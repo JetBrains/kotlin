@@ -39,9 +39,12 @@ internal interface LLFirLazyTransformer {
             element.replaceResolvePhase(newPhase)
 
             when (element) {
+                is FirFunction -> {
+                    element.valueParameters.forEach { updatePhaseForNonLocals(it, newPhase) }
+                }
                 is FirProperty -> {
-                    element.getter?.run { if (resolvePhase < newPhase) replaceResolvePhase(newPhase) }
-                    element.setter?.run { if (resolvePhase < newPhase) replaceResolvePhase(newPhase) }
+                    element.getter?.let { updatePhaseForNonLocals(it, newPhase) }
+                    element.setter?.let { updatePhaseForNonLocals(it, newPhase) }
                 }
                 is FirClass -> {
                     element.declarations.forEach {

@@ -142,10 +142,10 @@ FILE: secondaryConstructor.kt
     public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/A.A|(Int(42)))
     }
-    public final [CONTRACTS] fun receive([RAW_FIR] value: R|A|): R|kotlin/Unit| {
+    public final [CONTRACTS] fun receive([CONTRACTS] value: R|A|): R|kotlin/Unit| {
     }
     public final [STATUS] class A : R|kotlin/Any| {
-        public [STATUS] [ContainingClassKey=A] constructor([RAW_FIR] x: R|kotlin/Int|): R|A| {
+        public [STATUS] [ContainingClassKey=A] constructor([STATUS] x: R|kotlin/Int|): R|A| {
             super<R|kotlin/Any|>()
             [RAW_FIR] lval a: <implicit> = x#
         }

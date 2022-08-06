@@ -87,7 +87,7 @@ FILE: propertyWithGetter.kt
     public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/withGetter|)
     }
-    public final [CONTRACTS] fun receive([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
+    public final [CONTRACTS] fun receive([CONTRACTS] value: R|kotlin/Int|): R|kotlin/Unit| {
     }
     public final [CONTRACTS] val withGetter: R|kotlin/Int|
         public [CONTRACTS] get(): R|kotlin/Int| {
