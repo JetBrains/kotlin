@@ -38,6 +38,15 @@ internal interface LLFirLazyTransformer {
             if (element.resolvePhase >= newPhase) return
             element.replaceResolvePhase(newPhase)
 
+            if (element is FirCallableDeclaration) {
+                element.typeParameters.forEach { typeParameter ->
+                    // if it is not a type parameter of outer declaration
+                    if (typeParameter is FirTypeParameter) {
+                        updatePhaseForNonLocals(typeParameter, newPhase)
+                    }
+                }
+            }
+
             when (element) {
                 is FirFunction -> {
                     element.valueParameters.forEach { updatePhaseForNonLocals(it, newPhase) }
