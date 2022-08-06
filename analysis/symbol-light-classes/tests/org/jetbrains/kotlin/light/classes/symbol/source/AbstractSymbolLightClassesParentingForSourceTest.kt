@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.light.classes.symbol.source
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesAnnotationOwnerTest
+import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesParentingTest
 
-abstract class AbstractSymbolLightClassesAnnotationOwnerForSourceTest :
-    AbstractSymbolLightClassesAnnotationOwnerTest(
+abstract class AbstractSymbolLightClassesParentingForSourceTest :
+    AbstractSymbolLightClassesParentingTest(
         AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false),
         EXTENSIONS.FIR_JAVA,
         stopIfCompilationErrorDirectivePresent = false
