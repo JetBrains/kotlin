@@ -137,4 +137,68 @@ public class FirLazyDeclarationResolveTestGenerated extends AbstractFirLazyDecla
     public void testTypeParameterOfTopSetter() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/typeParameterOfTopSetter.kt");
     }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testdata/lazyResolve/classes")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Classes {
+        @Test
+        public void testAllFilesPresentInClasses() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/classes"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("classWithTypeParameters.kt")
+        public void testClassWithTypeParameters() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/classes/classWithTypeParameters.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testdata/lazyResolve/functions")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Functions {
+        @Test
+        public void testAllFilesPresentInFunctions() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/functions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("functionWithTypeParameters.kt")
+        public void testFunctionWithTypeParameters() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/functions/functionWithTypeParameters.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testdata/lazyResolve/properties")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Properties {
+        @Test
+        public void testAllFilesPresentInProperties() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/properties"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("propertyWithTypeParameters.kt")
+        public void testPropertyWithTypeParameters() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/properties/propertyWithTypeParameters.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testdata/lazyResolve/typeAliases")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TypeAliases {
+        @Test
+        public void testAllFilesPresentInTypeAliases() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/typeAliases"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("typeAliasWithTypeParameters.kt")
+        public void testTypeAliasWithTypeParameters() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/typeAliases/typeAliasWithTypeParameters.kt");
+        }
+    }
 }

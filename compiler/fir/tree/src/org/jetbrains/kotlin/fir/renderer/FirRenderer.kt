@@ -390,6 +390,7 @@ class FirRenderer(
         override fun visitTypeParameter(typeParameter: FirTypeParameter) {
             annotationRenderer?.render(typeParameter)
             modifierRenderer.renderModifiers(typeParameter)
+            resolvePhaseRenderer?.render(typeParameter)
             typeParameter.variance.renderVariance()
             print(typeParameter.name)
 

@@ -6,7 +6,7 @@ FILE: typeParameterOfNonLocalFunction.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? [RAW_FIR] fun <resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [RAW_FIR] fun <[RAW_FIR] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -17,7 +17,7 @@ FILE: typeParameterOfNonLocalFunction.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? [RAW_FIR] fun <resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [RAW_FIR] fun <[RAW_FIR] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -28,7 +28,7 @@ FILE: typeParameterOfNonLocalFunction.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun <resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun <[RAW_FIR] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -39,7 +39,7 @@ FILE: typeParameterOfNonLocalFunction.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? [COMPANION_GENERATION] fun <resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [COMPANION_GENERATION] fun <[RAW_FIR] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -50,7 +50,7 @@ FILE: typeParameterOfNonLocalFunction.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? [SUPER_TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [SUPER_TYPES] fun <[RAW_FIR] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -61,7 +61,7 @@ FILE: typeParameterOfNonLocalFunction.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? [TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [TYPES] fun <[RAW_FIR] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -72,7 +72,7 @@ FILE: typeParameterOfNonLocalFunction.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [STATUS] fun <resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [STATUS] fun <[RAW_FIR] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -83,7 +83,7 @@ FILE: typeParameterOfNonLocalFunction.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ARGUMENTS_OF_ANNOTATIONS] fun <resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ARGUMENTS_OF_ANNOTATIONS] fun <[RAW_FIR] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -94,7 +94,7 @@ FILE: typeParameterOfNonLocalFunction.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [CONTRACTS] fun <resolveMe> ddd(): R|kotlin/Unit| {
+        public final [CONTRACTS] fun <[RAW_FIR] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
     }
@@ -106,7 +106,7 @@ FILE: typeParameterOfNonLocalFunction.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [IMPLICIT_TYPES_BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
+        public final [IMPLICIT_TYPES_BODY_RESOLVE] fun <[RAW_FIR] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
     }
@@ -118,7 +118,7 @@ FILE: typeParameterOfNonLocalFunction.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [EXPECT_ACTUAL_MATCHING] fun <resolveMe> ddd(): R|kotlin/Unit| {
+        public final [EXPECT_ACTUAL_MATCHING] fun <[RAW_FIR] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
     }
@@ -130,7 +130,7 @@ FILE: typeParameterOfNonLocalFunction.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun <[BODY_RESOLVE] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
     }
@@ -142,7 +142,7 @@ FILE: typeParameterOfNonLocalFunction.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun <[BODY_RESOLVE] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
     }
