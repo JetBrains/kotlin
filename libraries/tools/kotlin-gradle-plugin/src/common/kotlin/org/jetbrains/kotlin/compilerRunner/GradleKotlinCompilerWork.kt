@@ -18,10 +18,11 @@ import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.cleanOutputsAndLocalState
 import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
+import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
-import org.jetbrains.kotlin.util.suffixIfNot
+import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.slf4j.LoggerFactory
 import java.io.*
 import java.net.URLClassLoader
@@ -155,10 +156,13 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                         e
                     )
                 }
+                val failDetails = e.stackTraceAsString().removeSuffixIfPresent("\n")
                 log.warn(
-                    "Failed to compile with Kotlin daemon: ${e.stackTraceToString().suffixIfNot("\n")}" +
-                            "Using fallback strategy: Compile without Kotlin daemon\n" +
-                            "Try ./gradlew --stop if this issue persists."
+                    """
+                    |Failed to compile with Kotlin daemon: $failDetails
+                    |Using fallback strategy: Compile without Kotlin daemon
+                    |Try ./gradlew --stop if this issue persists.
+                    """.trimMargin()
                 )
             }
         }
