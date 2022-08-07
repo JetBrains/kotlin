@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesigna
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ensurePhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 
 /**
  * Transform designation into IMPLICIT_TYPES_BODY_RESOLVE declaration. Affects only for target declaration, it's children and dependents
@@ -52,7 +52,7 @@ internal class LLFirDesignatedImplicitTypesTransformer(
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.declaration.resolvePhase >= FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) return
-        designation.declaration.ensurePhase(FirResolvePhase.CONTRACTS)
+        designation.declaration.checkPhase(FirResolvePhase.CONTRACTS)
 
             ResolveTreeBuilder.resolvePhase(designation.declaration, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
             phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
@@ -62,11 +62,11 @@ internal class LLFirDesignatedImplicitTypesTransformer(
 
         ideDeclarationTransformer.ensureDesignationPassed()
         updatePhaseDeep(designation.declaration, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-        ensureResolved(designation.declaration)
-        ensureResolvedDeep(designation.declaration)
+        checkIsResolved(designation.declaration)
+        checkIsResolvedDeep(designation.declaration)
     }
 
-    override fun ensureResolved(declaration: FirDeclaration) {
+    override fun checkIsResolved(declaration: FirDeclaration) {
         when (declaration) {
             is FirSimpleFunction -> check(declaration.returnTypeRef is FirResolvedTypeRef)
             is FirField -> check(declaration.returnTypeRef is FirResolvedTypeRef)

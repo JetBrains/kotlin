@@ -14,12 +14,14 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 internal interface LLFirLazyTransformer {
     fun transformDeclaration(phaseRunner: LLFirPhaseRunner)
-    fun ensureResolved(declaration: FirDeclaration)
-    fun ensureResolvedDeep(declaration: FirDeclaration) {
+
+    fun checkIsResolved(declaration: FirDeclaration)
+
+    fun checkIsResolvedDeep(declaration: FirDeclaration) {
         if (!enableDeepEnsure) return
-        ensureResolved(declaration)
+        checkIsResolved(declaration)
         if (declaration is FirRegularClass) {
-            declaration.declarations.forEach(::ensureResolvedDeep)
+            declaration.declarations.forEach(::checkIsResolvedDeep)
         }
     }
 
@@ -77,7 +79,7 @@ internal interface LLFirLazyTransformer {
 
         val DUMMY = object : LLFirLazyTransformer {
             override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) = Unit
-            override fun ensureResolved(declaration: FirDeclaration) = error("Not implemented")
+            override fun checkIsResolved(declaration: FirDeclaration) = error("Not implemented")
         }
     }
 }
