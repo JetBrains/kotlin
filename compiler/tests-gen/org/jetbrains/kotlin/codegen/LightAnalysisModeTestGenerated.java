@@ -29506,11 +29506,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 public void testTopLevelProperty() throws Exception {
                     runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/topLevelProperty.kt");
                 }
-
-                @TestMetadata("topLevelPropertyMultiModule.kt")
-                public void testTopLevelPropertyMultiModule() throws Exception {
-                    runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/topLevelPropertyMultiModule.kt");
-                }
             }
 
             @TestMetadata("compiler/testData/codegen/box/properties/lateinit/local")
