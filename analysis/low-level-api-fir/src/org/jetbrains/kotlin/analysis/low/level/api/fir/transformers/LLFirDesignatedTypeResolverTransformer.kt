@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ensurePhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 
 /**
@@ -43,7 +43,7 @@ internal class LLFirDesignatedTypeResolverTransformer(
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.declaration.resolvePhase >= FirResolvePhase.TYPES) return
-        designation.declaration.ensurePhase(FirResolvePhase.SUPER_TYPES)
+        designation.declaration.checkPhase(FirResolvePhase.SUPER_TYPES)
 
         ResolveTreeBuilder.resolvePhase(designation.declaration, FirResolvePhase.TYPES) {
             phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.TYPES) {
@@ -54,13 +54,13 @@ internal class LLFirDesignatedTypeResolverTransformer(
         declarationTransformer.ensureDesignationPassed()
         updatePhaseDeep(designation.declaration, FirResolvePhase.TYPES)
 
-        ensureResolved(designation.declaration)
-        ensureResolvedDeep(designation.declaration)
+        checkIsResolved(designation.declaration)
+        checkIsResolvedDeep(designation.declaration)
     }
 
-    override fun ensureResolved(declaration: FirDeclaration) {
+    override fun checkIsResolved(declaration: FirDeclaration) {
         if (declaration !is FirAnonymousInitializer) {
-            declaration.ensurePhase(FirResolvePhase.TYPES)
+            declaration.checkPhase(FirResolvePhase.TYPES)
         }
         when (declaration) {
             is FirFunction -> {
@@ -73,8 +73,8 @@ internal class LLFirDesignatedTypeResolverTransformer(
             is FirProperty -> {
                 check(declaration.returnTypeRef is FirResolvedTypeRef || declaration.returnTypeRef is FirImplicitTypeRef)
                 check(declaration.receiverTypeRef?.let { it is FirResolvedTypeRef } ?: true)
-                declaration.getter?.run(::ensureResolved)
-                declaration.setter?.run(::ensureResolved)
+                declaration.getter?.run(::checkIsResolved)
+                declaration.setter?.run(::checkIsResolved)
             }
             is FirField -> check(declaration.returnTypeRef is FirResolvedTypeRef || declaration.returnTypeRef is FirImplicitTypeRef)
             is FirClass, is FirTypeAlias, is FirAnonymousInitializer -> Unit
