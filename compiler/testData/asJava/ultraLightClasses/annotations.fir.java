@@ -14,12 +14,12 @@ public abstract @interface Anno4 /* Anno4*/ {
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@kotlin.annotation.Target(allowedTargets = ?)
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.EXPRESSION})
 public abstract @interface Anno5 /* Anno5*/ {
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@kotlin.annotation.Target(allowedTargets = ?)
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.EXPRESSION})
 public abstract @interface Anno6 /* Anno6*/ {
 }
 
@@ -48,7 +48,7 @@ public abstract @interface Anno /* Anno*/ {
 
 }
 
-@Deprecated(message = "This anno is deprecated, use === instead", replaceWith = ?)
+@Deprecated(message = "This anno is deprecated, use === instead", replaceWith = @ReplaceWith(expression = "this === other"))
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.annotation.MustBeDocumented()
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
