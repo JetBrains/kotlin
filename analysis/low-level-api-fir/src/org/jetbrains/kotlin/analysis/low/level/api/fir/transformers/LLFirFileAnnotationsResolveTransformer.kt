@@ -55,5 +55,5 @@ internal class LLFirFileAnnotationsResolveTransformer(
         }
     }
 
-    override fun ensureResolved(declaration: FirDeclaration) = error("Not implemented")
+    override fun checkIsResolved(declaration: FirDeclaration) = error("Not implemented")
 }

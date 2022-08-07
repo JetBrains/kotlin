@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeB
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ensurePhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 
 /**
  * Transform designation into SUPER_TYPES phase. Affects only for designation, target declaration, it's children and dependents
@@ -132,7 +132,7 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.declaration.resolvePhase >= FirResolvePhase.SUPER_TYPES) return
-        designation.firFile.ensurePhase(FirResolvePhase.IMPORTS)
+        designation.firFile.checkPhase(FirResolvePhase.IMPORTS)
 
         val targetDesignation = if (designation.declaration !is FirClassLikeDeclaration) {
             val resolvableTarget = designation.path.lastOrNull()
@@ -154,19 +154,19 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
         }
 
         updatePhaseDeep(designation.declaration, FirResolvePhase.SUPER_TYPES)
-        ensureResolved(designation.declaration)
-        ensureResolvedDeep(designation.declaration)
+        checkIsResolved(designation.declaration)
+        checkIsResolvedDeep(designation.declaration)
     }
 
-    override fun ensureResolved(declaration: FirDeclaration) {
+    override fun checkIsResolved(declaration: FirDeclaration) {
         when (declaration) {
             is FirFunction, is FirProperty, is FirEnumEntry, is FirField, is FirAnonymousInitializer -> Unit
             is FirRegularClass -> {
-                declaration.ensurePhase(FirResolvePhase.SUPER_TYPES)
+                declaration.checkPhase(FirResolvePhase.SUPER_TYPES)
                 check(declaration.superTypeRefs.all { it is FirResolvedTypeRef })
             }
             is FirTypeAlias -> {
-                declaration.ensurePhase(FirResolvePhase.SUPER_TYPES)
+                declaration.checkPhase(FirResolvePhase.SUPER_TYPES)
                 check(declaration.expandedTypeRef is FirResolvedTypeRef)
             }
             else -> error("Unexpected type: ${declaration::class.simpleName}")
