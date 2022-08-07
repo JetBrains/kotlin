@@ -22,6 +22,12 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 internal fun mapAnnotationParameters(annotation: FirAnnotation, session: FirSession): Map<Name, FirExpression> {
+    // TODO: Alas, argument mapping for annotations on [FirValueParameter] is not properly built, even after BODY_RESOLVE ensured.
+    //  Once fixed, manual building of argument mapping below is redundant. I.e., this util can be as simple as:
+    //    return if (annotation.resolved)
+    //      annotation.argumentMapping.mapping.mapKeys { (name, _) -> name }
+    //    else
+    //      emptyMap()
     if (annotation.resolved) return annotation.argumentMapping.mapping.mapKeys { (name, _) -> name }
     if (annotation !is FirAnnotationCall) return emptyMap()
     val annotationCone = (annotation.annotationTypeRef.coneType as? ConeClassLikeType)?.fullyExpandedType(session)
