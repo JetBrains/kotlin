@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.sources.android
 
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
-internal object MultiplatformLayoutV1KotlinAndroidSourceSetNaming : KotlinAndroidSourceSetNaming.Simple {
-    override fun kotlinSourceSetName(disambiguationClassifier: String, androidSourceSetName: String): String =
+internal object MultiplatformLayoutV1KotlinAndroidSourceSetNaming : KotlinAndroidSourceSetNaming {
+    override fun kotlinSourceSetName(disambiguationClassifier: String, androidSourceSetName: String, type: AndroidVariantType?): String =
         lowerCamelCaseName(disambiguationClassifier, androidSourceSetName)
 }

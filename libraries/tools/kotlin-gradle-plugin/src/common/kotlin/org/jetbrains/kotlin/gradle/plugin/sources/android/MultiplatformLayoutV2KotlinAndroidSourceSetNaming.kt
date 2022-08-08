@@ -22,17 +22,10 @@ internal object MultiplatformLayoutV2KotlinAndroidSourceSetNaming : KotlinAndroi
     override fun kotlinSourceSetName(
         disambiguationClassifier: String,
         androidSourceSetName: String,
+        type: AndroidVariantType?
     ): String? {
-        val androidBaseSourceSetName = AndroidBaseSourceSetName.byName(androidSourceSetName) ?: return null
-        return lowerCamelCaseName(disambiguationClassifier, androidBaseSourceSetName.kotlinName)
-    }
-
-    override fun kotlinSourceSetName(
-        disambiguationClassifier: String,
-        androidSourceSetName: String,
-        type: AndroidVariantType
-    ): String {
-        return lowerCamelCaseName(disambiguationClassifier, replaceAndroidBaseSourceSetName(androidSourceSetName, type))
+        val knownType = type ?: AndroidBaseSourceSetName.byName(androidSourceSetName)?.variantType ?: return null
+        return lowerCamelCaseName(disambiguationClassifier, replaceAndroidBaseSourceSetName(androidSourceSetName, knownType))
     }
 
     override fun defaultKotlinSourceSetName(compilation: AndroidCompilationDetails): String? {
