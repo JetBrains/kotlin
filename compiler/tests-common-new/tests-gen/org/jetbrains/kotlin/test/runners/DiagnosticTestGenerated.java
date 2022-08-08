@@ -37651,6 +37651,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("subclassOptInInheritance.kt")
+            public void testSubclassOptInInheritance() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/subclassOptInInheritance.kt");
+            }
+
+            @Test
             @TestMetadata("topLevel.kt")
             public void testTopLevel() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/topLevel.kt");
