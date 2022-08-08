@@ -11,25 +11,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.AndroidCompilationDetails
 internal interface KotlinAndroidSourceSetNaming {
 
     /**
-     * Returns non-null name of the corresponding [KotlinSourceSet], if the name of said source set can be
-     * determined by the [disambiguationClassifier] and [androidSourceSetName] alone.
-     *
-     * Returns `null`, if KotlinSourceSet name requires additional [AndroidVariantType] to be determined.
+     * Returns the name of the corresponding [KotlinSourceSet]
+     * This function can be called w/ or w/o a specific [type].
      */
     fun kotlinSourceSetName(
-        disambiguationClassifier: String,
-        androidSourceSetName: String
+        disambiguationClassifier: String, androidSourceSetName: String, type: AndroidVariantType?
     ): String?
-
-    /**
-     * Returns the name of the corresponding [KotlinSourceSet], if the name of said source set cannot be determined
-     * by the [disambiguationClassifier] and [androidSourceSetName] alone.
-     */
-    fun kotlinSourceSetName(
-        disambiguationClassifier: String,
-        androidSourceSetName: String,
-        type: AndroidVariantType
-    ): String
 
 
     /**
@@ -38,13 +25,4 @@ internal interface KotlinAndroidSourceSetNaming {
      * 'default' defaultSourceSetName will be constructed by the compilation.
      */
     fun defaultKotlinSourceSetName(compilation: AndroidCompilationDetails): String? = null
-
-    /**
-     * Always capable of creating the [KotlinSourceSet]'s name based upon the disambiguationClassifier and androidSourceSetName alone.
-     */
-    interface Simple : KotlinAndroidSourceSetNaming {
-        override fun kotlinSourceSetName(disambiguationClassifier: String, androidSourceSetName: String): String
-        override fun kotlinSourceSetName(disambiguationClassifier: String, androidSourceSetName: String, type: AndroidVariantType): String =
-            kotlinSourceSetName(disambiguationClassifier, androidSourceSetName)
-    }
 }

@@ -35,8 +35,12 @@ internal object KotlinAndroidSourceSets {
         make them available in the buildscript dsl immediately.
          */
         android.sourceSets.all { androidSourceSet ->
-            val kotlinSourceSetName = layout.naming.kotlinSourceSetName(target.disambiguationClassifier, androidSourceSet.name)
-            factory.getOrCreateConfiguredKotlinSourceSet(kotlinSourceSetName ?: return@all, androidSourceSet)
+            val kotlinSourceSetName = layout.naming.kotlinSourceSetName(
+                target.disambiguationClassifier, androidSourceSet.name,
+                AndroidBaseSourceSetName.byName(androidSourceSet.name)?.variantType
+            ) ?: return@all
+
+            factory.getOrCreateConfiguredKotlinSourceSet(kotlinSourceSetName, androidSourceSet)
         }
 
         /* Hook into Android's variant creation: This is invoked in 'afterEvaluate' */
@@ -44,8 +48,9 @@ internal object KotlinAndroidSourceSets {
             variant.sourceSets.forEach { sourceProvider ->
                 val androidSourceSet = android.sourceSets.findByName(sourceProvider.name) ?: return@forEach
 
-                val kotlinSourceSetName = layout.naming.kotlinSourceSetName(target.disambiguationClassifier, sourceProvider.name)
-                    ?: layout.naming.kotlinSourceSetName(target.disambiguationClassifier, sourceProvider.name, variant.type)
+                val kotlinSourceSetName = layout.naming.kotlinSourceSetName(
+                    target.disambiguationClassifier, sourceProvider.name, variant.type
+                ) ?: return@forEach
 
                 val kotlinSourceSet = factory.getOrCreateConfiguredKotlinSourceSet(kotlinSourceSetName, androidSourceSet)
                 layout.sourceSetConfigurator.configureWithVariant(target, kotlinSourceSet, variant)

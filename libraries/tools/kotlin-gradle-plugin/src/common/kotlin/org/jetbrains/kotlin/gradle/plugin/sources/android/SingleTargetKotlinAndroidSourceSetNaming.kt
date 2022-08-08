@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.gradle.plugin.sources.android
 
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
-internal object SingleTargetKotlinAndroidSourceSetNaming : KotlinAndroidSourceSetNaming.Simple {
-    override fun kotlinSourceSetName(disambiguationClassifier: String, androidSourceSetName: String): String {
+internal object SingleTargetKotlinAndroidSourceSetNaming : KotlinAndroidSourceSetNaming {
+    override fun kotlinSourceSetName(disambiguationClassifier: String, androidSourceSetName: String, type: AndroidVariantType?): String {
         assert(disambiguationClassifier.isEmpty()) { "Unexpected non-empty disambiguationClassifier found: $disambiguationClassifier" }
         return lowerCamelCaseName(disambiguationClassifier, androidSourceSetName)
     }
