@@ -86,7 +86,7 @@ class KotlinNpmResolutionManager(@Transient private val nodeJsSettings: NodeJsRo
         (nodeJsSettings ?: unavailableValueError("nodeJsSettings")).rootProject.isInIdeaSync
     }
 
-    internal val resolver = KotlinRootNpmResolver(nodeJsSettings, forceFullResolve)
+    val resolver = KotlinRootNpmResolver(nodeJsSettings, forceFullResolve)
 
     internal abstract class KotlinNpmResolutionManagerStateHolder : BuildService<BuildServiceParameters.None> {
         @Volatile
@@ -101,13 +101,13 @@ class KotlinNpmResolutionManager(@Transient private val nodeJsSettings: NodeJsRo
 
     private val stateHolder get() = stateHolderProvider.get()
 
-    private var state: ResolutionState
+    var state: ResolutionState
         get() = stateHolder.state ?: ResolutionState.Configuring(resolver)
         set(value) {
             stateHolder.state = value
         }
 
-    internal sealed class ResolutionState {
+    sealed class ResolutionState {
         abstract val npmProjects: List<NpmProject>
 
         class Configuring(val resolver: KotlinRootNpmResolver) : ResolutionState() {
@@ -120,9 +120,14 @@ class KotlinNpmResolutionManager(@Transient private val nodeJsSettings: NodeJsRo
                 get() = npmProjectsByProjectResolutions(preparedInstallation.projectResolutions)
         }
 
-        class Installed(val resolved: KotlinRootNpmResolution) : ResolutionState() {
+        class Installed internal constructor(internal val resolved: KotlinRootNpmResolution) : ResolutionState() {
             override val npmProjects: List<NpmProject>
                 get() = npmProjectsByProjectResolutions(resolved.projects)
+        }
+
+        class Error(val wrappedException: Throwable) : ResolutionState() {
+            override val npmProjects: List<NpmProject>
+                get() = emptyList()
         }
 
         companion object {
@@ -156,23 +161,30 @@ class KotlinNpmResolutionManager(@Transient private val nodeJsSettings: NodeJsRo
         args: List<String> = emptyList(),
         services: ServiceRegistry,
         logger: Logger
-    ): KotlinRootNpmResolution {
+    ): KotlinRootNpmResolution? {
         synchronized(stateHolder) {
             if (state is ResolutionState.Installed) {
                 return (state as ResolutionState.Installed).resolved
             }
 
-            val installUpToDate = nodeJsSettings?.npmInstallTaskProvider?.get()?.state?.upToDate ?: false
-            val forceUpToDate = installUpToDate && !forceFullResolve
+            if (state is ResolutionState.Error) {
+                return null
+            }
 
-            val installation = prepareIfNeeded(requireUpToDateReason = reason, logger = logger)
-            val resolution = installation
-                .install(forceUpToDate, args, services, logger)
-            state = ResolutionState.Installed(resolution)
+            return try {
+                val installUpToDate = nodeJsSettings?.npmInstallTaskProvider?.get()?.state?.upToDate ?: false
+                val forceUpToDate = installUpToDate && !forceFullResolve
 
-            installation.closePlugins(resolution)
-
-            return resolution
+                val installation = prepareIfNeeded(requireUpToDateReason = reason, logger = logger)
+                val resolution = installation
+                    .install(forceUpToDate, args, services, logger)
+                state = ResolutionState.Installed(resolution)
+                installation.closePlugins(resolution)
+                resolution
+            } catch (e: Exception) {
+                state = ResolutionState.Error(e)
+                throw e
+            }
         }
     }
 
@@ -215,10 +227,12 @@ class KotlinNpmResolutionManager(@Transient private val nodeJsSettings: NodeJsRo
                             }
                         }
                         is ResolutionState.Installed -> error("Project already installed")
+                        is ResolutionState.Error -> throw state1.wrappedException
                     }
                 }
             }
             is ResolutionState.Installed -> error("Project already installed")
+            is ResolutionState.Error -> throw state0.wrappedException
         }
     }
 
@@ -230,7 +244,7 @@ class KotlinNpmResolutionManager(@Transient private val nodeJsSettings: NodeJsRo
 
         val resolvedProject =
             if (forceFullResolve) {
-                installIfNeeded(reason = null, services = services, logger = logger)[projectPath]
+                installIfNeeded(reason = null, services = services, logger = logger)?.get(projectPath) ?: return null
             } else {
                 // may return null only during npm resolution
                 // (it can be called since NpmDependency added to configuration that
@@ -243,13 +257,16 @@ class KotlinNpmResolutionManager(@Transient private val nodeJsSettings: NodeJsRo
                         //error("Cannot use NpmDependency before :kotlinNpmInstall task execution")
                     }
                     is ResolutionState.Installed -> state0.resolved[projectPath]
+                    is ResolutionState.Error -> {
+                        return null
+                    }
                 }
             }
 
         return resolvedProject.npmProjectsByNpmDependency[npmDependency] ?: error("NPM project resolved without $this")
     }
 
-    internal fun <T> checkRequiredDependencies(task: T, services: ServiceRegistry, logger: Logger, projectPath: String)
+    internal fun <T> checkRequiredDependencies(task: T)
             where T : RequiresNpmDependencies,
                   T : Task {
         val targetRequired = resolver.taskRequirements.byTask[task.path]?.toSet() ?: setOf()

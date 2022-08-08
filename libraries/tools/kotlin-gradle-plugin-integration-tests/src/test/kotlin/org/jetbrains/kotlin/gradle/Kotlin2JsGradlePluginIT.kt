@@ -1564,6 +1564,37 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
             }
         }
     }
+
+    @DisplayName("smoothly fail npm install")
+    @GradleTest
+    fun testFailNpmInstall(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            buildGradleKts.modify { originalScript ->
+                buildString {
+                    append(originalScript)
+                    append(
+                        """
+                        |
+                        |plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
+                        |    val nodejs = the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>()
+                        |    tasks.named<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>("kotlinNpmInstall") {
+                        |        doFirst {
+                        |            nodejs.npmResolutionManager.state = 
+                        |            org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager.ResolutionState.Error(GradleException("someSpecialException"))
+                        |        }
+                        |    }
+                        |}
+                        |
+                        """.trimMargin()
+                    )
+                }
+            }
+            buildAndFail("build") {
+                assertTasksFailed(":kotlinNpmInstall")
+                assertOutputContains("someSpecialException")
+            }
+        }
+    }
 }
 
 @JsGradlePluginTests
