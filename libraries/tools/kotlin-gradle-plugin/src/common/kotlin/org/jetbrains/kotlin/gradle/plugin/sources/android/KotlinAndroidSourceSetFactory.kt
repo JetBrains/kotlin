@@ -39,8 +39,19 @@ internal class KotlinAndroidSourceSetFactory(
     ): KotlinSourceSet {
         return kotlin.sourceSets.getOrCreate(name) { kotlinSourceSet ->
             kotlinSourceSet.androidSourceSetInfoOrNull?.let { info ->
-                check(info.kotlinSourceSetName == name) { "Bad 'androidSourceSetInfo' on $name: Bad 'kotlinSourceSetName'" }
-                check(info.androidSourceSetName == androidSourceSet.name) { "Bad 'androidSourceSetInfo' on $name: Bad 'androidSourceSetName'" }
+                /* Check if kotlinSourceSetName is correct */
+                check(info.kotlinSourceSetName == name) {
+                    "Bad 'androidSourceSetInfo.kotlinSourceSetName' on KotlinSourceSet:$name: " +
+                            "Expected: ${kotlinSourceSet.name} " +
+                            "Found: ${info.kotlinSourceSetName}"
+                }
+
+                /* Check if androidSourceSetName is correct */
+                check(info.androidSourceSetName == androidSourceSet.name) {
+                    "Bad 'androidSourceSetInfo.androidSourceSetName' on KotlinSourceSet:$name: " +
+                            "Expected: ${androidSourceSet.name} " +
+                            "Found: ${info.androidSourceSetName}"
+                }
                 return@getOrCreate
             }
 
