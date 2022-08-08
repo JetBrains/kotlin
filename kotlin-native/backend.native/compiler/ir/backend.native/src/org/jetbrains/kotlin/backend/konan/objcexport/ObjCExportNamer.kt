@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal interface ObjCExportNameTranslator {
     fun getFileClassName(file: KtFile): ObjCExportNamer.ClassOrProtocolName
@@ -668,13 +667,13 @@ internal class ObjCExportNamerImpl(
     private fun forceAssignPredefined(builtIns: KotlinBuiltIns) {
         val any = builtIns.any
 
-        val predefinedClassNames = mapOf(
+        val predefinedClassNames: Map<ClassDescriptor, ObjCExportNamer.ClassOrProtocolName> = mapOf(
                 builtIns.any to kotlinAnyName,
                 builtIns.mutableSet to mutableSetName,
                 builtIns.mutableMap to mutableMapName
         )
 
-        predefinedClassNames.forEach { descriptor, name ->
+        predefinedClassNames.forEach { (descriptor, name) ->
             objCClassNames.forceAssign(descriptor, name.objCName)
             swiftClassAndProtocolNames.forceAssign(descriptor, name.swiftName)
         }
@@ -685,11 +684,11 @@ internal class ObjCExportNamerImpl(
                         NoLookupLocation.FROM_BACKEND
                 ).single()
 
-        Predefined.anyMethodSelectors.forEach { name, selector ->
+        Predefined.anyMethodSelectors.forEach { (name, selector) ->
             methodSelectors.forceAssign(any.method(name), selector)
         }
 
-        Predefined.anyMethodSwiftNames.forEach { name, swiftName ->
+        Predefined.anyMethodSwiftNames.forEach { (name, swiftName) ->
             methodSwiftNames.forceAssign(any.method(name), swiftName)
         }
     }
@@ -857,7 +856,7 @@ private inline fun StringBuilder.mangledSequence(crossinline mangle: StringBuild
 
 private fun StringBuilder.mangledBySuffixUnderscores() = this.mangledSequence { append("_") }
 
-private fun ObjCExportMapper.canHaveCommonSubtype(first: ClassDescriptor, second: ClassDescriptor): Boolean {
+private fun canHaveCommonSubtype(first: ClassDescriptor, second: ClassDescriptor): Boolean {
     if (first.isSubclassOf(second) || second.isSubclassOf(first)) {
         return true
     }
@@ -1029,13 +1028,15 @@ private fun KtClassOrObject.getObjCName(): ObjCName {
 internal val ModuleDescriptor.objCExportAdditionalNamePrefix: String get() {
     if (this.isNativeStdlib()) return "Kotlin"
 
-    val fullPrefix = when(val module = this.klibModuleOrigin) {
+    val fullPrefix = when (val module = this.klibModuleOrigin) {
         CurrentKlibModuleOrigin ->
             error("expected deserialized module, got $this (origin = $module)")
         SyntheticModulesOrigin ->
             this.name.asString().let { it.substring(1, it.lastIndex) }
         is DeserializedKlibModuleOrigin ->
             module.library.let { it.shortName ?: it.uniqueName }
+
+        else -> error("Unexpected module origin: $module")
     }
 
     return abbreviate(fullPrefix)

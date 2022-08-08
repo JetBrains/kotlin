@@ -6,30 +6,17 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
-import org.jetbrains.kotlin.backend.konan.getExportedDependencies
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.createTempFile
 import org.jetbrains.kotlin.konan.file.use
-import org.jetbrains.kotlin.konan.target.*
-
-internal class ObjCExportedInterface(
-        val generatedClasses: Set<ClassDescriptor>,
-        val categoryMembers: Map<ClassDescriptor, List<CallableMemberDescriptor>>,
-        val topLevel: Map<SourceFile, List<CallableMemberDescriptor>>,
-        val namer: ObjCExportNamer,
-        val mapper: ObjCExportMapper,
-        val clangModule: SXClangModule
-)
+import org.jetbrains.kotlin.konan.target.AppleConfigurables
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
     private val target get() = context.config.target

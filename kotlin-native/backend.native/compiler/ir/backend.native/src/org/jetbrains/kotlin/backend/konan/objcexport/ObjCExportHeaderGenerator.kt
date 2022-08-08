@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 class SXHeaderImportReferenceTracker(
-        val header: SXObjCHeader,
-        val sxBuilder: SXClangModuleBuilder,
+        private val header: SXObjCHeader,
+        private val sxBuilder: SXClangModuleBuilder,
 ) : ReferenceTracker {
     override fun trackReference(declaration: DeclarationDescriptor) {
         val declarationHeader = sxBuilder.findHeaderForDeclaration(declaration)
@@ -141,11 +141,11 @@ abstract class ObjCExportHeaderGenerator internal constructor(
             packageFragment.getMemberScope().translateClasses()
         }
 
-        extensions.forEach { classDescriptor, declarations ->
+        extensions.forEach { (classDescriptor, declarations) ->
             generateExtensions(classDescriptor, declarations)
         }
 
-        topLevel.forEach { sourceFile, declarations ->
+        topLevel.forEach { (sourceFile, declarations) ->
             generateFile(sourceFile, declarations)
         }
     }

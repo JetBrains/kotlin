@@ -17,7 +17,7 @@ internal fun patchObjCRuntimeModule(context: Context): LLVMModuleRef? {
     val config = context.config
     if (!(config.isFinalBinary && config.target.family.isAppleFamily)) return null
 
-    val patchBuilder = PatchBuilder(context)
+    val patchBuilder = PatchBuilder(context.objCExport.namer)
     patchBuilder.addObjCPatches()
 
     val bitcodeFile = config.objCNativeLibrary
@@ -27,7 +27,9 @@ internal fun patchObjCRuntimeModule(context: Context): LLVMModuleRef? {
     return parsedModule
 }
 
-private class PatchBuilder(val context: Context) {
+private class PatchBuilder(
+        val objCExportNamer: ObjCExportNamer
+) {
     enum class GlobalKind(val prefix: String) {
         OBJC_CLASS("OBJC_CLASS_\$_"),
         OBJC_METACLASS("OBJC_METACLASS_\$_"),
@@ -51,8 +53,6 @@ private class PatchBuilder(val context: Context) {
     val globalPatches = mutableListOf<GlobalPatch>()
     val literalPatches = mutableListOf<LiteralPatch>()
 
-    val objCExportNamer = context.objCExport.namer
-
     // Note: exported classes anyway use the same prefix,
     // so using more unique private prefix wouldn't help to prevent any clashes.
     private val privatePrefix = objCExportNamer.topLevelNamePrefix
@@ -70,7 +70,7 @@ private class PatchBuilder(val context: Context) {
         addRenameClass(name, "$privatePrefix$name", ivars)
     }
 
-    private fun addRenameClass(oldName: String, newName: String, ivars: Array<out String>)  {
+    private fun addRenameClass(oldName: String, newName: String, ivars: Array<out String>) {
         globalPatches += GlobalPatch(GlobalKind.OBJC_CLASS, oldName, newName)
         globalPatches += GlobalPatch(GlobalKind.OBJC_METACLASS, oldName, newName)
 
