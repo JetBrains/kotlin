@@ -198,6 +198,7 @@ fun Project.configureKotlinCompilationOptions() {
 
                 //TODO these modules should be properly migrated
                 if (!project.path.contains("-gradle") &&
+                    !project.path.contains("kotlin-project-model") &&
                     !project.path.contains(":binary-compatibility-validator") &&
                     !project.path.contains("runtime") &&
                     //TODO: tune performance in tree and tree.impl modules
