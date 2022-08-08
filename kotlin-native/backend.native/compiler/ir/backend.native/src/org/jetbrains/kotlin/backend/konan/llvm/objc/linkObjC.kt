@@ -17,13 +17,14 @@ internal fun patchObjCRuntimeModule(context: Context): LLVMModuleRef? {
     val config = context.config
     if (!(config.isFinalBinary && config.target.family.isAppleFamily)) return null
 
-    val patchBuilder = PatchBuilder(context.objCExport.namer)
-    patchBuilder.addObjCPatches()
-
     val bitcodeFile = config.objCNativeLibrary
     val parsedModule = parseBitcodeFile(bitcodeFile)
 
-    patchBuilder.buildAndApply(parsedModule)
+    context.objCExport.namers.forEach { namer ->
+        val patchBuilder = PatchBuilder(namer)
+        patchBuilder.addObjCPatches()
+        patchBuilder.buildAndApply(parsedModule)
+    }
     return parsedModule
 }
 

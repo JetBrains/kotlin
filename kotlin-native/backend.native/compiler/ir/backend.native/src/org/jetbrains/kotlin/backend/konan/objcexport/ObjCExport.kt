@@ -22,20 +22,19 @@ internal class ObjCExport(val context: Context) {
     private val target get() = context.config.target
     private val topLevelNamePrefix get() = context.objCExportTopLevelNamePrefix
 
-    private val exportedInterface = produceInterface()
+    private val exportedInterfaces = produceInterfaces()
 
+    val namers: MutableList<ObjCExportNamer> = mutableListOf()
+    private val codeSpecs: MutableMap<ObjCExportedInterface, ObjCExportCodeSpec> = mutableMapOf()
 
-    lateinit var namer: ObjCExportNamer
-    private lateinit var codeSpec: ObjCExportCodeSpec
-
-    fun buildCodeSpec(symbolTable: SymbolTable) {
-        exportedInterface?.let {
-            codeSpec = ObjCCodeSpecBuilder(it, symbolTable).build()
+    fun buildCodeSpecs(symbolTable: SymbolTable) {
+        exportedInterfaces.forEach {
+            codeSpecs[it] = ObjCCodeSpecBuilder(it, symbolTable).build()
         }
     }
 
-    private fun produceInterface(): ObjCExportedInterface? {
-        if (!target.family.isAppleFamily) return null
+    private fun produceInterfaces(): List<ObjCExportedInterface> {
+        if (!target.family.isAppleFamily) return emptyList()
 
         // TODO: emit RTTI to the same modules as classes belong to.
         //   Not possible yet, since ObjCExport translates the entire "world" API at once
@@ -60,9 +59,9 @@ internal class ObjCExport(val context: Context) {
                     context, moduleDescriptors, mapper, namer, objcGenerics, getFrameworkName()
             )
             headerGenerator.translateModule()
-            headerGenerator.buildInterface()
+            listOf(headerGenerator.buildInterface())
         } else {
-            null
+            emptyList()
         }
     }
 
@@ -75,18 +74,12 @@ internal class ObjCExport(val context: Context) {
 
         if (!context.config.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
 
-        val mapper = exportedInterface?.mapper ?: ObjCExportMapper(unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport)
-        namer = exportedInterface?.namer ?: ObjCExportNamerImpl(
-                setOf(codegen.context.moduleDescriptor),
-                context.moduleDescriptor.builtIns,
-                mapper,
-                topLevelNamePrefix,
-                local = false
-        )
-
-        ObjCExportCodeGenerator(codegen, namer, mapper).use { objCCodeGenerator ->
-            exportedInterface?.generateWorkaroundForSwiftSR10177()
-            objCCodeGenerator.generate(codeSpec)
+        codeSpecs.forEach { (exportedInterface, codeSpec) ->
+            namers += exportedInterface.namer
+            ObjCExportCodeGenerator(codegen, exportedInterface.namer, exportedInterface.mapper).use { objCCodeGenerator ->
+                exportedInterface.generateWorkaroundForSwiftSR10177()
+                objCCodeGenerator.generate(codeSpec)
+            }
         }
     }
 
@@ -94,16 +87,23 @@ internal class ObjCExport(val context: Context) {
      * Populate framework directory with headers, module and info.plist.
      */
     fun produceFrameworkInterface() {
-        if (exportedInterface != null) {
+        exportedInterfaces.forEach { exportedInterface ->
             val framework = File(context.config.outputFile)
             val properties = context.config.platform.configurables as AppleConfigurables
             val mainPackageGuesser = MainPackageGuesser(
-                    context.moduleDescriptor, context.getIncludedLibraryDescriptors(), context.getExportedDependencies()
+                    context.moduleDescriptor,
+                    context.getIncludedLibraryDescriptors(),
+                    context.getExportedDependencies()
             )
             val infoPListBuilder = InfoPListBuilder(target, properties, context.configuration, mainPackageGuesser)
-            val moduleMapBuilder = ModuleMapBuilder(getFrameworkName())
-            FrameworkBuilder(exportedInterface.clangModule, target, framework, getFrameworkName(), context.shouldExportKDoc())
-                    .build(infoPListBuilder, moduleMapBuilder)
+            val moduleMapBuilder = ModuleMapBuilder(exportedInterface.frameworkName)
+            FrameworkBuilder(
+                    exportedInterface.clangModule,
+                    target,
+                    framework,
+                    exportedInterface.frameworkName,
+                    context.shouldExportKDoc()
+            ).build(infoPListBuilder, moduleMapBuilder)
         }
     }
 

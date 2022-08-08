@@ -96,10 +96,10 @@ class SXObjCHeader(val name: String) : SXContainer, SXElement {
 }
 
 class SXClangModuleBuilder(
-        val kotlinModules: List<ModuleDescriptor>,
+        private val kotlinModules: List<ModuleDescriptor>,
         val namer: ObjCExportNamer,
-        val headerPerModule: Boolean,
-        val umbrellaHeaderName: String,
+        private val headerPerModule: Boolean,
+        private val umbrellaHeaderName: String,
 ) {
     private val theModule = SXClangModule()
     private val theHeader = SXObjCHeader(umbrellaHeaderName)

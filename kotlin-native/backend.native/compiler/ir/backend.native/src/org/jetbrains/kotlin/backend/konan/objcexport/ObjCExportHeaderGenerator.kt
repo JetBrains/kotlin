@@ -39,7 +39,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         val namer: ObjCExportNamer,
         val objcGenerics: Boolean,
         problemCollector: ObjCExportProblemCollector,
-        frameworkName: String
+        private val frameworkName: String
 ) {
     private val extraClassesToTranslate = mutableSetOf<ClassDescriptor>()
 
@@ -59,7 +59,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
 
     private val translator = ObjCExportTranslatorImpl(this, mapper, namer, problemCollector, objcGenerics)
 
-    internal fun sxBuild() {
+    private fun buildImports() {
         foundationImports.forEach {
             sxBuilder.findHeaderForStdlib().addImport(it)
         }
@@ -70,8 +70,8 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     }
 
     internal fun buildInterface(): ObjCExportedInterface {
-        sxBuild()
-        return ObjCExportedInterface(generatedClasses, extensions, topLevel, namer, mapper, sxBuilder.build())
+        buildImports()
+        return ObjCExportedInterface(generatedClasses, extensions, topLevel, namer, mapper, sxBuilder.build(), frameworkName)
     }
 
     protected open fun getAdditionalImports(): List<String> = emptyList()
@@ -83,14 +83,14 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         translateModuleDeclarations()
     }
 
-    fun translateBaseDeclarations() {
+    private fun translateBaseDeclarations() {
         val toplevels = translator.generateBaseDeclarations()
         toplevels.forEach {
             sxBuilder.findHeaderForStdlib().addTopLevelDeclaration(it)
         }
     }
 
-    fun translateModuleDeclarations() {
+    private fun translateModuleDeclarations() {
         translatePackageFragments()
         translateExtraClasses()
     }

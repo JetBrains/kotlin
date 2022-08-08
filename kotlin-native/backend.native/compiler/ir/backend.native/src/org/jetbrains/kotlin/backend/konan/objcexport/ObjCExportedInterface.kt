@@ -16,5 +16,6 @@ internal class ObjCExportedInterface(
     val topLevel: Map<SourceFile, List<CallableMemberDescriptor>>,
     val namer: ObjCExportNamer,
     val mapper: ObjCExportMapper,
-    val clangModule: SXClangModule
+    val clangModule: SXClangModule,
+    val frameworkName: String,
 )
