@@ -86,6 +86,7 @@ abstract class TransformationMethodVisitor(
 
             delegate.visitEnd()
         } catch (t: Throwable) {
+            t.printStackTrace()
             throw CompilationException("Couldn't transform method node:\n" + methodNode.nodeText, t, null)
         }
     }
