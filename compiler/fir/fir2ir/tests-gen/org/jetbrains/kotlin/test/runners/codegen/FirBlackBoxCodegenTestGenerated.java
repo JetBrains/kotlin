@@ -451,6 +451,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("annotationInstancesEmptyDefaultLowered.kt")
+            public void testAnnotationInstancesEmptyDefaultLowered() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/annotationInstancesEmptyDefaultLowered.kt");
+            }
+
+            @Test
             @TestMetadata("annotationJvmHashCode.kt")
             public void testAnnotationJvmHashCode() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/annotationJvmHashCode.kt");

@@ -113,6 +113,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 runTest("compiler/testData/codegen/box/annotations/instances/annotationInstancesEmptyDefault.kt");
             }
 
+            @TestMetadata("annotationInstancesEmptyDefaultLowered.kt")
+            public void testAnnotationInstancesEmptyDefaultLowered() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/annotationInstancesEmptyDefaultLowered.kt");
+            }
+
             @TestMetadata("annotationToString.kt")
             public void testAnnotationToString() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/annotationToString.kt");

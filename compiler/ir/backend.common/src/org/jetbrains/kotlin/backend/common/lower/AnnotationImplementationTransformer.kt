@@ -69,6 +69,7 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
         val constructedClass = expression.type.classOrNull?.owner ?: return super.visitConstructorCall(expression)
         if (!constructedClass.isAnnotationClass) return super.visitConstructorCall(expression)
         if (constructedClass.typeParameters.isNotEmpty()) return super.visitConstructorCall(expression) // Not supported yet
+        require(expression.symbol.owner.isPrimary) { "Non-primary constructors of annotations are not supported" }
 
         val implClass = implementations.getOrPut(constructedClass) { createAnnotationImplementation(constructedClass) }
         val ctor = chooseConstructor(implClass, expression)

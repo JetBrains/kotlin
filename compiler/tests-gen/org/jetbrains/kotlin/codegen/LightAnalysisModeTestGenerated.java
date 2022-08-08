@@ -370,6 +370,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/annotations/instances/annotationInstancesEmptyDefault.kt");
             }
 
+            @TestMetadata("annotationInstancesEmptyDefaultLowered.kt")
+            public void ignoreAnnotationInstancesEmptyDefaultLowered() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/annotationInstancesEmptyDefaultLowered.kt");
+            }
+
             @TestMetadata("annotationToString.kt")
             public void ignoreAnnotationToString() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/annotationToString.kt");
