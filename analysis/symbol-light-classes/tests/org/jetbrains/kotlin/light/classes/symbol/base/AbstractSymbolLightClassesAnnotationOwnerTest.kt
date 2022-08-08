@@ -10,8 +10,8 @@ import com.intellij.psi.*
 import junit.framework.TestCase
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.asJava.LightClassTestCommon
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.FirLightClassModifierList
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.FirLightMemberModifierList
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -106,11 +106,11 @@ abstract class AbstractSymbolLightClassesAnnotationOwnerTest(
             when (lastDeclaration) {
                 is PsiClass,
                 is PsiParameter ->
-                    TestCase.assertTrue(owner is FirLightClassModifierList<*>)
+                    TestCase.assertTrue(owner is SymbolLightClassModifierList<*>)
 
                 is PsiField,
                 is PsiMethod ->
-                    TestCase.assertTrue(owner is FirLightMemberModifierList<*>)
+                    TestCase.assertTrue(owner is SymbolLightMemberModifierList<*>)
 
                 else ->
                     throw IllegalStateException("Unexpected annotation owner kind: ${lastDeclaration::class.java}")

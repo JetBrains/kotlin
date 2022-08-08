@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderImpl
 import org.jetbrains.kotlin.idea.references.KotlinFirReferenceContributor
 import org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor
 import org.jetbrains.kotlin.idea.references.ReadWriteAccessChecker
-import org.jetbrains.kotlin.light.classes.symbol.KotlinAsJavaFirSupport
+import org.jetbrains.kotlin.light.classes.symbol.SymbolKotlinAsJavaSupport
 import org.jetbrains.kotlin.light.classes.symbol.caches.SymbolLightClassFacadeCache
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
@@ -157,7 +157,7 @@ public class StandaloneAnalysisAPISessionBuilder(
 
             registerService(SymbolLightClassFacadeCache::class.java, SymbolLightClassFacadeCache(this))
             registerService(ClsJavaStubByVirtualFileCache::class.java, ClsJavaStubByVirtualFileCache())
-            registerService(KotlinAsJavaSupport::class.java, KotlinAsJavaFirSupport(this))
+            registerService(KotlinAsJavaSupport::class.java, SymbolKotlinAsJavaSupport(this))
             registerService(ReadWriteAccessChecker::class.java, ReadWriteAccessCheckerFirImpl())
         }
 
