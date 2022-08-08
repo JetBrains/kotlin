@@ -61,7 +61,7 @@ class FirDataFrameReceiverInjector(
 ) : FirExpressionResolutionExtension(session) {
 
     override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
-        return coneKotlinTypes(functionCall, state, ids)
+        return coneKotlinTypes(functionCall, state, ids, id)
     }
 
     private fun findSchemaProcessor(functionCall: FirFunctionCall): SchemaModificationInterpreter? {
@@ -81,10 +81,23 @@ class FirDataFrameReceiverInjector(
     object DataFramePluginKey : GeneratedDeclarationKey()
 }
 
+typealias RootMarkerStrategy = FirExpressionResolutionExtension.(FirFunctionCall) -> ConeTypeProjection
+
+
+val id: RootMarkerStrategy = {
+    val callReturnType = it.typeRef.coneTypeSafe<ConeClassLikeType>()
+    callReturnType!!.typeArguments[0]
+}
+
+val any: RootMarkerStrategy = {
+    session.builtinTypes.anyType.type
+}
+
 fun FirExpressionResolutionExtension.coneKotlinTypes(
     functionCall: FirFunctionCall,
     state: MutableMap<ClassId, SchemaContext>,
-    ids: ArrayDeque<ClassId>
+    ids: ArrayDeque<ClassId>,
+    getRootMarker: FirExpressionResolutionExtension.(FirFunctionCall) -> ConeTypeProjection
 ): List<ConeKotlinType> {
     val callReturnType = functionCall.typeRef.coneTypeSafe<ConeClassLikeType>() ?: return emptyList()
     if (callReturnType.classId != DF_CLASS_ID) return emptyList()
@@ -95,8 +108,7 @@ fun FirExpressionResolutionExtension.coneKotlinTypes(
     val types: MutableList<ConeClassLikeType> = mutableListOf()
 
     // TODO: generate a new marker for each call when there is an API to cast functionCall result to this type
-    val rootMarker = callReturnType.typeArguments[0]
-
+    val rootMarker = getRootMarker(functionCall)
     fun PluginDataFrameSchema.materialize(rootMarker: ConeTypeProjection? = null): ConeTypeProjection {
         val id = ids.removeLast()
         val marker = rootMarker ?: ConeClassLikeLookupTagImpl(id)
@@ -163,12 +175,14 @@ private fun TypeApproximation.convert(): ConeKotlinType {
     return when (this) {
         is ColumnGroupTypeApproximation -> TODO()
         is FrameColumnTypeApproximation -> TODO()
-        is TypeApproximationImpl -> ConeClassLikeLookupTagImpl(
-            ClassId(
-                FqName(fqName.substringBeforeLast(".")),
-                Name.identifier(fqName.substringAfterLast("."))
-            )
-        ).constructType(emptyArray(), this.nullable)
+        is TypeApproximationImpl -> {
+            ConeClassLikeLookupTagImpl(
+                ClassId(
+                    FqName(fqName.substringBeforeLast(".", missingDelimiterValue = "")),
+                    Name.identifier(fqName.substringAfterLast("."))
+                )
+            ).constructType(emptyArray(), this.nullable)
+        }
     }
 }
 

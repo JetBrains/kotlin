@@ -57,7 +57,7 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
         super.runTest(filePath)
     }
 
-    class Configurator(testServices: TestServices, val function: () -> String) : EnvironmentConfigurator(testServices) {
+    class Configurator(testServices: TestServices, val getTestFilePath: () -> String) : EnvironmentConfigurator(testServices) {
         override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
             module: TestModule,
             configuration: CompilerConfiguration
@@ -73,7 +73,7 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
             FirExtensionRegistrarAdapter.registerExtension(object : FirExtensionRegistrar() {
                 override fun ExtensionRegistrarContext.configurePlugin() {
                     +{ it: FirSession -> FirDataFrameExtensionsGenerator(it, ids, state) }
-                    +{ it: FirSession -> InterpretersRunner(it, queue, state) }
+                    +{ it: FirSession -> InterpretersRunner(it, queue, state, getTestFilePath) }
                 }
             })
         }
@@ -82,7 +82,8 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
     class InterpretersRunner(
         session: FirSession,
         val queue: ArrayDeque<ClassId>,
-        val state: MutableMap<ClassId, SchemaContext>
+        val state: MutableMap<ClassId, SchemaContext>,
+        val getTestFilePath: () -> String
     ) : FirExpressionResolutionExtension(session) {
         override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
             functionCall.calleeReference.name.identifierOrNullIfSpecial?.let {
@@ -97,7 +98,12 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
                     }
                 }
             }
-            return coneKotlinTypes(functionCall, state, queue)
+            val file = getTestFilePath()
+            val rootMarkerStrategy = when {
+                file.contains("convert") -> any
+                else -> id
+            }
+            return coneKotlinTypes(functionCall, state, queue, rootMarkerStrategy)
         }
 
         fun expectedResult(id: String): Any? {
