@@ -39,8 +39,6 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         problemCollector: ObjCExportProblemCollector,
         frameworkName: String
 ) {
-    private val classForwardDeclarations = linkedSetOf<ObjCClassForwardDeclaration>()
-    private val protocolForwardDeclarations = linkedSetOf<String>()
     private val extraClassesToTranslate = mutableSetOf<ClassDescriptor>()
 
     private val generatedClasses = mutableSetOf<ClassDescriptor>()
@@ -73,9 +71,6 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         sxBuild()
         return ObjCExportedInterface(generatedClasses, extensions, topLevel, namer, mapper, sxBuilder.build())
     }
-
-    fun getExportStubs(): ObjCExportedStubs =
-        ObjCExportedStubs(classForwardDeclarations, protocolForwardDeclarations, emptyList())
 
     protected open fun getAdditionalImports(): List<String> = emptyList()
 
@@ -182,10 +177,10 @@ abstract class ObjCExportHeaderGenerator internal constructor(
 
     private inline fun inHeader(declaration: DeclarationDescriptor, action: SXObjCHeader.() -> Unit) {
         val header = sxBuilder.findHeaderForDeclaration(declaration)
-        val oldState = translator.tracker
+        val oldTracker = translator.tracker
         translator.tracker = getTracker(header)
         header.action()
-        translator.tracker = oldState
+        translator.tracker = oldTracker
     }
 
     private fun generateFile(sourceFile: SourceFile, declarations: List<CallableMemberDescriptor>) {
@@ -224,12 +219,10 @@ abstract class ObjCExportHeaderGenerator internal constructor(
 
     internal fun referenceClass(forwardDeclaration: ObjCClassForwardDeclaration) {
         translator.tracker.trackClassForwardDeclaration(forwardDeclaration)
-        classForwardDeclarations += forwardDeclaration
     }
 
     internal fun referenceProtocol(objCName: String) {
         translator.tracker.trackProtocolForwardDeclaration(objCName)
-        protocolForwardDeclarations += objCName
     }
 
     companion object {
