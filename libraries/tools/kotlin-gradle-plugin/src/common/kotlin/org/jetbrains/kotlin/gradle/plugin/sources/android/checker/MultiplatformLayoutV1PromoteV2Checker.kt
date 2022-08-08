@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSetLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
+import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 
 /**
  * Promotes MultiplatformAndroidSourceSetLayoutV2 when requirements are met
@@ -22,8 +23,9 @@ internal object MultiplatformLayoutV1PromoteV2Checker : KotlinAndroidSourceSetLa
         if (target.project.kotlinPropertiesProvider.ignoreMppAndroidSourceSetLayoutVersion) return
         runCatching {
             if (MultiplatformLayoutV2AgpRequirementChecker.isAgpRequirementMet()) {
-                logger.warn(
-                    """
+                SingleWarningPerBuild.show(
+                    target.project, logger,
+                    """ 
                         w: ${layout.name} is deprecated. Use ${multiplatformAndroidSourceSetLayoutV2.name} instead. 
                         To enable ${multiplatformAndroidSourceSetLayoutV2.name}: put the following in your gradle.properties: 
                         ${PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION}=2

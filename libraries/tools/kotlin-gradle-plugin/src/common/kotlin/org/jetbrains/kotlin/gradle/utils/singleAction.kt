@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
-import java.util.WeakHashMap
+import org.gradle.api.logging.Logger
+import java.util.*
 
 internal abstract class SingleAction {
     private val performedActions = WeakHashMap<Project, MutableSet<String>>()
@@ -32,8 +33,10 @@ internal object SingleActionPerProject : SingleAction() {
 internal object SingleWarningPerBuild {
     private const val ACTION_ID_SHOW_WARNING = "show-warning:"
 
-    fun show(project: Project, warningText: String) = SingleActionPerBuild.run(project, ACTION_ID_SHOW_WARNING + warningText) {
-        project.logger.warn(warningText)
+    fun show(project: Project, warningText: String) = show(project, project.logger, warningText)
+
+    fun show(project: Project, logger: Logger, warningText: String) = SingleActionPerBuild.run(project, ACTION_ID_SHOW_WARNING + warningText) {
+        logger.warn(warningText)
     }
 
     fun deprecation(project: Project, context: String, target: String, replacement: String?) {
