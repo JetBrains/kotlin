@@ -51,8 +51,8 @@ tasks.jar {
 dependencies {
     kotlinCompilerClasspath("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+    implementation(kotlinStdlib())
+    implementation(project(":kotlin-reflect"))
     api("org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion")
     api("org.jetbrains.kotlin:kotlin-util-klib:$kotlinVersion")
 }
