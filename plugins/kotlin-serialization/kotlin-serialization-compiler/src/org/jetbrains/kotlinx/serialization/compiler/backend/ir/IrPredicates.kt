@@ -6,6 +6,7 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.jvm.ir.getStringConstArgument
+import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -108,7 +110,7 @@ internal fun IrClass.isSerializableEnum(): Boolean = kind == ClassKind.ENUM_CLAS
 internal val IrType.genericIndex: Int?
     get() = (this.classifierOrNull as? IrTypeParameterSymbol)?.owner?.index
 
-fun IrType.serialName(): String = this.classOrNull!!.owner.serialName()
+fun IrType.serialName(): String = this.classOrUpperBound()!!.owner.serialName()
 
 fun IrClass.serialName(): String {
     return annotations.serialNameValue ?: fqNameWhenAvailable?.asString() ?: error("${this.render()} does not have fqName")
@@ -199,4 +201,11 @@ fun findSerializerConstructorForTypeArgumentsSerializers(serializer: IrClass): I
     return serializer.constructors.singleOrNull {
         it.valueParameters.let { vps -> vps.size == typeParamsCount && vps.all { vp -> vp.type.isKSerializer() } }
     }?.symbol
+}
+
+fun IrType.classOrUpperBound(): IrClassSymbol? = when(val cls = classifierOrNull) {
+    is IrClassSymbol -> cls
+    is IrScriptSymbol -> cls.owner.targetClass
+    is IrTypeParameterSymbol -> cls.owner.representativeUpperBound.classOrUpperBound()
+    else -> null
 }

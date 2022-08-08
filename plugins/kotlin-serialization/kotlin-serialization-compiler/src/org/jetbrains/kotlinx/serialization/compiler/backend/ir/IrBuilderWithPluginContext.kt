@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
@@ -506,8 +507,8 @@ interface IrBuilderWithPluginContext {
         )
     }
 
-    fun IrBuilderWithScope.classReference(classSymbol: IrType): IrClassReference =
-        createClassReference(classSymbol, startOffset, endOffset)
+    fun IrBuilderWithScope.classReference(classSymbol: IrClassSymbol): IrClassReference =
+        createClassReference(classSymbol.starProjectedType, startOffset, endOffset)
 
     fun collectSerialInfoAnnotations(irClass: IrClass): List<IrConstructorCall> {
         if (!(irClass.isInterface || irClass.descriptor.hasSerializableOrMetaAnnotation)) return emptyList()
@@ -555,14 +556,15 @@ interface IrBuilderWithPluginContext {
         if (compilerContext.platform.isJvm()) {
             // "Byte::class" -> "java.lang.Byte::class"
 //          TODO: get rid of descriptor
-            val wrapperFqName = KotlinBuiltIns.getPrimitiveType(classType.classOrNull!!.descriptor)?.let(JvmPrimitiveType::get)?.wrapperFqName
+            val wrapperFqName =
+                KotlinBuiltIns.getPrimitiveType(classType.classOrNull!!.descriptor)?.let(JvmPrimitiveType::get)?.wrapperFqName
             if (wrapperFqName != null) {
                 val wrapperClass = compilerContext.referenceClass(ClassId.topLevel(wrapperFqName))
                     ?: error("Primitive wrapper class for $classType not found: $wrapperFqName")
-                return classReference(wrapperClass.defaultType)
+                return createClassReference(wrapperClass.defaultType, startOffset, endOffset)
             }
         }
-        return classReference(classType)
+        return createClassReference(classType, startOffset, endOffset)
     }
 
     fun IrClass.getSuperClassOrAny(): IrClass = getSuperClassNotAny() ?: compilerContext.irBuiltIns.anyClass.owner

@@ -379,11 +379,11 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         when (serializerClassOriginal.owner.classId) {
             polymorphicSerializerId -> {
                 needToCopyAnnotations = true
-                args = listOf(classReference(kType))
+                args = listOf(classReference(kType.classOrUpperBound()!!))
                 typeArgs = listOf(thisIrType)
             }
             contextSerializerId -> {
-                args = listOf(classReference(kType))
+                args = listOf(classReference(kType.classOrUpperBound()!!))
                 typeArgs = listOf(thisIrType)
 
                 val hasNewCtxSerCtor = compilerContext.referenceConstructors(contextSerializerId).any { it.owner.valueParameters.size == 3 }
@@ -412,16 +412,16 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
             }
             objectSerializerId -> {
                 needToCopyAnnotations = true
-                args = listOf(irString(kType.serialName()), irGetObject(kType.classOrNull!!))
+                args = listOf(irString(kType.serialName()), irGetObject(kType.classOrUpperBound()!!))
                 typeArgs = listOf(thisIrType)
             }
             sealedSerializerId -> {
                 needToCopyAnnotations = true
                 args = mutableListOf<IrExpression>().apply {
                     add(irString(kType.serialName()))
-                    add(classReference(kType))
+                    add(classReference(kType.classOrUpperBound()!!))
                     val (subclasses, subSerializers) = allSealedSerializableSubclassesFor(
-                        kType.classOrNull!!.owner,
+                        kType.classOrUpperBound()!!.owner,
                         pluginContext
                     )
                     val projectedOutCurrentKClass =
@@ -431,7 +431,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                     add(
                         createArrayOfExpression(
                             projectedOutCurrentKClass,
-                            subclasses.map { classReference(it) }
+                            subclasses.map { classReference(it.classOrUpperBound()!!) }
                         )
                     )
                     add(
@@ -528,7 +528,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         }
 
         // If KType is interface, .classSerializer always yields PolymorphicSerializer, which may be unavailable for interfaces from other modules
-        if (!kType.isInterface() && serializerClassOriginal == kType.classOrNull!!.owner.classSerializer(pluginContext) && this@BaseIrGenerator !is SerializableCompanionIrGenerator) {
+        if (!kType.isInterface() && serializerClassOriginal == kType.classOrUpperBound()?.owner.classSerializer(pluginContext) && this@BaseIrGenerator !is SerializableCompanionIrGenerator) {
             // This is default type serializer, we can shortcut through Companion.serializer()
             // BUT not during generation of this method itself
             callSerializerFromCompanion(thisIrType, typeArgs, args)?.let { return it }

@@ -64,27 +64,3 @@ fun FirDeclarationGenerationExtension.buildConstructor(classId: ClassId, isInner
         it.containingClassForStaticMemberAttr = lookupTag
     }
 }
-
-// FIXME: copied from Parcelize plugin
-inline fun FirSession.createFunction(
-    owner: FirRegularClassSymbol,
-    callableId: CallableId,
-    init: FirSimpleFunctionBuilder.() -> Unit
-): FirNamedFunctionSymbol {
-    val function = buildSimpleFunction {
-        moduleData = this@createFunction.moduleData
-        origin = SerializationPluginKey.origin
-        status = FirResolvedDeclarationStatusImpl(
-            Visibilities.Public,
-            if (owner.modality == Modality.FINAL) Modality.FINAL else Modality.OPEN,
-            EffectiveVisibility.Public
-        ).apply {
-            isOverride = true
-        }
-        name = callableId.callableName
-        symbol = FirNamedFunctionSymbol(callableId)
-        dispatchReceiverType = owner.defaultType()
-        init()
-    }
-    return function.symbol
-}
