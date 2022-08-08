@@ -290,6 +290,64 @@ public class FirLazyBodiesCalculatorTestGenerated extends AbstractFirLazyBodiesC
                 }
             }
         }
+
+        @Nested
+        @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType")
+        @TestDataPath("$PROJECT_ROOT")
+        public class NoParameterType {
+            @Test
+            public void testAllFilesPresentInNoParameterType() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("noParameterTypRefInCatch.kt")
+            public void testNoParameterTypRefInCatch() throws Exception {
+                runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInCatch.kt");
+            }
+
+            @Test
+            @TestMetadata("noParameterTypRefInFuncionalType.kt")
+            public void testNoParameterTypRefInFuncionalType() throws Exception {
+                runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInFuncionalType.kt");
+            }
+
+            @Test
+            @TestMetadata("noParameterTypRefInFunction.kt")
+            public void testNoParameterTypRefInFunction() throws Exception {
+                runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInFunction.kt");
+            }
+
+            @Test
+            @TestMetadata("noParameterTypRefInLambda.kt")
+            public void testNoParameterTypRefInLambda() throws Exception {
+                runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInLambda.kt");
+            }
+
+            @Test
+            @TestMetadata("noParameterTypRefInPrimaryConstructor.kt")
+            public void testNoParameterTypRefInPrimaryConstructor() throws Exception {
+                runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInPrimaryConstructor.kt");
+            }
+
+            @Test
+            @TestMetadata("noParameterTypRefInPrimaryConsturctorVal.kt")
+            public void testNoParameterTypRefInPrimaryConsturctorVal() throws Exception {
+                runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInPrimaryConsturctorVal.kt");
+            }
+
+            @Test
+            @TestMetadata("noParameterTypRefInSecondaryConstructor.kt")
+            public void testNoParameterTypRefInSecondaryConstructor() throws Exception {
+                runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInSecondaryConstructor.kt");
+            }
+
+            @Test
+            @TestMetadata("noParameterTypRefInSetter.kt")
+            public void testNoParameterTypRefInSetter() throws Exception {
+                runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInSetter.kt");
+            }
+        }
     }
 
     @Nested
