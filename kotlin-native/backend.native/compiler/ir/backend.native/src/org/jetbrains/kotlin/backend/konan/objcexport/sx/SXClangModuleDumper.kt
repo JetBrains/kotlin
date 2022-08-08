@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport.sx
 
-import org.jetbrains.kotlin.backend.konan.objcexport.SXClangModule
-import org.jetbrains.kotlin.backend.konan.objcexport.SXObjCHeader
 import org.jetbrains.kotlin.konan.file.File
 
 class SXClangModuleDumper(

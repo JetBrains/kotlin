@@ -27,7 +27,7 @@ internal class ObjCCodeSpecBuilder(
         ObjCMethodForKotlinMethod(
                 createObjCMethodSpecBaseMethod(
                         objcInterface.mapper,
-                        objcInterface.namer,
+                        namer,
                         symbolTable.referenceSimpleFunction(it),
                         it
                 )
@@ -47,7 +47,7 @@ internal class ObjCCodeSpecBuilder(
     })
 
     private fun getType(descriptor: ClassDescriptor): ObjCTypeForKotlinType = classToType.getOrPut(descriptor) {
-        val methods = mutableListOf<ObjCMethodSpec>()
+        val methods: MutableList<ObjCMethodSpec> = mutableListOf()
 
         // Note: contributedMethods includes fake overrides too.
         val allBaseMethods = descriptor.contributedMethods.filter { objcInterface.mapper.shouldBeExposed(it) }
@@ -114,7 +114,7 @@ internal class ObjCCodeSpecBuilder(
             val methods = declarations.toObjCMethods()
             ObjCClassForKotlinFile(binaryName, sourceFile, methods)
         }
-        val types = objcInterface.generatedClasses.map { getType(it) }
+        val types = objcInterface.generatedClasses.map(::getType)
         return ObjCExportCodeSpec(files, types)
     }
 }

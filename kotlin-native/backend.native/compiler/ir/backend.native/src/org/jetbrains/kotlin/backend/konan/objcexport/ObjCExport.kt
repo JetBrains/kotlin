@@ -18,14 +18,20 @@ import org.jetbrains.kotlin.konan.file.use
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
-internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
+internal class ObjCExport(val context: Context) {
     private val target get() = context.config.target
     private val topLevelNamePrefix get() = context.objCExportTopLevelNamePrefix
 
     private val exportedInterface = produceInterface()
 
-    private val codeSpec = exportedInterface?.let {
-        ObjCCodeSpecBuilder(it, symbolTable).build()
+
+    lateinit var namer: ObjCExportNamer
+    private lateinit var codeSpec: ObjCExportCodeSpec
+
+    fun buildCodeSpec(symbolTable: SymbolTable) {
+        exportedInterface?.let {
+            codeSpec = ObjCCodeSpecBuilder(it, symbolTable).build()
+        }
     }
 
     private fun produceInterface(): ObjCExportedInterface? {
@@ -59,8 +65,6 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
             null
         }
     }
-
-    lateinit var namer: ObjCExportNamer
 
     internal fun generate(codegen: CodeGenerator) {
         if (!target.family.isAppleFamily) return
@@ -120,7 +124,6 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
                 },
                 "}"
         )
-
 
         val source = createTempFile("protocols", ".m").deleteOnExit()
         source.writeLines(/*headerLines +*/ protocolsStub)

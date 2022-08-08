@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.isBitcode
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
+import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.library.*
@@ -28,13 +29,16 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 /**
  * Supposed to be true for a single LLVM module within final binary.
  */
-val KonanConfig.isFinalBinary: Boolean get() = when (this.produce) {
-    CompilerOutputKind.PROGRAM, CompilerOutputKind.DYNAMIC,
-    CompilerOutputKind.STATIC -> true
-    CompilerOutputKind.DYNAMIC_CACHE, CompilerOutputKind.STATIC_CACHE, CompilerOutputKind.PRELIMINARY_CACHE,
-    CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE -> false
-    CompilerOutputKind.FRAMEWORK -> !omitFrameworkBinary
-}
+val KonanConfig.isFinalBinary: Boolean
+    get() = when (this.produce) {
+        CompilerOutputKind.PROGRAM, CompilerOutputKind.DYNAMIC,
+        CompilerOutputKind.STATIC -> true
+
+        CompilerOutputKind.DYNAMIC_CACHE, CompilerOutputKind.STATIC_CACHE, CompilerOutputKind.PRELIMINARY_CACHE,
+        CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE -> false
+
+        CompilerOutputKind.FRAMEWORK -> !omitFrameworkBinary
+    }
 
 val CompilerOutputKind.involvesBitcodeGeneration: Boolean
     get() = this != CompilerOutputKind.LIBRARY
@@ -59,6 +63,7 @@ val KonanConfig.involvesLinkStage: Boolean
         CompilerOutputKind.PROGRAM, CompilerOutputKind.DYNAMIC,
         CompilerOutputKind.DYNAMIC_CACHE, CompilerOutputKind.STATIC_CACHE,
         CompilerOutputKind.STATIC -> true
+
         CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE, CompilerOutputKind.PRELIMINARY_CACHE -> false
         CompilerOutputKind.FRAMEWORK -> !omitFrameworkBinary
     }
@@ -68,7 +73,7 @@ val CompilerOutputKind.isCache: Boolean
             || this == CompilerOutputKind.PRELIMINARY_CACHE
 
 internal fun llvmIrDumpCallback(state: ActionState, module: IrModuleFragment, context: Context) {
-    module.let{}
+    module.let {}
     if (state.beforeOrAfter == BeforeOrAfter.AFTER && state.phase.name in context.configuration.getList(KonanConfigKeys.SAVE_LLVM_IR)) {
         val moduleName: String = memScoped {
             val sizeVar = alloc<size_tVar>()
@@ -220,58 +225,67 @@ internal fun produceOutput(context: Context) {
             insertAliasToEntryPoint(context)
             LLVMWriteBitcodeToFile(context.llvmModule!!, output)
         }
+
         CompilerOutputKind.LIBRARY -> {
-            val nopack = config.getBoolean(KonanConfigKeys.NOPACK)
-            val output = context.config.outputFiles.klibOutputFileName(!nopack)
-            val libraryName = context.config.moduleId
-            val shortLibraryName = context.config.shortModuleName
-            val neededLibraries = context.librariesWithDependencies
-            val abiVersion = KotlinAbiVersion.CURRENT
-            val compilerVersion = CompilerVersion.CURRENT.toString()
-            val libraryVersion = config.get(KonanConfigKeys.LIBRARY_VERSION)
-            val metadataVersion = KlibMetadataVersion.INSTANCE.toString()
-            val irVersion = KlibIrVersion.INSTANCE.toString()
-            val versions = KotlinLibraryVersioning(
-                abiVersion = abiVersion,
-                libraryVersion = libraryVersion,
-                compilerVersion = compilerVersion,
-                metadataVersion = metadataVersion,
-                irVersion = irVersion
-            )
-            val target = context.config.target
-            val manifestProperties = context.config.manifestProperties
-
-            if (!nopack) {
-                val suffix = context.config.outputFiles.produce.suffix(target)
-                if (!output.endsWith(suffix)) {
-                    error("please specify correct output: packed: ${!nopack}, $output$suffix")
-                }
-            }
-
-            val library = buildLibrary(
-                    context.config.nativeLibraries,
-                    context.config.includeBinaries,
-                    neededLibraries,
-                    context.serializedMetadata!!,
-                    context.serializedIr,
-                    versions,
-                    target,
-                    output,
-                    libraryName,
-                    nopack,
-                    shortLibraryName,
-                    manifestProperties,
-                    context.dataFlowGraph)
-
+            val library = produceKotlinLibrary(context)
             context.bitcodeFileName = library.mainBitcodeFileName
         }
+
         CompilerOutputKind.BITCODE -> {
             val output = context.config.outputFile
             context.bitcodeFileName = output
             LLVMWriteBitcodeToFile(context.llvmModule!!, output)
         }
+
         CompilerOutputKind.PRELIMINARY_CACHE -> {}
+
+        null -> {}
     }
+}
+
+private fun produceKotlinLibrary(context: Context): KonanLibraryLayout {
+    val config = context.config.configuration
+    val nopack = config.getBoolean(KonanConfigKeys.NOPACK)
+    val output = context.config.outputFiles.klibOutputFileName(!nopack)
+    val libraryName = context.config.moduleId
+    val shortLibraryName = context.config.shortModuleName
+    val neededLibraries = context.librariesWithDependencies
+    val abiVersion = KotlinAbiVersion.CURRENT
+    val compilerVersion = CompilerVersion.CURRENT.toString()
+    val libraryVersion = config.get(KonanConfigKeys.LIBRARY_VERSION)
+    val metadataVersion = KlibMetadataVersion.INSTANCE.toString()
+    val irVersion = KlibIrVersion.INSTANCE.toString()
+    val versions = KotlinLibraryVersioning(
+            abiVersion = abiVersion,
+            libraryVersion = libraryVersion,
+            compilerVersion = compilerVersion,
+            metadataVersion = metadataVersion,
+            irVersion = irVersion
+    )
+    val target = context.config.target
+    val manifestProperties = context.config.manifestProperties
+
+    if (!nopack) {
+        val suffix = context.config.outputFiles.produce.suffix(target)
+        if (!output.endsWith(suffix)) {
+            error("please specify correct output: packed: ${!nopack}, $output$suffix")
+        }
+    }
+
+    return buildLibrary(
+            context.config.nativeLibraries,
+            context.config.includeBinaries,
+            neededLibraries,
+            context.serializedMetadata!!,
+            context.serializedIr,
+            versions,
+            target,
+            output,
+            libraryName,
+            nopack,
+            shortLibraryName,
+            manifestProperties,
+            context.dataFlowGraph)
 }
 
 internal fun parseAndLinkBitcodeFile(context: Context, llvmModule: LLVMModuleRef, path: String) {
@@ -289,7 +303,7 @@ private fun embedAppleLinkerOptionsToBitcode(llvm: Llvm, config: KonanConfig) {
     fun findEmbeddableOptions(options: List<String>): List<List<String>> {
         val result = mutableListOf<List<String>>()
         val iterator = options.iterator()
-        loop@while (iterator.hasNext()) {
+        loop@ while (iterator.hasNext()) {
             val option = iterator.next()
             result += when {
                 option.startsWith("-l") -> listOf(option)

@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.backend.common.serialization.findSourceFile
 import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
+import org.jetbrains.kotlin.backend.konan.objcexport.sx.SXClangModuleBuilder
+import org.jetbrains.kotlin.backend.konan.objcexport.sx.SXObjCHeader
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
