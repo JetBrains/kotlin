@@ -1,5 +1,5 @@
-FILE: Convert3.kt
-    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface Convert3 : R|kotlin/Any| {
+FILE: Convert4.kt
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface Convert4 : R|kotlin/Any| {
         public abstract val age: R|kotlin/Number?|
             public get(): R|kotlin/Number?|
 
@@ -13,15 +13,16 @@ FILE: Convert3.kt
             public get(): R|kotlin/Int?|
 
     }
-    public final fun convert3(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Convert3>|): R|kotlin/Unit| {
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<kotlin/Int>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|Convert3|, R|kotlin/Double?|>(String(age), <L> = convert@fun R|org/jetbrains/kotlinx/dataframe/DataRow<Convert3>|.<anonymous>(it: R|kotlin/Any?|): R|kotlin/Double?| <inline=NoInline, kind=UNKNOWN>  {
-            ^ (this@R|special/anonymous|, String(age)).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.invoke: R|R|>|<R|kotlin/Number?|>()?.{ $subj$.R|kotlin/Number.toDouble|() }
+    public final fun convert4(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Convert4>|): R|kotlin/Unit| {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<Convert4>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|Convert4|, R|kotlin/String?|>(String(age), vararg(String(weight)), <L> = convert@fun R|org/jetbrains/kotlinx/dataframe/DataRow<Convert4>|.<anonymous>(it: R|kotlin/Any?|): R|kotlin/String?| <inline=NoInline, kind=UNKNOWN>  {
+            ^ R|<local>/it|?.{ $subj$.R|kotlin/Any.toString|() }
         }
-        ).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|kotlin/Int|>()
-        local final fun col0(v: R|kotlin/Double?|): R|kotlin/Unit| {
+        )
+        local final fun col0(v: R|kotlin/String?|): R|kotlin/Unit| {
         }
 
-        R|<local>/col0|((this@R|/convert3|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/99.age|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/Double?|>|(Int(0)))
+        R|<local>/col0|((this@R|/convert4|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/99.age|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/String?|>|(Int(0)))
+        R|<local>/col0|((this@R|/convert4|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/99.weight|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/String?|>|(Int(0)))
     }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe
@@ -225,11 +226,11 @@ FILE: __GENERATED DECLARATIONS__.kt
     local final class 98 {
     }
     local final class 99 {
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any>|.age: R|kotlin/Double?|
-            public get(): R|kotlin/Double?|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any>|.age: R|kotlin/String?|
+            public get(): R|kotlin/String?|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<kotlin/Any>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Double?>|
-            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Double?>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<kotlin/Any>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
 
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any>|.city: R|kotlin/String?|
             public get(): R|kotlin/String?|
@@ -243,27 +244,27 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<kotlin/Any>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any>|.weight: R|kotlin/Int?|
-            public get(): R|kotlin/Int?|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any>|.weight: R|kotlin/String?|
+            public get(): R|kotlin/String?|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<kotlin/Any>|.weight: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
-            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<kotlin/Any>|.weight: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
 
     }
 FILE: __GENERATED DECLARATIONS__.kt
-    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Convert3>|.age: R|kotlin/Number?|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Convert4>|.age: R|kotlin/Number?|
         public get(): R|kotlin/Number?|
-    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Convert3>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Number?>|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Convert4>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Number?>|
         public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Number?>|
-    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Convert3>|.city: R|kotlin/String?|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Convert4>|.city: R|kotlin/String?|
         public get(): R|kotlin/String?|
-    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Convert3>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Convert4>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
         public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
-    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Convert3>|.name: R|kotlin/String?|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Convert4>|.name: R|kotlin/String?|
         public get(): R|kotlin/String?|
-    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Convert3>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Convert4>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
         public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
-    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Convert3>|.weight: R|kotlin/Int?|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Convert4>|.weight: R|kotlin/Int?|
         public get(): R|kotlin/Int?|
-    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Convert3>|.weight: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Convert4>|.weight: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
         public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
