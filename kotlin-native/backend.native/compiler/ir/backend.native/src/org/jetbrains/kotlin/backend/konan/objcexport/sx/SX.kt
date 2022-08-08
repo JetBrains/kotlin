@@ -76,7 +76,7 @@ class SXObjCHeader(val name: String) {
 }
 
 class SXClangModuleBuilder(
-        private val kotlinModules: List<ModuleDescriptor>,
+        private val kotlinModules: Set<ModuleDescriptor>,
         private val headerPerModule: Boolean,
         private val umbrellaHeaderName: String,
         val containsStdlib: Boolean,

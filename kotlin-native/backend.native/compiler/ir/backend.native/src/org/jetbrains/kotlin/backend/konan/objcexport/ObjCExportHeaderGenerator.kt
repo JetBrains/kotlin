@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 interface CrossModuleResolver {
     fun findModuleBuilder(declaration: DeclarationDescriptor): SXClangModuleBuilder
 
+    fun findExportGenerator(moduleDescriptor: ModuleDescriptor): ObjCExportHeaderGenerator
+
     fun findStdlibModuleBuilder(): SXClangModuleBuilder
 }
 
@@ -51,7 +53,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         problemCollector: ObjCExportProblemCollector,
         private val frameworkName: String,
         val moduleBuilder: SXClangModuleBuilder,
-        private val crossModuleResolver: CrossModuleResolver,
+        val crossModuleResolver: CrossModuleResolver,
 ) {
     private val extraClassesToTranslate = mutableSetOf<ClassDescriptor>()
 
@@ -67,7 +69,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
 
     open val shouldExportKDoc = false
 
-    private val translator = ObjCExportTranslatorImpl(this, mapper, namer, problemCollector, objcGenerics)
+    internal val translator = ObjCExportTranslatorImpl(this, mapper, namer, problemCollector, objcGenerics)
 
     private fun buildImports() {
         if (this.moduleBuilder.containsStdlib) {
@@ -140,21 +142,21 @@ abstract class ObjCExportHeaderGenerator internal constructor(
             getContributedDescriptors()
                     .asSequence()
                     .filterIsInstance<ClassDescriptor>()
-                    .forEach {
-                        if (mapper.shouldBeExposed(it)) {
-                            if (it.isInterface) {
-                                generateInterface(it)
+                    .forEach { classDescriptor ->
+                        if (mapper.shouldBeExposed(classDescriptor)) {
+                            if (classDescriptor.isInterface) {
+                                generateInterface(classDescriptor)
                             } else {
-                                generateClass(it)
+                                generateClass(classDescriptor)
                             }
 
-                            it.unsubstitutedMemberScope.translateClasses()
-                        } else if (mapper.shouldBeVisible(it)) {
-                            inHeader(it) {
-                                addTopLevelDeclaration(if (it.isInterface) {
-                                    translator.translateUnexposedInterfaceAsUnavailableStub(it)
+                            classDescriptor.unsubstitutedMemberScope.translateClasses()
+                        } else if (mapper.shouldBeVisible(classDescriptor)) {
+                            inHeader(classDescriptor) {
+                                addTopLevelDeclaration(if (classDescriptor.isInterface) {
+                                    it.translator.translateUnexposedInterfaceAsUnavailableStub(classDescriptor)
                                 } else {
-                                    translator.translateUnexposedClassAsUnavailableStub(it)
+                                    it.translator.translateUnexposedClassAsUnavailableStub(classDescriptor)
                                 })
                             }
                         }
@@ -199,20 +201,21 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         }
     }
 
-    private inline fun inHeader(declaration: DeclarationDescriptor, action: SXObjCHeader.() -> Unit) {
-        val header = this.moduleBuilder.findHeaderForDeclaration(declaration)
-        val oldTracker = translator.tracker
-        translator.tracker = getTracker(header)
-        header.action()
-        translator.tracker = oldTracker
+    private inline fun inHeader(declaration: DeclarationDescriptor, action: SXObjCHeader.(ObjCExportHeaderGenerator) -> Unit) {
+        val exportGenerator = crossModuleResolver.findExportGenerator(declaration.module)
+        val header = exportGenerator.moduleBuilder.findHeaderForDeclaration(declaration)
+        val oldTracker = exportGenerator.translator.tracker
+        exportGenerator.translator.tracker = getTracker(header)
+        header.action(exportGenerator)
+        exportGenerator.translator.tracker = oldTracker
     }
 
     private fun generateFile(sourceFile: SourceFile, declarations: List<CallableMemberDescriptor>) {
-        inHeader(declarations.first()) { addTopLevelDeclaration(translator.translateFile(sourceFile, declarations)) }
+        inHeader(declarations.first()) { addTopLevelDeclaration(it.translator.translateFile(sourceFile, declarations)) }
     }
 
     private fun generateExtensions(classDescriptor: ClassDescriptor, declarations: List<CallableMemberDescriptor>) {
-        inHeader(classDescriptor) { addTopLevelDeclaration(translator.translateExtensions(classDescriptor, declarations)) }
+        inHeader(classDescriptor) { addTopLevelDeclaration(it.translator.translateExtensions(classDescriptor, declarations)) }
     }
 
     protected open fun shouldTranslateExtraClass(descriptor: ClassDescriptor): Boolean = true
@@ -227,12 +230,12 @@ abstract class ObjCExportHeaderGenerator internal constructor(
 
     private fun generateClass(descriptor: ClassDescriptor) {
         if (!generatedClasses.add(descriptor)) return
-        inHeader(descriptor) { addTopLevelDeclaration(translator.translateClass(descriptor)) }
+        inHeader(descriptor) { addTopLevelDeclaration(it.translator.translateClass(descriptor)) }
     }
 
     private fun generateInterface(descriptor: ClassDescriptor) {
         if (!generatedClasses.add(descriptor)) return
-        inHeader(descriptor) { addTopLevelDeclaration(translator.translateInterface(descriptor)) }
+        inHeader(descriptor) { addTopLevelDeclaration(it.translator.translateInterface(descriptor)) }
     }
 
     internal fun requireClassOrInterface(descriptor: ClassDescriptor) {

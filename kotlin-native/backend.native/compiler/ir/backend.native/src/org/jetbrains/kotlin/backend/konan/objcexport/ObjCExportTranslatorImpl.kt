@@ -202,6 +202,14 @@ internal class ObjCExportTranslatorImpl(
         assert(!descriptor.isInterface)
         generator?.requireClassOrInterface(descriptor)
         tracker.trackReference(descriptor)
+        generator?.let {
+            val translator = it.crossModuleResolver.findExportGenerator(descriptor.module).translator
+            return translator.translateClassOrInterfaceName(descriptor).also { className ->
+                val generics = mapTypeConstructorParameters(descriptor)
+                val forwardDeclaration = ObjCClassForwardDeclaration(className.objCName, generics)
+                it.referenceClass(forwardDeclaration)
+            }
+        }
         return translateClassOrInterfaceName(descriptor).also { className ->
             val generics = mapTypeConstructorParameters(descriptor)
             val forwardDeclaration = ObjCClassForwardDeclaration(className.objCName, generics)
@@ -214,8 +222,14 @@ internal class ObjCExportTranslatorImpl(
         assert(descriptor.isInterface)
         generator?.requireClassOrInterface(descriptor)
         tracker.trackReference(descriptor)
-        return translateClassOrInterfaceName(descriptor).also {
-            generator?.referenceProtocol(it.objCName)
+        generator?.let {
+            val translator = it.crossModuleResolver.findExportGenerator(descriptor.module).translator
+            return translator.translateClassOrInterfaceName(descriptor).also { protocolName ->
+                generator.referenceProtocol(protocolName.objCName)
+            }
+        }
+        return translateClassOrInterfaceName(descriptor).also { protocolName ->
+            generator?.referenceProtocol(protocolName.objCName)
         }
     }
 

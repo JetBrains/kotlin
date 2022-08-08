@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGen
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
 import org.jetbrains.kotlin.backend.konan.objcexport.sx.SXClangModuleBuilder
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.exec.Command
@@ -21,10 +22,10 @@ import org.jetbrains.kotlin.konan.file.use
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import java.util.*
 
 internal class ObjCExport(val context: Context) {
     private val target get() = context.config.target
-    private val topLevelNamePrefix get() = context.objCExportTopLevelNamePrefix
 
     private val resolver = object : CrossModuleResolver {
         override fun findModuleBuilder(declaration: DeclarationDescriptor): SXClangModuleBuilder =
@@ -32,6 +33,9 @@ internal class ObjCExport(val context: Context) {
 
         override fun findStdlibModuleBuilder(): SXClangModuleBuilder =
                 objcHeaderGenerators.first { it.moduleDescriptors.find { it.isNativeStdlib() } != null }.moduleBuilder
+
+        override fun findExportGenerator(moduleDescriptor: ModuleDescriptor): ObjCExportHeaderGenerator =
+                objcHeaderGenerators.first { moduleDescriptor in it.moduleDescriptors }
     }
 
     private val objcHeaderGenerators: List<ObjCExportHeaderGenerator> = prepareObjCHeaderGenerators()
@@ -64,38 +68,49 @@ internal class ObjCExport(val context: Context) {
                 local = false,
                 objcGenerics = objcGenerics,
         )
-        val namer = ObjCExportNamerImpl(
-                otherModules,
-                context.moduleDescriptor.builtIns,
-                mapper,
-                topLevelNamePrefix,
-                local = false,
-                objcGenerics = objcGenerics
-        )
+
         val stdlibModuleBuilder = SXClangModuleBuilder(
-                listOf(stdlib),
+                setOf(stdlib),
                 headerPerModule = false,
                 "Kotlin.h",
                 containsStdlib = true,
                 { TODO() }
         )
-        val theModuleBuilder = SXClangModuleBuilder(
-                otherModules.toList(),
-                headerPerModule = true,
-                "${getFrameworkName()}.h",
-                containsStdlib = false,
-                { stdlibModuleBuilder.findHeaderForStdlib() }
-        )
+
         val stdlibHeaderGenerator = ObjCExportHeaderGeneratorImpl(
                 context, listOf(stdlib), mapper, stdlibNamer, objcGenerics, "Kotlin", stdlibModuleBuilder, this.resolver
         )
-        val moduleHeaderGenerator = ObjCExportHeaderGeneratorImpl(
-                context, otherModules.toList(), mapper, namer, objcGenerics, getFrameworkName(), theModuleBuilder, this.resolver
-        )
-        return listOf(
-                stdlibHeaderGenerator,
-                moduleHeaderGenerator,
-        )
+
+        return otherModules.map {
+            val baseName = inferBaseName(it)
+            val namer = ObjCExportNamerImpl(
+                    setOf(it),
+                    context.moduleDescriptor.builtIns,
+                    mapper,
+                    baseName,
+                    local = false,
+                    objcGenerics = objcGenerics
+            )
+            val theModuleBuilder = SXClangModuleBuilder(
+                    setOf(it),
+                    headerPerModule = false,
+                    "${baseName}.h",
+                    containsStdlib = false,
+                    { stdlibModuleBuilder.findHeaderForStdlib() }
+            )
+            ObjCExportHeaderGeneratorImpl(
+                    context, listOf(it), mapper, namer, objcGenerics, baseName, theModuleBuilder, this.resolver
+            )
+        } + stdlibHeaderGenerator
+    }
+
+    private fun inferBaseName(module: ModuleDescriptor): String {
+        // TODO: Better normalization
+        val normalized = module.name.asStringStripSpecialMarkers()
+                .replace('.', '_')
+                .replace(':', '_')
+                .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        return normalized
     }
 
     private fun produceInterfaces(): List<ObjCExportedInterface> {
@@ -206,10 +221,5 @@ internal class ObjCExport(val context: Context) {
             // Note: ignoring compile errors intentionally.
             // In this case resulting framework will likely be unusable due to compile errors when importing it.
         }
-    }
-
-    private fun getFrameworkName(): String {
-        val framework = File(context.config.outputFile)
-        return framework.name.removeSuffix(".framework")
     }
 }
