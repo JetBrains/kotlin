@@ -52,6 +52,7 @@ public class Reflection {
     }
 
     public static KDeclarationContainer getOrCreateKotlinPackage(Class javaClass, String moduleName) {
+        // This signature cannot be removed as it is used in FunctionReferenceLowering.kt non-directly
         return factory.getOrCreateKotlinPackage(javaClass, moduleName);
     }
 

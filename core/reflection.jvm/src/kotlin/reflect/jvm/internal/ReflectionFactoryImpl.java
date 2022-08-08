@@ -32,17 +32,18 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     @Override
     public KDeclarationContainer getOrCreateKotlinPackage(Class javaClass, String moduleName) {
-        return new KPackageImpl(javaClass, moduleName);
+        // moduleName is unused deliberately and only left in public ABI
+        return ClassCachesKt.getOrCreateKotlinPackage(javaClass);
     }
 
     @Override
     public KClass getOrCreateKotlinClass(Class javaClass) {
-        return KClassCacheKt.getOrCreateKotlinClass(javaClass);
+        return ClassCachesKt.getOrCreateKotlinClass(javaClass);
     }
 
     @Override
     public KClass getOrCreateKotlinClass(Class javaClass, String internalName) {
-        return KClassCacheKt.getOrCreateKotlinClass(javaClass);
+        return ClassCachesKt.getOrCreateKotlinClass(javaClass);
     }
 
     @Override
@@ -154,7 +155,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     // Misc
 
     public static void clearCaches() {
-        KClassCacheKt.clearKClassCache();
+        ClassCachesKt.clearCaches();
         ModuleByClassLoaderKt.clearModuleByClassLoaderCache();
     }
 }

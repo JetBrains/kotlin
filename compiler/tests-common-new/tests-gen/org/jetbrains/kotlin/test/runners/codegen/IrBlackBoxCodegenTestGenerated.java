@@ -41267,6 +41267,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @Test
+        @TestMetadata("jvmKPackageCaching.kt")
+        public void testJvmKPackageCaching() throws Exception {
+            runTest("compiler/testData/codegen/box/reflection/jvmKPackageCaching.kt");
+        }
+
+        @Test
+        @TestMetadata("jvmKTypeCaching.kt")
+        public void testJvmKTypeCaching() throws Exception {
+            runTest("compiler/testData/codegen/box/reflection/jvmKTypeCaching.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/annotations")
         @TestDataPath("$PROJECT_ROOT")
