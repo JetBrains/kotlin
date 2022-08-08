@@ -33,6 +33,10 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
                     ?: task.destinationDirectory.locationOnly.get().asFile.resolve("${compilation.ownModuleName}$extensionName")
             }).disallowChanges()
 
+            if (propertiesProvider.useK2 == true) {
+                task.kotlinOptions.useK2 = true
+            }
+
             task.optionalOutputFile.fileProvider(task.outputFileProperty.flatMap { outputFile ->
                 task.project.provider {
                     outputFile.takeUnless { task.kotlinOptions.isProduceUnzippedKlib() }
