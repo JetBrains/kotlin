@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,12 +28,6 @@ public class DataFrameInterpretationTestsGenerated extends AbstractDataFrameInte
     @Test
     public void testAllFilesPresentInInterpretation() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlin-dataframe/testData/interpretation"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
-
-    @Test
-    @TestMetadata("convert.kt")
-    public void testConvert() throws Exception {
-        runTest("plugins/kotlin-dataframe/testData/interpretation/convert.kt");
     }
 
     @Nested
@@ -88,6 +82,12 @@ public class DataFrameInterpretationTestsGenerated extends AbstractDataFrameInte
         }
 
         @Test
+        @TestMetadata("rowValueExpression.kt")
+        public void testRowValueExpression() throws Exception {
+            runTest("plugins/kotlin-dataframe/testData/interpretation/atoms/rowValueExpression.kt");
+        }
+
+        @Test
         @TestMetadata("string.kt")
         public void testString() throws Exception {
             runTest("plugins/kotlin-dataframe/testData/interpretation/atoms/string.kt");
@@ -103,6 +103,34 @@ public class DataFrameInterpretationTestsGenerated extends AbstractDataFrameInte
         @TestMetadata("typeParameter.kt")
         public void testTypeParameter() throws Exception {
             runTest("plugins/kotlin-dataframe/testData/interpretation/atoms/typeParameter.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("plugins/kotlin-dataframe/testData/interpretation/convert")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Convert {
+        @Test
+        public void testAllFilesPresentInConvert() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlin-dataframe/testData/interpretation/convert"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("Convert0.kt")
+        public void testConvert0() throws Exception {
+            runTest("plugins/kotlin-dataframe/testData/interpretation/convert/Convert0.kt");
+        }
+
+        @Test
+        @TestMetadata("Convert1.kt")
+        public void testConvert1() throws Exception {
+            runTest("plugins/kotlin-dataframe/testData/interpretation/convert/Convert1.kt");
+        }
+
+        @Test
+        @TestMetadata("Convert2.kt")
+        public void testConvert2() throws Exception {
+            runTest("plugins/kotlin-dataframe/testData/interpretation/convert/Convert2.kt");
         }
     }
 }

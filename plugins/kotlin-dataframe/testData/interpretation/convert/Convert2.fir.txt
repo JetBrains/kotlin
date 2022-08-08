@@ -1,46 +1,26 @@
-FILE: convert.kt
-    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface Convert0 : R|kotlin/Any| {
-        public abstract val year: R|kotlin/Int|
+FILE: Convert2.kt
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface Convert2 : R|kotlin/Any| {
+        public abstract val a: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public abstract val b: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public abstract val c: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
     }
-    public final fun convert0(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Convert0>|): R|kotlin/Unit| {
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<kotlin/Any>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|Convert0|>(vararg(String(year))).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/Convert.to: R|org/jetbrains/kotlinx/dataframe/DataFrame<Convert0>|>|<R|kotlin/String|>().R|org/jetbrains/kotlinx/dataframe/api/cast|<R|kotlin/Any|>()
+    public final fun convert2(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Convert2>|): R|kotlin/Unit| {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<kotlin/Int>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|Convert2|>(vararg(String(a), String(b), String(c))).R|org/jetbrains/kotlinx/dataframe/api/with|<R|Convert2|, R|kotlin/Any?|, R|kotlin/String|>(<L> = with@fun R|org/jetbrains/kotlinx/dataframe/DataRow<Convert2>|.<anonymous>(it: R|kotlin/Any?|): R|kotlin/String| <inline=NoInline, kind=UNKNOWN>  {
+            ^ R|<local>/it|.R|kotlin/toString|()
+        }
+        ).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|kotlin/Int|>()
         local final fun col0(v: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        R|<local>/col0|((this@R|/convert0|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/99.year|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/String|>|(Int(0)))
-    }
-    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface Convert1 : R|kotlin/Any| {
-        public abstract val direction: R|kotlin/String|
-            public get(): R|kotlin/String|
-
-    }
-    public final enum class Direction : R|kotlin/Enum<Direction>| {
-        private constructor(): R|Direction| {
-            super<R|kotlin/Enum<Direction>|>()
-        }
-
-        public final static enum entry NORTH: R|Direction|
-        public final static enum entry SOUTH: R|Direction|
-        public final static enum entry WEST: R|Direction|
-        public final static enum entry EAST: R|Direction|
-        public final static fun values(): R|kotlin/Array<Direction>| {
-        }
-
-        public final static fun valueOf(value: R|kotlin/String|): R|Direction| {
-        }
-
-    }
-    public final val R|org/jetbrains/kotlinx/dataframe/DataFrame<kotlin/Int>|.direction: R|org/jetbrains/kotlinx/dataframe/DataColumn<Direction>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<Direction>| {
-            ^ R|kotlin/TODO|()
-        }
-    public final fun convert1(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<kotlin/Int>|): R|kotlin/Unit| {
-        local final fun col0(v: R|org/jetbrains/kotlinx/dataframe/DataColumn<Direction>|): R|kotlin/Unit| {
-        }
-
-        R|<local>/col0|(R|<local>/df|.R|/direction|)
+        R|<local>/col0|((this@R|/convert2|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/99.a|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/String|>|(Int(0)))
+        R|<local>/col0|((this@R|/convert2|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/99.b|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/String|>|(Int(0)))
+        R|<local>/col0|((this@R|/convert2|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/99.c|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/String|>|(Int(0)))
     }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe
@@ -244,19 +224,35 @@ FILE: __GENERATED DECLARATIONS__.kt
     local final class 98 {
     }
     local final class 99 {
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any>|.year: R|kotlin/String|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any>|.a: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<kotlin/Any>|.year: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<kotlin/Any>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any>|.b: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<kotlin/Any>|.b: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<kotlin/Any>|.c: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<kotlin/Any>|.c: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
     }
 FILE: __GENERATED DECLARATIONS__.kt
-    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Convert0>|.year: R|kotlin/Int|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Convert2>|.a: R|kotlin/Int|
         public get(): R|kotlin/Int|
-    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Convert0>|.year: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Convert2>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
         public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Convert1>|.direction: R|kotlin/String|
-        public get(): R|kotlin/String|
-    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Convert1>|.direction: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Convert2>|.b: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Convert2>|.b: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Convert2>|.c: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Convert2>|.c: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
