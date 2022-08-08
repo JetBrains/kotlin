@@ -58,7 +58,6 @@ import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
@@ -89,36 +88,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         paths: KotlinPaths?
     ): ExitCode {
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            messageCollector.report(ERROR, "K2 does not support JS target right now")
-            return ExitCode.COMPILATION_ERROR
-        }
 
         val pluginLoadResult = loadPlugins(paths, arguments, configuration)
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
         //TODO: add to configuration everything that may come in handy at script compiler and use it there
         if (arguments.script) {
-
-            if (!arguments.enableJsScripting) {
-                messageCollector.report(ERROR, "Script for K/JS should be enabled explicitly, see -Xenable-js-scripting")
-                return COMPILATION_ERROR
-            }
-
-            configuration.put(CommonConfigurationKeys.MODULE_NAME, "repl.kts")
-
-            val environment = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(rootDisposable, configuration)
-            val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(rootDisposable, environment, configuration)
-            projectEnv.registerExtensionsFromPlugins(configuration)
-
-            val scriptingEvaluators = ScriptEvaluationExtension.getInstances(projectEnv.project)
-            val scriptingEvaluator = scriptingEvaluators.find { it.isAccepted(arguments) }
-            if (scriptingEvaluator == null) {
-                messageCollector.report(ERROR, "Unable to evaluate script, no scripting plugin loaded")
-                return COMPILATION_ERROR
-            }
-
-            return scriptingEvaluator.eval(arguments, configuration, projectEnv)
+            return executeScript(arguments, messageCollector, configuration, rootDisposable)
         }
 
         if (arguments.freeArgs.isEmpty() && !(incrementalCompilationIsEnabledForJs(arguments))) {
@@ -206,111 +182,22 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         // TODO: Handle non-empty main call arguments
         val mainCallArguments = if (K2JsArgumentConstants.NO_CALL == arguments.main) null else emptyList<String>()
 
-        val cacheDirectories = configureLibraries(arguments.cacheDirectories)
-
-        val icCaches = if (cacheDirectories.isNotEmpty()) {
-            messageCollector.report(INFO, "")
-            messageCollector.report(INFO, "Building cache:")
-            messageCollector.report(INFO, "to: ${outputFilePath}")
-            messageCollector.report(INFO, arguments.cacheDirectories ?: "")
-            messageCollector.report(INFO, libraries.toString())
-
-            val start = System.currentTimeMillis()
-
-            val cacheUpdater = CacheUpdater(
-                mainModule = arguments.includes!!,
-                allModules = libraries,
-                icCachePaths = cacheDirectories,
-                compilerConfiguration = configurationJs,
-                irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
-                mainArguments = mainCallArguments,
-                executor = ::buildCacheForModuleFiles
-            )
-
-            var tp = System.currentTimeMillis()
-            messageCollector.report(INFO, "IC cache updater initialization: ${tp - start}ms")
-
-            val artifacts = cacheUpdater.actualizeCaches {
-                val now = System.currentTimeMillis()
-                messageCollector.report(INFO, "IC $it: ${now - tp}ms")
-                tp = now
-            }
-
-            messageCollector.report(INFO, "IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
-
-            for ((libFile, srcFiles) in cacheUpdater.getDirtyFileStats()) {
-                val isCleanBuild = srcFiles.values.all { it.contains(DirtyFileState.ADDED_FILE) }
-                val msg = if (isCleanBuild) "fully rebuilt" else "partially rebuilt"
-                messageCollector.report(INFO, "module [${File(libFile.path).name}] was $msg")
-                if (!isCleanBuild) {
-                    for ((srcFile, stat) in srcFiles) {
-                        val statStr = stat.joinToString { it.str }
-                        messageCollector.report(INFO, "  file [${File(srcFile.path).name}]: ($statStr)")
-                    }
-                }
-            }
-
-            artifacts
-        } else emptyList()
+        val icCaches = prepareIcCaches(arguments, messageCollector, outputFilePath, libraries, configurationJs, mainCallArguments)
 
         // Run analysis if main module is sources
-        lateinit var sourceModule: ModulesStructure
+        var sourceModule: ModulesStructure? = null
         val includes = arguments.includes
         if (includes == null) {
-            do {
-                sourceModule = prepareAnalyzedSourceModule(
-                    projectJs,
-                    environmentForJS.getSourceFiles(),
-                    configurationJs,
-                    libraries,
-                    friendLibraries,
-                    AnalyzerWithCompilerReport(configurationJs)
-                )
-                val result = sourceModule.jsFrontEndResult.jsAnalysisResult
-                if (result is JsAnalysisResult.RetryWithAdditionalRoots) {
-                    environmentForJS.addKotlinSourceRoots(result.additionalKotlinRoots)
-                }
-            } while (result is JsAnalysisResult.RetryWithAdditionalRoots)
+            sourceModule = processSourceModule(
+                environmentForJS,
+                libraries,
+                friendLibraries,
+                arguments,
+                outputFile
+            )
+
             if (!sourceModule.jsFrontEndResult.jsAnalysisResult.shouldGenerateCode)
                 return OK
-        }
-
-        if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
-            if (arguments.irProduceKlibFile) {
-                require(outputFile.extension == KLIB_FILE_EXTENSION) { "Please set up .klib file as output" }
-            }
-            val moduleSourceFiles = (sourceModule.mainModule as MainModule.SourceFiles).files
-            val icData = configurationJs.incrementalDataProvider?.getSerializedData(moduleSourceFiles) ?: emptyList()
-            val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
-
-            val moduleFragment = generateIrForKlibSerialization(
-                projectJs,
-                moduleSourceFiles,
-                configurationJs,
-                sourceModule.jsFrontEndResult.jsAnalysisResult,
-                sortDependencies(sourceModule.descriptors),
-                icData,
-                expectDescriptorToSymbol,
-                IrFactoryImpl,
-                verifySignatures = true
-            ) {
-                sourceModule.getModuleDescriptor(it)
-            }
-
-            val metadataSerializer =
-                KlibMetadataIncrementalSerializer(configuration, sourceModule.project, sourceModule.jsFrontEndResult.hasErrors)
-
-            generateKLib(
-                sourceModule,
-                outputKlibPath = outputFile.path,
-                nopack = arguments.irProduceKlibDir,
-                jsOutputName = arguments.irPerModuleOutputName,
-                icData = icData,
-                expectDescriptorToSymbol = expectDescriptorToSymbol,
-                moduleFragment = moduleFragment
-            ) { file ->
-                metadataSerializer.serializeScope(file, sourceModule.jsFrontEndResult.bindingContext, moduleFragment.descriptor)
-            }
         }
 
         if (arguments.irProduceJs) {
@@ -363,7 +250,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     friendLibraries
                 )
             } else {
-                sourceModule
+                sourceModule!!
             }
 
 
@@ -480,6 +367,153 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         return OK
+    }
+
+    private fun processSourceModule(
+        environmentForJS: KotlinCoreEnvironment,
+        libraries: List<String>,
+        friendLibraries: List<String>,
+        arguments: K2JSCompilerArguments,
+        outputFile: File
+    ): ModulesStructure {
+        lateinit var sourceModule: ModulesStructure
+        do {
+            sourceModule = prepareAnalyzedSourceModule(
+                environmentForJS.project,
+                environmentForJS.getSourceFiles(),
+                environmentForJS.configuration,
+                libraries,
+                friendLibraries,
+                AnalyzerWithCompilerReport(environmentForJS.configuration)
+            )
+            val result = sourceModule.jsFrontEndResult.jsAnalysisResult
+            if (result is JsAnalysisResult.RetryWithAdditionalRoots) {
+                environmentForJS.addKotlinSourceRoots(result.additionalKotlinRoots)
+            }
+        } while (result is JsAnalysisResult.RetryWithAdditionalRoots)
+
+        if (sourceModule.jsFrontEndResult.jsAnalysisResult.shouldGenerateCode && (arguments.irProduceKlibDir || arguments.irProduceKlibFile)) {
+            if (arguments.irProduceKlibFile) {
+                require(outputFile.extension == KLIB_FILE_EXTENSION) { "Please set up .klib file as output" }
+            }
+            val moduleSourceFiles = (sourceModule.mainModule as MainModule.SourceFiles).files
+            val icData = environmentForJS.configuration.incrementalDataProvider?.getSerializedData(moduleSourceFiles) ?: emptyList()
+            val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
+
+            val moduleFragment = generateIrForKlibSerialization(
+                environmentForJS.project,
+                moduleSourceFiles,
+                environmentForJS.configuration,
+                sourceModule.jsFrontEndResult.jsAnalysisResult,
+                sortDependencies(sourceModule.descriptors),
+                icData,
+                expectDescriptorToSymbol,
+                IrFactoryImpl,
+                verifySignatures = true
+            ) {
+                sourceModule.getModuleDescriptor(it)
+            }
+
+            val metadataSerializer =
+                KlibMetadataIncrementalSerializer(environmentForJS.configuration, sourceModule.project, sourceModule.jsFrontEndResult.hasErrors)
+
+            generateKLib(
+                sourceModule,
+                outputKlibPath = outputFile.path,
+                nopack = arguments.irProduceKlibDir,
+                jsOutputName = arguments.irPerModuleOutputName,
+                icData = icData,
+                expectDescriptorToSymbol = expectDescriptorToSymbol,
+                moduleFragment = moduleFragment
+            ) { file ->
+                metadataSerializer.serializeScope(file, sourceModule.jsFrontEndResult.bindingContext, moduleFragment.descriptor)
+            }
+        }
+        return sourceModule
+    }
+
+    private fun prepareIcCaches(
+        arguments: K2JSCompilerArguments,
+        messageCollector: MessageCollector,
+        outputFilePath: String?,
+        libraries: List<String>,
+        configurationJs: CompilerConfiguration,
+        mainCallArguments: List<String>?
+    ): List<ModuleArtifact> {
+        val cacheDirectories = configureLibraries(arguments.cacheDirectories)
+
+        val icCaches = if (cacheDirectories.isNotEmpty()) {
+            messageCollector.report(INFO, "")
+            messageCollector.report(INFO, "Building cache:")
+            messageCollector.report(INFO, "to: ${outputFilePath}")
+            messageCollector.report(INFO, arguments.cacheDirectories ?: "")
+            messageCollector.report(INFO, libraries.toString())
+
+            val start = System.currentTimeMillis()
+
+            val cacheUpdater = CacheUpdater(
+                mainModule = arguments.includes!!,
+                allModules = libraries,
+                icCachePaths = cacheDirectories,
+                compilerConfiguration = configurationJs,
+                irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
+                mainArguments = mainCallArguments,
+                executor = ::buildCacheForModuleFiles
+            )
+
+            var tp = System.currentTimeMillis()
+            messageCollector.report(INFO, "IC cache updater initialization: ${tp - start}ms")
+
+            val artifacts = cacheUpdater.actualizeCaches {
+                val now = System.currentTimeMillis()
+                messageCollector.report(INFO, "IC $it: ${now - tp}ms")
+                tp = now
+            }
+
+            messageCollector.report(INFO, "IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
+
+            for ((libFile, srcFiles) in cacheUpdater.getDirtyFileStats()) {
+                val isCleanBuild = srcFiles.values.all { it.contains(DirtyFileState.ADDED_FILE) }
+                val msg = if (isCleanBuild) "fully rebuilt" else "partially rebuilt"
+                messageCollector.report(INFO, "module [${File(libFile.path).name}] was $msg")
+                if (!isCleanBuild) {
+                    for ((srcFile, stat) in srcFiles) {
+                        val statStr = stat.joinToString { it.str }
+                        messageCollector.report(INFO, "  file [${File(srcFile.path).name}]: ($statStr)")
+                    }
+                }
+            }
+
+            artifacts
+        } else emptyList()
+        return icCaches
+    }
+
+    private fun executeScript(
+        arguments: K2JSCompilerArguments,
+        messageCollector: MessageCollector,
+        configuration: CompilerConfiguration,
+        rootDisposable: Disposable
+    ): ExitCode {
+        if (!arguments.enableJsScripting) {
+            messageCollector.report(ERROR, "Script for K/JS should be enabled explicitly, see -Xenable-js-scripting")
+            return COMPILATION_ERROR
+        }
+
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, "repl.kts")
+
+        val environment = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(rootDisposable, configuration)
+        val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(rootDisposable, environment, configuration)
+        projectEnv.registerExtensionsFromPlugins(configuration)
+
+        val scriptingEvaluators = ScriptEvaluationExtension.getInstances(projectEnv.project)
+        val scriptingEvaluator = scriptingEvaluators.find { it.isAccepted(arguments) }
+        if (scriptingEvaluator == null) {
+            messageCollector.report(ERROR, "Unable to evaluate script, no scripting plugin loaded")
+            return COMPILATION_ERROR
+        }
+
+        return scriptingEvaluator.eval(arguments, configuration, projectEnv)
     }
 
     private fun File.write(outputs: CompilationOutputs) {
