@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
-import org.jetbrains.kotlin.diagnostics.deprecationError2
-import org.jetbrains.kotlin.diagnostics.error0
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
@@ -328,6 +326,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val OPT_IN_MARKER_ON_OVERRIDE by error<KtAnnotationEntry>()
         val OPT_IN_MARKER_ON_OVERRIDE_WARNING by warning<KtAnnotationEntry>()
+
+        val SUBCLASS_OPT_IN_INAPPLICABLE by error<KtAnnotationEntry> {
+            parameter<String>("target")
+        }
     }
 
     val EXPOSED_VISIBILITY by object : DiagnosticGroup("Exposed visibility") {

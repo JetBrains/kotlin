@@ -37549,6 +37549,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("subClassOptInModality.kt")
+            public void testSubClassOptInModality() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/subClassOptInModality.kt");
+            }
+
+            @Test
             @TestMetadata("subClassOptInRequired.kt")
             public void testSubClassOptInRequired() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/subClassOptInRequired.kt");

@@ -8,14 +8,15 @@ package org.jetbrains.kotlin.resolve.checkers
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.KtAnnotated
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.AdditionalAnnotationChecker
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -46,6 +47,11 @@ class OptInMarkerDeclarationAnnotationChecker(private val module: ModuleDescript
                         annotation.allValueArguments[OptInNames.USE_EXPERIMENTAL_ANNOTATION_CLASS]
                             .safeAs<ArrayValue>()?.value.orEmpty()
                     checkOptInUsage(annotationClasses, trace, entry)
+                }
+                OptInNames.SUBCLASS_OPT_IN_REQUIRED_FQ_NAME -> {
+                    val annotationClass =
+                        annotation.allValueArguments[OptInNames.USE_EXPERIMENTAL_ANNOTATION_CLASS]
+                    checkSubclassOptInUsage(annotated, listOfNotNull(annotationClass), trace, entry)
                 }
                 in OptInNames.REQUIRES_OPT_IN_FQ_NAMES -> {
                     hasOptIn = true
@@ -89,7 +95,53 @@ class OptInMarkerDeclarationAnnotationChecker(private val module: ModuleDescript
             trace.report(Errors.OPT_IN_WITHOUT_ARGUMENTS.on(entry))
             return
         }
+        checkArgumentsAreMarkers(annotationClasses, trace, entry)
+    }
 
+    private fun checkSubclassOptInUsage(
+        annotated: KtAnnotated?,
+        annotationClasses: List<ConstantValue<*>>,
+        trace: BindingTrace,
+        entry: KtAnnotationEntry
+    ) {
+        when (annotated) {
+            is KtAnnotatedExpression -> {
+                if (annotated.baseExpression is KtObjectLiteralExpression) {
+                    trace.report(Errors.SUBCLASS_OPT_IN_INAPPLICABLE.on(entry, "object"))
+                }
+                return
+            }
+            is KtClassOrObject -> {
+                val descriptor = trace[BindingContext.CLASS, annotated]
+                if (descriptor != null) {
+                    val kind = descriptor.kind
+                    if (kind == ClassKind.OBJECT || kind == ClassKind.ENUM_CLASS || kind == ClassKind.ANNOTATION_CLASS) {
+                        trace.report(Errors.SUBCLASS_OPT_IN_INAPPLICABLE.on(entry, kind.toString()))
+                        return
+                    }
+                    if (kind != ClassKind.ENUM_ENTRY) {
+                        // ^ We don't report anything on enum entries because it's anyway inapplicable target
+                        val modality = descriptor.modality
+                        if (modality != Modality.ABSTRACT && modality != Modality.OPEN) {
+                            trace.report(Errors.SUBCLASS_OPT_IN_INAPPLICABLE.on(entry, "$modality $kind"))
+                            return
+                        }
+                        if (descriptor.isFun) {
+                            trace.report(Errors.SUBCLASS_OPT_IN_INAPPLICABLE.on(entry, "fun interface"))
+                            return
+                        }
+                        if (annotated.isLocal) {
+                            trace.report(Errors.SUBCLASS_OPT_IN_INAPPLICABLE.on(entry, "local $kind"))
+                            return
+                        }
+                    }
+                }
+            }
+        }
+        checkArgumentsAreMarkers(annotationClasses, trace, entry)
+    }
+
+    private fun checkArgumentsAreMarkers(annotationClasses: List<ConstantValue<*>>, trace: BindingTrace, entry: KtAnnotationEntry) {
         for (annotationClass in annotationClasses) {
             val classDescriptor =
                 (annotationClass as? KClassValue)?.getArgumentType(module)?.constructor?.declarationDescriptor as? ClassDescriptor

@@ -751,6 +751,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = OptInMarkerOnOverrideWarning::class
     }
 
+    abstract class SubclassOptInInapplicable : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = SubclassOptInInapplicable::class
+        abstract val target: String
+    }
+
     abstract class ExposedTypealiasExpandedType : KtFirDiagnostic<KtNamedDeclaration>() {
         override val diagnosticClass get() = ExposedTypealiasExpandedType::class
         abstract val elementVisibility: EffectiveVisibility
