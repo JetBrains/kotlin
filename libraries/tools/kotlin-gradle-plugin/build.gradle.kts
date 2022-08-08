@@ -47,9 +47,14 @@ dependencies {
     commonCompileOnly(project(":kotlin-scripting-compiler"))
     commonCompileOnly(project(":kotlin-gradle-statistics"))
     commonCompileOnly(project(":kotlin-gradle-build-metrics"))
-    commonCompileOnly("com.android.tools.build:gradle:3.6.4")
+    commonCompileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    commonCompileOnly("com.android.tools.build:gradle:3.6.4") {
+        exclude("org.jetbrains.kotlin")
+    }
     commonCompileOnly("com.android.tools.build:gradle-api:3.6.4")
-    commonCompileOnly("com.android.tools.build:builder:3.6.4")
+    commonCompileOnly("com.android.tools.build:builder:3.6.4") {
+        exclude("org.jetbrains.kotlin")
+    }
     commonCompileOnly("com.android.tools.build:builder-model:3.6.4")
     commonCompileOnly("org.codehaus.groovy:groovy-all:2.4.12")
     commonCompileOnly(intellijCore())
@@ -90,7 +95,9 @@ dependencies {
 
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         val functionalTestImplementation by configurations.getting
-        functionalTestImplementation("com.android.tools.build:gradle:7.2.1")
+        functionalTestImplementation("com.android.tools.build:gradle:7.2.1") {
+            exclude("org.jetbrains.kotlin")
+        }
         functionalTestImplementation("com.android.tools.build:gradle-api:7.2.1")
         functionalTestImplementation(gradleKotlinDsl())
         functionalTestImplementation(project(":kotlin-gradle-plugin-kpm-android"))

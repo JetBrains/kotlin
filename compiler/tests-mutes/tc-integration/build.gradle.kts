@@ -7,8 +7,12 @@ plugins {
 dependencies {
     api(kotlinStdlib())
     implementation(project(":compiler:tests-mutes"))
-    implementation("khttp:khttp:1.0.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
+    implementation("khttp:khttp:1.0.0") {
+        exclude("org.jetbrains.kotlin")
+    }
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0") {
+        exclude("org.jetbrains.kotlin")
+    }
 }
 
 sourceSets {

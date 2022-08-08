@@ -49,7 +49,9 @@ tasks.jar {
 }
 
 dependencies {
-    kotlinCompilerClasspath("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
+    kotlinCompilerClasspath("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion") {
+        exclude("org.jetbrains.kotlin", "kotlin-reflect")
+    }
 
     implementation(kotlinStdlib())
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }

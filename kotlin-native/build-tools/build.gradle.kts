@@ -14,6 +14,14 @@ plugins {
     id("gradle-plugin-dependency-configuration")
 }
 
+configurations.all {
+    // The `exclude` fixes: 'kotlin-reflect' should have '1.6.10' version. But it was '1.5.31'
+    // Technically, this should avoid kotlin-reflect leakage added by `kotlin-dsl` plugin, but it looks like it doesn't work because
+    // I can still see that kotlin-reflect 1.5.31 is in runtime dependencies of the module (I wrote a `main` function which checks
+    // reflect at runtime). IDK how to fix it properly.
+    exclude("org.jetbrains.kotlin", "kotlin-reflect")
+}
+
 buildscript {
     val rootBuildDirectory by extra(project.file("../.."))
 

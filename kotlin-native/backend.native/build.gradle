@@ -108,7 +108,9 @@ dependencies {
     kotlin_compiler_jar project(kotlinCompilerModule)
     kotlin_stdlib_jar kotlinStdLibModule
     use(DependenciesKt) {
-        kotlin_reflect_jar commonDependency("org.jetbrains.kotlin:kotlin-reflect")
+        kotlin_reflect_jar(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) {
+            transitive = false
+        }
     }
     kotlin_script_runtime_jar project(":kotlin-script-runtime")
 
