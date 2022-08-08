@@ -269,6 +269,59 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
                 }
             }
         }
+
+        @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class NoParameterType extends AbstractRawFirBuilderTestCase {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInNoParameterType() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("noParameterTypRefInCatch.kt")
+            public void testNoParameterTypRefInCatch() throws Exception {
+                runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInCatch.kt");
+            }
+
+            @TestMetadata("noParameterTypRefInFuncionalType.kt")
+            public void testNoParameterTypRefInFuncionalType() throws Exception {
+                runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInFuncionalType.kt");
+            }
+
+            @TestMetadata("noParameterTypRefInFunction.kt")
+            public void testNoParameterTypRefInFunction() throws Exception {
+                runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInFunction.kt");
+            }
+
+            @TestMetadata("noParameterTypRefInLambda.kt")
+            public void testNoParameterTypRefInLambda() throws Exception {
+                runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInLambda.kt");
+            }
+
+            @TestMetadata("noParameterTypRefInPrimaryConstructor.kt")
+            public void testNoParameterTypRefInPrimaryConstructor() throws Exception {
+                runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInPrimaryConstructor.kt");
+            }
+
+            @TestMetadata("noParameterTypRefInPrimaryConsturctorVal.kt")
+            public void testNoParameterTypRefInPrimaryConsturctorVal() throws Exception {
+                runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInPrimaryConsturctorVal.kt");
+            }
+
+            @TestMetadata("noParameterTypRefInSecondaryConstructor.kt")
+            public void testNoParameterTypRefInSecondaryConstructor() throws Exception {
+                runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInSecondaryConstructor.kt");
+            }
+
+            @TestMetadata("noParameterTypRefInSetter.kt")
+            public void testNoParameterTypRefInSetter() throws Exception {
+                runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInSetter.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions")
