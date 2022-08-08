@@ -121,6 +121,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("annotationInstancesEmptyDefaultLowered.kt")
+                public void testAnnotationInstancesEmptyDefaultLowered() throws Exception {
+                    runTest("compiler/testData/codegen/box/annotations/instances/annotationInstancesEmptyDefaultLowered.kt");
+                }
+
+                @Test
                 @TestMetadata("annotationToString.kt")
                 public void testAnnotationToString() throws Exception {
                     runTest("compiler/testData/codegen/box/annotations/instances/annotationToString.kt");
