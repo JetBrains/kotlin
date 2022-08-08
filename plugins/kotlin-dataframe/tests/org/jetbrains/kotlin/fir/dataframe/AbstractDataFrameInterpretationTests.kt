@@ -129,7 +129,8 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
                     KPropertyApproximation("col2", TypeApproximationImpl("kotlin.Int", true))
                 ),
                 "memberFunction_1" to Context(123),
-                "typeParameter_1" to TypeApproximationImpl("kotlin.Int", false)
+                "typeParameter_1" to TypeApproximationImpl("kotlin.Int", false),
+                "rowValueExpression_1" to TypeApproximationImpl("kotlin.Int", nullable = false)
             )
             return map[id]
         }
