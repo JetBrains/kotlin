@@ -37,7 +37,9 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
 
     private val exportedInterface = produceInterface()
 
-    private val codeSpec = exportedInterface?.createCodeSpec(symbolTable)
+    private val codeSpec = exportedInterface?.let {
+        ObjCCodeSpecBuilder(it, symbolTable).build()
+    }
 
     private fun produceInterface(): ObjCExportedInterface? {
         if (!target.family.isAppleFamily) return null

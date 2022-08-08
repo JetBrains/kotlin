@@ -15,43 +15,43 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 
-internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): ObjCExportCodeSpec {
 
-    fun createObjCMethods(methods: List<FunctionDescriptor>) = methods.map {
+internal class ObjCCodeSpecBuilder(
+        private val objcInterface: ObjCExportedInterface,
+        private val symbolTable: SymbolTable
+) {
+    private val classToType = mutableMapOf<ClassDescriptor, ObjCTypeForKotlinType>()
+    private val namer: ObjCExportNamer = objcInterface.namer
+
+    private fun createObjCMethods(methods: List<FunctionDescriptor>) = methods.map {
         ObjCMethodForKotlinMethod(
                 createObjCMethodSpecBaseMethod(
-                        mapper,
-                        namer,
+                        objcInterface.mapper,
+                        objcInterface.namer,
                         symbolTable.referenceSimpleFunction(it),
                         it
                 )
         )
     }
 
-    fun List<CallableMemberDescriptor>.toObjCMethods() = createObjCMethods(this.flatMap {
+    private fun List<CallableMemberDescriptor>.toObjCMethods() = createObjCMethods(this.flatMap {
         when (it) {
             is PropertyDescriptor -> listOfNotNull(
                     it.getter,
-                    it.setter?.takeIf(mapper::shouldBeExposed) // Similar to [ObjCExportTranslatorImpl.buildProperty].
+                    it.setter?.takeIf(objcInterface.mapper::shouldBeExposed) // Similar to [ObjCExportTranslatorImpl.buildProperty].
             )
+
             is FunctionDescriptor -> listOf(it)
             else -> error(it)
         }
     })
 
-    val files = topLevel.map { (sourceFile, declarations) ->
-        val binaryName = namer.getFileClassName(sourceFile).binaryName
-        val methods = declarations.toObjCMethods()
-        ObjCClassForKotlinFile(binaryName, sourceFile, methods)
-    }
-
-    val classToType = mutableMapOf<ClassDescriptor, ObjCTypeForKotlinType>()
-    fun getType(descriptor: ClassDescriptor): ObjCTypeForKotlinType = classToType.getOrPut(descriptor) {
+    private fun getType(descriptor: ClassDescriptor): ObjCTypeForKotlinType = classToType.getOrPut(descriptor) {
         val methods = mutableListOf<ObjCMethodSpec>()
 
         // Note: contributedMethods includes fake overrides too.
-        val allBaseMethods = descriptor.contributedMethods.filter { mapper.shouldBeExposed(it) }
-                .flatMap { mapper.getBaseMethods(it) }.distinct()
+        val allBaseMethods = descriptor.contributedMethods.filter { objcInterface.mapper.shouldBeExposed(it) }
+                .flatMap { objcInterface.mapper.getBaseMethods(it) }.distinct()
 
         methods += createObjCMethods(allBaseMethods)
 
@@ -61,9 +61,9 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
         if (descriptor.isInterface) {
             ObjCProtocolForKotlinInterface(binaryName, irClassSymbol, methods)
         } else {
-            descriptor.constructors.filter { mapper.shouldBeExposed(it) }.mapTo(methods) {
+            descriptor.constructors.filter { objcInterface.mapper.shouldBeExposed(it) }.mapTo(methods) {
                 val irConstructorSymbol = symbolTable.referenceConstructor(it)
-                val baseMethod = createObjCMethodSpecBaseMethod(mapper, namer, irConstructorSymbol, it)
+                val baseMethod = createObjCMethodSpecBaseMethod(objcInterface.mapper, namer, irConstructorSymbol, it)
 
                 if (descriptor.isArray) {
                     ObjCFactoryMethodForKotlinArrayConstructor(baseMethod)
@@ -77,7 +77,7 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
                 methods += ObjCGetterForObjectInstance(namer.getObjectPropertySelector(descriptor), irClassSymbol)
             }
 
-            if (descriptor.needCompanionObjectProperty(namer, mapper)) {
+            if (descriptor.needCompanionObjectProperty(namer, objcInterface.mapper)) {
                 methods += ObjCGetterForObjectInstance(namer.getCompanionObjectPropertySelector(descriptor),
                         symbolTable.referenceClass(descriptor.companionObjectDescriptor!!))
             }
@@ -99,7 +99,7 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
                 methods += ObjCKotlinThrowableAsErrorMethod
             }
 
-            val categoryMethods = categoryMembers[descriptor].orEmpty().toObjCMethods()
+            val categoryMethods = objcInterface.categoryMembers[descriptor].orEmpty().toObjCMethods()
 
             val superClassNotAny = descriptor.getSuperClassNotAny()
                     ?.let { getType(it) as ObjCClassForKotlinClass }
@@ -108,10 +108,17 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
         }
     }
 
-    val types = generatedClasses.map { getType(it) }
-
-    return ObjCExportCodeSpec(files, types)
+    fun build(): ObjCExportCodeSpec {
+        val files = objcInterface.topLevel.map { (sourceFile, declarations) ->
+            val binaryName = objcInterface.namer.getFileClassName(sourceFile).binaryName
+            val methods = declarations.toObjCMethods()
+            ObjCClassForKotlinFile(binaryName, sourceFile, methods)
+        }
+        val types = objcInterface.generatedClasses.map { getType(it) }
+        return ObjCExportCodeSpec(files, types)
+    }
 }
+
 
 internal fun <S : IrFunctionSymbol> createObjCMethodSpecBaseMethod(
         mapper: ObjCExportMapper,
