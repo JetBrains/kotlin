@@ -390,9 +390,62 @@ val gradlePluginProjects = listOf(
 
 val ignoreTestFailures by extra(project.kotlinBuildProperties.ignoreTestFailures)
 
+val dependencyOnSnapshotReflectWhitelist = setOf(
+    ":kotlin-compiler",
+    ":kotlin-reflect",
+    ":tools:binary-compatibility-validator",
+    ":tools:kotlin-stdlib-gen",
+)
+
 allprojects {
     if (!project.path.startsWith(":kotlin-ide.")) {
         pluginManager.apply("common-configuration")
+    }
+    configurations.all {
+        val configuration = this
+        if (name != "compileClasspath") {
+            return@all
+        }
+        resolutionStrategy.eachDependency {
+            if (requested.group != "org.jetbrains.kotlin") {
+                return@eachDependency
+            }
+            val isReflect = requested.name == "kotlin-reflect" || requested.name == "kotlin-reflect-api"
+            // More strict check for "compilerModules". We can't apply this check for all modules because it would force to
+            // exclude kotlin-reflect from transitive dependencies of kotlin-poet, ktor, com.android.tools.build:gradle, etc
+            if (project.path in (rootProject.extra["compilerModules"] as Array<String>)) {
+                val expectedReflectVersion = commonDependencyVersion("org.jetbrains.kotlin", "kotlin-reflect")
+                if (isReflect) {
+                    check(requested.version == expectedReflectVersion) {
+                        """
+                            $configuration: 'kotlin-reflect' should have '$expectedReflectVersion' version. But it was '${requested.version}'
+                            Suggestions:
+                                1. Use 'commonDependency("org.jetbrains.kotlin:kotlin-reflect") { isTransitive = false }'
+                                2. Avoid 'kotlin-reflect' leakage from transitive dependencies with 'exclude("org.jetbrains.kotlin")'
+                        """.trimIndent()
+                    }
+                }
+                if (requested.name.startsWith("kotlin-stdlib")) {
+                    check(requested.version != expectedReflectVersion) {
+                        """
+                            $configuration: '${requested.name}' has a wrong version. It's not allowed to be '$expectedReflectVersion'
+                            Suggestions:
+                                1. Most likely, it leaked from 'kotlin-reflect' transitive dependencies. Use 'isTransitive = false' for
+                                   'kotlin-reflect' dependencies
+                                2. Avoid '${requested.name}' leakage from other transitive dependencies with 'exclude("org.jetbrains.kotlin")'
+                        """.trimIndent()
+                    }
+                }
+            }
+            if (isReflect && project.path !in dependencyOnSnapshotReflectWhitelist) {
+                check(requested.version != kotlinVersion) {
+                    """
+                        $configuration: 'kotlin-reflect' is not allowed to have '$kotlinVersion' version.
+                        Suggestion: Use 'commonDependency("org.jetbrains.kotlin:kotlin-reflect") { isTransitive = false }'
+                    """.trimIndent()
+                }
+            }
+        }
     }
     val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
 

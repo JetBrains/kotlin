@@ -12,7 +12,9 @@ dependencies {
     implementation(project(":compiler:util"))
     implementation(project(":compiler:config"))
 
-    compileOnly(project("tree-generator")) // Provided, so that IDEA can recognize references to this module in KDoc.
+    if (kotlinBuildProperties.isInIdeaSync) {
+        compileOnly(project("tree-generator")) // Provided, so that IDEA can recognize references to this module in KDoc.
+    }
     compileOnly(intellijCore())
 }
 
