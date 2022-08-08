@@ -13,7 +13,10 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.utils.addToStdlib.cast
+import java.util.logging.ConsoleHandler
+import java.util.logging.Level
 import java.util.logging.Logger
+import java.util.logging.MemoryHandler
 import kotlin.coroutines.*
 
 /**
@@ -91,7 +94,16 @@ private const val NODE_WS_DEBUG_URL_PREFIX = "Debugger listening on ws://"
  */
 private class NodeJsInspectorClientContextImpl(engine: NodeJsInspectorClient) : NodeJsInspectorClientContext, CDPRequestEvaluator {
 
-    private val logger = Logger.getLogger(this::class.java.name)
+    private val consoleLoggingHandler = ConsoleHandler().apply {
+        level = Level.FINER
+    }
+
+    private val memoryLoggingHandler = MemoryHandler(consoleLoggingHandler, 5000, Level.WARNING)
+
+    private val logger = Logger.getLogger(this::class.java.name).apply {
+        level = Level.FINER
+        addHandler(memoryLoggingHandler)
+    }
 
     private val nodeProcess = ProcessBuilder(
         System.getProperty("javascript.engine.path.NodeJs"),
@@ -153,11 +165,16 @@ private class NodeJsInspectorClientContextImpl(engine: NodeJsInspectorClient) : 
     suspend fun listenForMessages(receiveMessage: (String) -> Boolean) {
         val session = webSocketSession ?: error("Session closed")
         do {
-            val message = when (val frame = session.incoming.receive()) {
-                is Frame.Text -> frame.readText()
-                else -> error("Unexpected frame kind: $frame")
+            val message = try {
+                when (val frame = session.incoming.receive()) {
+                    is Frame.Text -> frame.readText()
+                    else -> error("Unexpected frame kind: $frame")
+                }
+            } catch (e: Exception) {
+                logger.log(Level.SEVERE, "Could not receive message", e)
+                throw e
             }
-            logger.fine {
+            logger.finer {
                 "Received message:\n${prettyPrintJson(message)}"
             }
         } while (!receiveMessage(message))
@@ -177,7 +194,7 @@ private class NodeJsInspectorClientContextImpl(engine: NodeJsInspectorClient) : 
 
     private suspend fun sendPlainTextMessage(message: String) {
         val session = webSocketSession ?: error("Session closed")
-        logger.fine {
+        logger.finer {
             "Sent message:\n${prettyPrintJson(message)}"
         }
         session.send(message)
@@ -207,6 +224,7 @@ private class NodeJsInspectorClientContextImpl(engine: NodeJsInspectorClient) : 
      * Releases all the resources and destroys the Node.js process.
      */
     suspend fun release() {
+        logger.fine { "Releasing $this" }
         webSocketSession?.close()
         webSocketSession = null
         webSocketClient.close()
