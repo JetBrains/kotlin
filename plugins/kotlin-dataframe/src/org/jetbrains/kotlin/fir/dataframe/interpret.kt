@@ -34,13 +34,14 @@ fun <T> FirExpressionResolutionExtension.interpret(
 ): Interpreter.Success<T>? {
 
     val refinedArguments: Arguments = functionCall.collectArgumentExpressions()
+
+    val defaultArguments =  processor.expectedArguments.filter { it.defaultValue is Present }.map { it.name }.toSet()
     val actualArgsMap = refinedArguments.associateBy { it.name.identifier }.toSortedMap()
     val expectedArgsMap = processor.expectedArguments
         .filterNot { it.name.startsWith("typeArg") }
-        .filter { it.defaultValue is Absent }
         .associateBy { it.name }.toSortedMap().minus(additionalArguments.keys)
 
-    if (expectedArgsMap.keys != actualArgsMap.keys) {
+    if (expectedArgsMap.keys - defaultArguments != actualArgsMap.keys - defaultArguments) {
         val message = buildString {
             appendLine("ERROR: Different set of arguments")
             appendLine("Implementation class: $processor")
