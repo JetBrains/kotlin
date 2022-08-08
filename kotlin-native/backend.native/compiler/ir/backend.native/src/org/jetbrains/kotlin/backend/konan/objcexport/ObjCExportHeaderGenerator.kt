@@ -12,13 +12,23 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.sx.SXClangModuleBuilder
 import org.jetbrains.kotlin.backend.konan.objcexport.sx.SXObjCHeader
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+
+
+interface CrossModuleResolver {
+    fun findModuleBuilder(declaration: DeclarationDescriptor): SXClangModuleBuilder
+
+    fun findStdlibModuleBuilder(): SXClangModuleBuilder
+}
 
 class SXHeaderImportReferenceTracker(
         private val header: SXObjCHeader,
-        private val sxBuilder: SXClangModuleBuilder,
+        private val resolver: CrossModuleResolver,
 ) : ReferenceTracker {
     override fun trackReference(declaration: DeclarationDescriptor) {
+        val sxBuilder = resolver.findModuleBuilder(declaration)
         val declarationHeader = sxBuilder.findHeaderForDeclaration(declaration)
         header.addImport(declarationHeader)
         println("$header depends on $declarationHeader because of ${declaration.name}")
@@ -39,7 +49,9 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         val namer: ObjCExportNamer,
         val objcGenerics: Boolean,
         problemCollector: ObjCExportProblemCollector,
-        private val frameworkName: String
+        private val frameworkName: String,
+        val moduleBuilder: SXClangModuleBuilder,
+        private val crossModuleResolver: CrossModuleResolver,
 ) {
     private val extraClassesToTranslate = mutableSetOf<ClassDescriptor>()
 
@@ -50,28 +62,35 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     private val trackersCache = mutableMapOf<SXObjCHeader, SXHeaderImportReferenceTracker>()
 
     private fun getTracker(header: SXObjCHeader) = trackersCache.getOrPut(header) {
-        SXHeaderImportReferenceTracker(header, sxBuilder)
+        SXHeaderImportReferenceTracker(header, crossModuleResolver)
     }
 
     open val shouldExportKDoc = false
 
-    private val sxBuilder = SXClangModuleBuilder(moduleDescriptors, namer, true, "$frameworkName.h")
-
     private val translator = ObjCExportTranslatorImpl(this, mapper, namer, problemCollector, objcGenerics)
 
     private fun buildImports() {
-        foundationImports.forEach {
-            sxBuilder.findHeaderForStdlib().addImport(it)
+        if (this.moduleBuilder.containsStdlib) {
+            foundationImports.forEach {
+                this.moduleBuilder.findHeaderForStdlib().addImport(it)
+            }
+            getAdditionalImports().forEach {
+                this.moduleBuilder.findHeaderForStdlib().addImport(it)
+            }
         }
-        getAdditionalImports().forEach {
-            sxBuilder.findHeaderForStdlib().addImport(it)
-        }
-
     }
 
     internal fun buildInterface(): ObjCExportedInterface {
         buildImports()
-        return ObjCExportedInterface(generatedClasses, extensions, topLevel, namer, mapper, sxBuilder.build(), frameworkName)
+        return ObjCExportedInterface(
+                generatedClasses,
+                extensions,
+                topLevel,
+                namer,
+                mapper,
+                this.moduleBuilder.build(),
+                frameworkName
+        )
     }
 
     protected open fun getAdditionalImports(): List<String> = emptyList()
@@ -84,9 +103,10 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     }
 
     private fun translateBaseDeclarations() {
-        val toplevels = translator.generateBaseDeclarations()
-        toplevels.forEach {
-            sxBuilder.findHeaderForStdlib().addTopLevelDeclaration(it)
+        if (moduleBuilder.containsStdlib) {
+            translator.generateBaseDeclarations().forEach {
+                moduleBuilder.findHeaderForStdlib().addTopLevelDeclaration(it)
+            }
         }
     }
 
@@ -96,7 +116,9 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     }
 
     private fun translatePackageFragments() {
-        val packageFragments = moduleDescriptors.flatMap { it.getPackageFragments() }
+        val packageFragments = moduleDescriptors
+                .filterNot { it.isNativeStdlib() }
+                .flatMap { it.getPackageFragments() }
 
         packageFragments.forEach { packageFragment ->
             packageFragment.getMemberScope().getContributedDescriptors()
@@ -178,7 +200,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     }
 
     private inline fun inHeader(declaration: DeclarationDescriptor, action: SXObjCHeader.() -> Unit) {
-        val header = sxBuilder.findHeaderForDeclaration(declaration)
+        val header = this.moduleBuilder.findHeaderForDeclaration(declaration)
         val oldTracker = translator.tracker
         translator.tracker = getTracker(header)
         header.action()

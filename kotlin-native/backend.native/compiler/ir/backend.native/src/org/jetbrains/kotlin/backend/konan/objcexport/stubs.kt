@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.backend.konan.objcexport.sx.SXElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
@@ -20,7 +19,7 @@ data class ObjCClassForwardDeclaration(
         val typeDeclarations: List<ObjCGenericTypeDeclaration> = emptyList()
 )
 
-abstract class Stub<out D : DeclarationDescriptor>(val name: String, val comment: ObjCComment? = null) : SXElement {
+abstract class Stub<out D : DeclarationDescriptor>(val name: String, val comment: ObjCComment? = null) {
     abstract val descriptor: D?
     open val psi: PsiElement?
         get() = ((descriptor as? DeclarationDescriptorWithSource)?.source as? PsiSourceElement)?.psi

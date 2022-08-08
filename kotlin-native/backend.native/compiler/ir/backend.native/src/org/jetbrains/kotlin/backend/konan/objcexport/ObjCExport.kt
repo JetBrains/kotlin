@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
+import org.jetbrains.kotlin.backend.konan.objcexport.sx.SXClangModuleBuilder
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
@@ -17,10 +20,21 @@ import org.jetbrains.kotlin.konan.file.createTempFile
 import org.jetbrains.kotlin.konan.file.use
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 internal class ObjCExport(val context: Context) {
     private val target get() = context.config.target
     private val topLevelNamePrefix get() = context.objCExportTopLevelNamePrefix
+
+    private val resolver = object : CrossModuleResolver {
+        override fun findModuleBuilder(declaration: DeclarationDescriptor): SXClangModuleBuilder =
+                objcHeaderGenerators.first { declaration.module in it.moduleDescriptors }.moduleBuilder
+
+        override fun findStdlibModuleBuilder(): SXClangModuleBuilder =
+                objcHeaderGenerators.first { it.moduleDescriptors.find { it.isNativeStdlib() } != null }.moduleBuilder
+    }
+
+    private val objcHeaderGenerators: List<ObjCExportHeaderGenerator> = prepareObjCHeaderGenerators()
 
     private val exportedInterfaces = produceInterfaces()
 
@@ -33,6 +47,57 @@ internal class ObjCExport(val context: Context) {
         }
     }
 
+    private fun prepareObjCHeaderGenerators(): List<ObjCExportHeaderGenerator> {
+        val unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport
+        val objcGenerics = context.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
+        val mapper = ObjCExportMapper(context.frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
+
+        val moduleDescriptors = listOf(context.moduleDescriptor) + context.getExportedDependencies()
+        val stdlib = moduleDescriptors.first().allDependencyModules.first { it.isNativeStdlib() }
+        val otherModules = (moduleDescriptors - stdlib).toSet()
+
+        val stdlibNamer = ObjCExportNamerImpl(
+                setOf(stdlib),
+                stdlib.builtIns,
+                mapper,
+                "Kotlin",
+                local = false,
+                objcGenerics = objcGenerics,
+        )
+        val namer = ObjCExportNamerImpl(
+                otherModules,
+                context.moduleDescriptor.builtIns,
+                mapper,
+                topLevelNamePrefix,
+                local = false,
+                objcGenerics = objcGenerics
+        )
+        val stdlibModuleBuilder = SXClangModuleBuilder(
+                listOf(stdlib),
+                headerPerModule = false,
+                "Kotlin.h",
+                containsStdlib = true,
+                { TODO() }
+        )
+        val theModuleBuilder = SXClangModuleBuilder(
+                otherModules.toList(),
+                headerPerModule = true,
+                "${getFrameworkName()}.h",
+                containsStdlib = false,
+                { stdlibModuleBuilder.findHeaderForStdlib() }
+        )
+        val stdlibHeaderGenerator = ObjCExportHeaderGeneratorImpl(
+                context, listOf(stdlib), mapper, stdlibNamer, objcGenerics, "Kotlin", stdlibModuleBuilder, this.resolver
+        )
+        val moduleHeaderGenerator = ObjCExportHeaderGeneratorImpl(
+                context, otherModules.toList(), mapper, namer, objcGenerics, getFrameworkName(), theModuleBuilder, this.resolver
+        )
+        return listOf(
+                stdlibHeaderGenerator,
+                moduleHeaderGenerator,
+        )
+    }
+
     private fun produceInterfaces(): List<ObjCExportedInterface> {
         if (!target.family.isAppleFamily) return emptyList()
 
@@ -43,23 +108,13 @@ internal class ObjCExport(val context: Context) {
         val produceFramework = context.config.produce == CompilerOutputKind.FRAMEWORK
 
         return if (produceFramework) {
-            val unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport
-            val mapper = ObjCExportMapper(context.frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
-            val moduleDescriptors = listOf(context.moduleDescriptor) + context.getExportedDependencies()
-            val objcGenerics = context.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
-            val namer = ObjCExportNamerImpl(
-                    moduleDescriptors.toSet(),
-                    context.moduleDescriptor.builtIns,
-                    mapper,
-                    topLevelNamePrefix,
-                    local = false,
-                    objcGenerics = objcGenerics
-            )
-            val headerGenerator = ObjCExportHeaderGeneratorImpl(
-                    context, moduleDescriptors, mapper, namer, objcGenerics, getFrameworkName()
-            )
-            headerGenerator.translateModule()
-            listOf(headerGenerator.buildInterface())
+            objcHeaderGenerators.forEach { builder ->
+                builder.translateModule()
+            }
+            // We have to split these two loops because module translation might affect API of each module.
+            objcHeaderGenerators.map { builder ->
+                builder.buildInterface()
+            }
         } else {
             emptyList()
         }
@@ -88,7 +143,13 @@ internal class ObjCExport(val context: Context) {
      */
     fun produceFrameworkInterface() {
         exportedInterfaces.forEach { exportedInterface ->
-            val framework = File(context.config.outputFile)
+            val dir = File(context.config.outputFile).parentFile
+            val name = if (!exportedInterface.frameworkName.endsWith(".framework")) {
+                exportedInterface.frameworkName + ".framework"
+            } else {
+                exportedInterface.frameworkName
+            }
+            val frameworkDirectory = dir.child(name)
             val properties = context.config.platform.configurables as AppleConfigurables
             val mainPackageGuesser = MainPackageGuesser(
                     context.moduleDescriptor,
@@ -100,7 +161,7 @@ internal class ObjCExport(val context: Context) {
             FrameworkBuilder(
                     exportedInterface.clangModule,
                     target,
-                    framework,
+                    frameworkDirectory,
                     exportedInterface.frameworkName,
                     context.shouldExportKDoc()
             ).build(infoPListBuilder, moduleMapBuilder)

@@ -82,7 +82,7 @@ class SXObjCHeaderTextRenderer(
     }
 
     private fun collectUniqueImports(header: SXObjCHeader): Set<SXHeaderImport> =
-            (header.headerImports).toSet()
+            header.headerImports
 
     private fun renderImportsTo(imports: Set<SXHeaderImport>, output: MutableList<String>) {
         imports.map {

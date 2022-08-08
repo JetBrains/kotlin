@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.backend.konan.objcexport.sx.SXClangModuleBuilder
 import org.jetbrains.kotlin.backend.konan.reportCompilationWarning
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
@@ -22,9 +23,18 @@ internal class ObjCExportHeaderGeneratorImpl(
         mapper: ObjCExportMapper,
         namer: ObjCExportNamer,
         objcGenerics: Boolean,
-        frameworkName: String
+        frameworkName: String,
+        moduleBuilder: SXClangModuleBuilder,
+        crossModuleResolver: CrossModuleResolver,
 ) : ObjCExportHeaderGenerator(
-        moduleDescriptors, mapper, namer, objcGenerics, ProblemCollector(context), frameworkName,
+        moduleDescriptors,
+        mapper,
+        namer,
+        objcGenerics,
+        ProblemCollector(context),
+        frameworkName,
+        moduleBuilder,
+        crossModuleResolver,
 ) {
 
     override val shouldExportKDoc = context.shouldExportKDoc()

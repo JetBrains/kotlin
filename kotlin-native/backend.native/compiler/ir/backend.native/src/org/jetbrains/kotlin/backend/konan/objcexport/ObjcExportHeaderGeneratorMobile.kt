@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.backend.konan.objcexport.sx.SXClangModuleBuilder
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -13,8 +14,19 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
         problemCollector: ObjCExportProblemCollector,
         objcGenerics: Boolean,
         private val restrictToLocalModules: Boolean,
-        frameworkName: String
-) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, problemCollector, frameworkName) {
+        frameworkName: String,
+        moduleBuilder: SXClangModuleBuilder,
+        crossModuleResolver: CrossModuleResolver,
+) : ObjCExportHeaderGenerator(
+        moduleDescriptors,
+        mapper,
+        namer,
+        objcGenerics,
+        problemCollector,
+        frameworkName,
+        moduleBuilder,
+        crossModuleResolver,
+) {
 
     companion object {
         fun createInstance(
@@ -26,6 +38,8 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
                 local: Boolean = false,
                 restrictToLocalModules: Boolean = false,
                 frameworkName: String,
+                moduleBuilder: SXClangModuleBuilder,
+                crossModuleResolver: CrossModuleResolver,
         ): ObjCExportHeaderGenerator {
             val mapper = ObjCExportMapper(deprecationResolver, local, configuration.unitSuspendFunctionExport)
             val namerConfiguration = createNamerConfiguration(configuration)
@@ -38,7 +52,9 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
                     problemCollector,
                     configuration.objcGenerics,
                     restrictToLocalModules,
-                    frameworkName
+                    frameworkName,
+                    moduleBuilder,
+                    crossModuleResolver
             )
         }
     }

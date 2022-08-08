@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 internal class FrameworkBuilder(
         private val clangModule: SXClangModule,
         private val target: KonanTarget,
-        private val framework: File,
+        private val frameworkDirectory: File,
         private val frameworkName: String,
         private val exportKDoc: Boolean,
 ) {
@@ -22,9 +22,9 @@ internal class FrameworkBuilder(
         val frameworkContents = when (target.family) {
             Family.IOS,
             Family.WATCHOS,
-            Family.TVOS -> framework
+            Family.TVOS -> frameworkDirectory
 
-            Family.OSX -> framework.child("Versions/A")
+            Family.OSX -> frameworkDirectory.child("Versions/A")
             else -> error(target)
         }
 
@@ -53,9 +53,9 @@ internal class FrameworkBuilder(
         val infoPlistContents = infoPListBuilder.build(frameworkName)
         infoPlistFile.writeBytes(infoPlistContents.toByteArray())
         if (target.family == Family.OSX) {
-            framework.child("Versions/Current").createAsSymlink("A")
+            frameworkDirectory.child("Versions/Current").createAsSymlink("A")
             for (child in listOf(frameworkName, "Headers", "Modules", "Resources")) {
-                framework.child(child).createAsSymlink("Versions/Current/$child")
+                frameworkDirectory.child(child).createAsSymlink("Versions/Current/$child")
             }
         }
     }

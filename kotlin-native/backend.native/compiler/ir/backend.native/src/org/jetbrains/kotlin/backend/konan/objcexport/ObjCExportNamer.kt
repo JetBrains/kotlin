@@ -274,7 +274,7 @@ internal class ObjCExportNamerImpl(
             mapper: ObjCExportMapper,
             topLevelNamePrefix: String,
             local: Boolean,
-            objcGenerics: Boolean = false
+            objcGenerics: Boolean = false,
     ) : this(
             object : ObjCExportNamer.Configuration {
                 override val topLevelNamePrefix: String
