@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.light.classes.symbol.classes.getOrCreateSymbolLightClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-class SymbolFakeFile(private val classOrObject: KtClassOrObject, ktClass: KtLightClass) : FakeFileForLightClass(
+internal class SymbolFakeFile(private val classOrObject: KtClassOrObject, ktClass: KtLightClass) : FakeFileForLightClass(
     classOrObject.containingKtFile,
     { if (classOrObject.isTopLevel()) ktClass else getOrCreateSymbolLightClass(getOutermostClassOrObject(classOrObject))!! },
 ) {
