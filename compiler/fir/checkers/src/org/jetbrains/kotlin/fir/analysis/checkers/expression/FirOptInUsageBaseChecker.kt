@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenProperties
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -69,13 +69,13 @@ object FirOptInUsageBaseChecker {
 
     // Note: receiver is an OptIn marker class and parameter is an annotated member owner class / self class name
     fun FirRegularClassSymbol.loadExperimentalityForMarkerAnnotation(annotatedOwnerClassName: String? = null): Experimentality? {
-        ensureResolved(FirResolvePhase.BODY_RESOLVE)
+        lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
         @OptIn(SymbolInternals::class)
         return fir.loadExperimentalityForMarkerAnnotation(annotatedOwnerClassName)
     }
 
     fun FirBasedSymbol<*>.loadExperimentalitiesFromAnnotationTo(session: FirSession, result: MutableCollection<Experimentality>) {
-        ensureResolved(FirResolvePhase.STATUS)
+        lazyResolveToPhase(FirResolvePhase.STATUS)
         @OptIn(SymbolInternals::class)
         fir.loadExperimentalitiesFromAnnotationTo(session, result)
     }
@@ -133,7 +133,7 @@ object FirOptInUsageBaseChecker {
         fromSetter: Boolean,
         dispatchReceiverType: ConeKotlinType?,
     ): Set<Experimentality> {
-        ensureResolved(FirResolvePhase.STATUS)
+        lazyResolveToPhase(FirResolvePhase.STATUS)
         val fir = this.fir
         if (!visited.add(fir)) return emptySet()
         val result = knownExperimentalities ?: SmartSet.create()
@@ -141,7 +141,7 @@ object FirOptInUsageBaseChecker {
         if (fir is FirCallableDeclaration) {
             val parentClassSymbol = fir.containingClass()?.toSymbol(session) as? FirRegularClassSymbol
             if (fir.isSubstitutionOrIntersectionOverride) {
-                parentClassSymbol?.ensureResolved(FirResolvePhase.STATUS)
+                parentClassSymbol?.lazyResolveToPhase(FirResolvePhase.STATUS)
                 val parentClassScope = parentClassSymbol?.unsubstitutedScope(context)
                 if (this is FirNamedFunctionSymbol) {
                     parentClassScope?.processDirectlyOverriddenFunctions(this) {
@@ -188,7 +188,7 @@ object FirOptInUsageBaseChecker {
             val accessibility = fir.checkSinceKotlinVersionAccessibility(context)
             if (accessibility is FirSinceKotlinAccessibility.NotAccessibleButWasExperimental) {
                 accessibility.markerClasses.forEach {
-                    it.ensureResolved(FirResolvePhase.STATUS)
+                    it.lazyResolveToPhase(FirResolvePhase.STATUS)
                     result.addIfNotNull(it.fir.loadExperimentalityForMarkerAnnotation())
                 }
             }

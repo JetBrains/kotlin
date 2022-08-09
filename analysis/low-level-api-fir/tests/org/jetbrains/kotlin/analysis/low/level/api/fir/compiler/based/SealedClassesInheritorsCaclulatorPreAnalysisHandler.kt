@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSealedClassInheritorsProcessor
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.PreAnalysisHandler
@@ -58,7 +58,7 @@ class SealedClassesInheritorsCaclulatorPreAnalysisHandler(
         firFiles: List<FirFile>,
         tmpFirResolveSession: LLFirResolveSession
     ): Map<ClassId, List<ClassId>> {
-        firFiles.forEach { it.ensureResolved(FirResolvePhase.TYPES) }
+        firFiles.forEach { it.lazyResolveToPhase(FirResolvePhase.TYPES) }
         val inheritorsCollector = FirSealedClassInheritorsProcessor.InheritorsCollector(tmpFirResolveSession.useSiteFirSession)
         val sealedClassInheritorsMap = mutableMapOf<FirRegularClass, MutableList<ClassId>>()
         firFiles.forEach { it.accept(inheritorsCollector, sealedClassInheritorsMap) }

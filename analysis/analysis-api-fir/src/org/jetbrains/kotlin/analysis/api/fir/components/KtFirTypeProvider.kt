@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -66,7 +66,7 @@ internal class KtFirTypeProvider(
 
     override fun buildSelfClassType(symbol: KtNamedClassOrObjectSymbol): KtType {
         require(symbol is KtFirNamedClassOrObjectSymbol)
-        symbol.firSymbol.ensureResolved(FirResolvePhase.SUPER_TYPES)
+        symbol.firSymbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
         val firClass = symbol.firSymbol.fir
         val type = ConeClassLikeTypeImpl(
             firClass.symbol.toLookupTag(),

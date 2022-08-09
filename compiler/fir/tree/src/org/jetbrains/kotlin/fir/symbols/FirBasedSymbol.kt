@@ -41,19 +41,19 @@ abstract class FirBasedSymbol<E : FirDeclaration> {
 
     val resolvedAnnotationsWithArguments: List<FirAnnotation>
         get() {
-            ensureResolved(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
+            lazyResolveToPhase(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
             return fir.annotations
         }
 
     val resolvedAnnotationsWithClassIds: List<FirAnnotation>
         get() {
-            ensureResolved(FirResolvePhase.TYPES)
+            lazyResolveToPhase(FirResolvePhase.TYPES)
             return fir.annotations
         }
 
     val resolvedAnnotationClassIds: List<ClassId>
         get() {
-            ensureResolved(FirResolvePhase.TYPES)
+            lazyResolveToPhase(FirResolvePhase.TYPES)
             return fir.annotations.mapNotNull { (it.annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag?.classId }
         }
 }

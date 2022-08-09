@@ -19,11 +19,11 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
-import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseCheckingPhaseManager
+import org.jetbrains.kotlin.fir.resolve.transformers.FirCompilerLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.registerCommonComponents
 import org.jetbrains.kotlin.fir.session.registerModuleData
-import org.jetbrains.kotlin.fir.symbols.FirPhaseManager
+import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import java.util.concurrent.ConcurrentHashMap
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
                 bindSession(this@session)
             }
             registerIdeComponents(project)
-            register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
+            register(FirLazyDeclarationResolver::class, FirCompilerLazyDeclarationResolver)
             registerCommonComponents(LanguageVersionSettingsImpl.DEFAULT/*TODO*/)
             registerModuleData(moduleData)
 

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visibilityChecker
@@ -432,7 +432,7 @@ internal object MapArguments : ResolutionStage() {
 
 internal object CheckArguments : CheckerStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
-        candidate.symbol.ensureResolved(FirResolvePhase.STATUS)
+        candidate.symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         val argumentMapping =
             candidate.argumentMapping ?: error("Argument should be already mapped while checking arguments!")
         for (argument in callInfo.arguments) {

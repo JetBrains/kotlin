@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.FirPhaseManager
+import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 
-object FirPhaseCheckingPhaseManager : FirPhaseManager() {
-    override fun ensureResolved(symbol: FirBasedSymbol<*>, requiredPhase: FirResolvePhase) {
+/**
+ * Compiler is non-lazy, so it does nothing.
+ */
+object FirCompilerLazyDeclarationResolver : FirLazyDeclarationResolver() {
+    override fun lazyResolveToPhase(symbol: FirBasedSymbol<*>, toPhase: FirResolvePhase) {
     }
 }

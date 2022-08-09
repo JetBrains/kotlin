@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -50,7 +50,7 @@ internal class KtFirImportOptimizer(
     override fun analyseImports(file: KtFile): KtImportOptimizerResult {
         assertIsValidAndAccessible()
 
-        val firFile = file.getOrBuildFirFile(firResolveSession).apply { ensureResolved(FirResolvePhase.BODY_RESOLVE) }
+        val firFile = file.getOrBuildFirFile(firResolveSession).apply { lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE) }
 
         val existingImports = file.importDirectives
 

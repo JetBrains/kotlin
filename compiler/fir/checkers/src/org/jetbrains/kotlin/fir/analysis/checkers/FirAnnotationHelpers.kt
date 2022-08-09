@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolved
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -50,7 +50,7 @@ fun FirAnnotation.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTa
     if (annotationTypeRef is FirErrorTypeRef) return KotlinTarget.values().toSet()
     val annotationClassSymbol = (this.annotationTypeRef.coneType as? ConeClassLikeType)
         ?.fullyExpandedType(session)?.lookupTag?.toSymbol(session) ?: return defaultAnnotationTargets
-    annotationClassSymbol.ensureResolved(FirResolvePhase.BODY_RESOLVE)
+    annotationClassSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
     return annotationClassSymbol.getAllowedAnnotationTargets()
 }
 

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -44,7 +44,7 @@ object FirOptInUsageTypeRefChecker : FirTypeRefChecker() {
         }
 
         val symbol = coneType.lookupTag.toSymbol(context.session) ?: return
-        symbol.ensureResolved(FirResolvePhase.STATUS)
+        symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         val classId = symbol.classId
         val lastAnnotationCall = context.qualifiedAccessOrAnnotationCalls.lastOrNull() as? FirAnnotation
         if (lastAnnotationCall == null || lastAnnotationCall.annotationTypeRef !== typeRef) {
