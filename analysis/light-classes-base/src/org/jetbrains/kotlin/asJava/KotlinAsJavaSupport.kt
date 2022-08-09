@@ -17,11 +17,19 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 
 abstract class KotlinAsJavaSupport {
+    abstract fun getLightClass(classOrObject: KtClassOrObject): KtLightClass?
+
+    abstract fun getLightClassForScript(script: KtScript): KtLightClass?
+
+    abstract fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass>
+
+    abstract fun getFakeLightClass(classOrObject: KtClassOrObject): KtFakeLightClass
+
+    abstract fun createFacadeForSyntheticFile(facadeClassFqName: FqName, file: KtFile): PsiClass
+
+
     // Returns only immediately declared classes/objects, package classes are not included (they have no declarations)
-    abstract fun findClassOrObjectDeclarationsInPackage(
-        packageFqName: FqName,
-        searchScope: GlobalSearchScope
-    ): Collection<KtClassOrObject>
+    abstract fun findClassOrObjectDeclarationsInPackage(packageFqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject>
 
     /*
     * Finds files whose package declaration is exactly {@code fqName}. For example, if a file declares
@@ -38,12 +46,6 @@ abstract class KotlinAsJavaSupport {
 
     abstract fun getSubPackages(fqn: FqName, scope: GlobalSearchScope): Collection<FqName>
 
-    abstract fun getLightClass(classOrObject: KtClassOrObject): KtLightClass?
-
-    abstract fun getLightClassForScript(script: KtScript): KtLightClass?
-
-    abstract fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass>
-
     abstract fun getScriptClasses(scriptFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass>
 
     abstract fun getKotlinInternalClasses(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass>
@@ -54,17 +56,10 @@ abstract class KotlinAsJavaSupport {
 
     abstract fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<KtFile>
 
-    abstract fun getFakeLightClass(classOrObject: KtClassOrObject): KtFakeLightClass
-
-    abstract fun createFacadeForSyntheticFile(facadeClassFqName: FqName, file: KtFile): PsiClass
-
     companion object {
         @JvmStatic
         fun getInstance(project: Project): KotlinAsJavaSupport {
-            return ServiceManager.getService(
-                project,
-                KotlinAsJavaSupport::class.java
-            )
+            return ServiceManager.getService(project, KotlinAsJavaSupport::class.java)
         }
     }
 }
