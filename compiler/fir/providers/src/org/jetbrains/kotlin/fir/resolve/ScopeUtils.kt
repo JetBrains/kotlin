@@ -119,10 +119,10 @@ fun ClassId.defaultType(parameters: List<FirTypeParameterSymbol>): ConeClassLike
         isNullable = false,
     )
 
-fun FirClass.typeWithStarProjections(): ConeClassLikeType =
+fun FirClassSymbol<*>.typeWithStarProjections(): ConeClassLikeType =
     ConeClassLikeTypeImpl(
-        symbol.toLookupTag(),
-        typeParameters.map { ConeStarProjection }.toTypedArray(),
+        this.toLookupTag(),
+        typeParameterSymbols.map { ConeStarProjection }.toTypedArray(),
         isNullable = false
     )
 
