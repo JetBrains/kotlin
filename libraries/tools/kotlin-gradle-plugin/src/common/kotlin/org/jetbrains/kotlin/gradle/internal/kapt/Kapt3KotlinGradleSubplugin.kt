@@ -482,8 +482,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         taskConfig.configureTask {
             it.stubsDir.set(getKaptStubsDir())
             it.destinationDirectory.set(getKaptIncrementalDataDir())
-            val generatedSourcesDirs = listOf(sourcesOutputDir, kotlinSourcesOutputDir)
-            it.exclude { fileElement -> generatedSourcesDirs.any { dir -> dir.isParentOf(fileElement.file) } }
             it.kaptClasspath.from(kaptClasspathConfigurations)
         }
 
