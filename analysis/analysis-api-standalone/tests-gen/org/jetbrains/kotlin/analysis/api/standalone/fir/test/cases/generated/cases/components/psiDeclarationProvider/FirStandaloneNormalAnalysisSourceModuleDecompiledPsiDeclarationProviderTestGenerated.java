@@ -47,6 +47,18 @@ public class FirStandaloneNormalAnalysisSourceModuleDecompiledPsiDeclarationProv
     }
 
     @Test
+    @TestMetadata("capitalize_default.kt")
+    public void testCapitalize_default() throws Exception {
+        runTest("analysis/analysis-api/testData/standalone/singleModule/capitalize_default.kt");
+    }
+
+    @Test
+    @TestMetadata("capitalize_locale.kt")
+    public void testCapitalize_locale() throws Exception {
+        runTest("analysis/analysis-api/testData/standalone/singleModule/capitalize_locale.kt");
+    }
+
+    @Test
     @TestMetadata("multipleFiles.kt")
     public void testMultipleFiles() throws Exception {
         runTest("analysis/analysis-api/testData/standalone/singleModule/multipleFiles.kt");
