@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.test.frontend.fir
+package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
