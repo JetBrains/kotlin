@@ -116,6 +116,15 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
         return rootProject.locateOrRegisterTask(
             "commonizeNativeDistribution",
             invokeWhenRegistered = {
+                /**
+                 * https://github.com/gradle/gradle/issues/13252
+                 * https://github.com/gradle/gradle/issues/20145
+                 * https://youtrack.jetbrains.com/issue/KT-51583
+                 */
+                if (rootProject.plugins.findPlugin("jvm-ecosystem") == null) {
+                    rootProject.plugins.apply("jvm-ecosystem")
+                }
+
                 commonizeTask.dependsOn(this)
                 rootProject.commonizeTask.dependsOn(this)
                 cleanNativeDistributionCommonizerTask
