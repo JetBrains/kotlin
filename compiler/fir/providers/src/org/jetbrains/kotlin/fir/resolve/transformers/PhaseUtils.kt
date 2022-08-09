@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -21,8 +21,8 @@ fun ConeKotlinType.ensureResolvedTypeDeclaration(
 ) {
     if (this !is ConeClassLikeType) return
 
-    lookupTag.toSymbol(useSiteSession)?.ensureResolved(requiredPhase)
-    fullyExpandedType(useSiteSession).lookupTag.toSymbol(useSiteSession)?.ensureResolved(requiredPhase)
+    lookupTag.toSymbol(useSiteSession)?.lazyResolveToPhase(requiredPhase)
+    fullyExpandedType(useSiteSession).lookupTag.toSymbol(useSiteSession)?.lazyResolveToPhase(requiredPhase)
 }
 
 fun FirTypeRef.ensureResolvedTypeDeclaration(

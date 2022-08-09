@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.PACKAGE_MEMBER
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.util.ListMultimap
@@ -83,7 +83,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
             conflictingFile: FirFile?,
             session: FirSession
         ) {
-            conflictingSymbol.ensureResolved(FirResolvePhase.STATUS)
+            conflictingSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
             @OptIn(SymbolInternals::class)
             val conflicting = conflictingSymbol.fir
             if (declaration.moduleData != conflicting.moduleData) return
@@ -130,7 +130,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                             )
                         }
                         packageMemberScope.processClassifiersByNameWithSubstitution(declarationName) { symbol, _ ->
-                            symbol.ensureResolved(FirResolvePhase.STATUS)
+                            symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
                             @OptIn(SymbolInternals::class)
                             val classWithSameName = symbol.fir as? FirRegularClass
                             classWithSameName?.onConstructors { constructor ->

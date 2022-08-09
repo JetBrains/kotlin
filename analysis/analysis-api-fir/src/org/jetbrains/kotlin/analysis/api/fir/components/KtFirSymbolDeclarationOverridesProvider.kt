@@ -18,10 +18,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionOverrideFunctionSymbol
@@ -113,7 +112,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
         callableSymbol: KtFirSymbol<*>,
         crossinline process: (FirTypeScope, FirDeclaration) -> Unit
     ) {
-        containingDeclaration.firSymbol.ensureResolved(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+        containingDeclaration.firSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
         val firContainer = containingDeclaration.firSymbol.fir
         val firCallableDeclaration = callableSymbol.firSymbol.fir
 
@@ -154,7 +153,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
         require(superClass is KtFirSymbol<*>)
 
         if (subClass == superClass) return false
-        subClass.firSymbol.ensureResolved(FirResolvePhase.SUPER_TYPES)
+        subClass.firSymbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
         return isSubClassOf(
             subClass = subClass.firSymbol.fir as FirClass,
             superClass = superClass.firSymbol.fir as FirClass,
@@ -169,7 +168,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
         if (!checkDeep) return false
         subClass.superConeTypes.forEach { superType ->
             val superOfSub = superType.toRegularClassSymbol(rootModuleSession) ?: return@forEach
-            superOfSub.ensureResolved(FirResolvePhase.SUPER_TYPES)
+            superOfSub.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
             if (isSubClassOf(superOfSub.fir, superClass, checkDeep = true)) return true
         }
         return false

@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.symbols.FirPhaseManager
+import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidator
 
 @ThreadSafeMutableState
-internal class LLFirPhaseManager(private val sessionInvalidator: LLFirSessionInvalidator) : FirPhaseManager() {
-    override fun ensureResolved(symbol: FirBasedSymbol<*>, requiredPhase: FirResolvePhase) {
+internal class LLFirLazyDeclarationResolver(private val sessionInvalidator: LLFirSessionInvalidator) : FirLazyDeclarationResolver() {
+    override fun lazyResolveToPhase(symbol: FirBasedSymbol<*>, toPhase: FirResolvePhase) {
         val fir = symbol.fir
         val session = fir.moduleData.session
         if (session !is LLFirResolvableModuleSession) return
@@ -23,7 +23,7 @@ internal class LLFirPhaseManager(private val sessionInvalidator: LLFirSessionInv
             moduleComponents.lazyFirDeclarationsResolver.lazyResolveDeclaration(
                 firDeclarationToResolve = fir,
                 scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
-                toPhase = requiredPhase,
+                toPhase = toPhase,
                 checkPCE = true,
             )
         } catch (e: Throwable) {

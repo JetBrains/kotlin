@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens.QUEST
@@ -75,7 +75,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
         // TODO: differentiate RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS
         if (argument.typeArguments.isNotEmpty() && !argument.typeRef.coneType.isAllowedInClassLiteral(context)) {
             val symbol = argument.symbol
-            symbol?.ensureResolved(FirResolvePhase.TYPES)
+            symbol?.lazyResolveToPhase(FirResolvePhase.TYPES)
             @OptIn(SymbolInternals::class)
             val typeParameters = (symbol?.fir as? FirTypeParameterRefsOwner)?.typeParameters
             // Among type parameter references, only count actual type parameter while discarding [FirOuterClassTypeParameterRef]

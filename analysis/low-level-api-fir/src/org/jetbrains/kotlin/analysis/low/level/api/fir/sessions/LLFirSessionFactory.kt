@@ -10,7 +10,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseManager
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.registerIdeComponents
@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
-import org.jetbrains.kotlin.fir.symbols.FirPhaseManager
+import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
@@ -101,7 +101,7 @@ internal object LLFirSessionFactory {
             )
 
             register(FirProvider::class, provider)
-            register(FirPhaseManager::class, LLFirPhaseManager(sessionInvalidator))
+            register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver(sessionInvalidator))
 
             registerCompilerPluginServices(contentScope, project, module)
             registerCompilerPluginExtensions(project, module)
@@ -206,7 +206,7 @@ internal object LLFirSessionFactory {
 
             register(FirProvider::class, provider)
 
-            register(FirPhaseManager::class, LLFirPhaseManager(sessionInvalidator))
+            register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver(sessionInvalidator))
 
             // We need FirRegisteredPluginAnnotations during extensions' registration process
             val annotationsResolver = project.createAnnotationResolver(contentScope)

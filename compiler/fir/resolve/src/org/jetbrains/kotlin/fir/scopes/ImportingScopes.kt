@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.scopes.impl.*
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.FqName
 
 private val ALL_IMPORTS = scopeSessionKey<FirFile, ListStorageFirScope>()
@@ -39,7 +39,7 @@ private fun doCreateImportingScopes(
     session: FirSession,
     scopeSession: ScopeSession
 ): List<FirScope> {
-    file.ensureResolved(FirResolvePhase.IMPORTS)
+    file.lazyResolveToPhase(FirResolvePhase.IMPORTS)
     val excludedImportNames =
         file.imports.filter { it.aliasName != null }.mapNotNullTo(hashSetOf()) { it.importedFqName }.ifEmpty { emptySet() }
     return listOf(

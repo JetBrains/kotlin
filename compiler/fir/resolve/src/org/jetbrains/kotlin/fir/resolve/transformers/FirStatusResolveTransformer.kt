@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -167,7 +167,7 @@ open class FirDesignatedStatusResolveTransformer(
         data: FirResolvedDeclarationStatus?
     ): FirStatement {
         if (shouldSkipClass(regularClass)) return regularClass
-        regularClass.symbol.ensureResolved(FirResolvePhase.TYPES)
+        regularClass.symbol.lazyResolveToPhase(FirResolvePhase.TYPES)
         val classLocated = this.classLocated
         /*
          * In designated status resolve we should resolve status only of target class and it's members
@@ -383,7 +383,7 @@ abstract class AbstractFirStatusResolveTransformer(
 
     private fun forceResolveStatusOfCorrespondingClass(typeRef: FirTypeRef) {
         val superClassSymbol = typeRef.coneType.toSymbol(session)
-        superClassSymbol?.ensureResolved(FirResolvePhase.SUPER_TYPES)
+        superClassSymbol?.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
         when (superClassSymbol) {
             is FirRegularClassSymbol -> forceResolveStatusesOfClass(superClassSymbol.fir)
             is FirTypeAliasSymbol -> forceResolveStatusOfCorrespondingClass(superClassSymbol.fir.expandedTypeRef)
@@ -487,12 +487,12 @@ abstract class AbstractFirStatusResolveTransformer(
         val overridden = statusResolver.getOverriddenProperties(property, containingClass)
 
         val overriddenProperties = overridden.map {
-            it.ensureResolved(FirResolvePhase.STATUS)
+            it.lazyResolveToPhase(FirResolvePhase.STATUS)
             it.status as FirResolvedDeclarationStatus
         }
 
         val overriddenSetters = overridden.mapNotNull {
-            it.setter?.ensureResolved(FirResolvePhase.STATUS)
+            it.setter?.lazyResolveToPhase(FirResolvePhase.STATUS)
             it.setter?.status as? FirResolvedDeclarationStatus
         }
 

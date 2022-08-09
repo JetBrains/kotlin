@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visibilityChecker
@@ -160,7 +160,7 @@ object FirOverrideChecker : FirClassChecker() {
         val containingDeclarations = context.containingDeclarations + containingClass
         val visibilityChecker = context.session.visibilityChecker
         val hasVisibleBase = overriddenSymbols.any {
-            it.ensureResolved(FirResolvePhase.STATUS)
+            it.lazyResolveToPhase(FirResolvePhase.STATUS)
             @OptIn(SymbolInternals::class)
             val fir = it.fir
             visibilityChecker.isVisible(

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirQualifierResolverImpl
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeResolverImpl
-import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseCheckingPhaseManager
+import org.jetbrains.kotlin.fir.resolve.transformers.FirCompilerLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClassIndex
 import org.jetbrains.kotlin.fir.scopes.FirOverrideService
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirDynamicMembersStorage
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntersectionOverrideStorage
 import org.jetbrains.kotlin.fir.scopes.impl.FirSubstitutionOverrideStorage
-import org.jetbrains.kotlin.fir.symbols.FirPhaseManager
+import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 import org.jetbrains.kotlin.fir.types.TypeComponents
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
@@ -70,7 +70,7 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
 fun FirSession.registerCliCompilerOnlyComponents() {
     register(FirCachesFactory::class, FirThreadUnsafeCachesFactory)
     register(SealedClassInheritorsProvider::class, SealedClassInheritorsProviderImpl)
-    register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
+    register(FirLazyDeclarationResolver::class, FirCompilerLazyDeclarationResolver)
 
     register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotationsImpl(this))
     register(FirPredicateBasedProvider::class, FirPredicateBasedProviderImpl(this))

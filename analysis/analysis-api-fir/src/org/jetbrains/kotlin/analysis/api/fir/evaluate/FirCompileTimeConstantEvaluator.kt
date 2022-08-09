@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
@@ -68,7 +68,7 @@ internal object FirCompileTimeConstantEvaluator {
             mode == KtConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION && !isConst -> null
             isVal && hasInitializer -> {
                 // NB: the initializer could be [FirLazyExpression] in [BodyBuildingMode.LAZY_BODIES].
-                this.ensureResolved(FirResolvePhase.BODY_RESOLVE) // to unwrap lazy body
+                this.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE) // to unwrap lazy body
                 evaluate(fir.initializer, mode)
             }
             else -> null

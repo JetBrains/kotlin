@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.isExtension
@@ -100,7 +100,7 @@ internal class KtFirKotlinPropertySymbol(
     // NB: `field` in accessors indicates the property should have a backing field. To see that, though, we need BODY_RESOLVE.
     override val hasBackingField: Boolean
         get() = withValidityAssertion {
-            firSymbol.ensureResolved(FirResolvePhase.BODY_RESOLVE)
+            firSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             firSymbol.fir.hasBackingField
         }
     override val isLateInit: Boolean get() = withValidityAssertion { firSymbol.isLateInit }
