@@ -132,29 +132,6 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
     }
 
     @Test
-    override fun testImpactComputation_SupertypesInheritors() {
-        val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testImpactComputation_SupertypesInheritors/src"), tmpDir)
-        Changes(
-            lookupSymbols = setOf(
-                LookupSymbol(name = "changedProperty", scope = "com.example.ChangedSuperClass"),
-                LookupSymbol(name = "changedProperty", scope = "com.example.SubClassOfChangedSuperClass"),
-                LookupSymbol(name = "changedProperty", scope = "com.example.SubSubClassOfChangedSuperClass"),
-                LookupSymbol(name = "changedFunction", scope = "com.example.ChangedSuperClass"),
-                LookupSymbol(name = "changedFunction", scope = "com.example.SubClassOfChangedSuperClass"),
-                LookupSymbol(name = "changedFunction", scope = "com.example.SubSubClassOfChangedSuperClass"),
-                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.ChangedSuperClass"),
-                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SubClassOfChangedSuperClass"),
-                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SubSubClassOfChangedSuperClass")
-            ),
-            fqNames = setOf(
-                "com.example.ChangedSuperClass",
-                "com.example.SubClassOfChangedSuperClass",
-                "com.example.SubSubClassOfChangedSuperClass"
-            )
-        ).assertEquals(changes)
-    }
-
-    @Test
     fun testTopLevelMembers() {
         val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testTopLevelMembers/src"), tmpDir)
         Changes(
@@ -232,6 +209,53 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
             fqNames = setOf(
                 "com.example.SomeClass",
                 "com.example.SomeClass.CompanionObject",
+            )
+        ).assertEquals(changes)
+    }
+
+    /** Tests [SupertypesInheritorsImpact]. */
+    @Test
+    override fun testImpactComputation_SupertypesInheritors() {
+        val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testImpactComputation_SupertypesInheritors/src"), tmpDir)
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "changedProperty", scope = "com.example.ChangedSuperClass"),
+                LookupSymbol(name = "changedProperty", scope = "com.example.SubClassOfChangedSuperClass"),
+                LookupSymbol(name = "changedProperty", scope = "com.example.SubSubClassOfChangedSuperClass"),
+                LookupSymbol(name = "changedFunction", scope = "com.example.ChangedSuperClass"),
+                LookupSymbol(name = "changedFunction", scope = "com.example.SubClassOfChangedSuperClass"),
+                LookupSymbol(name = "changedFunction", scope = "com.example.SubSubClassOfChangedSuperClass"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.ChangedSuperClass"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SubClassOfChangedSuperClass"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SubSubClassOfChangedSuperClass")
+            ),
+            fqNames = setOf(
+                "com.example.ChangedSuperClass",
+                "com.example.SubClassOfChangedSuperClass",
+                "com.example.SubSubClassOfChangedSuperClass"
+            )
+        ).assertEquals(changes)
+    }
+
+    /**
+     * Tests [ConstantsInCompanionObjectsImpact].
+     *
+     * Note that this test is slightly different from [testConstantsAndInlineFunctions]: In [testConstantsAndInlineFunctions], the companion
+     * object's .class file changes, whereas in this test, the companion object's .class file does not change because we want to test that
+     * the companion object is unchanged but *impacted* by the change in the .class file of the companion object's outer class.
+     */
+    @Test
+    fun testImpactComputation_ConstantsInCompanionObjects() {
+        val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testImpactComputation_ConstantsInCompanionObjects/src"), tmpDir)
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "constantChangedValue", scope = "com.example.SomeClass"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SomeClass"),
+                LookupSymbol(name = "constantChangedValue", scope = "com.example.SomeClass.CompanionObject"),
+            ),
+            fqNames = setOf(
+                "com.example.SomeClass",
+                "com.example.SomeClass.CompanionObject"
             )
         ).assertEquals(changes)
     }
