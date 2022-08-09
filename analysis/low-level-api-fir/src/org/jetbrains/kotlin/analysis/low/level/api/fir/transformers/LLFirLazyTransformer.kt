@@ -17,11 +17,44 @@ internal interface LLFirLazyTransformer {
 
     fun checkIsResolved(declaration: FirDeclaration)
 
-    fun checkIsResolvedDeep(declaration: FirDeclaration) {
-        if (!enableDeepEnsure) return
-        checkIsResolved(declaration)
-        if (declaration is FirRegularClass) {
-            declaration.declarations.forEach(::checkIsResolvedDeep)
+    fun checkNestedDeclarationsAreResolved(declaration: FirDeclaration) {
+        checkFunctionParametersAreResolved(declaration)
+        checkPropertyAccessorsAreResolved(declaration)
+        checkClassMembersAreResolved(declaration)
+    }
+
+    fun checkClassMembersAreResolved(declaration: FirDeclaration) {
+        if (!needCheckingIfClassMembersAreResolved) return
+        if (declaration is FirClass) {
+            for (member in declaration.declarations) {
+                checkClassMembersAreResolved(member)
+            }
+        }
+    }
+
+    fun checkPropertyAccessorsAreResolved(declaration: FirDeclaration) {
+        if (declaration is FirProperty) {
+            declaration.getter?.let { checkIsResolved(it) }
+            declaration.setter?.let { checkIsResolved(it) }
+        }
+    }
+
+
+    fun checkFunctionParametersAreResolved(declaration: FirDeclaration) {
+        if (declaration is FirFunction) {
+            for (parameter in declaration.valueParameters) {
+                checkIsResolved(parameter)
+            }
+        }
+    }
+
+    fun checkTypeParametersAreResolved(declaration: FirDeclaration) {
+        if (declaration is FirTypeParameterRefsOwner) {
+            for (parameter in declaration.typeParameters) {
+                if (parameter is FirTypeParameter) {
+                    checkIsResolved(parameter)
+                }
+            }
         }
     }
 
@@ -40,7 +73,7 @@ internal interface LLFirLazyTransformer {
             if (element.resolvePhase >= newPhase) return
             element.replaceResolvePhase(newPhase)
 
-            if (element is FirCallableDeclaration) {
+            if (element is FirTypeParameterRefsOwner) {
                 element.typeParameters.forEach { typeParameter ->
                     // if it is not a type parameter of outer declaration
                     if (typeParameter is FirTypeParameter) {
@@ -74,7 +107,7 @@ internal interface LLFirLazyTransformer {
             }
         }
 
-        internal var enableDeepEnsure: Boolean = false
+        internal var needCheckingIfClassMembersAreResolved: Boolean = false
             @TestOnly set
 
         val DUMMY = object : LLFirLazyTransformer {

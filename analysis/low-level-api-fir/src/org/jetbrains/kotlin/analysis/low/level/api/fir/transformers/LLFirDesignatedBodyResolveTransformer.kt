@@ -63,21 +63,11 @@ internal class LLFirDesignatedBodyResolveTransformer(
         ideDeclarationTransformer.ensureDesignationPassed()
         updatePhaseDeep(designation.declaration, FirResolvePhase.BODY_RESOLVE, withNonLocalDeclarations = true)
         checkIsResolved(designation.declaration)
-        checkIsResolvedDeep(designation.declaration)
     }
 
     override fun checkIsResolved(declaration: FirDeclaration) {
-        when (declaration) {
-            is FirSimpleFunction, is FirConstructor, is FirTypeAlias, is FirField, is FirAnonymousInitializer ->
-                declaration.checkPhase(FirResolvePhase.BODY_RESOLVE)
-            is FirProperty -> {
-                declaration.checkPhase(FirResolvePhase.BODY_RESOLVE)
-//                declaration.getter?.ensurePhase(FirResolvePhase.BODY_RESOLVE)
-//                declaration.setter?.ensurePhase(FirResolvePhase.BODY_RESOLVE)
-            }
-            is FirEnumEntry, is FirClass -> Unit
-            else -> error("Unexpected type: ${declaration::class.simpleName}")
-        }
+        declaration.checkPhase(FirResolvePhase.BODY_RESOLVE)
+        checkNestedDeclarationsAreResolved(declaration)
     }
 }
 
