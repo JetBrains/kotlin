@@ -192,7 +192,8 @@ class PostponedArgumentsAnalyzer(
                     checkerSink,
                     context = resolutionContext,
                     isReceiver = false,
-                    isDispatch = false
+                    isDispatch = false,
+                    hasBuilderInferenceAnnotation = false
                 )
             }
         }
@@ -251,6 +252,7 @@ fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
         expectedTypeRef,
         context,
         sink = null,
+        hasBuilderInferenceAnnotation = false,
         duringCompletion = true,
         returnTypeVariable = returnTypeVariable
     ) as ResolvedLambdaAtom

@@ -21,6 +21,7 @@ fun extractLambdaInfoFromFunctionalType(
     returnTypeVariable: ConeTypeVariableForLambdaReturnType?,
     components: BodyResolveComponents,
     candidate: Candidate?,
+    hasBuilderInferenceAnnotation: Boolean,
     duringCompletion: Boolean,
 ): ResolvedLambdaAtom? {
     val session = components.session
@@ -33,6 +34,7 @@ fun extractLambdaInfoFromFunctionalType(
             returnTypeVariable,
             components,
             candidate,
+            hasBuilderInferenceAnnotation,
             duringCompletion
         )
     }
@@ -107,6 +109,7 @@ fun extractLambdaInfoFromFunctionalType(
         returnType,
         typeVariableForLambdaReturnType = returnTypeVariable,
         candidate,
-        coerceFirstParameterToExtensionReceiver
+        coerceFirstParameterToExtensionReceiver,
+        hasBuilderInferenceAnnotation
     )
 }

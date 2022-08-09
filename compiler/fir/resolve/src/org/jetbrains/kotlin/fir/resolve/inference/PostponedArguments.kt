@@ -30,6 +30,7 @@ fun Candidate.preprocessLambdaArgument(
     expectedTypeRef: FirTypeRef?,
     context: ResolutionContext,
     sink: CheckerSink?,
+    hasBuilderInferenceAnnotation: Boolean,
     duringCompletion: Boolean = false,
     returnTypeVariable: ConeTypeVariableForLambdaReturnType? = null
 ): PostponedResolvedAtom {
@@ -57,7 +58,8 @@ fun Candidate.preprocessLambdaArgument(
             returnTypeVariable,
             context.bodyResolveComponents,
             this,
-            duringCompletion || sink == null
+            hasBuilderInferenceAnnotation,
+            duringCompletion = duringCompletion || sink == null
         ) ?: extractLambdaInfo(expectedType, anonymousFunction, csBuilder, context.session, this)
 
     if (expectedType != null) {
@@ -142,6 +144,7 @@ private fun extractLambdaInfo(
         returnType,
         typeVariable.takeIf { newTypeVariableUsed },
         candidate,
-        coerceFirstParameterToExtensionReceiver = false
+        coerceFirstParameterToExtensionReceiver = false,
+        hasBuilderInferenceAnnotation = false
     )
 }

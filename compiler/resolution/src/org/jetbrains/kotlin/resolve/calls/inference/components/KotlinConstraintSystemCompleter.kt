@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -215,8 +216,13 @@ class KotlinConstraintSystemCompleter(
         if (!useBuilderInferenceOnlyIfNeeded) return false
 
         val lambdaArguments = postponedArguments.filterIsInstance<ResolvedLambdaAtom>().takeIf { it.isNotEmpty() } ?: return false
+
+        fun ResolvedLambdaAtom.notFixedInputTypeVariables(): List<TypeVariableTypeConstructorMarker> =
+            inputTypes.flatMap { it.extractTypeVariables() }.filter { it !in fixedTypeVariables }
+
         val useBuilderInferenceWithoutAnnotation =
-            languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceWithoutAnnotation)
+            languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceWithoutAnnotation) &&
+                    (lambdaArguments.size < 2 || lambdaArguments.count { it.notFixedInputTypeVariables().isNotEmpty() } < 2)
 
         val builder = getBuilder()
         for (argument in lambdaArguments) {
@@ -224,9 +230,7 @@ class KotlinConstraintSystemCompleter(
                 if (!useBuilderInferenceWithoutAnnotation) continue
             }
 
-            val notFixedInputTypeVariables = argument.inputTypes
-                .flatMap { it.extractTypeVariables() }.filter { it !in fixedTypeVariables }
-
+            val notFixedInputTypeVariables = argument.notFixedInputTypeVariables()
             if (notFixedInputTypeVariables.isEmpty()) continue
 
             for (variable in notFixedInputTypeVariables) {
