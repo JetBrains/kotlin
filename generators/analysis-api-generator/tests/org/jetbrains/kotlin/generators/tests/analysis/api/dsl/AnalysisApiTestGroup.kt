@@ -93,14 +93,14 @@ private fun getTestNameSuffix(data: AnalysisApiTestConfiguratorFactoryData): Str
 private fun getPackageName(data: AnalysisApiTestConfiguratorFactoryData, testClass: KClass<*>): String {
     val basePrefix = buildString {
         append("org.jetbrains.kotlin.analysis.api.")
-        if (data.analysisApiMode ==AnalysisApiMode.Standalone) {
+        if (data.analysisApiMode == AnalysisApiMode.Standalone) {
             append("standalone.")
         }
         append(data.frontend.suffix.lowercase())
         append(".test.cases.generated")
     }
-    val packagePrefix = testClass.java.name
-        .substringAfter("org.jetbrains.kotlin.analysis.api.impl.base.test.")
+    val packagePrefix = "cases." + testClass.java.name
+        .substringAfter("test.cases.")
         .substringBeforeLast('.', "")
 
     return if (packagePrefix.isEmpty()) "$basePrefix." else "$basePrefix.$packagePrefix."

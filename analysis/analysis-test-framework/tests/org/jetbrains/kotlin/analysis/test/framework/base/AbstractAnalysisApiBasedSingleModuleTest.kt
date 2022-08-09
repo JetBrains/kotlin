@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.base
 
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.util.Computable
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestModuleStructure

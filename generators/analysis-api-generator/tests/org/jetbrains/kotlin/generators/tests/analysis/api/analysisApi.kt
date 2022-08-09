@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSy
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByPsiTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAnalysisApiSubstitutorsTest
+import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractDecompiledPsiDeclarationProviderTest
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
@@ -135,6 +136,12 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
     group("substitutors", filter = frontendIs(FrontendKind.Fir)) {
         test(AbstractAnalysisApiSubstitutorsTest::class) {
             model("typeSubstitution")
+        }
+    }
+
+    group("standalone", filter = analysisApiModeIs(AnalysisApiMode.Standalone)) {
+        test(AbstractDecompiledPsiDeclarationProviderTest::class) {
+            model("singleModule")
         }
     }
 }
