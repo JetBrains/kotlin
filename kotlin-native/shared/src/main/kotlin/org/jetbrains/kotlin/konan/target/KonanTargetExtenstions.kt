@@ -5,7 +5,33 @@
 
 package org.jetbrains.kotlin.konan.target
 
-// TODO: This all needs to go to konan.properties
+enum class BinaryFormat {
+    ELF,
+    PE_COFF,
+    MACH_O
+}
+
+fun KonanTarget.binaryFormat() = when (family) {
+    Family.WATCHOS -> BinaryFormat.MACH_O
+    Family.IOS -> BinaryFormat.MACH_O
+    Family.TVOS -> BinaryFormat.MACH_O
+    Family.OSX -> BinaryFormat.MACH_O
+    Family.ANDROID -> BinaryFormat.ELF
+    Family.LINUX -> BinaryFormat.ELF
+    Family.MINGW -> BinaryFormat.PE_COFF
+    Family.WASM, Family.ZEPHYR -> null
+}
+
+fun KonanTarget.pointerBits() = when (architecture) {
+    Architecture.X64 -> 64
+    Architecture.X86 -> 32
+    Architecture.ARM64 -> if (this == KonanTarget.WATCHOS_ARM64) 32 else 64
+    Architecture.ARM32 -> 32
+    Architecture.MIPS32 -> 32
+    Architecture.MIPSEL32 -> 32
+    Architecture.WASM32 -> 32
+}
+
 
 fun KonanTarget.supportsCodeCoverage(): Boolean =
         // TODO: Disabled for now, because we don't support
@@ -46,13 +72,71 @@ fun KonanTarget.supportsCoreSymbolication(): Boolean =
                 KonanTarget.WATCHOS_X86, KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_SIMULATOR_ARM64
         )
 
+fun KonanTarget.supportsGccUnwind(): Boolean = family == Family.ANDROID || family == Family.LINUX || family == Family.MINGW
 
-fun KonanTarget.supportsThreads(): Boolean =
-     when(this) {
-        is KonanTarget.WASM32 -> false
-        is KonanTarget.ZEPHYR -> false
-        else -> true
-     }
+
+fun KonanTarget.supportsThreads(): Boolean = when(this) {
+    is KonanTarget.WASM32 -> false
+    is KonanTarget.ZEPHYR -> false
+    else -> true
+}
+
+fun KonanTarget.supportsExceptions(): Boolean = when(this) {
+    is KonanTarget.WASM32 -> false
+    is KonanTarget.ZEPHYR -> false
+    else -> true
+}
+
+fun KonanTarget.suportsMemMem(): Boolean = when (this) {
+    is KonanTarget.WASM32 -> false
+    is KonanTarget.MINGW_X86 -> false
+    is KonanTarget.MINGW_X64 -> false
+    is KonanTarget.ZEPHYR -> false
+    else -> true
+}
+
+fun KonanTarget.supportsObjcInterop(): Boolean = family.isAppleFamily
+fun KonanTarget.hasFoundationFramework(): Boolean = family.isAppleFamily
+fun KonanTarget.hasUIKitFramework(): Boolean = family == Family.IOS || family == Family.TVOS
+fun KonanTarget.supports64BitMulOverflow(): Boolean = when (this) {
+    is KonanTarget.MINGW_X86 -> false
+    is KonanTarget.LINUX_ARM32_HFP -> false
+    is KonanTarget.LINUX_MIPS32 -> false
+    is KonanTarget.LINUX_MIPSEL32 -> false
+    is KonanTarget.WASM32 -> false
+    is KonanTarget.ZEPHYR -> false
+    is KonanTarget.ANDROID_ARM32 -> false
+    is KonanTarget.ANDROID_X86 -> false
+    else -> true
+}
+
+fun KonanTarget.supportsIosCrashLog(): Boolean = when (this) {
+    KonanTarget.IOS_ARM32 -> true
+    KonanTarget.IOS_ARM64 -> true
+    KonanTarget.WATCHOS_ARM32 -> true
+    KonanTarget.WATCHOS_ARM64 -> true
+    KonanTarget.TVOS_ARM64 -> true
+    else -> false
+}
+
+/*
+ * While not 100% correct here, using atomic ops on iOS armv7 requires 8 byte alignment,
+ * and general ABI requires 4-byte alignment on 64-bit long fields as mentioned in
+ * https://developer.apple.com/library/archive/documentation/Xcode/Conceptual/iPhoneOSABIReference/Articles/ARMv6FunctionCallingConventions.html#//apple_ref/doc/uid/TP40009021-SW1
+ * See https://github.com/ktorio/ktor/issues/941 for the context.
+ * TODO: reconsider once target MIPS can do proper 64-bit load/store/CAS.
+ */
+fun KonanTarget.supports64BitAtomics(): Boolean = when (architecture) {
+    Architecture.ARM32, Architecture.WASM32, Architecture.MIPS32, Architecture.MIPSEL32 -> false
+    Architecture.X86, Architecture.ARM64, Architecture.X64 -> true
+} && this != KonanTarget.WATCHOS_ARM64 && this != KonanTarget.WATCHOS_X86
+
+fun KonanTarget.supportsUnalignedAccess(): Boolean = when (architecture) {
+    Architecture.ARM32, Architecture.WASM32, Architecture.MIPS32, Architecture.MIPSEL32 -> false
+    Architecture.X86, Architecture.ARM64, Architecture.X64 -> true
+} && this != KonanTarget.WATCHOS_ARM64
+
+fun KonanTarget.needSmallBinary() = (architecture == Architecture.ARM32 && family.isAppleFamily) || this == KonanTarget.WATCHOS_ARM64
 
 fun KonanTarget.supportedSanitizers(): List<SanitizerKind> =
     when(this) {
@@ -65,9 +149,32 @@ fun KonanTarget.supportedSanitizers(): List<SanitizerKind> =
         else -> listOf()
     }
 
-// should be consistent with KONAN_TARGET_HAS_ADDRESS_DEPENDENCY macro
 fun KonanTarget.hasAddressDependencyInMemoryModel(): Boolean =
      when (this.architecture) {
          Architecture.X86, Architecture.X64, Architecture.ARM32, Architecture.ARM64 -> true
          Architecture.MIPS32, Architecture.MIPSEL32, Architecture.WASM32 -> false
      }
+
+
+// TODO: this is bad function. It should be replaced by capabilities functions like above
+// but two affected targets are too strange, so we postpone it
+fun KonanTarget.customArgsForKonanSources() = when (this) {
+    KonanTarget.WASM32 -> listOf(
+            "KONAN_NO_FFI=1",
+            "KONAN_INTERNAL_DLMALLOC=1",
+            "KONAN_INTERNAL_SNPRINTF=1",
+            "KONAN_INTERNAL_NOW=1",
+            "KONAN_NO_CTORS_SECTION=1",
+            "KONAN_NO_BACKTRACE=1",
+            "KONAN_NO_EXTERNAL_CALLS_CHECKER=1",
+    )
+    is KonanTarget.ZEPHYR -> listOf(
+            "KONAN_NO_FFI=1",
+            "KONAN_NO_MATH=1",
+            "KONAN_INTERNAL_SNPRINTF=1",
+            "KONAN_INTERNAL_NOW=1",
+            "KONAN_NO_CTORS_SECTION=1",
+            "KONAN_NO_BACKTRACE=1"
+    )
+    else -> emptyList()
+}

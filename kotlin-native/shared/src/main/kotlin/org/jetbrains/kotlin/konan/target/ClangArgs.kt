@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed -> in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.konan.target
@@ -45,8 +34,41 @@ sealed class ClangArgs(
     // TODO: Should be dropped in favor of real MSVC target.
     private val argsForWindowsJni = forJni && target == KonanTarget.MINGW_X64
 
-    private val clangArgsSpecificForKonanSources
-        get() = configurables.runtimeDefinitions.map { "-D$it" }
+    private val clangArgsSpecificForKonanSources : List<String>
+        get() {
+            val konanOptions = listOfNotNull(
+                    target.architecture.name.takeIf { target != KonanTarget.WATCHOS_ARM64 },
+                    "ARM32".takeIf { target == KonanTarget.WATCHOS_ARM64 },
+                    target.family.name.takeIf { target.family != Family.MINGW },
+                    "WINDOWS".takeIf { target.family == Family.MINGW },
+                    "MACOSX".takeIf { target.family == Family.OSX },
+
+                    "NO_THREADS".takeUnless { target.supportsThreads() },
+                    "NO_EXCEPTIONS".takeUnless { target.supportsExceptions() },
+                    "NO_MEMMEM".takeUnless { target.suportsMemMem() },
+                    "NO_64BIT_ATOMIC".takeUnless { target.supports64BitAtomics() },
+                    "NO_UNALIGNED_ACCESS".takeUnless { target.supportsUnalignedAccess() },
+                    "FORBID_BUILTIN_MUL_OVERFLOW".takeUnless { target.supports64BitMulOverflow() },
+
+                    "OBJC_INTEROP".takeIf { target.supportsObjcInterop() },
+                    "HAS_FOUNDATION_FRAMEWORK".takeIf { target.hasFoundationFramework() },
+                    "HAS_UIKIT_FRAMEWORK".takeIf { target.hasUIKitFramework() },
+                    "REPORT_BACKTRACE_TO_IOS_CRASH_LOG".takeIf { target.supportsIosCrashLog() },
+                    "NEAD_SMALL_BINARY".takeIf { target.needSmallBinary() },
+                    "TARGET_HAS_ADDRESS_DEPENDENCY".takeIf { target.hasAddressDependencyInMemoryModel() },
+            ).map { "KONAN_$it=1" }
+            val otherOptions = listOfNotNull(
+                    "USE_ELF_SYMBOLS=1".takeIf { target.binaryFormat() == BinaryFormat.ELF },
+                    "ELFSIZE=${target.pointerBits()}".takeIf { target.binaryFormat() == BinaryFormat.ELF },
+                    "MACHSIZE=${target.pointerBits()}".takeIf { target.binaryFormat() == BinaryFormat.MACH_O },
+                    "__ANDROID__".takeIf { target.family == Family.ANDROID },
+                    "USE_PE_COFF_SYMBOLS=1".takeIf { target.binaryFormat() == BinaryFormat.PE_COFF },
+                    "UNICODE".takeIf { target.family == Family.MINGW },
+                    "USE_GCC_UNWIND=1".takeIf { target.supportsGccUnwind() }
+            )
+            val customOptions = target.customArgsForKonanSources()
+            return (konanOptions + otherOptions + customOptions).map { "-D$it" }
+        }
 
     private val binDir = when (HostManager.host) {
         KonanTarget.LINUX_X64 -> "$absoluteTargetToolchain/bin"

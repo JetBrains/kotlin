@@ -25,7 +25,7 @@
 #define RUNTIME_WEAK __attribute__((weak))
 #define RUNTIME_NODEBUG __attribute__((nodebug))
 
-#if KONAN_ARM32 && (KONAN_IOS || KONAN_WATCHOS)
+#if KONAN_NEAD_SMALL_BINARY
   // On the one hand, ALWAYS_INLINE forces many performance-critical function to be, well,
   // inlined. Which is good for performance, of course.
   // On the other hand, 32-bit Mach-O object files can't be really big.
@@ -52,9 +52,5 @@
 #define KONAN_TYPE_INFO_HAS_WRITABLE_PART 1
 #endif
 
-// should be consistent with hasAddressDependencyInMemoryModel function
-#if defined(KONAN_X64) || defined(KONAN_X86) || defined(KONAN_ARM32) || defined(KONAN_ARM64)
-#define KONAN_TARGET_HAS_ADDRESS_DEPENDENCY 1
-#endif
 
 #endif // RUNTIME_COMMON_H
