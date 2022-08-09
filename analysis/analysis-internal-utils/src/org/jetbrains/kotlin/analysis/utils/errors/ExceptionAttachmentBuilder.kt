@@ -16,10 +16,10 @@ public class ExceptionAttachmentBuilder {
 
     public fun <T> withEntry(name: String, value: T, render: (T & Any) -> String) {
         withEntry(name) {
-            appendLine("Class: ${value?.let { it::class.java.name }}")
+            appendLine("Class: ${value?.let { it::class.java.name } ?: "<null>"}")
             appendLine("Value:")
             withIndent {
-                appendLine(value?.let(render) ?: "null")
+                appendLine(value?.let(render) ?: "<null>")
             }
         }
     }
@@ -28,7 +28,7 @@ public class ExceptionAttachmentBuilder {
         with(printer) {
             appendLine("- $name:")
             withIndent {
-                appendLine(value)
+                appendLine(value ?: "<null>")
             }
             appendLine(separator)
         }
