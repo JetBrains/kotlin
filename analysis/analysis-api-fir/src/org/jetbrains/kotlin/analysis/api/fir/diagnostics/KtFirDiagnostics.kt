@@ -1452,6 +1452,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = MisplacedTypeParameterConstraints::class
     }
 
+    abstract class DynamicSupertype : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = DynamicSupertype::class
+    }
+
     abstract class DynamicUpperBound : KtFirDiagnostic<KtTypeReference>() {
         override val diagnosticClass get() = DynamicUpperBound::class
     }
