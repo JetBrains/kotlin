@@ -101,10 +101,10 @@ internal fun createSymbolLightClassNoCache(classOrObject: KtClassOrObject): KtLi
 
 context(KtAnalysisSession)
 internal fun KtClassOrObjectSymbol.createLightClassNoCache(manager: PsiManager): SymbolLightClassBase = when (this) {
-    is KtAnonymousObjectSymbol -> SymbolLightAnonymousClassForSymbol(this, manager)
+    is KtAnonymousObjectSymbol -> SymbolLightAnonymousClass(this, manager)
     is KtNamedClassOrObjectSymbol -> when (classKind) {
         KtClassKind.INTERFACE -> SymbolLightInterfaceClass(this, manager)
-        KtClassKind.ANNOTATION_CLASS -> SymbolLightAnnotationClassSymbol(this, manager)
+        KtClassKind.ANNOTATION_CLASS -> SymbolLightAnnotationClass(this, manager)
         else -> SymbolLightClass(this, manager)
     }
 }

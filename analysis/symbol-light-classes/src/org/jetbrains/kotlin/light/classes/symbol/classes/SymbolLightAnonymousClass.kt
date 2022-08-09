@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 
 context(KtAnalysisSession)
-internal class SymbolLightAnonymousClassForSymbol(
+internal class SymbolLightAnonymousClass(
     private val anonymousObjectSymbol: KtAnonymousObjectSymbol,
     manager: PsiManager
 ) : SymbolLightClassBase(manager),
@@ -139,12 +139,12 @@ internal class SymbolLightAnonymousClassForSymbol(
 
     override fun equals(other: Any?): Boolean =
         this === other ||
-                (other is SymbolLightAnonymousClassForSymbol && anonymousObjectSymbol == other.anonymousObjectSymbol)
+                (other is SymbolLightAnonymousClass && anonymousObjectSymbol == other.anonymousObjectSymbol)
 
     override fun hashCode(): Int = anonymousObjectSymbol.hashCode()
 
     override fun copy() =
-        SymbolLightAnonymousClassForSymbol(anonymousObjectSymbol, manager)
+        SymbolLightAnonymousClass(anonymousObjectSymbol, manager)
 
     override fun isValid(): Boolean = super.isValid() && anonymousObjectSymbol.isValid()
 

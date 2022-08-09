@@ -10,14 +10,17 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReferenceList
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
-import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 
 context(KtAnalysisSession)
-internal class SymbolLightAnnotationClassSymbol(
+internal class SymbolLightAnnotationClass(
     private val classOrObjectSymbol: KtNamedClassOrObjectSymbol,
     manager: PsiManager
 ) : SymbolLightInterfaceOrAnnotationClass(classOrObjectSymbol, manager) {
@@ -51,12 +54,12 @@ internal class SymbolLightAnnotationClassSymbol(
     override fun getExtendsList(): PsiReferenceList? = null
 
     override fun equals(other: Any?): Boolean =
-        other is SymbolLightAnnotationClassSymbol && classOrObjectSymbol == other.classOrObjectSymbol
+        other is SymbolLightAnnotationClass && classOrObjectSymbol == other.classOrObjectSymbol
 
     override fun hashCode(): Int = classOrObjectSymbol.hashCode()
 
 
     override fun isValid(): Boolean = super.isValid() && classOrObjectSymbol.isValid()
 
-    override fun copy(): SymbolLightClassForClassOrObject = SymbolLightAnnotationClassSymbol(classOrObjectSymbol, manager)
+    override fun copy(): SymbolLightClassForClassOrObject = SymbolLightAnnotationClass(classOrObjectSymbol, manager)
 }
