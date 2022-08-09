@@ -56,18 +56,12 @@ internal class LLFirDesignatedAnnotationsResolveTransformed(
 
         LLFirLazyTransformer.updatePhaseDeep(designation.declaration, FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
         checkIsResolved(designation.declaration)
-        checkIsResolvedDeep(designation.declaration)
     }
 
     override fun checkIsResolved(declaration: FirDeclaration) {
-        when (declaration) {
-            is FirClass, is FirTypeAlias ->
-                declaration.checkPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
-            is FirFunction, is FirProperty, is FirEnumEntry, is FirField, is FirAnonymousInitializer, is FirErrorProperty ->
-                Unit
-            else ->
-                error("Unexpected type: ${declaration::class.simpleName}")
-        }
+        declaration.checkPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
+        // todo add proper check that COMPILER_REQUIRED_ANNOTATIONS are resolved
+//        checkNestedDeclarationsAreResolved(declaration)
     }
 
 }

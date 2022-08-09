@@ -57,20 +57,13 @@ internal class LLFirDesignatedContractsResolveTransformer(
         ideDeclarationTransformer.ensureDesignationPassed()
         updatePhaseDeep(designation.declaration, FirResolvePhase.CONTRACTS)
         checkIsResolved(designation.declaration)
-        checkIsResolvedDeep(designation.declaration)
     }
 
     override fun checkIsResolved(declaration: FirDeclaration) {
-        when (declaration) {
-            is FirSimpleFunction, is FirConstructor, is FirAnonymousInitializer ->
-                declaration.checkPhase(FirResolvePhase.CONTRACTS)
-            is FirProperty -> {
-                declaration.checkPhase(FirResolvePhase.CONTRACTS)
-//                declaration.getter?.ensurePhase(FirResolvePhase.CONTRACTS)
-//                declaration.setter?.ensurePhase(FirResolvePhase.CONTRACTS)
-            }
-            is FirClass, is FirTypeAlias, is FirEnumEntry, is FirField -> Unit
-            else -> error("Unexpected type: ${declaration::class.simpleName}")
+        declaration.checkPhase(FirResolvePhase.CONTRACTS)
+        if (declaration is FirContractDescriptionOwner) {
+           // TODO checkContractDescriptionIsResolved(declaration)
         }
+        checkNestedDeclarationsAreResolved(declaration)
     }
 }

@@ -26,6 +26,7 @@ fun ExceptionAttachmentBuilder.withFirEntry(name: String, fir: FirElement) {
             declarationRenderer = FirDeclarationRendererWithAttributes()
         ).renderElementAsString(it)
     }
+    withEntry("${name}FirSourceElementKind", fir.source?.kind?.let { it::class.simpleName })
     withPsiEntry("${name}Psi", fir.psi)
 }
 

@@ -5,14 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.*
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
@@ -25,6 +17,14 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableS
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.transformers.*
+import org.jetbrains.kotlin.fir.types.toSymbol
 
 /**
  * Transform designation into SUPER_TYPES phase. Affects only for designation, target declaration, it's children and dependents
@@ -155,21 +155,23 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
 
         updatePhaseDeep(designation.declaration, FirResolvePhase.SUPER_TYPES)
         checkIsResolved(designation.declaration)
-        checkIsResolvedDeep(designation.declaration)
     }
 
     override fun checkIsResolved(declaration: FirDeclaration) {
+        declaration.checkPhase(FirResolvePhase.SUPER_TYPES)
         when (declaration) {
-            is FirFunction, is FirProperty, is FirEnumEntry, is FirField, is FirAnonymousInitializer -> Unit
-            is FirRegularClass -> {
-                declaration.checkPhase(FirResolvePhase.SUPER_TYPES)
-                check(declaration.superTypeRefs.all { it is FirResolvedTypeRef })
+            is FirClass -> {
+                for (superTypeRef in declaration.superTypeRefs) {
+                    checkTypeRefIsResolved(superTypeRef, "class super type", declaration)
+                }
             }
+
             is FirTypeAlias -> {
-                declaration.checkPhase(FirResolvePhase.SUPER_TYPES)
-                check(declaration.expandedTypeRef is FirResolvedTypeRef)
+                checkTypeRefIsResolved(declaration.expandedTypeRef, typeRefName = "type alias expanded type", declaration)
             }
-            else -> error("Unexpected type: ${declaration::class.simpleName}")
+
+            else -> {}
         }
+        checkNestedDeclarationsAreResolved(declaration)
     }
 }
