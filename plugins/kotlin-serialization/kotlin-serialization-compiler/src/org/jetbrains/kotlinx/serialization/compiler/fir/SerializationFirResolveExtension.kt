@@ -260,8 +260,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             })
 
             superTypeRefs += buildResolvedTypeRef {
-                @OptIn(SymbolInternals::class)
-                type = generatedSerializerClassId.constructClassLikeType(arrayOf(owner.fir.typeWithStarProjections()), isNullable = false)
+                type = generatedSerializerClassId.constructClassLikeType(arrayOf(owner.typeWithStarProjections()), isNullable = false)
             }
         }
         // TODO: add typed constructor
