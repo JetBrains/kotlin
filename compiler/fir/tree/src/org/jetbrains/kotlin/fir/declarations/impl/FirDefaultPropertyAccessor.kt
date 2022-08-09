@@ -43,7 +43,7 @@ abstract class FirDefaultPropertyAccessor(
 ) : FirPropertyAccessorImpl(
     source,
     moduleData,
-    resolvePhase = if (effectiveVisibility != null) FirResolvePhase.BODY_RESOLVE else FirResolvePhase.TYPES,
+    resolvePhase = FirResolvePhase.RAW_FIR,
     origin,
     FirDeclarationAttributes(),
     status = if (effectiveVisibility == null)
@@ -64,10 +64,6 @@ abstract class FirDefaultPropertyAccessor(
     annotations = mutableListOf(),
     typeParameters = mutableListOf(),
 ) {
-    override var resolvePhase
-        get() = if (status is FirResolvedDeclarationStatus) FirResolvePhase.BODY_RESOLVE else FirResolvePhase.TYPES
-        set(_) {}
-
     override val dispatchReceiverType: ConeSimpleKotlinType?
         get() = propertySymbol?.dispatchReceiverType
 
