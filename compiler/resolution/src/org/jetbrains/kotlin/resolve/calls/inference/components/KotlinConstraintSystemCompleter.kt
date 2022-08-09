@@ -220,12 +220,8 @@ class KotlinConstraintSystemCompleter(
 
         val builder = getBuilder()
         for (argument in lambdaArguments) {
-            if (!argument.atom.hasBuilderInferenceAnnotation && !useBuilderInferenceWithoutAnnotation)
-                continue
-
-            // Imitate having builder inference annotation. TODO: Remove after getting rid of @BuilderInference
-            if (!argument.atom.hasBuilderInferenceAnnotation && useBuilderInferenceWithoutAnnotation) {
-                argument.atom.hasBuilderInferenceAnnotation = true
+            if (!argument.atom.hasBuilderInferenceAnnotation) {
+                if (!useBuilderInferenceWithoutAnnotation) continue
             }
 
             val notFixedInputTypeVariables = argument.inputTypes
