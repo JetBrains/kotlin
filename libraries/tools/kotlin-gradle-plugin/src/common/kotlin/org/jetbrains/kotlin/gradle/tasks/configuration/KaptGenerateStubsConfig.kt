@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.tasks.configuration
 
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.TaskProvider
@@ -21,9 +22,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompilerArgumentsProvider
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.isParentOf
 import java.io.File
 import java.nio.file.Files
+import java.util.concurrent.ConcurrentHashMap
 
 internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStubsTask> {
 
@@ -48,13 +52,16 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
             )
             val destinationDirectory = task.destinationDirectory
             val stubsDir = task.stubsDir
+            val kaptFilterSpec = KaptFilterSpec(destinationDirectory, stubsDir, kaptJavaSourcesDir, kaptKotlinSourcesDir)
+            // FileTree filtering approach fails with configuration cache until Gradle 7.5 leading to failed UP-TO-DATE checks
+            val kaptFilter = if (shouldUseFileTreeKaptFilter) {
+                FileTreeKaptInputsFilter(kaptFilterSpec)
+            } else {
+                FileCollectionKaptInputsFilter(kaptFilterSpec)
+            }
             task.source(
-                kotlinCompileTask
-                    .javaSources
-                    .filter(KaptFilterSpec(destinationDirectory, stubsDir, kaptJavaSourcesDir)),
-                kotlinCompileTask
-                    .sources
-                    .filter(KaptFilterSpec(destinationDirectory, stubsDir, kaptKotlinSourcesDir))
+                kaptFilter.filtered(kotlinCompileTask.javaSources),
+                kaptFilter.filtered(kotlinCompileTask.sources),
             )
         }
     }
@@ -106,24 +113,54 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
         }
     }
 
+    private abstract class CachingKaptInputsFilter {
+        private val filterCache = ConcurrentHashMap<File, Boolean>()
+        abstract fun filtered(fileCollection: FileCollection): FileCollection
+
+        protected fun isSatisfiedBy(file: File) = filterCache[file] ?: predicate(file).also { filterCache[file] = it }
+
+        abstract fun predicate(file: File): Boolean
+    }
+
     // Drop `isEmptyDirectory` check after min supported Gradle version will be bumped to 6.8
     // It will be covered by '@IgnoreEmptyDirectories' input annotation
+    private class FileCollectionKaptInputsFilter(val spec: KaptFilterSpec) : CachingKaptInputsFilter() {
+        override fun filtered(fileCollection: FileCollection): FileCollection {
+            return fileCollection.filter(::isSatisfiedBy)
+        }
+
+        override fun predicate(file: File) = !file.isEmptyDirectory && spec.isSatisfiedBy(file)
+
+        private val File.isEmptyDirectory: Boolean
+            get() = with(toPath()) {
+                Files.isDirectory(this) && !Files.list(this).use { it.findFirst().isPresent }
+            }
+    }
+
+    private val shouldUseFileTreeKaptFilter
+        get() = isGradleVersionAtLeast(7, 5) || !isConfigurationCacheAvailable(project.gradle) && isGradleVersionAtLeast(6, 8)
+
+    // Filtering through FileTree and PatternFilterable works faster, but adds empty directories which is the problem for Gradle 6.7
+    private class FileTreeKaptInputsFilter(val spec: KaptFilterSpec) : CachingKaptInputsFilter() {
+        override fun filtered(fileCollection: FileCollection): FileCollection {
+            return fileCollection.asFileTree.matching { it.include { elem -> isSatisfiedBy(elem.file) } }
+        }
+
+        override fun predicate(file: File) = spec.isSatisfiedBy(file)
+    }
+
     private class KaptFilterSpec(
         private val destinationDirectory: DirectoryProperty,
         private val stubsDir: DirectoryProperty,
-        private val additionalParentToCheck: File
+        private val kaptJavaSourcesDir: File,
+        private val kaptKotlinSourcesDir: File,
     ) : Spec<File> {
-        override fun isSatisfiedBy(element: File): Boolean {
-            return !element.isEmptyDirectory &&
-                    element.isSourceRootAllowed()
-        }
-
-        private val File.isEmptyDirectory: Boolean
-            get() = with(toPath()) { Files.isDirectory(this) && !Files.list(this).use { it.findFirst().isPresent } }
+        override fun isSatisfiedBy(element: File) = element.isSourceRootAllowed()
 
         private fun File.isSourceRootAllowed(): Boolean =
             !destinationDirectory.get().asFile.isParentOf(this) &&
                     !stubsDir.asFile.get().isParentOf(this) &&
-                    !additionalParentToCheck.isParentOf(this)
+                    !kaptJavaSourcesDir.isParentOf(this) &&
+                    !kaptKotlinSourcesDir.isParentOf(this)
     }
 }
