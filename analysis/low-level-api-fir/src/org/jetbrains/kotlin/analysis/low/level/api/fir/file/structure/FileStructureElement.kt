@@ -125,7 +125,7 @@ internal class ReanalyzableFunctionStructureElement(
                 it.replaceResolvePhase(minOf(it.resolvePhase, upgradedPhase))
             }
 
-            moduleComponents.lazyFirDeclarationsResolver.lazyResolveDeclaration(
+            moduleComponents.firModuleLazyDeclarationResolver.lazyResolveDeclaration(
                 firDeclarationToResolve = originalFunction,
                 scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
                 toPhase = FirResolvePhase.BODY_RESOLVE,
@@ -179,7 +179,7 @@ internal class ReanalyzablePropertyStructureElement(
                 replaceBodyResolveState(FirPropertyBodyResolveState.NOTHING_RESOLVED)
             }
 
-            moduleComponents.lazyFirDeclarationsResolver.lazyResolveDeclaration(
+            moduleComponents.firModuleLazyDeclarationResolver.lazyResolveDeclaration(
                 firDeclarationToResolve = originalProperty,
                 scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
                 toPhase = FirResolvePhase.BODY_RESOLVE,

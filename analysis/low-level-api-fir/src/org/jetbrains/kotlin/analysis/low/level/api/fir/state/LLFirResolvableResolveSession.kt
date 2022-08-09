@@ -135,7 +135,7 @@ internal abstract class LLFirResolvableResolveSession(
         val llFirResolvableModuleSession = declaration.llFirModuleData.session as? LLFirResolvableModuleSession ?: return
 
         val moduleComponents = llFirResolvableModuleSession.moduleComponents
-        moduleComponents.lazyFirDeclarationsResolver.lazyResolveDeclaration(
+        moduleComponents.firModuleLazyDeclarationResolver.lazyResolveDeclaration(
             firDeclarationToResolve = declaration,
             scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
             toPhase = toPhase,
