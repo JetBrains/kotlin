@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -221,7 +221,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
 
     private val FirPropertySymbol.lazyDelegation: FirAnonymousFunction?
         get() {
-            ensureResolved(FirResolvePhase.BODY_RESOLVE)
+            lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             @OptIn(SymbolInternals::class)
             val property = this.fir
             if (property.delegate == null || property.delegate !is FirFunctionCall) return null

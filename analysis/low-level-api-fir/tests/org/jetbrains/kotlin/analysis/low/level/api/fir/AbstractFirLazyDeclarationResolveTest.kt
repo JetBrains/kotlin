@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithAttributes
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
@@ -66,7 +66,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
                 .findResolveMe()
             for (currentPhase in FirResolvePhase.values()) {
                 if (currentPhase == FirResolvePhase.SEALED_CLASS_INHERITORS) continue
-                declarationToResolve.ensureResolved(currentPhase)
+                declarationToResolve.lazyResolveToPhase(currentPhase)
                 val firFile = firResolveSession.getOrBuildFirFile(ktFile)
                 resultBuilder.append("\n${currentPhase.name}:\n")
                 renderer.renderElementAsString(firFile)
@@ -76,7 +76,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
         resolveWithClearCaches(ktFile) { firResolveSession ->
             check(firResolveSession is LLFirSourceResolveSession)
             val firFile = firResolveSession.getOrBuildFirFile(ktFile)
-            firFile.ensureResolved(FirResolvePhase.BODY_RESOLVE)
+            firFile.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             resultBuilder.append("\nFILE RAW TO BODY:\n")
             renderer.renderElementAsString(firFile)
         }

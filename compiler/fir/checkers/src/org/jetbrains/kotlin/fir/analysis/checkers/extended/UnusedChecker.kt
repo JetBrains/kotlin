@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.resolved
 import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.types.isFunctionalType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.coneType
@@ -75,7 +75,7 @@ object UnusedChecker : FirControlFlowChecker() {
             for (dataPerLabel in dataPerNode.values) {
                 val data = dataPerLabel[variableSymbol] ?: continue
 
-                variableSymbol.ensureResolved(FirResolvePhase.BODY_RESOLVE)
+                variableSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
                 @OptIn(SymbolInternals::class)
                 val variable = variableSymbol.fir
                 val variableSource = variable.source.takeIf { it?.elementType != KtNodeTypes.DESTRUCTURING_DECLARATION }

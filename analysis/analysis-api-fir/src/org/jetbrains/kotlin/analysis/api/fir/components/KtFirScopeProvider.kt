@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.components.KtImplicitReceiver
 import org.jetbrains.kotlin.analysis.api.components.KtScopeContext
@@ -44,7 +43,7 @@ import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -71,15 +70,15 @@ internal class KtFirScopeProvider(
     private inline fun <T> KtSymbolWithMembers.withFirForScope(crossinline body: (FirClass) -> T): T? {
         return when (this) {
             is KtFirNamedClassOrObjectSymbol -> {
-                firSymbol.ensureResolved(FirResolvePhase.TYPES)
+                firSymbol.lazyResolveToPhase(FirResolvePhase.TYPES)
                 body(firSymbol.fir)
             }
             is KtFirAnonymousObjectSymbol -> {
-                firSymbol.ensureResolved(FirResolvePhase.TYPES)
+                firSymbol.lazyResolveToPhase(FirResolvePhase.TYPES)
                 body(firSymbol.fir)
             }
             is KtFirEnumEntrySymbol -> {
-                firSymbol.ensureResolved(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+                firSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
                 val initializer = firSymbol.fir.initializer ?: return null
                 check(initializer is FirAnonymousObjectExpression) { "Unexpected enum entry initializer: ${initializer.javaClass}" }
                 body(initializer.anonymousObject)

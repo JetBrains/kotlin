@@ -10,9 +10,8 @@ import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolvedSymbol
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.*
 
 sealed class FirFunctionSymbol<D : FirFunction>(
@@ -23,7 +22,7 @@ sealed class FirFunctionSymbol<D : FirFunction>(
 
     val resolvedContractDescription: FirResolvedContractDescription?
         get() {
-            ensureResolved(FirResolvePhase.CONTRACTS)
+            lazyResolveToPhase(FirResolvePhase.CONTRACTS)
             return when (this) {
                 is FirNamedFunctionSymbol -> fir.contractDescription
                 is FirPropertyAccessorSymbol -> fir.contractDescription
@@ -33,7 +32,7 @@ sealed class FirFunctionSymbol<D : FirFunction>(
 
     val resolvedControlFlowGraphReference: FirControlFlowGraphReference?
         get() {
-            ensureResolved(FirResolvePhase.BODY_RESOLVE)
+            lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             return fir.controlFlowGraphReference
         }
 }
@@ -70,7 +69,7 @@ class FirConstructorSymbol(
     val resolvedDelegatedConstructorCall: FirDelegatedConstructorCall?
         get() {
             if (fir.delegatedConstructor == null) return null
-            ensureResolved(FirResolvePhase.BODY_RESOLVE)
+            lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             return fir.delegatedConstructor
         }
 

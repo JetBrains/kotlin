@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
@@ -26,7 +26,7 @@ class FirTypeParameterSymbol : FirClassifierSymbol<FirTypeParameter>() {
 
     val resolvedBounds: List<FirResolvedTypeRef>
         get() {
-            ensureResolved(FirResolvePhase.TYPES)
+            lazyResolveToPhase(FirResolvePhase.TYPES)
             @Suppress("UNCHECKED_CAST")
             return fir.bounds as List<FirResolvedTypeRef>
         }

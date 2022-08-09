@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.model.CaptureStatus
@@ -34,13 +34,13 @@ abstract class SupertypeSupplier {
         override fun forClass(firClass: FirClass, useSiteSession: FirSession): List<ConeClassLikeType> {
             if (!firClass.isLocal) {
                 // for local classes the phase may not be updated till that moment
-                firClass.ensureResolved(FirResolvePhase.SUPER_TYPES)
+                firClass.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
             }
             return firClass.superConeTypes
         }
 
         override fun expansionForTypeAlias(typeAlias: FirTypeAlias, useSiteSession: FirSession): ConeClassLikeType? {
-            typeAlias.ensureResolved(FirResolvePhase.SUPER_TYPES)
+            typeAlias.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
             return typeAlias.expandedConeType
         }
     }

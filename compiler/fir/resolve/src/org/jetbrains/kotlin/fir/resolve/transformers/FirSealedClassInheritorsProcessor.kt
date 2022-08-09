@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -73,7 +73,7 @@ class FirSealedClassInheritorsProcessor(
             return when (classLikeSymbol) {
                 is FirRegularClassSymbol -> classLikeSymbol.fir
                 is FirTypeAliasSymbol -> {
-                    classLikeSymbol.ensureResolved(FirResolvePhase.SUPER_TYPES)
+                    classLikeSymbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
                     extractClassFromTypeRef(symbolProvider, classLikeSymbol.fir.expandedTypeRef)
                 }
                 else -> null

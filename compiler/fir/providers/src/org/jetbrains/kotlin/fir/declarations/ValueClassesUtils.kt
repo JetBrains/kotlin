@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
@@ -32,7 +32,7 @@ internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClass(session: F
         ?.lookupTag
         ?.toSymbol(session) as? FirRegularClassSymbol
         ?: return null
-    symbol.ensureResolved(FirResolvePhase.STATUS)
+    symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
     return symbol.fir.inlineClassRepresentation?.underlyingType
 }
 
@@ -63,9 +63,9 @@ private fun ConeSimpleKotlinType.valueClassRepresentationTypeMarkersList(session
     val symbol = this.toSymbol(session) as? FirRegularClassSymbol ?: return null
     if (!symbol.fir.isInline) return null
     symbol.fir.valueClassRepresentation?.let { return it.underlyingPropertyNamesToTypes }
-    symbol.ensureResolved(FirResolvePhase.TYPES)
+    symbol.lazyResolveToPhase(FirResolvePhase.TYPES)
     val constructorSymbol = symbol.fir.primaryConstructorIfAny(session) ?: return null
     return constructorSymbol.valueParameterSymbols
-        .onEach { it.ensureResolved(FirResolvePhase.TYPES) }
+        .onEach { it.lazyResolveToPhase(FirResolvePhase.TYPES) }
         .map { it.name to it.resolvedReturnType as ConeSimpleKotlinType }
 }
