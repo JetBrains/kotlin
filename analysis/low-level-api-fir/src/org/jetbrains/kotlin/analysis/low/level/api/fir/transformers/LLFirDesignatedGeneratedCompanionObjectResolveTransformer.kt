@@ -30,7 +30,6 @@ internal class LLFirDesignatedGeneratedCompanionObjectResolveTransformer(
 
         LLFirLazyTransformer.updatePhaseDeep(designation.declaration, FirResolvePhase.COMPANION_GENERATION)
         checkIsResolved(designation.declaration)
-        checkIsResolvedDeep(designation.declaration)
     }
 
     override fun checkIsResolved(declaration: FirDeclaration) {

@@ -5,19 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTypeResolveTransformer
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 
 /**
  * Transform designation into TYPES phase. Affects only for designation, target declaration and it's children
@@ -55,32 +52,26 @@ internal class LLFirDesignatedTypeResolverTransformer(
         updatePhaseDeep(designation.declaration, FirResolvePhase.TYPES)
 
         checkIsResolved(designation.declaration)
-        checkIsResolvedDeep(designation.declaration)
+        checkClassMembersAreResolved(designation.declaration)
     }
 
     override fun checkIsResolved(declaration: FirDeclaration) {
-        if (declaration !is FirAnonymousInitializer) {
-            declaration.checkPhase(FirResolvePhase.TYPES)
-        }
+        declaration.checkPhase(FirResolvePhase.TYPES)
         when (declaration) {
-            is FirFunction -> {
-                check(declaration.returnTypeRef is FirResolvedTypeRef || declaration.returnTypeRef is FirImplicitTypeRef)
-                check(declaration.receiverTypeRef?.let { it is FirResolvedTypeRef } ?: true)
-                declaration.valueParameters.forEach {
-                    check(it.returnTypeRef is FirResolvedTypeRef || it.returnTypeRef is FirImplicitTypeRef)
+            is FirCallableDeclaration -> {
+                checkReturnTypeRefIsResolved(declaration, acceptImplicitTypeRef = true)
+                checkReceiverTypeRefIsResolved(declaration)
+            }
+
+            is FirTypeParameter -> {
+                for (bound in declaration.bounds) {
+                    checkTypeRefIsResolved(bound, "type parameter bound", declaration)
                 }
             }
-            is FirProperty -> {
-                check(declaration.returnTypeRef is FirResolvedTypeRef || declaration.returnTypeRef is FirImplicitTypeRef)
-                check(declaration.receiverTypeRef?.let { it is FirResolvedTypeRef } ?: true)
-                declaration.getter?.run(::checkIsResolved)
-                declaration.setter?.run(::checkIsResolved)
-            }
-            is FirField -> check(declaration.returnTypeRef is FirResolvedTypeRef || declaration.returnTypeRef is FirImplicitTypeRef)
-            is FirClass, is FirTypeAlias, is FirAnonymousInitializer -> Unit
-            is FirEnumEntry -> check(declaration.returnTypeRef is FirResolvedTypeRef)
-            is FirDiagnosticHolder -> {}
-            else -> error("Unexpected type: ${declaration::class.simpleName}")
+
+            else -> {}
         }
+        checkNestedDeclarationsAreResolved(declaration)
+        checkTypeParametersAreResolved(declaration)
     }
 }

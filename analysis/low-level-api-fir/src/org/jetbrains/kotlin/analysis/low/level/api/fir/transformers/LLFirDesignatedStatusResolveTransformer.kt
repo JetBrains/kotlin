@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeclarationStatusIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 
 /**
@@ -50,27 +51,15 @@ internal class LLFirDesignatedStatusResolveTransformer(
         transformer.designationTransformer.ensureDesignationPassed()
         updatePhaseDeep(designation.declaration, FirResolvePhase.STATUS)
         checkIsResolved(designation.declaration)
-        checkIsResolvedDeep(designation.declaration)
     }
 
     override fun checkIsResolved(declaration: FirDeclaration) {
         if (declaration !is FirAnonymousInitializer) {
             declaration.checkPhase(FirResolvePhase.STATUS)
         }
-        when (declaration) {
-            is FirSimpleFunction -> check(declaration.status is FirResolvedDeclarationStatus)
-            is FirConstructor -> check(declaration.status is FirResolvedDeclarationStatus)
-            is FirTypeAlias -> check(declaration.status is FirResolvedDeclarationStatus)
-            is FirEnumEntry -> check(declaration.status is FirResolvedDeclarationStatus)
-            is FirField -> check(declaration.status is FirResolvedDeclarationStatus)
-            is FirProperty -> {
-                check(declaration.status is FirResolvedDeclarationStatus)
-                check(declaration.getter?.status?.let { it is FirResolvedDeclarationStatus } ?: true)
-                check(declaration.setter?.status?.let { it is FirResolvedDeclarationStatus } ?: true)
-            }
-            is FirRegularClass -> check(declaration.status is FirResolvedDeclarationStatus)
-            is FirAnonymousInitializer -> Unit
-            else -> error("Unexpected type: ${declaration::class.simpleName}")
+        if (declaration is FirMemberDeclaration) {
+            checkDeclarationStatusIsResolved(declaration)
         }
+        checkNestedDeclarationsAreResolved(declaration)
     }
 }

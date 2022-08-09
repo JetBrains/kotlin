@@ -51,19 +51,12 @@ internal class LLFirDesignatedExpectActualMatcherTransformer(
         declarationTransformer.ensureDesignationPassed()
         updatePhaseDeep(designation.declaration, FirResolvePhase.EXPECT_ACTUAL_MATCHING)
         checkIsResolved(designation.declaration)
-        checkIsResolvedDeep(designation.declaration)
     }
 
     override fun checkIsResolved(declaration: FirDeclaration) {
-        when (declaration) {
-            is FirSimpleFunction, is FirConstructor, is FirAnonymousInitializer ->
-                declaration.checkPhase(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
-            is FirProperty -> {
-                declaration.checkPhase(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
-            }
-            is FirClass, is FirTypeAlias, is FirEnumEntry, is FirField -> Unit
-            else -> error("Unexpected type: ${declaration::class.simpleName}")
-        }
+        declaration.checkPhase(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
+        // TODO check if expect-actual matching is present
+        checkNestedDeclarationsAreResolved(declaration)
     }
 }
 
