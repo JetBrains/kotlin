@@ -6,13 +6,17 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.checkers.registerCommonCheckers
+import org.jetbrains.kotlin.fir.checkers.registerJsCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSwitchableExtensionDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.java.FirCliSession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -21,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirDependenciesSymbolProv
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirLibrarySessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.Name
@@ -135,5 +140,42 @@ abstract class FirAbstractSessionFactory {
                 dependenciesSymbolProvider
             )
         }
+    }
+
+    fun createModuleBasedSession(
+        moduleData: FirModuleData,
+        sessionProvider: FirProjectSessionProvider,
+        extensionRegistrars: List<FirExtensionRegistrar>,
+        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
+        lookupTracker: LookupTracker?,
+        init: FirSessionConfigurator.() -> Unit
+    ): FirSession {
+        return createModuleBasedSession(
+            moduleData,
+            sessionProvider,
+            extensionRegistrars,
+            languageVersionSettings,
+            lookupTracker,
+            null,
+            init,
+            registerExtraComponents = { it.registerJsSpecificResolveComponents() },
+            registerExtraCheckers = { it.registerJsCheckers() },
+            createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
+            createProviders = { _, _, symbolProvider, generatedSymbolsProvider, dependenciesSymbolProvider ->
+                listOfNotNull(
+                    symbolProvider,
+                    generatedSymbolsProvider,
+                    dependenciesSymbolProvider,
+                )
+            }
+        )
+    }
+
+    @OptIn(SessionConfiguration::class)
+    fun FirSession.registerJsSpecificResolveComponents() {
+        register(FirVisibilityChecker::class, FirVisibilityChecker.Default)
+        register(ConeCallConflictResolverFactory::class, JsCallConflictResolverFactory)
+        register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
+        register(FirOverridesBackwardCompatibilityHelper::class, FirOverridesBackwardCompatibilityHelper.Default())
     }
 }
