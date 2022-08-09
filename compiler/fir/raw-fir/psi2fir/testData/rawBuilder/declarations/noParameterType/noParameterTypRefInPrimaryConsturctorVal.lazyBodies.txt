@@ -1,0 +1,10 @@
+FILE: noParameterTypRefInPrimaryConsturctorVal.kt
+    public? final? class X : R|kotlin/Any| {
+        public? constructor(x: <ERROR TYPE REF: No type for parameter>): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? val x: <ERROR TYPE REF: No type for parameter> = R|<local>/x|
+            public? get(): <ERROR TYPE REF: No type for parameter>
+
+    }
