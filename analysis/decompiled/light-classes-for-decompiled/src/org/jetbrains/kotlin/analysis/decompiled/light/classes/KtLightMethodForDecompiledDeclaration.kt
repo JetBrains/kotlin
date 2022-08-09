@@ -101,6 +101,8 @@ class KtLightMethodForDecompiledDeclaration(
     override fun toString(): String = "${this.javaClass.simpleName} of $funParent"
 
     override fun isValid(): Boolean = parent.isValid
+
+    override fun getOriginalElement() = funDelegate
 }
 
 private fun KtLightMethod.checkIsMangled(): Boolean {
