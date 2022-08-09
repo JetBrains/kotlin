@@ -10,18 +10,37 @@ import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 
+/**
+ * A component to lazy resolve [FirBasedSymbol] to the required phase.
+ * This is needed for the Analysis API to work properly, for the compiler the implementation does nothing.
+ */
 abstract class FirLazyDeclarationResolver : FirSessionComponent {
     abstract fun lazyResolveToPhase(symbol: FirBasedSymbol<*>, toPhase: FirResolvePhase)
 }
 
 val FirSession.lazyDeclarationResolver: FirLazyDeclarationResolver by FirSession.sessionComponentAccessor()
 
+/**
+ * Lazy resolve [FirBasedSymbol<*>] passed as receiver to the [toPhase].
+ * In the case of lazy resolution (inside Analysis API), it checks that the declaration phase `>= toPhase`.
+ * If not, it resolved the declaration for the requested phase.
+ *
+ * If the [lazyResolveToPhase] is called inside a fir transformer,
+ * it should always request the phase which is strictly lower than the current transformer phase, otherwise a deadlock/stackoverflow is possible
+ *
+ * For the compiler mode it does nothing, as compiler is non-lazy.
+ */
 fun FirBasedSymbol<*>.lazyResolveToPhase(toPhase: FirResolvePhase) {
     val session = fir.moduleData.session
     val phaseManager = session.lazyDeclarationResolver
     phaseManager.lazyResolveToPhase(this, toPhase)
 }
 
+/**
+ *  Lazy resolve [FirDeclaration] passed as receiver to the [toPhase].
+ *
+ *  @see lazyResolveToPhase
+ */
 fun FirDeclaration.lazyResolveToPhase(toPhase: FirResolvePhase) {
     symbol.lazyResolveToPhase(toPhase)
 }
