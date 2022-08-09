@@ -122,13 +122,13 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             return transformLocalVariable(property)
         }
 
-        val returnTypeRef = property.returnTypeRef
+        val returnTypeRefBeforeResolve = property.returnTypeRef
         val bodyResolveState = property.bodyResolveState
         if (bodyResolveState == FirPropertyBodyResolveState.EVERYTHING_RESOLVED) return property
 
         val canHaveDeepImplicitTypeRefs = property.hasExplicitBackingField
 
-        if (returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly && !canHaveDeepImplicitTypeRefs) {
+        if (returnTypeRefBeforeResolve !is FirImplicitTypeRef && implicitTypeOnly && !canHaveDeepImplicitTypeRefs) {
             return property
         }
 
@@ -142,7 +142,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             context.withProperty(property) {
                 context.forPropertyInitializer {
                     if (!initializerIsAlreadyResolved) {
-                        property.transformChildrenWithoutComponents(returnTypeRef)
+                        property.transformChildrenWithoutComponents(returnTypeRefBeforeResolve)
                         property.replaceBodyResolveState(FirPropertyBodyResolveState.INITIALIZER_RESOLVED)
                     }
                     if (property.initializer != null) {
@@ -165,7 +165,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     val hasNonDefaultAccessors = property.getter != null && property.getter !is FirDefaultPropertyAccessor ||
                             property.setter != null && property.setter !is FirDefaultPropertyAccessor
                     val mayResolveSetter = shouldResolveEverything || !hasNonDefaultAccessors
-                    val propertyTypeIsKnown = property.returnTypeRef is FirResolvedTypeRef || property.returnTypeRef is FirErrorTypeRef
+                    val propertyTypeRefAfterResolve = property.returnTypeRef
+                    val propertyTypeIsKnown = propertyTypeRefAfterResolve is FirResolvedTypeRef
                     val mayResolveGetter = mayResolveSetter || !propertyTypeIsKnown
                     if (mayResolveGetter) {
                         property.transformAccessors(mayResolveSetter)
@@ -173,11 +174,11 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                             if (mayResolveSetter) FirPropertyBodyResolveState.EVERYTHING_RESOLVED
                             else FirPropertyBodyResolveState.INITIALIZER_AND_GETTER_RESOLVED
                         )
-                    } else if (returnTypeRef is FirResolvedTypeRef) {
+                    } else {
                         // Even though we're not going to resolve accessors themselves (so as to avoid resolve cycle, like KT-48634),
                         // we still need to resolve types in accessors (as per IMPLICIT_TYPES_BODY_RESOLVE contract).
-                        property.getter?.transformTypeWithPropertyType(returnTypeRef)
-                        property.setter?.transformTypeWithPropertyType(returnTypeRef)
+                        property.getter?.transformTypeWithPropertyType(propertyTypeRefAfterResolve)
+                        property.setter?.transformTypeWithPropertyType(propertyTypeRefAfterResolve)
                         property.setter?.transformReturnTypeRef(transformer, withExpectedType(session.builtinTypes.unitType.type))
                     }
                 }
@@ -413,24 +414,33 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             storeVariableReturnType(this)
             enhancedTypeRef = returnTypeRef
             // We need update type of getter for case when its type was approximated
-            getter?.transformTypeWithPropertyType(enhancedTypeRef)
+            getter?.transformTypeWithPropertyType(enhancedTypeRef, forceUpdateForNonImplicitTypes = true)
         }
         setter?.let {
-            if (it.valueParameters[0].returnTypeRef is FirImplicitTypeRef) {
-                it.transformTypeWithPropertyType(enhancedTypeRef)
-            }
+            it.transformTypeWithPropertyType(enhancedTypeRef)
+
             if (mayResolveSetter) {
                 transformAccessor(it, enhancedTypeRef, this)
             }
         }
     }
 
-    private fun FirPropertyAccessor.transformTypeWithPropertyType(propertyTypeRef: FirTypeRef) {
+    private fun FirPropertyAccessor.transformTypeWithPropertyType(
+        propertyTypeRef: FirTypeRef,
+        forceUpdateForNonImplicitTypes: Boolean = false
+    ) {
         when {
-            isGetter ->
-                replaceReturnTypeRef(propertyTypeRef)
-            isSetter ->
-                valueParameters[0].transformReturnTypeRef(StoreType, propertyTypeRef)
+            isGetter -> {
+                if (returnTypeRef is FirImplicitTypeRef || forceUpdateForNonImplicitTypes) {
+                    replaceReturnTypeRef(propertyTypeRef)
+                }
+            }
+            isSetter -> {
+                val valueParameter = valueParameters.firstOrNull() ?: return
+                if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
+                    valueParameter.transformReturnTypeRef(StoreType, propertyTypeRef)
+                }
+            }
         }
     }
 
@@ -721,15 +731,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     }
 
     override fun transformValueParameter(valueParameter: FirValueParameter, data: ResolutionMode): FirStatement {
-        if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
-            valueParameter.replaceReturnTypeRef(
-                valueParameter.returnTypeRef.errorTypeFromPrototype(
-                    ConeSimpleDiagnostic("No type for parameter", DiagnosticKind.ValueParameterWithNoTypeAnnotation)
-                )
-            )
-            return valueParameter
-        }
-
         dataFlowAnalyzer.enterValueParameter(valueParameter)
         val result = context.withValueParameter(valueParameter, session) {
             transformDeclarationContent(
