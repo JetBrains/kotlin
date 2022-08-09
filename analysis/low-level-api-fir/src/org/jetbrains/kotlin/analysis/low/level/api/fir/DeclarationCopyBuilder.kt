@@ -31,33 +31,24 @@ internal object DeclarationCopyBuilder {
     }
 
     fun FirProperty.withBodyFrom(propertyWithBody: FirProperty): FirProperty {
-        val originalSetter = this@withBodyFrom.setter
-        val replacementSetter = propertyWithBody.setter
-
-        // setter has a header with `value` parameter, and we want it type to be resolved
-        val copySetter = if (originalSetter != null && replacementSetter != null) {
-            buildPropertyAccessorCopy(originalSetter) {
-                body = replacementSetter.body
-                symbol = replacementSetter.symbol
-                initDeclaration(originalSetter, replacementSetter)
-            }.apply { reassignAllReturnTargets(replacementSetter) }
-        } else {
-            replacementSetter
-        }
+        val newSetter = getAccessorToUse(this, propertyWithBody) { it.setter }
+        val newGetter = getAccessorToUse(this, propertyWithBody) { it.getter }
 
         val propertyResolvePhase = minOf(
             this@withBodyFrom.resolvePhase,
             FirResolvePhase.DECLARATIONS,
-            copySetter?.resolvePhase ?: FirResolvePhase.BODY_RESOLVE,
+            newGetter?.resolvePhase ?: FirResolvePhase.BODY_RESOLVE,
+            newSetter?.resolvePhase ?: FirResolvePhase.BODY_RESOLVE,
             propertyWithBody.getter?.resolvePhase ?: FirResolvePhase.BODY_RESOLVE,
+            propertyWithBody.setter?.resolvePhase ?: FirResolvePhase.BODY_RESOLVE,
         )
 
         return buildPropertyCopy(this@withBodyFrom) {
             symbol = propertyWithBody.symbol
             initializer = propertyWithBody.initializer
 
-            getter = propertyWithBody.getter
-            setter = copySetter
+            getter = newGetter
+            setter = newSetter
 
             if (propertyResolvePhase < FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
                 bodyResolveState = FirPropertyBodyResolveState.NOTHING_RESOLVED
@@ -65,6 +56,26 @@ internal object DeclarationCopyBuilder {
 
             initDeclaration(this@withBodyFrom, propertyWithBody)
             resolvePhase = propertyResolvePhase
+        }
+    }
+
+    private inline fun getAccessorToUse(
+        originalProperty: FirProperty,
+        replacementProperty: FirProperty,
+        getAccessor: (FirProperty) -> FirPropertyAccessor?
+    ): FirPropertyAccessor? {
+        val originalAccessor = getAccessor(originalProperty)
+        val replacementAccessor = getAccessor(replacementProperty)
+
+        // accessor has a header type, and we want it type to be resolved
+        return if (originalAccessor != null && replacementAccessor != null) {
+            buildPropertyAccessorCopy(originalAccessor) {
+                body = replacementAccessor.body
+                symbol = replacementAccessor.symbol
+                initDeclaration(originalAccessor, replacementAccessor)
+            }.apply { reassignAllReturnTargets(replacementAccessor) }
+        } else {
+            replacementAccessor
         }
     }
 
