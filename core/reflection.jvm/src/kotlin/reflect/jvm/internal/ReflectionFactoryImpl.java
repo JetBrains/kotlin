@@ -33,17 +33,17 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     @Override
     public KDeclarationContainer getOrCreateKotlinPackage(Class javaClass, String moduleName) {
         // moduleName is unused deliberately and only left in public ABI
-        return ClassCachesKt.getOrCreateKotlinPackage(javaClass);
+        return CachesKt.getOrCreateKotlinPackage(javaClass);
     }
 
     @Override
     public KClass getOrCreateKotlinClass(Class javaClass) {
-        return ClassCachesKt.getOrCreateKotlinClass(javaClass);
+        return CachesKt.getOrCreateKotlinClass(javaClass);
     }
 
     @Override
     public KClass getOrCreateKotlinClass(Class javaClass, String internalName) {
-        return ClassCachesKt.getOrCreateKotlinClass(javaClass);
+        return CachesKt.getOrCreateKotlinClass(javaClass);
     }
 
     @Override
@@ -111,6 +111,17 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     @Override
     public KType typeOf(KClassifier klass, List<KTypeProjection> arguments, boolean isMarkedNullable) {
+        /*
+         * We control how this method is called and ensure that `typeOf` is invoked mostly (in scenarios that
+         * bother us performance-wise) on the result of `getOrCreateKotlinClass(klass)`, thus we do downcast
+         * and extract `java.lang.Class` in a zero-cost manner.
+         * If that's our case, we go to caching code-path that caches relatively slow `createType()` call,
+         * and, what's more important, all member-based computations on this KType (e.g. `classifier`)
+         * are properly cached as well.
+         */
+        if (klass instanceof ClassBasedDeclarationContainer) {
+            return CachesKt.getOrCreateKType(((ClassBasedDeclarationContainer) klass).getJClass(), arguments, isMarkedNullable);
+        }
         return KClassifiers.createType(klass, arguments, isMarkedNullable, Collections.<Annotation>emptyList());
     }
 
@@ -155,7 +166,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     // Misc
 
     public static void clearCaches() {
-        ClassCachesKt.clearCaches();
+        CachesKt.clearCaches();
         ModuleByClassLoaderKt.clearModuleByClassLoaderCache();
     }
 }

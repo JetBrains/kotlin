@@ -44331,6 +44331,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("caching.kt")
+            public void testCaching() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/typeOf/caching.kt");
+            }
+
+            @Test
             @TestMetadata("classes.kt")
             public void testClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/typeOf/classes.kt");
