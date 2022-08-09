@@ -12,6 +12,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.backend.js.utils.isJsImplicitExport
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.superTypes
 
 private typealias SubstitutionMap = Map<IrTypeParameterSymbol, IrType>
 
@@ -34,13 +38,26 @@ class TransitiveExportCollector(val context: JsIrBackendContext) {
             .toSet()
     }
 
+    private fun IrSimpleType.findNearestExportedClass(typeSubstitutionMap: SubstitutionMap): IrSimpleType? {
+        val classifier = classifier as? IrClassSymbol ?: return null
+        if (classifier.owner.isExported(context)) return substitute(typeSubstitutionMap) as IrSimpleType
+
+        return classifier.superTypes()
+            .firstNotNullOfOrNull { (it as? IrSimpleType)?.findNearestExportedClass(typeSubstitutionMap) }
+    }
+
     private fun IrSimpleType.collectTransitiveHierarchy(typeSubstitutionMap: SubstitutionMap): Set<IrType> {
         val owner = classifier.owner as? IrClass ?: return emptySet()
         val substitutionMap = calculateTypeSubstitutionMap(typeSubstitutionMap)
 
         return when {
             isBuiltInClass(owner) || isStdLibClass(owner) -> emptySet()
-            owner.isExported(context) -> setOf(substitute(typeSubstitutionMap))
+            owner.isExported(context) -> setOf(substitute(substitutionMap))
+            owner.isJsImplicitExport() -> setOfNotNull(
+                substitute(typeSubstitutionMap),
+                takeIf { !owner.isInterface }?.findNearestExportedClass(substitutionMap)
+            )
+
             else -> collectSuperTypesTransitiveHierarchy(substitutionMap)
         }
     }

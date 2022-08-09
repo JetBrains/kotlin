@@ -207,6 +207,13 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     )
     var generateDts: Boolean by FreezableVar(false)
 
+
+    @Argument(
+        value = "-Xstrict-implicit-export-types",
+        description = "Generate strict types for implicitly exported entities inside d.ts files. Available in IR backend only."
+    )
+    var strictImplicitExportType: Boolean by FreezableVar(false)
+
     @GradleOption(DefaultValues.BooleanTrueDefault::class)
     @Argument(value = "-Xtyped-arrays", description = "Translate primitive arrays to JS typed arrays")
     var typedArrays: Boolean by FreezableVar(true)

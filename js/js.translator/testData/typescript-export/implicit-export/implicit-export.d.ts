@@ -41,5 +41,6 @@ declare namespace JS_TESTS {
         function bar(): Error;
         const console: Console;
         const error: WebAssembly.CompileError;
+        function functionWithTypeAliasInside(x: any/* foo.NonExportedGenericInterface<foo.NonExportedType> */): any/* foo.NonExportedGenericInterface<foo.NonExportedType> */;
     }
 }

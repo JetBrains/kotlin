@@ -798,6 +798,12 @@ private val escapedIdentifiersLowering = makeBodyLoweringPhase(
     description = "Convert global variables with invalid names access to globalThis member expression"
 )
 
+private val implicitlyExportedDeclarationsMarkingLowering = makeDeclarationTransformerPhase(
+    ::ImplicitlyExportedDeclarationsMarkingLowering,
+    name = "ImplicitlyExportedDeclarationsMarkingLowering",
+    description = "Add @JsImplicitExport annotation to declarations which are not exported but are used inside other exported declarations as a type"
+)
+
 private val cleanupLoweringPhase = makeBodyLoweringPhase(
     { CleanupLowering() },
     name = "CleanupLowering",
@@ -920,6 +926,7 @@ val loweringList = listOf<Lowering>(
     captureStackTraceInThrowablesPhase,
     callsLoweringPhase,
     escapedIdentifiersLowering,
+    implicitlyExportedDeclarationsMarkingLowering,
     cleanupLoweringPhase,
     // Currently broken due to static members lowering making single-open-class
     // files non-recognizable as single-class files

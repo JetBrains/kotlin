@@ -61,7 +61,6 @@ class ExportedProperty(
     val irSetter: IrFunction? = null,
 ) : ExportedDeclaration()
 
-
 // TODO: Cover all cases with frontend and disable error declarations
 class ErrorDeclaration(val message: String) : ExportedDeclaration()
 
