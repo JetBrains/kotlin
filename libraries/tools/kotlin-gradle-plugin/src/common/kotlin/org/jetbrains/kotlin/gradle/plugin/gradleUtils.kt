@@ -44,5 +44,8 @@ internal inline fun <reified T : Any> Any.addExtension(name: String, extension: 
 internal inline fun <reified T : Any> Any.getExtension(name: String): T? =
     (this as ExtensionAware).extensions.getByName(name) as T?
 
+internal inline fun <reified T : Any> Any.findExtension(name: String): T? =
+    (this as ExtensionAware).extensions.findByName(name)?.let { it as T? }
+
 inline val Any.extraProperties: ExtraPropertiesExtension
     get() = (this as ExtensionAware).extensions.extraProperties

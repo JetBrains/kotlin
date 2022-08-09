@@ -11,32 +11,33 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.kpm.applyKpmPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 
 fun buildProject(
-    configBuilder: ProjectBuilder.() -> Unit = { },
-    configProject: Project.() -> Unit = {},
+    projectBuilder: ProjectBuilder.() -> Unit = { },
+    configureProject: Project.() -> Unit = {},
 ): ProjectInternal = ProjectBuilder
     .builder()
-    .apply(configBuilder)
+    .apply(projectBuilder)
     .build()
     //temporary solution for BuildEventsListenerRegistry
     .also { addBuildEventsListenerRegistryMock(it) }
-    .apply(configProject)
+    .apply(configureProject)
     .let { it as ProjectInternal }
 
-fun buildProjectWithMPP(code: Project.() -> Unit = {}) = buildProject {
-    project.plugins.apply("kotlin-multiplatform")
+fun buildProjectWithMPP(projectBuilder: ProjectBuilder.() -> Unit = { }, code: Project.() -> Unit = {}) = buildProject(projectBuilder) {
+    project.applyMultiplatformPlugin()
     code()
 }
 
-fun buildProjectWithKPM(code: Project.() -> Unit= {}) = buildProject {
-    project.plugins.apply("org.jetbrains.kotlin.multiplatform.pm20")
+fun buildProjectWithKPM(projectBuilder: ProjectBuilder.() -> Unit = { }, code: Project.() -> Unit= {}) = buildProject(projectBuilder) {
+    project.applyKpmPlugin()
     code()
 }
 
-fun buildProjectWithJvm(code: Project.() -> Unit = {}) = buildProject {
+fun buildProjectWithJvm(projectBuilder: ProjectBuilder.() -> Unit = {}, code: Project.() -> Unit = {}) = buildProject(projectBuilder) {
     project.plugins.apply(KotlinPlatformJvmPlugin::class.java)
     code()
 }
