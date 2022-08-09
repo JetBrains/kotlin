@@ -28,17 +28,17 @@ fun test(d: dynamic) {
     <!DEBUG_INFO_DYNAMIC!>d[1]<!><!DEBUG_INFO_DYNAMIC!>--<!>
     <!DEBUG_INFO_DYNAMIC!>--<!><!DEBUG_INFO_DYNAMIC!>d[1]<!>
 
-    <!DEBUG_INFO_DYNAMIC!>d()<!>
-    <!DEBUG_INFO_DYNAMIC!>d(1)<!>
-    <!DEBUG_INFO_DYNAMIC!>d(name = 1)<!>
-    <!DEBUG_INFO_DYNAMIC!>d {}<!>
+    <!DEBUG_INFO_DYNAMIC!>d<!>()
+    <!DEBUG_INFO_DYNAMIC!>d<!>(1)
+    <!DEBUG_INFO_DYNAMIC!>d<!>(name = 1)
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>d<!> {}
 
     class C {
         val plus: dynamic = null
     }
 
-    C() + 5 // todo should be marked as DEBUG_INFO_DYNAMIC
-    C().<!DEBUG_INFO_DYNAMIC!>plus(5)<!>
+    C() <!DEBUG_INFO_DYNAMIC, PROPERTY_AS_OPERATOR!>+<!> 5 // todo should be marked as DEBUG_INFO_DYNAMIC
+    C().<!DEBUG_INFO_DYNAMIC!>plus<!>(5)
 
     d == d
     d != d
@@ -62,22 +62,22 @@ fun test(d: dynamic) {
     dVar<!DEBUG_INFO_DYNAMIC!>--<!>
     <!DEBUG_INFO_DYNAMIC!>--<!>dVar
 
-    dVar <!DEBUG_INFO_DYNAMIC!>+=<!> 1
-    dVar <!DEBUG_INFO_DYNAMIC!>-=<!> 1
-    dVar <!DEBUG_INFO_DYNAMIC!>*=<!> 1
-    dVar <!DEBUG_INFO_DYNAMIC!>/=<!> 1
-    dVar <!DEBUG_INFO_DYNAMIC!>%=<!> 1
+    <!DEBUG_INFO_DYNAMIC!>dVar += 1<!>
+    <!DEBUG_INFO_DYNAMIC!>dVar -= 1<!>
+    <!DEBUG_INFO_DYNAMIC!>dVar *= 1<!>
+    <!DEBUG_INFO_DYNAMIC!>dVar /= 1<!>
+    <!DEBUG_INFO_DYNAMIC!>dVar %= 1<!>
 
-    d <!DEBUG_INFO_DYNAMIC!>+=<!> 1
-    d <!DEBUG_INFO_DYNAMIC!>-=<!> 1
-    d <!DEBUG_INFO_DYNAMIC!>*=<!> 1
-    d <!DEBUG_INFO_DYNAMIC!>/=<!> 1
-    d <!DEBUG_INFO_DYNAMIC!>%=<!> 1
+    <!DEBUG_INFO_DYNAMIC!>d += 1<!>
+    <!DEBUG_INFO_DYNAMIC!>d -= 1<!>
+    <!DEBUG_INFO_DYNAMIC!>d *= 1<!>
+    <!DEBUG_INFO_DYNAMIC!>d /= 1<!>
+    <!DEBUG_INFO_DYNAMIC!>d %= 1<!>
 
-    <!DEBUG_INFO_DYNAMIC!>d[1]<!> <!DEBUG_INFO_DYNAMIC!>+=<!> 1
-    <!DEBUG_INFO_DYNAMIC!>d[1]<!> <!DEBUG_INFO_DYNAMIC!>-=<!> 1
-    <!DEBUG_INFO_DYNAMIC!>d[1]<!> <!DEBUG_INFO_DYNAMIC!>*=<!> 1
-    <!DEBUG_INFO_DYNAMIC!>d[1]<!> <!DEBUG_INFO_DYNAMIC!>/=<!> 1
-    <!DEBUG_INFO_DYNAMIC!>d[1]<!> <!DEBUG_INFO_DYNAMIC!>%=<!> 1
+    <!DEBUG_INFO_DYNAMIC!><!DEBUG_INFO_DYNAMIC!>d[1]<!> += 1<!>
+    <!DEBUG_INFO_DYNAMIC!><!DEBUG_INFO_DYNAMIC!>d[1]<!> -= 1<!>
+    <!DEBUG_INFO_DYNAMIC!><!DEBUG_INFO_DYNAMIC!>d[1]<!> *= 1<!>
+    <!DEBUG_INFO_DYNAMIC!><!DEBUG_INFO_DYNAMIC!>d[1]<!> /= 1<!>
+    <!DEBUG_INFO_DYNAMIC!><!DEBUG_INFO_DYNAMIC!>d[1]<!> %= 1<!>
 }
 
