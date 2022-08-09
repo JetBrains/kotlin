@@ -1,2 +1,1 @@
 Resolved to:
-0: (in test.MyAnno) constructor()
