@@ -131,7 +131,7 @@ class FirFrontendFacade(
             }
             module.targetPlatform.isJs() -> {
                 projectEnvironment = null
-                FirJsSessionFactory.createLibrarySession(
+                TestFirJsSessionFactory.createLibrarySession(
                     moduleName,
                     moduleInfoProvider.firSessionProvider,
                     dependencyList,
@@ -179,7 +179,7 @@ class FirFrontendFacade(
                 )
             }
             module.targetPlatform.isJs() -> {
-                FirJsSessionFactory.createModuleBasedSession(
+                TestFirJsSessionFactory.createModuleBasedSession(
                     mainModuleData,
                     moduleInfoProvider.firSessionProvider,
                     extensionRegistrars,
