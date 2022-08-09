@@ -68,7 +68,7 @@ internal class FirElementBuilder(
 
     private fun getOrBuildFirForKtFile(ktFile: KtFile): FirFile {
         val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
-        moduleComponents.lazyFirDeclarationsResolver.lazyResolveFileDeclaration(
+        moduleComponents.firModuleLazyDeclarationResolver.lazyResolveFileDeclaration(
             firFile = firFile,
             toPhase = FirResolvePhase.BODY_RESOLVE,
             scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),

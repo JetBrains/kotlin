@@ -131,7 +131,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(file)
 
         val scopeSession = firResolveSession.getScopeSessionFor(session)
-        moduleComponents.lazyFirDeclarationsResolver.lazyResolveFileDeclaration(
+        moduleComponents.firModuleLazyDeclarationResolver.lazyResolveFileDeclaration(
             firFile = firFile,
             scopeSession = scopeSession,
             toPhase = FirResolvePhase.IMPORTS
@@ -197,7 +197,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
             ?: buildErrorWithAttachment("FirFile session expected to be a resolvable session but was ${firFile.llFirSession::class.java}") {
                 withEntry("firSession", firFile.llFirSession) { it.toString() }
             }
-        val declarationResolver = llFirResolvableSession.moduleComponents.lazyFirDeclarationsResolver
+        val declarationResolver = llFirResolvableSession.moduleComponents.firModuleLazyDeclarationResolver
 
         declarationResolver.resolveFileAnnotations(
             firFile = firFile,
@@ -270,7 +270,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
             ResolveTreeBuilder.resolveEnsure(onAirDesignation.declaration, FirResolvePhase.BODY_RESOLVE) {
                 val resolvableSession = onAirDesignation.declaration.llFirResolvableSession
                     ?: error("Expected resolvable session")
-                resolvableSession.moduleComponents.lazyFirDeclarationsResolver
+                resolvableSession.moduleComponents.firModuleLazyDeclarationResolver
                     .runLazyDesignatedOnAirResolveToBodyWithoutLock(
                         designation = onAirDesignation,
                         checkPCE = true,

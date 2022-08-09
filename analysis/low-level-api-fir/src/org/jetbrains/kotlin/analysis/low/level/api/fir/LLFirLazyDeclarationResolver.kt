@@ -20,7 +20,7 @@ internal class LLFirLazyDeclarationResolver(private val sessionInvalidator: LLFi
         if (session !is LLFirResolvableModuleSession) return
         val moduleComponents = session.moduleComponents
         try {
-            moduleComponents.lazyFirDeclarationsResolver.lazyResolveDeclaration(
+            moduleComponents.firModuleLazyDeclarationResolver.lazyResolveDeclaration(
                 firDeclarationToResolve = fir,
                 scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
                 toPhase = toPhase,
