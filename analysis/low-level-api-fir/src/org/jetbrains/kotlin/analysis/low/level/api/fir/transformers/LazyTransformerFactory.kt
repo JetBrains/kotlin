@@ -10,15 +10,14 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirModuleLazyDeclarationResolver
 
 internal object LazyTransformerFactory {
     fun createLazyTransformer(
         phase: FirResolvePhase,
         designation: FirDeclarationDesignationWithFile,
         scopeSession: ScopeSession,
-        lazyDeclarationResolver: FirLazyDeclarationResolver,
+        lazyDeclarationResolver: LLFirModuleLazyDeclarationResolver,
         towerDataContextCollector: FirTowerDataContextCollector?,
         firProviderInterceptor: FirProviderInterceptor?,
         checkPCE: Boolean,
