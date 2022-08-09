@@ -26,7 +26,8 @@ object StandaloneModeConfigurator : AnalysisApiTestConfigurator() {
     }
 
     override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>
-        get() = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false).serviceRegistrars
+        get() = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false).serviceRegistrars +
+                listOf(StandaloneModeTestServiceRegistrar)
 
     override fun createModules(
         moduleStructure: TestModuleStructure,
