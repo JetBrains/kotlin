@@ -37,15 +37,15 @@ internal fun <L : Any> L.invalidAccess(): Nothing =
     error("Cls delegate shouldn't be accessed for symbol light classes! Qualified name: ${javaClass.name}")
 
 
-internal fun KtAnalysisSession.mapSuperType(
+internal fun KtAnalysisSession.mapType(
     type: KtType,
     psiContext: PsiElement,
-    kotlinCollectionAsIs: Boolean = false
+    mode: KtTypeMappingMode
 ): PsiClassType? {
     if (type is KtClassErrorType) return null
     val psiType = type.asPsiType(
         psiContext,
-        if (kotlinCollectionAsIs) KtTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS else KtTypeMappingMode.SUPER_TYPE,
+        mode,
     )
     return psiType as? PsiClassType
 }

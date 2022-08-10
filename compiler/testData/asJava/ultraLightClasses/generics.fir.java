@@ -33,7 +33,7 @@ public abstract class C /* C*/<T>  {
   public final java.util.List<java.lang.CharSequence> getConstructorParam();//  getConstructorParam()
 
   @org.jetbrains.annotations.Nullable()
-  public final <T extends java.lang.Comparable<T>> T max(@org.jetbrains.annotations.Nullable() java.util.Collection<? extends T>);// <T extends java.lang.Comparable<T>>  max(java.util.Collection<? extends T>)
+  public final <T extends java.lang.Comparable<? super T>> T max(@org.jetbrains.annotations.Nullable() java.util.Collection<? extends T>);// <T extends java.lang.Comparable<? super T>>  max(java.util.Collection<? extends T>)
 
   @org.jetbrains.annotations.Nullable()
   public final java.util.HashSet<java.lang.String> getSHashSetProp();//  getSHashSetProp()
@@ -70,7 +70,7 @@ public abstract class C /* C*/<T>  {
 
 }
 
-public class K /* K*/<T extends K<T>>  {
+public class K /* K*/<T extends K<? extends T>>  {
   public  K();//  .ctor()
 
 }

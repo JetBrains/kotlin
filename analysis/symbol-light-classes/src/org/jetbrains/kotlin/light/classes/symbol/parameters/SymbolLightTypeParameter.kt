@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.basicIsEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.invalidAccess
-import org.jetbrains.kotlin.light.classes.symbol.mapSuperType
+import org.jetbrains.kotlin.light.classes.symbol.mapType
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -71,7 +72,7 @@ internal class SymbolLightTypeParameter(
                 }
             }
             .mapNotNull {
-                mapSuperType(it, this@SymbolLightTypeParameter)
+                mapType(it, this@SymbolLightTypeParameter, KtTypeMappingMode.GENERIC_ARGUMENT)
             }
             .forEach { listBuilder.addReference(it) }
 
