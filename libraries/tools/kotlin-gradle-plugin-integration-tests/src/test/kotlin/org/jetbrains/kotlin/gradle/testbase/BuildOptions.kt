@@ -127,7 +127,7 @@ data class BuildOptions(
         }
 
         if (useFir) {
-            arguments.add("-Pkotlin.useFir=true")
+            arguments.add("-Pkotlin.useK2=true")
         }
 
         if (usePreciseJavaTracking != null) {
