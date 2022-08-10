@@ -94,7 +94,8 @@ val functionCallOrigin = type("fir.expressions", "FirFunctionCallOrigin")
 
 val resolvedDeclarationStatusImplType = type("fir.declarations.impl", "FirResolvedDeclarationStatusImpl")
 
-val deprecationsPerUseSiteType = type("fir.declarations", "DeprecationsPerUseSite")
+val deprecationsProviderType = type("fir.declarations", "DeprecationsProvider")
+val unresolvedDeprecationsProviderType = type("fir.declarations", "UnresolvedDeprecationProvider")
 val emptyAnnotationArgumentMappingType = type("fir.expressions.impl", "FirEmptyAnnotationArgumentMapping")
 
 val firPropertySymbolType = type("fir.symbols.impl", "FirPropertySymbol")

@@ -24,65 +24,121 @@ import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames.dep
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames.deprecatedSinceKotlinWarningSince
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
-import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
-import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
-fun FirBasedSymbol<*>.getDeprecation(callSite: FirElement?): DeprecationInfo? {
+class DeprecationAnnotationInfoPerUseSiteStorage(val storage: Map<AnnotationUseSiteTarget?, List<DeprecationAnnotationInfo>>) {
+    fun toDeprecationsProvider(): DeprecationsProvider {
+        if (storage.isEmpty()) {
+            return EmptyDeprecationsProvider
+        }
+        @Suppress("UNCHECKED_CAST")
+        val specificCallSite = storage.filterKeys { it != null } as Map<AnnotationUseSiteTarget, List<DeprecationAnnotationInfo>>
+        return DeprecationsProviderImpl(
+            storage[null],
+            specificCallSite.takeIf { it.isNotEmpty() }
+        )
+    }
+
+}
+
+class DeprecationAnnotationInfoPerUseSiteStorageBuilder {
+    private val storage = mutableMapOf<AnnotationUseSiteTarget?, MutableList<DeprecationAnnotationInfo>>()
+
+    fun add(useSite: AnnotationUseSiteTarget?, info: DeprecationAnnotationInfo) {
+        storage.getOrPut(useSite) { mutableListOf() }.add(info)
+    }
+
+    fun add(useSite: AnnotationUseSiteTarget?, infos: Iterable<DeprecationAnnotationInfo>) {
+        storage.getOrPut(useSite) { mutableListOf() }.addAll(infos)
+    }
+
+    fun add(other: DeprecationAnnotationInfoPerUseSiteStorage) {
+        other.storage.forEach { (useSite, info) ->
+            add(useSite, info)
+        }
+    }
+
+    fun build(): DeprecationAnnotationInfoPerUseSiteStorage {
+        return DeprecationAnnotationInfoPerUseSiteStorage(storage)
+    }
+}
+
+fun buildDeprecationAnnotationInfoPerUseSiteStorage(builder: DeprecationAnnotationInfoPerUseSiteStorageBuilder.() -> Unit)
+        : DeprecationAnnotationInfoPerUseSiteStorage {
+    return DeprecationAnnotationInfoPerUseSiteStorageBuilder().apply(builder).build()
+}
+
+fun FirBasedSymbol<*>.getDeprecation(apiVersion: ApiVersion, callSite: FirElement?): DeprecationInfo? {
     return when (this) {
         is FirPropertySymbol ->
             when (callSite) {
                 is FirVariableAssignment ->
-                    getDeprecationForCallSite(AnnotationUseSiteTarget.PROPERTY_SETTER, AnnotationUseSiteTarget.PROPERTY)
+                    getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.PROPERTY_SETTER, AnnotationUseSiteTarget.PROPERTY)
                 is FirPropertyAccessExpression ->
-                    getDeprecationForCallSite(AnnotationUseSiteTarget.PROPERTY_GETTER, AnnotationUseSiteTarget.PROPERTY)
+                    getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.PROPERTY_GETTER, AnnotationUseSiteTarget.PROPERTY)
                 else ->
-                    getDeprecationForCallSite(AnnotationUseSiteTarget.PROPERTY)
+                    getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.PROPERTY)
             }
         else ->
-            getDeprecationForCallSite()
+            getDeprecationForCallSite(apiVersion)
     }
 }
 
-fun FirAnnotationContainer.getDeprecationInfos(currentVersion: ApiVersion): DeprecationsPerUseSite {
-    val deprecationByUseSite = mutableMapOf<AnnotationUseSiteTarget?, DeprecationInfo>()
+fun FirAnnotationContainer.getDeprecationsProvider(): DeprecationsProvider {
+    return extractDeprecationInfoPerUseSite().toDeprecationsProvider()
+}
+
+fun FirAnnotationContainer.extractDeprecationInfoPerUseSite(): DeprecationAnnotationInfoPerUseSiteStorage {
     val fromJava = this is FirDeclaration && this.isJavaOrEnhancement
-    annotations.extractDeprecationInfoPerUseSite(currentVersion, fromJava).toMap(deprecationByUseSite)
 
-    if (this is FirProperty) {
-        getDeprecationsFromAccessors(getter, setter, currentVersion).bySpecificSite?.forEach { (k, v) -> deprecationByUseSite[k] = v }
+    return buildDeprecationAnnotationInfoPerUseSiteStorage {
+        add(annotations.extractDeprecationAnnotationInfoPerUseSite(fromJava))
+        if (this@extractDeprecationInfoPerUseSite is FirProperty) {
+            add(getDeprecationsAnnotationInfoByUseSiteFromAccessors(getter, setter))
+        }
     }
-
-    return DeprecationsPerUseSite.fromMap(deprecationByUseSite)
 }
-
-@OptIn(ExperimentalStdlibApi::class)
-fun getDeprecationsFromAccessors(
+fun getDeprecationsProviderFromAccessors(
     getter: FirFunction?,
-    setter: FirFunction?,
-    currentVersion: ApiVersion
-): DeprecationsPerUseSite {
-    val perUseSite = buildMap<AnnotationUseSiteTarget, DeprecationInfo> {
-        val setterDeprecations = setter?.getDeprecationInfos(currentVersion)
-        setterDeprecations?.all?.let { put(AnnotationUseSiteTarget.PROPERTY_SETTER, it) }
-        setterDeprecations?.bySpecificSite?.let { putAll(it) }
-        val getterDeprecations = getter?.getDeprecationInfos(currentVersion)
-        getterDeprecations?.all?.let { put(AnnotationUseSiteTarget.PROPERTY_GETTER, it) }
-        getterDeprecations?.bySpecificSite?.let { putAll(it) }
+    setter: FirFunction?
+): DeprecationsProvider {
+    return getDeprecationsAnnotationInfoByUseSiteFromAccessors(getter, setter).toDeprecationsProvider()
+}
+fun getDeprecationsAnnotationInfoByUseSiteFromAccessors(
+    getter: FirFunction?,
+    setter: FirFunction?
+): DeprecationAnnotationInfoPerUseSiteStorage {
+    return buildDeprecationAnnotationInfoPerUseSiteStorage {
+        val setterDeprecations = setter?.extractDeprecationInfoPerUseSite()
+        setterDeprecations?.storage?.forEach { (useSite, infos) ->
+            if (useSite == null) {
+                add(AnnotationUseSiteTarget.PROPERTY_SETTER, infos)
+            } else {
+                add(useSite, infos)
+            }
+        }
+        val getterDeprecations = getter?.extractDeprecationInfoPerUseSite()
+        getterDeprecations?.storage?.forEach { (useSite, infos) ->
+            if (useSite == null) {
+                add(AnnotationUseSiteTarget.PROPERTY_GETTER, infos)
+            } else {
+                add(useSite, infos)
+            }
+        }
     }
-    return if (perUseSite.isEmpty()) EmptyDeprecationsPerUseSite else DeprecationsPerUseSite(null, perUseSite)
 }
 
-fun List<FirAnnotation>.getDeprecationInfosFromAnnotations(currentVersion: ApiVersion, fromJava: Boolean): DeprecationsPerUseSite {
-    val deprecationByUseSite = extractDeprecationInfoPerUseSite(currentVersion, fromJava).toMap()
-    return DeprecationsPerUseSite.fromMap(deprecationByUseSite)
+fun List<FirAnnotation>.getDeprecationsProviderFromAnnotations(fromJava: Boolean): DeprecationsProvider {
+    val deprecationAnnotationByUseSite = extractDeprecationAnnotationInfoPerUseSite(fromJava)
+    return deprecationAnnotationByUseSite.toDeprecationsProvider()
 }
 
 fun FirBasedSymbol<*>.getDeprecationForCallSite(
+    apiVersion: ApiVersion,
     vararg sites: AnnotationUseSiteTarget
 ): DeprecationInfo? {
     val deprecations = when (this) {
-        is FirCallableSymbol<*> -> deprecation
-        is FirClassLikeSymbol<*> -> deprecation
+        is FirCallableSymbol<*> -> getDeprecation(apiVersion)
+        is FirClassLikeSymbol<*> -> getDeprecation(apiVersion)
         else -> null
     }
     return (deprecations ?: EmptyDeprecationsPerUseSite).forUseSite(*sites)
@@ -107,51 +163,48 @@ private fun FirAnnotation.getDeprecationLevel(): DeprecationLevelValue? {
     return DeprecationLevelValue.values().find { it.name == targetName }
 }
 
-private fun List<FirAnnotation>.extractDeprecationInfoPerUseSite(
-    currentVersion: ApiVersion,
+private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
     fromJava: Boolean
-): List<Pair<AnnotationUseSiteTarget?, DeprecationInfo>> {
+): DeprecationAnnotationInfoPerUseSiteStorage {
     @Suppress("RemoveExplicitTypeArguments")
     val annotations = buildList<Pair<FirAnnotation, Boolean>> {
         mapAnnotationsWithClassIdTo(StandardClassIds.Annotations.Deprecated, this) { it to false }
         mapAnnotationsWithClassIdTo(StandardClassIds.Annotations.Java.Deprecated, this) { it to true }
         mapAnnotationsWithClassIdTo(StandardClassIds.Annotations.SinceKotlin, this) { it to false }
     }
-    return annotations.mapNotNull { (deprecated, fromJavaAnnotation) ->
-        if (deprecated.classId == StandardClassIds.Annotations.SinceKotlin) {
-            val sinceKotlinSingleArgument = deprecated.findArgumentByName(ParameterNames.sinceKotlinVersion)
-            val apiVersion = ((sinceKotlinSingleArgument as? FirConstExpression<*>)?.value as? String)
-                ?.let(ApiVersion.Companion::parse) ?: return@mapNotNull null
-            if (apiVersion <= currentVersion) return@mapNotNull null
-            val wasExperimental = this.any { it.classId == StandardClassIds.Annotations.WasExperimental }
-            return@mapNotNull runUnless(wasExperimental) {
-                deprecated.useSiteTarget to SimpleDeprecationInfo(
-                    deprecationLevel = DeprecationLevelValue.HIDDEN,
-                    propagatesToOverrides = true,
-                    message = null
-                )
+
+    return buildDeprecationAnnotationInfoPerUseSiteStorage {
+        for ((deprecated, fromJavaAnnotation) in annotations) {
+            if (deprecated.classId == StandardClassIds.Annotations.SinceKotlin) {
+                val sinceKotlinSingleArgument = deprecated.findArgumentByName(ParameterNames.sinceKotlinVersion)
+                val apiVersion = ((sinceKotlinSingleArgument as? FirConstExpression<*>)?.value as? String)
+                    ?.let(ApiVersion.Companion::parse) ?: continue
+                val wasExperimental = this@extractDeprecationAnnotationInfoPerUseSite.any {
+                    it.classId == StandardClassIds.Annotations.WasExperimental
+                }
+                if (!wasExperimental) {
+                    add(deprecated.useSiteTarget, SinceKotlinInfo(apiVersion))
+                }
+            } else {
+                val deprecationLevel = deprecated.getDeprecationLevel() ?: DeprecationLevelValue.WARNING
+                val propagatesToOverride = !fromJavaAnnotation && !fromJava
+                val deprecatedSinceKotlin = getAnnotationsByClassId(StandardClassIds.Annotations.DeprecatedSinceKotlin).firstOrNull()
+                val message = deprecated.getStringArgument(ParameterNames.deprecatedMessage)
+
+                val deprecatedInfo =
+                    if (deprecatedSinceKotlin == null) {
+                        DeprecatedInfo(deprecationLevel, propagatesToOverride, message)
+                    } else {
+                        DeprecatedSinceKotlinInfo(
+                            deprecatedSinceKotlin.getVersionFromArgument(deprecatedSinceKotlinWarningSince),
+                            deprecatedSinceKotlin.getVersionFromArgument(deprecatedSinceKotlinErrorSince),
+                            deprecatedSinceKotlin.getVersionFromArgument(deprecatedSinceKotlinHiddenSince),
+                            message,
+                            propagatesToOverride
+                        )
+                    }
+                add(deprecated.useSiteTarget, deprecatedInfo)
             }
-        }
-        val deprecationLevel = deprecated.getDeprecationLevel() ?: DeprecationLevelValue.WARNING
-        val deprecatedSinceKotlin = getAnnotationsByClassId(StandardClassIds.Annotations.DeprecatedSinceKotlin).firstOrNull()
-
-        fun deprecatedLevelApplied(name: Name, level: DeprecationLevelValue): DeprecationLevelValue? {
-            deprecatedSinceKotlin?.getVersionFromArgument(name)?.takeIf { it <= currentVersion }?.let { return level }
-            return level.takeIf { deprecatedSinceKotlin == null && level == deprecationLevel }
-        }
-
-        val appliedLevel = (deprecatedLevelApplied(deprecatedSinceKotlinHiddenSince, DeprecationLevelValue.HIDDEN)
-            ?: deprecatedLevelApplied(deprecatedSinceKotlinErrorSince, DeprecationLevelValue.ERROR)
-            ?: deprecatedLevelApplied(deprecatedSinceKotlinWarningSince, DeprecationLevelValue.WARNING))
-
-        appliedLevel?.let {
-            val inheritable = !fromJavaAnnotation && !fromJava
-            deprecated.useSiteTarget to SimpleDeprecationInfo(
-                it,
-                inheritable,
-                deprecated.getStringArgument(ParameterNames.deprecatedMessage)
-            )
         }
     }
 }
-

@@ -88,7 +88,7 @@ class JavaClassUseSiteMemberScope(
                         chooseModalityForAccessor(property, delegateGetter)
                     }
                 )
-                deprecation = getDeprecationsFromAccessors(delegateGetter, delegateSetter, session.languageVersionSettings.apiVersion)
+                deprecationsProvider = getDeprecationsProviderFromAccessors(delegateGetter, delegateSetter)
             }.symbol
         }
     }

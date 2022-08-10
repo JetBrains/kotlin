@@ -61,8 +61,8 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
 
-    override val deprecation: DeprecationsPerUseSite by lazy {
-        annotations.getDeprecationInfosFromAnnotations(moduleData.session.languageVersionSettings.apiVersion, fromJava = true)
+    override val deprecationsProvider: DeprecationsProvider by lazy {
+        annotations.getDeprecationsProviderFromAnnotations(true)
     }
 
     override val contextReceivers: List<FirContextReceiver>
@@ -145,8 +145,7 @@ class FirJavaField @FirImplementationDetail constructor(
     }
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
-
-    override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {}
+    override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {}
 
     override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirField {
         return this

@@ -28,7 +28,7 @@ sealed class FirClassLikeDeclaration : FirMemberDeclaration(), FirStatement {
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val status: FirDeclarationStatus
     abstract override val symbol: FirClassLikeSymbol<out FirClassLikeDeclaration>
-    abstract val deprecation: DeprecationsPerUseSite?
+    abstract val deprecationsProvider: DeprecationsProvider
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitClassLikeDeclaration(this, data)
 
@@ -38,7 +38,7 @@ sealed class FirClassLikeDeclaration : FirMemberDeclaration(), FirStatement {
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
-    abstract fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
+    abstract fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration
 

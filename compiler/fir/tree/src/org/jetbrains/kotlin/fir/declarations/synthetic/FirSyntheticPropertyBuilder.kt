@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations.synthetic
 
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
+import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
@@ -17,7 +17,7 @@ class FirSyntheticPropertyBuilder {
     lateinit var name: Name
     lateinit var symbol: FirSyntheticPropertySymbol
     lateinit var delegateGetter: FirSimpleFunction
-    lateinit var deprecation: DeprecationsPerUseSite
+    lateinit var deprecationsProvider: DeprecationsProvider
 
     var status: FirDeclarationStatus? = null
     var delegateSetter: FirSimpleFunction? = null
@@ -29,7 +29,7 @@ class FirSyntheticPropertyBuilder {
         resolvePhase = delegateGetter.resolvePhase,
         getter = FirSyntheticPropertyAccessor(delegateGetter, isGetter = true),
         setter = delegateSetter?.let { FirSyntheticPropertyAccessor(it, isGetter = false) },
-        deprecation = deprecation
+        deprecationsProvider = deprecationsProvider
     )
 }
 
