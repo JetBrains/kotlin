@@ -139,7 +139,7 @@ to perform such updates:
 
 - Use auto-generation for getting an initial list of new hashes (verify updates relate to you changes).
 
-`./gradlew -i -write-verification-metadata sha256,md5 -Pkotlin.native.enabled=true help`
+`./gradlew -i --write-verification-metadata sha256,md5 -Pkotlin.native.enabled=true help`
 
 *(any other task may be used instead of `help`)*
 
