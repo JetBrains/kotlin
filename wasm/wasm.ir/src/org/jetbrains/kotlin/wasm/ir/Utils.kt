@@ -30,28 +30,3 @@ fun WasmModule.calculateIds() {
     tables.calculateIds(startIndex = importedTables.size)
     tags.calculateIds(startIndex = importedTags.size)
 }
-
-// This is used to perform simple peephole-like optimizations from the WasmExpressionBuilder.
-// Takes two adjacent instructions and returns an array with 0, 1 or 2 instructions to replace the original ones.
-// Returns null if no action is required.
-fun foldWasmInstructions(prev: WasmInstr?, next: WasmInstr): List<WasmInstr>? {
-    if (prev == null)
-        return null
-
-    // Unreachable is not needed after another unreachable or return
-    if (next.operator == WasmOp.UNREACHABLE && prev.operator in listOf(WasmOp.UNREACHABLE, WasmOp.RETURN))
-        return listOf(prev)
-
-    if (next.operator == WasmOp.DROP) {
-        // simple pure instruction + drop -> nothing
-        if (prev.operator == WasmOp.GET_UNIT || prev.operator == WasmOp.REF_NULL)
-            return listOf()
-
-        // return + drop -> return
-        if (prev.operator == WasmOp.RETURN)
-            return listOf(prev)
-    }
-
-    return null
-}
-
