@@ -71,13 +71,13 @@ public inline fun buildErrorWithAttachment(
 
 @OptIn(ExperimentalContracts::class)
 public inline fun checkWithAttachmentBuilder(
-    value: Boolean,
-    lazyMessage: () -> String,
+    condition: Boolean,
+    message: () -> String,
     buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {}
 ) {
-    contract { returns() implies (value) }
+    contract { returns() implies (condition) }
 
-    if (!value) {
-        buildErrorWithAttachment(lazyMessage(), buildAttachment = buildAttachment)
+    if (!condition) {
+        buildErrorWithAttachment(message(), buildAttachment = buildAttachment)
     }
 }

@@ -22,8 +22,8 @@ internal inline fun checkTypeRefIsResolved(
     extraAttachment: ExceptionAttachmentBuilder.() -> Unit = {}
 ) {
     checkWithAttachmentBuilder(
-        typeRef is FirResolvedTypeRef || acceptImplicitTypeRef && typeRef is FirImplicitTypeRef,
-        {
+        condition = typeRef is FirResolvedTypeRef || acceptImplicitTypeRef && typeRef is FirImplicitTypeRef,
+        message = {
             buildString {
                 append("Expected ${FirResolvedTypeRef::class.simpleName}")
                 if (acceptImplicitTypeRef) {
@@ -52,8 +52,8 @@ internal fun checkReceiverTypeRefIsResolved(declaration: FirCallableDeclaration,
 internal fun checkContractDescriptionIsResolved(declaration: FirContractDescriptionOwner) {
     val contractDescription = declaration.contractDescription
     checkWithAttachmentBuilder(
-        contractDescription is FirResolvedContractDescription || contractDescription is FirEmptyContractDescription,
-        { "Expected ${FirResolvedContractDescription::class.simpleName} or ${FirEmptyContractDescription::class.simpleName} but ${contractDescription::class.simpleName} found for ${declaration::class.simpleName}" }
+        condition = contractDescription is FirResolvedContractDescription || contractDescription is FirEmptyContractDescription,
+        message = { "Expected ${FirResolvedContractDescription::class.simpleName} or ${FirEmptyContractDescription::class.simpleName} but ${contractDescription::class.simpleName} found for ${declaration::class.simpleName}" }
     ) {
         withFirEntry("declaration", declaration)
     }
@@ -62,8 +62,8 @@ internal fun checkContractDescriptionIsResolved(declaration: FirContractDescript
 internal fun checkDeclarationStatusIsResolved(declaration: FirMemberDeclaration) {
     val status = declaration.status
     checkWithAttachmentBuilder(
-        status is FirResolvedDeclarationStatus,
-        { "Expected ${FirResolvedDeclarationStatus::class.simpleName} but ${declaration::class.simpleName} found for ${declaration::class.simpleName}" }
+        condition = status is FirResolvedDeclarationStatus,
+        message = { "Expected ${FirResolvedDeclarationStatus::class.simpleName} but ${declaration::class.simpleName} found for ${declaration::class.simpleName}" }
     ) {
         withFirEntry("declaration", declaration)
     }
