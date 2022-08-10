@@ -108,4 +108,4 @@ private val PLACEHOLDER_SOURCES_TEXT = """
  * 
  * Write your testdata sources here, or remove the file, if it is not needed
  */
-"""
+""".trimIndent()
