@@ -71,7 +71,7 @@ internal class SymbolLightTypeParameter(
                 }
             }
             .mapNotNull {
-                mapSuperType(it, this@SymbolLightTypeParameter, kotlinCollectionAsIs = true)
+                mapSuperType(it, this@SymbolLightTypeParameter)
             }
             .forEach { listBuilder.addReference(it) }
 
