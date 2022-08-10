@@ -56,7 +56,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         val jvmTarget = JvmTarget.fromString(jvmTargetValue)
         if (jvmTarget != null) {
             put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
-            if (jvmTarget == JvmTarget.JVM_1_6 && !isJvmTarget6Allowed()) {
+            if (jvmTarget == JvmTarget.JVM_1_6) {
                 messageCollector.report(
                     ERROR,
                     "JVM target 1.6 is no longer supported. Please migrate to JVM target 1.8 or above"
@@ -378,6 +378,3 @@ private val CompilerConfiguration.messageCollector: MessageCollector
 
 private fun getJavaVersion(): Int =
     System.getProperty("java.specification.version")?.substringAfter('.')?.toIntOrNull() ?: 6
-
-private fun isJvmTarget6Allowed(): Boolean =
-    K2JVMCompiler::class.java.classLoader.getResource("META-INF/unsafe-allow-jvm6") != null

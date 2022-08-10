@@ -313,8 +313,7 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":kotlinx-serialization-compiler-plugin",
         ":kotlin-serialization",
         ":kotlin-serialization-unshaded",
-        ":wasm:wasm.ir",
-        ":libraries:tools:stdlib-compiler-classpath"
+        ":wasm:wasm.ir"
 
 
 include ":kotlinx-atomicfu-compiler-plugin",
