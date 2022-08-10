@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.getSymbolOfType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.getSymbolByName
-import org.jetbrains.kotlin.analysis.test.framework.services.getSymbolByNameSafe
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -24,7 +23,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractSubstitutorBuilderTest : AbstractAnalysisApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        val declaration = testServices.expressionMarkerProvider.getElementOfTypAtCaret<KtDeclaration>(ktFile)
+        val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(ktFile)
         val actual = analyseForTest(declaration) {
             val symbol = declaration.getSymbolOfType<KtCallableSymbol>()
 
