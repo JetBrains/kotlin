@@ -396,4 +396,36 @@ class JavadocParserTest : BaseAbstractTest() {
             }
         }
     }
+
+    @Test
+    fun `var tag is handled properly`() {
+        val source = """
+            |/src/main/kotlin/test/Test.java
+            |package example
+            |
+            | /**
+            | * An example of using var tag: <var>variable</var>
+            | */
+            | public class Test  {}
+            """.trimIndent()
+        testInline(
+            source,
+            configuration,
+        ) {
+            documentablesCreationStage = { modules ->
+                val docs = modules.first().packages.first().classlikes.single().documentation.first().value
+                val root = docs.children.first().root
+
+                kotlin.test.assertEquals(
+                    listOf(
+                        P(children = listOf(
+                            Text("An example of using var tag: "),
+                            Var(children = listOf(Text("variable"))),
+                        )),
+                    ),
+                    root.children
+                )
+            }
+        }
+    }
 }
