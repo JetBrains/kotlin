@@ -27,10 +27,9 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import javax.swing.Icon
 
 abstract class KtLightClassForFacadeBase constructor(
-    manager: PsiManager,
     override val facadeClassFqName: FqName,
     override val files: Collection<KtFile>
-) : KtLightClassBase(manager), KtLightClassForFacade {
+) : KtLightClassBase(files.first().manager), KtLightClassForFacade {
     private val firstFileInFacade by lazyPub { files.iterator().next() }
 
     private val modifierList: PsiModifierList =

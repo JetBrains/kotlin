@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.impl.light.LightModifierList
@@ -23,11 +22,10 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 
 class KtUltraLightClassForFacade(
-    manager: PsiManager,
     facadeClassFqName: FqName,
     files: Collection<KtFile>,
     private val filesWithSupports: Collection<Pair<KtFile, KtUltraLightSupport>>
-) : KtLightClassForFacadeBase(manager, facadeClassFqName, files) {
+) : KtLightClassForFacadeBase(facadeClassFqName, files) {
     private val _modifierList: PsiModifierList by lazyPub {
         if (isMultiFileClass)
             LightModifierList(manager, KotlinLanguage.INSTANCE, PsiModifier.PUBLIC, PsiModifier.FINAL)
@@ -135,6 +133,5 @@ class KtUltraLightClassForFacade(
 
     override fun getOwnMethods() = _ownMethods
 
-    override fun copy(): KtLightClassForFacade =
-        KtUltraLightClassForFacade(manager, facadeClassFqName, files, filesWithSupports)
+    override fun copy(): KtLightClassForFacade = KtUltraLightClassForFacade(facadeClassFqName, files, filesWithSupports)
 }

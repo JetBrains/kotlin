@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -35,10 +34,8 @@ class KotlinK1LightClassFactory : KotlinLightClassFactory {
     ): KtLightClassForFacade? = FacadeCache.getInstance(project)[facadeClassFqName, searchScope]
 
     override fun createFacadeForSyntheticFile(facadeClassFqName: FqName, file: KtFile): KtLightClassForFacade {
-        val project = file.project
-        val manager = PsiManager.getInstance(project)
-        return LightClassGenerationSupport.getInstance(project).run {
-            createUltraLightClassForFacade(manager, facadeClassFqName, listOf(file)) ?: error { "Unable to create UL class for facade" }
+        return LightClassGenerationSupport.getInstance(file.project).run {
+            createUltraLightClassForFacade(facadeClassFqName, listOf(file)) ?: error { "Unable to create UL class for facade" }
         }
     }
 
@@ -84,10 +81,9 @@ class KotlinK1LightClassFactory : KotlinLightClassFactory {
                 .filterNot { it.isCompiled || it.isScript() }
 
             if (sources.isEmpty()) return null
-            val manager = PsiManager.getInstance(project)
             return LightClassGenerationSupport.getInstance(project).run {
                 if (!canCreateUltraLightClassForFacade(sources)) return null
-                createUltraLightClassForFacade(manager, fqName, sources)
+                createUltraLightClassForFacade(fqName, sources)
                     ?: error("Unable to create UL class for facade: $fqName for ${sources.joinToString { it.virtualFilePath }}")
             }
         }
