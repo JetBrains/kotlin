@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -79,7 +80,9 @@ internal fun Context.psiToIr(
     irBuiltInsOverDescriptors.functionFactory = functionIrClassFactory
     val symbols = KonanSymbols(this, generatorContext.irBuiltIns, symbolTable, symbolTable.lazyWrapper)
 
-    objCExport.buildCodeSpecs(symbolTable)
+    if (this.config.produce == CompilerOutputKind.FRAMEWORK) {
+        objCExport.buildCodeSpecs(symbolTable)
+    }
 
     val irDeserializer = if (isProducingLibrary && !useLinkerWhenProducingLibrary) {
         // Enable lazy IR generation for newly-created symbols inside BE

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 interface ReferenceTracker {
-    fun trackReference(declaration: DeclarationDescriptor)
+    fun trackReference(declaration: ClassDescriptor): ObjCExportNamer.ClassOrProtocolName
 
     fun trackClassForwardDeclaration(forwardDeclaration: ObjCClassForwardDeclaration)
 
@@ -38,25 +38,22 @@ interface ReferenceTracker {
 
     companion object {
         val dummy: ReferenceTracker = object : ReferenceTracker {
-            override fun trackReference(declaration: DeclarationDescriptor) {
-            }
+            override fun trackReference(declaration: ClassDescriptor) = TODO()
 
-            override fun trackClassForwardDeclaration(forwardDeclaration: ObjCClassForwardDeclaration) {
-            }
+            override fun trackClassForwardDeclaration(forwardDeclaration: ObjCClassForwardDeclaration) {}
 
-            override fun trackProtocolForwardDeclaration(objCName: String) {
-            }
+            override fun trackProtocolForwardDeclaration(objCName: String) {}
         }
     }
 }
 
 internal class ObjCExportTranslatorImpl(
-        private val generator: ObjCExportHeaderGenerator?,
         val mapper: ObjCExportMapper,
         val namer: ObjCExportNamer,
         val problemCollector: ObjCExportProblemCollector,
         val objcGenerics: Boolean,
-        var tracker: ReferenceTracker = ReferenceTracker.dummy
+        val tracker: ReferenceTracker = ReferenceTracker.dummy,
+        val eventQueue: EventQueue
 ) : ObjCExportTranslator {
 
     private val kotlinAnyName = namer.kotlinAnyName
@@ -200,37 +197,26 @@ internal class ObjCExportTranslatorImpl(
     private fun referenceClass(descriptor: ClassDescriptor): ObjCExportNamer.ClassOrProtocolName {
         assert(mapper.shouldBeExposed(descriptor)) { "Shouldn't be exposed: $descriptor" }
         assert(!descriptor.isInterface)
-        generator?.requireClassOrInterface(descriptor)
-        tracker.trackReference(descriptor)
-        generator?.let {
-            val translator = it.crossModuleResolver.findExportGenerator(descriptor.module).translator
-            return translator.translateClassOrInterfaceName(descriptor).also { className ->
-                val generics = mapTypeConstructorParameters(descriptor)
-                val forwardDeclaration = ObjCClassForwardDeclaration(className.objCName, generics)
-                it.referenceClass(forwardDeclaration)
-            }
-        }
-        return translateClassOrInterfaceName(descriptor).also { className ->
-            val generics = mapTypeConstructorParameters(descriptor)
-            val forwardDeclaration = ObjCClassForwardDeclaration(className.objCName, generics)
-            generator?.referenceClass(forwardDeclaration)
-        }
+        eventQueue.add(Event.TranslateClass(descriptor))
+        return tracker.trackReference(descriptor)
+    }
+
+    fun translateClassForwardDeclaration(descriptor: ClassDescriptor): ObjCClassForwardDeclaration {
+        val name = translateClassOrInterfaceName(descriptor)
+        val generics = mapTypeConstructorParameters(descriptor)
+        return ObjCClassForwardDeclaration(name.objCName, generics)
+    }
+
+    fun translateProtocolForwardDeclaration(descriptor: ClassDescriptor): String {
+        val name = translateClassOrInterfaceName(descriptor)
+        return name.objCName
     }
 
     private fun referenceProtocol(descriptor: ClassDescriptor): ObjCExportNamer.ClassOrProtocolName {
         assert(mapper.shouldBeExposed(descriptor)) { "Shouldn't be exposed: $descriptor" }
         assert(descriptor.isInterface)
-        generator?.requireClassOrInterface(descriptor)
-        tracker.trackReference(descriptor)
-        generator?.let {
-            val translator = it.crossModuleResolver.findExportGenerator(descriptor.module).translator
-            return translator.translateClassOrInterfaceName(descriptor).also { protocolName ->
-                generator.referenceProtocol(protocolName.objCName)
-            }
-        }
-        return translateClassOrInterfaceName(descriptor).also { protocolName ->
-            generator?.referenceProtocol(protocolName.objCName)
-        }
+        eventQueue.add(Event.TranslateInterface(descriptor))
+        return tracker.trackReference(descriptor)
     }
 
     private fun translateClassOrInterfaceName(descriptor: ClassDescriptor): ObjCExportNamer.ClassOrProtocolName {
@@ -262,7 +248,7 @@ internal class ObjCExportTranslatorImpl(
                     .asSequence()
                     .filter { mapper.shouldBeExposed(it) }
                     .map {
-                        generator?.generateExtraInterfaceEarly(it)
+                        eventQueue.add(Event.TranslateInterface(it))
                         referenceProtocol(it).objCName
                     }
                     .toList()
@@ -271,7 +257,7 @@ internal class ObjCExportTranslatorImpl(
             classDescriptor: ClassDescriptor,
             declarations: List<CallableMemberDescriptor>
     ): ObjCInterface {
-        generator?.generateExtraClassEarly(classDescriptor)
+        eventQueue.add(Event.TranslateClass(classDescriptor))
 
         val name = referenceClass(classDescriptor).objCName
         val members = buildMembers {
@@ -319,7 +305,7 @@ internal class ObjCExportTranslatorImpl(
         val superName = if (superClass == null) {
             kotlinAnyName
         } else {
-            generator?.generateExtraClassEarly(superClass)
+            eventQueue.add(Event.TranslateClass(superClass))
             referenceClass(superClass)
         }
 
@@ -851,7 +837,13 @@ internal class ObjCExportTranslatorImpl(
     private fun exportThrown(method: FunctionDescriptor) {
         getDefinedThrows(method)
                 ?.mapNotNull { method.module.findClassAcrossModuleDependencies(it) }
-                ?.forEach { generator?.requireClassOrInterface(it) }
+                ?.forEach {
+                    eventQueue.add(if (it.isInterface) {
+                        Event.TranslateInterface(it)
+                    } else {
+                        Event.TranslateClass(it)
+                    })
+                }
     }
 
     private fun getDefinedThrows(method: FunctionDescriptor): Sequence<ClassId>? {
@@ -1014,12 +1006,12 @@ internal class ObjCExportTranslatorImpl(
     }
 
     private fun foreignProtocolType(name: String): ObjCProtocolType {
-        generator?.referenceProtocol(name)
+        tracker.trackProtocolForwardDeclaration(name)
         return ObjCProtocolType(name)
     }
 
     private fun foreignClassType(name: String): ObjCClassType {
-        generator?.referenceClass(ObjCClassForwardDeclaration(name))
+        tracker.trackClassForwardDeclaration(ObjCClassForwardDeclaration(name))
         return ObjCClassType(name)
     }
 

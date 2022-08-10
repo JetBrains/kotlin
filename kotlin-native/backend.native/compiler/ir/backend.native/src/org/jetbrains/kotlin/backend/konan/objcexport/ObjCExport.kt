@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
 import org.jetbrains.kotlin.backend.konan.objcexport.sx.SXClangModuleBuilder
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -27,20 +26,11 @@ import java.util.*
 internal class ObjCExport(val context: Context) {
     private val target get() = context.config.target
 
-    private val resolver = object : CrossModuleResolver {
-        override fun findModuleBuilder(declaration: DeclarationDescriptor): SXClangModuleBuilder =
-                objcHeaderGenerators.first { declaration.module in it.moduleDescriptors }.moduleBuilder
+    private val resolver = CrossModuleResolver { declaration -> objcHeaderGenerators.first { declaration.module in it.moduleDescriptors } }
 
-        override fun findStdlibModuleBuilder(): SXClangModuleBuilder =
-                objcHeaderGenerators.first { it.moduleDescriptors.find { it.isNativeStdlib() } != null }.moduleBuilder
+    private val objcHeaderGenerators: List<ObjCExportHeaderGenerator> by lazy { prepareObjCHeaderGenerators() }
 
-        override fun findExportGenerator(moduleDescriptor: ModuleDescriptor): ObjCExportHeaderGenerator =
-                objcHeaderGenerators.first { moduleDescriptor in it.moduleDescriptors }
-    }
-
-    private val objcHeaderGenerators: List<ObjCExportHeaderGenerator> = prepareObjCHeaderGenerators()
-
-    private val exportedInterfaces = produceInterfaces()
+    private val exportedInterfaces by lazy { produceInterfaces() }
 
     val namers: MutableList<ObjCExportNamer> = mutableListOf()
     private val codeSpecs: MutableMap<ObjCExportedInterface, ObjCExportCodeSpec> = mutableMapOf()
@@ -166,6 +156,7 @@ internal class ObjCExport(val context: Context) {
             }
             val frameworkDirectory = dir.child(name)
             val properties = context.config.platform.configurables as AppleConfigurables
+            // TODO: per-module.
             val mainPackageGuesser = MainPackageGuesser(
                     context.moduleDescriptor,
                     context.getIncludedLibraryDescriptors(),

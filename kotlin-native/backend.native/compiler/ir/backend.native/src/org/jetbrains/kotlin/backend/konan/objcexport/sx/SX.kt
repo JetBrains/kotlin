@@ -61,6 +61,9 @@ class SXObjCHeader(val name: String) {
         declarations += stub
     }
 
+    fun hasDeclarationWithName(name: String): Boolean =
+            declarations.find { it.name == name } != null
+
     fun addImport(header: String) {
         headerImports += SXHeaderImport(header, local = false)
     }

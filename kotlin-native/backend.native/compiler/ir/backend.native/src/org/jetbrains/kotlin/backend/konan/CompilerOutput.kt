@@ -201,7 +201,6 @@ internal fun linkBitcodeDependencies(context: Context) {
 
 internal fun produceOutput(context: Context) {
 
-    val config = context.config.configuration
     val tempFiles = context.config.tempFiles
     val produce = context.config.produce
     if (produce == CompilerOutputKind.FRAMEWORK) {
@@ -238,8 +237,6 @@ internal fun produceOutput(context: Context) {
         }
 
         CompilerOutputKind.PRELIMINARY_CACHE -> {}
-
-        null -> {}
     }
 }
 
