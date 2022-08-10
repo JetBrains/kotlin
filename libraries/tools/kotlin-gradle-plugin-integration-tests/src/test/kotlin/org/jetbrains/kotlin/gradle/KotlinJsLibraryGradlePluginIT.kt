@@ -26,7 +26,8 @@ class KotlinJsIrLibraryGradlePluginIT : KGPBaseTest() {
         jsOptions = BuildOptions.JsOptions(
             useIrBackend = true,
             jsCompilerType = KotlinJsCompilerType.IR
-        )
+        ),
+        useFir = true,
     )
 
     @DisplayName("simple binary library")
