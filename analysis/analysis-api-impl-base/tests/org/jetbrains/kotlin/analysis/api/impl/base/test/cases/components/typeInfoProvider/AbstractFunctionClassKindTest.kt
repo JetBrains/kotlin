@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractFunctionClassKindTest  : AbstractAnalysisApiSingleFileTest() {
 
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypAtCaret(ktFile) as KtExpression
+        val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaret(ktFile) as KtExpression
 
         val (type, functionClassKind) = executeOnPooledThreadInReadAction {
             analyseForTest(expressionAtCaret) {

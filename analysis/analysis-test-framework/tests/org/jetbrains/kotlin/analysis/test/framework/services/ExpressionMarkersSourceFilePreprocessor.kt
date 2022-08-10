@@ -86,7 +86,7 @@ class ExpressionMarkerProvider : TestService {
 
     }
 
-    inline fun <reified P : KtElement> getElementOfTypAtCaret(file: KtFile, caretName: String? = null): P {
+    inline fun <reified P : KtElement> getElementOfTypeAtCaret(file: KtFile, caretName: String? = null): P {
         val offset = getCaretPosition(file, caretName)
         return file.findElementAt(offset)
             ?.parentOfType<P>()
