@@ -181,7 +181,7 @@ constructor(
             null
         } else {
             project.registerTask(binary.validateGeneratedTsTaskName, listOf(compilation)) {
-                it.inputDir.set(linkTask.destinationDirectory.map { it.asFile })
+                it.inputDir.set(linkTask.flatMap { it.destinationDirectory })
                 it.validationStrategy.set(
                     when (binary.mode) {
                         KotlinJsBinaryMode.DEVELOPMENT -> propertiesProvider.jsIrGeneratedTypeScriptValidationDevStrategy
