@@ -5477,6 +5477,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("breakContinueNoinline.kt")
+            public void testBreakContinueNoinline() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/breakContinueNoinline.kt");
+            }
+
+            @Test
+            @TestMetadata("breakInLambdaPassedToDirectInvoke.kt")
+            public void testBreakInLambdaPassedToDirectInvoke() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/breakInLambdaPassedToDirectInvoke.kt");
+            }
+
+            @Test
             @TestMetadata("breakInsideLocal.kt")
             public void testBreakInsideLocal() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/breakInsideLocal.kt");

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtPsiUtil.deparenthesizeOnce
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
 import org.jetbrains.kotlin.types.KotlinType
@@ -154,12 +156,49 @@ fun getEnclosingDescriptor(context: BindingContext, element: KtElement): Declara
     }
 }
 
-fun getEnclosingFunctionDescriptor(context: BindingContext, element: KtElement): FunctionDescriptor? {
-    val functionOrClass = element.getParentOfTypeCodeFragmentAware(KtFunction::class.java, KtClassOrObject::class.java)
-    val descriptor = context.get(DECLARATION_TO_DESCRIPTOR, functionOrClass)
-    return if (functionOrClass is KtFunction) {
-        if (descriptor is FunctionDescriptor) descriptor else null
-    } else {
-        if (descriptor is ClassDescriptor) descriptor.unsubstitutedPrimaryConstructor else null
+fun getEnclosingFunctionDescriptor(context: BindingContext, element: KtElement, skipInlineFunctionLiterals: Boolean): FunctionDescriptor? {
+    var current = element
+    while (true) {
+        val functionOrClass = current.getParentOfTypeCodeFragmentAware(KtFunction::class.java, KtClassOrObject::class.java)
+        val descriptor = context.get(DECLARATION_TO_DESCRIPTOR, functionOrClass)
+        if (functionOrClass is KtFunction) {
+            if (descriptor is FunctionDescriptor) {
+                if (skipInlineFunctionLiterals && isInlineableFunctionLiteral(
+                        ((functionOrClass as? KtFunctionLiteral)?.parent as? KtExpression) ?: functionOrClass,
+                        context
+                    )) {
+                    current = functionOrClass
+                } else {
+                    return descriptor
+                }
+            } else {
+                return null
+            }
+        } else {
+            return if (descriptor is ClassDescriptor) descriptor.unsubstitutedPrimaryConstructor else null
+        }
     }
+}
+
+fun isInlineableFunctionLiteral(expression: KtExpression, context: BindingContext): Boolean {
+    if (expression !is KtLambdaExpression && !(expression is KtNamedFunction && expression.name == null)) {
+        return false
+    }
+    var wrapper: PsiElement = expression
+    while (deparenthesizeOnce(wrapper.parent as? KtExpression) == wrapper) {
+        wrapper = wrapper.parent
+    }
+
+    val argument = (wrapper.parent as? KtValueArgument) ?: return false
+    val call = (((argument.parent as? KtValueArgumentList) ?: argument).parent as? KtCallExpression) ?: return false
+    val resolvedCall = call.getResolvedCall(context) ?: return false
+    val descriptor = (resolvedCall.resultingDescriptor as? FunctionDescriptor) ?: return false
+    if (descriptor.isInline) {
+        val parameter = resolvedCall.valueArguments.entries.find { (_, valueArgument) ->
+            valueArgument.arguments.any { it.asElement() == argument }
+        }?.key ?: return false
+        return !parameter.isNoinline
+    }
+
+    return false
 }

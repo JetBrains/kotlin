@@ -1,10 +1,19 @@
 package
 
+public inline fun </*0*/ T> foo(/*0*/ block: () -> T): T
 public fun test(): kotlin.Unit
 public fun test2(): kotlin.Unit
 public fun test3(): kotlin.Unit
-public fun test4(): kotlin.Unit
+public fun test4(/*0*/ tag: kotlin.Int): kotlin.Unit
 public fun test5(): kotlin.Unit
 public fun test6(): kotlin.Unit
 public fun test7(): kotlin.Unit
 public fun test8(): kotlin.Unit
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.EXPRESSION}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) public final annotation class SomeAnnotation : kotlin.Annotation {
+    public constructor SomeAnnotation()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

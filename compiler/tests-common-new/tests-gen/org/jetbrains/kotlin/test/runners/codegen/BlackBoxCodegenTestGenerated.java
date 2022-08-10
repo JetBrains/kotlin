@@ -8913,6 +8913,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             public void testWhileTrueBreak() throws Exception {
                 runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/whileTrueBreak.kt");
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue")
+            @TestDataPath("$PROJECT_ROOT")
+            public class InlinedBreakContinue {
+                @Test
+                public void testAllFilesPresentInInlinedBreakContinue() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                }
+            }
         }
 
         @Nested

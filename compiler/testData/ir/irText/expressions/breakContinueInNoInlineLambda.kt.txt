@@ -1,0 +1,24 @@
+inline fun foo(noinline block: Function0<Unit>) {
+  return block.invoke()
+}
+
+fun test1() {
+  L1@ while (true) { // BLOCK
+    foo(block = local fun <anonymous>() {
+      error("") /* ErrorExpression */
+    }
+)
+    foo(block = local fun <anonymous>() {
+      error("") /* ErrorExpression */
+    }
+)
+    foo(block = local fun <anonymous>() {
+      error("") /* ErrorExpression */
+    }
+)
+    foo(block = local fun <anonymous>() {
+      error("") /* ErrorExpression */
+    }
+)
+  }
+}

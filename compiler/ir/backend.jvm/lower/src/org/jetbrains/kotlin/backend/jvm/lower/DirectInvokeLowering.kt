@@ -73,7 +73,7 @@ private class DirectInvokeLowering(private val context: JvmBackendContext) : Fil
         return context.createIrBuilder(scope.scopeOwnerSymbol).run {
             at(expression)
             irBlock {
-                val arguments = function.explicitParameters.withIndex().map { (index, parameter) ->
+                val arguments = function.explicitParameters.mapIndexed { index, parameter ->
                     val argument = expression.getValueArgument(index)!!
                     IrVariableImpl(
                         argument.startOffset, argument.endOffset, IrDeclarationOrigin.DEFINED, IrVariableSymbolImpl(), parameter.name,

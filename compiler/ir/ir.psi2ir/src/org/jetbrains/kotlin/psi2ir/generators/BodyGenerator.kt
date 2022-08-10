@@ -39,10 +39,15 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
+interface LoopResolver {
+    fun getLoop(expression: KtExpression): IrLoop?
+}
+
 class BodyGenerator(
     val scopeOwnerSymbol: IrSymbol,
-    override val context: GeneratorContext
-) : GeneratorWithScope {
+    override val context: GeneratorContext,
+    private val parentLoopResolver: LoopResolver?
+) : GeneratorWithScope, LoopResolver {
 
     val scopeOwner: DeclarationDescriptor get() = scopeOwnerSymbol.descriptor
 
@@ -196,8 +201,9 @@ class BodyGenerator(
         loopTable[expression] = irLoop
     }
 
-    fun getLoop(expression: KtExpression): IrLoop? =
-        loopTable[expression]
+    override fun getLoop(expression: KtExpression): IrLoop? {
+        return loopTable[expression] ?: parentLoopResolver?.getLoop(expression)
+    }
 
     fun generatePrimaryConstructorBody(ktClassOrObject: KtPureClassOrObject, irConstructor: IrConstructor): IrBody {
         val irBlockBody = context.irFactory.createBlockBody(ktClassOrObject.pureStartOffset, ktClassOrObject.pureEndOffset)
