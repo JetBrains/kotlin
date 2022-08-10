@@ -88,7 +88,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         callableDeclaration.configure {
             +field("returnTypeRef", typeRef, withReplace = true).withTransform()
             +field("receiverTypeRef", typeRef, nullable = true, withReplace = true).withTransform()
-            +field("deprecation", deprecationsPerUseSiteType, nullable = true).withReplace().apply { isMutable = true }
+            +field("deprecationsProvider", deprecationsProviderType).withReplace().apply { isMutable = true }
             +symbol("FirCallableSymbol", "out FirCallableDeclaration")
 
             +field("containerSource", type(DeserializedContainerSource::class), nullable = true)
@@ -245,7 +245,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         classLikeDeclaration.configure {
             +symbol("FirClassLikeSymbol", "out FirClassLikeDeclaration")
-            +field("deprecation", deprecationsPerUseSiteType, nullable = true).withReplace().apply { isMutable = true}
+            +field("deprecationsProvider", deprecationsProviderType).withReplace().apply { isMutable = true}
         }
 
         klass.configure {

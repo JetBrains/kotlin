@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
+import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.UnresolvedDeprecationProvider
 import org.jetbrains.kotlin.fir.declarations.builder.FirAbstractConstructorBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirConstructorImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -49,7 +50,7 @@ open class FirConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotationC
     override lateinit var status: FirDeclarationStatus
     override lateinit var returnTypeRef: FirTypeRef
     override var receiverTypeRef: FirTypeRef? = null
-    override var deprecation: DeprecationsPerUseSite? = null
+    override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
     override val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
@@ -70,7 +71,7 @@ open class FirConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotationC
             status,
             returnTypeRef,
             receiverTypeRef,
-            deprecation,
+            deprecationsProvider,
             containerSource,
             dispatchReceiverType,
             contextReceivers,
@@ -114,7 +115,7 @@ inline fun buildConstructorCopy(original: FirConstructor, init: FirConstructorBu
     copyBuilder.status = original.status
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.receiverTypeRef = original.receiverTypeRef
-    copyBuilder.deprecation = original.deprecation
+    copyBuilder.deprecationsProvider = original.deprecationsProvider
     copyBuilder.containerSource = original.containerSource
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType
     copyBuilder.contextReceivers.addAll(original.contextReceivers)

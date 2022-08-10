@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
+import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.UnresolvedDeprecationProvider
 import org.jetbrains.kotlin.fir.declarations.builder.FirAbstractConstructorBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -50,7 +51,7 @@ class FirPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotatio
     override lateinit var status: FirDeclarationStatus
     override lateinit var returnTypeRef: FirTypeRef
     override var receiverTypeRef: FirTypeRef? = null
-    override var deprecation: DeprecationsPerUseSite? = null
+    override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
     override val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
@@ -72,7 +73,7 @@ class FirPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotatio
             status,
             returnTypeRef,
             receiverTypeRef,
-            deprecation,
+            deprecationsProvider,
             containerSource,
             dispatchReceiverType,
             contextReceivers,

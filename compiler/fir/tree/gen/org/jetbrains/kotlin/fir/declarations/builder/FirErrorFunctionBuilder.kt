@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
+import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.UnresolvedDeprecationProvider
 import org.jetbrains.kotlin.fir.declarations.impl.FirErrorFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -47,7 +48,7 @@ class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    var deprecation: DeprecationsPerUseSite? = null
+    var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeSimpleKotlinType? = null
     val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
@@ -63,7 +64,7 @@ class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
             resolvePhase,
             origin,
             attributes,
-            deprecation,
+            deprecationsProvider,
             containerSource,
             dispatchReceiverType,
             contextReceivers,

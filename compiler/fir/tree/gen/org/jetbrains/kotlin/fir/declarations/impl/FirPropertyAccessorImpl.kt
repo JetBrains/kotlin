@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
+import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -45,7 +45,7 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     override val attributes: FirDeclarationAttributes,
     override var status: FirDeclarationStatus,
     override var returnTypeRef: FirTypeRef,
-    override var deprecation: DeprecationsPerUseSite?,
+    override var deprecationsProvider: DeprecationsProvider,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override val contextReceivers: MutableList<FirContextReceiver>,
@@ -140,8 +140,8 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
 
-    override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {
-        deprecation = newDeprecation
+    override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
+        deprecationsProvider = newDeprecationsProvider
     }
 
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {

@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
+import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
@@ -45,7 +45,7 @@ interface FirAbstractConstructorBuilder : FirFunctionBuilder {
     abstract override var attributes: FirDeclarationAttributes
     abstract override var status: FirDeclarationStatus
     abstract override var returnTypeRef: FirTypeRef
-    abstract override var deprecation: DeprecationsPerUseSite?
+    abstract override var deprecationsProvider: DeprecationsProvider
     abstract override var containerSource: DeserializedContainerSource?
     abstract override var dispatchReceiverType: ConeSimpleKotlinType?
     abstract override val contextReceivers: MutableList<FirContextReceiver>

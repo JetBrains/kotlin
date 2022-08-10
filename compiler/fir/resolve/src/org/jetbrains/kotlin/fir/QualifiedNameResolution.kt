@@ -177,7 +177,7 @@ internal fun extractNonFatalDiagnostics(
     val prevDiagnostics = (explicitReceiver as? FirResolvedQualifier)?.nonFatalDiagnostics ?: emptyList()
     var result: MutableList<ConeDiagnostic>? = null
 
-    val deprecation = symbol.fir.deprecation?.forUseSite()
+    val deprecation = symbol.deprecation?.forUseSite()
     if (deprecation != null) {
         result = mutableListOf()
         result.addAll(prevDiagnostics)

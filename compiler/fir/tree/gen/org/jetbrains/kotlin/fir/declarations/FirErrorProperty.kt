@@ -34,7 +34,7 @@ abstract class FirErrorProperty : FirVariable(), FirDiagnosticHolder {
     abstract override val status: FirDeclarationStatus
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
-    abstract override val deprecation: DeprecationsPerUseSite?
+    abstract override val deprecationsProvider: DeprecationsProvider
     abstract override val containerSource: DeserializedContainerSource?
     abstract override val dispatchReceiverType: ConeSimpleKotlinType?
     abstract override val contextReceivers: List<FirContextReceiver>
@@ -62,7 +62,7 @@ abstract class FirErrorProperty : FirVariable(), FirDiagnosticHolder {
 
     abstract override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
 
-    abstract override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
+    abstract override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)
 
     abstract override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>)
 

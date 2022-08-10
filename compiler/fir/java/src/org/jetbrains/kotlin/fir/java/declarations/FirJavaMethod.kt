@@ -85,7 +85,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
         get() = emptyList()
 
     //not used actually, because get 'enhanced' into regular FirSimpleFunction
-    override var deprecation: DeprecationsPerUseSite? = null
+    override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
@@ -159,8 +159,8 @@ class FirJavaMethod @FirImplementationDetail constructor(
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
     }
 
-    override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {
-        deprecation = newDeprecation
+    override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
+        deprecationsProvider = newDeprecationsProvider
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
@@ -207,7 +207,7 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
     lateinit var annotationBuilder: () -> List<FirAnnotation>
 
     @Deprecated("Modification of 'deprecation' has no impact for FirJavaFunctionBuilder", level = DeprecationLevel.HIDDEN)
-    override var deprecation: DeprecationsPerUseSite?
+    override var deprecationsProvider: DeprecationsProvider
         get() = throw IllegalStateException()
         set(_) {
             throw IllegalStateException()

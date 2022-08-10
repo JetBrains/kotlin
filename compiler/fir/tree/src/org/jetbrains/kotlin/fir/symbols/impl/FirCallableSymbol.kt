@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.types.*
@@ -61,7 +62,7 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
     val deprecation: DeprecationsPerUseSite?
         get() {
             ensureResolved(FirResolvePhase.STATUS)
-            return fir.deprecation
+            return fir.deprecationsProvider.getDeprecationsInfo(moduleData.session.languageVersionSettings.apiVersion)
         }
 
     private fun ensureType(typeRef: FirTypeRef?) {

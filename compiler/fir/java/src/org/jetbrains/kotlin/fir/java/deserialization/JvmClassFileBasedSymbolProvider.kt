@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.getDeprecationInfos
+import org.jetbrains.kotlin.fir.declarations.getDeprecationsProvider
 import org.jetbrains.kotlin.fir.deserialization.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
@@ -151,7 +151,7 @@ class JvmClassFileBasedSymbolProvider(
             },
             kotlinClass.byteContent,
         )
-        symbol.fir.replaceDeprecation(symbol.fir.getDeprecationInfos(session.languageVersionSettings.apiVersion))
+        symbol.fir.replaceDeprecationsProvider(symbol.fir.getDeprecationsProvider())
     }
 
     private fun String?.toPath(): Path? {

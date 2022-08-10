@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
+import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
@@ -41,7 +41,7 @@ interface FirClassBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilder
     abstract override var attributes: FirDeclarationAttributes
     abstract val typeParameters: MutableList<FirTypeParameterRef>
     abstract var status: FirDeclarationStatus
-    abstract var deprecation: DeprecationsPerUseSite?
+    abstract var deprecationsProvider: DeprecationsProvider
     abstract var classKind: ClassKind
     abstract val superTypeRefs: MutableList<FirTypeRef>
     abstract val declarations: MutableList<FirDeclaration>

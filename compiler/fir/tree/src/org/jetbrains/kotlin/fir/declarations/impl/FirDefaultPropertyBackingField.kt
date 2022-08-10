@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -34,7 +31,7 @@ class FirDefaultPropertyBackingField(
     attributes = FirDeclarationAttributes(),
     returnTypeRef = returnTypeRef,
     receiverTypeRef = null,
-    deprecation = null,
+    deprecationsProvider = UnresolvedDeprecationProvider,
     containerSource = null,
     dispatchReceiverType = null,
     name = BACKING_FIELD,

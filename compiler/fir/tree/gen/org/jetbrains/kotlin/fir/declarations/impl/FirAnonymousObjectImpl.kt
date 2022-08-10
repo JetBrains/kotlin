@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
+import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
@@ -39,7 +39,7 @@ internal class FirAnonymousObjectImpl(
     override val attributes: FirDeclarationAttributes,
     override val typeParameters: MutableList<FirTypeParameterRef>,
     override var status: FirDeclarationStatus,
-    override var deprecation: DeprecationsPerUseSite?,
+    override var deprecationsProvider: DeprecationsProvider,
     override val classKind: ClassKind,
     override val superTypeRefs: MutableList<FirTypeRef>,
     override val declarations: MutableList<FirDeclaration>,
@@ -101,8 +101,8 @@ internal class FirAnonymousObjectImpl(
         resolvePhase = newResolvePhase
     }
 
-    override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {
-        deprecation = newDeprecation
+    override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
+        deprecationsProvider = newDeprecationsProvider
     }
 
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
+import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.UnresolvedDeprecationProvider
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultSetterValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -48,7 +49,7 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var returnTypeRef: FirTypeRef
     var receiverTypeRef: FirTypeRef? = null
-    var deprecation: DeprecationsPerUseSite? = null
+    var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeSimpleKotlinType? = null
     val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
@@ -75,7 +76,7 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
             attributes,
             returnTypeRef,
             receiverTypeRef,
-            deprecation,
+            deprecationsProvider,
             containerSource,
             dispatchReceiverType,
             contextReceivers,

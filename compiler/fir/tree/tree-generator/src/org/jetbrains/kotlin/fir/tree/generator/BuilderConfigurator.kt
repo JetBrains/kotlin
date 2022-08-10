@@ -420,6 +420,13 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         ) {
             default(it, "${declarationAttributesType.type}()")
         }
+
+        configureFieldInAllLeafBuilders(
+            field = "deprecationsProvider"
+        ) {
+            default(it, "UnresolvedDeprecationProvider")
+            useTypes(unresolvedDeprecationsProviderType)
+        }
     }
 
     private inline fun findImplementationsWithElementInParents(
