@@ -90,7 +90,8 @@ private fun unfoldFunction(function: IrSimpleFunction, environment: IrInterprete
 
 private fun unfoldConstructor(constructor: IrConstructor, callStack: CallStack) {
     when (constructor.fqName) {
-        "kotlin.Enum.<init>", "kotlin.Throwable.<init>" -> {
+        "kotlin.Enum.<init>" -> return // all properties already initialized in `interpretEnumEntry`
+        "kotlin.Throwable.<init>" -> {
             val irClass = constructor.parentAsClass
             val receiverSymbol = irClass.thisReceiver!!.symbol
             val receiverState = callStack.loadState(receiverSymbol)
@@ -196,11 +197,15 @@ private fun unfoldEnumConstructorCall(element: IrEnumConstructorCall, environmen
 private fun unfoldInstanceInitializerCall(instanceInitializerCall: IrInstanceInitializerCall, callStack: CallStack) {
     val irClass = instanceInitializerCall.classSymbol.owner
     val toInitialize = irClass.declarations.filter { it is IrProperty || it is IrAnonymousInitializer }
+    val state = irClass.thisReceiver?.symbol?.let { callStack.loadState(it) } // try to avoid recalculation of properties
 
     toInitialize.reversed().forEach {
         when {
             it is IrAnonymousInitializer -> callStack.pushCompoundInstruction(it.body)
-            it is IrProperty && it.backingField?.initializer?.expression != null -> callStack.pushCompoundInstruction(it.backingField)
+
+            it is IrProperty && it.backingField?.initializer?.expression != null && state?.getField(it.symbol) == null -> {
+                callStack.pushCompoundInstruction(it.backingField)
+            }
         }
     }
 }
@@ -271,6 +276,14 @@ private fun unfoldGetObjectValue(expression: IrGetObjectValue, environment: IrIn
 private fun unfoldGetEnumValue(expression: IrGetEnumValue, environment: IrInterpreterEnvironment) {
     val callStack = environment.callStack
     environment.mapOfEnums[expression.symbol]?.let { return callStack.pushState(it) }
+
+    val frameOwner = callStack.currentFrameOwner
+    if (frameOwner is IrCall && frameOwner.dispatchReceiver is IrGetEnumValue && frameOwner.symbol.owner.name.asString() == "<get-name>") {
+        // this optimization allow us to avoid creation of enum object when we try to interpret simple `name` call; see KT-53480
+        val enumEntry = (frameOwner.dispatchReceiver as IrGetEnumValue).symbol.owner
+        callStack.pushState(enumEntry.toState(environment.irBuiltIns))
+        return
+    }
 
     callStack.pushSimpleInstruction(expression)
     val enumEntry = expression.symbol.owner
