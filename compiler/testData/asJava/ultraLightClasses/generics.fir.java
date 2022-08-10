@@ -52,9 +52,9 @@ public abstract class C /* C*/<T>  {
 
   public  C(@org.jetbrains.annotations.NotNull() java.util.List<? extends java.lang.CharSequence>);//  .ctor(java.util.List<? extends java.lang.CharSequence>)
 
-  public final <V, U extends V> T foo(V, @org.jetbrains.annotations.NotNull() C<V>, @org.jetbrains.annotations.NotNull() kotlin.sequences.Sequence<? extends V>);// <V, U extends V>  foo(V, C<V>, kotlin.sequences.Sequence<? extends V>)
+  public final <Q extends T> Q getW(Q);// <Q extends T>  getW(Q)
 
-  public final Q getW(Q);//  getW(Q)
+  public final <V, U extends V> T foo(V, @org.jetbrains.annotations.NotNull() C<V>, @org.jetbrains.annotations.NotNull() kotlin.sequences.Sequence<? extends V>);// <V, U extends V>  foo(V, C<V>, kotlin.sequences.Sequence<? extends V>)
 
   public final void setConstructorParam(@org.jetbrains.annotations.NotNull() java.util.List<? extends java.lang.CharSequence>);//  setConstructorParam(java.util.List<? extends java.lang.CharSequence>)
 

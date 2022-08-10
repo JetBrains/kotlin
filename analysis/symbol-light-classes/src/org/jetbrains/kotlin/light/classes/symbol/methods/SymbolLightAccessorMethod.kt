@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightSetterParameter
+import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
 import org.jetbrains.kotlin.load.java.JvmAbi.getterName
 import org.jetbrains.kotlin.load.java.JvmAbi.setterName
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -62,9 +63,18 @@ internal class SymbolLightAccessorMethod(
 
     override fun getName(): String = _name
 
-    override fun hasTypeParameters(): Boolean = false
-    override fun getTypeParameterList(): PsiTypeParameterList? = null
-    override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
+    private val _typeParameterList: PsiTypeParameterList? by lazyPub {
+        hasTypeParameters().ifTrue {
+            SymbolLightTypeParameterList(
+                owner = this,
+                symbolWithTypeParameterList = containingPropertySymbol,
+            )
+        }
+    }
+
+    override fun hasTypeParameters(): Boolean = containingPropertySymbol.typeParameters.isNotEmpty()
+    override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
+    override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
 
     override fun isVarArgs(): Boolean = false
 
