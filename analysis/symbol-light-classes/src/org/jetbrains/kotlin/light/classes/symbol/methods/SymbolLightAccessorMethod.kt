@@ -82,7 +82,7 @@ internal class SymbolLightAccessorMethod(
     private fun computeAnnotations(isPrivate: Boolean): List<PsiAnnotation> {
         val nullabilityApplicable = isGetter &&
                 !isPrivate &&
-                !(isParameter && (containingClass.isAnnotationType || containingClass.isEnum))
+                !(isParameter && containingClass.isAnnotationType)
 
         val nullabilityType = if (nullabilityApplicable) {
             getTypeNullability(containingPropertySymbol.returnType)
