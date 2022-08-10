@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories;
@@ -29,6 +18,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.RangeToIntrinsic;
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.RangeUntilIntrinsic;
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.AstUtilsKt;
@@ -131,7 +121,9 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     private static final DescriptorPredicate NUMBER_REM = pattern("Byte|Short|Int.rem(Byte|Short|Int)");
 
     private static final DescriptorPredicate CHAR_RANGE_TO = pattern("Char.rangeTo(Char)");
+    private static final DescriptorPredicate CHAR_RANGE_UNTIL = pattern("Char.rangeUntil(Char)");
     private static final DescriptorPredicate NUMBER_RANGE_TO = pattern("Byte|Short|Int.rangeTo(Byte|Short|Int)");
+    private static final DescriptorPredicate NUMBER_RANGE_UNTIL = pattern("Byte|Short|Int|Long.rangeUntil(Byte|Short|Int|Long)");
 
     private static final ImmutableMap<String, JsBinaryOperator> BINARY_BITWISE_OPERATIONS = ImmutableMap.<String, JsBinaryOperator>builder()
             .put("or", JsBinaryOperator.BIT_OR)
@@ -151,6 +143,9 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         if (CHAR_RANGE_TO.test(descriptor)) {
             return new RangeToIntrinsic(descriptor);
         }
+        if (CHAR_RANGE_UNTIL.test(descriptor)) {
+            return new RangeUntilIntrinsic(descriptor);
+        }
 
         if (PRIMITIVE_INTEGRAL_NUMBERS_COMPARE_TO_INTEGRAL_OPERATIONS.test(descriptor)) {
             return PRIMITIVE_NUMBER_COMPARE_TO_INTRINSIC;
@@ -161,6 +156,10 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
 
         if (KotlinBuiltIns.isBuiltIn(descriptor) && descriptor.getName().equals(OperatorNameConventions.COMPARE_TO)) {
             return BUILTINS_COMPARE_TO_INTRINSIC;
+        }
+
+        if (NUMBER_RANGE_UNTIL.test(descriptor)) { // test here because Long type is rejected after that
+            return new RangeUntilIntrinsic(descriptor);
         }
 
         if (!PREDICATE.test(descriptor)) {
