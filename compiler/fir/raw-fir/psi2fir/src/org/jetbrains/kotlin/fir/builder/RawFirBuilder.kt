@@ -406,7 +406,7 @@ open class RawFirBuilder(
                         annotations += accessorAnnotationsFromProperty
                         this@RawFirBuilder.context.firFunctionTargets += accessorTarget
                         extractValueParametersTo(
-                            this, ValueParameterDeclaration.FUNCTION, propertyTypeRefToUse, parameterAnnotationsFromProperty
+                            this, ValueParameterDeclaration.SETTER, propertyTypeRefToUse, parameterAnnotationsFromProperty
                         )
                         if (!isGetter && valueParameters.isEmpty()) {
                             valueParameters += buildDefaultSetterValueParameter {
