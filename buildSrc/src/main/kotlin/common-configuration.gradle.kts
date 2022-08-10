@@ -139,8 +139,6 @@ fun Project.configureKotlinCompilationOptions() {
         val jvmCompilerArgs = listOf(
             "-Xno-optimized-callable-references",
             "-Xno-kotlin-nothing-value-exception",
-            // Should this suppression be removed ?
-            "-Xsuppress-deprecated-jvm-target-warning" // Remove as soon as there are no modules for JDK 1.6 & 1.7
         )
 
         val coreLibProjects: List<String> by rootProject.extra

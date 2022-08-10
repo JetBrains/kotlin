@@ -28,7 +28,6 @@ configureJavadocJar()
 compileKotlin {
     kotlinOptions.freeCompilerArgs = [
         "-Xallow-kotlin-package",
-        "-Xsuppress-deprecated-jvm-target-warning",
     ]
     kotlinOptions.moduleName = project.name
 }
