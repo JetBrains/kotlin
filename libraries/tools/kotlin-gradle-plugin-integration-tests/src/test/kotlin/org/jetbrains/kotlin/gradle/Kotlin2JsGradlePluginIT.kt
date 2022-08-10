@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YARN_LOCK_MISMATCH_MESSAGE
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.STORE_YARN_LOCK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.UPGRADE_YARN_LOCK
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.YARN_LOCK_MISMATCH_MESSAGE
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -1420,26 +1420,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
             }
 
             buildGradleKts.modify {
-                val replaced = it.replace("implementation(npm(\"decamelize\", \"6.0.0\"))", "")
-                replaced + "\n" +
-                        """
-                        rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
-                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().yarnLockMismatchReport =
-                                org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport.FAIL_AFTER_BUILD
-                        }
-                        """.trimIndent()
-            }
-
-            buildAndFail("compileKotlinJs") {
-                assertTasksExecuted(":$STORE_YARN_LOCK_NAME")
-
-                assertOutputContains(YARN_LOCK_MISMATCH_MESSAGE)
-            }
-
-            buildAndFail("compileKotlinJs") {
-                assertTasksUpToDate(":$STORE_YARN_LOCK_NAME")
-
-                assertOutputContains(YARN_LOCK_MISMATCH_MESSAGE)
+                it.replace("implementation(npm(\"decamelize\", \"6.0.0\"))", "")
             }
 
             projectPath.resolve("kotlin-js-store").deleteRecursively()
@@ -1488,25 +1469,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
             }
 
             buildGradleKts.modify {
-                val replaced = it.replace("implementation(npm(\"decamelize\", \"6.0.0\"))", "")
-                replaced + "\n" +
-                        """
-                        rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
-                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().yarnLockMismatchReport =
-                                org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport.FAIL_AFTER_BUILD
-                        }
-                        """.trimIndent()
-            }
-
-            buildAndFail("compileKotlinJs") {
-                assertTasksExecuted(":$STORE_YARN_LOCK_NAME")
-
-                assertOutputContains(YARN_LOCK_MISMATCH_MESSAGE)
-            }
-
-            //yarn.lock was updated
-            build("compileKotlinJs") {
-                assertTasksUpToDate(":$STORE_YARN_LOCK_NAME")
+                it.replace("implementation(npm(\"decamelize\", \"6.0.0\"))", "")
             }
 
             // check if everything ok without build/js/yarn.lock
@@ -1516,6 +1479,17 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
 
             build("clean") {
                 assertTasksUpToDate(":clean")
+            }
+
+            buildAndFail("compileKotlinJs") {
+                assertTasksFailed(":$STORE_YARN_LOCK_NAME")
+            }
+
+            projectPath.resolve("kotlin-js-store").deleteRecursively()
+
+            //check if independent tasks can be executed
+            build("help") {
+                assertTasksExecuted(":help")
             }
         }
     }
