@@ -387,7 +387,7 @@
         <!--<target value="JVM" />-->
         <target value="TestNG"/>
         <ExternalDocumentationLink url="https://kotlinlang.org/api/latest/jvm/stdlib/" packageListUrl="${stdlib.package.list}" />
-        <ExternalDocumentationLink url="https://jitpack.io/com/github/cbeust/testng/master/javadoc/"/>
+<!--        <ExternalDocumentationLink url="https://jitpack.io/com/github/cbeust/testng/master/javadoc/"/>-->
       </passconfig>
 
       <passconfig
