@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.backend.konan.lower.BridgesSupport
 import org.jetbrains.kotlin.backend.konan.lower.EnumsSupport
 import org.jetbrains.kotlin.backend.konan.lower.InlineFunctionsSupport
 import org.jetbrains.kotlin.backend.konan.lower.InnerClassesSupport
-import org.jetbrains.kotlin.backend.konan.lower.InternalLoweredEnum
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
 import org.jetbrains.kotlin.backend.konan.optimizations.ExternalModulesDFG
@@ -60,11 +59,12 @@ internal class NativeMapping : DefaultMapping() {
     data class BridgeKey(val target: IrSimpleFunction, val bridgeDirections: BridgeDirections)
 
     val outerThisFields = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrField>()
+    val enumImplObjects = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrClass>()
+    val enumValueGetters = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrFunction>()
+    val enumEntriesMaps = mutableMapOf<IrClass, Map<Name, LoweredEnumEntryDescription>>()
     val bridges = mutableMapOf<BridgeKey, IrSimpleFunction>()
     val notLoweredInlineFunctions = mutableMapOf<IrFunctionSymbol, IrFunction>()
     val loweredInlineFunctions = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
-    val internalLoweredEnums = mutableMapOf<IrClass, InternalLoweredEnum>()
-    val externalLoweredEnums = mutableMapOf<IrClass, ExternalLoweredEnum>()
 }
 
 internal class Context(config: KonanConfig) : KonanBackendContext(config) {
@@ -104,7 +104,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     val innerClassesSupport by lazy { InnerClassesSupport(mapping, irFactory) }
     val bridgesSupport by lazy { BridgesSupport(mapping, irBuiltIns, irFactory) }
     val inlineFunctionsSupport by lazy { InlineFunctionsSupport(mapping) }
-    val enumsSupport by lazy { EnumsSupport(this) }
+    val enumsSupport by lazy { EnumsSupport(mapping, ir.symbols, irBuiltIns, irFactory) }
 
     open class LazyMember<T>(val initializer: Context.() -> T) {
         operator fun getValue(thisRef: Context, property: KProperty<*>): T = thisRef.getValue(this)

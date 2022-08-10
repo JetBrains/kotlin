@@ -228,7 +228,7 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
 
             override fun transform(enumConstructorCall: IrEnumConstructorCall): IrExpression {
                 val name = enumEntry.name.asString()
-                val ordinal = context.enumsSupport.getEnumEntryOrdinal(enumEntry)
+                val ordinal = context.enumsSupport.enumEntriesMap(enumEntry.parentAsClass)[enumEntry.name]!!.ordinal
 
                 val startOffset = enumConstructorCall.startOffset
                 val endOffset = enumConstructorCall.endOffset

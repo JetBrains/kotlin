@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMo
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
+import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_ENUM
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SamSuperTypesChecker
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -427,6 +429,21 @@ internal val exportInternalAbiPhase = makeKonanModuleOpPhase(
                         }
                         context.internalAbi.declare(function, declaration.module)
                     }
+
+                    if (declaration.isEnumClass) {
+                        val function = context.irFactory.buildFun {
+                            name = InternalAbi.getEnumValuesAccessorName(declaration)
+                            returnType = context.ir.symbols.array.typeWith(declaration.defaultType)
+                            origin = InternalAbi.INTERNAL_ABI_ORIGIN
+                        }
+
+                        context.createIrBuilder(function.symbol).run {
+                            function.body = irBlockBody {
+                                +irReturn(with(context.enumsSupport) { irGetValuesField(declaration) })
+                            }
+                        }
+                        context.internalAbi.declare(function, declaration.module)
+                    }
                 }
 
                 override fun visitProperty(declaration: IrProperty) {
@@ -470,6 +487,7 @@ internal val useInternalAbiPhase = makeKonanModuleOpPhase(
             val companionObjectAccessors = mutableMapOf<IrClass, IrSimpleFunction>()
             val outerThisAccessors = mutableMapOf<IrClass, IrSimpleFunction>()
             val lateinitPropertyAccessors = mutableMapOf<IrProperty, IrSimpleFunction>()
+            val enumValuesAccessors = mutableMapOf<IrClass, IrSimpleFunction>()
 
             val transformer = object : IrElementTransformerVoid() {
                 override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
@@ -559,6 +577,23 @@ internal val useInternalAbiPhase = makeKonanModuleOpPhase(
                                 if (irClass != null)
                                     putValueArgument(0, expression.receiver)
                             }
+                        }
+
+                        field.origin == DECLARATION_ORIGIN_ENUM -> {
+                            val enumClass = irClass?.parentClassOrNull
+                            require(enumClass != null) { "Unexpected usage of enum VALUES field" }
+                            require(enumClass.isEnumClass) { "Expected a enum class: ${enumClass.render()}" }
+                            val accessor = enumValuesAccessors.getOrPut(enumClass) {
+                                context.irFactory.buildFun {
+                                    name = InternalAbi.getEnumValuesAccessorName(enumClass)
+                                    returnType = context.ir.symbols.array.typeWith(enumClass.defaultType)
+                                    origin = InternalAbi.INTERNAL_ABI_ORIGIN
+                                    isExternal = true
+                                }.also {
+                                    context.internalAbi.reference(it, enumClass.module)
+                                }
+                            }
+                            return IrCallImpl(expression.startOffset, expression.endOffset, expression.type, accessor.symbol, accessor.typeParameters.size, accessor.valueParameters.size)
                         }
 
                         else -> expression
