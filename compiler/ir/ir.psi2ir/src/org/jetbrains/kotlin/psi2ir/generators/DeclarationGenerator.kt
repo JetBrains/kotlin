@@ -46,7 +46,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         return try {
             when (ktDeclaration) {
                 is KtNamedFunction ->
-                    FunctionGenerator(this).generateFunctionDeclaration(ktDeclaration)
+                    FunctionGenerator(this).generateFunctionDeclaration(ktDeclaration, null)
                 is KtProperty ->
                     PropertyGenerator(this).generatePropertyDeclaration(ktDeclaration)
                 is KtClassOrObject ->
@@ -207,5 +207,5 @@ abstract class DeclarationGeneratorExtension(val declarationGenerator: Declarati
     fun KotlinType.toIrType() = with(declarationGenerator) { toIrType() }
 }
 
-fun Generator.createBodyGenerator(scopeOwnerSymbol: IrSymbol) =
-    BodyGenerator(scopeOwnerSymbol, context)
+fun Generator.createBodyGenerator(scopeOwnerSymbol: IrSymbol, parentLoopResolver: LoopResolver? = null) =
+    BodyGenerator(scopeOwnerSymbol, context, parentLoopResolver)

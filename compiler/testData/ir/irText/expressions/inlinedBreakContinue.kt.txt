@@ -1,0 +1,60 @@
+inline fun foo(block: Function0<Unit>) {
+  block.invoke()
+}
+
+inline fun bar(block1: Function0<Unit>, noinline block2: Function0<Unit>) {
+  block1.invoke()
+  block2.invoke()
+}
+
+fun test1() {
+  while (true) { // BLOCK
+    foo(block = local fun <anonymous>() {
+      break
+    }
+)
+    foo(block = local fun <anonymous>() {
+      continue
+    }
+)
+    foo(block = local fun <no name provided>() {
+      break
+    }
+)
+    foo(block = local fun <no name provided>() {
+      continue
+    }
+)
+  }
+}
+
+fun test2() {
+  while (true) { // BLOCK
+    bar(block1 = local fun <anonymous>() {
+      break
+    }
+, block2 = local fun <anonymous>() {
+      return Unit
+    }
+)
+    bar(block1 = local fun <anonymous>() {
+      continue
+    }
+, block2 = local fun <anonymous>() {
+      return Unit
+    }
+)
+    bar(block1 = local fun <no name provided>() {
+      break
+    }
+, block2 = local fun <no name provided>() {
+    }
+)
+    bar(block1 = local fun <no name provided>() {
+      continue
+    }
+, block2 = local fun <no name provided>() {
+    }
+)
+  }
+}

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.AccessTarget
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValue
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature.BreakContinueInInlineLambdas
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitQualifiedAccessToUninitializedEnumEntry
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
@@ -926,9 +927,9 @@ class ControlFlowProcessor(
 
         private fun jumpDoesNotCrossFunctionBoundary(jumpExpression: KtExpressionWithLabel, jumpTarget: KtLoopExpression): Boolean {
             val bindingContext = trace.bindingContext
-
-            val labelExprEnclosingFunc = getEnclosingFunctionDescriptor(bindingContext, jumpExpression)
-            val labelTargetEnclosingFunc = getEnclosingFunctionDescriptor(bindingContext, jumpTarget)
+            val skipInlineFunctions = languageVersionSettings.supportsFeature(BreakContinueInInlineLambdas)
+            val labelExprEnclosingFunc = getEnclosingFunctionDescriptor(bindingContext, jumpExpression, skipInlineFunctions)
+            val labelTargetEnclosingFunc = getEnclosingFunctionDescriptor(bindingContext, jumpTarget, skipInlineFunctions)
             return if (labelExprEnclosingFunc !== labelTargetEnclosingFunc) {
                 // Check to report only once
                 if (builder.getLoopExitPoint(jumpTarget) != null ||

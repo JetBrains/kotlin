@@ -738,10 +738,7 @@ open class DeepCopyIrTreeWithSymbols(
     private val transformedLoops = HashMap<IrLoop, IrLoop>()
 
     private fun getTransformedLoop(irLoop: IrLoop): IrLoop =
-        transformedLoops.getOrElse(irLoop) { getNonTransformedLoop(irLoop) }
-
-    protected open fun getNonTransformedLoop(irLoop: IrLoop): IrLoop =
-        throw AssertionError("Outer loop was not transformed: ${irLoop.render()}")
+        transformedLoops.getOrDefault(irLoop, irLoop)
 
     override fun visitWhileLoop(loop: IrWhileLoop): IrWhileLoop =
         IrWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type.remapType(), mapStatementOrigin(loop.origin)).also { newLoop ->

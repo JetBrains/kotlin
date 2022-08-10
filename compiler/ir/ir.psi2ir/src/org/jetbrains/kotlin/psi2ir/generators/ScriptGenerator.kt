@@ -168,7 +168,8 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                     is KtScriptInitializer -> {
                         val irExpressionBody = BodyGenerator(
                             irScript.symbol,
-                            context
+                            context,
+                            null
                         ).generateExpressionBody(d.body!!)
                         if (d == ktScript.declarations.last() && descriptor.resultValue != null) {
                             descriptor.resultValue!!.let { resultDescriptor ->
@@ -194,7 +195,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                     is KtDestructuringDeclaration -> {
                         // copied with modifications from StatementGenerator.visitDestructuringDeclaration
                         // TODO: consider code deduplication
-                        val bodyGenerator = BodyGenerator(irScript.symbol, context)
+                        val bodyGenerator = BodyGenerator(irScript.symbol, context, null)
                         val statementGenerator = bodyGenerator.createStatementGenerator()
                         val irBlock = IrCompositeImpl(
                             d.startOffsetSkippingComments, d.endOffset,
