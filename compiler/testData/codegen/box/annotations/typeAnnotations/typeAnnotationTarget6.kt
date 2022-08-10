@@ -19,7 +19,7 @@ fun box(): String {
     checkTypeAnnotation(
         ::foo.javaMethod!!.annotatedReturnType,
         "kotlin.jvm.functions.Function1<java.lang.String, kotlin.Unit>",
-        "",
+        "@kotlin.ExtensionFunctionType()",
         "foo"
     )
 
