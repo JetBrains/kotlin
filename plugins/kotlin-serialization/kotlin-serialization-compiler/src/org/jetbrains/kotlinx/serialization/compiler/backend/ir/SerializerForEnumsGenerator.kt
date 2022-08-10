@@ -29,7 +29,7 @@ class SerializerForEnumsGenerator(
     irClass: IrClass,
     compilerContext: SerializationPluginContext,
     serialInfoJvmGenerator: SerialInfoImplJvmIrGenerator,
-) : SerializerIrGenerator(irClass, compilerContext, null, serialInfoJvmGenerator) {
+) : SerializerIrGenerator(irClass, compilerContext, null) {
     override fun generateSave(function: IrSimpleFunction) = addFunctionBody(function) { saveFunc ->
         fun irThis(): IrExpression =
             IrGetValueImpl(startOffset, endOffset, saveFunc.dispatchReceiverParameter!!.symbol)

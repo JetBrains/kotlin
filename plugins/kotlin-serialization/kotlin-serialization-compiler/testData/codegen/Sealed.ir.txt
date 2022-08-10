@@ -1,7 +1,7 @@
 public final class Container$$serializer : java/lang/Object, kotlinx/serialization/internal/GeneratedSerializer {
     public final static Container$$serializer INSTANCE
 
-    public final static kotlinx.serialization.descriptors.SerialDescriptor descriptor
+    private final static kotlinx.serialization.internal.PluginGeneratedSerialDescriptor descriptor
 
     static void <clinit>() {
           NEW (Container$$serializer)
@@ -23,8 +23,7 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
           ICONST_0
           INVOKEVIRTUAL (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor, addElement, (Ljava/lang/String;Z)V)
           ALOAD (0)
-          CHECKCAST (kotlinx/serialization/descriptors/SerialDescriptor)
-          PUTSTATIC (Container$$serializer, descriptor, Lkotlinx/serialization/descriptors/SerialDescriptor;)
+          PUTSTATIC (Container$$serializer, descriptor, Lkotlinx/serialization/internal/PluginGeneratedSerialDescriptor;)
         LABEL (L1)
         LINENUMBER (19)
           RETURN
@@ -479,7 +478,7 @@ public final class Result$Err : Result {
 public final class Result$OK$$serializer : java/lang/Object, kotlinx/serialization/internal/GeneratedSerializer {
     public final static Result$OK$$serializer INSTANCE
 
-    public final static kotlinx.serialization.descriptors.SerialDescriptor descriptor
+    private final static kotlinx.serialization.internal.PluginGeneratedSerialDescriptor descriptor
 
     static void <clinit>() {
           NEW (Result$OK$$serializer)
@@ -501,8 +500,7 @@ public final class Result$OK$$serializer : java/lang/Object, kotlinx/serializati
           ICONST_0
           INVOKEVIRTUAL (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor, addElement, (Ljava/lang/String;Z)V)
           ALOAD (0)
-          CHECKCAST (kotlinx/serialization/descriptors/SerialDescriptor)
-          PUTSTATIC (Result$OK$$serializer, descriptor, Lkotlinx/serialization/descriptors/SerialDescriptor;)
+          PUTSTATIC (Result$OK$$serializer, descriptor, Lkotlinx/serialization/internal/PluginGeneratedSerialDescriptor;)
           RETURN
     }
 

@@ -1,0 +1,61 @@
+FILE: classWithGenericParameters.kt
+    @R|kotlinx/serialization/Serializable|() public final class GenericBox<T, V> : R|kotlin/Any| {
+        public constructor<T, V>(i: R|kotlin/Int|, t: R|T|, vs: R|kotlin/collections/List<V>|): R|GenericBox<T, V>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val i: R|kotlin/Int| = R|<local>/i|
+            public get(): R|kotlin/Int|
+
+        public final val t: R|T| = R|<local>/t|
+            public get(): R|T|
+
+        public final val vs: R|kotlin/collections/List<V>| = R|<local>/vs|
+            public get(): R|kotlin/collections/List<V>|
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun <T, V> serializer(typeSerial0: R|kotlinx/serialization/KSerializer<T>|, typeSerial1: R|kotlinx/serialization/KSerializer<V>|): R|kotlinx/serialization/KSerializer<GenericBox<T, V>>|
+
+            private constructor(): R|GenericBox.Companion|
+
+        }
+
+        public final class $serializer<T, V> : R|kotlinx/serialization/internal/GeneratedSerializer<GenericBox<T, V>>| {
+            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|GenericBox<T, V>|): R|kotlin/Unit|
+
+            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|GenericBox<T, V>|
+
+            public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
+                public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
+
+            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+
+            public final fun typeParametersSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+
+            private constructor(): R|GenericBox.$serializer<T, V>|
+
+            private constructor(typeSerial0: R|kotlinx/serialization/KSerializer<T>|, typeSerial1: R|kotlinx/serialization/KSerializer<V>|): R|GenericBox.$serializer<T, V>|
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval box: R|GenericBox<kotlin/String, kotlin/Boolean>| = R|/GenericBox.GenericBox|<R|kotlin/String|, R|kotlin/Boolean|>(Int(42), String(foo), R|kotlin/collections/listOf|<R|kotlin/Boolean|>(vararg(Boolean(true), Boolean(false))))
+        lval serial: R|kotlinx/serialization/KSerializer<GenericBox<kotlin/String, kotlin/Boolean>>| = Q|GenericBox|.R|/GenericBox.Companion.serializer|<R|kotlin/String|, R|kotlin/Boolean|>(Q|kotlin/String|.R|kotlinx/serialization/builtins/serializer|(), Q|kotlin/Boolean|.R|kotlinx/serialization/builtins/serializer|())
+        lval target: R|kotlin/String| = String({"i":42,"t":"foo","vs":[true,false]})
+        lval s: R|kotlin/String| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.encodeToString|<R|GenericBox<kotlin/String, kotlin/Boolean>|>(R|<local>/serial|, R|<local>/box|)
+        when () {
+            !=(R|<local>/target|, R|<local>/s|) ->  {
+                ^box <strcat>(String(Incorrect serialization: ), R|<local>/s|)
+            }
+        }
+
+        lval decoded: R|GenericBox<kotlin/String, kotlin/Boolean>| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.decodeFromString|<R|GenericBox<kotlin/String, kotlin/Boolean>|>(R|<local>/serial|, R|<local>/s|)
+        when () {
+            !=(R|<local>/box|.R|SubstitutionOverride</GenericBox.t: R|kotlin/String|>|, R|<local>/decoded|.R|SubstitutionOverride</GenericBox.t: R|kotlin/String|>|) || !=(R|<local>/box|.R|SubstitutionOverride</GenericBox.vs: R|kotlin/collections/List<kotlin/Boolean>|>|, R|<local>/decoded|.R|SubstitutionOverride</GenericBox.vs: R|kotlin/collections/List<kotlin/Boolean>|>|) ->  {
+                ^box String(Incorrect deserialization)
+            }
+        }
+
+        ^box String(OK)
+    }

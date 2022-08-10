@@ -14,24 +14,22 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingDeclarationSymbol
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.origin
-import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.constructStarProjectedType
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
@@ -170,13 +168,24 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             dispatchReceiverType = owner.defaultType()
 
             // TODO: handle serializable objects
-            val serializableType =
+            val serializableClassSymbol =
                 (owner.getContainingDeclarationSymbol(session) as? FirClassSymbol<*>) ?: error("Can't get outer class for $owner")
 
-            // TODO: Add value parameters & type parameters for parameterized classes
+            typeParameters.addAll(serializableClassSymbol.typeParameterSymbols.map { newSimpleTypeParameter(session, symbol, it.name) })
+            val parametersAsArguments = typeParameters.map { it.toConeType() }.toTypedArray<ConeTypeProjection>()
+
+            valueParameters.addAll(List(serializableClassSymbol.typeParameterSymbols.size) { i ->
+                newSimpleValueParameter(
+                    session,
+                    kSerializerClassId.constructClassLikeType(arrayOf(parametersAsArguments[i]), false).newRef(),
+                    Name.identifier("${SerialEntityNames.typeArgPrefix}$i")
+                )
+            })
+
+
             returnTypeRef = buildResolvedTypeRef {
                 type = kSerializerClassId.constructClassLikeType(
-                    arrayOf(serializableType.defaultType().toTypeProjection(Variance.INVARIANT)),
+                    arrayOf(serializableClassSymbol.constructType(parametersAsArguments, false)),
                     isNullable = false
                 )
             }
@@ -217,8 +226,37 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
     }
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
-        val constructor = buildConstructor(context.owner.classId, isInner = false, SerializationPluginKey)
-        return listOf(constructor.symbol)
+        val owner = context.owner
+        val defaultObjectConstructor = buildPrimaryConstructor(
+            owner, isInner = false, SerializationPluginKey, status = FirResolvedDeclarationStatusImpl(
+                Visibilities.Private,
+                Modality.FINAL,
+                EffectiveVisibility.PrivateInClass
+            )
+        )
+        if (owner.name == SerialEntityNames.SERIALIZER_CLASS_NAME && owner.typeParameterSymbols.isNotEmpty()) {
+            val parameterizedConstructor = buildConstructor {
+                moduleData = session.moduleData
+                origin = SerializationPluginKey.origin
+                returnTypeRef = defaultObjectConstructor.returnTypeRef
+                symbol = FirConstructorSymbol(owner.classId)
+                dispatchReceiverType = defaultObjectConstructor.dispatchReceiverType
+                status = FirResolvedDeclarationStatusImpl(
+                    Visibilities.Private,
+                    Modality.FINAL,
+                    EffectiveVisibility.PrivateInFile // accessed from a companion
+                )
+                valueParameters.addAll(owner.typeParameterSymbols.mapIndexed { i, typeParam ->
+                    newSimpleValueParameter(
+                        session,
+                        kSerializerClassId.constructClassLikeType(arrayOf(typeParam.toConeType()), false).newRef(),
+                        Name.identifier("${SerialEntityNames.typeArgPrefix}$i")
+                    )
+                })
+            }
+            return listOf(defaultObjectConstructor.symbol, parameterizedConstructor.symbol)
+        }
+        return listOf(defaultObjectConstructor.symbol)
     }
 
     fun addSerializerImplClass(
@@ -244,36 +282,19 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
 
 
             typeParameters.addAll(owner.typeParameterSymbols.map { param ->
-                buildTypeParameter {
-                    moduleData = session.moduleData
-                    origin = SerializationPluginKey.origin
-                    resolvePhase = FirResolvePhase.BODY_RESOLVE
-                    variance = Variance.INVARIANT
-                    name = param.name
-                    symbol = FirTypeParameterSymbol()
-                    containingDeclarationSymbol = this@buildRegularClass.symbol
-                    isReified = false
-                    addDefaultBoundIfNecessary() // there should be KSerializer but whatever
-                }
+                newSimpleTypeParameter(session, symbol, param.name)
             })
 
-            superTypeRefs += buildResolvedTypeRef {
-                type = generatedSerializerClassId.constructClassLikeType(arrayOf(owner.constructStarProjectedType()), isNullable = false)
-            }
+            val parametersAsArguments = typeParameters.map { it.toConeType() }.toTypedArray<ConeTypeProjection>()
+            superTypeRefs += generatedSerializerClassId.constructClassLikeType(
+                arrayOf(
+                    owner.constructType(
+                        parametersAsArguments,
+                        isNullable = false
+                    )
+                ), isNullable = false
+            ).newRef()
         }
-        // TODO: add typed constructor
-//        val secondaryCtors =
-//            if (!hasTypeParams)
-//                emptyList()
-//            else
-//                listOf(
-//                    KSerializerDescriptorResolver.createTypedSerializerConstructorDescriptor(
-//                        serializerFirClass,
-//                        thisDescriptor,
-//                        typeParameters
-//                    )
-//                )
-//        serializerFirClass.secondaryConstructors = secondaryCtors
         return serializerFirClass.symbol
     }
 

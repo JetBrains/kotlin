@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.jvm.functionByName
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -41,6 +40,7 @@ import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPlug
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.DECODER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ENCODER_CLASS
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.KSERIALIZER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.LOAD
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SAVE
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.STRUCTURE_DECODER_CLASS
@@ -55,14 +55,13 @@ open class SerializerIrGenerator(
     val irClass: IrClass,
     compilerContext: SerializationPluginContext,
     metadataPlugin: SerializationDescriptorSerializerPlugin?,
-    private val serialInfoJvmGenerator: SerialInfoImplJvmIrGenerator,
 ) : BaseIrGenerator(irClass, compilerContext) {
     protected val serializableIrClass = getSerializableClassDescriptorBySerializer(irClass)!!
 
     protected val serialName: String = serializableIrClass.serialName()
     protected val properties = serializablePropertiesForIrBackend(serializableIrClass, metadataPlugin)
     protected val serializableProperties = properties.serializableProperties
-    protected val isGeneratedSerializer = irClass.descriptor.typeConstructor.supertypes.any(::isGeneratedKSerializer) // TODO TODO
+    protected val isGeneratedSerializer = irClass.superTypes.any(IrType::isGeneratedKSerializer)
 
     protected val generatedSerialDescPropertyDescriptor = getProperty(
         SerialEntityNames.SERIAL_DESC_FIELD,
@@ -71,7 +70,7 @@ open class SerializerIrGenerator(
 
     protected val anySerialDescProperty = getProperty(
         SerialEntityNames.SERIAL_DESC_FIELD,
-    ) { true } // TODO REMOVE TRUE
+    ) { true } // remove true?
 
     protected val irAnySerialDescProperty = anySerialDescProperty
 
@@ -82,17 +81,18 @@ open class SerializerIrGenerator(
         return irClass.properties.singleOrNull { it.name.asString() == name && isReturnTypeOk(it) }
     }
 
-    var localSerializersFieldsDescriptors: List<Pair<PropertyDescriptor, IrProperty>> = emptyList()
-        protected set
-    protected fun findLocalSerializersFieldDescriptors(): List<IrProperty> {
+    var localSerializersFieldsDescriptors: List<IrProperty> = emptyList()
+        private set
+
+    // null if was not found — we're in FIR
+    private fun findLocalSerializersFieldDescriptors(): List<IrProperty?> {
         val count = serializableIrClass.typeParameters.size
         if (count == 0) return emptyList()
         val propNames = (0 until count).map { "${SerialEntityNames.typeArgPrefix}$it" }
-        return propNames.mapNotNull { name ->
+        return propNames.map { name ->
             getProperty(name) { it.getter!!.returnType.isKSerializer() }
         }
     }
-
 
     protected open val serialDescImplClass: IrClassSymbol =
         compilerContext.getClassFromInternalSerializationPackage(SerialEntityNames.SERIAL_DESCRIPTOR_CLASS_IMPL)
@@ -106,11 +106,13 @@ open class SerializerIrGenerator(
 
         // how to (auto)create backing field and getter/setter?
         compilerContext.symbolTable.withReferenceScope(irClass) {
-            prop = generateSimplePropertyWithBackingField(desc.descriptor, irClass)
+            prop = generatePropertyMissingParts(desc, desc.name, serialDescImplClass.starProjectedType, irClass, desc.visibility)
 
-            // TODO: Do not use descriptors here
-            localSerializersFieldsDescriptors = findLocalSerializersFieldDescriptors().map { prop ->
-                prop.descriptor to generateSimplePropertyWithBackingField(prop.descriptor, irClass)
+            localSerializersFieldsDescriptors = findLocalSerializersFieldDescriptors().mapIndexed { i, prop ->
+                generatePropertyMissingParts(
+                    prop, Name.identifier("${SerialEntityNames.typeArgPrefix}$i"),
+                    compilerContext.getClassFromRuntime(KSERIALIZER_CLASS).starProjectedType, irClass
+                )
             }
         }
 
@@ -141,7 +143,8 @@ open class SerializerIrGenerator(
 
                         // save local descriptor to field
                         +irSetField(
-                            generateReceiverExpressionForFieldAccess(
+                            IrGetValueImpl(
+                                startOffset, endOffset,
                                 thisAsReceiverParameter.symbol
                             ),
                             prop.backingField!!,
@@ -218,11 +221,9 @@ open class SerializerIrGenerator(
             // store type arguments serializers in fields
             val thisAsReceiverParameter = irClass.thisReceiver!!
             ctor.valueParameters.forEachIndexed { index, param ->
-                val localSerial = localSerializersFieldsDescriptors[index].second.backingField!!
+                val localSerial = localSerializersFieldsDescriptors[index].backingField!!
                 +irSetField(
-                    generateReceiverExpressionForFieldAccess(
-                        thisAsReceiverParameter.symbol
-                    ), localSerial, irGet(param)
+                    IrGetValueImpl(startOffset, endOffset, thisAsReceiverParameter.symbol), localSerial, irGet(param)
                 )
             }
         }
@@ -243,7 +244,7 @@ open class SerializerIrGenerator(
         val typeParams = serializableIrClass.typeParameters.mapIndexed { idx, _ ->
             irGetField(
                 irGet(irFun.dispatchReceiverParameter!!),
-                localSerializersFieldsDescriptors[idx].second.backingField!!
+                localSerializersFieldsDescriptors[idx].backingField!!
             )
         }
         val kSerType = ((irFun.returnType as IrSimpleType).arguments.first() as IrTypeProjection).type
@@ -268,7 +269,8 @@ open class SerializerIrGenerator(
         val localSerialDesc = irTemporary(irGet(descriptorGetterSymbol.owner.returnType, irThis(), descriptorGetterSymbol), "desc")
 
         //  fun beginStructure(desc: SerialDescriptor, vararg typeParams: KSerializer<*>): StructureEncoder
-        val beginFunc = encoderClass.functions.single { it.owner.name.asString() == CallingConventions.begin && it.owner.valueParameters.size == 1 }
+        val beginFunc =
+            encoderClass.functions.single { it.owner.name.asString() == CallingConventions.begin && it.owner.valueParameters.size == 1 }
 
         val call = irCall(beginFunc, type = kOutputClass.defaultType).mapValueParametersIndexed { _, _ ->
             irGet(localSerialDesc)
@@ -283,9 +285,9 @@ open class SerializerIrGenerator(
         if (writeSelfFunction != null) {
             // extract Tx from KSerializer<Tx> list
             val typeArgs =
-                localSerializersFieldsDescriptors.map { (_, ir) -> ir.backingField!!.type.cast<IrSimpleType>().arguments.single().typeOrNull }
+                localSerializersFieldsDescriptors.map { ir -> ir.backingField!!.type.cast<IrSimpleType>().arguments.single().typeOrNull }
             val args = mutableListOf<IrExpression>(irGet(objectToSerialize), irGet(localOutput), irGet(localSerialDesc))
-            args.addAll(localSerializersFieldsDescriptors.map { (_, ir) ->
+            args.addAll(localSerializersFieldsDescriptors.map { ir ->
                 irGetField(
                     irGet(saveFunc.dispatchReceiverParameter!!),
                     ir.backingField!!
@@ -304,7 +306,7 @@ open class SerializerIrGenerator(
                 serializableProperties, objectToSerialize, localOutput,
                 localSerialDesc, kOutputClass, ignoreIndexTo = -1, initializerAdapter
             ) { it, _ ->
-                val (_, ir) = localSerializersFieldsDescriptors[it]
+                val ir = localSerializersFieldsDescriptors[it]
                 irGetField(irGet(saveFunc.dispatchReceiverParameter!!), ir.backingField!!)
             }
         }
@@ -327,7 +329,7 @@ open class SerializerIrGenerator(
         whenHaveSerializer,
         whenDoNot,
         { it, _ ->
-            val (_, ir) = localSerializersFieldsDescriptors[it]
+            val ir = localSerializersFieldsDescriptors[it]
             irGetField(irGet(dispatchReceiver), ir.backingField!!)
         },
         returnTypeHint
@@ -401,7 +403,8 @@ open class SerializerIrGenerator(
         }
 
         //input = input.beginStructure(...)
-        val beginFunc = decoderClass.functions.single { it.owner.name.asString() == CallingConventions.begin && it.owner.valueParameters.size == 1 }
+        val beginFunc =
+            decoderClass.functions.single { it.owner.name.asString() == CallingConventions.begin && it.owner.valueParameters.size == 1 }
         val call = irInvoke(
             irGet(loadFunc.valueParameters[0]),
             beginFunc,
@@ -422,7 +425,7 @@ open class SerializerIrGenerator(
                             } to listOf(
                                 localSerialDesc.get(), irInt(index), innerSerial, serialPropertiesMap.getValue(property.ir).get()
                             )
-                        }, {sti ->
+                        }, { sti ->
                                                          inputClass.functions.single {
                                                              it.owner.name.asString() == "${CallingConventions.decode}${sti.elementMethodPrefix}${CallingConventions.elementPostfix}" &&
                                                                      it.owner.valueParameters.size == 2
@@ -461,7 +464,12 @@ open class SerializerIrGenerator(
 
                     // throw exception on unknown field
 
-                    val excClassRef = compilerContext.referenceConstructors(ClassId(SerializationPackages.packageFqName, Name.identifier(UNKNOWN_FIELD_EXC)))
+                    val excClassRef = compilerContext.referenceConstructors(
+                        ClassId(
+                            SerializationPackages.packageFqName,
+                            Name.identifier(UNKNOWN_FIELD_EXC)
+                        )
+                    )
                         .single { it.owner.valueParameters.singleOrNull()?.type?.isInt() == true }
                     +elseBranch(
                         irThrow(
@@ -594,7 +602,8 @@ open class SerializerIrGenerator(
         val save = irClass.findPluginGeneratedMethod(SAVE)?.let { generateSave(it); true } ?: false
         val load = irClass.findPluginGeneratedMethod(LOAD)?.let { generateLoad(it); true } ?: false
         irClass.findPluginGeneratedMethod(SerialEntityNames.CHILD_SERIALIZERS_GETTER.identifier)?.let { generateChildSerializersGetter(it) }
-        irClass.findPluginGeneratedMethod(SerialEntityNames.TYPE_PARAMS_SERIALIZERS_GETTER.identifier)?.let { generateTypeParamsSerializersGetter(it) }
+        irClass.findPluginGeneratedMethod(SerialEntityNames.TYPE_PARAMS_SERIALIZERS_GETTER.identifier)
+            ?.let { generateTypeParamsSerializersGetter(it) }
         if (!prop && (save || load))
             generateSerialDesc()
         if (serializableIrClass.typeParameters.isNotEmpty()) {
@@ -603,7 +612,6 @@ open class SerializerIrGenerator(
             }
         }
     }
-
 
 
     companion object {
@@ -620,8 +628,8 @@ open class SerializerIrGenerator(
                     context,
                     serialInfoJvmGenerator
                 )
-                serializableDesc.isInlineClass() -> SerializerForInlineClassGenerator(irClass, context, serialInfoJvmGenerator)
-                else -> SerializerIrGenerator(irClass, context, metadataPlugin, serialInfoJvmGenerator)
+                serializableDesc.isInlineClass() -> SerializerForInlineClassGenerator(irClass, context)
+                else -> SerializerIrGenerator(irClass, context, metadataPlugin)
             }
             generator.generate()
             irClass.addDefaultConstructorIfAbsent(context)
