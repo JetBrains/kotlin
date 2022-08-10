@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: User.java
 
 import lombok.Builder;

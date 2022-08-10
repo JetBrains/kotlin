@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.lombok.config.AccessLevel
 import org.jetbrains.kotlin.lombok.utils.trimToNull
 import org.jetbrains.kotlin.name.Name
 
-fun getAccessLevel(annotation: FirAnnotation, field: Name = LombokConfigNames.VALUE): AccessLevel {
-    val value = annotation.getArgumentAsString(field) ?: return AccessLevel.PUBLIC
+fun FirAnnotation.getAccessLevel(field: Name = LombokConfigNames.VALUE): AccessLevel {
+    val value = getArgumentAsString(field) ?: return AccessLevel.PUBLIC
     return AccessLevel.valueOf(value)
 }
 
@@ -39,7 +39,7 @@ private fun FirAnnotation.getArgumentAsString(field: Name): String? {
 }
 
 fun getVisibility(annotation: FirAnnotation, field: Name = LombokConfigNames.VALUE): Visibility {
-    return getAccessLevel(annotation, field).toVisibility()
+    return annotation.getAccessLevel(field).toVisibility()
 }
 
 fun FirAnnotation.getNonBlankStringArgument(name: Name): String? = getStringArgument(name)?.trimToNull()
@@ -53,9 +53,17 @@ object LombokConfigNames {
     val STATIC_NAME = Name.identifier("staticName")
     val STATIC_CONSTRUCTOR = Name.identifier("staticConstructor")
 
+    val BUILDER_CLASS_NAME = Name.identifier("builderClassName")
+    val BUILD_METHOD_NAME = Name.identifier("buildMethodName")
+    val BUILDER_METHOD_NAME = Name.identifier("builderMethodName")
+    val TO_BUILDER = Name.identifier("toBuilder")
+    val SETTER_PREFIX = Name.identifier("setterPrefix")
+    val IGNORE_NULL_COLLECTIONS = Name.identifier("ignoreNullCollections")
+
 
     const val FLUENT_CONFIG = "lombok.accessors.fluent"
     const val CHAIN_CONFIG = "lombok.accessors.chain"
     const val PREFIX_CONFIG = "lombok.accessors.prefix"
     const val NO_IS_PREFIX_CONFIG = "lombok.getter.noIsPrefix"
+    const val BUILDER_CLASS_NAME_CONFIG = "lombok.builder.className"
 }

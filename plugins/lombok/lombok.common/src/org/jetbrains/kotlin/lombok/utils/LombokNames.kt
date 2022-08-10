@@ -29,6 +29,8 @@ object LombokNames {
     val WITH_ID = ClassId.topLevel(WITH)
     val DATA_ID = ClassId.topLevel(DATA)
     val VALUE_ID = ClassId.topLevel(VALUE)
+    val BUILDER_ID = ClassId.topLevel(BUILDER)
+    val SINGULAR_ID = ClassId.topLevel(SINGULAR)
     val NO_ARGS_CONSTRUCTOR_ID = ClassId.topLevel(NO_ARGS_CONSTRUCTOR)
     val ALL_ARGS_CONSTRUCTOR_ID = ClassId.topLevel(ALL_ARGS_CONSTRUCTOR)
     val REQUIRED_ARGS_CONSTRUCTOR_ID = ClassId.topLevel(REQUIRED_ARGS_CONSTRUCTOR)

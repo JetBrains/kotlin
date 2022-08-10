@@ -17,11 +17,13 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.lombok.config.LombokConfig
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Accessors
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.AllArgsConstructor
+import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Builder
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Data
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Getter
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.NoArgsConstructor
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.RequiredArgsConstructor
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Setter
+import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Singular
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Value
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.With
 import java.io.File
@@ -34,7 +36,7 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
         }
     }
 
-    private val config = configFile?.let(LombokConfig::parse) ?: LombokConfig.Empty
+    val config = configFile?.let(LombokConfig::parse) ?: LombokConfig.Empty
     private val cachesFactory = session.firCachesFactory
 
     private val accessorsCache: Cache<Accessors> = cachesFactory.createCache { symbol ->
@@ -77,6 +79,14 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
         Value.getOrNull(symbol.fir)
     }
 
+    private val builderCache: Cache<Builder?> = cachesFactory.createCache { symbol ->
+        Builder.getIfAnnotated(symbol.fir, config)
+    }
+
+    private val singularCache: Cache<Singular?> = cachesFactory.createCache { symbol ->
+        Singular.getOrNull(symbol.fir)
+    }
+
     fun getAccessors(symbol: FirBasedSymbol<*>): Accessors = accessorsCache.getValue(symbol)
     fun getAccessorsIfAnnotated(symbol: FirBasedSymbol<*>): Accessors? = accessorsIfAnnotatedCache.getValue(symbol)
     fun getGetter(symbol: FirBasedSymbol<*>): Getter? = getterCache.getValue(symbol)
@@ -87,6 +97,8 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
     fun getRequiredArgsConstructor(symbol: FirBasedSymbol<*>): RequiredArgsConstructor? = requiredArgsConstructorCache.getValue(symbol)
     fun getData(symbol: FirBasedSymbol<*>): Data? = dataCache.getValue(symbol)
     fun getValue(symbol: FirBasedSymbol<*>): Value? = valueCache.getValue(symbol)
+    fun getBuilder(symbol: FirBasedSymbol<*>): Builder? = builderCache.getValue(symbol)
+    fun getSingular(symbol: FirBasedSymbol<*>): Singular? = singularCache.getValue(symbol)
 }
 
 private typealias Cache<T> = FirCache<FirBasedSymbol<*>, T, Nothing?>
