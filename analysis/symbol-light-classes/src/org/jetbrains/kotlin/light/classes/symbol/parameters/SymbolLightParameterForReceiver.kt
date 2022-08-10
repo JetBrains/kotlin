@@ -19,9 +19,11 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightAnnotationForAnnotationCall
+import org.jetbrains.kotlin.light.classes.symbol.annotations.computeNullabilityAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
+import org.jetbrains.kotlin.light.classes.symbol.nullabilityType
 import org.jetbrains.kotlin.psi.KtParameter
 
 context(KtAnalysisSession)
@@ -66,8 +68,11 @@ internal class SymbolLightParameterForReceiver private constructor(
     override val kotlinOrigin: KtParameter? = null
 
     private val _annotations: List<PsiAnnotation> by lazyPub {
-        receiverType.annotations.map {
-            SymbolLightAnnotationForAnnotationCall(it, this)
+        buildList {
+            receiverType.nullabilityType.computeNullabilityAnnotation(this@SymbolLightParameterForReceiver)?.let { add(it) }
+            receiverType.annotations.mapTo(this) {
+                SymbolLightAnnotationForAnnotationCall(it, this@SymbolLightParameterForReceiver)
+            }
         }
     }
 

@@ -6,7 +6,7 @@ public final class SimpleFunctionsKt /* SimpleFunctionsKt*/ {
 
   public static final /* vararg */ void nullableVararg(@org.jetbrains.annotations.NotNull() java.lang.Object...);//  nullableVararg(java.lang.Object[])
 
-  public static final error.NonExistentClass onString(java.lang.String, @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function1<? super java.lang.Integer, ? extends java.lang.Object>);//  onString(java.lang.String, kotlin.jvm.functions.Function1<? super java.lang.Integer, ? extends java.lang.Object>)
+  public static final error.NonExistentClass onString(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function1<? super java.lang.Integer, ? extends java.lang.Object>);//  onString(java.lang.String, kotlin.jvm.functions.Function1<? super java.lang.Integer, ? extends java.lang.Object>)
 
   public static final error.NonExistentClass plus(int);//  plus(int)
 

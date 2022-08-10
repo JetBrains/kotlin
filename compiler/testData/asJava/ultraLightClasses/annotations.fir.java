@@ -111,7 +111,7 @@ public final class Foo /* Foo*/ {
   public  Foo(error.NonExistentClass);//  .ctor(error.NonExistentClass)
 
   @Anno()
-  public final void f4(java.lang.String);//  f4(java.lang.String)
+  public final void f4(@org.jetbrains.annotations.NotNull() java.lang.String);//  f4(java.lang.String)
 
   @Anno()
   public final void setX(@org.jetbrains.annotations.Nullable() java.lang.String);//  setX(java.lang.String)

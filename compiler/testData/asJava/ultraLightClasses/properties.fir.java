@@ -161,7 +161,7 @@ public final class Foo /* Foo*/ {
 
   public final int getF1();//  getF1()
 
-  public final int getIntProp(int);//  getIntProp(int)
+  public final int getIntProp(@org.jetbrains.annotations.NotNull() int);//  getIntProp(int)
 
   public final int getInternalWithPrivateSet$light_idea_test_case();//  getInternalWithPrivateSet$light_idea_test_case()
 

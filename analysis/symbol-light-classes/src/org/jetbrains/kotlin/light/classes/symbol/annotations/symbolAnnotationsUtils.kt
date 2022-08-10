@@ -91,6 +91,16 @@ internal fun KtAnnotatedSymbol.hasAnnotation(fqName: FqName, annotationUseSiteTa
         it.useSiteTarget == annotationUseSiteTarget && it.classId?.asSingleFqName() == fqName
     }
 
+internal fun NullabilityType.computeNullabilityAnnotation(parent: PsiElement): SymbolLightSimpleAnnotation? {
+    return when (this) {
+        NullabilityType.NotNull -> NotNull::class.java
+        NullabilityType.Nullable -> Nullable::class.java
+        else -> null
+    }?.let {
+        SymbolLightSimpleAnnotation(it.name, parent)
+    }
+}
+
 internal fun KtAnnotatedSymbol.computeAnnotations(
     parent: PsiElement,
     nullability: NullabilityType,
@@ -98,13 +108,7 @@ internal fun KtAnnotatedSymbol.computeAnnotations(
     includeAnnotationsWithoutSite: Boolean = true
 ): List<PsiAnnotation> {
 
-    val nullabilityAnnotation = when (nullability) {
-        NullabilityType.NotNull -> NotNull::class.java
-        NullabilityType.Nullable -> Nullable::class.java
-        else -> null
-    }?.let {
-        SymbolLightSimpleAnnotation(it.name, parent)
-    }
+    val nullabilityAnnotation = nullability.computeNullabilityAnnotation(parent)
 
     val parentIsAnnotation = (parent as? PsiClass)?.isAnnotationType == true
 

@@ -33,13 +33,13 @@ public final class C /* C*/ {
 public static final class Companion /* C.Companion*/ {
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
-  public final java.lang.String getC(I);//  getC(I)
+  public final java.lang.String getC(@org.jetbrains.annotations.NotNull() I);//  getC(I)
 
   @kotlin.jvm.JvmStatic()
   public final void foo();//  foo()
 
   @kotlin.jvm.JvmStatic()
-  public final void setC(I, @org.jetbrains.annotations.NotNull() java.lang.String);//  setC(I, java.lang.String)
+  public final void setC(@org.jetbrains.annotations.NotNull() I, @org.jetbrains.annotations.NotNull() java.lang.String);//  setC(I, java.lang.String)
 
   @kotlin.jvm.JvmStatic()
   public final void setC1(@org.jetbrains.annotations.NotNull() java.lang.String);//  setC1(java.lang.String)
