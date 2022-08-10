@@ -305,7 +305,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
             property.type,
             genericIndex = property.genericIndex
         ) { it, _ ->
-            val (_, ir) = generator.localSerializersFieldsDescriptors[it]
+            val ir = generator.localSerializersFieldsDescriptors[it]
             irGetField(irGet(dispatchReceiverParameter), ir.backingField!!)
         }?.let { expr -> wrapWithNullableSerializerIfNeeded(property.type, expr, nullableSerClass) }
     }

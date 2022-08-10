@@ -35,6 +35,8 @@ internal fun IrType.isKSerializer(): Boolean {
     return fqName == SerialEntityNames.KSERIALIZER_NAME_FQ || fqName == SerialEntityNames.GENERATED_SERIALIZER_FQ
 }
 
+internal fun IrType.isGeneratedKSerializer(): Boolean = classifierOrNull?.isClassWithFqName(SerialEntityNames.GENERATED_SERIALIZER_FQ.toUnsafe()) == true
+
 internal val IrClass.isInternalSerializable: Boolean
     get() {
         if (kind != ClassKind.CLASS) return false

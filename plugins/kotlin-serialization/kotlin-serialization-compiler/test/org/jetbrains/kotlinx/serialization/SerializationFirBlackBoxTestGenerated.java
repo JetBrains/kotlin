@@ -32,6 +32,12 @@ public class SerializationFirBlackBoxTestGenerated extends AbstractSerialization
     }
 
     @Test
+    @TestMetadata("classWithGenericParameters.kt")
+    public void testClassWithGenericParameters() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/firMembers/classWithGenericParameters.kt");
+    }
+
+    @Test
     @TestMetadata("defaultProperties.kt")
     public void testDefaultProperties() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/firMembers/defaultProperties.kt");

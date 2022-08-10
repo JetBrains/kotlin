@@ -1,4 +1,4 @@
-// CURIOUS_ABOUT serialize, deserialize, write$Self, childSerializers, <init>, <clinit>
+// CURIOUS_ABOUT serialize, deserialize, write$Self, childSerializers, <init>, <clinit>, getDescriptor
 // WITH_STDLIB
 
 import kotlinx.serialization.*
