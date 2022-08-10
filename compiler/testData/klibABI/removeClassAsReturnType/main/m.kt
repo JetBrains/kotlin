@@ -30,7 +30,52 @@ fun test5(): String {
     }
 }
 
-fun box(): String = checkResults(test1(D()), test2(D()), test3(D()), test4(D()), test5())
+fun test6(): String {
+    return try {
+        bar()
+        return "FAIL6"
+    } catch (e: Throwable) {
+        e.checkLinkageError("function foo declared in function bar can not be called")
+    }
+}
+
+fun test7(): String {
+    return try {
+        baz()
+        return "FAIL7"
+    } catch (e: Throwable) {
+        e.checkLinkageError("function foo declared in function qux declared in function baz can not be called")
+    }
+}
+
+fun test8(): String {
+    return try {
+        quux()
+        return "FAIL8"
+    } catch (e: Throwable) {
+        e.checkLinkageError("function foo declared in function quux\$Local.corge can not be called")
+    }
+}
+
+fun test9(): String {
+    return try {
+        grault()
+        return "FAIL9"
+    } catch (e: Throwable) {
+        e.checkLinkageError("function foo declared in function grault\$1.garply")
+    }
+}
+
+fun test10(): String {
+    return try {
+        waldo()
+        return "FAIL10"
+    } catch (e: Throwable) {
+        e.checkLinkageError("function foo declared in function waldo\$fred\$1.garply")
+    }
+}
+
+fun box(): String = checkResults(test1(D()), test2(D()), test3(D()), test4(D()), test5(), test6(), test7(), test8(), test9(), test10())
 
 private fun Throwable.checkLinkageError(prefix: String): String =
     if (this::class.simpleName == "IrLinkageError" && message?.startsWith("$prefix because it uses unlinked symbols") == true)
