@@ -209,7 +209,7 @@ internal open class SymbolLightClass(
         result
     }
 
-    private fun addPropertyBackingFields(result: MutableList<KtLightField>) {
+    protected fun addPropertyBackingFields(result: MutableList<KtLightField>) {
         val propertySymbols = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
             .filterIsInstance<KtPropertySymbol>()
             .applyIf(isCompanionObject) {

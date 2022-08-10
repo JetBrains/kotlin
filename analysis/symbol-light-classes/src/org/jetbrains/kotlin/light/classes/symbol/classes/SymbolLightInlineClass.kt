@@ -57,9 +57,15 @@ internal class SymbolLightInlineClass(
         result
     }
 
+    private val _ownFields: List<KtLightField> by lazyPub {
+        mutableListOf<KtLightField>().apply {
+            addPropertyBackingFields(this)
+        }
+    }
+
     override fun getOwnMethods(): List<PsiMethod> = _ownMethods
 
-    override fun getOwnFields(): List<KtLightField> = emptyList()
+    override fun getOwnFields(): List<KtLightField> = _ownFields
 
     override fun copy(): SymbolLightInlineClass = SymbolLightInlineClass(classOrObjectSymbol, manager)
 }
