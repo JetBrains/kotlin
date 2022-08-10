@@ -912,7 +912,7 @@ Finished executing task ':$taskName'|
             }
 
             if (options.useFir) {
-                add("-Pkotlin.useFir=true")
+                add("-Pkotlin.useK2=true")
             }
 
             if (options.dryRun) {
