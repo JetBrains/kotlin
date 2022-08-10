@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.project.model
 
-import org.junit.Assume.assumeTrue
-import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions.assumeTrue
+import org.junit.jupiter.api.Test
 
 internal class DefaultModuleFragmentsResolverTest {
     val bundleFoo = simpleModuleBundle("foo")
@@ -34,7 +34,7 @@ internal class DefaultModuleFragmentsResolverTest {
             val result = fragmentResolver.getChosenFragments(consumingFragment, moduleFooMain)
             assertTrue(result is KpmFragmentResolution.ChosenFragments)
             val expected = expectedVisibleFragments.getValue(consumingFragment.fragmentName)
-            assertEquals(expected, result.visibleFragments.map { it.fragmentName }.toSet())
+            assertEquals(expected, (result as KpmFragmentResolution.ChosenFragments).visibleFragments.map { it.fragmentName }.toSet())
         }
     }
 
@@ -53,7 +53,7 @@ internal class DefaultModuleFragmentsResolverTest {
         val (commonMainResult, jsAndLinuxResult) = listOf("common", "jsAndLinux").map {
             val chosenFragments = fragmentResolver.getChosenFragments(dependingModule.fragment(it), moduleFooMain)
             assertTrue(chosenFragments is KpmFragmentResolution.ChosenFragments)
-            chosenFragments.visibleFragments.map { it.fragmentName }.toSet()
+            (chosenFragments as KpmFragmentResolution.ChosenFragments).visibleFragments.map { it.fragmentName }.toSet()
         }
 
         assertEquals(setOf("common", "jvmAndJs"), commonMainResult)

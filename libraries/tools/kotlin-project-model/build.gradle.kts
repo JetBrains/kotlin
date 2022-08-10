@@ -13,11 +13,15 @@ standardPublicJars()
 dependencies {
     implementation(kotlinStdlib())
     implementation(project(":kotlin-tooling-core"))
-    testFixturesImplementation(kotlin("test-junit"))
+    testApiJUnit5(runner = true)
     testFixturesImplementation(project(":kotlin-tooling-core"))
     testFixturesImplementation(project(":core:util.runtime"))
     testFixturesImplementation(projectTests(":generators:test-generator"))
     testFixturesImplementation(project(":kotlin-reflect"))
+}
+
+projectTest(jUnitMode = JUnitMode.JUnit5) {
+    useJUnitPlatform()
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
