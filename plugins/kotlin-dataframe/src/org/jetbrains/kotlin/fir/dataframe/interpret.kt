@@ -14,18 +14,17 @@ import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fqName
+import org.jetbrains.kotlin.fir.resolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlinx.dataframe.annotations.*
-import org.jetbrains.kotlinx.dataframe.plugin.DataFrameCallableId
-import org.jetbrains.kotlinx.dataframe.plugin.KPropertyApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
+import org.jetbrains.kotlinx.dataframe.plugin.*
 
 fun <T> FirExpressionResolutionExtension.interpret(
     functionCall: FirFunctionCall,
@@ -77,7 +76,6 @@ fun <T> FirExpressionResolutionExtension.interpret(
                         }
                         Interpreter.Success(args)
                     }
-
                     is FirFunctionCall -> {
                         val interpreter = expression.loadInterpreter()
                             ?: TODO("receiver ${expression.calleeReference} is not annotated with Interpretable. It can be DataFrame instance, but it's not supported rn")
@@ -101,6 +99,51 @@ fun <T> FirExpressionResolutionExtension.interpret(
                     }
                     is FirCallableReferenceAccess -> {
                         Interpreter.Success(expression.toKPropertyApproximation(session))
+                    }
+                    is FirLambdaArgumentExpression -> {
+                        val col: ColumnWithPathApproximation = when (val lambda = expression.expression) {
+                            is FirAnonymousFunctionExpression -> {
+                                val result = (lambda.anonymousFunction.body!!.statements.last() as FirReturnExpression).result
+                                when (result) {
+                                    is FirPropertyAccessExpression -> {
+//                                        val symbol = result.calleeReference.toResolvedCallableSymbol()!!
+//                                        result.let {
+//                                            println(it)
+//                                        }
+//                                        result.typeRef.let {
+//                                            println(it)
+//                                        }
+                                        (result.typeRef as FirResolvedTypeRef).type.let {
+                                            val column = when {
+                                                it.classId == Names.DATA_COLUMN_CLASS_ID -> {
+                                                    val arg = it.typeArguments.single() as ConeClassLikeType
+                                                    when {
+                                                        arg.classId == Names.DF_CLASS_ID -> TODO()
+                                                        else -> SimpleCol(
+                                                            f(result),
+                                                            TypeApproximation.of(arg.lookupTag.classId, arg.isNullable)
+                                                        )
+                                                    }
+                                                }
+                                                it.classId == Names.COLUM_GROUP_CLASS_ID -> TODO()
+                                                else -> TODO()
+                                            }
+                                            ColumnWithPathApproximation(
+                                                path = ColumnPathApproximation(path(result)),
+                                                column
+                                            )
+                                        }
+//                                        val col = when (symbol.resolvedReturnType) {
+//                                            else -> TODO()
+//                                        }
+                                        //listOf()
+                                    }
+                                    else -> TODO(result::class.toString())
+                                }
+                            }
+                            else -> TODO(lambda::class.toString())
+                        }
+                        Interpreter.Success(listOf(col))
                     }
                     else -> TODO(expression::class.toString())
                 }
@@ -171,6 +214,22 @@ fun <T> FirExpressionResolutionExtension.interpret(
     } else {
         error("")
     }
+}
+
+fun path(propertyAccessExpression: FirPropertyAccessExpression): List<String> {
+    val colName = f(propertyAccessExpression)
+    return when (val explicitReceiver = propertyAccessExpression.explicitReceiver) {
+        null -> listOf(colName)
+        else -> path(explicitReceiver as FirPropertyAccessExpression) + colName
+    }
+}
+
+fun f(propertyAccessExpression: FirPropertyAccessExpression): String {
+    return propertyAccessExpression.calleeReference.resolved!!.name.identifier
+}
+
+private fun TypeApproximation.Companion.of(classId: ClassId, nullable: Boolean): TypeApproximationImpl {
+    return TypeApproximationImpl(classId.asFqNameString(), nullable)
 }
 
 private fun FirCallableReferenceAccess.toKPropertyApproximation(session: FirSession): KPropertyApproximation {

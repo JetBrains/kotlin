@@ -46,6 +46,12 @@ public class DataFrameInterpretationTestsGenerated extends AbstractDataFrameInte
         }
 
         @Test
+        @TestMetadata("columnsSelector.kt")
+        public void testColumnsSelector() throws Exception {
+            runTest("plugins/kotlin-dataframe/testData/interpretation/atoms/columnsSelector.kt");
+        }
+
+        @Test
         @TestMetadata("dataFrame.kt")
         public void testDataFrame() throws Exception {
             runTest("plugins/kotlin-dataframe/testData/interpretation/atoms/dataFrame.kt");

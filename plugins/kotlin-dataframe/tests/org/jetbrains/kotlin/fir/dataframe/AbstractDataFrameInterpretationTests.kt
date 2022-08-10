@@ -130,7 +130,19 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
                 ),
                 "memberFunction_1" to Context(123),
                 "typeParameter_1" to TypeApproximationImpl("kotlin.Int", false),
-                "rowValueExpression_1" to TypeApproximationImpl("kotlin.Int", nullable = false)
+                "rowValueExpression_1" to TypeApproximationImpl("kotlin.Int", nullable = false),
+                "columnsSelector_1" to listOf(
+                    ColumnWithPathApproximation(
+                        ColumnPathApproximation(listOf("intField")),
+                        SimpleCol(name = "intField", type = TypeApproximationImpl(fqName = "kotlin.Int", nullable = false))
+                    )
+                ),
+                "columnsSelector_2" to listOf(
+                    ColumnWithPathApproximation(
+                        ColumnPathApproximation(listOf("group", "stringField")),
+                        SimpleCol(name = "stringField", type = TypeApproximationImpl(fqName = "kotlin.String", nullable = false))
+                    )
+                ),
             )
             return map[id]
         }
