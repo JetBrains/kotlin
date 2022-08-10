@@ -253,8 +253,8 @@ private class FirAnnotationResolveTransformer(
     }
 
     private fun calculateDeprecations(classLikeDeclaration: FirClassLikeDeclaration) {
-        if (classLikeDeclaration.deprecation == null) {
-            classLikeDeclaration.replaceDeprecation(classLikeDeclaration.getDeprecationInfos(session.languageVersionSettings.apiVersion))
+        if (classLikeDeclaration.deprecationsProvider == UnresolvedDeprecationProvider) {
+            classLikeDeclaration.replaceDeprecationsProvider(classLikeDeclaration.getDeprecationsProvider())
         }
     }
 }

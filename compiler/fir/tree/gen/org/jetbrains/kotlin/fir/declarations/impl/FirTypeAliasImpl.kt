@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
+import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
@@ -35,7 +35,7 @@ internal class FirTypeAliasImpl(
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override var status: FirDeclarationStatus,
-    override var deprecation: DeprecationsPerUseSite?,
+    override var deprecationsProvider: DeprecationsProvider,
     override val typeParameters: MutableList<FirTypeParameter>,
     override val name: Name,
     override val symbol: FirTypeAliasSymbol,
@@ -85,8 +85,8 @@ internal class FirTypeAliasImpl(
         resolvePhase = newResolvePhase
     }
 
-    override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {
-        deprecation = newDeprecation
+    override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
+        deprecationsProvider = newDeprecationsProvider
     }
 
     override fun replaceExpandedTypeRef(newExpandedTypeRef: FirTypeRef) {

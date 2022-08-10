@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.symbols.impl
 
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -58,11 +59,10 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
     val name: Name
         get() = callableId.callableName
 
-    val deprecation: DeprecationsPerUseSite?
-        get() {
-            lazyResolveToPhase(FirResolvePhase.STATUS)
-            return fir.deprecation
-        }
+    fun getDeprecation(apiVersion: ApiVersion): DeprecationsPerUseSite? {
+        lazyResolveToPhase(FirResolvePhase.STATUS)
+        return fir.deprecationsProvider.getDeprecationsInfo(apiVersion)
+    }
 
     private fun ensureType(typeRef: FirTypeRef?) {
         when (typeRef) {

@@ -30,7 +30,7 @@ class FirSyntheticProperty(
     override val getter: FirSyntheticPropertyAccessor,
     override val setter: FirSyntheticPropertyAccessor? = null,
     override val backingField: FirBackingField? = null,
-    override val deprecation: DeprecationsPerUseSite? = null
+    override val deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
 ) : FirProperty() {
     init {
         symbol.bind(this)
@@ -150,7 +150,7 @@ class FirSyntheticProperty(
         throw AssertionError("Mutation of synthetic property isn't supported")
     }
 
-    override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {
+    override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
         throw AssertionError("Mutation of synthetic property isn't supported")
     }
 

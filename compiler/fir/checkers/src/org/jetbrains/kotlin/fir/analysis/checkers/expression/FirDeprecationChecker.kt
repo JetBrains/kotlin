@@ -74,11 +74,11 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
         context: CheckerContext
     ): DeprecationInfo? {
         val deprecationInfos = listOfNotNull(
-            symbol.getDeprecation(callSite),
+            symbol.getDeprecation(context.languageVersionSettings.apiVersion, callSite),
             symbol.safeAs<FirConstructorSymbol>()
                 ?.resolvedReturnTypeRef
                 ?.toRegularClassSymbol(context.session)
-                ?.getDeprecation(callSite)
+                ?.getDeprecation(context.languageVersionSettings.apiVersion, callSite)
         )
         return deprecationInfos.maxOrNull()
     }

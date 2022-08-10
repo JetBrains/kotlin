@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypePa
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructorCopy
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -104,7 +105,7 @@ private fun FirDeclaration.isInvisibleOrHidden(session: FirSession, bodyResolveC
         }
     }
 
-    val deprecation = symbol.getDeprecationForCallSite()
+    val deprecation = symbol.getDeprecationForCallSite(session.languageVersionSettings.apiVersion)
     return deprecation != null && deprecation.deprecationLevel == DeprecationLevelValue.HIDDEN
 }
 

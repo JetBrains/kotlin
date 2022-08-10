@@ -122,7 +122,7 @@ object FirFakeOverrideGenerator {
                 session, baseFunction, newParameterTypes, newTypeParameters,
                 newReceiverType, newContextReceiverTypes, newReturnType, fakeOverrideSubstitution, newSymbol
             ).filterIsInstance<FirTypeParameter>()
-            deprecation = baseFunction.deprecation
+            deprecationsProvider = baseFunction.deprecationsProvider
         }
     }
 
@@ -165,7 +165,7 @@ object FirFakeOverrideGenerator {
             resolvePhase = baseConstructor.resolvePhase
             source = baseConstructor.source
             attributes = baseConstructor.attributes.copy()
-            deprecation = baseConstructor.deprecation
+            deprecationsProvider = baseConstructor.deprecationsProvider
         }.apply {
             originalForSubstitutionOverrideAttr = baseConstructor
         }
@@ -344,7 +344,7 @@ object FirFakeOverrideGenerator {
                 newReturnType,
                 fakeOverrideSubstitution
             )
-            deprecation = baseProperty.deprecation
+            deprecationsProvider = baseProperty.deprecationsProvider
         }
     }
 
@@ -526,7 +526,7 @@ object FirFakeOverrideGenerator {
             delegateGetter = getter
             delegateSetter = setter
             status = baseProperty.status
-            deprecation = getDeprecationsFromAccessors(getter, setter, session.languageVersionSettings.apiVersion)
+            deprecationsProvider = getDeprecationsProviderFromAccessors(getter, setter)
         }.symbol
     }
 
