@@ -146,7 +146,12 @@ internal fun KtAnnotatedSymbol.computeAnnotations(
     if (parentIsAnnotation &&
         annotations.none { it.classId?.asFqNameString() == JAVA_LANG_ANNOTATION_RETENTION }
     ) {
-        result.add(createRetentionRuntimeAnnotation(parent))
+        val argumentWithKotlinRetention = annotations.firstOrNull { it.classId == StandardClassIds.Annotations.Retention }
+            ?.arguments
+            ?.firstOrNull { it.name.asString() == "value" }
+            ?.expression
+        val kotlinRetentionName = (argumentWithKotlinRetention as? KtEnumEntryAnnotationValue)?.callableId?.callableName?.asString()
+        result.add(createRetentionRuntimeAnnotation(parent, kotlinRetentionName))
     }
 
     if (nullabilityAnnotation != null) {
@@ -156,7 +161,7 @@ internal fun KtAnnotatedSymbol.computeAnnotations(
     return result
 }
 
-private fun createRetentionRuntimeAnnotation(parent: PsiElement): PsiAnnotation =
+private fun createRetentionRuntimeAnnotation(parent: PsiElement, retentionName: String? = null): PsiAnnotation =
     SymbolLightSimpleAnnotation(
         JAVA_LANG_ANNOTATION_RETENTION,
         parent,
@@ -166,7 +171,7 @@ private fun createRetentionRuntimeAnnotation(parent: PsiElement): PsiAnnotation 
                 expression = KtEnumEntryAnnotationValue(
                     callableId = CallableId(
                         ClassId.fromString(RETENTION_POLICY_ENUM.asString()),
-                        Name.identifier(AnnotationRetention.RUNTIME.name)
+                        Name.identifier(retentionName ?: AnnotationRetention.RUNTIME.name)
                     ),
                     sourcePsi = null
                 )
