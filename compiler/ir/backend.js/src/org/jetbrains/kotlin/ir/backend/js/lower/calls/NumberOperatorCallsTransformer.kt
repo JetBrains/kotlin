@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 private val HASH_CODE_NAME = Name.identifier("hashCode")
 
@@ -61,7 +62,8 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         }
 
         for (type in primitiveNumbers) {
-            add(type, Name.identifier("rangeTo"), ::transformRangeTo)
+            add(type, OperatorNameConventions.RANGE_TO, ::transformRangeTo)
+            add(type, OperatorNameConventions.RANGE_UNTIL, ::transformRangeUntil)
             add(type, HASH_CODE_NAME, ::transformHashCode)
         }
 
@@ -100,6 +102,18 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
                 isLong() ->
                     irCall(call, intrinsics.jsNumberRangeToLong, receiversAsArguments = true)
                 else -> call
+            }
+        }
+    }
+
+    private fun transformRangeUntil(call: IrFunctionAccessExpression): IrExpression {
+        if (call.valueArgumentsCount != 1) return call
+        with(call.symbol.owner) {
+            val function = intrinsics.rangeUntilFunctions[dispatchReceiverParameter!!.type to valueParameters[0].type] ?:
+                error("No 'until' function found for descriptor: $this")
+            return irCall(call, function).apply {
+                extensionReceiver = dispatchReceiver
+                dispatchReceiver = null
             }
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -179,6 +179,13 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     val jsNumberRangeToNumber = getInternalFunction("numberRangeToNumber")
     val jsNumberRangeToLong = getInternalFunction("numberRangeToLong")
+
+    private val _rangeUntilFunctions = irBuiltIns.findFunctions(Name.identifier("until"), "kotlin", "ranges")
+    val rangeUntilFunctions by lazy {
+        _rangeUntilFunctions
+            .filter { it.owner.extensionReceiverParameter != null && it.owner.valueParameters.size == 1 }
+            .associateBy { it.owner.extensionReceiverParameter!!.type to it.owner.valueParameters[0].type }
+    }
 
     val longClassSymbol = getInternalClassWithoutPackage("kotlin.Long")
 
