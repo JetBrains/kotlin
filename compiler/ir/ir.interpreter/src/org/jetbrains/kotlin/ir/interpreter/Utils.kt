@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -311,4 +312,22 @@ internal fun State.unsignedToString(): String {
         is Int -> value.toUInt().toString()
         else -> (value as Number).toLong().toULong().toString()
     }
+}
+
+internal fun IrEnumEntry.toState(irBuiltIns: IrBuiltIns): Common {
+    val enumClass = this.symbol.owner.parentAsClass
+    val enumEntries = enumClass.declarations.filterIsInstance<IrEnumEntry>()
+    val enumClassObject = Common(this.correspondingClass ?: enumClass)
+
+    if (enumEntries.isNotEmpty()) {
+        val valueArguments = listOf(
+            Primitive(this.name.asString(), irBuiltIns.stringType),
+            Primitive(enumEntries.indexOf(this), irBuiltIns.intType)
+        )
+        irBuiltIns.enumClass.owner.declarations.filterIsInstance<IrProperty>().zip(valueArguments).forEach { (property, argument) ->
+            enumClassObject.setField(property.symbol, argument)
+        }
+    }
+
+    return enumClassObject
 }

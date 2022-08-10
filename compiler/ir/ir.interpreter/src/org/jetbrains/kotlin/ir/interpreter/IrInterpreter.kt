@@ -206,7 +206,6 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         if (callStack.peekState() == null) callStack.pushState(getUnitState()) // implicit Unit result
     }
 
-    @Suppress("UNUSED_PARAMETER")
     private fun interpretConstructor(constructor: IrConstructor) {
         callStack.pushState(callStack.loadState(constructor.parentAsClass.thisReceiver!!.symbol))
         callStack.dropFrameAndCopyResult()
@@ -390,27 +389,13 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
     private fun interpretEnumEntry(enumEntry: IrEnumEntry) {
         callInterceptor.interceptEnumEntry(enumEntry) {
-            val enumClass = enumEntry.symbol.owner.parentAsClass
-            val enumEntries = enumClass.declarations.filterIsInstance<IrEnumEntry>()
+            val enumClassObject = enumEntry.toState(irBuiltIns)
+            environment.mapOfEnums[enumEntry.symbol] = enumClassObject
+
             val enumInitializer = enumEntry.initializerExpression?.expression
                 ?: throw InterpreterError("Initializer at enum entry ${enumEntry.fqName} is null")
             val enumConstructorCall = enumInitializer as? IrEnumConstructorCall
                 ?: (enumInitializer as IrBlock).statements.filterIsInstance<IrEnumConstructorCall>().single()
-
-            val enumClassObject = Common(enumEntry.correspondingClass ?: enumClass)
-            environment.mapOfEnums[enumEntry.symbol] = enumClassObject
-
-            if (enumEntries.isNotEmpty()) {
-                // these fields will be evaluated during interpretation of constructor call
-                // but we need them right away to create correct call to Enum's constructor
-                val valueArguments = listOf(
-                    Primitive(enumEntry.name.asString(), irBuiltIns.stringType),
-                    Primitive(enumEntries.indexOf(enumEntry), irBuiltIns.intType)
-                )
-                irBuiltIns.enumClass.owner.declarations.filterIsInstance<IrProperty>().zip(valueArguments).forEach { (property, argument) ->
-                    enumClassObject.setField(property.symbol, argument)
-                }
-            }
 
             callStack.newSubFrame(enumEntry)
             callStack.pushCompoundInstruction(enumEntry) // not really a compound instruction
