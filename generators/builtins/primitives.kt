@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -178,6 +178,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             generateBinaryOperators(kind)
             generateUnaryOperators(kind)
             generateRangeTo(kind)
+            generateRangeUntil(kind)
 
             if (kind == PrimitiveType.INT || kind == PrimitiveType.LONG) {
                 generateBitShiftOperators(kind)
@@ -248,6 +249,23 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         }
         out.println()
 
+    }
+
+    private fun generateRangeUntil(thisKind: PrimitiveType) {
+        for (otherKind in PrimitiveType.onlyNumeric) {
+            val returnType = maxByDomainCapacity(maxByDomainCapacity(thisKind, otherKind), PrimitiveType.INT)
+            if (returnType == PrimitiveType.DOUBLE || returnType == PrimitiveType.FLOAT)
+                continue
+            out.println("    /**")
+            out.println("     * Creates a range from this value up to but excluding the specified [other] value.")
+            out.println("     *")
+            out.println("     * If the [other] value is less than or equal to `this` value, then the returned range is empty.")
+            out.println("     */")
+            out.println("    @SinceKotlin(\"1.7\")")
+            out.println("    @ExperimentalStdlibApi")
+            out.println("    public operator fun rangeUntil(other: ${otherKind.capitalized}): ${returnType.capitalized}Range")
+            out.println()
+        }
     }
 
     private fun generateUnaryOperators(kind: PrimitiveType) {

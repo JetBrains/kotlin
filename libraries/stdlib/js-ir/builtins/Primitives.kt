@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -201,6 +201,42 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
     public operator fun rangeTo(other: Int): IntRange
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Long): LongRange
+
+    /**
+     * Creates a range from this value up to but excluding the specified [other] value.
+     *
+     * If the [other] value is less than or equal to `this` value, then the returned range is empty.
+     */
+    @SinceKotlin("1.7")
+    @ExperimentalStdlibApi
+    public operator fun rangeUntil(other: Byte): IntRange
+
+    /**
+     * Creates a range from this value up to but excluding the specified [other] value.
+     *
+     * If the [other] value is less than or equal to `this` value, then the returned range is empty.
+     */
+    @SinceKotlin("1.7")
+    @ExperimentalStdlibApi
+    public operator fun rangeUntil(other: Short): IntRange
+
+    /**
+     * Creates a range from this value up to but excluding the specified [other] value.
+     *
+     * If the [other] value is less than or equal to `this` value, then the returned range is empty.
+     */
+    @SinceKotlin("1.7")
+    @ExperimentalStdlibApi
+    public operator fun rangeUntil(other: Int): IntRange
+
+    /**
+     * Creates a range from this value up to but excluding the specified [other] value.
+     *
+     * If the [other] value is less than or equal to `this` value, then the returned range is empty.
+     */
+    @SinceKotlin("1.7")
+    @ExperimentalStdlibApi
+    public operator fun rangeUntil(other: Long): LongRange
 
     /** Returns this value. */
     public override fun toByte(): Byte
@@ -455,6 +491,42 @@ public class Short private constructor() : Number(), Comparable<Short> {
     public operator fun rangeTo(other: Long): LongRange
 
     /**
+     * Creates a range from this value up to but excluding the specified [other] value.
+     *
+     * If the [other] value is less than or equal to `this` value, then the returned range is empty.
+     */
+    @SinceKotlin("1.7")
+    @ExperimentalStdlibApi
+    public operator fun rangeUntil(other: Byte): IntRange
+
+    /**
+     * Creates a range from this value up to but excluding the specified [other] value.
+     *
+     * If the [other] value is less than or equal to `this` value, then the returned range is empty.
+     */
+    @SinceKotlin("1.7")
+    @ExperimentalStdlibApi
+    public operator fun rangeUntil(other: Short): IntRange
+
+    /**
+     * Creates a range from this value up to but excluding the specified [other] value.
+     *
+     * If the [other] value is less than or equal to `this` value, then the returned range is empty.
+     */
+    @SinceKotlin("1.7")
+    @ExperimentalStdlibApi
+    public operator fun rangeUntil(other: Int): IntRange
+
+    /**
+     * Creates a range from this value up to but excluding the specified [other] value.
+     *
+     * If the [other] value is less than or equal to `this` value, then the returned range is empty.
+     */
+    @SinceKotlin("1.7")
+    @ExperimentalStdlibApi
+    public operator fun rangeUntil(other: Long): LongRange
+
+    /**
      * Converts this [Short] value to [Byte].
      *
      * If this value is in [Byte.MIN_VALUE]..[Byte.MAX_VALUE], the resulting `Byte` value represents
@@ -702,6 +774,42 @@ public class Int private constructor() : Number(), Comparable<Int> {
     public operator fun rangeTo(other: Int): IntRange
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Long): LongRange
+
+    /**
+     * Creates a range from this value up to but excluding the specified [other] value.
+     *
+     * If the [other] value is less than or equal to `this` value, then the returned range is empty.
+     */
+    @SinceKotlin("1.7")
+    @ExperimentalStdlibApi
+    public operator fun rangeUntil(other: Byte): IntRange = this until other
+
+    /**
+     * Creates a range from this value up to but excluding the specified [other] value.
+     *
+     * If the [other] value is less than or equal to `this` value, then the returned range is empty.
+     */
+    @SinceKotlin("1.7")
+    @ExperimentalStdlibApi
+    public operator fun rangeUntil(other: Short): IntRange = this until other
+
+    /**
+     * Creates a range from this value up to but excluding the specified [other] value.
+     *
+     * If the [other] value is less than or equal to `this` value, then the returned range is empty.
+     */
+    @SinceKotlin("1.7")
+    @ExperimentalStdlibApi
+    public operator fun rangeUntil(other: Int): IntRange = this until other
+
+    /**
+     * Creates a range from this value up to but excluding the specified [other] value.
+     *
+     * If the [other] value is less than or equal to `this` value, then the returned range is empty.
+     */
+    @SinceKotlin("1.7")
+    @ExperimentalStdlibApi
+    public operator fun rangeUntil(other: Long): LongRange = this until other
 
     /**
      * Shifts this value left by the [bitCount] number of bits.

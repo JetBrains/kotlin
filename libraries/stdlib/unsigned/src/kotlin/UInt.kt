@@ -238,6 +238,16 @@ public value class UInt @kotlin.internal.IntrinsicConstEvaluation @PublishedApi 
     public inline operator fun rangeTo(other: UInt): UIntRange = UIntRange(this, other)
 
     /**
+     * Creates a range from this value up to but excluding the specified [other] value.
+     *
+     * If the [other] value is less than or equal to `this` value, then the returned range is empty.
+     */
+    @SinceKotlin("1.7")
+    @ExperimentalStdlibApi
+    @kotlin.internal.InlineOnly
+    public inline operator fun rangeUntil(other: UInt): UIntRange = this until other
+
+    /**
      * Shifts this value left by the [bitCount] number of bits.
      *
      * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.

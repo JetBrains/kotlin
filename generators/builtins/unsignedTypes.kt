@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -96,6 +96,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         generateBinaryOperators()
         generateUnaryOperators()
         generateRangeTo()
+        generateRangeUntil()
 
         if (type == UnsignedType.UINT || type == UnsignedType.ULONG) {
             generateBitShiftOperators()
@@ -216,6 +217,22 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         out.println("    /** Creates a range from this value to the specified [other] value. */")
         out.println("    @kotlin.internal.InlineOnly")
         out.println("    public inline operator fun rangeTo(other: $className): $rangeType = $rangeType(${convert("this")}, ${convert("other")})")
+        out.println()
+    }
+
+    private fun generateRangeUntil() {
+        val rangeElementType = maxByDomainCapacity(type, UnsignedType.UINT)
+        val rangeType = rangeElementType.capitalized + "Range"
+        fun convert(name: String) = if (rangeElementType == type) name else "$name.to${rangeElementType.capitalized}()"
+        out.println("    /**")
+        out.println("     * Creates a range from this value up to but excluding the specified [other] value.")
+        out.println("     *")
+        out.println("     * If the [other] value is less than or equal to `this` value, then the returned range is empty.")
+        out.println("     */")
+        out.println("    @SinceKotlin(\"1.7\")")
+        out.println("    @ExperimentalStdlibApi")
+        out.println("    @kotlin.internal.InlineOnly")
+        out.println("    public inline operator fun rangeUntil(other: $className): $rangeType = ${convert("this")} until ${convert("other")}")
         out.println()
     }
 

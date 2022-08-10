@@ -89,6 +89,10 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte>, java.io
     public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.ranges.IntRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.ranges.LongRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.ranges.IntRange
+    @kotlin.SinceKotlin(version = "1.7") @kotlin.ExperimentalStdlibApi public final operator fun rangeUntil(/*0*/ other: kotlin.Byte): kotlin.ranges.IntRange
+    @kotlin.SinceKotlin(version = "1.7") @kotlin.ExperimentalStdlibApi public final operator fun rangeUntil(/*0*/ other: kotlin.Int): kotlin.ranges.IntRange
+    @kotlin.SinceKotlin(version = "1.7") @kotlin.ExperimentalStdlibApi public final operator fun rangeUntil(/*0*/ other: kotlin.Long): kotlin.ranges.LongRange
+    @kotlin.SinceKotlin(version = "1.7") @kotlin.ExperimentalStdlibApi public final operator fun rangeUntil(/*0*/ other: kotlin.Short): kotlin.ranges.IntRange
     @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(/*0*/ other: kotlin.Byte): kotlin.Int
     @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(/*0*/ other: kotlin.Double): kotlin.Double
     @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(/*0*/ other: kotlin.Float): kotlin.Float
@@ -144,6 +148,7 @@ public final class Char : kotlin.Comparable<kotlin.Char>, java.io.Serializable {
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Char
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(/*0*/ other: kotlin.Int): kotlin.Char
     public final operator fun rangeTo(/*0*/ other: kotlin.Char): kotlin.ranges.CharRange
+    @kotlin.SinceKotlin(version = "1.7") @kotlin.ExperimentalStdlibApi public final operator fun rangeUntil(/*0*/ other: kotlin.Char): kotlin.ranges.CharRange
     @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toByte()", imports = {})) @kotlin.DeprecatedSinceKotlin(warningSince = "1.5") @kotlin.internal.IntrinsicConstEvaluation public final fun toByte(): kotlin.Byte
     @kotlin.internal.IntrinsicConstEvaluation public final fun toChar(): kotlin.Char
     @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toDouble()", imports = {})) @kotlin.DeprecatedSinceKotlin(warningSince = "1.5") @kotlin.internal.IntrinsicConstEvaluation public final fun toDouble(): kotlin.Double
@@ -477,6 +482,10 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int>, java.io.S
     public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.ranges.IntRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.ranges.LongRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.ranges.IntRange
+    @kotlin.SinceKotlin(version = "1.7") @kotlin.ExperimentalStdlibApi public final operator fun rangeUntil(/*0*/ other: kotlin.Byte): kotlin.ranges.IntRange
+    @kotlin.SinceKotlin(version = "1.7") @kotlin.ExperimentalStdlibApi public final operator fun rangeUntil(/*0*/ other: kotlin.Int): kotlin.ranges.IntRange
+    @kotlin.SinceKotlin(version = "1.7") @kotlin.ExperimentalStdlibApi public final operator fun rangeUntil(/*0*/ other: kotlin.Long): kotlin.ranges.LongRange
+    @kotlin.SinceKotlin(version = "1.7") @kotlin.ExperimentalStdlibApi public final operator fun rangeUntil(/*0*/ other: kotlin.Short): kotlin.ranges.IntRange
     @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(/*0*/ other: kotlin.Byte): kotlin.Int
     @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(/*0*/ other: kotlin.Double): kotlin.Double
     @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(/*0*/ other: kotlin.Float): kotlin.Float
@@ -562,6 +571,10 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long>, java.io
     public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.ranges.LongRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.ranges.LongRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.ranges.LongRange
+    @kotlin.SinceKotlin(version = "1.7") @kotlin.ExperimentalStdlibApi public final operator fun rangeUntil(/*0*/ other: kotlin.Byte): kotlin.ranges.LongRange
+    @kotlin.SinceKotlin(version = "1.7") @kotlin.ExperimentalStdlibApi public final operator fun rangeUntil(/*0*/ other: kotlin.Int): kotlin.ranges.LongRange
+    @kotlin.SinceKotlin(version = "1.7") @kotlin.ExperimentalStdlibApi public final operator fun rangeUntil(/*0*/ other: kotlin.Long): kotlin.ranges.LongRange
+    @kotlin.SinceKotlin(version = "1.7") @kotlin.ExperimentalStdlibApi public final operator fun rangeUntil(/*0*/ other: kotlin.Short): kotlin.ranges.LongRange
     @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(/*0*/ other: kotlin.Byte): kotlin.Long
     @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(/*0*/ other: kotlin.Double): kotlin.Double
     @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(/*0*/ other: kotlin.Float): kotlin.Float
@@ -677,6 +690,10 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short>, java.
     public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.ranges.IntRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.ranges.LongRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.ranges.IntRange
+    @kotlin.SinceKotlin(version = "1.7") @kotlin.ExperimentalStdlibApi public final operator fun rangeUntil(/*0*/ other: kotlin.Byte): kotlin.ranges.IntRange
+    @kotlin.SinceKotlin(version = "1.7") @kotlin.ExperimentalStdlibApi public final operator fun rangeUntil(/*0*/ other: kotlin.Int): kotlin.ranges.IntRange
+    @kotlin.SinceKotlin(version = "1.7") @kotlin.ExperimentalStdlibApi public final operator fun rangeUntil(/*0*/ other: kotlin.Long): kotlin.ranges.LongRange
+    @kotlin.SinceKotlin(version = "1.7") @kotlin.ExperimentalStdlibApi public final operator fun rangeUntil(/*0*/ other: kotlin.Short): kotlin.ranges.IntRange
     @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(/*0*/ other: kotlin.Byte): kotlin.Int
     @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(/*0*/ other: kotlin.Double): kotlin.Double
     @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(/*0*/ other: kotlin.Float): kotlin.Float

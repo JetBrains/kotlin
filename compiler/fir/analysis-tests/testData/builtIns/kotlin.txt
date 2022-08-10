@@ -180,6 +180,14 @@ public final class Byte : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Byte>|, R
 
     public final operator fun rangeTo(other: R|kotlin/Short|): R|kotlin/ranges/IntRange|
 
+    @R|kotlin/SinceKotlin|(version = String(1.7)) @R|kotlin/ExperimentalStdlibApi|() public final operator fun rangeUntil(other: R|kotlin/Byte|): R|kotlin/ranges/IntRange|
+
+    @R|kotlin/SinceKotlin|(version = String(1.7)) @R|kotlin/ExperimentalStdlibApi|() public final operator fun rangeUntil(other: R|kotlin/Int|): R|kotlin/ranges/IntRange|
+
+    @R|kotlin/SinceKotlin|(version = String(1.7)) @R|kotlin/ExperimentalStdlibApi|() public final operator fun rangeUntil(other: R|kotlin/Long|): R|kotlin/ranges/LongRange|
+
+    @R|kotlin/SinceKotlin|(version = String(1.7)) @R|kotlin/ExperimentalStdlibApi|() public final operator fun rangeUntil(other: R|kotlin/Short|): R|kotlin/ranges/IntRange|
+
     @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Int|
 
     @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
@@ -297,6 +305,8 @@ public final class Char : R|kotlin/Comparable<kotlin/Char>|, R|java/io/Serializa
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Int|): R|kotlin/Char|
 
     public final operator fun rangeTo(other: R|kotlin/Char|): R|kotlin/ranges/CharRange|
+
+    @R|kotlin/SinceKotlin|(version = String(1.7)) @R|kotlin/ExperimentalStdlibApi|() public final operator fun rangeUntil(other: R|kotlin/Char|): R|kotlin/ranges/CharRange|
 
     @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.code.toByte())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toByte(): R|kotlin/Byte|
 
@@ -828,6 +838,14 @@ public final class Int : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Int>|, R|j
 
     public final operator fun rangeTo(other: R|kotlin/Short|): R|kotlin/ranges/IntRange|
 
+    @R|kotlin/SinceKotlin|(version = String(1.7)) @R|kotlin/ExperimentalStdlibApi|() public final operator fun rangeUntil(other: R|kotlin/Byte|): R|kotlin/ranges/IntRange|
+
+    @R|kotlin/SinceKotlin|(version = String(1.7)) @R|kotlin/ExperimentalStdlibApi|() public final operator fun rangeUntil(other: R|kotlin/Int|): R|kotlin/ranges/IntRange|
+
+    @R|kotlin/SinceKotlin|(version = String(1.7)) @R|kotlin/ExperimentalStdlibApi|() public final operator fun rangeUntil(other: R|kotlin/Long|): R|kotlin/ranges/LongRange|
+
+    @R|kotlin/SinceKotlin|(version = String(1.7)) @R|kotlin/ExperimentalStdlibApi|() public final operator fun rangeUntil(other: R|kotlin/Short|): R|kotlin/ranges/IntRange|
+
     @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Int|
 
     @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Double|): R|kotlin/Double|
@@ -987,6 +1005,14 @@ public final class Long : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Long>|, R
     public final operator fun rangeTo(other: R|kotlin/Long|): R|kotlin/ranges/LongRange|
 
     public final operator fun rangeTo(other: R|kotlin/Short|): R|kotlin/ranges/LongRange|
+
+    @R|kotlin/SinceKotlin|(version = String(1.7)) @R|kotlin/ExperimentalStdlibApi|() public final operator fun rangeUntil(other: R|kotlin/Byte|): R|kotlin/ranges/LongRange|
+
+    @R|kotlin/SinceKotlin|(version = String(1.7)) @R|kotlin/ExperimentalStdlibApi|() public final operator fun rangeUntil(other: R|kotlin/Int|): R|kotlin/ranges/LongRange|
+
+    @R|kotlin/SinceKotlin|(version = String(1.7)) @R|kotlin/ExperimentalStdlibApi|() public final operator fun rangeUntil(other: R|kotlin/Long|): R|kotlin/ranges/LongRange|
+
+    @R|kotlin/SinceKotlin|(version = String(1.7)) @R|kotlin/ExperimentalStdlibApi|() public final operator fun rangeUntil(other: R|kotlin/Short|): R|kotlin/ranges/LongRange|
 
     @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Long|
 
@@ -1189,6 +1215,14 @@ public final class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>|,
     public final operator fun rangeTo(other: R|kotlin/Long|): R|kotlin/ranges/LongRange|
 
     public final operator fun rangeTo(other: R|kotlin/Short|): R|kotlin/ranges/IntRange|
+
+    @R|kotlin/SinceKotlin|(version = String(1.7)) @R|kotlin/ExperimentalStdlibApi|() public final operator fun rangeUntil(other: R|kotlin/Byte|): R|kotlin/ranges/IntRange|
+
+    @R|kotlin/SinceKotlin|(version = String(1.7)) @R|kotlin/ExperimentalStdlibApi|() public final operator fun rangeUntil(other: R|kotlin/Int|): R|kotlin/ranges/IntRange|
+
+    @R|kotlin/SinceKotlin|(version = String(1.7)) @R|kotlin/ExperimentalStdlibApi|() public final operator fun rangeUntil(other: R|kotlin/Long|): R|kotlin/ranges/LongRange|
+
+    @R|kotlin/SinceKotlin|(version = String(1.7)) @R|kotlin/ExperimentalStdlibApi|() public final operator fun rangeUntil(other: R|kotlin/Short|): R|kotlin/ranges/IntRange|
 
     @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun rem(other: R|kotlin/Byte|): R|kotlin/Int|
 
