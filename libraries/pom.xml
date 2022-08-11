@@ -2,7 +2,6 @@
 <project
         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
         xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.jetbrains.kotlin</groupId>
@@ -51,7 +50,7 @@
 
         <kotlin-dist>${project-root}/dist</kotlin-dist>
         <kotlin-sdk>${kotlin-dist}/kotlinc</kotlin-sdk>
-        <kotlin.compiler.jdkHome>${env.JDK_18}</kotlin.compiler.jdkHome>
+        <kotlin.compiler.jdkHome>${jdk_1_8}</kotlin.compiler.jdkHome>
 
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
@@ -252,6 +251,30 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>jdk_1_8_new</id>
+            <activation>
+                <property>
+                    <name>env.JDK_1_8</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_1_8>${env.JDK_1_8}</jdk_1_8>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk_1_8_old</id>
+            <activation>
+                <property>
+                    <name>!env.JDK_1_8</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_1_8>${env.JDK_18}</jdk_1_8>
+            </properties>
+        </profile>
         <profile>
             <id>sign-artifacts</id>
             <build>
