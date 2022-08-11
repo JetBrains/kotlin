@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
+import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
@@ -56,6 +57,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.psi.KtPsiUtil.deparenthesize;
@@ -440,6 +443,19 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         KotlinType expectedType = refineJavaFieldInTypeProperly
                                   ? refineTypeByPropertyInType(bindingContext, leftOperand, leftType)
                                   : refineTypeFromPropertySetterIfPossible(bindingContext, leftOperand, leftType);
+
+        List<AssignResolutionAltererExtension> assignAlterers = AssignResolutionAltererExtension.Companion.getInstances(expression.getProject());
+        if (!assignAlterers.isEmpty()) {
+            KotlinTypeInfo alteredTypeInfo = assignAlterers.stream()
+                    .filter((it) -> it.needOverloadAssign(expression, leftType, bindingContext))
+                    .map((it) -> it.resolveAssign(bindingContext, expression, leftOperand, left, leftInfo, context, components, scope))
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .orElse(null);
+            if (alteredTypeInfo != null) {
+                return alteredTypeInfo;
+            }
+        }
 
         DataFlowInfo dataFlowInfo = leftInfo.getDataFlowInfo();
         KotlinTypeInfo resultInfo;
