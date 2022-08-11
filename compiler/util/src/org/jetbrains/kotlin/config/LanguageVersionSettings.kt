@@ -264,7 +264,6 @@ enum class LanguageFeature(
     GenericInlineClassParameter(sinceVersion = KOTLIN_1_8, kind = UNSTABLE_FEATURE), // KT-32162
     DataObjects(KOTLIN_1_8), // KT-4107
     LightweightLambdas(KOTLIN_1_8, defaultState = State.DISABLED),
-    EnumEntries(KOTLIN_1_8, sinceApiVersion = ApiVersion.KOTLIN_1_8, defaultState = State.DISABLED), // KT-48872
 
     // 1.9
 
@@ -284,6 +283,7 @@ enum class LanguageFeature(
     SkipStandaloneScriptsInSourceRoots(KOTLIN_1_9, kind = OTHER), // KT-52525
     ModifierNonBuiltinSuspendFunError(KOTLIN_1_9),
     BreakContinueInInlineLambdas(KOTLIN_1_9, defaultState = State.ENABLED), // KT-1436
+    EnumEntries(KOTLIN_1_9, sinceApiVersion = ApiVersion.KOTLIN_1_8, defaultState = State.DISABLED), // KT-48872
 
     // Disabled for indefinite time. See KT-48535 and related discussion
     ApproximateIntegerLiteralTypesInReceiverPosition(sinceVersion = null),

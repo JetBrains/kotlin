@@ -14,7 +14,7 @@ FILE: annotationParameters.kt
         }
 
         public final static [BODY_RESOLVE] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-            public [TYPES] get(): R|kotlin/enums/EnumEntries<X>|
+            public [RAW_FIR] get(): R|kotlin/enums/EnumEntries<X>|
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
@@ -52,7 +52,7 @@ FILE: annotationParameters.kt
         }
 
         public final static [BODY_RESOLVE] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-            public [TYPES] get(): R|kotlin/enums/EnumEntries<X>|
+            public [RAW_FIR] get(): R|kotlin/enums/EnumEntries<X>|
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
@@ -90,7 +90,7 @@ FILE: annotationParameters.kt
         }
 
         public final static [BODY_RESOLVE] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-            public [TYPES] get(): R|kotlin/enums/EnumEntries<X>|
+            public [RAW_FIR] get(): R|kotlin/enums/EnumEntries<X>|
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
@@ -128,7 +128,7 @@ FILE: annotationParameters.kt
         }
 
         public final static [BODY_RESOLVE] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-            public [TYPES] get(): R|kotlin/enums/EnumEntries<X>|
+            public [RAW_FIR] get(): R|kotlin/enums/EnumEntries<X>|
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
@@ -166,7 +166,7 @@ FILE: annotationParameters.kt
         }
 
         public final static [BODY_RESOLVE] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-            public [TYPES] get(): R|kotlin/enums/EnumEntries<X>|
+            public [RAW_FIR] get(): R|kotlin/enums/EnumEntries<X>|
 
     }
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
@@ -204,7 +204,7 @@ FILE: annotationParameters.kt
         }
 
         public final static [BODY_RESOLVE] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-            public [TYPES] get(): R|kotlin/enums/EnumEntries<X>|
+            public [RAW_FIR] get(): R|kotlin/enums/EnumEntries<X>|
 
     }
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
@@ -242,7 +242,7 @@ FILE: annotationParameters.kt
         }
 
         public final static [BODY_RESOLVE] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-            public [TYPES] get(): R|kotlin/enums/EnumEntries<X>|
+            public [RAW_FIR] get(): R|kotlin/enums/EnumEntries<X>|
 
     }
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
@@ -280,7 +280,7 @@ FILE: annotationParameters.kt
         }
 
         public final static [BODY_RESOLVE] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-            public [BODY_RESOLVE] get(): R|kotlin/enums/EnumEntries<X>|
+            public [RAW_FIR] get(): R|kotlin/enums/EnumEntries<X>|
 
     }
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
@@ -318,7 +318,7 @@ FILE: annotationParameters.kt
         }
 
         public final static [BODY_RESOLVE] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-            public [BODY_RESOLVE] get(): R|kotlin/enums/EnumEntries<X>|
+            public [RAW_FIR] get(): R|kotlin/enums/EnumEntries<X>|
 
     }
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
@@ -357,7 +357,7 @@ FILE: annotationParameters.kt
         }
 
         public final static [BODY_RESOLVE] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-            public [BODY_RESOLVE] get(): R|kotlin/enums/EnumEntries<X>|
+            public [RAW_FIR] get(): R|kotlin/enums/EnumEntries<X>|
 
     }
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
@@ -396,7 +396,7 @@ FILE: annotationParameters.kt
         }
 
         public final static [BODY_RESOLVE] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-            public [BODY_RESOLVE] get(): R|kotlin/enums/EnumEntries<X>|
+            public [RAW_FIR] get(): R|kotlin/enums/EnumEntries<X>|
 
     }
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
@@ -435,7 +435,7 @@ FILE: annotationParameters.kt
         }
 
         public final static [BODY_RESOLVE] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-            public [BODY_RESOLVE] get(): R|kotlin/enums/EnumEntries<X>|
+            public [RAW_FIR] get(): R|kotlin/enums/EnumEntries<X>|
 
     }
     public final [SUPER_TYPES] annotation class Anno : R|kotlin/Annotation| {
@@ -474,7 +474,7 @@ FILE: annotationParameters.kt
         }
 
         public final static [BODY_RESOLVE] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-            public [BODY_RESOLVE] get(): R|kotlin/enums/EnumEntries<X>|
+            public [RAW_FIR] get(): R|kotlin/enums/EnumEntries<X>|
 
     }
     public final [BODY_RESOLVE] annotation class Anno : R|kotlin/Annotation| {
