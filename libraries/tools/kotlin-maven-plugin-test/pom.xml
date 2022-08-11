@@ -166,7 +166,7 @@
                                 <configuration>
                                     <projectsDirectory>src/it/java9</projectsDirectory>
                                     <cloneProjectsTo>${project.build.directory}/it/java9</cloneProjectsTo>
-                                    <javaHome>${env.JDK_9}</javaHome>
+                                    <javaHome>${jdk_9_0}</javaHome>
                                 </configuration>
                                 <goals>
                                     <goal>install</goal>

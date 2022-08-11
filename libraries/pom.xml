@@ -323,6 +323,30 @@
                 <jdk_1_7>${env.JDK_17}</jdk_1_7>
             </properties>
         </profile>
+        <profile>
+            <id>jdk_9_0_new</id>
+            <activation>
+                <property>
+                    <name>env.JDK_9_0</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_9_0>${env.JDK_9_0}</jdk_9_0>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk_9_0_old</id>
+            <activation>
+                <property>
+                    <name>!env.JDK_9_0</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_9_0>${env.JDK_9}</jdk_9_0>
+            </properties>
+        </profile>
 
         <profile>
             <id>sign-artifacts</id>
