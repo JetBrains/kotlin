@@ -333,6 +333,7 @@ public infix fun UShort.downTo(to: UShort): UIntProgression {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun UByte.rangeUntil(to: UByte): UIntRange {
     return until(to)
 }
@@ -345,6 +346,7 @@ public inline operator fun UByte.rangeUntil(to: UByte): UIntRange {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun UInt.rangeUntil(to: UInt): UIntRange {
     return until(to)
 }
@@ -357,6 +359,7 @@ public inline operator fun UInt.rangeUntil(to: UInt): UIntRange {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun ULong.rangeUntil(to: ULong): ULongRange {
     return until(to)
 }
@@ -369,6 +372,7 @@ public inline operator fun ULong.rangeUntil(to: ULong): ULongRange {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun UShort.rangeUntil(to: UShort): UIntRange {
     return until(to)
 }

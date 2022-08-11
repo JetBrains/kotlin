@@ -946,6 +946,7 @@ public infix fun Short.downTo(to: Short): IntProgression {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun Int.rangeUntil(to: Byte): IntRange {
     return until(to)
 }
@@ -958,6 +959,7 @@ public inline operator fun Int.rangeUntil(to: Byte): IntRange {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun Long.rangeUntil(to: Byte): LongRange {
     return until(to)
 }
@@ -970,6 +972,7 @@ public inline operator fun Long.rangeUntil(to: Byte): LongRange {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun Byte.rangeUntil(to: Byte): IntRange {
     return until(to)
 }
@@ -982,6 +985,7 @@ public inline operator fun Byte.rangeUntil(to: Byte): IntRange {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun Short.rangeUntil(to: Byte): IntRange {
     return until(to)
 }
@@ -994,6 +998,7 @@ public inline operator fun Short.rangeUntil(to: Byte): IntRange {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun Char.rangeUntil(to: Char): CharRange {
     return until(to)
 }
@@ -1006,6 +1011,7 @@ public inline operator fun Char.rangeUntil(to: Char): CharRange {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun Int.rangeUntil(to: Int): IntRange {
     return until(to)
 }
@@ -1018,6 +1024,7 @@ public inline operator fun Int.rangeUntil(to: Int): IntRange {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun Long.rangeUntil(to: Int): LongRange {
     return until(to)
 }
@@ -1030,6 +1037,7 @@ public inline operator fun Long.rangeUntil(to: Int): LongRange {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun Byte.rangeUntil(to: Int): IntRange {
     return until(to)
 }
@@ -1042,6 +1050,7 @@ public inline operator fun Byte.rangeUntil(to: Int): IntRange {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun Short.rangeUntil(to: Int): IntRange {
     return until(to)
 }
@@ -1054,6 +1063,7 @@ public inline operator fun Short.rangeUntil(to: Int): IntRange {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun Int.rangeUntil(to: Long): LongRange {
     return until(to)
 }
@@ -1066,6 +1076,7 @@ public inline operator fun Int.rangeUntil(to: Long): LongRange {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun Long.rangeUntil(to: Long): LongRange {
     return until(to)
 }
@@ -1078,6 +1089,7 @@ public inline operator fun Long.rangeUntil(to: Long): LongRange {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun Byte.rangeUntil(to: Long): LongRange {
     return until(to)
 }
@@ -1090,6 +1102,7 @@ public inline operator fun Byte.rangeUntil(to: Long): LongRange {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun Short.rangeUntil(to: Long): LongRange {
     return until(to)
 }
@@ -1102,6 +1115,7 @@ public inline operator fun Short.rangeUntil(to: Long): LongRange {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun Int.rangeUntil(to: Short): IntRange {
     return until(to)
 }
@@ -1114,6 +1128,7 @@ public inline operator fun Int.rangeUntil(to: Short): IntRange {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun Long.rangeUntil(to: Short): LongRange {
     return until(to)
 }
@@ -1126,6 +1141,7 @@ public inline operator fun Long.rangeUntil(to: Short): LongRange {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun Byte.rangeUntil(to: Short): IntRange {
     return until(to)
 }
@@ -1138,6 +1154,7 @@ public inline operator fun Byte.rangeUntil(to: Short): IntRange {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline operator fun Short.rangeUntil(to: Short): IntRange {
     return until(to)
 }

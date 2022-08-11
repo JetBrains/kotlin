@@ -159,6 +159,7 @@ object RangeOps : TemplateGroupBase() {
         inlineOnly()
         since("1.7")
         annotation("@ExperimentalStdlibApi")
+        suppress("EXTENSION_SHADOWED_BY_MEMBER")
         signature("rangeUntil(to: $toType)")
 
         val elementType = rangeElementType(fromType, toType)
