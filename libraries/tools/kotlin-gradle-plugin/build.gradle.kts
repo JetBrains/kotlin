@@ -115,10 +115,12 @@ dependencies {
     testImplementation(project(":kotlin-tooling-metadata"))
 }
 
-tasks.withType<Test>().named("functionalTest").configure {
-    javaLauncher.set(javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(11))
-    })
+if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
+    tasks.withType<Test>().named("functionalTest").configure {
+        javaLauncher.set(javaToolchains.launcherFor {
+            languageVersion.set(JavaLanguageVersion.of(11))
+        })
+    }
 }
 
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
