@@ -6151,6 +6151,10 @@ fileCheckTest("filecheck_smoke0") {
     annotatedSource = project.file('filecheck/smoke0.kt')
 }
 
+fileCheckTest("filecheck_when") {
+    annotatedSource = project.file('filecheck/when.kt')
+}
+
 if (HostManager.@Companion.hostIsMac) {
     fileCheckTest("filecheck_force_arm_instruction_set") {
         enabled = enabled && cacheTesting == null

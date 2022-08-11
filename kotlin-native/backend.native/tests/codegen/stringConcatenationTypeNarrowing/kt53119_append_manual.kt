@@ -7,11 +7,9 @@ package codegen.stringConcatenationTypeNarrowing.kt53119_append_manual
 import kotlin.test.*
 
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual#appendMaybeAny(kotlin.Any?)
-// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
-// CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
-
 // CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo#toString(){}kotlin.String"
 // CHECK-NOT: Foo#toString(){}kotlin.String"
+// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 // CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
 
 // CHECK: ret %struct.ObjHeader*

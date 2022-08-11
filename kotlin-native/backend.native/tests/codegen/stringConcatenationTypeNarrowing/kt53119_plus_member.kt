@@ -9,11 +9,9 @@ import kotlin.test.*
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberAny
 // CHECK-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK: call %struct.ObjHeader* @Kotlin_String_plusImpl
-// CHECK-NOT: kfun:kotlin.String#plus(kotlin.Any?)
-
 // CHECK: call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
 // CHECK-NOT: Foo#toString(){}kotlin.String"
+// CHECK: call %struct.ObjHeader* @Kotlin_String_plusImpl
 // CHECK-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
 // CHECK: ret %struct.ObjHeader*
@@ -37,12 +35,9 @@ fun manualPlusMemberString(str1: String, str2: String): kotlin.String =
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#generatedPlusMemberAny
 // CHECK-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK: call %struct.ObjHeader* @Kotlin_String_plusImpl
-// CHECK-NOT: kfun:kotlin.String#plus(kotlin.Any?)
-
 // CHECK: call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
 // CHECK-NOT: Foo#toString(){}kotlin.String"
-
+// CHECK: call %struct.ObjHeader* @Kotlin_String_plusImpl
 // CHECK-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
 // CHECK: ret %struct.ObjHeader*
@@ -86,9 +81,10 @@ fun manualPlusMemberFoo(str1: String, foo: Foo): kotlin.String =
 // CHECK call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
 // CHECK-NOT Foo#toString(){}kotlin.String
 
-// CHECK: call %struct.ObjHeader* @Kotlin_String_plusImpl
 // CHECK: call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString
+// CHECK-NOT: Foo#toString(){}kotlin.String"
 // CHECK-NOT: kfun:kotlin.String#plus(kotlin.Any?)
+// CHECK: call %struct.ObjHeader* @Kotlin_String_plusImpl
 // CHECK-NOT: Foo#toString(){}kotlin.String"
 
 // CHECK: ret %struct.ObjHeader*

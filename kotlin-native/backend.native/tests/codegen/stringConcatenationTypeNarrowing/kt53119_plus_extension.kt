@@ -9,17 +9,15 @@ import kotlin.test.*
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#manualPlusExtensionAny
 // CHECK-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
+// CHECK: call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
+// CHECK-NOT: Foo#toString(){}kotlin.String"
+
 // CHECK: call %struct.ObjHeader* @Kotlin_String_plusImpl
 // CHECK-NOT: call %struct.ObjHeader* @Kotlin_String_plusImpl
 // CHECK-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 // CHECK-NOT: call %struct.ObjHeader* @"kfun:kotlin.String#toString(){}kotlin.String"
-
-// CHECK: call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
-
-// CHECK-NOT: call %struct.ObjHeader* @"kfun:kotlin.String#toString(){}kotlin.String"
 // CHECK-NOT: Foo#toString(){}kotlin.String"
 // CHECK-NOT: call %struct.ObjHeader* @Kotlin_String_plusImpl
-// CHECK-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
 // CHECK: ret %struct.ObjHeader*
 
@@ -43,16 +41,12 @@ fun manualPlusExtensionString(maybeStr: String?, str: String): kotlin.String =
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionAny
 // CHECK-NOT: kfun:kotlin#plus__at__kotlin.String?(kotlin.Any?)
 
+// CHECK: call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
+// CHECK-NOT: Foo#toString(){}kotlin.String"
 // CHECK: call %struct.ObjHeader* @Kotlin_String_plusImpl
 // CHECK-NOT: call %struct.ObjHeader* @Kotlin_String_plusImpl
 // CHECK-NOT: kfun:kotlin#plus__at__kotlin.String?(kotlin.Any?)
-
-// CHECK: call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
-
-// CHECK-NOT: Foo#toString(){}kotlin.String"
 // CHECK-NOT: call %struct.ObjHeader* @"kfun:kotlin.String#toString(){}kotlin.String"
-// CHECK-NOT: kfun:kotlin#plus__at__kotlin.String?(kotlin.Any?)
-// CHECK-NOT: call %struct.ObjHeader* @Kotlin_String_plusImpl
 
 // CHECK: ret %struct.ObjHeader*
 
@@ -98,14 +92,12 @@ fun generatedPlusExtensionFoo(maybeStr: String?, foo: Foo): String {
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionMaybeFoo
 // CHECK-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
+// CHECK: call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
+// CHECK-NOT: Foo#toString(){}kotlin.String
 // CHECK: call %struct.ObjHeader* @Kotlin_String_plusImpl
 // CHECK-NOT: call %struct.ObjHeader* @Kotlin_String_plusImpl
 // CHECK-NOT: call %struct.ObjHeader* @"kfun:kotlin.String#toString(){}kotlin.String"
 
-// CHECK: call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
-// CHECK-NOT: Foo#toString(){}kotlin.String
-
-// CHECK-NOT: call %struct.ObjHeader* @"kfun:kotlin.String#toString(){}kotlin.String"
 // CHECK-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
 // CHECK: ret %struct.ObjHeader*

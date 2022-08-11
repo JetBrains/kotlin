@@ -1283,12 +1283,16 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
      *  }
      *  we cannot determine if the result of when is assigned or not.
      */
-    private inner class WhenEmittingContext(val expression: IrWhen) {
+    private inner class WhenEmittingContext(val expression: IrWhen, val lastBBOfWhenCases: LLVMBasicBlockRef) {
         val needsPhi = expression.branches.last().isUnconditional() && !expression.type.isUnit()
         val llvmType = codegen.getLLVMType(expression.type)
 
-        val bbExit = lazy { functionGenerationContext.basicBlock("when_exit", expression.endLocation) }
-
+        val bbExit = lazy {
+            // bbExit must be positioned after all blocks of WHEN construct
+            functionGenerationContext.appendingTo(lastBBOfWhenCases) {
+                functionGenerationContext.basicBlock("when_exit", expression.endLocation)
+            }
+        }
         val resultPhi = lazy {
             functionGenerationContext.appendingTo(bbExit.value) {
                 functionGenerationContext.phi(llvmType)
@@ -1296,19 +1300,35 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }
     }
 
+    /** For WHEN { COND1 -> CASE1, COND2 -> CASE2, ELSE -> UNCONDITIONAL }
+     * the following sequence of basic blocks is generated:
+     * -- if COND1
+     * -- CASE1
+     * -- NEXT1(if COND2)
+     * -- CASE2
+     * -- NEXT2 (UNCONDITIONAL)
+     * -- EXIT
+     */
     private fun evaluateWhen(expression: IrWhen, resultSlot: LLVMValueRef?): LLVMValueRef {
         context.log{"evaluateWhen                   : ${ir2string(expression)}"}
 
-        val whenEmittingContext = WhenEmittingContext(expression)
-
         generateDebugTrambolineIf("when", expression)
-        expression.branches.forEach {
-            val bbNext = if (it == expression.branches.last())
-                             null
-                         else
-                             functionGenerationContext.basicBlock("when_next", it.startLocation, it.endLocation)
-            generateWhenCase(whenEmittingContext, it, bbNext, resultSlot)
+
+        // First, generate all empty basic blocks for conditions and variants
+        val bbOfFirstConditionCheck = functionGenerationContext.currentBlock
+        val branchInfos: List<BranchCaseNextInfo> = expression.branches.map {
+            // Carefully create empty basic blocks and position them one after another
+            val bbCase = if (it.isUnconditional()) null else
+                functionGenerationContext.basicBlock("when_case", it.startLocation, it.endLocation).apply { functionGenerationContext.positionAtEnd(this) }
+            val bbNext = if (it.isUnconditional() || it == expression.branches.last()) null else
+                functionGenerationContext.basicBlock("when_next", it.startLocation, it.endLocation).apply { functionGenerationContext.positionAtEnd(this) }
+            BranchCaseNextInfo(it, bbCase, bbNext, resultSlot)
         }
+        // Now, exit basic block can be positioned after all blocks of WHEN expression
+        val whenEmittingContext = WhenEmittingContext(expression, lastBBOfWhenCases = functionGenerationContext.currentBlock)
+        functionGenerationContext.positionAtEnd(bbOfFirstConditionCheck)
+
+        branchInfos.forEach { generateWhenCase(whenEmittingContext, it) }
 
         if (whenEmittingContext.bbExit.isInitialized())
             functionGenerationContext.positionAtEnd(whenEmittingContext.bbExit.value)
@@ -1330,25 +1350,26 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }
     }
 
-    private fun generateWhenCase(whenEmittingContext: WhenEmittingContext, branch: IrBranch, bbNext: LLVMBasicBlockRef?, resultSlot: LLVMValueRef?) {
-        val brResult = if (branch.isUnconditional())
-            evaluateExpression(branch.result, resultSlot)
-        else {
-            val bbCase = functionGenerationContext.basicBlock("when_case", branch.startLocation, branch.endLocation)
-            val condition = evaluateExpression(branch.condition)
-            functionGenerationContext.condBr(condition, bbCase, bbNext ?: whenEmittingContext.bbExit.value)
-            functionGenerationContext.positionAtEnd(bbCase)
-            evaluateExpression(branch.result, resultSlot)
-        }
-        if (!functionGenerationContext.isAfterTerminator()) {
-            if (whenEmittingContext.needsPhi)
-                functionGenerationContext.assignPhis(whenEmittingContext.resultPhi.value to brResult)
-            functionGenerationContext.br(whenEmittingContext.bbExit.value)
-        }
-        if (bbNext != null)
-            functionGenerationContext.positionAtEnd(bbNext)
-    }
+    private data class BranchCaseNextInfo(val branch: IrBranch, val bbCase: LLVMBasicBlockRef?, val bbNext: LLVMBasicBlockRef?,
+                                          val resultSlot: LLVMValueRef?)
 
+    private fun generateWhenCase(whenEmittingContext: WhenEmittingContext, branchCaseNextInfo: BranchCaseNextInfo) {
+        with(branchCaseNextInfo) {
+            if (!branch.isUnconditional()) {
+                val condition = evaluateExpression(branch.condition)
+                functionGenerationContext.condBr(condition, bbCase, bbNext ?: whenEmittingContext.bbExit.value)
+                functionGenerationContext.positionAtEnd(bbCase!!)
+            }
+            val brResult = evaluateExpression(branch.result, resultSlot)
+            if (!functionGenerationContext.isAfterTerminator()) {
+                if (whenEmittingContext.needsPhi)
+                    functionGenerationContext.assignPhis(whenEmittingContext.resultPhi.value to brResult)
+                functionGenerationContext.br(whenEmittingContext.bbExit.value)
+            }
+            if (bbNext != null)
+                functionGenerationContext.positionAtEnd(bbNext)
+        }
+    }
     //-------------------------------------------------------------------------//
 
     private fun evaluateWhileLoop(loop: IrWhileLoop): LLVMValueRef {
