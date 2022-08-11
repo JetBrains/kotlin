@@ -228,9 +228,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         var sourceModule: ModulesStructure? = null
         val includes = arguments.includes
         if (includes == null) {
-            if (arguments.useK2)
+            if (arguments.useK2) {
+                messageCollector.report(
+                    STRONG_WARNING,
+                    "ATTENTION!\n This build uses experimental K2 compiler: \n  -Xuse-k2"
+                )
                 sourceModule = processSourceModuleWithK2(environmentForJS, libraries, friendLibraries, arguments, outputFile)
-            else {
+            } else {
                 sourceModule = processSourceModule(environmentForJS, libraries, friendLibraries, arguments, outputFile)
 
                 if (!sourceModule.jsFrontEndResult.jsAnalysisResult.shouldGenerateCode)
