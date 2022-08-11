@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -30,7 +28,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
@@ -65,7 +62,7 @@ interface IrBuilderWithPluginContext {
             this.returnType = type
             name = Name.identifier("<anonymous>")
             visibility = DescriptorVisibilities.LOCAL
-            origin = SERIALIZABLE_PLUGIN_ORIGIN
+            origin = SERIALIZATION_PLUGIN_ORIGIN
         }
         function.body =
             DeclarationIrBuilder(compilerContext, function.symbol, startOffset, endOffset).irBlockBody(startOffset, endOffset, bodyGen)
@@ -138,7 +135,7 @@ interface IrBuilderWithPluginContext {
 
     fun IrClass.contributeAnonymousInitializer(bodyGen: IrBlockBodyBuilder.() -> Unit) {
         val symbol = IrAnonymousInitializerSymbolImpl(descriptor)
-        factory.createAnonymousInitializer(startOffset, endOffset, SERIALIZABLE_PLUGIN_ORIGIN, symbol).also {
+        factory.createAnonymousInitializer(startOffset, endOffset, SERIALIZATION_PLUGIN_ORIGIN, symbol).also {
             it.parent = this
             declarations.add(it)
             it.body = DeclarationIrBuilder(compilerContext, symbol, startOffset, endOffset).irBlockBody(startOffset, endOffset, bodyGen)
@@ -299,7 +296,7 @@ interface IrBuilderWithPluginContext {
             endOffset = propertyParent.endOffset
             name = propertyName
             type = propertyType
-            origin = SERIALIZABLE_PLUGIN_ORIGIN
+            origin = SERIALIZATION_PLUGIN_ORIGIN
             isFinal = true
             this.visibility = DescriptorVisibilities.PRIVATE
         }.also { it.parent = propertyParent }
@@ -309,7 +306,7 @@ interface IrBuilderWithPluginContext {
             endOffset = propertyParent.endOffset
             name = propertyName
             this.isVar = false
-            origin = SERIALIZABLE_PLUGIN_ORIGIN
+            origin = SERIALIZATION_PLUGIN_ORIGIN
         }
 
         prop.apply {
@@ -321,7 +318,7 @@ interface IrBuilderWithPluginContext {
             startOffset = propertyParent.startOffset
             endOffset = propertyParent.endOffset
             returnType = propertyType
-            origin = SERIALIZABLE_PLUGIN_ORIGIN
+            origin = SERIALIZATION_PLUGIN_ORIGIN
             this.visibility = visibility
             modality = Modality.FINAL
         }

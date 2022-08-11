@@ -28,7 +28,6 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 class SerializerForEnumsGenerator(
     irClass: IrClass,
     compilerContext: SerializationPluginContext,
-    serialInfoJvmGenerator: SerialInfoImplJvmIrGenerator,
 ) : SerializerIrGenerator(irClass, compilerContext, null) {
     override fun generateSave(function: IrSimpleFunction) = addFunctionBody(function) { saveFunc ->
         fun irThis(): IrExpression =

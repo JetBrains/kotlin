@@ -1,0 +1,98 @@
+FILE: privatePropertiesSerialization.kt
+    @R|kotlinx/serialization/Serializable|() public open class Parent : R|kotlin/Any| {
+        public constructor(ctor: R|kotlin/Int|): R|Parent| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val ctor: R|kotlin/Int| = R|<local>/ctor|
+            private get(): R|kotlin/Int|
+
+        private final var body: R|kotlin/String| = String(42)
+            private get(): R|kotlin/String|
+            private set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        public final fun checkDeser(c: R|kotlin/Int|, b: R|kotlin/String|): R|kotlin/String| {
+            when () {
+                !=(this@R|/Parent|.R|/Parent.ctor|, R|<local>/c|) ->  {
+                    ^checkDeser <strcat>(String(Ctor : ), this@R|/Parent|.R|/Parent.ctor|)
+                }
+            }
+
+            when () {
+                !=(this@R|/Parent|.R|/Parent.body|, R|<local>/b|) ->  {
+                    ^checkDeser <strcat>(String(Body : ), this@R|/Parent|.R|/Parent.body|)
+                }
+            }
+
+            ^checkDeser String(OK)
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Parent>|
+
+            private constructor(): R|Parent.Companion|
+
+        }
+
+        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Parent>| {
+            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Parent|): R|kotlin/Unit|
+
+            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Parent|
+
+            public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
+                public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
+
+            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+
+            private constructor(): R|Parent.$serializer|
+
+        }
+
+    }
+    @R|kotlinx/serialization/Serializable|() public final class Derived : R|Parent| {
+        public constructor(): R|Derived| {
+            super<R|Parent|>(Int(42))
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Derived>|
+
+            private constructor(): R|Derived.Companion|
+
+        }
+
+        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Derived>| {
+            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Derived|): R|kotlin/Unit|
+
+            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Derived|
+
+            public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
+                public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
+
+            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+
+            private constructor(): R|Derived.$serializer|
+
+        }
+
+    }
+    public final fun test(targetString: R|kotlin/String|): R|kotlin/String| {
+        lval c: R|Derived| = R|/Derived.Derived|()
+        lval j: R|kotlinx/serialization/json/Json| = R|kotlinx/serialization/json/Json|(<L> = Json@fun R|kotlinx/serialization/json/JsonBuilder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|kotlinx/serialization/json/JsonBuilder.encodeDefaults| = Boolean(true)
+        }
+        )
+        lval s: R|kotlin/String| = R|<local>/j|.R|kotlinx/serialization/json/Json.encodeToString|<R|Derived|>(Q|Derived|.R|/Derived.Companion.serializer|(), R|<local>/c|)
+        when () {
+            !=(R|<local>/s|, R|<local>/targetString|) ->  {
+                ^test R|<local>/s|
+            }
+        }
+
+        lval d: R|Derived| = R|<local>/j|.R|kotlinx/serialization/json/Json.decodeFromString|<R|Derived|>(Q|Derived|.R|/Derived.Companion.serializer|(), String({"ctor":43,"body":"43"}))
+        ^test R|<local>/d|.R|/Parent.checkDeser|(Int(43), String(43))
+        ^test String(OK)
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box R|/test|(String({"ctor":42,"body":"42"}))
+    }
