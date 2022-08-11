@@ -34321,6 +34321,24 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("TrailingComma.kt")
+            public void testTrailingComma() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/TrailingComma.kt");
+            }
+
+            @Test
+            @TestMetadata("UnqualifiedBreak.kt")
+            public void testUnqualifiedBreak() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/UnqualifiedBreak.kt");
+            }
+
+            @Test
+            @TestMetadata("UnqualifiedContinue.kt")
+            public void testUnqualifiedContinue() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/UnqualifiedContinue.kt");
+            }
+
+            @Test
             @TestMetadata("When.kt")
             public void testWhen() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/when/When.kt");
@@ -34363,6 +34381,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @Test
                 public void testAllFilesPresentInWithSubjectVariable() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/when/withSubjectVariable"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("AnnotatedWhenSubject.kt")
+                public void testAnnotatedWhenSubject() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/AnnotatedWhenSubject.kt");
                 }
 
                 @Test
