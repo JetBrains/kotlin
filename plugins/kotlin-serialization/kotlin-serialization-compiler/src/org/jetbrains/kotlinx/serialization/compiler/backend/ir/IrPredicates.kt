@@ -163,7 +163,7 @@ internal fun IrConstructor.lastArgumentIsAnnotationArray(): Boolean {
     return ((lastArgType as? IrSimpleType)?.arguments?.firstOrNull()?.typeOrNull?.classFqName?.toString() == "kotlin.Annotation")
 }
 
-fun IrClass.serializableSyntheticConstructor(): IrConstructorSymbol? { // FIXME: remove nullability W/A when FIR plugin will add proper deserialization ctor
+fun IrClass.findSerializableSyntheticConstructor(): IrConstructorSymbol? {
     return declarations.filterIsInstance<IrConstructor>().singleOrNull { it.isSerializationCtor() }?.symbol
 }
 
@@ -211,3 +211,6 @@ fun IrType.classOrUpperBound(): IrClassSymbol? = when(val cls = classifierOrNull
     is IrTypeParameterSymbol -> cls.owner.representativeUpperBound.classOrUpperBound()
     else -> null
 }
+
+internal inline fun IrClass.shouldHaveSpecificSyntheticMethods(functionPresenceChecker: () -> IrSimpleFunction?) =
+    !isValue && (isAbstractOrSealedSerializableClass || functionPresenceChecker() != null)

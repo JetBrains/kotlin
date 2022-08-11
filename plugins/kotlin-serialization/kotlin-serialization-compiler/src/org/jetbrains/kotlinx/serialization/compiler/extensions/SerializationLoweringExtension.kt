@@ -12,19 +12,13 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerialInfoImplJvmIrGenerator
-import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableCompanionIrGenerator
-import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableIrGenerator
-import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializerIrGenerator
+import org.jetbrains.kotlinx.serialization.compiler.backend.ir.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
 import java.util.concurrent.ConcurrentHashMap
 
@@ -52,25 +46,49 @@ class SerializationPluginContext(baseContext: IrPluginContext, val metadataPlugi
     internal val copiedStaticWriteSelf: MutableMap<IrSimpleFunction, IrSimpleFunction> = ConcurrentHashMap()
 }
 
+private inline fun IrClass.runPluginSafe(block: () -> Unit) {
+    try {
+        block()
+    } catch (e: Exception) {
+        throw CompilationException(
+            "kotlinx.serialization compiler plugin internal error: unable to transform declaration, see cause",
+            this.fileParent,
+            this,
+            e
+        )
+    }
+}
+
 private class SerializerClassLowering(
     baseContext: IrPluginContext,
     metadataPlugin: SerializationDescriptorSerializerPlugin?,
     moduleFragment: IrModuleFragment
 ) : IrElementTransformerVoid(), ClassLoweringPass {
     val context: SerializationPluginContext = SerializationPluginContext(baseContext, metadataPlugin)
-    private val serialInfoJvmGenerator = SerialInfoImplJvmIrGenerator(context, moduleFragment).also { context.serialInfoImplJvmIrGenerator = it }
+    private val serialInfoJvmGenerator =
+        SerialInfoImplJvmIrGenerator(context, moduleFragment).also { context.serialInfoImplJvmIrGenerator = it }
 
     override fun lower(irClass: IrClass) {
-        try {
+        irClass.runPluginSafe {
             SerializableIrGenerator.generate(irClass, context)
-            SerializerIrGenerator.generate(irClass, context, context.metadataPlugin, serialInfoJvmGenerator)
+            SerializerIrGenerator.generate(irClass, context, context.metadataPlugin)
             SerializableCompanionIrGenerator.generate(irClass, context)
 
             if (context.platform.isJvm() && KSerializerDescriptorResolver.isSerialInfoImpl(irClass.descriptor)) {
                 serialInfoJvmGenerator.generate(irClass)
             }
-        } catch (e: Exception) {
-            throw CompilationException("kotlinx.serialization compiler plugin internal error: unable to transform declaration, see cause", irClass.fileParent, irClass, e)
+        }
+    }
+}
+
+private class SerializerClassPreLowering(
+    baseContext: IrPluginContext
+) : IrElementTransformerVoid(), ClassLoweringPass {
+    val context: SerializationPluginContext = SerializationPluginContext(baseContext, null)
+
+    override fun lower(irClass: IrClass) {
+        irClass.runPluginSafe {
+            IrPreGenerator(irClass, context).generate()
         }
     }
 }
@@ -82,8 +100,9 @@ open class SerializationLoweringExtension @JvmOverloads constructor(
         moduleFragment: IrModuleFragment,
         pluginContext: IrPluginContext
     ) {
-        val serializerClassLowering = SerializerClassLowering(pluginContext, metadataPlugin, moduleFragment)
-        for (file in moduleFragment.files)
-            serializerClassLowering.runOnFileInOrder(file)
+        val pass1 = SerializerClassPreLowering(pluginContext)
+        val pass2 = SerializerClassLowering(pluginContext, metadataPlugin, moduleFragment)
+        moduleFragment.files.forEach(pass1::runOnFileInOrder)
+        moduleFragment.files.forEach(pass2::runOnFileInOrder)
     }
 }

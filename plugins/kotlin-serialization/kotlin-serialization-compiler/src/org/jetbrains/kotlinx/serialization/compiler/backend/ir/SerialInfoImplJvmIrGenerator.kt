@@ -84,7 +84,7 @@ class SerialInfoImplJvmIrGenerator(
             generateSimplePropertyWithBackingField(property.descriptor, irClass, Name.identifier("_" + property.name.asString()))
 
             val getter = property.getter!!
-            getter.origin = SERIALIZABLE_PLUGIN_ORIGIN
+            getter.origin = SERIALIZATION_PLUGIN_ORIGIN
             // Add JvmName annotation to property getters to force the resulting JVM method name for 'x' be 'x', instead of 'getX',
             // and to avoid having useless bridges for it generated in BridgeLowering.
             // Unfortunately, this results in an extra `@JvmName` annotation in the bytecode, but it shouldn't matter very much.
@@ -92,7 +92,7 @@ class SerialInfoImplJvmIrGenerator(
 
             val field = property.backingField!!
             field.visibility = DescriptorVisibilities.PRIVATE
-            field.origin = SERIALIZABLE_PLUGIN_ORIGIN
+            field.origin = SERIALIZATION_PLUGIN_ORIGIN
 
             val parameter = ctor.addValueParameter(property.name.asString(), field.type)
             ctorBody.statements += IrSetFieldImpl(
@@ -200,7 +200,7 @@ class SerialInfoImplJvmIrGenerator(
                 propertyParent.factory.createProperty(
                     propertyParent.startOffset,
                     propertyParent.endOffset,
-                    SERIALIZABLE_PLUGIN_ORIGIN,
+                    SERIALIZATION_PLUGIN_ORIGIN,
                     IrPropertySymbolImpl(propertyDescriptor),
                     name,
                     visibility,
@@ -240,7 +240,7 @@ class SerialInfoImplJvmIrGenerator(
             originProperty.factory.createField(
                 originProperty.startOffset,
                 originProperty.endOffset,
-                SERIALIZABLE_PLUGIN_ORIGIN,
+                SERIALIZATION_PLUGIN_ORIGIN,
                 IrFieldSymbolImpl(propertyDescriptor),
                 name,
                 type.toIrType(),
@@ -274,7 +274,7 @@ class SerialInfoImplJvmIrGenerator(
                 property.factory.createFunction(
                     fieldSymbol.owner.startOffset,
                     fieldSymbol.owner.endOffset,
-                    SERIALIZABLE_PLUGIN_ORIGIN, IrSimpleFunctionSymbolImpl(descriptor),
+                    SERIALIZATION_PLUGIN_ORIGIN, IrSimpleFunctionSymbolImpl(descriptor),
                     name, visibility, modality, returnType!!.toIrType(),
                     isInline, isEffectivelyExternal(), isTailrec, isSuspend, isOperator, isInfix, isExpect
                 )
@@ -368,7 +368,7 @@ class SerialInfoImplJvmIrGenerator(
         fun irValueParameter(descriptor: ParameterDescriptor): IrValueParameter = with(descriptor) {
             @OptIn(FirIncompatiblePluginAPI::class) // should never be called after FIR frontend
             factory.createValueParameter(
-                function.startOffset, function.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, IrValueParameterSymbolImpl(this),
+                function.startOffset, function.endOffset, SERIALIZATION_PLUGIN_ORIGIN, IrValueParameterSymbolImpl(this),
                 name, indexOrMinusOne, type.toIrType(), varargElementType?.toIrType(), isCrossinline, isNoinline,
                 isHidden = false, isAssignable = false
             ).also {
@@ -394,7 +394,7 @@ class SerialInfoImplJvmIrGenerator(
         val newTypeParameters = descriptor.typeParameters.map {
             factory.createTypeParameter(
                 startOffset, endOffset,
-                SERIALIZABLE_PLUGIN_ORIGIN,
+                SERIALIZATION_PLUGIN_ORIGIN,
                 IrTypeParameterSymbolImpl(it),
                 it.name, it.index, it.isReified, it.variance
             ).also { typeParameter ->

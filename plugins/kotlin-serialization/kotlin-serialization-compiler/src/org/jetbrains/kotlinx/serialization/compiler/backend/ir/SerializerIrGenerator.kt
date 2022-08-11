@@ -47,7 +47,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ST
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.STRUCTURE_ENCODER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.UNKNOWN_FIELD_EXC
 
-object SERIALIZABLE_PLUGIN_ORIGIN : IrDeclarationOriginImpl("SERIALIZER", true)
+object SERIALIZATION_PLUGIN_ORIGIN : IrDeclarationOriginImpl("KOTLINX_SERIALIZATION", true)
 
 internal typealias FunctionWithArgs = Pair<IrFunctionSymbol, List<IrExpression>>
 
@@ -118,7 +118,7 @@ open class SerializerIrGenerator(
 
         val anonymousInit = irClass.run {
             val symbol = IrAnonymousInitializerSymbolImpl(descriptor)
-            irClass.factory.createAnonymousInitializer(startOffset, endOffset, SERIALIZABLE_PLUGIN_ORIGIN, symbol).also {
+            irClass.factory.createAnonymousInitializer(startOffset, endOffset, SERIALIZATION_PLUGIN_ORIGIN, symbol).also {
                 it.parent = this
                 declarations.add(it)
             }
@@ -495,7 +495,7 @@ open class SerializerIrGenerator(
         )
 
         val typeArgs = (loadFunc.returnType as IrSimpleType).arguments.map { (it as IrTypeProjection).type }
-        val deserCtor: IrConstructorSymbol? = serializableIrClass.serializableSyntheticConstructor()
+        val deserCtor: IrConstructorSymbol? = serializableIrClass.findSerializableSyntheticConstructor()
         if (serializableIrClass.isInternalSerializable && deserCtor != null) {
             var args: List<IrExpression> = serializableProperties.map { serialPropertiesMap.getValue(it.ir).get() }
             args = bitMasks.map { irGet(it) } + args + irNull()
@@ -619,14 +619,12 @@ open class SerializerIrGenerator(
             irClass: IrClass,
             context: SerializationPluginContext,
             metadataPlugin: SerializationDescriptorSerializerPlugin?,
-            serialInfoJvmGenerator: SerialInfoImplJvmIrGenerator,
         ) {
             val serializableDesc = getSerializableClassDescriptorBySerializer(irClass.symbol.descriptor) ?: return
             val generator = when {
                 serializableDesc.isEnumWithLegacyGeneratedSerializer() -> SerializerForEnumsGenerator(
                     irClass,
-                    context,
-                    serialInfoJvmGenerator
+                    context
                 )
                 serializableDesc.isInlineClass() -> SerializerForInlineClassGenerator(irClass, context)
                 else -> SerializerIrGenerator(irClass, context, metadataPlugin)

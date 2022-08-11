@@ -270,7 +270,7 @@ class SerializableIrGenerator(
         propertiesStart: Int
     ): Int {
         check(superClass.isInternalSerializable)
-        val superCtorRef = superClass.serializableSyntheticConstructor()!!
+        val superCtorRef = superClass.findSerializableSyntheticConstructor() ?: error("Class serializable internally should have special constructor with marker")
         val superProperties = serializablePropertiesForIrBackend(superClass).serializableProperties
         val superSlots = superProperties.bitMaskSlotCount()
         val arguments = allValueParameters.subList(0, superSlots) +
@@ -358,10 +358,7 @@ class SerializableIrGenerator(
         generateSyntheticMethods()
     }
 
-    private inline fun IrClass.shouldHaveSpecificSyntheticMethods(functionPresenceChecker: () -> IrSimpleFunction?) =
-        !isValue && (isAbstractOrSealedSerializableClass || functionPresenceChecker() != null)
-
-    private fun generateSyntheticInternalConstructor() { // TODO: this doesn't work with OLD FE
+    private fun generateSyntheticInternalConstructor() {
         val serializerDescriptor = irClass.classSerializer(compilerContext)?.owner ?: return
         if (irClass.shouldHaveSpecificSyntheticMethods { serializerDescriptor.findPluginGeneratedMethod(LOAD) }) {
             val constrDesc = irClass.constructors.find(IrConstructor::isSerializationCtor) ?: return
