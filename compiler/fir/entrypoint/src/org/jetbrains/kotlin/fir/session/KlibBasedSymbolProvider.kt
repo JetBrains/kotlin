@@ -64,7 +64,7 @@ class KlibBasedSymbolProvider(
         return resolvedLibrary.library.packageMetadataParts(packageStringName).mapNotNull {
             val fragment = getPackageFragment(packageStringName, it)
 
-            val libraryPath = Paths.get(resolvedLibrary.library.libraryName)
+            val libraryPath = Paths.get(resolvedLibrary.library.libraryFile.path)
             val moduleData = moduleDataProvider.getModuleData(libraryPath) ?: return@mapNotNull null
             val packageProto = fragment.`package`
 
@@ -94,7 +94,7 @@ class KlibBasedSymbolProvider(
         }
 
         resolvedLibrary.library.packageMetadataParts(packageStringName).forEach {
-            val libraryPath = Paths.get(resolvedLibrary.library.libraryName)
+            val libraryPath = Paths.get(resolvedLibrary.library.libraryFile.path)
             val fragment = getPackageFragment(packageStringName, it)
 
             val nameResolver = NameResolverImpl(
