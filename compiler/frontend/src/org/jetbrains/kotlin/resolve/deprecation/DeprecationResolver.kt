@@ -117,9 +117,7 @@ class DeprecationResolver(
             return if (callElement != null && bindingContext != null) {
                 with(OptInUsageChecker) {
                     sinceKotlinAccessibility.markerClasses.any { classDescriptor ->
-                        !callElement.isOptInAllowed(
-                            classDescriptor.fqNameSafe, languageVersionSettings, bindingContext, subclassesOnly = false
-                        )
+                        !callElement.isOptInAllowed(classDescriptor.fqNameSafe, languageVersionSettings, bindingContext)
                     }
                 }
             } else {

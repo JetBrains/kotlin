@@ -326,6 +326,12 @@ class OptInUsageChecker(project: Project) : CallChecker {
         fun PsiElement.isOptInAllowed(
             annotationFqName: FqName,
             languageVersionSettings: LanguageVersionSettings,
+            bindingContext: BindingContext
+        ): Boolean = isOptInAllowed(annotationFqName, languageVersionSettings, bindingContext, subclassesOnly = false)
+
+        private fun PsiElement.isOptInAllowed(
+            annotationFqName: FqName,
+            languageVersionSettings: LanguageVersionSettings,
             bindingContext: BindingContext,
             subclassesOnly: Boolean
         ): Boolean {
