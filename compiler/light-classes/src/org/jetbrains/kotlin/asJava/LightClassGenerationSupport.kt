@@ -33,11 +33,7 @@ abstract class LightClassGenerationSupport {
         ConstantExpressionEvaluator(moduleDescriptor, languageVersionSettings, expression.project)
     }
 
-    internal fun canCreateUltraLightClassForFacade(files: Collection<KtFile>): Boolean = files.none { it.isScript() }
-
-    fun createUltraLightClassForFacade(facadeClassFqName: FqName, files: Collection<KtFile>): KtUltraLightClassForFacade? {
-        if (!canCreateUltraLightClassForFacade(files)) return null
-
+    fun createUltraLightClassForFacade(facadeClassFqName: FqName, files: Collection<KtFile>): KtUltraLightClassForFacade {
         val filesToSupports: List<Pair<KtFile, KtUltraLightSupport>> = files.map {
             it to getUltraLightClassSupport(it)
         }

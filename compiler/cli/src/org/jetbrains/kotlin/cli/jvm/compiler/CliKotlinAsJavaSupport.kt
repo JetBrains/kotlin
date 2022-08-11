@@ -10,10 +10,10 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
+import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.components.FilesByFacadeFqNameIndexer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -25,32 +25,33 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-class CliKotlinAsJavaSupport(
-    private val project: Project,
-    private val traceHolder: CliTraceHolder
-) : KotlinAsJavaSupport() {
-    override fun getFacadeClassesInPackage(packageFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
-        return findFacadeFilesInPackage(packageFqName, scope)
-            .groupBy { it.javaFileFacadeFqName }
-            .mapNotNull { (facadeClassFqName, _) ->
-                KotlinLightClassFactory.createFacade(project, facadeClassFqName, scope)
-            }
-    }
-
-    override fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String> {
-        return findFacadeFilesInPackage(packageFqName, scope)
-            .map { it.javaFileFacadeFqName.shortName().asString() }
-    }
-
-    private fun findFacadeFilesInPackage(
+class CliKotlinAsJavaSupport(project: Project, private val traceHolder: CliTraceHolder) : KotlinAsJavaSupportBase<KtFile>(project) {
+    override fun findFilesForFacadeByPackage(
         packageFqName: FqName,
-        scope: GlobalSearchScope
+        searchScope: GlobalSearchScope
     ) = traceHolder.bindingContext.get(FilesByFacadeFqNameIndexer.FACADE_FILES_BY_PACKAGE_NAME, packageFqName)
-        ?.filter { PsiSearchScopeUtil.isInScope(scope, it) }
+        ?.filter { PsiSearchScopeUtil.isInScope(searchScope, it) }
         .orEmpty()
 
-    override fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
-        return listOfNotNull(KotlinLightClassFactory.createFacade(project, facadeFqName, scope))
+    override fun KtFile.findModule(): KtFile = this
+
+    override fun createInstanceOfDecompiledLightFacade(facadeFqName: FqName, files: List<KtFile>, module: KtFile): KtLightClassForFacade? {
+        error("Should not be called")
+    }
+
+    override fun createInstanceOfLightFacade(facadeFqName: FqName, files: List<KtFile>, module: KtFile): KtLightClassForFacade {
+        return LightClassGenerationSupport.getInstance(files.first().project).createUltraLightClassForFacade(facadeFqName, files)
+    }
+
+    override val KtFile.contentSearchScope: GlobalSearchScope get() = GlobalSearchScope.allScope(project)
+    override fun facadeIsApplicable(module: KtFile, file: KtFile): Boolean = !module.isCompiled
+
+    override fun findFilesForFacade(facadeFqName: FqName, searchScope: GlobalSearchScope): List<KtFile> {
+        if (facadeFqName.isRoot) return emptyList()
+
+        return traceHolder.bindingContext.get(FilesByFacadeFqNameIndexer.FACADE_FILES_BY_FQ_NAME, facadeFqName)?.filter {
+            PsiSearchScopeUtil.isInScope(searchScope, it)
+        }.orEmpty()
     }
 
     override fun getScriptClasses(scriptFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
@@ -59,24 +60,13 @@ class CliKotlinAsJavaSupport(
         }
 
         return findFilesForPackage(scriptFqName.parent(), scope).mapNotNull { file ->
-            file.script?.takeIf { it.fqName == scriptFqName }?.let { it -> getLightClassForScript(it) }
+            file.script?.takeIf { it.fqName == scriptFqName }?.let { getLightClassForScript(it) }
         }
     }
 
-    override fun getKotlinInternalClasses(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
-        return emptyList()
-    }
+    override fun getKotlinInternalClasses(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> = emptyList()
 
-    override fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<KtFile> {
-        if (facadeFqName.isRoot) return emptyList()
-
-        return traceHolder.bindingContext.get(FilesByFacadeFqNameIndexer.FACADE_FILES_BY_FQ_NAME, facadeFqName)?.filter {
-            PsiSearchScopeUtil.isInScope(scope, it)
-        }.orEmpty()
-    }
-
-    override fun getFakeLightClass(classOrObject: KtClassOrObject): KtFakeLightClass =
-        KtDescriptorBasedFakeLightClass(classOrObject)
+    override fun getFakeLightClass(classOrObject: KtClassOrObject): KtFakeLightClass = KtDescriptorBasedFakeLightClass(classOrObject)
 
     override fun findClassOrObjectDeclarationsInPackage(
         packageFqName: FqName, searchScope: GlobalSearchScope
@@ -90,12 +80,11 @@ class CliKotlinAsJavaSupport(
                 }
             }
         }
+
         return result
     }
 
-    override fun packageExists(fqName: FqName, scope: GlobalSearchScope): Boolean {
-        return !traceHolder.module.getPackage(fqName).isEmpty()
-    }
+    override fun packageExists(fqName: FqName, scope: GlobalSearchScope): Boolean = !traceHolder.module.getPackage(fqName).isEmpty()
 
     override fun getSubPackages(fqn: FqName, scope: GlobalSearchScope): Collection<FqName> {
         val packageView = traceHolder.module.getPackage(fqn)
@@ -118,11 +107,11 @@ class CliKotlinAsJavaSupport(
         }
     }
 
-    override fun findFilesForPackage(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> {
-        return traceHolder.bindingContext.get(BindingContext.PACKAGE_TO_FILES, fqName)?.filter {
+    override fun findFilesForPackage(packageFqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> {
+        return traceHolder.bindingContext.get(BindingContext.PACKAGE_TO_FILES, packageFqName)?.filter {
             PsiSearchScopeUtil.isInScope(searchScope, it)
         }.orEmpty()
     }
 
-    override fun createFacadeForSyntheticFile(facadeClassFqName: FqName, file: KtFile): PsiClass = error("Should not be called")
+    override fun createFacadeForSyntheticFile(file: KtFile): KtLightClassForFacade = error("Should not be called")
 }

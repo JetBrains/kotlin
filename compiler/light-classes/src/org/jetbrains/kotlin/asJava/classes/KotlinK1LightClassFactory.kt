@@ -5,17 +5,12 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
-import com.intellij.openapi.project.Project
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
-import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtCodeFragment
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 
 class KotlinK1LightClassFactory : KotlinLightClassFactory {
@@ -26,18 +21,6 @@ class KotlinK1LightClassFactory : KotlinLightClassFactory {
                 KotlinModificationTrackerService.getInstance(classOrObject.project).outOfBlockModificationTracker,
             )
         }
-
-    override fun createFacade(
-        project: Project,
-        facadeClassFqName: FqName,
-        searchScope: GlobalSearchScope,
-    ): KtLightClassForFacade? = FacadeCache.getInstance(project)[facadeClassFqName, searchScope]
-
-    override fun createFacadeForSyntheticFile(facadeClassFqName: FqName, file: KtFile): KtLightClassForFacade {
-        return LightClassGenerationSupport.getInstance(file.project).run {
-            createUltraLightClassForFacade(facadeClassFqName, listOf(file)) ?: error { "Unable to create UL class for facade" }
-        }
-    }
 
     override fun createScript(script: KtScript): KtLightClassForScript? = CachedValuesManager.getCachedValue(script) {
         CachedValueProvider.Result.create(
@@ -54,9 +37,7 @@ class KotlinK1LightClassFactory : KotlinLightClassFactory {
                 return null
             }
 
-            return LightClassGenerationSupport.getInstance(script.project).run {
-                createUltraLightClassForScript(script)
-            }
+            return LightClassGenerationSupport.getInstance(script.project).createUltraLightClassForScript(script)
         }
 
         fun createClassNoCache(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
@@ -70,22 +51,7 @@ class KotlinK1LightClassFactory : KotlinLightClassFactory {
                 return null
             }
 
-            return LightClassGenerationSupport.getInstance(classOrObject.project).run {
-                createUltraLightClass(classOrObject)
-            }
-        }
-
-        fun createFacadeNoCache(fqName: FqName, searchScope: GlobalSearchScope, project: Project): KtLightClassForFacade? {
-            val sources = KotlinAsJavaSupport.getInstance(project)
-                .findFilesForFacade(fqName, searchScope)
-                .filterNot { it.isCompiled || it.isScript() }
-
-            if (sources.isEmpty()) return null
-            return LightClassGenerationSupport.getInstance(project).run {
-                if (!canCreateUltraLightClassForFacade(sources)) return null
-                createUltraLightClassForFacade(fqName, sources)
-                    ?: error("Unable to create UL class for facade: $fqName for ${sources.joinToString { it.virtualFilePath }}")
-            }
+            return LightClassGenerationSupport.getInstance(classOrObject.project).createUltraLightClass(classOrObject)
         }
     }
 }

@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.JvmNames
 import org.jetbrains.kotlin.name.JvmNames.JVM_NAME_SHORT
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
@@ -36,7 +36,7 @@ abstract class KtLightClassForFacadeBase constructor(
     private val firstFileInFacade by lazyPub { files.first() }
 
     val isMultiFileClass: Boolean by lazyPub {
-        files.size > 1 || JvmFileClassUtil.findAnnotationEntryOnFileNoResolve(firstFileInFacade, JvmNames.JVM_MULTIFILE_CLASS_SHORT) != null
+        files.size > 1 || firstFileInFacade.isJvmMultifileClassFile
     }
 
     private val _modifierList: PsiModifierList by lazyPub {

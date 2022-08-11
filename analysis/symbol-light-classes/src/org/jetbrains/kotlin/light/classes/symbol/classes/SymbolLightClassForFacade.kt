@@ -40,10 +40,9 @@ import org.jetbrains.kotlin.psi.KtFile
 
 context(KtAnalysisSession)
 class SymbolLightClassForFacade(
-    manager: PsiManager,
     override val facadeClassFqName: FqName,
     override val files: Collection<KtFile>
-) : SymbolLightClassBase(manager), KtLightClassForFacade {
+) : SymbolLightClassBase(files.first().manager), KtLightClassForFacade {
 
     init {
         require(files.isNotEmpty())
@@ -158,17 +157,13 @@ class SymbolLightClassForFacade(
 
     override fun getOwnMethods() = _ownMethods
 
-    override fun copy(): SymbolLightClassForFacade =
-        SymbolLightClassForFacade(manager, facadeClassFqName, files)
+    override fun copy(): SymbolLightClassForFacade = SymbolLightClassForFacade(facadeClassFqName, files)
 
-    private val packageFqName: FqName =
-        facadeClassFqName.parent()
+    private val packageFqName: FqName = facadeClassFqName.parent()
 
-    private val modifierList: PsiModifierList =
-        LightModifierList(manager, KotlinLanguage.INSTANCE, PsiModifier.PUBLIC, PsiModifier.FINAL)
+    private val modifierList: PsiModifierList = LightModifierList(manager, KotlinLanguage.INSTANCE, PsiModifier.PUBLIC, PsiModifier.FINAL)
 
-    private val implementsList: LightEmptyImplementsList =
-        LightEmptyImplementsList(manager)
+    private val implementsList: LightEmptyImplementsList = LightEmptyImplementsList(manager)
 
     private val packageClsFile = FakeFileForLightClass(
         firstFileInFacade,

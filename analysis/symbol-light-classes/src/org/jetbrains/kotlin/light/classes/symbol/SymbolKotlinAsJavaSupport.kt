@@ -6,20 +6,24 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.analysis.providers.createAllLibrariesModificationTracker
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
+import org.jetbrains.kotlin.analysis.providers.createModuleWithoutDependenciesOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
-import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
-import org.jetbrains.kotlin.light.classes.symbol.caches.SymbolLightClassFacadeCache
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolBasedFakeLightClass
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForFacade
 import org.jetbrains.kotlin.light.classes.symbol.classes.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.classes.getOrCreateSymbolLightClass
 import org.jetbrains.kotlin.name.ClassId
@@ -30,7 +34,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 
-class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport() {
+class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtModule>(project) {
     override fun findClassOrObjectDeclarationsInPackage(
         packageFqName: FqName,
         searchScope: GlobalSearchScope
@@ -40,13 +44,18 @@ class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupp
         }
     }
 
-    override fun findFilesForPackage(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> =
-        buildSet {
-            addAll(project.createDeclarationProvider(searchScope).getFacadeFilesInPackage(fqName))
-            findClassOrObjectDeclarationsInPackage(fqName, searchScope).mapTo(this) {
-                it.containingKtFile
-            }
+    override fun findFilesForPackage(packageFqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> = buildSet {
+        addAll(project.createDeclarationProvider(searchScope).findFilesForFacadeByPackage(packageFqName))
+        findClassOrObjectDeclarationsInPackage(packageFqName, searchScope).mapTo(this) {
+            it.containingKtFile
         }
+    }
+
+    override fun findFilesForFacadeByPackage(packageFqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> {
+        return project.createDeclarationProvider(searchScope)
+            .findFilesForFacadeByPackage(packageFqName)
+            .filter { it.isFromSourceOrLibraryBinary(project) }
+    }
 
     private fun FqName.toClassIdSequence(): Sequence<ClassId> {
         var currentName = shortNameOrSpecial()
@@ -88,64 +97,50 @@ class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupp
         }
     }
 
-    override fun getLightClassForScript(script: KtScript): KtLightClass =
-        error("Should not be called")
+    override fun getLightClassForScript(script: KtScript): KtLightClass = error("Should not be called")
 
-    override fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
-        val filesForFacade = findFilesForFacade(facadeFqName, scope)
+    override fun KtFile.findModule(): KtModule = getKtModule(project)
 
-        return getFacadeClassesForFiles(facadeFqName, filesForFacade)
+    override fun createInstanceOfDecompiledLightFacade(
+        facadeFqName: FqName,
+        files: List<KtFile>,
+        module: KtModule,
+    ): KtLightClassForFacade? = DecompiledLightClassesFactory.createLightFacadeForDecompiledKotlinFile(project, facadeFqName, files)
+
+    override fun tracker(file: KtFile): ModificationTracker = when (val module = file.getKtModule(project)) {
+        is KtSourceModule -> module.createModuleWithoutDependenciesOutOfBlockModificationTracker(project)
+        is KtLibraryModule -> project.createAllLibrariesModificationTracker()
+        else -> super.tracker(file)
     }
 
-    override fun getScriptClasses(scriptFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> =
-        error("Should not be called")
+    override fun createInstanceOfLightFacade(
+        facadeFqName: FqName,
+        files: List<KtFile>,
+        module: KtModule,
+    ): KtLightClassForFacade = analyzeForLightClasses(files.first()) {
+        SymbolLightClassForFacade(facadeFqName, files)
+    }
+
+    override val KtModule.contentSearchScope: GlobalSearchScope get() = this.contentScope
+
+    override fun facadeIsApplicable(module: KtModule, file: KtFile): Boolean = module.isFromSourceOrLibraryBinary()
+
+    override fun getScriptClasses(scriptFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> = error("Should not be called")
 
     override fun getKotlinInternalClasses(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> =
         emptyList() //TODO Implement if necessary for symbol
 
-    override fun getFacadeClassesInPackage(packageFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> =
-        project.createDeclarationProvider(scope)
-            .getFacadeFilesInPackage(packageFqName)
-            .asSequence()
-            .filter { it.isFromSourceOrLibraryBinary(project) }
-            .groupBy { it.javaFileFacadeFqName }
-            .flatMap { (fqName, files) -> getFacadeClassesForFiles(fqName, files) }
-
-    override fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String> =
-        project.createDeclarationProvider(scope)
-            .getFacadeFilesInPackage(packageFqName)
-            .filter { it.isFromSourceOrLibraryBinary(project) }
-            .mapTo(mutableSetOf()) { it.javaFileFacadeFqName.shortName().asString() }
-
-    override fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<KtFile> {
-        return project.createDeclarationProvider(scope)
+    override fun findFilesForFacade(facadeFqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> {
+        return project.createDeclarationProvider(searchScope)
             .findFilesForFacade(facadeFqName)
             .filter { it.isFromSourceOrLibraryBinary(project) }
     }
 
-    override fun getFakeLightClass(classOrObject: KtClassOrObject): KtFakeLightClass =
-        SymbolBasedFakeLightClass(classOrObject)
+    override fun getFakeLightClass(classOrObject: KtClassOrObject): KtFakeLightClass = SymbolBasedFakeLightClass(classOrObject)
 
-    override fun createFacadeForSyntheticFile(facadeClassFqName: FqName, file: KtFile): PsiClass =
-        TODO("Not implemented")
+    private fun KtElement.isFromSourceOrLibraryBinary(project: Project): Boolean = getKtModule(project).isFromSourceOrLibraryBinary()
 
-    private fun getFacadeClassesForFiles(facadeFqName: FqName, allFiles: Collection<KtFile>): Collection<PsiClass> {
-        if (allFiles.isEmpty()) return emptyList()
-        val filesByModule = allFiles.groupBy { it.getKtModule(project) }
-
-        val lightClassFacadeCache = project.getService(SymbolLightClassFacadeCache::class.java)
-
-        return filesByModule.mapNotNull { (module, files) ->
-            analyzeForLightClasses(module) {
-                lightClassFacadeCache.getOrCreateSymbolLightFacade(files, facadeFqName)
-            }
-        }
-    }
-}
-
-
-private fun KtElement.isFromSourceOrLibraryBinary(project: Project): Boolean {
-    return when (getKtModule(project)) {
+    private fun KtModule.isFromSourceOrLibraryBinary() = when (this) {
         is KtSourceModule -> true
         is KtLibraryModule -> true
         else -> false
