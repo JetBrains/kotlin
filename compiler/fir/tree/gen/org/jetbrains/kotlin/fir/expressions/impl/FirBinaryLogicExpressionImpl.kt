@@ -32,7 +32,7 @@ internal class FirBinaryLogicExpressionImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
         leftOperand.accept(visitor, data)
         rightOperand.accept(visitor, data)
     }

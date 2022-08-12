@@ -68,14 +68,14 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
-        contextReceivers.forEach { it.accept(visitor, data) }
+        contextReceivers.acceptAllElements(visitor, data)
         delegate?.accept(visitor, data)
         getter?.accept(visitor, data)
         setter?.accept(visitor, data)
         backingField?.accept(visitor, data)
         initializer?.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-        typeParameters.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
+        typeParameters.acceptAllElements(visitor, data)
         status.accept(visitor, data)
     }
 

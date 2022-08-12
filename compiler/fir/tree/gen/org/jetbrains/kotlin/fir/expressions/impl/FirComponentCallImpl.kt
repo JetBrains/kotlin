@@ -46,9 +46,9 @@ internal class FirComponentCallImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-        contextReceiverArguments.forEach { it.accept(visitor, data) }
-        typeArguments.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
+        contextReceiverArguments.acceptAllElements(visitor, data)
+        typeArguments.acceptAllElements(visitor, data)
         argumentList.accept(visitor, data)
         calleeReference.accept(visitor, data)
         explicitReceiver.accept(visitor, data)

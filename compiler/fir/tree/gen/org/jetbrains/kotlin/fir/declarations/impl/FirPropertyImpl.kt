@@ -77,15 +77,15 @@ internal class FirPropertyImpl(
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
-        contextReceivers.forEach { it.accept(visitor, data) }
+        contextReceivers.acceptAllElements(visitor, data)
         initializer?.accept(visitor, data)
         delegate?.accept(visitor, data)
         getter?.accept(visitor, data)
         setter?.accept(visitor, data)
         backingField?.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
         controlFlowGraphReference?.accept(visitor, data)
-        typeParameters.forEach { it.accept(visitor, data) }
+        typeParameters.acceptAllElements(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyImpl {

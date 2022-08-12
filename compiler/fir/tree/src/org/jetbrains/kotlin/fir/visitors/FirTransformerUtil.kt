@@ -45,9 +45,9 @@ inline fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirT
 }
 
 fun <R, D> List<FirElement>.acceptAllElements(visitor: FirVisitor<R, D>, data: D) {
-    forEach { it.accept(visitor, data) }
+    forEach { (it as FirPureAbstractElement).accept(visitor, data) }
 }
 
 fun List<FirElement>.acceptAllElements(visitor: FirVisitorVoid) {
-    forEach { it.accept(visitor) }
+    forEach { (it as FirPureAbstractElement).accept(visitor) }
 }

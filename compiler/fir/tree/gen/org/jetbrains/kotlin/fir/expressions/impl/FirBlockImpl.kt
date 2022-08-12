@@ -28,8 +28,8 @@ internal class FirBlockImpl(
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
-        statements.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
+        statements.acceptAllElements(visitor, data)
         typeRef.accept(visitor, data)
     }
 

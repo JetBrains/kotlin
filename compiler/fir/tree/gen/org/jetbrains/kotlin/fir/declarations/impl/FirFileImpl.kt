@@ -49,10 +49,10 @@ internal class FirFileImpl(
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
         packageDirective.accept(visitor, data)
-        imports.forEach { it.accept(visitor, data) }
-        declarations.forEach { it.accept(visitor, data) }
+        imports.acceptAllElements(visitor, data)
+        declarations.acceptAllElements(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFileImpl {

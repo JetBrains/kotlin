@@ -69,16 +69,16 @@ internal class FirAnonymousFunctionImpl(
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
-        contextReceivers.forEach { it.accept(visitor, data) }
+        contextReceivers.acceptAllElements(visitor, data)
         controlFlowGraphReference?.accept(visitor, data)
-        valueParameters.forEach { it.accept(visitor, data) }
+        valueParameters.acceptAllElements(visitor, data)
         body?.accept(visitor, data)
         label?.accept(visitor, data)
-        typeParameters.forEach { it.accept(visitor, data) }
+        typeParameters.acceptAllElements(visitor, data)
         typeRef.accept(visitor, data)
     }
 

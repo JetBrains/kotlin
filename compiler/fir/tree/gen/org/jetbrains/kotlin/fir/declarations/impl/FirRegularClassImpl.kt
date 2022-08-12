@@ -60,13 +60,13 @@ internal class FirRegularClassImpl(
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeParameters.forEach { it.accept(visitor, data) }
+        typeParameters.acceptAllElements(visitor, data)
         status.accept(visitor, data)
-        declarations.forEach { it.accept(visitor, data) }
-        annotations.forEach { it.accept(visitor, data) }
+        declarations.acceptAllElements(visitor, data)
+        annotations.acceptAllElements(visitor, data)
         controlFlowGraphReference?.accept(visitor, data)
-        superTypeRefs.forEach { it.accept(visitor, data) }
-        contextReceivers.forEach { it.accept(visitor, data) }
+        superTypeRefs.acceptAllElements(visitor, data)
+        contextReceivers.acceptAllElements(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {

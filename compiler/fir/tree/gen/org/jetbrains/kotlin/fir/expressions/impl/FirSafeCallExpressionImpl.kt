@@ -32,7 +32,7 @@ internal class FirSafeCallExpressionImpl(
 ) : FirSafeCallExpression() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
         receiver.accept(visitor, data)
         selector.accept(visitor, data)
     }

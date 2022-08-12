@@ -32,10 +32,10 @@ internal class FirTryExpressionImpl(
 ) : FirTryExpression() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
         calleeReference.accept(visitor, data)
         tryBlock.accept(visitor, data)
-        catches.forEach { it.accept(visitor, data) }
+        catches.acceptAllElements(visitor, data)
         finallyBlock?.accept(visitor, data)
     }
 

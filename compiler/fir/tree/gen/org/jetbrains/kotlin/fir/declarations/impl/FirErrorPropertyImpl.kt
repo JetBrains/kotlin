@@ -71,9 +71,9 @@ internal class FirErrorPropertyImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
-        contextReceivers.forEach { it.accept(visitor, data) }
+        contextReceivers.acceptAllElements(visitor, data)
         backingField?.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {

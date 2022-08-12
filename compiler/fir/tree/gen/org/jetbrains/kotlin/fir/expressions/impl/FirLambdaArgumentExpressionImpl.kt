@@ -28,7 +28,7 @@ internal class FirLambdaArgumentExpressionImpl(
     override val isSpread: Boolean get() = false
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
         expression.accept(visitor, data)
     }
 

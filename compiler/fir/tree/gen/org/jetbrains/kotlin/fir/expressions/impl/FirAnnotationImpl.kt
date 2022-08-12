@@ -33,7 +33,7 @@ internal class FirAnnotationImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotationTypeRef.accept(visitor, data)
         argumentMapping.accept(visitor, data)
-        typeArguments.forEach { it.accept(visitor, data) }
+        typeArguments.acceptAllElements(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnnotationImpl {

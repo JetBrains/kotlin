@@ -63,12 +63,12 @@ internal class FirErrorFunctionImpl(
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
-        contextReceivers.forEach { it.accept(visitor, data) }
+        contextReceivers.acceptAllElements(visitor, data)
         controlFlowGraphReference?.accept(visitor, data)
-        valueParameters.forEach { it.accept(visitor, data) }
+        valueParameters.acceptAllElements(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {

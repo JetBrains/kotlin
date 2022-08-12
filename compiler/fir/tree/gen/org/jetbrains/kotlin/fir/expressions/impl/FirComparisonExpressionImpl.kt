@@ -31,7 +31,7 @@ internal class FirComparisonExpressionImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
         compareToCall.accept(visitor, data)
     }
 

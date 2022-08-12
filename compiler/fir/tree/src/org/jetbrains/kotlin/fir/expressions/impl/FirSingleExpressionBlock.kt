@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.fir.visitors.transformInplace
-import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.fir.visitors.*
 
 class FirSingleExpressionBlock(
     var statement: FirStatement
@@ -28,7 +25,7 @@ class FirSingleExpressionBlock(
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
         statement.accept(visitor, data)
         typeRef.accept(visitor, data)
     }

@@ -30,7 +30,7 @@ internal class FirStringConcatenationCallImpl(
     override var typeRef: FirTypeRef = FirImplicitStringTypeRef(source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef))
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
         argumentList.accept(visitor, data)
         typeRef.accept(visitor, data)
     }

@@ -30,11 +30,11 @@ internal class FirFunctionTypeRefImpl(
     override val contextReceiverTypeRefs: MutableList<FirTypeRef>,
 ) : FirFunctionTypeRef() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
         receiverTypeRef?.accept(visitor, data)
-        valueParameters.forEach { it.accept(visitor, data) }
+        valueParameters.acceptAllElements(visitor, data)
         returnTypeRef.accept(visitor, data)
-        contextReceiverTypeRefs.forEach { it.accept(visitor, data) }
+        contextReceiverTypeRefs.acceptAllElements(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFunctionTypeRefImpl {

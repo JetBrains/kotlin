@@ -22,7 +22,7 @@ internal class FirRawContractDescriptionImpl(
     override val rawEffects: MutableList<FirExpression>,
 ) : FirRawContractDescription() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        rawEffects.forEach { it.accept(visitor, data) }
+        rawEffects.acceptAllElements(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirRawContractDescriptionImpl {

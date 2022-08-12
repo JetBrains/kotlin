@@ -30,7 +30,7 @@ internal class FirNamedArgumentExpressionImpl(
     override val typeRef: FirTypeRef get() = expression.typeRef
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
         expression.accept(visitor, data)
     }
 

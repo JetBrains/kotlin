@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.acceptAllElements
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
 class FirUserTypeRefImpl(
@@ -25,9 +26,9 @@ class FirUserTypeRefImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         for (part in qualifier) {
-            part.typeArgumentList.typeArguments.forEach { it.accept(visitor, data) }
+            part.typeArgumentList.typeArguments.acceptAllElements(visitor, data)
         }
-        annotations.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirUserTypeRefImpl {

@@ -28,7 +28,7 @@ internal class FirWhenSubjectExpressionImpl(
     override val typeRef: FirTypeRef get() = whenRef.value.subject!!.typeRef
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirWhenSubjectExpressionImpl {

@@ -37,7 +37,7 @@ internal class FirAnnotationCallImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotationTypeRef.accept(visitor, data)
-        typeArguments.forEach { it.accept(visitor, data) }
+        typeArguments.acceptAllElements(visitor, data)
         argumentList.accept(visitor, data)
         calleeReference.accept(visitor, data)
     }

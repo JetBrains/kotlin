@@ -62,14 +62,14 @@ internal class FirConstructorImpl(
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeParameters.forEach { it.accept(visitor, data) }
+        typeParameters.acceptAllElements(visitor, data)
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
-        contextReceivers.forEach { it.accept(visitor, data) }
+        contextReceivers.acceptAllElements(visitor, data)
         controlFlowGraphReference?.accept(visitor, data)
-        valueParameters.forEach { it.accept(visitor, data) }
-        annotations.forEach { it.accept(visitor, data) }
+        valueParameters.acceptAllElements(visitor, data)
+        annotations.acceptAllElements(visitor, data)
         delegatedConstructor?.accept(visitor, data)
         body?.accept(visitor, data)
     }

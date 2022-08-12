@@ -173,7 +173,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                                             }
 
                                             is FieldList -> {
-                                                println("${field.name}.forEach { it.accept(visitor, data) }")
+                                                println("${field.name}.acceptAllElements(visitor, data)")
                                             }
 
                                             else -> throw IllegalStateException()

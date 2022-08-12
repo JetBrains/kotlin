@@ -12,13 +12,14 @@ import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.acceptAllElements
 
 internal class FirArgumentListImpl(
     override val source: KtSourceElement?,
     override val arguments: MutableList<FirExpression>,
 ) : FirArgumentList() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        arguments.forEach { it.accept(visitor, data) }
+        arguments.acceptAllElements(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirArgumentListImpl {

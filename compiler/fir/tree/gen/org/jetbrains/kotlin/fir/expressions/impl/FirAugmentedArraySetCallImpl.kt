@@ -31,7 +31,7 @@ internal class FirAugmentedArraySetCallImpl(
     override val arrayAccessSource: KtSourceElement?,
 ) : FirAugmentedArraySetCall() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
         lhsGetCall.accept(visitor, data)
         rhs.accept(visitor, data)
         calleeReference.accept(visitor, data)

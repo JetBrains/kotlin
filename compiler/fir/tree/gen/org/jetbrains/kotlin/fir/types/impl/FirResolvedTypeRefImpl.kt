@@ -28,7 +28,7 @@ class FirResolvedTypeRefImpl @FirImplementationDetail constructor(
     override val isFromStubType: Boolean,
 ) : FirResolvedTypeRef() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
+        annotations.acceptAllElements(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedTypeRefImpl {
