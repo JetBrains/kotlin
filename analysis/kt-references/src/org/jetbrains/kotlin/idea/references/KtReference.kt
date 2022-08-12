@@ -54,10 +54,8 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
 
     override fun toString() = this::class.java.simpleName + ": " + expression.text
 
-    @Suppress("UNUSED_PARAMETER")
     protected open fun canBeReferenceTo(candidateTarget: PsiElement): Boolean = true
 
-    @Suppress("UNUSED_PARAMETER")
     protected open fun isReferenceToImportAlias(alias: KtImportAlias): Boolean = false
 
     override fun isReferenceTo(candidateTarget: PsiElement): Boolean {

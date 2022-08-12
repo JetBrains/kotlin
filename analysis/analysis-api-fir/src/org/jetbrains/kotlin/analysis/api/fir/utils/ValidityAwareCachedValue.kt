@@ -20,7 +20,6 @@ class ValidityAwareCachedValue<T>(
 ) : ReadOnlyProperty<Any, T> {
     private val lazyValue = lazy(LazyThreadSafetyMode.PUBLICATION, init)
 
-    @Suppress("UNCHECKED_CAST")
     override fun getValue(thisRef: Any, property: KProperty<*>): T {
         token.assertIsValidAndAccessible()
         return lazyValue.value

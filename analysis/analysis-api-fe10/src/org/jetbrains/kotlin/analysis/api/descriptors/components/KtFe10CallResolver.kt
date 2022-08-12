@@ -455,7 +455,7 @@ internal class KtFe10CallResolver(
                 )
             }
         }
-        @Suppress("UNCHECKED_CAST")
+
         return KtSimpleFunctionCall(
             partiallyAppliedSymbol,
             argumentMapping,

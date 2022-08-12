@@ -19,7 +19,7 @@ public class ConcurrentMapBasedCache<K, V>(public val map: ConcurrentMap<K, Any>
 
 public object NullValue
 
-@Suppress("NOTHING_TO_INLINE", "UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST")
 public fun <V> Any.nullValueToNull(): V = when (this) {
     NullValue -> null
     else -> this

@@ -152,7 +152,6 @@ abstract class KtLightMethodImpl protected constructor(
 
     override fun getBody() = null
 
-    @Suppress("DEPRECATION")
     abstract override fun findDeepestSuperMethod(): PsiMethod?
 
     abstract override fun findDeepestSuperMethods(): Array<out PsiMethod>

@@ -42,10 +42,7 @@ class KtFirAnalysisSessionProvider(project: Project) : CachingKtAnalysisSessionP
     override fun createAnalysisSession(
         firResolveSession: LLFirResolveSession,
         token: KtLifetimeToken,
-    ): KtAnalysisSession {
-        @Suppress("DEPRECATION")
-        return KtFirAnalysisSession.createAnalysisSessionByFirResolveSession(firResolveSession, token)
-    }
+    ): KtAnalysisSession = KtFirAnalysisSession.createAnalysisSessionByFirResolveSession(firResolveSession, token)
 }
 
 
