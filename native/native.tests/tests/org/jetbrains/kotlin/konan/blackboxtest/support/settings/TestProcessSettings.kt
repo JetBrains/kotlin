@@ -29,7 +29,7 @@ internal class KotlinNativeTargets(val testTarget: KonanTarget, val hostTarget: 
 internal class KotlinNativeHome(val dir: File) {
     val librariesDir: File = dir.resolve("klib")
     val stdlibFile: File = librariesDir.resolve("common/stdlib")
-
+    val lldbPrettyPrinters: File = dir.resolve("tools/konan_lldb.py")
     val properties: Properties by lazy {
         dir.resolve("konan/konan.properties").inputStream().use { Properties().apply { load(it) } }
     }

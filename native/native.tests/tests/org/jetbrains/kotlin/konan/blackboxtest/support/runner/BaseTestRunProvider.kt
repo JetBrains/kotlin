@@ -29,6 +29,11 @@ internal open class BaseTestRunProvider {
         addIfNotNull(testCase.checks.outputDataFile?.file?.let(TestRunParameter::WithExpectedOutputData))
 
         when (testCase.kind) {
+            TestKind.STANDALONE_LLDB -> {
+                assertTrue(testName == null)
+                add(TestRunParameter.WithLLDB(testCase.extras<NoTestRunnerExtras>().arguments))
+                addIfNotNull(testCase.extras<NoTestRunnerExtras>().inputDataFile?.let(TestRunParameter::WithInputData))
+            }
             TestKind.STANDALONE_NO_TR -> {
                 assertTrue(testName == null)
                 addIfNotNull(testCase.extras<NoTestRunnerExtras>().inputDataFile?.let(TestRunParameter::WithInputData))

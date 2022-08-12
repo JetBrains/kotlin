@@ -105,6 +105,9 @@ internal abstract class AbstractLocalProcessRunner<R>(private val checks: TestRu
                             "Tested process output mismatch. See \"TEST STDOUT\" and \"EXPECTED OUTPUT DATA FILE\" below."
                         }
                     }
+                    is TestRunCheck.OutputMatcher -> {
+                        check.match(runResult.processOutput.stdOut.filteredOutput)
+                    }
                 }
             }
 
