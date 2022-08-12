@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.cli.common.messages
 
+import java.io.File
+
 class GradleStyleMessageRenderer : MessageRenderer {
 
     override fun render(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?): String {
@@ -19,7 +21,8 @@ class GradleStyleMessageRenderer : MessageRenderer {
             append("$prefix: ")
 
             location?.apply {
-                append("file://$path")
+                val fileUri = File(path).toPath().toUri()
+                append("$fileUri")
                 if (line > 0 && column > 0) {
                     append(":$line:$column ")
                 }
