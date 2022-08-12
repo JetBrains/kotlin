@@ -25,6 +25,7 @@ kotlin {
     target {
         browser {
             webpackTask {
+                cssSupport.enabled = true
                 cssSupport {
                     enabled = true
                 }
