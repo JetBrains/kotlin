@@ -2,7 +2,7 @@ public final class A /* A*/ {
   @kotlin.jvm.Transient()
   @kotlin.jvm.Volatile()
   @org.jetbrains.annotations.NotNull()
-  private transient volatile java.lang.String c;
+  private transient volatile java.lang.String c = "" /* initializer type: java.lang.String */;
 
   @kotlin.jvm.Strictfp()
   @kotlin.jvm.Synchronized()

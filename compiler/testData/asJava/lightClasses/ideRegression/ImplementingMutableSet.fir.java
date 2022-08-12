@@ -3,11 +3,11 @@ public final class SmartSet /* SmartSet*/<T>  extends kotlin.collections.Abstrac
   public static final SmartSet.Companion Companion;
 
   @org.jetbrains.annotations.Nullable()
-  private java.lang.Object data;
+  private java.lang.Object data = null /* initializer type: null */;
 
-  private int size;
+  private int size = 0 /* initializer type: int */;
 
-  private static final int ARRAY_THRESHOLD;
+  private static final int ARRAY_THRESHOLD = 5 /* initializer type: int */;
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()

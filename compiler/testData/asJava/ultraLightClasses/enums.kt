@@ -1,3 +1,5 @@
+// IGNORE_FIR
+// Ignored due to KT-53573
 // CHECK_BY_JAVA_FILE
 
 import java.util.function.*

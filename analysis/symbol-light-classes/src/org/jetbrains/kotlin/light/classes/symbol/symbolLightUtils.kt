@@ -265,6 +265,7 @@ private fun KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue.toAnnotation
 
 private fun KtConstantValue.asStringForPsiLiteral(): String =
     when (val value = value) {
+        is Char -> "'$value'"
         is String -> "\"${escapeString(value)}\""
         is Long -> "${value}L"
         is Float -> "${value}f"

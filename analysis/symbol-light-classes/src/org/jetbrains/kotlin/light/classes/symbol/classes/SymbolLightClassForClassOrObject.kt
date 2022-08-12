@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 context(KtAnalysisSession)
-internal abstract class SymbolLightClassForClassOrObject(
+abstract class SymbolLightClassForClassOrObject(
     private val classOrObjectSymbol: KtNamedClassOrObjectSymbol,
     manager: PsiManager
 ) : SymbolLightClassBase(manager),

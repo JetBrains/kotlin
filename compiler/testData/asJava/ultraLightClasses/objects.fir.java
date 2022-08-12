@@ -1,7 +1,7 @@
 public final class C /* C*/ {
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
-  private static java.lang.String x;
+  private static java.lang.String x = "" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
   private static java.lang.String c1;
@@ -96,7 +96,7 @@ public static final class Companion /* I.Companion*/ {
 public final class Obj /* Obj*/ implements java.lang.Runnable {
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
-  private static java.lang.String x;
+  private static java.lang.String x = "" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
   public static final Obj INSTANCE;

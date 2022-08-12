@@ -117,8 +117,6 @@ internal class SymbolLightFieldForProperty(
 
     private val _initializer by lazyPub {
         if (propertySymbol !is KtKotlinPropertySymbol) return@lazyPub null
-        if (!propertySymbol.isConst) return@lazyPub null
-        if (!propertySymbol.isVal) return@lazyPub null
         val constInitializer = propertySymbol.initializer as? KtConstantInitializerValue ?: return@lazyPub null
         (constInitializer.constant as? KtConstantValue)?.createPsiLiteral(this)
     }

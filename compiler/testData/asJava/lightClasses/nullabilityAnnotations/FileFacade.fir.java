@@ -71,8 +71,7 @@ public final class FileFacadeKt /* FileFacadeKt*/ {
   @org.jetbrains.annotations.Nullable()
   public static final void setNotNullVarWithGetSet(@org.jetbrains.annotations.NotNull() java.lang.String);//  setNotNullVarWithGetSet(java.lang.String)
 
-  @org.jetbrains.annotations.Nullable()
-  static final java.lang.String privateFun(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() java.lang.String);//  privateFun(java.lang.String, java.lang.String)
+  private static final java.lang.String privateFun(java.lang.String, java.lang.String);//  privateFun(java.lang.String, java.lang.String)
 
   public static final void setNotNullVar(@org.jetbrains.annotations.NotNull() java.lang.String);//  setNotNullVar(java.lang.String)
 

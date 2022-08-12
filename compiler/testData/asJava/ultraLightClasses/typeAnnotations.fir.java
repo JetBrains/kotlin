@@ -48,9 +48,9 @@ public final class Y /* Y*/ {
 
 public final class klass /* klass*/ {
   @org.jetbrains.annotations.Nullable()
-  private final java.util.List<java.lang.Integer> y;
+  private final java.util.List<java.lang.Integer> y = null /* initializer type: null */;
 
-  private final int x;
+  private final int x = 2 /* initializer type: int */;
 
   @org.jetbrains.annotations.NotNull()
   public final X annotatedMethod(@org.jetbrains.annotations.NotNull() P<X, P<X, Y>>, @org.jetbrains.annotations.NotNull() Y[]);//  annotatedMethod(P<X, P<X, Y>>, Y[])

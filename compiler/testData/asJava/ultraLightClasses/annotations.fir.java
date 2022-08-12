@@ -89,7 +89,7 @@ public abstract @interface Ann /* Ann*/ {
 public final class F /* F*/ implements java.lang.Runnable {
   @Anno(p = "p")
   @org.jetbrains.annotations.NotNull()
-  private java.lang.String prop;
+  private java.lang.String prop = "x" /* initializer type: java.lang.String */;
 
   @Anno(p = "f")
   public final void f(@Anno() @org.jetbrains.annotations.NotNull() java.lang.String);//  f(java.lang.String)
@@ -105,7 +105,7 @@ public final class F /* F*/ implements java.lang.Runnable {
 
 public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.Nullable()
-  private java.lang.String x;
+  private java.lang.String x = null /* initializer type: null */;
 
   @Anno()
   public  Foo(error.NonExistentClass);//  .ctor(error.NonExistentClass)
