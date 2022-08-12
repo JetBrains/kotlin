@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.backend.common.IrWhenUtils
 import org.jetbrains.kotlin.backend.wasm.WasmSymbols
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.isElseBranch
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.wasm.ir.*
 
 private class ExtractedWhenCondition<T>(val condition: IrCall, val const: IrConst<T>)
@@ -58,7 +58,7 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(expression: IrWhen, symbols:
     if (minValue == maxValue) return false
 
     val selectorLocal = context.referenceLocal(SyntheticLocalType.TABLE_SWITCH_SELECTOR)
-    subject.accept(this, null)
+    generateExpression(subject)
     body.buildSetLocal(selectorLocal)
 
     val resultType = context.transformBlockResultType(expression.type)
@@ -71,7 +71,7 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(expression: IrWhen, symbols:
                 intBranches = intBranches,
                 elseExpression = elseExpression,
                 resultType = resultType,
-                nothingType = symbols.irBuiltIns.nothingType
+                expectedType = expression.type,
             )
         } else {
             createBinaryTable(selectorLocal, intBranches)
@@ -83,7 +83,7 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(expression: IrWhen, symbols:
                 elseExpression = elseExpression,
                 shift = 0,
                 brTable = intBranches.indices.toList(),
-                nothingType = symbols.irBuiltIns.nothingType
+                expectedType = expression.type,
             )
         }
     } else {
@@ -100,17 +100,10 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(expression: IrWhen, symbols:
             elseExpression = elseExpression,
             shift = minValue,
             brTable = brTable,
-            nothingType = symbols.irBuiltIns.nothingType
+            expectedType = expression.type,
         )
     }
     return true
-}
-
-private fun IrExpression.safeAccept(bodyGenerator: BodyGenerator, nothingType: IrType) {
-    acceptVoid(bodyGenerator)
-    if (type == nothingType) {
-        bodyGenerator.body.buildUnreachable()
-    }
 }
 
 /**
@@ -202,7 +195,7 @@ private fun BodyGenerator.createBinaryTable(
     intBranches: List<ExtractedWhenBranch<Int>>,
     elseExpression: IrExpression?,
     resultType: WasmType?,
-    nothingType: IrType,
+    expectedType: IrType,
 ) {
     val sortedCaseToBranchIndex = mutableListOf<Pair<Int, IrExpression>>()
     intBranches.mapTo(sortedCaseToBranchIndex) { branch -> branch.conditions[0].const.value to branch.expression }
@@ -210,26 +203,31 @@ private fun BodyGenerator.createBinaryTable(
 
     body.buildBlock("when_block", resultType) { currentBlock ->
         val thenBody = { result: IrExpression ->
-            result.safeAccept(this, nothingType)
+            generateWithExpectedType(result, expectedType)
             body.buildBr(currentBlock)
-        }
-        val elseBody: () -> Unit = {
-            resultType?.let { generateDefaultInitializerForType(it, body) }
         }
         createBinaryTable(
             selectorLocal = selectorLocal,
-            resultType = resultType,
+            resultType = null,
             sortedCases = sortedCaseToBranchIndex,
             fromIncl = 0,
             toExcl = sortedCaseToBranchIndex.size,
             thenBody = thenBody,
-            elseBody = elseBody
+            elseBody = { }
         )
 
-        if (resultType != null) {
-            body.buildDrop()
+        if (elseExpression != null) {
+            generateWithExpectedType(elseExpression, expectedType)
+        } else {
+            // default else block
+            if (resultType != null) {
+                if (expectedType.isUnit()) {
+                    body.buildGetUnit()
+                } else {
+                    body.buildUnreachable()
+                }
+            }
         }
-        elseExpression?.safeAccept(this, nothingType)
     }
 }
 
@@ -299,7 +297,7 @@ private fun BodyGenerator.genTableIntSwitch(
     elseExpression: IrExpression?,
     shift: Int,
     brTable: List<Int>,
-    nothingType: IrType,
+    expectedType: IrType,
 ) {
     val baseBlockIndex = body.numberOfNestedBlocks
     //expressions + else branch + br_table
@@ -324,16 +322,18 @@ private fun BodyGenerator.genTableIntSwitch(
         if (resultType != null) {
             body.buildDrop()
         }
-        expression.expression.safeAccept(this, nothingType)
+        generateWithExpectedType(expression.expression, expectedType)
 
         body.buildBr(baseBlockIndex + 1)
         body.buildEnd()
     }
 
-    if (resultType != null) {
-        body.buildDrop()
+    if (elseExpression != null) {
+        if (resultType != null) {
+            body.buildDrop()
+        }
+        generateWithExpectedType(elseExpression, expectedType)
     }
-    elseExpression?.safeAccept(this, nothingType)
 
     body.buildEnd()
     check(baseBlockIndex == body.numberOfNestedBlocks)

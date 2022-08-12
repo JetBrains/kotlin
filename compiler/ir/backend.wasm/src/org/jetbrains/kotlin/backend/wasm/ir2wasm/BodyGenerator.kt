@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalUnsignedTypes::class)
-
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.common.ir.returnType
@@ -21,6 +19,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -30,7 +29,8 @@ import org.jetbrains.kotlin.wasm.ir.*
 
 class BodyGenerator(
     val context: WasmFunctionCodegenContext,
-    private val hierarchyDisjointUnions: DisjointUnions<IrClassSymbol>
+    private val hierarchyDisjointUnions: DisjointUnions<IrClassSymbol>,
+    private val isGetUnitFunction: Boolean,
 ) : IrElementVisitorVoid {
     val body: WasmExpressionBuilder = context.bodyGen
 
@@ -45,12 +45,12 @@ class BodyGenerator(
     }
 
     // Generates code for the given IR element. Leaves something on the stack unless expression was of the type Void.
-    private fun generateExpression(elem: IrElement) {
+    internal fun generateExpression(elem: IrElement) {
         assert(elem is IrExpression || elem is IrVariable) { "Unsupported statement kind" }
 
         elem.acceptVoid(this)
 
-        if (elem is IrExpression && elem.type == irBuiltIns.nothingType) {
+        if (elem is IrExpression && elem.type.isNothing()) {
             body.buildUnreachable()
         }
     }
@@ -296,7 +296,7 @@ class BodyGenerator(
         }
 
         if (tryToGenerateIntrinsicCall(call, function)) {
-            if (function.returnType == irBuiltIns.unitType)
+            if (function.returnType.isUnit())
                 body.buildGetUnit()
             return
         }
@@ -346,7 +346,7 @@ class BodyGenerator(
         }
 
         // Unit types don't cross function boundaries
-        if (function.returnType == irBuiltIns.unitType)
+        if (function.returnType.isUnit())
             body.buildGetUnit()
     }
 
@@ -498,21 +498,36 @@ class BodyGenerator(
         val statements = expression.statements
 
         if (statements.isEmpty()) {
-            if (expression.type == irBuiltIns.unitType)
+            if (expression.type == irBuiltIns.unitType) {
                 body.buildGetUnit()
+            }
             return
         }
 
-        statements.dropLast(1).forEach {
-            generateStatement(it)
+        if (expression is IrReturnableBlock) {
+            context.defineNonLocalReturnLevel(
+                expression.symbol,
+                body.buildBlock(context.transformBlockResultType(expression.type))
+            )
         }
 
-        generateExpression(statements.last())
+        statements.forEachIndexed { i, statement ->
+            if (i != statements.lastIndex) {
+                generateStatement(statement)
+            } else {
+                if (statement is IrExpression) {
+                    generateWithExpectedType(statement, expression.type)
+                } else {
+                    generateStatement(statement)
+                    if (expression.type != wasmSymbols.voidType) {
+                        body.buildGetUnit()
+                    }
+                }
+            }
+        }
 
-        // This handles cases where the last statement of a block is declaration which doesn't produce any value,
-        // but the block itself marked with the unit type.
-        if (statements.last() !is IrExpression && expression.type != wasmSymbols.voidType) {
-            body.buildGetUnit()
+        if (expression is IrReturnableBlock) {
+            body.buildEnd()
         }
     }
 
@@ -526,13 +541,16 @@ class BodyGenerator(
         body.buildBr(context.referenceLoopLevel(jump.loop, LoopLabelType.CONTINUE))
     }
 
-    override fun visitReturn(expression: IrReturn) {
-        if (expression.returnTargetSymbol.owner.returnType(backendContext) == irBuiltIns.unitType &&
-            expression.returnTargetSymbol.owner != unitGetInstance
-        ) {
+    private fun visitFunctionReturn(expression: IrReturn) {
+        val returnType = expression.returnTargetSymbol.owner.returnType(backendContext)
+        if (returnType == irBuiltIns.unitType && expression.returnTargetSymbol.owner != unitGetInstance) {
             generateStatement(expression.value)
         } else {
-            generateExpression(expression.value)
+            if (isGetUnitFunction) {
+                generateExpression(expression.value)
+            } else {
+                generateWithExpectedType(expression.value, returnType)
+            }
         }
 
         if (context.irFunction is IrConstructor) {
@@ -540,6 +558,88 @@ class BodyGenerator(
         }
 
         body.buildInstr(WasmOp.RETURN)
+    }
+
+    internal fun generateWithExpectedType(expression: IrExpression, expectedType: IrType) {
+        val actualType = expression.type
+
+        if (expectedType == wasmSymbols.voidType) {
+            generateStatement(expression)
+            return
+        }
+
+        if (expectedType.isUnit() && !actualType.isUnit()) {
+            generateStatement(expression)
+            body.buildGetUnit()
+            return
+        }
+
+        generateExpression(expression)
+        recoverToExpectedType(actualType = actualType, expectedType = expectedType)
+    }
+
+    //TODO: This method needed because of IR has type inconsistency. We need to discover why is it and fix
+    private fun recoverToExpectedType(actualType: IrType, expectedType: IrType) {
+        // TYPE -> NOTHING -> FALSE
+        if (expectedType.isNothing()) {
+            body.buildUnreachable()
+            return
+        }
+
+        // NOTHING -> TYPE -> TRUE
+        if (actualType.isNothing()) return
+
+        // NOTHING? -> TYPE? -> TRUE
+        if (actualType.isNullableNothing() && expectedType.isNullable()) return
+
+        val expectedClassErased = expectedType.getRuntimeClass(irBuiltIns)
+
+        // TYPE -> EXTERNAL -> TRUE
+        if (expectedClassErased.isExternal) return
+
+        val actualClassErased = actualType.getRuntimeClass(irBuiltIns)
+        val expectedTypeErased = expectedClassErased.defaultType
+        val actualTypeErased = actualClassErased.defaultType
+
+        // TYPE -> TYPE -> TRUE
+        if (expectedTypeErased == actualTypeErased) return
+
+        // NOT_NOTHING_TYPE -> NOTHING -> FALSE
+        if (expectedTypeErased.isNothing() && !actualTypeErased.isNothing()) {
+            body.buildUnreachable()
+            return
+        }
+
+        // TYPE -> BASE -> TRUE
+        if (actualClassErased.isSubclassOf(expectedClassErased)) {
+            return
+        }
+
+        val expectedIsPrimitive = expectedTypeErased.isPrimitiveType()
+        val actualIsPrimitive = actualTypeErased.isPrimitiveType()
+
+        // PRIMITIVE -> REF -> FALSE
+        // REF -> PRIMITIVE -> FALSE
+        if (expectedIsPrimitive != actualIsPrimitive) {
+            body.buildUnreachable()
+            return
+        }
+
+        // REF -> REF -> REF_CAST
+        if (!expectedIsPrimitive) {
+            generateRefCast(actualTypeErased, expectedTypeErased)
+        }
+    }
+
+    override fun visitReturn(expression: IrReturn) {
+        val nonLocalReturnSymbol = expression.returnTargetSymbol as? IrReturnableBlockSymbol
+        if (nonLocalReturnSymbol != null) {
+            generateWithExpectedType(expression.value, nonLocalReturnSymbol.owner.type)
+            body.buildBr(context.referenceNonLocalReturnLevel(nonLocalReturnSymbol))
+            body.buildUnreachable()
+        } else {
+            visitFunctionReturn(expression)
+        }
     }
 
     override fun visitWhen(expression: IrWhen) {
@@ -555,17 +655,11 @@ class BodyGenerator(
             if (!isElseBranch(branch)) {
                 generateExpression(branch.condition)
                 body.buildIf(null, resultType)
-                generateExpression(branch.result)
-                if (expression.type == irBuiltIns.nothingType) {
-                    body.buildUnreachable()
-                }
+                generateWithExpectedType(branch.result, expression.type)
                 body.buildElse()
                 ifCount++
             } else {
-                generateExpression(branch.result)
-                if (expression.type == irBuiltIns.nothingType) {
-                    body.buildUnreachable()
-                }
+                generateWithExpectedType(branch.result, expression.type)
                 seenElse = true
                 break
             }
@@ -575,7 +669,15 @@ class BodyGenerator(
         // If it's not exhaustive it must be used as a statement (per kotlin spec) and so the result value of the last else will never be used.
         if (!seenElse && resultType != null) {
             assert(expression.type != irBuiltIns.nothingType)
-            generateDefaultInitializerForType(resultType, body)
+            if (expression.type.isUnit()) {
+                if (isGetUnitFunction) {
+                    generateDefaultInitializerForType(resultType, body)
+                } else {
+                    body.buildGetUnit()
+                }
+            } else {
+                body.buildUnreachable()
+            }
         }
 
         repeat(ifCount) { body.buildEnd() }
