@@ -94,5 +94,4 @@ enum class YarnLockMismatchReport {
     NONE,
     WARNING,
     FAIL,
-    FAIL_AFTER_BUILD,
 }
