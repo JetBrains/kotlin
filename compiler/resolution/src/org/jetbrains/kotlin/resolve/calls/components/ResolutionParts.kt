@@ -900,6 +900,9 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionPart() {
                     markCandidateForCompatibilityResolve(needToReportWarning = false)
                     continue
                 }
+                (variableWithConstraints.typeVariable as? TypeVariableFromCallableDescriptor)?.originalTypeParameter?.let { parameter ->
+                    resolvedCall.typeArgumentMappingByOriginal.getTypeArgument(parameter)
+                } is SimpleTypeArgument -> continue
                 else -> {
                     val emptyIntersectionTypeInfo = constraintSystem.getEmptyIntersectionTypeKind(upperTypes) ?: continue
                     val isInferredEmptyIntersectionForbidden = callComponents.languageVersionSettings.supportsFeature(

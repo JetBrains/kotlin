@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVari
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.hasBuilderInferenceAnnotation
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.inference.isSubtypeConstraintCompatible
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -572,7 +574,13 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
                     continue
 
                 val emptyIntersectionTypeInfo = candidate.system.getEmptyIntersectionTypeKind(upperTypes) ?: continue
-
+                if (variableWithConstraints.constraints.any {
+                        it.kind == ConstraintKind.EQUALITY &&
+                                it.position.initialConstraint.position is ConeExplicitTypeParameterConstraintPosition
+                    }
+                ) {
+                    return
+                }
                 sink.yieldDiagnostic(
                     @Suppress("UNCHECKED_CAST")
                     InferredEmptyIntersectionDiagnostic(
