@@ -12,8 +12,8 @@ public final class SimpleFunctionsKt /* SimpleFunctionsKt*/ {
 
   public static final int bar4();//  bar4()
 
-  public static final void bar2(error.NonExistentClass, error.NonExistentClass);//  bar2(error.NonExistentClass, error.NonExistentClass)
+  public static final void bar(int, @org.jetbrains.annotations.NotNull() java.lang.Object, error.NonExistentClass);//  bar(int, java.lang.Object, error.NonExistentClass)
 
-  public static void bar(int, @org.jetbrains.annotations.NotNull() java.lang.Object, error.NonExistentClass);//  bar(int, java.lang.Object, error.NonExistentClass)
+  public static final void bar2(error.NonExistentClass, error.NonExistentClass);//  bar2(error.NonExistentClass, error.NonExistentClass)
 
 }

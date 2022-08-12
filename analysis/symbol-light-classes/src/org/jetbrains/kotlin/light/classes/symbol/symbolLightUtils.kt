@@ -90,6 +90,13 @@ internal fun KtSymbolWithModality.computeModalityForMethod(
     }
     if (isTopLevel) {
         result.add(PsiModifier.STATIC)
+        val needFinalModifier = when (this) {
+            is KtPropertySymbol -> isDelegatedProperty || isVal
+            else -> true
+        }
+        if (needFinalModifier) {
+            result.add(PsiModifier.FINAL)
+        }
     }
 }
 
