@@ -1,0 +1,5 @@
+> b main.kt:5
+> r
+> fr var xs
+(ObjHeader *) xs = [..., ..., ...]
+> q

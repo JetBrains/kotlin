@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.Executable
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Success
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeHome
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.DumpedTestListing
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.LldbSessionSpecification
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.startsWith
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
@@ -94,6 +97,13 @@ internal sealed interface TestRunParameter {
 
     class WithInputData(val inputDataFile: File) : TestRunParameter {
         override fun applyTo(programArgs: MutableList<String>) = Unit
+    }
+
+    class WithLLDB(val commands: List<String>) : TestRunParameter {
+        override fun applyTo(programArgs: MutableList<String>) {
+            programArgs.add(0, "lldb")
+            programArgs.addAll(commands)
+        }
     }
 
     // Currently, used only for logging the data.

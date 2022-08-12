@@ -1,0 +1,7 @@
+> b main.kt:10
+> r
+> fr var
+(ObjHeader *) args = []
+(ObjHeader *) xs = [..., ..., ...]
+(ObjHeader *) ys = [..., ...]
+> q
