@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.project.model.coreCases
 import org.jetbrains.kotlin.project.model.infra.KpmTestCase
 import org.jetbrains.kotlin.project.model.testDsl.*
 
-object SimpleProjectToProject : org.jetbrains.kotlin.project.model.coreCases.KpmTestCaseDescriptor {
+object SimpleProjectToProject : KpmTestCaseDescriptor {
     override fun KpmTestCase.describeCase() {
         allModules {
             jvm()
