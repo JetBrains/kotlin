@@ -1064,6 +1064,142 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: [
+    kotlin/SinceKotlin(version = "1.7")
+      psi: null
+    kotlin/ExperimentalStdlibApi()
+      psi: null
+  ]
+  callableIdIfNonLocal: kotlin/Int.rangeUntil
+  contextReceivers: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: rangeUntil
+  origin: LIBRARY
+  receiverType: null
+  returnType: kotlin/ranges/IntRange
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol(other)
+  ]
+  visibility: Public
+  getDispatchReceiver(): kotlin/Int
+  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: [
+    kotlin/SinceKotlin(version = "1.7")
+      psi: null
+    kotlin/ExperimentalStdlibApi()
+      psi: null
+  ]
+  callableIdIfNonLocal: kotlin/Int.rangeUntil
+  contextReceivers: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: rangeUntil
+  origin: LIBRARY
+  receiverType: null
+  returnType: kotlin/ranges/IntRange
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol(other)
+  ]
+  visibility: Public
+  getDispatchReceiver(): kotlin/Int
+  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: [
+    kotlin/SinceKotlin(version = "1.7")
+      psi: null
+    kotlin/ExperimentalStdlibApi()
+      psi: null
+  ]
+  callableIdIfNonLocal: kotlin/Int.rangeUntil
+  contextReceivers: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: rangeUntil
+  origin: LIBRARY
+  receiverType: null
+  returnType: kotlin/ranges/LongRange
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol(other)
+  ]
+  visibility: Public
+  getDispatchReceiver(): kotlin/Int
+  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: [
+    kotlin/SinceKotlin(version = "1.7")
+      psi: null
+    kotlin/ExperimentalStdlibApi()
+      psi: null
+  ]
+  callableIdIfNonLocal: kotlin/Int.rangeUntil
+  contextReceivers: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: rangeUntil
+  origin: LIBRARY
+  receiverType: null
+  returnType: kotlin/ranges/IntRange
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol(other)
+  ]
+  visibility: Public
+  getDispatchReceiver(): kotlin/Int
+  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: [
     kotlin/SinceKotlin(version = "1.1")
       psi: null
     kotlin/internal/IntrinsicConstEvaluation()
