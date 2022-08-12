@@ -45,6 +45,8 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0-RC")
 
     testRuntimeOnly(intellijCore())
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":core:descriptors.runtime"))
 }
 
 sourceSets {
