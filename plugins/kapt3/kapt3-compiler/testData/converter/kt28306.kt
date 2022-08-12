@@ -1,3 +1,4 @@
+// FIR_BLOCKED: LC don't support DefaultImpls
 // CORRECT_ERROR_TYPES
 
 package foo

@@ -1,3 +1,4 @@
+// FIR_BLOCKED: DefaultImpls, named companions
 class Test {
     class Nested {
         class NestedNested

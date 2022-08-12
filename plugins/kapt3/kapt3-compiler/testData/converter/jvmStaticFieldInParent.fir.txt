@@ -1,0 +1,37 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class Test {
+    @org.jetbrains.annotations.NotNull()
+    public static final Test.A A = null;
+    @org.jetbrains.annotations.NotNull()
+    @kotlin.jvm.JvmStatic()
+    public static final java.lang.String test = "";
+
+    public Test() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static java.lang.String getTest() {
+        return null;
+    }
+
+    @kotlin.Metadata()
+    public static final class A {
+
+        private A() {
+            super();
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String getTest() {
+            return null;
+        }
+
+        @kotlin.jvm.JvmStatic()
+        @java.lang.Deprecated()
+        public static void getTest$annotations() {
+        }
+    }
+}

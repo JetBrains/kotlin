@@ -28,6 +28,8 @@ object KaptTestDirectives : SimpleDirectivesContainer() {
     val NON_EXISTENT_CLASS by directive("TODO")
     val NO_VALIDATION by directive("TODO")
     val EXPECTED_ERROR by stringDirective("TODO()", multiLine = true)
+    val EXPECTED_ERROR_K1 by stringDirective("TODO()", multiLine = true)
+    val EXPECTED_ERROR_K2 by stringDirective("TODO()", multiLine = true)
 
     val flagDirectives = listOf(
         SHOW_PROCESSOR_STATS, VERBOSE, INFO_AS_WARNINGS, USE_LIGHT_ANALYSIS, CORRECT_ERROR_TYPES,

@@ -62,6 +62,7 @@ dependencies {
     testApi(projectTests(":plugins:parcelize:parcelize-compiler"))
     testApi(projectTests(":kotlin-annotation-processing"))
     testApi(projectTests(":kotlin-annotation-processing-cli"))
+    testApi(projectTests(":plugins:kapt4:kapt4-compiler"))
     testApi(projectTests(":kotlin-allopen-compiler-plugin"))
     testApi(projectTests(":kotlin-noarg-compiler-plugin"))
     testApi(projectTests(":kotlin-lombok-compiler-plugin"))

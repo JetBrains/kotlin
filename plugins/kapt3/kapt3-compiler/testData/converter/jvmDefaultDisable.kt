@@ -1,3 +1,4 @@
+// FIR_BLOCKED: LC don't support DefaultImpls
 // !JVM_DEFAULT_MODE: disable
 // EXPECTED_ERROR: (kotlin:20:5) modifier private not allowed here
 

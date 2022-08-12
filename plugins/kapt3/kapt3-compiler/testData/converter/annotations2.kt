@@ -1,3 +1,4 @@
+// FIR_ALMOST_DONE
 @file:kotlin.jvm.JvmName("AnnotationsTest")
 package test
 

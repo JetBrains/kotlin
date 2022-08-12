@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractFakeOverride
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
 import org.jetbrains.kotlin.resolve.calls.util.isOrOverridesSynthesized
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeCheckerImpl
@@ -75,6 +76,7 @@ class OverrideResolver(
 
         checkInheritedAndDelegatedSignatures(classDescriptor, inheritedMemberErrors, inheritedMemberErrors, kotlinTypeRefiner)
         inheritedMemberErrors.doReportErrors()
+        classDescriptor.getSuperClassOrAny()
     }
 
     private interface CheckInheritedSignaturesReportStrategy {

@@ -97,6 +97,8 @@ class KtSourceModuleByCompilerConfiguration(
 ) : KtModuleByCompilerConfiguration(project, testModule, psiFiles, testServices), KtSourceModule {
     override val ktModule: KtModule get() = this
 
+    override val ktFiles: List<KtFile>
+        get() = TODO("Not yet implemented")
     override val contentScope: GlobalSearchScope =
         TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, psiFiles.filterIsInstance<KtFile>())
 }

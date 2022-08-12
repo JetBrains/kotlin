@@ -1,3 +1,4 @@
+// FIR_BLOCKED: LC don't support illegal java identifiers
 class `:)` {
     lateinit val f: String
 }

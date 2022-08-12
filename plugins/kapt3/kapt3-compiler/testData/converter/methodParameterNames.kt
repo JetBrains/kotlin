@@ -1,3 +1,4 @@
+// FIR_BLOCKED: LC don't support DefaultImpls
 interface Intf {
     fun foo(abc: String)
 

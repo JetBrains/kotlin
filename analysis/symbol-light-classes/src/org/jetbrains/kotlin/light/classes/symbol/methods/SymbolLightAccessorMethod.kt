@@ -44,11 +44,11 @@ internal class SymbolLightAccessorMethod private constructor(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
-    private val isGetter: Boolean,
+    internal val isGetter: Boolean,
     private val propertyAccessorDeclaration: KtPropertyAccessor?,
     private val propertyAccessorSymbolPointer: KtSymbolPointer<KtPropertyAccessorSymbol>,
     private val containingPropertyDeclaration: KtCallableDeclaration?,
-    private val containingPropertySymbolPointer: KtSymbolPointer<KtPropertySymbol>,
+    internal val containingPropertySymbolPointer: KtSymbolPointer<KtPropertySymbol>,
     private val isTopLevel: Boolean,
     private val suppressStatic: Boolean,
 ) : SymbolLightMethodBase(

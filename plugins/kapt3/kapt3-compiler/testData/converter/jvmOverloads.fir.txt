@@ -1,0 +1,88 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class State {
+    private final int someInt = 0;
+    private final long someLong = 0L;
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String someString = null;
+
+    @kotlin.jvm.JvmOverloads()
+    public State(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
+    java.lang.String someString) {
+        super();
+    }
+
+    public final int getSomeInt() {
+        return 0;
+    }
+
+    public final long getSomeLong() {
+        return 0L;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getSomeString() {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    public State(int someInt, long someLong) {
+        super();
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class State2 {
+    @kotlin.jvm.JvmField()
+    public final int someInt = 0;
+    @kotlin.jvm.JvmField()
+    public final long someLong = 0L;
+    @org.jetbrains.annotations.NotNull()
+    @kotlin.jvm.JvmField()
+    public final java.lang.String someString = null;
+
+    @kotlin.jvm.JvmOverloads()
+    public State2(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
+    java.lang.String someString) {
+        super();
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    public final int test(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
+    java.lang.String someString) {
+        return 0;
+    }
+
+    public final void someMethod(@org.jetbrains.annotations.NotNull()
+    java.lang.String str) {
+    }
+
+    public final void methodWithoutArgs() {
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    public State2(int someInt) {
+        super();
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    public State2(int someInt, long someLong) {
+        super();
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    public final int test(int someInt) {
+        return 0;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    public final int test(int someInt, long someLong) {
+        return 0;
+    }
+}

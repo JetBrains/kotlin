@@ -1,3 +1,4 @@
+// FIR_ALMOST_DONE
 enum class Enum1 {
     BLACK, WHITE
 }

@@ -1,3 +1,5 @@
+// FIR_ALMOST_DONE
+
 annotation class Anno1
 enum class Colors { WHITE, BLACK }
 annotation class Anno2(

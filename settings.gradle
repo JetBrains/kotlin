@@ -217,7 +217,9 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":kotlin-annotation-processing-runtime",
         ":kotlin-annotation-processing-gradle",
         ":kotlin-annotation-processing-embeddable",
-        ":kotlin-daemon-embeddable",
+        ":plugins:kapt4:kapt4-compiler"
+
+include ":kotlin-daemon-embeddable",
         ":examples:kotlin-jsr223-local-example",
         ":examples:kotlin-jsr223-daemon-local-eval-example",
         ":kotlin-annotations-jvm",

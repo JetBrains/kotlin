@@ -1,3 +1,5 @@
+// FIR_ALMOST_DONE
+
 annotation class Anno
 
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.CLASS)

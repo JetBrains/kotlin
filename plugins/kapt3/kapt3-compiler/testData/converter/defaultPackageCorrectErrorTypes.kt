@@ -1,3 +1,5 @@
+// FIR_ALMOST_DONE
+//   there is a problem with psi resolve of type in annotation member value
 // CORRECT_ERROR_TYPES
 // STRICT
 

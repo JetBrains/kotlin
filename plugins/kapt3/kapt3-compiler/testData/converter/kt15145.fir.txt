@@ -1,0 +1,7 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+public abstract interface MyInterface {
+
+    public abstract void someFun();
+}

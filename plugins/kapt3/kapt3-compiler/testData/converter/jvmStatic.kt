@@ -1,3 +1,5 @@
+// FIR_ALMOST_DONE
+
 class JvmStaticTest {
     companion object {
         @JvmStatic

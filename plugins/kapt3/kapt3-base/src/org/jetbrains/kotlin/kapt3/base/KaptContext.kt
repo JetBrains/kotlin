@@ -9,6 +9,7 @@ import com.sun.tools.javac.jvm.ClassReader
 import com.sun.tools.javac.main.JavaCompiler
 import com.sun.tools.javac.main.Option
 import com.sun.tools.javac.util.Context
+import com.sun.tools.javac.util.JCDiagnostic
 import com.sun.tools.javac.util.Log
 import com.sun.tools.javac.util.Options
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
