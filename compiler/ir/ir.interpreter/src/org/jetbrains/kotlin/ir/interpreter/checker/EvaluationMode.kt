@@ -48,7 +48,7 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
     },
 
     ONLY_BUILTINS(mustCheckBody = false) {
-        private val forbiddenMethodsOnPrimitives = setOf("inc", "dec", "rangeTo", "hashCode")
+        private val forbiddenMethodsOnPrimitives = setOf("inc", "dec", "rangeTo", "rangeUntil", "hashCode")
         private val forbiddenMethodsOnStrings = setOf("subSequence", "hashCode", "<init>")
         private val allowedExtensionFunctions = setOf("kotlin.floorDiv", "kotlin.mod", "kotlin.NumbersKt.floorDiv", "kotlin.NumbersKt.mod")
 
