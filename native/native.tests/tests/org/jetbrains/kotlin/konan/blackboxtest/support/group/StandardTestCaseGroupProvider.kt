@@ -200,6 +200,12 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             fixPackageNames(testModules.values, nominalPackageName, testDataFile)
         }
 
+        val lldbSpec = if (testKind == TestKind.STANDALONE_LLDB) parseLLDBSpec(
+            baseDir = testDataFile.parentFile,
+            registeredDirectives,
+            location
+        ) else null
+
         val testCase = TestCase(
             id = TestCaseId.TestDataFile(testDataFile),
             kind = testKind,
@@ -209,15 +215,26 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             checks = TestRunChecks(
                 computeExecutionTimeoutCheck(settings, expectedTimeoutFailure),
                 computeExitCodeCheck(testKind, registeredDirectives, location),
-                computeOutputDataFileCheck(testDataFile, registeredDirectives, location)
+                computeOutputDataFileCheck(testDataFile, registeredDirectives, location),
+                lldbSpec?.let { OutputMatcher(it::matchOutput) }
             ),
-            extras = if (testKind == TestKind.STANDALONE_NO_TR)
-                NoTestRunnerExtras(
-                    entryPoint = parseEntryPoint(registeredDirectives, location),
-                    inputDataFile = parseInputDataFile(baseDir = testDataFile.parentFile, registeredDirectives, location)
-                )
-            else
-                WithTestRunnerExtras(runnerType = parseTestRunner(registeredDirectives, location))
+            extras = when (testKind) {
+                TestKind.STANDALONE_NO_TR -> {
+                    NoTestRunnerExtras(
+                        entryPoint = parseEntryPoint(registeredDirectives, location),
+                        inputDataFile = parseInputDataFile(baseDir = testDataFile.parentFile, registeredDirectives, location)
+                    )
+                }
+                TestKind.REGULAR, TestKind.STANDALONE -> {
+                    WithTestRunnerExtras(runnerType = parseTestRunner(registeredDirectives, location))
+                }
+                TestKind.STANDALONE_LLDB -> {
+                    NoTestRunnerExtras(
+                        entryPoint = parseEntryPoint(registeredDirectives, location),
+                        arguments = lldbSpec!!.generateCLIArguments(settings.get<KotlinNativeHome>().lldbPrettyPrinters)
+                    )
+                }
+            }
         )
         testCase.initialize(findSharedModule = null)
 

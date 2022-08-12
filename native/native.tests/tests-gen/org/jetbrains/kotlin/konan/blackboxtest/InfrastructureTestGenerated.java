@@ -121,6 +121,12 @@ public class InfrastructureTestGenerated extends AbstractNativeBlackBoxTest {
         }
 
         @Test
+        @TestMetadata("standalone_lldb_stepping.kt")
+        public void testStandalone_lldb_stepping() throws Exception {
+            runTest("native/native.tests/testData/samples/standalone_lldb_stepping.kt");
+        }
+
+        @Test
         @TestMetadata("standalone_multifile.kt")
         public void testStandalone_multifile() throws Exception {
             runTest("native/native.tests/testData/samples/standalone_multifile.kt");

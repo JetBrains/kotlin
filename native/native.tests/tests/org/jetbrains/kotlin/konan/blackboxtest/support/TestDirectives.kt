@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.INPUT_DATA
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.KIND
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.OUTPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.EXPECTED_TIMEOUT_FAILURE
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.LLDB_TRACE
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.TEST_RUNNER
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck.OutputDataFile
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.LldbSessionSpecification
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.StringDirective
@@ -37,6 +39,8 @@ internal object TestDirectives : SimpleDirectivesContainer() {
 
             - STANDALONE_NO_TR - compile the test to a separate binary that is supposed to have main entry point.
               The entry point can be customized Note that @kotlin.Test annotations are ignored.
+
+            - STANDALONE_LLDB - compile the test to a separate binary and debug with LLDB.
         """.trimIndent()
     )
 
@@ -122,12 +126,19 @@ internal object TestDirectives : SimpleDirectivesContainer() {
     val FREE_COMPILER_ARGS by stringDirective(
         description = "Specify free compiler arguments for Kotlin/Native compiler"
     )
+
+    val LLDB_TRACE by stringDirective(
+        description = """
+            Specify a filename containing the LLDB commands and the patterns that
+             the output should match""".trimIndent(),
+    )
 }
 
 internal enum class TestKind {
     REGULAR,
     STANDALONE,
-    STANDALONE_NO_TR;
+    STANDALONE_NO_TR,
+    STANDALONE_LLDB;
 }
 
 internal enum class TestRunnerType {
@@ -201,6 +212,12 @@ internal fun parseEntryPoint(registeredDirectives: RegisteredDirectives, locatio
     assertTrue(entryPoint.isNotEmpty()) { "$location: Invalid entry point in $ENTRY_POINT directive: $entryPoint" }
 
     return entryPoint
+}
+
+internal fun parseLLDBSpec(baseDir:File, registeredDirectives: RegisteredDirectives, location: Location): LldbSessionSpecification {
+    val specFile = parseFileBasedDirective(baseDir, LLDB_TRACE, registeredDirectives, location)
+        ?: fail { "$location: A lldb session specification must be provided" }
+    return LldbSessionSpecification.parse(specFile.readText())
 }
 
 internal fun parseModule(parsedDirective: RegisteredDirectivesParser.ParsedDirective, location: Location): TestModule.Exclusive {

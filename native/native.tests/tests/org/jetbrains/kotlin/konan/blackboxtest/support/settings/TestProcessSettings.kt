@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.runner.NoopTestRunner
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.Runner
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import java.io.File
@@ -29,7 +31,7 @@ internal class KotlinNativeTargets(val testTarget: KonanTarget, val hostTarget: 
 internal class KotlinNativeHome(val dir: File) {
     val librariesDir: File = dir.resolve("klib")
     val stdlibFile: File = librariesDir.resolve("common/stdlib")
-
+    val lldbPrettyPrinters: File = dir.resolve("tools/konan_lldb.py")
     val properties: Properties by lazy {
         dir.resolve("konan/konan.properties").inputStream().use { Properties().apply { load(it) } }
     }

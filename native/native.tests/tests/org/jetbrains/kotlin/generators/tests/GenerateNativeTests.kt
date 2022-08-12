@@ -59,10 +59,21 @@ fun main() {
                 model("binaryCompatibility/klibEvolution", recursive = false)
             }
         }
+
+        // LLDB integration tests.
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "LldbTestGenerated",
+                annotations = listOf(lldb(), provider<UseStandardTestCaseGroupProvider>())
+            ) {
+                model("lldb")
+            }
+        }
     }
 }
 
 private inline fun <reified T : Annotation> provider() = annotation(T::class.java)
 
 private fun codegen() = annotation(Tag::class.java, "codegen")
+private fun lldb() = annotation(Tag::class.java, "lldb")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
