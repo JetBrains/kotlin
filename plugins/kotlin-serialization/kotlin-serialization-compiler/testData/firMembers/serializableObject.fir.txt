@@ -1,0 +1,12 @@
+FILE: serializableObject.kt
+    @R|kotlinx/serialization/Serializable|() public final object FooBar : R|kotlin/Any| {
+        private constructor(): R|FooBar| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun serializer(): R|kotlinx/serialization/KSerializer<FooBar>|
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.encodeToString|<R|FooBar|>(Q|FooBar|.R|/FooBar.serializer|(), Q|FooBar|)
+    }
