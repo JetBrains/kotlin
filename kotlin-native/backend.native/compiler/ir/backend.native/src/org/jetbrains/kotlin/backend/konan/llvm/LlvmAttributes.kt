@@ -61,7 +61,6 @@ private fun enforceFramePointer(llvmFunction: LLVMValueRef, context: Context) {
 
     // Matches Clang behaviour.
     val omitLeafFp = when {
-        target == KonanTarget.WATCHOS_ARM64 -> false
         target.architecture == Architecture.ARM64 -> true
         else -> false
     }
