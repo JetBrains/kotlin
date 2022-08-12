@@ -1195,7 +1195,10 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): Compilation {
         try {
             translationUnit.ensureNoCompileErrors()
 
-            val compilation = nativeIndex.library.withPrecompiledHeader(translationUnit)
+            val compilation = if (nativeIndex.library.compilerArgs.contains("-fmodules"))
+                nativeIndex.library  // Don't precompile headers to workaround a clang issue
+            else
+                nativeIndex.library.withPrecompiledHeader(translationUnit)
 
             val headers = getFilteredHeaders(nativeIndex, index, translationUnit)
 
