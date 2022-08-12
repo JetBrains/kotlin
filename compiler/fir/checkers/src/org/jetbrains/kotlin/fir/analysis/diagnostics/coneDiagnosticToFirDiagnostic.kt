@@ -50,6 +50,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
         source,
         (this.name ?: SpecialNames.NO_NAME_PROVIDED).asString()
     )
+
     is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.classId.asString())
     is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.name.asString())
     is ConeUnresolvedQualifierError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.qualifier)
@@ -64,6 +65,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
             (this.candidateSymbol.safeAs<FirCallableSymbol<*>>()?.name ?: SpecialNames.NO_NAME_PROVIDED).asString()
         )
     }
+
     is ConeVisibilityError -> FirErrors.INVISIBLE_REFERENCE.createOn(source, this.symbol)
     is ConeInapplicableWrongReceiver -> FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER.createOn(source, this.candidateSymbols)
     is ConeNoCompanionObject -> FirErrors.NO_COMPANION_OBJECT.createOn(source, this.candidateSymbol as FirRegularClassSymbol)
@@ -74,6 +76,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
             val unsafeCall = candidate.diagnostics.firstIsInstance<UnsafeCall>()
             mapUnsafeCallError(candidate, unsafeCall, source, qualifiedAccessSource)
         }
+
         applicability == CandidateApplicability.UNSTABLE_SMARTCAST -> {
             val unstableSmartcast =
                 this.candidates.first { it.applicability == CandidateApplicability.UNSTABLE_SMARTCAST }.diagnostics.firstIsInstance<UnstableSmartCast>()
@@ -85,27 +88,34 @@ private fun ConeDiagnostic.toKtDiagnostic(
                 unstableSmartcast.isCastToNotNull
             )
         }
+
         else -> FirErrors.NONE_APPLICABLE.createOn(source, this.candidates.map { it.symbol })
     }
+
     is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.createOn(source, this.candidateSymbols)
     is ConeVariableExpectedError -> FirErrors.VARIABLE_EXPECTED.createOn(source)
     is ConeValReassignmentError -> when (val symbol = this.variable) {
         is FirBackingFieldSymbol -> FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD.errorFactory.createOn(source, symbol)
         else -> FirErrors.VAL_REASSIGNMENT.createOn(source, symbol)
     }
+
     is ConeUnexpectedTypeArgumentsError -> FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.createOn(this.source ?: source)
     is ConeIllegalAnnotationError -> FirErrors.NOT_AN_ANNOTATION_CLASS.createOn(source, this.name.asString())
     is ConeWrongNumberOfTypeArgumentsError ->
         FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.createOn(this.source, this.desiredCount, this.symbol)
+
     is ConeOuterClassArgumentsRequired ->
         FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED.createOn(qualifiedAccessSource ?: source, this.symbol)
+
     is ConeNoTypeArgumentsOnRhsError ->
         FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.createOn(qualifiedAccessSource ?: source, this.desiredCount, this.symbol)
+
     is ConeSimpleDiagnostic -> when {
         source.kind is KtFakeSourceElementKind && source.kind != KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess -> null
         else -> this.getFactory(source).createOn(qualifiedAccessSource ?: source)
     }
-    is ConeCannotInferParameterType ->  FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source)
+
+    is ConeCannotInferParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source)
     is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.createOn(source, this.target)
     is ConeStubDiagnostic -> null
     is ConeIntermediateDiagnostic -> null
@@ -115,8 +125,10 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeNotAnnotationContainer -> null
     is ConeImportFromSingleton -> FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON.createOn(source, this.name)
     is ConeUnsupported -> FirErrors.UNSUPPORTED.createOn(this.source ?: source, this.reason)
-    is ConeLocalVariableNoTypeOrInitializer ->
-        runIf(variable.isLocalMember) { FirErrors.VARIABLE_WITH_NO_TYPE_NO_INITIALIZER.createOn(source) }
+    is ConeLocalVariableNoTypeOrInitializer -> runIf(variable.isLocalMember) {
+        FirErrors.VARIABLE_WITH_NO_TYPE_NO_INITIALIZER.createOn(source)
+    }
+
     is ConeUnderscoreIsReserved -> FirErrors.UNDERSCORE_IS_RESERVED.createOn(this.source)
     is ConeUnderscoreUsageWithoutBackticks -> FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS.createOn(this.source)
     is ConeAmbiguousSuper -> FirErrors.AMBIGUOUS_SUPER.createOn(source, this.candidateTypes)
@@ -198,10 +210,12 @@ private fun mapInapplicableCandidateError(
             is VarargArgumentOutsideParentheses -> FirErrors.VARARG_OUTSIDE_PARENTHESES.createOn(
                 rootCause.argument.source ?: qualifiedAccessSource
             )
+
             is NamedArgumentNotAllowed -> FirErrors.NAMED_ARGUMENTS_NOT_ALLOWED.createOn(
                 rootCause.argument.source,
                 rootCause.forbiddenNamedArgumentsTarget
             )
+
             is ArgumentTypeMismatch -> {
                 FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
                     rootCause.argument.source ?: source,
@@ -210,21 +224,26 @@ private fun mapInapplicableCandidateError(
                     rootCause.isMismatchDueToNullability
                 )
             }
+
             is MultipleContextReceiversApplicableForExtensionReceivers ->
                 FirErrors.AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER.createOn(qualifiedAccessSource ?: source)
+
             is NoApplicableValueForContextReceiver ->
                 FirErrors.NO_CONTEXT_RECEIVER.createOn(
                     qualifiedAccessSource ?: source,
                     rootCause.expectedContextReceiverType.removeTypeVariableTypes(typeContext)
                 )
+
             is AmbiguousValuesForContextReceiverParameter ->
                 FirErrors.MULTIPLE_ARGUMENTS_APPLICABLE_FOR_CONTEXT_RECEIVER.createOn(
                     qualifiedAccessSource ?: source,
                     rootCause.expectedContextReceiverType.removeTypeVariableTypes(typeContext)
                 )
+
             is NullForNotNullType -> FirErrors.NULL_FOR_NONNULL_TYPE.createOn(
                 rootCause.argument.source ?: source
             )
+
             is NonVarargSpread -> FirErrors.NON_VARARG_SPREAD.createOn(rootCause.argument.source?.getChild(KtTokens.MUL, depth = 1)!!)
             is ArgumentPassedTwice -> FirErrors.ARGUMENT_PASSED_TWICE.createOn(rootCause.argument.source)
             is TooManyArguments -> FirErrors.TOO_MANY_ARGUMENTS.createOn(rootCause.argument.source ?: source, rootCause.function.symbol)
@@ -232,18 +251,22 @@ private fun mapInapplicableCandidateError(
                 qualifiedAccessSource ?: source,
                 rootCause.valueParameter.symbol
             )
+
             is NameNotFound -> FirErrors.NAMED_PARAMETER_NOT_FOUND.createOn(
                 rootCause.argument.source ?: source,
                 rootCause.argument.name.asString()
             )
+
             is NameForAmbiguousParameter -> FirErrors.NAME_FOR_AMBIGUOUS_PARAMETER.createOn(
                 rootCause.argument.source ?: source
             )
+
             is UnsafeCall -> mapUnsafeCallError(diagnostic.candidate, rootCause, source, qualifiedAccessSource)
             is ManyLambdaExpressionArguments -> FirErrors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.createOn(rootCause.argument.source ?: source)
             is InfixCallOfNonInfixFunction -> FirErrors.INFIX_MODIFIER_REQUIRED.createOn(source, rootCause.function)
             is OperatorCallOfNonOperatorFunction ->
                 FirErrors.OPERATOR_MODIFIER_REQUIRED.createOn(source, rootCause.function, rootCause.function.name.asString())
+
             is UnstableSmartCast -> FirErrors.SMARTCAST_IMPOSSIBLE.createOn(
                 rootCause.argument.source,
                 rootCause.targetType,
@@ -251,6 +274,7 @@ private fun mapInapplicableCandidateError(
                 rootCause.argument.smartcastStability.description,
                 rootCause.isCastToNotNull
             )
+
             is DslScopeViolation -> FirErrors.DSL_SCOPE_VIOLATION.createOn(source, rootCause.calleeSymbol)
             is InferenceError -> {
                 rootCause.constraintError.toDiagnostic(
@@ -261,9 +285,11 @@ private fun mapInapplicableCandidateError(
                     diagnostic.candidate
                 )
             }
+
             is InferredEmptyIntersectionDiagnostic -> reportInferredIntoEmptyIntersectionError(
                 source, rootCause.typeVariable, rootCause.incompatibleTypes, rootCause.causingTypes, rootCause.kind
             )
+
             else -> genericDiagnostic
         }
     }.distinct()
@@ -366,14 +392,17 @@ private fun ConstraintSystemError.toDiagnostic(
                         typeMismatchDueToNullability
                     )
                 }
+
                 is ExplicitTypeParameterConstraintPosition<*>,
                 is DelegatedPropertyConstraintPosition<*> -> {
                     errorsToIgnore.add(this)
                     return null
                 }
+
                 else -> null
             }
         }
+
         is NotEnoughInformationForTypeParameter<*> -> {
             val isDiagnosticRedundant = candidate.errors.any { otherError ->
                 (otherError is ConstrainingTypeIsError && otherError.typeVariable == this.typeVariable)
@@ -393,12 +422,14 @@ private fun ConstraintSystemError.toDiagnostic(
                 typeVariableName,
             )
         }
+
         is NoSuccessfulFork -> {
             FirErrors.INFERENCE_UNSUCCESSFUL_FORK.createOn(
                 source,
                 position.initialConstraint.asStringWithoutPosition(),
             )
         }
+
         is InferredEmptyIntersection -> {
             @Suppress("UNCHECKED_CAST")
             reportInferredIntoEmptyIntersectionError(
@@ -409,6 +440,7 @@ private fun ConstraintSystemError.toDiagnostic(
                 kind
             )
         }
+
         else -> null
     }
 }
@@ -455,6 +487,7 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement): KtDiagnost
             KtNodeTypes.WHEN_CONDITION_IN_RANGE, KtNodeTypes.WHEN_CONDITION_IS_PATTERN -> FirErrors.EXPECTED_CONDITION
             else -> FirErrors.EXPRESSION_EXPECTED
         }
+
         DiagnosticKind.JumpOutsideLoop -> FirErrors.BREAK_OR_CONTINUE_OUTSIDE_A_LOOP
         DiagnosticKind.NotLoopLabel -> FirErrors.NOT_A_LOOP_LABEL
         DiagnosticKind.VariableExpected -> FirErrors.VARIABLE_EXPECTED
