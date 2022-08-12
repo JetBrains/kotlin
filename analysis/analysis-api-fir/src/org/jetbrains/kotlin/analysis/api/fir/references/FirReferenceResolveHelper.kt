@@ -394,7 +394,6 @@ internal object FirReferenceResolveHelper {
         return listOf(symbolBuilder.buildSymbol(fir.symbol))
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun getSymbolsByResolvedImport(
         expression: KtSimpleNameExpression,
         builder: KtSymbolByFirBuilder,

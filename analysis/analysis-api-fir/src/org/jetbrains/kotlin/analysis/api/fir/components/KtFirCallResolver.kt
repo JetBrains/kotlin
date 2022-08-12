@@ -612,7 +612,6 @@ internal class KtFirCallResolver(
         )
     }
 
-    @OptIn(SymbolInternals::class)
     private fun getOperationPartiallyAppliedSymbolsForIncOrDecOperation(
         fir: FirFunctionCall,
         arrayAccessExpression: KtArrayAccessExpression,
@@ -705,7 +704,6 @@ internal class KtFirCallResolver(
         )
     }
 
-    @OptIn(SymbolInternals::class)
     private fun FirExpression.toKtReceiverValue(): KtReceiverValue? {
         val psi = psi
         return when (this) {
@@ -738,18 +736,14 @@ internal class KtFirCallResolver(
         }
     }
 
-    @OptIn(SymbolInternals::class)
     private fun FirCallableSymbol<*>.toKtSignature(): KtCallableSignature<KtCallableSymbol> =
         firSymbolBuilder.callableBuilder.buildCallableSignature(this)
 
-    @OptIn(SymbolInternals::class)
     private fun FirClassLikeSymbol<*>.toKtSymbol(): KtClassLikeSymbol = firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(this)
 
-    @OptIn(SymbolInternals::class)
     private fun FirNamedFunctionSymbol.toKtSignature(): KtFunctionLikeSignature<KtFunctionSymbol> =
         firSymbolBuilder.functionLikeBuilder.buildFunctionSignature(this)
 
-    @OptIn(SymbolInternals::class)
     private fun FirVariableSymbol<*>.toKtSignature(): KtVariableLikeSignature<KtVariableLikeSymbol> =
         firSymbolBuilder.variableLikeBuilder.buildVariableLikeSignature(this)
 

@@ -40,7 +40,6 @@ abstract class AbstractDiagnosticsDataClassRenderer : DiagnosticListRenderer() {
         printGeneratedMessage()
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     protected fun collectImports(diagnosticList: HLDiagnosticList): Collection<String> = buildSet {
         addAll(defaultImports)
         for (diagnostic in diagnosticList.diagnostics) {

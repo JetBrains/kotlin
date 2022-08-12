@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 /**
  * [org.jetbrains.kotlin.fir.FirSession] responsible for all libraries analysing module transitively depends on
  */
-@OptIn(PrivateSessionConstructor::class)
 internal class LLFirLibrarySession @PrivateSessionConstructor constructor(
     override val ktModule: KtModule,
     project: Project,

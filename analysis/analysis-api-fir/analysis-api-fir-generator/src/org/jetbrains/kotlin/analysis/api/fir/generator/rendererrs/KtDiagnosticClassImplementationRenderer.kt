@@ -53,7 +53,6 @@ object KtDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
         println(",")
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     override fun collectImportsForDiagnosticParameter(diagnosticParameter: HLDiagnosticParameter): Collection<String> = buildSet {
         diagnosticParameter.type.collectClassNamesTo(this)
     }

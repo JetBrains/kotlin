@@ -47,7 +47,6 @@ internal class KtFirStarImportingScope(
     override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion { emptySequence() }
 
     // todo cache?
-    @OptIn(ExperimentalStdlibApi::class)
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         imports.flatMapTo(hashSetOf()) { import: Import ->
             if (import.relativeClassName == null) { // top level callable

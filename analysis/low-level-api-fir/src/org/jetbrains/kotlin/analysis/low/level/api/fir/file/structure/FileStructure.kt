@@ -57,7 +57,6 @@ internal class FileStructure private constructor(
             ?: error("FileStructureElement for was not defined for \n${declaration.getElementTextInContext()}")
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     fun getAllDiagnosticsForFile(diagnosticCheckerFilter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> {
         val structureElements = getAllStructureElements()
 

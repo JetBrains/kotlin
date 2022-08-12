@@ -30,7 +30,6 @@ import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 
-@OptIn(ExperimentalStdlibApi::class)
 abstract class KtModuleByCompilerConfiguration(
     val project: Project,
     val testModule: TestModule,

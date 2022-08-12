@@ -97,7 +97,6 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
         return true
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun FirTypeRef.renderTypeAsKotlinType(isVararg: Boolean = false): String {
         val rendered = when (this) {
             is FirResolvedTypeRef -> type.renderTypeAsKotlinType()
@@ -147,7 +146,6 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
         return "kotlin.Array<out $this>"
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private val classIdToName: Map<String, String> = buildList<Pair<String, String>> {
         StandardClassIds.primitiveArrayTypeByElementType.mapTo(this) { (classId, arrayClassId) ->
             classId.asString().replace('/', '.') to arrayClassId.asString().replace('/', '.')

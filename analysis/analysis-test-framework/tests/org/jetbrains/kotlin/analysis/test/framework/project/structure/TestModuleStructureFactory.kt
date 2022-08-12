@@ -66,7 +66,6 @@ object KtMainModuleFactoryForSourceModules : KtMainModuleFactory {
 }
 
 object TestModuleStructureFactory {
-    @OptIn(TestInfrastructureInternals::class)
     fun createProjectStructureByTestStructure(
         moduleStructure: TestModuleStructure,
         testServices: TestServices,

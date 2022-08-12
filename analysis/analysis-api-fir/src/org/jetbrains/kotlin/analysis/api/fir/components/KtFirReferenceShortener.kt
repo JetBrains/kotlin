@@ -210,7 +210,6 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
         return element
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     fun findScopesAtPosition(
         position: KtElement,
         newImports: List<FqName>,
