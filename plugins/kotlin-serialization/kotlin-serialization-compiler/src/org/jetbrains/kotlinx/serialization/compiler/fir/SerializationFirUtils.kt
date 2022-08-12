@@ -46,7 +46,7 @@ internal val FirClassSymbol<*>.isInternallySerializableObject: Boolean
     get() = classKind == ClassKind.OBJECT && hasSerializableAnnotationWithoutArgs
 
 internal val FirClassSymbol<*>.isSealedSerializableInterface: Boolean
-    get() = classKind == ClassKind.INTERFACE && modality == Modality.SEALED && hasSerializableAnnotation
+    get() = classKind == ClassKind.INTERFACE && rawStatus.modality == Modality.SEALED && hasSerializableAnnotation
 
 internal val FirClassSymbol<*>.isInternalSerializable: Boolean
     get() {

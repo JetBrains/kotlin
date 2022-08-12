@@ -56,7 +56,7 @@ class IrPreGenerator(
             dispatchReceiverParameter = null // function is static
         }
 
-        val typeParams = serializerDescriptor.typeParameters.map {
+        val typeParams = irClass.typeParameters.map {
             method.addTypeParameter(
                 it.name.asString(), compilerContext.irBuiltIns.anyNType
             )

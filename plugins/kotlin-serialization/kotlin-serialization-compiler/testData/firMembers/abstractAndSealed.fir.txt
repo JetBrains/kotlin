@@ -1,0 +1,144 @@
+FILE: abstractAndSealed.kt
+    @R|kotlinx/serialization/Serializable|() public sealed interface I : R|kotlin/Any| {
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<I>|
+
+            private constructor(): R|I.Companion|
+
+        }
+
+    }
+    @R|kotlinx/serialization/Serializable|() public sealed class X : R|I| {
+        protected constructor(): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final var x: R|kotlin/String| = String(X)
+            private get(): R|kotlin/String|
+            private set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        public final fun exposeX(): R|kotlin/String| {
+            ^exposeX this@R|/X|.R|/X.x|
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<X>|
+
+            private constructor(): R|X.Companion|
+
+        }
+
+    }
+    @R|kotlinx/serialization/Serializable|() public abstract class Y : R|X| {
+        public constructor(): R|Y| {
+            super<R|X|>()
+        }
+
+        private final var y: R|kotlin/String| = String(Y)
+            private get(): R|kotlin/String|
+            private set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        public final fun exposeY(): R|kotlin/String| {
+            ^exposeY this@R|/Y|.R|/Y.y|
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Y>|
+
+            private constructor(): R|Y.Companion|
+
+        }
+
+    }
+    @R|kotlinx/serialization/Serializable|() public final class Bottom : R|Y| {
+        public constructor(): R|Bottom| {
+            super<R|Y|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Bottom>|
+
+            private constructor(): R|Bottom.Companion|
+
+        }
+
+        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Bottom>| {
+            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Bottom|): R|kotlin/Unit|
+
+            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Bottom|
+
+            public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
+                public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
+
+            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+
+            private constructor(): R|Bottom.$serializer|
+
+        }
+
+    }
+    public final fun testData(results: R|kotlin/String|): R|kotlin/String| {
+        when () {
+            !=(R|<local>/results|, String(OK)) ->  {
+                ^testData R|<local>/results|
+            }
+        }
+
+        lval serial: R|kotlinx/serialization/KSerializer<Bottom>| = Q|Bottom|.R|/Bottom.Companion.serializer|()
+        lval j: R|kotlinx/serialization/json/Json| = R|kotlinx/serialization/json/Json|(<L> = Json@fun R|kotlinx/serialization/json/JsonBuilder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|kotlinx/serialization/json/JsonBuilder.encodeDefaults| = Boolean(true)
+        }
+        )
+        lval s: R|kotlin/String| = R|<local>/j|.R|kotlinx/serialization/json/Json.encodeToString|<R|Bottom|>(R|<local>/serial|, R|/Bottom.Bottom|())
+        when () {
+            !=(R|<local>/s|, String({"x":"X","y":"Y"})) ->  {
+                ^testData <strcat>(String(Incorrect encoding: ), R|<local>/s|)
+            }
+        }
+
+        lval decoded: R|Bottom| = R|<local>/j|.R|kotlinx/serialization/json/Json.decodeFromString|<R|Bottom|>(R|<local>/serial|, String({"x":"1","y":"2"}))
+        when () {
+            !=(R|<local>/decoded|.R|/X.exposeX|(), String(1)) ->  {
+                ^testData String(Incorrect X)
+            }
+        }
+
+        when () {
+            !=(R|<local>/decoded|.R|/Y.exposeY|(), String(2)) ->  {
+                ^testData String(Incorrect Y)
+            }
+        }
+
+        ^testData String(OK)
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlinx/serialization/ExperimentalSerializationApi|))) public final fun testKinds(): R|kotlin/String| {
+        when () {
+            !=(Q|I|.R|/I.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.kind|, Q|kotlinx/serialization/descriptors/PolymorphicKind.SEALED|) ->  {
+                ^testKinds String(Not sealed: I)
+            }
+        }
+
+        when () {
+            !=(Q|X|.R|/X.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.kind|, Q|kotlinx/serialization/descriptors/PolymorphicKind.SEALED|) ->  {
+                ^testKinds String(Not sealed: X)
+            }
+        }
+
+        when () {
+            !=(Q|Y|.R|/Y.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.kind|, Q|kotlinx/serialization/descriptors/PolymorphicKind.OPEN|) ->  {
+                ^testKinds String(Not polymorphic: Y)
+            }
+        }
+
+        lval serial: R|kotlinx/serialization/KSerializer<Bottom>| = Q|Bottom|.R|/Bottom.Companion.serializer|()
+        when () {
+            !=(R|<local>/serial|.R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.kind|, Q|kotlinx/serialization/descriptors/StructureKind.CLASS|) ->  {
+                ^testKinds String(Not class: Bottom)
+            }
+        }
+
+        ^testKinds String(OK)
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box R|/testData|(R|/testKinds|())
+    }

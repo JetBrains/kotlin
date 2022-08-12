@@ -20,6 +20,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class SerializationFirMembersTestGenerated extends AbstractSerializationFirMembersTest {
     @Test
+    @TestMetadata("abstractAndSealed.kt")
+    public void testAbstractAndSealed() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/firMembers/abstractAndSealed.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInFirMembers() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/firMembers"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
