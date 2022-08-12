@@ -126,7 +126,11 @@ class DeclarationGenerator(
         }
 
         val exprGen = functionCodegenContext.bodyGen
-        val bodyBuilder = BodyGenerator(functionCodegenContext, hierarchyDisjointUnions)
+        val bodyBuilder = BodyGenerator(
+            context = functionCodegenContext,
+            hierarchyDisjointUnions = hierarchyDisjointUnions,
+            isGetUnitFunction = declaration == unitGetInstanceFunction
+        )
 
         require(declaration.body is IrBlockBody) { "Only IrBlockBody is supported" }
         declaration.body?.acceptVoid(bodyBuilder)

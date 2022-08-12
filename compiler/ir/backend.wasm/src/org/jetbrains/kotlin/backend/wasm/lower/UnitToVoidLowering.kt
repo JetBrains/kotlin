@@ -80,19 +80,17 @@ class UnitToVoidLowering(val context: WasmBackendContext) : FileLoweringPass, Ab
         if (expr.type == symbols.voidType || expr.type == builtIns.nothingType)
             return false
 
-        when (expr) {
-            is IrContainerExpression -> {
-                if (expr.statements.isEmpty())
-                    return false
-                return shouldVoidify(expr.statements.last())
-            }
-            is IrWhen ->
-                return true
-            is IrTry ->
-                return true
+        return when (expr) {
+            is IrContainerExpression ->
+                expr.statements.isNotEmpty() && expr !is IrReturnableBlock && shouldVoidify(expr.statements.last())
+
+            is IrWhen, is IrTry ->
+                true
+
             is IrTypeOperatorCall ->
-                return expr.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
-            else -> return false
+                expr.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
+
+            else -> false
         }
     }
 

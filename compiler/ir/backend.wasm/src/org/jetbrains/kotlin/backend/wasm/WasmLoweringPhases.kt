@@ -144,8 +144,8 @@ private val tailrecLoweringPhase = makeWasmModulePhase(
 
 private val wasmStringSwitchOptimizerLowering = makeWasmModulePhase(
     ::WasmStringSwitchOptimizerLowering,
-    name = "!!!",
-    description = "!!!"
+    name = "WasmStringSwitchOptimizerLowering",
+    description = "Replace when with constant string cases to binary search by string hashcodes"
 )
 
 private val complexExternalDeclarationsToTopLevelFunctionsLowering = makeWasmModulePhase(
@@ -403,13 +403,6 @@ private val tryCatchCanonicalization = makeWasmModulePhase(
     prerequisite = setOf(functionInliningPhase)
 )
 
-private val returnableBlockLoweringPhase = makeWasmModulePhase(
-    ::ReturnableBlockLowering,
-    name = "ReturnableBlockLowering",
-    description = "Replace returnable block with do-while loop",
-    prerequisite = setOf(functionInliningPhase)
-)
-
 private val bridgesConstructionPhase = makeWasmModulePhase(
     ::WasmBridgesConstruction,
     name = "BridgesConstruction",
@@ -627,7 +620,6 @@ val wasmPhases = NamedCompilerPhase(
             unhandledExceptionLowering then
 
             tryCatchCanonicalization then
-            returnableBlockLoweringPhase then
 
             forLoopsLoweringPhase then
             propertyLazyInitLoweringPhase then

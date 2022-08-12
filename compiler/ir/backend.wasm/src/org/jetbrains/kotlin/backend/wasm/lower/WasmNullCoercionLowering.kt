@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
+import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
@@ -22,11 +23,11 @@ import org.jetbrains.kotlin.ir.types.makeNotNull
  *
  * Wasm GC doesn't have a nullref type anymore.
  */
-class WasmNullCoercingLowering(context: JsCommonBackendContext) : AbstractValueUsageLowering(context) {
+class WasmNullCoercingLowering(private val contextx: WasmBackendContext) : AbstractValueUsageLowering(contextx) {
     override fun IrExpression.useExpressionAsType(actualType: IrType, expectedType: IrType): IrExpression =
-        if (actualType.makeNotNull().isNothing() && actualType.isNullable() && !expectedType.makeNotNull().isNothing())
+        if (actualType.makeNotNull().isNothing() && actualType.isNullable() && !expectedType.makeNotNull().isNothing() && expectedType != contextx.wasmSymbols.voidType)
             JsIrBuilder.buildComposite(
-                type,
+                expectedType,
                 listOf(this, IrConstImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, expectedType, IrConstKind.Null, null))
             )
         else
