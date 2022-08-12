@@ -169,14 +169,25 @@ class Fir2IrLazyClass(
         // Handle generated methods for enum classes (values(), valueOf(String)).
         if (fir.classKind == ClassKind.ENUM_CLASS) {
             for (declaration in fir.declarations) {
-                if (declaration !is FirSimpleFunction || !declaration.isStatic || !shouldBuildStub(declaration)) continue
-                // TODO we also come here for all deserialized / enhanced static enum members (with declaration.source == null).
-                //  For such members we currently can't tell whether they are compiler-generated methods or not.
-                // Note: we must drop declarations from Java here to avoid FirJavaTypeRefs inside
-                if (declaration.source == null && declaration.origin !is FirDeclarationOrigin.Java ||
-                    declaration.source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration
-                ) {
-                    result += declarationStorage.getIrFunctionSymbol(declaration.symbol, forceTopLevelPrivate = isTopLevelPrivate).owner
+                if (declaration !is FirCallableDeclaration || !declaration.isStatic || !shouldBuildStub(declaration)) continue
+
+                when (declaration) {
+                    is FirSimpleFunction -> {
+                        // TODO we also come here for all deserialized / enhanced static enum members (with declaration.source == null).
+                        //  For such members we currently can't tell whether they are compiler-generated methods or not.
+                        // Note: we must drop declarations from Java here to avoid FirJavaTypeRefs inside
+                        if (declaration.source == null && declaration.origin !is FirDeclarationOrigin.Java ||
+                            declaration.source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration
+                        ) {
+                            result += declarationStorage.getIrFunctionSymbol(declaration.symbol, forceTopLevelPrivate = isTopLevelPrivate).owner
+                        }
+                    }
+
+                    is FirEnumEntry -> {
+                        result += declarationStorage.getIrValueSymbol(declaration.symbol).owner as IrDeclaration
+                    }
+
+                    else -> {}
                 }
             }
         }
