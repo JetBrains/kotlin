@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPE_ALIAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_WITHOUT_EXPECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_ACTUALS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_ALTERED_ASSIGN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_ANONYMOUS_TYPE_INFERRED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_EXPECTS
@@ -674,6 +675,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Constructor of inner class {0} can be called only with receiver of containing class",
             SYMBOL
         )
+        map.put(
+            AMBIGUOUS_ALTERED_ASSIGN,
+            "Multiple extensions tried to alter this assignement at the same time. Extensions: {0}",
+            COLLECTION(NULLABLE_STRING)
+        )
+
         map.put(ILLEGAL_SELECTOR, "The expression cannot be a selector (occur after a dot)")
         map.put(NO_RECEIVER_ALLOWED, "No receiver can be passed to this function or property")
 

@@ -29,6 +29,7 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             FirExpressionResolutionExtension::class,
             FirExtensionSessionComponent::class,
             FirSamConversionTransformerExtension::class,
+            FirAssignExpressionAltererExtension::class,
         )
     }
 
@@ -77,6 +78,11 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             registerExtension(FirSamConversionTransformerExtension::class, this)
         }
 
+        @JvmName("plusAssignExpressionAltererExtension")
+        operator fun (FirAssignExpressionAltererExtension.Factory).unaryPlus() {
+            registerExtension(FirAssignExpressionAltererExtension::class, this)
+        }
+
         // ------------------ reference methods ------------------
 
         @JvmName("plusStatusTransformerExtension")
@@ -117,6 +123,11 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
         @JvmName("plusSamConversionTransformerExtension")
         operator fun ((FirSession) -> FirSamConversionTransformerExtension).unaryPlus() {
             FirSamConversionTransformerExtension.Factory { this.invoke(it) }.unaryPlus()
+        }
+
+        @JvmName("plusAssignExpressionAltererExtension")
+        operator fun ((FirSession) -> FirAssignExpressionAltererExtension).unaryPlus() {
+            FirAssignExpressionAltererExtension.Factory { this.invoke(it) }.unaryPlus()
         }
 
         // ------------------ utilities ------------------

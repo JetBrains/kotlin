@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.extensions.assignAltererExtensions
 import org.jetbrains.kotlin.fir.extensions.expressionResolutionExtensions
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.*
@@ -60,6 +61,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     var containingSafeCallExpression: FirSafeCallExpression? = null
 
     private val expressionResolutionExtensions = session.extensionService.expressionResolutionExtensions.takeIf { it.isNotEmpty() }
+    private val assignAltererExtensions = session.extensionService.assignAltererExtensions.takeIf { it.isNotEmpty() }
 
     init {
         @Suppress("LeakingThis")
@@ -845,6 +847,30 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val resolvedAssignment = callResolver.resolveVariableAccessAndSelectCandidate(variableAssignment, isUsedAsReceiver = false)
         val result = if (resolvedAssignment is FirVariableAssignment) {
             val completeAssignment = callCompleter.completeCall(resolvedAssignment, noExpectedType).result // TODO: check
+            val resolvedReference = completeAssignment.calleeReference
+            if (assignAltererExtensions != null && resolvedReference is FirResolvedNamedReference) {
+                val alteredAssignments = assignAltererExtensions.mapNotNull { alterer ->
+                    alterer.transformVariableAssignment(variableAssignment)?.let { it to alterer }
+                }
+                when (alteredAssignments.size) {
+                    0 -> {}
+                    1 -> {
+                        val transformedAssignment = alteredAssignments.first().first
+                        return transformedAssignment.transform(transformer, ResolutionMode.ContextIndependent)
+                    }
+
+                    else -> {
+                        val altererNames = alteredAssignments.map { it.second::class.qualifiedName }
+                        val errorReference = buildErrorNamedReference {
+                            source = resolvedReference.source
+                            candidateSymbol = resolvedReference.resolvedSymbol
+                            diagnostic = ConeAmbiguousAlteredAssign(altererNames)
+                        }
+                        completeAssignment.replaceCalleeReference(errorReference)
+                    }
+                }
+            }
+
             completeAssignment.transformRValue(
                 transformer,
                 withExpectedType(variableAssignment.lValueTypeRef, expectedTypeMismatchIsReportedInChecker = true),

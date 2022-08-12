@@ -142,6 +142,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val RESOLUTION_TO_CLASSIFIER by error<PsiElement> {
             parameter<FirRegularClassSymbol>("classSymbol")
         }
+        val AMBIGUOUS_ALTERED_ASSIGN by error<PsiElement> {
+            parameter<List<String?>>("altererNames")
+        }
     }
 
     val SUPER by object : DiagnosticGroup("Super") {

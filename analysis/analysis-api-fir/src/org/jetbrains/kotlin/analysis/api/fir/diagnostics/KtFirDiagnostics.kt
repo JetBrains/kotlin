@@ -291,6 +291,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val classSymbol: KtClassLikeSymbol
     }
 
+    abstract class AmbiguousAlteredAssign : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = AmbiguousAlteredAssign::class
+        abstract val altererNames: List<String?>
+    }
+
     abstract class SuperIsNotAnExpression : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = SuperIsNotAnExpression::class
     }

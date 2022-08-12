@@ -336,6 +336,12 @@ internal class ResolutionToClassifierImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.ResolutionToClassifier(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class AmbiguousAlteredAssignImpl(
+    override val altererNames: List<String?>,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.AmbiguousAlteredAssign(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class SuperIsNotAnExpressionImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
