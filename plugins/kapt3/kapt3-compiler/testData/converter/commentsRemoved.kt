@@ -1,3 +1,4 @@
+// FIR_ALMOST_DONE
 // DISABLED_FLAGS: KEEP_KDOC_COMMENTS_IN_STUBS
 /** Test. */
 class Test {

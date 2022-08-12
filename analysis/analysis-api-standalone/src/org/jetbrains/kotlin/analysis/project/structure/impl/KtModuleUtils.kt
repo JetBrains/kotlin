@@ -16,6 +16,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.builder.*
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
@@ -41,9 +43,14 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import java.io.IOException
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 internal fun TargetPlatform.getAnalyzerServices(): PlatformDependentAnalyzerServices {
     return when {
@@ -150,75 +157,82 @@ internal inline fun <reified T : PsiFileSystemItem> getPsiFilesFromPaths(
     }
 }
 
+@OptIn(ExperimentalContracts::class)
 internal fun buildKtModuleProviderByCompilerConfiguration(
     compilerConfig: CompilerConfiguration,
     project: Project,
     ktFiles: List<KtFile>,
-): ProjectStructureProvider = buildProjectStructureProvider {
-    val (scriptFiles, ordinaryFiles) = ktFiles.partition { it.isScript() }
-    val platform = JvmPlatforms.defaultJvmPlatform
+    moduleCallback: (KtSourceModule) -> Unit = {}
+): ProjectStructureProvider {
+    contract {
+        callsInPlace(moduleCallback, InvocationKind.EXACTLY_ONCE)
+    }
+    return buildProjectStructureProvider {
+        val (scriptFiles, ordinaryFiles) = ktFiles.partition { it.isScript() }
+        val platform = JvmPlatforms.defaultJvmPlatform
 
-    fun KtModuleBuilder.addModuleDependencies(moduleName: String) {
-        val libraryRoots = compilerConfig.jvmModularRoots + compilerConfig.jvmClasspathRoots
-        addRegularDependency(
-            buildKtLibraryModule {
-                contentScope = ProjectScope.getLibrariesScope(project)
-                this.platform = platform
-                this.project = project
-                binaryRoots = libraryRoots.map { it.toPath() }
-                libraryName = "Library for $moduleName"
-            }
-        )
-        compilerConfig.get(JVMConfigurationKeys.JDK_HOME)?.let { jdkHome ->
-            val vfm = VirtualFileManager.getInstance()
-            val jdkHomePath = jdkHome.toPath()
-            val jdkHomeVirtualFile = vfm.findFileByNioPath(jdkHomePath)
-            val binaryRoots = LibraryUtils.findClassesFromJdkHome(jdkHomePath).map {
-                Paths.get(URLUtil.extractPath(it))
-            }
+        fun KtModuleBuilder.addModuleDependencies(moduleName: String) {
+            val libraryRoots = compilerConfig.jvmModularRoots + compilerConfig.jvmClasspathRoots
             addRegularDependency(
-                buildKtSdkModule {
-                    contentScope = GlobalSearchScope.fileScope(project, jdkHomeVirtualFile)
+                buildKtLibraryModule {
+                    contentScope = ProjectScope.getLibrariesScope(project)
                     this.platform = platform
                     this.project = project
-                    this.binaryRoots = binaryRoots
-                    sdkName = "JDK for $moduleName"
+                    binaryRoots = libraryRoots.map { it.toPath() }
+                    libraryName = "Library for $moduleName"
                 }
             )
+            compilerConfig.get(JVMConfigurationKeys.JDK_HOME)?.let { jdkHome ->
+                val vfm = VirtualFileManager.getInstance()
+                val jdkHomePath = jdkHome.toPath()
+                val jdkHomeVirtualFile = vfm.findFileByNioPath(jdkHomePath)
+                val binaryRoots = LibraryUtils.findClassesFromJdkHome(jdkHomePath).map {
+                    Paths.get(URLUtil.extractPath(it))
+                }
+                addRegularDependency(
+                    buildKtSdkModule {
+                        contentScope = GlobalSearchScope.fileScope(project, jdkHomeVirtualFile)
+                        this.platform = platform
+                        this.project = project
+                        this.binaryRoots = binaryRoots
+                        sdkName = "JDK for $moduleName"
+                    }
+                )
+            }
         }
-    }
 
-    val configLanguageVersionSettings = compilerConfig[CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS]
+        val configLanguageVersionSettings = compilerConfig[CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS]
 
-    for (scriptFile in scriptFiles) {
-        buildKtScriptModule {
+        for (scriptFile in scriptFiles) {
+            buildKtScriptModule {
+                configLanguageVersionSettings?.let { this.languageVersionSettings = it }
+                this.project = project
+                this.platform = platform
+                this.file = scriptFile
+
+                addModuleDependencies("Script " + scriptFile.name)
+            }.apply(::addModule)
+        }
+
+        val module = buildKtSourceModule {
             configLanguageVersionSettings?.let { this.languageVersionSettings = it }
             this.project = project
             this.platform = platform
-            this.file = scriptFile
+            this.moduleName = compilerConfig.get(CommonConfigurationKeys.MODULE_NAME) ?: "<no module name provided>"
 
-            addModuleDependencies("Script " + scriptFile.name)
-        }.apply(::addModule)
-    }
+            addModuleDependencies(moduleName)
 
-    buildKtSourceModule {
-        configLanguageVersionSettings?.let { this.languageVersionSettings = it }
-        this.project = project
-        this.platform = platform
-        this.moduleName = compilerConfig.get(CommonConfigurationKeys.MODULE_NAME) ?: "<no module name provided>"
-
-        addModuleDependencies(moduleName)
-
-        contentScope = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ordinaryFiles)
-        addSourceRoots(
-            getPsiFilesFromPaths(
-                project,
-                getSourceFilePaths(compilerConfig, includeDirectoryRoot = true)
+            contentScope = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ordinaryFiles)
+            addSourceRoots(
+                getPsiFilesFromPaths(
+                    project,
+                    getSourceFilePaths(compilerConfig, includeDirectoryRoot = true)
+                )
             )
-        )
-    }.apply(::addModule)
-
-
-    this.platform = platform
-    this.project = project
+        }
+        addModule(module)
+        moduleCallback(module)
+        this.platform = platform
+        this.project = project
+    }
 }

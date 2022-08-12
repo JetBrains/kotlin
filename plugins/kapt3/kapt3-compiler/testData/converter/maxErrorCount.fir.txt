@@ -1,0 +1,12 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class Test {
+
+    public Test() {
+        super();
+    }
+
+    public final void a(ABC a, BCD b) {
+    }
+}

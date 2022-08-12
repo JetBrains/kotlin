@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.Stand
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProviderImpl
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleProviderBuilder
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildProjectStructureProvider
@@ -74,22 +75,29 @@ public class StandaloneAnalysisAPISessionBuilder(
 
     private lateinit var projectStructureProvider: ProjectStructureProvider
 
+    @OptIn(ExperimentalContracts::class)
     public fun buildKtModuleProvider(init: KtModuleProviderBuilder.() -> Unit) {
+        contract {
+            callsInPlace(init, InvocationKind.EXACTLY_ONCE)
+        }
         projectStructureProvider = buildProjectStructureProvider(init)
     }
 
-    @Deprecated(
-        "Compiler configuration is not a good fit for specifying multi-module project.",
-        ReplaceWith("buildKtModuleProvider { }")
-    )
+    // TODO: add optIn
+    @OptIn(ExperimentalContracts::class)
     public fun buildKtModuleProviderByCompilerConfiguration(
         compilerConfiguration: CompilerConfiguration,
+        moduleCallback: (KtSourceModule) -> Unit = {}
     ) {
+        contract {
+            callsInPlace(moduleCallback, InvocationKind.EXACTLY_ONCE)
+        }
         val project = kotlinCoreProjectEnvironment.project
         projectStructureProvider = buildKtModuleProviderByCompilerConfiguration(
             compilerConfiguration,
             project,
             getPsiFilesFromPaths(project, getSourceFilePaths(compilerConfiguration)),
+            moduleCallback
         )
     }
 

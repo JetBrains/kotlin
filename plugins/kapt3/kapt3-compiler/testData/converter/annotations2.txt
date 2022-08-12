@@ -13,6 +13,7 @@ public abstract @interface Anno {
 package test;
 
 @kotlin.Metadata()
+@kotlin.Metadata()
 @kotlin.jvm.JvmName(name = "AnnotationsTest")
 public final class AnnotationsTest {
 
@@ -33,8 +34,15 @@ public final class AnnotationsTest {
 
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver")
+    @org.jetbrains.annotations.NotNull()
     int $this$topLevelVal) {
         return null;
+    }
+
+    @Anno(value = "top-level-fun")
+    public static final void topLevelFun(@Anno(value = "top-level-fun-receiver")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String $this$topLevelFun) {
     }
 }
 

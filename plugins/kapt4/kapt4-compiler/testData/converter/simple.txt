@@ -1,0 +1,50 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Ann {
+
+    public abstract byte b();
+
+    public abstract short s();
+
+    public abstract int i();
+
+    public abstract long l();
+
+    public abstract java.lang.String ss();
+
+    public abstract char c();
+
+    public abstract int[] arr();
+
+    public abstract SomeEnum some();
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+@Ann(b = 1, s = 2, i = 3, l = 4, ss = "hello", c = 'c', some = SomeEnum.A)
+public final class Base {
+
+    public Base() {
+        super();
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public enum SomeEnum {
+    /*public static final*/ A /* = new SomeEnum() */,
+    /*public static final*/ B /* = new SomeEnum() */;
+
+    SomeEnum() {
+    }
+}
