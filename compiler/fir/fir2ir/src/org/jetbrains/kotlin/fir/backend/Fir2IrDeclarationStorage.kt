@@ -236,18 +236,6 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private fun findIrClass(lookupTag: ConeClassLikeLookupTag): IrClass? =
-        if (lookupTag.classId.isLocal) {
-            classifierStorage.getCachedLocalClass(lookupTag)
-        } else {
-            val firSymbol = lookupTag.toSymbol(session)
-            if (firSymbol is FirClassSymbol) {
-                classifierStorage.getIrClassSymbol(firSymbol).owner
-            } else {
-                null
-            }
-        }
-
     internal fun findIrParent(
         packageFqName: FqName,
         parentLookupTag: ConeClassLikeLookupTag?,
@@ -255,7 +243,7 @@ class Fir2IrDeclarationStorage(
         firOrigin: FirDeclarationOrigin
     ): IrDeclarationParent? {
         return if (parentLookupTag != null) {
-            findIrClass(parentLookupTag)
+            classifierStorage.findIrClass(parentLookupTag)
         } else {
             val containerFile = when (firBasedSymbol) {
                 is FirCallableSymbol -> firProvider.getFirCallableContainerFile(firBasedSymbol)
@@ -1573,7 +1561,7 @@ class Fir2IrDeclarationStorage(
             is FirEnumEntry -> {
                 classifierStorage.getCachedIrEnumEntry(firDeclaration)?.let { return it.symbol }
                 val containingFile = firProvider.getFirCallableContainerFile(firVariableSymbol)
-                val irParentClass = firDeclaration.containingClass()?.let { findIrClass(it) }
+                val irParentClass = firDeclaration.containingClass()?.let { classifierStorage.findIrClass(it) }
                 classifierStorage.createIrEnumEntry(
                     firDeclaration,
                     irParent = irParentClass,

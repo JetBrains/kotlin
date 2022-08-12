@@ -169,7 +169,7 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
                 (firDeclaration as FirRegularClass).symbol,
                 forceTopLevelPrivate = isTopLevelPrivate
             ).owner
-            SymbolKind.ENUM_ENTRY_SYMBOL -> classifierStorage.createIrEnumEntry(
+            SymbolKind.ENUM_ENTRY_SYMBOL -> classifierStorage.getIrEnumEntry(
                 firDeclaration as FirEnumEntry, parent as IrClass, forceTopLevelPrivate = isTopLevelPrivate
             )
             SymbolKind.CONSTRUCTOR_SYMBOL -> {

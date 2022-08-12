@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
@@ -461,6 +462,43 @@ class Fir2IrClassifierStorage(
             factory(IrEnumEntrySymbolImpl())
         else
             symbolTable.declareEnumEntry(signature, { Fir2IrEnumEntrySymbol(signature) }, factory)
+
+    fun getIrEnumEntry(
+        enumEntry: FirEnumEntry,
+        irParent: IrClass?,
+        predefinedOrigin: IrDeclarationOrigin? = null,
+        forceTopLevelPrivate: Boolean = false,
+    ): IrEnumEntry {
+        getCachedIrEnumEntry(enumEntry)?.let { return it }
+        val containingFile = firProvider.getFirCallableContainerFile(enumEntry.symbol)
+        val irParentClass = irParent ?: enumEntry.containingClass()?.let { findIrClass(it) }
+
+        @Suppress("NAME_SHADOWING")
+        val predefinedOrigin = predefinedOrigin ?: if (containingFile != null) {
+            IrDeclarationOrigin.DEFINED
+        } else {
+            irParentClass?.origin ?: IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+        }
+        return createIrEnumEntry(
+            enumEntry,
+            irParent = irParentClass,
+            predefinedOrigin = predefinedOrigin,
+            forceTopLevelPrivate
+        )
+    }
+
+    fun findIrClass(lookupTag: ConeClassLikeLookupTag): IrClass? {
+        return if (lookupTag.classId.isLocal) {
+            getCachedLocalClass(lookupTag)
+        } else {
+            val firSymbol = lookupTag.toSymbol(session)
+            if (firSymbol is FirClassSymbol) {
+                getIrClassSymbol(firSymbol).owner
+            } else {
+                null
+            }
+        }
+    }
 
     fun createIrEnumEntry(
         enumEntry: FirEnumEntry,
