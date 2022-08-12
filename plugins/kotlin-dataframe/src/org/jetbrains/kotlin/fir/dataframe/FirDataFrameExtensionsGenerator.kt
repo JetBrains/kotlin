@@ -80,12 +80,37 @@ class FirDataFrameExtensionsGenerator(
 
                 val resolvedReturnTypeRef = property.resolvedReturnTypeRef
                 val propertyName = property.name
-                firPropertySymbols(
-                    resolvedReturnTypeRef,
-                    propertyName,
-                    callableId,
-                    owner.constructType(arrayOf(), isNullable = false).toTypeProjection(Variance.INVARIANT)
+                val marker = owner.constructType(arrayOf(), isNullable = false).toTypeProjection(Variance.INVARIANT)
+                val rowExtension = generateExtensionProperty(
+                    callableId = callableId,
+                    receiverType = ConeClassLikeTypeImpl(
+                        ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID),
+                        typeArguments = arrayOf(marker),
+                        isNullable = false
+                    ), propertyName = propertyName,
+                    returnTypeRef = resolvedReturnTypeRef
                 )
+                val columnReturnType = when {
+                    resolvedReturnTypeRef.coneType.classId?.equals(Names.DATA_ROW_CLASS_ID) == true -> {
+                        ConeClassLikeTypeImpl(
+                            ConeClassLikeLookupTagImpl(Names.COLUM_GROUP_CLASS_ID),
+                            typeArguments = arrayOf(resolvedReturnTypeRef.coneType.typeArguments[0]),
+                            isNullable = false
+                        ).toFirResolvedTypeRef()
+                    }
+                    else -> resolvedReturnTypeRef.projectOverDataColumnType().toFirResolvedTypeRef()
+                }
+                val columnsContainerExtension = generateExtensionProperty(
+                    callableId = callableId,
+                    receiverType = ConeClassLikeTypeImpl(
+                        ConeClassLikeLookupTagImpl(Names.COLUMNS_CONTAINER_CLASS_ID),
+                        typeArguments = arrayOf(marker),
+                        isNullable = false
+                    ),
+                    propertyName = propertyName,
+                    returnTypeRef = columnReturnType
+                )
+                listOf(rowExtension.symbol, columnsContainerExtension.symbol)
             }
 
             else -> state

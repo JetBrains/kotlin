@@ -4,11 +4,23 @@ FILE: dataFrame.kt
             public get(): R|kotlin/Int|
 
     }
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|(isOpen = Boolean(false)) public abstract interface Schema21 : R|kotlin/Any| {
+        public abstract val age: R|kotlin/Number?|
+            public get(): R|kotlin/Number?|
+
+    }
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface Schema2 : R|kotlin/Any| {
+        public abstract val person: R|org/jetbrains/kotlinx/dataframe/DataRow<Schema21>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<Schema21>|
+
+    }
     internal final fun injectionScope(): R|kotlin/Unit| {
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Schema1>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(i))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(1), Int(2), Int(3))).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|Schema1|>()
         R|org/jetbrains/kotlinx/dataframe/plugin/testing/test|<R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|>(id = String(dataFrame_1), call = R|org/jetbrains/kotlinx/dataframe/plugin/testing/atoms/dataFrame|(R|<local>/df|))
         lval df1: R|org/jetbrains/kotlinx/dataframe/AnyFrame| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(i))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(1), Int(2), Int(3)))
         R|org/jetbrains/kotlinx/dataframe/plugin/testing/test|<R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|>(id = String(dataFrame_2), call = R|org/jetbrains/kotlinx/dataframe/plugin/testing/atoms/dataFrame|(R|<local>/df1|))
+        lval df2: R|org/jetbrains/kotlinx/dataframe/DataFrame<Schema2>| = R|kotlin/TODO|()
+        R|org/jetbrains/kotlinx/dataframe/plugin/testing/test|<R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|>(id = String(dataFrame_3), call = R|org/jetbrains/kotlinx/dataframe/plugin/testing/atoms/dataFrame|(R|<local>/df2|))
     }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe
@@ -206,8 +218,20 @@ FILE: __GENERATED DECLARATIONS__.kt
     local final class 95 {
     }
     local final class 96 {
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/96>|.age: R|kotlin/Number?|
+            public get(): R|kotlin/Number?|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/96>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Number?>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Number?>|
+
     }
     local final class 97 {
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<*>|.person: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/96>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/96>|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<*>|.person: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/96>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/96>|
+
     }
     local final class 98 {
     }
@@ -219,3 +243,12 @@ FILE: __GENERATED DECLARATIONS__.kt
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
     }
+FILE: __GENERATED DECLARATIONS__.kt
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Schema21>|.age: R|kotlin/Number?|
+        public get(): R|kotlin/Number?|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Schema21>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Number?>|
+        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Number?>|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Schema2>|.person: R|org/jetbrains/kotlinx/dataframe/DataRow<Schema21>|
+        public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<Schema21>|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Schema2>|.person: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<Schema21>|
+        public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<Schema21>|

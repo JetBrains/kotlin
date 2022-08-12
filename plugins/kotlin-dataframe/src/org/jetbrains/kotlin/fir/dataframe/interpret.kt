@@ -180,12 +180,7 @@ fun <T> FirExpressionResolutionExtension.interpret(
                     val declarationSymbols =
                         ((schemaTypeArg.type as ConeClassLikeType).toSymbol(session) as FirRegularClassSymbol).declarationSymbols
                     val columns = declarationSymbols.filterIsInstance<FirPropertySymbol>().map {
-                        SimpleCol(
-                            it.name.identifier, TypeApproximationImpl(
-                                it.resolvedReturnType.classId!!.asFqNameString(),
-                                it.resolvedReturnType.isMarkedNullable
-                            )
-                        )
+                        simpleCol(it)
                     }
                     PluginDataFrameSchema(columns)
                 }.let { Interpreter.Success(it) }
@@ -215,6 +210,26 @@ fun <T> FirExpressionResolutionExtension.interpret(
         error("")
     }
 }
+
+private fun FirExpressionResolutionExtension.simpleCol(it: FirPropertySymbol): SimpleCol =
+    when (it.resolvedReturnType.classId) {
+        Names.DATA_ROW_CLASS_ID -> {
+            val nestedColumns = it.resolvedReturnType.typeArguments[0].type
+                ?.toRegularClassSymbol(session)
+                ?.declarationSymbols
+                ?.filterIsInstance<FirPropertySymbol>()
+                ?.map { simpleCol(it) }
+                ?: emptyList()
+            SimpleColumnGroup(it.name.identifier, nestedColumns)
+        }
+
+        else -> SimpleCol(
+            it.name.identifier, TypeApproximationImpl(
+                it.resolvedReturnType.classId!!.asFqNameString(),
+                it.resolvedReturnType.isMarkedNullable
+            )
+        )
+    }
 
 fun path(propertyAccessExpression: FirPropertyAccessExpression): List<String> {
     val colName = f(propertyAccessExpression)

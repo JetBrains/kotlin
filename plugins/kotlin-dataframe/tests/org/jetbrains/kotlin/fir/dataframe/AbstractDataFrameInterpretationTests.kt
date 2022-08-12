@@ -112,6 +112,11 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
                 "string_2" to "42",
                 "dataFrame_1" to PluginDataFrameSchema(listOf(SimpleCol("i", TypeApproximationImpl("kotlin.Int", false)))),
                 "dataFrame_2" to PluginDataFrameSchema(emptyList()),
+                "dataFrame_3" to PluginDataFrameSchema(
+                    listOf(
+                        SimpleColumnGroup("person", listOf(SimpleCol("age", TypeApproximationImpl("kotlin.Number", true))))
+                    )
+                ),
                 "type_1" to TypeApproximationImpl("kotlin.Int", nullable = false),
                 "insert_1" to InsertClauseApproximation(
                     PluginDataFrameSchema(columns = emptyList()),
