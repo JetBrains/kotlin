@@ -66,3 +66,23 @@ public infix fun Byte.until(to: Short): IntRange {
 public infix fun Short.until(to: Short): IntRange {
     return this.toInt() .. (to.toInt() - 1).toInt()
 }
+
+public infix fun UByte.until(to: UByte): UIntRange {
+    if (to <= UByte.MIN_VALUE) return UIntRange.EMPTY
+    return this.toUInt() .. (to - 1u).toUInt()
+}
+
+public infix fun UInt.until(to: UInt): UIntRange {
+    if (to <= UInt.MIN_VALUE) return UIntRange.EMPTY
+    return this .. (to - 1u).toUInt()
+}
+
+public infix fun ULong.until(to: ULong): ULongRange {
+    if (to <= ULong.MIN_VALUE) return ULongRange.EMPTY
+    return this .. (to - 1u).toULong()
+}
+
+public infix fun UShort.until(to: UShort): UIntRange {
+    if (to <= UShort.MIN_VALUE) return UIntRange.EMPTY
+    return this.toUInt() .. (to - 1u).toUInt()
+}
