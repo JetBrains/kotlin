@@ -5,19 +5,9 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.load.java.JvmAbi
 import java.net.URL
 import java.net.URLClassLoader
 
-fun clearReflectionCache(classLoader: ClassLoader) {
-    try {
-        val klass = classLoader.loadClass(JvmAbi.REFLECTION_FACTORY_IMPL.asSingleFqName().asString())
-        val method = klass.getDeclaredMethod("clearCaches")
-        method.invoke(null)
-    } catch (e: ClassNotFoundException) {
-        // This is OK for a test without kotlin-reflect in the dependencies
-    }
-}
 
 fun ClassLoader?.extractUrls(): List<URL> {
     return (this as? URLClassLoader)?.let {

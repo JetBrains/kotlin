@@ -5,6 +5,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertSame
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
+import kotlin.reflect.jvm.internal.*
 
 private inline fun <reified T> check(isNullable: Boolean = false) {
     val t1 = typeOf<T>()
@@ -15,10 +16,12 @@ private inline fun <reified T> check(isNullable: Boolean = false) {
 }
 
 fun box(): String {
-    check<Int>()
-    check<Int?>(true)
-    check<List<Int>?>(true)
-    check<List<Int>>()
-    check<List<Int?>?>(true)
+    synchronized(ReflectionFactoryImpl::class.java) {
+        check<Int>()
+        check<Int?>(true)
+        check<List<Int>?>(true)
+        check<List<Int>>()
+        check<List<Int?>?>(true)
+    }
     return "OK"
 }
