@@ -94,7 +94,7 @@ class KlibBasedSymbolProvider(
         }
 
         resolvedLibrary.library.packageMetadataParts(packageStringName).forEach {
-            val libraryPath = Paths.get(resolvedLibrary.library.libraryName)
+            val libraryPath = Paths.get(resolvedLibrary.library.libraryFile.path)
             val fragment = getPackageFragment(packageStringName, it)
 
             val nameResolver = NameResolverImpl(
