@@ -25,7 +25,7 @@ import java.io.File
  */
 internal fun findMacros(
         nativeIndex: NativeIndexImpl,
-        compilation: CompilationWithPCH,
+        compilation: Compilation,
         translationUnit: CXTranslationUnit,
         headers: Set<CXFile?>
 ) {
@@ -49,7 +49,7 @@ private typealias TypeConverter = (CValue<CXType>) -> Type
  * @return the list of constants.
  */
 private fun expandMacros(
-        library: CompilationWithPCH,
+        library: Compilation,
         names: List<String>,
         typeConverter: TypeConverter
 ): List<MacroDef> {
@@ -97,7 +97,7 @@ private fun expandMacros(
  * As a side effect, modifies the [sourceFile] and reparses the [translationUnit].
  */
 private fun tryExpandMacros(
-        library: CompilationWithPCH,
+        library: Compilation,
         translationUnit: CXTranslationUnit,
         sourceFile: File,
         names: List<String>,
@@ -161,7 +161,7 @@ private const val CODE_SNIPPET_FUNCTION_NAME_PREFIX = "kni_indexer_function_"
  * generate a bridge for this macro.
  *  - Otherwise the macro is skipped.
  */
-private fun reparseWithCodeSnippets(library: CompilationWithPCH,
+private fun reparseWithCodeSnippets(library: Compilation,
                                     translationUnit: CXTranslationUnit, sourceFile: File,
                                     names: List<String>) {
 

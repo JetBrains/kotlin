@@ -111,7 +111,7 @@ data class NativeLibrary(override val includes: List<String>,
                          val headerExclusionPolicy: HeaderExclusionPolicy,
                          val headerFilter: NativeLibraryHeaderFilter) : Compilation
 
-data class IndexerResult(val index: NativeIndex, val compilation: CompilationWithPCH)
+data class IndexerResult(val index: NativeIndex, val compilation: Compilation)
 
 /**
  * Retrieves the definitions from given C header file using given compiler arguments (e.g. defines).

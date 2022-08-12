@@ -1186,7 +1186,7 @@ fun buildNativeIndexImpl(index: NativeIndexImpl): IndexerResult {
     return IndexerResult(index, compilation)
 }
 
-private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH {
+private fun indexDeclarations(nativeIndex: NativeIndexImpl): Compilation {
     withIndex { index ->
         val translationUnit = nativeIndex.library.copyWithArgsForPCH().parse(
                 index,

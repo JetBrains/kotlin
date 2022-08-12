@@ -461,8 +461,8 @@ internal fun CXTranslationUnit.getErrorLineNumbers(): Sequence<Int> =
 /**
  * For each list of lines, checks if the code fragment composed from these lines is compilable against given library.
  */
-fun List<List<String>>.mapFragmentIsCompilable(originalLibrary: CompilationWithPCH): List<Boolean> {
-    val library: CompilationWithPCH = originalLibrary
+fun List<List<String>>.mapFragmentIsCompilable(originalLibrary: Compilation): List<Boolean> {
+    val library: Compilation = originalLibrary
             .copy(compilerArgs = originalLibrary.compilerArgs + "-ferror-limit=0")
 
     val indicesOfNonCompilable = mutableSetOf<Int>()

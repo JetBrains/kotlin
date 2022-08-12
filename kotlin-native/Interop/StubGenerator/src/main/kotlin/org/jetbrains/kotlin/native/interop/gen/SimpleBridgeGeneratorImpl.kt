@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.native.interop.gen
 
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
-import org.jetbrains.kotlin.native.interop.indexer.CompilationWithPCH
+import org.jetbrains.kotlin.native.interop.indexer.Compilation
 import org.jetbrains.kotlin.native.interop.indexer.Language
 import org.jetbrains.kotlin.native.interop.indexer.mapFragmentIsCompilable
 
@@ -27,7 +27,7 @@ class SimpleBridgeGeneratorImpl(
         private val platform: KotlinPlatform,
         private val pkgName: String,
         private val jvmFileClassName: String,
-        private val libraryForCStubs: CompilationWithPCH,
+        private val libraryForCStubs: Compilation,
         override val topLevelNativeScope: NativeScope,
         private val topLevelKotlinScope: KotlinScope
 ) : SimpleBridgeGenerator {
