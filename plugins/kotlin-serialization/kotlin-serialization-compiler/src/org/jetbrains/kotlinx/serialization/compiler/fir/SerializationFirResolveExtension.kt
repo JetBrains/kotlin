@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -52,6 +53,21 @@ val generatedSerializerClassId = ClassId(SerializationPackages.internalPackageFq
 val kSerializerClassId = ClassId(SerializationPackages.packageFqName, SerialEntityNames.KSERIALIZER_NAME)
 
 class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGenerationExtension(session) {
+
+    internal val runtimeHasEnumSerializerFactory by lazy {
+        val hasFactory = session.symbolProvider.getTopLevelCallableSymbols(
+            SerializationPackages.internalPackageFqName,
+            SerialEntityNames.ENUM_SERIALIZER_FACTORY_FUNC_NAME
+        ).isNotEmpty()
+        val hasMarkedFactory = session.symbolProvider.getTopLevelCallableSymbols(
+            SerializationPackages.internalPackageFqName,
+            SerialEntityNames.MARKED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
+        ).isNotEmpty()
+        hasFactory && hasMarkedFactory
+    }
+
+    internal val FirClassSymbol<*>.shouldHaveGeneratedSerializer: Boolean
+        get() = (isInternalSerializable && isFinalOrOpen()) || (classKind == ClassKind.ENUM_CLASS && hasSerializableAnnotationWithoutArgs && !runtimeHasEnumSerializerFactory)
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>): Set<Name> {
         val result = mutableSetOf<Name>()
@@ -156,7 +172,11 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         return listOf(copy.symbol)
     }
 
-    private fun generateSerializerGetterInCompanion(owner: FirClassSymbol<*>, serializableClassSymbol: FirClassSymbol<*>, callableId: CallableId): FirNamedFunctionSymbol {
+    private fun generateSerializerGetterInCompanion(
+        owner: FirClassSymbol<*>,
+        serializableClassSymbol: FirClassSymbol<*>,
+        callableId: CallableId
+    ): FirNamedFunctionSymbol {
         val f = buildSimpleFunction {
             moduleData = session.moduleData
             symbol = FirNamedFunctionSymbol(callableId)

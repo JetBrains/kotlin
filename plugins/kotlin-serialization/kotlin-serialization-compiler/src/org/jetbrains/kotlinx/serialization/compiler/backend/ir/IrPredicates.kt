@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
@@ -61,10 +62,7 @@ internal fun IrClass.findPluginGeneratedMethod(name: String): IrSimpleFunction? 
     }
 }
 
-internal fun IrClass.isEnumWithLegacyGeneratedSerializer(): Boolean = isInternallySerializableEnum() && useGeneratedEnumSerializer
-
-internal val IrClass.useGeneratedEnumSerializer: Boolean
-    get() = true // FIXME This would break if we try to use this new IR compiler with pre-1.4.1 serialization versions. I think we just need to raise min runtime version.
+internal fun IrClass.isEnumWithLegacyGeneratedSerializer(context: SerializationPluginContext): Boolean = isInternallySerializableEnum() && !context.runtimeHasEnumSerializerFactoryFunctions
 
 internal val IrClass.isSealedSerializableInterface: Boolean
     get() = kind == ClassKind.INTERFACE && modality == Modality.SEALED && hasSerializableOrMetaAnnotation()
@@ -100,9 +98,9 @@ internal val IrClass.isSerialInfoAnnotation: Boolean
             || annotations.hasAnnotation(SerializationAnnotations.inheritableSerialInfoFqName)
             || annotations.hasAnnotation(SerializationAnnotations.metaSerializableAnnotationFqName)
 
-internal val IrClass.shouldHaveGeneratedSerializer: Boolean
-    get() = (isInternalSerializable && (modality == Modality.FINAL || modality == Modality.OPEN))
-            || isEnumWithLegacyGeneratedSerializer()
+internal fun IrClass.shouldHaveGeneratedSerializer(context: SerializationPluginContext): Boolean
+    = (isInternalSerializable && (modality == Modality.FINAL || modality == Modality.OPEN))
+            || isEnumWithLegacyGeneratedSerializer(context)
 
 internal val IrClass.shouldHaveGeneratedMethodsInCompanion: Boolean
     get() = this.isSerializableObject || this.isSerializableEnum() || (this.kind == ClassKind.CLASS && hasSerializableOrMetaAnnotation()) || this.isSealedSerializableInterface

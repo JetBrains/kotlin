@@ -48,10 +48,10 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         = compilerContext.referenceFunctions(CallableId(SerializationPackages.internalPackageFqName, SerialEntityNames.ARRAY_MASK_FIELD_MISSING_FUNC_NAME)).singleOrNull()
 
     private val enumSerializerFactoryFunc
-        = compilerContext.referenceFunctions(CallableId(SerializationPackages.internalPackageFqName, SerialEntityNames.ENUM_SERIALIZER_FACTORY_FUNC_NAME)).singleOrNull()
+        = compilerContext.enumSerializerFactoryFunc
 
     private val markedEnumSerializerFactoryFunc
-        = compilerContext.referenceFunctions(CallableId(SerializationPackages.internalPackageFqName, SerialEntityNames.MARKED_ENUM_SERIALIZER_FACTORY_FUNC_NAME)).singleOrNull()
+        = compilerContext.markedEnumSerializerFactoryFunc
 
     fun useFieldMissingOptimization(): Boolean {
         return throwMissedFieldExceptionFunc != null && throwMissedFieldExceptionArrayFunc != null
@@ -535,7 +535,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         }
 
 
-        val serializable = serializerClass?.owner?.let { getSerializableClassDescriptorBySerializer(it) }
+        val serializable = serializerClass?.owner?.let { compilerContext.getSerializableClassDescriptorBySerializer(it) }
         requireNotNull(serializerClass)
         val ctor = if (serializable?.typeParameters?.isNotEmpty() == true) {
             requireNotNull(

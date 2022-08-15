@@ -5,22 +5,16 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.fir
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingDeclarationSymbol
-import org.jetbrains.kotlin.fir.analysis.checkers.outerClassSymbol
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.classId
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
-import org.jetbrains.kotlinx.serialization.compiler.resolve.isSerializableObject
-import org.jetbrains.kotlinx.serialization.compiler.resolve.shouldHaveGeneratedMethodsInCompanion
 
 internal val FirClassSymbol<*>.hasSerializableAnnotation
     get() = this.annotations.any {
@@ -56,13 +50,7 @@ internal val FirClassSymbol<*>.isInternalSerializable: Boolean
 
 internal fun FirClassSymbol<*>.isSerializableEnum(): Boolean = classKind == ClassKind.ENUM_CLASS && hasSerializableAnnotation
 
-internal fun FirClassSymbol<*>.isInternallySerializableEnum(): Boolean =
-    classKind == ClassKind.ENUM_CLASS && hasSerializableAnnotationWithoutArgs
-
-internal val FirClassSymbol<*>.shouldHaveGeneratedSerializer: Boolean
-    get() = (isInternalSerializable && isFinalOrOpen()) || isInternallySerializableEnum()
-
-private fun FirClassSymbol<*>.isFinalOrOpen(): Boolean {
+internal fun FirClassSymbol<*>.isFinalOrOpen(): Boolean {
     val modality = rawStatus.modality
     // null means default modality, final
     return (modality == null || modality == Modality.FINAL || modality == Modality.OPEN)

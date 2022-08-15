@@ -56,7 +56,7 @@ open class SerializerIrGenerator(
     compilerContext: SerializationPluginContext,
     metadataPlugin: SerializationDescriptorSerializerPlugin?,
 ) : BaseIrGenerator(irClass, compilerContext) {
-    protected val serializableIrClass = getSerializableClassDescriptorBySerializer(irClass)!!
+    protected val serializableIrClass = compilerContext.getSerializableClassDescriptorBySerializer(irClass)!!
 
     protected val serialName: String = serializableIrClass.serialName()
     protected val properties = serializablePropertiesForIrBackend(serializableIrClass, metadataPlugin)
@@ -620,13 +620,13 @@ open class SerializerIrGenerator(
             context: SerializationPluginContext,
             metadataPlugin: SerializationDescriptorSerializerPlugin?,
         ) {
-            val serializableDesc = getSerializableClassDescriptorBySerializer(irClass.symbol.descriptor) ?: return
+            val serializableDesc = context.getSerializableClassDescriptorBySerializer(irClass) ?: return
             val generator = when {
-                serializableDesc.isEnumWithLegacyGeneratedSerializer() -> SerializerForEnumsGenerator(
+                serializableDesc.isEnumWithLegacyGeneratedSerializer(context) -> SerializerForEnumsGenerator(
                     irClass,
                     context
                 )
-                serializableDesc.isInlineClass() -> SerializerForInlineClassGenerator(irClass, context)
+                serializableDesc.isValue -> SerializerForInlineClassGenerator(irClass, context)
                 else -> SerializerIrGenerator(irClass, context, metadataPlugin)
             }
             generator.generate()

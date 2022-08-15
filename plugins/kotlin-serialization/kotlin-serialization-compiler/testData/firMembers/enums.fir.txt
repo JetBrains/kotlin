@@ -1,0 +1,132 @@
+FILE: enums.kt
+    public final enum class Plain : R|kotlin/Enum<Plain>| {
+        private constructor(): R|Plain| {
+            super<R|kotlin/Enum<Plain>|>()
+        }
+
+        public final static enum entry A: R|Plain|
+        public final static enum entry B: R|Plain|
+        public final static fun values(): R|kotlin/Array<Plain>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|Plain| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<Plain>|
+            public get(): R|kotlin/enums/EnumEntries<Plain>|
+
+    }
+    @R|kotlinx/serialization/Serializable|() public final enum class WithNames : R|kotlin/Enum<WithNames>| {
+        private constructor(): R|WithNames| {
+            super<R|kotlin/Enum<WithNames>|>()
+        }
+
+        @R|kotlinx/serialization/SerialName|(value = String(A)) public final static enum entry ENTRY1: R|WithNames| = object : R|WithNames| {
+            private constructor(): R|<anonymous>| {
+                super<R|WithNames|>()
+            }
+
+        }
+
+        @R|kotlinx/serialization/SerialName|(value = String(B)) public final static enum entry ENTRY2: R|WithNames| = object : R|WithNames| {
+            private constructor(): R|<anonymous>| {
+                super<R|WithNames|>()
+            }
+
+        }
+
+        public final static fun values(): R|kotlin/Array<WithNames>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|WithNames| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<WithNames>|
+            public get(): R|kotlin/enums/EnumEntries<WithNames>|
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<WithNames>|
+
+            private constructor(): R|WithNames.Companion|
+
+        }
+
+        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<WithNames>| {
+            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|WithNames|): R|kotlin/Unit|
+
+            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|WithNames|
+
+            public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
+                public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
+
+            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+
+            private constructor(): R|WithNames.$serializer|
+
+        }
+
+    }
+    @R|kotlinx/serialization/Serializable|() public final class Holder : R|kotlin/Any| {
+        public constructor(p: R|Plain|, w: R|WithNames|): R|Holder| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val p: R|Plain| = R|<local>/p|
+            public get(): R|Plain|
+
+        public final val w: R|WithNames| = R|<local>/w|
+            public get(): R|WithNames|
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Holder>|
+
+            private constructor(): R|Holder.Companion|
+
+        }
+
+        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Holder>| {
+            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Holder|): R|kotlin/Unit|
+
+            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Holder|
+
+            public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
+                public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
+
+            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+
+            private constructor(): R|Holder.$serializer|
+
+        }
+
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlinx/serialization/InternalSerializationApi|))) public final fun testSerializers(): R|kotlin/String| {
+        lval cs: R|kotlin/Array<kotlinx/serialization/KSerializer<*>>| = (Q|Holder|.R|/Holder.Companion.serializer|() as R|kotlinx/serialization/internal/GeneratedSerializer<*>|).R|SubstitutionOverride<kotlinx/serialization/internal/GeneratedSerializer.childSerializers: R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|>|()
+        lval str1: R|kotlin/String| = R|<local>/cs|.R|SubstitutionOverride<kotlin/Array.get: R|kotlinx/serialization/KSerializer<*>|>|(Int(0)).R|kotlin/Any.toString|()
+        when () {
+            R|<local>/str1|.R|kotlin/text/contains|(String(kotlinx.serialization.internal.EnumSerializer)).R|kotlin/Boolean.not|() ->  {
+                ^testSerializers R|<local>/str1|
+            }
+        }
+
+        ^testSerializers String(OK)
+    }
+    public final fun testSerialization(previous: R|kotlin/String|): R|kotlin/String| {
+        when () {
+            !=(R|<local>/previous|, String(OK)) ->  {
+                ^testSerialization R|<local>/previous|
+            }
+        }
+
+        lval h: R|Holder| = R|/Holder.Holder|(Q|Plain|.R|/Plain.B|, Q|WithNames|.R|/WithNames.ENTRY1|)
+        lval s: R|kotlin/String| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.encodeToString|<R|Holder|>(Q|Holder|.R|/Holder.Companion.serializer|(), R|<local>/h|)
+        when () {
+            !=(R|<local>/s|, String({"p":"B","w":"A"})) ->  {
+                ^testSerialization R|<local>/s|
+            }
+        }
+
+        ^testSerialization String(OK)
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box R|/testSerialization|(R|/testSerializers|())
+    }

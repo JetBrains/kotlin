@@ -17,9 +17,12 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlinx.serialization.compiler.backend.ir.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -44,6 +47,22 @@ class SerializationPluginContext(baseContext: IrPluginContext, val metadataPlugi
     lateinit var serialInfoImplJvmIrGenerator: SerialInfoImplJvmIrGenerator
 
     internal val copiedStaticWriteSelf: MutableMap<IrSimpleFunction, IrSimpleFunction> = ConcurrentHashMap()
+
+    internal val enumSerializerFactoryFunc = baseContext.referenceFunctions(
+        CallableId(
+            SerializationPackages.internalPackageFqName,
+            SerialEntityNames.ENUM_SERIALIZER_FACTORY_FUNC_NAME
+        )
+    ).singleOrNull()
+
+    internal val markedEnumSerializerFactoryFunc = baseContext.referenceFunctions(
+        CallableId(
+            SerializationPackages.internalPackageFqName,
+            SerialEntityNames.MARKED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
+        )
+    ).singleOrNull()
+
+    val runtimeHasEnumSerializerFactoryFunctions = enumSerializerFactoryFunc != null && markedEnumSerializerFactoryFunc != null
 }
 
 private inline fun IrClass.runPluginSafe(block: () -> Unit) {

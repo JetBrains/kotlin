@@ -49,6 +49,12 @@ public class SerializationFirMembersTestGenerated extends AbstractSerializationF
     }
 
     @Test
+    @TestMetadata("enums.kt")
+    public void testEnums() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/firMembers/enums.kt");
+    }
+
+    @Test
     @TestMetadata("multipleProperties.kt")
     public void testMultipleProperties() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/firMembers/multipleProperties.kt");

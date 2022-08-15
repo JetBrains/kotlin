@@ -38,6 +38,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("enumsAreCached.kt")
+    public void testEnumsAreCached() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/boxIr/enumsAreCached.kt");
+    }
+
+    @Test
     @TestMetadata("generics.kt")
     public void testGenerics() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/boxIr/generics.kt");
