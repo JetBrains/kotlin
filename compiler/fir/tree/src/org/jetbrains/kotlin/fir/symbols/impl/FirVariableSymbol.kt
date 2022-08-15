@@ -76,7 +76,16 @@ class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirBacki
 
 class FirDelegateFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirProperty>(callableId)
 
-class FirFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirField>(callableId)
+class FirFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirField>(callableId) {
+    val hasInitializer: Boolean
+        get() = fir.initializer != null
+
+    val isVal: Boolean
+        get() = fir.isVal
+
+    val isVar: Boolean
+        get() = fir.isVar
+}
 
 class FirEnumEntrySymbol(callableId: CallableId) : FirVariableSymbol<FirEnumEntry>(callableId)
 

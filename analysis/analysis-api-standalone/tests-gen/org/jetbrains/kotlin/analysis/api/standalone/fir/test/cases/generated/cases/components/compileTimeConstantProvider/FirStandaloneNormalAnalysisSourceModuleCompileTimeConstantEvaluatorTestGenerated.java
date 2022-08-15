@@ -77,6 +77,24 @@ public class FirStandaloneNormalAnalysisSourceModuleCompileTimeConstantEvaluator
     }
 
     @Test
+    @TestMetadata("javaFinalField.kt")
+    public void testJavaFinalField() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/javaFinalField.kt");
+    }
+
+    @Test
+    @TestMetadata("javaStaticField.kt")
+    public void testJavaStaticField() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/javaStaticField.kt");
+    }
+
+    @Test
+    @TestMetadata("javaStaticFinalField.kt")
+    public void testJavaStaticFinalField() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/javaStaticFinalField.kt");
+    }
+
+    @Test
     @TestMetadata("namedReference_const.kt")
     public void testNamedReference_const() throws Exception {
         runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference_const.kt");
