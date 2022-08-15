@@ -23,15 +23,14 @@ import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
-import org.jetbrains.kotlin.fir.extensions.predicate.AnnotatedWith
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
-import org.jetbrains.kotlin.fir.resolve.typeWithStarProjections
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.constructStarProjectedType
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
@@ -43,7 +42,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
 
 object SerializationPluginKey : GeneratedDeclarationKey() {
@@ -260,7 +258,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             })
 
             superTypeRefs += buildResolvedTypeRef {
-                type = generatedSerializerClassId.constructClassLikeType(arrayOf(owner.typeWithStarProjections()), isNullable = false)
+                type = generatedSerializerClassId.constructClassLikeType(arrayOf(owner.constructStarProjectedType()), isNullable = false)
             }
         }
         // TODO: add typed constructor
