@@ -39,6 +39,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         public void testAnnotationClass() throws Exception {
             runTest("js/js.translator/testData/box/annotation/annotationClass.kt");
         }
+
+        @Test
+        @TestMetadata("multipleEqualMethodsBug.kt")
+        public void testMultipleEqualMethodsBug() throws Exception {
+            runTest("js/js.translator/testData/box/annotation/multipleEqualMethodsBug.kt");
+        }
     }
 
     @Nested
