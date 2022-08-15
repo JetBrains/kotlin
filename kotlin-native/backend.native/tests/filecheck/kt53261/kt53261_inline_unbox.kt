@@ -30,5 +30,5 @@ fun main(arr: Array<String>) {
 // CHECK-NOT: {{call|invoke}} <4 x float> @"kfun:kotlin.native#<Vector128-unbox>
 // CHECK-NOT: {{call|invoke}} %struct.ObjHeader* @"kfun:kotlin#<Result-unbox>
 
-// On ARM64, generated functions IntToNSNumber and UIntToNSNumber may contain non-converted invocations of unbox functions.
-// CHECK-ARM64: IntToNSNumber
+// On APPLE targets, generated functions <T>ToNSNumber may contain non-converted invocations of unbox functions.
+// CHECK-APPLE: {{IntToNSNumber|LongToNSNumber|ByteToNSNumber|ShortToNSNumber|FloatToNSNumber|DoubleToNSNumber}}

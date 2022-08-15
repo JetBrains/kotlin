@@ -6232,8 +6232,8 @@ fileCheckTest("filecheck_kt49847_generic_receiver") {
 fileCheckTest("filecheck_kt53261_inline_unbox") {
     annotatedSource = project.file('filecheck/kt53261/kt53261_inline_unbox.kt')
     enabled = project.globalTestArgs.contains('-opt')
-    if (target.architecture == Architecture.ARM64) {
-        checkPrefix = "CHECK-ARM64"
+    if (isAppleTarget(project)) {
+        checkPrefix = "CHECK-APPLE"
     }
 }
 
