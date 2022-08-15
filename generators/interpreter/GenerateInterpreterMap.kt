@@ -204,10 +204,13 @@ private fun getOperationMap(argumentsCount: Int): MutableList<Operation> {
         return !isPrimitive && isFakeOverridden
     }
 
+    val excludedBinaryOperations = listOf("rangeUntil").map { Name.identifier(it) }
+
     for (classDescriptor in allPrimitiveTypes + additionalBuiltIns + arrays) {
         val compileTimeFunctions = classDescriptor.unsubstitutedMemberScope.getContributedDescriptors()
             .filterIsInstance<CallableDescriptor>()
             .filter { !it.isFakeOverride(classDescriptor) && it.valueParameters.size + 1 == argumentsCount }
+            .filter { it.name !in excludedBinaryOperations }
 
         for (function in compileTimeFunctions) {
             operationMap.add(
