@@ -55,18 +55,22 @@ class JsIrModuleHeader(
     val externalNames: Set<String> by lazy { nameBindings.keys - definitions }
 }
 
-class JsIrProgram(val modules: List<JsIrModule>) {
-    val mainModule = modules.last()
-    val otherModules = modules.dropLast(1)
-
-    fun crossModuleDependencies(relativeRequirePath: Boolean): Map<JsIrModule, CrossModuleReferences> {
+class JsIrProgram(private var modules: List<JsIrModule>) {
+    fun asCrossModuleDependencies(relativeRequirePath: Boolean): List<Pair<JsIrModule, CrossModuleReferences>> {
         val resolver = CrossModuleDependenciesResolver(modules.map { it.makeModuleHeader() })
+        modules = emptyList()
         val crossModuleReferences = resolver.resolveCrossModuleDependencies(relativeRequirePath)
-        return crossModuleReferences.entries.associate {
+        return crossModuleReferences.entries.map {
             val module = it.key.associatedModule ?: error("Internal error: module ${it.key.moduleName} is not loaded")
             it.value.initJsImportsForModule(module)
             module to it.value
         }
+    }
+
+    fun asFragments(): List<JsIrProgramFragment> {
+        val fragments = modules.flatMap { it.fragments }
+        modules = emptyList()
+        return fragments
     }
 }
 

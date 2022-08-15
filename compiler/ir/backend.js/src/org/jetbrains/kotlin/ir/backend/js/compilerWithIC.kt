@@ -38,7 +38,6 @@ fun compileWithIC(
     dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
     es6mode: Boolean = false,
     multiModule: Boolean = false,
-    relativeRequirePath: Boolean = false,
     verifySignatures: Boolean = true,
     baseClassIntoMetadata: Boolean = false,
     lowerPerModule: Boolean = false,
@@ -79,12 +78,7 @@ fun compileWithIC(
 
     lowerPreservingTags(allModules, context, PhaseConfig(jsPhases), symbolTable.irFactory.stageController as WholeWorldStageController)
 
-    val transformer = IrModuleToJsTransformerTmp(
-        context,
-        mainArguments,
-        relativeRequirePath = relativeRequirePath,
-    )
-
+    val transformer = IrModuleToJsTransformerTmp(context, mainArguments)
     return transformer.generateBinaryAst(filesToLower, allModules)
 }
 

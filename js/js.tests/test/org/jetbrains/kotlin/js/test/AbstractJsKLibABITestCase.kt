@@ -70,13 +70,9 @@ abstract class AbstractJsKLibABITestCase : AbstractKlibABITestCase() {
             icCompatibleIr2Js = true
         )
 
-        val transformer = IrModuleToJsTransformerTmp(
-            ir.context,
-            emptyList(),
-            relativeRequirePath = false
-        )
+        val transformer = IrModuleToJsTransformerTmp(ir.context, emptyList())
 
-        val compiledResult = transformer.generateModule(ir.allModules, setOf(TranslationMode.FULL_DCE_MINIMIZED_NAMES))
+        val compiledResult = transformer.generateModule(ir.allModules, setOf(TranslationMode.FULL_DCE_MINIMIZED_NAMES), false)
 
         val dceOutput = compiledResult.outputs[TranslationMode.FULL_DCE_MINIMIZED_NAMES] ?: error("No DCE output")
 
