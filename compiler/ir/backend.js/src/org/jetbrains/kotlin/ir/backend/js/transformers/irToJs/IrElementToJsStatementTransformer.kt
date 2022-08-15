@@ -32,7 +32,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitBlockBody(body: IrBlockBody, context: JsGenerationContext): JsStatement {
-        return JsBlock(body.statements.map { it.accept(this, context) })
+        return JsBlock(body.statements.map { it.accept(this, context) }).withSource(body, context)
     }
 
     override fun visitBlock(expression: IrBlock, context: JsGenerationContext): JsStatement {
@@ -53,7 +53,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
             }
         } else {
             JsBlock(statements)
-        }
+        }.withSource(expression, context)
     }
 
     private fun List<JsStatement>.wrapInCommentsInlineFunctionCall(expression: IrReturnableBlock): List<JsStatement> {
@@ -65,7 +65,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitComposite(expression: IrComposite, context: JsGenerationContext): JsStatement {
-        return JsBlock(expression.statements.map { it.accept(this, context) })
+        return JsBlock(expression.statements.map { it.accept(this, context) }).withSource(expression, context)
     }
 
     override fun visitExpression(expression: IrExpression, context: JsGenerationContext): JsStatement {
