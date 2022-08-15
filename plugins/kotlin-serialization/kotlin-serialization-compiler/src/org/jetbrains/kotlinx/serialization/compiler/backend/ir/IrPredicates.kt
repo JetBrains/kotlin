@@ -117,7 +117,7 @@ fun IrClass.serialName(): String {
 }
 
 fun IrClass.findEnumValuesMethod() = this.functions.singleOrNull { f ->
-    f.name == Name.identifier("values") && f.valueParameters.isEmpty() && f.extensionReceiverParameter == null
+    f.name == Name.identifier("values") && f.valueParameters.isEmpty() && f.extensionReceiverParameter == null && f.dispatchReceiverParameter == null
 } ?: throw AssertionError("Enum class does not have single .values() function")
 
 internal fun IrClass.enumEntries(): List<IrEnumEntry> {
