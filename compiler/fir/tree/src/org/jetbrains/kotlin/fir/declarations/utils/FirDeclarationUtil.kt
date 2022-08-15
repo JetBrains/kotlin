@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.ClassId
@@ -41,10 +38,11 @@ val FirClass.anonymousInitializers: List<FirAnonymousInitializer>
 val FirClass.delegateFields: List<FirField>
     get() = declarations.filterIsInstance<FirField>().filter { it.isSynthetic }
 
+val FirQualifiedAccess.referredVariableSymbol: FirVariableSymbol<*>?
+    get() = calleeReference.resolvedSymbol as? FirVariableSymbol<*>
+
 val FirQualifiedAccess.referredPropertySymbol: FirPropertySymbol?
-    get() {
-        return calleeReference.resolvedSymbol as? FirPropertySymbol
-    }
+    get() = referredVariableSymbol as? FirPropertySymbol
 
 inline val FirDeclaration.isJava: Boolean
     get() = origin is FirDeclarationOrigin.Java
