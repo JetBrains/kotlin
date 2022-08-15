@@ -71,6 +71,11 @@ class JavaClassesTrackerImpl(
         }
     }
 
+    override fun clear() {
+        classToSourceSerialized.clear()
+        classDescriptors.clear()
+    }
+
     private fun JavaClassDescriptor.wasContentRequested() =
             this.safeAs<LazyJavaClassDescriptor>()?.wasScopeContentRequested() != false
 }

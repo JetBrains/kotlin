@@ -276,6 +276,15 @@ class LookupTrackerImpl(private val delegate: LookupTracker) : LookupTracker {
             delegate.record(prevFilePath, position, prevScopeFqName, scopeKind, prevName)
         }
     }
+
+    override fun clear() {
+        lookups.clear()
+        prevFilePath = ""
+        prevPosition = null
+        prevScopeFqName = ""
+        prevScopeKind = null
+        prevName = ""
+    }
 }
 
 data class LookupSymbol(val name: String, val scope: String) : Comparable<LookupSymbol> {

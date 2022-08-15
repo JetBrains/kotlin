@@ -21,15 +21,18 @@ import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.toLogger
 import org.jetbrains.kotlin.cli.jvm.config.*
+import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys.LOOKUP_TRACKER
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
+import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -167,6 +170,12 @@ object KotlinToJVMBytecodeCompiler {
             }
 
             KotlinJavaPsiFacade.getInstance(environment.project).clearPackageCaches()
+
+            val javaClassesTracker = configuration[JAVA_CLASSES_TRACKER]
+            javaClassesTracker?.clear()
+
+            val lookupTracker = configuration[LOOKUP_TRACKER]
+            lookupTracker?.clear()
 
             // Clear all diagnostic messages
             configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]?.clear()
