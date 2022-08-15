@@ -13,11 +13,12 @@ fun <T : FirElement, D> T.transformSingle(transformer: FirTransformer<D>, data: 
 }
 
 fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirTransformer<D>, data: D) {
-    for (i in 0 until this.size) {
-        val next = this[i] as FirPureAbstractElement
+    val list = this as ArrayList
+    for (i in list.indices) {
+        val next = list[i] as FirPureAbstractElement
         val result = next.transform<T, D>(transformer, data)
         if (result !== next) {
-            this[i] = result
+            list[i] = result
         }
     }
 }
@@ -44,13 +45,15 @@ inline fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirT
 }
 
 fun <R, D> List<FirElement>.acceptAllElements(visitor: FirVisitor<R, D>, data: D) {
-    for (i in 0 until this.size) {
-        (this[i] as FirPureAbstractElement).accept(visitor, data)
+    val list = this as ArrayList
+    for (i in list.indices) {
+        (list[i] as FirPureAbstractElement).accept(visitor, data)
     }
 }
 
 fun List<FirElement>.acceptAllElements(visitor: FirVisitorVoid) {
-    for (i in 0 until this.size) {
-        (this[i] as FirPureAbstractElement).accept(visitor)
+    val list = this as ArrayList
+    for (i in list.indices) {
+        (list[i] as FirPureAbstractElement).accept(visitor)
     }
 }
