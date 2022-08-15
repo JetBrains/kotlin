@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
-import org.jetbrains.kotlin.fir.declarations.utils.referredPropertySymbol
+import org.jetbrains.kotlin.fir.declarations.utils.isFinal
+import org.jetbrains.kotlin.fir.declarations.utils.referredVariableSymbol
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.psi
@@ -22,8 +23,9 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.psi.KtElement
@@ -44,7 +46,11 @@ internal object FirCompileTimeConstantEvaluator {
     ): FirConstExpression<*>? =
         when (fir) {
             is FirPropertyAccessExpression -> {
-                fir.referredPropertySymbol?.toConstExpression(mode)
+                when (val referredVariable = fir.referredVariableSymbol) {
+                    is FirPropertySymbol -> referredVariable.toConstExpression(mode)
+                    is FirFieldSymbol -> referredVariable.toConstExpression(mode)
+                    else -> null
+                }
             }
             is FirConstExpression<*> -> {
                 fir.adaptToConstKind()
@@ -69,6 +75,18 @@ internal object FirCompileTimeConstantEvaluator {
             isVal && hasInitializer -> {
                 // NB: the initializer could be [FirLazyExpression] in [BodyBuildingMode.LAZY_BODIES].
                 this.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE) // to unwrap lazy body
+                evaluate(fir.initializer, mode)
+            }
+            else -> null
+        }
+    }
+
+    private fun FirFieldSymbol.toConstExpression(
+        mode: KtConstantEvaluationMode,
+    ): FirConstExpression<*>? {
+        return when {
+            mode == KtConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION && !isFinal -> null
+            isVal && hasInitializer -> {
                 evaluate(fir.initializer, mode)
             }
             else -> null
