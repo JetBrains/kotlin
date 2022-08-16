@@ -269,16 +269,17 @@ class BodyGenerator(
         }
 
         // Some intrinsics are a special case because we want to remove them completely, including their arguments.
-        val removableIntrinsics = buildList {
-            if (backendContext.configuration.getNotNull(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS) == false)
-                add(wasmSymbols.rangeCheck)
-            if (backendContext.configuration.getNotNull(JSConfigurationKeys.WASM_ENABLE_ASSERTS) == false)
-                addAll(wasmSymbols.assertFuncs)
+        if (!backendContext.configuration.getNotNull(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS)) {
+            if (call.symbol == wasmSymbols.rangeCheck) {
+                body.buildGetUnit()
+                return
+            }
         }
-
-        if (call.symbol in removableIntrinsics) {
-            body.buildGetUnit()
-            return
+        if (!backendContext.configuration.getNotNull(JSConfigurationKeys.WASM_ENABLE_ASSERTS)) {
+            if (call.symbol in wasmSymbols.assertFuncs) {
+                body.buildGetUnit()
+                return
+            }
         }
 
         val function: IrFunction = call.symbol.owner.realOverrideTarget
