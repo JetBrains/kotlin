@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.declarations.*
@@ -508,6 +509,9 @@ internal object EagerResolveOfCallableReferences : CheckerStage() {
 internal object DiscriminateSynthetics : CheckerStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         if (candidate.symbol is SyntheticSymbol) {
+            sink.reportDiagnostic(ResolvedWithSynthetic)
+        }
+        if (candidate.symbol is FirPropertySymbol && candidate.symbol.source?.kind is KtFakeSourceElementKind.EnumGeneratedDeclaration) {
             sink.reportDiagnostic(ResolvedWithSynthetic)
         }
     }
