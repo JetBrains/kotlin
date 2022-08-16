@@ -36,7 +36,7 @@ constructor(
 
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
-        get() = setOf(nodeJs.versions.typeScript)
+        get() = setOf(nodeJs.versions.typescript)
 
     @get:SkipWhenEmpty
     @get:InputDirectory
