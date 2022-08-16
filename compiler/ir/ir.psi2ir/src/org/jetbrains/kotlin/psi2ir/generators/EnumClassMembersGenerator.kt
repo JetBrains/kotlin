@@ -94,7 +94,7 @@ class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
             ).also { irProperty ->
                 irProperty.getter = context.symbolTable.declareSimpleFunctionWithOverrides(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
-                    IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR,
+                    IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
                     entriesProperty.getter!!
                 ).also { getter ->
                     getter.correspondingPropertySymbol = irProperty.symbol

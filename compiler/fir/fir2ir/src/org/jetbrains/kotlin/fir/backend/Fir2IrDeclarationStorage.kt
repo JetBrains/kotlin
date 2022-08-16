@@ -854,8 +854,8 @@ class Fir2IrDeclarationStorage(
         containingClass: ConeClassLikeLookupTag? = (irParent as? IrClass)?.classId?.let { ConeClassLikeLookupTagImpl(it) },
         forceTopLevelPrivate: Boolean = false,
     ): IrProperty = convertCatching(property) {
-        val origin = if (property.isStatic && property.name in ENUM_SYNTHETIC_NAMES)
-            IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
+        val origin =
+            if (property.isStatic && property.name in ENUM_SYNTHETIC_NAMES) IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
             else property.computeIrOrigin(predefinedOrigin)
         // See similar comments in createIrFunction above
         val signature =
@@ -934,6 +934,7 @@ class Fir2IrDeclarationStorage(
                         getter, property, this, type, irParent, thisReceiverOwner, false,
                         when {
                             origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
+                            origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> origin
                             delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
                             getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                             else -> origin
