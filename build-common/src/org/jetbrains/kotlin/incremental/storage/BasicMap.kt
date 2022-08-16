@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.KeyDescriptor
@@ -49,7 +48,7 @@ abstract class BasicMap<K : Comparable<K>, V>(
     }
 
     // avoid unsynchronized close
-    open fun close() {
+    fun close() {
         storage.close()
     }
 
@@ -88,16 +87,10 @@ abstract class BasicStringMap<V>(
         keyDescriptor: KeyDescriptor<String>,
         valueExternalizer: DataExternalizer<V>
 ) : BasicMap<String, V>(storageFile, keyDescriptor, valueExternalizer) {
-    val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
     constructor(
             storageFile: File,
             valueExternalizer: DataExternalizer<V>
     ) : this(storageFile, EnumeratorStringDescriptor.INSTANCE, valueExternalizer)
-
-    override fun close() {
-        LOG.info(">>>$storageFile:${storage.keys.size}")
-        super.close()
-    }
 
     override fun dumpKey(key: String): String = key
 }
