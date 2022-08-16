@@ -56,6 +56,12 @@ public class SerializationFirBlackBoxTestGenerated extends AbstractSerialization
     }
 
     @Test
+    @TestMetadata("inlineClasses.kt")
+    public void testInlineClasses() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/firMembers/inlineClasses.kt");
+    }
+
+    @Test
     @TestMetadata("multipleProperties.kt")
     public void testMultipleProperties() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/firMembers/multipleProperties.kt");

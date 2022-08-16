@@ -1,0 +1,77 @@
+FILE: inlineClasses.kt
+    @R|kotlinx/serialization/Serializable|() @R|kotlin/jvm/JvmInline|() public final inline class Foo : R|kotlin/Any| {
+        public constructor(i: R|kotlin/Int|): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val i: R|kotlin/Int| = R|<local>/i|
+            public get(): R|kotlin/Int|
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Foo>|
+
+            private constructor(): R|Foo.Companion|
+
+        }
+
+        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Foo>| {
+            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Foo|): R|kotlin/Unit|
+
+            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Foo|
+
+            public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
+                public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
+
+            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+
+            private constructor(): R|Foo.$serializer|
+
+        }
+
+    }
+    @R|kotlinx/serialization/Serializable|() public final class Holder : R|kotlin/Any| {
+        public constructor(f: R|Foo|): R|Holder| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val f: R|Foo| = R|<local>/f|
+            public get(): R|Foo|
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Holder>|
+
+            private constructor(): R|Holder.Companion|
+
+        }
+
+        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Holder>| {
+            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Holder|): R|kotlin/Unit|
+
+            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Holder|
+
+            public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
+                public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
+
+            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+
+            private constructor(): R|Holder.$serializer|
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        when () {
+            Q|Foo|.R|/Foo.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.isInline|.R|kotlin/Boolean.not|() ->  {
+                ^box String(Incorrect descriptor)
+            }
+        }
+
+        lval s: R|kotlin/String| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.encodeToString|<R|Holder|>(Q|Holder|.R|/Holder.Companion.serializer|(), R|/Holder.Holder|(R|/Foo.Foo|(Int(42))))
+        when () {
+            !=(R|<local>/s|, String({"f":42})) ->  {
+                ^box R|<local>/s|
+            }
+        }
+
+        ^box String(OK)
+    }
