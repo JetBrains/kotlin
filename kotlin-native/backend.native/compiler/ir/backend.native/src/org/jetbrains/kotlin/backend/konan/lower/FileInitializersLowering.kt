@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_ENTRY_POINT
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.llvm.FieldStorageKind
 import org.jetbrains.kotlin.backend.konan.llvm.needsGCRegistration
@@ -81,7 +82,7 @@ internal class FileInitializersLowering(val context: Context) : FileLoweringPass
                 else null
 
         irFile.simpleFunctions()
-                .filterNot { it.isModuleInitializer }
+                .filterNot { it.isModuleInitializer || it.origin == DECLARATION_ORIGIN_ENTRY_POINT }
                 .forEach {
                     val body = it.body ?: return@forEach
                     val statements = (body as IrBlockBody).statements

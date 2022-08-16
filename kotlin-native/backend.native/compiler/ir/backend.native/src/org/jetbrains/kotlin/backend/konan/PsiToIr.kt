@@ -242,7 +242,6 @@ internal fun Context.psiToIr(
         if (this.stdlibModule in modulesWithoutDCE) {
             (functionIrClassFactory as? BuiltInFictitiousFunctionIrClassFactory)?.buildAllClasses()
         }
-        internalAbi.init(irModules.values + irModule!!)
         (functionIrClassFactory as? BuiltInFictitiousFunctionIrClassFactory)?.module =
                 (modules.values + irModule!!).single { it.descriptor.isNativeStdlib() }
     }

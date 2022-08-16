@@ -66,6 +66,10 @@ internal class NativeMapping : DefaultMapping() {
     val bridges = mutableMapOf<BridgeKey, IrSimpleFunction>()
     val notLoweredInlineFunctions = mutableMapOf<IrFunctionSymbol, IrFunction>()
     val loweredInlineFunctions = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
+    val companionObjectCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
+    val outerThisCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
+    val lateinitPropertyCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrProperty, IrSimpleFunction>()
+    val enumValuesCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
 }
 
 internal class Context(config: KonanConfig) : KonanBackendContext(config) {
@@ -106,6 +110,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     val bridgesSupport by lazy { BridgesSupport(mapping, irBuiltIns, irFactory) }
     val inlineFunctionsSupport by lazy { InlineFunctionsSupport(mapping) }
     val enumsSupport by lazy { EnumsSupport(mapping, ir.symbols, irBuiltIns, irFactory) }
+    val cachesAbiSupport by lazy { CachesAbiSupport(mapping, ir.symbols, irFactory) }
 
     open class LazyMember<T>(val initializer: Context.() -> T) {
         operator fun getValue(thisRef: Context, property: KProperty<*>): T = thisRef.getValue(this)
@@ -360,11 +365,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     }
 
     val declaredLocalArrays: MutableMap<String, LLVMTypeRef> = HashMap()
-
-    /**
-     * Manages internal ABI references and declarations.
-     */
-    val internalAbi = InternalAbi(this)
 
     lateinit var irLinker: KonanIrLinker
 

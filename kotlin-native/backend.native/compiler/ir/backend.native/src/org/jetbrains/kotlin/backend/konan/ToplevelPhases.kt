@@ -363,7 +363,7 @@ internal val entryPointPhase = makeCustomPhase<Context, IrModuleFragment>(
             } else {
                 // `main` function is compiled to other LLVM module.
                 // For example, test running support uses `main` defined in stdlib.
-                context.irModule!!.addFile(NaiveSourceBasedFileEntryImpl("entryPointOwner"), FqName("kotlin.native.caches.abi"))
+                context.irModule!!.addFile(NaiveSourceBasedFileEntryImpl("entryPointOwner"), FqName("kotlin.native.internal.abi"))
             }
 
             file.addChild(makeEntryPoint(context))
@@ -425,12 +425,12 @@ private val backendCodegen = namedUnitPhase(
         name = "Backend codegen",
         description = "Backend code generation",
         lower = takeFromContext<Context, Unit, IrModuleFragment> { it.irModule!! } then
+                entryPointPhase then
                 functionsWithoutBoundCheck then
                 allLoweringsPhase then // Lower current module first.
                 dependenciesLowerPhase then // Then lower all libraries in topological order.
                                             // With that we guarantee that inline functions are unlowered while being inlined.
                 dumpTestsPhase then
-                entryPointPhase then
                 exportInternalAbiPhase then
                 useInternalAbiPhase then
                 bitcodePhase then

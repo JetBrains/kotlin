@@ -5,22 +5,23 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
+import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.InternalAbi
+import org.jetbrains.kotlin.backend.konan.NativeMapping
+import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
 import org.jetbrains.kotlin.backend.konan.isObjCClass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -29,9 +30,116 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
+/**
+ * Allows to distinguish external declarations to internal ABI.
+ */
+internal object INTERNAL_ABI_ORIGIN : IrDeclarationOriginImpl("INTERNAL_ABI")
+
+/**
+ * Sometimes we need to reference symbols that are not declared in metadata.
+ * For example, symbol might be declared during lowering.
+ * In case of compiler caches, this means that it is not accessible as Lazy IR
+ * and we have to explicitly add an external declaration.
+ */
+internal class CachesAbiSupport(mapping: NativeMapping, symbols: KonanSymbols, private val irFactory: IrFactory) {
+    private val companionObjectAccessors = mapping.companionObjectCacheAccessors
+    private val outerThisAccessors = mapping.outerThisCacheAccessors
+    private val lateinitPropertyAccessors = mapping.lateinitPropertyCacheAccessors
+    private val enumValuesAccessors = mapping.enumValuesCacheAccessors
+    private val lateInitFieldToNullableField = mapping.lateInitFieldToNullableField
+    private val array = symbols.array
+
+    fun getCompanionObjectAccessor(irClass: IrClass): IrSimpleFunction {
+        require(irClass.isCompanion) { "Expected a companion object but was: ${irClass.render()}" }
+        return companionObjectAccessors.getOrPut(irClass) {
+            irFactory.buildFun {
+                name = getMangledNameFor("globalAccessor", irClass)
+                origin = INTERNAL_ABI_ORIGIN
+                returnType = irClass.defaultType
+            }.apply {
+                parent = irClass.getPackageFragment()
+            }
+        }
+    }
+
+    fun getOuterThisAccessor(irClass: IrClass): IrSimpleFunction {
+        require(irClass.isInner) { "Expected an inner class but was: ${irClass.render()}" }
+        return outerThisAccessors.getOrPut(irClass) {
+            irFactory.buildFun {
+                name = getMangledNameFor("outerThis", irClass)
+                origin = INTERNAL_ABI_ORIGIN
+                returnType = irClass.parentAsClass.defaultType
+            }.apply {
+                parent = irClass.getPackageFragment()
+
+                addValueParameter {
+                    name = Name.identifier("innerClass")
+                    origin = INTERNAL_ABI_ORIGIN
+                    type = irClass.defaultType
+                }
+            }
+        }
+    }
+
+    fun getLateinitPropertyAccessor(irProperty: IrProperty): IrSimpleFunction {
+        require(irProperty.isLateinit) { "Expected a lateinit property but was: ${irProperty.render()}" }
+        return lateinitPropertyAccessors.getOrPut(irProperty) {
+            val backingField = irProperty.backingField ?: error("Lateinit property ${irProperty.render()} should have a backing field")
+            val actualField = lateInitFieldToNullableField[backingField] ?: backingField
+            val owner = irProperty.parent
+            irFactory.buildFun {
+                name = getMangledNameFor("${irProperty.name}_field", owner)
+                origin = INTERNAL_ABI_ORIGIN
+                returnType = actualField.type
+            }.apply {
+                parent = irProperty.getPackageFragment()
+
+                (owner as? IrClass)?.let {
+                    addValueParameter {
+                        name = Name.identifier("owner")
+                        origin = INTERNAL_ABI_ORIGIN
+                        type = it.defaultType
+                    }
+                }
+            }
+        }
+    }
+
+    fun getEnumValuesAccessor(irClass: IrClass): IrSimpleFunction {
+        require(irClass.isEnumClass) { "Expected a enum class but was: ${irClass.render()}" }
+        return enumValuesAccessors.getOrPut(irClass) {
+            irFactory.buildFun {
+                name = getMangledNameFor("getValues", irClass)
+                returnType = array.typeWith(irClass.defaultType)
+                origin = INTERNAL_ABI_ORIGIN
+            }.apply {
+                parent = irClass.getPackageFragment()
+            }
+        }
+    }
+
+    /**
+     * Generate name for declaration that will be a part of internal ABI.
+     */
+    private fun getMangledNameFor(declarationName: String, parent: IrDeclarationParent): Name {
+        val prefix = parent.fqNameForIrSerialization
+        return "$prefix.$declarationName".synthesizedName
+    }
+}
+
 internal class ExportCachesAbiVisitor(val context: Context) : IrElementVisitorVoid {
+    private val cachesAbiSupport = context.cachesAbiSupport
+    private val addedFunctions = mutableListOf<IrFunction>()
+
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
+    }
+
+    override fun visitFile(declaration: IrFile) {
+        declaration.acceptChildrenVoid(this)
+
+        declaration.addChildren(addedFunctions)
+        addedFunctions.clear()
     }
 
     override fun visitClass(declaration: IrClass) {
@@ -40,31 +148,17 @@ internal class ExportCachesAbiVisitor(val context: Context) : IrElementVisitorVo
         if (declaration.isLocal) return
 
         if (declaration.isCompanion) {
-            val function = context.irFactory.buildFun {
-                name = InternalAbi.getCompanionObjectAccessorName(declaration)
-                origin = InternalAbi.INTERNAL_ABI_ORIGIN
-                returnType = declaration.defaultType
-            }
+            val function = cachesAbiSupport.getCompanionObjectAccessor(declaration)
             context.createIrBuilder(function.symbol).apply {
                 function.body = irBlockBody {
                     +irReturn(irGetObjectValue(declaration.defaultType, declaration.symbol))
                 }
             }
-            context.internalAbi.declare(function, declaration.module)
+            addedFunctions.add(function)
         }
 
         if (declaration.isInner) {
-            val function = context.irFactory.buildFun {
-                name = InternalAbi.getInnerClassOuterThisAccessorName(declaration)
-                origin = InternalAbi.INTERNAL_ABI_ORIGIN
-                returnType = declaration.parentAsClass.defaultType
-            }
-            function.addValueParameter {
-                name = Name.identifier("innerClass")
-                origin = InternalAbi.INTERNAL_ABI_ORIGIN
-                type = declaration.defaultType
-            }
-
+            val function = cachesAbiSupport.getOuterThisAccessor(declaration)
             context.createIrBuilder(function.symbol).apply {
                 function.body = irBlockBody {
                     +irReturn(irGetField(
@@ -73,22 +167,17 @@ internal class ExportCachesAbiVisitor(val context: Context) : IrElementVisitorVo
                     )
                 }
             }
-            context.internalAbi.declare(function, declaration.module)
+            addedFunctions.add(function)
         }
 
         if (declaration.isEnumClass) {
-            val function = context.irFactory.buildFun {
-                name = InternalAbi.getEnumValuesAccessorName(declaration)
-                returnType = context.ir.symbols.array.typeWith(declaration.defaultType)
-                origin = InternalAbi.INTERNAL_ABI_ORIGIN
-            }
-
+            val function = cachesAbiSupport.getEnumValuesAccessor(declaration)
             context.createIrBuilder(function.symbol).run {
                 function.body = irBlockBody {
                     +irReturn(with(this@ExportCachesAbiVisitor.context.enumsSupport) { irGetValuesField(declaration) })
                 }
             }
-            context.internalAbi.declare(function, declaration.module)
+            addedFunctions.add(function)
         }
     }
 
@@ -100,33 +189,20 @@ internal class ExportCachesAbiVisitor(val context: Context) : IrElementVisitorVo
             return
 
         val backingField = declaration.backingField ?: error("Lateinit property ${declaration.render()} should have a backing field")
-        val function = context.irFactory.buildFun {
-            name = InternalAbi.getLateinitPropertyFieldAccessorName(declaration)
-            origin = InternalAbi.INTERNAL_ABI_ORIGIN
-            returnType = backingField.type
-        }
         val ownerClass = declaration.parentClassOrNull
-        if (ownerClass != null)
-            function.addValueParameter {
-                name = Name.identifier("owner")
-                origin = InternalAbi.INTERNAL_ABI_ORIGIN
-                type = ownerClass.defaultType
-            }
-
+        val function = cachesAbiSupport.getLateinitPropertyAccessor(declaration)
         context.createIrBuilder(function.symbol).apply {
             function.body = irBlockBody {
                 +irReturn(irGetField(ownerClass?.let { irGet(function.valueParameters[0]) }, backingField))
             }
         }
-        context.internalAbi.declare(function, declaration.module)
+        addedFunctions.add(function)
     }
 }
 
 internal class ImportCachesAbiTransformer(val context: Context) : IrElementTransformerVoid() {
-    private val companionObjectAccessors = mutableMapOf<IrClass, IrSimpleFunction>()
-    private val outerThisAccessors = mutableMapOf<IrClass, IrSimpleFunction>()
-    private val lateinitPropertyAccessors = mutableMapOf<IrProperty, IrSimpleFunction>()
-    private val enumValuesAccessors = mutableMapOf<IrClass, IrSimpleFunction>()
+    private val cachesAbiSupport = context.cachesAbiSupport
+    private val enumsSupport = context.enumsSupport
 
     override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
         expression.transformChildrenVoid(this)
@@ -140,17 +216,9 @@ internal class ImportCachesAbiTransformer(val context: Context) : IrElementTrans
             // Access to Obj-C metaclass is done via intrinsic.
             return expression
         }
-        val accessor = companionObjectAccessors.getOrPut(irClass) {
-            context.irFactory.buildFun {
-                name = InternalAbi.getCompanionObjectAccessorName(irClass)
-                returnType = irClass.defaultType
-                origin = InternalAbi.INTERNAL_ABI_ORIGIN
-                isExternal = true
-            }.also {
-                context.internalAbi.reference(it, irClass.module)
-            }
-        }
-        return IrCallImpl(expression.startOffset, expression.endOffset, expression.type, accessor.symbol, accessor.typeParameters.size, accessor.valueParameters.size)
+        val accessor = cachesAbiSupport.getCompanionObjectAccessor(irClass)
+        context.llvmImports.add(irClass.llvmSymbolOrigin)
+        return irCall(expression.startOffset, expression.endOffset, accessor, emptyList())
     }
 
     override fun visitGetField(expression: IrGetField): IrExpression {
@@ -164,54 +232,17 @@ internal class ImportCachesAbiTransformer(val context: Context) : IrElementTrans
             context.llvmModuleSpecification.containsDeclaration(field) -> expression
 
             irClass?.isInner == true && context.innerClassesSupport.getOuterThisField(irClass) == field -> {
-                val accessor = outerThisAccessors.getOrPut(irClass) {
-                    context.irFactory.buildFun {
-                        name = InternalAbi.getInnerClassOuterThisAccessorName(irClass)
-                        returnType = irClass.parentAsClass.defaultType
-                        origin = InternalAbi.INTERNAL_ABI_ORIGIN
-                        isExternal = true
-                    }.also { function ->
-                        context.internalAbi.reference(function, irClass.module)
-
-                        function.addValueParameter {
-                            name = Name.identifier("innerClass")
-                            origin = InternalAbi.INTERNAL_ABI_ORIGIN
-                            type = irClass.defaultType
-                        }
-                    }
-                }
-                return IrCallImpl(
-                        expression.startOffset, expression.endOffset,
-                        expression.type, accessor.symbol,
-                        accessor.typeParameters.size, accessor.valueParameters.size
-                ).apply {
+                val accessor = cachesAbiSupport.getOuterThisAccessor(irClass)
+                context.llvmImports.add(irClass.llvmSymbolOrigin)
+                return irCall(expression.startOffset, expression.endOffset, accessor, emptyList()).apply {
                     putValueArgument(0, expression.receiver)
                 }
             }
 
             property?.isLateinit == true -> {
-                val accessor = lateinitPropertyAccessors.getOrPut(property) {
-                    context.irFactory.buildFun {
-                        name = InternalAbi.getLateinitPropertyFieldAccessorName(property)
-                        returnType = field.type
-                        origin = InternalAbi.INTERNAL_ABI_ORIGIN
-                        isExternal = true
-                    }.also { function ->
-                        context.internalAbi.reference(function, property.module)
-
-                        if (irClass != null)
-                            function.addValueParameter {
-                                name = Name.identifier("owner")
-                                origin = InternalAbi.INTERNAL_ABI_ORIGIN
-                                type = irClass.defaultType
-                            }
-                    }
-                }
-                return IrCallImpl(
-                        expression.startOffset, expression.endOffset,
-                        expression.type, accessor.symbol,
-                        accessor.typeParameters.size, accessor.valueParameters.size
-                ).apply {
+                val accessor = cachesAbiSupport.getLateinitPropertyAccessor(property)
+                context.llvmImports.add(property.llvmSymbolOrigin)
+                return irCall(expression.startOffset, expression.endOffset, accessor, emptyList()).apply {
                     if (irClass != null)
                         putValueArgument(0, expression.receiver)
                 }
@@ -221,17 +252,11 @@ internal class ImportCachesAbiTransformer(val context: Context) : IrElementTrans
                 val enumClass = irClass?.parentClassOrNull
                 require(enumClass != null) { "Unexpected usage of enum VALUES field" }
                 require(enumClass.isEnumClass) { "Expected a enum class: ${enumClass.render()}" }
-                val accessor = enumValuesAccessors.getOrPut(enumClass) {
-                    context.irFactory.buildFun {
-                        name = InternalAbi.getEnumValuesAccessorName(enumClass)
-                        returnType = context.ir.symbols.array.typeWith(enumClass.defaultType)
-                        origin = InternalAbi.INTERNAL_ABI_ORIGIN
-                        isExternal = true
-                    }.also {
-                        context.internalAbi.reference(it, enumClass.module)
-                    }
-                }
-                return IrCallImpl(expression.startOffset, expression.endOffset, expression.type, accessor.symbol, accessor.typeParameters.size, accessor.valueParameters.size)
+                require(enumsSupport.getImplObject(enumClass) == irClass) { "Expected a enum's impl object: ${irClass.render()}" }
+                require(field == enumsSupport.getValuesField(irClass)) { "Expected VALUES field: ${field.render()}" }
+                val accessor = cachesAbiSupport.getEnumValuesAccessor(enumClass)
+                context.llvmImports.add(enumClass.llvmSymbolOrigin)
+                return irCall(expression.startOffset, expression.endOffset, accessor, emptyList())
             }
 
             else -> expression
