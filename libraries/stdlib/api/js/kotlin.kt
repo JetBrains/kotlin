@@ -921,8 +921,6 @@ public final class BooleanArray {
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.experimental.ExperimentalTypeInference
-@kotlin.Deprecated(message = "BuilderInference annotation may not be used anymore. The builder inference is enabled automatically for builder calls if needed")
-@kotlin.DeprecatedSinceKotlin(errorSince = "1.9", hiddenSince = "1.10", warningSince = "1.7")
 public final annotation class BuilderInference : kotlin.Annotation {
     public constructor BuilderInference()
 }
