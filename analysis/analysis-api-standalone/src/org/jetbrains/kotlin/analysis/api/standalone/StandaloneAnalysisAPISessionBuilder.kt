@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.impl.PsiElementFinderImpl
 import com.intellij.psi.search.GlobalSearchScope
@@ -33,14 +34,8 @@ import org.jetbrains.kotlin.analysis.project.structure.impl.KtModuleProviderImpl
 import org.jetbrains.kotlin.analysis.project.structure.impl.buildKtModuleProviderByCompilerConfiguration
 import org.jetbrains.kotlin.analysis.project.structure.impl.getPsiFilesFromPaths
 import org.jetbrains.kotlin.analysis.project.structure.impl.getSourceFilePaths
-import org.jetbrains.kotlin.analysis.providers.KotlinAnnotationsResolverFactory
-import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
-import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
-import org.jetbrains.kotlin.analysis.providers.KotlinPackageProviderFactory
-import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticAnnotationsResolverFactory
-import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticDeclarationProviderFactory
-import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticModificationTrackerFactory
-import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticPackageProviderFactory
+import org.jetbrains.kotlin.analysis.providers.*
+import org.jetbrains.kotlin.analysis.providers.impl.*
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
@@ -167,6 +162,23 @@ public class StandaloneAnalysisAPISessionBuilder(
         PsiElementFinder.EP.getPoint(project).registerExtension(PsiElementFinderImpl(project))
     }
 
+    private fun registerPsiDeclarationFromBinaryModuleProvider(
+        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
+    ) {
+        val ktModuleProviderImpl = projectStructureProvider as KtModuleProviderImpl
+        kotlinCoreProjectEnvironment.project.apply {
+            registerService(
+                KotlinPsiDeclarationProviderFactory::class.java,
+                KotlinStaticPsiDeclarationProviderFactory(
+                    this,
+                    packagePartProvider,
+                    ktModuleProviderImpl.binaryModules,
+                    kotlinCoreProjectEnvironment.environment.jarFileSystem as CoreJarFileSystem
+                )
+            )
+        }
+    }
+
     public fun <T : Any> registerProjectService(serviceInterface: Class<T>, serviceImplementation: T) {
         kotlinCoreProjectEnvironment.project.apply {
             registerService(serviceInterface, serviceImplementation)
@@ -179,7 +191,9 @@ public class StandaloneAnalysisAPISessionBuilder(
         }
     }
 
-    public fun build(): StandaloneAnalysisAPISession {
+    public fun build(
+        withPsiDeclarationFromBinaryModuleProvider: Boolean = false,
+    ): StandaloneAnalysisAPISession {
         val ktModuleProviderImpl = projectStructureProvider as KtModuleProviderImpl
         val modules = ktModuleProviderImpl.mainModules
         val allSourceFiles = ktModuleProviderImpl.allSourceFiles()
@@ -204,6 +218,9 @@ public class StandaloneAnalysisAPISessionBuilder(
             ktFiles,
             createPackagePartProvider,
         )
+        if (withPsiDeclarationFromBinaryModuleProvider) {
+            registerPsiDeclarationFromBinaryModuleProvider(createPackagePartProvider)
+        }
 
         return StandaloneAnalysisAPISession(
             kotlinCoreProjectEnvironment,
@@ -216,6 +233,7 @@ public class StandaloneAnalysisAPISessionBuilder(
 public inline fun buildStandaloneAnalysisAPISession(
     applicationDisposable: Disposable = Disposer.newDisposable("StandaloneAnalysisAPISession.application"),
     projectDisposable: Disposable = Disposer.newDisposable("StandaloneAnalysisAPISession.project"),
+    withPsiDeclarationFromBinaryModuleProvider: Boolean = false,
     init: StandaloneAnalysisAPISessionBuilder.() -> Unit
 ): StandaloneAnalysisAPISession {
     contract {
@@ -224,5 +242,7 @@ public inline fun buildStandaloneAnalysisAPISession(
     return StandaloneAnalysisAPISessionBuilder(
         applicationDisposable,
         projectDisposable,
-    ).apply(init).build()
+    ).apply(init).build(
+        withPsiDeclarationFromBinaryModuleProvider,
+    )
 }

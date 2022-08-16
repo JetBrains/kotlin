@@ -7,20 +7,15 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.project.structure.*
-import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.psiUtil.contains
 
 class KtStaticModuleProvider(
-    private val projectStructure: KtModuleProjectStructure,
+    val projectStructure: KtModuleProjectStructure,
 ) : ProjectStructureProvider() {
     override fun getKtModuleForKtElement(element: PsiElement): KtModule {
         return projectStructure.mainModules
             .first { module ->
                 module.ktModule.contentScope.contains(element)
             }.ktModule
-    }
-
-    override fun getKtBinaryModules(): Collection<KtBinaryModule> {
-        return projectStructure.allKtModules().filterIsInstance<KtBinaryModule>()
     }
 }

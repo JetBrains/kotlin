@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticModuleProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
+import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticPsiDeclarationProviderFactory
@@ -23,7 +25,9 @@ object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
 
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
         val projectStructureProvider = project.getService(ProjectStructureProvider::class.java)
-        val binaryModules = projectStructureProvider.getKtBinaryModules().toList()
+        val binaryModules =
+            (projectStructureProvider as? KtStaticModuleProvider)?.projectStructure?.allKtModules()?.filterIsInstance<KtBinaryModule>()
+                ?: emptyList()
         val projectEnvironment = testServices.environmentManager.getProjectEnvironment()
         val binaryRoots = StandaloneProjectFactory.getAllBinaryRoots(binaryModules, projectEnvironment)
         project.apply {
