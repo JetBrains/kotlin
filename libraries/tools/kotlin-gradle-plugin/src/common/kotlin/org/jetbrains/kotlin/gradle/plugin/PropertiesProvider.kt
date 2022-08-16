@@ -122,12 +122,18 @@ internal class PropertiesProvider private constructor(private val project: Proje
             ?: KotlinJsIrOutputGranularity.PER_MODULE
 
     val jsIrGeneratedTypeScriptValidationDevStrategy: KotlinIrJsGeneratedTSValidationStrategy
-        get() = property("kotlin.js.ir.development.typescript.validation.strategy")?.let { KotlinIrJsGeneratedTSValidationStrategy.byArgument(it) }
-            ?: KotlinIrJsGeneratedTSValidationStrategy.IGNORE
+        get() = property("kotlin.js.ir.development.typescript.validation.strategy")?.let {
+            KotlinIrJsGeneratedTSValidationStrategy.byArgument(
+                it
+            )
+        } ?: KotlinIrJsGeneratedTSValidationStrategy.IGNORE
 
     val jsIrGeneratedTypeScriptValidationProdStrategy: KotlinIrJsGeneratedTSValidationStrategy
-        get() = property("kotlin.js.ir.production.typescript.validation.strategy")?.let { KotlinIrJsGeneratedTSValidationStrategy.byArgument(it) }
-            ?: KotlinIrJsGeneratedTSValidationStrategy.IGNORE
+        get() = property("kotlin.js.ir.production.typescript.validation.strategy")?.let {
+            KotlinIrJsGeneratedTSValidationStrategy.byArgument(
+                it
+            )
+        } ?: KotlinIrJsGeneratedTSValidationStrategy.IGNORE
 
     val incrementalMultiplatform: Boolean?
         get() = booleanProperty("kotlin.incremental.multiplatform")
@@ -454,6 +460,17 @@ internal class PropertiesProvider private constructor(private val project: Proje
         } else {
             localProperties.getProperty(propName)
         }
+
+    /**
+     * A resolved property lookup that combines the following sources with decreasing priority:
+     * 1. Gradle command line properties (`-P`)
+     * 2. `local.properties`
+     * 3. `gradle.properties`
+     */
+    fun compositeProperty(propName: String): String? {
+        val prop = project.gradle.startParameter.projectProperties[propName] ?: localProperties[propName] ?: project.findProperty(propName)
+        return prop?.toString()
+    }
 
     private fun propertiesWithPrefix(prefix: String): Map<String, String> {
         val result = mutableMapOf<String, String>()

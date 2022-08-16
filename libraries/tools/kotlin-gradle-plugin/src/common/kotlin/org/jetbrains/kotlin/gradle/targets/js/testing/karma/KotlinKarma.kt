@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.internal.processLogMessage
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
@@ -33,11 +34,9 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Compan
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.appendLine
-import org.jetbrains.kotlin.gradle.utils.findCompositeProperty
 import org.jetbrains.kotlin.gradle.utils.property
 import org.slf4j.Logger
 import java.io.File
-import java.util.*
 
 class KotlinKarma(
     @Transient override val compilation: KotlinJsCompilation,
@@ -103,10 +102,11 @@ class KotlinKarma(
 
     private fun usePropBrowsers() {
         val propKey = "kotlin.js.browser.karma.browsers"
-        val propValue = project.findCompositeProperty("$propKey.${compilation.target.name}") ?: project.findCompositeProperty(propKey)
-        val propBrowsers = propValue?.toString()?.split(",")
-        propBrowsers?.forEach {
-            when (it.trim().toLowerCase()) {
+        val propValue = project.kotlinPropertiesProvider.compositeProperty("$propKey.${compilation.target.name}")
+            ?: project.kotlinPropertiesProvider.compositeProperty(propKey)
+        val propBrowsers = propValue?.split(",")
+        propBrowsers?.map(String::trim)?.forEach {
+            when (it.toLowerCase()) {
                 "chrome" -> useChrome()
                 "chrome-canary" -> useChromeCanary()
                 "chrome-canary-headless" -> useChromeCanaryHeadless()
@@ -126,6 +126,7 @@ class KotlinKarma(
                 "opera" -> useOpera()
                 "phantom-js" -> usePhantomJS()
                 "safari" -> useSafari()
+                else -> project.logger.warn("Unrecognised `kotlin.js.browser.karma.browsers` value [$it]. Ignoring...")
             }
         }
     }
