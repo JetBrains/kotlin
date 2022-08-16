@@ -43,6 +43,7 @@ class KpmCoreCasesRenderingTests : KpmCoreCasesTestRunner {
                 project("p") {
                     module("main") {
                         jvm()
+                        macosX64()
                     }
                 }
             }               

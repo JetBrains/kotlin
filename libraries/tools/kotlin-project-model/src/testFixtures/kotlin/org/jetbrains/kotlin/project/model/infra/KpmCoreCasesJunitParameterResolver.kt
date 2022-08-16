@@ -12,10 +12,10 @@ import java.lang.reflect.Method
 
 class KpmCoreCasesJunitParameterResolver : ParameterResolver {
     override fun supportsParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Boolean =
-        parameterContext.parameter.type == KpmTestCaseDescriptor::class.java
+        parameterContext.parameter.type == KpmTestCase::class.java
 
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
-        require(parameterContext.parameter.type == KpmTestCaseDescriptor::class.java)
+        require(parameterContext.parameter.type == KpmTestCase::class.java)
         val kpmCaseName = extensionContext.requiredTestMethod.kpmCaseName
         val caseDescriptor = KpmTestCaseDescriptor.allCaseDescriptorsByNames[kpmCaseName]
         requireNotNull(caseDescriptor) {
