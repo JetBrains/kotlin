@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import java.lang.IllegalArgumentException
 
 internal class WasmVarargExpressionLowering(
     private val context: WasmBackendContext
@@ -143,11 +142,11 @@ internal class WasmVarargExpressionLowering(
                         check(typeArgumentsCount == 1 && srcArrDescr.arrayClass.typeParameters.size == 1)
                         putTypeArgument(0, srcArrDescr.elementType)
                     }
-                    extensionReceiver = irGet(exprVar)  // source
-                    putValueArgument(0, irGet(destArr)) // destination
-                    putValueArgument(1, destIdx)        // destinationOffset
-                    putValueArgument(2, irInt(0))       // startIndex
-                    putValueArgument(3, irSize())       // endIndex
+                    putValueArgument(0, irGet(exprVar))  // source (0)
+                    putValueArgument(1, irGet(destArr)) // destination
+                    putValueArgument(2, destIdx)        // destinationOffset
+                    putValueArgument(3, irInt(0))       // startIndex
+                    putValueArgument(4, irSize())       // endIndex
                 }
             }
         }
