@@ -155,13 +155,8 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
             irBuilder.irCall(
                 requiredSymbol
             ).apply {
-                if (requiredSymbol.owner.extensionReceiverParameter != null) {
-                    extensionReceiver = arg1
-                    putValueArgument(0, arg2)
-                } else {
-                    putValueArgument(0, arg1)
-                    putValueArgument(1, arg2)
-                }
+                putValueArgument(0, arg1)
+                putValueArgument(1, arg2)
             }
         } else
             irBuilder.irEquals(arg1, arg2)

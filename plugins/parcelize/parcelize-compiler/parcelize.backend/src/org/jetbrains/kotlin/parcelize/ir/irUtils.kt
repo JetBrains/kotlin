@@ -59,9 +59,9 @@ fun IrBuilderWithScope.parcelerWrite(
     value: IrExpression,
 ) = irCall(parceler.parcelerSymbolByName("write")!!).apply {
     dispatchReceiver = irGetObject(parceler.symbol)
-    extensionReceiver = value
-    putValueArgument(0, irGet(parcel))
-    putValueArgument(1, irGet(flags))
+    putValueArgument(0, value)
+    putValueArgument(1, irGet(parcel))
+    putValueArgument(2, irGet(flags))
 }
 
 // object P : Parceler<T> { fun create(parcel: Parcel): T }
