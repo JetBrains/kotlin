@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.*
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
@@ -116,7 +115,8 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                     }
                 }
 
-                val javaSymbolProvider = JavaSymbolProvider(session, projectEnvironment.getFirJavaFacade(session, moduleData, javaSourcesScope))
+                val javaSymbolProvider =
+                    JavaSymbolProvider(session, projectEnvironment.getFirJavaFacade(session, moduleData, javaSourcesScope))
                 session.register(JavaSymbolProvider::class, javaSymbolProvider)
 
                 listOfNotNull(
@@ -136,3 +136,4 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         }
     }
 }
+
