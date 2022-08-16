@@ -94,20 +94,20 @@ abstract class BasicWasmBoxTest(
             val filesToCompile = psiFiles.map { TranslationUnit.SourceFile(it).file }
             val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
 
-            val phaseConfig = if (debugMode >= DebugMode.DEBUG) {
-                val allPhasesSet = if (debugMode >= DebugMode.SUPER_DEBUG) wasmPhases.toPhaseMap().values.toSet() else emptySet()
+            val phaseConfig = if (debugMode >= DebugMode.SUPER_DEBUG) {
                 val dumpOutputDir = File(outputDirBase, "irdump")
                 println("\n ------ Dumping phases to file://${dumpOutputDir.absolutePath}")
-                println(" ------ KT   file://${file.absolutePath}")
                 PhaseConfig(
                     wasmPhases,
                     dumpToDirectory = dumpOutputDir.path,
-                    toDumpStateAfter = allPhasesSet,
-                    // toValidateStateAfter = allPhasesSet,
-                    // dumpOnlyFqName = null
+                    toDumpStateAfter = wasmPhases.toPhaseMap().values.toSet(),
                 )
             } else {
                 PhaseConfig(wasmPhases)
+            }
+
+            if (debugMode >= DebugMode.DEBUG) {
+                println(" ------ KT   file://${file.absolutePath}")
             }
 
             val sourceModule = prepareAnalyzedSourceModule(
@@ -300,9 +300,4 @@ abstract class BasicWasmBoxTest(
         const val TEST_MODULE = "main"
         private const val TEST_FUNCTION = "box"
     }
-}
-
-private fun File.write(text: String) {
-    parentFile.mkdirs()
-    writeText(text)
 }
