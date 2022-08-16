@@ -9909,6 +9909,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("enumEntriesAmbiguity.kt")
+            public void testEnumEntriesAmbiguity() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/enum/enumEntriesAmbiguity.kt");
+            }
+
+            @Test
             @TestMetadata("enumEntryCannotHaveClassObject.kt")
             public void testEnumEntryCannotHaveClassObject() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/enum/enumEntryCannotHaveClassObject.kt");
