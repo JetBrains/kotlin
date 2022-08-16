@@ -6,7 +6,6 @@
 package test.exceptions
 
 import test.collections.assertArrayNotSameButEquals
-import test.testOnJvm7AndAbove
 import java.io.*
 import java.nio.charset.Charset
 import kotlin.test.*
@@ -96,9 +95,8 @@ class ExceptionJVMTest {
         e1.initCause(e2)
         assertSame(e1, e2.cause)
         assertSame(e2, e1.cause)
-        testOnJvm7AndAbove {
-            val trace = e2.stackTraceToString()
-            assertTrue("CIRCULAR REFERENCE" in trace, trace)
-        }
+
+        val trace = e2.stackTraceToString()
+        assertTrue("CIRCULAR REFERENCE" in trace, trace)
     }
 }

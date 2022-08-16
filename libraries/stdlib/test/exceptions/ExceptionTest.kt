@@ -5,7 +5,6 @@
 
 package test.exceptions
 
-import test.supportsSuppressedExceptions
 import kotlin.test.*
 
 @Suppress("Reformat") // author's formatting
@@ -81,11 +80,7 @@ class ExceptionTest {
         e1.addSuppressed(c1)
         e1.addSuppressed(c2)
 
-        if (supportsSuppressedExceptions) {
-            assertEquals(listOf(c1, c2), e1.suppressedExceptions)
-        } else {
-            assertTrue(e1.suppressedExceptions.isEmpty())
-        }
+        assertEquals(listOf(c1, c2), e1.suppressedExceptions)
     }
 
     @Test
@@ -122,12 +117,10 @@ class ExceptionTest {
         val cause = assertNotNull(e.cause, "Should have cause")
         assertInTrace(cause)
 
-        if (supportsSuppressedExceptions) {
-            val topLevelSuppressed = e.suppressedExceptions.single()
-            assertInTrace(topLevelSuppressed)
-            cause.suppressedExceptions.forEach {
-                assertInTrace(it)
-            }
+        val topLevelSuppressed = e.suppressedExceptions.single()
+        assertInTrace(topLevelSuppressed)
+        cause.suppressedExceptions.forEach {
+            assertInTrace(it)
         }
 
 //        fail(topLevelTrace) // to dump the entire trace
@@ -135,8 +128,6 @@ class ExceptionTest {
 
     @Test
     fun circularSuppressedDetailedTrace() {
-        if (!supportsSuppressedExceptions) return
-
         // Testing an exception of the following structure
         // e1
         //    -- suppressed: e0 (same stack as e1)

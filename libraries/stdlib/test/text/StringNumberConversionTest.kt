@@ -5,7 +5,6 @@
 
 package test.text
 
-import test.*
 import kotlin.test.*
 
 class StringNumberConversionTest {
@@ -439,7 +438,7 @@ internal class ConversionContext<T : Any>(
     }
 
     fun assertProduces(input: String, output: T) {
-        assertEquals(output, convertOrFail(input.removeLeadingPlusOnJava6()), input, "convertOrFail")
+        assertEquals(output, convertOrFail(input), input, "convertOrFail")
         assertEquals(output, convertOrNull(input), input, "convertOrNull")
     }
 
@@ -454,7 +453,7 @@ internal class ConversionWithRadixContext<T : Any>(
     val convertOrNull: (String, Int) -> T?
 ) {
     fun assertProduces(radix: Int, input: String, output: T) {
-        assertEquals(output, convertOrFail(input.removeLeadingPlusOnJava6(), radix))
+        assertEquals(output, convertOrFail(input, radix))
         assertEquals(output, convertOrNull(input, radix))
     }
 
