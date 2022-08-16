@@ -12,7 +12,7 @@ fun test_2() {
     takeList(list)
 }
 
-fun <E> myBuildList(@<!DEPRECATION, OPT_IN_USAGE_ERROR!>BuilderInference<!> builderAction: MutableList<E>.() -> Unit): List<E> {
+fun <E> myBuildList(@<!OPT_IN_USAGE_ERROR!>BuilderInference<!> builderAction: MutableList<E>.() -> Unit): List<E> {
     return ArrayList<E>().apply(builderAction)
 }
 
