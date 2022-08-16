@@ -190,11 +190,6 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                 if (irFunction.dispatchReceiverParameter != null) {
                     it.dispatchReceiver = capturedThisValue
                 }
-                irFunction.extensionReceiverParameter?.let { extensionReceiverParameter ->
-                    it.extensionReceiver = extensionReceiverParameter.type.defaultValue(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, backendContext
-                    )
-                }
                 for ((i, parameter) in irFunction.valueParameters.dropLast(1).withIndex()) {
                     it.putValueArgument(i, parameter.type.defaultValue(UNDEFINED_OFFSET, UNDEFINED_OFFSET, backendContext))
                 }
@@ -276,9 +271,6 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                 var i = 0
                 if (irFunction.dispatchReceiverParameter != null) {
                     it.putValueArgument(i++, irGet(irFunction.dispatchReceiverParameter!!))
-                }
-                if (irFunction.extensionReceiverParameter != null) {
-                    it.putValueArgument(i++, irGet(irFunction.extensionReceiverParameter!!))
                 }
                 for (parameter in irFunction.valueParameters) {
                     it.putValueArgument(i++, irGet(parameter))
@@ -464,7 +456,6 @@ private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspend
         it.copyAttributes(this)
         it.copyTypeArgumentsFrom(this)
         it.dispatchReceiver = dispatchReceiver
-        it.extensionReceiver = extensionReceiver
         val continuationParameter = view.continuationParameter()!!
         for (i in 0 until valueArgumentsCount) {
             it.putValueArgument(i + if (i >= continuationParameter.index) 1 else 0, getValueArgument(i))

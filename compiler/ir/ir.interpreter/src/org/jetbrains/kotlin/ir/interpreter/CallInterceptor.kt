@@ -151,7 +151,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             else -> property.owner.name.asString()
         }
 
-        val receiverType = irFunction.dispatchReceiverParameter?.type ?: irFunction.extensionReceiverParameter?.type
+        val receiverType = irFunction.dispatchReceiverParameter?.type
         val argsType = listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }
         val argsValues = args.wrap(this, irFunction)
 

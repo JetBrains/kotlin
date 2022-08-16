@@ -83,7 +83,6 @@ class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrElementTr
         ).apply {
             copyTypeArgumentsFrom(this@transform)
             dispatchReceiver = this@transform.dispatchReceiver
-            extensionReceiver = this@transform.extensionReceiver
             values.forEachIndexed(::putValueArgument)
             transformChildrenVoid()
         }

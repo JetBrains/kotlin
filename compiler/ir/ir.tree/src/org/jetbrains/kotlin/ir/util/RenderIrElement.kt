@@ -407,7 +407,6 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
     private fun IrFunction.renderValueParameterTypes(): String =
         ArrayList<String>().apply {
             addIfNotNull(dispatchReceiverParameter?.run { "\$this:${type.render()}" })
-            addIfNotNull(extensionReceiverParameter?.run { "\$receiver:${type.render()}" })
             valueParameters.mapTo(this) { "${it.name}:${it.type.render()}" }
         }.joinToString(separator = ", ", prefix = "(", postfix = ")")
 

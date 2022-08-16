@@ -171,7 +171,6 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         }
 
         newCall.dispatchReceiver = expression.dispatchReceiver
-        newCall.extensionReceiver = expression.extensionReceiver
 
         for (i in 0 until expression.typeArgumentsCount) {
             newCall.putTypeArgument(i, expression.getTypeArgument(i))

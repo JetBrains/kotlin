@@ -396,7 +396,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 }
 
             targetCall.dispatchReceiver = getTargetCallArgument(reference.dispatchReceiver, targetFun.dispatchReceiverParameter)
-            targetCall.extensionReceiver = getTargetCallArgument(reference.extensionReceiver, targetFun.extensionReceiverParameter)
             for ((valueParameterIndex, valueParameter) in targetFun.valueParameters.withIndex()) {
                 targetCall.putValueArgument(
                     valueParameterIndex,
@@ -1007,12 +1006,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 callArguments[it] = wrapIntoTemporaryVariableIfNecessary(
                     irCall.dispatchReceiver
                         ?: throw AssertionError("No dispatch receiver in adapter call: ${irCall.dump()}")
-                )
-            }
-            callee.extensionReceiverParameter?.let {
-                callArguments[it] = wrapIntoTemporaryVariableIfNecessary(
-                    irCall.extensionReceiver
-                        ?: throw AssertionError("No extension receiver in adapter call: ${irCall.dump()}")
                 )
             }
             for (valueParameter in callee.valueParameters) {

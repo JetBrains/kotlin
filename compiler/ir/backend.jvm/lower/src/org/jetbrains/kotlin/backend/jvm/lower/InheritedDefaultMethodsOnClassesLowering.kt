@@ -107,7 +107,6 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
                                 irGet(it).reinterpretAsDispatchReceiverOfType(superClassType)
                             )
                         }
-                        irFunction.extensionReceiverParameter?.let { putValueArgument(offset++, irGet(it)) }
                         irFunction.valueParameters.mapIndexed { i, parameter -> putValueArgument(i + offset, irGet(parameter)) }
                     }
                 )

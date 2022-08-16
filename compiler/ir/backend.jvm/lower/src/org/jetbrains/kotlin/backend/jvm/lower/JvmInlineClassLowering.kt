@@ -214,7 +214,6 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     private fun typedArgumentList(function: IrFunction, expression: IrMemberAccessExpression<*>) =
         listOfNotNull(
             function.dispatchReceiverParameter?.let { it to expression.dispatchReceiver },
-            function.extensionReceiverParameter?.let { it to expression.extensionReceiver }
         ) + function.valueParameters.map { it to expression.getValueArgument(it.index) }
 
     private fun IrMemberAccessExpression<*>.buildReplacement(

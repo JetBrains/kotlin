@@ -256,9 +256,6 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
         function.body = context.createIrBuilder(function.symbol).irBlockBody {
             +irReturn(irCall(target).also { call ->
                 call.passTypeArgumentsFrom(function)
-                function.extensionReceiverParameter?.let { parameter ->
-                    call.extensionReceiver = irGet(parameter)
-                }
                 for (parameter in function.valueParameters) {
                     call.putValueArgument(parameter.index, irGet(parameter))
                 }
@@ -309,7 +306,6 @@ private class UpdateFunctionCallSites(
             // TODO: deduplicate this with ReplaceKFunctionInvokeWithFunctionInvoke
             IrCallImpl.fromSymbolOwner(startOffset, endOffset, type, newFunction.symbol).apply {
                 copyTypeArgumentsFrom(expression)
-                extensionReceiver = expression.extensionReceiver?.transform(this@UpdateFunctionCallSites, null)
                 for (i in 0 until valueArgumentsCount) {
                     putValueArgument(i, expression.getValueArgument(i)?.transform(this@UpdateFunctionCallSites, null))
                 }

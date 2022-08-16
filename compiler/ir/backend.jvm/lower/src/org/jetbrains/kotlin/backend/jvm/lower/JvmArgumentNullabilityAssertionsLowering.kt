@@ -67,8 +67,6 @@ private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContex
             !isWithUnifiedNullChecks && expression.origin.isOperatorWithNoNullabilityAssertionsOnExtensionReceiver
         ) AssertionScope.Disabled else AssertionScope.Enabled
 
-        expression.extensionReceiver = expression.extensionReceiver?.transform(this, receiverAssertionScope)
-
         val parameterAssertionScope =
             if (isCallToMethodWithTypeCheckBarrier(expression)) AssertionScope.Disabled else AssertionScope.Enabled
         for (i in 0 until expression.valueArgumentsCount) {

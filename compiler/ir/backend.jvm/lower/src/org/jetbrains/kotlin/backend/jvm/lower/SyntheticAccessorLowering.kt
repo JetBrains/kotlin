@@ -254,9 +254,6 @@ private class SyntheticAccessorTransformer(
         if (implFun.dispatchReceiverParameter != null) {
             accessorRef.putValueArgument(accessorArgIndex++, implFunRef.dispatchReceiver)
         }
-        if (implFun.extensionReceiverParameter != null) {
-            accessorRef.putValueArgument(accessorArgIndex++, implFunRef.extensionReceiver)
-        }
         for (implArgIndex in 0 until implFunRef.valueArgumentsCount) {
             accessorRef.putValueArgument(accessorArgIndex++, implFunRef.getValueArgument(implArgIndex))
         }
@@ -690,11 +687,6 @@ private class SyntheticAccessorTransformer(
         val delegateTo = call.symbol.owner
         delegateTo.dispatchReceiverParameter?.let {
             call.dispatchReceiver =
-                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, syntheticFunction.valueParameters[offset++].symbol)
-        }
-
-        delegateTo.extensionReceiverParameter?.let {
-            call.extensionReceiver =
                 IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, syntheticFunction.valueParameters[offset++].symbol)
         }
 

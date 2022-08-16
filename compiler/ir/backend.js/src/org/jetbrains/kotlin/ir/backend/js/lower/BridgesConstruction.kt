@@ -170,10 +170,6 @@ abstract class BridgesConstruction<T : JsCommonBackendContext>(val context: T) :
                 else
                     dispatchReceiver
 
-                irFunction.extensionReceiverParameter?.let {
-                    call.extensionReceiver = irCastIfNeeded(irGet(it), delegateTo.extensionReceiverParameter!!.type)
-                }
-
                 val toTake = valueParameters.size - if (call.isSuspend xor irFunction.isSuspend) 1 else 0
 
                 valueParameters.subList(0, toTake).mapIndexed { i, valueParameter ->

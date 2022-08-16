@@ -67,10 +67,9 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.io.File
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
+import java.io.File
 
 fun IrDeclaration.getJvmNameFromAnnotation(): String? {
     // TODO lower @JvmName?
@@ -477,8 +476,8 @@ val IrClass.isOptionalAnnotationClass: Boolean
             hasAnnotation(OptionalAnnotationUtil.OPTIONAL_EXPECTATION_FQ_NAME)
 
 fun IrFunctionAccessExpression.receiverAndArgs(): List<IrExpression> {
-    return (arrayListOf(this.dispatchReceiver, this.extensionReceiver) +
-            symbol.owner.valueParameters.mapIndexed { i, _ -> getValueArgument(i) }).filterNotNull()
+    return (arrayListOf(this.dispatchReceiver) +
+            List(symbol.owner.valueParameters.size) { i -> getValueArgument(i) }).filterNotNull()
 }
 
 fun classFileContainsMethod(classId: ClassId, function: IrFunction, context: JvmBackendContext): Boolean? {

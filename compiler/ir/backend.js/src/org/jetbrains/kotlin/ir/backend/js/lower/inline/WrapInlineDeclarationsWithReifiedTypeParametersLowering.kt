@@ -80,7 +80,6 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
                                 function.symbol,
                                 JsIrBuilder.buildCall(owner.symbol).also { call ->
                                     call.dispatchReceiver = expression.dispatchReceiver
-                                    call.extensionReceiver = expression.extensionReceiver
                                     function.valueParameters.forEachIndexed { index, valueParameter ->
                                         call.putValueArgument(index, JsIrBuilder.buildGetValue(valueParameter.symbol))
                                     }

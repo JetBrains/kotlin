@@ -84,7 +84,6 @@ class ComposeLikeDefaultMethodCallRewriter(private val context: IrPluginContext,
                 expression.superQualifierSymbol
             ).also {
                 it.dispatchReceiver = expression.dispatchReceiver?.transform(this, null)
-                it.extensionReceiver = expression.extensionReceiver?.transform(this, null)
                 var bitmap = 0
                 for (i in function.valueParameters.indices) {
                     if (i < expression.valueArgumentsCount) {
@@ -281,7 +280,6 @@ class ComposeLikeDefaultArgumentRewriter(
             lhs.type.binaryOperator(Name.identifier("and"), rhs.type),
             null,
             lhs,
-            null,
             rhs
         )
     }
@@ -290,7 +288,6 @@ class ComposeLikeDefaultArgumentRewriter(
         symbol: IrFunctionSymbol,
         origin: IrStatementOrigin? = null,
         dispatchReceiver: IrExpression? = null,
-        extensionReceiver: IrExpression? = null,
         vararg args: IrExpression
     ): IrCallImpl {
         return IrCallImpl(
@@ -303,7 +300,6 @@ class ComposeLikeDefaultArgumentRewriter(
             origin
         ).also {
             if (dispatchReceiver != null) it.dispatchReceiver = dispatchReceiver
-            if (extensionReceiver != null) it.extensionReceiver = extensionReceiver
             args.forEachIndexed { index, arg ->
                 it.putValueArgument(index, arg)
             }
@@ -320,7 +316,6 @@ class ComposeLikeDefaultArgumentRewriter(
     private fun irEqual(lhs: IrExpression, rhs: IrExpression): IrExpression {
         return irCall(
             context.irBuiltIns.eqeqeqSymbol,
-            null,
             null,
             null,
             lhs,

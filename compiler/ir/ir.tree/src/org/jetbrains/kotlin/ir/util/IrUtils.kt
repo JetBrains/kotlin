@@ -111,10 +111,6 @@ fun IrMemberAccessExpression<*>.getArgumentsWithIr(): List<Pair<IrValueParameter
         res += (irFunction.dispatchReceiverParameter!! to it)
     }
 
-    extensionReceiver?.let {
-        res += (irFunction.extensionReceiverParameter!! to it)
-    }
-
     irFunction.valueParameters.forEachIndexed { index, it ->
         val arg = getValueArgument(index)
         if (arg != null) {
@@ -895,14 +891,6 @@ fun IrFunction.copyValueParametersToStatic(
             index = shift++,
             type = type,
             name = Name.identifier("\$this")
-        )
-    }
-    source.extensionReceiverParameter?.let { originalExtensionReceiver ->
-        target.allValueParameters += originalExtensionReceiver.copyTo(
-            target,
-            origin = originalExtensionReceiver.origin,
-            index = shift++,
-            name = Name.identifier("\$receiver")
         )
     }
 

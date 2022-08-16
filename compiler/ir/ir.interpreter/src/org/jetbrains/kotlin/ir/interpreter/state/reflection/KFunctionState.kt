@@ -89,15 +89,10 @@ internal class KFunctionState(
                     else -> TODO("Unsupported symbol $symbol for invoke")
                 }.apply {
                     val dispatchParameter = irFunction.dispatchReceiverParameter
-                    val extensionParameter = irFunction.extensionReceiverParameter
 
                     if (dispatchParameter != null) {
                         dispatchReceiver = dispatchParameter.createGetValue()
                         if (!hasDispatchReceiver) newValueParameters += dispatchParameter
-                    }
-                    if (extensionParameter != null) {
-                        extensionReceiver = extensionParameter.createGetValue()
-                        if (!hasExtensionReceiver) newValueParameters += extensionParameter
                     }
                     irFunction.valueParameters.forEach {
                         putArgument(it, it.createGetValue())

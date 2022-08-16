@@ -70,7 +70,7 @@ class ScopeValidator(
         override fun visitFunction(declaration: IrFunction, data: Visibles) {
             val newVisibles = data.extend(
                 declaration.typeParameters,
-                listOfNotNull(declaration.dispatchReceiverParameter, declaration.extensionReceiverParameter) + declaration.valueParameters
+                listOfNotNull(declaration.dispatchReceiverParameter) + declaration.valueParameters
             )
 
             newVisibles.visitTypeAccess(declaration, declaration.returnType)
