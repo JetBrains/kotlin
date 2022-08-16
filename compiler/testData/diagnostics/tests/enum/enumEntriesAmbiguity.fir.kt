@@ -1,8 +1,8 @@
 // !LANGUAGE: +EnumEntries
 // FIR_DUMP
 
-enum class <!REDECLARATION!>Ambiguous<!> {
-    first, <!REDECLARATION!>entries<!>;
+enum class Ambiguous {
+    first, entries;
 }
 
 val e = Ambiguous.<!OVERLOAD_RESOLUTION_AMBIGUITY!>entries<!>

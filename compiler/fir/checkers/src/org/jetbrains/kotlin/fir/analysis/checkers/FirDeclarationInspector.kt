@@ -233,6 +233,7 @@ private val NO_NAME_PROVIDED = Name.special("<no name provided>")
 // you can't redeclare something that has no name.
 private fun FirDeclaration.isCollectable() = when (this) {
     is FirSimpleFunction -> source?.kind !is KtFakeSourceElementKind && name != NO_NAME_PROVIDED
+    is FirProperty -> source?.kind !is KtFakeSourceElementKind.EnumGeneratedDeclaration
     is FirRegularClass -> name != NO_NAME_PROVIDED
     else -> true
 }
