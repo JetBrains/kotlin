@@ -98,14 +98,14 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
                 if (name != OperatorNameConventions.TO_STRING || valueParameters.isNotEmpty() || !returnType.isString())
                     return false
 
-                return (dispatchReceiverParameter != null && extensionReceiverParameter == null
+                return (dispatchReceiverParameter != null && !hasExtensionReceiver
                         && (dispatchReceiverParameter?.type?.isAny() == true || this.overriddenSymbols.isNotEmpty()))
             }
 
         /** @return true if the function is Any?.toString */
         private val IrSimpleFunction.isNullableToString: Boolean
             get() {
-                if (name != OperatorNameConventions.TO_STRING || valueParameters.isNotEmpty() || !returnType.isString())
+                if (name != OperatorNameConventions.TO_STRING || valueParameters.size != 1 || !returnType.isString())
                     return false
 
                 return dispatchReceiverParameter == null

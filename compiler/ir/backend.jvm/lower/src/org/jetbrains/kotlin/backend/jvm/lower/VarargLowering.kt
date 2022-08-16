@@ -107,7 +107,7 @@ internal fun IrFunction.isArrayOf(): Boolean {
     }
     return parent.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME &&
             name.asString().let { it in PRIMITIVE_ARRAY_OF_NAMES || it == ARRAY_OF_NAME } &&
-            extensionReceiverParameter == null &&
+            !hasExtensionReceiver &&
             dispatchReceiverParameter == null &&
             valueParameters.size == 1 &&
             valueParameters[0].isVararg

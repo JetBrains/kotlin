@@ -156,7 +156,7 @@ private fun IrType.isArrayOrNullableArrayOf(context: JvmBackendContext, element:
 // Match `fun <T> toArray(prototype: Array<T>): Array<T>`
 internal fun IrSimpleFunction.isGenericToArray(context: JvmBackendContext): Boolean =
     name.asString() == "toArray" && typeParameters.size == 1 && valueParameters.size == 1 &&
-            extensionReceiverParameter == null &&
+            !hasExtensionReceiver &&
             returnType.isArrayOrNullableArrayOf(context, typeParameters[0].symbol) &&
             valueParameters[0].type.isArrayOrNullableArrayOf(context, typeParameters[0].symbol)
 
@@ -164,8 +164,7 @@ internal fun IrSimpleFunction.isGenericToArray(context: JvmBackendContext): Bool
 // It would be more correct to check that the return type is erased to `Object[]`, however the old backend doesn't do that
 // (see `FunctionDescriptor.isNonGenericToArray` and KT-43111).
 internal fun IrSimpleFunction.isNonGenericToArray(): Boolean =
-    name.asString() == "toArray" && typeParameters.isEmpty() && valueParameters.isEmpty() &&
-            extensionReceiverParameter == null && returnType.isArrayOrNullableArray()
+    name.asString() == "toArray" && typeParameters.isEmpty() && valueParameters.isEmpty() && returnType.isArrayOrNullableArray()
 
 private fun IrType.isArrayOrNullableArray(): Boolean =
     this is IrSimpleType && (isArray() || isNullableArray())

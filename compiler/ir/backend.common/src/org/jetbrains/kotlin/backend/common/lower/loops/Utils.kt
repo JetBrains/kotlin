@@ -187,7 +187,7 @@ internal fun IrExpression.castIfNecessary(targetClass: IrClass) =
             val classifier = type.getClass() ?: error("Has to be a class ${type.render()}")
             val castFun = classifier.functions.single {
                 it.name == numberCastFunctionName &&
-                        it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null && it.valueParameters.isEmpty()
+                        it.dispatchReceiverParameter != null && it.valueParameters.isEmpty()
             }
             IrCallImpl(
                 startOffset, endOffset,

@@ -90,7 +90,7 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
                 extensionReceiver {
                     it != null && it.type.run { isArray() || isPrimitiveArray() }
                 }
-                parameterCount { it == 0 }
+                parameterCount { it == 1 }
             }
         }
 
