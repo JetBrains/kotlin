@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.pipeline
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
@@ -44,7 +45,9 @@ fun FirSession.convertToIr(
             FirJvmKotlinMangler(this),
             JvmIrMangler, IrFactoryImpl, FirJvmVisibilityConverter,
             Fir2IrJvmSpecialAnnotationSymbolProvider(),
-            irGeneratorExtensions, true
+            irGeneratorExtensions,
+            kotlinBuiltIns = DefaultBuiltIns.Instance, // TODO: consider passing externally
+            generateSignatures = true,
         )
     } else {
         return Fir2IrConverter.createModuleFragmentWithoutSignatures(
@@ -53,7 +56,8 @@ fun FirSession.convertToIr(
             FirJvmKotlinMangler(this),
             JvmIrMangler, IrFactoryImpl, FirJvmVisibilityConverter,
             Fir2IrJvmSpecialAnnotationSymbolProvider(),
-            irGeneratorExtensions
+            irGeneratorExtensions,
+            kotlinBuiltIns = DefaultBuiltIns.Instance // TODO: consider passing externally
         )
     }
 }
