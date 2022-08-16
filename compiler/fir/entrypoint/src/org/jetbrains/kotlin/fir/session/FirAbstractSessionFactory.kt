@@ -50,7 +50,7 @@ abstract class FirAbstractSessionFactory {
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
             val builtinsModuleData = DependencyListForCliModule.createDependencyModuleData(
-                Name.special("<builtins of ${mainModuleName.identifier}"),
+                Name.special("<builtins of ${mainModuleName.asString()}"),
                 moduleDataProvider.platform,
                 moduleDataProvider.analyzerServices,
             )
