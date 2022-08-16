@@ -593,10 +593,9 @@ class BlockDecomposerTransformer(
             val newArguments = mapArguments(oldArguments, compositeCount, newStatements)
 
             expression.dispatchReceiver = newArguments[0]
-            expression.extensionReceiver = newArguments[1]
 
             for (i in 0 until expression.valueArgumentsCount) {
-                expression.putValueArgument(i, newArguments[i + 2])
+                expression.putValueArgument(i, newArguments[i + 1])
             }
 
             newStatements += expression

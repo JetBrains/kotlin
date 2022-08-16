@@ -139,7 +139,6 @@ internal fun IrFunctionAccessExpression.shallowCopy(copyTypeArguments: Boolean =
 
 internal fun IrBuiltIns.copyArgs(from: IrFunctionAccessExpression, into: IrFunctionAccessExpression) {
     into.dispatchReceiver = from.dispatchReceiver
-    into.extensionReceiver = from.extensionReceiver
     (0 until from.valueArgumentsCount)
         .map { from.getValueArgument(it) }
         .forEachIndexed { i, arg ->

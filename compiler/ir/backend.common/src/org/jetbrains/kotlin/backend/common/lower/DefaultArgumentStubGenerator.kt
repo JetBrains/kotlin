@@ -82,10 +82,6 @@ open class DefaultArgumentStubGenerator(
                     variables[it.symbol] = newIrFunction.dispatchReceiverParameter?.symbol!!
                 }
 
-                irFunction.extensionReceiverParameter?.let {
-                    variables[it.symbol] = newIrFunction.extensionReceiverParameter?.symbol!!
-                }
-
                 // In order to deal with forward references in default value lambdas,
                 // accesses to the parameter before it has been determined if there is
                 // a default value or not is redirected to the actual parameter of the
@@ -203,7 +199,6 @@ open class DefaultArgumentStubGenerator(
         val dispatchCall = irCall(irFunction, origin = getOriginForCallToImplementation()).apply {
             passTypeArgumentsFrom(newIrFunction)
             dispatchReceiver = newIrFunction.dispatchReceiverParameter?.let { irGet(it) }
-            extensionReceiver = newIrFunction.extensionReceiverParameter?.let { irGet(it) }
 
             for ((i, variable) in params.withIndex()) {
                 val paramType = irFunction.valueParameters[i].type
@@ -316,7 +311,6 @@ open class DefaultParameterInjector(
                 }
             } else {
                 dispatchReceiver = expression.dispatchReceiver
-                extensionReceiver = expression.extensionReceiver
             }
 
             params.drop(receivers).forEachIndexed { i, value ->

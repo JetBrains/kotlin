@@ -142,8 +142,7 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
     ): IrSimpleFunction {
         val superMethod = superType.getClass()?.getSingleAbstractMethod()
             ?: throw AssertionError("SAM type expected: ${superType.render()}")
-        val effectiveValueParametersCount = superMethod.valueParameters.size +
-                if (superMethod.extensionReceiverParameter == null) 0 else 1
+        val effectiveValueParametersCount = superMethod.valueParameters.size
         val invocableFunctionClass =
             if (superMethod.isSuspend)
                 jvmContext.ir.symbols.suspendFunctionN(effectiveValueParametersCount).owner
@@ -174,9 +173,6 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
 
                             invokeCall.dispatchReceiver = irImplicitCast(irGet(tmp), rawFunctionType)
                             var parameterIndex = 0
-                            invokeFunction.extensionReceiverParameter?.let {
-                                invokeCall.extensionReceiver = irGet(lambda.valueParameters[parameterIndex++])
-                            }
                             for (argumentIndex in invokeFunction.valueParameters.indices) {
                                 invokeCall.putValueArgument(argumentIndex, irGet(lambda.valueParameters[parameterIndex++]))
                             }
@@ -194,9 +190,6 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
     ): List<IrValueParameter> {
         val lambdaParameters = ArrayList<IrValueParameter>()
         var index = 0
-        superMethod.extensionReceiverParameter?.let { superExtensionReceiver ->
-            lambdaParameters.add(superExtensionReceiver.copySubstituted(lambda, typeSubstitutor, index++, Name.identifier("\$receiver")))
-        }
         superMethod.valueParameters.mapTo(lambdaParameters) { superValueParameter ->
             superValueParameter.copySubstituted(lambda, typeSubstitutor, index++)
         }

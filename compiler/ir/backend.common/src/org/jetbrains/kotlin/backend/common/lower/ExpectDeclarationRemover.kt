@@ -307,8 +307,6 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
                 when (parameter) {
                     parent.dispatchReceiverParameter ->
                         actualFunction.dispatchReceiverParameter!!
-                    parent.extensionReceiverParameter ->
-                        actualFunction.extensionReceiverParameter!!
                     else -> {
                         assert(parent.valueParameters[parameter.index] == parameter)
                         actualFunction.valueParameters[parameter.index]

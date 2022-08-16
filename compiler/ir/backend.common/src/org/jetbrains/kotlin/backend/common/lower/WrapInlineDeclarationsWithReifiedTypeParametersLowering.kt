@@ -68,15 +68,6 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
                 }.apply {
                     parent = container as IrDeclarationParent
                     val irBuilder = context.createIrBuilder(symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
-                    val forwardExtensionReceiverAsParam = owner.extensionReceiverParameter?.let { extensionReceiver ->
-                        runIf(expression.extensionReceiver == null) {
-                            addValueParameter(
-                                extensionReceiver.name,
-                                typeSubstitutor.substitute(extensionReceiver.type)
-                            )
-                            true
-                        }
-                    } ?: false
                     owner.valueParameters.forEach { valueParameter ->
                         addValueParameter(
                             valueParameter.name,
@@ -90,15 +81,8 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
                         statements.add(
                             irBuilder.irReturn(
                                 irBuilder.irCall(owner.symbol).also { call ->
-                                    val (extensionReceiver, forwardedParams) = if (forwardExtensionReceiverAsParam) {
-                                        irBuilder.irGet(valueParameters.first()) to valueParameters.subList(1, valueParameters.size)
-                                    } else {
-                                        expression.extensionReceiver to valueParameters
-                                    }
-                                    call.extensionReceiver = extensionReceiver
                                     call.dispatchReceiver = expression.dispatchReceiver
-
-                                    forwardedParams.forEachIndexed { index, valueParameter ->
+                                    valueParameters.forEachIndexed { index, valueParameter ->
                                         call.putValueArgument(index, irBuilder.irGet(valueParameter))
                                     }
                                     for (i in 0 until expression.typeArgumentsCount) {

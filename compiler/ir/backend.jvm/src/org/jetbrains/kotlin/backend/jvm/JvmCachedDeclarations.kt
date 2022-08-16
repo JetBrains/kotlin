@@ -170,7 +170,6 @@ class JvmCachedDeclarations(
                     if (target.dispatchReceiverParameter != null) {
                         dispatchReceiver = irGetField(null, getFieldForObjectInstance(target.parentAsClass))
                     }
-                    extensionReceiverParameter?.let { extensionReceiver = irGet(it) }
                     for ((i, valueParameter) in valueParameters.withIndex()) {
                         putValueArgument(i, irGet(valueParameter))
                     }

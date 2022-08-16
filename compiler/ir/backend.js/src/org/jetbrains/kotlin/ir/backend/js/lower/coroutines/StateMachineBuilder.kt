@@ -556,18 +556,16 @@ class StateMachineBuilder(
 
         val arguments = arrayOfNulls<IrExpression>(expression.valueArgumentsCount + 2)
         arguments[0] = expression.dispatchReceiver
-        arguments[1] = expression.extensionReceiver
 
         for (i in 0 until expression.valueArgumentsCount) {
-            arguments[i + 2] = expression.getValueArgument(i)
+            arguments[i + 1] = expression.getValueArgument(i)
         }
 
         val newArguments = transformArguments(arguments)
 
         expression.dispatchReceiver = newArguments[0]
-        expression.extensionReceiver = newArguments[1]
         for (i in 0 until expression.valueArgumentsCount) {
-            expression.putValueArgument(i, newArguments[i + 2])
+            expression.putValueArgument(i, newArguments[i + 1])
         }
 
         addExceptionEdge()
