@@ -43,14 +43,10 @@ internal class KtModuleProviderImpl(
         }
     }
 
-    private val binaryModules: Collection<KtBinaryModule> by lazy {
+    internal val binaryModules: List<KtBinaryModule> by lazy {
         mainModules
             .flatMap { it.allDirectDependencies() }
             .filterIsInstance<KtBinaryModule>()
-    }
-
-    override fun getKtBinaryModules(): Collection<KtBinaryModule> {
-        return binaryModules
     }
 
     internal fun allSourceFiles(): List<PsiFileSystemItem> = buildList {
