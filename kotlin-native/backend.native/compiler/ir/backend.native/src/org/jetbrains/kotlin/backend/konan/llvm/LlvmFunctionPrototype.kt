@@ -183,9 +183,9 @@ private fun mustNotInline(context: Context, irFunction: IrFunction): Boolean {
             // To simplify skipping this constructor when scanning call stack in Kotlin_getCurrentStackTrace.
             return true
         }
-        if (irFunction.symbol == context.ir.symbols.entryPoint) {
-            return true
-        }
+    }
+    if (irFunction.symbol == context.ir.symbols.entryPoint) {
+        return true
     }
 
     return false
