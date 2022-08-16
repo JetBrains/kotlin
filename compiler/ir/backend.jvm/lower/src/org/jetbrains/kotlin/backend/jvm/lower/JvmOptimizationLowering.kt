@@ -42,7 +42,6 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
         private fun isNegation(expression: IrExpression): Boolean =
             expression is IrCall && expression.symbol.owner.let { not ->
                 not.name == OperatorNameConventions.NOT &&
-                        not.extensionReceiverParameter == null &&
                         not.valueParameters.isEmpty() &&
                         not.dispatchReceiverParameter.let { receiver ->
                             receiver != null && receiver.type.isBoolean()
@@ -54,7 +53,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
         get() = name.asString() == "equals" &&
                 valueParameters.count() == 1 &&
                 valueParameters[0].type.isNullableAny() &&
-                extensionReceiverParameter == null &&
+                !hasExtensionReceiver &&
                 dispatchReceiverParameter != null
 
 

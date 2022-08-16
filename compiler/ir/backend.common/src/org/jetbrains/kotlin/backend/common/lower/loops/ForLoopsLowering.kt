@@ -329,7 +329,6 @@ private class RangeLoopTransformer(
         val next = receiverClass.functions.singleOrNull {
             it.name == OperatorNameConventions.NEXT &&
                     it.dispatchReceiverParameter != null &&
-                    it.extensionReceiverParameter == null &&
                     it.valueParameters.isEmpty()
         } ?: return
 

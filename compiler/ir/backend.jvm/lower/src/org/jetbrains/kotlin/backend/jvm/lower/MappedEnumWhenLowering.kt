@@ -172,7 +172,6 @@ private class MappedEnumWhenLowering(override val context: JvmBackendContext) : 
 internal fun IrClass.findEnumValuesFunction(context: JvmBackendContext) = functions.single {
     it.name.toString() == "values"
             && it.dispatchReceiverParameter == null
-            && it.extensionReceiverParameter == null
             && it.valueParameters.isEmpty()
             && it.returnType.isBoxedArray
             && it.returnType.getArrayElementType(context.irBuiltIns).classOrNull == this.symbol

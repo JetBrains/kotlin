@@ -168,7 +168,7 @@ class IrEnumParcelSerializer(enumClass: IrClass) : IrParcelSerializer {
     private val enumValueOf: IrFunctionSymbol =
         enumClass.functions.single { function ->
             function.name.asString() == "valueOf" && function.dispatchReceiverParameter == null
-                    && function.extensionReceiverParameter == null && function.valueParameters.size == 1
+                    && !function.hasExtensionReceiver && function.valueParameters.size == 1
                     && function.valueParameters.single().type.isString()
         }.symbol
 

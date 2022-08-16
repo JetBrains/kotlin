@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.MethodsFromAnyGeneratorForLower
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
@@ -44,14 +44,14 @@ class MethodsFromAnyGeneratorForLowerings(val context: BackendContext, val irCla
 
     companion object {
         fun IrFunction.isToString(): Boolean =
-            name.asString() == "toString" && extensionReceiverParameter == null && valueParameters.isEmpty()
+            name.asString() == "toString" && valueParameters.isEmpty()
 
         fun IrFunction.isHashCode() =
-            name.asString() == "hashCode" && extensionReceiverParameter == null && valueParameters.isEmpty()
+            name.asString() == "hashCode" && valueParameters.isEmpty()
 
         fun IrFunction.isEquals(context: BackendContext) =
             name.asString() == "equals" &&
-                    extensionReceiverParameter == null &&
+                    !hasExtensionReceiver &&
                     valueParameters.singleOrNull()?.type == context.irBuiltIns.anyNType
 
 
