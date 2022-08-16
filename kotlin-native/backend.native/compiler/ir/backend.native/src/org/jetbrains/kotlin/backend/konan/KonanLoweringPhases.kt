@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 private val validateAll = false
 
@@ -458,4 +459,16 @@ internal val computeStringTrimPhase = makeKonanFileLoweringPhase(
         ::StringTrimLowering,
         name = "StringTrimLowering",
         description = "Compute trimIndent and trimMargin operations on constant strings"
+)
+
+internal val exportInternalAbiPhase = makeKonanFileLoweringPhase(
+        ::ExportCachesAbiVisitor,
+        name = "ExportInternalAbi",
+        description = "Add accessors to private entities"
+)
+
+internal val useInternalAbiPhase = makeKonanFileLoweringPhase(
+        ::ImportCachesAbiTransformer,
+        name = "UseInternalAbi",
+        description = "Use internal ABI functions to access private entities"
 )

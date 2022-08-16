@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
@@ -24,10 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -127,23 +125,21 @@ internal class CachesAbiSupport(mapping: NativeMapping, symbols: KonanSymbols, p
     }
 }
 
-internal class ExportCachesAbiVisitor(val context: Context) : IrElementVisitorVoid {
+internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass, IrElementVisitor<Unit, MutableList<IrFunction>> {
     private val cachesAbiSupport = context.cachesAbiSupport
-    private val addedFunctions = mutableListOf<IrFunction>()
 
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
+    override fun lower(irFile: IrFile) {
+        val addedFunctions = mutableListOf<IrFunction>()
+        irFile.acceptChildren(this, addedFunctions)
+        irFile.addChildren(addedFunctions)
     }
 
-    override fun visitFile(declaration: IrFile) {
-        declaration.acceptChildrenVoid(this)
-
-        declaration.addChildren(addedFunctions)
-        addedFunctions.clear()
+    override fun visitElement(element: IrElement, data: MutableList<IrFunction>) {
+        element.acceptChildren(this, data)
     }
 
-    override fun visitClass(declaration: IrClass) {
-        declaration.acceptChildrenVoid(this)
+    override fun visitClass(declaration: IrClass, data: MutableList<IrFunction>) {
+        declaration.acceptChildren(this, data)
 
         if (declaration.isLocal) return
 
@@ -154,7 +150,7 @@ internal class ExportCachesAbiVisitor(val context: Context) : IrElementVisitorVo
                     +irReturn(irGetObjectValue(declaration.defaultType, declaration.symbol))
                 }
             }
-            addedFunctions.add(function)
+            data.add(function)
         }
 
         if (declaration.isInner) {
@@ -167,7 +163,7 @@ internal class ExportCachesAbiVisitor(val context: Context) : IrElementVisitorVo
                     )
                 }
             }
-            addedFunctions.add(function)
+            data.add(function)
         }
 
         if (declaration.isEnumClass) {
@@ -177,12 +173,12 @@ internal class ExportCachesAbiVisitor(val context: Context) : IrElementVisitorVo
                     +irReturn(with(this@ExportCachesAbiVisitor.context.enumsSupport) { irGetValuesField(declaration) })
                 }
             }
-            addedFunctions.add(function)
+            data.add(function)
         }
     }
 
-    override fun visitProperty(declaration: IrProperty) {
-        declaration.acceptChildrenVoid(this)
+    override fun visitProperty(declaration: IrProperty, data: MutableList<IrFunction>) {
+        declaration.acceptChildren(this, data)
 
         if (!declaration.isLateinit || declaration.isFakeOverride
                 || DescriptorVisibilities.isPrivate(declaration.visibility) || declaration.isLocal)
@@ -196,13 +192,17 @@ internal class ExportCachesAbiVisitor(val context: Context) : IrElementVisitorVo
                 +irReturn(irGetField(ownerClass?.let { irGet(function.valueParameters[0]) }, backingField))
             }
         }
-        addedFunctions.add(function)
+        data.add(function)
     }
 }
 
-internal class ImportCachesAbiTransformer(val context: Context) : IrElementTransformerVoid() {
+internal class ImportCachesAbiTransformer(val context: Context) : FileLoweringPass, IrElementTransformerVoid() {
     private val cachesAbiSupport = context.cachesAbiSupport
     private val enumsSupport = context.enumsSupport
+
+    override fun lower(irFile: IrFile) {
+        irFile.transformChildrenVoid(this)
+    }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
         expression.transformChildrenVoid(this)

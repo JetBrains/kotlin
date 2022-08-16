@@ -3,13 +3,11 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.common.checkDeclarationParents
 import org.jetbrains.kotlin.backend.common.IrValidator
 import org.jetbrains.kotlin.backend.common.IrValidatorConfig
-import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SamSuperTypesChecker
@@ -20,7 +18,6 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
 
@@ -283,6 +280,8 @@ internal val allLoweringsPhase = NamedCompilerPhase(
 //                        constantInliningPhase,
                         fileInitializersPhase,
                         bridgesPhase,
+                        exportInternalAbiPhase,
+                        useInternalAbiPhase,
                         autoboxPhase,
                 )
         ),
@@ -370,20 +369,6 @@ internal val entryPointPhase = makeCustomPhase<Context, IrModuleFragment>(
         }
 )
 
-internal val exportInternalAbiPhase = makeKonanModuleOpPhase(
-        name = "exportInternalAbi",
-        description = "Add accessors to private entities",
-        prerequisite = emptySet(),
-        op = { context, module -> module.acceptChildrenVoid(ExportCachesAbiVisitor(context)) }
-)
-
-internal val useInternalAbiPhase = makeKonanModuleOpPhase(
-        name = "useInternalAbi",
-        description = "Use internal ABI functions to access private entities",
-        prerequisite = emptySet(),
-        op = { context, module -> module.transformChildrenVoid(ImportCachesAbiTransformer(context)) }
-)
-
 internal val bitcodePhase = NamedCompilerPhase(
         name = "Bitcode",
         description = "LLVM Bitcode generation",
@@ -431,8 +416,6 @@ private val backendCodegen = namedUnitPhase(
                 dependenciesLowerPhase then // Then lower all libraries in topological order.
                                             // With that we guarantee that inline functions are unlowered while being inlined.
                 dumpTestsPhase then
-                exportInternalAbiPhase then
-                useInternalAbiPhase then
                 bitcodePhase then
                 verifyBitcodePhase then
                 printBitcodePhase then
