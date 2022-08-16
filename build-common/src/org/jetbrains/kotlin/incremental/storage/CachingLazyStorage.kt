@@ -43,7 +43,7 @@ class CachingLazyStorage<K, V>(
     var events = java.util.Collections.synchronizedList(mutableListOf<StorageEvents>())
 
     private fun getStorageIfExists(): PersistentHashMap<K, V>? {
-        events.add(GET_STORAGE_IF_EXISTS)
+        events.carefulAdd(GET_STORAGE_IF_EXISTS)
 
         if (storage != null) return storage
 
@@ -59,7 +59,7 @@ class CachingLazyStorage<K, V>(
     }
 
     private fun getStorageOrCreateNew(): PersistentHashMap<K, V> {
-        events.add(GET_STORAGE_OR_CREATE_NEW)
+        events.carefulAdd(GET_STORAGE_OR_CREATE_NEW)
         if (storage == null) {
             storage = createMap()
         }
@@ -69,43 +69,43 @@ class CachingLazyStorage<K, V>(
     override val keys: Collection<K>
         @Synchronized
         get() {
-            events.add(KEYS)
+            events.carefulAdd(KEYS)
             return getStorageIfExists()?.allKeysWithExistingMapping ?: listOf()
         }
 
     @Synchronized
     override operator fun contains(key: K): Boolean {
-        events.add(CONTAINS)
+        events.carefulAdd(CONTAINS)
         return getStorageIfExists()?.containsMapping(key) ?: false
     }
 
     @Synchronized
     override operator fun get(key: K): V? {
-        events.add(GET)
+        events.carefulAdd(GET)
         return getStorageIfExists()?.get(key)
     }
 
     @Synchronized
     override operator fun set(key: K, value: V) {
-        events.add(SET)
+        events.carefulAdd(SET)
         getStorageOrCreateNew().put(key, value)
     }
 
     @Synchronized
     override fun remove(key: K) {
-        events.add(REMOVE)
+        events.carefulAdd(REMOVE)
         getStorageIfExists()?.remove(key)
     }
 
     @Synchronized
     override fun append(key: K, value: V) {
-        events.add(APPEND)
+        events.carefulAdd(APPEND)
         getStorageOrCreateNew().appendData(key, { valueExternalizer.save(it, value) })
     }
 
     @Synchronized
     override fun clean() {
-        events.add(CLEAN)
+        events.carefulAdd(CLEAN)
         try {
             storage?.close()
         } finally {
@@ -118,23 +118,23 @@ class CachingLazyStorage<K, V>(
 
     @Synchronized
     override fun flush(memoryCachesOnly: Boolean) {
-        events.add(FLUSH)
+        events.carefulAdd(FLUSH)
         val existingStorage = storage ?: return
 
         if (memoryCachesOnly) {
             if (existingStorage.isDirty) {
-                events.add(DROP_MEMORY_CACHES)
+                events.carefulAdd(DROP_MEMORY_CACHES)
                 existingStorage.dropMemoryCaches()
             }
         } else {
-            events.add(FORCE)
+            events.carefulAdd(FORCE)
             existingStorage.force()
         }
     }
 
     @Synchronized
     override fun close() {
-        events.add(CLOSE)
+        events.carefulAdd(CLOSE)
         LOG.info(">>>$storageFile:$events")
         try {
             storage?.close()
@@ -145,7 +145,16 @@ class CachingLazyStorage<K, V>(
     }
 
     private fun createMap(): PersistentHashMap<K, V> {
-        events.add(CREATE_MAP)
+        events.carefulAdd(CREATE_MAP)
         return PersistentHashMap(storageFile, keyDescriptor, valueExternalizer)
+    }
+
+    @Synchronized
+    fun <E> MutableList<E>.carefulAdd(a:E) {
+        if(this.size > 100) {
+            LOG.info(">>>$storageFile:$events")
+            events.clear()
+        }
+        this.add(a)
     }
 }
