@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.findSuperDeclaration
 import org.jetbrains.kotlin.backend.jvm.ir.getSingleAbstractMethod
 import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.lower.findInterfaceImplementation
+import org.jetbrains.kotlin.backend.jvm.lower.isTailCallSuspendLambda
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -114,8 +115,10 @@ internal class LambdaMetafactoryArgumentsBuilder(
         val samMethod = samClass.getSingleAbstractMethod()
             ?: throw AssertionError("SAM class has no single abstract method: ${samClass.render()}")
 
-        // Can't use JDK LambdaMetafactory for fun interface with suspend fun.
-        if (samMethod.isSuspend) {
+        val isTailCallSuspendLambda = samClass.defaultType.isSuspendFunction() && reference.symbol.owner.isTailCallSuspendLambda()
+
+        // Can't use JDK LambdaMetafactory for fun interface with suspend fun and non-tail-call suspend lambdas.
+        if (samMethod.isSuspend && !isTailCallSuspendLambda) {
             abiHazard = true
         }
 

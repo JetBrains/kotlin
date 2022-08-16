@@ -12957,6 +12957,64 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Nested
+            @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Lambda {
+                @Test
+                public void testAllFilesPresentInLambda() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("class.kt")
+                public void testClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/class.kt");
+                }
+
+                @Test
+                @TestMetadata("function.kt")
+                public void testFunction() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/function.kt");
+                }
+
+                @Test
+                @TestMetadata("indy.kt")
+                public void testIndy() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/indy.kt");
+                }
+
+                @Test
+                @TestMetadata("inlineLambda.kt")
+                public void testInlineLambda() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/inlineLambda.kt");
+                }
+
+                @Test
+                @TestMetadata("lambda.kt")
+                public void testLambda() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/lambda.kt");
+                }
+
+                @Test
+                @TestMetadata("object.kt")
+                public void testObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/object.kt");
+                }
+
+                @Test
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/simple.kt");
+                }
+
+                @Test
+                @TestMetadata("startCoroutine.kt")
+                public void testStartCoroutine() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambda/startCoroutine.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit")
             @TestDataPath("$PROJECT_ROOT")
             public class Unit {

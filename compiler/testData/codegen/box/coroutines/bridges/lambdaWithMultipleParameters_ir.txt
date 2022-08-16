@@ -1,21 +1,14 @@
-@kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class LambdaWithMultipleParametersKt$box$1$1 {
     // source: 'lambdaWithMultipleParameters.kt'
     enclosing method LambdaWithMultipleParametersKt$box$1.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
-    synthetic field J$0: long
-    synthetic field J$1: long
-    synthetic field J$2: long
-    synthetic field J$3: long
-    synthetic field J$4: long
-    synthetic field L$0: java.lang.Object
-    field label: int
+    public final static field INSTANCE: LambdaWithMultipleParametersKt$box$1$1
     inner (anonymous) class LambdaWithMultipleParametersKt$box$1
     inner (anonymous) class LambdaWithMultipleParametersKt$box$1$1
-    method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: long, p2: long, p3: long, p4: long, p5: long, @org.jetbrains.annotations.Nullable p6: kotlin.coroutines.Continuation): java.lang.Object
+    static method <clinit>(): void
+    method <init>(): void
+    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: long, p2: long, p3: long, p4: long, p5: long, @org.jetbrains.annotations.NotNull p6: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object, p6: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata

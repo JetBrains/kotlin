@@ -28,13 +28,12 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.overrides.buildFakeOverrideMember
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -52,7 +51,9 @@ import kotlin.collections.set
 internal val suspendLambdaPhase = makeIrFilePhase(
     ::SuspendLambdaLowering,
     "SuspendLambda",
-    "Transform suspend lambdas into continuation classes"
+    "Transform suspend lambdas into continuation classes",
+    // Function reference phase generates indy-metafactory calls to replace.
+    prerequisite = setOf(functionReferencePhase)
 )
 
 private fun IrFunction.capturesCrossinline(): Boolean {
@@ -112,10 +113,64 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
                 if (reference.isSuspend && reference.origin.isLambda) {
                     assert(expression.statements.size == 2 && expression.statements[0] is IrFunction)
                     expression.transformChildrenVoid(this)
+                    val isTailCall = (expression.statements[0] as IrFunction).isTailCallSuspendLambda()
+                    if (isTailCall) return super.visitBlock(expression)
                     val parent = currentDeclarationParent ?: error("No current declaration parent at ${reference.dump()}")
                     return generateAnonymousObjectForLambda(reference, parent)
                 }
                 return super.visitBlock(expression)
+            }
+
+            // FunctionReferencePhase generates raw function references to SuspendFunctionN's suspend invoke functions,
+            // replace them with function references with Function{N+1}'s invoke functions with continuation parameter.
+            override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrExpression {
+                if (expression.symbol.owner.isSuspend) {
+                    val function = expression.symbol.owner
+                    val parentClass = function.parentAsClass
+                    if (parentClass.parent == context.ir.symbols.kotlinJvmInternalInvokeDynamicPackage) {
+                        // RAW_FUNCTION_REFERENCE 'public abstract fun invoke (p1: kotlin.String): kotlin.String [suspend,fake_override,operator]
+                        // declared in kotlin.jvm.internal.invokeDynamic.<fake>' type=kotlin.Any
+                        // ->
+                        // RAW_FUNCTION_REFERENCE 'public abstract fun invoke (p1: kotlin.String, p2: kotlin.coroutines.Continuation<String>): kotlin.Any? [fake_override,operator]
+                        // declared in kotlin.jvm.internal.invokeDynamic.<fake>' type=kotlin.Any
+                        val fakeClass = context.irFactory.buildClass { name = Name.special("<fake>") }
+                        fakeClass.parent = context.ir.symbols.kotlinJvmInternalInvokeDynamicPackage
+
+                        val superType = buildOrdinaryFunctionTypeFromSuspendInvokeTypes(
+                            function.valueParameters.map { it.type }, function.returnType
+                        )
+
+                        val invokeMethod = superType.classOrNull!!.functions.single { it.owner.modality == Modality.ABSTRACT }.owner
+
+                        val fakeInstanceMethod = buildFakeOverrideMember(superType, invokeMethod, fakeClass) as IrSimpleFunction
+                        (fakeInstanceMethod as IrFakeOverrideFunction).acquireSymbol(IrSimpleFunctionSymbolImpl())
+                        fakeInstanceMethod.overriddenSymbols = listOf(invokeMethod.symbol)
+                        return IrRawFunctionReferenceImpl(
+                            expression.startOffset, expression.endOffset, expression.type, fakeInstanceMethod.symbol
+                        )
+                    } else {
+                        val arity = expression.symbol.owner.valueParameters.size
+                        val nonSuspendFunctionalType = context.ir.symbols.functionN(arity + 1)
+
+                        val invokeMethod = nonSuspendFunctionalType.functions.single { it.owner.modality == Modality.ABSTRACT }
+                        return IrRawFunctionReferenceImpl(
+                            expression.startOffset, expression.endOffset, expression.type, invokeMethod
+                        )
+                    }
+                } else {
+                    return super.visitRawFunctionReference(expression)
+                }
+            }
+
+            private fun buildOrdinaryFunctionTypeFromSuspendInvokeTypes(types: List<IrType>, returnType: IrType): IrType {
+                val arguments = buildList {
+                    addAll(types)
+
+                    add(context.ir.symbols.continuationClass.typeWith(returnType))
+                    add(context.irBuiltIns.anyNType)
+                }
+
+                return context.ir.symbols.functionN(arguments.size - 1).typeWith(arguments)
             }
         })
     }
@@ -364,4 +419,51 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
 
 private data class ParameterInfo(val field: IrField?, val type: IrType, val name: Name, val origin: IrDeclarationOrigin) {
     val isUsed = field != null
+}
+
+internal fun IrFunction.isTailCallSuspendLambda(): Boolean {
+    if (!isSuspend || origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) return false
+
+    var isTailCall = true
+
+    val tailCallChecker = object : IrElementVisitorVoid {
+        val tailCalls = mutableSetOf<IrCall>()
+
+        override fun visitElement(element: IrElement) {
+            // If we already found non-tail-call element, there is no need to visit the rest of the tree
+            if (isTailCall) {
+                element.acceptChildrenVoid(this)
+            }
+        }
+
+        override fun visitReturn(expression: IrReturn) {
+            if (expression.value is IrCall) {
+                tailCalls += expression.value as IrCall
+            }
+            super.visitReturn(expression)
+        }
+
+        override fun visitCall(expression: IrCall) {
+            if (expression.isSuspend && expression !in tailCalls) {
+                isTailCall = false
+            } else {
+                super.visitCall(expression)
+            }
+        }
+
+        override fun visitBlock(expression: IrBlock) {
+            // Do not cross lambda boundaries
+        }
+
+        override fun visitFunction(declaration: IrFunction) {
+            // Do not cross function boundaries
+        }
+
+        override fun visitClass(declaration: IrClass) {
+            // Do not cross class boundaries
+        }
+    }
+
+    acceptChildrenVoid(tailCallChecker)
+    return isTailCall
 }

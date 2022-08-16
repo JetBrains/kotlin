@@ -73,7 +73,8 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
         val bigArityFunctionSuperTypes = declaration.superTypes.filterIsInstance<IrSimpleType>().filter {
-            it.isFunctionType && it.arguments.size > BuiltInFunctionArity.BIG_ARITY
+            it.isFunctionType && it.arguments.size > BuiltInFunctionArity.BIG_ARITY ||
+                    it.isSuspendFunction() && it.arguments.size >= BuiltInFunctionArity.BIG_ARITY
         }
 
         if (bigArityFunctionSuperTypes.isEmpty())

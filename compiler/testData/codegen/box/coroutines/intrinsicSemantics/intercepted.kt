@@ -30,7 +30,8 @@ fun builder(expectedCount: Int, c: suspend () -> String): String {
     var counter = 0
 
     val result = try {
-        c.startCoroutineUninterceptedOrReturn(object: ContinuationAdapter<String>() {
+        // FIXME: UNDO
+        c.createCoroutineUnintercepted(object: ContinuationAdapter<String>() {
             override val context: CoroutineContext
                 get() =  ContinuationDispatcher { counter++ }
 
@@ -41,12 +42,12 @@ fun builder(expectedCount: Int, c: suspend () -> String): String {
             override fun resume(value: String) {
                 fromSuspension = value
             }
-        })
+        }).resume(Unit)
     } catch (e: Exception) {
         "Exception: ${e.message}"
     }
 
-    if (counter != expectedCount) throw RuntimeException("fail 0")
+    if (counter != expectedCount) throw RuntimeException("fail 0 $counter != $expectedCount")
     return fromSuspension!!
 }
 

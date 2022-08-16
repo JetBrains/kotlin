@@ -4,7 +4,7 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 buildscript {
     val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
-    kotlinBootstrapFrom(BootstrapOption.SpaceBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
+    kotlinBootstrapFrom(BootstrapOption.Local(localPath = "C:\\Users\\ilmirus\\work\\kotlin2\\build\\repo"))
 
     repositories {
         bootstrapKotlinRepo?.let(::maven)

@@ -20,6 +20,11 @@ class Test {
     }
 }
 
+// JVM_TEMPLATES
 // suspend lambdas: 4
 // suspend lambdas $$forInline: 1
 // 5 TABLESWITCH
+
+// JVM_IR_TEMPLATES
+// tail-call suspend lambdas: 2
+// 3 TABLESWITCH
