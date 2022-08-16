@@ -10,15 +10,16 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 
-class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
+class FirModuleDescriptor(
+    val session: FirSession,
     override val builtIns: KotlinBuiltIns
-        get() = DefaultBuiltIns.Instance
-
+) : ModuleDescriptor {
     override fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean {
         return false
     }
@@ -38,8 +39,8 @@ class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
         TODO("not implemented")
     }
 
-    override val allDependencyModules: List<ModuleDescriptor>
-        get() = TODO("not implemented")
+    override var allDependencyModules: List<ModuleDescriptor> = emptyList()
+
     override val expectedByModules: List<ModuleDescriptor>
         get() = TODO("not implemented")
     override val allExpectedByModules: Set<ModuleDescriptor>
@@ -61,10 +62,10 @@ class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
     }
 
     override fun getName(): Name {
-        return FIR_MODULE_NAME
+        return session.moduleData.name
     }
 
-    override val stableName: Name?
+    override val stableName: Name
         get() = name
 
     override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
@@ -73,8 +74,4 @@ class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
 
     override val annotations: Annotations
         get() = Annotations.EMPTY
-
-    companion object {
-        val FIR_MODULE_NAME = Name.identifier("module for FIR session")
-    }
 }
