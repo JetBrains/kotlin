@@ -11,6 +11,10 @@ val resolvedTestedVersion = if (isSnapshotTest) properties["defaultSnapshotVersi
 
 //region Download and prepare classpath for specified tested version
 
+repositories {
+    maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap")
+}
+
 if (isSnapshotTest) {
     repositories {
         clear()
