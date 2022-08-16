@@ -334,7 +334,6 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             val hasReceiver = callee.run { dispatchReceiverParameter ?: extensionReceiverParameter } != null
 
             irCall.dispatchReceiver = funRef.dispatchReceiver
-            irCall.extensionReceiver = funRef.extensionReceiver
 
             var i = 0
             val valueParameters = valueParameters
@@ -346,7 +345,6 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             if (hasReceiver) {
                 if (!boundReceiver) {
                     if (callee.dispatchReceiverParameter != null) irCall.dispatchReceiver = getValue(valueParameters[i++])
-                    if (callee.extensionReceiverParameter != null) irCall.extensionReceiver = getValue(valueParameters[i++])
                 } else {
                     val boundReceiverField = boundReceiverField
                     if (boundReceiverField != null) {
@@ -362,13 +360,9 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                             )
 
                         if (funRef.dispatchReceiver != null) irCall.dispatchReceiver = value
-                        if (funRef.extensionReceiver != null) irCall.extensionReceiver = value
                     }
                     if (callee.dispatchReceiverParameter != null && funRef.dispatchReceiver == null) {
                         irCall.dispatchReceiver = getValue(valueParameters[i++])
-                    }
-                    if (callee.extensionReceiverParameter != null && funRef.extensionReceiver == null) {
-                        irCall.extensionReceiver = getValue(valueParameters[i++])
                     }
                 }
             }

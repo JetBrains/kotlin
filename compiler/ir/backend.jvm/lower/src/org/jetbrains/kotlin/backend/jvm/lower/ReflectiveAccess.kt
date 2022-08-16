@@ -310,12 +310,10 @@ internal class ReflectiveAccessLowering(
             call.superQualifierSymbol?.defaultType ?: call.dispatchReceiver?.type ?: call.symbol.owner.parentAsClass.defaultType,
             call.symbol.owner.name.asString(),
             mutableListOf<IrType>().apply {
-                call.symbol.owner.extensionReceiverParameter?.let { add(it.type) }
                 addAll(call.valueParameterTypes())
             },
             call.dispatchReceiver,
             mutableListOf<IrExpression>().apply {
-                call.extensionReceiver?.let { add(it) }
                 addAll(call.getValueArguments())
             },
             call.type,
@@ -472,12 +470,10 @@ internal class ReflectiveAccessLowering(
                 setter.parentAsClass.defaultType,
                 JvmAbi.setterName(propertyName = property.name.asString()),
                 mutableListOf<IrType>().apply {
-                    setter.extensionReceiverParameter?.let { add(it.type) }
                     addAll(call.valueParameterTypes())
                 },
                 call.dispatchReceiver,
                 mutableListOf<IrExpression>().apply {
-                    call.extensionReceiver?.let { add(it) }
                     addAll(call.getValueArguments())
                 },
                 setter.returnType,

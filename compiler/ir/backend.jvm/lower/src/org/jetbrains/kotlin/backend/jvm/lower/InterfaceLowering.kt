@@ -244,10 +244,6 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                     call.dispatchReceiver = IrGetValueImpl(startOffset, endOffset, valueParameters[offset].symbol)
                     offset += 1
                 }
-                callTarget.extensionReceiverParameter?.let {
-                    call.extensionReceiver = IrGetValueImpl(startOffset, endOffset, valueParameters[offset].symbol)
-                    offset += 1
-                }
                 for (i in offset until valueParameters.size) {
                     call.putValueArgument(i - offset, IrGetValueImpl(startOffset, endOffset, valueParameters[i].symbol))
                 }

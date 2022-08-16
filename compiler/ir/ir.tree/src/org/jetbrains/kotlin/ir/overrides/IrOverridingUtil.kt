@@ -627,7 +627,7 @@ class IrOverridingUtil(
 
     private val IrOverridableMember.compiledValueParameters
         get() = when (this) {
-            is IrSimpleFunction -> extensionReceiverParameter?.let { listOf(it) + valueParameters } ?: valueParameters
+            is IrSimpleFunction -> valueParameters
             is IrProperty -> getter!!.extensionReceiverParameter?.let { listOf(it) } ?: emptyList()
             else -> error("Unexpected declaration for compiledValueParameters: $this")
         }

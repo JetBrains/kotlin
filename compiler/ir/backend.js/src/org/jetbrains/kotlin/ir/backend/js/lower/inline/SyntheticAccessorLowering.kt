@@ -78,7 +78,6 @@ class SyntheticAccessorLowering(private val context: CommonBackendContext) : Bod
                     IrSimpleFunctionSymbolImpl()
                 }
                 declaration.typeParameters.forEach { it.acceptVoid(this) }
-                declaration.extensionReceiverParameter?.acceptVoid(this)
                 declaration.valueParameters.forEach { it.acceptVoid(this) }
             }
         }
@@ -139,10 +138,6 @@ class SyntheticAccessorLowering(private val context: CommonBackendContext) : Bod
             irCall.putValueArgument(i, IrGetValueImpl(startOffset, endOffset, vp.type, vp.symbol))
         }
 
-        irCall.extensionReceiver = newFunction.extensionReceiverParameter?.let {
-            IrGetValueImpl(startOffset, endOffset, it.type, it.symbol)
-        }
-
         val irReturn = IrReturnImpl(startOffset, endOffset, context.irBuiltIns.nothingType, newFunction.symbol, irCall)
 
         newFunction.body = context.irFactory.createBlockBody(startOffset, endOffset, listOf(irReturn))
@@ -162,7 +157,6 @@ class SyntheticAccessorLowering(private val context: CommonBackendContext) : Bod
                 }
 
                 newExpression.copyTypeArgumentsFrom(expression)
-                newExpression.extensionReceiver = expression.extensionReceiver
                 for (i in 0 until expression.valueArgumentsCount) {
                     newExpression.putValueArgument(i, expression.getValueArgument(i))
                 }
@@ -185,7 +179,6 @@ class SyntheticAccessorLowering(private val context: CommonBackendContext) : Bod
                 }
 
                 newExpression.copyTypeArgumentsFrom(expression)
-                newExpression.extensionReceiver = expression.extensionReceiver
                 for (i in 0 until expression.valueArgumentsCount) {
                     newExpression.putValueArgument(i, expression.getValueArgument(i))
                 }

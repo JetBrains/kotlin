@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
-import org.jetbrains.kotlin.backend.jvm.lower.FragmentSharedVariablesLowering.Companion.GENERATED_FUNCTION_NAME
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -64,7 +63,6 @@ internal class FragmentLocalFunctionPatchLowering(
                 val irBuilder = context.createJvmIrBuilder(declaration.symbol)
                 return irBuilder.irCall(remappedTarget.transformedDeclaration).apply {
                     this.copyTypeArgumentsFrom(expression)
-                    extensionReceiver = expression.extensionReceiver
                     dispatchReceiver = expression.dispatchReceiver
 
                     remappedTarget.transformedDeclaration.valueParameters.map { newValueParameterDeclaration ->

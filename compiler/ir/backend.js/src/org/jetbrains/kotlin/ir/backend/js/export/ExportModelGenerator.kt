@@ -86,7 +86,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 ExportedFunction(
                     function.getExportedIdentifier(),
                     returnType = exportType(function.returnType),
-                    parameters = (listOfNotNull(function.extensionReceiverParameter) + function.valueParameters).map { exportParameter(it) },
+                    parameters = function.valueParameters.map { exportParameter(it) },
                     typeParameters = function.typeParameters.map(::exportTypeParameter),
                     isMember = parent is IrClass,
                     isStatic = function.isStaticMethodOfClass,
@@ -100,8 +100,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
     private fun exportConstructor(constructor: IrConstructor): ExportedDeclaration? {
         if (!constructor.isPrimary) return null
-        val allValueParameters = listOfNotNull(constructor.extensionReceiverParameter) +
-                constructor.valueParameters.filterNot { it.origin === ES6_RESULT_TYPE_PARAMETER || it.origin === ES6_INIT_BOX_PARAMETER }
+        val allValueParameters = constructor.valueParameters.filterNot { it.origin === ES6_RESULT_TYPE_PARAMETER || it.origin === ES6_INIT_BOX_PARAMETER }
         return ExportedConstructor(
             parameters = allValueParameters.map { exportParameter(it) },
             visibility = constructor.visibility.toExportedVisibility()

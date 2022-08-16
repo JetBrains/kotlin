@@ -381,9 +381,6 @@ class FunctionInlining(
                             function.dispatchReceiverParameter ->
                                 this.dispatchReceiver = argument.implicitCastIfNeededTo(inlinedFunction.dispatchReceiverParameter!!.type)
 
-                            function.extensionReceiverParameter ->
-                                this.extensionReceiver = argument.implicitCastIfNeededTo(inlinedFunction.extensionReceiverParameter!!.type)
-
                             else ->
                                 putValueArgument(
                                     parameter.index,
@@ -483,21 +480,6 @@ class FunctionInlining(
             val valueArguments =
                 callSite.symbol.owner.valueParameters.map { callSite.getValueArgument(it.index) }.toMutableList()
 
-            if (callee.extensionReceiverParameter != null) {
-                parameterToArgument += ParameterToArgument(
-                    parameter = callee.extensionReceiverParameter!!,
-                    argumentExpression = if (callSite.extensionReceiver != null) {
-                        callSite.extensionReceiver!!
-                    } else {
-                        // Special case: lambda with receiver is called as usual lambda:
-                        valueArguments.removeAt(0)!!
-                    }
-                )
-            } else if (callSite.extensionReceiver != null) {
-                // Special case: usual lambda is called as lambda with receiver:
-                valueArguments.add(0, callSite.extensionReceiver!!)
-            }
-
             val parametersWithDefaultToArgument = mutableListOf<ParameterToArgument>()
             for (parameter in callee.valueParameters) {
                 val argument = valueArguments[parameter.index]
@@ -573,7 +555,6 @@ class FunctionInlining(
                 }
                 when (it.parameter) {
                     referenced.dispatchReceiverParameter -> functionReference.dispatchReceiver = newArgument
-                    referenced.extensionReceiverParameter -> functionReference.extensionReceiver = newArgument
                     else -> functionReference.putValueArgument(it.parameter.index, newArgument)
                 }
             }

@@ -70,12 +70,6 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
                 dispatchReceiver.symbol
             )
         }
-        call.extensionReceiver = wrapperIrFunction.extensionReceiverParameter?.let { extensionReceiver ->
-            IrGetValueImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                extensionReceiver.symbol
-            )
-        }
 
         var parametersCopied = 0
         var defaultParametersCopied = 0

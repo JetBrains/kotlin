@@ -254,10 +254,6 @@ class DelegatedMemberGenerator(
                         delegateFunction.dispatchReceiverParameter?.symbol!!
                     )
                 )
-            extensionReceiver =
-                delegateFunction.extensionReceiverParameter?.let { extensionReceiver ->
-                    IrGetValueImpl(startOffset, endOffset, extensionReceiver.type, extensionReceiver.symbol)
-                }
             delegateFunction.valueParameters.forEach {
                 putValueArgument(it.index, IrGetValueImpl(startOffset, endOffset, it.type, it.symbol))
             }

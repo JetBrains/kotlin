@@ -157,14 +157,13 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
         val inlinePrefix = if (wrapperVisibility == DescriptorVisibilities.PUBLIC) "\$i" else ""
         val wrapperName = Name.identifier("sam$inlinePrefix\$$superFqName$SAM_WRAPPER_SUFFIX")
         val superMethod = superClass.functions.single { it.modality == Modality.ABSTRACT }
-        val extensionReceiversCount = if (superMethod.extensionReceiverParameter == null) 0 else 1
         // TODO: have psi2ir cast the argument to the correct function type. Also see the TODO
         //       about type parameters in `visitTypeOperator`.
         val wrappedFunctionClass =
             if (superMethod.isSuspend)
-                context.ir.symbols.suspendFunctionN(superMethod.valueParameters.size + extensionReceiversCount).owner
+                context.ir.symbols.suspendFunctionN(superMethod.valueParameters.size).owner
             else
-                context.ir.symbols.functionN(superMethod.valueParameters.size + extensionReceiversCount).owner
+                context.ir.symbols.functionN(superMethod.valueParameters.size).owner
         val wrappedFunctionType = getWrappedFunctionType(wrappedFunctionClass)
 
         val subclass = context.irFactory.buildClass {
@@ -226,8 +225,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
                         superMethod.returnType
                     ).apply {
                         dispatchReceiver = irGetField(irGet(dispatchReceiverParameter!!), field)
-                        extensionReceiverParameter?.let { putValueArgument(0, irGet(it)) }
-                        valueParameters.forEachIndexed { i, parameter -> putValueArgument(extensionReceiversCount + i, irGet(parameter)) }
+                        valueParameters.forEachIndexed { i, parameter -> putValueArgument(i, irGet(parameter)) }
                     })
             }
         }

@@ -476,8 +476,8 @@ val IrClass.isOptionalAnnotationClass: Boolean
             hasAnnotation(OptionalAnnotationUtil.OPTIONAL_EXPECTATION_FQ_NAME)
 
 fun IrFunctionAccessExpression.receiverAndArgs(): List<IrExpression> {
-    return (arrayListOf(this.dispatchReceiver, this.extensionReceiver) +
-            symbol.owner.valueParameters.mapIndexed { i, _ -> getValueArgument(i) }).filterNotNull()
+    return (arrayListOf(this.dispatchReceiver) +
+            List(symbol.owner.valueParameters.size) { i -> getValueArgument(i) }).filterNotNull()
 }
 
 fun classFileContainsMethod(classId: ClassId, function: IrFunction, context: JvmBackendContext): Boolean? {

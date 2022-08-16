@@ -130,7 +130,6 @@ class ExportedDefaultParameterStub(val context: JsIrBackendContext) : Declaratio
             +irReturn(irCall(declaration).apply {
                 passTypeArgumentsFrom(declaration)
                 dispatchReceiver = exportedDefaultStubFun.dispatchReceiverParameter?.let { irGet(it) }
-                extensionReceiver = exportedDefaultStubFun.extensionReceiverParameter?.let { irGet(it) }
 
                 declaration.valueParameters.forEachIndexed { index, irValueParameter ->
                     val exportedParameter = exportedDefaultStubFun.valueParameters[index]

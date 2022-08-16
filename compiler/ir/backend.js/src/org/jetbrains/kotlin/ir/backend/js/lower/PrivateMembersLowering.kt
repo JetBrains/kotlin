@@ -191,7 +191,6 @@ class PrivateMemberBodiesLowering(val context: JsIrBackendContext) : BodyLowerin
                     superQualifierSymbol = expression.superQualifierSymbol
                 )
 
-                newExpression.extensionReceiver = expression.extensionReceiver
                 expression.dispatchReceiver?.let { newExpression.putValueArgument(0, it) }
 
                 for (i in 0 until expression.valueArgumentsCount) {
@@ -208,8 +207,6 @@ class PrivateMemberBodiesLowering(val context: JsIrBackendContext) : BodyLowerin
             ): IrCallableReference<*> {
 
                 val newExpression = builder()
-
-                newExpression.extensionReceiver = expression.extensionReceiver
 
                 newExpression.dispatchReceiver = expression.dispatchReceiver
                 for (i in 0 until expression.valueArgumentsCount) {
