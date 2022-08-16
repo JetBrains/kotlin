@@ -130,7 +130,6 @@ private class MappedEnumWhenLowering(override val context: JvmBackendContext) : 
             val enumValues = enum.functions.single {
                 it.name.toString() == "values"
                         && it.dispatchReceiverParameter == null
-                        && it.extensionReceiverParameter == null
                         && it.valueParameters.isEmpty()
                         && it.returnType.isBoxedArray
                         && it.returnType.getArrayElementType(context.irBuiltIns).classOrNull == enum.symbol

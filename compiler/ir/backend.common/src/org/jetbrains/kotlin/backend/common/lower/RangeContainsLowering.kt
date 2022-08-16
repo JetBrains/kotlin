@@ -300,7 +300,7 @@ private class Transformer(
         }.getValue(if (useCompareTo) builtIns.intClass else comparisonClass.symbol)
         val compareToFun = comparisonClass.functions.singleOrNull {
             it.name == OperatorNameConventions.COMPARE_TO &&
-                    it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null &&
+                    it.dispatchReceiverParameter != null && !it.hasExtensionReceiver &&
                     it.valueParameters.size == 1 && (!isNumericRange || it.valueParameters[0].type == comparisonClass.defaultType)
         } ?: return null
 

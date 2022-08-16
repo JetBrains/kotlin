@@ -739,11 +739,11 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         }
 
         private fun isEqualsFromAny(f: IrSimpleFunction): Boolean =
-            f.name.asString() == "equals" && f.extensionReceiverParameter == null &&
+            f.name.asString() == "equals" && !f.hasExtensionReceiver &&
                     f.valueParameters.singleOrNull()?.type?.isNullableAny() == true
 
         private fun isHashCodeFromAny(f: IrSimpleFunction): Boolean =
-            f.name.asString() == "hashCode" && f.extensionReceiverParameter == null && f.valueParameters.isEmpty()
+            f.name.asString() == "hashCode" && f.valueParameters.isEmpty()
 
         private fun createConstructor(): IrConstructor =
             functionReferenceClass.addConstructor {

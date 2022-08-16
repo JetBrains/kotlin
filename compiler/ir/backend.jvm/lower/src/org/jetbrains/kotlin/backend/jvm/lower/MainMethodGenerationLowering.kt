@@ -94,7 +94,6 @@ private class MainMethodGenerationLowering(private val context: JvmBackendContex
 
     private fun IrSimpleFunction.isParameterlessMainMethod(): Boolean =
         typeParameters.isEmpty() &&
-                extensionReceiverParameter == null &&
                 valueParameters.isEmpty() &&
                 returnType.isUnit() &&
                 name.asString() == "main"

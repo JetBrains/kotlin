@@ -30,7 +30,7 @@ class JsMainFunctionDetector(val context: JsCommonBackendContext) {
             return false
 
         if (name.asString() != "main") return false
-        if (extensionReceiverParameter != null) return false
+        if (hasExtensionReceiver) return false
 
         if (valueParameters.size == 1) {
             return isLoweredSuspendFunction || valueParameters.single().isStringArrayParameter()

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -13,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -208,7 +208,7 @@ interface IrBuilderExtension {
         callee: IrFunctionSymbol,
         vararg args: IrExpression,
         typeHint: IrType? = null
-    ): IrMemberAccessExpression<*> {
+    ): IrFunctionAccessExpression {
         assert(callee.isBound) { "Symbol $callee expected to be bound" }
         val returnType = typeHint ?: callee.owner.returnType
         val call = irCall(callee, type = returnType)
@@ -223,7 +223,7 @@ interface IrBuilderExtension {
         typeArguments: List<IrType?>,
         valueArguments: List<IrExpression>,
         returnTypeHint: IrType? = null
-    ): IrMemberAccessExpression<*> =
+    ): IrFunctionAccessExpression =
         irInvoke(
             dispatchReceiver,
             callee,
@@ -817,7 +817,7 @@ interface IrBuilderExtension {
         assert(enumClass.kind == ClassKind.ENUM_CLASS)
         return compilerContext.referenceClass(enumClass.fqNameSafe)?.let {
             it.owner.functions.singleOrNull { f ->
-                f.name == Name.identifier("values") && f.valueParameters.isEmpty() && f.extensionReceiverParameter == null
+                f.name == Name.identifier("values") && f.valueParameters.isEmpty()
             } ?: throw AssertionError("Enum class does not have single .values() function")
         } ?: error("Couldn't load class $enumClass")
     }
