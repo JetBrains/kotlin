@@ -231,7 +231,7 @@ class Fir2IrDeclarationStorage(
             // But keep original module descriptor for the fragments coming from parts compiled on the previous incremental step
             val externalFragmentModuleDescriptor =
                 if (firOrigin == FirDeclarationOrigin.Precompiled) moduleDescriptor
-                else FirModuleDescriptor(session)
+                else FirModuleDescriptor(session, moduleDescriptor.builtIns)
             symbolTable.declareExternalPackageFragment(FirPackageFragmentDescriptor(fqName, externalFragmentModuleDescriptor))
         }
     }
