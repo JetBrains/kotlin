@@ -1,5 +1,5 @@
 // CHECK_BYTECODE_LISTING
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR
 // FIR status: questionable bytecode listing difference (open/final methods in final class)
 // !JVM_DEFAULT_MODE: all-compatibility
 // TARGET_BACKEND: JVM
