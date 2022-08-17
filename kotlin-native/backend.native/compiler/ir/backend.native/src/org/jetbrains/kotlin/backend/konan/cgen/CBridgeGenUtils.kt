@@ -90,7 +90,7 @@ internal class KotlinBridgeBuilder(
                 isAssignable = false
         ).apply {
             parent = bridge
-            bridge.valueParameters += this
+            bridge.allValueParameters += this
         }
     }
 

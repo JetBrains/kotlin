@@ -362,7 +362,7 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                 parent = functionReferenceClass
                 functionReferenceClass.declarations += this
 
-                valueParameters += boundFunctionParameters.mapIndexed { index, parameter ->
+                allValueParameters += boundFunctionParameters.mapIndexed { index, parameter ->
                     parameter.copyTo(this, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, index,
                             type = parameter.type.substitute(typeArgumentsMap))
                 }

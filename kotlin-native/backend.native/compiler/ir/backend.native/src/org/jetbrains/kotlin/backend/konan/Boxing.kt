@@ -84,7 +84,7 @@ internal val Context.getBoxFunction: (IrClass) -> IrSimpleFunction by Context.la
             isOperator = false,
             isInfix = false
     ).also { function ->
-        function.valueParameters = listOf(
+        function.allValueParameters = listOf(
             IrValueParameterImpl(
                     startOffset, endOffset,
                     IrDeclarationOrigin.DEFINED,
@@ -143,7 +143,7 @@ internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.
             isOperator = false,
             isInfix = false
     ).also { function ->
-        function.valueParameters = listOf(
+        function.allValueParameters = listOf(
             IrValueParameterImpl(
                     startOffset, endOffset,
                     IrDeclarationOrigin.DEFINED,

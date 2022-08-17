@@ -94,7 +94,7 @@ internal interface DescriptorToIrTranslationMixin {
                 )
             }
         }
-        irConstructor.valueParameters += constructorDescriptor.valueParameters.map { valueParameterDescriptor ->
+        irConstructor.allValueParameters += constructorDescriptor.valueParameters.map { valueParameterDescriptor ->
             symbolTable.declareValueParameter(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.DEFINED,
                     valueParameterDescriptor,
@@ -127,7 +127,7 @@ internal interface DescriptorToIrTranslationMixin {
         val irFunction = symbolTable.declareSimpleFunctionWithOverrides(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, functionDescriptor)
         symbolTable.withScope(irFunction) {
             irFunction.returnType = functionDescriptor.returnType!!.toIrType()
-            irFunction.valueParameters +=  functionDescriptor.valueParameters.map {
+            irFunction.allValueParameters +=  functionDescriptor.valueParameters.map {
                 symbolTable.declareValueParameter(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.DEFINED, it, it.type.toIrType())
             }
             irFunction.dispatchReceiverParameter = functionDescriptor.dispatchReceiverParameter?.let {

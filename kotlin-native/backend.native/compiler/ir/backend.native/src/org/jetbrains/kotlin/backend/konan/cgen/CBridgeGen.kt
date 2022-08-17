@@ -1144,7 +1144,7 @@ private class ObjCBlockPointerValuePassing(
                 isHidden = false,
                 isAssignable = false
         )
-        constructor.valueParameters += constructorParameter
+        constructor.allValueParameters += constructorParameter
         constructorParameter.parent = constructor
 
         constructor.body = irBuilder(stubs.irBuiltIns, constructor.symbol).irBlockBody(startOffset, endOffset) {
@@ -1175,7 +1175,7 @@ private class ObjCBlockPointerValuePassing(
         irClass.addChild(invokeMethod)
         invokeMethod.createDispatchReceiverParameter()
 
-        invokeMethod.valueParameters += (0 until parameterCount).map { index ->
+        invokeMethod.allValueParameters += (0 until parameterCount).map { index ->
             val parameter = IrValueParameterImpl(
                     startOffset, endOffset,
                     OBJC_BLOCK_FUNCTION_IMPL,

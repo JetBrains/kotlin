@@ -244,7 +244,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                                 isFakeOverride
                         ).apply {
                             parent = functionClass
-                            valueParameters += invokeFunctionDescriptor.valueParameters.map {
+                            allValueParameters += invokeFunctionDescriptor.valueParameters.map {
                                 IrValueParameterImpl(
                                         SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, DECLARATION_ORIGIN_FUNCTION_CLASS,
                                         IrValueParameterSymbolImpl(it), it.name, it.index,

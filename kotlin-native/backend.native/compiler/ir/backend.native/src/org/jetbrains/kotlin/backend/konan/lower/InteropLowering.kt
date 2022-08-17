@@ -252,7 +252,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
         ).also { result ->
             result.parent = irClass
             result.createDispatchReceiverParameter()
-            result.valueParameters += constructor.valueParameters.map { it.copyTo(result) }
+            result.allValueParameters += constructor.valueParameters.map { it.copyTo(result) }
 
             result.overriddenSymbols += initMethod.symbol
 
@@ -348,7 +348,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
                     isInfix = false
             )
 
-        newFunction.valueParameters += parameterTypes.mapIndexed { index, type ->
+        newFunction.allValueParameters += parameterTypes.mapIndexed { index, type ->
             IrValueParameterImpl(
                     function.startOffset, function.endOffset,
                     IrDeclarationOrigin.DEFINED,

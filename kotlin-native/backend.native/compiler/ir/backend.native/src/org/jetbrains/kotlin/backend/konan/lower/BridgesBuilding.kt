@@ -137,7 +137,7 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                                 isInfix = false
                     )
 
-                    runtimeJobFunction.valueParameters +=
+                    runtimeJobFunction.allValueParameters +=
                         IrValueParameterImpl(
                                 startOffset, endOffset,
                                 IrDeclarationOrigin.DEFINED,

@@ -191,7 +191,7 @@ internal class CStructVarClassGenerator(
                     returnType = irBuiltIns.unitType
                 }.apply {
                     parent = field
-                    valueParameters = listOf (
+                    allValueParameters = listOf (
                             buildValueParameter(this) {
                                 origin = IrDeclarationOrigin.DEFINED
                                 name = Name.identifier("field")

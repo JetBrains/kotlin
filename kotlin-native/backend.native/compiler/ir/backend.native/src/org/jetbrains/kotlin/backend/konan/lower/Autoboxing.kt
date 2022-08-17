@@ -548,6 +548,6 @@ private val Context.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpl
         // So it is just a trick to make [copyTo] happy:
         val remapTypeMap = irConstructor.constructedClass.typeParameters.associateBy { it }
 
-        valueParameters += irConstructor.valueParameters.map { it.copyTo(this, remapTypeMap = remapTypeMap) }
+        allValueParameters += irConstructor.valueParameters.map { it.copyTo(this, remapTypeMap = remapTypeMap) }
     }
 }

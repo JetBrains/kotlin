@@ -393,7 +393,7 @@ class SerialInfoImplJvmIrGenerator(
         if (!overwriteValueParameters)
             assert(valueParameters.isEmpty())
 
-        valueParameters = descriptor.valueParameters.map { irValueParameter(it) }
+        allValueParameters = descriptor.valueParameters.map { irValueParameter(it) }
     }
 
     private fun IrFunction.copyTypeParamsFromDescriptor(descriptor: FunctionDescriptor) {
