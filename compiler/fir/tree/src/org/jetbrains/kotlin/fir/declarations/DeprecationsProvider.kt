@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
-interface DeprecationsProvider {
-    fun getDeprecationsInfo(version: ApiVersion): DeprecationsPerUseSite?
+abstract class DeprecationsProvider {
+    abstract fun getDeprecationsInfo(version: ApiVersion): DeprecationsPerUseSite?
 }
 
 class DeprecationsProviderImpl(
     private val all: List<DeprecationAnnotationInfo>?,
     private val bySpecificSite: Map<AnnotationUseSiteTarget, List<DeprecationAnnotationInfo>>?
-) : DeprecationsProvider {
+) : DeprecationsProvider() {
     override fun getDeprecationsInfo(version: ApiVersion): DeprecationsPerUseSite {
         @Suppress("UNCHECKED_CAST")
         return DeprecationsPerUseSite(
@@ -34,13 +34,13 @@ class DeprecationsProviderImpl(
     }
 }
 
-object EmptyDeprecationsProvider : DeprecationsProvider {
+object EmptyDeprecationsProvider : DeprecationsProvider() {
     override fun getDeprecationsInfo(version: ApiVersion): DeprecationsPerUseSite {
         return EmptyDeprecationsPerUseSite
     }
 }
 
-object UnresolvedDeprecationProvider : DeprecationsProvider {
+object UnresolvedDeprecationProvider : DeprecationsProvider() {
     override fun getDeprecationsInfo(version: ApiVersion): DeprecationsPerUseSite? {
         return null
     }

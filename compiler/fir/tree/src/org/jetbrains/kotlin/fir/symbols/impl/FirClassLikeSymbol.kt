@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.symbols.impl
 
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
@@ -25,11 +25,10 @@ sealed class FirClassLikeSymbol<D : FirClassLikeDeclaration>(
 
     val name get() = classId.shortClassName
 
-    val deprecation: DeprecationsPerUseSite?
-        get() {
-            ensureResolved(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
-            return fir.deprecationsProvider.getDeprecationsInfo(moduleData.session.languageVersionSettings.apiVersion)
-        }
+    fun getDeprecation(apiVersion: ApiVersion): DeprecationsPerUseSite? {
+        ensureResolved(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
+        return fir.deprecationsProvider.getDeprecationsInfo(apiVersion)
+    }
 
     val rawStatus: FirDeclarationStatus
         get() = fir.status
