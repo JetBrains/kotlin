@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.totalValueParametersCount
 import org.jetbrains.kotlin.name.Name
 
 class IrFunctionReferenceImpl(
@@ -33,6 +34,8 @@ class IrFunctionReferenceImpl(
     valueArgumentsCount: Int,
     override val reflectionTarget: IrFunctionSymbol? = symbol,
     override val origin: IrStatementOrigin? = null,
+    override var hasExtensionReceiver: Boolean = false,
+    override var contextReceiversCount: Int = 0,
 ) : IrFunctionReference() {
     override val referencedName: Name
         get() = symbol.owner.name
@@ -56,9 +59,14 @@ class IrFunctionReferenceImpl(
             type,
             symbol,
             typeArgumentsCount,
-            symbol.descriptor.valueParameters.size,
+            symbol.descriptor.valueParameters.size.totalValueParametersCount(
+                symbol.descriptor.contextReceiverParameters.size,
+                hasExtensionReceiver = symbol.descriptor.extensionReceiverParameter != null
+            ),
             reflectionTarget,
-            origin
+            origin,
+            hasExtensionReceiver = symbol.descriptor.extensionReceiverParameter != null,
+            contextReceiversCount = symbol.descriptor.contextReceiverParameters.size,
         )
 
         fun fromSymbolOwner(
@@ -66,8 +74,8 @@ class IrFunctionReferenceImpl(
             endOffset: Int,
             type: IrType,
             symbol: IrFunctionSymbol,
-            typeArgumentsCount: Int,
-            reflectionTarget: IrFunctionSymbol?,
+            typeArgumentsCount: Int = symbol.owner.typeParameters.size,
+            reflectionTarget: IrFunctionSymbol? = symbol,
             origin: IrStatementOrigin? = null
         ) = IrFunctionReferenceImpl(
             startOffset, endOffset,
@@ -76,7 +84,43 @@ class IrFunctionReferenceImpl(
             typeArgumentsCount,
             symbol.owner.valueParameters.size,
             reflectionTarget,
-            origin
+            origin,
+            hasExtensionReceiver = symbol.owner.extensionReceiverParameter != null,
+            contextReceiversCount = symbol.owner.contextReceiverParametersCount,
+        )
+
+        fun createCopy(
+            original: IrFunctionReference,
+            startOffset: Int = original.startOffset,
+            endOffset: Int = original.endOffset,
+            type: IrType = original.type,
+            symbol: IrFunctionSymbol = original.symbol,
+            typeArgumentsCount: Int = original.typeArgumentsCount,
+            valueArgumentsCount: Int = original.valueArgumentsCount,
+            reflectionTarget: IrFunctionSymbol? = original.reflectionTarget,
+            origin: IrStatementOrigin? = original.origin,
+            hasExtensionReceiver: Boolean = original.hasExtensionReceiver,
+            contextReceiversCount: Int = original.contextReceiversCount,
+        ) = IrFunctionReferenceImpl(
+            startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, reflectionTarget, origin,
+            hasExtensionReceiver, contextReceiversCount,
+        )
+
+        fun withReplacedSymbol(
+            original: IrFunctionReference,
+            symbol: IrFunctionSymbol,
+            startOffset: Int = original.startOffset,
+            endOffset: Int = original.endOffset,
+            type: IrType = original.type,
+            typeArgumentsCount: Int = original.typeArgumentsCount,
+            valueArgumentsCount: Int = symbol.owner.valueParameters.size,
+            reflectionTarget: IrFunctionSymbol? = original.reflectionTarget,
+            origin: IrStatementOrigin? = original.origin,
+            hasExtensionReceiver: Boolean = symbol.owner.hasExtensionReceiver,
+            contextReceiversCount: Int = symbol.owner.contextReceiverParametersCount,
+        ) = IrFunctionReferenceImpl(
+            startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, reflectionTarget, origin,
+            hasExtensionReceiver, contextReceiversCount,
         )
     }
 }

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.totalValueParametersCount
 
 class IrCallImpl(
     override val startOffset: Int,
@@ -35,14 +36,15 @@ class IrCallImpl(
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
     override val origin: IrStatementOrigin? = null,
-    override val superQualifierSymbol: IrClassSymbol? = null
+    override val superQualifierSymbol: IrClassSymbol? = null,
+    override var hasExtensionReceiver: Boolean = false,
+    override var contextReceiversCount: Int = 0,
 ) : IrCall() {
 
     override val typeArgumentsByIndex: Array<IrType?> = arrayOfNulls(typeArgumentsCount)
 
-    override val argumentsByParameterIndex: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
-
-    override var contextReceiversCount = 0
+    override val argumentsByParameterIndex: Array<IrExpression?> =
+        arrayOfNulls(valueArgumentsCount)
 
     init {
         if (symbol is IrConstructorSymbol) {
@@ -58,11 +60,17 @@ class IrCallImpl(
             type: IrType,
             symbol: IrSimpleFunctionSymbol,
             typeArgumentsCount: Int = symbol.descriptor.typeParametersCount,
-            valueArgumentsCount: Int = symbol.descriptor.valueParameters.size + symbol.descriptor.contextReceiverParameters.size,
+            totalValueArgumentsCount: Int =
+                symbol.descriptor.valueParameters.size.totalValueParametersCount(
+                    symbol.descriptor.contextReceiverParameters.size, symbol.descriptor.extensionReceiverParameter != null
+                ),
             origin: IrStatementOrigin? = null,
             superQualifierSymbol: IrClassSymbol? = null,
-        ) =
-            IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol)
+        ) = IrCallImpl(
+            startOffset, endOffset, type, symbol, typeArgumentsCount, totalValueArgumentsCount, origin, superQualifierSymbol,
+            hasExtensionReceiver = symbol.descriptor.extensionReceiverParameter != null,
+            contextReceiversCount = symbol.descriptor.contextReceiverParameters.size,
+        )
 
         fun fromSymbolOwner(
             startOffset: Int,
@@ -70,27 +78,47 @@ class IrCallImpl(
             type: IrType,
             symbol: IrSimpleFunctionSymbol,
             typeArgumentsCount: Int = symbol.owner.typeParameters.size,
-            valueArgumentsCount: Int = symbol.owner.valueParameters.size,
+            totalValueArgumentsCount: Int = symbol.owner.valueParameters.size,
             origin: IrStatementOrigin? = null,
             superQualifierSymbol: IrClassSymbol? = null,
-        ) =
-            IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol)
+        ) = IrCallImpl(
+            startOffset, endOffset, type, symbol, typeArgumentsCount, totalValueArgumentsCount, origin, superQualifierSymbol,
+            hasExtensionReceiver = symbol.owner.hasExtensionReceiver,
+            contextReceiversCount = symbol.owner.contextReceiverParametersCount,
+        )
 
         fun fromSymbolOwner(
             startOffset: Int,
             endOffset: Int,
             symbol: IrSimpleFunctionSymbol
-        ) =
-            IrCallImpl(
-                startOffset,
-                endOffset,
-                symbol.owner.returnType,
-                symbol,
-                typeArgumentsCount = symbol.owner.typeParameters.size,
-                valueArgumentsCount = symbol.owner.valueParameters.size,
-                origin = null,
-                superQualifierSymbol = null
-            )
+        ) = IrCallImpl(
+            startOffset,
+            endOffset,
+            symbol.owner.returnType,
+            symbol,
+            typeArgumentsCount = symbol.owner.typeParameters.size,
+            valueArgumentsCount = symbol.owner.valueParameters.size,
+            origin = null,
+            superQualifierSymbol = null,
+            hasExtensionReceiver = symbol.owner.hasExtensionReceiver,
+            contextReceiversCount = symbol.owner.contextReceiverParametersCount,
+        )
 
+        fun createCopy(
+            original: IrCall,
+            startOffset: Int = original.startOffset,
+            endOffset: Int = original.endOffset,
+            type: IrType = original.type,
+            symbol: IrSimpleFunctionSymbol = original.symbol,
+            typeArgumentsCount: Int = original.typeArgumentsCount,
+            valueArgumentsCount: Int = original.valueArgumentsCount,
+            origin: IrStatementOrigin? = original.origin,
+            superQualifierSymbol: IrClassSymbol? = original.superQualifierSymbol,
+            hasExtensionReceiver: Boolean = original.hasExtensionReceiver,
+            contextReceiversCount: Int = original.contextReceiversCount,
+        ) = IrCallImpl(
+            startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol,
+            hasExtensionReceiver, contextReceiversCount,
+        )
     }
 }
