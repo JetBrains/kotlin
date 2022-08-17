@@ -626,11 +626,12 @@ FILE fqName:<root> fileName:/kt44814.kt
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]'
-      FUN name:getModifierList visibility:public modality:FINAL <> ($this:<root>.FirModifierList.Companion, $receiver:<root>.FirSourceElement?) returnType:<root>.FirModifierList?
+      FUN name:getModifierList visibility:public modality:FINAL <> ($this:<root>.FirModifierList.Companion, <this>:<root>.FirSourceElement?) returnType:<root>.FirModifierList?
         $this: VALUE_PARAMETER name:<this> type:<root>.FirModifierList.Companion
-        $receiver: VALUE_PARAMETER name:<this> type:<root>.FirSourceElement?
+        hasExtensionReceiver=true
+        VALUE_PARAMETER name:<this> index:0 type:<root>.FirSourceElement?
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun getModifierList (): <root>.FirModifierList? declared in <root>.FirModifierList.Companion'
+          RETURN type=kotlin.Nothing from='public final fun getModifierList (<this>: <root>.FirSourceElement?): <root>.FirModifierList? declared in <root>.FirModifierList.Companion'
             BLOCK type=<root>.FirModifierList? origin=WHEN
               VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.FirSourceElement? [val]
                 GET_VAR '<this>: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.FirSourceElement? origin=null
@@ -669,10 +670,11 @@ FILE fqName:<root> fileName:/kt44814.kt
                         then: CONST Null type=kotlin.Nothing? value=null
                       BRANCH
                         if: CONST Boolean type=kotlin.Boolean value=true
-                        then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.StandardKt.let, R of kotlin.StandardKt.let>): R of kotlin.StandardKt.let [inline] declared in kotlin.StandardKt' type=<root>.FirModifierList.FirPsiModifierList origin=null
+                        then: CALL 'public final fun let <T, R> (<this>: T of kotlin.StandardKt.let, block: kotlin.Function1<T of kotlin.StandardKt.let, R of kotlin.StandardKt.let>): R of kotlin.StandardKt.let [inline] declared in kotlin.StandardKt' type=<root>.FirModifierList.FirPsiModifierList origin=null
                           <T>: <root>.KtModifierList
                           <R>: <root>.FirModifierList.FirPsiModifierList
                           $receiver: GET_VAR 'val tmp_1: <root>.KtModifierList? [val] declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.KtModifierList? origin=null
+                          <this>: GET_VAR 'val tmp_1: <root>.KtModifierList? [val] declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.KtModifierList? origin=null
                           block: FUN_EXPR type=kotlin.Function1<<root>.KtModifierList, <root>.FirModifierList.FirPsiModifierList> origin=LAMBDA
                             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.KtModifierList) returnType:<root>.FirModifierList.FirPsiModifierList
                               VALUE_PARAMETER name:it index:0 type:<root>.KtModifierList
@@ -687,9 +689,14 @@ FILE fqName:<root> fileName:/kt44814.kt
                     VAR name:modifierListNode type:<root>.LighterASTNode [val]
                       BLOCK type=<root>.LighterASTNode origin=ELVIS
                         VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:<root>.LighterASTNode? [val]
-                          CALL 'public final fun find <T> (predicate: kotlin.Function1<T of kotlin.collections.CollectionsKt.find, kotlin.Boolean>): T of kotlin.collections.CollectionsKt.find? [inline] declared in kotlin.collections.CollectionsKt' type=<root>.LighterASTNode? origin=null
+                          CALL 'public final fun find <T> (<this>: kotlin.collections.Iterable<T of kotlin.collections.CollectionsKt.find>, predicate: kotlin.Function1<T of kotlin.collections.CollectionsKt.find, kotlin.Boolean>): T of kotlin.collections.CollectionsKt.find? [inline] declared in kotlin.collections.CollectionsKt' type=<root>.LighterASTNode? origin=null
                             <T>: <root>.LighterASTNode?
                             $receiver: CALL 'public final fun getChildren (treeStructure: <root>.FlyweightCapableTreeStructure): kotlin.collections.List<<root>.LighterASTNode?> declared in <root>.LighterASTNode' type=kotlin.collections.List<<root>.LighterASTNode?> origin=null
+                              $this: CALL 'public abstract fun <get-lighterASTNode> (): <root>.LighterASTNode declared in <root>.FirSourceElement' type=<root>.LighterASTNode origin=GET_PROPERTY
+                                $this: GET_VAR '<this>: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.FirSourceElement? origin=null
+                              treeStructure: CALL 'public abstract fun <get-treeStructure> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirSourceElement' type=<root>.FlyweightCapableTreeStructure origin=GET_PROPERTY
+                                $this: GET_VAR '<this>: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.FirSourceElement? origin=null
+                            <this>: CALL 'public final fun getChildren (treeStructure: <root>.FlyweightCapableTreeStructure): kotlin.collections.List<<root>.LighterASTNode?> declared in <root>.LighterASTNode' type=kotlin.collections.List<<root>.LighterASTNode?> origin=null
                               $this: CALL 'public abstract fun <get-lighterASTNode> (): <root>.LighterASTNode declared in <root>.FirSourceElement' type=<root>.LighterASTNode origin=GET_PROPERTY
                                 $this: GET_VAR '<this>: <root>.FirSourceElement? declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.FirSourceElement? origin=null
                               treeStructure: CALL 'public abstract fun <get-treeStructure> (): <root>.FlyweightCapableTreeStructure declared in <root>.FirSourceElement' type=<root>.FlyweightCapableTreeStructure origin=GET_PROPERTY
@@ -720,7 +727,7 @@ FILE fqName:<root> fileName:/kt44814.kt
                             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                               arg0: GET_VAR 'val tmp_3: <root>.LighterASTNode? [val] declared in <root>.FirModifierList.Companion.getModifierList' type=<root>.LighterASTNode? origin=null
                               arg1: CONST Null type=kotlin.Nothing? value=null
-                            then: RETURN type=kotlin.Nothing from='public final fun getModifierList (): <root>.FirModifierList? declared in <root>.FirModifierList.Companion'
+                            then: RETURN type=kotlin.Nothing from='public final fun getModifierList (<this>: <root>.FirSourceElement?): <root>.FirModifierList? declared in <root>.FirModifierList.Companion'
                               CONST Null type=kotlin.Nothing? value=null
                           BRANCH
                             if: CONST Boolean type=kotlin.Boolean value=true
@@ -743,9 +750,10 @@ FILE fqName:<root> fileName:/kt44814.kt
                   element: CONSTRUCTOR_CALL 'public constructor <init> (_children: kotlin.collections.List<<root>.LighterASTNode?>) [primary] declared in <root>.LighterASTNode' type=<root>.LighterASTNode origin=null
               treeStructure: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.FlyweightCapableTreeStructure' type=<root>.FlyweightCapableTreeStructure origin=null
           VAR name:result type:<root>.FirModifierList? [val]
-            CALL 'public final fun getModifierList (): <root>.FirModifierList? declared in <root>.FirModifierList.Companion' type=<root>.FirModifierList? origin=null
+            CALL 'public final fun getModifierList (<this>: <root>.FirSourceElement?): <root>.FirModifierList? declared in <root>.FirModifierList.Companion' type=<root>.FirModifierList? origin=null
               $this: GET_VAR '<this>: <root>.FirModifierList.Companion declared in <root>.FirModifierList.Companion.boxImpl' type=<root>.FirModifierList.Companion origin=null
               $receiver: GET_VAR 'val sourceElement: <root>.FirSourceElement? [val] declared in <root>.FirModifierList.Companion.boxImpl' type=<root>.FirSourceElement? origin=null
+              <this>: GET_VAR 'val sourceElement: <root>.FirSourceElement? [val] declared in <root>.FirModifierList.Companion.boxImpl' type=<root>.FirSourceElement? origin=null
           RETURN type=kotlin.Nothing from='public final fun boxImpl (): kotlin.String declared in <root>.FirModifierList.Companion'
             WHEN type=kotlin.String origin=IF
               BRANCH
