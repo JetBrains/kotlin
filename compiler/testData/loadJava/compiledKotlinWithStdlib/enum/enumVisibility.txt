@@ -14,6 +14,8 @@ internal final enum class In : kotlin.Enum<test.In> {
     public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.In!>!
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.In>
+        public final /*synthesized*/ fun `<get-entries>`(): kotlin.enums.EnumEntries<test.In>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.In
     public final /*synthesized*/ fun values(): kotlin.Array<test.In>
 }
@@ -32,6 +34,8 @@ private final enum class Pr : kotlin.Enum<test.Pr> {
     public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.Pr!>!
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.Pr>
+        public final /*synthesized*/ fun `<get-entries>`(): kotlin.enums.EnumEntries<test.Pr>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.Pr
     public final /*synthesized*/ fun values(): kotlin.Array<test.Pr>
 }
@@ -50,6 +54,8 @@ public final enum class Pu : kotlin.Enum<test.Pu> {
     public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.Pu!>!
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.Pu>
+        public final /*synthesized*/ fun `<get-entries>`(): kotlin.enums.EnumEntries<test.Pu>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.Pu
     public final /*synthesized*/ fun values(): kotlin.Array<test.Pu>
 }

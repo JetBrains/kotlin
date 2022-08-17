@@ -12,6 +12,8 @@ public final enum class EnumWithGenericConstructorParameter : kotlin.Enum<test.E
     public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.EnumWithGenericConstructorParameter!>!
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.EnumWithGenericConstructorParameter>
+        public final /*synthesized*/ fun `<get-entries>`(): kotlin.enums.EnumEntries<test.EnumWithGenericConstructorParameter>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.EnumWithGenericConstructorParameter
     public final /*synthesized*/ fun values(): kotlin.Array<test.EnumWithGenericConstructorParameter>
 }

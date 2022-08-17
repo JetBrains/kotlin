@@ -53,11 +53,6 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotatedMethod.kt");
             }
 
-            @TestMetadata("AnnotationInAnnotationArguments.kt")
-            public void testAnnotationInAnnotationArguments() throws Exception {
-                runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotationInAnnotationArguments.kt");
-            }
-
             @TestMetadata("AnnotationInArray.kt")
             public void testAnnotationInArray() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotationInArray.kt");
@@ -66,11 +61,6 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             @TestMetadata("ClassLiteralArguments.kt")
             public void testClassLiteralArguments() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/ClassLiteralArguments.kt");
-            }
-
-            @TestMetadata("EnumArgumentWithCustomToString.kt")
-            public void testEnumArgumentWithCustomToString() throws Exception {
-                runTest("compiler/testData/loadJava/compiledKotlin/annotations/EnumArgumentWithCustomToString.kt");
             }
 
             @TestMetadata("MultiDimensionalArrayMethod.kt")
@@ -123,11 +113,6 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 @TestMetadata("EnumArgument.kt")
                 public void testEnumArgument() throws Exception {
                     runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/EnumArgument.kt");
-                }
-
-                @TestMetadata("EnumEntry.kt")
-                public void testEnumEntry() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/EnumEntry.kt");
                 }
 
                 @TestMetadata("Function.kt")
@@ -317,11 +302,6 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 @TestMetadata("Constructor.kt")
                 public void testConstructor() throws Exception {
                     runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/Constructor.kt");
-                }
-
-                @TestMetadata("EnumConstructor.kt")
-                public void testEnumConstructor() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/EnumConstructor.kt");
                 }
 
                 @TestMetadata("ExtensionFunction.kt")
@@ -605,16 +585,6 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             @TestMetadata("ClassTwoParams2.kt")
             public void testClassTwoParams2() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/class/ClassTwoParams2.kt");
-            }
-
-            @TestMetadata("EnumWithGenericConstructorParameter.kt")
-            public void testEnumWithGenericConstructorParameter() throws Exception {
-                runTest("compiler/testData/loadJava/compiledKotlin/class/EnumWithGenericConstructorParameter.kt");
-            }
-
-            @TestMetadata("EnumWithPrimitiveConstructorParameter.kt")
-            public void testEnumWithPrimitiveConstructorParameter() throws Exception {
-                runTest("compiler/testData/loadJava/compiledKotlin/class/EnumWithPrimitiveConstructorParameter.kt");
             }
 
             @TestMetadata("FunInterface.kt")
@@ -1067,49 +1037,6 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             }
         }
 
-        @TestMetadata("compiler/testData/loadJava/compiledKotlin/enum")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Enum extends AbstractJvmRuntimeDescriptorLoaderTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInEnum() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/enum"), Pattern.compile("^(.+)\\.kt$"), null, true);
-            }
-
-            @TestMetadata("enumVisibility.kt")
-            public void testEnumVisibility() throws Exception {
-                runTest("compiler/testData/loadJava/compiledKotlin/enum/enumVisibility.kt");
-            }
-
-            @TestMetadata("enumWithConstuctor.kt")
-            public void testEnumWithConstuctor() throws Exception {
-                runTest("compiler/testData/loadJava/compiledKotlin/enum/enumWithConstuctor.kt");
-            }
-
-            @TestMetadata("enumWithInnerClasses.kt")
-            public void testEnumWithInnerClasses() throws Exception {
-                runTest("compiler/testData/loadJava/compiledKotlin/enum/enumWithInnerClasses.kt");
-            }
-
-            @TestMetadata("innerEnum.kt")
-            public void testInnerEnum() throws Exception {
-                runTest("compiler/testData/loadJava/compiledKotlin/enum/innerEnum.kt");
-            }
-
-            @TestMetadata("innerEnumExistingClassObject.kt")
-            public void testInnerEnumExistingClassObject() throws Exception {
-                runTest("compiler/testData/loadJava/compiledKotlin/enum/innerEnumExistingClassObject.kt");
-            }
-
-            @TestMetadata("simpleEnum.kt")
-            public void testSimpleEnum() throws Exception {
-                runTest("compiler/testData/loadJava/compiledKotlin/enum/simpleEnum.kt");
-            }
-        }
-
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -1175,11 +1102,6 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             @TestMetadata("ClassWithTypePRefSelfAndClass.kt")
             public void testClassWithTypePRefSelfAndClass() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithTypePRefSelfAndClass.kt");
-            }
-
-            @TestMetadata("enum.kt")
-            public void testEnum() throws Exception {
-                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/enum.kt");
             }
 
             @TestMetadata("FieldAsVar.kt")
@@ -2343,11 +2265,6 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             @TestMetadata("callablesNameClash.kt")
             public void testCallablesNameClash() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/memberOrder/callablesNameClash.kt");
-            }
-
-            @TestMetadata("enumEntries.kt")
-            public void testEnumEntries() throws Exception {
-                runTest("compiler/testData/loadJava/compiledKotlin/memberOrder/enumEntries.kt");
             }
 
             @TestMetadata("extensionMembers.kt")

@@ -1,5 +1,3 @@
-// WITH_STDLIB
-
 package test
 
 @Target(AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER)

@@ -14,6 +14,8 @@ public final enum class MyEnum : kotlin.Enum<test.MyEnum> {
     public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.MyEnum!>!
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.MyEnum>
+        public final /*synthesized*/ fun `<get-entries>`(): kotlin.enums.EnumEntries<test.MyEnum>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.MyEnum
     public final /*synthesized*/ fun values(): kotlin.Array<test.MyEnum>
 }
