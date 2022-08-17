@@ -170,6 +170,11 @@ private class ExportedElementScope(val kind: ScopeKind, val name: String) {
         }
     }
 
+    // collects names of inner scopes to make sure function<->scope name clashes would be detected, and functions would be mangled with "_" suffix
+    fun collectInnerScopeName(innerScope: ExportedElementScope) {
+        scopeNames += innerScope.name
+    }
+
     fun scopeUniqueName(descriptor: DeclarationDescriptor, shortName: Boolean): String {
         scopeNamesMap[descriptor to shortName]?.apply { return this }
         var computedName = when (descriptor) {
@@ -787,8 +792,11 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
             return
         if (kind == DefinitionKind.C_HEADER_STRUCT) output("struct {", indent)
         if (kind == DefinitionKind.C_SOURCE_STRUCT) output(".${scope.name} = {", indent)
+        scope.scopes.forEach {
+            scope.collectInnerScopeName(it)
+            makeScopeDefinitions(it, kind, indent + 1)
+        }
         scope.elements.forEach { makeElementDefinition(it, kind, indent + 1) }
-        scope.scopes.forEach { makeScopeDefinitions(it, kind, indent + 1) }
         if (kind == DefinitionKind.C_HEADER_STRUCT) output("} ${scope.name};", indent)
         if (kind == DefinitionKind.C_SOURCE_STRUCT) output("},", indent)
     }
