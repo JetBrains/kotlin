@@ -41,7 +41,7 @@ external fun getCachedLongBox(value: Long): Long?
 @GCUnsafeCall("inLongBoxCache")
 external fun inLongBoxCache(value: Long): Boolean
 
-// TODO: functions below are used for ObjCExport, move and rename them correspondigly.
+// TODO: functions below are used for ObjCExport and CAdapterGenerator, move and rename them correspondigly.
 
 @ExportForCppRuntime("Kotlin_boxBoolean")
 fun boxBoolean(value: Boolean): Boolean? = value
@@ -85,3 +85,45 @@ fun boxDouble(value: Double): Double? = value
 
 @ExportForCppRuntime("Kotlin_boxUnit")
 internal fun Kotlin_boxUnit(): Unit? = Unit
+
+// Unbox fuctions
+
+@ExportForCppRuntime("Kotlin_unboxBoolean")
+fun unboxBoolean(value: Boolean?): Boolean = value!!
+
+@ExportForCppRuntime("Kotlin_unboxChar")
+fun unboxChar(value: Char?): Char = value!!
+
+@ExportForCppRuntime("Kotlin_unboxByte")
+fun unboxByte(value: Byte?): Byte = value!!
+
+@ExportForCppRuntime("Kotlin_unboxShort")
+fun unboxShort(value: Short?): Short = value!!
+
+@ExportForCppRuntime("Kotlin_unboxInt")
+fun unboxInt(value: Int?): Int = value!!
+
+@ExportForCppRuntime("Kotlin_unboxLong")
+fun unboxLong(value: Long?): Long = value!!
+
+@ExperimentalUnsignedTypes
+@ExportForCppRuntime("Kotlin_unboxUByte")
+fun unboxUByte(value: UByte?): UByte = value!!
+
+@ExperimentalUnsignedTypes
+@ExportForCppRuntime("Kotlin_unboxUShort")
+fun unboxUShort(value: UShort?): UShort = value!!
+
+@ExperimentalUnsignedTypes
+@ExportForCppRuntime("Kotlin_unboxUInt")
+fun unboxUInt(value: UInt?): UInt = value!!
+
+@ExperimentalUnsignedTypes
+@ExportForCppRuntime("Kotlin_unboxULong")
+fun unboxULong(value: ULong?): ULong = value!!
+
+@ExportForCppRuntime("Kotlin_unboxFloat")
+fun unboxFloat(value: Float?): Float = value!!
+
+@ExportForCppRuntime("Kotlin_unboxDouble")
+fun unboxDouble(value: Double?): Double = value!!

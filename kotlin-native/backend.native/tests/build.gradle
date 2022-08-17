@@ -5236,6 +5236,13 @@ for (i in 0..2) {
     }
 }
 
+dynamicTest("kt42830") {
+    disabled = (project.testTarget == 'wasm32') // wasm doesn't support -produce dynamic
+    source = "produce_dynamic/kt-42830/box_unbox.kt"
+    cSource = "$projectDir/produce_dynamic/kt-42830/main.c"
+    useGoldenData = true
+}
+
 dynamicTest("produce_dynamic_unhandledException") {
     disabled = (project.testTarget == 'wasm32') || // Uses exceptions + dynamic is unsupported for wasm.
             (cacheTesting != null) // Disabled due to KT-47828.
