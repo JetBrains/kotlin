@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.impl
 
+import com.google.common.io.Files.getFileExtension
 import com.google.common.io.Files.getNameWithoutExtension
+import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
@@ -39,8 +42,9 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
-import java.nio.file.Files
-import java.nio.file.Paths
+import java.io.IOException
+import java.nio.file.*
+import java.nio.file.attribute.BasicFileAttributes
 
 internal fun TargetPlatform.getAnalyzerServices(): PlatformDependentAnalyzerServices {
     return when {
@@ -52,6 +56,12 @@ internal fun TargetPlatform.getAnalyzerServices(): PlatformDependentAnalyzerServ
     }
 }
 
+/**
+ * Collect source file path as [String] from the given source roots in [compilerConfig].
+ *
+ * Such source roots are either [KotlinSourceRoot] or [JavaSourceRoot], and thus
+ * this util collects all `.kt` and `.java` files under source roots.
+ */
 internal fun getSourceFilePaths(
     compilerConfig: CompilerConfiguration,
     includeDirectoryRoot: Boolean = false,
@@ -61,9 +71,7 @@ internal fun getSourceFilePaths(
             val path = Paths.get(srcRoot)
             if (Files.isDirectory(path)) {
                 // E.g., project/app/src
-                Files.walk(path)
-                    .filter(java.nio.file.Files::isRegularFile)
-                    .forEach { add(it.toString()) }
+                collectSourceFilePaths(path, this)
                 if (includeDirectoryRoot) {
                     add(srcRoot)
                 }
@@ -73,6 +81,51 @@ internal fun getSourceFilePaths(
             }
         }
     }
+}
+
+/**
+ * Collect source file path from the given [root] store them in [result].
+ *
+ * E.g., for `project/app/src` as a [root], this will walk the file tree and
+ * collect all `.kt` and `.java` files under that folder.
+ *
+ * Note that this util gracefully skips [IOException] during file tree traversal.
+ */
+private fun collectSourceFilePaths(
+    root: Path,
+    result: MutableSet<String>
+) {
+    // NB: [Files#walk] throws an exception if there is an issue during IO.
+    // With [Files#walkFileTree] with a custom visitor, we can take control of exception handling.
+    Files.walkFileTree(
+        root,
+        object : SimpleFileVisitor<Path>() {
+            override fun preVisitDirectory(dir: Path, attrs: BasicFileAttributes): FileVisitResult {
+                return if (Files.isReadable(dir))
+                    FileVisitResult.CONTINUE
+                else
+                    FileVisitResult.SKIP_SUBTREE
+            }
+
+            override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+                if (!Files.isRegularFile(file) || !Files.isReadable(file))
+                    return FileVisitResult.CONTINUE
+                val ext = getFileExtension(file.fileName.toString())
+                if (ext == KotlinFileType.EXTENSION || ext == JavaFileType.DEFAULT_EXTENSION) {
+                    result.add(file.toString())
+                }
+                return FileVisitResult.CONTINUE
+            }
+
+            override fun visitFileFailed(file: Path, exc: IOException?): FileVisitResult {
+                // TODO: report or log [IOException]?
+                // NB: this intentionally swallows the exception, hence fail-safe.
+                // Skipping subtree doesn't make any sense, since this is not a directory.
+                // Skipping sibling may drop valid file paths afterward, so we just continue.
+                return FileVisitResult.CONTINUE
+            }
+        }
+    )
 }
 
 internal inline fun <reified T : PsiFileSystemItem> getPsiFilesFromPaths(
