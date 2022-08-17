@@ -128,7 +128,7 @@ class SerialInfoImplJvmIrGenerator(
             valueArgumentsCount = 0,
             origin = IrStatementOrigin.GET_PROPERTY
         ).apply {
-            this.extensionReceiver = irExpression
+            putExtensionReceiverAsArgument(irExpression)
         }
     }
 

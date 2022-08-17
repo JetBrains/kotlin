@@ -161,9 +161,10 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
                         if (reference.dispatchReceiver != null) irGet(boundValueParameters[b++]) else irGet(unboundValueParameters[u++])
                 }
 
-                if (accessor.extensionReceiverParameter != null) {
-                    irAccessorCall.extensionReceiver =
+                if (accessor.hasExtensionReceiver) {
+                    irAccessorCall.putExtensionReceiverAsArgument(
                         if (reference.extensionReceiver != null) irGet(boundValueParameters[b++]) else irGet(unboundValueParameters[u++])
+                    )
                 }
 
                 if (u < unboundValueParameters.size) {

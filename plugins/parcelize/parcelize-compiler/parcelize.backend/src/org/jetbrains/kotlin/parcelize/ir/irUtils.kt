@@ -162,7 +162,7 @@ private fun IrBuilderWithScope.kClassReference(classType: IrType): IrClassRefere
 
 private fun AndroidIrBuilder.kClassToJavaClass(kClassReference: IrExpression): IrCall =
     irGet(androidSymbols.javaLangClass.starProjectedType, null, androidSymbols.kotlinKClassJava.owner.getter!!.symbol).apply {
-        extensionReceiver = kClassReference
+        putExtensionReceiverAsArgument(kClassReference)
     }
 
 // Produce a static reference to the java class of the given type.

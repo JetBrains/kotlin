@@ -173,13 +173,14 @@ internal class ReflectiveAccessLowering(
 
     private fun IrBuilderWithScope.javaClassObject(klass: IrType): IrExpression =
         irCall(symbols.kClassJavaPropertyGetter).apply {
-            extensionReceiver =
+            putExtensionReceiverAsArgument(
                 IrClassReferenceImpl(
                     startOffset, endOffset,
                     context.irBuiltIns.kClassClass.starProjectedType,
                     context.irBuiltIns.kClassClass,
                     klass
                 )
+            )
         }
 
     private fun IrBuilderWithScope.getDeclaredField(declaringClass: IrExpression, fieldName: String): IrExpression =

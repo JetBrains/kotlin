@@ -892,7 +892,7 @@ interface IrBuilderExtension {
             typeArguments = typeArguments,
             valueArguments = emptyList(),
             returnTypeHint = returnType
-        ).apply { extensionReceiver = expression }
+        ).apply { putExtensionReceiverAsArgument(expression) }
     } else {
         expression
     }
