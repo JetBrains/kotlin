@@ -209,7 +209,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     }
 
     protected fun rememberClosure(parameterType: Type, index: Int, lambdaInfo: LambdaInfo) {
-        invocationParamBuilder.addNextValueParameter(parameterType, true, null, index).functionalArgument = lambdaInfo
+        invocationParamBuilder.addNextValueParameter(parameterType, true, null).functionalArgument = lambdaInfo
     }
 
     protected fun putCapturedToLocalVal(stackValue: StackValue, capturedParam: CapturedParamDesc, kotlinType: KotlinType?) {
@@ -230,7 +230,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             return processDefaultMaskOrMethodHandler(stackValue, kind)
         }
 
-        val info = invocationParamBuilder.addNextValueParameter(jvmKotlinType.type, false, null, parameterIndex)
+        val info = invocationParamBuilder.addNextValueParameter(jvmKotlinType.type, false, null)
         info.functionalArgument = when (kind) {
             ValueKind.READ_OF_INLINE_LAMBDA_FOR_INLINE_SUSPEND_PARAMETER ->
                 NonInlineArgumentForInlineSuspendParameter.INLINE_LAMBDA_AS_VARIABLE
