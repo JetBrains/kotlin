@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrElement
@@ -170,7 +171,7 @@ private class RangeLoopTransformer(
 
         val statements = expression.statements
         assert(statements.size == 2) { "Expected 2 statements in for-loop block, was:\n${expression.dump()}" }
-        val iteratorVariable = statements[0] as IrVariable
+        val iteratorVariable = statements[0] as? IrVariable ?: compilationException("Expected IrVariable", statements[0])
         assert(iteratorVariable.origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR) {
             "Expected FOR_LOOP_ITERATOR origin for iterator variable, was:\n${iteratorVariable.dump()}"
         }
