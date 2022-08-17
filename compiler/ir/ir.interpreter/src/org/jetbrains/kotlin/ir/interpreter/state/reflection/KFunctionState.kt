@@ -44,7 +44,7 @@ internal class KFunctionState(
         set(value) {
             field = value ?: return
             val samFunction = value.classOrNull!!.owner.getSingleAbstractMethod()
-            if (samFunction.extensionReceiverParameter != null) {
+            if (samFunction.hasExtensionReceiver) {
                 // this change of parameter is needed because of difference in `invoke` and sam calls
                 invokeSymbol.owner.hasExtensionReceiver = true
                 invokeSymbol.owner.allValueParameters = invokeSymbol.owner.allValueParameters
