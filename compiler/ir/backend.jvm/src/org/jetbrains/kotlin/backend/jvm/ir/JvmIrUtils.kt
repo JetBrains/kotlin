@@ -364,7 +364,7 @@ fun IrBuilderWithScope.kClassReference(classType: IrType): IrClassReference =
 
 fun JvmIrBuilder.kClassToJavaClass(kClassReference: IrExpression): IrCall =
     irGet(irSymbols.javaLangClass.starProjectedType, null, irSymbols.kClassJavaPropertyGetter.symbol).apply {
-        extensionReceiver = kClassReference
+        putExtensionReceiverAsArgument(kClassReference)
     }
 
 fun JvmIrBuilder.javaClassReference(classType: IrType): IrCall =

@@ -137,7 +137,7 @@ fun IrMemberAccessExpression<*>.addArguments(args: Map<ParameterDescriptor, IrEx
     descriptor.extensionReceiverParameter?.let {
         val arg = args[it]
         if (arg != null) {
-            this.extensionReceiver = arg
+            this.putExtensionReceiverAsArgument(arg)
         }
     }
 
@@ -642,7 +642,7 @@ fun IrExpression.remapReceiver(oldReceiver: IrValueParameter?, newReceiver: IrVa
     is IrCall ->
         IrCallImpl.createCopy(this).also {
             it.dispatchReceiver = dispatchReceiver?.remapReceiver(oldReceiver, newReceiver)
-            it.extensionReceiver = extensionReceiver?.remapReceiver(oldReceiver, newReceiver)
+            it.putExtensionReceiverAsArgumentIfNotNull(extensionReceiver?.remapReceiver(oldReceiver, newReceiver))
         }
     else -> shallowCopy()
 }

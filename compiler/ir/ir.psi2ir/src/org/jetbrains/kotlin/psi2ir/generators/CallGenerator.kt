@@ -454,7 +454,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                 scope.createTemporaryVariableInBlock(context, this, irBlock, nameHint).load()
 
         irCall.dispatchReceiver = irCall.dispatchReceiver?.freeze("\$this")
-        irCall.extensionReceiver = irCall.extensionReceiver?.freeze("\$receiver")
+        irCall.putExtensionReceiverAsArgumentIfNotNull(irCall.extensionReceiver?.freeze("\$receiver"))
 
         val resolvedCall = call.original
         val valueParameters = resolvedCall.resultingDescriptor.valueParameters

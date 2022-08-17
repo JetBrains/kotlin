@@ -497,7 +497,7 @@ internal class InsertImplicitCasts(
             symbolTable.referenceSimpleFunction(coercionFunction),
             typeArgumentsCount = 0, valueArgumentsCount = 0
         ).also { irCall ->
-            irCall.extensionReceiver = this
+            irCall.putExtensionReceiverAsArgument(this)
         }
     }
 

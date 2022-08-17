@@ -344,7 +344,7 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
                         putValueArgument(
                             0,
                             irGet(javaLangClass.starProjectedType, null, kClassJavaPropertyGetter.symbol).apply {
-                                extensionReceiver = scriptClassRef
+                                putExtensionReceiverAsArgument(scriptClassRef)
                             }
                         )
                         putValueArgument(

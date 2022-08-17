@@ -324,8 +324,9 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             when {
                 hasBoundDispatchReceiver || isImportedFromObject ->
                     irCall.dispatchReceiver = receiverValue
-                hasBoundExtensionReceiver ->
-                    irCall.extensionReceiver = receiverValue
+
+                else ->
+                    irCall.putExtensionReceiverAsArgument(receiverValue)
             }
         }
 
@@ -354,14 +355,15 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                 IrGetValueImpl(startOffset, endOffset, irAdaptedReceiverParameter.type, irAdaptedReceiverParameter.symbol)
         } else if (resolvedCall.extensionReceiver is TransientReceiver) {
             val irAdaptedReceiverParameter = irAdapterFun.valueParameters[0]
-            irAdapteeCall.extensionReceiver =
+            irAdapteeCall.putExtensionReceiverAsArgumentIfNotNull(
                 IrGetValueImpl(startOffset, endOffset, irAdaptedReceiverParameter.type, irAdaptedReceiverParameter.symbol)
+            )
             shift = 1
         }
 
         for ((valueParameter, valueArgument) in adaptedArguments) {
             val substitutedValueParameter = resolvedCall.resultingDescriptor.valueParameters[valueParameter.index]
-            irAdapteeCall.putValueArgument(
+            irAdapteeCall.putValueArgumentIgnoring(
                 valueParameter.index,
                 adaptResolvedValueArgument(startOffset, endOffset, valueArgument, irAdapterFun, substitutedValueParameter, shift)
             )

@@ -361,10 +361,9 @@ class ClassGenerator(
                     )
                 )
 
-            extensionReceiver =
-                irDelegatedFunction.extensionReceiverParameter?.let { extensionReceiver ->
-                    IrGetValueImpl(startOffset, endOffset, extensionReceiver.type, extensionReceiver.symbol)
-                }
+            irDelegatedFunction.extensionReceiverParameter?.let { extensionReceiver ->
+                putExtensionReceiverAsArgument(IrGetValueImpl(startOffset, endOffset, extensionReceiver.type, extensionReceiver.symbol))
+            }
 
             mapValueParameters { overriddenValueParameter ->
                 val delegatedValueParameter = delegatedDescriptor.valueParameters[overriddenValueParameter.index]

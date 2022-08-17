@@ -54,7 +54,7 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
                     if ((expression.dispatchReceiver as? IrGetField)?.symbol == backingField?.symbol) {
                         expression.dispatchReceiver = newReceiver
                     } else if ((expression.extensionReceiver as? IrGetField)?.symbol == backingField?.symbol) {
-                        expression.extensionReceiver = newReceiver
+                        expression.putExtensionReceiverAsArgument(newReceiver)
                     }
                 }
                 return expression
