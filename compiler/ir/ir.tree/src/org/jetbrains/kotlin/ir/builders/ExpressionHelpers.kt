@@ -183,28 +183,24 @@ fun IrBuilderWithScope.irNotEquals(arg1: IrExpression, arg2: IrExpression) =
     )
 
 fun IrBuilderWithScope.irGet(type: IrType, receiver: IrExpression?, getterSymbol: IrFunctionSymbol): IrCall =
-    IrCallImpl(
+    IrCallImpl.fromSymbolOwner(
         startOffset, endOffset,
         type,
         getterSymbol as IrSimpleFunctionSymbol,
-        typeArgumentsCount = getterSymbol.owner.typeParameters.size,
-        valueArgumentsCount = 0,
         origin = IrStatementOrigin.GET_PROPERTY
     ).apply {
         dispatchReceiver = receiver
     }
 
 fun IrBuilderWithScope.irSet(type: IrType, receiver: IrExpression?, setterSymbol: IrFunctionSymbol, value: IrExpression): IrCall =
-    IrCallImpl(
+    IrCallImpl.fromSymbolOwner(
         startOffset, endOffset,
         type,
         setterSymbol as IrSimpleFunctionSymbol,
-        typeArgumentsCount = setterSymbol.owner.typeParameters.size,
-        valueArgumentsCount = 1,
         origin = IrStatementOrigin.EQ
     ).apply {
         dispatchReceiver = receiver
-        putValueArgument(0, value)
+        putValueArgument(receiversPrefixSize, value)
     }
 
 fun IrBuilderWithScope.irCall(
@@ -234,8 +230,18 @@ fun IrBuilderWithScope.irCallConstructor(callee: IrConstructorSymbol, typeArgume
 fun IrBuilderWithScope.irCall(
     callee: IrSimpleFunctionSymbol,
     type: IrType,
-    valueArgumentsCount: Int = callee.owner.valueParameters.size,
-    typeArgumentsCount: Int = callee.owner.typeParameters.size,
+    origin: IrStatementOrigin? = null
+): IrCall =
+    IrCallImpl.fromSymbolOwner(
+        startOffset, endOffset, type, callee,
+        origin = origin
+    )
+
+fun IrBuilderWithScope.irCall(
+    callee: IrSimpleFunctionSymbol,
+    type: IrType,
+    valueArgumentsCount: Int,
+    typeArgumentsCount: Int,
     origin: IrStatementOrigin? = null
 ): IrCall =
     IrCallImpl(
@@ -277,11 +283,10 @@ fun IrBuilderWithScope.irCall(callee: IrFunction): IrFunctionAccessExpression =
     irCall(callee.symbol)
 
 fun IrBuilderWithScope.irCall(callee: IrFunction, origin: IrStatementOrigin? = null, superQualifierSymbol: IrClassSymbol? = null): IrCall =
-    IrCallImpl(
+    IrCallImpl.fromSymbolOwner(
         startOffset, endOffset, callee.returnType,
         callee.symbol as IrSimpleFunctionSymbol,
-        callee.typeParameters.size, callee.valueParameters.size,
-        origin, superQualifierSymbol
+        origin = origin, superQualifierSymbol = superQualifierSymbol
     )
 
 fun IrBuilderWithScope.irDelegatingConstructorCall(callee: IrConstructor): IrDelegatingConstructorCall =

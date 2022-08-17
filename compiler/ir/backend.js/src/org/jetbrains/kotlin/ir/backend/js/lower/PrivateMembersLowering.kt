@@ -148,12 +148,7 @@ class PrivateMemberBodiesLowering(val context: JsIrBackendContext) : BodyLowerin
 
                 return expression.symbol.owner.correspondingStatic?.let {
                     transformPrivateToStaticReference(expression) {
-                        IrFunctionReferenceImpl(
-                            expression.startOffset, expression.endOffset,
-                            expression.type,
-                            it.symbol, expression.typeArgumentsCount,
-                            expression.valueArgumentsCount, expression.reflectionTarget, expression.origin
-                        )
+                        IrFunctionReferenceImpl.withReplacedSymbol(expression, it.symbol)
                     }
                 } ?: expression
             }

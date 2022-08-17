@@ -178,13 +178,11 @@ fun createDelegatingCallWithPlaceholderTypeArguments(
     redirectTarget: IrSimpleFunction,
     irBuiltIns: IrBuiltIns
 ): IrCall =
-    IrCallImpl(
+    IrCallImpl.fromSymbolOwner(
         existingCall.startOffset,
         existingCall.endOffset,
         existingCall.type,
         redirectTarget.symbol,
-        typeArgumentsCount = redirectTarget.typeParameters.size,
-        valueArgumentsCount = redirectTarget.valueParameters.size,
         origin = existingCall.origin
     ).apply {
         copyFromWithPlaceholderTypeArguments(existingCall, irBuiltIns)

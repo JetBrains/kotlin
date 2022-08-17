@@ -6,17 +6,17 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentStubGenerator
-import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
@@ -85,13 +85,12 @@ class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringP
         val originalFunction = context.mapping.defaultArgumentsOriginalFunction[irCall.symbol.owner]!!
 
         val reference = irCall.run {
-            IrFunctionReferenceImpl(
+            IrFunctionReferenceImpl.fromSymbolOwner(
                 startOffset,
                 endOffset,
                 context.irBuiltIns.anyType,
                 originalFunction.symbol,
                 typeArgumentsCount = 0,
-                valueArgumentsCount = originalFunction.valueParameters.size,
                 reflectionTarget = originalFunction.symbol,
                 origin = JsStatementOrigins.BIND_CALL
             )

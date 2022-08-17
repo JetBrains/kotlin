@@ -162,10 +162,9 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         return when (val irFun = irFunRef.symbol.owner) {
             is IrSimpleFunction -> {
                 if (irFun.typeParameters.isNotEmpty()) return null
-                IrCallImpl(
+                IrCallImpl.fromSymbolOwner(
                     irInvokeCall.startOffset, irInvokeCall.endOffset, irInvokeCall.type,
                     irFun.symbol,
-                    typeArgumentsCount = irFun.typeParameters.size, valueArgumentsCount = irFun.valueParameters.size
                 ).apply {
                     copyReceiverAndValueArgumentsForDirectInvoke(irFunRef, irInvokeCall)
                 }
@@ -428,12 +427,10 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
         }
 
-        val proxyFunRef = IrFunctionReferenceImpl(
+        val proxyFunRef = IrFunctionReferenceImpl.fromSymbolOwner(
             startOffset, endOffset,
             reference.type,
             proxyFun.symbol,
-            0, // TODO generic function reference?
-            proxyFun.valueParameters.size
         )
 
         return IrBlockImpl(
@@ -1043,10 +1040,10 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 putValueArgument(
                     0,
                     //don't pass receivers otherwise LocalDeclarationLowering will create additional captured parameters
-                    IrFunctionReferenceImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunctionReference.type, target,
-                        irFunctionReference.typeArgumentsCount, target.owner.valueParameters.size,
-                        irFunctionReference.reflectionTarget, null
+                    IrFunctionReferenceImpl.withReplacedSymbol(
+                        irFunctionReference,
+                        symbol = target,
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     ).apply {
                         copyTypeArgumentsFrom(irFunctionReference)
                     }

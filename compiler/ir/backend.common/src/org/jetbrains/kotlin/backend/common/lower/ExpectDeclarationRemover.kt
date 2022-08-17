@@ -148,15 +148,11 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
         val newCallee = symbolTable.referenceSimpleFunction(
             nExpression.symbol.descriptor.findActualForExpect() as? FunctionDescriptor ?: return nExpression
         )
-        with(nExpression) {
-            return IrFunctionReferenceImpl(
-                startOffset, endOffset, type, newCallee, typeArgumentsCount, valueArgumentsCount, reflectionTarget, origin
-            ).also {
-                it.attributeOwnerId = attributeOwnerId
-                it.copyTypeArgumentsFrom(nExpression)
-                it.dispatchReceiver = dispatchReceiver
-                it.extensionReceiver = extensionReceiver
-            }
+        return IrFunctionReferenceImpl.withReplacedSymbol(nExpression, newCallee).also {
+            it.attributeOwnerId = nExpression.attributeOwnerId
+            it.copyTypeArgumentsFrom(nExpression)
+            it.dispatchReceiver = nExpression.dispatchReceiver
+            it.extensionReceiver = nExpression.extensionReceiver
         }
     }
 

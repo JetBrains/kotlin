@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrScript
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
@@ -20,7 +22,6 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import java.lang.IllegalArgumentException
 
 class ScriptRemoveReceiverLowering(val context: CommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
@@ -69,20 +70,14 @@ class ScriptRemoveReceiverLowering(val context: CommonBackendContext) : FileLowe
                         val arguments = (type as IrSimpleType).arguments.filterNot(::isScript)
                         val newN = arguments.size - 1
 
-                        IrFunctionReferenceImpl(
-                            startOffset,
-                            endOffset,
-                            IrSimpleTypeImpl(
+                        IrFunctionReferenceImpl.createCopy(
+                            this@with,
+                            type = IrSimpleTypeImpl(
                                 context.ir.symbols.functionN(newN),
                                 (type as IrSimpleType).nullability,
                                 arguments,
                                 type.annotations
                             ),
-                            symbol,
-                            typeArgumentsCount,
-                            valueArgumentsCount,
-                            reflectionTarget,
-                            origin
                         ).also {
                             it.dispatchReceiver = dispatchReceiver
                             it.extensionReceiver = extensionReceiver

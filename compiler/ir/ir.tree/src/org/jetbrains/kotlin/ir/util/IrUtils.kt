@@ -380,28 +380,20 @@ fun ReferenceSymbolTable.referenceFunction(callable: CallableDescriptor): IrFunc
  * [argumentsAsDispatchers]: optionally convert static call to call with dispatch receiver
  */
 fun irConstructorCall(
-    call: IrFunctionAccessExpression,
+    call: IrConstructorCall,
     newSymbol: IrConstructorSymbol,
     receiversAsArguments: Boolean = false,
     argumentsAsDispatchers: Boolean = false
 ): IrConstructorCall =
-    call.run {
-        IrConstructorCallImpl(
-            startOffset,
-            endOffset,
-            type,
-            newSymbol,
-            typeArgumentsCount,
-            0,
-            call.valueArgumentsCount,
-            origin
-        ).apply {
-            copyTypeAndValueArgumentsFrom(
-                call,
-                receiversAsArguments,
-                argumentsAsDispatchers
-            )
-        }
+    IrConstructorCallImpl.createCopy(
+        call,
+        symbol = newSymbol,
+    ).apply {
+        copyTypeAndValueArgumentsFrom(
+            call,
+            receiversAsArguments,
+            argumentsAsDispatchers
+        )
     }
 
 fun irCall(
@@ -648,7 +640,7 @@ fun IrExpression.remapReceiver(oldReceiver: IrValueParameter?, newReceiver: IrVa
     is IrGetValue ->
         IrGetValueImpl(startOffset, endOffset, type, newReceiver?.symbol.takeIf { symbol == oldReceiver?.symbol } ?: symbol, origin)
     is IrCall ->
-        IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol).also {
+        IrCallImpl.createCopy(this).also {
             it.dispatchReceiver = dispatchReceiver?.remapReceiver(oldReceiver, newReceiver)
             it.extensionReceiver = extensionReceiver?.remapReceiver(oldReceiver, newReceiver)
         }

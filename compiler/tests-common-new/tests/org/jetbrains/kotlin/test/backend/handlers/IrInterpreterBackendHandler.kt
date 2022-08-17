@@ -64,9 +64,9 @@ private class Evaluator(private val interpreter: IrInterpreter, private val glob
                 expression.symbol.owner.valueParameters.forEachIndexed { index, parameter ->
                     if (expression.getValueArgument(index) != null || !expression.symbol.owner.isInline) return@forEachIndexed
                     val default = parameter.defaultValue?.expression as? IrCall ?: return@forEachIndexed
-                    val callWithNewOffsets = IrCallImpl(
-                        expression.startOffset, expression.endOffset, default.type, default.symbol,
-                        default.typeArgumentsCount, default.valueArgumentsCount, default.origin, default.superQualifierSymbol
+                    val callWithNewOffsets = IrCallImpl.createCopy(
+                        default,
+                        expression.startOffset, expression.endOffset
                     )
                     callWithNewOffsets.copyTypeAndValueArgumentsFrom(default)
                     interpreter.interpret(callWithNewOffsets, irFile)

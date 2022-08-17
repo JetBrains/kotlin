@@ -166,7 +166,7 @@ private val IrStatementOrigin?.isInlinable: Boolean
     get() = isLambda || this == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || this == IrStatementOrigin.SUSPEND_CONVERSION
 
 private fun IrFunctionReference.replaceOrigin(origin: IrStatementOrigin): IrFunctionReference =
-    IrFunctionReferenceImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, reflectionTarget, origin).also {
+    IrFunctionReferenceImpl.createCopy(this@replaceOrigin, origin = origin).also {
         it.copyAttributes(this)
         it.copyTypeAndValueArgumentsFrom(this)
     }

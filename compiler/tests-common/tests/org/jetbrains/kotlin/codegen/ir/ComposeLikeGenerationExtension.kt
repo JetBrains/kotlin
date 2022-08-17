@@ -73,16 +73,7 @@ class ComposeLikeDefaultMethodCallRewriter(private val context: IrPluginContext,
     override fun visitCall(expression: IrCall): IrExpression {
         val function = expression.symbol.owner
         return if (rewrittenFunctions.contains(function)) {
-            IrCallImpl(
-                expression.startOffset,
-                expression.endOffset,
-                expression.type,
-                expression.symbol,
-                function.typeParameters.size,
-                function.valueParameters.size,
-                expression.origin,
-                expression.superQualifierSymbol
-            ).also {
+            IrCallImpl.createCopy(expression).also {
                 it.dispatchReceiver = expression.dispatchReceiver?.transform(this, null)
                 var bitmap = 0
                 for (i in function.valueParameters.indices) {
@@ -290,14 +281,12 @@ class ComposeLikeDefaultArgumentRewriter(
         dispatchReceiver: IrExpression? = null,
         vararg args: IrExpression
     ): IrCallImpl {
-        return IrCallImpl(
+        return IrCallImpl.fromSymbolOwner(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             symbol.owner.returnType,
             symbol as IrSimpleFunctionSymbol,
-            symbol.owner.typeParameters.size,
-            symbol.owner.valueParameters.size,
-            origin
+            origin = origin,
         ).also {
             if (dispatchReceiver != null) it.dispatchReceiver = dispatchReceiver
             args.forEachIndexed { index, arg ->

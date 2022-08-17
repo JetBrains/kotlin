@@ -415,9 +415,9 @@ private fun StatementGenerator.applySuspendConversionForValueArgumentIfRequired(
         .apply {
             val irAdapterFunction = createFunctionForSuspendConversion(startOffset, endOffset, suspendConversionType, suspendFunType)
             // TODO add a bound receiver property to IrFunctionExpressionImpl?
-            val irAdapterRef = IrFunctionReferenceImpl(
-                startOffset, endOffset, irAdapterRefType, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
-                irAdapterFunction.valueParameters.size, null, IrStatementOrigin.SUSPEND_CONVERSION
+            val irAdapterRef = IrFunctionReferenceImpl.fromSymbolOwner(
+                startOffset, endOffset, irAdapterRefType, irAdapterFunction.symbol,
+                reflectionTarget = null, origin = IrStatementOrigin.SUSPEND_CONVERSION,
             )
             statements.add(irAdapterFunction)
             statements.add(irAdapterRef.apply { extensionReceiver = expression })

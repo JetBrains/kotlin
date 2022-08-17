@@ -130,11 +130,10 @@ class ArrayConstructorReferenceLowering(val context: CommonBackendContext) : Bod
                     val wrapper = createFunctionReferenceWrapper(expression, target)
                     statements.add(wrapper)
                     statements.add(
-                        IrFunctionReferenceImpl(
-                            startOffset, endOffset, type,
-                            symbol = wrapper.symbol,
+                        IrFunctionReferenceImpl.fromSymbolOwner(
+                            startOffset, endOffset,
+                            type, wrapper.symbol,
                             typeArgumentsCount = 0,
-                            valueArgumentsCount = valueArgumentsCount,
                             reflectionTarget = target.symbol,
                             origin = origin
                         )

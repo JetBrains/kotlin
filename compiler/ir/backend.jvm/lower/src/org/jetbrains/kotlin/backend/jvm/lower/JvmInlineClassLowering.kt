@@ -241,10 +241,9 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         // In case of callable reference to inline class constructor,
         // type parameters of the replacement include class's type parameters,
         // however, expression does not. Thus, we should not include them either.
-        return IrFunctionReferenceImpl(
-            expression.startOffset, expression.endOffset, expression.type,
-            replacement.symbol, function.typeParameters.size,
-            replacement.valueParameters.size, expression.reflectionTarget, expression.origin
+        return IrFunctionReferenceImpl.withReplacedSymbol(
+            expression, replacement.symbol,
+            typeArgumentsCount = function.typeParameters.size,
         ).apply {
             buildReplacement(function, expression, replacement)
         }.copyAttributes(expression)
@@ -255,10 +254,11 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         val replacement = context.inlineClassReplacements.getReplacementFunction(function)
             ?: return super.visitFunctionAccess(expression)
 
-        return IrCallImpl(
+        return IrCallImpl.fromSymbolOwner(
             expression.startOffset, expression.endOffset, function.returnType.substitute(expression.typeSubstitutionMap),
-            replacement.symbol, replacement.typeParameters.size, replacement.valueParameters.size,
-            expression.origin, (expression as? IrCall)?.superQualifierSymbol
+            replacement.symbol,
+            origin = expression.origin,
+            superQualifierSymbol = (expression as? IrCall)?.superQualifierSymbol,
         ).apply {
             buildReplacement(function, expression, replacement)
         }

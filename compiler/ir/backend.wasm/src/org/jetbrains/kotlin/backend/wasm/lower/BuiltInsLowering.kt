@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.utils.isEqualsInheritedFromAny
-import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irCallConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -103,7 +104,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 return builder.irCall(symbols.throwNoBranchMatchedException, irBuiltins.nothingType)
 
             irBuiltins.illegalArgumentExceptionSymbol ->
-                return builder.irCall(symbols.throwIAE, irBuiltins.nothingType, 1).apply {
+                return builder.irCall(symbols.throwIAE, irBuiltins.nothingType, valueArgumentsCount = 1, typeArgumentsCount = 0).apply {
                     putValueArgument(0, call.getValueArgument(0)!!)
                 }
 

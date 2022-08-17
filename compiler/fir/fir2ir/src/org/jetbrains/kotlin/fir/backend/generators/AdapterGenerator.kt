@@ -165,9 +165,10 @@ internal class AdapterGenerator(
                 IrFunctionExpressionImpl(startOffset, endOffset, type, irAdapterFunction, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE)
             } else {
                 // TODO add a bound receiver property to IrFunctionExpressionImpl?
-                val irAdapterRef = IrFunctionReferenceImpl(
-                    startOffset, endOffset, type, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
-                    irAdapterFunction.valueParameters.size, null, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
+                val irAdapterRef = IrFunctionReferenceImpl.fromSymbolOwner(
+                    startOffset, endOffset, type, irAdapterFunction.symbol,
+                    reflectionTarget = null,
+                    origin = IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE,
                 )
                 IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE).apply {
                     statements.add(irAdapterFunction)
@@ -528,9 +529,10 @@ internal class AdapterGenerator(
         return argument.convertWithOffsets { startOffset, endOffset ->
             val irAdapterFunction = createAdapterFunctionForArgument(startOffset, endOffset, suspendConvertedType, type, invokeSymbol)
             // TODO add a bound receiver property to IrFunctionExpressionImpl?
-            val irAdapterRef = IrFunctionReferenceImpl(
-                startOffset, endOffset, suspendConvertedType, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
-                irAdapterFunction.valueParameters.size, null, IrStatementOrigin.SUSPEND_CONVERSION
+            val irAdapterRef = IrFunctionReferenceImpl.fromSymbolOwner(
+                startOffset, endOffset, suspendConvertedType, irAdapterFunction.symbol,
+                reflectionTarget = null,
+                origin = IrStatementOrigin.SUSPEND_CONVERSION,
             )
             IrBlockImpl(startOffset, endOffset, suspendConvertedType, IrStatementOrigin.SUSPEND_CONVERSION).apply {
                 statements.add(irAdapterFunction)
@@ -655,14 +657,9 @@ internal class AdapterGenerator(
 
             val irAdapterFun = generateFunInterfaceConstructorAdapter(startOffset, endOffset, callableSymbol, irReferenceType)
 
-            val irAdapterRef = IrFunctionReferenceImpl(
-                startOffset, endOffset,
-                type = irReferenceType,
-                symbol = irAdapterFun.symbol,
-                typeArgumentsCount = irAdapterFun.typeParameters.size,
-                valueArgumentsCount = irAdapterFun.valueParameters.size,
-                reflectionTarget = irAdapterFun.symbol,
-                origin = IrStatementOrigin.FUN_INTERFACE_CONSTRUCTOR_REFERENCE
+            val irAdapterRef = IrFunctionReferenceImpl.fromSymbolOwner(
+                startOffset, endOffset, irReferenceType, irAdapterFun.symbol,
+                origin = IrStatementOrigin.FUN_INTERFACE_CONSTRUCTOR_REFERENCE,
             )
 
             IrBlockImpl(
