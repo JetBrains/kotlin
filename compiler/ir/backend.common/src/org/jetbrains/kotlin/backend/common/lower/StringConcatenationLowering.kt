@@ -19,8 +19,12 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.atMostOne
-import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.builders.createTmpVariable
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irString
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.types.IrType
@@ -31,7 +35,6 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
  * This lowering pass replaces [IrStringConcatenation]s with StringBuilder appends.
@@ -84,7 +87,7 @@ class StringConcatenationLowering(context: CommonBackendContext) : FileLoweringP
                 val argument = arguments[0]
                 if (argument.type.isNullable())
                     builder.irCall(symbols.extensionToString).apply {
-                        extensionReceiver = argument
+                        putValueArgument(0, argument)
                     }
                 else builder.irCall(symbols.memberToString).apply {
                     dispatchReceiver = argument
@@ -94,8 +97,8 @@ class StringConcatenationLowering(context: CommonBackendContext) : FileLoweringP
             arguments.size == 2 && arguments[0].type.isStringClassType() ->
                 if (arguments[0].type.isNullable())
                     builder.irCall(symbols.extensionStringPlus).apply {
-                        extensionReceiver = arguments[0]
-                        putValueArgument(0, arguments[1])
+                        putValueArgument(0, arguments[0])
+                        putValueArgument(1, arguments[1])
                     }
                 else
                     builder.irCall(symbols.memberStringPlus).apply {
