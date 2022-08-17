@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.totalValueParametersCount
 
 class IrConstructorCallImpl(
     override val startOffset: Int,
@@ -24,13 +25,13 @@ class IrConstructorCallImpl(
     override val constructorTypeArgumentsCount: Int,
     valueArgumentsCount: Int,
     override val origin: IrStatementOrigin? = null,
-    override val source: SourceElement = SourceElement.NO_SOURCE
+    override val source: SourceElement = SourceElement.NO_SOURCE,
+    override var hasExtensionReceiver: Boolean = false,
+    override var contextReceiversCount: Int = 0,
 ) : IrConstructorCall() {
     override val typeArgumentsByIndex: Array<IrType?> = arrayOfNulls(typeArgumentsCount)
 
     override val argumentsByParameterIndex: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
-
-    override var contextReceiversCount = 0
 
     companion object {
         @ObsoleteDescriptorBasedAPI
@@ -44,7 +45,9 @@ class IrConstructorCallImpl(
             val constructorDescriptor = constructorSymbol.descriptor
             val classTypeParametersCount = constructorDescriptor.constructedClass.original.declaredTypeParameters.size
             val totalTypeParametersCount = constructorDescriptor.typeParameters.size
-            val valueParametersCount = constructorDescriptor.valueParameters.size + constructorDescriptor.contextReceiverParameters.size
+            val valueParametersCount =
+                constructorDescriptor.valueParameters.size
+                    .totalValueParametersCount(constructorDescriptor.contextReceiverParameters.size, hasExtensionReceiver = false)
             return IrConstructorCallImpl(
                 startOffset, endOffset,
                 type,
@@ -52,6 +55,7 @@ class IrConstructorCallImpl(
                 typeArgumentsCount = totalTypeParametersCount,
                 constructorTypeArgumentsCount = totalTypeParametersCount - classTypeParametersCount,
                 valueArgumentsCount = valueParametersCount,
+                contextReceiversCount = constructorDescriptor.contextReceiverParameters.size,
                 origin = origin
             )
         }
@@ -101,5 +105,23 @@ class IrConstructorCallImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, constructorSymbol, constructorSymbol.owner.parentAsClass.typeParameters.size,
                 origin
             )
+
+        fun createCopy(
+            original: IrConstructorCall,
+            startOffset: Int = original.startOffset,
+            endOffset: Int = original.endOffset,
+            type: IrType = original.type,
+            symbol: IrConstructorSymbol = original.symbol,
+            typeArgumentsCount: Int = original.typeArgumentsCount,
+            constructorTypeArgumentsCount: Int = original.typeArgumentsCount,
+            valueArgumentsCount: Int = original.valueArgumentsCount,
+            origin: IrStatementOrigin? = original.origin,
+            source: SourceElement = original.source,
+            hasExtensionReceiver: Boolean = original.hasExtensionReceiver,
+            contextReceiversCount: Int = original.contextReceiversCount,
+        ) = IrConstructorCallImpl(
+            startOffset, endOffset, type, symbol, typeArgumentsCount, constructorTypeArgumentsCount, valueArgumentsCount, origin, source,
+            hasExtensionReceiver, contextReceiversCount
+        )
     }
 }
