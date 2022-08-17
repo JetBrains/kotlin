@@ -331,7 +331,11 @@ internal fun IrPluginContext.addDefaultGetter(property: IrProperty, parentClass:
         visibility = property.visibility
         returnType = field.type
     }.apply {
-        dispatchReceiverParameter = (parentClass as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
+        dispatchReceiverParameter = if (parentClass is IrClass && parentClass.kind == ClassKind.OBJECT) {
+            null
+        } else {
+            (parentClass as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
+        }
         body = factory.createBlockBody(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                 IrReturnImpl(
