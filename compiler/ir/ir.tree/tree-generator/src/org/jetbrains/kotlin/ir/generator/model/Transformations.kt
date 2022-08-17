@@ -29,7 +29,8 @@ fun config2model(config: Config): Model {
                     fc.mutable,
                     fc.isChild,
                     fc.baseDefaultValue,
-                    fc.baseGetter
+                    fc.baseGetter,
+                    fc.baseSetter,
                 )
                 is ListFieldConfig -> {
                     val listType = if (fc.mutability == ListFieldConfig.Mutability.List) type(
@@ -46,7 +47,8 @@ fun config2model(config: Config): Model {
                         fc.isChild,
                         fc.mutability != ListFieldConfig.Mutability.Immutable,
                         fc.baseDefaultValue,
-                        fc.baseGetter
+                        fc.baseGetter,
+                        fc.baseSetter,
                     )
                 }
             }

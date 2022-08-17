@@ -62,6 +62,9 @@ fun printElements(generationPath: File, model: Model) = sequence {
                     field.baseGetter?.let {
                         getter(FunSpec.getterBuilder().addCode("return ").addCode(it).build())
                     }
+                    field.baseSetter?.let {
+                        setter(FunSpec.setterBuilder().addParameter("value", poetType).addCode(it).build())
+                    }
 
                     if (field.needsDescriptorApiAnnotation) {
                         addAnnotation(descriptorApiAnnotation)
