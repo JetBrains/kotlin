@@ -83,14 +83,14 @@ class SerializableCompanionIrGenerator(
 
         val irSerializableClass = if (irClass.isCompanion) irClass.parentAsClass else irClass
         val serializableWithAlreadyPresent = irSerializableClass.annotations.any {
-            it.symbol.descriptor.constructedClass.fqNameSafe == annotationMarkerClass.owner.fqNameWhenAvailable
+            it.constructedClass.fqNameWhenAvailable == annotationMarkerClass.owner.fqNameWhenAvailable
         }
         if (serializableWithAlreadyPresent) return
 
         val annotationCtor = annotationMarkerClass.constructors.single { it.owner.isPrimary }
         val annotationType = annotationMarkerClass.defaultType
 
-        val annotationCtorCall = IrConstructorCallImpl.fromSymbolDescriptor(startOffset, endOffset, annotationType, annotationCtor).apply {
+        val annotationCtorCall = IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, annotationType, annotationCtor).apply {
             putValueArgument(
                 0,
                 createClassReference(
@@ -150,7 +150,7 @@ class SerializableCompanionIrGenerator(
     }
 
     private fun generateSerializerFactoryIfNeeded(getterDescriptor: IrSimpleFunction) {
-        if (!irClass.descriptor.needSerializerFactory()) return
+        if (!irClass.needSerializerFactory(compilerContext)) return
         val serialFactoryDescriptor = irClass.findDeclaration<IrSimpleFunction> {
             it.valueParameters.size == 1
                     && it.valueParameters.first().isVararg

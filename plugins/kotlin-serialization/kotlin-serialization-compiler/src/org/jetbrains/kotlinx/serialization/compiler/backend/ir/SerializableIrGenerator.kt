@@ -6,7 +6,6 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.common.lower.irThrow
-import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
@@ -19,12 +18,10 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.getOrPutNullable
-import org.jetbrains.kotlinx.serialization.compiler.diagnostic.serializableAnnotationIsUseless
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.CACHED_DESCRIPTOR_FIELD_NAME
@@ -97,8 +94,9 @@ class SerializableIrGenerator(
             }
 
             // Missing field exception parts
-            val exceptionCtorRef = compilerContext.referenceConstructors(ClassId(SerializationPackages.packageFqName, Name.identifier(MISSING_FIELD_EXC)))
-                .single { it.owner.valueParameters.singleOrNull()?.type?.isString() == true }
+            val exceptionCtorRef =
+                compilerContext.referenceConstructors(ClassId(SerializationPackages.packageFqName, Name.identifier(MISSING_FIELD_EXC)))
+                    .single { it.owner.valueParameters.singleOrNull()?.type?.isString() == true }
             val exceptionType = exceptionCtorRef.owner.returnType
 
             val seenVarsOffset = serializableProperties.bitMaskSlotCount()
@@ -244,7 +242,7 @@ class SerializableIrGenerator(
             ?: error("Non-serializable parent of serializable $irClass must have no arg constructor")
 
 
-        val call = IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
+        val call = IrDelegatingConstructorCallImpl.fromSymbolOwner(
             startOffset,
             endOffset,
             compilerContext.irBuiltIns.unitType,
@@ -270,13 +268,14 @@ class SerializableIrGenerator(
         propertiesStart: Int
     ): Int {
         check(superClass.isInternalSerializable)
-        val superCtorRef = superClass.findSerializableSyntheticConstructor() ?: error("Class serializable internally should have special constructor with marker")
+        val superCtorRef = superClass.findSerializableSyntheticConstructor()
+            ?: error("Class serializable internally should have special constructor with marker")
         val superProperties = serializablePropertiesForIrBackend(superClass).serializableProperties
         val superSlots = superProperties.bitMaskSlotCount()
         val arguments = allValueParameters.subList(0, superSlots) +
                 allValueParameters.subList(propertiesStart, propertiesStart + superProperties.size) +
                 allValueParameters.last() // SerializationConstructorMarker
-        val call = IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
+        val call = IrDelegatingConstructorCallImpl.fromSymbolOwner(
             startOffset,
             endOffset,
             compilerContext.irBuiltIns.unitType,
@@ -307,7 +306,7 @@ class SerializableIrGenerator(
             // Compute offset of properties in superclass
             var ignoreIndexTo = -1
             val superClass = irClass.getSuperClassOrAny()
-            if (superClass.descriptor.isInternalSerializable) {
+            if (superClass.isInternalSerializable) {
                 ignoreIndexTo = serializablePropertiesForIrBackend(superClass).serializableProperties.size
 
                 // call super.writeSelf
@@ -380,16 +379,18 @@ class SerializableIrGenerator(
             irClass: IrClass,
             context: SerializationPluginContext,
         ) {
-            val serializableClass = irClass.descriptor
-
-            if (serializableClass.isInternalSerializable) {
+            if (irClass.isInternalSerializable) {
                 SerializableIrGenerator(irClass, context).generate()
                 irClass.patchDeclarationParents(irClass.parent)
-            } else if (serializableClass.serializableAnnotationIsUseless) {
-                throw CompilationException(
-                    "@Serializable annotation on $serializableClass would be ignored because it is impossible to serialize it automatically. " +
-                            "Provide serializer manually via e.g. companion object", null, serializableClass.findPsi()
-                )
+            } else {
+                val serializableAnnotationIsUseless = with(irClass) {
+                    hasSerializableOrMetaAnnotationWithoutArgs() && !isInternalSerializable && !hasCompanionObjectAsSerializer && kind != ClassKind.ENUM_CLASS && !isSealedSerializableInterface
+                }
+                if (serializableAnnotationIsUseless)
+                    throw AssertionError(
+                        "@Serializable annotation on $irClass would be ignored because it is impossible to serialize it automatically. " +
+                                "Provide serializer manually via e.g. companion object"
+                    )
             }
         }
     }

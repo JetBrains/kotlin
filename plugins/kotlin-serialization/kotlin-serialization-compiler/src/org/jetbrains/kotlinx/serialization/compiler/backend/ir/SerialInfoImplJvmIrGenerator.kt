@@ -8,6 +8,7 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -30,12 +31,14 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 
 // This doesn't support annotation arguments of type KClass and Array<KClass> because the codegen doesn't compute JVM signatures for
 // such cases correctly (because inheriting from annotation classes is prohibited in Kotlin).
 // Currently it results in an "accidental override" error where a method with return type KClass conflicts with the one with Class.
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 class SerialInfoImplJvmIrGenerator(
     private val context: SerializationPluginContext,
     private val moduleFragment: IrModuleFragment,
@@ -53,7 +56,7 @@ class SerialInfoImplJvmIrGenerator(
 
     fun getImplClass(serialInfoAnnotationClass: IrClass): IrClass =
         annotationToImpl.getOrPut(serialInfoAnnotationClass) {
-            @OptIn(FirIncompatiblePluginAPI::class) // TODO
+            @OptIn(FirIncompatiblePluginAPI::class)
             val implClassSymbol = context.referenceClass(serialInfoAnnotationClass.kotlinFqName.child(SerialEntityNames.IMPL_NAME))
             implClassSymbol!!.owner.apply(this::generate)
         }
@@ -111,6 +114,9 @@ class SerialInfoImplJvmIrGenerator(
         ).apply {
             putValueArgument(0, IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, name))
         }
+
+    @FirIncompatiblePluginAPI
+    fun KotlinType.toIrType() = compilerContext.typeTranslator.translateType(this)
 
     private fun IrType.kClassToJClassIfNeeded(): IrType = when {
         this.isKClass() -> javaLangType

@@ -54,8 +54,7 @@ class SerializerForEnumsGenerator(
         val decode = decoderClass.functionByName(CallingConventions.decodeEnum)
         val serialDescGetter = irGet(descriptorGetterSymbol.owner.returnType, irThis(), descriptorGetterSymbol)
 
-        val serializableIrClass = requireNotNull(serializableIrClass) { "Enums do not support external serialization" }
-        val valuesF = serializableIrClass.functions.single { it.name == StandardNames.ENUM_VALUES }
+        val valuesF = this@SerializerForEnumsGenerator.serializableIrClass.functions.single { it.name == StandardNames.ENUM_VALUES }
         val getValues = irInvoke(dispatchReceiver = null, callee = valuesF.symbol)
 
 
@@ -67,7 +66,7 @@ class SerializerForEnumsGenerator(
                 getValues,
                 arrayGet.symbol,
                 irInvoke(irGet(loadFunc.valueParameters[0]), decode, serialDescGetter),
-                typeHint = serializableIrClass.defaultType
+                typeHint = this@SerializerForEnumsGenerator.serializableIrClass.defaultType
             )
         +irReturn(getValueByOrdinal)
     }

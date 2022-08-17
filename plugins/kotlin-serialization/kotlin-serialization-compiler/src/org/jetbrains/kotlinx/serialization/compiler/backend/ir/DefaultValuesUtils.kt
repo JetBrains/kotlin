@@ -6,6 +6,7 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irGetField
@@ -78,6 +79,7 @@ fun IrBuilderWithScope.createPropertyByParamReplacer(
     Creates an initializer adapter function that can replace IR expressions of getting constructor parameter value by some other expression.
     Also adapter may replace IR expression of getting `this` value by another expression.
      */
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun createInitializerAdapter(
     irClass: IrClass,
     paramGetReplacer: (ValueParameterDescriptor) -> IrExpression?,

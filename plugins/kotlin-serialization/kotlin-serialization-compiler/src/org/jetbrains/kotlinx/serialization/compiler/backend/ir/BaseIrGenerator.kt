@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.isSealed
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -39,19 +38,26 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
-abstract class BaseIrGenerator(private val currentClass: IrClass, final override val compilerContext: SerializationPluginContext): IrBuilderWithPluginContext {
+abstract class BaseIrGenerator(private val currentClass: IrClass, final override val compilerContext: SerializationPluginContext) :
+    IrBuilderWithPluginContext {
 
-    private val throwMissedFieldExceptionFunc
-        = compilerContext.referenceFunctions(CallableId(SerializationPackages.internalPackageFqName, SerialEntityNames.SINGLE_MASK_FIELD_MISSING_FUNC_NAME)).singleOrNull()
+    private val throwMissedFieldExceptionFunc = compilerContext.referenceFunctions(
+        CallableId(
+            SerializationPackages.internalPackageFqName,
+            SerialEntityNames.SINGLE_MASK_FIELD_MISSING_FUNC_NAME
+        )
+    ).singleOrNull()
 
-    private val throwMissedFieldExceptionArrayFunc
-        = compilerContext.referenceFunctions(CallableId(SerializationPackages.internalPackageFqName, SerialEntityNames.ARRAY_MASK_FIELD_MISSING_FUNC_NAME)).singleOrNull()
+    private val throwMissedFieldExceptionArrayFunc = compilerContext.referenceFunctions(
+        CallableId(
+            SerializationPackages.internalPackageFqName,
+            SerialEntityNames.ARRAY_MASK_FIELD_MISSING_FUNC_NAME
+        )
+    ).singleOrNull()
 
-    private val enumSerializerFactoryFunc
-        = compilerContext.enumSerializerFactoryFunc
+    private val enumSerializerFactoryFunc = compilerContext.enumSerializerFactoryFunc
 
-    private val markedEnumSerializerFactoryFunc
-        = compilerContext.markedEnumSerializerFactoryFunc
+    private val markedEnumSerializerFactoryFunc = compilerContext.markedEnumSerializerFactoryFunc
 
     fun useFieldMissingOptimization(): Boolean {
         return throwMissedFieldExceptionFunc != null && throwMissedFieldExceptionArrayFunc != null
@@ -250,7 +256,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
             genericGetter
         )
         val (functionToCall, args: List<IrExpression>) = if (innerSerial != null) whenHaveSerializer(innerSerial, sti) else whenDoNot(sti)
-        val typeArgs = if (functionToCall.descriptor.typeParameters.isNotEmpty()) listOf(property.type) else listOf()
+        val typeArgs = if (functionToCall.owner.typeParameters.isNotEmpty()) listOf(property.type) else listOf()
         return irInvoke(encoder, functionToCall, typeArguments = typeArgs, valueArguments = args, returnTypeHint = returnTypeHint)
     }
 
@@ -267,7 +273,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
 
         val adjustedArgs: List<IrExpression> =
             // if typeArgs.size == args.size then the serializer is custom - we need to use the actual serializers from the arguments
-            if ((typeArgs.size != args.size) && (baseClass.descriptor.isSealed() || baseClass.descriptor.modality == Modality.ABSTRACT)) {
+            if ((typeArgs.size != args.size) && (baseClass.modality == Modality.SEALED || baseClass.modality == Modality.ABSTRACT)) {
                 val serializer = findStandardKotlinTypeSerializer(compilerContext, context.irBuiltIns.unitType)!!
                 // workaround for sealed and abstract classes - the `serializer` function expects non-null serializers, but does not use them, so serializers of any type can be passed
                 List(baseClass.typeParameters.size) { irGetObject(serializer) }

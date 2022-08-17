@@ -16,14 +16,11 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.deepCopyWithVariables
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.mapValueParametersIndexed
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -117,7 +114,7 @@ open class SerializerIrGenerator(
         }
 
         val anonymousInit = irClass.run {
-            val symbol = IrAnonymousInitializerSymbolImpl(descriptor)
+            val symbol = IrAnonymousInitializerSymbolImpl(symbol)
             irClass.factory.createAnonymousInitializer(startOffset, endOffset, SERIALIZATION_PLUGIN_ORIGIN, symbol).also {
                 it.parent = this
                 declarations.add(it)
@@ -207,7 +204,7 @@ open class SerializerIrGenerator(
         addFunctionBody(typedConstructorDescriptor) { ctor ->
             // generate call to primary ctor to init serialClassDesc and super()
             val primaryCtor = irClass.constructors.primary
-            +IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
+            +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                 startOffset,
                 endOffset,
                 compilerContext.irBuiltIns.unitType,
@@ -268,15 +265,11 @@ open class SerializerIrGenerator(
 
         val localSerialDesc = irTemporary(irGet(descriptorGetterSymbol.owner.returnType, irThis(), descriptorGetterSymbol), "desc")
 
-        //  fun beginStructure(desc: SerialDescriptor, vararg typeParams: KSerializer<*>): StructureEncoder
+        //  public fun beginStructure(descriptor: SerialDescriptor): CompositeDecoder
         val beginFunc =
             encoderClass.functions.single { it.owner.name.asString() == CallingConventions.begin && it.owner.valueParameters.size == 1 }
 
-        val call = irCall(beginFunc, type = kOutputClass.defaultType).mapValueParametersIndexed { _, _ ->
-            irGet(localSerialDesc)
-        }
-        // can it be done in more concise way? e.g. additional builder function?
-        call.dispatchReceiver = irGet(saveFunc.valueParameters[0])
+        val call = irInvoke(irGet(saveFunc.valueParameters[0]), beginFunc, irGet(localSerialDesc), typeHint = kOutputClass.defaultType)
         val objectToSerialize = saveFunc.valueParameters[1]
         val localOutput = irTemporary(call, "output")
 

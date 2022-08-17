@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -93,6 +94,7 @@ private class SerializerClassLowering(
             SerializerIrGenerator.generate(irClass, context, context.metadataPlugin)
             SerializableCompanionIrGenerator.generate(irClass, context)
 
+            @OptIn(ObsoleteDescriptorBasedAPI::class)
             if (context.platform.isJvm() && KSerializerDescriptorResolver.isSerialInfoImpl(irClass.descriptor)) {
                 serialInfoJvmGenerator.generate(irClass)
             }

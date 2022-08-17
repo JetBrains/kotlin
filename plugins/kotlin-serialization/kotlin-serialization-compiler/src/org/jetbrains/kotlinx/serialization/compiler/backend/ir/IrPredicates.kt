@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -23,11 +24,11 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
+import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 internal fun IrType.isKSerializer(): Boolean {
     val simpleType = this as? IrSimpleType ?: return false
@@ -89,7 +90,7 @@ private fun IrClass.checkSerializableOrMetaAnnotationArgs(mustDoNotHaveArgs: Boo
         return true
     }
     return annotations
-        .map { it.annotationClass.annotations }
+        .map { it.constructedClass.annotations }
         .any { it.hasAnnotation(SerializationAnnotations.metaSerializableAnnotationFqName) }
 }
 
@@ -97,6 +98,9 @@ internal val IrClass.isSerialInfoAnnotation: Boolean
     get() = annotations.hasAnnotation(SerializationAnnotations.serialInfoFqName)
             || annotations.hasAnnotation(SerializationAnnotations.inheritableSerialInfoFqName)
             || annotations.hasAnnotation(SerializationAnnotations.metaSerializableAnnotationFqName)
+
+internal val IrClass.isInheritableSerialInfoAnnotation: Boolean
+    get() = annotations.hasAnnotation(SerializationAnnotations.inheritableSerialInfoFqName)
 
 internal fun IrClass.shouldHaveGeneratedSerializer(context: SerializationPluginContext): Boolean
     = (isInternalSerializable && (modality == Modality.FINAL || modality == Modality.OPEN))
@@ -142,6 +146,7 @@ fun IrClass.getSuperClassNotAny(): IrClass? {
     return if (parentClass.defaultType.isAny()) null else parentClass
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun IrDeclaration.isFromPlugin(): Boolean =
     this.origin == IrDeclarationOrigin.GeneratedByPlugin(SerializationPluginKey) || (this.descriptor as? CallableMemberDescriptor)?.kind == CallableMemberDescriptor.Kind.SYNTHESIZED // old FE doesn't specify origin
 
@@ -165,14 +170,35 @@ fun IrClass.findSerializableSyntheticConstructor(): IrConstructorSymbol? {
     return declarations.filterIsInstance<IrConstructor>().singleOrNull { it.isSerializationCtor() }?.symbol
 }
 
+internal fun IrClass.needSerializerFactory(compilerContext: SerializationPluginContext): Boolean {
+    if (!(compilerContext.platform?.isNative() == true || compilerContext.platform.isJs())) return false
+    val serializableClass = getSerializableClassDescriptorByCompanion(this) ?: return false
+    if (serializableClass.isSerializableObject) return true
+    if (serializableClass.isSerializableEnum()) return true
+    if (serializableClass.isAbstractOrSealedSerializableClass) return true
+    if (serializableClass.isSealedSerializableInterface) return true
+    if (serializableClass.typeParameters.isEmpty()) return false
+    return true
+}
+
+
+internal fun getSerializableClassDescriptorByCompanion(companion: IrClass): IrClass? {
+    if (companion.isSerializableObject) return companion
+    if (!companion.isCompanion) return null
+    val classDescriptor = (companion.parent as? IrClass) ?: return null
+    if (!classDescriptor.shouldHaveGeneratedMethodsInCompanion) return null
+    return classDescriptor
+}
+
+
 internal fun IrExpression.isInitializePropertyFromParameter(): Boolean =
     this is IrGetValueImpl && this.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
 
-internal val IrConstructorCall.annotationClass
+internal val IrConstructorCall.constructedClass
     get() = this.symbol.owner.constructedClass
 
 internal val List<IrConstructorCall>.hasAnySerialAnnotation: Boolean
-    get() = serialNameValue != null || any { it.annotationClass.isSerialInfoAnnotation == true }
+    get() = serialNameValue != null || any { it.constructedClass.isSerialInfoAnnotation }
 
 internal val List<IrConstructorCall>.serialNameValue: String?
     get() = findAnnotation(SerializationAnnotations.serialNameAnnotationFqName)?.getStringConstArgument(0) // @SerialName("foo")
