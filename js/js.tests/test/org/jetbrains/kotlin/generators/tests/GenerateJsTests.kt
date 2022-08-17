@@ -115,8 +115,16 @@ fun main(args: Array<String>) {
                 model("lineNumbers/")
             }
 
-            testClass<AbstractFirJsTest> {
+            testClass<AbstractFirBoxJsTest> {
                 model("box/", pattern = "^([^_](.+))\\.kt$")
+            }
+
+            testClass<AbstractFirJsTypeScriptExportTest> {
+                model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
+            }
+
+            testClass<AbstractJsFirLineNumberTest> {
+                model("lineNumbers/")
             }
         }
 
@@ -157,6 +165,26 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "Fir2IrJsTextTestGenerated"
             ) {
                 model("ir/irJsText")
+            }
+
+            testClass<AbstractFirJsCodegenBoxTest> {
+                model("codegen/box", excludeDirs = jvmOnlyBoxTests)
+            }
+
+            testClass<AbstractFirJsCodegenBoxErrorTest> {
+                model("codegen/boxError", excludeDirs = jvmOnlyBoxTests)
+            }
+
+            testClass<AbstractFirJsCodegenInlineTest> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractFirCodegenWasmJsInteropJsTest> {
+                model("codegen/boxWasmJsInterop")
+            }
+
+            testClass<AbstractFirJsSteppingTest> {
+                model("debug/stepping")
             }
         }
     }
