@@ -125,7 +125,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                     overloadSymbol,
                     returnType,
                 ).apply {
-                    extensionReceiver = argument
+                    putExtensionReceiverAsArgument(argument)
                     if (argumentType.classOrNull == irBuiltins.arrayClass) {
                         putTypeArgument(0, argumentType.getArrayElementType(irBuiltins))
                     }
