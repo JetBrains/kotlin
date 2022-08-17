@@ -7737,6 +7737,18 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("innerWithMultipleArgs.kt")
+        public void testInnerWithMultipleArgs() throws Exception {
+            runTest("js/js.translator/testData/box/nestedTypes/innerWithMultipleArgs.kt");
+        }
+
+        @Test
+        @TestMetadata("innerWithSecondaryConstructor.kt")
+        public void testInnerWithSecondaryConstructor() throws Exception {
+            runTest("js/js.translator/testData/box/nestedTypes/innerWithSecondaryConstructor.kt");
+        }
+
+        @Test
         @TestMetadata("nested.kt")
         public void testNested() throws Exception {
             runTest("js/js.translator/testData/box/nestedTypes/nested.kt");
