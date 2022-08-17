@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR
 // FIR status: don't support legacy feature (see https://youtrack.jetbrains.com/issue/KT-37591). UNRESOLVED_REFERENCE at '+'
 // WITH_STDLIB
 // MODULE: lib

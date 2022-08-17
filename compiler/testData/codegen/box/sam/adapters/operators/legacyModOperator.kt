@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // !LANGUAGE: -ProhibitOperatorMod
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR
 // FIR status: don't support legacy feature
 // MODULE: lib
 // FILE: Java.java
