@@ -199,6 +199,51 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
     }
 
     @Test
+    fun `should add default value to constant properties`() {
+        testInline(
+            """
+            |/src/main/java/test/JavaConstants.java
+            |package test;
+            |
+            |public class JavaConstants {
+            |    public static final byte BYTE = 1;
+            |    public static final short SHORT = 2;
+            |    public static final int INT = 3;
+            |    public static final long LONG = 4L;
+            |    public static final float FLOAT = 5.0f;
+            |    public static final double DOUBLE = 6.0d;
+            |    public static final String STRING = "Seven";
+            |    public static final char CHAR = 'E';
+            |    public static final boolean BOOLEAN = true;
+            |}
+            """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val testedClass = module.packages.single().classlikes.single { it.name == "JavaConstants" }
+
+                val constants = testedClass.properties
+                assertEquals(9, constants.size)
+
+                val constantsByName = constants.associateBy { it.name }
+                fun getConstantExpression(name: String): Expression? {
+                    return constantsByName.getValue(name).extra[DefaultValue]?.expression?.values?.first()
+                }
+
+                assertEquals(IntegerConstant(1), getConstantExpression("BYTE"))
+                assertEquals(IntegerConstant(2), getConstantExpression("SHORT"))
+                assertEquals(IntegerConstant(3), getConstantExpression("INT"))
+                assertEquals(IntegerConstant(4), getConstantExpression("LONG"))
+                assertEquals(FloatConstant(5.0f), getConstantExpression("FLOAT"))
+                assertEquals(DoubleConstant(6.0), getConstantExpression("DOUBLE"))
+                assertEquals(StringConstant("Seven"), getConstantExpression("STRING"))
+                assertEquals(StringConstant("E"), getConstantExpression("CHAR"))
+                assertEquals(BooleanConstant(true), getConstantExpression("BOOLEAN"))
+            }
+        }
+    }
+
+    @Test
     fun `should resolve static imports used as annotation param values as literal values`() {
         testInline(
             """
