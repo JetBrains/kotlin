@@ -195,17 +195,16 @@ class IrExpressionLambdaImpl(
     init {
         val asmMethod = codegen.methodSignatureMapper.mapAsmMethod(function)
         val capturedParameters = reference.getArgumentsWithIr()
-        val captureStart = if (isExtensionLambda) 1 else 0 // extension receiver comes before captures
-        val captureEnd = captureStart + capturedParameters.size
+        val captureEnd = capturedParameters.size
         capturedVars = capturedParameters.mapIndexed { index, (parameter, _) ->
             val isSuspend = parameter.isInlineParameter() && parameter.type.isSuspendFunction()
-            capturedParamDesc(parameter.name.asString(), asmMethod.argumentTypes[captureStart + index], isSuspend)
+            capturedParamDesc(parameter.name.asString(), asmMethod.argumentTypes[index], isSuspend)
         }
         // The parameter list should include the continuation if this is a suspend lambda. In the IR backend,
         // the lambda is suspend iff the inline function's parameter is marked suspend, so FunctionN.invoke call
         // inside the inline function already has a (real) continuation value as the last argument.
-        val freeParameters = function.explicitParameters.let { it.take(captureStart) + it.drop(captureEnd) }
-        val freeAsmParameters = asmMethod.argumentTypes.let { it.take(captureStart) + it.drop(captureEnd) }
+        val freeParameters = function.explicitParameters.drop(captureEnd)
+        val freeAsmParameters = asmMethod.argumentTypes.drop(captureEnd)
         // The return type, on the other hand, should be the original type if this is a suspend lambda that returns
         // an unboxed inline class value so that the inliner will box it (FunctionN.invoke should return a boxed value).
         val unboxedReturnType = function.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass()
