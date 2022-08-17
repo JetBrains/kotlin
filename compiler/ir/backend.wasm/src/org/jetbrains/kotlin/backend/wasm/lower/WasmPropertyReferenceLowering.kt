@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.lower.WasmPropertyReferenceLowering.KTypeGeneratorInterface
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
@@ -64,14 +62,17 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
                         isMutable -> symbols.kMutableProperty0Impl
                         else -> symbols.kProperty0Impl
                     }
+
                     1 -> when {
                         isMutable -> symbols.kMutableProperty1Impl
                         else -> symbols.kProperty1Impl
                     }
+
                     2 -> when {
                         isMutable -> symbols.kMutableProperty2Impl
                         else -> symbols.kProperty2Impl
                     }
+
                     else -> error("More than 2 receivers is not allowed")
                 }
             }
@@ -190,8 +191,6 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
         kTypeGenerator: KTypeGeneratorInterface,
         irBuilder: IrBuilderWithScope
     ): IrExpression {
-        val startOffset = expression.startOffset
-        val endOffset = expression.endOffset
         return irBuilder.irBlock(expression) {
             val receiverTypes = mutableListOf<IrType>()
             val dispatchReceiver = expression.dispatchReceiver?.let {
@@ -215,20 +214,7 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
                     returnType,
                     receiverTypes
                 )
-                IrFunctionReferenceImpl(
-                    startOffset = startOffset,
-                    endOffset = endOffset,
-                    type = getterKFunctionType,
-                    symbol = expression.getter!!,
-                    typeArgumentsCount = getter.typeParameters.size,
-                    valueArgumentsCount = getter.valueParameters.size,
-                    reflectionTarget = expression.getter!!
-                ).apply {
-                    this.dispatchReceiver = dispatchReceiver?.let { irGet(it) }
-                    this.extensionReceiver = extensionReceiver?.let { irGet(it) }
-                    for (index in 0 until expression.typeArgumentsCount)
-                        putTypeArgument(index, expression.getTypeArgument(index))
-                }
+                createFunctionReferenceToAccessor(expression, getter, getterKFunctionType, dispatchReceiver, extensionReceiver)
             }
 
             val setterCallableReference = expression.setter?.owner?.let { setter ->
@@ -238,20 +224,13 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
                         context.irBuiltIns.unitType,
                         receiverTypes + returnType
                     )
-                    IrFunctionReferenceImpl(
-                        startOffset = startOffset,
-                        endOffset = endOffset,
-                        type = setterKFunctionType,
-                        symbol = expression.setter!!,
-                        typeArgumentsCount = setter.typeParameters.size,
-                        valueArgumentsCount = setter.valueParameters.size,
-                        reflectionTarget = expression.setter!!
-                    ).apply {
-                        this.dispatchReceiver = dispatchReceiver?.let { irGet(it) }
-                        this.extensionReceiver = extensionReceiver?.let { irGet(it) }
-                        for (index in 0 until expression.typeArgumentsCount)
-                            putTypeArgument(index, expression.getTypeArgument(index))
-                    }
+                    createFunctionReferenceToAccessor(
+                        expression,
+                        setter,
+                        setterKFunctionType,
+                        dispatchReceiver,
+                        extensionReceiver
+                    )
                 }
             }
 
@@ -273,6 +252,21 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
             }
             +initializer
         }
+    }
+
+    private fun IrBlockBuilder.createFunctionReferenceToAccessor(
+        propertyReference: IrPropertyReference,
+        accessor: IrSimpleFunction,
+        accessorKFunctionType: IrSimpleType,
+        dispatchReceiver: IrVariable?,
+        extensionReceiver: IrVariable?
+    ): IrFunctionReferenceImpl = IrFunctionReferenceImpl.fromSymbolOwner(
+        propertyReference.startOffset, propertyReference.endOffset, accessorKFunctionType, accessor.symbol,
+    ).apply {
+        this.dispatchReceiver = dispatchReceiver?.let { irGet(it) }
+        this.extensionReceiver = extensionReceiver?.let { irGet(it) }
+        for (index in 0 until propertyReference.typeArgumentsCount)
+            putTypeArgument(index, propertyReference.getTypeArgument(index))
     }
 
     private fun createLocalKProperty(
