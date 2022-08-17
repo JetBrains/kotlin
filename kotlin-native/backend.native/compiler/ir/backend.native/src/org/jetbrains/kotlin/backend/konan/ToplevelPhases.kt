@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SamSuperTypesChecker
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.serialization.*
-import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.*
@@ -347,7 +346,6 @@ internal val umbrellaCompilation = NamedCompilerPhase(
                     // Pretend we're about to create a single file cache.
                     context.config.cacheSupport.libraryToCache!!.strategy =
                             CacheDeserializationStrategy.SingleFile(file.path, file.fqName.asString())
-                    context.config.recreateOutputFiles(explicitlyProducePerFileCache = false)
 
                     module.files += file
                     if (context.shouldDefineFunctionClasses)
@@ -357,15 +355,6 @@ internal val umbrellaCompilation = NamedCompilerPhase(
 
                     module.files.clear()
                     context.irModule!!.files.clear() // [dependenciesLowerPhase] puts all files to [context.irModule] for codegen.
-
-                    context.inlineFunctionBodies.clear()
-                    context.classFields.clear()
-                    context.calledFromExportedInlineFunctions.clear()
-                    context.constructedFromExportedInlineFunctions.clear()
-                    context.localClassNames.clear()
-                    context.testCasesToDump.clear()
-                    context.mapping.loweredInlineFunctions.clear()
-                    context.cStubsManager = CStubsManager(context.config.target)
                 }
 
                 module.files += files
@@ -382,11 +371,11 @@ internal val dumpTestsPhase = makeCustomPhase<Context, IrModuleFragment>(
             if (!testDumpFile.exists)
                 testDumpFile.createNew()
 
-            if (context.testCasesToDump.isEmpty())
+            if (context.generationState.testCasesToDump.isEmpty())
                 return@makeCustomPhase
 
             testDumpFile.appendLines(
-                    context.testCasesToDump
+                    context.generationState.testCasesToDump
                             .flatMap { (suiteClassId, functionNames) ->
                                 val suiteName = suiteClassId.asString()
                                 functionNames.asSequence().map { "$suiteName:$it" }
@@ -418,8 +407,7 @@ internal val entryPointPhase = makeCustomPhase<Context, IrModuleFragment>(
 internal val bitcodePhase = NamedCompilerPhase(
         name = "Bitcode",
         description = "LLVM Bitcode generation",
-        lower = contextLLVMSetupPhase then
-                returnsInsertionPhase then
+        lower = returnsInsertionPhase then
                 buildDFGPhase then
                 devirtualizationAnalysisPhase then
                 dcePhase then
@@ -467,10 +455,30 @@ private val backendCodegen = NamedCompilerPhase(
                 bitcodePostprocessingPhase
 )
 
+internal val createGenerationStatePhase = namedUnitPhase(
+        name = "CreateGenerationState",
+        description = "Create generation state",
+        lower = object : CompilerPhase<Context, Unit, Unit> {
+            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
+                context.generationState = NativeGenerationState(context)
+            }
+        }
+)
+
+internal val disposeGenerationStatePhase = namedUnitPhase(
+        name = "DisposeGenerationState",
+        description = "Dispose generation state",
+        lower = object : CompilerPhase<Context, Unit, Unit> {
+            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
+                context.disposeGenerationState()
+            }
+        }
+)
+
 private val entireBackend = NamedCompilerPhase(
         name = "EntireBackend",
         description = "Entire backend",
-        lower = createLLVMImportsPhase then
+        lower = createGenerationStatePhase then
                 buildAdditionalCacheInfoPhase then
                 takeFromContext { it.irModule!! } then
                 specialBackendChecksPhase then
@@ -478,10 +486,10 @@ private val entireBackend = NamedCompilerPhase(
                 unitSink() then
                 saveAdditionalCacheInfoPhase then
                 produceOutputPhase then
-                disposeLLVMPhase then
                 objectFilesPhase then
                 linkerPhase then
-                finalizeCachePhase
+                finalizeCachePhase then
+                disposeGenerationStatePhase
 )
 
 private val middleEnd = NamedCompilerPhase(
@@ -547,6 +555,10 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         disableUnless(rewriteExternalCallsCheckerGlobals, getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
         disableUnless(stringConcatenationTypeNarrowingPhase, config.optimizationsEnabled)
         disableUnless(optimizeTLSDataLoadsPhase, config.optimizationsEnabled)
+        if (!config.debug && !config.lightDebug) {
+            disable(generateDebugInfoHeaderPhase)
+            disable(finalizeDebugInfoPhase)
+        }
         if (!config.involvesLinkStage) {
             disable(bitcodePostprocessingPhase)
             disable(linkBitcodeDependenciesPhase)

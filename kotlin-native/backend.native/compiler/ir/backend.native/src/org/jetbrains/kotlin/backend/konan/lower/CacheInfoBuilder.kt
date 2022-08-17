@@ -32,7 +32,7 @@ internal class CacheInfoBuilder(private val context: Context, private val module
                 if (!declaration.isInterface && !declaration.isLocal
                         && declaration.isExported && declaration.origin != DECLARATION_ORIGIN_FUNCTION_CLASS
                 ) {
-                    context.classFields.add(buildClassFields(declaration, context.getLayoutBuilder(declaration).getDeclaredFields()))
+                    context.generationState.classFields.add(buildClassFields(declaration, context.getLayoutBuilder(declaration).getDeclaredFields()))
                 }
             }
 
@@ -41,7 +41,7 @@ internal class CacheInfoBuilder(private val context: Context, private val module
                 // as for functions - both their callees will be handled and inline bodies will be built for the top function.
 
                 if (!declaration.isFakeOverride && declaration.isInline && declaration.isExported) {
-                    context.inlineFunctionBodies.add(buildInlineFunctionReference(declaration))
+                    context.generationState.inlineFunctionBodies.add(buildInlineFunctionReference(declaration))
                     trackCallees(declaration)
                 }
             }
@@ -64,8 +64,10 @@ internal class CacheInfoBuilder(private val context: Context, private val module
 
             private fun processFunction(function: IrFunction) {
                 if (function.getPackageFragment() !is IrExternalPackageFragment) {
-                    context.calledFromExportedInlineFunctions.add(function)
-                    (function as? IrConstructor)?.constructedClass?.let { context.constructedFromExportedInlineFunctions.add(it) }
+                    context.generationState.calledFromExportedInlineFunctions.add(function)
+                    (function as? IrConstructor)?.constructedClass?.let {
+                        context.generationState.constructedFromExportedInlineFunctions.add(it)
+                    }
                     if (function.isInline && !function.isExported) {
                         // An exported inline function calls a non-exported inline function:
                         // should track its callees as well as it won't be handled by the main visitor.

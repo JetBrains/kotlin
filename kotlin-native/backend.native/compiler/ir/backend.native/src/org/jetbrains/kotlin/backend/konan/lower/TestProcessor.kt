@@ -642,7 +642,7 @@ internal class TestProcessor (val context: Context) {
 
         fun recordFunction(suiteClassId: ClassId, function: TestFunction) {
             if (function.kind == FunctionKind.TEST)
-                context.testCasesToDump.computeIfAbsent(suiteClassId) { mutableListOf() } += function.functionName
+                context.generationState.testCasesToDump.computeIfAbsent(suiteClassId) { mutableListOf() } += function.functionName
         }
 
         annotationCollector.topLevelFunctions.forEach { function ->

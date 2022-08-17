@@ -199,6 +199,7 @@ internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass, 
 internal class ImportCachesAbiTransformer(val context: Context) : FileLoweringPass, IrElementTransformerVoid() {
     private val cachesAbiSupport = context.cachesAbiSupport
     private val enumsSupport = context.enumsSupport
+    private val llvmImports = context.generationState.llvmImports
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
@@ -217,7 +218,7 @@ internal class ImportCachesAbiTransformer(val context: Context) : FileLoweringPa
             return expression
         }
         val accessor = cachesAbiSupport.getCompanionObjectAccessor(irClass)
-        context.llvmImports.add(irClass.llvmSymbolOrigin)
+        llvmImports.add(irClass.llvmSymbolOrigin)
         return irCall(expression.startOffset, expression.endOffset, accessor, emptyList())
     }
 
@@ -233,7 +234,7 @@ internal class ImportCachesAbiTransformer(val context: Context) : FileLoweringPa
 
             irClass?.isInner == true && context.innerClassesSupport.getOuterThisField(irClass) == field -> {
                 val accessor = cachesAbiSupport.getOuterThisAccessor(irClass)
-                context.llvmImports.add(irClass.llvmSymbolOrigin)
+                llvmImports.add(irClass.llvmSymbolOrigin)
                 return irCall(expression.startOffset, expression.endOffset, accessor, emptyList()).apply {
                     putValueArgument(0, expression.receiver)
                 }
@@ -241,7 +242,7 @@ internal class ImportCachesAbiTransformer(val context: Context) : FileLoweringPa
 
             property?.isLateinit == true -> {
                 val accessor = cachesAbiSupport.getLateinitPropertyAccessor(property)
-                context.llvmImports.add(property.llvmSymbolOrigin)
+                llvmImports.add(property.llvmSymbolOrigin)
                 return irCall(expression.startOffset, expression.endOffset, accessor, emptyList()).apply {
                     if (irClass != null)
                         putValueArgument(0, expression.receiver)
@@ -255,7 +256,7 @@ internal class ImportCachesAbiTransformer(val context: Context) : FileLoweringPa
                 require(enumsSupport.getImplObject(enumClass) == irClass) { "Expected a enum's impl object: ${irClass.render()}" }
                 require(field == enumsSupport.getValuesField(irClass)) { "Expected VALUES field: ${field.render()}" }
                 val accessor = cachesAbiSupport.getEnumValuesAccessor(enumClass)
-                context.llvmImports.add(enumClass.llvmSymbolOrigin)
+                llvmImports.add(enumClass.llvmSymbolOrigin)
                 return irCall(expression.startOffset, expression.endOffset, accessor, emptyList())
             }
 

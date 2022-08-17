@@ -41,7 +41,7 @@ internal class LLVMCoverageInstrumentation(
         val numberOfRegions = Int32(functionRegions.regions.size).llvm
         val regionNumber = Int32(functionRegions.regionEnumeration.getValue(region)).llvm
         val args = listOf(functionNameGlobal, functionHash, numberOfRegions, regionNumber)
-        callSitePlacer(LLVMInstrProfIncrement(context.llvmModule)!!, args)
+        callSitePlacer(LLVMInstrProfIncrement(context.generationState.llvm.module)!!, args)
     }
 
     // Each profiled function should have a global with its name in a specific format.

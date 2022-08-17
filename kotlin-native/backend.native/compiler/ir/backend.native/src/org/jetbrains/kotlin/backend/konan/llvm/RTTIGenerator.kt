@@ -200,7 +200,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         val className = irClass.fqNameForIrSerialization
 
-        val llvmDeclarations = context.llvmDeclarations.forClass(irClass)
+        val llvmDeclarations = context.generationState.llvmDeclarations.forClass(irClass)
 
         val bodyType = llvmDeclarations.bodyType
 
@@ -390,7 +390,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     private val debugOperations: ConstValue by lazy {
         if (debugRuntimeOrNull != null) {
             val external = LLVMGetNamedGlobal(debugRuntimeOrNull, "Konan_debugOperationsList")!!
-            val local = LLVMAddGlobal(context.llvmModule, LLVMGetElementType(LLVMTypeOf(external)),"Konan_debugOperationsList")!!
+            val local = LLVMAddGlobal(llvm.module, LLVMGetElementType(LLVMTypeOf(external)),"Konan_debugOperationsList")!!
             constPointer(LLVMConstBitCast(local, kInt8PtrPtr)!!)
         } else {
             Zero(kInt8PtrPtr)
@@ -411,7 +411,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             return NullPointer(runtime.extendedTypeInfoType)
 
         val className = irClass.fqNameForIrSerialization.toString()
-        val llvmDeclarations = context.llvmDeclarations.forClass(irClass)
+        val llvmDeclarations = context.generationState.llvmDeclarations.forClass(irClass)
         val bodyType = llvmDeclarations.bodyType
         val elementType = getElementType(irClass)
 
@@ -577,16 +577,16 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         when {
             irClass.isAnonymousObject -> {
-                relativeName = context.getLocalClassName(irClass)
+                relativeName = context.generationState.getLocalClassName(irClass)
                 flags = 0 // Forbid to use package and relative names in KClass.[simpleName|qualifiedName].
             }
             irClass.isLocal -> {
-                relativeName = context.getLocalClassName(irClass)
+                relativeName = context.generationState.getLocalClassName(irClass)
                 flags = TF_REFLECTION_SHOW_REL_NAME // Only allow relative name to be used in KClass.simpleName.
             }
             isLoweredFunctionReference(irClass) -> {
                 // TODO: might return null so use fallback here, to be fixed in KT-47194
-                relativeName = context.getLocalClassName(irClass) ?: generateDefaultRelativeName(irClass)
+                relativeName = context.generationState.getLocalClassName(irClass) ?: generateDefaultRelativeName(irClass)
                 flags = 0 // Forbid to use package and relative names in KClass.[simpleName|qualifiedName].
             }
             else -> {

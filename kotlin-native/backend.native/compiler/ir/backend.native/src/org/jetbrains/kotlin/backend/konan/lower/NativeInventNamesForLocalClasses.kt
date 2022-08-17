@@ -16,6 +16,6 @@ internal class NativeInventNamesForLocalClasses(val context: Context) : InventNa
     override fun sanitizeNameIfNeeded(name: String) = name
 
     override fun putLocalClassName(declaration: IrAttributeContainer, localClassName: String) {
-        context.putLocalClassName(declaration, localClassName)
+        context.generationState.putLocalClassName(declaration, localClassName)
     }
 }
