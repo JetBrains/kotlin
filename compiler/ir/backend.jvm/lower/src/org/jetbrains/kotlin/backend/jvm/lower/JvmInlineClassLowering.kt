@@ -118,7 +118,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     }
 
     private fun IrSimpleFunction.signatureRequiresMangling() =
-        fullValueParameterList.any { it.type.requiresMangling } ||
+        valueParameters.any { it.type.requiresMangling } ||
                 context.state.functionsWithInlineClassReturnTypesMangled && returnType.requiresMangling
 
     // We may need to add a bridge method for inline class methods with static replacements. Ideally, we'd do this in BridgeLowering,
