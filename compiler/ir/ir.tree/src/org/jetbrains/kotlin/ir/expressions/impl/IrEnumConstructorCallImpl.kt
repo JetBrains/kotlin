@@ -34,11 +34,25 @@ class IrEnumConstructorCallImpl(
     override val origin: IrStatementOrigin?
         get() = null
 
+    override var contextReceiversCount: Int
+        get() = 0
+        set(value) {
+            require(value == 0) {
+                "Trying to set hasExtensionReceiver for IrEnumConstructorCallImpl"
+            }
+        }
+
+    override var hasExtensionReceiver: Boolean
+        get() = false
+        set(value) {
+            require(!value) {
+                "Trying to set hasExtensionReceiver for IrEnumConstructorCallImpl"
+            }
+        }
+
     override val typeArgumentsByIndex: Array<IrType?> = arrayOfNulls(typeArgumentsCount)
 
     override val argumentsByParameterIndex: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
-
-    override var contextReceiversCount = 0
 
     companion object {
         @ObsoleteDescriptorBasedAPI

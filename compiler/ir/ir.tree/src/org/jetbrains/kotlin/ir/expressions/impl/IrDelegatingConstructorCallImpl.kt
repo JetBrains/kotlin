@@ -32,15 +32,22 @@ class IrDelegatingConstructorCallImpl(
     override val symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
+    override var contextReceiversCount: Int = 0,
 ) : IrDelegatingConstructorCall() {
     override val origin: IrStatementOrigin?
         get() = null
 
+    override var hasExtensionReceiver: Boolean
+        get() = false
+        set(value) {
+            require(!value) {
+                "Trying to set hasExtensionReceiver for IrDelegatingConstructorCallImpl"
+            }
+        }
+
     override val typeArgumentsByIndex: Array<IrType?> = arrayOfNulls(typeArgumentsCount)
 
     override val argumentsByParameterIndex: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
-
-    override var contextReceiversCount = 0
 
     companion object {
         @ObsoleteDescriptorBasedAPI
