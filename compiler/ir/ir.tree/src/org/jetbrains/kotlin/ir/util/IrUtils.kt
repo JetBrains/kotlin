@@ -1009,7 +1009,7 @@ fun IrFactory.createSpecialAnnotationClass(fqn: FqName, parent: IrPackageFragmen
 fun isElseBranch(branch: IrBranch) = branch is IrElseBranch || ((branch.condition as? IrConst<Boolean>)?.value == true)
 
 fun IrFunction.isMethodOfAny(): Boolean =
-    extensionReceiverParameter == null && dispatchReceiverParameter != null &&
+    !hasExtensionReceiver && dispatchReceiverParameter != null &&
             when (name) {
                 OperatorNameConventions.HASH_CODE, OperatorNameConventions.TO_STRING -> valueParameters.isEmpty()
                 OperatorNameConventions.EQUALS -> valueParameters.singleOrNull()?.type?.isNullableAny() == true

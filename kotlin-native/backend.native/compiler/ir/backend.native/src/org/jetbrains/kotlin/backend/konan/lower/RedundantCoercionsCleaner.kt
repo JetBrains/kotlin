@@ -30,7 +30,7 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
     private class PossiblyFoldedExpression(val expression: IrExpression, val folded: Boolean) {
         fun getFullExpression(coercion: IrCall, cast: IrTypeOperatorCall?): IrExpression {
             if (folded) return expression
-            require (coercion.dispatchReceiver == null && coercion.extensionReceiver == null) {
+            require(coercion.dispatchReceiver == null && !coercion.hasExtensionReceiver) {
                 "Expected either <box> or <unbox> function without any receivers"
             }
             val castedExpression =

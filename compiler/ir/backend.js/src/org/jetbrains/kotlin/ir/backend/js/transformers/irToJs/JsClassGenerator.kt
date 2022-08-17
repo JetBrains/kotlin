@@ -108,7 +108,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
         if (!irClass.isInterface) {
             for (property in properties) {
-                if (property.getter?.extensionReceiverParameter != null || property.setter?.extensionReceiverParameter != null)
+                if (property.getter?.hasExtensionReceiver == true || property.setter?.hasExtensionReceiver == true)
                     continue
 
                 if (!property.visibility.isPublicAPI)

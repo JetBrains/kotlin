@@ -270,7 +270,7 @@ internal fun ProtoClass.findInlineFunction(irFunction: IrFunction, fileReader: I
         if (child.declaratorCase != ProtoDeclaration.DeclaratorCase.IR_FUNCTION) continue
         val childFunction = child.irFunction
         if (childFunction.base.valueParameterCount != irFunction.valueParameters.size) continue
-        if (childFunction.base.hasExtensionReceiver() xor (irFunction.extensionReceiverParameter != null)) continue
+        if (childFunction.base.hasExtensionReceiver() xor irFunction.hasExtensionReceiver) continue
         if (childFunction.base.hasDispatchReceiver() xor (irFunction.dispatchReceiverParameter != null)) continue
         if (!FunctionFlags.decode(childFunction.base.base.flags).isInline) continue
 

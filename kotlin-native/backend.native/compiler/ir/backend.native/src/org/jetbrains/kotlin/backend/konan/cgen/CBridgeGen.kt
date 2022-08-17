@@ -139,7 +139,7 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
             )
         }
     } else {
-        require(expression.extensionReceiver == null) { renderCompilerError(expression) }
+        require(!expression.hasExtensionReceiver) { renderCompilerError(expression) }
         targetPtrParameter = null
         targetFunctionName = this.getUniqueCName("target")
 

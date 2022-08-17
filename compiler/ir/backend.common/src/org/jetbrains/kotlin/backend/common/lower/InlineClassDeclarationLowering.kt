@@ -247,7 +247,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                                         staticMethod.valueParameters[1]
 
                                     in function.valueParameters -> {
-                                        val offset = if (function.extensionReceiverParameter != null) 2 else 1
+                                        val offset = 1 + function.hasExtensionReceiver.toInt()
                                         staticMethod.valueParameters[valueDeclaration.index + offset]
                                     }
 
@@ -262,7 +262,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                             return context.createIrBuilder(staticMethod.symbol).irSet(
                                 when (valueDeclaration) {
                                     in function.valueParameters -> {
-                                        val offset = if (function.extensionReceiverParameter != null) 2 else 1
+                                        val offset = 1 + function.hasExtensionReceiver.toInt()
                                         staticMethod.valueParameters[valueDeclaration.index + offset].symbol
                                     }
                                     else -> return expression
@@ -282,9 +282,8 @@ class InlineClassLowering(val context: CommonBackendContext) {
                     +irReturn(
                         irCall(staticMethod).apply {
                             val parameters =
-                                listOfNotNull(
+                                listOf(
                                     function.dispatchReceiverParameter!!,
-                                    function.extensionReceiverParameter
                                 ) + function.valueParameters
 
                             for ((index, valueParameter) in parameters.withIndex()) {

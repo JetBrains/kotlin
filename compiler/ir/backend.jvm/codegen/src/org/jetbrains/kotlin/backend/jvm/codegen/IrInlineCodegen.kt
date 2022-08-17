@@ -52,7 +52,7 @@ class IrInlineCodegen(
         var actualParametersCount = function.valueParameters.size
         if (function.dispatchReceiverParameter != null)
             ++actualParametersCount
-        if (function.extensionReceiverParameter != null)
+        if (function.hasExtensionReceiver)
             ++actualParametersCount
         if (actualParametersCount == 0)
             return false
@@ -172,7 +172,7 @@ class IrExpressionLambdaImpl(
     codegen: ExpressionCodegen,
     val reference: IrFunctionReference,
 ) : ExpressionLambda(), IrExpressionLambda {
-    override val isExtensionLambda: Boolean = function.extensionReceiverParameter != null && reference.extensionReceiver == null
+    override val isExtensionLambda: Boolean = function.hasExtensionReceiver && reference.extensionReceiver == null
 
     val function: IrFunction
         get() = reference.symbol.owner

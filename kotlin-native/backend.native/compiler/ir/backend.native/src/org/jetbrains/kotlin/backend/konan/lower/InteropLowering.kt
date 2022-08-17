@@ -286,7 +286,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
     }
 
     private fun generateActionImp(function: IrSimpleFunction): IrSimpleFunction {
-        require(function.extensionReceiverParameter == null) { renderCompilerError(function) }
+        require(!function.hasExtensionReceiver) { renderCompilerError(function) }
         require(function.valueParameters.all { it.type.isObjCObjectType() }) { renderCompilerError(function) }
         require(function.returnType.isUnit()) { renderCompilerError(function) }
 
@@ -295,7 +295,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
 
     private fun generateOutletSetterImp(property: IrProperty): IrSimpleFunction {
         require(property.isVar) { renderCompilerError(property) }
-        require(property.getter?.extensionReceiverParameter == null) { renderCompilerError(property) }
+        require(property.getter?.hasExtensionReceiver != true) { renderCompilerError(property) }
         require(property.descriptor.type.isObjCObjectType()) { renderCompilerError(property) }
 
         val name = property.name.asString()
@@ -305,7 +305,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
     }
 
     private fun getMethodSignatureEncoding(function: IrFunction): String {
-        require(function.extensionReceiverParameter == null) { renderCompilerError(function) }
+        require(!function.hasExtensionReceiver) { renderCompilerError(function) }
         require(function.valueParameters.all { it.type.isObjCObjectType() }) { renderCompilerError(function) }
         require(function.returnType.isUnit()) { renderCompilerError(function) }
 
@@ -476,7 +476,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
             require(constructedClass.getSuperClassNotAny() == delegatingCallConstructingClass) { renderCompilerError(expression) }
             require(expression.symbol.owner.objCConstructorIsDesignated()) { renderCompilerError(expression) }
             require(expression.dispatchReceiver == null) { renderCompilerError(expression) }
-            require(expression.extensionReceiver == null) { renderCompilerError(expression) }
+            require(!expression.hasExtensionReceiver) { renderCompilerError(expression) }
 
             val initMethod = expression.symbol.owner.getObjCInitMethod()!!
 
@@ -560,7 +560,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
         val initMethod = callee.getObjCInitMethod()
         if (initMethod != null) {
             val arguments = callee.valueParameters.map { expression.getValueArgument(it.index) }
-            require(expression.extensionReceiver == null) { renderCompilerError(expression) }
+            require(!expression.hasExtensionReceiver) { renderCompilerError(expression) }
             require(expression.dispatchReceiver == null) { renderCompilerError(expression) }
 
             val constructedClass = callee.constructedClass
@@ -616,7 +616,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
 
             if (!useKotlinDispatch) {
                 val arguments = callee.valueParameters.map { expression.getValueArgument(it.index) }
-                require(expression.dispatchReceiver == null || expression.extensionReceiver == null) { renderCompilerError(expression) }
+                require(expression.dispatchReceiver == null || !expression.hasExtensionReceiver) { renderCompilerError(expression) }
                 require(expression.superQualifierSymbol?.owner?.isObjCMetaClass() != true) { renderCompilerError(expression) }
                 require(expression.superQualifierSymbol?.owner?.isInterface != true) { renderCompilerError(expression) }
 
@@ -624,6 +624,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
                 return builder.genLoweredObjCMethodCall(
                         methodInfo,
                         superQualifier = expression.superQualifierSymbol,
+                        //??
                         receiver = expression.dispatchReceiver ?: expression.extensionReceiver!!,
                         arguments = arguments,
                         call = expression,

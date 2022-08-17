@@ -59,7 +59,7 @@ abstract class AbstractKonanIrMangler(private val withReturnType: Boolean) : IrB
             (if (this is IrConstructor && this.isObjCConstructor) this.getObjCInitMethod() else this)?.getObjCMethodInfo()
                     ?.let {
                         return buildString {
-                            if (extensionReceiverParameter != null) {
+                            if (hasExtensionReceiver) {
                                 append(extensionReceiverParameter!!.type.getClass()!!.name)
                                 append(".")
                             }
