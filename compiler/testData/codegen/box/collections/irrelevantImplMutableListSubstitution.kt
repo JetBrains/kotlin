@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR
 // FIR status: wrong CONFLICTING_INHERITED_JVM_DECLARATIONS, probably provoked by override mapping error
 // TARGET_BACKEND: JVM
 

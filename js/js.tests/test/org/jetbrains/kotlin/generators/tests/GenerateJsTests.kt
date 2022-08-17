@@ -120,9 +120,19 @@ fun main(args: Array<String>) {
                 model("lineNumbers/")
             }
 
-            testClass<AbstractFirJsTest> {
+            testClass<AbstractFirBoxJsTest> {
                 model("box/", pattern = "^([^_](.+))\\.kt$")
             }
+
+            // see todo on defining class
+//            testClass<AbstractFirJsTypeScriptExportTest> {
+//                model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
+//            }
+
+            // see todo on defining class
+//            testClass<AbstractJsFirLineNumberTest> {
+//                model("lineNumbers/")
+//            }
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
@@ -167,6 +177,27 @@ fun main(args: Array<String>) {
             ) {
                 model("ir/irJsText")
             }
+
+            testClass<AbstractFirJsCodegenBoxTest> {
+                model("codegen/box", excludeDirs = jvmOnlyBoxTests)
+            }
+
+            testClass<AbstractFirJsCodegenBoxErrorTest> {
+                model("codegen/boxError", excludeDirs = jvmOnlyBoxTests)
+            }
+
+            testClass<AbstractFirJsCodegenInlineTest> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractFirCodegenWasmJsInteropJsTest> {
+                model("codegen/boxWasmJsInterop")
+            }
+
+            // see todo on AbstractFirJsSteppingTest
+//            testClass<AbstractFirJsSteppingTest> {
+//                model("debug/stepping")
+//            }
         }
     }
 }
