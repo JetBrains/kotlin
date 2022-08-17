@@ -320,7 +320,7 @@ class FirSignatureEnhancement(
             else -> throw AssertionError("Unknown Java method to enhance: ${firMethod.render()}")
         }.apply {
             annotations += firMethod.annotations
-            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(true, session.firCachesFactory)
+            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(fromJava = true, session.firCachesFactory)
         }.build()
 
         return function.symbol
