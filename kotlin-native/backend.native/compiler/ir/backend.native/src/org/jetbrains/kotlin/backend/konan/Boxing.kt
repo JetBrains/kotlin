@@ -174,7 +174,7 @@ internal fun initializeCachedBoxes(context: Context) {
         val rangeEnd = "${cache.name}_RANGE_TO"
         initCache(cache, context, cacheName, rangeStart, rangeEnd,
                 declareOnly = !context.shouldDefineCachedBoxes
-        ).also { context.llvm.boxCacheGlobals[cache] = it }
+        ).also { context.generationState.llvm.boxCacheGlobals[cache] = it }
     }
 }
 
@@ -185,9 +185,9 @@ private fun initCache(cache: BoxCache, context: Context, cacheName: String,
                       rangeStartName: String, rangeEndName: String, declareOnly: Boolean) : StaticData.Global {
 
     val kotlinType = context.irBuiltIns.getKotlinClass(cache)
-    val staticData = context.llvm.staticData
+    val staticData = context.generationState.llvm.staticData
     val llvmType = staticData.getLLVMType(kotlinType.defaultType)
-    val llvmBoxType = structType(context.llvm.runtime.objHeaderType, llvmType)
+    val llvmBoxType = structType(context.generationState.llvm.runtime.objHeaderType, llvmType)
     val (start, end) = context.config.target.getBoxCacheRange(cache)
 
     return if (declareOnly) {
@@ -227,7 +227,7 @@ internal fun IrConstantPrimitive.toBoxCacheValue(context: Context): ConstValue? 
     }
     val (start, end) = context.config.target.getBoxCacheRange(cacheType)
     return if (value in start..end) {
-        context.llvm.boxCacheGlobals[cacheType]?.pointer?.getElementPtr(value.toInt() - start)?.getElementPtr(0)
+        context.generationState.llvm.boxCacheGlobals[cacheType]?.pointer?.getElementPtr(value.toInt() - start)?.getElementPtr(0)
     } else {
         null
     }

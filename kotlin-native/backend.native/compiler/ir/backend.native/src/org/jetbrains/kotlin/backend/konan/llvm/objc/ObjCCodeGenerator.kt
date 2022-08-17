@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.*
 
 internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
     val context = codegen.context
+    val llvm = codegen.llvm
 
     val dataGenerator = codegen.objCDataGenerator!!
 
@@ -26,7 +27,7 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
     }
 
     private val objcMsgSend = constPointer(
-            context.llvm.externalFunction(LlvmFunctionProto(
+            llvm.externalFunction(LlvmFunctionProto(
                     "objc_msgSend",
                     LlvmRetType(int8TypePtr),
                     listOf(LlvmParamType(int8TypePtr), LlvmParamType(int8TypePtr)),
@@ -43,17 +44,17 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
                 listOf(LlvmFunctionAttribute.NoUnwind),
                 origin = context.stdlibModule.llvmSymbolOrigin
         )
-        context.llvm.externalFunction(proto)
+        llvm.externalFunction(proto)
     }
 
-    val objcAlloc = context.llvm.externalFunction(LlvmFunctionProto(
+    val objcAlloc = llvm.externalFunction(LlvmFunctionProto(
             "objc_alloc",
             LlvmRetType(int8TypePtr),
             listOf(LlvmParamType(int8TypePtr)),
             origin = context.stdlibModule.llvmSymbolOrigin
     ))
 
-    val objcAutoreleaseReturnValue = context.llvm.externalFunction(LlvmFunctionProto(
+    val objcAutoreleaseReturnValue = llvm.externalFunction(LlvmFunctionProto(
             "llvm.objc.autoreleaseReturnValue",
             LlvmRetType(int8TypePtr),
             listOf(LlvmParamType(int8TypePtr)),
@@ -61,7 +62,7 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
             origin = context.stdlibModule.llvmSymbolOrigin
     ))
 
-    val objcRetainAutoreleasedReturnValue = context.llvm.externalFunction(LlvmFunctionProto(
+    val objcRetainAutoreleasedReturnValue = llvm.externalFunction(LlvmFunctionProto(
             "llvm.objc.retainAutoreleasedReturnValue",
             LlvmRetType(int8TypePtr),
             listOf(LlvmParamType(int8TypePtr)),

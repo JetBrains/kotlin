@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
-import org.jetbrains.kotlin.backend.konan.llvm.tryDisposeLLVMContext
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -63,12 +62,8 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
     }
 
     private fun KonanConfig.runTopLevelPhases() {
-        try {
-            ensureModuleName(this)
-            runTopLevelPhases(this, environment)
-        } finally {
-            dispose()
-        }
+        ensureModuleName(this)
+        runTopLevelPhases(this, environment)
     }
 
     private fun ensureModuleName(config: KonanConfig) {
@@ -106,9 +101,7 @@ private fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreE
             try {
                 toplevelPhase.cast<CompilerPhase<Context, Unit, Unit>>().invokeToplevel(context.phaseConfig, context, Unit)
             } finally {
-                context.disposeLlvm()
-                context.disposeRuntime()
-                tryDisposeLLVMContext()
+                context.disposeGenerationState()
             }
         }
     }

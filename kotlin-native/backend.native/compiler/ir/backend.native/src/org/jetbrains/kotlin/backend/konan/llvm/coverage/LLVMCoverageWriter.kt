@@ -30,7 +30,7 @@ private fun LLVMCoverageRegion.populateFrom(region: Region, regionId: Int, files
 }
 
 /**
- * Writes all of the coverage information to the [org.jetbrains.kotlin.backend.konan.Context.llvmModule].
+ * Writes all of the coverage information to the [org.jetbrains.kotlin.backend.konan.NativeGenerationState.llvm.module].
  * See http://llvm.org/docs/CoverageMappingFormat.html for the format description.
  */
 internal class LLVMCoverageWriter(
@@ -40,8 +40,7 @@ internal class LLVMCoverageWriter(
     fun write() {
         if (filesRegionsInfo.isEmpty()) return
 
-        val module = context.llvmModule
-                ?: error("LLVM module should be initialized.")
+        val module = context.generationState.llvm.module
         val filesIndex = filesRegionsInfo.mapIndexed { index, fileRegionInfo -> fileRegionInfo.file to index }.toMap()
 
         val coverageGlobal = memScoped {
@@ -54,8 +53,8 @@ internal class LLVMCoverageWriter(
                         fileIds.toCValues(), fileIds.size.signExtend(),
                         regions.toCValues(), regions.size.signExtend())
 
-                val functionName = context.llvmDeclarations.forFunction(functionRegions.function).llvmValue.name
-                val functionMappingRecord = LLVMAddFunctionMappingRecord(LLVMGetModuleContext(context.llvmModule),
+                val functionName = context.generationState.llvmDeclarations.forFunction(functionRegions.function).llvmValue.name
+                val functionMappingRecord = LLVMAddFunctionMappingRecord(LLVMGetModuleContext(context.generationState.llvm.module),
                         functionName, functionRegions.structuralHash, functionCoverage)!!
 
                 Pair(functionMappingRecord, functionCoverage)
@@ -70,6 +69,6 @@ internal class LLVMCoverageWriter(
 
             retval
         }
-        context.llvm.usedGlobals.add(coverageGlobal)
+        context.generationState.llvm.usedGlobals.add(coverageGlobal)
     }
 }

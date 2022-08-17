@@ -15,10 +15,8 @@ import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.deepCopyWithVariables
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.Name
 
 internal class InlineFunctionsSupport(mapping: NativeMapping) {
     private val notLoweredInlineFunctions = mapping.notLoweredInlineFunctions
@@ -39,12 +37,12 @@ internal class NativeInlineFunctionResolver(override val context: Context) : Def
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
         val function = super.getFunctionDeclaration(symbol)
 
-        context.mapping.loweredInlineFunctions[function]?.let { return it.irFunction }
+        context.generationState.loweredInlineFunctions[function]?.let { return it.irFunction }
 
         val packageFragment = function.getPackageFragment()
         val (possiblyLoweredFunction, shouldLower) = if (packageFragment !is IrExternalPackageFragment) {
             context.inlineFunctionsSupport.getNonLoweredInlineFunction(function, copy = context.config.produceBatchedPerFileCache).also {
-                context.mapping.loweredInlineFunctions[function] =
+                context.generationState.loweredInlineFunctions[function] =
                         InlineFunctionOriginInfo(it, packageFragment as IrFile, function.startOffset, function.endOffset)
             } to true
         } else {
@@ -56,7 +54,7 @@ internal class NativeInlineFunctionResolver(override val context: Context) : Def
                 "No IR and no cache for ${function.render()}"
             }
             val (shouldLower, deserializedInlineFunction) = moduleDeserializer.deserializeInlineFunction(function)
-            context.mapping.loweredInlineFunctions[function] = deserializedInlineFunction
+            context.generationState.loweredInlineFunctions[function] = deserializedInlineFunction
             function to shouldLower
         }
 
@@ -64,7 +62,7 @@ internal class NativeInlineFunctionResolver(override val context: Context) : Def
 
         val body = possiblyLoweredFunction.body ?: return possiblyLoweredFunction
 
-        PreInlineLowering(context).lower(body, possiblyLoweredFunction, context.mapping.loweredInlineFunctions[function]!!.irFile)
+        PreInlineLowering(context).lower(body, possiblyLoweredFunction, context.generationState.loweredInlineFunctions[function]!!.irFile)
 
         ArrayConstructorLowering(context).lower(body, possiblyLoweredFunction)
 

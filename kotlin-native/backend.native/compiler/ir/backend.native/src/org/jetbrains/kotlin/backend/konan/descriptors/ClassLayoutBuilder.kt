@@ -423,7 +423,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
             declaredFields
         else
             declaredFields.sortedByDescending {
-                with(context.llvm) { LLVMStoreSizeOfType(runtime.targetData, getLLVMType(it.type)) }
+                with(context.generationState.llvm) { LLVMStoreSizeOfType(runtime.targetData, getLLVMType(it.type)) }
             }
 
         val superFieldsCount = 1 /* First field is ObjHeader */ + superFields.size

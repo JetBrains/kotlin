@@ -17,12 +17,10 @@ import kotlin.random.Random
 /**
  * Creates and stores terminal compiler outputs.
  */
-class OutputFiles(outputPath: String?, target: KonanTarget, val produce: CompilerOutputKind, val producePerFileCache: Boolean) {
+class OutputFiles(val outputName: String, target: KonanTarget, val produce: CompilerOutputKind, val producePerFileCache: Boolean) {
 
     private val prefix = produce.prefix(target)
     private val suffix = produce.suffix(target)
-
-    val outputName = outputPath?.removeSuffixIfPresent(suffix) ?: produce.visibleName
 
     fun klibOutputFileName(isPacked: Boolean): String =
             if (isPacked) "$outputName$suffix" else outputName
