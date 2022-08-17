@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.defaultConstructor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -504,7 +505,7 @@ class Fir2IrClassifierStorage(
                         // Otherwise, this is a default-ish enum entry whose initializer would be a delegating constructor call,
                         // which will be translated via visitor later.
                     } else if (irParent != null && origin == IrDeclarationOrigin.DEFINED) {
-                        val constructor = irParent.constructors.first()
+                        val constructor = irParent.defaultConstructor ?: error("Assuming that default constructor should exist and be converted at this point")
                         this.initializerExpression = factory.createExpressionBody(
                             IrEnumConstructorCallImpl(
                                 startOffset, endOffset, irType, constructor.symbol,

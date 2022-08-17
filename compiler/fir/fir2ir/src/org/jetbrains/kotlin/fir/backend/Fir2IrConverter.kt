@@ -234,7 +234,8 @@ class Fir2IrConverter(
         if (irConstructor != null) {
             irClass.declarations += irConstructor
         }
-        for (declaration in syntheticPropertiesLast(allDeclarations)) {
+        // At least on enum entry creation we may need a default constructor, so ctors should be converted first
+        for (declaration in syntheticPropertiesLast(constructorsFirst(allDeclarations))) {
             val irDeclaration = processMemberDeclaration(declaration, regularClass, irClass) ?: continue
             irClass.declarations += irDeclaration
         }
@@ -294,8 +295,12 @@ class Fir2IrConverter(
     // Sort declarations so that all non-synthetic declarations are before synthetic ones.
     // This is needed because converting synthetic fields for implementation delegation needs to know
     // existing declarations in the class to avoid adding redundant delegated members.
-    private fun syntheticPropertiesLast(declarations: List<FirDeclaration>): Iterable<FirDeclaration> {
+    private fun syntheticPropertiesLast(declarations: Iterable<FirDeclaration>): Iterable<FirDeclaration> {
         return declarations.sortedBy { it !is FirField && it.isSynthetic }
+    }
+
+    private fun constructorsFirst(declarations: Iterable<FirDeclaration>): Iterable<FirDeclaration> {
+        return declarations.sortedBy { it !is FirConstructor }
     }
 
     private fun registerClassAndNestedClasses(regularClass: FirRegularClass, parent: IrDeclarationParent): IrClass {
