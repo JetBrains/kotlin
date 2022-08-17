@@ -7,7 +7,7 @@ package org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.extensions.*
 import org.jetbrains.kotlin.backend.common.lower.parents
-import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.builders.*
@@ -102,13 +102,13 @@ class AtomicfuJvmIrTransformer(
         }
 
         private fun IrProperty.transformAtomicfuProperty(parent: IrDeclarationContainer) {
-            val isTopLevel = parent is IrFile
+            val isTopLevel = parent is IrFile || (parent is IrClass && parent.kind == ClassKind.OBJECT)
             when {
                 isAtomic() -> {
                     if (isTopLevel) {
                         val parentClass = generateWrapperClass(this, parent)
                         transformAtomicProperty(parentClass)
-                        moveFromFileToClass(parent as IrFile, parentClass)
+                        moveFromFileToClass(parent, parentClass)
                     } else {
                         transformAtomicProperty(parent as IrClass)
                     }
@@ -121,7 +121,7 @@ class AtomicfuJvmIrTransformer(
         }
 
         private fun IrProperty.moveFromFileToClass(
-            parentFile: IrFile,
+            parentFile: IrDeclarationContainer,
             parentClass: IrClass
         ) {
             parentFile.declarations.remove(this)
@@ -239,9 +239,9 @@ class AtomicfuJvmIrTransformer(
         }
 
         private fun buildVolatileRawField(property: IrProperty, parent: IrDeclarationContainer): IrField =
-            // Generate a new backing field for the given property:
-            // a volatile variable of the atomic value type
-            // val a = atomic(0)
+        // Generate a new backing field for the given property:
+        // a volatile variable of the atomic value type
+        // val a = atomic(0)
             // volatile var a: Int = 0
             property.backingField?.let { backingField ->
                 val init = backingField.initializer?.expression
@@ -271,9 +271,9 @@ class AtomicfuJvmIrTransformer(
             } ?: error("Backing field of the atomic property ${property.render()} is null")
 
         private fun addJucaAFUProperty(atomicProperty: IrProperty, parentClass: IrClass): IrProperty =
-            // Generate an atomic field updater for the volatile backing field of the given property:
-            // val a = atomic(0)
-            // volatile var a: Int = 0
+        // Generate an atomic field updater for the volatile backing field of the given property:
+        // val a = atomic(0)
+        // volatile var a: Int = 0
             // val a$FU = AtomicIntegerFieldUpdater.newUpdater(parentClass, "a")
             atomicProperty.backingField?.let { volatileField ->
                 val fuClass = atomicSymbols.getJucaAFUClass(volatileField.type)
@@ -332,14 +332,15 @@ class AtomicfuJvmIrTransformer(
                 }
             } ?: error("Atomic property does not have backingField")
 
-        private fun generateWrapperClass(atomicProperty: IrProperty, parentFile: IrDeclarationContainer): IrClass {
+        private fun generateWrapperClass(atomicProperty: IrProperty, parentContainer: IrDeclarationContainer): IrClass {
             val wrapperClassName = getVolatileWrapperClassName(atomicProperty)
-            val volatileWrapperClass = parentFile.declarations.singleOrNull { it is IrClass && it.name.asString() == wrapperClassName }
-                ?: atomicSymbols.buildClassWithPrimaryConstructor(wrapperClassName, parentFile)
+            val volatileWrapperClass = parentContainer.declarations.singleOrNull { it is IrClass && it.name.asString() == wrapperClassName }
+                ?: atomicSymbols.buildClassWithPrimaryConstructor(wrapperClassName, parentContainer)
+            // add a static instance of the generated wrapper class to the parent container
             return (volatileWrapperClass as IrClass).also {
                 context.addProperty(
-                    field = context.buildClassInstance(it, parentFile),
-                    parent = parentFile,
+                    field = context.buildClassInstance(it, parentContainer),
+                    parent = parentContainer,
                     visibility = atomicProperty.visibility,
                     isStatic = true
                 )
@@ -480,8 +481,8 @@ class AtomicfuJvmIrTransformer(
                     val receiver = if (it is IrTypeOperatorCallImpl) it.argument else it
                     if (receiver.type.isAtomicValueType()) {
                         val valueType = if (it is IrTypeOperatorCallImpl) {
-                             // If receiverExpression is a cast `s as AtomicRef<String>`
-                             // then valueType is the type argument of Atomic* class `String`
+                            // If receiverExpression is a cast `s as AtomicRef<String>`
+                            // then valueType is the type argument of Atomic* class `String`
                             (it.type as IrSimpleType).arguments[0] as IrSimpleType
                         } else {
                             receiver.type.atomicToValueType()
@@ -601,7 +602,8 @@ class AtomicfuJvmIrTransformer(
                 val parent = valueParameter.parent
                 if (data != null && data.isTransformedAtomicExtension() &&
                     parent is IrFunctionImpl && !parent.isTransformedAtomicExtension() &&
-                    parent.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) {
+                    parent.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+                ) {
                     val index = valueParameter.index
                     if (index < 0 && !valueParameter.type.isAtomicValueType()) {
                         // index == -1 for `this` parameter
@@ -654,20 +656,28 @@ class AtomicfuJvmIrTransformer(
                     val isArrayReceiver = receiver.isArrayElementGetter()
                     val getAtomicProperty = if (isArrayReceiver) receiver.dispatchReceiver as IrCall else receiver
                     val atomicProperty = getAtomicProperty.getCorrespondingProperty()
-                    val dispatchReceiver = getAtomicProperty.dispatchReceiver
-                        ?: run {
+                    val dispatchReceiver = getAtomicProperty.dispatchReceiver.let {
+                        val isObjectReceiver = it?.type?.classOrNull?.owner?.kind == ClassKind.OBJECT
+                        if (it == null || isObjectReceiver) {
                             if (getAtomicProperty.symbol.owner.returnType.isAtomicValueType()) {
                                 // for top-level atomic properties get wrapper class instance as a parent
                                 getProperty(getStaticVolatileWrapperInstance(atomicProperty), null)
-                            } else null
-                        }
+                            } else if (isObjectReceiver && getAtomicProperty.symbol.owner.returnType.isAtomicArrayType()) {
+                                it
+                            }
+                            else null
+                        } else it
+                    }
                     // atomic property is handled by the Atomic*FieldUpdater instance
-                    // atomic array elementis handled by the Atomic*Array instance
+                    // atomic array elements handled by the Atomic*Array instance
                     val atomicHandler = propertyToAtomicHandler[atomicProperty]
                         ?: error("No atomic handler found for the atomic property ${atomicProperty.render()}")
                     return AtomicFieldInfo(
                         dispatchReceiver = dispatchReceiver,
-                        atomicHandler = getProperty(atomicHandler, if (isArrayReceiver) dispatchReceiver else null)
+                        atomicHandler = getProperty(
+                            atomicHandler,
+                            if (isArrayReceiver && dispatchReceiver?.type?.classOrNull?.owner?.kind != ClassKind.OBJECT) dispatchReceiver else null
+                        )
                     )
                 }
                 receiver.isThisReceiver() -> {
@@ -693,8 +703,8 @@ class AtomicfuJvmIrTransformer(
         }
 
         private val IrDeclaration.parentDeclarationContainer: IrDeclarationContainer
-            get() = parents.filterIsInstance<IrDeclarationContainer>().firstOrNull() ?:
-                error("In the sequence of parents for ${this.render()} no IrDeclarationContainer was found")
+            get() = parents.filterIsInstance<IrDeclarationContainer>().firstOrNull()
+                ?: error("In the sequence of parents for ${this.render()} no IrDeclarationContainer was found")
 
         private val IrFunction.containingFunction: IrFunction
             get() {
@@ -742,7 +752,8 @@ class AtomicfuJvmIrTransformer(
         ): IrSimpleFunction {
             val parent = this
             val mangledName = mangleFunctionName(functionName, isArrayReceiver)
-            val updaterType = if (isArrayReceiver) atomicSymbols.getAtomicArrayType(valueType) else atomicSymbols.getFieldUpdaterType(valueType)
+            val updaterType =
+                if (isArrayReceiver) atomicSymbols.getAtomicArrayType(valueType) else atomicSymbols.getFieldUpdaterType(valueType)
             findDeclaration<IrSimpleFunction> {
                 it.name.asString() == mangledName && it.valueParameters[0].type == updaterType
             }?.let { return it }
@@ -754,7 +765,10 @@ class AtomicfuJvmIrTransformer(
                 if (functionName == LOOP) {
                     if (isArrayReceiver) generateAtomicfuArrayLoop(valueType) else generateAtomicfuLoop(valueType)
                 } else {
-                    if (isArrayReceiver) generateAtomicfuArrayUpdate(functionName, valueType) else generateAtomicfuUpdate(functionName, valueType)
+                    if (isArrayReceiver) generateAtomicfuArrayUpdate(functionName, valueType) else generateAtomicfuUpdate(
+                        functionName,
+                        valueType
+                    )
                 }
                 this.parent = parent
                 parent.declarations.add(this)
@@ -765,9 +779,9 @@ class AtomicfuJvmIrTransformer(
             declaration: IrSimpleFunction,
             isArrayReceiver: Boolean
         ): IrSimpleFunction = findDeclaration {
-                it.name.asString() == mangleFunctionName(declaration.name.asString(), isArrayReceiver) &&
-                        it.isTransformedAtomicExtension()
-            } ?: error("Could not find corresponding transformed declaration for the atomic extension ${declaration.render()}")
+            it.name.asString() == mangleFunctionName(declaration.name.asString(), isArrayReceiver) &&
+                    it.isTransformedAtomicExtension()
+        } ?: error("Could not find corresponding transformed declaration for the atomic extension ${declaration.render()}")
 
         private fun IrSimpleFunction.generateAtomicfuLoop(valueType: IrType) {
             addValueParameter(ATOMIC_HANDLER, atomicSymbols.getFieldUpdaterType(valueType))
@@ -813,11 +827,12 @@ class AtomicfuJvmIrTransformer(
     }
 
     private fun getStaticVolatileWrapperInstance(atomicProperty: IrProperty): IrProperty {
-        val refVolatileStaticPropertyName = getVolatileWrapperClassName(atomicProperty).replaceFirstChar { it.lowercaseChar() }
-        return atomicProperty.fileParent.declarations.singleOrNull {
-            it is IrProperty && it.name.asString() == refVolatileStaticPropertyName
+        val volatileWrapperClass = atomicProperty.parent as IrClass
+        return (volatileWrapperClass.parent as IrDeclarationContainer).declarations.singleOrNull {
+            it is IrProperty && it.backingField != null &&
+                    it.backingField!!.type.classOrNull == volatileWrapperClass.symbol
         } as? IrProperty
-            ?: error("Static instance of $refVolatileStaticPropertyName is missing in the file ${atomicProperty.fileParent.render()}")
+            ?: error("Static instance of ${volatileWrapperClass.name.asString()} is missing in ${volatileWrapperClass.parent}")
     }
 
     private fun IrType.isKotlinxAtomicfuPackage() =
@@ -873,7 +888,9 @@ class AtomicfuJvmIrTransformer(
                 symbol.owner.dispatchReceiverParameter?.type?.isTraceBaseType() == true
 
     private fun getVolatileWrapperClassName(property: IrProperty) =
-        property.name.asString().capitalizeAsciiOnly() + '$' + property.fileParent.name.substringBefore('.') + VOLATILE_WRAPPER_SUFFIX
+        property.name.asString().capitalizeAsciiOnly() + '$' +
+                (if (property.parent is IrFile) (property.parent as IrFile).name else property.parent.kotlinFqName.asString()).substringBefore('.') +
+                VOLATILE_WRAPPER_SUFFIX
 
     private fun mangleFunctionName(name: String, isArrayReceiver: Boolean) =
         if (isArrayReceiver) "$name$$ATOMICFU$ATOMIC_ARRAY_RECEIVER_SUFFIX" else "$name$$ATOMICFU"
