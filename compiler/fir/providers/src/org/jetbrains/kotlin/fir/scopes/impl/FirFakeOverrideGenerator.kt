@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -526,7 +527,7 @@ object FirFakeOverrideGenerator {
             delegateGetter = getter
             delegateSetter = setter
             status = baseProperty.status
-            deprecationsProvider = getDeprecationsProviderFromAccessors(getter, setter)
+            deprecationsProvider = getDeprecationsProviderFromAccessors(getter, setter, session.firCachesFactory)
         }.symbol
     }
 
