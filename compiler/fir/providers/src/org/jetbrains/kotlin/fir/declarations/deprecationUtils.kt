@@ -64,7 +64,7 @@ class DeprecationAnnotationInfoPerUseSiteStorageBuilder {
     }
 }
 
-fun buildDeprecationAnnotationInfoPerUseSiteStorage(builder: DeprecationAnnotationInfoPerUseSiteStorageBuilder.() -> Unit)
+inline fun buildDeprecationAnnotationInfoPerUseSiteStorage(builder: DeprecationAnnotationInfoPerUseSiteStorageBuilder.() -> Unit)
         : DeprecationAnnotationInfoPerUseSiteStorage {
     return DeprecationAnnotationInfoPerUseSiteStorageBuilder().apply(builder).build()
 }
@@ -130,7 +130,10 @@ fun getDeprecationsAnnotationInfoByUseSiteFromAccessors(
     }
 }
 
-fun List<FirAnnotation>.getDeprecationsProviderFromAnnotations(fromJava: Boolean, firCachesFactory: FirCachesFactory): DeprecationsProvider {
+fun List<FirAnnotation>.getDeprecationsProviderFromAnnotations(
+    fromJava: Boolean,
+    firCachesFactory: FirCachesFactory
+): DeprecationsProvider {
     val deprecationAnnotationByUseSite = extractDeprecationAnnotationInfoPerUseSite(fromJava)
     return deprecationAnnotationByUseSite.toDeprecationsProvider(firCachesFactory)
 }
