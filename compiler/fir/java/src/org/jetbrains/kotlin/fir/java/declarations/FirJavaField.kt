@@ -11,11 +11,11 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFieldBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
@@ -62,7 +62,7 @@ class FirJavaField @FirImplementationDetail constructor(
     override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
 
     override val deprecationsProvider: DeprecationsProvider by lazy {
-        annotations.getDeprecationsProviderFromAnnotations(true)
+        annotations.getDeprecationsProviderFromAnnotations(true, moduleData.session.firCachesFactory)
     }
 
     override val contextReceivers: List<FirContextReceiver>
