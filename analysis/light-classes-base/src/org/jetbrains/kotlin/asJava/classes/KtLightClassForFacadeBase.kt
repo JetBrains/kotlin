@@ -202,12 +202,12 @@ abstract class KtLightClassForFacadeBase constructor(
     override fun hashCode() = facadeClassFqName.hashCode()
 
     override fun equals(other: Any?): Boolean {
+        if (this === other) return true
         if (other == null || this::class.java != other::class.java) {
             return false
         }
 
         val lightClass = other as KtLightClassForFacadeBase
-        if (this === other) return true
 
         if (facadeClassFqName != lightClass.facadeClassFqName) return false
         if (files != lightClass.files) return false
