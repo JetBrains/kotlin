@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.util.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinableParameterExpression
 import org.jetbrains.kotlin.resolve.inline.isInlineOnly
@@ -97,8 +97,7 @@ class PsiInlineCodegen(
             hiddenParameters += invocationParamBuilder.addNextParameter(param.asmType, false) to
                     codegen.frameMap.enterTemp(param.asmType)
         }
-        // TODO: Add context receivers as hiddenParameters and pass their count
-        invocationParamBuilder.markValueParametersStart(0)
+        invocationParamBuilder.markValueParametersStart()
     }
 
     override fun putHiddenParamsIntoLocals() {

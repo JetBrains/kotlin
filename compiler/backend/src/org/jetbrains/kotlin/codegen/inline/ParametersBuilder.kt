@@ -12,8 +12,6 @@ class ParametersBuilder private constructor() {
 
     private val params = arrayListOf<ParameterInfo>()
 
-    private var valueParamFirstIndex = 0
-
     var nextParameterOffset = 0
         private set
 
@@ -27,11 +25,11 @@ class ParametersBuilder private constructor() {
         return addParameter(ParameterInfo(type, skipped, nextParameterOffset, null, nextValueParameterIndex, typeOnStack))
     }
 
-    fun addNextValueParameter(type: Type, skipped: Boolean, remapValue: StackValue?, parameterIndex: Int): ParameterInfo {
+    fun addNextValueParameter(type: Type, skipped: Boolean, remapValue: StackValue?): ParameterInfo {
         return addParameter(
             ParameterInfo(
                 type, skipped, nextParameterOffset, remapValue,
-                if (parameterIndex == -1) nextValueParameterIndex else parameterIndex + valueParamFirstIndex
+                nextValueParameterIndex,
             )
         )
     }
@@ -78,9 +76,8 @@ class ParametersBuilder private constructor() {
         return info
     }
 
-    fun markValueParametersStart(contextReceiversCount: Int) {
-        this.valueParamFirstIndex = params.size - contextReceiversCount
-        this.nextValueParameterIndex = valueParamFirstIndex
+    fun markValueParametersStart() {
+        this.nextValueParameterIndex = params.size
     }
 
     fun listCaptured(): List<CapturedParamInfo> {
