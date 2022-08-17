@@ -62,10 +62,8 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
             override fun visitCall(expression: IrCall): IrExpression {
                 val remappedSymbol = symbolMap[expression.symbol]
                     ?: return super.visitCall(expression)
-                return IrCallImpl(
-                    expression.startOffset, expression.endOffset, expression.type, remappedSymbol,
-                    expression.typeArgumentsCount, expression.valueArgumentsCount, expression.origin,
-                    expression.superQualifierSymbol
+                return IrCallImpl.createCopy(
+                    expression, symbol = remappedSymbol,
                 ).apply {
                     copyTypeAndValueArgumentsFrom(expression)
                 }
@@ -77,10 +75,10 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
                 if (remappedSymbol == null && remappedReflectionTarget == null)
                     return super.visitFunctionReference(expression)
 
-                return IrFunctionReferenceImpl(
-                    expression.startOffset, expression.endOffset, expression.type, remappedSymbol ?: expression.symbol,
-                    expression.typeArgumentsCount, expression.valueArgumentsCount, remappedReflectionTarget,
-                    expression.origin
+                return IrFunctionReferenceImpl.createCopy(
+                    expression,
+                    symbol = remappedSymbol ?: expression.symbol,
+                    reflectionTarget = remappedReflectionTarget,
                 ).apply {
                     copyTypeAndValueArgumentsFrom(expression)
                 }

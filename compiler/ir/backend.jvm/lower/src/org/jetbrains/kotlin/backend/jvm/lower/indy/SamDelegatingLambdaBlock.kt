@@ -209,12 +209,11 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
         }
 
     private fun JvmIrBuilder.createDelegatingLambdaReference(expression: IrExpression, lambda: IrSimpleFunction): IrFunctionReference {
-        return IrFunctionReferenceImpl(
+        return IrFunctionReferenceImpl.fromSymbolOwner(
             startOffset, endOffset,
             expression.type,
             lambda.symbol,
             typeArgumentsCount = 0,
-            valueArgumentsCount = lambda.valueParameters.size,
             reflectionTarget = null,
             origin = IrStatementOrigin.LAMBDA
         )

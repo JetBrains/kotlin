@@ -237,14 +237,7 @@ private class SyntheticAccessorTransformer(
 
         val accessorSymbol = createAccessor(implFunSymbol, implFunRef.dispatchReceiver?.type, null)
         val accessorFun = accessorSymbol.owner
-        val accessorRef =
-            IrFunctionReferenceImpl(
-                implFunRef.startOffset, implFunRef.endOffset, implFunRef.type,
-                accessorSymbol,
-                accessorFun.typeParameters.size,
-                accessorFun.valueParameters.size,
-                implFunRef.reflectionTarget, implFunRef.origin
-            )
+        val accessorRef = IrFunctionReferenceImpl.withReplacedSymbol(implFunRef, accessorSymbol)
 
         accessorRef.copyTypeArgumentsFrom(implFunRef)
 
@@ -342,11 +335,7 @@ private class SyntheticAccessorTransformer(
         if (!expression.origin.isLambda && function is IrConstructor && function.isOrShouldBeHidden) {
             handleHiddenConstructor(function).let { accessor ->
                 expression.transformChildrenVoid()
-                return IrFunctionReferenceImpl(
-                    expression.startOffset, expression.endOffset, expression.type,
-                    accessor.symbol, accessor.typeParameters.size,
-                    accessor.valueParameters.size, accessor.symbol, expression.origin
-                )
+                return IrFunctionReferenceImpl.withReplacedSymbol(expression, accessor.symbol)
             }
         }
 
@@ -610,17 +599,20 @@ private class SyntheticAccessorTransformer(
                 accessorSymbol as IrSimpleFunctionSymbol, oldExpression.typeArgumentsCount,
                 origin = oldExpression.origin
             )
+
             is IrDelegatingConstructorCall -> IrDelegatingConstructorCallImpl.fromSymbolOwner(
                 oldExpression.startOffset, oldExpression.endOffset,
                 context.irBuiltIns.unitType,
                 accessorSymbol as IrConstructorSymbol, oldExpression.typeArgumentsCount
             )
+
             is IrConstructorCall ->
                 IrConstructorCallImpl.fromSymbolOwner(
                     oldExpression.startOffset, oldExpression.endOffset,
                     oldExpression.type,
                     accessorSymbol as IrConstructorSymbol
                 )
+
             else ->
                 error("Unexpected IrFunctionAccessExpression: $oldExpression")
         }
@@ -642,11 +634,11 @@ private class SyntheticAccessorTransformer(
         oldExpression: IrGetField,
         accessorSymbol: IrSimpleFunctionSymbol
     ): IrCall {
-        val call = IrCallImpl(
+        val call = IrCallImpl.fromSymbolOwner(
             oldExpression.startOffset, oldExpression.endOffset,
             oldExpression.type,
-            accessorSymbol, 0, accessorSymbol.owner.valueParameters.size,
-            oldExpression.origin
+            accessorSymbol, 0,
+            origin = oldExpression.origin,
         )
         oldExpression.receiver?.let {
             call.putValueArgument(0, oldExpression.receiver)
@@ -658,12 +650,13 @@ private class SyntheticAccessorTransformer(
         oldExpression: IrSetField,
         accessorSymbol: IrSimpleFunctionSymbol
     ): IrCall {
-        val call = IrCallImpl(
+        val call = IrCallImpl.fromSymbolOwner(
             oldExpression.startOffset, oldExpression.endOffset,
             oldExpression.type,
-            accessorSymbol, 0, accessorSymbol.owner.valueParameters.size,
-            oldExpression.origin
+            accessorSymbol, 0,
+            origin = oldExpression.origin,
         )
+
         oldExpression.receiver?.let {
             call.putValueArgument(0, oldExpression.receiver)
         }

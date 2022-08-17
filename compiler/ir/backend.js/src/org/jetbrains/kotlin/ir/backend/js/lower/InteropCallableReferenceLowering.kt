@@ -412,15 +412,13 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
     }
 
     private fun buildLambdaBody(instance: IrVariable, lambdaDeclaration: IrSimpleFunction, invokeFun: IrSimpleFunction): IrBlockBody {
-        val invokeExpression = IrCallImpl(
+        val invokeExpression = IrCallImpl.fromSymbolOwner(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             invokeFun.returnType,
             invokeFun.symbol,
-            0,
-            invokeFun.valueParameters.size,
-            JsStatementOrigins.EXPLICIT_INVOKE,
-            null
+            typeArgumentsCount = 0,
+            origin = JsStatementOrigins.EXPLICIT_INVOKE,
         )
 
         fun getValue(d: IrValueDeclaration): IrExpression = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, d.symbol)

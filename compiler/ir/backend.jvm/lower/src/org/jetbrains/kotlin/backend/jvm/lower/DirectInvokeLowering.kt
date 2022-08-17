@@ -92,9 +92,9 @@ private class DirectInvokeLowering(private val context: JvmBackendContext) : Fil
     private fun visitFunctionReferenceInvoke(expression: IrCall, receiver: IrFunctionReference): IrExpression =
         when (val irFun = receiver.symbol.owner) {
             is IrSimpleFunction ->
-                IrCallImpl(
-                    expression.startOffset, expression.endOffset, expression.type, irFun.symbol,
-                    typeArgumentsCount = irFun.typeParameters.size, valueArgumentsCount = irFun.valueParameters.size
+                IrCallImpl.fromSymbolOwner(
+                    expression.startOffset, expression.endOffset, expression.type,
+                    symbol = irFun.symbol,
                 ).apply {
                     copyReceiverAndValueArgumentsForDirectInvoke(receiver, expression)
                 }

@@ -135,13 +135,10 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
 
         val irAdapterFun = createFunInterfaceConstructorAdapter(startOffset, endOffset, descriptor)
 
-        val irAdapterRef = IrFunctionReferenceImpl(
+        val irAdapterRef = IrFunctionReferenceImpl.fromSymbolOwner(
             startOffset, endOffset,
             type = irReferenceType,
             symbol = irAdapterFun.symbol,
-            typeArgumentsCount = irAdapterFun.typeParameters.size,
-            valueArgumentsCount = irAdapterFun.valueParameters.size,
-            reflectionTarget = irAdapterFun.symbol,
             origin = IrStatementOrigin.FUN_INTERFACE_CONSTRUCTOR_REFERENCE
         )
 
@@ -284,9 +281,10 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                 "Bound callable reference cannot have both receivers: $adapteeDescriptor"
             }
             val receiver = irDispatchReceiver ?: irExtensionReceiver
-            val irAdapterRef = IrFunctionReferenceImpl(
-                startOffset, endOffset, irFunctionalType, irAdapterFun.symbol, irAdapterFun.typeParameters.size,
-                irAdapterFun.valueParameters.size, adapteeSymbol, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
+            val irAdapterRef = IrFunctionReferenceImpl.fromSymbolOwner(
+                startOffset, endOffset, irFunctionalType, irAdapterFun.symbol,
+                reflectionTarget = adapteeSymbol,
+                origin = IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE,
             )
             IrBlockImpl(startOffset, endOffset, irFunctionalType, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE).apply {
                 statements.add(irAdapterFun)

@@ -29,13 +29,12 @@ object JsIrBuilder {
         origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT
     ): IrCall {
         val owner = target.owner
-        return IrCallImpl(
+        return IrCallImpl.fromSymbolOwner(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             type ?: owner.returnType,
             target,
             typeArgumentsCount = owner.typeParameters.size,
-            valueArgumentsCount = owner.valueParameters.size,
             origin = origin
         ).apply {
             typeArguments?.let {

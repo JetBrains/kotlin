@@ -268,18 +268,12 @@ class InnerClassConstructorCallsLowering(val context: BackendContext, val innerC
                     }
                 }
 
-                val newReference = expression.run {
-                    IrFunctionReferenceImpl(
-                        startOffset,
-                        endOffset,
-                        type,
-                        newCallee.symbol,
-                        typeArgumentsCount = typeArgumentsCount,
-                        valueArgumentsCount = newCallee.valueParameters.size,
-                        reflectionTarget = newReflectionTarget?.symbol,
-                        origin = origin
-                    )
-                }
+                val newReference = IrFunctionReferenceImpl.withReplacedSymbol(
+                    expression,
+                    newCallee.symbol,
+                    typeArgumentsCount = expression.typeArgumentsCount,
+                    reflectionTarget = newReflectionTarget?.symbol,
+                )
 
                 newReference.let {
                     it.copyTypeArgumentsFrom(expression)

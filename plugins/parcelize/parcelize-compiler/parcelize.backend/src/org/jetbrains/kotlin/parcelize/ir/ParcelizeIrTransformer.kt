@@ -75,11 +75,7 @@ class ParcelizeIrTransformer(
                 // Remap calls to `describeContents` and `writeToParcel`
                 val remappedSymbol = symbolMap[expression.symbol]
                     ?: return super.visitCall(expression)
-                return IrCallImpl(
-                    expression.startOffset, expression.endOffset, expression.type, remappedSymbol,
-                    expression.typeArgumentsCount, expression.valueArgumentsCount, expression.origin,
-                    expression.superQualifierSymbol
-                ).apply {
+                return IrCallImpl.createCopy(expression, symbol = remappedSymbol).apply {
                     copyTypeAndValueArgumentsFrom(expression)
                 }
             }
@@ -90,10 +86,10 @@ class ParcelizeIrTransformer(
                 if (remappedSymbol == null && remappedReflectionTarget == null)
                     return super.visitFunctionReference(expression)
 
-                return IrFunctionReferenceImpl(
-                    expression.startOffset, expression.endOffset, expression.type, remappedSymbol ?: expression.symbol,
-                    expression.typeArgumentsCount, expression.valueArgumentsCount, remappedReflectionTarget,
-                    expression.origin
+                return IrFunctionReferenceImpl.createCopy(
+                    expression,
+                    symbol = remappedSymbol ?: expression.symbol,
+                    reflectionTarget = remappedReflectionTarget,
                 ).apply {
                     copyTypeAndValueArgumentsFrom(expression)
                 }
