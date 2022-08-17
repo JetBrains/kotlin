@@ -27,9 +27,8 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.util.slicedMap.Slices
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.AbstractSerialGenerator
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.bodyPropertiesDescriptorsMap
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContextUnchecked
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryConstructorPropertiesDescriptorsMap
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
@@ -41,6 +40,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
     final override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor) return
 
+        checkEnum(descriptor, declaration, context.trace)
         checkExternalSerializer(descriptor, declaration, context.trace)
 
         if (!canBeSerializedInternally(descriptor, declaration, context.trace)) return
@@ -164,7 +164,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
 
     private fun canBeSerializedInternally(descriptor: ClassDescriptor, declaration: KtDeclaration, trace: BindingTrace): Boolean {
         // if enum has meta or SerialInfo annotation on a class or entries and used plugin-generated serializer
-        if (descriptor.isSerializableEnumWithMissingSerializer() && descriptor.useLegacyGeneratedEnumSerializer()) {
+        if (descriptor.useLegacyGeneratedEnumSerializer() && descriptor.isSerializableEnumWithMissingSerializer()) {
             val declarationToReport = declaration.modifierList ?: declaration
             trace.report(SerializationErrors.EXPLICIT_SERIALIZABLE_IS_REQUIRED.on(declarationToReport))
             return false
@@ -239,6 +239,30 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             return false
         }
 
+    private fun checkEnum(descriptor: ClassDescriptor, declaration: KtDeclaration, trace: BindingTrace) {
+        if (descriptor.kind != ClassKind.ENUM_CLASS) return
+
+        val entryBySerialName = mutableMapOf<String, ClassDescriptor?>()
+        descriptor.enumEntries().forEach { entryDescriptor ->
+            val serialNameAnnotation = entryDescriptor.annotations.serialNameAnnotation
+            val serialName = entryDescriptor.annotations.serialNameValue ?: entryDescriptor.name.asString()
+            val firstEntry = entryBySerialName[serialName]
+            if (firstEntry != null) {
+                trace.report(
+                    SerializationErrors.DUPLICATE_SERIAL_NAME_ENUM.on(
+                        serialNameAnnotation?.findAnnotationEntry() ?: firstEntry.annotations.serialNameAnnotation?.findAnnotationEntry()
+                        ?: declaration,
+                        descriptor.defaultType,
+                        serialName,
+                        entryDescriptor.name.asString()
+                    )
+                )
+            } else {
+                entryBySerialName[serialName] = entryDescriptor
+            }
+        }
+
+    }
     private fun ClassDescriptor.isSerializableEnumWithMissingSerializer(): Boolean {
         if (kind != ClassKind.ENUM_CLASS) return false
         if (hasSerializableOrMetaAnnotation) return false

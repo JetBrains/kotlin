@@ -34,6 +34,11 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/DuplicateSerialName.kt");
     }
 
+    @TestMetadata("EnumDuplicateSerialName.kt")
+    public void testEnumDuplicateSerialName() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/EnumDuplicateSerialName.kt");
+    }
+
     @TestMetadata("ExternalSerializers.kt")
     public void testExternalSerializers() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/ExternalSerializers.kt");

@@ -57,6 +57,13 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             CommonRenderers.STRING
         )
         MAP.put(
+            SerializationErrors.DUPLICATE_SERIAL_NAME_ENUM,
+            "Enum class ''{0}'' has duplicate serial name ''{1}'' in entry ''{2}''",
+            Renderers.RENDER_TYPE,
+            CommonRenderers.STRING,
+            CommonRenderers.STRING
+        )
+        MAP.put(
             SerializationErrors.SERIALIZER_NOT_FOUND,
             "Serializer has not been found for type ''{0}''. " +
                     "To use context serializer as fallback, explicitly annotate type or property with @Contextual",

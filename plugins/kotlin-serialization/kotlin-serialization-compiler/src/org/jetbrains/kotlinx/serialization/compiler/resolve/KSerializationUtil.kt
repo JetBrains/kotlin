@@ -88,6 +88,9 @@ internal val ClassDescriptor.isInheritableSerialInfoAnnotation: Boolean
 internal val Annotations.serialNameValue: String?
     get() = findAnnotationConstantValue(SerializationAnnotations.serialNameAnnotationFqName, "value")
 
+internal val Annotations.serialNameAnnotation: AnnotationDescriptor?
+    get() = findAnnotation(SerializationAnnotations.serialNameAnnotationFqName)
+
 internal val Annotations.serialRequired: Boolean
     get() = hasAnnotation(SerializationAnnotations.requiredAnnotationFqName)
 
