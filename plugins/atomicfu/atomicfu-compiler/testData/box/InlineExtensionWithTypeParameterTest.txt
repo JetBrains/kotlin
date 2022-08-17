@@ -11,6 +11,7 @@ public abstract class InlineExtensionWithTypeParameterTest$Segment {
 public final class InlineExtensionWithTypeParameterTest$SemaphoreSegment {
     // source: 'InlineExtensionWithTypeParameterTest.kt'
     public method <init>(p0: int): void
+    public abstract inner class InlineExtensionWithTypeParameterTest$Segment
     public final inner class InlineExtensionWithTypeParameterTest$SemaphoreSegment
 }
 
