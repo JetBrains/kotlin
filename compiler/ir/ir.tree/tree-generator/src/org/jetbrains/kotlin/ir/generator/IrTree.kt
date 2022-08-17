@@ -244,7 +244,7 @@ object IrTree : AbstractTreeBuilder() {
         }
         +listField("allValueParameters", valueParameter, mutability = Var, isChild = true)
         +listField("valueParameters", valueParameter, mutability = Immutable, isChild = false) {
-            baseGetter = code("if (hasExtensionReceiver) valueParameters.drop(1) else emptyList()")
+            baseGetter = code("allValueParameters")
         }
         // The first `contextReceiverParametersCount` value parameters are context receivers.
         +field("contextReceiverParametersCount", int, mutable = true)
@@ -565,13 +565,31 @@ object IrTree : AbstractTreeBuilder() {
         +field("typeArgumentsByIndex", type<Array<*>>(irTypeType.copy(nullable = true)))
     }
     val functionAccessExpression: ElementConfig by element(Expression) {
+        suppressPrint = true //todo: generate this element too
         visitorParent = memberAccessExpression
         visitorName = "functionAccess"
         transformerReturnType = rootElement
 
         parent(memberAccessExpression.withArgs("S" to functionSymbolType))
 
+        +field("hasExtensionReceiver", boolean, mutable = true)
         +field("contextReceiversCount", int, mutable = true)
+
+        +field("extensionReceiver", expression, mutable = true, nullable = true) {
+            baseGetter = code("if (hasExtensionReceiver) getValueArgument(contextReceiversCount) else null")
+            baseSetter = code(
+                """
+                    if (value == null) return
+                    require(hasExtensionReceiver) { "Trying to set extension receiver for non-extension" }
+            
+                    putValueArgument(contextReceiversCount, value)
+                """.trimIndent()
+            )
+        }
+
+        +field("receiversPrefixSize", int) {
+            baseGetter = code("contextReceiversCount + (if (hasExtensionReceiver) 1 else 0)")
+        }
     }
     val constructorCall: ElementConfig by element(Expression) {
         visitorParent = functionAccessExpression
@@ -699,14 +717,19 @@ object IrTree : AbstractTreeBuilder() {
         +field("superQualifierSymbol", classSymbolType, nullable = true)
     }
     val callableReference: ElementConfig by element(Expression) {
+        suppressPrint = true //todo: generate this element too
         visitorParent = memberAccessExpression
         val s = +param("S", symbolType)
 
         parent(memberAccessExpression.withArgs("S" to s))
 
         +field("referencedName", type<Name>())
+        +field("extensionReceiver", expression, nullable = true, mutable = true, isChild = true) {
+            baseDefaultValue = code("null")
+        }
     }
     val functionReference: ElementConfig by element(Expression) {
+        suppressPrint = true //todo: generate this element too
         visitorParent = callableReference
 
         parent(callableReference.withArgs("S" to functionSymbolType))
