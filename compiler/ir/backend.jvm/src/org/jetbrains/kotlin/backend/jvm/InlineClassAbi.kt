@@ -88,7 +88,7 @@ object InlineClassAbi {
     fun hashSuffix(irFunction: IrFunction, mangleReturnTypes: Boolean, useOldMangleRules: Boolean): String? =
         hashSuffix(
             useOldMangleRules,
-            irFunction.fullValueParameterList.map { it.type },
+            irFunction.valueParameters.map { it.type },
             irFunction.returnType.takeIf { mangleReturnTypes && irFunction.hasMangledReturnType },
             irFunction.isSuspend
         )
@@ -130,12 +130,9 @@ val IrType.requiresMangling: Boolean
         return irClass.isSingleFieldValueClass && irClass.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME
     }
 
-val IrFunction.fullValueParameterList: List<IrValueParameter>
-    get() = listOfNotNull(extensionReceiverParameter) + valueParameters
-
 val IrFunction.hasMangledParameters: Boolean
     get() = dispatchReceiverParameter != null && parentAsClass.isSingleFieldValueClass ||
-            fullValueParameterList.any { it.type.requiresMangling } ||
+            valueParameters.any { it.type.requiresMangling } ||
             (this is IrConstructor && constructedClass.isSingleFieldValueClass)
 
 val IrFunction.hasMangledReturnType: Boolean
