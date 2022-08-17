@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.declarations.utils.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -64,9 +66,13 @@ class DeprecationAnnotationInfoPerUseSiteStorageBuilder {
     }
 }
 
-fun buildDeprecationAnnotationInfoPerUseSiteStorage(builder: DeprecationAnnotationInfoPerUseSiteStorageBuilder.() -> Unit)
+inline fun buildDeprecationAnnotationInfoPerUseSiteStorage(builder: DeprecationAnnotationInfoPerUseSiteStorageBuilder.() -> Unit)
         : DeprecationAnnotationInfoPerUseSiteStorage {
     return DeprecationAnnotationInfoPerUseSiteStorageBuilder().apply(builder).build()
+}
+
+fun FirBasedSymbol<*>.getDeprecation(session: FirSession, callSite: FirElement?): DeprecationInfo? {
+    return getDeprecation(session.languageVersionSettings.apiVersion, callSite)
 }
 
 fun FirBasedSymbol<*>.getDeprecation(apiVersion: ApiVersion, callSite: FirElement?): DeprecationInfo? {
@@ -130,7 +136,10 @@ fun getDeprecationsAnnotationInfoByUseSiteFromAccessors(
     }
 }
 
-fun List<FirAnnotation>.getDeprecationsProviderFromAnnotations(fromJava: Boolean, firCachesFactory: FirCachesFactory): DeprecationsProvider {
+fun List<FirAnnotation>.getDeprecationsProviderFromAnnotations(
+    fromJava: Boolean,
+    firCachesFactory: FirCachesFactory
+): DeprecationsProvider {
     val deprecationAnnotationByUseSite = extractDeprecationAnnotationInfoPerUseSite(fromJava)
     return deprecationAnnotationByUseSite.toDeprecationsProvider(firCachesFactory)
 }

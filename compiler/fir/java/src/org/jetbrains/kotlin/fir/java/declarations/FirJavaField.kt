@@ -62,7 +62,7 @@ class FirJavaField @FirImplementationDetail constructor(
     override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
 
     override val deprecationsProvider: DeprecationsProvider by lazy {
-        annotations.getDeprecationsProviderFromAnnotations(true, moduleData.session.firCachesFactory)
+        annotations.getDeprecationsProviderFromAnnotations(fromJava = true, moduleData.session.firCachesFactory)
     }
 
     override val contextReceivers: List<FirContextReceiver>
