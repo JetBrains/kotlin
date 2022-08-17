@@ -256,10 +256,13 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
             |import static test.JavaConstants.BOOLEAN;
             |import static test.JavaConstants.DOUBLE;
             |import static test.JavaConstants.FLOAT;
+            |import static test.JavaConstants.BYTE;
+            |import static test.JavaConstants.SHORT;
+            |import static test.JavaConstants.CHAR;
             |
             |@JavaAnnotation(
-            |        stringValue = STRING, intValue = INTEGER, longValue = LONG,
-            |        booleanValue = BOOLEAN, doubleValue = DOUBLE, floatValue = FLOAT
+            |        byteValue = BYTE, shortValue = SHORT, intValue = INTEGER, longValue = LONG, booleanValue = BOOLEAN,
+            |        doubleValue = DOUBLE, floatValue = FLOAT, stringValue = STRING, charValue = CHAR
             |)
             |public class JavaClassUsingAnnotation {
             |}
@@ -268,23 +271,29 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
             |package test;
             |@Documented
             |public @interface JavaAnnotation {
-            |    String stringValue();
+            |    byte byteValue();
+            |    short shortValue();
             |    int intValue();
             |    long longValue();
             |    boolean booleanValue();
             |    double doubleValue();
             |    float floatValue();
+            |    String stringValue();
+            |    char charValue();
             |}
             |
             |/src/main/java/test/JavaConstants.java
             |package test;
             |public class JavaConstants {
-            |    public static final String STRING = "STRING_CONSTANT_VALUE";
+            |    public static final byte BYTE = 3;
+            |    public static final short SHORT = 4;
             |    public static final int INTEGER = 5;
             |    public static final long LONG = 6L;
             |    public static final boolean BOOLEAN = true;
             |    public static final double DOUBLE = 7.0d;
             |    public static final float FLOAT = 8.0f;
+            |    public static final String STRING = "STRING_CONSTANT_VALUE";
+            |    public static final char CHAR = 'c';
             |}
         """.trimIndent(),
             configuration
@@ -296,13 +305,16 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
                 checkNotNull(annotation)
 
                 assertEquals("JavaAnnotation", annotation.dri.classNames)
-                assertEquals(StringValue("STRING_CONSTANT_VALUE"), annotation.params["stringValue"])
 
+                assertEquals(IntValue(3), annotation.params["byteValue"])
+                assertEquals(IntValue(4), annotation.params["shortValue"])
                 assertEquals(IntValue(5), annotation.params["intValue"])
                 assertEquals(LongValue(6), annotation.params["longValue"])
                 assertEquals(BooleanValue(true), annotation.params["booleanValue"])
                 assertEquals(DoubleValue(7.0), annotation.params["doubleValue"])
                 assertEquals(FloatValue(8.0f), annotation.params["floatValue"])
+                assertEquals(StringValue("STRING_CONSTANT_VALUE"), annotation.params["stringValue"])
+                assertEquals(StringValue("c"), annotation.params["charValue"])
             }
         }
     }
