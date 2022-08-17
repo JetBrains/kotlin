@@ -27,13 +27,11 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrEnumConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -528,7 +526,6 @@ class Fir2IrClassifierStorage(
                     startOffset, endOffset, origin, symbol, enumEntry.name
                 ).apply {
                     declarationStorage.enterScope(this)
-                    val irType = enumEntry.returnTypeRef.toIrType()
                     if (irParent != null) {
                         this.parent = irParent
                     }
@@ -541,15 +538,6 @@ class Fir2IrClassifierStorage(
                         }
                         // Otherwise, this is a default-ish enum entry whose initializer would be a delegating constructor call,
                         // which will be translated via visitor later.
-                    } else if (irParent != null && origin == IrDeclarationOrigin.DEFINED) {
-                        val constructor = irParent.constructors.first()
-                        this.initializerExpression = factory.createExpressionBody(
-                            IrEnumConstructorCallImpl(
-                                startOffset, endOffset, irType, constructor.symbol,
-                                valueArgumentsCount = constructor.valueParameters.size,
-                                typeArgumentsCount = constructor.typeParameters.size
-                            )
-                        )
                     }
                     declarationStorage.leaveScope(this)
                 }

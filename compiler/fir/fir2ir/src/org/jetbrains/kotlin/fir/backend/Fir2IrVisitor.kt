@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.defaultConstructor
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -109,6 +110,8 @@ class Fir2IrVisitor(
         annotationGenerator.generate(irEnumEntry, enumEntry)
         val correspondingClass = irEnumEntry.correspondingClass
         val initializer = enumEntry.initializer
+        val irType = enumEntry.returnTypeRef.toIrType()
+        val irParentEnumClass = irEnumEntry.parent as? IrClass
         // If the enum entry has its own members, we need to introduce a synthetic class.
         if (correspondingClass != null) {
             declarationStorage.enterScope(irEnumEntry)
@@ -122,7 +125,7 @@ class Fir2IrVisitor(
                 val constructor = correspondingClass.constructors.first()
                 irEnumEntry.initializerExpression = irFactory.createExpressionBody(
                     IrEnumConstructorCallImpl(
-                        startOffset, endOffset, enumEntry.returnTypeRef.toIrType(),
+                        startOffset, endOffset, irType,
                         constructor.symbol,
                         typeArgumentsCount = constructor.typeParameters.size,
                         valueArgumentsCount = constructor.valueParameters.size
@@ -140,6 +143,20 @@ class Fir2IrVisitor(
                         delegatedConstructor.toIrDelegatingConstructorCall()
                     )
                 }
+            }
+        } else if (irParentEnumClass != null && initializer == null) {
+            // a default-ish enum entry whose initializer would be a delegating constructor call
+            val constructor =
+                irParentEnumClass.defaultConstructor ?: error("Assuming that default constructor should exist and be converted at this point")
+            enumEntry.convertWithOffsets { startOffset, endOffset ->
+                irEnumEntry.initializerExpression = irFactory.createExpressionBody(
+                    IrEnumConstructorCallImpl(
+                        startOffset, endOffset, irType, constructor.symbol,
+                        valueArgumentsCount = constructor.valueParameters.size,
+                        typeArgumentsCount = constructor.typeParameters.size
+                    )
+                )
+                irEnumEntry
             }
         }
         return irEnumEntry
