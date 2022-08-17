@@ -178,7 +178,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // Don't use JDK LambdaMetafactory for big arity lambdas.
         if (plainLambda) {
             var parametersCount = implFun.valueParameters.size
-            if (implFun.extensionReceiverParameter != null) ++parametersCount
+            if (implFun.hasExtensionReceiver) ++parametersCount
             if (parametersCount >= BuiltInFunctionArity.BIG_ARITY)
                 abiHazard = true
         }
@@ -676,7 +676,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         withExtensionReceiver: Boolean = true
     ): List<IrValueParameter> {
         if ((!withDispatchReceiver || irFun.dispatchReceiverParameter == null) &&
-            (!withExtensionReceiver || irFun.extensionReceiverParameter == null)
+            (!withExtensionReceiver || !irFun.hasExtensionReceiver)
         )
             return irFun.valueParameters
         return ArrayList<IrValueParameter>().apply {

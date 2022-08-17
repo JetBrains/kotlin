@@ -63,8 +63,8 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
                     if (accessor.owner.dispatchReceiverParameter != null) {
                         dispatchReceiver = boundReceiver.also { boundReceiver = null } ?: irGet(unboundReceiver!!)
                     }
-                    if (accessor.owner.extensionReceiverParameter != null) {
-                        extensionReceiver = boundReceiver.also { boundReceiver = null } ?: irGet(unboundReceiver!!)
+                    if (accessor.owner.hasExtensionReceiver) {
+                        putExtensionReceiverAsArgument(boundReceiver.also { boundReceiver = null } ?: irGet(unboundReceiver!!))
                     }
                     if (value != null) {
                         putValueArgument(0, value)

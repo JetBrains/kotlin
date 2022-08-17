@@ -123,7 +123,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     private fun exportProperty(property: IrProperty): ExportedDeclaration? {
         for (accessor in listOfNotNull(property.getter, property.setter)) {
             // TODO: Report a frontend error
-            if (accessor.extensionReceiverParameter != null)
+            if (accessor.hasExtensionReceiver)
                 return null
             if (accessor.isFakeOverride && !accessor.isAllowedFakeOverriddenDeclaration(context)) {
                 return null
