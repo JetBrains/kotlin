@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.FirCachesFactory
+import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
@@ -17,16 +20,21 @@ abstract class DeprecationsProvider {
 }
 
 class DeprecationsProviderImpl(
+    firCachesFactory: FirCachesFactory,
     private val all: List<DeprecationAnnotationInfo>?,
     private val bySpecificSite: Map<AnnotationUseSiteTarget, List<DeprecationAnnotationInfo>>?
 ) : DeprecationsProvider() {
-    override fun getDeprecationsInfo(version: ApiVersion): DeprecationsPerUseSite {
+    private val cache: FirCache<ApiVersion, DeprecationsPerUseSite, Nothing?> = firCachesFactory.createCache { version ->
         @Suppress("UNCHECKED_CAST")
-        return DeprecationsPerUseSite(
+        DeprecationsPerUseSite(
             all?.computeDeprecationInfoOrNull(version),
             bySpecificSite?.mapValues { (_, info) -> info.computeDeprecationInfoOrNull(version) }?.filterValues { it != null }
                     as Map<AnnotationUseSiteTarget, DeprecationInfo>?
         )
+    }
+
+    override fun getDeprecationsInfo(version: ApiVersion): DeprecationsPerUseSite {
+        return cache.getValue(version, null)
     }
 
     private fun List<DeprecationAnnotationInfo>.computeDeprecationInfoOrNull(version: ApiVersion): DeprecationInfo? {

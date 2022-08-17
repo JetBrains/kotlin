@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -421,7 +422,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             }
             this.containerSource = c.containerSource
             this.initializer = c.constDeserializer.loadConstant(proto, symbol.callableId, c.nameResolver)
-            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(false)
+            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(false, c.session.firCachesFactory)
 
             proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers, ::loadContextReceiver)
         }.apply {
@@ -499,7 +500,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             )
             annotations +=
                 c.annotationDeserializer.loadFunctionAnnotations(c.containerSource, proto, local.nameResolver, local.typeTable)
-            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(false)
+            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(false, c.session.firCachesFactory)
             this.containerSource = c.containerSource
 
             proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers, ::loadContextReceiver)
@@ -578,7 +579,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             annotations +=
                 c.annotationDeserializer.loadConstructorAnnotations(c.containerSource, proto, local.nameResolver, local.typeTable)
             containerSource = c.containerSource
-            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(false)
+            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(false, c.session.firCachesFactory)
 
             contextReceivers.addAll(createContextReceiversForClass(classProto))
         }.build().apply {
