@@ -20,7 +20,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
     fun generate(irClass: IrClass) {
         assert(irClass.isFinalClass)
 
-        val objCLLvmDeclarations = context.llvmDeclarations.forClass(irClass).objCDeclarations!!
+        val objCLLvmDeclarations = context.generationState.llvmDeclarations.forClass(irClass).objCDeclarations!!
 
         val instanceMethods = generateInstanceMethodDescs(irClass)
 
@@ -28,11 +28,11 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
         val classMethods = companionObject?.generateMethodDescs().orEmpty()
 
         val superclassName = irClass.getSuperClassNotAny()!!.let {
-            context.llvm.imports.add(it.llvmSymbolOrigin)
+            llvm.imports.add(it.llvmSymbolOrigin)
             it.descriptor.getExternalObjCClassBinaryName()
         }
         val protocolNames = irClass.getSuperInterfaces().map {
-            context.llvm.imports.add(it.llvmSymbolOrigin)
+            llvm.imports.add(it.llvmSymbolOrigin)
             it.name.asString().removeSuffix("Protocol")
         }
 
@@ -87,7 +87,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
                 .distinctBy { it.selector }
 
         allInitMethodsInfo.mapTo(this) {
-            ObjCMethodDesc(it.selector, it.encoding, context.llvm.missingInitImp.llvmValue)
+            ObjCMethodDesc(it.selector, it.encoding, llvm.missingInitImp.llvmValue)
         }
     }
 
@@ -164,6 +164,6 @@ internal fun CodeGenerator.kotlinObjCClassInfo(irClass: IrClass): LLVMValueRef {
                 origin = irClass.llvmSymbolOrigin
         )
     } else {
-        context.llvmDeclarations.forClass(irClass).objCDeclarations!!.classInfoGlobal.llvmGlobal
+        llvmDeclarations.forClass(irClass).objCDeclarations!!.classInfoGlobal.llvmGlobal
     }
 }

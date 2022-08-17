@@ -23,15 +23,13 @@ import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.KonanHomeProvider
+import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
+import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
-
-    fun dispose() {
-        tempFiles.dispose()
-    }
 
     internal val distribution = run {
         val overridenProperties = mutableMapOf<String, String>().apply {
@@ -417,32 +415,21 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         get() = configuration.get(KonanConfigKeys.MAKE_PER_FILE_CACHE) == true
                 && configuration.get(KonanConfigKeys.BATCHED_PER_FILE_CACHE_BUILD) != false
 
-    lateinit var outputFiles: OutputFiles
-
-    lateinit var tempFiles: TempFiles
-
-    init {
-        recreateOutputFiles(producePerFileCache)
-    }
-
-    fun recreateOutputFiles(explicitlyProducePerFileCache: Boolean) {
-        val outputPath = configuration.get(KonanConfigKeys.OUTPUT) ?: cacheSupport.tryGetImplicitOutput(explicitlyProducePerFileCache)
-        outputFiles = OutputFiles(outputPath, target, produce, explicitlyProducePerFileCache)
-        tempFiles = TempFiles(outputFiles.outputName, configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR))
-
-        println("ZZZ: ${outputFiles.outputName}")
-    }
-
-    val outputFile get() = outputFiles.mainFileName
+    val outputPath get() = configuration.get(KonanConfigKeys.OUTPUT)?.removeSuffixIfPresent(produce.suffix(target)) ?: produce.visibleName
 
     private val implicitModuleName: String
-        get() = if (produce.isCache) outputFiles.cacheFileName else File(outputFiles.outputName).name
+        get() = cacheSupport.libraryToCache?.let {
+            if (configuration.get(KonanConfigKeys.MAKE_PER_FILE_CACHE) == true)
+                CachedLibraries.getPerFileCachedLibraryName(it.klib)
+            else
+                CachedLibraries.getCachedLibraryName(it.klib)
+        }
+                ?: File(outputPath).name
 
     val infoArgsOnly = (configuration.kotlinSourceRoots.isEmpty()
             && configuration[KonanConfigKeys.INCLUDED_LIBRARIES].isNullOrEmpty()
             && configuration[KonanConfigKeys.EXPORTED_LIBRARIES].isNullOrEmpty()
             && libraryToCache == null)
-            || (producePerFileCache && outputFiles.mainFile.exists)
 
     /**
      * Do not compile binary when compiling framework.

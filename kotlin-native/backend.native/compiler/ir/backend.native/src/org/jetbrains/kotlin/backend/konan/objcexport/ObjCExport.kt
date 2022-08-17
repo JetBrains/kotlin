@@ -112,7 +112,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
     }
 
     private fun produceFrameworkSpecific(headerLines: List<String>) {
-        val framework = File(context.config.outputFile)
+        val framework = File(context.generationState.outputFile)
         val frameworkContents = when(target.family) {
             Family.IOS,
             Family.WATCHOS,
@@ -293,7 +293,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
         val result = Command(clangCommand).getResult(withErrors = true)
 
         if (result.exitCode == 0) {
-            context.llvm.additionalProducedBitcodeFiles += bitcode.absolutePath
+            context.generationState.llvm.additionalProducedBitcodeFiles += bitcode.absolutePath
         } else {
             // Note: ignoring compile errors intentionally.
             // In this case resulting framework will likely be unusable due to compile errors when importing it.

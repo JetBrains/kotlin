@@ -16,7 +16,7 @@ private fun ConstPointer.add(index: Int): ConstPointer {
     return constPointer(LLVMConstGEP(llvm, cValuesOf(Int32(index).llvm), 1)!!)
 }
 
-internal class KotlinStaticData(override val context: Context) : ContextUtils, StaticData(context.llvmModule!!) {
+internal class KotlinStaticData(override val context: Context, module: LLVMModuleRef) : ContextUtils, StaticData(module) {
     private val stringLiterals = mutableMapOf<String, ConstPointer>()
 
     // Must match OBJECT_TAG_PERMANENT_CONTAINER in C++.
@@ -104,10 +104,10 @@ internal class KotlinStaticData(override val context: Context) : ContextUtils, S
         }
         return if (isExternal(descriptor)) {
             constPointer(importGlobal(
-                    kind.llvmName, context.llvm.runtime.objHeaderType, origin = descriptor.llvmSymbolOrigin
+                    kind.llvmName, runtime.objHeaderType, origin = descriptor.llvmSymbolOrigin
             ))
         } else {
-            context.llvmDeclarations.forUnique(kind).pointer
+            context.generationState.llvmDeclarations.forUnique(kind).pointer
         }
     }
 

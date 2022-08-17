@@ -5,29 +5,30 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import llvm.*
+import llvm.LLVMTypeRef
 import org.jetbrains.kotlin.backend.common.DefaultDelegateFactory
 import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.descriptors.BridgeDirections
+import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
+import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysisResult
+import org.jetbrains.kotlin.backend.konan.descriptors.deepPrint
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
-import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.llvm.CodegenClassMetadata
+import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.lower.*
-import org.jetbrains.kotlin.backend.konan.lower.BridgesSupport
-import org.jetbrains.kotlin.backend.konan.lower.EnumsSupport
-import org.jetbrains.kotlin.backend.konan.lower.InlineFunctionsSupport
-import org.jetbrains.kotlin.backend.konan.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
 import org.jetbrains.kotlin.backend.konan.optimizations.ExternalModulesDFG
 import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFG
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
-import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
-import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -36,15 +37,13 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.target.Architecture
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.needSmallBinary
 import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.library.SerializedMetadata
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -53,8 +52,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import java.lang.System.out
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KProperty
-
-internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
 
 internal class NativeMapping : DefaultMapping() {
     data class BridgeKey(val target: IrSimpleFunction, val bridgeDirections: BridgeDirections)
@@ -65,7 +62,6 @@ internal class NativeMapping : DefaultMapping() {
     val enumEntriesMaps = mutableMapOf<IrClass, Map<Name, LoweredEnumEntryDescription>>()
     val bridges = mutableMapOf<BridgeKey, IrSimpleFunction>()
     val notLoweredInlineFunctions = mutableMapOf<IrFunctionSymbol, IrFunction>()
-    val loweredInlineFunctions = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
     val companionObjectCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
     val outerThisCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
     val lateinitPropertyCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrProperty, IrSimpleFunction>()
@@ -94,6 +90,12 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     override val internalPackageFqn: FqName = RuntimeNames.kotlinNativeInternalPackageName
 
     override val optimizeLoopsOverUnsignedArrays = true
+
+    lateinit var generationState: NativeGenerationState
+
+    fun disposeGenerationState() {
+        if (::generationState.isInitialized) generationState.dispose()
+    }
 
     val phaseConfig = config.phaseConfig
 
@@ -142,21 +144,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     fun <T> setValue(member: LazyVarMember<T>, newValue: T) {
         lazyValues[member] = newValue
     }
-
-    val localClassNames = mutableMapOf<IrAttributeContainer, String>()
-
-    fun getLocalClassName(container: IrAttributeContainer): String? = localClassNames[container.attributeOwnerId]
-
-    fun putLocalClassName(container: IrAttributeContainer, name: String) {
-        localClassNames[container.attributeOwnerId] = name
-    }
-
-    fun copyLocalClassName(source: IrAttributeContainer, destination: IrAttributeContainer) {
-        getLocalClassName(source)?.let { name -> putLocalClassName(destination, name) }
-    }
-
-    /* test suite class -> test function names */
-    val testCasesToDump = mutableMapOf<ClassId, MutableCollection<String>>()
 
     val reflectionTypes: KonanReflectionTypes by lazy(PUBLICATION) {
         KonanReflectionTypes(moduleDescriptor)
@@ -225,49 +212,12 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         InteropBuiltIns(this.builtIns)
     }
 
-    var llvmModule: LLVMModuleRef? = null
-        set(module) {
-            field = module!!
-
-            llvm = Llvm(this, module)
-            debugInfo = DebugInfo(this)
-        }
-
-    lateinit var runtime: Runtime
-
-    private var runtimeDisposed = false
-
-    fun disposeRuntime() {
-        if (runtimeDisposed) return
-        if (::runtime.isInitialized) {
-            LLVMDisposeTargetData(runtime.targetData)
-            LLVMDisposeModule(runtime.llvmModule)
-        }
-        runtimeDisposed = true
-    }
-
-    lateinit var llvmImports: LlvmImports
-    lateinit var llvm: Llvm
-    lateinit var llvmDeclarations: LlvmDeclarations
     lateinit var bitcodeFileName: String
     lateinit var library: KonanLibraryLayout
 
-    var llvmDisposed = false
+    val coverage by lazy { CoverageManager(this) }
 
-    fun disposeLlvm() {
-        if (llvmDisposed) return
-        if (::debugInfo.isInitialized)
-            LLVMDisposeDIBuilder(debugInfo.builder)
-        if (llvmModule != null)
-            LLVMDisposeModule(llvmModule)
-        llvmDisposed = true
-    }
-
-    var cStubsManager = CStubsManager(config.target)
-
-    val coverage = CoverageManager(this)
-
-    protected fun separator(title: String) {
+    fun separator(title: String) {
         println("\n\n--- ${title} ----------------------\n")
     }
 
@@ -290,14 +240,13 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     }
 
     fun verifyBitCode() {
-        if (llvmModule == null) return
-        verifyModule(llvmModule!!)
+        if (::generationState.isInitialized)
+            generationState.verifyBitCode()
     }
 
     fun printBitCode() {
-        if (llvmModule == null) return
-        separator("BitCode:")
-        LLVMDumpModule(llvmModule!!)
+        if (::generationState.isInitialized)
+            generationState.printBitCode()
     }
 
     fun verify() {
@@ -342,11 +291,9 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         }
     }
 
-    lateinit var debugInfo: DebugInfo
     var moduleDFG: ModuleDFG? = null
     var externalModulesDFG: ExternalModulesDFG? = null
-    lateinit var lifetimes: MutableMap<IrElement, Lifetime>
-    lateinit var codegenVisitor: CodeGeneratorVisitor
+    val lifetimes = mutableMapOf<IrElement, Lifetime>()
     var devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult? = null
 
     var referencedFunctions: Set<IrFunction>? = null
@@ -367,15 +314,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     val declaredLocalArrays: MutableMap<String, LLVMTypeRef> = HashMap()
 
     lateinit var irLinker: KonanIrLinker
-
-    val inlineFunctionBodies = mutableListOf<SerializedInlineFunctionReference>()
-
-    val classFields = mutableListOf<SerializedClassFields>()
-
-    val calledFromExportedInlineFunctions = mutableSetOf<IrFunction>()
-    val constructedFromExportedInlineFunctions = mutableSetOf<IrClass>()
-
-    val enumEntriesMaps = mutableMapOf<IrClass, Map<Name, LoweredEnumEntryDescription>>()
 
     val targetAbiInfo: TargetAbiInfo by lazy {
         when {

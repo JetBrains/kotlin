@@ -245,7 +245,7 @@ private class ExportedElement(val kind: ElementKind,
                 // Produce type getter.
                 val getTypeFunction = addLlvmFunctionWithDefaultAttributes(
                         context,
-                        context.llvmModule!!,
+                        llvm.module,
                         "${cname}_type",
                         owner.kGetTypeFuncType
                 )
@@ -830,7 +830,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
     val exportedSymbols = mutableListOf<String>()
 
     private fun makeGlobalStruct(top: ExportedElementScope) {
-        val headerFile = context.config.outputFiles.cAdapterHeader
+        val headerFile = context.generationState.outputFiles.cAdapterHeader
         outputStreamWriter = headerFile.printWriter()
 
         val exportedSymbol = "${prefix}_symbols"
@@ -915,7 +915,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         outputStreamWriter.close()
         println("Produced library API in ${prefix}_api.h")
 
-        outputStreamWriter = context.config.tempFiles
+        outputStreamWriter = context.generationState.tempFiles
                 .cAdapterCpp
                 .printWriter()
 
@@ -1055,7 +1055,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         outputStreamWriter.close()
 
         if (context.config.target.family == Family.MINGW) {
-            outputStreamWriter = context.config.outputFiles
+            outputStreamWriter = context.generationState.outputFiles
                     .cAdapterDef
                     .printWriter()
             output("EXPORTS")
