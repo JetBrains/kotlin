@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.util.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinableParameterExpression
 import org.jetbrains.kotlin.resolve.inline.isInlineOnly
@@ -97,8 +97,7 @@ class PsiInlineCodegen(
             hiddenParameters += invocationParamBuilder.addNextParameter(param.asmType, false) to
                     codegen.frameMap.enterTemp(param.asmType)
         }
-        // TODO: Add context receivers as hiddenParameters and pass their count
-        invocationParamBuilder.markValueParametersStart(0)
+        invocationParamBuilder.markValueParametersStart()
     }
 
     override fun putHiddenParamsIntoLocals() {
@@ -154,7 +153,7 @@ class PsiInlineCodegen(
         } else null
 
         val lambda = PsiExpressionLambda(ktLambda!!, state, parameter.isCrossinline, boundReceiver != null)
-        rememberClosure(type, parameter.index, lambda)
+        rememberClosure(type, lambda)
         closuresToGenerate += lambda
         if (boundReceiver != null) {
             // Has to be done immediately to preserve evaluation order.
@@ -180,7 +179,7 @@ class PsiInlineCodegen(
     }
 
     override fun putValueIfNeeded(parameterType: JvmKotlinType, value: StackValue, kind: ValueKind, parameterIndex: Int) =
-        putArgumentToLocalVal(parameterType, value, parameterIndex, kind)
+        putArgumentToLocalVal(parameterType, value, kind)
 
     override fun putCapturedValueOnStack(stackValue: StackValue, valueType: Type, paramIndex: Int) =
         putCapturedToLocalVal(stackValue, activeLambda!!.capturedVars[paramIndex], stackValue.kotlinType)

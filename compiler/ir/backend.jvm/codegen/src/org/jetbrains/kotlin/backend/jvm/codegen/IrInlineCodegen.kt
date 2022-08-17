@@ -92,7 +92,7 @@ class IrInlineCodegen(
         val inlineLambda = argumentExpression.unwrapInlineLambda()
         if (inlineLambda != null) {
             val lambdaInfo = IrExpressionLambdaImpl(codegen, inlineLambda)
-            rememberClosure(parameterType, irValueParameter.index, lambdaInfo)
+            rememberClosure(parameterType, lambdaInfo)
             lambdaInfo.generateLambdaBody(sourceCompiler)
             lambdaInfo.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
                 val param = lambdaInfo.capturedVars[index]
@@ -146,12 +146,12 @@ class IrInlineCodegen(
             }
 
             val expectedType = JvmKotlinType(parameterType, irValueParameter.type.toIrBasedKotlinType())
-            putArgumentToLocalVal(expectedType, onStack, irValueParameter.index, kind)
+            putArgumentToLocalVal(expectedType, onStack, kind)
         }
     }
 
-    override fun beforeValueParametersStart(contextReceiversCount: Int) {
-        invocationParamBuilder.markValueParametersStart(contextReceiversCount)
+    override fun beforeValueParametersStart() {
+        invocationParamBuilder.markValueParametersStart()
     }
 
     override fun genInlineCall(

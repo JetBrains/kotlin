@@ -495,7 +495,7 @@ class ExpressionCodegen(
             callGenerator.genValueAndPut(irParameter, arg, parameterType, this, data)
         }
 
-        callGenerator.beforeValueParametersStart(0)
+        callGenerator.beforeValueParametersStart()
         callee.valueParameters.forEachIndexed(::handleValueParameter)
 
         expression.markLineNumber(true)
