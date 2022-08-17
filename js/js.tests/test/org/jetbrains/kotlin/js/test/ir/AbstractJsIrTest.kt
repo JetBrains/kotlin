@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.js.test.ir
 
 import org.jetbrains.kotlin.js.test.AbstractJsBlackBoxCodegenTestBase
-import org.jetbrains.kotlin.js.test.converters.FirJsKlibBackendFacade
 import org.jetbrains.kotlin.js.test.JsSteppingTestAdditionalSourceProvider
+import org.jetbrains.kotlin.js.test.converters.FirJsKlibBackendFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
 import org.jetbrains.kotlin.js.test.converters.JsKlibBackendFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrJsResultsConverter
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
@@ -190,7 +189,7 @@ private class SkipMultiModuleTestsMetaConfigurator(testServices: TestServices) :
 
 open class AbstractFirJsTest(
     pathToTestDir: String = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
-    testGroupOutputDirPrefix: String = "box/",
+    testGroupOutputDirPrefix: String = "firBox/",
 ) : AbstractJsBlackBoxCodegenTestBase<FirOutputArtifact, IrBackendInput, BinaryArtifacts.KLib>(
     FrontendKinds.FIR, TargetBackend.JS_IR, pathToTestDir, testGroupOutputDirPrefix, skipMinification = true
 ) {
