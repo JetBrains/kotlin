@@ -6,19 +6,15 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.util.remapTypes
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 class ProvisionalFunctionExpressionLoweringContext(
     val outer: ProvisionalFunctionExpressionLoweringContext? = null,
@@ -63,11 +59,11 @@ class ProvisionalFunctionExpressionLowering :
             startOffset, endOffset, type, origin,
             listOf(
                 function,
-                IrFunctionReferenceImpl(
-                    startOffset, endOffset, type,
+                IrFunctionReferenceImpl.fromSymbolOwner(
+                    startOffset, endOffset,
+                    type,
                     function.symbol,
                     typeArgumentsCount = 0,
-                    valueArgumentsCount = function.valueParameters.size,
                     reflectionTarget = null,
                     origin = origin
                 )

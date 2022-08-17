@@ -157,13 +157,7 @@ private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext
                     val (staticProxy, _) = context.cachedDeclarations.getStaticAndCompanionDeclaration(implFun)
                     expression.putValueArgument(
                         1,
-                        IrFunctionReferenceImpl(
-                            implFunRef.startOffset, implFunRef.endOffset, implFunRef.type,
-                            staticProxy.symbol,
-                            staticProxy.typeParameters.size,
-                            staticProxy.valueParameters.size,
-                            implFunRef.reflectionTarget, implFunRef.origin
-                        )
+                        IrFunctionReferenceImpl.withReplacedSymbol(implFunRef, staticProxy.symbol)
                     )
                 }
                 expression

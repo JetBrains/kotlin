@@ -18,10 +18,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.interpreter.state.Complex
-import org.jetbrains.kotlin.ir.interpreter.state.ExceptionState
-import org.jetbrains.kotlin.ir.interpreter.state.Primitive
-import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
@@ -67,7 +63,9 @@ fun Any?.toIrConst(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffse
 
 internal fun IrFunction.createCall(origin: IrStatementOrigin? = null): IrCall {
     this as IrSimpleFunction
-    return IrCallImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, returnType, symbol, typeParameters.size, valueParameters.size, origin)
+    return IrCallImpl.fromSymbolOwner(
+        SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, returnType, symbol, origin = origin
+    )
 }
 
 internal fun IrConstructor.createConstructorCall(irType: IrType = returnType): IrConstructorCall {

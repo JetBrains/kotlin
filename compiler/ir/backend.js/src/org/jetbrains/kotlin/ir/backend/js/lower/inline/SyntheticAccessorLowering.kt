@@ -173,10 +173,9 @@ class SyntheticAccessorLowering(private val context: CommonBackendContext) : Bod
             val callee = expression.symbol.owner
 
             functionMap[callee]?.let { newFunction ->
-                val newExpression = expression.run {
-                    // TODO: What has to be done with `reflectionTarget`?
-                    IrFunctionReferenceImpl(startOffset, endOffset, type, newFunction.symbol, typeArgumentsCount, valueArgumentsCount)
-                }
+                // TODO: What has to be done with `reflectionTarget`?
+                val newExpression =
+                    IrFunctionReferenceImpl.withReplacedSymbol(expression, symbol = newFunction.symbol)
 
                 newExpression.copyTypeArgumentsFrom(expression)
                 for (i in 0 until expression.valueArgumentsCount) {

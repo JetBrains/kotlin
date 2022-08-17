@@ -10,17 +10,20 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
-import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.typeWithArguments
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -303,26 +306,24 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             val irCall = reference.run {
                 when (callee) {
                     is IrConstructor ->
-                        IrConstructorCallImpl(
+                        IrConstructorCallImpl.fromSymbolOwner(
                             startOffset,
                             endOffset,
                             callee.parentAsClass.defaultType,
                             callee.symbol,
                             callee.countContextTypeParameters(),
-                            callee.typeParameters.size,
-                            callee.valueParameters.size,
-                            JsStatementOrigins.CALLABLE_REFERENCE_INVOKE
+                            JsStatementOrigins.CALLABLE_REFERENCE_INVOKE,
                         )
+
                     is IrSimpleFunction ->
-                        IrCallImpl(
+                        IrCallImpl.fromSymbolOwner(
                             startOffset,
                             endOffset,
                             callee.returnType,
                             callee.symbol,
-                            callee.typeParameters.size,
-                            callee.valueParameters.size,
-                            JsStatementOrigins.CALLABLE_REFERENCE_INVOKE
+                            origin = JsStatementOrigins.CALLABLE_REFERENCE_INVOKE,
                         )
+
                     else ->
                         compilationException("unknown function kind", callee)
                 }

@@ -164,11 +164,9 @@ class CallAndReferenceGenerator(
                         val klass = function.parent as? IrClass
                         val typeArgumentCount = function.typeParameters.size +
                                 if (function is IrConstructor) klass?.typeParameters?.size ?: 0 else 0
-                        IrFunctionReferenceImpl(
+                        IrFunctionReferenceImpl.fromSymbolOwner(
                             startOffset, endOffset, type, symbol,
                             typeArgumentsCount = typeArgumentCount,
-                            valueArgumentsCount = function.valueParameters.size,
-                            reflectionTarget = symbol
                         ).applyTypeArguments(callableReferenceAccess)
                             .applyReceivers(callableReferenceAccess, explicitReceiverExpression)
                     }
@@ -447,19 +445,15 @@ class CallAndReferenceGenerator(
                 when (symbol) {
                     is IrConstructorSymbol -> IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, symbol)
                     is IrSimpleFunctionSymbol -> {
-                        IrCallImpl(
+                        IrCallImpl.fromSymbolOwner(
                             startOffset, endOffset, type, symbol,
-                            typeArgumentsCount = symbol.owner.typeParameters.size,
-                            valueArgumentsCount = symbol.owner.valueParameters.size,
                             origin = calleeReference.statementOrigin(),
                             superQualifierSymbol = dispatchReceiver.superQualifierSymbol()
                         )
                     }
                     is IrLocalDelegatedPropertySymbol -> {
-                        IrCallImpl(
+                        IrCallImpl.fromSymbolOwner(
                             startOffset, endOffset, type, symbol.owner.getter.symbol,
-                            typeArgumentsCount = symbol.owner.getter.typeParameters.size,
-                            valueArgumentsCount = 0,
                             origin = IrStatementOrigin.GET_LOCAL_PROPERTY,
                             superQualifierSymbol = dispatchReceiver.superQualifierSymbol()
                         )
@@ -468,10 +462,8 @@ class CallAndReferenceGenerator(
                         val getter = symbol.owner.getter
                         val backingField = symbol.owner.backingField
                         when {
-                            getter != null -> IrCallImpl(
+                            getter != null -> IrCallImpl.fromSymbolOwner(
                                 startOffset, endOffset, type, getter.symbol,
-                                typeArgumentsCount = getter.typeParameters.size,
-                                valueArgumentsCount = getter.valueParameters.size,
                                 origin = IrStatementOrigin.GET_PROPERTY,
                                 superQualifierSymbol = dispatchReceiver.superQualifierSymbol()
                             )
@@ -577,10 +569,8 @@ class CallAndReferenceGenerator(
                     is IrLocalDelegatedPropertySymbol -> {
                         val setter = symbol.owner.setter
                         when {
-                            setter != null -> IrCallImpl(
+                            setter != null -> IrCallImpl.fromSymbolOwner(
                                 startOffset, endOffset, type, setter.symbol,
-                                typeArgumentsCount = setter.typeParameters.size,
-                                valueArgumentsCount = setter.valueParameters.size,
                                 origin = origin,
                                 superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol()
                             ).apply {
@@ -595,10 +585,8 @@ class CallAndReferenceGenerator(
                         val setter = irProperty.setter
                         val backingField = irProperty.backingField
                         when {
-                            setter != null -> IrCallImpl(
+                            setter != null -> IrCallImpl.fromSymbolOwner(
                                 startOffset, endOffset, type, setter.symbol,
-                                typeArgumentsCount = setter.typeParameters.size,
-                                valueArgumentsCount = setter.valueParameters.size,
                                 origin = origin,
                                 superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol()
                             ).apply {
@@ -615,10 +603,8 @@ class CallAndReferenceGenerator(
                         }
                     }
                     is IrSimpleFunctionSymbol -> {
-                        IrCallImpl(
+                        IrCallImpl.fromSymbolOwner(
                             startOffset, endOffset, type, symbol,
-                            typeArgumentsCount = symbol.owner.typeParameters.size,
-                            valueArgumentsCount = 1,
                             origin = origin
                         ).apply {
                             putValueArgument(0, assignedValue)

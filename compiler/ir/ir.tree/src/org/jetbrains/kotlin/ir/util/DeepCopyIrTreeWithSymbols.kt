@@ -543,14 +543,11 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrConstructorCall {
         val constructorSymbol = symbolRemapper.getReferencedConstructor(expression.symbol)
-        return IrConstructorCallImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            constructorSymbol,
-            expression.typeArgumentsCount,
-            expression.constructorTypeArgumentsCount,
-            expression.valueArgumentsCount,
-            mapStatementOrigin(expression.origin)
+        return IrConstructorCallImpl.createCopy(
+            expression,
+            type = expression.type.remapType(),
+            symbol = constructorSymbol,
+            origin = mapStatementOrigin(expression.origin)
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
             transformValueArguments(expression)
@@ -568,14 +565,12 @@ open class DeepCopyIrTreeWithSymbols(
 
     private fun shallowCopyCall(expression: IrCall): IrCall {
         val newCallee = symbolRemapper.getReferencedSimpleFunction(expression.symbol)
-        return IrCallImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            newCallee,
-            expression.typeArgumentsCount,
-            expression.valueArgumentsCount,
-            mapStatementOrigin(expression.origin),
-            symbolRemapper.getReferencedClassOrNull(expression.superQualifierSymbol)
+        return IrCallImpl.createCopy(
+            expression,
+            type = expression.type.remapType(),
+            symbol = newCallee,
+            origin = mapStatementOrigin(expression.origin),
+            superQualifierSymbol = symbolRemapper.getReferencedClassOrNull(expression.superQualifierSymbol),
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
         }.copyAttributes(expression)
@@ -632,17 +627,15 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitFunctionReference(expression: IrFunctionReference): IrFunctionReference {
         val symbol = symbolRemapper.getReferencedFunction(expression.symbol)
         val reflectionTarget = expression.reflectionTarget?.let { symbolRemapper.getReferencedFunction(it) }
-        return IrFunctionReferenceImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type.remapType(),
-            symbol,
-            expression.typeArgumentsCount,
-            expression.valueArgumentsCount,
-            reflectionTarget,
-            mapStatementOrigin(expression.origin)
+        return IrFunctionReferenceImpl.createCopy(
+            expression,
+            symbol = symbol,
+            type = expression.type.remapType(),
+            reflectionTarget = reflectionTarget,
+            origin = mapStatementOrigin(expression.origin)
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
-            transformValueArguments(expression)
+            transformReceiversAndCaptureArguments(expression)
         }.copyAttributes(expression)
     }
 
