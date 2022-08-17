@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.decompiled.light.classes
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.ClassFileViewProvider
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.compiled.ClsClassImpl
@@ -15,6 +16,8 @@ import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtEnumEntry
@@ -81,17 +84,40 @@ object DecompiledLightClassesFactory {
     }
 
     fun createLightClassForDecompiledKotlinFile(file: KtClsFile, project: Project): KtLightClassForDecompiledDeclaration? {
+        return createLightClassForDecompiledKotlinFile(project, file) { kotlinClsFile, javaClsClass, classOrObject ->
+            KtLightClassForDecompiledDeclaration(javaClsClass, javaClsClass.parent, kotlinClsFile, classOrObject)
+        }
+    }
+
+    private fun <T> createLightClassForDecompiledKotlinFile(
+        project: Project,
+        file: KtClsFile,
+        builder: (kotlinClsFile: KtClsFile, javaClsClass: PsiClass, classOrObject: KtClassOrObject?) -> T
+    ): T? {
         val virtualFile = file.virtualFile ?: return null
-
         val classOrObject = file.declarations.filterIsInstance<KtClassOrObject>().singleOrNull()
-
         val javaClsClass = createClsJavaClassFromVirtualFile(
-            file, virtualFile,
+            mirrorFile = file,
+            classFile = virtualFile,
             correspondingClassOrObject = classOrObject,
-            project,
+            project = project,
         ) ?: return null
 
-        return KtLightClassForDecompiledDeclaration(javaClsClass, javaClsClass.parent, file, classOrObject)
+        return builder(file, javaClsClass, classOrObject)
+    }
+
+    fun createLightFacadeForDecompiledKotlinFile(
+        project: Project,
+        facadeClassFqName: FqName,
+        files: List<KtFile>,
+    ): KtLightClassForFacade? {
+        assert(files.all(KtFile::isCompiled))
+        val file = files.firstOrNull { it.javaFileFacadeFqName == facadeClassFqName } as? KtClsFile
+            ?: error("Can't find the representative decompiled file for $facadeClassFqName")
+
+        return createLightClassForDecompiledKotlinFile(project, file) { kotlinClsFile, javaClsClass, classOrObject ->
+            KtLightClassForDecompiledFacade(javaClsClass, javaClsClass.parent, kotlinClsFile, classOrObject, files)
+        }
     }
 
     fun createClsJavaClassFromVirtualFile(

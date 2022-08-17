@@ -7,18 +7,14 @@ package org.jetbrains.kotlin.light.classes.symbol.caches
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
-import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.utils.caches.getValue
 import org.jetbrains.kotlin.analysis.utils.caches.softCachedValue
 import org.jetbrains.kotlin.analysis.utils.collections.ConcurrentMapBasedCache
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
-import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForFacade
 import org.jetbrains.kotlin.light.classes.symbol.classes.analyzeForLightClasses
-import org.jetbrains.kotlin.light.classes.symbol.decompiled.SymbolLightClassForDecompiledFacade
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.concurrent.ConcurrentHashMap
 
@@ -54,16 +50,7 @@ class SymbolLightClassFacadeCache(private val project: Project) {
                 }
 
             ktFiles.all { it.isCompiled } -> {
-                val file = ktFiles.firstOrNull { it.javaFileFacadeFqName == facadeClassFqName } as? KtClsFile
-                    ?: error("Can't find the representative decompiled file for $facadeClassFqName")
-                val classOrObject = file.declarations.filterIsInstance<KtClassOrObject>().singleOrNull()
-                val clsDelegate = DecompiledLightClassesFactory.createClsJavaClassFromVirtualFile(
-                    mirrorFile = file,
-                    classFile = file.virtualFile,
-                    correspondingClassOrObject = classOrObject,
-                    project = project,
-                ) ?: return null
-                SymbolLightClassForDecompiledFacade(clsDelegate, clsDelegate.parent, file, classOrObject, ktFiles)
+                DecompiledLightClassesFactory.createLightFacadeForDecompiledKotlinFile(project, facadeClassFqName, ktFiles)
             }
 
             else ->
