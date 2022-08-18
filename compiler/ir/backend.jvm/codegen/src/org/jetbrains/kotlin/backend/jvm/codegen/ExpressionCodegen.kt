@@ -360,7 +360,7 @@ class ExpressionCodegen(
         for (param in irFunction.valueParameters) {
             if (param.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION || param.origin == IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION)
                 continue
-            writeValueParameterInLocalVariableTable(param, startLabel, endLabel, isReceiver = param.index < irFunction.receiversPrefixSize)
+            writeValueParameterInLocalVariableTable(param, startLabel, endLabel, isReceiver = irFunction.isReceiver(param))
         }
     }
 

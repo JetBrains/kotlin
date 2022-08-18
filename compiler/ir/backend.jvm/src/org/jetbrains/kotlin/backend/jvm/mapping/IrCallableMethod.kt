@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.mapping
 
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -22,7 +21,7 @@ class IrCallableMethod(
     val asmMethod: Method = signature.asmMethod
 
     val valueParameterTypes: List<Type> =
-        signature.valueParameters.filter { it.kind != JvmMethodParameterKind.RECEIVER }.map { it.asmType }
+        signature.valueParameters.map { it.asmType }
 
     override fun toString(): String =
         "${Printer.OPCODES[invokeOpcode]} $owner.$asmMethod" + (if (isInterfaceMethod) " (itf)" else "")
