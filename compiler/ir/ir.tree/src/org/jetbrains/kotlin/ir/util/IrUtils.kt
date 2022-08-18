@@ -428,7 +428,9 @@ fun irCall(
             typeArgumentsCount,
             valueArgumentsCount = newSymbol.owner.valueParameters.size,
             origin = origin,
-            superQualifierSymbol = newSuperQualifierSymbol
+            superQualifierSymbol = newSuperQualifierSymbol,
+            hasExtensionReceiver = newSymbol.owner.hasExtensionReceiver,
+            contextReceiversCount = newSymbol.owner.contextReceiverParametersCount,
         ).apply {
             copyTypeAndValueArgumentsFrom(
                 call,
