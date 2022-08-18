@@ -360,25 +360,24 @@ enum class WasmOp(
     I31_GET_S("i31.get_s", 0xFB_21),
     I31_GET_U("i31.get_u", 0xFB_22),
 
-    REF_TEST_STATIC("ref.test_static", 0xFB_44, STRUCT_TYPE_IDX),
-    REF_CAST_STATIC("ref.cast_static", 0xFB_45, STRUCT_TYPE_IDX),
+    REF_TEST("ref.test", 0xFB_44, STRUCT_TYPE_IDX),
+    REF_CAST("ref.cast", 0xFB_45, STRUCT_TYPE_IDX),
 
-    BR_ON_CAST_STATIC_FAIL("br_on_cast_static_fail", 0xfb47, listOf(LABEL_IDX, STRUCT_TYPE_IDX)),
+    BR_ON_CAST_FAIL("br_on_cast_fail", 0xfb47, listOf(LABEL_IDX, STRUCT_TYPE_IDX)),
 
-    REF_IS_FUNC("ref.is_func", 0xfb50),
     REF_IS_DATA("ref.is_data", 0xfb51),
     REF_IS_I31("ref.is_i31", 0xfb52),
-    REF_AS_FUNC("ref.as_func", 0xfb58),
     REF_AS_DATA("ref.as_data", 0xfb59),
     REF_AS_I31("ref.as_i31", 0xfb5a),
 
-    BR_ON_FUNC("br_on_func", 0xfb60, listOf(LABEL_IDX)),
     BR_ON_DATA("br_on_data", 0xfb61, listOf(LABEL_IDX)),
     BR_ON_I31("br_on_i31", 0xfb62, listOf(LABEL_IDX)),
 
-    BR_ON_NON_FUNC("br_on_non_func", 0xfb63, listOf(LABEL_IDX)),
     BR_ON_NON_DATA("br_on_non_data", 0xfb64, listOf(LABEL_IDX)),
     BR_ON_NON_I31("br_on_non_i31", 0xfb65, listOf(LABEL_IDX)),
+
+    EXTERN_INTERNALIZE("extern.internalize", 0xfb70), // externref -> anyref
+    EXTERN_EXTERNALIZE("extern.externalize", 0xfb71), // anyref -> externref
 
     // Pseudo-instruction, just alias for a normal call. It's used to easily spot get_unit on the wasm level.
     GET_UNIT("call", 0x10, FUNC_IDX)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -256,21 +256,19 @@ internal annotation class WasmOp(val name: String) {
         const val I31_NEW = "I31_NEW"
         const val I31_GET_S = "I31_GET_S"
         const val I31_GET_U = "I31_GET_U"
-        const val REF_TEST_STATIC = "REF_TEST_STATIC"
-        const val REF_CAST_STATIC = "REF_CAST_STATIC"
-        const val BR_ON_CAST_STATIC_FAIL = "BR_ON_CAST_STATIC_FAIL"
-        const val REF_IS_FUNC = "REF_IS_FUNC"
+        const val REF_TEST = "REF_TEST"
+        const val REF_CAST = "REF_CAST"
+        const val BR_ON_CAST_FAIL = "BR_ON_CAST_FAIL"
         const val REF_IS_DATA = "REF_IS_DATA"
         const val REF_IS_I31 = "REF_IS_I31"
-        const val REF_AS_FUNC = "REF_AS_FUNC"
         const val REF_AS_DATA = "REF_AS_DATA"
         const val REF_AS_I31 = "REF_AS_I31"
-        const val BR_ON_FUNC = "BR_ON_FUNC"
         const val BR_ON_DATA = "BR_ON_DATA"
         const val BR_ON_I31 = "BR_ON_I31"
-        const val BR_ON_NON_FUNC = "BR_ON_NON_FUNC"
         const val BR_ON_NON_DATA = "BR_ON_NON_DATA"
         const val BR_ON_NON_I31 = "BR_ON_NON_I31"
+        const val EXTERN_INTERNALIZE = "EXTERN_INTERNALIZE"
+        const val EXTERN_EXTERNALIZE = "EXTERN_EXTERNALIZE"
         const val GET_UNIT = "GET_UNIT"
     }
 }

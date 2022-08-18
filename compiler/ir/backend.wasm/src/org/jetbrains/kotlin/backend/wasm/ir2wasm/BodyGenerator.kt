@@ -414,7 +414,7 @@ class BodyGenerator(
                         body.buildBlock("isInterface", WasmRefNullType(WasmHeapType.Simple.Data)) { innerLabel ->
                             body.buildGetLocal(parameterLocal)
                             body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1))
-                            body.buildBrInstr(WasmOp.BR_ON_CAST_STATIC_FAIL, innerLabel, classITable)
+                            body.buildBrInstr(WasmOp.BR_ON_CAST_FAIL, innerLabel, classITable)
                             body.buildStructGet(classITable, context.referenceClassITableInterfaceSlot(irInterface.symbol))
                             body.buildInstr(WasmOp.REF_IS_NULL)
                             body.buildInstr(WasmOp.I32_EQZ)
