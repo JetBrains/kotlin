@@ -13,6 +13,8 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.HasAttributes
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.TaskProvider
@@ -97,9 +99,13 @@ sealed class NativeBinary(
 
     // Output access.
     // TODO: Provide output configurations and integrate them with Gradle Native.
-    var outputDirectory: File = with(project) {
+    var outputDirectory: File
+        get() = outputDirectoryProperty.get().asFile
+        set(value) = outputDirectoryProperty.set(value)
+
+    val outputDirectoryProperty: DirectoryProperty = with(project) {
         val targetSubDirectory = target.disambiguationClassifier?.let { "$it/" }.orEmpty()
-        buildDir.resolve("bin/$targetSubDirectory${this@NativeBinary.name}")
+        objects.directoryProperty().convention(layout.buildDirectory.dir("bin/$targetSubDirectory${this@NativeBinary.name}"))
     }
 
     val outputFile: File by lazy {

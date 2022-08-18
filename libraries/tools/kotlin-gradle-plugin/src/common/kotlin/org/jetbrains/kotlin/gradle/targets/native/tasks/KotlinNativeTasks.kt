@@ -501,9 +501,7 @@ constructor(
         disallowSourceChanges()
     }
 
-    override val destinationDirectory: DirectoryProperty = objectFactory.directoryProperty().apply {
-        set(binary.outputDirectory)
-    }
+    override val destinationDirectory: DirectoryProperty = binary.outputDirectoryProperty
 
     override val outputKind: CompilerOutputKind
         @Input get() = binary.outputKind.compilerOutputKind
