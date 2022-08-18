@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrPropertyReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -43,7 +44,7 @@ private class PropertyReferenceDelegationLowering(val context: JvmBackendContext
 private class PropertyReferenceDelegationTransformer(val context: JvmBackendContext) : IrElementTransformerVoid() {
     private fun IrSimpleFunction.accessorBody(delegate: IrPropertyReference, receiverFieldOrExpression: IrStatement?) =
         context.createIrBuilder(symbol, startOffset, endOffset).run {
-            val value = valueParameters.singleOrNull()?.let(::irGet)
+            val value = valueParametersWithoutReceivers().singleOrNull()?.let(::irGet)
             var boundReceiver = when (receiverFieldOrExpression) {
                 null -> null
                 is IrField -> irGetField(dispatchReceiverParameter?.let(::irGet), receiverFieldOrExpression)
@@ -67,7 +68,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
                         putExtensionReceiverAsArgument(boundReceiver.also { boundReceiver = null } ?: irGet(unboundReceiver!!))
                     }
                     if (value != null) {
-                        putValueArgument(0, value)
+                        putValueArgumentViaSourceBasedArgumentIndex(0, value)
                     }
                 }
             } else {

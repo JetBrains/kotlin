@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.util.receiversPrefixSize
 import java.io.File
 
 fun <D : IrAttributeContainer> D.copyAttributes(other: IrAttributeContainer?): D = apply {
@@ -38,7 +39,7 @@ val IrFile.name: String get() = File(path).name
 
 @ObsoleteDescriptorBasedAPI
 fun IrFunction.getIrValueParameter(parameter: ValueParameterDescriptor): IrValueParameter =
-    valueParameters.getOrElse(parameter.index) {
+    valueParameters.getOrElse(parameter.index + receiversPrefixSize) {
         throw AssertionError("No IrValueParameter for $parameter")
     }.also { found ->
         assert(found.descriptor == parameter) {

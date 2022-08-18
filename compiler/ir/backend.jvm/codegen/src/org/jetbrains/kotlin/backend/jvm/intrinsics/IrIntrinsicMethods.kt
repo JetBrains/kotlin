@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isFileClass
+import org.jetbrains.kotlin.ir.util.valueParametersWithoutReceivers
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
@@ -209,7 +210,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 ownerFqName,
                 getParameterFqName(owner.extensionReceiverParameter),
                 owner.name.asString(),
-                owner.valueParameters.map(::getParameterFqName)
+                owner.valueParametersWithoutReceivers().map(::getParameterFqName)
             )
         }
 

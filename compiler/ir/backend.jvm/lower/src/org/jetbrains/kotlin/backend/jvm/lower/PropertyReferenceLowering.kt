@@ -263,7 +263,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             // This function was imported from a jar. Didn't run the inline class lowering yet though - have to map manually.
             val replaced = context.inlineClassReplacements.getReplacementFunction(this) ?: this
             val signature = context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(replaced)
-            val localIndex = signature.valueParameters.take(index + if (replaced.extensionReceiverParameter != null) 1 else 0)
+            val localIndex = signature.valueParameters.take(index)
                 .sumOf { it.asmType.size } + (if (replaced.dispatchReceiverParameter != null) 1 else 0)
             // Null checks are removed during inlining, so we can ignore them.
             return loadCompiledInlineFunction(containerId, signature.asmMethod, isSuspend, hasMangledReturnType, context.state)
@@ -417,11 +417,13 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
                 call.dispatchReceiver = call.symbol.owner.dispatchReceiverParameter?.let {
                     receiverFromField ?: irImplicitCast(irGet(arguments[1]), expression.receiverType)
                 }
-                call.extensionReceiver = call.symbol.owner.extensionReceiverParameter?.let {
-                    if (call.symbol.owner.dispatchReceiverParameter == null)
-                        receiverFromField ?: irImplicitCast(irGet(arguments[1]), it.type)
-                    else
-                        irImplicitCast(irGet(arguments[if (receiverFromField != null) 1 else 2]), it.type)
+                call.symbol.owner.extensionReceiverParameter?.let {
+                    call.putExtensionReceiverAsArgument(
+                        if (call.symbol.owner.dispatchReceiverParameter == null)
+                            receiverFromField ?: irImplicitCast(irGet(arguments[1]), it.type)
+                        else
+                            irImplicitCast(irGet(arguments[if (receiverFromField != null) 1 else 2]), it.type)
+                    )
                 }
             }
 

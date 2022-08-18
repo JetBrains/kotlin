@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.receiversPrefixSize
+import org.jetbrains.kotlin.ir.util.valueParametersWithoutReceivers
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -463,7 +465,7 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
             .mapIndexedTo(this) { index, typeProjection -> createValueParameter("p$index", index + 1, typeProjection.type.toIrType()) }
     }
 
-    val valueArgumentsCount = irAdapterFun.valueParameters.size
+    val valueArgumentsCount = irAdapterFun.valueParameters.size - irAdapterFun.receiversPrefixSize
     val invokeDescriptor = funType.memberScope
         .getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND)
         .find { it.valueParameters.size == valueArgumentsCount }
@@ -483,8 +485,8 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
         this@createFunctionForSuspendConversion.context
             .callToSubstitutedDescriptorMap[irAdapteeCall] = invokeDescriptor
 
-        for (irAdapterParameter in irAdapterFun.valueParameters) {
-            irAdapteeCall.putValueArgument(irAdapterParameter.index, irGet(irAdapterParameter))
+        for (irAdapterParameter in irAdapterFun.valueParametersWithoutReceivers()) {
+            irAdapteeCall.putValueArgument(irAdapterParameter.index - irAdapterFun.receiversPrefixSize, irGet(irAdapterParameter))
         }
         if (suspendFunType.arguments.last().type.isUnit()) {
             +irAdapteeCall

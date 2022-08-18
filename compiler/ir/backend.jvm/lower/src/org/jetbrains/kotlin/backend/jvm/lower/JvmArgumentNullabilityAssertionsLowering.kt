@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.hasPlatformDependent
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -54,7 +54,7 @@ private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContex
         else
             super.visitTypeOperator(expression, data)
 
-    override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: AssertionScope): IrElement {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: AssertionScope): IrElement {
         // Always drop nullability assertions on dispatch receivers, assuming that it will throw NPE.
         //
         // NB there are some members in Kotlin built-in classes which are NOT implemented as platform method calls,
@@ -70,8 +70,15 @@ private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContex
         val parameterAssertionScope =
             if (isCallToMethodWithTypeCheckBarrier(expression)) AssertionScope.Disabled else AssertionScope.Enabled
         for (i in 0 until expression.valueArgumentsCount) {
+
             expression.getValueArgument(i)?.let { irArgument ->
-                expression.putValueArgument(i, irArgument.transform(this, parameterAssertionScope))
+                val assertionScope =
+                    if (i < expression.receiversPrefixSize)
+                        receiverAssertionScope
+                    else
+                        parameterAssertionScope
+
+                expression.putValueArgument(i, irArgument.transform(this, assertionScope))
             }
         }
 
