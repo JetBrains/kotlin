@@ -53,4 +53,10 @@ public class SerializationFirMembersTestGenerated extends AbstractSerializationF
     public void testPrivatePropertiesSerialization() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/firMembers/privatePropertiesSerialization.kt");
     }
+
+    @Test
+    @TestMetadata("serializableObject.kt")
+    public void testSerializableObject() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/firMembers/serializableObject.kt");
+    }
 }

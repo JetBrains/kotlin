@@ -132,8 +132,10 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
     @OptIn(SymbolInternals::class)
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         val owner = context?.owner ?: return emptyList()
-        if (owner.name == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT && callableId.callableName == SerialEntityNames.SERIALIZER_PROVIDER_NAME)
-            return listOf(generateSerializerGetterInCompanion(owner, callableId))
+        if (callableId.callableName == SerialEntityNames.SERIALIZER_PROVIDER_NAME) {
+            val serializableClass = session.getSerializableClassDescriptorByCompanion(owner) ?: return emptyList()
+            return listOf(generateSerializerGetterInCompanion(owner, serializableClass, callableId))
+        }
         if (owner.name != SerialEntityNames.SERIALIZER_CLASS_NAME) return emptyList()
         if (callableId.callableName !in setOf(
                 SpecialNames.INIT,
@@ -154,7 +156,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         return listOf(copy.symbol)
     }
 
-    private fun generateSerializerGetterInCompanion(owner: FirClassSymbol<*>, callableId: CallableId): FirNamedFunctionSymbol {
+    private fun generateSerializerGetterInCompanion(owner: FirClassSymbol<*>, serializableClassSymbol: FirClassSymbol<*>, callableId: CallableId): FirNamedFunctionSymbol {
         val f = buildSimpleFunction {
             moduleData = session.moduleData
             symbol = FirNamedFunctionSymbol(callableId)
@@ -166,10 +168,6 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             )
             name = callableId.callableName
             dispatchReceiverType = owner.defaultType()
-
-            // TODO: handle serializable objects
-            val serializableClassSymbol =
-                (owner.getContainingDeclarationSymbol(session) as? FirClassSymbol<*>) ?: error("Can't get outer class for $owner")
 
             typeParameters.addAll(serializableClassSymbol.typeParameterSymbols.map { newSimpleTypeParameter(session, symbol, it.name) })
             val parametersAsArguments = typeParameters.map { it.toConeType() }.toTypedArray<ConeTypeProjection>()
@@ -193,7 +191,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         return f.symbol
     }
 
-    @OptIn(SymbolInternals::class) // TODO: localSerializersFieldDescriptors
+    @OptIn(SymbolInternals::class)
     override fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> {
         val owner = context?.owner ?: return emptyList()
         if (owner.name != SerialEntityNames.SERIALIZER_CLASS_NAME) return emptyList()
