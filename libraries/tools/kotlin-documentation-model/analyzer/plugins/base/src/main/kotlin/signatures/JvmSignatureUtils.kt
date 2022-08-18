@@ -20,6 +20,9 @@ interface JvmSignatureUtils {
     fun Collection<ExtraModifiers>.toSignatureString(): String =
         joinToString("") { it.name.toLowerCase() + " " }
 
+    @Suppress("UNCHECKED_CAST")
+    fun Documentable.annotations() = (this as? WithExtraProperties<Documentable>)?.annotations() ?: emptyMap()
+
     fun <T : AnnotationTarget> WithExtraProperties<T>.annotations(): SourceSetDependent<List<Annotations.Annotation>> =
         extra[Annotations]?.directAnnotations ?: emptyMap()
 
