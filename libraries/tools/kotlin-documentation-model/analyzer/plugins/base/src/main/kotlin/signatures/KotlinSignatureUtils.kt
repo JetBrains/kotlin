@@ -1,6 +1,8 @@
 package org.jetbrains.dokka.base.signatures
 
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
+import org.jetbrains.dokka.base.transformers.pages.annotations.SinceKotlinTransformer
+import org.jetbrains.dokka.pages.ContentKind
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.DriOfAny
 import org.jetbrains.dokka.links.DriOfUnit
@@ -10,12 +12,21 @@ import org.jetbrains.dokka.model.properties.WithExtraProperties
 
 object KotlinSignatureUtils : JvmSignatureUtils {
 
+    private const val classExtension = "::class"
     private val strategy = OnlyOnce
     private val listBrackets = Pair('[', ']')
-    private val classExtension = "::class"
     private val ignoredAnnotations = setOf(
+        /**
+         * Rendered separately, see [SinceKotlinTransformer]
+         */
         Annotations.Annotation(DRI("kotlin", "SinceKotlin"), emptyMap()),
-        Annotations.Annotation(DRI("kotlin", "Deprecated"), emptyMap())
+
+        /**
+         * Rendered separately as its own block, see usage of [ContentKind.Deprecation]
+         */
+        Annotations.Annotation(DRI("kotlin", "Deprecated"), emptyMap()),
+        Annotations.Annotation(DRI("kotlin", "DeprecatedSinceKotlin"), emptyMap()),
+        Annotations.Annotation(DRI("java.lang", "Deprecated"), emptyMap()), // could be used as well for interop
     )
 
 
