@@ -450,6 +450,7 @@ fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) 
     WasmF64 -> g.buildConstF64(0.0)
     is WasmRefNullType -> g.buildRefNull(type.heapType)
     is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Any)
+    is WasmExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern)
     WasmUnreachableType -> error("Unreachable type can't be initialized")
     else -> error("Unknown value type ${type.name}")
 }
