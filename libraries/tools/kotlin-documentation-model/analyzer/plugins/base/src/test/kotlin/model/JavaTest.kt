@@ -143,6 +143,43 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
         ) {
             with((this / "java" / "Foo").cast<DClass>()) {
                 generics counts 1
+                generics[0].dri.classNames equals "Foo"
+                (functions[0].type as? TypeParameter)?.dri?.run {
+                    packageName equals "java"
+                    name equals "Foo"
+                    callable?.name equals "foo"
+                }
+            }
+        }
+    }
+
+    @Test
+    fun typeParameterIntoDifferentClasses2596() {
+        inlineModelTest(
+            """
+            |class GenericDocument { }
+            |public interface DocumentClassFactory<T> {
+            |    String getSchemaName();
+            |    GenericDocument toGenericDocument(T document);
+            |    T fromGenericDocument(GenericDocument genericDoc);
+            |}
+            |
+            |public final class DocumentClassFactoryRegistry {
+            |    public <T> DocumentClassFactory<T> getOrCreateFactory(T documentClass) {
+            |        return null;
+            |    }
+            |}
+            """, configuration = configuration
+        ) {
+            with((this / "java" / "DocumentClassFactory").cast<DInterface>()) {
+                generics counts 1
+                generics[0].dri.classNames equals "DocumentClassFactory"
+            }
+            with((this / "java" / "DocumentClassFactoryRegistry").cast<DClass>()) {
+                functions.forEach {
+                    (it.type as GenericTypeConstructor).dri.classNames equals "DocumentClassFactory"
+                    ((it.type as GenericTypeConstructor).projections[0] as TypeParameter).dri.classNames equals "DocumentClassFactoryRegistry"
+                }
             }
         }
     }
