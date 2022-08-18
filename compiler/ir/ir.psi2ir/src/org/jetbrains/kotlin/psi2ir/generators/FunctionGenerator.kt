@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
+import org.jetbrains.kotlin.ir.util.receiversPrefixSize
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -348,8 +349,11 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         // fun f(f1: () -> String = { f2() },
         //       f2: () -> String) = f1()
         if (withDefaultValues) {
+            val receiversPrefixSize = irFunction.receiversPrefixSize
             irFunction.valueParameters.forEachIndexed { index, irValueParameter ->
-                val valueParameterDescriptor = functionDescriptor.valueParameters[index]
+                if (index < receiversPrefixSize) return@forEachIndexed
+
+                val valueParameterDescriptor = functionDescriptor.valueParameters[index - receiversPrefixSize]
                 val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
                 irValueParameter.defaultValue = ktParameter?.defaultValue?.let { defaultValue ->
                     val inAnnotation =
