@@ -109,7 +109,7 @@ private class SerializerClassPreLowering(
 
     override fun lower(irClass: IrClass) {
         irClass.runPluginSafe {
-            IrPreGenerator(irClass, context).generate()
+            IrPreGenerator.generate(irClass, context)
         }
     }
 }

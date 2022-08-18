@@ -34,8 +34,8 @@ class IrPreGenerator(
     val irClass: IrClass,
     compilerContext: SerializationPluginContext,
 ) : BaseIrGenerator(irClass, compilerContext) {
-    private val serialDescriptorSymbol = compilerContext.getClassFromRuntime(SerialEntityNames.SERIAL_DESCRIPTOR_CLASS)
-    fun generate() {
+
+    private fun generate() {
         preGenerateWriteSelfMethodIfNeeded()
         preGenerateDeserializationConstructorIfNeeded()
     }
@@ -75,6 +75,7 @@ class IrPreGenerator(
             SERIALIZATION_PLUGIN_ORIGIN
         )
         // descriptor
+        val serialDescriptorSymbol = compilerContext.getClassFromRuntime(SerialEntityNames.SERIAL_DESCRIPTOR_CLASS)
         method.addValueParameter(
             Name.identifier("serialDesc"), serialDescriptorSymbol.defaultType,
             SERIALIZATION_PLUGIN_ORIGIN
@@ -93,7 +94,9 @@ class IrPreGenerator(
     private fun preGenerateDeserializationConstructorIfNeeded() {
         if (!irClass.isInternalSerializable) return
         // do not add synthetic deserialization constructor if .deserialize method is customized
-        if (irClass.hasCompanionObjectAsSerializer && irClass.companionObject()?.findPluginGeneratedMethod(SerialEntityNames.LOAD) == null) return
+        if (irClass.hasCompanionObjectAsSerializer && irClass.companionObject()
+                ?.findPluginGeneratedMethod(SerialEntityNames.LOAD) == null
+        ) return
         if (irClass.isValue) return
         if (irClass.findSerializableSyntheticConstructor() != null) return
         val ctor = irClass.addConstructor {
@@ -119,5 +122,15 @@ class IrPreGenerator(
     private fun IrType.makeNullableIfNotPrimitive() =
         if (this.isPrimitiveType(false)) this
         else this.makeNullable()
+
+    companion object {
+        fun generate(
+            irClass: IrClass,
+            compilerContext: SerializationPluginContext
+        ) {
+            if (!irClass.isInternalSerializable) return
+            IrPreGenerator(irClass, compilerContext).generate()
+        }
+    }
 
 }
