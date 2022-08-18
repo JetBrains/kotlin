@@ -55,6 +55,13 @@ abstract class IrFunctionCommonImpl(
     override var hasExtensionReceiver: Boolean = false
 
     override var allValueParameters: List<IrValueParameter> = emptyList()
+        set(value) {
+            if (field.size == 1 && value.size > 1) {
+                field.hashCode()
+            }
+
+            field = value
+        }
 
     override var contextReceiverParametersCount: Int = 0
 

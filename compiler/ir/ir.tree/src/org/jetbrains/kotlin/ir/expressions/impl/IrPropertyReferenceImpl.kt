@@ -38,6 +38,8 @@ class IrPropertyReferenceImpl(
 ) : IrPropertyReference() {
     override val typeArgumentsByIndex: Array<IrType?> = arrayOfNulls(typeArgumentsCount)
 
+    override var extensionReceiver: IrExpression? = null
+
     override val argumentsByParameterIndex: Array<IrExpression?>
         get() = throw UnsupportedOperationException("Property reference $symbol has no value arguments")
 

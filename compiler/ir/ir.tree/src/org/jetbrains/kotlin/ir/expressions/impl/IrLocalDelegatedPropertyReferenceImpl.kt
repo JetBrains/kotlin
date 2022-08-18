@@ -36,6 +36,7 @@ class IrLocalDelegatedPropertyReferenceImpl(
     override val origin: IrStatementOrigin? = null,
 ) : IrLocalDelegatedPropertyReference() {
     override val typeArgumentsByIndex: Array<IrType?> = emptyArray()
+    override var extensionReceiver: IrExpression? = null
 
     override val argumentsByParameterIndex: Array<IrExpression?>
         get() = throw UnsupportedOperationException("Property reference $symbol has no value arguments")
