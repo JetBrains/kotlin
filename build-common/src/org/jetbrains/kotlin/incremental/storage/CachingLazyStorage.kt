@@ -26,7 +26,20 @@ import java.io.File
 import java.io.IOException
 
 enum class StorageEvents {
-    CLOSE, CREATE_MAP, FORCE, DROP_MEMORY_CACHES, CLEAN, APPEND, REMOVE, SET, GET, CONTAINS, KEYS, GET_STORAGE_OR_CREATE_NEW, GET_STORAGE_IF_EXISTS, FLUSH
+    L, //CLOSE
+    M, //CREATE_MAP,
+    O, //FORCE
+    D,  //DROP_MEMORY_CACHES
+    C, //CLEAN
+    A, //APPEND
+    R, //REMOVE
+    S, //SET
+    G, //GET
+    T, //CONTAINS
+    K, //KEYS
+    N, //GET_STORAGE_OR_CREATE_NEW
+    E, //GET_STORAGE_IF_EXISTS
+    F //FLUSH
 }
 
 /**
@@ -43,7 +56,7 @@ class CachingLazyStorage<K, V>(
     var events = java.util.Collections.synchronizedList(mutableListOf<StorageEvents>())
 
     private fun getStorageIfExists(): PersistentHashMap<K, V>? {
-        events.carefulAdd(GET_STORAGE_IF_EXISTS)
+        carefulAdd(E,events)
 
         if (storage != null) return storage
 
@@ -59,7 +72,7 @@ class CachingLazyStorage<K, V>(
     }
 
     private fun getStorageOrCreateNew(): PersistentHashMap<K, V> {
-        events.carefulAdd(GET_STORAGE_OR_CREATE_NEW)
+        carefulAdd(N,events)
         if (storage == null) {
             storage = createMap()
         }
@@ -69,43 +82,43 @@ class CachingLazyStorage<K, V>(
     override val keys: Collection<K>
         @Synchronized
         get() {
-            events.carefulAdd(KEYS)
+            carefulAdd(K,events)
             return getStorageIfExists()?.allKeysWithExistingMapping ?: listOf()
         }
 
     @Synchronized
     override operator fun contains(key: K): Boolean {
-        events.carefulAdd(CONTAINS)
+        carefulAdd(T,events)
         return getStorageIfExists()?.containsMapping(key) ?: false
     }
 
     @Synchronized
     override operator fun get(key: K): V? {
-        events.carefulAdd(GET)
+        carefulAdd(G,events)
         return getStorageIfExists()?.get(key)
     }
 
     @Synchronized
     override operator fun set(key: K, value: V) {
-        events.carefulAdd(SET)
+        carefulAdd(S,events)
         getStorageOrCreateNew().put(key, value)
     }
 
     @Synchronized
     override fun remove(key: K) {
-        events.carefulAdd(REMOVE)
+        carefulAdd(R,events)
         getStorageIfExists()?.remove(key)
     }
 
     @Synchronized
     override fun append(key: K, value: V) {
-        events.carefulAdd(APPEND)
+        carefulAdd(A,events)
         getStorageOrCreateNew().appendData(key, { valueExternalizer.save(it, value) })
     }
 
     @Synchronized
     override fun clean() {
-        events.carefulAdd(CLEAN)
+        carefulAdd(C,events)
         try {
             storage?.close()
         } finally {
@@ -118,43 +131,49 @@ class CachingLazyStorage<K, V>(
 
     @Synchronized
     override fun flush(memoryCachesOnly: Boolean) {
-        events.carefulAdd(FLUSH)
+        carefulAdd(F,events)
         val existingStorage = storage ?: return
 
         if (memoryCachesOnly) {
             if (existingStorage.isDirty) {
-                events.carefulAdd(DROP_MEMORY_CACHES)
+                carefulAdd(D,events)
                 existingStorage.dropMemoryCaches()
             }
         } else {
-            events.carefulAdd(FORCE)
+            carefulAdd(O,events)
             existingStorage.force()
         }
     }
 
     @Synchronized
     override fun close() {
-        events.carefulAdd(CLOSE)
-        LOG.info(">>>$storageFile:$events")
+        carefulAdd(L,events)
+        dropEventsToLog()
         try {
             storage?.close()
         } finally {
             storage = null
-            events.clear()
         }
     }
 
     private fun createMap(): PersistentHashMap<K, V> {
-        events.carefulAdd(CREATE_MAP)
+        carefulAdd(M, events)
         return PersistentHashMap(storageFile, keyDescriptor, valueExternalizer)
     }
 
     @Synchronized
-    fun <E> MutableList<E>.carefulAdd(a:E) {
-        if(this.size > 100) {
-            LOG.info(">>>$storageFile:$events")
-            events.clear()
+    fun carefulAdd(event:StorageEvents, eventsList: MutableList<StorageEvents>) {
+
+        if(eventsList.size > 1000) {
+            dropEventsToLog()
         }
-        this.add(a)
+        eventsList.add(event)
+    }
+
+    fun dropEventsToLog() {
+        val fileKey = storageFile.absolutePath.substringAfter("/targets/")
+        val eventsValue = events.toString().replace(", ", "")
+        LOG.info(">>>$fileKey:$eventsValue")
+        events.clear()
     }
 }
