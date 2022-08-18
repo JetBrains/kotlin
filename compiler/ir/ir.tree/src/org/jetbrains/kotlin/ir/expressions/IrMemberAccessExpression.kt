@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.KotlinType
  */
 abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference() {
     var dispatchReceiver: IrExpression? = null
-    var extensionReceiver: IrExpression? = null
+    abstract var extensionReceiver: IrExpression?
 
     abstract override val symbol: S
 
@@ -68,7 +68,6 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         dispatchReceiver?.accept(visitor, data)
-        extensionReceiver?.accept(visitor, data)
         if (valueArgumentsCount > 0) {
             argumentsByParameterIndex.forEach { it?.accept(visitor, data) }
         }
@@ -76,10 +75,10 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         dispatchReceiver = dispatchReceiver?.transform(transformer, data)
-        extensionReceiver = extensionReceiver?.transform(transformer, data)
         if (valueArgumentsCount > 0) {
             argumentsByParameterIndex.forEachIndexed { i, irExpression ->
-                argumentsByParameterIndex[i] = irExpression?.transform(transformer, data)
+                val transform = irExpression?.transform(transformer, data)
+                argumentsByParameterIndex[i] = transform
             }
         }
     }
@@ -132,20 +131,11 @@ fun IrMemberAccessExpression<*>.putValueArgument(valueParameterDescriptor: Value
 }
 
 @ObsoleteDescriptorBasedAPI
-inline fun <T : IrMemberAccessExpression<*>> T.mapTypeParameters(transform: (TypeParameterDescriptor) -> IrType) : T =
+inline fun <T : IrMemberAccessExpression<*>> T.mapTypeParameters(transform: (TypeParameterDescriptor) -> IrType): T =
     apply {
         val descriptor = symbol.descriptor as CallableDescriptor
         descriptor.typeParameters.forEach {
             putTypeArgument(it.index, transform(it))
-        }
-    }
-
-@ObsoleteDescriptorBasedAPI
-inline fun <T : IrMemberAccessExpression<*>> T.mapValueParameters(transform: (ValueParameterDescriptor) -> IrExpression?): T =
-    apply {
-        val descriptor = symbol.descriptor as CallableDescriptor
-        descriptor.valueParameters.forEach {
-            putValueArgument(it.index, transform(it))
         }
     }
 
@@ -161,6 +151,5 @@ inline fun <T : IrMemberAccessExpression<*>> T.mapValueParametersIndexed(transfo
 fun IrMemberAccessExpression<*>.putArgument(callee: IrFunction, parameter: IrValueParameter, argument: IrExpression) =
     when (parameter) {
         callee.dispatchReceiverParameter -> dispatchReceiver = argument
-        callee.extensionReceiverParameter -> extensionReceiver = argument
         else -> putValueArgument(parameter.index, argument)
     }

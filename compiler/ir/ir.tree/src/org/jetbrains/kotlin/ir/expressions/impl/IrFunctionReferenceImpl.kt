@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.totalValueParametersCount
+import org.jetbrains.kotlin.ir.util.convertSourceArgumentIndexToReal
 import org.jetbrains.kotlin.name.Name
 
 class IrFunctionReferenceImpl(
@@ -59,7 +59,7 @@ class IrFunctionReferenceImpl(
             type,
             symbol,
             typeArgumentsCount,
-            symbol.descriptor.valueParameters.size.totalValueParametersCount(
+            symbol.descriptor.valueParameters.size.convertSourceArgumentIndexToReal(
                 symbol.descriptor.contextReceiverParameters.size,
                 hasExtensionReceiver = symbol.descriptor.extensionReceiverParameter != null
             ),

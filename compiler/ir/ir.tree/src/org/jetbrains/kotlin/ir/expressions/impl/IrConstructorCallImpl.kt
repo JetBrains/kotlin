@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.totalValueParametersCount
+import org.jetbrains.kotlin.ir.util.convertSourceArgumentIndexToReal
 
 class IrConstructorCallImpl(
     override val startOffset: Int,
@@ -47,7 +47,7 @@ class IrConstructorCallImpl(
             val totalTypeParametersCount = constructorDescriptor.typeParameters.size
             val valueParametersCount =
                 constructorDescriptor.valueParameters.size
-                    .totalValueParametersCount(constructorDescriptor.contextReceiverParameters.size, hasExtensionReceiver = false)
+                    .convertSourceArgumentIndexToReal(constructorDescriptor.contextReceiverParameters.size, hasExtensionReceiver = false)
             return IrConstructorCallImpl(
                 startOffset, endOffset,
                 type,
