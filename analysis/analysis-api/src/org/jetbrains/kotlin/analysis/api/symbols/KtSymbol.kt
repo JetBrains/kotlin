@@ -95,7 +95,8 @@ public enum class KtSymbolOrigin {
      * interface B : A<Int> { }
      * ```
      *
-     * The B will have a member B.foo(): Int, this member is generated inside interface B with substtution T -> Int, such members are SUBSTITUTION_OVERRIDE
+     * The B will have a member B.foo(): Int, this member is generated inside interface B with substitution T -> Int,
+     * such members are SUBSTITUTION_OVERRIDE
      */
     SUBSTITUTION_OVERRIDE,
 
