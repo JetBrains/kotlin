@@ -389,8 +389,8 @@ class LocalDeclarationsLowering(
                     }
                 }
 
-            private fun <T : IrMemberAccessExpression<*>> T.fillArguments2(
-                oldExpression: IrMemberAccessExpression<*>,
+            private fun <T : IrFunctionAccessExpression> T.fillArguments2(
+                oldExpression: T,
                 newTarget: IrFunction
             ): T {
                 mapValueParameters(newTarget) { newValueParameterDeclaration ->
@@ -416,7 +416,37 @@ class LocalDeclarationsLowering(
                 }
 
                 dispatchReceiver = oldExpression.dispatchReceiver
-                extensionReceiver = oldExpression.extensionReceiver
+
+                return this
+            }
+
+            private fun <T : IrCallableReference<*>> T.fillArguments2(
+                oldExpression: T,
+                newTarget: IrFunction,
+            ): T {
+                mapValueParameters(newTarget) { newValueParameterDeclaration ->
+                    val oldParameter = newParameterToOld[newValueParameterDeclaration]
+
+                    if (oldParameter != null) {
+                        oldExpression.getValueArgument(oldParameter.index)
+                    } else {
+                        // The callee expects captured value as argument.
+                        val capturedValueSymbol =
+                            newParameterToCaptured[newValueParameterDeclaration]
+                                ?: throw AssertionError("Non-mapped parameter $newValueParameterDeclaration")
+
+                        val capturedValue = capturedValueSymbol.owner
+
+                        localContext?.irGet(oldExpression.startOffset, oldExpression.endOffset, capturedValue) ?: run {
+                            // Captured value is directly available for the caller.
+                            val value = oldParameterToNew[capturedValue] ?: capturedValue
+                            IrGetValueImpl(oldExpression.startOffset, oldExpression.endOffset, value.symbol)
+                        }
+                    }
+
+                }
+
+                dispatchReceiver = oldExpression.dispatchReceiver
 
                 return this
             }
@@ -432,14 +462,11 @@ class LocalDeclarationsLowering(
                     newCallee.parentAsClass.typeParameters
                 else
                     newCallee.typeParameters
-                return IrFunctionReferenceImpl(
-                    expression.startOffset, expression.endOffset,
-                    expression.type, // TODO functional type for transformed descriptor
-                    newCallee.symbol,
+                // TODO functional type for transformed descriptor
+                return IrFunctionReferenceImpl.withReplacedSymbol(
+                    expression, newCallee.symbol,
                     typeArgumentsCount = typeParameters.size,
-                    valueArgumentsCount = newCallee.valueParameters.size,
                     reflectionTarget = newReflectionTarget?.symbol,
-                    origin = expression.origin
                 ).also {
                     it.fillArguments2(expression, newCallee)
                     it.setLocalTypeArguments(oldCallee)
@@ -742,9 +769,11 @@ class LocalDeclarationsLowering(
             oldDeclaration.dispatchReceiverParameter?.run {
                 throw AssertionError("Local class constructor can't have dispatch receiver: ${ir2string(oldDeclaration)}")
             }
-            oldDeclaration.extensionReceiverParameter?.run {
-                throw AssertionError("Local class constructor can't have extension receiver: ${ir2string(oldDeclaration)}")
+
+            assert(!oldDeclaration.hasExtensionReceiver) {
+                "Local class constructor can't have extension receiver: ${ir2string(oldDeclaration)}"
             }
+
 
             newDeclaration.allValueParameters += createTransformedValueParameters(
                 capturedValues, localClassContext, oldDeclaration, newDeclaration
