@@ -615,8 +615,10 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
                     if (refExtensionReceiver != null) {
                         addValueParameter("p${syntheticParameterIndex++}", targetFun.extensionReceiverParameter!!.type)
                         dynamicCallArguments.add(refExtensionReceiver)
+                        argumentStart++
                     }
                 }
+
                 is IrConstructor -> {
                     // At this point, outer class instances in inner class constructors are represented as regular value parameters.
                     // However, in a function reference to such constructors, bound receiver value is stored as a dispatch receiver.
@@ -626,15 +628,14 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
                         argumentStart++
                     }
                 }
+
                 else -> {
                     throw AssertionError("Unexpected function: ${targetFun.render()}")
                 }
             }
 
-            val samMethodValueParametersCount = samMethod.valueParameters.size +
-                    if (samMethod.extensionReceiverParameter != null && refExtensionReceiver == null) 1 else 0
-            val targetFunValueParametersCount = targetFun.valueParameters.size
-            for (i in argumentStart until targetFunValueParametersCount - samMethodValueParametersCount) {
+            val capturedPrefixSize = targetFun.valueParameters.size - samMethod.valueParameters.size
+            for (i in argumentStart until capturedPrefixSize) {
                 val targetFunValueParameter = targetFun.valueParameters[i]
                 addValueParameter("p${syntheticParameterIndex++}", targetFunValueParameter.type)
                 val capturedValueArgument = targetRef.getValueArgument(i)
