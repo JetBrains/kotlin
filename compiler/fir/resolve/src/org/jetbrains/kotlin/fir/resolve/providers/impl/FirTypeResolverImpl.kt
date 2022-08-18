@@ -124,7 +124,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 diagnostic = ConeVisibilityError(symbol)
             }
 
-            val deprecation = symbol.getDeprecation(session.languageVersionSettings.apiVersion, useSiteFile)
+            val deprecation = symbol.getDeprecation(session, useSiteFile)
             if (deprecation != null && deprecation.deprecationLevel == DeprecationLevelValue.HIDDEN) {
                 symbolApplicability = minOf(CandidateApplicability.HIDDEN, symbolApplicability)
                 diagnostic = null
