@@ -11,18 +11,15 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -764,7 +761,7 @@ class CallAndReferenceGenerator(
     ): IrExpression {
         val call = statement as? FirCall
         return when (this) {
-            is IrMemberAccessExpression<*> -> {
+            is IrFunctionAccessExpression -> {
                 val contextReceiverCount = putContextReceiverArguments(statement)
                 if (call == null) return this
                 val argumentsCount = call.arguments.size
@@ -860,7 +857,7 @@ class CallAndReferenceGenerator(
         return contextReceiverCount
     }
 
-    private fun IrMemberAccessExpression<*>.applyArgumentsWithReorderingIfNeeded(
+    private fun IrFunctionAccessExpression.applyArgumentsWithReorderingIfNeeded(
         argumentMapping: Map<FirExpression, FirValueParameter>,
         valueParameters: List<FirValueParameter>,
         substitutor: ConeSubstitutor,
@@ -886,8 +883,8 @@ class CallAndReferenceGenerator(
                 dispatchReceiver = dispatchReceiver?.freeze("\$this")
                 extensionReceiver = extensionReceiver?.freeze("\$receiver")
                 for ((parameter, irArgument) in converted) {
-                    putValueArgument(
-                        valueParameters.indexOf(parameter) + contextReceiverCount,
+                    putValueArgumentViaSourceBasedArgumentIndex(
+                        valueParameters.indexOf(parameter),
                         irArgument.freeze(parameter.name.asString())
                     )
                 }
