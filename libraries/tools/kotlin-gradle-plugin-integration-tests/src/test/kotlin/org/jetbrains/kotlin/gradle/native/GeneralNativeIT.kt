@@ -1147,6 +1147,21 @@ class GeneralNativeIT : BaseGradleIT() {
         }
     }
 
+    // KT-52303
+    @Test
+    fun testBuildDirChangeAppliedToBinaries() = with(transformNativeTestProjectWithPluginDsl("executables", directoryPrefix = "native-binaries")) {
+        gradleBuildScript().appendText(
+            """
+                project.buildDir = file("${'$'}{project.buildDir.absolutePath}/mydir")
+            """.trimIndent()
+        )
+        build(":linkDebugExecutableHost") {
+            assertSuccessful()
+            assertDirectoryExists("build/mydir/bin/host/debugExecutable")
+            assertNoSuchFile("build/bin")
+        }
+    }
+
     companion object {
         fun List<String>.containsSequentially(vararg elements: String): Boolean {
             check(elements.isNotEmpty())

@@ -553,6 +553,12 @@ abstract class BaseGradleIT {
         return this
     }
 
+    fun CompiledProject.assertDirectoryExists(path: String): CompiledProject {
+        assertFileExists(path)
+        assertTrue(fileInWorkingDir(path).isDirectory, "$path is not a directory")
+        return this
+    }
+
     fun CompiledProject.assertFileIsSymlink(path: String = ""): CompiledProject {
         assertTrue(Files.isSymbolicLink(fileInWorkingDir(path).toPath()), "The file [$path] isn't a symlink.")
         return this
