@@ -453,6 +453,7 @@ class WasmIrToText : SExpressionBuilder() {
         when (type) {
             is WasmFuncRef -> appendElement("func")
             is WasmAnyRef -> appendElement("any")
+            is WasmExternRef -> appendElement("extern")
             else -> TODO()
         }
     }
