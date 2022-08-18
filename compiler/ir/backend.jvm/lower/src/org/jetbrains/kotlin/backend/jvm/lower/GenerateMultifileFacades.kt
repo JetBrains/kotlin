@@ -235,9 +235,9 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
     if (targetProperty != null) {
         val newProperty = correspondingProperties.getOrCopyProperty(targetProperty)
         function.correspondingPropertySymbol = newProperty.symbol
-        when (target.valueParameters.size) {
-            0 -> newProperty.getter = function
-            1 -> newProperty.setter = function
+        when {
+            target.hasGetterShape() -> newProperty.getter = function
+            target.hasSetterShape() -> newProperty.setter = function
         }
     }
 

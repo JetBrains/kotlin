@@ -64,9 +64,11 @@ class MemoizedInlineClassReplacements(
                     when {
                         it.isRemoveAtSpecialBuiltinStub() ->
                             null
+
                         it.isInlineClassMemberFakeOverriddenFromJvmDefaultInterfaceMethod() ||
                                 it.origin == IrDeclarationOrigin.IR_BUILTINS_STUB ->
                             createMethodReplacement(it)
+
                         else ->
                             createStaticReplacement(it)
                     }
@@ -175,7 +177,13 @@ class MemoizedInlineClassReplacements(
             hasExtensionReceiver = function.hasExtensionReceiver
             contextReceiverParametersCount = function.contextReceiverParametersCount
             allValueParameters = function.allValueParameters.mapIndexed { index, parameter ->
-                parameter.copyTo(this, index = index, defaultValue = null).also {
+                val newName =
+                    when {
+                        function.isExtensionReceiverParameter(parameter) -> Name.identifier(function.extensionReceiverName(context.state))
+                        else -> parameter.name
+                    }
+
+                parameter.copyTo(this, index = index, name = newName, defaultValue = null).also {
                     // Assuming that constructors and non-override functions are always replaced with the unboxed
                     // equivalent, deep-copying the value here is unnecessary. See `JvmInlineClassLowering`.
                     it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
@@ -209,7 +217,7 @@ class MemoizedInlineClassReplacements(
                     origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
                 )
             }
-            for (parameter in function.valueParameters.drop(function.contextReceiverParametersCount)) {
+            for (parameter in function.valueParametersWithoutReceivers()) {
                 newValueParameters += parameter.copyTo(this, index = newValueParameters.size, defaultValue = null).also {
                     // See comment next to a similar line above.
                     it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
@@ -252,8 +260,10 @@ class MemoizedInlineClassReplacements(
         origin = when {
             function.origin == IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER ->
                 JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD
+
             function is IrConstructor && function.constructedClass.isSingleFieldValueClass ->
                 JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR
+
             else ->
                 replacementOrigin
         }

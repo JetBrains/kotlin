@@ -252,8 +252,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             writeParameter(sw, JvmMethodParameterKind.RECEIVER, receiverParameter.type, function)
         }
 
-        val regularValueParameters =
-            function.valueParameters.subList(function.contextReceiverParametersCount, function.valueParameters.size)
+        val regularValueParameters = function.valueParametersWithoutReceivers()
         for (parameter in regularValueParameters) {
             val kind = when (parameter.origin) {
                 JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> JvmMethodParameterKind.OUTER

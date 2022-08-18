@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.convertSourceArgumentIndexToReal
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 
 abstract class PropertyLValueBase(
@@ -153,23 +154,40 @@ class AccessorPropertyLValue(
 
     override fun load(): IrExpression =
         callReceiver.adjustForCallee(getterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue, contextReceiverValues ->
-            IrCallImpl(
+            IrCallImpl.fromSymbolDescriptor(
                 startOffset, endOffset,
                 type,
-                getter!!, typeArgumentsCount,
-                contextReceiverValues.size,
-                origin,
-                superQualifier
+                getter!!,
+                origin = origin,
+                superQualifierSymbol = superQualifier
             ).apply {
                 context.callToSubstitutedDescriptorMap[this] = getterDescriptor
                 putTypeArguments()
-                dispatchReceiver = dispatchReceiverValue?.load()
-                extensionReceiver = extensionReceiverValue?.load()
-                for ((i, contextReceiverValue) in contextReceiverValues.withIndex()) {
-                    putValueArgument(i, contextReceiverValue.load())
-                }
+                putReceivers(dispatchReceiverValue, extensionReceiverValue, contextReceiverValues)
             }
         }
+
+    private fun IrCallImpl.putReceivers(
+        dispatchReceiverValue: IntermediateValue?,
+        extensionReceiverValue: IntermediateValue?,
+        contextReceiverValues: List<IntermediateValue>
+    ): Int {
+        dispatchReceiver = dispatchReceiverValue?.load()
+
+        val receiversAsArguments = buildList {
+            if (extensionReceiverValue != null) {
+                add(extensionReceiverValue)
+            }
+
+            addAll(contextReceiverValues)
+        }
+
+        for ((i, receiverValue) in receiversAsArguments.withIndex()) {
+            putValueArgument(i, receiverValue.load())
+        }
+
+        return receiversAsArguments.size
+    }
 
     override fun store(irExpression: IrExpression) =
         callReceiver.adjustForCallee(setterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue, contextReceiverValues ->
@@ -177,18 +195,15 @@ class AccessorPropertyLValue(
                 startOffset, endOffset,
                 context.irBuiltIns.unitType,
                 setter!!, typeArgumentsCount,
-                1 + contextReceiverValues.size,
+                1.convertSourceArgumentIndexToReal(contextReceiverValues.size, hasExtensionReceiver = extensionReceiverValue != null),
                 origin,
                 superQualifier
             ).apply {
                 context.callToSubstitutedDescriptorMap[this] = setterDescriptor
                 putTypeArguments()
-                dispatchReceiver = dispatchReceiverValue?.load()
-                extensionReceiver = extensionReceiverValue?.load()
-                for ((i, contextReceiverValue) in contextReceiverValues.withIndex()) {
-                    putValueArgument(i, contextReceiverValue.load())
-                }
-                putValueArgument(contextReceiverValues.size, irExpression)
+                val valueArgumentsCount = putReceivers(dispatchReceiverValue, extensionReceiverValue, contextReceiverValues)
+                // Put new "value" as a last argument
+                putValueArgument(valueArgumentsCount, irExpression)
             }
         }
 

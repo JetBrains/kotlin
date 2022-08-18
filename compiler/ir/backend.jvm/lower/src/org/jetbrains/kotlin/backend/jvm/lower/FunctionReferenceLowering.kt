@@ -193,13 +193,17 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         if (irFun.dispatchReceiverParameter != null) {
             dispatchReceiver = irFunRef.dispatchReceiver ?: irInvokeCall.getValueArgument(invokeArgIndex++)
         }
-        if (irFun.extensionReceiverParameter != null) {
-            extensionReceiver = irFunRef.extensionReceiver ?: irInvokeCall.getValueArgument(invokeArgIndex++)
+
+        var irFunIndex = 0
+        if (irFunRef.extensionReceiver != null) {
+            putValueArgument(irFunIndex++, irFunRef.extensionReceiver)
         }
-        if (invokeArgIndex + valueArgumentsCount != irInvokeCall.valueArgumentsCount) {
+
+        if ((valueArgumentsCount - irFunIndex) != (irInvokeCall.valueArgumentsCount - invokeArgIndex)) {
             throw AssertionError("Mismatching value arguments: $invokeArgIndex arguments used for receivers\n${irInvokeCall.dump()}")
         }
-        for (i in 0 until valueArgumentsCount) {
+
+        for (i in irFunIndex until valueArgumentsCount) {
             putValueArgument(i, irInvokeCall.getValueArgument(invokeArgIndex++))
         }
     }

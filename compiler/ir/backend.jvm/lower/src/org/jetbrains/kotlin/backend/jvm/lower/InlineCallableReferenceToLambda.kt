@@ -112,8 +112,6 @@ private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendCont
             returnType = ((type as IrSimpleType).arguments.last() as IrTypeProjection).type
             isSuspend = referencedFunction.isSuspend
         }.apply {
-            contextReceiverParametersCount = referencedFunction.contextReceiverParametersCount
-            hasExtensionReceiver = referencedFunction.hasExtensionReceiver
             body = context.createJvmIrBuilder(symbol, startOffset, endOffset).run {
                 // TODO: could there be a star projection here?
                 val argumentTypes = (type as IrSimpleType).arguments.dropLast(1).map { (it as IrTypeProjection).type }
@@ -123,25 +121,31 @@ private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendCont
                     extensionReceiver != null -> referencedFunction.extensionReceiverParameter
                     else -> null
                 }
+                val argumentOffset = (boundReceiverParameter != null).toInt()
+
                 irExprBody(irCall(referencedFunction.symbol, returnType).apply {
                     copyTypeArgumentsFrom(this@wrapFunction)
                     for (parameter in referencedFunction.explicitParameters) {
-                        val next = valueParameters.size
+                        val argumentIndex = valueParameters.size - argumentOffset
                         when {
                             boundReceiverParameter == parameter ->
                                 irGet(addExtensionReceiver(boundReceiver!!.type))
-                            parameter.isVararg && next < argumentTypes.size && parameter.type == argumentTypes[next] ->
-                                irGet(addValueParameter("p$next", argumentTypes[next]))
-                            parameter.isVararg && (next < argumentTypes.size || !parameter.hasDefaultValue()) ->
+
+                            parameter.isVararg && argumentIndex < argumentTypes.size && parameter.type == argumentTypes[argumentIndex] ->
+                                irGet(addValueParameter("p$argumentIndex", argumentTypes[argumentIndex]))
+
+                            parameter.isVararg && (argumentIndex < argumentTypes.size || !parameter.hasDefaultValue()) ->
                                 irArray(parameter.type) {
-                                    for (i in next until argumentTypes.size) {
+                                    for (i in argumentIndex until argumentTypes.size) {
                                         +irGet(addValueParameter("p$i", argumentTypes[i]))
                                     }
                                 }
-                            next >= argumentTypes.size ->
+
+                            argumentIndex >= argumentTypes.size ->
                                 null
+
                             else ->
-                                irGet(addValueParameter("p$next", argumentTypes[next]))
+                                irGet(addValueParameter("p$argumentIndex", argumentTypes[argumentIndex]))
                         }?.let { putArgument(referencedFunction, parameter, it) }
                     }
                 })

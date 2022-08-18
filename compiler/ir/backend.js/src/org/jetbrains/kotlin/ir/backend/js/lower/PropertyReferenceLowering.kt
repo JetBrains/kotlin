@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.putValueArgumentViaSourceBasedArgumentIndex
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -168,7 +169,7 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
                 }
 
                 if (u < unboundValueParameters.size) {
-                    irAccessorCall.putValueArgument(0, irGet(unboundValueParameters[u++]))
+                    irAccessorCall.putValueArgumentViaSourceBasedArgumentIndex(0, irGet(unboundValueParameters[u++]))
                 }
 
                 assert(u == arity)

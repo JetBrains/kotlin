@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.util.valueParametersWithoutReceivers
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
@@ -62,7 +63,7 @@ internal class KMutableProperty1Proxy(
                 checkArguments(2, args.size)
                 val receiverParameter = (setter.dispatchReceiverParameter ?: setter.extensionReceiverParameter)!!
                 val receiver = environment.convertToState(args[0], receiverParameter.getActualType())
-                val valueParameter = setter.valueParameters.single()
+                val valueParameter = setter.valueParametersWithoutReceivers().single()
                 val value = environment.convertToState(args[1], valueParameter.getActualType())
                 callInterceptor.interceptProxy(setter, listOf(receiver, value))
             }
