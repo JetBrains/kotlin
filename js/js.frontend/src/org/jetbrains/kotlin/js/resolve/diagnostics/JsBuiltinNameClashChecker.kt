@@ -48,9 +48,9 @@ class JsBuiltinNameClashChecker(private val nameSuggestion: NameSuggestion) : De
 
     companion object {
         @JvmField
-        val PROHIBITED_STATIC_NAMES = setOf("prototype", "length", "\$metadata\$")
+        val PROHIBITED_STATIC_NAMES = setOf("prototype", "length", "\$metadata\$", "\$imask\$")
 
         @JvmField
-        val PROHIBITED_MEMBER_NAMES = setOf("constructor")
+        val PROHIBITED_MEMBER_NAMES = setOf("constructor", "\$imask\$")
     }
 }

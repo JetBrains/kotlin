@@ -10,6 +10,13 @@ public final class C {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
+    public final class `$imask$` {
+        public constructor `$imask$`()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
     public final class `$metadata$` {
         public constructor `$metadata$`()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -39,6 +46,13 @@ public final class D {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
+    private final class `$imask$` {
+        public constructor `$imask$`()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
     private final class `$metadata$` {
         public constructor `$metadata$`()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -63,6 +77,7 @@ public final class D {
 
 public final class E {
     public constructor E()
+    @kotlin.js.JsName(name = "$imask$") public final fun d(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @kotlin.js.JsName(name = "constructor") public final fun f(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -78,6 +93,7 @@ public final class E {
 
 public final class F {
     public constructor F()
+    @kotlin.js.JsName(name = "d") public final fun `$imask$`(): kotlin.Unit
     @kotlin.js.JsName(name = "f") public final fun constructor(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
