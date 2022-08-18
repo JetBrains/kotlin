@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.ir.interpreter.checker
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.isPrimitiveArray
@@ -26,7 +28,8 @@ class IrConstTransformer(
     private val irFile: IrFile,
     private val mode: EvaluationMode,
     private val onWarning: (IrElement, IrErrorExpression) -> Unit = { _, _ -> },
-    private val onError: (IrElement, IrErrorExpression) -> Unit = { _, _ -> }
+    private val onError: (IrElement, IrErrorExpression) -> Unit = { _, _ -> },
+    private val suppressExceptions: Boolean = false,
 ) : IrElementTransformerVoid() {
     private fun IrExpression.warningIfError(original: IrExpression): IrExpression {
         if (this is IrErrorExpression) {
@@ -52,7 +55,8 @@ class IrConstTransformer(
         val result = try {
             interpreter.interpret(this, irFile)
         } catch (e: Throwable) {
-            throw AssertionError("Error occurred while optimizing an expression:\n${this.dump()}", e)
+            if (!suppressExceptions) throw AssertionError("Error occurred while optimizing an expression:\n${this.dump()}", e)
+            return IrErrorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, this.type, e.message.toString()).warningIfError(this)
         }
 
         return if (failAsError) result.reportIfError(this) else result.warningIfError(this)

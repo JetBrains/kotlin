@@ -159,4 +159,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> ENABLE_DEBUG_MODE =
             CompilerConfigurationKey.create("Enable debug mode");
+
+    public static final CompilerConfigurationKey<Boolean> IGNORE_CONST_OPTIMIZATION_ERRORS =
+            CompilerConfigurationKey.create("Ignore errors from IrConstTransformer");
 }
