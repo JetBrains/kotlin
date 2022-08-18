@@ -141,15 +141,6 @@ object JsExportDeclarationChecker : DeclarationChecker {
                     // Covered by ENUM_CLASS
                     return
                 }
-
-                val supertypes = descriptor.defaultType.supertypes()
-                val isEnum = supertypes.any { KotlinBuiltIns.isEnum(it) }
-
-                for (superType in supertypes) {
-                    if (!superType.isExportable(bindingContext) && !(KotlinBuiltIns.isComparable(superType) && isEnum)) {
-                        trace.report(ErrorsJs.NON_EXPORTABLE_TYPE.on(declaration, "super", superType))
-                    }
-                }
             }
         }
     }
