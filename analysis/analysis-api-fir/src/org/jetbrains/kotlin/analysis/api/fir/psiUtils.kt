@@ -40,7 +40,6 @@ fun FirElement.findPsi(project: Project): PsiElement? =
     getAllowedPsi()
         ?: FirDeserializedDeclarationSourceProvider.findPsi(this, project)
 
-
 fun FirBasedSymbol<*>.findPsi(): PsiElement? =
     fir.findPsi(fir.moduleData.session)
 
