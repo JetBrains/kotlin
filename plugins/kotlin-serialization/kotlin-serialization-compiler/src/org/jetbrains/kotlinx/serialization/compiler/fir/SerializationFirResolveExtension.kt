@@ -30,11 +30,8 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.constructStarProjectedType
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeTypeProjection
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.constructClassLikeType
-import org.jetbrains.kotlin.fir.types.toTypeProjection
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -195,7 +192,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             valueParameters.addAll(List(serializableClassSymbol.typeParameterSymbols.size) { i ->
                 newSimpleValueParameter(
                     session,
-                    kSerializerClassId.constructClassLikeType(arrayOf(parametersAsArguments[i]), false).newRef(),
+                    kSerializerClassId.constructClassLikeType(arrayOf(parametersAsArguments[i]), false).toFirResolvedTypeRef(),
                     Name.identifier("${SerialEntityNames.typeArgPrefix}$i")
                 )
             })
@@ -267,7 +264,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                 valueParameters.addAll(owner.typeParameterSymbols.mapIndexed { i, typeParam ->
                     newSimpleValueParameter(
                         session,
-                        kSerializerClassId.constructClassLikeType(arrayOf(typeParam.toConeType()), false).newRef(),
+                        kSerializerClassId.constructClassLikeType(arrayOf(typeParam.toConeType()), false).toFirResolvedTypeRef(),
                         Name.identifier("${SerialEntityNames.typeArgPrefix}$i")
                     )
                 })
@@ -311,7 +308,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                         isNullable = false
                     )
                 ), isNullable = false
-            ).newRef()
+            ).toFirResolvedTypeRef()
         }
         return serializerFirClass.symbol
     }

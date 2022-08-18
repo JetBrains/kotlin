@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
+import org.jetbrains.kotlin.fir.types.toFirResolvedTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
@@ -38,7 +39,9 @@ fun FirDeclarationGenerationExtension.buildPrimaryConstructor(owner: FirClassSym
     return buildPrimaryConstructor {
         moduleData = session.moduleData
         origin = key.origin
-        returnTypeRef = owner.defaultType().newRef()
+        returnTypeRef = run {
+            owner.defaultType().toFirResolvedTypeRef()
+        }
         this.status = status
         symbol = FirConstructorSymbol(classId)
         if (isInner && classId.isNestedClass) {
@@ -50,10 +53,6 @@ fun FirDeclarationGenerationExtension.buildPrimaryConstructor(owner: FirClassSym
     }.also {
         it.containingClassForStaticMemberAttr = lookupTag
     }
-}
-
-fun ConeKotlinType.newRef(): FirResolvedTypeRef = buildResolvedTypeRef {
-    type = this@newRef
 }
 
 fun newSimpleTypeParameter(firSession: FirSession, containingDeclarationSymbol: FirBasedSymbol<*>, name: Name) = buildTypeParameter {
