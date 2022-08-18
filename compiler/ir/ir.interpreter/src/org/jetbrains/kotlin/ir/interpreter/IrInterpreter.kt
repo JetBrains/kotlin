@@ -566,8 +566,8 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
     private fun interpretFunctionReference(reference: IrFunctionReference) {
         val irFunction = reference.symbol.owner
 
-        val dispatchReceiver = reference.dispatchReceiver?.let { callStack.popState() }
-        val extensionReceiver = reference.extensionReceiver?.let { callStack.popState() }
+        val dispatchReceiver = irFunction.getDispatchReceiver()?.let { reference.dispatchReceiver?.let { callStack.popState() } }
+        val extensionReceiver = irFunction.getExtensionReceiver()?.let { reference.extensionReceiver?.let { callStack.popState() } }
 
         val function = KFunctionState(
             reference,
@@ -581,7 +581,11 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
     private fun interpretPropertyReference(propertyReference: IrPropertyReference) {
         // it is impossible to get KProperty2 through ::, so only one receiver can be not null (or both null)
-        val receiver = (propertyReference.dispatchReceiver ?: propertyReference.extensionReceiver)?.let { callStack.popState() }
+        val getter = propertyReference.getter?.owner
+        val dispatchReceiver = getter?.getDispatchReceiver()?.let { propertyReference.dispatchReceiver?.let { callStack.popState() } }
+        val extensionReceiver = getter?.getExtensionReceiver()?.let { propertyReference.extensionReceiver?.let { callStack.popState() } }
+        val receiver = dispatchReceiver ?: extensionReceiver
+
         val propertyState = KPropertyState(propertyReference, receiver)
 
         fun List<IrTypeParameter>.addToFields() {
