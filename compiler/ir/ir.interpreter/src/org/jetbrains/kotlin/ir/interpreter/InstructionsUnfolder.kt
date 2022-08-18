@@ -416,28 +416,21 @@ private fun unfoldComposite(element: IrComposite, callStack: CallStack) {
     }
 }
 
-private fun unfoldFunctionReference(reference: IrFunctionReference, callStack: CallStack) {
-    val function = reference.symbol.owner
+private fun unfoldCallableReference(reference: IrCallableReference<*>, callStack: CallStack) {
     callStack.pushSimpleInstruction(reference)
+    reference.getArgumentsWithIr().forEach { (parameter, arg) ->
+        callStack.pushSimpleInstruction(parameter)
+        callStack.pushCompoundInstruction(arg)
+    }
+}
 
-    reference.dispatchReceiver?.let { callStack.pushSimpleInstruction(function.dispatchReceiverParameter!!) }
-    reference.extensionReceiver?.let { callStack.pushSimpleInstruction(function.extensionReceiverParameter!!) }
-
-    reference.extensionReceiver?.let { callStack.pushCompoundInstruction(it) }
-    reference.dispatchReceiver?.let { callStack.pushCompoundInstruction(it) }
+private fun unfoldFunctionReference(reference: IrFunctionReference, callStack: CallStack) {
+    unfoldCallableReference(reference, callStack)
 }
 
 private fun unfoldPropertyReference(propertyReference: IrPropertyReference, callStack: CallStack) {
-    callStack.pushSimpleInstruction(propertyReference)
-
-    val getter = propertyReference.getter?.owner
-    if (getter != null) {
-        propertyReference.dispatchReceiver?.let { callStack.pushSimpleInstruction(getter.dispatchReceiverParameter!!) }
-        propertyReference.extensionReceiver?.let { callStack.pushSimpleInstruction(getter.extensionReceiverParameter!!) }
-
-        propertyReference.extensionReceiver?.let { callStack.pushCompoundInstruction(it) }
-        propertyReference.dispatchReceiver?.let { callStack.pushCompoundInstruction(it) }
-    }
+    if (propertyReference.field != null) return callStack.pushSimpleInstruction(propertyReference)
+    unfoldCallableReference(propertyReference, callStack)
 }
 
 private fun unfoldClassReference(classReference: IrClassReference, callStack: CallStack) {
