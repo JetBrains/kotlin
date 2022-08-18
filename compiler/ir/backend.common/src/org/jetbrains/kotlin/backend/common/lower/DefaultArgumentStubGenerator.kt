@@ -103,12 +103,14 @@ open class DefaultArgumentStubGenerator(
                 )
                 var sourceParameterIndex = -1
                 for (valueParameter in irFunction.valueParameters) {
-                    if (!valueParameter.isMovedReceiver()) {
+                    if (!irFunction.isReceiver(valueParameter) && !valueParameter.isMovedReceiver()) {
                         ++sourceParameterIndex
                     }
                     val parameter = newIrFunction.valueParameters[valueParameter.index]
                     val remapped = valueParameter.defaultValue?.let { defaultValue ->
-                        val mask = irGet(newIrFunction.valueParameters[irFunction.valueParameters.size + valueParameter.index / 32])
+                        val maskParameterIndex =
+                            irFunction.valueParameters.size + (valueParameter.index - irFunction.receiversPrefixSize) / 32
+                        val mask = irGet(newIrFunction.valueParameters[maskParameterIndex])
                         val bit = irInt(1 shl (sourceParameterIndex % 32))
                         val defaultFlag =
                             irCallOp(intAnd, context.irBuiltIns.intType, mask, bit)
@@ -134,6 +136,7 @@ open class DefaultArgumentStubGenerator(
                         dispatchReceiver = newIrFunction.dispatchReceiverParameter?.let { irGet(it) }
                         params.forEachIndexed { i, variable -> putValueArgument(i, irGet(variable)) }
                     }
+
                     is IrSimpleFunction -> +irReturn(dispatchToImplementation(irFunction, newIrFunction, params))
                     else -> error("Unknown function declaration")
                 }
@@ -289,7 +292,7 @@ open class DefaultParameterInjector(
         if (argumentsCount == expression.symbol.owner.valueParameters.size)
             return expression
 
-        val (symbol, params) = parametersForCall(expression) ?: return expression
+        val (symbol, args) = prepareArgumentsForCall(expression) ?: return expression
         for (i in 0 until expression.typeArgumentsCount) {
             log { "$symbol[$i]: ${expression.getTypeArgument(i)}" }
         }
@@ -304,16 +307,13 @@ open class DefaultParameterInjector(
 
             if (isStatic) {
                 if (symbol.owner.dispatchReceiverParameter != null) {
-                    dispatchReceiver = params[receivers++]
-                }
-                if (symbol.owner.extensionReceiverParameter != null) {
-                    extensionReceiver = params[receivers++]
+                    dispatchReceiver = args[receivers++]
                 }
             } else {
                 dispatchReceiver = expression.dispatchReceiver
             }
 
-            params.drop(receivers).forEachIndexed { i, value ->
+            args.drop(receivers).forEachIndexed { i, value ->
                 log { "call::params@$i/${symbol.owner.valueParameters[i].name}: ${ir2string(value)}" }
                 putValueArgument(i, value)
             }
@@ -340,7 +340,13 @@ open class DefaultParameterInjector(
         expression.transformChildrenVoid()
         return visitFunctionAccessExpression(expression) {
             with(expression) {
-                IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, it as IrConstructorSymbol, LoweredStatementOrigins.DEFAULT_DISPATCH_CALL)
+                IrConstructorCallImpl.fromSymbolOwner(
+                    startOffset,
+                    endOffset,
+                    type,
+                    it as IrConstructorSymbol,
+                    LoweredStatementOrigins.DEFAULT_DISPATCH_CALL
+                )
             }
         }
     }
@@ -362,10 +368,11 @@ open class DefaultParameterInjector(
         expression.transformChildrenVoid()
         return visitFunctionAccessExpression(expression) {
             with(expression) {
-                IrCallImpl(
-                    startOffset, endOffset, type, it as IrSimpleFunctionSymbol,
+                IrCallImpl.fromSymbolOwner(
+                    startOffset, endOffset,
+                    type,
+                    symbol = it as IrSimpleFunctionSymbol,
                     typeArgumentsCount = typeArgumentsCount,
-                    valueArgumentsCount = it.owner.valueParameters.size,
                     origin = LoweredStatementOrigins.DEFAULT_DISPATCH_CALL,
                     superQualifierSymbol = superQualifierSymbol
                 )
@@ -373,7 +380,7 @@ open class DefaultParameterInjector(
         }
     }
 
-    private fun parametersForCall(expression: IrFunctionAccessExpression): Pair<IrFunctionSymbol, List<IrExpression?>>? {
+    private fun prepareArgumentsForCall(expression: IrFunctionAccessExpression): Pair<IrFunctionSymbol, List<IrExpression?>>? {
         val startOffset = expression.startOffset
         val endOffset = expression.endOffset
         val declaration = expression.symbol.owner
@@ -396,9 +403,9 @@ open class DefaultParameterInjector(
         log { "$declaration -> $stubFunction" }
 
         val realArgumentsNumber = declaration.valueParameters.size
-        val maskValues = IntArray((declaration.valueParameters.size + 31) / 32)
+        val maskValues = IntArray((realArgumentsNumber - declaration.receiversPrefixSize + 31) / 32)
         assert(
-            ((if (isStatic(expression.symbol.owner) && stubFunction.extensionReceiverParameter != null) 1 else 0) +
+            ((if (isStatic(expression.symbol.owner) && stubFunction.hasExtensionReceiver) 1 else 0) +
                     stubFunction.valueParameters.size - realArgumentsNumber - maskValues.size) in listOf(0, 1)
         ) {
             "argument count mismatch: expected $realArgumentsNumber arguments + ${maskValues.size} masks + optional handler/marker, " +
@@ -407,10 +414,13 @@ open class DefaultParameterInjector(
         var sourceParameterIndex = -1
         val valueParametersPrefix =
             if (isStatic(expression.symbol.owner))
-                listOfNotNull(stubFunction.dispatchReceiverParameter, stubFunction.extensionReceiverParameter)
+                listOfNotNull(stubFunction.dispatchReceiverParameter)
             else emptyList()
         return stubFunction.symbol to (valueParametersPrefix + stubFunction.valueParameters).mapIndexed { i, parameter ->
-            if (!parameter.isMovedReceiver() && parameter != stubFunction.dispatchReceiverParameter && parameter != stubFunction.extensionReceiverParameter) {
+            if (!parameter.isMovedReceiver() &&
+                parameter != stubFunction.dispatchReceiverParameter &&
+                parameter.index >= stubFunction.receiversPrefixSize
+            ) {
                 ++sourceParameterIndex
             }
             when {
@@ -419,7 +429,8 @@ open class DefaultParameterInjector(
                 else -> {
                     val valueArgument = expression.getValueArgument(i)
                     if (valueArgument == null) {
-                        maskValues[i / 32] = maskValues[i / 32] or (1 shl (sourceParameterIndex % 32))
+                        val maskIndex = (i - declaration.receiversPrefixSize) / 32
+                        maskValues[maskIndex] = maskValues[maskIndex] or (1 shl (sourceParameterIndex % 32))
                     }
                     valueArgument ?: nullConst(startOffset, endOffset, parameter)?.let {
                         IrCompositeImpl(
@@ -570,6 +581,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(
                 isExpect = false
                 visibility = newVisibility
             }
+
         is IrSimpleFunction ->
             factory.buildFun {
                 updateFrom(this@generateDefaultsFunctionImpl)
@@ -581,6 +593,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(
                 isTailrec = false
                 visibility = newVisibility
             }
+
         else -> throw IllegalStateException("Unknown function type")
     }
     (newFunction as? IrAttributeContainer)?.copyAttributes(this@generateDefaultsFunctionImpl as? IrAttributeContainer)
@@ -605,7 +618,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(
         )
     }
 
-    for (i in 0 until (valueParameters.size + 31) / 32) {
+    for (i in 0 until (valueParameters.size - receiversPrefixSize + 31) / 32) {
         newFunction.addValueParameter("mask$i".synthesizedString, context.irBuiltIns.intType, IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION)
     }
     if (useConstructorMarker) {
