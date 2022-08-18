@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.computeExpandedTypeForInlineClass
@@ -319,12 +318,12 @@ class ExpressionCodegen(
             return
         }
 
-        irFunction.extensionReceiverParameter?.let { generateNonNullAssertion(it) }
-
         // Private operator functions don't have null checks on value parameters,
         // see `DescriptorAsmUtil.genNotNullAssertionsForParameters`.
         if (!DescriptorVisibilities.isPrivate(irFunction.visibility) || irFunction !is IrSimpleFunction || !irFunction.isOperator) {
             irFunction.valueParameters.forEach(::generateNonNullAssertion)
+        } else {
+            irFunction.extensionReceiverParameter?.let(::generateNonNullAssertion)
         }
     }
 
