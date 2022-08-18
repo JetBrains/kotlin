@@ -185,7 +185,11 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
                     type = if (normalizedType == AsmTypes.OBJECT_TYPE) context.irBuiltIns.anyNType else it.type
                     origin = LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE
                     isFinal = false
-                    visibility = if (it.index < 0) DescriptorVisibilities.PRIVATE else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+                    visibility =
+                        when {
+                            function.isReceiver(it) -> DescriptorVisibilities.PRIVATE
+                            else -> JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+                        }
                 } else null
                 ParameterInfo(field, it.type, it.name, it.origin)
             }
@@ -247,7 +251,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
                     override fun visitGetValue(expression: IrGetValue): IrExpression {
                         val parameter = (expression.symbol.owner as? IrValueParameter)?.takeIf { it.parent == irFunction }
                             ?: return expression
-                        val lvar = localVals[parameter.index + if (irFunction.extensionReceiverParameter != null) 1 else 0]
+                        val lvar = localVals[parameter.index]
                             ?: return expression
                         return IrGetValueImpl(expression.startOffset, expression.endOffset, lvar.symbol)
                     }

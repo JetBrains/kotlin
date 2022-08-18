@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.convertSourceArgumentIndexToReal
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -151,12 +152,15 @@ internal class InsertImplicitCasts(
                 descriptor.dispatchReceiverParameter?.type
         }
 
-    override fun visitMemberAccess(expression: IrMemberAccessExpression<*>): IrExpression {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         val substitutedDescriptor = expression.substitutedDescriptor
         return expression.transformPostfix {
             transformReceiverArguments(substitutedDescriptor)
             for (index in substitutedDescriptor.valueParameters.indices) {
-                val irIndex = index + substitutedDescriptor.contextReceiverParameters.size
+                val irIndex = index.convertSourceArgumentIndexToReal(
+                    substitutedDescriptor.contextReceiverParameters.size,
+                    substitutedDescriptor.extensionReceiverParameter != null
+                )
                 val argument = getValueArgument(irIndex) ?: continue
                 val parameterType = substitutedDescriptor.valueParameters[index].type
                 val originalParameterType = substitutedDescriptor.original.valueParameters[index].type

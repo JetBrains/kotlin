@@ -30,9 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.ir.util.referenceClassifier
-import org.jetbrains.kotlin.ir.util.referenceFunction
-import org.jetbrains.kotlin.ir.util.withScope
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -308,8 +306,10 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         val irCall = when (adapteeSymbol) {
             is IrConstructorSymbol ->
                 IrConstructorCallImpl.fromSymbolDescriptor(startOffset, endOffset, irType, adapteeSymbol)
+
             is IrSimpleFunctionSymbol ->
                 IrCallImpl.fromSymbolDescriptor(startOffset, endOffset, irType, adapteeSymbol)
+
             else -> error("Unknown symbol kind $adapteeSymbol")
         }
 
@@ -363,7 +363,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
 
         for ((valueParameter, valueArgument) in adaptedArguments) {
             val substitutedValueParameter = resolvedCall.resultingDescriptor.valueParameters[valueParameter.index]
-            irAdapteeCall.putValueArgumentIgnoring(
+            irAdapteeCall.putValueArgumentViaSourceBasedArgumentIndex(
                 valueParameter.index,
                 adaptResolvedValueArgument(startOffset, endOffset, valueArgument, irAdapterFun, substitutedValueParameter, shift)
             )
@@ -381,6 +381,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         return when (resolvedValueArgument) {
             is DefaultValueArgument ->
                 null
+
             is VarargValueArgument ->
                 if (resolvedValueArgument.arguments.isEmpty())
                     null
@@ -392,11 +393,13 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                             adaptValueArgument(startOffset, endOffset, it, irAdapterFun, shift)
                         }
                     )
+
             is ExpressionValueArgument -> {
                 val valueArgument = resolvedValueArgument.valueArgument!!
 
                 adaptValueArgument(startOffset, endOffset, valueArgument, irAdapterFun, shift) as IrExpression
             }
+
             else ->
                 throw AssertionError("Unexpected ResolvedValueArgument: $resolvedValueArgument")
         }
@@ -417,7 +420,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                 )
 
             is FakePositionalValueArgumentForCallableReference -> {
-                val irAdapterParameter = irAdapterFun.valueParameters[valueArgument.index + shift]
+                val irAdapterParameter = irAdapterFun.valueParameters[valueArgument.index + shift + irAdapterFun.receiversPrefixSize]
                 IrGetValueImpl(startOffset, endOffset, irAdapterParameter.type, irAdapterParameter.symbol)
             }
 
@@ -514,10 +517,12 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                 val symbol = context.symbolTable.referenceFunction(callableDescriptor.original)
                 generateFunctionReference(startOffset, endOffset, type, symbol, callableDescriptor, typeArguments, origin)
             }
+
             is PropertyDescriptor -> {
                 val mutable = ReflectionTypes.isNumberedKMutablePropertyType(type)
                 generatePropertyReference(startOffset, endOffset, type, callableDescriptor, typeArguments, origin, mutable)
             }
+
             else ->
                 throw AssertionError("Unexpected callable reference: $callableDescriptor")
         }

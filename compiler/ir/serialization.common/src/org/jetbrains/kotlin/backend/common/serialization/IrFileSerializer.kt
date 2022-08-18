@@ -566,7 +566,7 @@ open class IrFileSerializer(
             proto.addTypeArgument(typeArgumentIndex)
         }
 
-        for (index in 0 until call.valueArgumentsCount) {
+        for (index in call.receiversPrefixSize until call.valueArgumentsCount) {
             val actual = call.getValueArgument(index)
             val argOrNull = ProtoNullableIrExpression.newBuilder()
             if (actual == null) {
@@ -1144,7 +1144,7 @@ open class IrFileSerializer(
         if (contextReceiverParametersCount > 0) {
             proto.contextReceiverParametersCount = contextReceiverParametersCount
         }
-        function.valueParameters.forEach {
+        function.valueParametersWithoutReceivers().forEach {
             proto.addValueParameter(serializeIrValueParameter(it))
         }
 

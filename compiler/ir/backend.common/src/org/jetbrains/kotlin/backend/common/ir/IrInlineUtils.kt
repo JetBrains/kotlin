@@ -40,7 +40,7 @@ fun IrExpression.asInlinableFunctionReference(): IrFunctionReference? {
         return null
     if (function.dispatchReceiverParameter != null)
         return null
-    if ((0 until reference.valueArgumentsCount).any { reference.getValueArgument(it) != null })
+    if ((reference.receiversPrefixSize until reference.valueArgumentsCount).any { reference.getValueArgument(it) != null })
         return null
     if (function.valueParameters.any { it.isVararg || it.defaultValue != null })
         return null

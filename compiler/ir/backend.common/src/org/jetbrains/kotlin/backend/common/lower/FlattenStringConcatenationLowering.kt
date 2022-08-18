@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.valueParametersWithoutReceivers
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -87,7 +88,7 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
                 return receiverParameter != null
                         && receiverParameter.type.isStringClassType()
                         && function.returnType.isStringClassType()
-                        && function.valueParameters.size == 1
+                        && function.valueParametersWithoutReceivers().size == 1
                         && function.name == OperatorNameConventions.PLUS
                         && function.fqNameWhenAvailable?.parent() in PARENT_NAMES
             }

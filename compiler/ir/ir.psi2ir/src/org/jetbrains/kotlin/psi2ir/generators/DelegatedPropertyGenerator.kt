@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
+import org.jetbrains.kotlin.ir.util.valueParametersWithoutReceivers
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
@@ -427,7 +428,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
                 conventionMethodCall.setExplicitReceiverValue(delegateReceiverValue)
                 updateNullThisRefValue(conventionMethodCall)
                 conventionMethodCall.irValueArgumentsByIndex[1] = irPropertyReference
-                val irSetterParameter = irSetter.valueParameters[0]
+                val irSetterParameter = irSetter.valueParametersWithoutReceivers()[0]
                 conventionMethodCall.irValueArgumentsByIndex[2] = irGet(irSetterParameter)
                 +irReturn(CallGenerator(statementGenerator).generateCall(startOffset, endOffset, conventionMethodCall))
             }
