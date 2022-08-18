@@ -491,9 +491,6 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
         if (type is WasmRefNullType) {
             appendHeapType(type.heapType)
         }
-        if (type is WasmRtt) {
-            appendModuleFieldReference(type.type.owner)
-        }
     }
 
     fun appendLocalReference(local: WasmLocal) {

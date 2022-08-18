@@ -96,7 +96,7 @@ class WasmTypeTransformer(
                 val ic = context.backendContext.inlineClassesUtils.getInlinedClass(this)
 
                 if (klass.isExternal) {
-                    WasmAnyRef
+                    WasmExternRef
                 } else if (isBuiltInWasmRefType(this)) {
                     when (val name = klass.name.identifier) {
                         "anyref" -> WasmAnyRef

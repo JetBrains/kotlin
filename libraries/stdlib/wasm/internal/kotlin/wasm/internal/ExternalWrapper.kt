@@ -92,17 +92,15 @@ private external fun setExternrefBox(ref: ExternalInterfaceType, box: JsExternal
 
 @WasmNoOpCast
 @Suppress("unused")
-internal fun Any?.asWasmAnyref(): anyref =
+private fun Any?.asWasmAnyref(): anyref =
     implementedAsIntrinsic
 
-@WasmNoOpCast
-@Suppress("unused")
-internal fun ExternalInterfaceType.externAsWasmAnyref(): anyref =
+@WasmOp(WasmOp.EXTERN_INTERNALIZE)
+private fun ExternalInterfaceType.externAsWasmAnyref(): anyref =
     implementedAsIntrinsic
 
-@WasmNoOpCast
-@Suppress("unused")
-internal fun Any?.asWasmExternRef(): ExternalInterfaceType =
+@WasmOp(WasmOp.EXTERN_EXTERNALIZE)
+private fun Any?.asWasmExternRef(): ExternalInterfaceType =
     implementedAsIntrinsic
 
 @JsFun("(ref) => ref == null")
