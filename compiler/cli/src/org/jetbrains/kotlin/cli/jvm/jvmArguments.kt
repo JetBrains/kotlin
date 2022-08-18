@@ -294,6 +294,8 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(JVMConfigurationKeys.LINK_VIA_SIGNATURES, arguments.linkViaSignatures)
 
+    put(JVMConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS, arguments.ignoreConstOptimizationErrors)
+
     val assertionsMode =
         JVMAssertionsMode.fromStringOrNull(arguments.assertionsMode)
     if (assertionsMode == null) {

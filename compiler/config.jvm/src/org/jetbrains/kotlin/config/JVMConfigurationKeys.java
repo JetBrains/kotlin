@@ -156,4 +156,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> LINK_VIA_SIGNATURES =
             CompilerConfigurationKey.create("Link JVM IR symbols via signatures, instead of by descriptors");
+
+    public static final CompilerConfigurationKey<Boolean> IGNORE_CONST_OPTIMIZATION_ERRORS =
+            CompilerConfigurationKey.create("Ignore errors from IrConstTransformer");
 }
