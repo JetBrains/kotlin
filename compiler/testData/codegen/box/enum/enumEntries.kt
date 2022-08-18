@@ -1,6 +1,6 @@
 // !LANGUAGE: +EnumEntries
 // TARGET_BACKEND: JVM_IR
-// FULL_JDK
+// TARGET_BACKEND: NATIVE
 // WITH_STDLIB
 
 enum class MyEnum {

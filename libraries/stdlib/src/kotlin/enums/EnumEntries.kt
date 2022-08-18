@@ -27,7 +27,18 @@ internal fun <E : Enum<E>> enumEntries(entriesProvider: () -> Array<E>): EnumEnt
 @PublishedApi
 @ExperimentalStdlibApi
 @SinceKotlin("1.8") // Used by Native/JS compilers and Java serialization
-internal fun <E : Enum<E>> enumEntries(entries: Array<E>): EnumEntries<E> = EnumEntriesList { entries }
+internal fun <E : Enum<E>> enumEntries(entries: Array<E>): EnumEntries<E> = EnumEntriesList { entries }.also {
+    /*
+     * Here we are enforcing initialization of _entries property.
+     * It is required because of two reasons.
+     *   1. In old Native mm the object will be frozen after creation, so it must be immutable
+     *   2. Native doesn't support @Volatile for now, so this initialization is not generally safe, if
+     *      done after object is published.
+     *
+     * This is very implementation-dependent hack, and it should be removed when/if both reasons above are gone.
+     */
+    it.size
+}
 
 /*
  * For enum class E, this class is instantiated in the following manner (NB it's pseudocode that does not

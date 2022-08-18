@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.ir
@@ -302,6 +302,11 @@ internal class KonanSymbols(
     val valuesForEnum = internalFunction("valuesForEnum")
 
     val valueOfForEnum = internalFunction("valueOfForEnum")
+
+    val createEnumEntries = irBuiltIns.findFunctions(Name.identifier("enumEntries"), "kotlin", "enums")
+            .single { it.descriptor.valueParameters.singleOrNull()?.type?.constructor?.declarationDescriptor == array.descriptor }
+
+    val enumEntriesInterface = irBuiltIns.findClass(Name.identifier("EnumEntries"), "kotlin", "enums")!!
 
     val createUninitializedInstance = internalFunction("createUninitializedInstance")
 

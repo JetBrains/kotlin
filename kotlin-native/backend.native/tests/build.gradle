@@ -4737,6 +4737,7 @@ interopTest("interop_union") {
 interopTest("interop_enums") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     interop = 'cenums'
+    flags = ['-XXLanguage:+EnumEntries']
     source = "interop/basics/enums.kt"
 }
 

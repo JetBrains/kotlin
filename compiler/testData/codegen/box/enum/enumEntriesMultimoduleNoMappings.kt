@@ -1,8 +1,9 @@
 // TARGET_BACKEND: JVM_IR
-// AFTER KT-53649 - TARGET_BACKEND: NATIVE
+// TARGET_BACKEND: NATIVE
 // WITH_STDLIB
 
 // MODULE: lib
+// !LANGUAGE: +EnumEntries
 // FILE: MyEnum.kt
 enum class MyEnum {
     Nope, OK

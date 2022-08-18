@@ -1,7 +1,13 @@
+/*
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 import cenums.*
 import kotlinx.cinterop.*
 import kotlin.test.*
 
+@OptIn(kotlin.ExperimentalStdlibApi::class)
 fun main() {
     memScoped {
         val e = alloc<E.Var>()
@@ -12,4 +18,12 @@ fun main() {
             e.value = TODO()
         }
     }
+    val values = E.values()
+    assertEquals(values[0], E.A)
+    assertEquals(values[1], E.B)
+    assertEquals(values[2], E.C)
+    val entries = E.entries
+    assertEquals(entries[0], E.A)
+    assertEquals(entries[1], E.B)
+    assertEquals(entries[2], E.C)
 }
