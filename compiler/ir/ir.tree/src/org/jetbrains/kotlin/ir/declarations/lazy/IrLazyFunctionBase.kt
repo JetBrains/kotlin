@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.toInt
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -44,10 +45,15 @@ interface IrLazyFunctionBase : IrLazyDeclarationBase, IrTypeParametersContainer 
                 ).apply { parent = this@IrLazyFunctionBase }
             }
 
-            result.addIfNotNull(createReceiverParameter(descriptor.extensionReceiverParameter))
+            result.addIfNotNull(
+                createReceiverParameter(descriptor.extensionReceiverParameter, index = descriptor.contextReceiverParameters.size)
+            )
 
             descriptor.valueParameters.mapTo(result) {
-                stubGenerator.generateValueParameterStub(it, it.index + descriptor.contextReceiverParameters.size)
+                stubGenerator.generateValueParameterStub(
+                    it,
+                    it.index + descriptor.contextReceiverParameters.size + (descriptor.extensionReceiverParameter != null).toInt()
+                )
                     .apply { parent = this@IrLazyFunctionBase }
             }
         }
@@ -55,10 +61,11 @@ interface IrLazyFunctionBase : IrLazyDeclarationBase, IrTypeParametersContainer 
     fun createReceiverParameter(
         parameter: ReceiverParameterDescriptor?,
         functionDispatchReceiver: Boolean = false,
+        index: Int = -1,
     ): IrValueParameter? =
         if (functionDispatchReceiver && stubGenerator.extensions.isStaticFunction(descriptor)) null
         else typeTranslator.buildWithScope(this) {
-            parameter?.generateReceiverParameterStub()?.also { it.parent = this@IrLazyFunctionBase }
+            parameter?.generateReceiverParameterStub(index)?.also { it.parent = this@IrLazyFunctionBase }
         }
 
     fun createReturnType(): IrType =

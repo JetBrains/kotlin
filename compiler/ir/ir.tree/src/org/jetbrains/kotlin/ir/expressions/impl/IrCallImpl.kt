@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.convertSourceArgumentIndexToReal
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.util.totalValueParametersCount
 
 class IrCallImpl(
     override val startOffset: Int,
@@ -61,7 +61,7 @@ class IrCallImpl(
             symbol: IrSimpleFunctionSymbol,
             typeArgumentsCount: Int = symbol.descriptor.typeParametersCount,
             totalValueArgumentsCount: Int =
-                symbol.descriptor.valueParameters.size.totalValueParametersCount(
+                symbol.descriptor.valueParameters.size.convertSourceArgumentIndexToReal(
                     symbol.descriptor.contextReceiverParameters.size, symbol.descriptor.extensionReceiverParameter != null
                 ),
             origin: IrStatementOrigin? = null,

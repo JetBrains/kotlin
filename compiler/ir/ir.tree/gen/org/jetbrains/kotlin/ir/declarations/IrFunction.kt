@@ -46,7 +46,7 @@ abstract class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration,
     abstract var allValueParameters: List<IrValueParameter>
 
     val valueParameters: List<IrValueParameter>
-        get() = if (hasExtensionReceiver) valueParameters.drop(1) else emptyList()
+        get() = allValueParameters
 
     abstract var contextReceiverParametersCount: Int
 
