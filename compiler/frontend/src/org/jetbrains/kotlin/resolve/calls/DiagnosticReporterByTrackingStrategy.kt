@@ -187,6 +187,10 @@ class DiagnosticReporterByTrackingStrategy(
                     trace.report(SUPER_CANT_BE_EXTENSION_RECEIVER.on(psiExpression, psiExpression.text))
                 }
             }
+
+            StubBuilderInferenceReceiver::class.java -> {
+                trace.report(BUILDER_INFERENCE_STUB_RECEIVER.on(callReceiver.psiExpression ?: return))
+            }
         }
     }
 
