@@ -351,14 +351,10 @@ class ExpressionCodegen(
         if (!irFunction.isStatic) {
             mv.visitLocalVariable("this", classCodegen.type.descriptor, null, startLabel, endLabel, 0)
         }
-        val extensionReceiverParameter = irFunction.extensionReceiverParameter
-        if (extensionReceiverParameter != null) {
-            writeValueParameterInLocalVariableTable(extensionReceiverParameter, startLabel, endLabel, true)
-        }
         for (param in irFunction.valueParameters) {
             if (param.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION || param.origin == IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION)
                 continue
-            writeValueParameterInLocalVariableTable(param, startLabel, endLabel, false)
+            writeValueParameterInLocalVariableTable(param, startLabel, endLabel, isReceiver = irFunction.isReceiver(param))
         }
     }
 
@@ -500,18 +496,8 @@ class ExpressionCodegen(
             callGenerator.genValueAndPut(irParameter, arg, parameterType, this, data)
         }
 
-        val contextReceivers = callee.valueParameters.subList(0, callee.contextReceiverParametersCount)
-        contextReceivers.forEachIndexed(::handleValueParameter)
-
-        expression.extensionReceiver?.let { receiver ->
-            val type = callable.signature.valueParameters.singleOrNull { it.kind == JvmMethodParameterKind.RECEIVER }?.asmType
-                ?: error("No single extension receiver parameter: ${callable.signature.valueParameters}")
-            callGenerator.genValueAndPut(callee.extensionReceiverParameter!!, receiver, type, this, data)
-        }
-
-        callGenerator.beforeValueParametersStart(callee.contextReceiverParametersCount)
-        callee.valueParameters.subList(callee.contextReceiverParametersCount, callee.valueParameters.size)
-            .forEachIndexed { i, valueParameter -> handleValueParameter(i + contextReceivers.size, valueParameter) }
+        callGenerator.beforeValueParametersStart(0)
+        callee.valueParameters.forEachIndexed(::handleValueParameter)
 
         expression.markLineNumber(true)
 
@@ -699,7 +685,6 @@ class ExpressionCodegen(
     private fun IrSimpleFunction.resultIsActuallyAny(index: Int?): Boolean? {
         val type = when {
             index == null -> returnType
-            index < 0 -> extensionReceiverParameter!!.type
             else -> valueParameters[index].type
         }
         if (!type.eraseTypeParameters().isKotlinResult()) return null
