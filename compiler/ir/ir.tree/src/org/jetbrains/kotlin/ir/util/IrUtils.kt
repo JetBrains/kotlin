@@ -221,8 +221,6 @@ fun IrFunction.addExplicitParametersTo(parametersList: MutableList<IrValueParame
     parametersList.addAll(valueParameters.drop(contextReceiverParametersCount))
 }
 
-private fun Boolean.toInt(): Int = if (this) 1 else 0
-
 val IrFunction.explicitParametersCount: Int
     get() = (dispatchReceiverParameter != null).toInt() + (extensionReceiverParameter != null).toInt() +
             valueParameters.size
@@ -1265,3 +1263,29 @@ fun IrBuiltIns.getKFunctionType(returnType: IrType, parameterTypes: List<IrType>
 
 fun IdSignature?.isComposite(): Boolean =
     this is IdSignature.CompositeSignature
+
+fun Int.convertSourceArgumentIndexToReal(contextReceiversNumber: Int, hasExtensionReceiver: Boolean) =
+    this + contextReceiversNumber + hasExtensionReceiver.toInt()
+
+fun Boolean.toInt(): Int = if (this) 1 else 0
+
+val IrFunction.receiversPrefixSize get() = contextReceiverParametersCount + hasExtensionReceiver.toInt()
+
+fun IrFunction.isReceiver(parameterIndex: Int): Boolean = parameterIndex < receiversPrefixSize
+
+fun IrFunction.isReceiver(parameter: IrValueParameter): Boolean = isReceiver(parameter.index)
+
+fun IrFunction.isExtensionReceiverParameter(parameterIndex: Int): Boolean =
+    hasExtensionReceiver && contextReceiverParametersCount == parameterIndex
+
+fun IrFunction.isExtensionReceiverParameter(parameter: IrValueParameter): Boolean = isExtensionReceiverParameter(parameter.index)
+
+fun IrFunction.valueParametersWithoutReceivers(): List<IrValueParameter> =
+    valueParameters.subList(receiversPrefixSize, valueParameters.size)
+
+fun IrFunction.hasGetterShape(): Boolean = receiversPrefixSize == valueParameters.size
+fun IrFunction.hasSetterShape(): Boolean = receiversPrefixSize + 1 == valueParameters.size
+
+fun IrFunctionAccessExpression.putValueArgumentViaSourceBasedArgumentIndex(index: Int, valueArgument: IrExpression?) {
+    putValueArgument(index + receiversPrefixSize, valueArgument)
+}
