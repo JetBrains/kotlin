@@ -403,6 +403,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             public void testSamLambda() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/annotatedLambda/samLambda.kt");
             }
+
+            @Test
+            @TestMetadata("suspendLambda.kt")
+            public void testSuspendLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/annotatedLambda/suspendLambda.kt");
+            }
         }
 
         @Nested
