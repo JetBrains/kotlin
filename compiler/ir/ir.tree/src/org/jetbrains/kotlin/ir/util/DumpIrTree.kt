@@ -150,7 +150,10 @@ class DumpIrTreeVisitor(
                 printer.println("contextReceiverParametersCount: $contextReceiverParametersCount")
             }
 
-            declaration.extensionReceiverParameter?.accept(this, "\$receiver")
+            if (declaration.hasExtensionReceiver) {
+                printer.println("hasExtensionReceiver=true")
+            }
+
             declaration.valueParameters.dumpElements()
             declaration.body?.accept(this, "")
         }
