@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
-import org.jetbrains.kotlin.backend.jvm.mapping.mapType
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.*
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.JvmNames.STRICTFP_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.JvmNames.SYNCHRONIZED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.JVM_THROWS_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.*
@@ -248,15 +246,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         receiver?.let {
             frameMap.enter(it, classCodegen.typeMapper.mapTypeAsDeclaration(it.type))
         }
-        val contextReceivers = valueParameters.subList(0, contextReceiverParametersCount)
-        for (contextReceiver in contextReceivers) {
-            frameMap.enter(contextReceiver, classCodegen.typeMapper.mapType(contextReceiver.type))
-        }
-        extensionReceiverParameter?.let {
-            frameMap.enter(it, classCodegen.typeMapper.mapType(it))
-        }
-        val regularParameters = valueParameters.subList(contextReceiverParametersCount, valueParameters.size)
-        for (parameter in regularParameters) {
+        for (parameter in valueParameters) {
             frameMap.enter(parameter, classCodegen.typeMapper.mapType(parameter.type))
         }
         return frameMap
@@ -278,12 +268,9 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
 
         kotlinParameterTypes.forEachIndexed { i, parameterSignature ->
             val kind = parameterSignature.kind
-            val annotated = when (kind) {
-                JvmMethodParameterKind.RECEIVER -> irFunction.extensionReceiverParameter
-                else -> iterator.next()
-            }
+            val annotated = iterator.next()
 
-            if (annotated != null && !kind.isSkippedInGenericSignature && !annotated.isSyntheticMarkerParameter()) {
+            if (!kind.isSkippedInGenericSignature && !annotated.isSyntheticMarkerParameter()) {
                 object : AnnotationCodegen(classCodegen, skipNullabilityAnnotations) {
                     override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                         return mv.visitParameterAnnotation(
@@ -329,10 +316,9 @@ private fun IrValueParameter.isSyntheticMarkerParameter(): Boolean =
             origin == JvmLoweredDeclarationOrigin.SYNTHETIC_MARKER_PARAMETER
 
 private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, state: GenerationState) {
-    irFunction.extensionReceiverParameter?.let {
-        mv.visitParameter(irFunction.extensionReceiverName(state), Opcodes.ACC_MANDATED)
-    }
     for (irParameter in irFunction.valueParameters) {
+        val isExtensionReceiver = irFunction.isExtensionReceiverParameter(irParameter)
+
         // A construct emitted by a Java compiler must be marked as synthetic if it does not correspond to a construct declared
         // explicitly or implicitly in source code, unless the emitted construct is a class initialization method (JVMS §2.9).
         // A construct emitted by a Java compiler must be marked as mandated if it corresponds to a formal parameter
@@ -341,13 +327,19 @@ private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, st
             irParameter.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> Opcodes.ACC_MANDATED
             // TODO mark these backend-common origins as synthetic? (note: ExpressionCodegen is still expected
             //      to generate LVT entries for them)
-            irParameter.origin == IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER -> Opcodes.ACC_MANDATED
+            isExtensionReceiver || irParameter.origin == IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER -> Opcodes.ACC_MANDATED
             irParameter.origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER -> Opcodes.ACC_SYNTHETIC
             irParameter.origin == BOUND_VALUE_PARAMETER -> Opcodes.ACC_SYNTHETIC
             irParameter.origin == BOUND_RECEIVER_PARAMETER -> Opcodes.ACC_SYNTHETIC
             irParameter.origin.isSynthetic -> Opcodes.ACC_SYNTHETIC
             else -> 0
         }
-        mv.visitParameter(irParameter.name.asString(), access)
+
+        val name = when {
+            isExtensionReceiver -> irFunction.extensionReceiverName(state)
+            else -> irParameter.name.asString()
+        }
+
+        mv.visitParameter(name, access)
     }
 }
