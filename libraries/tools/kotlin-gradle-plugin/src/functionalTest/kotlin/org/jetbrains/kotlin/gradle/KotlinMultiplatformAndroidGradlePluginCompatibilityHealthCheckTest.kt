@@ -9,9 +9,6 @@ package org.jetbrains.kotlin.gradle
 
 import com.android.build.gradle.LibraryPlugin
 import org.gradle.testfixtures.ProjectBuilder
-import org.jetbrains.kotlin.gradle.mpp.buildProjectWithKPM
-import org.jetbrains.kotlin.gradle.mpp.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.mpp.kotlin
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.AndroidGradlePluginStringProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.AndroidGradlePluginVersionParser
@@ -222,6 +219,7 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
         /* Not yet, executed, because Android is not applied yet */
         assertNoWarningMessage()
 
+        addBuildEventsListenerRegistryMock(project)
         project.plugins.apply(LibraryPlugin::class.java)
         assertEquals(Messages.FAILED_GETTING_ANDROID_GRADLE_PLUGIN_VERSION_STRING, assertSingleWarningMessage())
     }
@@ -229,6 +227,7 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
     @Test
     fun `test - WhenAndroidIsApplied - android is applied before the health check call`() {
         val project = ProjectBuilder.builder().build()
+        addBuildEventsListenerRegistryMock(project)
         project.plugins.apply(LibraryPlugin::class.java)
 
         project.runMultiplatformAndroidGradlePluginCompatibilityHealthCheckWhenAndroidIsApplied(
@@ -241,6 +240,7 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
     @Test
     fun `test - WhenAndroidIsApplied - called multiple times - still emits only a single message`() {
         val project = ProjectBuilder.builder().build()
+        addBuildEventsListenerRegistryMock(project)
         project.plugins.apply(LibraryPlugin::class.java)
 
         repeat(10) {
@@ -277,6 +277,7 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
     @Test
     fun `test - is not executed when android plugin is applied - kotlin-android plugin`() {
         val project = ProjectBuilder.builder().build()
+        addBuildEventsListenerRegistryMock(project)
         project.plugins.apply("kotlin-android")
         project.plugins.apply(LibraryPlugin::class.java)
 

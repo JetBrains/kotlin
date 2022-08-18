@@ -38,6 +38,7 @@ where advanced options include:
   -Xmetadata-only            Generate *.meta.js and *.kjsm files only
   -Xpartial-linkage          Allow unlinked symbols
   -Xrepositories=<path>      Paths to additional places where libraries could be found
+  -Xstrict-implicit-export-types Generate strict types for implicitly exported entities inside d.ts files. Available in IR backend only.
   -Xtyped-arrays             Translate primitive arrays to JS typed arrays
   -Xwasm                     Use experimental WebAssembly compiler backend
   -Xwasm-debug-info          Add debug info to WebAssembly compiled module

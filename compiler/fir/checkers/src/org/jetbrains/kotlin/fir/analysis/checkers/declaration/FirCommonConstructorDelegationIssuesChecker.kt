@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirCommonConstructorDelegationIssuesChecker : FirRegularClassChecker() {
@@ -95,7 +95,7 @@ object FirCommonConstructorDelegationIssuesChecker : FirRegularClassChecker() {
     }
 
     private fun FirConstructor.getDelegated(): FirConstructor? {
-        this.symbol.ensureResolved(FirResolvePhase.BODY_RESOLVE)
+        this.symbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
         val delegatedConstructorSymbol = delegatedConstructor
             ?.calleeReference.safeAs<FirResolvedNamedReference>()
             ?.resolvedSymbol

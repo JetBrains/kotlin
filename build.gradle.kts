@@ -1,5 +1,6 @@
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
 
 buildscript {
     val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
@@ -69,9 +70,9 @@ val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
 val defaultSnapshotVersion: String by extra
 val buildNumber by extra(findProperty("build.number")?.toString() ?: defaultSnapshotVersion)
 val kotlinVersion by extra(
-        findProperty("deployVersion")?.toString()?.let { deploySnapshotStr ->
-            if (deploySnapshotStr != "default.snapshot") deploySnapshotStr else defaultSnapshotVersion
-        } ?: buildNumber
+    findProperty("deployVersion")?.toString()?.let { deploySnapshotStr ->
+        if (deploySnapshotStr != "default.snapshot") deploySnapshotStr else defaultSnapshotVersion
+    } ?: buildNumber
 )
 
 val kotlinLanguageVersion by extra("1.8")
@@ -126,7 +127,7 @@ rootProject.apply {
 IdeVersionConfigurator.setCurrentIde(project)
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.8.0-dev-287"
+    extra["versions.kotlin-native"] = "1.8.0-dev-1808"
 }
 
 val irCompilerModules = arrayOf(
@@ -142,7 +143,7 @@ val irCompilerModules = arrayOf(
 val commonCompilerModules = arrayOf(
     ":compiler:psi",
     ":compiler:frontend.common-psi",
-    ":compiler:light-classes-base",
+    ":analysis:light-classes-base",
     ":compiler:frontend.common",
     ":compiler:util",
     ":compiler:config.jvm",
@@ -364,7 +365,9 @@ val coreLibProjects by extra {
 
 val projectsWithEnabledContextReceivers by extra {
     listOf(
-        ":compiler:fir:fir2ir"
+        ":core:descriptors.jvm",
+        ":compiler:fir:fir2ir",
+        ":kotlin-lombok-compiler-plugin.k1",
     )
 }
 
@@ -391,11 +394,12 @@ allprojects {
     val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
 
     repositories {
-        when(kotlinBuildProperties.getOrNull("attachedIntellijVersion")) {
-             null -> {}
+        when (kotlinBuildProperties.getOrNull("attachedIntellijVersion")) {
+            null -> {}
             "master" -> {
                 maven { setUrl("https://www.jetbrains.com/intellij-repository/snapshots") }
             }
+
             else -> {
                 kotlinBuildLocalRepo(project)
             }
@@ -437,9 +441,7 @@ allprojects {
 
 apply {
     from("libraries/commonConfiguration.gradle")
-    if (extra.has("isDeployStagingRepoGenerationRequired") &&
-        project.extra["isDeployStagingRepoGenerationRequired"] as Boolean == true
-    ) {
+    if (extra.has("isDeployStagingRepoGenerationRequired") && project.extra["isDeployStagingRepoGenerationRequired"] as Boolean) {
         logger.info("Applying configuration for sonatype release")
         from("libraries/prepareSonatypeStaging.gradle")
     }
@@ -510,7 +512,7 @@ tasks {
             ":kotlin-test:kotlin-test-js-ir:kotlin-test-js-ir-it".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
             ":kotlinx-metadata-jvm",
             ":tools:binary-compatibility-validator",
-            //":kotlin-stdlib-wasm",
+            ":kotlin-stdlib-wasm",
         )).forEach {
             dependsOn("$it:check")
         }
@@ -727,12 +729,14 @@ tasks {
 
     register("publishIdeArtifacts") {
         idePluginDependency {
+            @Suppress("UNCHECKED_CAST")
             dependsOn((rootProject.extra["compilerArtifactsForIde"] as List<String>).map { "$it:publish" })
         }
     }
 
     register("installIdeArtifacts") {
         idePluginDependency {
+            @Suppress("UNCHECKED_CAST")
             dependsOn((rootProject.extra["compilerArtifactsForIde"] as List<String>).map { "$it:install" })
         }
     }
@@ -849,6 +853,8 @@ afterEvaluate {
         rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
             rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().downloadBaseUrl =
                 "https://cache-redirector.jetbrains.com/github.com/yarnpkg/yarn/releases/download"
+            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().yarnLockMismatchReport =
+                YarnLockMismatchReport.WARNING
         }
     }
 }

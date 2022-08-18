@@ -28,8 +28,6 @@ dependencies {
     }
 }
 
-project.applyFixForStdlib16()
-
 apply(from = "$rootDir/gradle/cacheRedirector.gradle.kts")
 project.configureJvmDefaultToolchain()
 project.addEmbeddedConfigurations()
@@ -141,7 +139,6 @@ fun Project.configureKotlinCompilationOptions() {
         val jvmCompilerArgs = listOf(
             "-Xno-optimized-callable-references",
             "-Xno-kotlin-nothing-value-exception",
-            "-Xsuppress-deprecated-jvm-target-warning" // Remove as soon as there are no modules for JDK 1.6 & 1.7
         )
 
         val coreLibProjects: List<String> by rootProject.extra
@@ -196,16 +193,6 @@ fun Project.configureKotlinCompilationOptions() {
                     freeCompilerArgs += "-Xcontext-receivers"
                 }
             }
-        }
-    }
-}
-
-// Still compile stdlib, reflect, kotlin.test and scripting runtimes
-// with JVM target 1.6 to simplify migration from Kotlin 1.6 to 1.7.
-fun Project.applyFixForStdlib16() {
-    plugins.withType<KotlinBasePluginWrapper>() {
-        dependencies {
-            "kotlinCompilerClasspath"(project(":libraries:tools:stdlib-compiler-classpath"))
         }
     }
 }

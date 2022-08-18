@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommo
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compileAll
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.KotlinSourceFile
+import org.jetbrains.kotlin.incremental.storage.fromByteArray
+import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -25,7 +27,11 @@ abstract class ClasspathSnapshotTestCommon {
 
     // Use Gson to compare objects
     private val gson by lazy { GsonBuilder().setPrettyPrinting().create() }
-    protected fun Any.toGson(): String = gson.toJson(this)
+    protected fun ClassSnapshot.toGson(): String = gson.toJson(
+        // Serialize and deserialize the object to unset lazy properties' values as they are not essential and can add noise when comparing
+        // objects
+        ClassSnapshotExternalizer.fromByteArray(ClassSnapshotExternalizer.toByteArray(this))
+    )
 
     sealed class SourceFile(val baseDir: File, relativePath: String) {
         val unixStyleRelativePath: String
@@ -100,7 +106,7 @@ abstract class ClasspathSnapshotTestCommon {
          * Kotlin compiler to generate classes. However, kotlin-compiler.jar is currently not available in CI builds, so we need to
          * pre-compile the classes locally and put them in the test data to check in.
          */
-        @Synchronized // To safe-guard shared variable preCompiledKotlinClassesDirs
+        @Synchronized // To safeguard shared variable preCompiledKotlinClassesDirs
         private fun preCompileKotlinFilesIfNecessary(
             srcDir: File,
             preCompiledKotlinClassesDir: File,
@@ -195,7 +201,12 @@ internal fun snapshotClasspath(
     granularity: ClassSnapshotGranularity? = null
 ): ClasspathSnapshot {
     val classpath = mutableListOf<File>()
-    val classpathEntrySnapshots = classpathSourceDir.listFiles()!!.sortedBy { it.name }.map { classpathEntrySourceDir ->
+    val classpathEntrySourceDirs = if (classpathSourceDir.listFiles()!!.size == 1) {
+        listOf(classpathSourceDir)
+    } else {
+        classpathSourceDir.listFiles()!!.sortedBy { it.name }
+    }
+    val classpathEntrySnapshots = classpathEntrySourceDirs.map { classpathEntrySourceDir ->
         val classFiles = compileAll(classpathEntrySourceDir, tmpDir, classpath)
         classpath.addAll(listOfNotNull(classFiles.firstOrNull()?.classRoot))
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -118,6 +118,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @TestMetadata("annotationInstancesEmptyDefault.kt")
                 public void testAnnotationInstancesEmptyDefault() throws Exception {
                     runTest("compiler/testData/codegen/box/annotations/instances/annotationInstancesEmptyDefault.kt");
+                }
+
+                @Test
+                @TestMetadata("annotationInstancesEmptyDefaultLowered.kt")
+                public void testAnnotationInstancesEmptyDefaultLowered() throws Exception {
+                    runTest("compiler/testData/codegen/box/annotations/instances/annotationInstancesEmptyDefaultLowered.kt");
                 }
 
                 @Test
@@ -6959,6 +6965,54 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public void testWhileTrueBreak() throws Exception {
                     runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/whileTrueBreak.kt");
                 }
+
+                @Nested
+                @TestMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue")
+                @TestDataPath("$PROJECT_ROOT")
+                @Tag("codegen")
+                @UseExtTestCaseGroupProvider()
+                public class InlinedBreakContinue {
+                    @Test
+                    public void testAllFilesPresentInInlinedBreakContinue() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                    }
+
+                    @Test
+                    @TestMetadata("inlineFunctionWithMultipleParameters.kt")
+                    public void testInlineFunctionWithMultipleParameters() throws Exception {
+                        runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/inlineFunctionWithMultipleParameters.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("lambdaPassedToInlineFunction.kt")
+                    public void testLambdaPassedToInlineFunction() throws Exception {
+                        runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/lambdaPassedToInlineFunction.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("loopWithinInlineFunction.kt")
+                    public void testLoopWithinInlineFunction() throws Exception {
+                        runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/loopWithinInlineFunction.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("simple.kt")
+                    public void testSimple() throws Exception {
+                        runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/simple.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("stdlibFunctions.kt")
+                    public void testStdlibFunctions() throws Exception {
+                        runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/stdlibFunctions.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("withReturnValue.kt")
+                    public void testWithReturnValue() throws Exception {
+                        runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/withReturnValue.kt");
+                    }
+                }
             }
 
             @Nested
@@ -13244,6 +13298,24 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("kt53202.kt")
+            public void testKt53202() throws Exception {
+                runTest("compiler/testData/codegen/box/directInvokeOptimization/kt53202.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53202_funLiteral.kt")
+            public void testKt53202_funLiteral() throws Exception {
+                runTest("compiler/testData/codegen/box/directInvokeOptimization/kt53202_funLiteral.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53202_returns.kt")
+            public void testKt53202_returns() throws Exception {
+                runTest("compiler/testData/codegen/box/directInvokeOptimization/kt53202_returns.kt");
+            }
+
+            @Test
             @TestMetadata("nestedLambdas.kt")
             public void testNestedLambdas() throws Exception {
                 runTest("compiler/testData/codegen/box/directInvokeOptimization/nestedLambdas.kt");
@@ -15419,18 +15491,6 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public void testParameterAsDefaultValue() throws Exception {
                     runTest("compiler/testData/codegen/box/functions/localFunctions/parameterAsDefaultValue.kt");
                 }
-            }
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/box/hashPMap")
-        @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @UseExtTestCaseGroupProvider()
-        public class HashPMap {
-            @Test
-            public void testAllFilesPresentInHashPMap() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/hashPMap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
             }
         }
 
@@ -28235,6 +28295,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     public void testTopLevelProperty() throws Exception {
                         runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/topLevelProperty.kt");
                     }
+
+                    @Test
+                    @TestMetadata("topLevelPropertyMultiModule.kt")
+                    public void testTopLevelPropertyMultiModule() throws Exception {
+                        runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/topLevelPropertyMultiModule.kt");
+                    }
                 }
 
                 @Nested
@@ -28849,9 +28915,15 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     }
 
                     @Test
-                    @TestMetadata("charRangeLiteral.kt")
-                    public void testCharRangeLiteral() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/contains/generated/charRangeLiteral.kt");
+                    @TestMetadata("charRangeTo.kt")
+                    public void testCharRangeTo() throws Exception {
+                        runTest("compiler/testData/codegen/box/ranges/contains/generated/charRangeTo.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("charRangeUntil.kt")
+                    public void testCharRangeUntil() throws Exception {
+                        runTest("compiler/testData/codegen/box/ranges/contains/generated/charRangeUntil.kt");
                     }
 
                     @Test
@@ -28873,15 +28945,27 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     }
 
                     @Test
-                    @TestMetadata("doubleRangeLiteral.kt")
-                    public void testDoubleRangeLiteral() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/contains/generated/doubleRangeLiteral.kt");
+                    @TestMetadata("doubleRangeTo.kt")
+                    public void testDoubleRangeTo() throws Exception {
+                        runTest("compiler/testData/codegen/box/ranges/contains/generated/doubleRangeTo.kt");
                     }
 
                     @Test
-                    @TestMetadata("floatRangeLiteral.kt")
-                    public void testFloatRangeLiteral() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/contains/generated/floatRangeLiteral.kt");
+                    @TestMetadata("doubleRangeUntil.kt")
+                    public void testDoubleRangeUntil() throws Exception {
+                        runTest("compiler/testData/codegen/box/ranges/contains/generated/doubleRangeUntil.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("floatRangeTo.kt")
+                    public void testFloatRangeTo() throws Exception {
+                        runTest("compiler/testData/codegen/box/ranges/contains/generated/floatRangeTo.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("floatRangeUntil.kt")
+                    public void testFloatRangeUntil() throws Exception {
+                        runTest("compiler/testData/codegen/box/ranges/contains/generated/floatRangeUntil.kt");
                     }
 
                     @Test
@@ -28891,9 +28975,15 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     }
 
                     @Test
-                    @TestMetadata("intRangeLiteral.kt")
-                    public void testIntRangeLiteral() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/contains/generated/intRangeLiteral.kt");
+                    @TestMetadata("intRangeTo.kt")
+                    public void testIntRangeTo() throws Exception {
+                        runTest("compiler/testData/codegen/box/ranges/contains/generated/intRangeTo.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("intRangeUntil.kt")
+                    public void testIntRangeUntil() throws Exception {
+                        runTest("compiler/testData/codegen/box/ranges/contains/generated/intRangeUntil.kt");
                     }
 
                     @Test
@@ -28909,15 +28999,69 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     }
 
                     @Test
-                    @TestMetadata("longRangeLiteral.kt")
-                    public void testLongRangeLiteral() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/contains/generated/longRangeLiteral.kt");
+                    @TestMetadata("longRangeTo.kt")
+                    public void testLongRangeTo() throws Exception {
+                        runTest("compiler/testData/codegen/box/ranges/contains/generated/longRangeTo.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("longRangeUntil.kt")
+                    public void testLongRangeUntil() throws Exception {
+                        runTest("compiler/testData/codegen/box/ranges/contains/generated/longRangeUntil.kt");
                     }
 
                     @Test
                     @TestMetadata("longUntil.kt")
                     public void testLongUntil() throws Exception {
                         runTest("compiler/testData/codegen/box/ranges/contains/generated/longUntil.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("uintDownTo.kt")
+                    public void testUintDownTo() throws Exception {
+                        runTest("compiler/testData/codegen/box/ranges/contains/generated/uintDownTo.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("uintRangeTo.kt")
+                    public void testUintRangeTo() throws Exception {
+                        runTest("compiler/testData/codegen/box/ranges/contains/generated/uintRangeTo.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("uintRangeUntil.kt")
+                    public void testUintRangeUntil() throws Exception {
+                        runTest("compiler/testData/codegen/box/ranges/contains/generated/uintRangeUntil.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("uintUntil.kt")
+                    public void testUintUntil() throws Exception {
+                        runTest("compiler/testData/codegen/box/ranges/contains/generated/uintUntil.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("ulongDownTo.kt")
+                    public void testUlongDownTo() throws Exception {
+                        runTest("compiler/testData/codegen/box/ranges/contains/generated/ulongDownTo.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("ulongRangeTo.kt")
+                    public void testUlongRangeTo() throws Exception {
+                        runTest("compiler/testData/codegen/box/ranges/contains/generated/ulongRangeTo.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("ulongRangeUntil.kt")
+                    public void testUlongRangeUntil() throws Exception {
+                        runTest("compiler/testData/codegen/box/ranges/contains/generated/ulongRangeUntil.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("ulongUntil.kt")
+                    public void testUlongUntil() throws Exception {
+                        runTest("compiler/testData/codegen/box/ranges/contains/generated/ulongUntil.kt");
                     }
                 }
             }
@@ -34670,6 +34814,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("nativeWithoutPackagePatching.kt")
+                public void testNativeWithoutPackagePatching() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/classLiterals/nativeWithoutPackagePatching.kt");
+                }
+
+                @Test
                 @TestMetadata("simpleClassLiteral.kt")
                 public void testSimpleClassLiteral() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/classLiterals/simpleClassLiteral.kt");
@@ -36258,6 +36408,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @TestMetadata("callableReferenceInlinedFun.kt")
             public void testCallableReferenceInlinedFun() throws Exception {
                 runTest("compiler/testData/codegen/box/reified/callableReferenceInlinedFun.kt");
+            }
+
+            @Test
+            @TestMetadata("callableReferenceInlinedFunFromOtherModule.kt")
+            public void testCallableReferenceInlinedFunFromOtherModule() throws Exception {
+                runTest("compiler/testData/codegen/box/reified/callableReferenceInlinedFunFromOtherModule.kt");
             }
 
             @Test
@@ -38206,6 +38362,24 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/topLevelInitializtion")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("codegen")
+        @UseExtTestCaseGroupProvider()
+        public class TopLevelInitializtion {
+            @Test
+            public void testAllFilesPresentInTopLevelInitializtion() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/topLevelInitializtion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("concurrent.kt")
+            public void testConcurrent() throws Exception {
+                runTest("compiler/testData/codegen/box/topLevelInitializtion/concurrent.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/topLevelPrivate")
         @TestDataPath("$PROJECT_ROOT")
         @Tag("codegen")
@@ -39927,6 +40101,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("anonymousObjectInCallChildren.kt")
+            public void testAnonymousObjectInCallChildren() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/anonymousObjectInCallChildren.kt");
+            }
+
+            @Test
             @TestMetadata("anonymousObjectInDefault.kt")
             public void testAnonymousObjectInDefault() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/anonymousObject/anonymousObjectInDefault.kt");
@@ -40185,6 +40365,36 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("kt52795.kt")
+            public void testKt52795() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795.kt");
+            }
+
+            @Test
+            @TestMetadata("kt52795_2.kt")
+            public void testKt52795_2() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_2.kt");
+            }
+
+            @Test
+            @TestMetadata("kt52795_3.kt")
+            public void testKt52795_3() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_3.kt");
+            }
+
+            @Test
+            @TestMetadata("kt52795_4.kt")
+            public void testKt52795_4() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_4.kt");
+            }
+
+            @Test
+            @TestMetadata("kt52795_5.kt")
+            public void testKt52795_5() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_5.kt");
+            }
+
+            @Test
             @TestMetadata("kt6007.kt")
             public void testKt6007() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/anonymousObject/kt6007.kt");
@@ -40272,6 +40482,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @TestMetadata("withInlineMethod.kt")
             public void testWithInlineMethod() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/anonymousObject/withInlineMethod.kt");
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumEntries")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("codegen")
+            @UseExtTestCaseGroupProvider()
+            public class EnumEntries {
+                @Test
+                public void testAllFilesPresentInEnumEntries() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumEntries"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
             }
 
             @Nested
@@ -40722,6 +40944,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @TestMetadata("constructor.kt")
             public void testConstructor() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/callableReference/constructor.kt");
+            }
+
+            @Test
+            @TestMetadata("inlineCallableReference.kt")
+            public void testInlineCallableReference() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/callableReference/inlineCallableReference.kt");
             }
 
             @Test

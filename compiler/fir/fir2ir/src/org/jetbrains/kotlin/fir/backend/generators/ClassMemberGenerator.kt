@@ -168,6 +168,7 @@ internal class ClassMemberGenerator(
                 }
             } else if (irFunction !is IrConstructor && !irFunction.isExpect) {
                 when {
+                    // Create fake bodies for Enum.values/Enum.valueOf
                     irFunction.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> {
                         val kind = Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES.getValue(irFunction.name)
                         irFunction.body = IrSyntheticBodyImpl(startOffset, endOffset, kind)
@@ -215,6 +216,12 @@ internal class ClassMemberGenerator(
             isGetter = true,
             containingClass = containingClass
         )
+        // Create fake body for Enum.entries
+        if (irProperty.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER) {
+            val kind = Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES.getValue(irProperty.name)
+            irProperty.getter!!.body = IrSyntheticBodyImpl(irProperty.startOffset, irProperty.endOffset, kind)
+        }
+
         if (property.isVar) {
             irProperty.setter?.setPropertyAccessorContent(
                 property, property.setter, irProperty, propertyType,

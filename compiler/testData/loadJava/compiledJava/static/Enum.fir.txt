@@ -8,6 +8,9 @@ public final enum class Enum : R|kotlin/Enum<test/Enum!>| {
     public final static fun valueOf(value: R|kotlin/String|): R|test/Enum| {
     }
 
+    public final static val entries: R|kotlin/enums/EnumEntries<test/Enum>|
+        public get(): R|kotlin/enums/EnumEntries<test/Enum>|
+
     public open inner class Inner : R|kotlin/Any| {
         public/*package*/ open fun bar(): R|kotlin/Unit|
 

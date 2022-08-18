@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import com.android.build.gradle.TestedExtension
 import com.android.build.gradle.api.TestVariant
 import com.android.build.gradle.api.UnitTestVariant
 import org.gradle.api.InvalidUserDataException
@@ -27,10 +26,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
+import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidBaseSourceSetName
+import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
+import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOrNull
 import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
-import org.jetbrains.kotlin.gradle.targets.android.findAndroidTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.JvmCompilationsTestRunSource
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.KotlinTaskTestRun
@@ -112,10 +113,7 @@ internal fun configureStdlibDefaultDependency(project: Project) = with(project) 
 
                     project.tryWithDependenciesIfUnresolved(scopeConfiguration) { dependencies ->
                         val scopeToAddStdlibDependency =
-                            if (isRelatedToAndroidTestSourceSet(
-                                    project,
-                                    kotlinSourceSet
-                                )
+                            if (isRelatedToAndroidTestSourceSet(kotlinSourceSet)
                             ) // AGP deprecates API configurations in test source sets
                                 KotlinDependencyScope.IMPLEMENTATION_SCOPE
                             else KotlinDependencyScope.API_SCOPE
@@ -195,7 +193,9 @@ private fun chooseAndAddStdlibDependency(
         val stdlibModuleName = when (sourceSetStdlibPlatformType) {
             KotlinPlatformType.jvm -> stdlibModuleForJvmCompilations(compilations)
             KotlinPlatformType.androidJvm ->
-                if (kotlinSourceSet.name == androidMainSourceSetName(project)) stdlibModuleForJvmCompilations(compilations) else null
+                if (kotlinSourceSet.androidSourceSetInfoOrNull?.androidSourceSetName == AndroidBaseSourceSetName.Main.name)
+                    stdlibModuleForJvmCompilations(compilations) else null
+
             KotlinPlatformType.js -> "kotlin-stdlib-js"
             KotlinPlatformType.wasm -> "kotlin-stdlib-wasm"
             KotlinPlatformType.native -> null
@@ -214,28 +214,9 @@ private fun chooseAndAddStdlibDependency(
     }
 }
 
-private fun androidMainSourceSetName(project: Project): String {
-    val target = project.findAndroidTarget() ?: error("No Android target found")
-    return AbstractAndroidProjectHandler.kotlinSourceSetNameForAndroidSourceSet(target, "main")
-}
-
-private fun isRelatedToAndroidTestSourceSet(project: Project, kotlinSourceSet: KotlinSourceSet): Boolean {
-    val androidExtension = project.extensions.findByName("android") as? TestedExtension ?: return false
-    val androidTarget = project.findAndroidTarget() ?: return false
-
-    if (androidTarget.compilations.any {
-            (it.androidVariant is UnitTestVariant || it.androidVariant is TestVariant) && it.defaultSourceSet === kotlinSourceSet
-        }
-    ) return true
-
-    (androidExtension.testVariants + androidExtension.unitTestVariants).forEach { variant ->
-        if (variant.sourceSets.any {
-                kotlinSourceSet.name == AbstractAndroidProjectHandler.kotlinSourceSetNameForAndroidSourceSet(androidTarget, it.name)
-            }
-        ) return true
-    }
-
-    return false
+private fun isRelatedToAndroidTestSourceSet(kotlinSourceSet: KotlinSourceSet): Boolean {
+    val androidVariantType = kotlinSourceSet.androidSourceSetInfoOrNull?.androidVariantType ?: return false
+    return androidVariantType in setOf(AndroidVariantType.UnitTest, AndroidVariantType.InstrumentedTest)
 }
 
 private val stdlibModules = setOf("kotlin-stdlib-common", "kotlin-stdlib", "kotlin-stdlib-jdk7", "kotlin-stdlib-jdk8", "kotlin-stdlib-js")

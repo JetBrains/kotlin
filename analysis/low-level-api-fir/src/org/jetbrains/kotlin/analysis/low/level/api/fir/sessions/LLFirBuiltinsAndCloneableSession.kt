@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 
-@OptIn(PrivateSessionConstructor::class)
 class LLFirBuiltinsAndCloneableSession @PrivateSessionConstructor constructor(
     override val ktModule: KtModule,
     project: Project,

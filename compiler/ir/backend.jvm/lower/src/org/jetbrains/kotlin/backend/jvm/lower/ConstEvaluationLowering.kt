@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrErrorExpression
@@ -40,7 +41,10 @@ class ConstEvaluationLowering(val context: JvmBackendContext) : FileLoweringPass
                 .report(JvmBackendErrors.EXCEPTION_IN_CONST_EXPRESSION, warning.description)
         }
 
-        val transformer = IrConstTransformer(interpreter, irFile, mode = EvaluationMode.ONLY_INTRINSIC_CONST, ::onWarning, ::onError)
+        val suppressErrors = context.configuration.getBoolean(JVMConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS)
+        val transformer = IrConstTransformer(
+            interpreter, irFile, mode = EvaluationMode.ONLY_INTRINSIC_CONST, ::onWarning, ::onError, suppressErrors
+        )
         irFile.transformChildren(transformer, null)
     }
 }

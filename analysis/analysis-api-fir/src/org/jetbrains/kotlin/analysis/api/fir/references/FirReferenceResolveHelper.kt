@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -188,7 +189,10 @@ internal object FirReferenceResolveHelper {
         if (expression.isSyntheticOperatorReference()) return emptyList()
         val symbolBuilder = analysisSession.firSymbolBuilder
         val adjustedResolutionExpression = adjustResolutionExpression(expression)
-        val fir = adjustedResolutionExpression.getOrBuildFir(analysisSession.firResolveSession)
+        val fir = when (val baseFir = adjustedResolutionExpression.getOrBuildFir(analysisSession.firResolveSession)) {
+            is FirSmartCastExpression -> baseFir.originalExpression
+            else -> baseFir
+        }
         val session = analysisSession.firResolveSession.useSiteFirSession
         return when (fir) {
             is FirResolvedTypeRef -> getSymbolsForResolvedTypeRef(fir, expression, session, symbolBuilder)
@@ -361,7 +365,7 @@ internal object FirReferenceResolveHelper {
             return listOfNotNull((fir.dispatchReceiver.typeRef as? FirResolvedTypeRef)?.toTargetSymbol(session, symbolBuilder))
         }
         val implicitInvokeReceiver = if (fir is FirImplicitInvokeCall) {
-            fir.explicitReceiver as? FirQualifiedAccessExpression
+            fir.explicitReceiver?.unwrapSmartcastExpression() as? FirQualifiedAccessExpression
         } else {
             null
         }
@@ -394,7 +398,6 @@ internal object FirReferenceResolveHelper {
         return listOf(symbolBuilder.buildSymbol(fir.symbol))
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun getSymbolsByResolvedImport(
         expression: KtSimpleNameExpression,
         builder: KtSymbolByFirBuilder,

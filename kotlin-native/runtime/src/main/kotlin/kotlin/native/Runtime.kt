@@ -51,11 +51,29 @@ public class FileFailedToInitializeException : RuntimeException {
 public typealias ReportUnhandledExceptionHook = Function1<Throwable, Unit>
 
 /**
- * Install custom unhandled exception hook. Returns old hook, or null if it was not specified.
- * Hook is invoked whenever there's uncaught exception reaching boundaries of the Kotlin world,
- * i.e. top level main(), or when Objective-C to Kotlin call not marked with @Throws throws an exception.
- * Hook must be a frozen lambda, so that it could be called from any thread/worker.
+ * Installs an unhandled exception hook and returns an old hook, or `null` if no user-defined hooks were previously set.
+ *
+ * The hook is invoked whenever there is an uncaught exception reaching the boundaries of the Kotlin world,
+ * i.e. top-level `main()`, worker boundary, or when Objective-C to Kotlin call not marked with `@Throws` throws an exception.
+ *
+ * The hook is in full control of how to process an unhandled exception and proceed further.
+ * For hooks that terminate an application, it is recommended to use [terminateWithUnhandledException] to
+ * be consistent with a default behaviour when no hooks are set.
+ *
+ * Set or default hook is also invoked by [processUnhandledException].
+ * With the legacy MM the hook must be a frozen lambda so that it could be called from any thread/worker.
  */
+@OptIn(FreezingIsDeprecated::class)
+public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook?): ReportUnhandledExceptionHook? {
+    try {
+        return UnhandledExceptionHookHolder.hook.swap(hook)
+    } catch (e: InvalidMutabilityException) {
+        throw InvalidMutabilityException("Unhandled exception hook must be frozen")
+    }
+}
+
+@Suppress("CONFLICTING_OVERLOADS")
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 @OptIn(FreezingIsDeprecated::class)
 public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook): ReportUnhandledExceptionHook? {
     try {
@@ -66,7 +84,7 @@ public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook): Report
 }
 
 /**
- * Returns a user-defined uncaught exception handler set by [setUnhandledExceptionHook] or `null` if no user-defined handlers were set.
+ * Returns a user-defined unhandled exception hook set by [setUnhandledExceptionHook] or `null` if no user-defined hooks were set.
  */
 @ExperimentalStdlibApi
 @SinceKotlin("1.6")

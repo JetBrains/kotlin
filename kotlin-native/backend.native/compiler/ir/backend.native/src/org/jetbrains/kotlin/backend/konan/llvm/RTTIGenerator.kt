@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.ir.isAny
 import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering.Companion.isLoweredFunctionReference
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
@@ -462,6 +459,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                     ""
             ) {
                 ret(getObjectValue(value, ExceptionHandler.Caller, startLocationInfo = null))
+            }.also {
+                LLVMSetLinkage(it, LLVMLinkage.LLVMPrivateLinkage)
             }
 
             Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, constPointer(associatedObjectGetter))
@@ -564,7 +563,15 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     }
 
     private fun getReflectionInfo(irClass: IrClass): ReflectionInfo {
-        val packageName: String = irClass.getPackageFragment().fqName.asString() // Compute and store package name in TypeInfo anyways.
+        val packageFragment = irClass.getPackageFragment()
+        val reflectionPackageName = if (packageFragment is IrFile) {
+            // This annotation is used by test infrastructure.
+            packageFragment.annotations.findAnnotation(KonanFqNames.reflectionPackageName)?.getAnnotationStringValue()
+        } else {
+            null
+        }
+
+        val packageName: String = reflectionPackageName ?: packageFragment.fqName.asString() // Compute and store package name in TypeInfo anyways.
         val relativeName: String?
         val flags: Int
 

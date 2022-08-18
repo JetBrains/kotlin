@@ -137,7 +137,7 @@ open class NodeJsRootExtension(@Transient val rootProject: Project) : Configurat
 
     val versions = NpmVersions()
 
-    internal val npmResolutionManager = KotlinNpmResolutionManager(this)
+    val npmResolutionManager = KotlinNpmResolutionManager(this)
 
     companion object {
         const val EXTENSION_NAME: String = "kotlinNodeJs"

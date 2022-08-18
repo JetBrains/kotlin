@@ -490,6 +490,7 @@ class EnumSyntheticFunctionsLowering(val context: JsCommonBackendContext) : Decl
                         statements += when (kind) {
                             IrSyntheticBodyKind.ENUM_VALUES -> createEnumValuesBody(declaration, enumClass)
                             IrSyntheticBodyKind.ENUM_VALUEOF -> createEnumValueOfBody(declaration, enumClass)
+                            IrSyntheticBodyKind.ENUM_ENTRIES -> TODO("NOT IMPLEMENTED ON JS")
                         }.statements
                     }
                 }

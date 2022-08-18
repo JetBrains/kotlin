@@ -26,7 +26,7 @@ class KotlinAndroidDependsOnEdgesTest {
 
         /* Arbitrary minimal Android setup */
         val android = project.extensions.getByName("android") as LibraryExtension
-        android.compileSdkVersion(30)
+        android.compileSdk = 31
 
         /* Minimal MPP setup */
         val kotlin = project.kotlinExtension as KotlinMultiplatformExtension
@@ -66,7 +66,7 @@ class KotlinAndroidDependsOnEdgesTest {
 
         /* Arbitrary minimal Android setup */
         val android = project.extensions.getByName("android") as LibraryExtension
-        android.compileSdkVersion(30)
+        android.compileSdk = 31
 
         /* Custom MPP setup */
         val kotlin = project.kotlinExtension as KotlinMultiplatformExtension

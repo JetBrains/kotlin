@@ -17,8 +17,8 @@ dependencies {
     api(project(":analysis:low-level-api-fir"))
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-impl-base"))
-    api(project(":compiler:light-classes-base"))
-    api(project(":compiler:backend"))
+    api(project(":analysis:light-classes-base"))
+    api(project(":compiler:backend.common.jvm"))
     api(intellijCore())
     implementation(project(":analysis:analysis-api-providers"))
     implementation(project(":analysis:analysis-internal-utils"))
@@ -90,3 +90,7 @@ val generateCode by tasks.registering(NoDebugJavaExec::class) {
 val compileKotlin by tasks
 
 compileKotlin.dependsOn(generateCode)
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions.freeCompilerArgs += "-Xcontext-receivers"
+}

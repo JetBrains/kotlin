@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesigna
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirEnsureBasedTransformerForReturnTypeCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ensurePhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 
 /**
  * Transform designation into BODY_RESOLVE declaration. Affects only for target declaration and it's children
@@ -52,7 +52,7 @@ internal class LLFirDesignatedBodyResolveTransformer(
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.declaration.resolvePhase >= FirResolvePhase.BODY_RESOLVE) return
-        designation.declaration.ensurePhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+        designation.declaration.checkPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
 
         ResolveTreeBuilder.resolvePhase(designation.declaration, FirResolvePhase.BODY_RESOLVE) {
             phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.BODY_RESOLVE) {
@@ -62,22 +62,12 @@ internal class LLFirDesignatedBodyResolveTransformer(
 
         ideDeclarationTransformer.ensureDesignationPassed()
         updatePhaseDeep(designation.declaration, FirResolvePhase.BODY_RESOLVE, withNonLocalDeclarations = true)
-        ensureResolved(designation.declaration)
-        ensureResolvedDeep(designation.declaration)
+        checkIsResolved(designation.declaration)
     }
 
-    override fun ensureResolved(declaration: FirDeclaration) {
-        when (declaration) {
-            is FirSimpleFunction, is FirConstructor, is FirTypeAlias, is FirField, is FirAnonymousInitializer ->
-                declaration.ensurePhase(FirResolvePhase.BODY_RESOLVE)
-            is FirProperty -> {
-                declaration.ensurePhase(FirResolvePhase.BODY_RESOLVE)
-//                declaration.getter?.ensurePhase(FirResolvePhase.BODY_RESOLVE)
-//                declaration.setter?.ensurePhase(FirResolvePhase.BODY_RESOLVE)
-            }
-            is FirEnumEntry, is FirClass -> Unit
-            else -> error("Unexpected type: ${declaration::class.simpleName}")
-        }
+    override fun checkIsResolved(declaration: FirDeclaration) {
+        declaration.checkPhase(FirResolvePhase.BODY_RESOLVE)
+        checkNestedDeclarationsAreResolved(declaration)
     }
 }
 

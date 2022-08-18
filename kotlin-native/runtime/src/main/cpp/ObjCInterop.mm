@@ -173,7 +173,11 @@ void releaseAsAssociatedObjectImp(id self, SEL _cmd, ReleaseMode mode) {
 
 extern "C" {
 
-Class Kotlin_Interop_getObjCClass(const char* name);
+Class Kotlin_Interop_getObjCClass(const char* name) {
+    Class result = objc_lookUpClass(name);
+    RuntimeCheck(result != nil, "Objective-C class '%s' not found. Ensure that the containing framework or library was linked.", name);
+    return result;
+}
 
 const TypeInfo* GetObjCKotlinTypeInfo(ObjHeader* obj) RUNTIME_NOTHROW;
 
@@ -294,6 +298,8 @@ void* CreateKotlinObjCClass(const KotlinObjCClassInfo* info) {
     return createdClass;
   }
 
+  kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
+
   Class newClass = allocateClass(info);
 
   RuntimeAssert(newClass != nullptr, "Failed to allocate Objective-C class");
@@ -391,10 +397,6 @@ void Kotlin_objc_release(id ptr) {
   objc_release(ptr);
 }
 
-Class Kotlin_objc_lookUpClass(const char* name) {
-  return objc_lookUpClass(name);
-}
-
 } // extern "C"
 
 #else  // KONAN_OBJC_INTEROP
@@ -424,11 +426,6 @@ void* Kotlin_objc_retain(void* ptr) {
 
 void Kotlin_objc_release(void* ptr) {
   RuntimeAssert(false, "Objective-C interop is disabled");
-}
-
-void* Kotlin_objc_lookUpClass(const char* name) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  return nullptr;
 }
 
 } // extern "C"

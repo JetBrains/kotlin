@@ -1,213 +1,71 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
+import org.jetbrains.kotlin.backend.common.DefaultDelegateFactory
+import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
-import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
+import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
+import org.jetbrains.kotlin.backend.konan.lower.*
+import org.jetbrains.kotlin.backend.konan.lower.BridgesSupport
+import org.jetbrains.kotlin.backend.konan.lower.EnumsSupport
+import org.jetbrains.kotlin.backend.konan.lower.InlineFunctionsSupport
+import org.jetbrains.kotlin.backend.konan.lower.InnerClassesSupport
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
 import org.jetbrains.kotlin.backend.konan.optimizations.ExternalModulesDFG
 import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFG
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
+import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
+import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
+import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
+import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.needSmallBinary
+import org.jetbrains.kotlin.library.SerializedIrModule
+import org.jetbrains.kotlin.library.SerializedMetadata
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import java.lang.System.out
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KProperty
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
-import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
-import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
-import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
-import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.konan.target.Architecture
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.library.SerializedIrModule
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
-import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
-import org.jetbrains.kotlin.name.ClassId
 
 internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
 
-/**
- * Offset for synthetic elements created by lowerings and not attributable to other places in the source code.
- */
+internal class NativeMapping : DefaultMapping() {
+    data class BridgeKey(val target: IrSimpleFunction, val bridgeDirections: BridgeDirections)
 
-internal class SpecialDeclarationsFactory(val context: Context) {
-    private val enumSpecialDeclarationsFactory by lazy { EnumSpecialDeclarationsFactory(context) }
-    private val outerThisFields = mutableMapOf<IrClass, IrField>()
-    private val internalLoweredEnums = mutableMapOf<IrClass, InternalLoweredEnum>()
-    private val externalLoweredEnums = mutableMapOf<IrClass, ExternalLoweredEnum>()
-
-    private data class BridgeKey(val target: IrSimpleFunction, val bridgeDirections: BridgeDirections)
-
-    private val bridges = mutableMapOf<BridgeKey, IrSimpleFunction>()
-
-    private val notLoweredInlineFunctions = mutableMapOf<IrFunctionSymbol, IrFunction>()
+    val outerThisFields = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrField>()
+    val enumImplObjects = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrClass>()
+    val enumValueGetters = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrFunction>()
+    val enumEntriesMaps = mutableMapOf<IrClass, Map<Name, LoweredEnumEntryDescription>>()
+    val bridges = mutableMapOf<BridgeKey, IrSimpleFunction>()
+    val notLoweredInlineFunctions = mutableMapOf<IrFunctionSymbol, IrFunction>()
     val loweredInlineFunctions = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
-    fun getNonLoweredInlineFunction(function: IrFunction): IrFunction {
-        return notLoweredInlineFunctions.getOrPut(function.symbol) {
-            function.deepCopyWithVariables().also { it.patchDeclarationParents(function.parent) }
-        }
-    }
-
-    object DECLARATION_ORIGIN_FIELD_FOR_OUTER_THIS :
-            IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
-
-    fun getOuterThisField(innerClass: IrClass): IrField {
-        assert(innerClass.isInner) { "Class is not inner: ${innerClass.render()}" }
-        return outerThisFields.getOrPut(innerClass) {
-            val outerClass = innerClass.parent as? IrClass
-                    ?: throw AssertionError("No containing class for inner class ${innerClass.descriptor}")
-
-            val receiver = ReceiverParameterDescriptorImpl(
-                    innerClass.descriptor,
-                    ImplicitClassReceiver(innerClass.descriptor, null),
-                    Annotations.EMPTY
-            )
-            val descriptor = PropertyDescriptorImpl.create(
-                    innerClass.descriptor, Annotations.EMPTY, Modality.FINAL,
-                    DescriptorVisibilities.PRIVATE, false, "this$0".synthesizedName, CallableMemberDescriptor.Kind.SYNTHESIZED,
-                    SourceElement.NO_SOURCE, false, false, false, false, false, false
-            ).apply {
-                this.setType(outerClass.descriptor.defaultType, emptyList(), receiver, null, emptyList())
-                initialize(null, null)
-            }
-
-            IrFieldImpl(
-                    startOffset = innerClass.startOffset,
-                    endOffset = innerClass.endOffset,
-                    origin = DECLARATION_ORIGIN_FIELD_FOR_OUTER_THIS,
-                    symbol = IrFieldSymbolImpl(descriptor),
-                    name = descriptor.name,
-                    type = outerClass.defaultType,
-                    visibility = descriptor.visibility,
-                    isFinal = !descriptor.isVar,
-                    isExternal = descriptor.isEffectivelyExternal(),
-                    isStatic = descriptor.dispatchReceiverParameter == null
-            ).apply {
-                parent = innerClass
-            }
-        }
-    }
-
-    fun getLoweredEnumOrNull(enumClass: IrClass): LoweredEnumAccess? {
-        assert(enumClass.kind == ClassKind.ENUM_CLASS) { "Expected enum class but was: ${enumClass.descriptor}" }
-        return if (!context.llvmModuleSpecification.containsDeclaration(enumClass)) {
-            externalLoweredEnums[enumClass]
-        } else {
-            internalLoweredEnums[enumClass]
-        }
-    }
-
-    fun getLoweredEnum(enumClass: IrClass): LoweredEnumAccess {
-        assert(enumClass.kind == ClassKind.ENUM_CLASS) { "Expected enum class but was: ${enumClass.descriptor}" }
-        return if (!context.llvmModuleSpecification.containsDeclaration(enumClass)) {
-            externalLoweredEnums.getOrPut(enumClass) {
-                enumSpecialDeclarationsFactory.createExternalLoweredEnum(enumClass)
-            }
-        } else {
-            internalLoweredEnums.getOrPut(enumClass) {
-                enumSpecialDeclarationsFactory.createInternalLoweredEnum(enumClass)
-            }
-        }
-    }
-
-    fun getInternalLoweredEnum(enumClass: IrClass): InternalLoweredEnum {
-        assert(enumClass.kind == ClassKind.ENUM_CLASS) { "Expected enum class but was: ${enumClass.descriptor}" }
-        assert(context.llvmModuleSpecification.containsDeclaration(enumClass)) { "Expected enum class from current module." }
-        return internalLoweredEnums.getOrPut(enumClass) {
-            enumSpecialDeclarationsFactory.createInternalLoweredEnum(enumClass)
-        }
-    }
-
-    fun getEnumEntryOrdinal(enumEntry: IrEnumEntry) =
-            enumEntry.parentAsClass.declarations.filterIsInstance<IrEnumEntry>().indexOf(enumEntry)
-
-    fun getBridge(overriddenFunction: OverriddenFunctionInfo): IrSimpleFunction {
-        val irFunction = overriddenFunction.function
-        assert(overriddenFunction.needBridge) {
-            "Function ${irFunction.descriptor} is not needed in a bridge to call overridden function ${overriddenFunction.overriddenFunction.descriptor}"
-        }
-        val key = BridgeKey(irFunction, overriddenFunction.bridgeDirections)
-        return bridges.getOrPut(key) { createBridge(key) }
-    }
-
-    private fun createBridge(key: BridgeKey): IrSimpleFunction {
-        val (function, bridgeDirections) = key
-        val startOffset = function.startOffset
-        val endOffset = function.endOffset
-
-        fun BridgeDirection.type() =
-                if (this.kind == BridgeDirectionKind.NONE)
-                    null
-                else this.irClass?.defaultType ?: context.irBuiltIns.anyNType
-
-        return IrFunctionImpl(
-                startOffset, endOffset,
-                DECLARATION_ORIGIN_BRIDGE_METHOD(function),
-                IrSimpleFunctionSymbolImpl(),
-                "<bridge-$bridgeDirections>${function.computeFunctionName()}".synthesizedName,
-                function.visibility,
-                function.modality,
-                isInline = false,
-                isExternal = false,
-                isTailrec = false,
-                isSuspend = function.isSuspend,
-                returnType = bridgeDirections.returnDirection.type() ?: function.returnType,
-                isExpect = false,
-                isFakeOverride = false,
-                isOperator = false,
-                isInfix = false
-        ).apply {
-            val bridge = this
-            parent = function.parent
-
-            dispatchReceiverParameter = function.dispatchReceiverParameter?.let {
-                it.copyTo(bridge, type = bridgeDirections.dispatchReceiverDirection.type() ?: it.type)
-            }
-            extensionReceiverParameter = function.extensionReceiverParameter?.let {
-                it.copyTo(bridge, type = bridgeDirections.extensionReceiverDirection.type() ?: it.type)
-            }
-            valueParameters += function.valueParameters.map {
-                it.copyTo(bridge, type = bridgeDirections.parameterDirectionAt(it.index).type() ?: it.type)
-            }
-
-            typeParameters += function.typeParameters.map { parameter ->
-                parameter.copyToWithoutSuperTypes(bridge).also { it.superTypes += parameter.superTypes }
-            }
-        }
-    }
 }
 
 internal class Context(config: KonanConfig) : KonanBackendContext(config) {
@@ -244,7 +102,10 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         builtIns.builtInsModule.getPackage(KonanFqNames.packageName).memberScope.getContributedFunctions("immutableBlobOf").single()
     }
 
-    val specialDeclarationsFactory = SpecialDeclarationsFactory(this)
+    val innerClassesSupport by lazy { InnerClassesSupport(mapping, irFactory) }
+    val bridgesSupport by lazy { BridgesSupport(mapping, irBuiltIns, irFactory) }
+    val inlineFunctionsSupport by lazy { InlineFunctionsSupport(mapping) }
+    val enumsSupport by lazy { EnumsSupport(mapping, ir.symbols, irBuiltIns, irFactory) }
 
     open class LazyMember<T>(val initializer: Context.() -> T) {
         operator fun getValue(thisRef: Context, property: KProperty<*>): T = thisRef.getValue(this)
@@ -458,10 +319,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     fun shouldUseDebugInfoFromNativeLibs() = shouldContainAnyDebugInfo() && config.useDebugInfoInNativeLibs
 
     fun shouldOptimize() = config.optimizationsEnabled
-    fun shouldInlineSafepoints() = when {
-        config.target.family.isAppleFamily -> config.target.architecture != Architecture.ARM32 // disable for watchos_arm32 and similar
-        else -> true
-    }
+    fun shouldInlineSafepoints() = !config.target.needSmallBinary()
     fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized
     fun useLazyFileInitializers() = config.propertyLazyInitialization
 
@@ -496,7 +354,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     val llvmModuleSpecification: LlvmModuleSpecification by lazy {
         when {
             config.produce.isCache ->
-                CacheLlvmModuleSpecification(config.cachedLibraries, config.librariesToCache)
+                CacheLlvmModuleSpecification(config.cachedLibraries, config.libraryToCache!!.klib)
             else -> DefaultLlvmModuleSpecification(config.cachedLibraries)
         }
     }
@@ -513,6 +371,9 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     val inlineFunctionBodies = mutableListOf<SerializedInlineFunctionReference>()
 
     val classFields = mutableListOf<SerializedClassFields>()
+
+    val calledFromExportedInlineFunctions = mutableSetOf<IrFunction>()
+    val constructedFromExportedInlineFunctions = mutableSetOf<IrClass>()
 
     val targetAbiInfo: TargetAbiInfo by lazy {
         when {

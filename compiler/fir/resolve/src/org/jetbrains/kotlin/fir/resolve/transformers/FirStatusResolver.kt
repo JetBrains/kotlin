@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -108,7 +108,7 @@ class FirStatusResolver(
     ): FirResolvedDeclarationStatus {
         val statuses = overriddenStatuses ?: getOverriddenProperties(property, containingClass)
             .map {
-                it.ensureResolved(FirResolvePhase.STATUS)
+                it.lazyResolveToPhase(FirResolvePhase.STATUS)
                 it.status as FirResolvedDeclarationStatus
             }
 

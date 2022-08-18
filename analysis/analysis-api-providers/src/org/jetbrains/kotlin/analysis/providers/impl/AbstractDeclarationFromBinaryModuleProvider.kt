@@ -14,19 +14,71 @@ import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.FqName
 import java.nio.file.Files
 import java.nio.file.Path
 
 public interface AbstractDeclarationFromBinaryModuleProvider {
     public val scope: GlobalSearchScope
+    public val packagePartProvider: PackagePartProvider
     public val jarFileSystem: CoreJarFileSystem
 
+    /**
+     * Collect [VirtualFile]s that belong to the package with the given [FqName],
+     * from the given [KtBinaryModule], which is supposed to be a Kotlin module (i.e., with `kotlin_module` info),
+     * and properly registered to [PackagePartProvider]. Otherwise, returns an empty set.
+     *
+     * This util is useful to collect files for the package that may have multi-file facades.
+     * E.g., for `kotlin.collection`, regular classes would be under `kotlin/collection` folder.
+     * But, there could be more classes under irregular places, like `.../jdk8/...`,
+     * which would still have `kotlin.collection` as a package, if it is part of multi-file facades.
+     *
+     * To cover such cases with a normal, exhaustive directory lookup used in [virtualFilesFromModule], we will end up
+     * traversing _all_ folders, which is inefficient if package part information is available in `kotlin_module`.
+     */
+    public fun virtualFilesFromKotlinModule(
+        binaryModule: KtBinaryModule,
+        fqName: FqName,
+    ): Set<VirtualFile> {
+        val fqNameString = fqName.asString()
+        val packageParts = packagePartProvider.findPackageParts(fqNameString)
+        return if (packageParts.isNotEmpty()) {
+            binaryModule.getBinaryRoots().flatMap r@{ rootPath ->
+                if (!Files.isRegularFile(rootPath) || ".jar" !in rootPath.toString()) return@r emptySet<VirtualFile>()
+                buildSet {
+                    packageParts.forEach { packagePart ->
+                        add(
+                            jarFileSystem.refreshAndFindFileByPath(
+                                rootPath.toAbsolutePath().toString() + URLUtil.JAR_SEPARATOR + packagePart + ".class"
+                            ) ?: return@r emptySet<VirtualFile>()
+                        )
+                    }
+                }
+            }.toSet()
+        } else
+            emptySet()
+    }
+
+    /**
+     * Collect [VirtualFile]s that belong to the package with the given [FqName],
+     * from the given [KtBinaryModule], which has general `jar` files as roots, e.g., `android.jar` (for a specific API version)
+     *
+     * If the given [FqName] is a specific class name, returns a set with the corresponding [VirtualFile].
+     *
+     * This util assumes that classes will be under the folder where the folder path and package name match.
+     * To avoid exhaustive traversal, this util only visits folders that are parts of the given package name.
+     * E.g., for `android.os`, this will visit `android` and `android/os` directories only,
+     * and will return [VirtualFile]s for all classes under `android/os`.
+     *
+     * For a query with a class name, e.g., `android.os.Bundle`, this will visit `android` and `android/os` directories too,
+     * to search for that specific class.
+     */
     public fun virtualFilesFromModule(
         binaryModule: KtBinaryModule,
         fqName: FqName,
         isPackageName: Boolean,
-    ): Collection<VirtualFile> {
+    ): Set<VirtualFile> {
         val fqNameString = fqName.asString()
         val fs = StandardFileSystems.local()
         return binaryModule.getBinaryRoots().flatMap r@{ rootPath ->
@@ -62,7 +114,7 @@ public interface AbstractDeclarationFromBinaryModuleProvider {
                 }
             )
             files
-        }
+        }.toSet()
     }
 
     private fun findRoot(

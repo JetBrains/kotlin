@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -417,6 +417,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("recursiveTypeAlias.kt")
     public void testRecursiveTypeAlias() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/recursiveTypeAlias.kt");
+    }
+
+    @TestMetadata("reifiedTypeOverload.kt")
+    public void testReifiedTypeOverload() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/reifiedTypeOverload.kt");
     }
 
     @TestMetadata("sealedClass.kt")
@@ -3646,6 +3651,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             @TestMetadata("safeCalls.kt")
             public void testSafeCalls() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls/safeCalls.kt");
+            }
+
+            @TestMetadata("unstableSmartCastOnSafeCallArgument.kt")
+            public void testUnstableSmartCastOnSafeCallArgument() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls/unstableSmartCastOnSafeCallArgument.kt");
             }
         }
 

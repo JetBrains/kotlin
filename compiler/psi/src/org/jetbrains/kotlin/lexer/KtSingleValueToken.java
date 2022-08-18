@@ -20,11 +20,10 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class KtSingleValueToken extends KtToken {
-
     private final String myValue;
 
-    public KtSingleValueToken(@NotNull @NonNls String debugName, @NotNull @NonNls String value) {
-        super(debugName);
+    public KtSingleValueToken(@NotNull @NonNls String debugName, @NotNull @NonNls String value, int tokenId) {
+        super(debugName, tokenId);
         myValue = value;
     }
 

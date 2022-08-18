@@ -324,8 +324,11 @@ class Future {
 
   void cancelUnlocked(MemoryState* memoryState);
 
+  KInt stateUnlocked() const {
+      Locker locker(&lock_);
+      return state_;
+  }
   // Those are called with the lock taken.
-  KInt state() const { return state_; }
   KInt id() const { return id_; }
 
  private:
@@ -336,8 +339,8 @@ class Future {
   // Stable pointer with future's result.
   KNativePtr result_;
   // Lock and condition for waiting on the future.
-  pthread_mutex_t lock_;
-  pthread_cond_t cond_;
+  mutable pthread_mutex_t lock_;
+  mutable pthread_cond_t cond_;
 };
 
 class State {
@@ -488,7 +491,7 @@ class State {
     Locker locker(&lock_);
     auto it = futures_.find(id);
     if (it == futures_.end()) return INVALID;
-    return it->second->state();
+    return it->second->stateUnlocked();
   }
 
   OBJ_GETTER(consumeFutureUnlocked, KInt id) {

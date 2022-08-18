@@ -101,7 +101,7 @@ FILE: classMembers.kt
         public? final? [SUPER_TYPES] val x: Int = LAZY_EXPRESSION
             public? [SUPER_TYPES] [ContainingClassKey=A] get(): Int { LAZY_BLOCK }
 
-        public? final? [SUPER_TYPES] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [SUPER_TYPES] fun receive([SUPER_TYPES] value: String): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [SUPER_TYPES] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
@@ -119,7 +119,7 @@ FILE: classMembers.kt
         public? final? [SUPER_TYPES] val x: Int = LAZY_EXPRESSION
             public? [SUPER_TYPES] [ContainingClassKey=A] get(): Int { LAZY_BLOCK }
 
-        public? final? [SUPER_TYPES] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [SUPER_TYPES] fun receive([SUPER_TYPES] value: String): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [SUPER_TYPES] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
@@ -137,7 +137,7 @@ FILE: classMembers.kt
         public? final? [SUPER_TYPES] val x: Int = LAZY_EXPRESSION
             public? [SUPER_TYPES] [ContainingClassKey=A] get(): Int { LAZY_BLOCK }
 
-        public? final? [SUPER_TYPES] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [SUPER_TYPES] fun receive([SUPER_TYPES] value: String): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [SUPER_TYPES] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
@@ -157,7 +157,7 @@ FILE: classMembers.kt
         public? final? [SUPER_TYPES] val x: Int = LAZY_EXPRESSION
             public? [SUPER_TYPES] [ContainingClassKey=A] get(): Int { LAZY_BLOCK }
 
-        public? final? [SUPER_TYPES] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [SUPER_TYPES] fun receive([SUPER_TYPES] value: String): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [SUPER_TYPES] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
@@ -177,7 +177,7 @@ FILE: classMembers.kt
         public final [STATUS] val x: R|kotlin/Int| = LAZY_EXPRESSION
             public [STATUS] [ContainingClassKey=A] get(): R|kotlin/Int| { LAZY_BLOCK }
 
-        public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [STATUS] fun receive([STATUS] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public final [STATUS] fun functionWithLazyBody(): R|kotlin/String| { LAZY_BLOCK }
 
@@ -197,7 +197,7 @@ FILE: classMembers.kt
         public final [STATUS] val x: R|kotlin/Int| = LAZY_EXPRESSION
             public [STATUS] [ContainingClassKey=A] get(): R|kotlin/Int| { LAZY_BLOCK }
 
-        public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [STATUS] fun receive([STATUS] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public final [STATUS] fun functionWithLazyBody(): R|kotlin/String| { LAZY_BLOCK }
 
@@ -217,7 +217,7 @@ FILE: classMembers.kt
         public final [STATUS] val x: R|kotlin/Int| = LAZY_EXPRESSION
             public [STATUS] [ContainingClassKey=A] get(): R|kotlin/Int| { LAZY_BLOCK }
 
-        public final [CONTRACTS] fun receive([RAW_FIR] value: R|kotlin/String|): R|kotlin/Unit| {
+        public final [CONTRACTS] fun receive([CONTRACTS] value: R|kotlin/String|): R|kotlin/Unit| {
         }
 
         public final [CONTRACTS] fun functionWithLazyBody(): R|kotlin/String| {

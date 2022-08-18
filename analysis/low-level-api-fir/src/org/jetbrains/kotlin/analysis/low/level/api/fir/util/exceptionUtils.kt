@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.utils.errors.withPsiAttachment
-import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
+import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
+import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForDebugging
@@ -16,58 +17,50 @@ import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
-import org.jetbrains.kotlin.utils.errorWithAttachment
-import org.jetbrains.kotlin.utils.withAttachmentDetailed
 
 
-fun KotlinExceptionWithAttachments.withFirAttachment(name: String, fir: FirElement): KotlinExceptionWithAttachments {
-    withAttachmentDetailed(name, fir, debugFirRenderer::renderElementAsString)
-    withPsiAttachment("${name}Psi", fir.psi)
-    return this
+fun ExceptionAttachmentBuilder.withFirEntry(name: String, fir: FirElement) {
+    withEntry(name, fir) {
+        FirRenderer(
+            resolvePhaseRenderer = FirResolvePhaseRenderer(),
+            declarationRenderer = FirDeclarationRendererWithAttributes()
+        ).renderElementAsString(it)
+    }
+    withEntry("${name}FirSourceElementKind", fir.source?.kind?.let { it::class.simpleName })
+    withPsiEntry("${name}Psi", fir.psi)
 }
 
-fun KotlinExceptionWithAttachments.withFirSymbolAttachment(name: String, symbol: FirBasedSymbol<*>): KotlinExceptionWithAttachments {
-    withAttachment("${name}Class", symbol::class.java.name)
-    withFirAttachment("${name}Fir", symbol.fir)
-    return this
+fun ExceptionAttachmentBuilder.withFirSymbolEntry(name: String, symbol: FirBasedSymbol<*>) {
+    withFirEntry("${name}Fir", symbol.fir)
 }
 
-fun KotlinExceptionWithAttachments.withConeTypeAttachment(name: String, coneType: ConeKotlinType): KotlinExceptionWithAttachments {
-    withAttachmentDetailed(name, coneType) {
+fun ExceptionAttachmentBuilder.withConeTypeEntry(name: String, coneType: ConeKotlinType) {
+    withEntry(name, coneType) {
         buildString { ConeTypeRendererForDebugging(this).render(it) }
     }
-    return this
 }
 
 
-
-
-fun firErrorWithAttachment(
+fun errorWithFirSpecificEntries(
     message: String,
     cause: Throwable? = null,
     fir: FirElement? = null,
     coneType: ConeKotlinType? = null,
     psi: PsiElement? = null,
-    attachments: KotlinExceptionWithAttachments.() -> Unit = {}
+    additionalInfos: ExceptionAttachmentBuilder.() -> Unit = {}
 ): Nothing {
-    errorWithAttachment(message, cause) {
+    buildErrorWithAttachment(message, cause) {
         if (fir != null) {
-            withFirAttachment("fir", fir)
+            withFirEntry("fir", fir)
         }
 
         if (psi != null) {
-            withPsiAttachment("psi", psi)
+            withPsiEntry("psi", psi)
         }
 
         if (coneType != null) {
-            withConeTypeAttachment("coneType", coneType)
+            withConeTypeEntry("coneType", coneType)
         }
-        attachments ()
+        additionalInfos()
     }
 }
-
-
-val debugFirRenderer =
-    FirRenderer(resolvePhaseRenderer = FirResolvePhaseRenderer(), declarationRenderer = FirDeclarationRendererWithAttributes())

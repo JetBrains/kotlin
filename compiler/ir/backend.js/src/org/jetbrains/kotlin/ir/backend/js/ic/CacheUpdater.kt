@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrFragmentAndBinaryAst
@@ -239,12 +240,53 @@ class CacheUpdater(
         return exportedSymbols
     }
 
-    private fun resolveFakeOverrideInlineFunction(symbol: IrSymbol): IdSignature? {
+    private fun resolveFakeOverrideFunction(symbol: IrSymbol): IdSignature? {
         return (symbol.owner as? IrSimpleFunction)?.let { overridable ->
-            if (overridable.isFakeOverride && overridable.isInline) {
+            if (overridable.isFakeOverride) {
                 overridable.resolveFakeOverride()?.symbol?.signature
             } else {
                 null
+            }
+        }
+    }
+
+    private fun collectImplementedSymbol(deserializedSymbols: Map<IdSignature, IrSymbol>): Map<IdSignature, IrSymbol> {
+        return buildMap(deserializedSymbols.size) {
+            for ((signature, symbol) in deserializedSymbols) {
+                put(signature, symbol)
+
+                fun <T> addSymbol(decl: T): Boolean where T : IrDeclarationWithVisibility, T : IrSymbolOwner {
+                    when (decl.visibility) {
+                        DescriptorVisibilities.LOCAL -> return false
+                        DescriptorVisibilities.PRIVATE -> return false
+                        DescriptorVisibilities.PRIVATE_TO_THIS -> return false
+                    }
+
+                    val sig = decl.symbol.signature
+                    if (sig != null && sig !in deserializedSymbols) {
+                        return put(sig, decl.symbol) == null
+                    }
+                    return false
+                }
+
+                fun addNestedDeclarations(irClass: IrClass) {
+                    for (decl in irClass.declarations) {
+                        when (decl) {
+                            is IrSimpleFunction -> addSymbol(decl)
+                            is IrProperty -> {
+                                decl.getter?.let(::addSymbol)
+                                decl.setter?.let(::addSymbol)
+                            }
+                            is IrClass -> {
+                                if (addSymbol(decl)) {
+                                    addNestedDeclarations(decl)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                (symbol.owner as? IrClass)?.let(::addNestedDeclarations)
             }
         }
     }
@@ -264,16 +306,19 @@ class CacheUpdater(
                 val libSrcFile = KotlinSourceFile(fileDeserializer.file)
 
                 val reachableSignatures = fileDeserializer.symbolDeserializer.signatureDeserializer.signatureToIndexMapping()
-                val allImplementedSymbols = fileDeserializer.symbolDeserializer.deserializedSymbols
                 val maybeImportedSignatures = reachableSignatures.keys.toMutableSet()
-                for ((signature, symbol) in allImplementedSymbols) {
-                    if (signature in reachableSignatures) {
+                val implementedSymbols = collectImplementedSymbol(fileDeserializer.symbolDeserializer.deserializedSymbols)
+                for ((signature, symbol) in implementedSymbols) {
+                    var symbolCanBeExported = maybeImportedSignatures.remove(signature)
+                    resolveFakeOverrideFunction(symbol)?.let { resolvedSignature ->
+                        if (resolvedSignature !in implementedSymbols) {
+                            maybeImportedSignatures.add(resolvedSignature)
+                        }
+                        symbolCanBeExported = true
+                    }
+                    if (symbolCanBeExported) {
                         signatureHashCalculator.addHashForSignatureIfNotExist(signature, symbol)
                         idSignatureToFile[signature] = lib to libSrcFile
-                        maybeImportedSignatures.remove(signature)
-
-                        val resolvedSignature = resolveFakeOverrideInlineFunction(symbol) ?: continue
-                        maybeImportedSignatures.add(resolvedSignature)
                     }
                 }
 

@@ -134,8 +134,16 @@ class CliJavaModuleFinder(
     }
 
     private fun createModuleFromSignature(moduleInfo: JavaModuleInfo): List<JavaModule.Root> {
+        return listOf(createModuleFromSignature(!isCompilationJDK12OrLater, isCompilationJDK12OrLater, moduleInfo))
+    }
+
+    private fun createModuleFromSignature(
+        filterPackages: Boolean,
+        filterModules: Boolean,
+        moduleInfo: JavaModuleInfo
+    ): JavaModule.Root {
         val packageParts =
-            if (isCompilationJDK12OrLater) emptyMap()
+            if (!filterPackages) emptyMap()
             else hashMapOf<String, Boolean>().also { parts ->
                 moduleInfo.exports.forEach {
                     for (part in generateSequence(it.packageFqName) { part -> if (!part.isRoot) part.parent() else null }) {
@@ -148,21 +156,24 @@ class CliJavaModuleFinder(
                 }
             }
 
+        val moduleFolders =
+            if (filterModules)
+                listFoldersForRelease.filter { virtualFile -> virtualFile.name == moduleInfo.moduleName }
+            else
+                listFoldersForRelease
 
-        return listFoldersForRelease.mapNotNull { virtualFile ->
-            val rootFolder = when {
-                isCompilationJDK12OrLater -> if (virtualFile.name == moduleInfo.moduleName) virtualFile else return@mapNotNull null
-                else -> {
-                    if (virtualFile.children.none { it.name in packageParts }) return@mapNotNull null
-                    ModuleVirtualFileForRootPart(virtualFile.parent, virtualFile, packageParts, "")
-                }
-            }
-            JavaModule.Root(
-                rootFolder,
-                isBinary = true,
-                isBinarySignature = true
-            )
-        }
+        return JavaModule.Root(
+            CtSymDirectoryContainer(
+                ctSymRootFolder ?: ctSymFile,
+                moduleFolders,
+                packageParts,
+                "",
+                moduleInfo.moduleName,
+                skipPackageCheck = !filterPackages
+            ),
+            isBinary = true,
+            isBinarySignature = true
+        )
     }
 
     private fun codeFor(release: Int): String = release.toString(36).toUpperCase()
@@ -170,7 +181,12 @@ class CliJavaModuleFinder(
     private fun matchesRelease(fileName: String, release: Int) =
         !fileName.contains("-") && fileName.contains(codeFor(release)) // skip `*-modules`
 
-    val listFoldersForRelease: List<VirtualFile> by lazy {
+
+    val nonModuleRoot: JavaModule.Root by lazy {
+        createModuleFromSignature(false, false, JavaModuleInfo("*", emptyList(), emptyList(), emptyList()))
+    }
+
+    private val listFoldersForRelease: List<VirtualFile> by lazy {
         if (ctSymRootFolder == null) emptyList()
         else ctSymRootFolder!!.children.filter { matchesRelease(it.name, jdkRelease!!) }.flatMap {
             if (isCompilationJDK12OrLater)
@@ -179,7 +195,7 @@ class CliJavaModuleFinder(
                 listOf(it)
             }
         }.apply {
-            if (isEmpty()) reportError("'-Xrelease=${jdkRelease}' option is not supported by used JDK: ${jdkHome?.path}")
+            if (isEmpty()) reportError("'-Xjdk-release=${jdkRelease}' option is not supported by used JDK: ${jdkHome?.path}")
         }
     }
 
@@ -197,7 +213,7 @@ class CliJavaModuleFinder(
                     children.forEach {
                         result[it.name] = it
                     }
-                } ?: reportError("Can't find modules signatures in `ct.sym` file for `-Xrelease=$jdkRelease` in ${ctSymFile!!.path}")
+                } ?: reportError("Can't find modules signatures in `ct.sym` file for `-Xjdk-release=$jdkRelease` in ${ctSymFile!!.path}")
             }
         }
         return result

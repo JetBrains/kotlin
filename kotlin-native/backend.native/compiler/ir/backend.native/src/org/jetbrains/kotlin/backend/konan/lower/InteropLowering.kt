@@ -69,9 +69,10 @@ private abstract class BaseInteropIrTransformer(private val context: Context) : 
 
         val uniqueModuleName = irFile.packageFragmentDescriptor.module.name.asString()
                 .let { it.substring(1, it.lastIndex) }
+        val uniqueFileName = irFile.fileEntry.name
         val uniquePrefix = buildString {
             append('_')
-            uniqueModuleName.toByteArray().joinTo(this, "") {
+            (uniqueModuleName + uniqueFileName).toByteArray().joinTo(this, "") {
                 (0xFF and it.toInt()).toString(16).padStart(2, '0')
             }
             append('_')
@@ -127,7 +128,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
 
     lateinit var currentFile: IrFile
 
-    private val topLevelInitializers = mutableListOf<IrExpression>()
+    private val eagerTopLevelInitializers = mutableListOf<IrExpression>()
     private val newTopLevelDeclarations = mutableListOf<IrDeclaration>()
 
     override val irFile: IrFile
@@ -142,8 +143,8 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
         currentFile = irFile
         irFile.transformChildrenVoid(this)
 
-        topLevelInitializers.forEach { irFile.addTopLevelInitializer(it, context, false) }
-        topLevelInitializers.clear()
+        eagerTopLevelInitializers.forEach { irFile.addTopLevelInitializer(it, context, threadLocal = false, eager = true) }
+        eagerTopLevelInitializers.clear()
 
         irFile.addChildren(newTopLevelDeclarations)
         newTopLevelDeclarations.clear()
@@ -191,7 +192,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
 
         if (irClass.annotations.hasAnnotation(interop.exportObjCClass.fqNameSafe)) {
             val irBuilder = context.createIrBuilder(currentFile.symbol).at(irClass)
-            topLevelInitializers.add(irBuilder.getObjCClass(symbols, irClass.symbol))
+            eagerTopLevelInitializers.add(irBuilder.getObjCClass(symbols, irClass.symbol))
         }
     }
 

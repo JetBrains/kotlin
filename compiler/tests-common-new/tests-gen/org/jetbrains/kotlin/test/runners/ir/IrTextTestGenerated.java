@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -134,6 +134,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         @TestMetadata("enumClassModality.kt")
         public void testEnumClassModality() throws Exception {
             runTest("compiler/testData/ir/irText/classes/enumClassModality.kt");
+        }
+
+        @Test
+        @TestMetadata("enumEntries.kt")
+        public void testEnumEntries() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/enumEntries.kt");
         }
 
         @Test
@@ -1197,6 +1203,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("badInlinedBreakContinue.kt")
+        public void testBadInlinedBreakContinue() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/badInlinedBreakContinue.kt");
+        }
+
+        @Test
         @TestMetadata("bangbang.kt")
         public void testBangbang() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/bangbang.kt");
@@ -1236,6 +1248,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         @TestMetadata("breakContinueInLoopHeader.kt")
         public void testBreakContinueInLoopHeader() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/breakContinueInLoopHeader.kt");
+        }
+
+        @Test
+        @TestMetadata("breakContinueInNoInlineLambda.kt")
+        public void testBreakContinueInNoInlineLambda() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/breakContinueInNoInlineLambda.kt");
         }
 
         @Test
@@ -1500,6 +1518,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         @TestMetadata("incrementDecrement.kt")
         public void testIncrementDecrement() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/incrementDecrement.kt");
+        }
+
+        @Test
+        @TestMetadata("inlinedBreakContinue.kt")
+        public void testInlinedBreakContinue() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/inlinedBreakContinue.kt");
         }
 
         @Test
@@ -2573,12 +2597,6 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
-        @TestMetadata("JCTree.kt")
-        public void testJCTree() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/JCTree.kt");
-        }
-
-        @Test
         @TestMetadata("kt19251.kt")
         public void testKt19251() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/kt19251.kt");
@@ -2612,6 +2630,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         @TestMetadata("MultiList.kt")
         public void testMultiList() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/MultiList.kt");
+        }
+
+        @Test
+        @TestMetadata("OutBox.kt")
+        public void testOutBox() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/OutBox.kt");
         }
 
         @Test

@@ -30,6 +30,9 @@ FILE: constructorInObject.kt
         public final static [ContainingClassKey=B] fun valueOf(value: R|kotlin/String|): R|B| {
         }
 
+        public final static [ContainingClassKey=B] val entries: R|kotlin/enums/EnumEntries<B>|
+            public get(): R|kotlin/enums/EnumEntries<B>|
+
     }
     public? final? class C : R|kotlin/Any| {
         public? [ContainingClassKey=C] constructor(): R|C| {

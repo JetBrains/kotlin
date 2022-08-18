@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDesignatedBodyResolveTransformerForReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
@@ -62,9 +62,9 @@ private class LLFirEnsureBasedTransformerForReturnTypeCalculatorImpl(
     private fun <T : FirCallableDeclaration> T.ensureReturnType() {
         if (this !== targetDeclaration) return
         if (resolvePhase < FirResolvePhase.TYPES && returnTypeRef is FirResolvedTypeRef) return
-        ensureResolved(FirResolvePhase.TYPES)
+        lazyResolveToPhase(FirResolvePhase.TYPES)
         if (returnTypeRef is FirImplicitTypeRef) {
-            ensureResolved(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+            lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
         }
     }
 

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan
@@ -52,6 +52,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     private val platformManager = PlatformManager(distribution)
     internal val targetManager = platformManager.targetManager(configuration.get(KonanConfigKeys.TARGET))
     internal val target = targetManager.target
+    val targetHasAddressDependency get() = target.hasAddressDependencyInMemoryModel()
     internal val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)!!
 
     // TODO: debug info generation mode and debug/release variant selection probably requires some refactoring.
@@ -60,6 +61,19 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             ?: target.family.isAppleFamily // Default is true for Apple targets.
     val generateDebugTrampoline = debug && configuration.get(KonanConfigKeys.GENERATE_DEBUG_TRAMPOLINE) ?: false
     val optimizationsEnabled = configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)
+    val sanitizer = configuration.get(BinaryOptions.sanitizer)?.takeIf {
+        when {
+            it != SanitizerKind.THREAD -> "${it.name} sanitizer is not supported yet"
+            produce == CompilerOutputKind.STATIC -> "${it.name} sanitizer is unsupported for static library"
+            produce == CompilerOutputKind.FRAMEWORK && produceStaticFramework -> "${it.name} sanitizer is unsupported for static framework"
+            it !in target.supportedSanitizers() -> "${it.name} sanitizer is unsupported on ${target.name}"
+            else -> null
+        }?.let {message ->
+            configuration.report(CompilerMessageSeverity.STRONG_WARNING, message)
+            return@takeIf false
+        }
+        return@takeIf true
+    }
 
     private val defaultMemoryModel get() =
         if (target.supportsThreads()) {
@@ -207,7 +221,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             konanKlibDir = File(distribution.klib)
     )
 
-
     val fullExportedNamePrefix: String
         get() = configuration.get(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX) ?: implicitModuleName
 
@@ -226,7 +239,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     private val shouldCoverLibraries = !configuration.getList(KonanConfigKeys.LIBRARIES_TO_COVER).isNullOrEmpty()
 
     private val defaultAllocationMode get() = when {
-        memoryModel == MemoryModel.EXPERIMENTAL && target.supportsMimallocAllocator() -> AllocationMode.MIMALLOC
+        memoryModel == MemoryModel.EXPERIMENTAL && target.supportsMimallocAllocator() && sanitizer == null -> {
+            AllocationMode.MIMALLOC
+        }
         else -> AllocationMode.STD
     }
 
@@ -364,6 +379,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             }
             freezing != defaultFreezing -> "with ${freezing.name.replaceFirstChar { it.lowercase() }} freezing mode"
             runtimeAssertsMode != RuntimeAssertsMode.IGNORE -> "with runtime assertions"
+            sanitizer != null -> "with sanitizers enabled"
+            runtimeLogs != null -> "with runtime logs"
             else -> null
         }
         CacheSupport(
@@ -378,24 +395,27 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val cachedLibraries: CachedLibraries
         get() = cacheSupport.cachedLibraries
 
-    internal val librariesToCache: Set<KotlinLibrary>
-        get() = cacheSupport.librariesToCache
+    internal val libraryToCache: PartialCacheInfo?
+        get() = cacheSupport.libraryToCache
+
+    internal val producePerFileCache = libraryToCache?.strategy is CacheDeserializationStrategy.SingleFile
 
     val outputFiles =
             OutputFiles(configuration.get(KonanConfigKeys.OUTPUT) ?: cacheSupport.tryGetImplicitOutput(),
-                    target, produce)
+                    target, produce, producePerFileCache)
 
     val tempFiles = TempFiles(outputFiles.outputName, configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR))
 
-    val outputFile get() = outputFiles.mainFile
+    val outputFile get() = outputFiles.mainFileName
 
     private val implicitModuleName: String
-        get() = File(outputFiles.outputName).name
+        get() = if (produce.isCache) outputFiles.cacheFileName else File(outputFiles.outputName).name
 
-    val infoArgsOnly = configuration.kotlinSourceRoots.isEmpty()
+    val infoArgsOnly = (configuration.kotlinSourceRoots.isEmpty()
             && configuration[KonanConfigKeys.INCLUDED_LIBRARIES].isNullOrEmpty()
-            && librariesToCache.isEmpty()
             && configuration[KonanConfigKeys.EXPORTED_LIBRARIES].isNullOrEmpty()
+            && libraryToCache == null)
+            || (producePerFileCache && outputFiles.mainFile.exists)
 
     /**
      * Do not compile binary when compiling framework.

@@ -93,16 +93,24 @@ fun Collection<IrOverridableMember>.collectAndFilterRealOverrides(): Set<IrOverr
     else -> error("all members should be of the same kind, got ${map { it.render() }}")
 }
 
-// TODO: use this implementation instead of any other
 fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.resolveFakeOverride(
+    allowAbstract: Boolean = false,
+    toSkip: (T) -> Boolean = { false }
+): T? =
+    resolveFakeOverrideOrNull(allowAbstract, toSkip).also {
+        if (allowAbstract && it == null) {
+            error("No real overrides for ${this.render()}")
+        }
+    }
+
+// TODO: use this implementation instead of any other
+fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.resolveFakeOverrideOrNull(
     allowAbstract: Boolean = false,
     toSkip: (T) -> Boolean = { false }
 ): T? {
     if (!isFakeOverride && !toSkip(this)) return this
     return if (allowAbstract) {
-        val reals = collectRealOverrides(toSkip)
-        if (reals.isEmpty()) error("No real overrides for ${this.render()}")
-        reals.first()
+        collectRealOverrides(toSkip).firstOrNull()
     } else {
         collectRealOverrides(toSkip, { it.modality == Modality.ABSTRACT })
             .let { realOverrides ->

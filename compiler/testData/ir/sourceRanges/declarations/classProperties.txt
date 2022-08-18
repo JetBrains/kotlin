@@ -25,6 +25,10 @@
             @10:4..18 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               @10:4..18 GET_VAR '<this>: test.Test declared in test.Test.<get-test1>' type=test.Test origin=null
     @13:4..16:18 PROPERTY name:test2 visibility:public modality:FINAL [val]
+      annotations:
+        @13:4..15:5 CONSTRUCTOR_CALL 'public constructor <init> (vararg names: kotlin.String) [primary] declared in kotlin.Suppress' type=kotlin.Suppress origin=null
+          @14:8..25 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+            @14:8..25 CONST String type=kotlin.String value="UNUSED_VARIABLE"
       @13:4..16:18 FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:private [final]
         @16:16..18 EXPRESSION_BODY
           @16:16..18 CONST Int type=kotlin.Int value=42
@@ -64,6 +68,10 @@
             @34:16..18 CONST Int type=kotlin.Int value=42
     @37:4..41:18 PROPERTY name:test7 visibility:public modality:FINAL [val]
       @41:8..18 FUN name:<get-test7> visibility:public modality:FINAL <> ($this:test.Test) returnType:kotlin.Int
+        annotations:
+          @38:8..40:9 CONSTRUCTOR_CALL 'public constructor <init> (vararg names: kotlin.String) [primary] declared in kotlin.Suppress' type=kotlin.Suppress origin=null
+            @39:12..29 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+              @39:12..29 CONST String type=kotlin.String value="UNUSED_VARIABLE"
         @38:8..41:18 VALUE_PARAMETER name:<this> type:test.Test
         @41:16..18 BLOCK_BODY
           @41:18..18 RETURN type=kotlin.Nothing from='public final fun <get-test7> (): kotlin.Int declared in test.Test'
@@ -164,6 +172,10 @@
             @69:4..75:9 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test13 type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               @69:4..75:9 GET_VAR '<this>: test.Test declared in test.Test.<get-test13>' type=test.Test origin=null
       @73:8..75:9 FUN name:<set-test13> visibility:public modality:FINAL <> ($this:test.Test, value:kotlin.Int) returnType:kotlin.Unit
+        annotations:
+          @70:8..72:9 CONSTRUCTOR_CALL 'public constructor <init> (vararg names: kotlin.String) [primary] declared in kotlin.Suppress' type=kotlin.Suppress origin=null
+            @71:12..29 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+              @71:12..29 CONST String type=kotlin.String value="UNUSED_VARIABLE"
         @70:8..75:9 VALUE_PARAMETER name:<this> type:test.Test
         @73:12..17 VALUE_PARAMETER name:value index:0 type:kotlin.Int
         @73:19..75:9 BLOCK_BODY

@@ -11,6 +11,9 @@ FILE: valueOfOrNull.kt
         public final static fun valueOf(value: R|kotlin/String|): R|SomeEnum| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<SomeEnum>|
+            public get(): R|kotlin/enums/EnumEntries<SomeEnum>|
+
     }
     public final fun foo(s: R|kotlin/String?|): R|kotlin/Unit| {
         lval result: R|SomeEnum| = R|<local>/s|?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|SomeEnum?|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|SomeEnum?| <inline=Inline, kind=EXACTLY_ONCE>  {

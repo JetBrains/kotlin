@@ -1,0 +1,1 @@
+typealias ResolveMe<T : Int, K> = Map<T, K>

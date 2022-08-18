@@ -92,7 +92,6 @@ abstract class AbstractFileStructureTest : AbstractLowLevelApiSingleFileTest() {
         return session.moduleComponents.fileStructureCache.getFileStructure(this)
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun FileStructure.getAllStructureElements(ktFile: KtFile): Collection<FileStructureElement> = buildSet {
         ktFile.forEachDescendantOfType<KtElement> { ktElement ->
             add(getStructureElementFor(ktElement))

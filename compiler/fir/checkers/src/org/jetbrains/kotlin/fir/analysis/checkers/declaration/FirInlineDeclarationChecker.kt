@@ -114,7 +114,7 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
         }
 
         // prevent delegation to visitQualifiedAccessExpression, which causes redundant diagnostics
-        override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: CheckerContext) {}
+        override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: CheckerContext) {}
 
         override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: CheckerContext) {
             val propertySymbol = variableAssignment.calleeReference.toResolvedCallableSymbol() as? FirPropertySymbol ?: return

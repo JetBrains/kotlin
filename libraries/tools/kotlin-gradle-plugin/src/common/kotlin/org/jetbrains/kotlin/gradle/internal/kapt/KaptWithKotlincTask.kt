@@ -13,6 +13,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.InputChanges
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.compilerRunner.CompilerExecutionSettings
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
@@ -113,9 +114,12 @@ abstract class KaptWithKotlincTask @Inject constructor(
         val compilerRunner = GradleCompilerRunner(
             taskProvider.get(),
             defaultKotlinJavaToolchain.get().currentJvmJdkToolsJar.orNull,
-            normalizedKotlinDaemonJvmArguments.orNull,
+            CompilerExecutionSettings(
+                normalizedKotlinDaemonJvmArguments.orNull,
+                compilerExecutionStrategy.get(),
+                useDaemonFallbackStrategy.get()
+            ),
             metrics.get(),
-            compilerExecutionStrategy.get(),
         )
         compilerRunner.runJvmCompilerAsync(
             sourcesToCompile = emptyList(),

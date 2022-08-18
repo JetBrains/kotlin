@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.android.synthetic.descriptors.ContainerOptionsProxy
 import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticFunction
 import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticProperty
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.addDispatchReceiver
@@ -120,6 +121,7 @@ private class AndroidIrTransformer(val extension: AndroidIrExtension, val plugin
         }
 
     // NOTE: sparse array version intentionally not implemented; this plugin is deprecated
+    @OptIn(FirIncompatiblePluginAPI::class)
     private val mapFactory = pluginContext.referenceFunctions(FqName("kotlin.collections.mutableMapOf"))
         .single { it.owner.valueParameters.isEmpty() }
     private val mapGet = pluginContext.irBuiltIns.mapClass.owner.functions

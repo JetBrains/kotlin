@@ -143,12 +143,14 @@ public class Intrinsics {
     private static String createParameterIsNullExceptionMessage(String paramName) {
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
 
-        // #0 Thread.getStackTrace()
-        // #1 Intrinsics.createParameterIsNullExceptionMessage
-        // #2 Intrinsics.throwParameterIsNullIAE/throwParameterIsNullNPE
-        // #3 Intrinsics.checkParameterIsNotNull/checkNotNullParameter
-        // #4 our caller
-        StackTraceElement caller = stackTraceElements[4];
+        String thisClassName = Intrinsics.class.getName();
+        int i = 0;
+        // Skip platform frames such as Thread.getStackTrace.
+        while (!stackTraceElements[i].getClassName().equals(thisClassName)) i++;
+        // Skip all frames of this class such as createParameterIsNullExceptionMessage, throwParameterIsNullNPE, checkNotNullParameter.
+        while (stackTraceElements[i].getClassName().equals(thisClassName)) i++;
+        // This frame is our caller.
+        StackTraceElement caller = stackTraceElements[i];
         String className = caller.getClassName();
         String methodName = caller.getMethodName();
 

@@ -8,8 +8,6 @@
 package org.jetbrains.kotlin.codegen.jdk
 
 import org.jetbrains.kotlin.test.runners.codegen.*
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.platform.runner.JUnitPlatform
 import org.junit.platform.suite.api.ExcludeTags
 import org.junit.platform.suite.api.IncludeClassNamePatterns
@@ -35,23 +33,11 @@ import org.junit.runner.RunWith
 @UseTechnicalNames
 abstract class CustomJvmTargetOnJvmBaseTest
 
-// JDK 6
-@RunOnlyJdk6Test
-@Execution(ExecutionMode.SAME_THREAD)
-@RunWith(JUnitPlatformRunnerForJdk6::class)
-class JvmTarget6OnJvm6 : CustomJvmTargetOnJvmBaseTest()
-
 // JDK 8
-@RunWith(JUnitPlatform::class)
-class JvmTarget6OnJvm8 : CustomJvmTargetOnJvmBaseTest()
-
 @RunWith(JUnitPlatform::class)
 class JvmTarget8OnJvm8 : CustomJvmTargetOnJvmBaseTest()
 
 // JDK 11
-@RunWith(JUnitPlatform::class)
-class JvmTarget6OnJvm11 : CustomJvmTargetOnJvmBaseTest()
-
 @RunWith(JUnitPlatform::class)
 class JvmTarget8OnJvm11 : CustomJvmTargetOnJvmBaseTest()
 
@@ -60,16 +46,10 @@ class JvmTarget11OnJvm11 : CustomJvmTargetOnJvmBaseTest()
 
 // JDK 15
 @RunWith(JUnitPlatform::class)
-class JvmTarget6OnJvm15 : CustomJvmTargetOnJvmBaseTest()
-
-@RunWith(JUnitPlatform::class)
 class JvmTarget8OnJvm15 : CustomJvmTargetOnJvmBaseTest()
 
 @RunWith(JUnitPlatform::class)
 class JvmTarget15OnJvm15 : CustomJvmTargetOnJvmBaseTest()
-
-@RunWith(JUnitPlatform::class)
-class JvmTarget6OnJvm17 : CustomJvmTargetOnJvmBaseTest()
 
 @RunWith(JUnitPlatform::class)
 class JvmTarget8OnJvm17 : CustomJvmTargetOnJvmBaseTest()
@@ -79,9 +59,6 @@ class JvmTarget17OnJvm17 : CustomJvmTargetOnJvmBaseTest()
 
 
 // LAST JDK from JdkMajorVersion available on machine
-@RunWith(JUnitPlatform::class)
-class JvmTarget6OnJvmLast : CustomJvmTargetOnJvmBaseTest()
-
 @RunWith(JUnitPlatform::class)
 class JvmTarget8OnJvmLast : CustomJvmTargetOnJvmBaseTest()
 

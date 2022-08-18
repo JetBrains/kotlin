@@ -132,7 +132,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         this.scopesHolderForClass = createScopesHolderForClass(c, this.declarationProvider);
         this.kind = classLikeInfo.getClassKind();
-        this.staticScope = kind == ClassKind.ENUM_CLASS ? new StaticScopeForKotlinEnum(storageManager, this) : MemberScope.Empty.INSTANCE;
+        this.staticScope = kind == ClassKind.ENUM_CLASS ?
+                           new StaticScopeForKotlinEnum(
+                                   storageManager, this
+                           ) : MemberScope.Empty.INSTANCE;
 
         this.typeConstructor = new LazyClassTypeConstructor();
 

@@ -20,9 +20,12 @@ kotlin.targets.fromPreset(kotlin.presets.js, 'browser') {
 }
 
 dependencies {
-    browserImplementation project(":libraryProject")
-    browserImplementation "org.jetbrains.kotlin:kotlin-stdlib-js"
-    browserImplementation "org.mozilla:rhino:1.7.7.1"
+    def browserMainImplConfigName =
+            kotlin.getTargets().getByName("browser").getCompilations().getByName("main").getImplementationConfigurationName()
+
+    add(browserMainImplConfigName, project(":libraryProject"))
+    add(browserMainImplConfigName, "org.jetbrains.kotlin:kotlin-stdlib-js")
+    add(browserMainImplConfigName, "org.mozilla:rhino:1.7.7.1")
 }
 
 tasks.named('compileKotlinBrowser') {

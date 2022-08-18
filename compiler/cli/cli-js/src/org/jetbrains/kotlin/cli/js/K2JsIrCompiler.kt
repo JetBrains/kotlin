@@ -503,6 +503,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         configuration.put(JSConfigurationKeys.FRIEND_PATHS_DISABLED, arguments.friendModulesDisabled)
 
+        configuration.put(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT, arguments.strictImplicitExportType)
+
+
         val friendModules = arguments.friendModules
         if (!arguments.friendModulesDisabled && friendModules != null) {
             val friendPaths = friendModules

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 
-fun FirClassSymbol<*>.constructStarProjectedType(typeParameterNumber: Int): ConeClassLikeType {
+fun FirClassSymbol<*>.constructStarProjectedType(typeParameterNumber: Int = typeParameterSymbols.size): ConeClassLikeType {
     return ConeClassLikeTypeImpl(
         toLookupTag(),
         Array(typeParameterNumber) { ConeStarProjection },

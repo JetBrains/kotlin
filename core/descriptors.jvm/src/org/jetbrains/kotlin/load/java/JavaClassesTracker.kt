@@ -24,8 +24,11 @@ interface JavaClassesTracker {
 
     fun onCompletedAnalysis(module: ModuleDescriptor)
 
+    fun clear()
+
     object Default : JavaClassesTracker {
         override fun reportClass(classDescriptor: JavaClassDescriptor) {}
         override fun onCompletedAnalysis(module: ModuleDescriptor) {}
+        override fun clear() {}
     }
 }

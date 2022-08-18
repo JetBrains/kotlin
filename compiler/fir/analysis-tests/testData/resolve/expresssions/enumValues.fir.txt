@@ -17,6 +17,9 @@ FILE: enumValues.kt
         public final static fun valueOf(value: R|kotlin/String|): R|MyEnum| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<MyEnum>|
+            public get(): R|kotlin/enums/EnumEntries<MyEnum>|
+
     }
     public final fun foo(): R|kotlin/Unit| {
         lval values: R|kotlin/Array<MyEnum>| = Q|MyEnum|.R|/MyEnum.values|()

@@ -5,8 +5,7 @@
 
 package kotlin
 
-import kotlin.annotation.AnnotationRetention.BINARY
-import kotlin.annotation.AnnotationRetention.SOURCE
+import kotlin.annotation.AnnotationRetention.*
 import kotlin.annotation.AnnotationTarget.*
 import kotlin.internal.RequireKotlin
 import kotlin.internal.RequireKotlinVersionKind
@@ -54,4 +53,37 @@ public annotation class RequiresOptIn(
 @SinceKotlin("1.3")
 public annotation class OptIn(
     vararg val markerClass: KClass<out Annotation>
+)
+
+/**
+ * Opt-in marker annotation which allows to use [SubclassOptInRequired].
+ */
+@Target(CLASS)
+@Retention(BINARY)
+@SinceKotlin("1.8")
+public annotation class ExperimentalSubclassOptIn
+
+/**
+ * Forbids creation of subclasses/sub-interfaces from the annotated class/interface without explicit [OptIn].
+ *
+ * This annotation is devoted to specific case when we want subclassing to be experimental.
+ * In this case we annotated the base class or interface with [SubclassOptInRequired].
+ * Without an explicit opt-in we have a compilation error/warning on the subclass/sub-interface after that.
+ *
+ * There are three ways to negate this error/warning:
+ * <ol><li>Annotate subclass or interface with the marker annotation. In this case opt-in is propagated.</li>
+ * <li>Annotate subclass or interface with [OptIn]. In this case opt-in isn't propagated.</li>
+ * <li>Annotate subclass or interface with [SubclassOptInRequired]. In this case opt-in is propagated to subclasses/interfaces only.</li>
+ * </ol>
+ *
+ * Note that [SubclassOptInRequired] does not negate an opt-in usage error itself.
+ *
+ * @property markerClass an opt-in marker to be required
+ */
+@Target(CLASS)
+@Retention(BINARY)
+@SinceKotlin("1.8")
+@ExperimentalSubclassOptIn
+public annotation class SubclassOptInRequired(
+    val markerClass: KClass<out Annotation>
 )

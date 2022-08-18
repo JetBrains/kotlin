@@ -614,6 +614,7 @@ message IrCatch {
 enum IrSyntheticBodyKind {
   ENUM_VALUES = 1;
   ENUM_VALUEOF = 2;
+  ENUM_ENTRIES = 3;
 }
 
 message IrSyntheticBody {

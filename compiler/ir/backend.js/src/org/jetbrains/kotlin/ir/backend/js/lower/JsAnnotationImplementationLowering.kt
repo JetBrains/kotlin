@@ -40,10 +40,12 @@ class JsAnnotationImplementationTransformer(val jsContext: JsIrBackendContext) :
         compilationException("Should not be called", implClass)
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
-        if (declaration.isAnnotationClass) {
-            implementGeneratedFunctions(declaration, declaration)
+        return declaration.apply {
+            if (isAnnotationClass) {
+                implementGeneratedFunctions(this, this)
+            }
+            addConstructorBodyForCompatibility()
         }
-        return super.visitClassNew(declaration)
     }
 
     private val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol> =

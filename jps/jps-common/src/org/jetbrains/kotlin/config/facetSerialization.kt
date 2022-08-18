@@ -219,7 +219,10 @@ fun deserializeFacetSettings(element: Element): KotlinFacetSettings {
         2, 3, 4 -> readV2Config(element)
         KotlinFacetSettings.CURRENT_VERSION -> readLatestConfig(element)
         else -> return KotlinFacetSettings() // Reset facet configuration if versions don't match
-    }.apply { this.version = version }
+    }.apply {
+        this.version = version
+        updateMergedArguments()
+    }
 }
 
 fun CommonCompilerArguments.convertPathsToSystemIndependent() {

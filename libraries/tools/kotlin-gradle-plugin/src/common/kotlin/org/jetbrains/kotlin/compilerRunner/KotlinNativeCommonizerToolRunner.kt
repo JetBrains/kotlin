@@ -5,33 +5,31 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import java.io.File
 
-internal class KotlinNativeCommonizerToolRunner(project: Project) : KotlinToolRunner(project) {
+internal class KotlinNativeCommonizerToolRunner(
+    context: GradleExecutionContext,
+    private val settings: Settings,
+) : KotlinToolRunner(context) {
+
+    class Settings(
+        val kotlinPluginVersion: String,
+        val classpath: Set<File>,
+        val customJvmArgs: List<String>
+    )
+
     override val displayName get() = "Kotlin/Native KLIB commonizer"
 
     override val mainClass: String get() = "org.jetbrains.kotlin.commonizer.cli.CommonizerCLI"
 
-    override val classpath by lazy {
-        try {
-            project.configurations.getByName(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME).resolve() as Set<File>
-        } catch (e: Exception) {
-            project.logger.error(
-                "Could not resolve KLIB commonizer classpath. Check if Kotlin Gradle plugin repository is configured in $project."
-            )
-            throw e
-        }
-    }
+    override val classpath: Set<File> get() = settings.classpath
 
-    override val isolatedClassLoaderCacheKey get() = project.getKotlinPluginVersion()
+    override val isolatedClassLoaderCacheKey get() = settings.kotlinPluginVersion
 
     override val defaultMaxHeapSize: String get() = "4G"
 
     override val mustRunViaExec get() = true // because it's not enough the standard Gradle wrapper's heap size
 
-    override fun getCustomJvmArgs() = PropertiesProvider(project).commonizerJvmArgs?.split("\\s+".toRegex()).orEmpty()
+    override fun getCustomJvmArgs() = settings.customJvmArgs
 }
+

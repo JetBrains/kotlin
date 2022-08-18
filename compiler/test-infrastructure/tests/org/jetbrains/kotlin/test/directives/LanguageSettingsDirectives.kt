@@ -33,10 +33,6 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         description = "Enables corresponding analysis flag (AnalysisFlags.ignoreDataFlowInAssert)"
     )
 
-    val CONSTRAINT_SYSTEM_FOR_OVERLOAD_RESOLUTION by enumDirective<ConstraintSystemForOverloadResolutionMode>(
-        description = "Configures corresponding analysis flag (AnalysisFlags.constraintSystemForOverloadResolution)",
-    )
-
     val ALLOW_RESULT_RETURN_TYPE by directive(
         description = "Allow using Result in return type position"
     )

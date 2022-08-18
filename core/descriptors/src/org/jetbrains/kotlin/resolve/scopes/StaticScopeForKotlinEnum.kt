@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValueOfMethod
-import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesMethod
+import org.jetbrains.kotlin.resolve.DescriptorFactory.*
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.utils.SmartList
 
 // We don't need to track lookups here since this scope used only for introduce special Enum class members
 class StaticScopeForKotlinEnum(
-        storageManager: StorageManager,
-        private val containingClass: ClassDescriptor
+    storageManager: StorageManager,
+    private val containingClass: ClassDescriptor
 ) : MemberScopeImpl() {
     init {
         assert(containingClass.kind == ClassKind.ENUM_CLASS) { "Class should be an enum: $containingClass" }
@@ -43,10 +43,17 @@ class StaticScopeForKotlinEnum(
         listOf(createEnumValueOfMethod(containingClass), createEnumValuesMethod(containingClass))
     }
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = functions
+    private val properties: List<PropertyDescriptor> by storageManager.createLazyValue {
+        listOfNotNull(createEnumEntriesProperty(containingClass))
+    }
+
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = functions + properties
 
     override fun getContributedFunctions(name: Name, location: LookupLocation) =
         functions.filterTo(SmartList()) { it.name == name }
+
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> =
+        properties.filterTo(SmartList()) { it.name == name }
 
     override fun printScopeStructure(p: Printer) {
         p.println("Static scope for $containingClass")

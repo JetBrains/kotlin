@@ -20,10 +20,9 @@ public class LastBefore extends AbstractTokenStreamPattern {
     private final boolean dontStopRightAfterOccurrence;
     private final TokenStreamPredicate lookFor;
     private final TokenStreamPredicate stopAt;
-
     private boolean previousLookForResult;
 
-    public LastBefore(TokenStreamPredicate lookFor, TokenStreamPredicate stopAt, boolean dontStopRightAfterOccurrence) {
+    private LastBefore(TokenStreamPredicate lookFor, TokenStreamPredicate stopAt, boolean dontStopRightAfterOccurrence) {
         this.lookFor = lookFor;
         this.stopAt = stopAt;
         this.dontStopRightAfterOccurrence = dontStopRightAfterOccurrence;
@@ -46,5 +45,11 @@ public class LastBefore extends AbstractTokenStreamPattern {
         }
         previousLookForResult = lookForResult;
         return false;
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        previousLookForResult = false;
     }
 }

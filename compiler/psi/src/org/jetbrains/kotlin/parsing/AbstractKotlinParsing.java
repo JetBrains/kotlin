@@ -78,6 +78,16 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
     }
 
     protected boolean expect(KtToken expectation, String message, TokenSet recoverySet) {
+        if (expect(expectation)) {
+            return true;
+        }
+
+        errorWithRecovery(message, recoverySet);
+
+        return false;
+    }
+
+    protected boolean expect(KtToken expectation) {
         if (at(expectation)) {
             advance(); // expectation
             return true;
@@ -86,8 +96,6 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
         if (expectation == KtTokens.IDENTIFIER && "`".equals(myBuilder.getTokenText())) {
             advance();
         }
-
-        errorWithRecovery(message, recoverySet);
 
         return false;
     }
@@ -144,6 +152,11 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
         myBuilder.advanceLexer();
     }
 
+    protected int getTokenId() {
+        IElementType elementType = tt();
+        return (elementType instanceof KtToken) ? ((KtToken)elementType).tokenId : INVALID_Id;
+    }
+
     protected IElementType tt() {
         return myBuilder.getTokenType();
     }
@@ -189,14 +202,7 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
     /**
      * Side-effect-free version of atSet()
      */
-    protected boolean _atSet(IElementType... tokens) {
-        return _atSet(TokenSet.create(tokens));
-    }
-
-    /**
-     * Side-effect-free version of atSet()
-     */
-    private boolean _atSet(TokenSet set) {
+    protected boolean _atSet(TokenSet set) {
         IElementType token = tt();
         if (set.contains(token)) return true;
         if (set.contains(EOL_OR_SEMICOLON)) {
@@ -205,10 +211,6 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
             if (myBuilder.newlineBeforeCurrentToken()) return true;
         }
         return false;
-    }
-
-    protected boolean atSet(IElementType... tokens) {
-        return atSet(TokenSet.create(tokens));
     }
 
     protected boolean atSet(TokenSet set) {
@@ -313,39 +315,42 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
                     pattern.isTopLevel(openAngleBrackets, openBrackets, openBraces, openParentheses))) {
                 break;
             }
-            if (at(LPAR)) {
-                openParentheses++;
-                opens.push(LPAR);
-            }
-            else if (at(LT)) {
-                openAngleBrackets++;
-                opens.push(LT);
-            }
-            else if (at(LBRACE)) {
-                openBraces++;
-                opens.push(LBRACE);
-            }
-            else if (at(LBRACKET)) {
-                openBrackets++;
-                opens.push(LBRACKET);
-            }
-            else if (at(RPAR)) {
-                openParentheses--;
-                if (opens.isEmpty() || opens.pop() != LPAR) {
-                    if (pattern.handleUnmatchedClosing(RPAR)) {
-                        break;
+            switch (getTokenId()) {
+                case LPAR_Id:
+                    openParentheses++;
+                    opens.push(LPAR);
+                    break;
+                case LT_Id:
+                    openAngleBrackets++;
+                    opens.push(LT);
+                    break;
+                case LBRACE_Id:
+                    openBraces++;
+                    opens.push(LBRACE);
+                    break;
+                case LBRACKET_Id:
+                    openBrackets++;
+                    opens.push(LBRACKET);
+                    break;
+                case RPAR_Id:
+                    openParentheses--;
+                    if (opens.isEmpty() || opens.pop() != LPAR) {
+                        if (pattern.handleUnmatchedClosing(RPAR)) {
+                            break;
+                        }
                     }
-                }
+                    break;
+                case GT_Id:
+                    openAngleBrackets--;
+                    break;
+                case RBRACE_Id:
+                    openBraces--;
+                    break;
+                case RBRACKET_Id:
+                    openBrackets--;
+                    break;
             }
-            else if (at(GT)) {
-                openAngleBrackets--;
-            }
-            else if (at(RBRACE)) {
-                openBraces--;
-            }
-            else if (at(RBRACKET)) {
-                openBrackets--;
-            }
+
             advance(); // skip token
         }
 

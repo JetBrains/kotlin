@@ -1,0 +1,4 @@
+compiler/testData/cli/jvm/enumEntriesNotEnabled.kt:7:26: error: unresolved reference: entries
+    val entries = MyEnum.entries
+                         ^
+COMPILATION_ERROR

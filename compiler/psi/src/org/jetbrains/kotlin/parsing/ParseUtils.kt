@@ -10,7 +10,7 @@ import com.intellij.util.text.LiteralFormatUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.utils.extractRadix
 
-private val FP_LITERAL_PARTS = "(?:([_\\d]*)\\.?([_\\d]*)e?[+-]?([_\\d]*))[f]?".toRegex()
+private val FP_LITERAL_PARTS = "([_\\d]*)\\.?([_\\d]*)e?[+-]?([_\\d]*)[f]?".toRegex()
 
 fun hasIllegalUnderscore(text: String, elementType: IElementType): Boolean {
     val parts: List<String?> = if (elementType === KtNodeTypes.INTEGER_CONSTANT) {
@@ -79,32 +79,32 @@ private fun parseLong(text: String): Long? {
 }
 
 private fun parseFloatingLiteral(text: String): Number? {
-    if (text.lowercase().endsWith('f')) {
+    if (text.endsWith('f') || text.endsWith('F')) {
         return parseFloat(text)
     }
     return parseDouble(text)
 }
 
 private fun parseDouble(text: String): Double? {
-    try {
-        return java.lang.Double.parseDouble(text)
+    return try {
+        java.lang.Double.parseDouble(text)
     } catch (e: NumberFormatException) {
-        return null
+        null
     }
 }
 
 private fun parseFloat(text: String): Float? {
-    try {
-        return java.lang.Float.parseFloat(text)
+    return try {
+        java.lang.Float.parseFloat(text)
     } catch (e: NumberFormatException) {
-        return null
+        null
     }
 }
 
 fun parseBoolean(text: String): Boolean {
-    if ("true".equals(text)) {
+    if ("true" == text) {
         return true
-    } else if ("false".equals(text)) {
+    } else if ("false" == text) {
         return false
     }
 

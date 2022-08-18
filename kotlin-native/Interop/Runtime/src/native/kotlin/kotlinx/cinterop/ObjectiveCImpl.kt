@@ -133,19 +133,6 @@ internal annotation class ObjCMethodImp(val selector: String, val encoding: Stri
 @TypedIntrinsic(IntrinsicType.OBJC_GET_SELECTOR)
 internal external fun objCGetSelector(selector: String): COpaquePointer
 
-@kotlin.native.internal.ExportForCppRuntime("Kotlin_Interop_getObjCClass")
-private fun getObjCClassByName(name: NativePtr): NativePtr {
-    val result = objc_lookUpClass(name)
-    if (result == nativeNullPtr) {
-        val className = interpretCPointer<ByteVar>(name)!!.toKString()
-        val message = """Objective-C class '$className' not found.
-            |Ensure that the containing framework or library was linked.""".trimMargin()
-
-        throw RuntimeException(message)
-    }
-    return result
-}
-
 @kotlin.native.internal.ExportForCompiler
 private fun allocObjCObject(clazz: NativePtr): NativePtr {
     val rawResult = objc_allocWithZone(clazz)
@@ -219,6 +206,3 @@ external fun objc_retain(ptr: NativePtr): NativePtr
 
 @GCUnsafeCall("Kotlin_objc_release")
 external fun objc_release(ptr: NativePtr)
-
-@GCUnsafeCall("Kotlin_objc_lookUpClass")
-external fun objc_lookUpClass(name: NativePtr): NativePtr

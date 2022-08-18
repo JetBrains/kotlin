@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 open class KtClass : KtClassOrObject {
+    private val classInterfaceTokenSet = TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD)
+
     constructor(node: ASTNode) : super(node)
     constructor(stub: KotlinClassStub) : super(stub, KtStubElementTypes.CLASS)
 
@@ -36,7 +38,7 @@ open class KtClass : KtClassOrObject {
 
     override fun getCompanionObjects(): List<KtObjectDeclaration> = body?.allCompanionObjects.orEmpty()
 
-    fun getClassOrInterfaceKeyword(): PsiElement? = findChildByType(TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD))
+    fun getClassOrInterfaceKeyword(): PsiElement? = findChildByType(classInterfaceTokenSet)
 
     fun getClassKeyword(): PsiElement? = findChildByType(KtTokens.CLASS_KEYWORD)
 

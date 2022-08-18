@@ -55,6 +55,10 @@ class RemoteLookupTrackerClient(
         lookups.getOrPut(filePath, ::THashMap).getOrPut(internedSymbolFqName, ::THashSet).add(objectToPut)
     }
 
+    override fun clear() {
+        lookups.clear()
+    }
+
     init {
         eventManager.onCompilationFinished { flush() }
     }

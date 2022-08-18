@@ -6,6 +6,9 @@ public final class A : R|kotlin/Any| {
         public final static fun values(): R|kotlin/Array<test/A.E>| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<test/A.E>|
+            public get(): R|kotlin/enums/EnumEntries<test/A.E>|
+
         private constructor(): R|test/A.E|
 
         public final static enum entry ENTRY: R|test/A.E|

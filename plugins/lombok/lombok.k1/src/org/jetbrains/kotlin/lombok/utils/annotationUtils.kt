@@ -20,6 +20,11 @@ fun getAccessLevel(annotation: AnnotationDescriptor, field: String = "value"): A
     return AccessLevel.valueOf(value)
 }
 
+@JvmName("getAccessLevelWithReceiver")
+fun AnnotationDescriptor.getAccessLevel(field: String = "value"): AccessLevel {
+    return getAccessLevel(this, field)
+}
+
 fun AnnotationDescriptor.getStringArgument(argumentName: String): String? {
     val argument = allValueArguments[Name.identifier(argumentName)]
         ?: return null

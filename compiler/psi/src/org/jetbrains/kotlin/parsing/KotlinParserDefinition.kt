@@ -74,6 +74,7 @@ class KotlinParserDefinition : ParserDefinition {
 
     override fun createFile(fileViewProvider: FileViewProvider): PsiFile = KtFile(fileViewProvider, false)
 
+    @Deprecated("Deprecated in Java")
     override fun spaceExistanceTypeBetweenTokens(left: ASTNode, right: ASTNode): ParserDefinition.SpaceRequirements {
         val rightTokenType = right.elementType
 

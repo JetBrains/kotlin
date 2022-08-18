@@ -20,12 +20,11 @@ import org.jetbrains.kotlin.gradle.utils.setProperty
 import javax.inject.Inject
 
 abstract class KotlinAndroidTarget @Inject constructor(
-    override val targetName: String,
+    final override val targetName: String,
     project: Project
 ) : AbstractKotlinTarget(project) {
 
-    override var disambiguationClassifier: String? = null
-        internal set
+    final override val disambiguationClassifier: String = targetName
 
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.androidJvm
@@ -67,7 +66,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
     var publishLibraryVariantsGroupedByFlavor = false
 
     private fun checkPublishLibraryVariantsExist() {
-        fun AbstractAndroidProjectHandler.getLibraryVariantNames() =
+        fun AndroidProjectHandler.getLibraryVariantNames() =
             mutableSetOf<String>().apply {
                 project.forEachVariant {
                     if (getLibraryOutputTask(it) != null)
@@ -99,7 +98,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
         return publishLibraryVariants?.contains(getVariantName(variant)) ?: true
     }
 
-    private fun AbstractAndroidProjectHandler.doCreateComponents(): Set<KotlinTargetComponent> {
+    private fun AndroidProjectHandler.doCreateComponents(): Set<KotlinTargetComponent> {
 
         val publishableVariants = mutableListOf<BaseVariant>()
             .apply { project.forEachVariant { add(it) } }
@@ -173,7 +172,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
         }.toSet()
     }
 
-    private fun AbstractAndroidProjectHandler.createAndroidUsageContexts(
+    private fun AndroidProjectHandler.createAndroidUsageContexts(
         variant: BaseVariant,
         compilation: KotlinCompilation<*>,
         artifactClassifier: String?,

@@ -590,6 +590,12 @@ class DeclarationsConverter(
                             context.className,
                             modifiers.hasExpect()
                         )
+                        generateEntriesGetter(
+                            baseModuleData,
+                            context.packageFqName,
+                            context.className,
+                            modifiers.hasExpect()
+                        )
                     }
                     initCompanionObjectSymbolAttr()
 
@@ -940,7 +946,7 @@ class DeclarationsConverter(
         secondaryConstructor.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
-                VALUE_PARAMETER_LIST -> firValueParameters += convertValueParameters(it)
+                VALUE_PARAMETER_LIST -> firValueParameters += convertValueParameters(it, ValueParameterDeclaration.FUNCTION)
                 CONSTRUCTOR_DELEGATION_CALL -> constructorDelegationCall = convertConstructorDelegationCall(it, classWrapper)
                 BLOCK -> block = it
             }
@@ -1522,7 +1528,7 @@ class DeclarationsConverter(
         setterParameter.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
-                VALUE_PARAMETER -> firValueParameter = convertValueParameter(it).firValueParameter
+                VALUE_PARAMETER -> firValueParameter = convertValueParameter(it, ValueParameterDeclaration.SETTER).firValueParameter
             }
         }
 
@@ -1650,7 +1656,7 @@ class DeclarationsConverter(
                 valueParametersList?.let { list ->
                     valueParameters += convertValueParameters(
                         list,
-                        if (isAnonymousFunction) ValueParameterDeclaration.LAMBDA else ValueParameterDeclaration.OTHER
+                        if (isAnonymousFunction) ValueParameterDeclaration.LAMBDA else ValueParameterDeclaration.FUNCTION
                     ).map { it.firValueParameter }
                 }
 
@@ -2149,7 +2155,7 @@ class DeclarationsConverter(
         functionType.forEachChildren {
             when (it.tokenType) {
                 FUNCTION_TYPE_RECEIVER -> receiverTypeReference = convertReceiverType(it)
-                VALUE_PARAMETER_LIST -> valueParametersList += convertValueParameters(it)
+                VALUE_PARAMETER_LIST -> valueParametersList += convertValueParameters(it, ValueParameterDeclaration.FUNCTIONAL_TYPE)
                 TYPE_REFERENCE -> returnTypeReference = convertType(it)
             }
         }
@@ -2174,7 +2180,7 @@ class DeclarationsConverter(
      */
     fun convertValueParameters(
         valueParameters: LighterASTNode,
-        valueParameterDeclaration: ValueParameterDeclaration = ValueParameterDeclaration.OTHER,
+        valueParameterDeclaration: ValueParameterDeclaration,
         additionalAnnotations: List<FirAnnotation> = emptyList()
     ): List<ValueParameter> {
         return valueParameters.forEachChildrenReturnList { node, container ->
@@ -2189,7 +2195,7 @@ class DeclarationsConverter(
      */
     fun convertValueParameter(
         valueParameter: LighterASTNode,
-        valueParameterDeclaration: ValueParameterDeclaration = ValueParameterDeclaration.OTHER,
+        valueParameterDeclaration: ValueParameterDeclaration,
         additionalAnnotations: List<FirAnnotation> = emptyList()
     ): ValueParameter {
         var modifiers = Modifier()
@@ -2216,7 +2222,11 @@ class DeclarationsConverter(
             source = valueParameter.toFirSourceElement()
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source
-            returnTypeRef = firType ?: implicitType
+            returnTypeRef = firType
+                ?: when {
+                    valueParameterDeclaration.shouldExplicitParameterTypeBePresent -> createNoTypeForParameterTypeRef()
+                    else -> implicitType
+                }
             this.name = name
             symbol = FirValueParameterSymbol(name)
             defaultValue = firExpression

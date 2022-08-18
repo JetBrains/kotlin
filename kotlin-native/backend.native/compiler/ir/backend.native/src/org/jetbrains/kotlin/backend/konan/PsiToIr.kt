@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
@@ -33,6 +34,12 @@ import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 import org.jetbrains.kotlin.utils.DFS
+
+object KonanStubGeneratorExtensions : StubGeneratorExtensions() {
+    override fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean {
+        return super.isPropertyWithPlatformField(descriptor) || descriptor.isLateInit
+    }
+}
 
 internal fun Context.psiToIr(
         symbolTable: SymbolTable,
@@ -61,13 +68,14 @@ internal fun Context.psiToIr(
             moduleDescriptor, symbolTable,
             generatorContext.irBuiltIns,
             DescriptorByIdSignatureFinderImpl(moduleDescriptor, KonanManglerDesc),
+            KonanStubGeneratorExtensions
     )
     val irBuiltInsOverDescriptors = generatorContext.irBuiltIns as IrBuiltInsOverDescriptors
     val functionIrClassFactory: KonanIrAbstractDescriptorBasedFunctionFactory =
-            if (config.lazyIrForCaches && !llvmModuleSpecification.containsModule(this.stdlibModule))
-                LazyIrFunctionFactory(symbolTable, stubGenerator, irBuiltInsOverDescriptors, reflectionTypes)
-            else
+            if (shouldDefineFunctionClasses || (!config.lazyIrForCaches && !config.producePerFileCache))
                 BuiltInFictitiousFunctionIrClassFactory(symbolTable, irBuiltInsOverDescriptors, reflectionTypes)
+            else
+                LazyIrFunctionFactory(symbolTable, stubGenerator, irBuiltInsOverDescriptors, reflectionTypes)
     irBuiltInsOverDescriptors.functionFactory = functionIrClassFactory
     val symbols = KonanSymbols(this, generatorContext.irBuiltIns, symbolTable, symbolTable.lazyWrapper)
 
@@ -123,6 +131,7 @@ internal fun Context.psiToIr(
                 exportedDependencies = exportedDependencies,
                 cachedLibraries = config.cachedLibraries,
                 lazyIrForCaches = config.lazyIrForCaches,
+                libraryBeingCached = config.libraryToCache,
                 unlinkedDeclarationsSupport = unlinkedDeclarationsSupport,
                 userVisibleIrModulesSupport = config.userVisibleIrModulesSupport
         ).also { linker ->
@@ -143,10 +152,11 @@ internal fun Context.psiToIr(
 
                 for (dependency in sortDependencies(dependencies).filter { it != moduleDescriptor }) {
                     val kotlinLibrary = (dependency.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin)?.library
-                    val isCachedLibrary = kotlinLibrary != null && config.cachedLibraries.isLibraryCached(kotlinLibrary)
-                    if (isProducingLibrary || (config.lazyIrForCaches && isCachedLibrary))
+                    val isFullyCachedLibrary = kotlinLibrary != null &&
+                            config.cachedLibraries.isLibraryCached(kotlinLibrary) && kotlinLibrary != config.libraryToCache?.klib
+                    if (isProducingLibrary || (config.lazyIrForCaches && isFullyCachedLibrary))
                         linker.deserializeOnlyHeaderModule(dependency, kotlinLibrary)
-                    else if (isCachedLibrary)
+                    else if (isFullyCachedLibrary)
                         linker.deserializeHeadersWithInlineBodies(dependency, kotlinLibrary!!)
                     else
                         linker.deserializeIrModuleHeader(dependency, kotlinLibrary, dependency.name.asString())
@@ -216,6 +226,11 @@ internal fun Context.psiToIr(
 
     // Note: coupled with [shouldLower] below.
     irModules = modules.filterValues { llvmModuleSpecification.containsModule(it) }
+    // IR linker deserializes files in the order they lie on the disk, which might be inconvenient,
+    // so to make the pipeline more deterministic, the files are to be sorted.
+    // This concerns in the first place global initializers order for the eager initialization strategy,
+    // where the files are being initialized in order one by one.
+    irModules.values.forEach { module -> module.files.sortBy { it.fileEntry.name } }
 
     if (!isProducingLibrary)
         irLinker = irDeserializer as KonanIrLinker
@@ -225,7 +240,7 @@ internal fun Context.psiToIr(
     if (!isProducingLibrary) {
         // TODO: find out what should be done in the new builtins/symbols about it
         if (this.stdlibModule in modulesWithoutDCE) {
-            (functionIrClassFactory as BuiltInFictitiousFunctionIrClassFactory).buildAllClasses()
+            (functionIrClassFactory as? BuiltInFictitiousFunctionIrClassFactory)?.buildAllClasses()
         }
         internalAbi.init(irModules.values + irModule!!)
         (functionIrClassFactory as? BuiltInFictitiousFunctionIrClassFactory)?.module =

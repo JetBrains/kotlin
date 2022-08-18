@@ -2,6 +2,7 @@
 // WITH_STDLIB
 // KT-34166: Translation of loop over literal completely removes the validation of step
 // DONT_TARGET_EXACT_BACKEND: JS
+// DONT_TARGET_EXACT_BACKEND: JVM
 // !LANGUAGE: +RangeUntilOperator
 @file:OptIn(ExperimentalStdlibApi::class)
 import kotlin.test.*

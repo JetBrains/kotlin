@@ -21,6 +21,9 @@ data class ClassMember(val classId: ClassId, val memberName: String) : ProgramSy
 
 data class PackageMember(val packageFqName: FqName, val memberName: String) : ProgramSymbol()
 
+/** Compact representation for set of [ClassMember]s having the same [ClassId]. */
+data class ClassMembers(val classId: ClassId, val memberNames: Set<String>)
+
 /** Compact representation for a set of [ProgramSymbol]s. */
 class ProgramSymbolSet private constructor(
 

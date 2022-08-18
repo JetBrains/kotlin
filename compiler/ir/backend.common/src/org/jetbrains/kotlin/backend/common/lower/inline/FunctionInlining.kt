@@ -37,6 +37,9 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 fun IrValueParameter.isInlineParameter(type: IrType = this.type) =
     index >= 0 && !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunction())
 
+fun IrExpression.isAdaptedFunctionReference() =
+    this is IrBlock && this.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
+
 interface InlineFunctionResolver {
     fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction
 }
@@ -392,7 +395,7 @@ class FunctionInlining(
                     for (index in 0 until irFunctionReference.typeArgumentsCount)
                         putTypeArgument(index, irFunctionReference.getTypeArgument(index))
                 }.implicitCastIfNeededTo(irCall.type)
-                return this@FunctionInlining.visitExpression(super.visitExpression(immediateCall))
+                return super.visitExpression(immediateCall).transform(this@FunctionInlining, null)
             }
 
             override fun visitElement(element: IrElement) = element.accept(this, null)
@@ -414,9 +417,6 @@ class FunctionInlining(
                     && callee.name == OperatorNameConventions.INVOKE
                     && irCall.dispatchReceiver is IrGetValue
         }
-
-        private fun IrExpression.isAdaptedFunctionReference() =
-            this is IrBlock && this.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
 
         private inner class ParameterToArgument(
             val parameter: IrValueParameter,

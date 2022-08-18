@@ -72,7 +72,8 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
     private fun findVirtualFileForTopLevelClass(classId: ClassId, searchScope: GlobalSearchScope): VirtualFile? {
         val relativeClassName = classId.relativeClassName.asString()
-        return topLevelClassesCache.getOrPut(classId.packageFqName.child(classId.relativeClassName.pathSegments().first())) {
+        val outerMostClassFqName = classId.packageFqName.child(classId.relativeClassName.pathSegments().first())
+        return topLevelClassesCache.getOrPut(outerMostClassFqName) {
             // Search java sources first. For build tools, it makes sense to build new files passing all the
             // class files for the previous build on the class path.
             //
@@ -86,8 +87,9 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             // we want to make sure that we get the new A.java and not the old version A.class from previous.jar.
             //
             // Otherwise B.kt will not see the newly added field in A.
-            singleJavaFileRootsIndex.findJavaSourceClass(classId)
-                ?: index.findClass(classId) { dir, type ->
+            val outerMostClassId = ClassId.topLevel(outerMostClassFqName)
+            singleJavaFileRootsIndex.findJavaSourceClass(outerMostClassId)
+                ?: index.findClass(outerMostClassId) { dir, type ->
                     findVirtualFileGivenPackage(dir, relativeClassName, type)
                 }
 

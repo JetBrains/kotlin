@@ -52,8 +52,10 @@ abstract class UsefulDeclarationProcessor(
 
         override fun visitBlock(expression: IrBlock, data: IrDeclaration) {
             super.visitBlock(expression, data)
-            if (expression !is IrReturnableBlock) return
-            expression.inlineFunctionSymbol?.owner?.enqueue(data, "inline function usage")
+
+            if (expression is IrReturnableBlock) {
+                expression.inlineFunctionSymbol?.owner?.addToUsefulPolyfilledDeclarations()
+            }
         }
 
         override fun visitFieldAccess(expression: IrFieldAccessExpression, data: IrDeclaration) {
@@ -111,6 +113,14 @@ abstract class UsefulDeclarationProcessor(
         if (this !in result) {
             result.add(this)
             queue.addLast(this)
+
+            addToUsefulPolyfilledDeclarations()
+        }
+    }
+
+    private fun IrDeclaration.addToUsefulPolyfilledDeclarations() {
+        if (hasJsPolyfill() && this !in usefulPolyfilledDeclarations) {
+            usefulPolyfilledDeclarations.add(this)
         }
     }
 
@@ -127,6 +137,8 @@ abstract class UsefulDeclarationProcessor(
     private val queue = ArrayDeque<IrDeclaration>()
     protected val result = hashSetOf<IrDeclaration>()
     protected val classesWithObjectAssociations = hashSetOf<IrClass>()
+
+    public val usefulPolyfilledDeclarations = hashSetOf<IrDeclaration>()
 
     protected open fun processField(irField: IrField): Unit = Unit
 
@@ -185,6 +197,10 @@ abstract class UsefulDeclarationProcessor(
             }
         }
 
+        if (declaration is IrSimpleFunction && declaration.isAccessorForOverriddenExternalField()) {
+            declaration.enqueue(declaration.correspondingPropertySymbol!!.owner, "overrides external property")
+        }
+
         // A hack to enforce property lowering.
         // Until a getter is accessed it doesn't get moved to the declaration list.
         if (declaration is IrProperty) {
@@ -195,6 +211,14 @@ abstract class UsefulDeclarationProcessor(
                 findOverriddenContagiousDeclaration()?.let { enqueue(declaration, "(setter) overrides useful declaration") }
             }
         }
+    }
+
+    private fun IrSimpleFunction.isAccessorForOverriddenExternalField(): Boolean {
+        return correspondingPropertySymbol?.owner?.isExternalOrOverriddenExternal() ?: false
+    }
+
+    private fun IrProperty.isExternalOrOverriddenExternal(): Boolean {
+        return isEffectivelyExternal() || overriddenSymbols.any { it.owner.isExternalOrOverriddenExternal() }
     }
 
     protected open fun handleAssociatedObjects(): Unit = Unit

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,6 +34,24 @@ public class FirDiagnosticTestForLombokGenerated extends AbstractFirDiagnosticTe
     @TestMetadata("annotationTypes.kt")
     public void testAnnotationTypes() throws Exception {
         runTest("plugins/lombok/testData/diagnostics/annotationTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("builderAnnotationArguments.kt")
+    public void testBuilderAnnotationArguments() throws Exception {
+        runTest("plugins/lombok/testData/diagnostics/builderAnnotationArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("builderConfig.kt")
+    public void testBuilderConfig() throws Exception {
+        runTest("plugins/lombok/testData/diagnostics/builderConfig.kt");
+    }
+
+    @Test
+    @TestMetadata("builderSingularNullability.kt")
+    public void testBuilderSingularNullability() throws Exception {
+        runTest("plugins/lombok/testData/diagnostics/builderSingularNullability.kt");
     }
 
     @Test

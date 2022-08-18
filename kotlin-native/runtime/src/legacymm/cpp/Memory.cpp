@@ -499,20 +499,22 @@ ObjHeader* ObjHeader::GetOrSetWeakCounter(ObjHeader* counter) {
 
 #if KONAN_OBJC_INTEROP
 
-void* ObjHeader::GetAssociatedObject() {
-    if (!has_meta_object()) {
+void* ObjHeader::GetAssociatedObject() const {
+    auto metaObj = this->meta_object_or_null();
+    if (metaObj == nullptr) {
       return nullptr;
     }
-    return this->meta_object()->associatedObject_;
-}
-
-void** ObjHeader::GetAssociatedObjectLocation() {
-    return &this->meta_object()->associatedObject_;
+    return metaObj->associatedObject_;
 }
 
 void ObjHeader::SetAssociatedObject(void* obj) {
     this->meta_object()->associatedObject_ = obj;
 }
+
+void* ObjHeader::CasAssociatedObject(void* expectedObj, void* obj) {
+    return __sync_val_compare_and_swap(&this->meta_object()->associatedObject_, expectedObj, obj);
+}
+
 
 #endif // KONAN_OBJC_INTEROP
 

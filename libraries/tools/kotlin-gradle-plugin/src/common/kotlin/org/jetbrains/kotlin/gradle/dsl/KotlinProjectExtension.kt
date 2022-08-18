@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.Action
+import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainSpec
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAwar
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
@@ -110,6 +113,29 @@ abstract class KotlinTopLevelExtension(internal val project: Project) : KotlinTo
 
     override fun explicitApiWarning() {
         explicitApi = ExplicitApiMode.Warning
+    }
+
+    /**
+     * Can be used to configure objects that are not yet created, or will be created in
+     * 'afterEvaluate' (e.g. typically Android source sets containing flavors and buildTypes)
+     *
+     * Will fail project evaluation if the domain object is not created before 'afterEvaluate' listeners in the buildscript.
+     *
+     * @param configure: Called inline, if the value is already present. Called once the domain object is created.
+     */
+    @ExperimentalKotlinGradlePluginApi
+    fun <T : Named> NamedDomainObjectContainer<T>.invokeWhenCreated(name: String, configure: T.() -> Unit) {
+        val invoked = AtomicBoolean(false)
+        matching { it.name == name }.all { value -> if (!invoked.getAndSet(true)) value.configure() }
+        project.whenEvaluated {
+            if (!invoked.getAndSet(true)) {
+                /*
+                Expected to fail, since the listener was not called.
+                Letting Gradle fail here will result in a more natural error message
+                */
+                named(name).configure(configure)
+            }
+        }
     }
 }
 
@@ -217,11 +243,13 @@ abstract class KotlinJsProjectExtension(project: Project) :
                         it.irPreset = null
                     }
                     .createTarget("js")
+
                 KotlinJsCompilerType.IR -> irPreset
                     .also {
                         it.mixedMode = false
                     }
                     .createTarget("js")
+
                 KotlinJsCompilerType.BOTH -> legacyPreset
                     .also {
                         irPreset.mixedMode = true

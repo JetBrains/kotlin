@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 private object PublishedApiEffectiveVisibilityKey : FirDeclarationDataKey()
@@ -18,6 +18,6 @@ var FirDeclaration.publishedApiEffectiveVisibility: EffectiveVisibility? by FirD
 
 inline val FirCallableSymbol<*>.publishedApiEffectiveVisibility: EffectiveVisibility?
     get() {
-        ensureResolved(FirResolvePhase.STATUS)
+        lazyResolveToPhase(FirResolvePhase.STATUS)
         return fir.publishedApiEffectiveVisibility
     }

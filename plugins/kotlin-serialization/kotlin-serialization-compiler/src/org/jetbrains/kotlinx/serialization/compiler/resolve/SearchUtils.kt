@@ -7,10 +7,12 @@ package org.jetbrains.kotlinx.serialization.compiler.resolve
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
@@ -46,10 +48,13 @@ internal fun findSerializerConstructorForTypeArgumentsSerializers(
     return if (!onlyIfSynthetic) ctor else ctor?.takeIf { it.kind == CallableMemberDescriptor.Kind.SYNTHESIZED }
 }
 
+fun AnnotationDescriptor.findAnnotationEntry(): KtAnnotationEntry? = (this as? LazyAnnotationDescriptor)?.annotationEntry
+
 inline fun <reified R> Annotations.findAnnotationConstantValue(annotationFqName: FqName, property: String): R? =
-    findAnnotation(annotationFqName)?.let { annotation ->
-        annotation.allValueArguments.entries.singleOrNull { it.key.asString() == property }?.value?.value
-    } as? R
+    findAnnotation(annotationFqName)?.findConstantValue(property)
+
+inline fun <reified R> AnnotationDescriptor.findConstantValue(property: String): R? =
+    allValueArguments.entries.singleOrNull { it.key.asString() == property }?.value?.value as? R
 
 internal fun Annotations.findAnnotationKotlinTypeValue(
     annotationFqName: FqName,

@@ -98,7 +98,8 @@ val cacheMap: Map<String, String> = mapOf(
     "https://www.jetbrains.com/intellij-repository/snapshots" to "https://cache-redirector.jetbrains.com/www.jetbrains.com/intellij-repository/snapshots",
     "https://download.jetbrains.com" to "https://cache-redirector.jetbrains.com/download.jetbrains.com",
     "https://secure.index-cdn.jetbrains.com" to "https://cache-redirector.jetbrains.com/secure.index-cdn.jetbrains.com",
-    "https://maven.apache.org/xsd" to "https://cache-redirector.jetbrains.com/maven.apache.org/xsd"
+    "https://maven.apache.org/xsd" to "https://cache-redirector.jetbrains.com/maven.apache.org/xsd",
+    "https://maven.google.com" to "https://cache-redirector.jetbrains.com/maven.google.com"
 )
 
 val aliases = mapOf(

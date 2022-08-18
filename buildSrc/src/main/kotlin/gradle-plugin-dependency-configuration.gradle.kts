@@ -34,6 +34,13 @@ createGradlePluginVariant(
     isGradlePlugin = false
 )
 
+// Used for Gradle 7.5+ versions
+createGradlePluginVariant(
+    GradlePluginVariant.GRADLE_75,
+    commonSourceSet = commonSourceSet,
+    isGradlePlugin = false
+)
+
 publishing {
     publications {
         register<MavenPublication>(DEFAULT_MAIN_PUBLICATION_NAME) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -86,5 +86,17 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiPsiTypeProviderTestGe
     @TestMetadata("localClass_memberFunction.kt")
     public void testLocalClass_memberFunction() throws Exception {
         runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_memberFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendFunctionValueParameterNoStdlib.kt")
+    public void testSuspendFunctionValueParameterNoStdlib() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/suspendFunctionValueParameterNoStdlib.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendFunctionValueParameterWithStdlib.kt")
+    public void testSuspendFunctionValueParameterWithStdlib() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/suspendFunctionValueParameterWithStdlib.kt");
     }
 }

@@ -7,16 +7,14 @@ package codegen.stringConcatenationTypeNarrowing.kt53119_append_generated
 import kotlin.test.*
 
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated#maybeAnyMaybeAny
-// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
-// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String)
-// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
-// CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
-
-// CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
-// CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
-
 // CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
 // CHECK-NOT: Foo#toString(){}kotlin.String"
+// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String)
+// CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
+
+// CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 // CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
 
 // CHECK: ret %struct.ObjHeader*
@@ -26,13 +24,12 @@ fun maybeAnyMaybeAny(maybeAny1: Any?, maybeAny2: Any?): String {
 }
 
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated#maybeAnyMaybeString
+// CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-NOT: Foo#toString(){}kotlin.String"
 // CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 // CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String)
 // CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 // CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
-
-// CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
-// CHECK-NOT: Foo#toString(){}kotlin.String"
 
 // CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
 // CHECK: ret %struct.ObjHeader*
@@ -42,13 +39,12 @@ fun maybeAnyMaybeString(maybeAny1: Any?, maybeString2: String?): String {
 }
 
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated#maybeAnyString
+// CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-NOT: Foo#toString(){}kotlin.String"
 // CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 // CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String)
 // CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String)
 // CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
-
-// CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
-// CHECK-NOT: Foo#toString(){}kotlin.String"
 
 // CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
 // CHECK: ret %struct.ObjHeader*
@@ -59,6 +55,40 @@ fun maybeAnyString(maybeAny1: Any?, string: String): String {
 
 data class Foo(val bar: Int)
 
+// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated#maybeAnyFoo
+// CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-NOT: Foo#toString(){}kotlin.String"
+// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String)
+// CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
+// CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-NOT: Foo#toString(){}kotlin.String
+// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
+
+// CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
+// CHECK: ret %struct.ObjHeader*
+
+fun maybeAnyFoo(maybeAny: Any?, foo: Foo): String {
+    return "$maybeAny,$foo"
+}
+// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated#maybeAnyMaybeFoo
+// CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-NOT: Foo#toString(){}kotlin.String"
+// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String)
+// CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-NOT: Foo#toString(){}kotlin.String"
+// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
+
+
+// CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
+// CHECK: ret %struct.ObjHeader*
+
+fun maybeAnyMaybeFoo(maybeAny: Any?, foo: Foo?): String {
+    return "$maybeAny,$foo"
+}
 @Test
 fun runTest() {
     val foo = Foo(42)
@@ -68,4 +98,8 @@ fun runTest() {
     println(maybeAnyMaybeString(null, null))
     println(maybeAnyString(foo, "bar"))
     println(maybeAnyString(null, "bar"))
+    println(maybeAnyFoo(foo, foo))
+    println(maybeAnyFoo(null, foo))
+    println(maybeAnyMaybeFoo(foo, foo))
+    println(maybeAnyMaybeFoo(foo, null))
 }

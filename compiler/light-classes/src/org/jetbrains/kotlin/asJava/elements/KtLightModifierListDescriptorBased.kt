@@ -82,31 +82,23 @@ abstract class KtUltraLightModifierList<out T : KtLightElement<KtModifierListOwn
 
     override fun nonSourceAnnotationsForAnnotationType(sourceAnnotations: List<PsiAnnotation>): List<KtLightAbstractAnnotation> {
 
-        if (sourceAnnotations.isEmpty()) return listOf(createRetentionRuntimeAnnotation(support, this))
+        if (sourceAnnotations.isEmpty()) return listOf(createRetentionRuntimeAnnotation(this))
 
         return mutableListOf<KtLightAbstractAnnotation>().also { result ->
 
             sourceAnnotations.mapNotNullTo(result) { sourceAnnotation ->
                 sourceAnnotation.additionalConverter()
                     ?: sourceAnnotation.tryConvertAsTarget(support)
-                    ?: sourceAnnotation.tryConvertAsRetention(support)
-                    ?: sourceAnnotation.tryConvertAsRepeatable(support, owner)
-                    ?: sourceAnnotation.tryConvertAsMustBeDocumented(support)
+                    ?: sourceAnnotation.tryConvertAsRetention()
+                    ?: sourceAnnotation.tryConvertAsRepeatable(owner)
+                    ?: sourceAnnotation.tryConvertAsMustBeDocumented()
             }
 
             if (!result.any { it.qualifiedName == CommonClassNames.JAVA_LANG_ANNOTATION_RETENTION }) {
-                result.add(createRetentionRuntimeAnnotation(support, this))
+                result.add(createRetentionRuntimeAnnotation(this))
             }
         }
     }
-}
-
-class KtLightSimpleModifierList(
-    owner: KtLightElement<KtModifierListOwner, PsiModifierListOwner>, private val modifiers: Set<String>
-) : KtLightModifierListDescriptorBased<KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(owner) {
-    override fun hasModifierProperty(name: String) = name in modifiers
-
-    override fun copy() = KtLightSimpleModifierList(owner, modifiers)
 }
 
 private fun lightAnnotationsForEntries(lightModifierList: KtLightModifierList<*>): List<KtLightAnnotationForSourceEntry> {

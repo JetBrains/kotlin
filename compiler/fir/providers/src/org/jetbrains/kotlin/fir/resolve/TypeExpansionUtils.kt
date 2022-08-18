@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.util.component2
 fun ConeClassLikeType.fullyExpandedType(
     useSiteSession: FirSession,
     expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = { alias ->
-        alias.ensureResolved(FirResolvePhase.SUPER_TYPES)
+        alias.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
         alias.expandedConeType
     },
 ): ConeClassLikeType {
@@ -69,7 +69,7 @@ private fun ConeClassLikeType.fullyExpandedTypeNoCache(
 fun ConeClassLikeType.directExpansionType(
     useSiteSession: FirSession,
     expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = { alias ->
-        alias.ensureResolved(FirResolvePhase.SUPER_TYPES)
+        alias.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
         alias.expandedConeType
     },
 ): ConeClassLikeType? {

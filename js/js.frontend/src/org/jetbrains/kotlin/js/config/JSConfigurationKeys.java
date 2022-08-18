@@ -103,6 +103,9 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> GENERATE_INLINE_ANONYMOUS_FUNCTIONS =
             CompilerConfigurationKey.create("translate lambdas into in-line anonymous functions");
 
+    public static final CompilerConfigurationKey<Boolean> GENERATE_STRICT_IMPLICIT_EXPORT =
+            CompilerConfigurationKey.create("enable strict implicitly exported entities types inside d.ts files");
+
     public static final CompilerConfigurationKey<Boolean> WASM_ENABLE_ARRAY_RANGE_CHECKS =
             CompilerConfigurationKey.create("enable array range checks");
 

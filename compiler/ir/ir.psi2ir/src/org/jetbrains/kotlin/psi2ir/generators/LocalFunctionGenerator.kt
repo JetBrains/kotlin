@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -24,13 +25,19 @@ import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isInlineableFunctionLiteral
 
 class LocalFunctionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
 
     fun generateLambda(ktLambda: KtLambdaExpression): IrStatement {
         val ktFun = ktLambda.functionLiteral
         val lambdaExpressionType = getTypeInferredByFrontendOrFail(ktLambda).toIrType()
-        val irLambdaFunction = FunctionGenerator(context).generateLambdaFunctionDeclaration(ktFun)
+        val loopResolver = if (context.languageVersionSettings.supportsFeature(LanguageFeature.BreakContinueInInlineLambdas)
+            && isInlineableFunctionLiteral(ktLambda, context.bindingContext)
+        )
+            statementGenerator.bodyGenerator
+        else null
+        val irLambdaFunction = FunctionGenerator(context).generateLambdaFunctionDeclaration(ktFun, loopResolver)
 
         return IrFunctionExpressionImpl(
             ktLambda.startOffset, ktLambda.endOffset,
@@ -54,5 +61,12 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
     }
 
     private fun generateFunctionDeclaration(ktFun: KtNamedFunction) =
-        FunctionGenerator(context).generateFunctionDeclaration(ktFun, IrDeclarationOrigin.LOCAL_FUNCTION)
+        FunctionGenerator(context).generateFunctionDeclaration(
+            ktFun,
+            if (context.languageVersionSettings.supportsFeature(LanguageFeature.BreakContinueInInlineLambdas)
+                && isInlineableFunctionLiteral(ktFun, context.bindingContext)
+            ) statementGenerator.bodyGenerator
+            else null,
+            IrDeclarationOrigin.LOCAL_FUNCTION
+        )
 }

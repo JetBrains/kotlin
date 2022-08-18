@@ -49,9 +49,13 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
         check(testCaseGroupId is TestCaseGroupId.TestDataDir)
 
         return cachedTestCaseGroups.computeIfAbsent(testCaseGroupId) {
-            if (testCaseGroupId.dir in excludes) return@computeIfAbsent TestCaseGroup.ALL_DISABLED
+            val testDataDir = testCaseGroupId.dir
 
-            val (excludedTestDataFiles, testDataFiles) = testCaseGroupId.dir.listFiles()
+            val excludes: Set<File> = settings.get<DisabledTestDataFiles>().filesAndDirectories
+            if (testDataDir in excludes)
+                return@computeIfAbsent TestCaseGroup.ALL_DISABLED
+
+            val (excludedTestDataFiles, testDataFiles) = testDataDir.listFiles()
                 ?.filter { file -> file.isFile && file.extension == "kt" }
                 ?.partition { file -> file in excludes }
                 ?: return@computeIfAbsent null
@@ -73,7 +77,7 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
 
                 if (extTestDataFile.isRelevant)
                     testCases += extTestDataFile.createTestCase(
-                        definitelyStandaloneTest = settings.get<ForcedStandaloneTestKind>().value || testDataFile in standalones,
+                        definitelyStandaloneTest = settings.get<ForcedStandaloneTestKind>().value,
                         sharedModules = sharedModules
                     )
                 else
@@ -82,17 +86,6 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
 
             TestCaseGroup.Default(disabledTestCaseIds, testCases)
         }
-    }
-
-    companion object {
-        /** Test data files or test data directories that are excluded from testing. */
-        private val excludes: Set<File> = listOf<String>().mapToSet(::getAbsoluteFile)
-
-        /** Tests that should be compiled and executed as standalone tests. */
-        private val standalones: Set<File> = listOf(
-            // Comparison of type information obtained with reflection against non-patched string literal:
-            "compiler/testData/codegen/box/annotations/instances/annotationToString.kt"
-        ).mapToSet(::getAbsoluteFile)
     }
 }
 
@@ -151,6 +144,7 @@ private class ExtTestDataFile(
         val args = mutableListOf<String>()
         testDataFileSettings.languageSettings.sorted().mapTo(args) { "-XXLanguage:$it" }
         testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-opt-in=$it" }
+        args += "-opt-in=kotlin.native.internal.InternalForKotlinNativeTests" // for ReflectionPackageName
         if (testDataFileSettings.expectActualLinker) args += "-Xexpect-actual-linker"
         return TestCompilerArgs(args)
     }
@@ -161,9 +155,9 @@ private class ExtTestDataFile(
         val isStandaloneTest = definitelyStandaloneTest || determineIfStandaloneTest()
         makeObjectsMutable()
         patchPackageNames(isStandaloneTest)
-        val fileLevelAnnotations = patchFileLevelAnnotations()
+        patchFileLevelAnnotations()
         val entryPointFunctionFQN = findEntryPoint()
-        generateTestLauncher(isStandaloneTest, entryPointFunctionFQN, fileLevelAnnotations)
+        generateTestLauncher(isStandaloneTest, entryPointFunctionFQN)
 
         return doCreateTestCase(isStandaloneTest, sharedModules)
     }
@@ -174,6 +168,8 @@ private class ExtTestDataFile(
      * - test is compiled independently of any other tests
      */
     private fun determineIfStandaloneTest(): Boolean = with(structure) {
+        if (directives.contains(NATIVE_STANDALONE_DIRECTIVE)) return true
+
         var isStandaloneTest = false
 
         filesToTransform.forEach { handler ->
@@ -186,18 +182,6 @@ private class ExtTestDataFile(
                         isStandaloneTest = true
                     }
                     else -> super.visitKtFile(file)
-                }
-
-                override fun visitCallExpression(expression: KtCallExpression) = when {
-                    isStandaloneTest -> Unit
-                    expression.getChildOfType<KtNameReferenceExpression>()?.getReferencedNameAsName() == TYPE_OF_NAME -> {
-                        // Found a call of `typeOf()` function. It means that this is most likely a reflection-oriented test
-                        // that might compare the obtained name of a type against some string literal (ex: "foo.Bar<A>"),
-                        // which is obviously not patched during package names patching step because this step is not so smart.
-                        // So, let's avoid patching package names for this test and let's run it in standalone mode.
-                        isStandaloneTest = true
-                    }
-                    else -> super.visitCallExpression(expression)
                 }
             })
         }
@@ -279,6 +263,12 @@ private class ExtTestDataFile(
                         // Insert the package directive immediately after file-level annotations.
                         file.addAfter(newPackageDirective, file.fileAnnotationList).ensureSurroundedByWhiteSpace()
                     }
+
+                    // Add @ReflectionPackageName annotation to make the compiler use original package name in the reflective information.
+                    val annotationText =
+                        "kotlin.native.internal.ReflectionPackageName(${oldPackageName.asString().quoteAsKotlinStringLiteral()})"
+                    val fileAnnotationList = handler.psiFactory.createFileAnnotationListWithAnnotation(annotationText)
+                    file.addAnnotations(fileAnnotationList)
 
                     visitKtElement(file, file.collectAccessibleDeclarationNames())
                 }
@@ -415,77 +405,41 @@ private class ExtTestDataFile(
     }
 
     /**
-     * 1. Collect all file-level annotations that should be added to the launcher. See [generateTestLauncher].
-     * 2. Make sure that the OptIns specified in test directives (see [ExtTestDataFileSettings.optInsForSourceCode]) are represented
-     *    as file-level annotations in every individual test file.
+     * Make sure that the OptIns specified in test directives (see [ExtTestDataFileSettings.optInsForSourceCode]) are represented
+     * as file-level annotations in every individual test file.
      */
-    private fun patchFileLevelAnnotations(): List<String> = with(structure) {
-        val allFileLevelAnnotations = hashSetOf<String>()
-
+    private fun patchFileLevelAnnotations() = with(structure) {
         fun getAnnotationText(fullyQualifiedName: String) = "@file:${OPT_IN_ANNOTATION_NAME.asString()}($fullyQualifiedName::class)"
 
-        // Every OptIn specified in test directive should be represented as a file-level annotation.
-        testDataFileSettings.optInsForSourceCode.mapTo(allFileLevelAnnotations, ::getAnnotationText)
-
-        // Now, collect file-level annotations already present in test files.
-        filesToTransform.forEach { handler ->
-            handler.accept(object : KtTreeVisitorVoid() {
-                override fun visitKtFile(file: KtFile) {
-                    val importDirectives: Map<String, String> by lazy {
-                        file.importDirectives.mapNotNull { importDirective ->
-                            val importedFqName = importDirective.importedFqName ?: return@mapNotNull null
-                            val name = importDirective.alias?.name ?: importedFqName.shortName().asString()
-                            name to importedFqName.asString()
-                        }.toMap()
-                    }
-
-                    file.annotationEntries.mapNotNullTo(allFileLevelAnnotations) { annotationEntry ->
-                        val constructorCallee = annotationEntry.getChildOfType<KtConstructorCalleeExpression>()
-                        val constructorType = constructorCallee?.typeReference?.getChildOfType<KtUserType>()
-                        val constructorTypeName = constructorType?.collectNames()?.singleOrNull()
-
-                        if (constructorTypeName != OPT_IN_ANNOTATION_NAME) return@mapNotNullTo null
-
-                        val valueArgument = annotationEntry.valueArguments.singleOrNull()
-                        val classLiteral = valueArgument?.getArgumentExpression() as? KtClassLiteralExpression
-
-                        if (classLiteral?.getChildOfType<KtDotQualifiedExpression>() != null)
-                            annotationEntry.text
-                        else
-                            classLiteral?.getChildOfType<KtNameReferenceExpression>()?.getReferencedName()
-                                ?.let(importDirectives::get)
-                                ?.let { fullyQualifiedName -> getAnnotationText(fullyQualifiedName) }
-                    }
-                }
-            })
-        }
-
-        val allFileLevelAnnotationsSorted = allFileLevelAnnotations.sorted()
-
-        // Finally, make sure that every test file contains all the necessary file-level annotations.
-        if (allFileLevelAnnotationsSorted.isNotEmpty()) {
+        // Make sure that every test file contains all the necessary file-level annotations.
+        if (testDataFileSettings.optInsForSourceCode.isNotEmpty()) {
             filesToTransform.forEach { handler ->
                 handler.accept(object : KtTreeVisitorVoid() {
                     override fun visitKtFile(file: KtFile) {
-                        val oldFileAnnotationList = file.fileAnnotationList
-
                         val newFileAnnotationList = handler.psiFactory.createFile(buildString {
-                            allFileLevelAnnotationsSorted.forEach(::appendLine)
+                            testDataFileSettings.optInsForSourceCode.forEach {
+                                appendLine(getAnnotationText(it))
+                            }
                         }).fileAnnotationList!!
 
-                        if (oldFileAnnotationList != null) {
-                            // Replace old annotations list by the new one.
-                            oldFileAnnotationList.replace(newFileAnnotationList).ensureSurroundedByWhiteSpace()
-                        } else {
-                            // Insert the annotations list immediately before package directive.
-                            file.addBefore(newFileAnnotationList, file.packageDirective).ensureSurroundedByWhiteSpace()
-                        }
+                        file.addAnnotations(newFileAnnotationList)
                     }
                 })
             }
         }
+    }
 
-        return allFileLevelAnnotationsSorted
+    private fun KtFile.addAnnotations(fileAnnotationList: KtFileAnnotationList) {
+        val oldFileAnnotationList = this.fileAnnotationList
+        if (oldFileAnnotationList != null) {
+            // Add new annotations to the old ones.
+            fileAnnotationList.annotationEntries.forEach {
+                oldFileAnnotationList.add(it).ensureSurroundedByWhiteSpace()
+            }
+        } else {
+            // Insert the annotations list immediately before package directive.
+            this.addBefore(fileAnnotationList, packageDirective).ensureSurroundedByWhiteSpace()
+        }
     }
 
     /** Finds the fully-qualified name of the entry point function (aka `fun box(): String`). */
@@ -517,13 +471,8 @@ private class ExtTestDataFile(
     }
 
     /** Adds a wrapper to run it as Kotlin test. */
-    private fun generateTestLauncher(isStandaloneTest: Boolean, entryPointFunctionFQN: String, fileLevelAnnotations: List<String>) {
+    private fun generateTestLauncher(isStandaloneTest: Boolean, entryPointFunctionFQN: String) {
         val fileText = buildString {
-            if (fileLevelAnnotations.isNotEmpty()) {
-                fileLevelAnnotations.forEach(this::appendLine)
-                appendLine()
-            }
-
             if (!isStandaloneTest) {
                 append("package ").appendLine(testDataFileSettings.nominalPackageName)
                 appendLine()
@@ -585,6 +534,8 @@ private class ExtTestDataFile(
 
         private const val EXPECT_ACTUAL_LINKER_DIRECTIVE = "EXPECT_ACTUAL_LINKER"
         private const val USE_EXPERIMENTAL_DIRECTIVE = "USE_EXPERIMENTAL"
+
+        private const val NATIVE_STANDALONE_DIRECTIVE = "NATIVE_STANDALONE"
 
         private const val OPT_IN_DIRECTIVE = "OPT_IN"
         private val OPT_INS_PURELY_FOR_COMPILER = setOf(
@@ -755,8 +706,12 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             module.files += this
         }
 
-        override fun equals(other: Any?) = (other as? ExtTestFile)?.name == name
-        override fun hashCode() = name.hashCode()
+        override fun equals(other: Any?): Boolean {
+            if (other !is ExtTestFile) return false
+            return other.name == name && other.module == module
+        }
+
+        override fun hashCode() = name.hashCode() * 31 + module.hashCode()
     }
 
     private class ExtTestFileFactory : TestFiles.TestFileFactory<ExtTestModule, ExtTestFile> {

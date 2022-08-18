@@ -1,0 +1,7 @@
+FILE: noParameterTypRefInSecondaryConstructor.kt
+    public? final? class C : R|kotlin/Any| {
+        public? constructor(x: <ERROR TYPE REF: No type for parameter>): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

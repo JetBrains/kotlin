@@ -8,13 +8,18 @@ package org.jetbrains.kotlin.lombok.processor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.lombok.config.AccessLevel
 import org.jetbrains.kotlin.lombok.config.LombokAnnotations.With
 import org.jetbrains.kotlin.lombok.config.toDescriptorVisibility
 import org.jetbrains.kotlin.lombok.utils.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.typeUtil.isBoolean
 
 class WithProcessor : Processor {
+
+    context(LazyJavaResolverContext)
+    @Suppress("IncorrectFormatting") // KTIJ-22227
     override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder) {
         val clWith = With.getOrNull(classDescriptor)
 
@@ -32,7 +37,14 @@ class WithProcessor : Processor {
     ): SimpleFunctionDescriptor? {
         if (with.visibility == AccessLevel.NONE) return null
 
-        val functionName = "with" + toPropertyNameCapitalized(field.name.identifier)
+        val rawPropertyName = field.name.identifier
+        val propertyName = if (field.type.isBoolean() && rawPropertyName.startsWith("is")) {
+            rawPropertyName.removePrefix("is")
+        } else {
+            rawPropertyName
+        }
+
+        val functionName = "with" + toPropertyNameCapitalized(propertyName)
 
         return classDescriptor.createFunction(
             Name.identifier(functionName),

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -38,6 +38,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("annotationClass.kt")
         public void testAnnotationClass() throws Exception {
             runTest("js/js.translator/testData/box/annotation/annotationClass.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleEqualMethodsBug.kt")
+        public void testMultipleEqualMethodsBug() throws Exception {
+            runTest("js/js.translator/testData/box/annotation/multipleEqualMethodsBug.kt");
         }
     }
 
@@ -2119,6 +2125,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("exportInnerClass.kt")
+        public void testExportInnerClass() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportInnerClass.kt");
+        }
+
+        @Test
         @TestMetadata("exportInterface.kt")
         public void testExportInterface() throws Exception {
             runTest("js/js.translator/testData/box/export/exportInterface.kt");
@@ -2176,6 +2188,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("reservedModuleName.kt")
         public void testReservedModuleName() throws Exception {
             runTest("js/js.translator/testData/box/export/reservedModuleName.kt");
+        }
+
+        @Test
+        @TestMetadata("vararg.kt")
+        public void testVararg() throws Exception {
+            runTest("js/js.translator/testData/box/export/vararg.kt");
         }
     }
 
@@ -4611,6 +4629,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("callableReferenceClassMethod.kt")
+        public void testCallableReferenceClassMethod() throws Exception {
+            runTest("js/js.translator/testData/box/inline/callableReferenceClassMethod.kt");
+        }
+
+        @Test
         @TestMetadata("callableReferenceOfLocalFun.kt")
         public void testCallableReferenceOfLocalFun() throws Exception {
             runTest("js/js.translator/testData/box/inline/callableReferenceOfLocalFun.kt");
@@ -6571,6 +6595,36 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("methodOfAbstractClass.kt")
+        public void testMethodOfAbstractClass() throws Exception {
+            runTest("js/js.translator/testData/box/jsName/methodOfAbstractClass.kt");
+        }
+
+        @Test
+        @TestMetadata("methodOfInterface.kt")
+        public void testMethodOfInterface() throws Exception {
+            runTest("js/js.translator/testData/box/jsName/methodOfInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("methodOfInterfaceWithDefinition.kt")
+        public void testMethodOfInterfaceWithDefinition() throws Exception {
+            runTest("js/js.translator/testData/box/jsName/methodOfInterfaceWithDefinition.kt");
+        }
+
+        @Test
+        @TestMetadata("methodOfMultipleInterface.kt")
+        public void testMethodOfMultipleInterface() throws Exception {
+            runTest("js/js.translator/testData/box/jsName/methodOfMultipleInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("methodOfOpenClass.kt")
+        public void testMethodOfOpenClass() throws Exception {
+            runTest("js/js.translator/testData/box/jsName/methodOfOpenClass.kt");
+        }
+
+        @Test
         @TestMetadata("overriddenMethod.kt")
         public void testOverriddenMethod() throws Exception {
             runTest("js/js.translator/testData/box/jsName/overriddenMethod.kt");
@@ -7469,6 +7523,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("externalValWithOverridenVar.kt")
+        public void testExternalValWithOverridenVar() throws Exception {
+            runTest("js/js.translator/testData/box/native/externalValWithOverridenVar.kt");
+        }
+
+        @Test
         @TestMetadata("inheritanceFromNativeClass.kt")
         public void testInheritanceFromNativeClass() throws Exception {
             runTest("js/js.translator/testData/box/native/inheritanceFromNativeClass.kt");
@@ -7680,6 +7740,18 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("innerReferenceFromChild.kt")
         public void testInnerReferenceFromChild() throws Exception {
             runTest("js/js.translator/testData/box/nestedTypes/innerReferenceFromChild.kt");
+        }
+
+        @Test
+        @TestMetadata("innerWithMultipleArgs.kt")
+        public void testInnerWithMultipleArgs() throws Exception {
+            runTest("js/js.translator/testData/box/nestedTypes/innerWithMultipleArgs.kt");
+        }
+
+        @Test
+        @TestMetadata("innerWithSecondaryConstructor.kt")
+        public void testInnerWithSecondaryConstructor() throws Exception {
+            runTest("js/js.translator/testData/box/nestedTypes/innerWithSecondaryConstructor.kt");
         }
 
         @Test

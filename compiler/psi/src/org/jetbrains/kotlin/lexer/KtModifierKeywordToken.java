@@ -25,18 +25,18 @@ public final class KtModifierKeywordToken extends KtKeywordToken {
     /**
      * Generate keyword (identifier that has a keyword meaning in all possible contexts)
      */
-    public static KtModifierKeywordToken keywordModifier(String value) {
-        return new KtModifierKeywordToken(value, value, false);
+    public static KtModifierKeywordToken keywordModifier(String value, int tokenId) {
+        return new KtModifierKeywordToken(value, value, false, tokenId);
     }
 
     /**
      * Generate soft keyword (identifier that has a keyword meaning only in some contexts)
      */
-    public static KtModifierKeywordToken softKeywordModifier(String value) {
-        return new KtModifierKeywordToken(value, value, true);
+    public static KtModifierKeywordToken softKeywordModifier(String value, int tokenId) {
+        return new KtModifierKeywordToken(value, value, true, tokenId);
     }
 
-    private KtModifierKeywordToken(@NotNull @NonNls String debugName, @NotNull @NonNls String value, boolean isSoft) {
-        super(debugName, value, isSoft);
+    private KtModifierKeywordToken(@NotNull @NonNls String debugName, @NotNull @NonNls String value, boolean isSoft, int tokenId) {
+        super(debugName, value, isSoft, tokenId);
     }
 }

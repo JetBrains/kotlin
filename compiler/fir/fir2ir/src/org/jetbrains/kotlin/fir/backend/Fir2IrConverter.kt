@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtPsiSourceFileLinesMapping
 import org.jetbrains.kotlin.KtSourceFileLinesMappingFromLineStartOffsets
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -24,6 +27,7 @@ import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedMembers
 import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -164,7 +168,7 @@ class Fir2IrConverter(
         moduleFragment.files += irFile
     }
 
-    fun processClassHeaders(file: FirFile) {
+    private fun processClassHeaders(file: FirFile) {
         file.declarations.forEach {
             when (it) {
                 is FirRegularClass -> processClassAndNestedClassHeaders(it)
@@ -258,7 +262,7 @@ class Fir2IrConverter(
         return irClass
     }
 
-    fun bindFakeOverridesInFile(file: FirFile) {
+    private fun bindFakeOverridesInFile(file: FirFile) {
         val irFile = declarationStorage.getIrFile(file)
         for (irDeclaration in irFile.declarations) {
             if (irDeclaration is IrClass) {
@@ -355,9 +359,18 @@ class Fir2IrConverter(
                 )
             }
             is FirProperty -> {
-                declarationStorage.getOrCreateIrProperty(
-                    declaration, parent, isLocal = isLocal
-                )
+                if (declaration.source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration &&
+                    declaration.name == StandardNames.ENUM_ENTRIES &&
+                    !session.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)
+                ) {
+                    // Note: we have to do it, because backend without the feature
+                    // cannot process Enum.entries properly
+                    null
+                } else {
+                    declarationStorage.getOrCreateIrProperty(
+                        declaration, parent, isLocal = isLocal
+                    )
+                }
             }
             is FirField -> {
                 if (declaration.isSynthetic) {

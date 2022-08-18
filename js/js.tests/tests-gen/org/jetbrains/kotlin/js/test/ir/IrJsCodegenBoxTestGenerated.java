@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -106,6 +106,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             @TestMetadata("annotationInstancesEmptyDefault.kt")
             public void testAnnotationInstancesEmptyDefault() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/annotationInstancesEmptyDefault.kt");
+            }
+
+            @Test
+            @TestMetadata("annotationInstancesEmptyDefaultLowered.kt")
+            public void testAnnotationInstancesEmptyDefaultLowered() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/annotationInstancesEmptyDefaultLowered.kt");
             }
 
             @Test
@@ -6118,6 +6124,52 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             @TestMetadata("whileTrueBreak.kt")
             public void testWhileTrueBreak() throws Exception {
                 runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/whileTrueBreak.kt");
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue")
+            @TestDataPath("$PROJECT_ROOT")
+            public class InlinedBreakContinue {
+                @Test
+                public void testAllFilesPresentInInlinedBreakContinue() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                }
+
+                @Test
+                @TestMetadata("inlineFunctionWithMultipleParameters.kt")
+                public void testInlineFunctionWithMultipleParameters() throws Exception {
+                    runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/inlineFunctionWithMultipleParameters.kt");
+                }
+
+                @Test
+                @TestMetadata("lambdaPassedToInlineFunction.kt")
+                public void testLambdaPassedToInlineFunction() throws Exception {
+                    runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/lambdaPassedToInlineFunction.kt");
+                }
+
+                @Test
+                @TestMetadata("loopWithinInlineFunction.kt")
+                public void testLoopWithinInlineFunction() throws Exception {
+                    runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/loopWithinInlineFunction.kt");
+                }
+
+                @Test
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/simple.kt");
+                }
+
+                @Test
+                @TestMetadata("stdlibFunctions.kt")
+                public void testStdlibFunctions() throws Exception {
+                    runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/stdlibFunctions.kt");
+                }
+
+                @Test
+                @TestMetadata("withReturnValue.kt")
+                public void testWithReturnValue() throws Exception {
+                    runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/withReturnValue.kt");
+                }
             }
         }
 
@@ -12240,6 +12292,24 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("kt53202.kt")
+        public void testKt53202() throws Exception {
+            runTest("compiler/testData/codegen/box/directInvokeOptimization/kt53202.kt");
+        }
+
+        @Test
+        @TestMetadata("kt53202_funLiteral.kt")
+        public void testKt53202_funLiteral() throws Exception {
+            runTest("compiler/testData/codegen/box/directInvokeOptimization/kt53202_funLiteral.kt");
+        }
+
+        @Test
+        @TestMetadata("kt53202_returns.kt")
+        public void testKt53202_returns() throws Exception {
+            runTest("compiler/testData/codegen/box/directInvokeOptimization/kt53202_returns.kt");
+        }
+
+        @Test
         @TestMetadata("nestedLambdas.kt")
         public void testNestedLambdas() throws Exception {
             runTest("compiler/testData/codegen/box/directInvokeOptimization/nestedLambdas.kt");
@@ -14365,16 +14435,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             public void testParameterAsDefaultValue() throws Exception {
                 runTest("compiler/testData/codegen/box/functions/localFunctions/parameterAsDefaultValue.kt");
             }
-        }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/codegen/box/hashPMap")
-    @TestDataPath("$PROJECT_ROOT")
-    public class HashPMap {
-        @Test
-        public void testAllFilesPresentInHashPMap() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/hashPMap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
     }
 
@@ -26022,9 +26082,15 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 }
 
                 @Test
-                @TestMetadata("charRangeLiteral.kt")
-                public void testCharRangeLiteral() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/contains/generated/charRangeLiteral.kt");
+                @TestMetadata("charRangeTo.kt")
+                public void testCharRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/charRangeTo.kt");
+                }
+
+                @Test
+                @TestMetadata("charRangeUntil.kt")
+                public void testCharRangeUntil() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/charRangeUntil.kt");
                 }
 
                 @Test
@@ -26046,15 +26112,27 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 }
 
                 @Test
-                @TestMetadata("doubleRangeLiteral.kt")
-                public void testDoubleRangeLiteral() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/contains/generated/doubleRangeLiteral.kt");
+                @TestMetadata("doubleRangeTo.kt")
+                public void testDoubleRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/doubleRangeTo.kt");
                 }
 
                 @Test
-                @TestMetadata("floatRangeLiteral.kt")
-                public void testFloatRangeLiteral() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/contains/generated/floatRangeLiteral.kt");
+                @TestMetadata("doubleRangeUntil.kt")
+                public void testDoubleRangeUntil() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/doubleRangeUntil.kt");
+                }
+
+                @Test
+                @TestMetadata("floatRangeTo.kt")
+                public void testFloatRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/floatRangeTo.kt");
+                }
+
+                @Test
+                @TestMetadata("floatRangeUntil.kt")
+                public void testFloatRangeUntil() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/floatRangeUntil.kt");
                 }
 
                 @Test
@@ -26064,9 +26142,15 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 }
 
                 @Test
-                @TestMetadata("intRangeLiteral.kt")
-                public void testIntRangeLiteral() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/contains/generated/intRangeLiteral.kt");
+                @TestMetadata("intRangeTo.kt")
+                public void testIntRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/intRangeTo.kt");
+                }
+
+                @Test
+                @TestMetadata("intRangeUntil.kt")
+                public void testIntRangeUntil() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/intRangeUntil.kt");
                 }
 
                 @Test
@@ -26082,15 +26166,69 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 }
 
                 @Test
-                @TestMetadata("longRangeLiteral.kt")
-                public void testLongRangeLiteral() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/contains/generated/longRangeLiteral.kt");
+                @TestMetadata("longRangeTo.kt")
+                public void testLongRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/longRangeTo.kt");
+                }
+
+                @Test
+                @TestMetadata("longRangeUntil.kt")
+                public void testLongRangeUntil() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/longRangeUntil.kt");
                 }
 
                 @Test
                 @TestMetadata("longUntil.kt")
                 public void testLongUntil() throws Exception {
                     runTest("compiler/testData/codegen/box/ranges/contains/generated/longUntil.kt");
+                }
+
+                @Test
+                @TestMetadata("uintDownTo.kt")
+                public void testUintDownTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/uintDownTo.kt");
+                }
+
+                @Test
+                @TestMetadata("uintRangeTo.kt")
+                public void testUintRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/uintRangeTo.kt");
+                }
+
+                @Test
+                @TestMetadata("uintRangeUntil.kt")
+                public void testUintRangeUntil() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/uintRangeUntil.kt");
+                }
+
+                @Test
+                @TestMetadata("uintUntil.kt")
+                public void testUintUntil() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/uintUntil.kt");
+                }
+
+                @Test
+                @TestMetadata("ulongDownTo.kt")
+                public void testUlongDownTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/ulongDownTo.kt");
+                }
+
+                @Test
+                @TestMetadata("ulongRangeTo.kt")
+                public void testUlongRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/ulongRangeTo.kt");
+                }
+
+                @Test
+                @TestMetadata("ulongRangeUntil.kt")
+                public void testUlongRangeUntil() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/ulongRangeUntil.kt");
+                }
+
+                @Test
+                @TestMetadata("ulongUntil.kt")
+                public void testUlongUntil() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/ulongUntil.kt");
                 }
             }
         }
@@ -33230,6 +33368,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("callableReferenceInlinedFunFromOtherModule.kt")
+        public void testCallableReferenceInlinedFunFromOtherModule() throws Exception {
+            runTest("compiler/testData/codegen/box/reified/callableReferenceInlinedFunFromOtherModule.kt");
+        }
+
+        @Test
         @TestMetadata("checkcast.kt")
         public void testCheckcast() throws Exception {
             runTest("compiler/testData/codegen/box/reified/checkcast.kt");
@@ -35113,6 +35257,16 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         @TestMetadata("toTypedArray.kt")
         public void testToTypedArray() throws Exception {
             runTest("compiler/testData/codegen/box/toArray/toTypedArray.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/topLevelInitializtion")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TopLevelInitializtion {
+        @Test
+        public void testAllFilesPresentInTopLevelInitializtion() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/topLevelInitializtion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
     }
 

@@ -109,13 +109,14 @@ digraph functionCallBound_kt {
                     color=blue
                     41 [label="Enter block"];
                     42 [label="Access variable R|<local>/base|"];
-                    43 [label="Access variable R|/Sub.data|"];
-                    44 [label="Exit block"];
+                    43 [label="Smart cast: R|<local>/base|"];
+                    44 [label="Access variable R|/Sub.data|"];
+                    45 [label="Exit block"];
                 }
-                45 [label="Exit when branch result"];
-                46 [label="Exit when"];
+                46 [label="Exit when branch result"];
+                47 [label="Exit when"];
             }
-            47 [label="Jump: ^check when () {
+            48 [label="Jump: ^check when () {
     ==((R|<local>/base| as? R|Sub|)?.{ $subj$.R|/isOk|() }, Boolean(true)) ->  {
         R|<local>/base|.R|/Sub.data|
     }
@@ -124,10 +125,10 @@ digraph functionCallBound_kt {
     }
 }
 "];
-            48 [label="Stub" style="filled" fillcolor=gray];
-            49 [label="Exit block" style="filled" fillcolor=gray];
+            49 [label="Stub" style="filled" fillcolor=gray];
+            50 [label="Exit block" style="filled" fillcolor=gray];
         }
-        50 [label="Exit function check" style="filled" fillcolor=red];
+        51 [label="Exit function check" style="filled" fillcolor=red];
     }
     21 -> {22};
     22 -> {23};
@@ -147,7 +148,7 @@ digraph functionCallBound_kt {
     36 -> {37};
     37 -> {38};
     38 -> {39};
-    39 -> {46};
+    39 -> {47};
     40 -> {41};
     41 -> {42};
     42 -> {43};
@@ -155,9 +156,10 @@ digraph functionCallBound_kt {
     44 -> {45};
     45 -> {46};
     46 -> {47};
-    47 -> {50};
-    47 -> {48} [style=dotted];
+    47 -> {48};
+    48 -> {51};
     48 -> {49} [style=dotted];
     49 -> {50} [style=dotted];
+    50 -> {51} [style=dotted];
 
 }

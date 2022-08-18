@@ -61,6 +61,7 @@ fun FirDeclarationGenerationExtension.buildMaterializeFunction(
     }
 }
 
+// FIXME: this has to be shared
 @OptIn(SymbolInternals::class)
 fun FirDeclarationGenerationExtension.buildConstructor(classId: ClassId, isInner: Boolean, key: GeneratedDeclarationKey): FirConstructor {
     val lookupTag = ConeClassLikeLookupTagImpl(classId)
@@ -92,6 +93,7 @@ fun FirDeclarationGenerationExtension.buildConstructor(classId: ClassId, isInner
     }
 }
 
+// FIXME: this has to be shared
 fun ClassId.toSimpleConeType(typeArguments: Array<ConeKotlinTypeProjection> = emptyArray()): ConeClassLikeType {
     return ConeClassLikeTypeImpl(
         ConeClassLikeLookupTagImpl(this),

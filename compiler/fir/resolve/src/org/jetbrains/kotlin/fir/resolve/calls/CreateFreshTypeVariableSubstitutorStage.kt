@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParamete
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystem
 internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val declaration = candidate.symbol.fir
-        candidate.symbol.ensureResolved(FirResolvePhase.STATUS)
+        candidate.symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         if (declaration !is FirTypeParameterRefsOwner || declaration.typeParameters.isEmpty()) {
             candidate.substitutor = ConeSubstitutor.Empty
             candidate.freshVariables = emptyList()
@@ -78,6 +78,12 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                     "Unexpected typeArgument: ${typeArgument.renderWithType()}"
                 }
             }
+        }
+        if (csBuilder.hasContradiction) {
+            for (error in csBuilder.errors) {
+                sink.reportDiagnostic(InferenceError(error))
+            }
+            sink.yieldIfNeed()
         }
     }
 }

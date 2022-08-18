@@ -17,6 +17,9 @@ FILE: typeOfAnnotationMember.kt
         public final static fun valueOf(value: R|kotlin/String|): R|Enum| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<Enum>|
+            public get(): R|kotlin/enums/EnumEntries<Enum>|
+
     }
     public final annotation class Ann1 : R|kotlin/Annotation| {
         public constructor(p1: R|kotlin/Array<kotlin/Int>|, p2: R|kotlin/Array<kotlin/Int?>|, p3: R|kotlin/Array<kotlin/IntArray>|, p4: R|kotlin/Array<Foo>|, p5: R|Foo|, vararg p6: R|kotlin/Array<out java/lang/Class<*>>|): R|Ann1| {

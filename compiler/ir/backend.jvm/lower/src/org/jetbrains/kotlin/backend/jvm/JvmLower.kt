@@ -248,7 +248,7 @@ private val returnableBlocksPhase = makeIrFilePhase(
     ::ReturnableBlockLowering,
     name = "ReturnableBlock",
     description = "Replace returnable blocks with do-while(false) loops",
-    prerequisite = setOf(arrayConstructorPhase, assertionPhase)
+    prerequisite = setOf(arrayConstructorPhase, assertionPhase, directInvokeLowering)
 )
 
 private val syntheticAccessorPhase = makeIrFilePhase(
@@ -287,6 +287,7 @@ private val jvmFilePhases = listOf(
     jvmLateinitLowering,
 
     inlineCallableReferenceToLambdaPhase,
+    directInvokeLowering,
     functionReferencePhase,
     suspendLambdaPhase,
     propertyReferenceDelegationPhase,
@@ -352,6 +353,7 @@ private val jvmFilePhases = listOf(
     // makePatchParentsPhase(),
 
     enumClassPhase,
+    enumExternalEntriesPhase,
     objectClassPhase,
     readResolveForDataObjectsPhase,
     staticInitializersPhase,

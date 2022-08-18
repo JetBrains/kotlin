@@ -70,6 +70,9 @@ fun MemberScope.computeAllNames() = getClassifierNames()?.let { classifierNames 
 inline fun MemberScope.findFirstFunction(name: String, predicate: (CallableMemberDescriptor) -> Boolean) =
     getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).first(predicate)
 
+inline fun MemberScope.findFirstVariable(name: String, predicate: (CallableMemberDescriptor) -> Boolean) =
+    getContributedVariables(Name.identifier(name), NoLookupLocation.FROM_BACKEND).firstOrNull(predicate)
+
 fun Iterable<MemberScope>.flatMapClassifierNamesOrNull(): MutableSet<Name>? =
         flatMapToNullable(hashSetOf(), MemberScope::getClassifierNames)
 

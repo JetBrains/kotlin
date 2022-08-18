@@ -87,7 +87,7 @@ class KtLightAnnotationForSourceEntry(
         return null
     }
 
-    override fun getNameReferenceElement(): PsiJavaCodeReferenceElement? = KtLightPsiJavaCodeReferenceElement(
+    override fun getNameReferenceElement(): PsiJavaCodeReferenceElement = KtLightPsiJavaCodeReferenceElement(
         kotlinOrigin.navigationElement,
         {
             (kotlinOrigin as? KtAnnotationEntry)?.typeReference?.reference

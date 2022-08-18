@@ -28,8 +28,10 @@ import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
+import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
+import org.jetbrains.kotlin.resolve.TypeResolutionContext;
 import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
@@ -44,6 +46,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.tests.di.ContainerForTests;
 import org.jetbrains.kotlin.tests.di.InjectionKt;
+import org.jetbrains.kotlin.types.checker.IntersectionTypeKt;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 
@@ -173,7 +176,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertCommonSupertype("Derived_T<Int>", "DDerived_T<Int>", "Derived_T<Int>");
         assertCommonSupertype("Derived_T<Int>", "DDerived_T<Int>", "DDerived1_T<Int>");
 
-        assertCommonSupertype("Comparable<*>", "Comparable<Int>", "Comparable<Boolean>");
+        assertCommonSupertype("Comparable<Boolean & Int>", "Comparable<Int>", "Comparable<Boolean>");
         assertCommonSupertype("Base_T<out I>", "Base_T<AI>", "Base_T<BI>");
         assertCommonSupertype("Base_T<in Int>", "Base_T<Int>", "Base_T<in Int>");
         assertCommonSupertype("Base_T<in Int>", "Derived_T<Int>", "Base_T<in Int>");
@@ -505,7 +508,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         for (String type : types) {
             typesToIntersect.add(makeType(type));
         }
-        KotlinType result = TypeIntersector.intersectTypes(typesToIntersect);
+        KotlinType result = IntersectionTypeKt.intersectWrappedTypes(typesToIntersect);
 //        assertNotNull("Intersection is null for " + typesToIntersect, result);
         assertEquals(makeType(expected), result);
     }
@@ -584,6 +587,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
     }
 
     private KotlinType makeType(LexicalScope scope, String typeStr) {
-        return typeResolver.resolveType(scope, KtPsiFactoryKt.KtPsiFactory(getProject()).createType(typeStr), DummyTraces.DUMMY_TRACE, true);
+        KtTypeReference typeReference = KtPsiFactoryKt.KtPsiFactory(getProject()).createType(typeStr);
+        return typeResolver.resolveTypeWithPossibleIntersections(scope, typeReference, DummyTraces.DUMMY_TRACE);
     }
 }

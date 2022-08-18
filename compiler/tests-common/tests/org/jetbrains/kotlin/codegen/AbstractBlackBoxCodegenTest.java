@@ -21,10 +21,9 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.TestUtilsKt.clearReflectionCache;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile;
-import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getBoxMethodOrNull;
-import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getGeneratedClass;
+import static org.jetbrains.kotlin.codegen.CodegenTestUtilsKt.getBoxMethodOrNull;
+import static org.jetbrains.kotlin.codegen.CodegenTestUtilsKt.getGeneratedClass;
 
 @ObsoleteTestInfrastructure(replacer = "org.jetbrains.kotlin.test.runners.codegen.AbstractBlackBoxCodegenTest")
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
@@ -99,9 +98,6 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
                     System.out.println(generateToText());
                 }
                 throw ExceptionUtilsKt.rethrow(e);
-            }
-            finally {
-                clearReflectionCache(generatedClassLoader);
             }
         }
         fail("Can't find box method!");

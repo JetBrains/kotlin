@@ -955,6 +955,7 @@ Finished executing task ':$taskName'|
             options.androidHome?.let { sdkDir ->
                 sdkDir.parentFile.mkdirs()
                 put("ANDROID_HOME", sdkDir.canonicalPath)
+                put("ANDROID_SDK_ROOT", sdkDir.canonicalPath)
             }
 
             options.javaHome?.let {

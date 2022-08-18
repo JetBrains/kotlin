@@ -15,25 +15,21 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.KotlinCompilationsModuleGroups
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.newDependencyFilesHolder
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ofVariantCompileDependencies
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.unambiguousNameInProject
+import org.jetbrains.kotlin.gradle.plugin.sources.android.kotlinAndroidSourceSetLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
+import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.project.model.LanguageSettings
 import org.jetbrains.kotlin.tooling.core.closure
 import java.util.*
@@ -96,6 +92,7 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
             lowerCamelCaseName(
                 target.disambiguationClassifier,
                 compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+                "compilation",
             )
         )
 
@@ -250,7 +247,7 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
      * Adds `allDependencies` of configurations mentioned in `configurationNames` to configuration named [this] in
      * a lazy manner
      */
-    private fun String.addAllDependenciesFromOtherConfigurations(project: Project, vararg configurationNames: String) {
+    protected fun String.addAllDependenciesFromOtherConfigurations(project: Project, vararg configurationNames: String) {
         project.configurations.named(this).configure { receiverConfiguration ->
             receiverConfiguration.dependencies.addAllLater(
                 project.objects.listProperty(Dependency::class.java).apply {
@@ -527,10 +524,26 @@ class AndroidCompilationDetails(
     override val friendArtifacts: FileCollection
         get() = target.project.files(super.friendArtifacts, compilation.testedVariantArtifacts)
 
+    override val defaultSourceSetName: String by lazy {
+        project.kotlinAndroidSourceSetLayout.naming.defaultKotlinSourceSetName(this) ?: super.defaultSourceSetName
+    }
+
+    /*
+    * Example of how multiplatform dependencies from common would get to Android test classpath:
+    * commonMainImplementation -> androidDebugImplementation -> debugImplementation -> debugAndroidTestCompileClasspath
+    * After the fix for KT-35916 MPP compilation configurations receive a 'compilation' postfix for disambiguation.
+    * androidDebugImplementation remains a source set configuration, but no longer contains compilation dependencies.
+    * Therefore, it doesn't get dependencies from common source sets.
+    * We now explicitly add associate compilation dependencies to the Kotlin test compilation configurations (test classpaths).
+    * This helps, because the Android test classpath configurations extend from the Kotlin test compilations' directly.
+    */
     override fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
-        if ((other as? KotlinJvmAndroidCompilation)?.androidVariant != getTestedVariantData(androidVariant)) {
-            super.addAssociateCompilationDependencies(other)
-        } // otherwise, do nothing: the Android Gradle plugin adds these dependencies for us, we don't need to add them to the classpath
+        compilation.compileDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
+            project,
+            other.apiConfigurationName,
+            other.implementationConfigurationName,
+            other.compileOnlyConfigurationName
+        )
     }
 
     override val kotlinDependenciesHolder: HasKotlinDependencies
@@ -592,6 +605,7 @@ internal open class JsCompilationDetails(
             return lowerCamelCaseName(
                 disambiguationClassifierInPlatform,
                 compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+                "compilation",
                 simpleName
             )
         }

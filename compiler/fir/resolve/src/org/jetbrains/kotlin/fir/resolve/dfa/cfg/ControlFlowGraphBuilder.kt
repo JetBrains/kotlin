@@ -1087,6 +1087,17 @@ class ControlFlowGraphBuilder {
         return node
     }
 
+    fun exitSmartCastExpression(smartCastExpression: FirSmartCastExpression): SmartCastExpressionExitNode {
+        val returnsNothing = smartCastExpression.resultType.isNothing
+        val node = createSmartCastExitNode(smartCastExpression)
+        if (returnsNothing) {
+            addNodeThatReturnsNothing(node)
+        } else {
+            addNewSimpleNode(node)
+        }
+        return node
+    }
+
     fun exitResolvedQualifierNode(resolvedQualifier: FirResolvedQualifier): ResolvedQualifierNode {
         return createResolvedQualifierNode(resolvedQualifier).also(this::addNewSimpleNode)
     }

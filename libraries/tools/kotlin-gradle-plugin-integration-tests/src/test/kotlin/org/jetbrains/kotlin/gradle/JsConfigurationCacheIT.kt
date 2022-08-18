@@ -43,8 +43,6 @@ abstract class AbstractJsConfigurationCacheIT(protected val irBackend: Boolean) 
     @GradleTest
     fun testBrowserDistribution(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-
             assertSimpleConfigurationCacheScenarioWorks(
                 ":app:build",
                 buildOptions = defaultBuildOptions,
@@ -56,6 +54,25 @@ abstract class AbstractJsConfigurationCacheIT(protected val irBackend: Boolean) 
                     ":app:browserProductionWebpack",
                 )
             )
+        }
+    }
+
+    @DisplayName("configuration cache is reused when idea.version system property is changed in browser project")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_5, maxVersion = TestVersions.Gradle.G_7_5)
+    @GradleTest
+    fun testBrowserDistributionOnIdeaPropertyChange(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            build(":app:build")
+            // check IdeaPropertiesEvaluator for the logic
+            build(":app:build", "-Didea.version=2020.1") {
+                assertConfigurationCacheReused()
+                assertTasksUpToDate(
+                    ":app:packageJson",
+                    ":app:publicPackageJson",
+                    if (irBackend) ":app:compileProductionExecutableKotlinJs" else ":app:processDceKotlinJs",
+                    ":app:browserProductionWebpack",
+                )
+            }
         }
     }
 
@@ -75,6 +92,28 @@ abstract class AbstractJsConfigurationCacheIT(protected val irBackend: Boolean) 
                     ":nodeTest",
                 ) + if (irBackend) listOf(":compileProductionExecutableKotlinJs") else emptyList()
             )
+        }
+    }
+
+    @DisplayName("configuration cache is reused when idea.version system property is changed in node project")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_5, maxVersion = TestVersions.Gradle.G_7_5)
+    @GradleTest
+    fun testNodeJsOnIdeaPropertyChange(gradleVersion: GradleVersion) {
+        project("kotlin-js-nodejs-project", gradleVersion) {
+            build(":build")
+            // check IdeaPropertiesEvaluator for the logic
+            build(":build", "-Didea.version=2020.1") {
+                assertConfigurationCacheReused()
+                val upToDateTasks = listOf(
+                    ":packageJson",
+                    ":publicPackageJson",
+                    ":rootPackageJson",
+                    ":kotlinNpmInstall",
+                    ":compileKotlinJs",
+                    ":nodeTest",
+                ) + if (irBackend) listOf(":compileProductionExecutableKotlinJs") else emptyList()
+                assertTasksUpToDate(*upToDateTasks.toTypedArray())
+            }
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,12 +13,11 @@ import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledL
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompilerExecutor
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.light.classes.symbol.base.service.NullabilityAnnotationSourceProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
@@ -55,15 +54,12 @@ abstract class AbstractSymbolLightClassesTestBase(
         if (stopIfCompilationErrorDirectivePresent && CompilerExecutor.Directives.COMPILATION_ERRORS in module.directives) {
             return
         }
-        val testDataFile = module.files.first {
-            it.originalFile.extension in DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
-        }.originalFile.toPath()
 
         val ktFile = ktFiles.first()
         val project = ktFile.project
 
         ignoreExceptionIfIgnoreFirPresent(module) {
-            val actual = getRenderResult(ktFile, testDataFile, module, project)
+            val actual = getRenderResult(ktFile, testDataPath, module, project)
             compareResults(testServices, actual)
             removeIgnoreFir(module)
             removeDuplicatedFirJava(testServices)
@@ -105,7 +101,7 @@ abstract class AbstractSymbolLightClassesTestBase(
         }
     }
 
-    private fun findLightClass(fqname: String, project: Project): PsiClass? {
+    protected fun findLightClass(fqname: String, project: Project): PsiClass? {
         return JavaElementFinder
             .getInstance(project)
             .findClass(fqname, GlobalSearchScope.allScope(project))

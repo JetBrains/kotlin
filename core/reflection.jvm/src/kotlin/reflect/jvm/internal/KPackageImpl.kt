@@ -37,7 +37,6 @@ import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.D
 
 internal class KPackageImpl(
     override val jClass: Class<*>,
-    @Suppress("unused") val usageModuleName: String? = null // may be useful for debug
 ) : KDeclarationContainerImpl() {
     private inner class Data : KDeclarationContainerImpl.Data() {
         private val kotlinClass: ReflectKotlinClass? by ReflectProperties.lazySoft {

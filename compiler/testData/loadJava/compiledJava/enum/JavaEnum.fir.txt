@@ -7,4 +7,7 @@ public final enum class JavaEnum : R|kotlin/Enum<test/JavaEnum!>| {
     public final static fun valueOf(value: R|kotlin/String|): R|test/JavaEnum| {
     }
 
+    public final static val entries: R|kotlin/enums/EnumEntries<test/JavaEnum>|
+        public get(): R|kotlin/enums/EnumEntries<test/JavaEnum>|
+
 }

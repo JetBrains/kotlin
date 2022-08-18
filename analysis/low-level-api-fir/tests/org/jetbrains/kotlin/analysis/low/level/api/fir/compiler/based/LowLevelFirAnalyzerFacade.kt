@@ -13,11 +13,8 @@ import org.jetbrains.kotlin.fir.AbstractFirAnalyzerFacade
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.Fir2IrResult
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.FirSealedClassInheritorsProcessor
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestFile
 
@@ -30,21 +27,12 @@ class LowLevelFirAnalyzerFacade(
         get() = ScopeSession()
 
     override fun runCheckers(): Map<FirFile, List<KtDiagnostic>> {
-        findSealedInheritors()
         return allFirFiles.values.associateWith { firFile ->
             val ktFile = firFile.psi as KtFile
             val diagnostics = ktFile.collectDiagnosticsForFile(firResolveSession, diagnosticCheckerFilter)
             @Suppress("UNCHECKED_CAST")
             diagnostics.toList() as List<KtDiagnostic>
         }
-    }
-
-    private fun findSealedInheritors() {
-        allFirFiles.values.forEach { firFile ->
-            firFile.ensureResolved(FirResolvePhase.SUPER_TYPES)
-        }
-        val sealedProcessor = FirSealedClassInheritorsProcessor(allFirFiles.values.first().moduleData.session, ScopeSession())
-        sealedProcessor.process(allFirFiles.values)
     }
 
     override fun runResolution(): List<FirFile> = shouldNotBeCalled()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -242,15 +242,16 @@ internal class DescriptorRendererImpl(
         when {
             type.isError -> {
                 if (isUnresolvedType(type) && presentableUnresolvedTypes) {
-                    append(type.debugMessage)
+                    append(renderError(ErrorUtils.unresolvedTypeAsItIs(type)))
                 } else {
                     if (type is ErrorType && !informativeErrorType) {
                         append(type.debugMessage)
                     } else {
                         append(type.constructor.toString()) // Debug name of an error type is more informative
                     }
+
+                    append(renderTypeArguments(type.arguments))
                 }
-                append(renderTypeArguments(type.arguments))
             }
             type is StubTypeForBuilderInference ->
                 append(type.originalTypeVariable.toString())

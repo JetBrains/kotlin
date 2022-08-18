@@ -15,6 +15,7 @@ public final enum class AbstractEnum : kotlin.Enum<test.AbstractEnum!> {
     public/*package*/ abstract fun getString(): kotlin.String!
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.AbstractEnum>
     public final /*synthesized*/ fun valueOf(/*0*/ kotlin.String): test.AbstractEnum
     public final /*synthesized*/ fun values(): kotlin.Array<test.AbstractEnum>
 }

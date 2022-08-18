@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStream
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.Companion.jsCompilerProperty
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_ABI_SNAPSHOT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION_1_NO_WARN
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat.Companion.externalsOutputFormatProperty
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
@@ -118,6 +121,14 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = property("kotlin.js.ir.output.granularity")?.let { KotlinJsIrOutputGranularity.byArgument(it) }
             ?: KotlinJsIrOutputGranularity.PER_MODULE
 
+    val jsIrGeneratedTypeScriptValidationDevStrategy: KotlinIrJsGeneratedTSValidationStrategy
+        get() = property("kotlin.js.ir.development.typescript.validation.strategy")?.let { KotlinIrJsGeneratedTSValidationStrategy.byArgument(it) }
+            ?: KotlinIrJsGeneratedTSValidationStrategy.IGNORE
+
+    val jsIrGeneratedTypeScriptValidationProdStrategy: KotlinIrJsGeneratedTSValidationStrategy
+        get() = property("kotlin.js.ir.production.typescript.validation.strategy")?.let { KotlinIrJsGeneratedTSValidationStrategy.byArgument(it) }
+            ?: KotlinIrJsGeneratedTSValidationStrategy.IGNORE
+
     val incrementalMultiplatform: Boolean?
         get() = booleanProperty("kotlin.incremental.multiplatform")
 
@@ -199,6 +210,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val ignoreAndroidGradlePluginCompatibilityIssues: Boolean
         get() = booleanProperty(KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN) ?: false
+
+    val mppAndroidSourceSetLayoutVersion: Int?
+        get() = property(KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION)?.toIntOrNull()
+
+    val ignoreMppAndroidSourceSetLayoutVersion: Boolean
+        get() = booleanProperty(KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION_1_NO_WARN) ?: false
 
     val ignoreDisabledCInteropCommonization: Boolean
         get() = booleanProperty("$KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION.nowarn") ?: false
@@ -307,8 +324,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
     /**
      * Allows a user to specify additional arguments of a JVM executing KLIB commonizer.
      */
-    val commonizerJvmArgs: String?
+    val commonizerJvmArgs: List<String>
         get() = propertyWithDeprecatedVariant("kotlin.mpp.commonizerJvmArgs", "kotlin.commonizer.jvmArgs")
+            ?.split("\\s+".toRegex())
+            .orEmpty()
 
     /**
      * Enables experimental commonization of user defined c-interop libraries.
@@ -408,19 +427,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = property("kotlin.daemon.jvmargs")
 
     val kotlinCompilerExecutionStrategy: KotlinCompilerExecutionStrategy
-        get() {
-            val propertyName = "kotlin.compiler.execution.strategy"
-            val gradleProperty = property(propertyName)
-            // system property is for backward compatibility
-            val value = (gradleProperty ?: System.getProperty(propertyName)?.also {
-                SingleWarningPerBuild.show(
-                    project,
-                    "The '$propertyName' system property is deprecated and will have no effect since Kotlin 1.8.0. " +
-                            "Please use the '$propertyName' project property or the `compilerExecutionStrategy` Kotlin compile task property instead."
-                )
-            })
-            return KotlinCompilerExecutionStrategy.fromProperty(value?.toLowerCase())
-        }
+        get() = KotlinCompilerExecutionStrategy.fromProperty(property("kotlin.compiler.execution.strategy")?.toLowerCase())
+
+    val kotlinDaemonUseFallbackStrategy: Boolean
+        get() = booleanProperty("kotlin.daemon.useFallbackStrategy") ?: true
 
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = property(deprecatedPropName)
@@ -468,6 +478,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT = "kotlin.internal.mpp.hierarchicalStructureByDefault"
         const val KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT = "kotlin.mpp.hierarchicalStructureSupport"
         const val KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN = "kotlin.mpp.androidGradlePluginCompatibility.nowarn"
+        const val KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION = "kotlin.mpp.androidSourceSetLayoutVersion"
+        const val KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION_1_NO_WARN = "${KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION}1.nowarn"
         const val KOTLIN_NATIVE_DEPENDENCY_PROPAGATION = "kotlin.native.enableDependencyPropagation"
         const val KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION = "kotlin.mpp.enableOptimisticNumberCommonization"
         const val KOTLIN_KPM_EXPERIMENTAL_MODEL_MAPPING = "kotlin.kpm.experimentalModelMapping"

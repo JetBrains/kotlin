@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -123,6 +123,11 @@ public class JsTranslatorWasmTestGenerated extends AbstractJsTranslatorWasmTest 
         @TestMetadata("classObject.kt")
         public void testClassObject() throws Exception {
             runTest("js/js.translator/testData/box/native/classObject.kt");
+        }
+
+        @TestMetadata("externalValWithOverridenVar.kt")
+        public void testExternalValWithOverridenVar() throws Exception {
+            runTest("js/js.translator/testData/box/native/externalValWithOverridenVar.kt");
         }
 
         @TestMetadata("kt2209.kt")

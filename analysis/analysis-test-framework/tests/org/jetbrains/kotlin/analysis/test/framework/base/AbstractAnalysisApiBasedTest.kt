@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModulePr
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkersSourceFilePreprocessor
 import org.jetbrains.kotlin.analysis.test.framework.services.SubstitutionParser
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompilerExecutor
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtElement
@@ -104,6 +106,8 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
         useDirectives(*AbstractKotlinCompilerTest.defaultDirectiveContainers.toTypedArray())
         useDirectives(JvmEnvironmentConfigurationDirectives)
+        useDirectives(CompilerExecutor.Directives)
+
 
         useSourcePreprocessor(::ExpressionMarkersSourceFilePreprocessor)
         useAdditionalService { ExpressionMarkerProvider() }
@@ -128,6 +132,10 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         }
 
         if (configurator.analyseInDependentSession && isDependentModeDisabledForTheTest()) {
+            return
+        }
+
+        if (configurator.frontendKind == FrontendKind.Fe10 && isFe10DisabledForTheTest()) {
             return
         }
 
@@ -159,6 +167,9 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
     private fun isDependentModeDisabledForTheTest(): Boolean =
         AnalysisApiTestDirectives.DISABLE_DEPENDED_MODE in testServices.moduleStructure.allDirectives
+
+    private fun isFe10DisabledForTheTest(): Boolean =
+        AnalysisApiTestDirectives.IGNORE_FE10 in testServices.moduleStructure.allDirectives
 
     protected fun <R> analyseForTest(contextElement: KtElement, action: KtAnalysisSession.() -> R): R {
         return if (configurator.analyseInDependentSession) {

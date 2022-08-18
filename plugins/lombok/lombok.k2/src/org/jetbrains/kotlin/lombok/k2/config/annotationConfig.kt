@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.declarations.getBooleanArgument
+import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.declarations.getStringArrayArgument
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -16,15 +17,23 @@ import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.lombok.config.AccessLevel
 import org.jetbrains.kotlin.lombok.config.LombokConfig
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.ACCESS
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.BUILDER_CLASS_NAME
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.BUILDER_CLASS_NAME_CONFIG
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.BUILDER_METHOD_NAME
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.BUILD_METHOD_NAME
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.CHAIN
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.CHAIN_CONFIG
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.FLUENT
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.FLUENT_CONFIG
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.IGNORE_NULL_COLLECTIONS
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.NO_IS_PREFIX_CONFIG
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.PREFIX
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.PREFIX_CONFIG
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.SETTER_PREFIX
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.STATIC_CONSTRUCTOR
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.STATIC_NAME
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.TO_BUILDER
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.VALUE
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.name.ClassId
 
@@ -97,7 +106,7 @@ object ConeLombokAnnotations {
     class Getter(val visibility: AccessLevel = AccessLevel.PUBLIC) {
         companion object : ConeAnnotationCompanion<Getter>(LombokNames.GETTER_ID) {
             override fun extract(annotation: FirAnnotation): Getter = Getter(
-                visibility = getAccessLevel(annotation)
+                visibility = annotation.getAccessLevel()
             )
         }
     }
@@ -105,7 +114,7 @@ object ConeLombokAnnotations {
     class Setter(val visibility: AccessLevel = AccessLevel.PUBLIC) {
         companion object : ConeAnnotationCompanion<Setter>(LombokNames.SETTER_ID) {
             override fun extract(annotation: FirAnnotation): Setter = Setter(
-                visibility = getAccessLevel(annotation)
+                visibility = annotation.getAccessLevel()
             )
         }
     }
@@ -113,7 +122,7 @@ object ConeLombokAnnotations {
     class With(val visibility: AccessLevel = AccessLevel.PUBLIC) {
         companion object : ConeAnnotationCompanion<With>(LombokNames.WITH_ID) {
             override fun extract(annotation: FirAnnotation): With = With(
-                visibility = getAccessLevel(annotation)
+                visibility = annotation.getAccessLevel()
             )
         }
     }
@@ -186,6 +195,50 @@ object ConeLombokAnnotations {
             override fun extract(annotation: FirAnnotation): Value = Value(
                 staticConstructor = annotation.getNonBlankStringArgument(STATIC_CONSTRUCTOR)
             )
+        }
+    }
+
+    class Builder(
+        val builderClassName: String,
+        val buildMethodName: String,
+        val builderMethodName: String,
+        val requiresToBuilder: Boolean,
+        val visibility: AccessLevel,
+        val setterPrefix: String?
+    ) {
+        companion object : ConeAnnotationAndConfigCompanion<Builder>(LombokNames.BUILDER_ID) {
+            private const val DEFAULT_BUILDER_CLASS_NAME = "*Builder"
+            private const val DEFAULT_BUILD_METHOD_NAME = "build"
+            private const val DEFAULT_BUILDER_METHOD_NAME = "builder"
+            private const val DEFAULT_REQUIRES_TO_BUILDER = false
+
+
+            override fun extract(annotation: FirAnnotation?, config: LombokConfig): Builder {
+                return Builder(
+                    builderClassName = annotation?.getStringArgument(BUILDER_CLASS_NAME)
+                        ?: config.getString(BUILDER_CLASS_NAME_CONFIG)
+                        ?: DEFAULT_BUILDER_CLASS_NAME,
+                    buildMethodName = annotation?.getStringArgument(BUILD_METHOD_NAME) ?: DEFAULT_BUILD_METHOD_NAME,
+                    builderMethodName = annotation?.getStringArgument(BUILDER_METHOD_NAME) ?: DEFAULT_BUILDER_METHOD_NAME,
+                    requiresToBuilder = annotation?.getBooleanArgument(TO_BUILDER) ?: DEFAULT_REQUIRES_TO_BUILDER,
+                    visibility = annotation?.getAccessLevel(ACCESS) ?: AccessLevel.PUBLIC,
+                    setterPrefix = annotation?.getStringArgument(SETTER_PREFIX)
+                )
+            }
+        }
+    }
+
+    class Singular(
+        val singularName: String?,
+        val allowNull: Boolean,
+    ) {
+        companion object : ConeAnnotationCompanion<Singular>(LombokNames.SINGULAR_ID) {
+            override fun extract(annotation: FirAnnotation): Singular {
+                return Singular(
+                    singularName = annotation.getStringArgument(VALUE),
+                    allowNull = annotation.getBooleanArgument(IGNORE_NULL_COLLECTIONS) ?: false
+                )
+            }
         }
     }
 }

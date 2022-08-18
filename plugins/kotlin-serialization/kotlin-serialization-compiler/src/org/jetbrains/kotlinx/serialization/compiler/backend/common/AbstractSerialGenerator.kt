@@ -22,13 +22,14 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotat
 import org.jetbrains.kotlinx.serialization.compiler.resolve.isKSerializer
 import org.jetbrains.kotlinx.serialization.compiler.resolve.toClassDescriptor
 
-abstract class AbstractSerialGenerator(val bindingContext: BindingContext, val currentDeclaration: ClassDescriptor) {
-
+abstract class AbstractSerialGenerator(val bindingContext: BindingContext?, val currentDeclaration: ClassDescriptor) {
     private fun getKClassListFromFileAnnotation(annotationFqName: FqName, declarationInFile: DeclarationDescriptor): List<KotlinType> {
+        if (bindingContext == null) return emptyList()
         val annotation = AnnotationsUtils
             .getContainingFileAnnotations(bindingContext, declarationInFile)
             .find { it.fqName == annotationFqName }
             ?: return emptyList()
+
         @Suppress("UNCHECKED_CAST")
         val typeList: List<KClassValue> = annotation.firstArgument()?.value as? List<KClassValue> ?: return emptyList()
         return typeList.map { it.getArgumentType(declarationInFile.module) }
@@ -60,5 +61,6 @@ abstract class AbstractSerialGenerator(val bindingContext: BindingContext, val c
     }
 
     protected fun ClassDescriptor.getFuncDesc(funcName: String): Sequence<FunctionDescriptor> =
-        unsubstitutedMemberScope.getDescriptorsFiltered { it == Name.identifier(funcName) }.asSequence().filterIsInstance<FunctionDescriptor>()
+        unsubstitutedMemberScope.getDescriptorsFiltered { it == Name.identifier(funcName) }.asSequence()
+            .filterIsInstance<FunctionDescriptor>()
 }

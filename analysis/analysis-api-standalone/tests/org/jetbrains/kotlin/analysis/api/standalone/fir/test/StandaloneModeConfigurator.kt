@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtMod
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -18,13 +19,15 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 object StandaloneModeConfigurator : AnalysisApiTestConfigurator() {
     override val analyseInDependentSession: Boolean get() = false
+    override val frontendKind: FrontendKind get() = FrontendKind.Fir
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false).configureTest(builder, disposable)
     }
 
     override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>
-        get() = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false).serviceRegistrars
+        get() = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false).serviceRegistrars +
+                listOf(StandaloneModeTestServiceRegistrar)
 
     override fun createModules(
         moduleStructure: TestModuleStructure,

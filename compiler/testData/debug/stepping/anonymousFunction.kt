@@ -20,5 +20,3 @@ fun box() {
 // test.kt:6 box
 // test.kt:3 eval_0
 // test.kt:7 box$lambda
-// test.kt:7 box$lambda
-// test.kt:3 eval_0

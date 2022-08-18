@@ -970,8 +970,6 @@ public final class BooleanArray {
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.experimental.ExperimentalTypeInference
-@kotlin.Deprecated(message = "BuilderInference annotation may not be used anymore. The builder inference is enabled automatically for builder calls if needed")
-@kotlin.DeprecatedSinceKotlin(errorSince = "1.9", hiddenSince = "1.10", warningSince = "1.7")
 public final annotation class BuilderInference : kotlin.Annotation {
     public constructor BuilderInference()
 }
@@ -1649,6 +1647,13 @@ public final annotation class ExperimentalStdlibApi : kotlin.Annotation {
 /*∆*/     public constructor ExperimentalStdlibApi()
 /*∆*/ }
 /*∆*/ 
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS})
+@kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
+@kotlin.SinceKotlin(version = "1.8")
+public final annotation class ExperimentalSubclassOptIn : kotlin.Annotation {
+    public constructor ExperimentalSubclassOptIn()
+}
+
 @kotlin.RequiresOptIn(level = Level.WARNING)
 @kotlin.annotation.MustBeDocumented
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS})
@@ -2753,6 +2758,16 @@ public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequenc
 
     public companion object of String {
     }
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS})
+@kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
+@kotlin.SinceKotlin(version = "1.8")
+@kotlin.ExperimentalSubclassOptIn
+public final annotation class SubclassOptInRequired : kotlin.Annotation {
+    public constructor SubclassOptInRequired(markerClass: kotlin.reflect.KClass<out kotlin.Annotation>)
+
+    public final val markerClass: kotlin.reflect.KClass<out kotlin.Annotation> { get; }
 }
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.EXPRESSION, AnnotationTarget.FILE, AnnotationTarget.TYPEALIAS})

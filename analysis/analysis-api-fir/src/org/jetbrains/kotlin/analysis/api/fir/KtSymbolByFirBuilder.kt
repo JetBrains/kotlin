@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.firErrorWithAttachment
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withConeTypeAttachment
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirAttachment
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirSymbolAttachment
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withConeTypeEntry
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirSymbolEntry
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.*
@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -53,7 +53,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.errorWithAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -210,7 +210,7 @@ internal class KtSymbolByFirBuilder constructor(
             if (firSymbol.dispatchReceiverType?.contains { it is ConeStubType } == true) {
                 return buildFunctionSymbol(
                     firSymbol.originalIfFakeOverride()
-                        ?: firErrorWithAttachment("Stub type in real declaration", fir = firSymbol.fir)
+                        ?: errorWithFirSpecificEntries("Stub type in real declaration", fir = firSymbol.fir)
                 )
             }
 
@@ -219,7 +219,7 @@ internal class KtSymbolByFirBuilder constructor(
         }
 
         fun buildFunctionSignature(firSymbol: FirNamedFunctionSymbol): KtFunctionLikeSignature<KtFirFunctionSymbol> {
-            firSymbol.ensureResolved(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+            firSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
             val functionSymbol = buildFunctionSymbol(firSymbol)
             return KtFunctionLikeSignature(
                 functionSymbol,
@@ -320,7 +320,7 @@ internal class KtSymbolByFirBuilder constructor(
         }
 
         fun buildPropertySignature(firSymbol: FirPropertySymbol): KtVariableLikeSignature<KtVariableSymbol> {
-            firSymbol.ensureResolved(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+            firSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
             return KtVariableLikeSignature(
                 buildPropertySymbol(firSymbol),
                 typeBuilder.buildKtType(firSymbol.fir.returnTypeRef),
@@ -588,20 +588,20 @@ internal class KtSymbolByFirBuilder constructor(
 
     companion object {
         private fun throwUnexpectedElementError(element: FirBasedSymbol<*>): Nothing {
-            errorWithAttachment("Unexpected ${element::class.simpleName}") {
-                withFirSymbolAttachment("firSymbol", element)
+            buildErrorWithAttachment("Unexpected ${element::class.simpleName}") {
+                withFirSymbolEntry("firSymbol", element)
             }
         }
 
         private fun throwUnexpectedElementError(element: FirElement): Nothing {
-            errorWithAttachment("Unexpected ${element::class.simpleName}") {
-                withFirAttachment("firElement", element)
+            buildErrorWithAttachment("Unexpected ${element::class.simpleName}") {
+                withFirEntry("firElement", element)
             }
         }
 
         private fun throwUnexpectedElementError(element: ConeKotlinType): Nothing {
-            errorWithAttachment("Unexpected ${element::class.simpleName}") {
-                withConeTypeAttachment("coneType", element)
+            buildErrorWithAttachment("Unexpected ${element::class.simpleName}") {
+                withConeTypeEntry("coneType", element)
             }
         }
 

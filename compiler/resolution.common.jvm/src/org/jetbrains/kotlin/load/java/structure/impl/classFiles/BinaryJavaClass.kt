@@ -249,7 +249,7 @@ class BinaryJavaClass(
     fun findInnerClass(name: Name, classFileContent: ByteArray?): JavaClass? {
         val access = ownInnerClassNameToAccess[name] ?: return null
 
-        return virtualFile.parent.findChild("${virtualFile.nameWithoutExtension}$$name.class")?.let {
+        return virtualFile.parent.findChild("${virtualFile.nameWithoutExtension}$$name.${virtualFile.extension}")?.let {
             BinaryJavaClass(
                 it, fqName.child(name), context.copyForMember(), signatureParser, access, this,
                 classFileContent

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: NATIVE
-
 // WITH_STDLIB
 
 inline fun <T> useRef(value: T, f: (T) -> Boolean) = f(value)

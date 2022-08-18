@@ -39,6 +39,7 @@ internal fun KonanToolRunner.run(vararg args: String) = run(args.toList())
 
 private const val runFromDaemonPropertyName = "kotlin.native.tool.runFromDaemon"
 
+@Suppress("DEPRECATION") // calling KotlinToolRunner(project) constructor is deprecated
 internal abstract class KonanCliRunner(
         protected val toolName: String,
         project: Project,
@@ -89,8 +90,7 @@ internal abstract class KonanCliRunner(
 
     // A separate map for each build for automatic cleaning the daemon after the build have finished.
     @Suppress("UNCHECKED_CAST")
-    final override val isolatedClassLoaders get() =
-        project.project(":kotlin-native").ext["toolClassLoadersMap"] as ConcurrentHashMap<Any, URLClassLoader>
+    final override val isolatedClassLoaders = project.project(":kotlin-native").ext["toolClassLoadersMap"] as ConcurrentHashMap<Any, URLClassLoader>
 
     override fun transformArgs(args: List<String>) = listOf(toolName) + args
 
@@ -140,8 +140,10 @@ internal class KonanCliInteropRunner(
         additionalJvmArgs: List<String> = emptyList(),
         konanHome: String = project.konanHome
 ) : KonanCliRunner("cinterop", project, additionalJvmArgs, konanHome) {
+    private val projectDir = project.projectDir.toString()
+
     override fun transformArgs(args: List<String>): List<String> {
-        return super.transformArgs(args) + listOf("-Xproject-dir", project.projectDir.toString())
+        return super.transformArgs(args) + listOf("-Xproject-dir", projectDir)
     }
 
     override val execEnvironment by lazy {

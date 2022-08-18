@@ -12,15 +12,21 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.*
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
+import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFile
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
+import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.compilerRunner.*
@@ -30,6 +36,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
+import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
@@ -124,9 +131,12 @@ private fun FileCollection.filterOutPublishableInteropLibs(project: Project): Fi
  *      for it (NO-SOURCE check). So we need to take this case into account
  *      and skip libraries that were not compiled. See also: GH-2617 (K/N repo).
  */
-private fun Collection<File>.filterKlibsPassedToCompiler(): List<File> = filter {
-    (it.extension == "klib" || it.isDirectory) && it.exists()
-}
+private val File.canKlibBePassedToCompiler get() = (extension == "klib" || isDirectory) && exists()
+
+private fun Collection<File>.filterKlibsPassedToCompiler(): List<File> = filter(File::canKlibBePassedToCompiler)
+
+/* Returned FileCollection is lazy */
+private fun FileCollection.filterKlibsPassedToCompiler(): FileCollection = filter(File::canKlibBePassedToCompiler)
 
 // endregion
 abstract class AbstractKotlinNativeCompile<
@@ -137,6 +147,10 @@ abstract class AbstractKotlinNativeCompile<
 @Inject constructor(
     private val objectFactory: ObjectFactory
 ): AbstractKotlinCompileTool<M>(objectFactory) {
+
+    @get:Inject
+    protected abstract val projectLayout: ProjectLayout
+
     @get:Internal
     abstract val compilation: K
 
@@ -158,24 +172,18 @@ abstract class AbstractKotlinNativeCompile<
         compilation.konanTarget
     }
 
-    init {
-        notCompatibleWithConfigurationCache("Task $name does not support Gradle Configuration Cache. Check KT-43293 for more info")
-    }
-
     @get:Classpath
-    override val libraries: ConfigurableFileCollection by project.provider {
+    override val libraries: ConfigurableFileCollection = objectFactory.fileCollection().from({
         // Avoid resolving these dependencies during task graph construction when we can't build the target:
         if (konanTarget.enabledOnCurrentHost)
             objectFactory.fileCollection().from(
                 compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project)
             )
         else objectFactory.fileCollection()
-    }
+    })
 
     @get:Classpath
-    protected val friendModule: FileCollection by project.provider {
-        project.files(compilation.friendPaths)
-    }
+    protected val friendModule: FileCollection = project.files({ compilation.friendPaths })
 
     @get:Input
     val target: String by project.provider { compilation.konanTarget.name }
@@ -293,11 +301,7 @@ abstract class AbstractKotlinNativeCompile<
     }
 
     @get:Internal
-    internal val manifestFile: Provider<File>
-        get() = project.provider {
-            val inputManifestFile = project.buildDir.resolve("tmp/$name/inputManifest")
-            inputManifestFile
-        }
+    internal val manifestFile: Provider<RegularFile> get() = projectLayout.buildDirectory.file("tmp/$name/inputManifest")
 }
 
 // Remove it once actual K2NativeCompilerArguments will be available without 'kotlin.native.enabled = true' flag
@@ -313,7 +317,9 @@ constructor(
     @Internal
     @Transient  // can't be serialized for Gradle configuration cache
     final override val compilation: KotlinNativeCompilationData<*>,
-    objectFactory: ObjectFactory
+    private val objectFactory: ObjectFactory,
+    private val providerFactory: ProviderFactory,
+    private val execOperations: ExecOperations
 ) : AbstractKotlinNativeCompile<KotlinCommonOptions, KotlinNativeCompilationData<*>, StubK2NativeCompilerArguments>(objectFactory),
     KotlinCompile<KotlinCommonOptions> {
 
@@ -327,7 +333,7 @@ constructor(
     override val debuggable = true
 
     @get:Internal
-    override val baseName: String by project.provider {
+    override val baseName: String by lazy {
         if (compilation.isMainCompilationData())
             project.name
         else "${project.name}_${compilation.compilationPurpose}"
@@ -337,7 +343,7 @@ constructor(
 //    private val allSourceProvider = compilation.map { project.files(it.allSources).asFileTree }
 
     @get:Input
-    val moduleName: String by project.provider {
+    val moduleName: String by lazy {
         project.klibModuleName(baseName)
     }
 
@@ -346,7 +352,7 @@ constructor(
         get() = super.outputFile
 
     @get:Input
-    val shortModuleName: String by project.provider { baseName }
+    val shortModuleName: String by providerFactory.provider { baseName }
 
     // Inputs and outputs.
     // region Sources.
@@ -379,14 +385,17 @@ constructor(
     // endregion.
 
     // region Kotlin options.
-    override val kotlinOptions: KotlinCommonOptions by project.provider {
+    override val kotlinOptions: KotlinCommonOptions by providerFactory.provider {
         compilation.kotlinOptions
     }
 
     @get:Input
-    override val additionalCompilerOptions: Provider<Collection<String>> = project.provider {
+    override val additionalCompilerOptions: Provider<Collection<String>> = providerFactory.provider {
         kotlinOptions.freeCompilerArgs + ((languageSettings as? DefaultLanguageSettingsBuilder)?.freeCompilerArgs ?: emptyList())
     }
+
+    private val runnerSettings = KotlinNativeCompilerRunner.Settings.fromProject(project)
+    private val isAllowCommonizer: Boolean by lazy { project.isAllowCommonizer() }
 
     override fun kotlinOptions(fn: KotlinCommonOptions.() -> Unit) {
         kotlinOptions.fn()
@@ -413,7 +422,7 @@ constructor(
 
         var sharedCompilationData: SharedCompilationData? = null
         if (compilation is KotlinNativeFragmentMetadataCompilationData) {
-            val manifestFile: File = manifestFile.get()
+            val manifestFile: File = manifestFile.get().asFile
             manifestFile.ensureParentDirsCreated()
             val properties = java.util.Properties()
             properties[KLIB_PROPERTY_NATIVE_TARGETS] = konanTargetsForManifest
@@ -421,7 +430,7 @@ constructor(
 
             sharedCompilationData = SharedCompilationData(
                 manifestFile,
-                project.isAllowCommonizer()
+                isAllowCommonizer
             )
         }
 
@@ -455,7 +464,10 @@ constructor(
             commonSourcesTree
         )
 
-        KotlinNativeCompilerRunner(project).run(buildArgs)
+        KotlinNativeCompilerRunner(
+            settings = runnerSettings,
+            executionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger)
+        ).run(buildArgs)
     }
 }
 
@@ -468,11 +480,15 @@ abstract class KotlinNativeLink
 constructor(
     @Internal
     val binary: NativeBinary,
-    objectFactory: ObjectFactory
+    private val objectFactory: ObjectFactory,
+    private val providerFactory: ProviderFactory,
+    private val execOperations: ExecOperations
 ) : AbstractKotlinNativeCompile<KotlinCommonToolOptions, KotlinNativeCompilation, StubK2NativeCompilerArguments>(objectFactory) {
     @get:Internal
     final override val compilation: KotlinNativeCompilation
         get() = binary.compilation
+
+    private val runnerSettings = KotlinNativeCompilerRunner.Settings.fromProject(project)
 
     init {
         dependsOn(project.provider { compilation.compileKotlinTaskProvider })
@@ -502,7 +518,7 @@ constructor(
         @Input get() = binary.baseName
 
     @get:Input
-    protected val konanCacheKind: NativeCacheKind by project.provider {
+    protected val konanCacheKind: NativeCacheKind by lazy {
         project.getKonanCacheKind(konanTarget)
     }
 
@@ -513,13 +529,15 @@ constructor(
         override var freeCompilerArgs: List<String> = listOf()
     }
 
+    private val nativeLinkArgs = PropertiesProvider(project).nativeLinkArgs
+
     // We propagate compilation free args to the link task for now (see KT-33717).
     @get:Input
-    override val additionalCompilerOptions: Provider<Collection<String>> = project.provider {
+    override val additionalCompilerOptions: Provider<Collection<String>> = providerFactory.provider {
         kotlinOptions.freeCompilerArgs +
                 compilation.kotlinOptions.freeCompilerArgs +
                 ((languageSettings as? DefaultLanguageSettingsBuilder)?.freeCompilerArgs ?: emptyList()) +
-                PropertiesProvider(project).nativeLinkArgs
+                nativeLinkArgs
     }
 
     override val kotlinOptions: KotlinCommonToolOptions = NativeLinkOptions()
@@ -542,21 +560,19 @@ constructor(
     val linkerOpts: List<String>
         @Input get() = binary.linkerOpts
 
-    val binaryOptions: Map<String, String>
-        @Input get() = PropertiesProvider(project).nativeBinaryOptions + binary.binaryOptions
+    @get:Input
+    val binaryOptions: Map<String, String> by lazy { PropertiesProvider(project).nativeBinaryOptions + binary.binaryOptions }
 
     val processTests: Boolean
         @Input get() = binary is TestExecutable
 
     @get:Classpath
-    val exportLibraries: FileCollection by project.provider {
-        binary.let {
-            if (it is AbstractNativeLibrary) {
-                project.configurations.getByName(it.exportConfigurationName)
-            } else {
-                objectFactory.fileCollection()
-            }
-        }
+    val exportLibraries: FileCollection get() = exportLibrariesResolvedGraph?.files ?: objectFactory.fileCollection()
+
+    private val exportLibrariesResolvedGraph = if (binary is AbstractNativeLibrary) {
+        ResolvedDependencyGraph(project.configurations.getByName(binary.exportConfigurationName))
+    } else {
+        null
     }
 
     @get:Input
@@ -570,8 +586,20 @@ constructor(
     }
 
     @get:Internal
-    val apiFilesProvider = project.provider {
-        project.configurations.getByName(compilation.apiConfigurationName).files.filterKlibsPassedToCompiler()
+    val apiFiles = project.files(project.configurations.getByName(compilation.apiConfigurationName)).filterKlibsPassedToCompiler()
+
+    private val localKotlinOptions get() =
+        object : KotlinCommonToolOptions {
+            override var allWarningsAsErrors = kotlinOptions.allWarningsAsErrors
+            override var suppressWarnings = kotlinOptions.suppressWarnings
+            override var verbose = kotlinOptions.verbose
+            override var freeCompilerArgs = additionalCompilerOptions.get().toList()
+        }
+
+    private val externalDependenciesArgs by lazy { ExternalDependenciesBuilder(project, compilation).buildCompilerArgs() }
+
+    private val cacheBuilderSettings by lazy {
+        CacheBuilder.Settings.createWithProject(project, binary, konanTarget, localKotlinOptions, externalDependenciesArgs)
     }
 
     override fun createCompilerArgs(): StubK2NativeCompilerArguments = StubK2NativeCompilerArguments()
@@ -583,23 +611,26 @@ constructor(
     ) = Unit
 
     private fun validatedExportedLibraries() {
-        val exportConfiguration = exportLibraries as? Configuration ?: return
-        val apiFiles = apiFilesProvider.get()
+        if (exportLibrariesResolvedGraph == null) return
 
-        val failed = mutableSetOf<Dependency>()
-        exportConfiguration.allDependencies.forEach {
-            val dependencyFiles = exportConfiguration.files(it).filterKlibsPassedToCompiler()
-            if (!apiFiles.containsAll(dependencyFiles)) {
-                failed.add(it)
+        val failed = mutableSetOf<ResolvedDependencyResult>()
+        exportLibrariesResolvedGraph
+            .allDependencies
+            .filterIsInstance<ResolvedDependencyResult>()
+            .forEach {
+                val dependencyFiles = exportLibrariesResolvedGraph.dependencyArtifacts(it).map { it.file }.filterKlibsPassedToCompiler()
+                if (!apiFiles.files.containsAll(dependencyFiles)) {
+                    failed.add(it)
+                }
             }
-        }
 
         check(failed.isEmpty()) {
             val failedDependenciesList = failed.joinToString(separator = "\n") {
-                when (it) {
-                    is FileCollectionDependency -> "|Files: ${it.files.files}"
-                    is ProjectDependency -> "|Project ${it.dependencyProject.path}"
-                    else -> "|${it.group}:${it.name}:${it.version}"
+                val componentId = it.selected.id
+                when (componentId) {
+                    is ModuleComponentIdentifier -> "|Files: ${exportLibrariesResolvedGraph.dependencyArtifacts(it).map { it.file }}"
+                    is ProjectComponentIdentifier -> "|Project ${componentId.projectPath}"
+                    else -> "|${componentId.displayName}"
                 }
             }
 
@@ -613,6 +644,13 @@ constructor(
         }
     }
 
+    @get:Internal
+    internal abstract val konanPropertiesService: Property<KonanPropertiesBuildService>
+
+    private val resolvedDependencyGraph = ResolvedDependencyGraph(
+        project.configurations.getByName(compilation.compileDependencyConfigurationName)
+    )
+
     @TaskAction
     fun compile() {
         validatedExportedLibraries()
@@ -625,15 +663,12 @@ constructor(
             kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) }
         )
 
-        val localKotlinOptions = object : KotlinCommonToolOptions {
-            override var allWarningsAsErrors = kotlinOptions.allWarningsAsErrors
-            override var suppressWarnings = kotlinOptions.suppressWarnings
-            override var verbose = kotlinOptions.verbose
-            override var freeCompilerArgs = additionalCompilerOptions.get().toList()
-        }
-
-        val externalDependenciesArgs = ExternalDependenciesBuilder(project, compilation).buildCompilerArgs()
-        val cacheArgs = CacheBuilder(project, binary, konanTarget, localKotlinOptions, externalDependenciesArgs).buildCompilerArgs()
+        val executionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger)
+        val cacheArgs = CacheBuilder(
+            executionContext = executionContext,
+            settings = cacheBuilderSettings,
+            konanPropertiesService = konanPropertiesService.get()
+        ).buildCompilerArgs(resolvedDependencyGraph)
 
         val buildArgs = buildKotlinNativeBinaryLinkerArgs(
             output,
@@ -657,7 +692,10 @@ constructor(
             externalDependenciesArgs + cacheArgs
         )
 
-        KotlinNativeCompilerRunner(project).run(buildArgs)
+        KotlinNativeCompilerRunner(
+            settings = runnerSettings,
+            executionContext = executionContext
+        ).run(buildArgs)
     }
 }
 
@@ -838,19 +876,58 @@ private class ExternalDependenciesBuilder(
 }
 
 internal class CacheBuilder(
-    val project: Project,
-    val binary: NativeBinary,
-    val konanTarget: KonanTarget,
-    val kotlinOptions: KotlinCommonToolOptions,
-    val externalDependenciesArgs: List<String>
+    private val executionContext: KotlinToolRunner.GradleExecutionContext,
+    private val settings: Settings,
+    private val konanPropertiesService: KonanPropertiesBuildService,
 ) {
+    class Settings(
+        val runnerSettings: KotlinNativeCompilerRunner.Settings,
+        val konanCacheKind: NativeCacheKind,
+        val libraries: FileCollection,
+        val gradleUserHomeDir: File,
+        val binary: NativeBinary,
+        val konanTarget: KonanTarget,
+        val kotlinOptions: KotlinCommonToolOptions,
+        val externalDependenciesArgs: List<String>
+    ) {
+        val rootCacheDirectory get() = getRootCacheDirectory(
+            File(runnerSettings.parent.konanHome),
+            konanTarget,
+            binary.debuggable,
+            konanCacheKind
+        )
+
+        companion object {
+            fun createWithProject(
+                project: Project,
+                binary: NativeBinary,
+                konanTarget: KonanTarget,
+                kotlinOptions: KotlinCommonToolOptions,
+                externalDependenciesArgs: List<String>
+            ): Settings {
+                val konanCacheKind = project.getKonanCacheKind(konanTarget)
+                return Settings(
+                    runnerSettings = KotlinNativeCompilerRunner.Settings.fromProject(project),
+                    konanCacheKind = konanCacheKind,
+                    libraries = binary.compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project),
+                    gradleUserHomeDir = project.gradle.gradleUserHomeDir,
+                    binary, konanTarget, kotlinOptions, externalDependenciesArgs
+                )
+            }
+        }
+    }
+
 
     private val nativeSingleFileResolveStrategy: SingleFileKlibResolveStrategy
         get() = CompilerSingleFileKlibResolveAllowingIrProvidersStrategy(
             listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER)
         )
-    private val compilation: KotlinNativeCompilation
-        get() = binary.compilation
+
+    private val binary: NativeBinary
+        get() = settings.binary
+
+    private val konanTarget: KonanTarget
+        get() = settings.konanTarget
 
     private val optimized: Boolean
         get() = binary.optimized
@@ -858,60 +935,70 @@ internal class CacheBuilder(
     private val debuggable: Boolean
         get() = binary.debuggable
 
-    private val konanPropertiesService: KonanPropertiesBuildService
-        get() = KonanPropertiesBuildService.registerIfAbsent(project.gradle).get()
-
     private val konanCacheKind: NativeCacheKind
-        get() = project.getKonanCacheKind(konanTarget)
+        get() = settings.konanCacheKind
 
     // Inputs and outputs
     private val libraries: FileCollection
-        get() = compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project)
+        get() = settings.libraries
 
     private val target: String
         get() = konanTarget.name
 
-    private val rootCacheDirectory by project.provider {
-        getRootCacheDirectory(File(project.konanHome), konanTarget, debuggable, konanCacheKind)
-    }
+    private val rootCacheDirectory: File
+        get() = settings.rootCacheDirectory
 
     private val partialLinkage: Boolean
-        get() = PARTIAL_LINKAGE in kotlinOptions.freeCompilerArgs
+        get() = PARTIAL_LINKAGE in settings.kotlinOptions.freeCompilerArgs
 
-    private fun getCacheDirectory(dependency: ResolvedDependency): File = getCacheDirectory(
+    private fun getCacheDirectory(
+        resolvedDependencyGraph: ResolvedDependencyGraph,
+        dependency: ResolvedDependencyResult
+    ): File = getCacheDirectory(
         rootCacheDirectory = rootCacheDirectory,
         dependency = dependency,
         artifact = null,
+        resolvedDependencyGraph = resolvedDependencyGraph,
         partialLinkage = partialLinkage
     )
 
     private fun needCache(libraryPath: String) =
-        libraryPath.startsWith(project.gradle.gradleUserHomeDir.absolutePath) && libraryPath.endsWith(".klib")
+        libraryPath.startsWith(settings.gradleUserHomeDir.absolutePath) && libraryPath.endsWith(".klib")
 
-    private fun ensureDependencyPrecached(dependency: ResolvedDependency, visitedDependencies: MutableSet<ResolvedDependency>) {
+    private fun ResolvedDependencyGraph.ensureDependencyPrecached(
+        dependency: ResolvedDependencyResult,
+        visitedDependencies: MutableSet<ResolvedDependencyResult>
+    ) {
         if (dependency in visitedDependencies)
             return
-        visitedDependencies += dependency
-        dependency.children.forEach { ensureDependencyPrecached(it, visitedDependencies) }
 
-        val artifactsToAddToCache = dependency.moduleArtifacts.filter { needCache(it.file.absolutePath) }
+        visitedDependencies += dependency
+        dependency
+            .selected
+            .dependencies
+            .filterIsInstance<ResolvedDependencyResult>()
+            .forEach { ensureDependencyPrecached(it, visitedDependencies) }
+
+        val artifactsToAddToCache = dependencyArtifacts(dependency).filter { needCache(it.file.absolutePath) }
+
         if (artifactsToAddToCache.isEmpty()) return
 
         val dependenciesCacheDirectories = getDependenciesCacheDirectories(
             rootCacheDirectory = rootCacheDirectory,
             dependency = dependency,
             considerArtifact = false,
+            resolvedDependencyGraph = this,
             partialLinkage = partialLinkage
         ) ?: return
 
-        val cacheDirectory = getCacheDirectory(dependency)
+        val cacheDirectory = getCacheDirectory(this, dependency)
         cacheDirectory.mkdirs()
 
         val artifactsLibraries = artifactsToAddToCache
             .map {
                 resolveSingleFileKlib(
                     KFile(it.file.absolutePath),
-                    logger = GradleLoggerAdapter(project.logger),
+                    logger = GradleLoggerAdapter(executionContext.logger),
                     strategy = nativeSingleFileResolveStrategy
                 )
             }
@@ -939,14 +1026,14 @@ internal class CacheBuilder(
         for (library in sortedLibraries) {
             if (File(cacheDirectory, library.uniqueName.cachedName).listFilesOrEmpty().isNotEmpty())
                 continue
-            project.logger.info("Compiling ${library.uniqueName} to cache")
+            executionContext.logger.info("Compiling ${library.uniqueName} to cache")
             val args = mutableListOf(
                 "-p", konanCacheKind.produce!!,
                 "-target", target
             )
             if (debuggable) args += "-g"
             args += konanPropertiesService.additionalCacheFlags(konanTarget)
-            args += externalDependenciesArgs
+            args += settings.externalDependenciesArgs
             if (partialLinkage) args += PARTIAL_LINKAGE
             args += "-Xadd-cache=${library.libraryFile.absolutePath}"
             args += "-Xcache-directory=${cacheDirectory.absolutePath}"
@@ -956,7 +1043,7 @@ internal class CacheBuilder(
                 args += "-Xcache-directory=${it.absolutePath}"
             }
             getAllDependencies(dependency)
-                .flatMap { it.moduleArtifacts }
+                .flatMap { dependencyArtifacts(it) }
                 .map { it.file }
                 .filterKlibsPassedToCompiler()
                 .forEach {
@@ -969,7 +1056,7 @@ internal class CacheBuilder(
                     args += "-l"
                     args += it.libraryFile.absolutePath
                 }
-            KotlinNativeCompilerRunner(project).run(args)
+            KotlinNativeCompilerRunner(settings.runnerSettings, executionContext).run(args)
         }
     }
 
@@ -989,12 +1076,12 @@ internal class CacheBuilder(
             return
         val unresolvedDependencies = resolveSingleFileKlib(
             KFile(platformLib.absolutePath),
-            logger = GradleLoggerAdapter(project.logger),
+            logger = GradleLoggerAdapter(executionContext.logger),
             strategy = nativeSingleFileResolveStrategy
         ).unresolvedDependencies
         for (dependency in unresolvedDependencies)
             ensureCompilerProvidedLibPrecached(dependency.path, platformLibs, visitedLibs)
-        project.logger.info("Compiling $platformLibName (${visitedLibs.size}/${platformLibs.size}) to cache")
+        executionContext.logger.info("Compiling $platformLibName (${visitedLibs.size}/${platformLibs.size}) to cache")
         val args = mutableListOf(
             "-p", konanCacheKind.produce!!,
             "-target", target
@@ -1010,11 +1097,11 @@ internal class CacheBuilder(
         }
         args += "-Xadd-cache=${platformLib.absolutePath}"
         args += "-Xcache-directory=${rootCacheDirectory.absolutePath}"
-        KotlinNativeCompilerRunner(project).run(args)
+        KotlinNativeCompilerRunner(settings.runnerSettings, executionContext).run(args)
     }
 
     private fun ensureCompilerProvidedLibsPrecached() {
-        val distribution = Distribution(project.konanHome)
+        val distribution = Distribution(settings.runnerSettings.parent.konanHome)
         val platformLibs = mutableListOf<File>().apply {
             this += File(distribution.stdlib)
             this += File(distribution.platformLibs(konanTarget)).listFiles().orEmpty()
@@ -1024,18 +1111,17 @@ internal class CacheBuilder(
             ensureCompilerProvidedLibPrecached(platformLibName, platformLibs, visitedLibs)
     }
 
-    fun buildCompilerArgs(): List<String> = mutableListOf<String>().apply {
+    fun buildCompilerArgs(resolvedDependencyGraph: ResolvedDependencyGraph): List<String> = mutableListOf<String>().apply {
         if (konanCacheKind != NativeCacheKind.NONE && !optimized && konanPropertiesService.cacheWorksFor(konanTarget)) {
             rootCacheDirectory.mkdirs()
             ensureCompilerProvidedLibsPrecached()
             add("-Xcache-directory=${rootCacheDirectory.absolutePath}")
-            val visitedDependencies = mutableSetOf<ResolvedDependency>()
+            val visitedDependencies = mutableSetOf<ResolvedDependencyResult>()
             val allCacheDirectories = mutableSetOf<String>()
-            val compileDependencyConfiguration = project.configurations.getByName(compilation.compileDependencyConfigurationName)
-            for (root in compileDependencyConfiguration.resolvedConfiguration.firstLevelModuleDependencies) {
-                ensureDependencyPrecached(root, visitedDependencies)
+            for (root in resolvedDependencyGraph.root.dependencies.filterIsInstance<ResolvedDependencyResult>()) {
+                resolvedDependencyGraph.ensureDependencyPrecached(root, visitedDependencies)
                 for (dependency in listOf(root) + getAllDependencies(root)) {
-                    val cacheDirectory = getCacheDirectory(dependency)
+                    val cacheDirectory = getCacheDirectory(resolvedDependencyGraph, dependency)
                     if (cacheDirectory.exists())
                         allCacheDirectories += cacheDirectory.absolutePath
                 }
@@ -1047,7 +1133,7 @@ internal class CacheBuilder(
 
     companion object {
         internal fun getRootCacheDirectory(konanHome: File, target: KonanTarget, debuggable: Boolean, cacheKind: NativeCacheKind): File {
-            require(cacheKind != NativeCacheKind.NONE) { "Usupported cache kind: ${NativeCacheKind.NONE}" }
+            require(cacheKind != NativeCacheKind.NONE) { "Unsupported cache kind: ${NativeCacheKind.NONE}" }
             val optionsAwareCacheName = "$target${if (debuggable) "-g" else ""}$cacheKind"
             return konanHome.resolve("klib/cache/$optionsAwareCacheName")
         }
@@ -1062,40 +1148,48 @@ internal class CacheBuilder(
 }
 
 @CacheableTask
-open class CInteropProcess @Inject constructor(@get:Internal val settings: DefaultCInteropSettings) : DefaultTask() {
+open class CInteropProcess
+@Inject constructor(
+    @Transient
+    @Internal
+    val settings: DefaultCInteropSettings,
+    private val objectFactory: ObjectFactory,
+    private val execOperations: ExecOperations
+) : DefaultTask() {
 
     @Internal // Taken into account in the outputFileProvider property
     lateinit var destinationDir: Provider<File>
 
-    val konanTarget: KonanTarget
-        @Input get() = settings.compilation.konanTarget
+    @get:Input
+    val konanTarget: KonanTarget = settings.compilation.konanTarget
 
-    val interopName: String
-        @Input get() = settings.name
+    @get:Input
+    val konanVersion: CompilerVersion = project.konanVersion
 
-    val baseKlibName: String
-        @Input get() {
-            val compilationPrefix = settings.compilation.let {
-                if (it.isMainCompilationData()) project.name else it.compilationPurpose
-            }
-            return "$compilationPrefix-cinterop-$interopName"
+    @get:Input
+    val interopName: String = settings.name
+
+    @get:Input
+    val baseKlibName: String = run {
+        val compilationPrefix = settings.compilation.let {
+            if (it.isMainCompilationData()) project.name else it.compilationPurpose
         }
+        "$compilationPrefix-cinterop-$interopName"
+    }
 
-    val outputFileName: String
-        @Internal get() = with(CompilerOutputKind.LIBRARY) {
-            "$baseKlibName${suffix(konanTarget)}"
-        }
+    @get:Internal
+    val outputFileName: String = with(CompilerOutputKind.LIBRARY) {
+        "$baseKlibName${suffix(konanTarget)}"
+    }
 
-    val moduleName: String
-        @Input get() = project.klibModuleName(baseKlibName)
+    @get:Input
+    val moduleName: String = project.klibModuleName(baseKlibName)
 
     @get:Internal
     val outputFile: File
         get() = outputFileProvider.get()
 
-    init {
-        notCompatibleWithConfigurationCache("Task $name does not support Gradle Configuration Cache. Check KT-43293 for more info")
-    }
+    private val runnerSettings = KotlinNativeToolRunner.Settings.fromProject(project)
 
     // Inputs and outputs.
 
@@ -1104,41 +1198,38 @@ open class CInteropProcess @Inject constructor(@get:Internal val settings: Defau
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    val defFile: File
-        get() = settings.defFileProperty.get()
+    val defFile: File = settings.defFileProperty.get()
 
-    val packageName: String?
-        @Optional @Input get() = settings.packageName
+    @get:Optional
+    @get:Input
+    val packageName: String? = settings.packageName
 
-    val compilerOpts: List<String>
-        @Input get() = settings.compilerOpts
+    @get:Input
+    val compilerOpts: List<String> = settings.compilerOpts
 
-    val linkerOpts: List<String>
-        @Input get() = settings.linkerOpts
-
-    @get:IgnoreEmptyDirectories
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    val headers: FileCollection
-        get() = settings.headers
-
-    val allHeadersDirs: Set<File>
-        @Input get() = settings.includeDirs.allHeadersDirs.files
-
-    val headerFilterDirs: Set<File>
-        @Input get() = settings.includeDirs.headerFilterDirs.files
+    @get:Input
+    val linkerOpts: List<String> = settings.linkerOpts
 
     @get:IgnoreEmptyDirectories
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    val libraries: FileCollection
-        get() = settings.dependencyFiles.filterOutPublishableInteropLibs(project)
+    val headers: FileCollection = settings.headers
 
-    val extraOpts: List<String>
-        @Input get() = settings.extraOpts
+    @get:Input
+    val allHeadersDirs: Set<File> = settings.includeDirs.allHeadersDirs.files
 
-    val kotlinNativeVersion: String
-        @Input get() = project.konanVersion.toString()
+    @get:Input
+    val headerFilterDirs: Set<File> = settings.includeDirs.headerFilterDirs.files
+
+    @get:IgnoreEmptyDirectories
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    val libraries: FileCollection = settings.dependencyFiles.filterOutPublishableInteropLibs(project)
+
+    @get:Input
+    val extraOpts: List<String> = settings.extraOpts
+
+    private val isInIdeaSync = project.isInIdeaSync
 
     // Task action.
     @TaskAction
@@ -1167,7 +1258,7 @@ open class CInteropProcess @Inject constructor(@get:Internal val settings: Defau
             addArgs("-compiler-option", allHeadersDirs.map { "-I${it.absolutePath}" })
             addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
 
-            if (project.konanVersion.isAtLeast(1, 4, 0)) {
+            if (konanVersion.isAtLeast(1, 4, 0)) {
                 addArg("-Xmodule-name", moduleName)
             }
 
@@ -1175,6 +1266,11 @@ open class CInteropProcess @Inject constructor(@get:Internal val settings: Defau
         }
 
         outputFile.parentFile.mkdirs()
-        KotlinNativeCInteropRunner.createExecutionContext(this).run(args)
+        KotlinNativeCInteropRunner.createExecutionContext(
+            task = this,
+            isInIdeaSync = isInIdeaSync,
+            runnerSettings = runnerSettings,
+            gradleExecutionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger)
+        ).run(args)
     }
 }

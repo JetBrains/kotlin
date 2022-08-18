@@ -16,8 +16,12 @@
 
 package org.jetbrains.kotlinx.atomicfu.gradle
 
+import org.gradle.api.GradleException
+import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.*
+
+private const val EXTENSION_NAME = "atomicfuCompilerPlugin"
 
 class AtomicfuKotlinGradleSubplugin :
     KotlinCompilerPluginSupportPlugin {
@@ -25,15 +29,34 @@ class AtomicfuKotlinGradleSubplugin :
         const val ATOMICFU_ARTIFACT_NAME = "atomicfu"
     }
 
-    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true
+    override fun apply(target: Project) {
+        target.extensions.create(EXTENSION_NAME, AtomicfuKotlinGradleExtension::class.java)
+        super.apply(target)
+    }
+
+    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
+        val project = kotlinCompilation.target.project
+        val config = project.extensions.getByType(AtomicfuKotlinGradleExtension::class.java)
+        return (config.isJsIrTransformationEnabled && kotlinCompilation.target.isJs()) ||
+                (config.isJvmIrTransformationEnabled && kotlinCompilation.target.isJvm())
+    }
 
     override fun applyToCompilation(
         kotlinCompilation: KotlinCompilation<*>
     ): Provider<List<SubpluginOption>> =
         kotlinCompilation.target.project.provider { emptyList() }
 
+    open class AtomicfuKotlinGradleExtension {
+        var isJsIrTransformationEnabled = false
+        var isJvmIrTransformationEnabled = false
+    }
+
     override fun getPluginArtifact(): SubpluginArtifact =
         JetBrainsSubpluginArtifact(ATOMICFU_ARTIFACT_NAME)
 
     override fun getCompilerPluginId() = "org.jetbrains.kotlinx.atomicfu"
+
+    private fun KotlinTarget.isJs() = platformType == KotlinPlatformType.js
+
+    private fun KotlinTarget.isJvm() = platformType == KotlinPlatformType.jvm || platformType == KotlinPlatformType.androidJvm
 }

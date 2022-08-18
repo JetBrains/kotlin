@@ -4,7 +4,7 @@ apply plugin: 'kotlin-platform-jvm'
 
 archivesBaseName = 'kotlin-stdlib'
 
-JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_6)
+JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_8)
 
 configurePublishing(project)
 configureJavadocJar()
@@ -113,7 +113,6 @@ compileKotlin {
                 "-opt-in=kotlin.ExperimentalMultiplatform",
                 "-opt-in=kotlin.contracts.ExperimentalContracts",
                 "-Xuse-14-inline-classes-mangling-scheme",
-                "-Xsuppress-deprecated-jvm-target-warning",
                 "-Xbuiltins-from-sources",
                 "-XXLanguage:+RangeUntilOperator",
         ]
@@ -127,12 +126,15 @@ compileTestKotlin {
                 "-opt-in=kotlin.RequiresOptIn",
                 "-opt-in=kotlin.ExperimentalUnsignedTypes",
                 "-opt-in=kotlin.ExperimentalStdlibApi",
-                "-Xsuppress-deprecated-jvm-target-warning",
                 "-XXLanguage:+RangeUntilOperator",
         ]
         // This is needed for JavaTypeTest; typeOf for non-reified type parameters doesn't work otherwise, for implementation reasons.
         freeCompilerArgs.remove("-Xno-optimized-callable-references")
     }
+}
+
+test {
+    systemProperty("supportsNamedCapturingGroup", false)
 }
 
 compileLongRunningTestKotlin {

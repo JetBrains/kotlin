@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -54,6 +54,12 @@ public class JvmIrAgainstOldBoxInlineTestGenerated extends AbstractJvmIrAgainstO
         @Test
         public void testAllFilesPresentInAnonymousObject() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
+        }
+
+        @Test
+        @TestMetadata("anonymousObjectInCallChildren.kt")
+        public void testAnonymousObjectInCallChildren() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/anonymousObjectInCallChildren.kt");
         }
 
         @Test
@@ -357,6 +363,36 @@ public class JvmIrAgainstOldBoxInlineTestGenerated extends AbstractJvmIrAgainstO
         }
 
         @Test
+        @TestMetadata("kt52795.kt")
+        public void testKt52795() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795.kt");
+        }
+
+        @Test
+        @TestMetadata("kt52795_2.kt")
+        public void testKt52795_2() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_2.kt");
+        }
+
+        @Test
+        @TestMetadata("kt52795_3.kt")
+        public void testKt52795_3() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_3.kt");
+        }
+
+        @Test
+        @TestMetadata("kt52795_4.kt")
+        public void testKt52795_4() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_4.kt");
+        }
+
+        @Test
+        @TestMetadata("kt52795_5.kt")
+        public void testKt52795_5() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_5.kt");
+        }
+
+        @Test
         @TestMetadata("kt6007.kt")
         public void testKt6007() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt6007.kt");
@@ -450,6 +486,40 @@ public class JvmIrAgainstOldBoxInlineTestGenerated extends AbstractJvmIrAgainstO
         @TestMetadata("withInlineMethod.kt")
         public void testWithInlineMethod() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/withInlineMethod.kt");
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumEntries")
+        @TestDataPath("$PROJECT_ROOT")
+        public class EnumEntries {
+            @Test
+            public void testAllFilesPresentInEnumEntries() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumEntries"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
+            }
+
+            @Test
+            @TestMetadata("callSite.kt")
+            public void testCallSite() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/enumEntries/callSite.kt");
+            }
+
+            @Test
+            @TestMetadata("declSite.kt")
+            public void testDeclSite() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/enumEntries/declSite.kt");
+            }
+
+            @Test
+            @TestMetadata("declSiteSeveralMappings.kt")
+            public void testDeclSiteSeveralMappings() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/enumEntries/declSiteSeveralMappings.kt");
+            }
+
+            @Test
+            @TestMetadata("declSiteSeveralMappingsDifOrder.kt")
+            public void testDeclSiteSeveralMappingsDifOrder() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/enumEntries/declSiteSeveralMappingsDifOrder.kt");
+            }
         }
 
         @Nested
@@ -1022,6 +1092,12 @@ public class JvmIrAgainstOldBoxInlineTestGenerated extends AbstractJvmIrAgainstO
         @TestMetadata("constructor.kt")
         public void testConstructor() throws Exception {
             runTest("compiler/testData/codegen/boxInline/callableReference/constructor.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineCallableReference.kt")
+        public void testInlineCallableReference() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/callableReference/inlineCallableReference.kt");
         }
 
         @Test

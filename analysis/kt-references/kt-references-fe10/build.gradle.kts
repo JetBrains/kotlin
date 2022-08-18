@@ -7,7 +7,7 @@ dependencies {
     implementation(project(":analysis:kt-references"))
 
     implementation(project(":compiler:psi"))
-    implementation(project(":compiler:light-classes-base"))
+    implementation(project(":analysis:light-classes-base"))
     implementation(project(":compiler:frontend.java"))
     implementation(intellijCore())
 

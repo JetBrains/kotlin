@@ -1,5 +1,4 @@
 // !LANGUAGE: -ForbidUsingExtensionPropertyTypeParameterInDelegate
-// IGNORE_BACKEND: NATIVE
 //For KT-6020
 
 // MODULE: lib

@@ -7,19 +7,18 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.toKString
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.BoxCache
-import org.jetbrains.kotlin.backend.konan.CachedLibraries
-import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
+import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.TargetAbiInfo
+import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
+import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface.functionName
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.isReal
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -183,7 +182,14 @@ internal interface ContextUtils : RuntimeAware {
             }
             return if (isExternal(this)) {
                 runtime.addedLLVMExternalFunctions.getOrPut(this) {
-                    val proto = LlvmFunctionProto(this, this.computeSymbolName(), this@ContextUtils)
+                    val symbolName = if (KonanBinaryInterface.isExported(this)) {
+                        this.computeSymbolName()
+                    } else {
+                        val containerName = parentClassOrNull?.fqNameForIrSerialization?.asString()
+                                ?: context.irLinker.getExternalDeclarationFileName(this)
+                        this.computePrivateSymbolName(containerName)
+                    }
+                    val proto = LlvmFunctionProto(this, symbolName, this@ContextUtils)
                     context.llvm.externalFunction(proto)
                 }
             } else {
@@ -203,7 +209,13 @@ internal interface ContextUtils : RuntimeAware {
     val IrClass.typeInfoPtr: ConstPointer
         get() {
             return if (isExternal(this)) {
-                constPointer(importGlobal(this.computeTypeInfoSymbolName(), runtime.typeInfoType,
+                val typeInfoSymbolName = if (KonanBinaryInterface.isExported(this)) {
+                    this.computeTypeInfoSymbolName()
+                } else {
+                    this.computePrivateTypeInfoSymbolName(context.irLinker.getExternalDeclarationFileName(this))
+                }
+
+                constPointer(importGlobal(typeInfoSymbolName, runtime.typeInfoType,
                         origin = this.llvmSymbolOrigin))
             } else {
                 context.llvmDeclarations.forClass(this).typeInfo
@@ -379,6 +391,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
         }
 
         for (library in immediateBitcodeDependencies) {
+            if (library == context.config.libraryToCache?.klib) continue
             val cache = context.config.cachedLibraries.getLibraryCache(library)
             if (cache != null) {
                 result += library
@@ -395,7 +408,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
 
     val allBitcodeDependencies: List<KonanLibrary> by lazy {
         val allNonCachedDependencies = context.librariesWithDependencies.filter {
-            context.config.cachedLibraries.getLibraryCache(it) == null
+            context.config.cachedLibraries.getLibraryCache(it) == null || it == context.config.libraryToCache?.klib
         }
         val set = (allNonCachedDependencies + allCachedBitcodeDependencies).toSet()
         // This list is used in particular to build the libraries' initializers chain.

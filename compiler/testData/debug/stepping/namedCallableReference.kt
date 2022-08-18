@@ -36,4 +36,3 @@ fun g() {}
 // test.kt:8 f
 // test.kt:4 l
 // test.kt:4 l
-// test.kt:4 l

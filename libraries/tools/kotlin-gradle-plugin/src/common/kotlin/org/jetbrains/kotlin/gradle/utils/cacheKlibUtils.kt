@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
-import org.gradle.api.artifacts.ResolvedArtifact
-import org.gradle.api.artifacts.ResolvedDependency
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.library.uniqueName
@@ -14,14 +14,15 @@ import java.io.File
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 
-fun getCacheDirectory(
+internal fun getCacheDirectory(
     rootCacheDirectory: File,
-    dependency: ResolvedDependency,
-    artifact: ResolvedArtifact?,
+    dependency: ResolvedDependencyResult,
+    artifact: ResolvedArtifactResult?,
+    resolvedDependencyGraph: ResolvedDependencyGraph,
     partialLinkage: Boolean
 ): File {
-    val moduleCacheDirectory = File(rootCacheDirectory, dependency.moduleName)
-    val versionCacheDirectory = File(moduleCacheDirectory, dependency.moduleVersion)
+    val moduleCacheDirectory = File(rootCacheDirectory, dependency.selected.moduleVersion?.name ?: "undefined")
+    val versionCacheDirectory = File(moduleCacheDirectory, dependency.selected.moduleVersion?.version ?: "undefined")
     val uniqueName = artifact
         ?.let {
             if (libraryFilter(it))
@@ -40,16 +41,17 @@ fun getCacheDirectory(
         versionCacheDirectory.resolve(hash)
     } else versionCacheDirectory
 
-    return File(cacheDirectory, computeDependenciesHash(dependency, partialLinkage))
+    return File(cacheDirectory, computeDependenciesHash(dependency, resolvedDependencyGraph, partialLinkage))
 }
 
 internal fun ByteArray.toHexString() = joinToString("") { (0xFF and it.toInt()).toString(16).padStart(2, '0') }
 
-private fun computeDependenciesHash(dependency: ResolvedDependency, partialLinkage: Boolean): String {
+private fun computeDependenciesHash(dependency: ResolvedDependencyResult, resolvedDependencyGraph: ResolvedDependencyGraph, partialLinkage: Boolean): String {
     val hashedValue = buildString {
         if (partialLinkage) append("#__PL__#")
 
-        (dependency.moduleArtifacts + getAllDependencies(dependency).flatMap { it.moduleArtifacts })
+        (listOf(dependency) + getAllDependencies(dependency))
+            .flatMap { resolvedDependencyGraph.dependencyArtifacts(it) }
             .map { it.file.absolutePath }
             .distinct()
             .sortedBy { it }
@@ -61,20 +63,22 @@ private fun computeDependenciesHash(dependency: ResolvedDependency, partialLinka
     return hash.toHexString()
 }
 
-fun getDependenciesCacheDirectories(
+internal fun getDependenciesCacheDirectories(
     rootCacheDirectory: File,
-    dependency: ResolvedDependency,
+    dependency: ResolvedDependencyResult,
+    resolvedDependencyGraph: ResolvedDependencyGraph,
     considerArtifact: Boolean,
     partialLinkage: Boolean
 ): List<File>? {
     return getAllDependencies(dependency)
         .flatMap { childDependency ->
-            childDependency.moduleArtifacts.map {
+            resolvedDependencyGraph.dependencyArtifacts(childDependency).map {
                 if (libraryFilter(it)) {
                     val cacheDirectory = getCacheDirectory(
                         rootCacheDirectory = rootCacheDirectory,
                         dependency = childDependency,
                         artifact = if (considerArtifact) it else null,
+                        resolvedDependencyGraph = resolvedDependencyGraph,
                         partialLinkage = partialLinkage
                     )
                     if (!cacheDirectory.exists()) return null
@@ -88,17 +92,17 @@ fun getDependenciesCacheDirectories(
         .filter { it.exists() }
 }
 
-fun getAllDependencies(dependency: ResolvedDependency): Set<ResolvedDependency> {
-    val allDependencies = mutableSetOf<ResolvedDependency>()
+internal fun getAllDependencies(dependency: ResolvedDependencyResult): Set<ResolvedDependencyResult> {
+    val allDependencies = mutableSetOf<ResolvedDependencyResult>()
 
-    fun traverseAllDependencies(dependency: ResolvedDependency) {
+    fun traverseAllDependencies(dependency: ResolvedDependencyResult) {
         if (dependency in allDependencies)
             return
         allDependencies.add(dependency)
-        dependency.children.forEach { traverseAllDependencies(it) }
+        dependency.selected.dependencies.filterIsInstance<ResolvedDependencyResult>().forEach { traverseAllDependencies(it) }
     }
 
-    dependency.children.forEach { traverseAllDependencies(it) }
+    dependency.selected.dependencies.filterIsInstance<ResolvedDependencyResult>().forEach { traverseAllDependencies(it) }
     return allDependencies
 }
 
@@ -109,4 +113,4 @@ internal class GradleLoggerAdapter(private val gradleLogger: Logger) : org.jetbr
     override fun fatal(message: String): Nothing = kotlin.error(message)
 }
 
-private fun libraryFilter(artifact: ResolvedArtifact): Boolean = artifact.file.absolutePath.endsWith(".klib")
+private fun libraryFilter(artifact: ResolvedArtifactResult): Boolean = artifact.file.absolutePath.endsWith(".klib")

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.isChildOf
 
 private val BODILESS_BUILTIN_CLASSES = listOf(
     "kotlin.String",
@@ -43,6 +44,9 @@ private val BODILESS_BUILTIN_CLASSES = listOf(
 
 fun isBuiltInClass(declaration: IrDeclaration): Boolean =
     declaration is IrClass && declaration.fqNameWhenAvailable in BODILESS_BUILTIN_CLASSES
+
+fun isStdLibClass(declaration: IrDeclaration): Boolean =
+    declaration is IrClass && declaration.fqNameWhenAvailable?.isChildOf(JsPackage) != false
 
 private val JsPackage = FqName("kotlin.js")
 

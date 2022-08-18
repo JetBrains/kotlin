@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YARN_LOCK_MISMATCH_MESSAGE
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.STORE_YARN_LOCK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.UPGRADE_YARN_LOCK
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.YARN_LOCK_MISMATCH_MESSAGE
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -33,9 +33,7 @@ import java.nio.file.Paths
 import java.util.zip.ZipFile
 import kotlin.io.path.*
 import kotlin.streams.toList
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 @JsGradlePluginTests
 class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
@@ -249,6 +247,41 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
 
             build("build") {
                 assertFileInProjectNotExists("build/js/packages/kotlin-js-nodejs/kotlin/")
+            }
+        }
+    }
+
+    @DisplayName("generated typescript declarations validation")
+    @GradleTest
+    fun testGeneratedTypeScriptDeclarationsValidation(gradleVersion: GradleVersion) {
+        project("js-ir-validate-ts", gradleVersion) {
+            buildGradleKts.appendText(
+                """
+                |fun makeTypeScriptFileInvalid(mode: String) {
+                |  val dts = projectDir.resolve("build/compileSync/main/" + mode + "Executable/kotlin/js-ir-validate-ts.d.ts")
+                |  dts.appendText("\nlet invalidCode: unique symbol = Symbol()")
+                |}
+                |
+                |tasks.named<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>("compileDevelopmentExecutableKotlinJs").configure {
+                |   doLast { makeTypeScriptFileInvalid("development") }
+                |}
+                |
+                |tasks.named<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>("compileProductionExecutableKotlinJs").configure {
+                |   doLast { makeTypeScriptFileInvalid("production") }
+                |}
+               """.trimMargin()
+            )
+
+            buildAndFail("compileDevelopmentExecutableKotlinJs") {
+                assertTasksFailed(":developmentExecutableValidateGeneratedByCompilerTypeScript")
+                assertFileInProjectExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.js")
+                assertFileInProjectExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.d.ts")
+            }
+
+            build("compileProductionExecutableKotlinJs") {
+                assertTasksExecuted(":productionExecutableValidateGeneratedByCompilerTypeScript")
+                assertFileInProjectExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.js")
+                assertFileInProjectExists("build/js/packages/js-ir-validate-ts/kotlin/js-ir-validate-ts.d.ts")
             }
         }
     }
@@ -1387,26 +1420,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
             }
 
             buildGradleKts.modify {
-                val replaced = it.replace("implementation(npm(\"decamelize\", \"6.0.0\"))", "")
-                replaced + "\n" +
-                        """
-                        rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
-                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().yarnLockMismatchReport =
-                                org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport.FAIL_AFTER_BUILD
-                        }
-                        """.trimIndent()
-            }
-
-            buildAndFail("compileKotlinJs") {
-                assertTasksExecuted(":$STORE_YARN_LOCK_NAME")
-
-                assertOutputContains(YARN_LOCK_MISMATCH_MESSAGE)
-            }
-
-            buildAndFail("compileKotlinJs") {
-                assertTasksUpToDate(":$STORE_YARN_LOCK_NAME")
-
-                assertOutputContains(YARN_LOCK_MISMATCH_MESSAGE)
+                it.replace("implementation(npm(\"decamelize\", \"6.0.0\"))", "")
             }
 
             projectPath.resolve("kotlin-js-store").deleteRecursively()
@@ -1455,25 +1469,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
             }
 
             buildGradleKts.modify {
-                val replaced = it.replace("implementation(npm(\"decamelize\", \"6.0.0\"))", "")
-                replaced + "\n" +
-                        """
-                        rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
-                            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().yarnLockMismatchReport =
-                                org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport.FAIL_AFTER_BUILD
-                        }
-                        """.trimIndent()
-            }
-
-            buildAndFail("compileKotlinJs") {
-                assertTasksExecuted(":$STORE_YARN_LOCK_NAME")
-
-                assertOutputContains(YARN_LOCK_MISMATCH_MESSAGE)
-            }
-
-            //yarn.lock was updated
-            build("compileKotlinJs") {
-                assertTasksUpToDate(":$STORE_YARN_LOCK_NAME")
+                it.replace("implementation(npm(\"decamelize\", \"6.0.0\"))", "")
             }
 
             // check if everything ok without build/js/yarn.lock
@@ -1483,6 +1479,17 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
 
             build("clean") {
                 assertTasksUpToDate(":clean")
+            }
+
+            buildAndFail("compileKotlinJs") {
+                assertTasksFailed(":$STORE_YARN_LOCK_NAME")
+            }
+
+            projectPath.resolve("kotlin-js-store").deleteRecursively()
+
+            //check if independent tasks can be executed
+            build("help") {
+                assertTasksExecuted(":help")
             }
         }
     }
@@ -1528,6 +1535,37 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                 assertTasksUpToDate(":lib:compileKotlinJs")
                 assertTasksExecuted(":app:compileKotlinJs")
                 assertCompiledKotlinSources(listOf(appKt).relativizeTo(projectPath), output)
+            }
+        }
+    }
+
+    @DisplayName("smoothly fail npm install")
+    @GradleTest
+    fun testFailNpmInstall(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            buildGradleKts.modify { originalScript ->
+                buildString {
+                    append(originalScript)
+                    append(
+                        """
+                        |
+                        |plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
+                        |    val nodejs = the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>()
+                        |    tasks.named<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>("kotlinNpmInstall") {
+                        |        doFirst {
+                        |            nodejs.npmResolutionManager.state = 
+                        |            org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager.ResolutionState.Error(GradleException("someSpecialException"))
+                        |        }
+                        |    }
+                        |}
+                        |
+                        """.trimMargin()
+                    )
+                }
+            }
+            buildAndFail("build") {
+                assertTasksFailed(":kotlinNpmInstall")
+                assertOutputContains("someSpecialException")
             }
         }
     }

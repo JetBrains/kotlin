@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.generators.tests.analysis.api
 
 import org.jetbrains.kotlin.generators.TestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.light.classes.symbol.decompiled.AbstractSymbolLightClassesParentingForLibraryTest
 import org.jetbrains.kotlin.light.classes.symbol.decompiled.AbstractSymbolLightClassesFacadeForLibraryTest
 import org.jetbrains.kotlin.light.classes.symbol.decompiled.AbstractSymbolLightClassesForLibraryTest
 import org.jetbrains.kotlin.light.classes.symbol.decompiled.AbstractSymbolLightClassesLoadingForLibraryTest
+import org.jetbrains.kotlin.light.classes.symbol.source.AbstractSymbolLightClassesParentingForSourceTest
 import org.jetbrains.kotlin.light.classes.symbol.source.AbstractSymbolLightClassesFacadeForSourceTest
 import org.jetbrains.kotlin.light.classes.symbol.source.AbstractSymbolLightClassesForSourceTest
 import org.jetbrains.kotlin.light.classes.symbol.source.AbstractSymbolLightClassesLoadingForSourceTest
@@ -28,6 +30,21 @@ internal fun TestGroupSuite.generateSymbolLightClassesTests() {
             }
 
             testClass<AbstractSymbolLightClassesForLibraryTest> {
+                model(
+                    "asJava/lightClasses",
+                    excludeDirs = listOf("compilationErrors"),
+                    pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
+                )
+            }
+
+            testClass<AbstractSymbolLightClassesParentingForSourceTest> {
+                model(
+                    "asJava/lightClasses",
+                    pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
+                )
+            }
+
+            testClass<AbstractSymbolLightClassesParentingForLibraryTest> {
                 model(
                     "asJava/lightClasses",
                     excludeDirs = listOf("compilationErrors"),

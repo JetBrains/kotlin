@@ -57,7 +57,7 @@ internal class OverriddenFunctionInfo(
             } else {
                 function
             }
-            context.specialDeclarationsFactory.getBridge(OverriddenFunctionInfo(bridgeOwner, overriddenFunction))
+            context.bridgesSupport.getBridge(OverriddenFunctionInfo(bridgeOwner, overriddenFunction))
         }
         return if (implementation.modality == Modality.ABSTRACT) null else implementation
     }
@@ -279,7 +279,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
             context.getLayoutBuilder(superClass).vtableEntries
         }
 
-        val methods = irClass.overridableOrOverridingMethods
+        val methods = overridableOrOverridingMethods
         val newVtableSlots = mutableListOf<OverriddenFunctionInfo>()
         val overridenVtableSlots = mutableMapOf<IrSimpleFunction, OverriddenFunctionInfo>()
 
@@ -349,7 +349,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
     }
 
     fun overridingOf(function: IrSimpleFunction) =
-            irClass.overridableOrOverridingMethods.firstOrNull { function in it.allOverriddenFunctions }?.let {
+            overridableOrOverridingMethods.firstOrNull { function in it.allOverriddenFunctions }?.let {
                 OverriddenFunctionInfo(it, function).getImplementation(context)
             }
 
@@ -466,15 +466,17 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
      */
     fun getDeclaredFields(): List<FieldInfo> {
         val outerThisField = if (irClass.isInner)
-            context.specialDeclarationsFactory.getOuterThisField(irClass)
+            context.innerClassesSupport.getOuterThisField(irClass)
         else null
-        if (context.config.lazyIrForCaches && !context.llvmModuleSpecification.containsDeclaration(irClass)) {
-            val packageFragment = irClass.getPackageFragment()
+        val packageFragment = irClass.getPackageFragment()
+        if (packageFragment is IrExternalPackageFragment) {
             val moduleDescriptor = packageFragment.packageFragmentDescriptor.containingDeclaration
-            if (moduleDescriptor.isFromInteropLibrary())
-                return emptyList()
-            val moduleDeserializer = context.irLinker.cachedLibraryModuleDeserializers[moduleDescriptor]
+            if (moduleDescriptor.isFromInteropLibrary()) return emptyList()
+            val moduleDeserializer = context.irLinker.moduleDeserializers[moduleDescriptor]
                     ?: error("No module deserializer for ${irClass.render()}")
+            require(context.config.cachedLibraries.isLibraryCached(moduleDeserializer.klib)) {
+                "No IR and no cache for ${irClass.render()}"
+            }
             return moduleDeserializer.deserializeClassFields(irClass, outerThisField)
         }
 
@@ -492,8 +494,8 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         }
     }
 
-    private val IrClass.overridableOrOverridingMethods: List<IrSimpleFunction>
-        get() = this.simpleFunctions().filter { it.isOverridableOrOverrides && it.bridgeTarget == null }
+    private val overridableOrOverridingMethods: List<IrSimpleFunction>
+        get() = irClass.simpleFunctions().filter { it.isOverridableOrOverrides && it.bridgeTarget == null }
 
     private val IrFunction.uniqueName get() = computeFunctionName()
 }

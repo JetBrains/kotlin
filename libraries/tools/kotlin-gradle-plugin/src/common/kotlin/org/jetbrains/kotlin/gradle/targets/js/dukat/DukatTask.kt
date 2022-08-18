@@ -10,6 +10,7 @@ import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import java.io.File
@@ -53,7 +54,8 @@ abstract class DukatTask(
         get() = resolutionManager.requireInstalled(
             services,
             logger
-        )[projectPath][compilationName]
+        )?.get(projectPath)?.get(compilationName)
+            ?: throw (resolutionManager.state as KotlinNpmResolutionManager.ResolutionState.Error).wrappedException
 
     @get:Internal
     val dts: List<DtsResolver.Dts>
@@ -97,7 +99,7 @@ abstract class DukatTask(
 
     @TaskAction
     open fun run() {
-        resolutionManager.checkRequiredDependencies(this, services, logger, projectPath)
+        resolutionManager.checkRequiredDependencies(this)
 
         destinationDir.deleteRecursively()
 

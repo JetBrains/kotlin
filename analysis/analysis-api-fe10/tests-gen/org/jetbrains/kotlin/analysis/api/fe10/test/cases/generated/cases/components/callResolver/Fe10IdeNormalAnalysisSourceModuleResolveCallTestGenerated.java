@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -830,6 +830,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
     @TestMetadata("variableWithMemberInvoke.kt")
     public void testVariableWithMemberInvoke() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/variableWithMemberInvoke.kt");
+    }
+
+    @Test
+    @TestMetadata("whenSelectorSmartCast.kt")
+    public void testWhenSelectorSmartCast() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/whenSelectorSmartCast.kt");
     }
 
     @Nested

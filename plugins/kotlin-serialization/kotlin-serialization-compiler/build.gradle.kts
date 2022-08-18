@@ -14,10 +14,21 @@ dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:backend"))
     compileOnly(project(":compiler:ir.backend.common"))
+    compileOnly(project(":compiler:backend.jvm"))
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":js:js.frontend"))
     compileOnly(project(":js:js.translator"))
     compileOnly(project(":kotlin-util-klib-metadata"))
+
+    // FIR dependencies
+    compileOnly(project(":compiler:fir:cones"))
+    compileOnly(project(":compiler:fir:tree"))
+    compileOnly(project(":compiler:fir:resolve"))
+//    compileOnly(project(":compiler:fir:checkers"))
+//    compileOnly(project(":compiler:fir:checkers:checkers.jvm"))
+//    compileOnly(project(":compiler:fir:fir2ir"))
+//    compileOnly(project(":compiler:ir.tree.impl"))
+    compileOnly(project(":compiler:fir:entrypoint"))
 
     runtimeOnly(kotlinStdlib())
 
@@ -30,8 +41,8 @@ dependencies {
     testApi(commonDependency("junit:junit"))
     testApiJUnit5(vintageEngine = true)
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.2.2")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.0-RC")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0-RC")
 
     testRuntimeOnly(intellijCore())
 }
@@ -44,6 +55,7 @@ sourceSets {
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     kotlinOptions {
         freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
+        freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi"
     }
 }
 

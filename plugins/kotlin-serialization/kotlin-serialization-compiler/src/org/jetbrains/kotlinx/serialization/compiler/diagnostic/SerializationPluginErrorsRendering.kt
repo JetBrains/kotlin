@@ -57,6 +57,13 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             CommonRenderers.STRING
         )
         MAP.put(
+            SerializationErrors.DUPLICATE_SERIAL_NAME_ENUM,
+            "Enum class ''{0}'' has duplicate serial name ''{1}'' in entry ''{2}''",
+            Renderers.RENDER_TYPE,
+            CommonRenderers.STRING,
+            CommonRenderers.STRING
+        )
+        MAP.put(
             SerializationErrors.SERIALIZER_NOT_FOUND,
             "Serializer has not been found for type ''{0}''. " +
                     "To use context serializer as fallback, explicitly annotate type or property with @Contextual",
@@ -121,6 +128,20 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
         MAP.put(
             SerializationErrors.INCONSISTENT_INHERITABLE_SERIALINFO,
             "Argument values for inheritable serial info annotation ''{0}'' must be the same as the values in parent type ''{1}''",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE
+        )
+
+        MAP.put(
+            SerializationErrors.EXTERNAL_CLASS_NOT_SERIALIZABLE,
+            "Cannot generate external serializer ''{0}'': class ''{1}'' have constructor parameters which are not properties and therefore it is not serializable automatically",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE
+        )
+
+        MAP.put(
+            SerializationErrors.EXTERNAL_CLASS_IN_ANOTHER_MODULE,
+            "Cannot generate external serializer ''{0}'': class ''{1}'' is defined in another module",
             Renderers.RENDER_TYPE,
             Renderers.RENDER_TYPE
         )

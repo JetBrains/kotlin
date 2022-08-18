@@ -1,4 +1,4 @@
-public final inner [BODY_RESOLVE] class ONAIR<T> : R|X.BASE| {
+public final inner [BODY_RESOLVE] class ONAIR<[STATUS] T> : R|X.BASE| {
     public [BODY_RESOLVE] X<T>.constructor(): R|X.ONAIR<T>| {
         super<R|X.BASE|>()
     }

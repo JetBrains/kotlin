@@ -361,6 +361,10 @@ class TestLookupTracker : LookupTracker {
 
         lookups.add(LookupInfo(internedFilePath, position, internedScopeFqName, scopeKind, internedName))
     }
+
+    override fun clear() {
+        lookups.clear()
+    }
 }
 
 

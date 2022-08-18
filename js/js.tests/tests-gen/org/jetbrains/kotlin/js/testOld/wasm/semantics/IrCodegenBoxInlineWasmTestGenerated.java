@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -63,6 +63,11 @@ public class IrCodegenBoxInlineWasmTestGenerated extends AbstractIrCodegenBoxInl
 
         public void testAllFilesPresentInAnonymousObject() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @TestMetadata("anonymousObjectInCallChildren.kt")
+        public void testAnonymousObjectInCallChildren() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/anonymousObjectInCallChildren.kt");
         }
 
         @TestMetadata("anonymousObjectInDefault.kt")
@@ -280,6 +285,31 @@ public class IrCodegenBoxInlineWasmTestGenerated extends AbstractIrCodegenBoxInl
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt51950.kt");
         }
 
+        @TestMetadata("kt52795.kt")
+        public void testKt52795() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795.kt");
+        }
+
+        @TestMetadata("kt52795_2.kt")
+        public void testKt52795_2() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_2.kt");
+        }
+
+        @TestMetadata("kt52795_3.kt")
+        public void testKt52795_3() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_3.kt");
+        }
+
+        @TestMetadata("kt52795_4.kt")
+        public void testKt52795_4() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_4.kt");
+        }
+
+        @TestMetadata("kt52795_5.kt")
+        public void testKt52795_5() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_5.kt");
+        }
+
         @TestMetadata("kt6007.kt")
         public void testKt6007() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt6007.kt");
@@ -353,6 +383,19 @@ public class IrCodegenBoxInlineWasmTestGenerated extends AbstractIrCodegenBoxInl
         @TestMetadata("withInlineMethod.kt")
         public void testWithInlineMethod() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/withInlineMethod.kt");
+        }
+
+        @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumEntries")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class EnumEntries extends AbstractIrCodegenBoxInlineWasmTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInEnumEntries() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumEntries"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumWhen")
@@ -761,6 +804,11 @@ public class IrCodegenBoxInlineWasmTestGenerated extends AbstractIrCodegenBoxInl
         @TestMetadata("constructor.kt")
         public void testConstructor() throws Exception {
             runTest("compiler/testData/codegen/boxInline/callableReference/constructor.kt");
+        }
+
+        @TestMetadata("inlineCallableReference.kt")
+        public void testInlineCallableReference() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/callableReference/inlineCallableReference.kt");
         }
 
         @TestMetadata("innerGenericConstuctor.kt")

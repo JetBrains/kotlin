@@ -21,6 +21,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
@@ -37,19 +38,28 @@ import java.util.Set;
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.parsing.KotlinParsing.AnnotationParsingMode.DEFAULT;
+import static org.jetbrains.kotlin.parsing.KotlinParsing.PARAMETER_NAME_RECOVERY_SET;
 import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.PRECEDING_ALL_COMMENTS_BINDER;
 import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.TRAILING_ALL_COMMENTS_BINDER;
 
 public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD);
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET_WITH_ARROW = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD, ARROW, DOT);
-
-
     private static final ImmutableMap<String, KtToken> KEYWORD_TEXTS = tokenSetToMap(KEYWORDS);
 
-    private static final IElementType[] LOCAL_DECLARATION_FIRST =
-            new IElementType[] {CLASS_KEYWORD, INTERFACE_KEYWORD, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, TYPE_ALIAS_KEYWORD};
     private static final TokenSet TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA = TokenSet.create(ARROW, COMMA, COLON);
+    private static final TokenSet TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA_RECOVERY =
+            TokenSet.orSet(TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA, PARAMETER_NAME_RECOVERY_SET);
+    private static final TokenSet EQ_RPAR_SET = TokenSet.create(EQ, RPAR);
+    private static final TokenSet ARROW_SET = TokenSet.create(ARROW);
+    private static final TokenSet ARROW_COMMA_SET = TokenSet.create(ARROW, COMMA);
+    private static final TokenSet IN_KEYWORD_R_PAR_COLON_SET = TokenSet.create(IN_KEYWORD, RPAR, COLON);
+    private static final TokenSet IN_KEYWORD_L_BRACE_SET = TokenSet.create(IN_KEYWORD, LBRACE);
+    private static final TokenSet IN_KEYWORD_L_BRACE_RECOVERY_SET = TokenSet.orSet(IN_KEYWORD_L_BRACE_SET, PARAMETER_NAME_RECOVERY_SET);
+    private static final TokenSet COLON_IN_KEYWORD_SET = TokenSet.create(COLON, IN_KEYWORD);
+    private static final TokenSet L_PAR_L_BRACE_R_PAR_SET = TokenSet.create(LPAR, LBRACE, RPAR);
+    private static final TokenSet IN_KEYWORD_SET = TokenSet.create(IN_KEYWORD);
+    private static final TokenSet TRY_CATCH_RECOVERY_TOKEN_SET = TokenSet.create(LBRACE, RBRACE, FINALLY_KEYWORD, CATCH_KEYWORD);
 
     private static ImmutableMap<String, KtToken> tokenSetToMap(TokenSet tokens) {
         ImmutableMap.Builder<String, KtToken> builder = ImmutableMap.builder();
@@ -59,20 +69,17 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         return builder.build();
     }
 
-    private static final TokenSet TYPE_ARGUMENT_LIST_STOPPERS = TokenSet.create(
-            INTEGER_LITERAL, FLOAT_LITERAL, CHARACTER_LITERAL, OPEN_QUOTE,
-            PACKAGE_KEYWORD, AS_KEYWORD, TYPE_ALIAS_KEYWORD, INTERFACE_KEYWORD, CLASS_KEYWORD, THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
-            FUN_KEYWORD, FOR_KEYWORD, NULL_KEYWORD,
-            TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD,
-            CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD, TRY_KEYWORD, ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD,
-            WHEN_KEYWORD, RBRACKET, RBRACE, RPAR, PLUSPLUS, MINUSMINUS, EXCLEXCL,
-            //            MUL,
-            PLUS, MINUS, EXCL, DIV, PERC, LTEQ,
-            // TODO GTEQ,   foo<bar, baz>=x
-            EQEQEQ, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR, SAFE_ACCESS, ELVIS,
-            SEMICOLON, RANGE, RANGE_UNTIL, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ, NOT_IN, NOT_IS,
-            COLONCOLON,
-            COLON
+    private static final TokenSet STRONG_TYPE_ARGUMENT_LIST_POSTFIX_INDICATORS = TokenSet.orSet(
+            TokenSet.create(COLONCOLON, QUEST, LBRACKET, TokenType.BAD_CHARACTER), Precedence.POSTFIX.getOperations()
+    );
+    private static final TokenSet WEAK_TYPE_ARGUMENT_LIST_POSTFIX_INDICATORS = TokenSet.create(
+            RBRACKET, RBRACE, RPAR, EQ, COLON, SEMICOLON, COMMA,
+
+            EQEQEQ, EXCLEQEQEQ, EQEQ, EXCLEQ, ELVIS, AS_KEYWORD, IS_KEYWORD, NOT_IS, NOT_IN, RANGE, RANGE_UNTIL, ARROW,
+
+            PACKAGE_KEYWORD, CLASS_KEYWORD, INTERFACE_KEYWORD, OBJECT_KEYWORD, TYPE_ALIAS_KEYWORD, SUPER_KEYWORD, VAL_KEYWORD,
+            VAR_KEYWORD, FUN_KEYWORD, RETURN_KEYWORD, FOR_KEYWORD, WHILE_KEYWORD, DO_KEYWORD, BREAK_KEYWORD, CONTINUE_KEYWORD,
+            THROW_KEYWORD
     );
 
     /*package*/ static final TokenSet EXPRESSION_FIRST = TokenSet.create(
@@ -120,6 +127,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             LBRACKET // Collection literal expression
     );
 
+    @SuppressWarnings("WeakerAccess")
     public static final TokenSet STATEMENT_FIRST = TokenSet.orSet(
             EXPRESSION_FIRST,
             TokenSet.create(
@@ -158,7 +166,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         AS(AS_KEYWORD, AS_SAFE) {
             @Override
             public IElementType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
-                parser.myKotlinParsing.parseTypeRefWithoutIntersections();
+                parser.myKotlinParsing.parseTypeRefWithoutIntersections(/* partOfExpression */ true);
                 return BINARY_WITH_TYPE;
             }
 
@@ -177,7 +185,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             @Override
             public IElementType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
                 if (operation == IS_KEYWORD || operation == NOT_IS) {
-                    parser.myKotlinParsing.parseTypeRefWithoutIntersections();
+                    parser.myKotlinParsing.parseTypeRefWithoutIntersections(/* partOfExpression */ true);
                     return IS_EXPRESSION;
                 }
 
@@ -193,7 +201,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         ;
 
         static {
-            Precedence[] values = Precedence.values();
+            Precedence[] values = values();
             for (Precedence precedence : values) {
                 int ordinal = precedence.ordinal();
                 precedence.higher = ordinal > 0 ? values[ordinal - 1] : null;
@@ -229,7 +237,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         }
     }
 
-    public static final TokenSet ALLOW_NEWLINE_OPERATIONS = TokenSet.create(
+    private static final TokenSet ALLOW_NEWLINE_OPERATIONS = TokenSet.create(
             DOT, SAFE_ACCESS,
             COLON, AS_KEYWORD, AS_SAFE,
             ELVIS,
@@ -246,7 +254,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         for (Precedence precedence : values) {
             operations.addAll(Arrays.asList(precedence.getOperations().getTypes()));
         }
-        ALL_OPERATIONS = TokenSet.create(operations.toArray(new IElementType[operations.size()]));
+        ALL_OPERATIONS = TokenSet.create(operations.toArray(new IElementType[0]));
     }
 
     static {
@@ -392,7 +400,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
         if (at(LT)) {
             PsiBuilder.Marker typeArgumentList = mark();
-            if (myKotlinParsing.tryParseTypeArgumentList(TYPE_ARGUMENT_LIST_STOPPERS)) {
+            if (parseCallSuffixTypeArgumentList()) {
                 typeArgumentList.error("Type arguments are not allowed");
             }
             else {
@@ -400,7 +408,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             }
         }
 
-        if (at(LPAR) && !myBuilder.newlineBeforeCurrentToken()) {
+        if (isAtValueArgumentList()) {
             PsiBuilder.Marker lpar = mark();
             parseCallSuffix();
             lpar.error("This syntax is reserved for future use; to call a reference, enclose it in parentheses: (foo::bar)(args)");
@@ -484,35 +492,141 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
     /*
      * callSuffix
-     *   : typeArguments? valueArguments annotatedLambda
-     *   : typeArguments annotatedLambda
+     *   : typeArguments? valueArguments? annotatedLambda*
      *   ;
      */
     private boolean parseCallSuffix() {
-        if (parseCallWithClosure()) {
-            // do nothing
+        if (at(LT) && parseCallSuffixTypeArgumentList()) {
+            if (at(LPAR) && !myBuilder.newlineBeforeCurrentToken()) parseValueArgumentList();
+            parseCallWithClosure();
+
+            return true;
         }
         else if (at(LPAR)) {
             parseValueArgumentList();
             parseCallWithClosure();
+
+            return true;
         }
-        else if (at(LT)) {
-            PsiBuilder.Marker typeArgumentList = mark();
-            if (myKotlinParsing.tryParseTypeArgumentList(TYPE_ARGUMENT_LIST_STOPPERS)) {
-                typeArgumentList.done(TYPE_ARGUMENT_LIST);
-                if (!myBuilder.newlineBeforeCurrentToken() && at(LPAR)) parseValueArgumentList();
-                parseCallWithClosure();
-            }
-            else {
-                typeArgumentList.rollbackTo();
-                return false;
-            }
+        else if (parseCallWithClosure()) {
+            return true;
         }
-        else {
+
+        return false;
+    }
+
+    private boolean parseCallSuffixTypeArgumentList() {
+        PsiBuilder.Marker typeArgumentList = mark();
+
+        KotlinParsing.TypeArgumentListKind kind = myKotlinParsing.tryParseTypeArgumentList();
+
+        // If the parsed section did not fulfill the criteria of a type argument list or
+        // if there's no indication of an intended call suffix, drop the type argument list.
+        if (kind == KotlinParsing.TypeArgumentListKind.NONE) {
+            typeArgumentList.rollbackTo();
+
             return false;
         }
 
+        if (!isAtTypeArgumentListPostfixIndicator()) {
+            typeArgumentList.rollbackTo();
+
+            mark().done(TYPE_ARGUMENT_LIST_LIKE_EXPRESSION);
+            return false;
+        }
+
+        // If the parsed section could have been a faulty type argument type list, check
+        // whether it could have also been parsed as the right-hand side of a comparison
+        // expression correctly. If so, we have never had a faulty type argument list in
+        // the first place, and therefor it must be dropped.
+        if (kind == KotlinParsing.TypeArgumentListKind.FAULTY_TYPE_ARGUMENT_LIST) {
+            // For better error highlighting we only try to produce a faulty type argument list, if
+            // there are strong indicators. Otherwise, we would lean too much towards call suffixes
+            // in cases like when typing "x < 0 && 1 > ", where the last element hasn't been typed
+            // yet.
+            if (!isAtStrongTypeArgumentListPostfixIndicator()) {
+                typeArgumentList.rollbackTo();
+
+                mark().done(TYPE_ARGUMENT_LIST_LIKE_EXPRESSION);
+                return false;
+            }
+
+            typeArgumentList.rollbackTo();
+
+            if (isAtConditionalExpression()) {
+                mark().done(TYPE_ARGUMENT_LIST_LIKE_EXPRESSION);
+                return false;
+            }
+
+            typeArgumentList = mark();
+
+            myKotlinParsing.tryParseTypeArgumentList();
+        }
+
+        // At this point we're sure that it's either a correct type argument list followed
+        // by some indication of a call suffix or that it's faulty type argument list that
+        // is definitely not a correct right-hand side of an expression and is followed by
+        // a strong indication of a call suffix.
+
+        typeArgumentList.done(TYPE_ARGUMENT_LIST);
+
         return true;
+    }
+
+    private boolean isAtTypeArgumentListPostfixIndicator() {
+        return isAtStrongTypeArgumentListPostfixIndicator() || isAtWeakTypeArgumentListPostfixIndicator();
+    }
+
+    private boolean isAtStrongTypeArgumentListPostfixIndicator() {
+        // The start of a value argument list or an annotated lambda indicates a type argument list.
+        // <...>(  <...>{  <...>@identifier{  <...>identifier@{  <...>[
+        // Postfix expression are usually not applied to non-null boolean comparisons.
+        // <...>::  <...>?  <...>.  <...>?.  <...>!!  <...>++  <...>--
+        return isAtValueArgumentList() || isAtAnnotatedLambda() || atSet(STRONG_TYPE_ARGUMENT_LIST_POSTFIX_INDICATORS);
+    }
+
+    private boolean isAtWeakTypeArgumentListPostfixIndicator() {
+        // Line breaks are only available outside of value argument list. This is an incomplete line of code.
+        // <...>↵
+        // Other limiting tokens are also a likely indicator of an indented function call.
+        // <...>)  <...>]  <...>}  <...>,  <...>:  <...>=
+        // Operators are unlikely to be applied to non-null booleans.
+        // <...>==  <...>!=  <...>===  <...>!==  <...> as  <...> is  <...> in
+        // Hard keywords hint towards some formatting issue where line breaks are missing
+        // <...>fun  <...>var  <...>var  <...>object
+        return myBuilder.newlineBeforeCurrentToken() || atSet(WEAK_TYPE_ARGUMENT_LIST_POSTFIX_INDICATORS);
+    }
+
+    boolean isAtConditionalExpression() {
+        assert _at(LT) : "caller must check that current token is LT";
+
+        PsiBuilder.Marker marker = mark();
+
+        advance(); // LT
+
+        boolean hasNoErrors;
+
+        do {
+            PsiBuilder.Marker errorScope = mark();
+
+            parseExpression();
+
+            hasNoErrors = !myBuilder.hasErrorsAfter(errorScope);
+            errorScope.drop();
+
+            if (!hasNoErrors) break;
+
+            if (at(COMMA)) {
+                advance();
+            }
+            else {
+                break;
+            }
+        } while (true);
+
+        marker.rollbackTo();
+
+        return hasNoErrors;
     }
 
     /*
@@ -584,6 +698,24 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         return true;
     }
 
+    private boolean isAtAnnotatedLambda() {
+        // "{"
+        if (_at(LBRACE)) {
+            return true;
+        }
+        // IDENTIFIER "@" "{"
+        else if (_at(IDENTIFIER) && myBuilder.rawLookup(1) == AT && myBuilder.rawLookup(2) == LBRACE) {
+            return true;
+        }
+        // "@"
+        else if (_at(AT)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     private static void doneOrDrop(
             @NotNull PsiBuilder.Marker marker,
             @NotNull IElementType type,
@@ -621,66 +753,104 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private boolean parseAtomicExpression() {
         boolean ok = true;
 
-        if (at(LPAR)) {
-            parseParenthesizedExpression();
+        switch (getTokenId()) {
+            case LPAR_Id:
+                parseParenthesizedExpression();
+                break;
+            case LBRACKET_Id:
+                parseCollectionLiteralExpression();
+                break;
+            case THIS_KEYWORD_Id:
+                parseThisExpression();
+                break;
+            case SUPER_KEYWORD_Id:
+                parseSuperExpression();
+                break;
+            case OBJECT_KEYWORD_Id:
+                parseObjectLiteral();
+                break;
+            case THROW_KEYWORD_Id:
+                parseThrow();
+                break;
+            case RETURN_KEYWORD_Id:
+                parseReturn();
+                break;
+            case CONTINUE_KEYWORD_Id:
+                parseJump(CONTINUE);
+                break;
+            case BREAK_KEYWORD_Id:
+                parseJump(BREAK);
+                break;
+            case IF_KEYWORD_Id:
+                parseIf();
+                break;
+            case WHEN_KEYWORD_Id:
+                parseWhen();
+                break;
+            case TRY_KEYWORD_Id:
+                parseTry();
+                break;
+            case FOR_KEYWORD_Id:
+                parseFor();
+                break;
+            case WHILE_KEYWORD_Id:
+                parseWhile();
+                break;
+            case DO_KEYWORD_Id:
+                parseDoWhile();
+                break;
+            case IDENTIFIER_Id:
+                parseSimpleNameExpression();
+                break;
+            case LBRACE_Id:
+                parseFunctionLiteral();
+                break;
+            case OPEN_QUOTE_Id:
+                parseStringTemplate();
+                break;
+            /*
+             * literalConstant
+             *   : "true" | "false"
+             *   : stringTemplate
+             *   : NoEscapeString
+             *   : IntegerLiteral
+             *   : CharacterLiteral
+             *   : FloatLiteral
+             *   : "null"
+             *   ;
+             */
+            case TRUE_KEYWORD_Id:
+            case FALSE_KEYWORD_Id:
+                parseOneTokenExpression(BOOLEAN_CONSTANT);
+                break;
+            case INTEGER_LITERAL_Id:
+                parseOneTokenExpression(INTEGER_CONSTANT);
+                break;
+            case CHARACTER_LITERAL_Id:
+                parseOneTokenExpression(CHARACTER_CONSTANT);
+                break;
+            case FLOAT_LITERAL_Id:
+                parseOneTokenExpression(FLOAT_CONSTANT);
+                break;
+            case NULL_KEYWORD_Id:
+                parseOneTokenExpression(NULL);
+                break;
+            case CLASS_KEYWORD_Id:
+            case INTERFACE_KEYWORD_Id:
+            case FUN_KEYWORD_Id:
+            case VAL_KEYWORD_Id:
+            case VAR_KEYWORD_Id:
+            case TYPE_ALIAS_KEYWORD_Id:
+                if (!parseLocalDeclaration(/* rollbackIfDefinitelyNotExpression = */ myBuilder.newlineBeforeCurrentToken(), false)) {
+                    ok = false;
+                }
+                // declaration was parsed, do nothing
+                break;
+            default:
+                ok = false;
         }
-        else if (at(LBRACKET)) {
-            parseCollectionLiteralExpression();
-        }
-        else if (at(THIS_KEYWORD)) {
-            parseThisExpression();
-        }
-        else if (at(SUPER_KEYWORD)) {
-            parseSuperExpression();
-        }
-        else if (at(OBJECT_KEYWORD)) {
-            parseObjectLiteral();
-        }
-        else if (at(THROW_KEYWORD)) {
-            parseThrow();
-        }
-        else if (at(RETURN_KEYWORD)) {
-            parseReturn();
-        }
-        else if (at(CONTINUE_KEYWORD)) {
-            parseJump(CONTINUE);
-        }
-        else if (at(BREAK_KEYWORD)) {
-            parseJump(BREAK);
-        }
-        else if (at(IF_KEYWORD)) {
-            parseIf();
-        }
-        else if (at(WHEN_KEYWORD)) {
-            parseWhen();
-        }
-        else if (at(TRY_KEYWORD)) {
-            parseTry();
-        }
-        else if (at(FOR_KEYWORD)) {
-            parseFor();
-        }
-        else if (at(WHILE_KEYWORD)) {
-            parseWhile();
-        }
-        else if (at(DO_KEYWORD)) {
-            parseDoWhile();
-        }
-        else if (atSet(LOCAL_DECLARATION_FIRST) &&
-                    parseLocalDeclaration(/* rollbackIfDefinitelyNotExpression = */ myBuilder.newlineBeforeCurrentToken(), false)) {
-            // declaration was parsed, do nothing
-        }
-        else if (at(IDENTIFIER)) {
-            parseSimpleNameExpression();
-        }
-        else if (at(LBRACE)) {
-            parseFunctionLiteral();
-        }
-        else if (at(OPEN_QUOTE)) {
-            parseStringTemplate();
-        }
-        else if (!parseLiteralConstant()) {
-            ok = false;
+
+        if (!ok) {
             // TODO: better recovery if FIRST(element) did not match
             errorWithRecovery("Expecting an element", TokenSet.orSet(EXPRESSION_FOLLOW, TokenSet.create(LONG_TEMPLATE_ENTRY_END)));
         }
@@ -796,39 +966,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     }
 
     /*
-     * literalConstant
-     *   : "true" | "false"
-     *   : stringTemplate
-     *   : NoEscapeString
-     *   : IntegerLiteral
-     *   : CharacterLiteral
-     *   : FloatLiteral
-     *   : "null"
-     *   ;
-     */
-    private boolean parseLiteralConstant() {
-        if (at(TRUE_KEYWORD) || at(FALSE_KEYWORD)) {
-            parseOneTokenExpression(BOOLEAN_CONSTANT);
-        }
-        else if (at(INTEGER_LITERAL)) {
-            parseOneTokenExpression(INTEGER_CONSTANT);
-        }
-        else if (at(CHARACTER_LITERAL)) {
-            parseOneTokenExpression(CHARACTER_CONSTANT);
-        }
-        else if (at(FLOAT_LITERAL)) {
-            parseOneTokenExpression(FLOAT_CONSTANT);
-        }
-        else if (at(NULL_KEYWORD)) {
-            parseOneTokenExpression(NULL);
-        }
-        else {
-            return false;
-        }
-        return true;
-    }
-
-    /*
      * when
      *   : "when" ("(" (modifiers "val" SimpleName "=")? element ")")? "{"
      *         whenEntry*
@@ -848,7 +985,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             advanceAt(LPAR);
 
             PsiBuilder.Marker atWhenStart = mark();
-            myKotlinParsing.parseAnnotationsList(DEFAULT, TokenSet.create(EQ, RPAR));
+            myKotlinParsing.parseAnnotationsList(EQ_RPAR_SET);
             if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) {
                 IElementType declType = myKotlinParsing.parseProperty(KotlinParsing.DeclarationParsingMode.LOCAL);
 
@@ -954,39 +1091,45 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private void parseWhenCondition() {
         PsiBuilder.Marker condition = mark();
         myBuilder.disableNewlines();
-        if (at(IN_KEYWORD) || at(NOT_IN)) {
-            PsiBuilder.Marker mark = mark();
-            advance(); // IN_KEYWORD or NOT_IN
-            mark.done(OPERATION_REFERENCE);
+        switch (getTokenId()) {
+            case IN_KEYWORD_Id:
+            case NOT_IN_Id:
+                PsiBuilder.Marker mark = mark();
+                advance(); // IN_KEYWORD or NOT_IN
+                mark.done(OPERATION_REFERENCE);
 
 
-            if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
-                error("Expecting an element");
-            }
-            else {
-                parseExpression();
-            }
-            condition.done(WHEN_CONDITION_IN_RANGE);
-        }
-        else if (at(IS_KEYWORD) || at(NOT_IS)) {
-            advance(); // IS_KEYWORD or NOT_IS
+                if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
+                    error("Expecting an element");
+                }
+                else {
+                    parseExpression();
+                }
+                condition.done(WHEN_CONDITION_IN_RANGE);
+                break;
+            case IS_KEYWORD_Id:
+            case NOT_IS_Id:
+                advance(); // IS_KEYWORD or NOT_IS
 
-            if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
-                error("Expecting a type");
-            }
-            else {
-                myKotlinParsing.parseTypeRef();
-            }
-            condition.done(WHEN_CONDITION_IS_PATTERN);
-        }
-        else {
-            if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
+                if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
+                    error("Expecting a type");
+                }
+                else {
+                    myKotlinParsing.parseTypeRef(/* partOfExpression */ false);
+                }
+                condition.done(WHEN_CONDITION_IS_PATTERN);
+                break;
+            case RBRACE_Id:
+            case ELSE_KEYWORD_Id:
+            case ARROW_Id:
+            case DOT_Id:
                 error("Expecting an expression, is-condition or in-condition");
-            }
-            else {
+                condition.done(WHEN_CONDITION_EXPRESSION);
+                break;
+            default:
                 parseExpression();
-            }
-            condition.done(WHEN_CONDITION_EXPRESSION);
+                condition.done(WHEN_CONDITION_EXPRESSION);
+                break;
         }
         myBuilder.restoreNewlinesState();
     }
@@ -1095,7 +1238,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private boolean parseLocalDeclaration(boolean rollbackIfDefinitelyNotExpression, boolean isScriptTopLevel) {
         PsiBuilder.Marker decl = mark();
         KotlinParsing.ModifierDetector detector = new KotlinParsing.ModifierDetector();
-        myKotlinParsing.parseModifierList(detector, DEFAULT, TokenSet.EMPTY);
+        myKotlinParsing.parseModifierList(detector, TokenSet.EMPTY);
 
         IElementType declType = parseLocalDeclarationRest(detector, rollbackIfDefinitelyNotExpression, isScriptTopLevel);
 
@@ -1138,13 +1281,14 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
         boolean paramsFound = false;
 
-        if (at(ARROW)) {
+        IElementType token = tt();
+        if (token == ARROW) {
             //   { -> ...}
             mark().done(VALUE_PARAMETER_LIST);
             advance(); // ARROW
             paramsFound = true;
         }
-        else if (at(IDENTIFIER) || at(COLON) || at(LPAR)) {
+        else if (token == IDENTIFIER || token == COLON || token == LPAR) {
             // Try to parse a simple name list followed by an ARROW
             //   {a -> ...}
             //   {a, b -> ...}
@@ -1239,16 +1383,17 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             }
             else if (at(LPAR)) {
                 PsiBuilder.Marker destructuringDeclaration = mark();
-                myKotlinParsing.parseMultiDeclarationName(TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA);
+                myKotlinParsing.parseMultiDeclarationName(TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA,
+                                                          TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA_RECOVERY);
                 destructuringDeclaration.done(DESTRUCTURING_DECLARATION);
             }
             else {
-                expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(ARROW));
+                expect(IDENTIFIER, "Expecting parameter name", ARROW_SET);
             }
 
             if (at(COLON)) {
                 advance(); // COLON
-                myKotlinParsing.parseTypeRef(TokenSet.create(ARROW, COMMA));
+                myKotlinParsing.parseTypeRef(ARROW_COMMA_SET, /* partOfExpression */ false);
             }
             parameter.done(VALUE_PARAMETER);
 
@@ -1459,27 +1604,27 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 PsiBuilder.Marker parameter = mark();
 
                 if (!at(IN_KEYWORD)) {
-                    myKotlinParsing.parseModifierList(DEFAULT, TokenSet.create(IN_KEYWORD, RPAR, COLON));
+                    myKotlinParsing.parseModifierList(IN_KEYWORD_R_PAR_COLON_SET);
                 }
 
                 if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) advance(); // VAL_KEYWORD or VAR_KEYWORD
 
                 if (at(LPAR)) {
                     PsiBuilder.Marker destructuringDeclaration = mark();
-                    myKotlinParsing.parseMultiDeclarationName(TokenSet.create(IN_KEYWORD, LBRACE));
+                    myKotlinParsing.parseMultiDeclarationName(IN_KEYWORD_L_BRACE_SET, IN_KEYWORD_L_BRACE_RECOVERY_SET);
                     destructuringDeclaration.done(DESTRUCTURING_DECLARATION);
                 }
                 else {
-                    expect(IDENTIFIER, "Expecting a variable name", TokenSet.create(COLON, IN_KEYWORD));
+                    expect(IDENTIFIER, "Expecting a variable name", COLON_IN_KEYWORD_SET);
 
                     if (at(COLON)) {
                         advance(); // COLON
-                        myKotlinParsing.parseTypeRef(TokenSet.create(IN_KEYWORD));
+                        myKotlinParsing.parseTypeRef(IN_KEYWORD_SET, /* partOfExpression */ false);
                     }
                 }
                 parameter.done(VALUE_PARAMETER);
 
-                if (expect(IN_KEYWORD, "Expecting 'in'", TokenSet.create(LPAR, LBRACE, RPAR))) {
+                if (expect(IN_KEYWORD, "Expecting 'in'", L_PAR_L_BRACE_R_PAR_SET)) {
                     PsiBuilder.Marker range = mark();
                     parseExpression();
                     range.done(LOOP_RANGE);
@@ -1542,19 +1687,18 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             PsiBuilder.Marker catchBlock = mark();
             advance(); // CATCH_KEYWORD
 
-            TokenSet recoverySet = TokenSet.create(LBRACE, RBRACE, FINALLY_KEYWORD, CATCH_KEYWORD);
-            if (atSet(recoverySet)) {
+            if (atSet(TRY_CATCH_RECOVERY_TOKEN_SET)) {
                 error("Expecting exception variable declaration");
             }
             else {
                 PsiBuilder.Marker parameters = mark();
-                expect(LPAR, "Expecting '('", recoverySet);
-                if (!atSet(recoverySet)) {
+                expect(LPAR, "Expecting '('", TRY_CATCH_RECOVERY_TOKEN_SET);
+                if (!atSet(TRY_CATCH_RECOVERY_TOKEN_SET)) {
                     myKotlinParsing.parseValueParameter(/*typeRequired = */ true);
                     if (at(COMMA)) {
                         advance(); // trailing comma
                     }
-                    expect(RPAR, "Expecting ')'", recoverySet);
+                    expect(RPAR, "Expecting ')'", TRY_CATCH_RECOVERY_TOKEN_SET);
                 }
                 else {
                     error("Expecting exception variable declaration");
@@ -1791,7 +1935,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     }
 
     /*
-     * "this" ("<" type ">")? label?
+     * "super" ("<" type ">")? label?
      */
     private void parseSuperExpression() {
         assert _at(SUPER_KEYWORD);
@@ -1808,7 +1952,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             myBuilder.disableNewlines();
             advance(); // LT
 
-            myKotlinParsing.parseTypeRef();
+            myKotlinParsing.parseTypeRef(/* partOfExpression */ false);
 
             if (at(GT)) {
                 advance(); // GT
@@ -1864,6 +2008,10 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         myBuilder.restoreNewlinesState();
 
         list.done(VALUE_ARGUMENT_LIST);
+    }
+
+    private boolean isAtValueArgumentList() {
+        return _at(LPAR) && !myBuilder.newlineBeforeCurrentToken();
     }
 
     /*

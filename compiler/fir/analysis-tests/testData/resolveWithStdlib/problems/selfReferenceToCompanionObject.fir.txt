@@ -79,6 +79,9 @@ FILE: selfReferenceToCompanionObject.kt
         public final static fun valueOf(value: R|kotlin/String|): R|Test| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<Test>|
+            public get(): R|kotlin/enums/EnumEntries<Test>|
+
     }
     public final fun box(): R|kotlin/String| {
         ^box Q|Host.Companion|.R|/Base.fn|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()

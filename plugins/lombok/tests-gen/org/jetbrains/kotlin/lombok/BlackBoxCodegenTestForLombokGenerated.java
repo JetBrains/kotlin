@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -47,6 +47,18 @@ public class BlackBoxCodegenTestForLombokGenerated extends AbstractBlackBoxCodeg
     @Test
     public void testAllFilesPresentInBox() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/lombok/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+    }
+
+    @Test
+    @TestMetadata("builder.kt")
+    public void testBuilder() throws Exception {
+        runTest("plugins/lombok/testData/box/builder.kt");
+    }
+
+    @Test
+    @TestMetadata("builderSingular.kt")
+    public void testBuilderSingular() throws Exception {
+        runTest("plugins/lombok/testData/box/builderSingular.kt");
     }
 
     @Test
@@ -161,5 +173,11 @@ public class BlackBoxCodegenTestForLombokGenerated extends AbstractBlackBoxCodeg
     @TestMetadata("with.kt")
     public void testWith() throws Exception {
         runTest("plugins/lombok/testData/box/with.kt");
+    }
+
+    @Test
+    @TestMetadata("withBooleanField.kt")
+    public void testWithBooleanField() throws Exception {
+        runTest("plugins/lombok/testData/box/withBooleanField.kt");
     }
 }

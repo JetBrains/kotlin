@@ -14,15 +14,6 @@
 
 extern "C" {
 
-Class Kotlin_Interop_getObjCClass(const char* name) {
-    Class result = objc_lookUpClass(name);
-    if (result == nil) {
-        // GTest can display error messages of C++ exceptions so we use them instead of ObjC ones.
-        throw std::invalid_argument("Incorrect class name");
-    }
-    return result;
-}
-
 RUNTIME_NORETURN OBJ_GETTER0(Kotlin_NSEnumeratorAsKIterator_create) {
     throw std::runtime_error("Not implemented for tests");
 }

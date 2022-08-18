@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ensurePhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeclarationStatusIsResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 
 /**
  * Transform designation into STATUS phase. Affects only for designation, target declaration, it's children and dependents
@@ -38,7 +39,7 @@ internal class LLFirDesignatedStatusResolveTransformer(
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.declaration.resolvePhase >= FirResolvePhase.STATUS) return
-        designation.declaration.ensurePhase(FirResolvePhase.TYPES)
+        designation.declaration.checkPhase(FirResolvePhase.TYPES)
 
         val transformer = FirDesignatedStatusResolveTransformerForIDE()
         ResolveTreeBuilder.resolvePhase(designation.declaration, FirResolvePhase.STATUS) {
@@ -49,28 +50,16 @@ internal class LLFirDesignatedStatusResolveTransformer(
 
         transformer.designationTransformer.ensureDesignationPassed()
         updatePhaseDeep(designation.declaration, FirResolvePhase.STATUS)
-        ensureResolved(designation.declaration)
-        ensureResolvedDeep(designation.declaration)
+        checkIsResolved(designation.declaration)
     }
 
-    override fun ensureResolved(declaration: FirDeclaration) {
+    override fun checkIsResolved(declaration: FirDeclaration) {
         if (declaration !is FirAnonymousInitializer) {
-            declaration.ensurePhase(FirResolvePhase.STATUS)
+            declaration.checkPhase(FirResolvePhase.STATUS)
         }
-        when (declaration) {
-            is FirSimpleFunction -> check(declaration.status is FirResolvedDeclarationStatus)
-            is FirConstructor -> check(declaration.status is FirResolvedDeclarationStatus)
-            is FirTypeAlias -> check(declaration.status is FirResolvedDeclarationStatus)
-            is FirEnumEntry -> check(declaration.status is FirResolvedDeclarationStatus)
-            is FirField -> check(declaration.status is FirResolvedDeclarationStatus)
-            is FirProperty -> {
-                check(declaration.status is FirResolvedDeclarationStatus)
-                check(declaration.getter?.status?.let { it is FirResolvedDeclarationStatus } ?: true)
-                check(declaration.setter?.status?.let { it is FirResolvedDeclarationStatus } ?: true)
-            }
-            is FirRegularClass -> check(declaration.status is FirResolvedDeclarationStatus)
-            is FirAnonymousInitializer -> Unit
-            else -> error("Unexpected type: ${declaration::class.simpleName}")
+        if (declaration is FirMemberDeclaration) {
+            checkDeclarationStatusIsResolved(declaration)
         }
+        checkNestedDeclarationsAreResolved(declaration)
     }
 }

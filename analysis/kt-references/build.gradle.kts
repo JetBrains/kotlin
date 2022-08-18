@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     implementation(project(":compiler:psi"))
-    implementation(project(":compiler:light-classes-base"))
+    implementation(project(":analysis:light-classes-base"))
     implementation(intellijCore())
 
     compileOnly(commonDependency("com.google.guava:guava"))

@@ -1,0 +1,4 @@
+compiler/testData/cli/jvm/enumEntriesForJavaNotEnabled.kt:4:49: error: unresolved reference: entries
+    val entries = java.util.concurrent.TimeUnit.entries
+                                                ^
+COMPILATION_ERROR

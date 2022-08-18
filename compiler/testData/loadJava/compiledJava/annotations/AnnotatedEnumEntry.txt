@@ -25,6 +25,7 @@ public final enum class AnnotatedEnumEntry : kotlin.Enum<test.AnnotatedEnumEntry
     }
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.AnnotatedEnumEntry>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.AnnotatedEnumEntry
     public final /*synthesized*/ fun values(): kotlin.Array<test.AnnotatedEnumEntry>
 }

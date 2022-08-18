@@ -359,25 +359,8 @@ fun parseBitcodeFile(path: String): LLVMModuleRef = memScoped {
     }
 }
 
-private val nounwindAttrKindId by lazy {
-    getLlvmAttributeKindId("nounwind")
-}
-
-private val noreturnAttrKindId by lazy {
-    getLlvmAttributeKindId("noreturn")
-}
-
-private val noinlineAttrKindId by lazy {
-    getLlvmAttributeKindId("noinline")
-}
-
-private val signextAttrKindId by lazy {
-    getLlvmAttributeKindId("signext")
-}
-
-
 fun isFunctionNoUnwind(function: LLVMValueRef): Boolean {
-    val attribute = LLVMGetEnumAttributeAtIndex(function, LLVMAttributeFunctionIndex, nounwindAttrKindId.value)
+    val attribute = LLVMGetEnumAttributeAtIndex(function, LLVMAttributeFunctionIndex, LlvmFunctionAttribute.NoUnwind.asAttributeKindId().value)
     return attribute != null
 }
 
@@ -392,21 +375,24 @@ internal fun getLlvmAttributeKindId(attributeName: String): LLVMAttributeKindId 
 data class LLVMAttributeKindId(val value: Int)
 
 fun setFunctionNoUnwind(function: LLVMValueRef) {
-    addLlvmFunctionEnumAttribute(function, nounwindAttrKindId)
+    addLlvmFunctionEnumAttribute(function, LlvmFunctionAttribute.NoUnwind)
 }
 
 fun setFunctionNoReturn(function: LLVMValueRef) {
-    addLlvmFunctionEnumAttribute(function, noreturnAttrKindId)
+    addLlvmFunctionEnumAttribute(function, LlvmFunctionAttribute.NoReturn)
 }
 
 fun setFunctionNoInline(function: LLVMValueRef) {
-    addLlvmFunctionEnumAttribute(function, noinlineAttrKindId)
+    addLlvmFunctionEnumAttribute(function, LlvmFunctionAttribute.NoInline)
 }
 
 internal fun addLlvmFunctionEnumAttribute(function: LLVMValueRef, attrKindId: LLVMAttributeKindId, value: Long = 0) {
     val attribute = createLlvmEnumAttribute(LLVMGetTypeContext(function.type)!!, attrKindId, value)
     addLlvmFunctionAttribute(function, attribute)
 }
+
+internal fun addLlvmFunctionEnumAttribute(function: LLVMValueRef, attr: LlvmAttribute, value: Long = 0) =
+        addLlvmFunctionEnumAttribute(function, attr.asAttributeKindId(), value)
 
 internal fun createLlvmEnumAttribute(llvmContext: LLVMContextRef, attrKindId: LLVMAttributeKindId, value: Long = 0) =
         LLVMCreateEnumAttribute(llvmContext, attrKindId.value, value)!!
@@ -417,7 +403,7 @@ internal fun addLlvmFunctionAttribute(function: LLVMValueRef, attribute: LLVMAtt
 
 fun addFunctionSignext(function: LLVMValueRef, index: Int, type: LLVMTypeRef?) {
     if (type == int1Type || type == int8Type || type == int16Type) {
-        val attribute = createLlvmEnumAttribute(LLVMGetTypeContext(function.type)!!, signextAttrKindId)
+        val attribute = createLlvmEnumAttribute(LLVMGetTypeContext(function.type)!!, LlvmParameterAttribute.SignExt.asAttributeKindId())
         LLVMAddAttributeAtIndex(function, index, attribute)
     }
 }

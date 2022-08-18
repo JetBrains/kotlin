@@ -65,16 +65,17 @@ digraph dataFlowInfoFromWhileCondition_kt {
                         color=blue
                         24 [label="Enter block"];
                         25 [label="Access variable R|<local>/a|"];
-                        26 [label="Function call: R|<local>/a|.R|/A.foo|()"];
-                        27 [label="Exit block"];
+                        26 [label="Smart cast: R|<local>/a|"];
+                        27 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+                        28 [label="Exit block"];
                     }
-                    28 [label="Exit loop block"];
+                    29 [label="Exit loop block"];
                 }
-                29 [label="Exit whileloop"];
+                30 [label="Exit whileloop"];
             }
-            30 [label="Exit block"];
+            31 [label="Exit block"];
         }
-        31 [label="Exit function test" style="filled" fillcolor=red];
+        32 [label="Exit function test" style="filled" fillcolor=red];
     }
     8 -> {9};
     9 -> {10};
@@ -90,14 +91,15 @@ digraph dataFlowInfoFromWhileCondition_kt {
     19 -> {20};
     20 -> {21};
     21 -> {22};
-    22 -> {29 23};
+    22 -> {30 23};
     23 -> {24};
     24 -> {25};
     25 -> {26};
     26 -> {27};
     27 -> {28};
-    28 -> {13} [color=green style=dashed];
-    29 -> {30};
+    28 -> {29};
+    29 -> {13} [color=green style=dashed];
     30 -> {31};
+    31 -> {32};
 
 }

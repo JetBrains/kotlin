@@ -26,7 +26,6 @@ abstract class KotlinAndroidTargetPreset @Inject constructor(
             name,
             project
         ).apply {
-            disambiguationClassifier = name
             preset = this@KotlinAndroidTargetPreset
             targetUnderConstruction = this
         }

@@ -108,12 +108,12 @@ fun IrMemberAccessExpression<*>.getArgumentsWithIr(): List<Pair<IrValueParameter
         else -> error(this)
     }
 
-    dispatchReceiver?.let {
-        res += (irFunction.dispatchReceiverParameter!! to it)
+    dispatchReceiver?.let { arg ->
+        irFunction.dispatchReceiverParameter?.let { parameter -> res += (parameter to arg) }
     }
 
-    extensionReceiver?.let {
-        res += (irFunction.extensionReceiverParameter!! to it)
+    extensionReceiver?.let { arg ->
+        irFunction.extensionReceiverParameter?.let { parameter -> res += (parameter to arg) }
     }
 
     irFunction.valueParameters.forEachIndexed { index, it ->

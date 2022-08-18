@@ -208,8 +208,8 @@ jvmTestFrameworks.forEach { framework ->
                 apiElements("junit:junit:4.13.2")
             }
             "junit5" -> {
-                apiElements("org.junit.jupiter:junit-jupiter-api:5.6.0")
-                runtimeElements("org.junit.jupiter:junit-jupiter-engine:5.6.0")
+                apiElements("org.junit.jupiter:junit-jupiter-api:5.6.3")
+                runtimeElements("org.junit.jupiter:junit-jupiter-engine:5.6.3")
             }
             "testng" -> {
                 apiElements("org.testng:testng:6.13.1")

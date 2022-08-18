@@ -1,22 +1,11 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
 
 package kotlin.reflect.jvm.internal;
 
-import kotlin.SinceKotlin;
 import kotlin.jvm.internal.*;
 import kotlin.reflect.*;
 import kotlin.reflect.full.KClassifiers;
@@ -43,17 +32,18 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     @Override
     public KDeclarationContainer getOrCreateKotlinPackage(Class javaClass, String moduleName) {
-        return new KPackageImpl(javaClass, moduleName);
+        // moduleName is unused deliberately and only left in public ABI
+        return CachesKt.getOrCreateKotlinPackage(javaClass);
     }
 
     @Override
     public KClass getOrCreateKotlinClass(Class javaClass) {
-        return KClassCacheKt.getOrCreateKotlinClass(javaClass);
+        return CachesKt.getOrCreateKotlinClass(javaClass);
     }
 
     @Override
     public KClass getOrCreateKotlinClass(Class javaClass, String internalName) {
-        return KClassCacheKt.getOrCreateKotlinClass(javaClass);
+        return CachesKt.getOrCreateKotlinClass(javaClass);
     }
 
     @Override
@@ -121,6 +111,17 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     @Override
     public KType typeOf(KClassifier klass, List<KTypeProjection> arguments, boolean isMarkedNullable) {
+        /*
+         * We control how this method is called and ensure that `typeOf` is invoked mostly (in scenarios that
+         * bother us performance-wise) on the result of `getOrCreateKotlinClass(klass)`, thus we do downcast
+         * and extract `java.lang.Class` in a zero-cost manner.
+         * If that's our case, we go to caching code-path that caches relatively slow `createType()` call,
+         * and, what's more important, all member-based computations on this KType (e.g. `classifier`)
+         * are properly cached as well.
+         */
+        if (klass instanceof ClassBasedDeclarationContainer) {
+            return CachesKt.getOrCreateKType(((ClassBasedDeclarationContainer) klass).getJClass(), arguments, isMarkedNullable);
+        }
         return KClassifiers.createType(klass, arguments, isMarkedNullable, Collections.<Annotation>emptyList());
     }
 
@@ -165,7 +166,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     // Misc
 
     public static void clearCaches() {
-        KClassCacheKt.clearKClassCache();
+        CachesKt.clearCaches();
         ModuleByClassLoaderKt.clearModuleByClassLoaderCache();
     }
 }

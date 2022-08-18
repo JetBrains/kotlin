@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ensurePhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -55,19 +55,13 @@ internal class LLFirDesignatedAnnotationsResolveTransformed(
         }
 
         LLFirLazyTransformer.updatePhaseDeep(designation.declaration, FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
-        ensureResolved(designation.declaration)
-        ensureResolvedDeep(designation.declaration)
+        checkIsResolved(designation.declaration)
     }
 
-    override fun ensureResolved(declaration: FirDeclaration) {
-        when (declaration) {
-            is FirClass, is FirTypeAlias ->
-                declaration.ensurePhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
-            is FirFunction, is FirProperty, is FirEnumEntry, is FirField, is FirAnonymousInitializer, is FirErrorProperty ->
-                Unit
-            else ->
-                error("Unexpected type: ${declaration::class.simpleName}")
-        }
+    override fun checkIsResolved(declaration: FirDeclaration) {
+        declaration.checkPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
+        // todo add proper check that COMPILER_REQUIRED_ANNOTATIONS are resolved
+//        checkNestedDeclarationsAreResolved(declaration)
     }
 
 }

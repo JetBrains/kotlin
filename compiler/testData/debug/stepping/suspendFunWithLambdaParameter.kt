@@ -23,6 +23,3 @@ suspend fun box() {
 // test.kt:4 foo
 // test.kt:4 foo
 // test.kt:9 box$lambda
-// test.kt:9 box$lambda
-// test.kt:4 foo
-// test.kt:7 box

@@ -26,7 +26,7 @@
 #include "PointerBits.h"
 #include "Utils.hpp"
 
-#if KONAN_ARM32 && (KONAN_IOS || KONAN_WATCHOS)
+#if KONAN_NEAD_SMALL_BINARY
   // Currently, codegen places a lot of unnecessary calls to MM functions.
   // By forcing NO_INLINE on these functions we keep binaries from growing too big.
   #define CODEGEN_INLINE_POLICY NO_INLINE
@@ -59,35 +59,54 @@ struct ObjHeader {
       }
   }
 
+  TypeInfo* typeInfoOrMetaRelaxed() const { return atomicGetRelaxed(&typeInfoOrMeta_);}
+  TypeInfo* typeInfoOrMetaAcquire() const { return atomicGetAcquire(&typeInfoOrMeta_);}
+
+  /**
+   * Formally, this code data races with installing ExtraObject. Even though, we are okey, with reading
+   * both typeInfo and meta-object pointer, llvm memory model doesn't guarantee, that if we are able to
+   * see metaObject, written by other thread, we would be able to see metaObject->typeInfo.
+   *
+   * To make this correct with llvm memory model we need to use [LLVMAtomicOrdering.LLVMAtomicOrderingAcquire] here.
+   * Unfortunately, this is dramatically harmful for performance on arm architecture. So, we are using
+   * [LLVMAtomicOrdering.LLVMAtomicOrderingMonotonic] for both this read and following load of metaObject->typeInfo.
+   * At this point, we have no data race, but llvm memory model allows uninitialized value to be read from metaObject->typeInfo.
+   *
+   * Hardware guaranties on many supported platforms doesn't allow this to happen.
+   */
   const TypeInfo* type_info() const {
-    return clearPointerBits(typeInfoOrMeta_, OBJECT_TAG_MASK)->typeInfo_;
+#ifdef KONAN_TARGET_HAS_ADDRESS_DEPENDENCY
+      return atomicGetRelaxed(&clearPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK)->typeInfo_);
+#else
+      return atomicGetRelaxed(&clearPointerBits(typeInfoOrMetaAcquire(), OBJECT_TAG_MASK)->typeInfo_);
+#endif
   }
 
   bool has_meta_object() const {
-      return AsMetaObject(typeInfoOrMeta_) != nullptr;
+      return meta_object_or_null() != nullptr;
   }
 
   MetaObjHeader* meta_object() {
-      if (auto* metaObject = AsMetaObject(typeInfoOrMeta_)) {
+      if (auto* metaObject = AsMetaObject(typeInfoOrMetaAcquire())) {
           return metaObject;
       }
       return createMetaObject(this);
   }
 
-  MetaObjHeader* meta_object_or_null() const noexcept { return AsMetaObject(typeInfoOrMeta_); }
+  MetaObjHeader* meta_object_or_null() const noexcept { return AsMetaObject(typeInfoOrMetaAcquire()); }
 
   ALWAYS_INLINE ObjHeader* GetWeakCounter();
   ALWAYS_INLINE ObjHeader* GetOrSetWeakCounter(ObjHeader* counter);
 
 
 #ifdef KONAN_OBJC_INTEROP
-  ALWAYS_INLINE void* GetAssociatedObject();
-  ALWAYS_INLINE void** GetAssociatedObjectLocation();
+  ALWAYS_INLINE void* GetAssociatedObject() const;
   ALWAYS_INLINE void SetAssociatedObject(void* obj);
+  ALWAYS_INLINE void* CasAssociatedObject(void* expectedObj, void* obj);
 #endif
 
   inline bool local() const {
-    unsigned bits = getPointerBits(typeInfoOrMeta_, OBJECT_TAG_MASK);
+    unsigned bits = getPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK);
     return (bits & (OBJECT_TAG_PERMANENT_CONTAINER | OBJECT_TAG_NONTRIVIAL_CONTAINER)) ==
         (OBJECT_TAG_PERMANENT_CONTAINER | OBJECT_TAG_NONTRIVIAL_CONTAINER);
   }
@@ -98,10 +117,10 @@ struct ObjHeader {
   const ArrayHeader* array() const { return reinterpret_cast<const ArrayHeader*>(this); }
 
   inline bool permanent() const {
-    return hasPointerBits(typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+    return hasPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_PERMANENT_CONTAINER);
   }
 
-  inline bool heap() const { return getPointerBits(typeInfoOrMeta_, OBJECT_TAG_MASK) == 0; }
+  inline bool heap() const { return getPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK) == 0; }
 
   static MetaObjHeader* createMetaObject(ObjHeader* object);
   static void destroyMetaObject(ObjHeader* object);

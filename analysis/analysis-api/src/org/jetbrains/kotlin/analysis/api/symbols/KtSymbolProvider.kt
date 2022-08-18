@@ -51,6 +51,8 @@ public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
     public abstract fun getClassInitializerSymbol(psi: KtClassInitializer): KtClassInitializerSymbol
     public abstract fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KtLocalVariableSymbol
 
+    public abstract fun getPackageSymbolIfPackageExists(packageFqName: FqName): KtPackageSymbol?
+
     public abstract fun getClassOrObjectSymbolByClassId(classId: ClassId): KtClassOrObjectSymbol?
 
     public abstract fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KtSymbol>
@@ -125,6 +127,13 @@ public interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
 
     public fun KtFile.getFileSymbol(): KtFileSymbol =
         withValidityAssertion { analysisSession.symbolProvider.getFileSymbol(this) }
+
+    /**
+     * Returns [KtPackageSymbol] corresponding to [packageFqName] if corresponding package is exists and visible from current uses-site scope,
+     * `null` otherwise
+     */
+    public fun getPackageSymbolIfPackageExists(packageFqName: FqName): KtPackageSymbol? =
+        withValidityAssertion { analysisSession.symbolProvider.getPackageSymbolIfPackageExists(packageFqName) }
 
     /**
      * @return symbol with specified [this@getClassOrObjectSymbolByClassId] or `null` in case such symbol is not found

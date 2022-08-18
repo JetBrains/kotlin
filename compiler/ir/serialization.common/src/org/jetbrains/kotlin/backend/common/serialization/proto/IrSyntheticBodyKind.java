@@ -16,6 +16,10 @@ public enum IrSyntheticBodyKind
    * <code>ENUM_VALUEOF = 2;</code>
    */
   ENUM_VALUEOF(1, 2),
+  /**
+   * <code>ENUM_ENTRIES = 3;</code>
+   */
+  ENUM_ENTRIES(2, 3),
   ;
 
   /**
@@ -26,6 +30,10 @@ public enum IrSyntheticBodyKind
    * <code>ENUM_VALUEOF = 2;</code>
    */
   public static final int ENUM_VALUEOF_VALUE = 2;
+  /**
+   * <code>ENUM_ENTRIES = 3;</code>
+   */
+  public static final int ENUM_ENTRIES_VALUE = 3;
 
 
   public final int getNumber() { return value; }
@@ -34,6 +42,7 @@ public enum IrSyntheticBodyKind
     switch (value) {
       case 1: return ENUM_VALUES;
       case 2: return ENUM_VALUEOF;
+      case 3: return ENUM_ENTRIES;
       default: return null;
     }
   }

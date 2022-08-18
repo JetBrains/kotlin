@@ -183,7 +183,7 @@ class IrKlibBytesSource(private val klib: IrLibrary, private val fileIndex: Int)
     override fun debugInfo(index: Int): ByteArray? = klib.debugInfo(index, fileIndex)
 }
 
-internal fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
+fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
     fqn.joinToString(".", transform = ::string)
 
 fun IrLibraryFile.createFile(module: IrModuleFragment, fileProto: ProtoFile): IrFile {

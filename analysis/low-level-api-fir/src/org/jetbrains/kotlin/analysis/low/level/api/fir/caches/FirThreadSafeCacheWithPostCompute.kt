@@ -14,7 +14,6 @@ internal class FirThreadSafeCacheWithPostCompute<K : Any, V, CONTEXT, DATA>(
 ) : FirCache<K, V, CONTEXT>() {
     private val map = ConcurrentHashMap<K, ValueWithPostCompute<K, V, DATA>>()
 
-    @Suppress("UNCHECKED_CAST")
     override fun getValue(key: K, context: CONTEXT): V =
         map.getOrPut(key) {
             ValueWithPostCompute(

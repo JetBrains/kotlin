@@ -157,7 +157,7 @@ constructor(
     }
 
     override fun executeTests() {
-        npmResolutionManager.checkRequiredDependencies(task = this, services = services, logger = logger, projectPath = projectPath)
+        npmResolutionManager.checkRequiredDependencies(task = this)
         super.executeTests()
     }
 

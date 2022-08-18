@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -424,6 +424,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("annotationInstancesEmptyDefault.kt")
             public void testAnnotationInstancesEmptyDefault() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/annotationInstancesEmptyDefault.kt");
+            }
+
+            @Test
+            @TestMetadata("annotationInstancesEmptyDefaultLowered.kt")
+            public void testAnnotationInstancesEmptyDefaultLowered() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/annotationInstancesEmptyDefaultLowered.kt");
             }
 
             @Test
@@ -8907,6 +8913,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             public void testWhileTrueBreak() throws Exception {
                 runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/whileTrueBreak.kt");
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue")
+            @TestDataPath("$PROJECT_ROOT")
+            public class InlinedBreakContinue {
+                @Test
+                public void testAllFilesPresentInInlinedBreakContinue() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                }
+            }
         }
 
         @Nested
@@ -15808,6 +15824,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("kt53202.kt")
+        public void testKt53202() throws Exception {
+            runTest("compiler/testData/codegen/box/directInvokeOptimization/kt53202.kt");
+        }
+
+        @Test
+        @TestMetadata("kt53202_funLiteral.kt")
+        public void testKt53202_funLiteral() throws Exception {
+            runTest("compiler/testData/codegen/box/directInvokeOptimization/kt53202_funLiteral.kt");
+        }
+
+        @Test
+        @TestMetadata("kt53202_returns.kt")
+        public void testKt53202_returns() throws Exception {
+            runTest("compiler/testData/codegen/box/directInvokeOptimization/kt53202_returns.kt");
+        }
+
+        @Test
         @TestMetadata("nestedLambdas.kt")
         public void testNestedLambdas() throws Exception {
             runTest("compiler/testData/codegen/box/directInvokeOptimization/nestedLambdas.kt");
@@ -18431,52 +18465,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             public void testParameterAsDefaultValue() throws Exception {
                 runTest("compiler/testData/codegen/box/functions/localFunctions/parameterAsDefaultValue.kt");
             }
-        }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/codegen/box/hashPMap")
-    @TestDataPath("$PROJECT_ROOT")
-    public class HashPMap {
-        @Test
-        public void testAllFilesPresentInHashPMap() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/hashPMap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-        }
-
-        @Test
-        @TestMetadata("empty.kt")
-        public void testEmpty() throws Exception {
-            runTest("compiler/testData/codegen/box/hashPMap/empty.kt");
-        }
-
-        @Test
-        @TestMetadata("manyNumbers.kt")
-        public void testManyNumbers() throws Exception {
-            runTest("compiler/testData/codegen/box/hashPMap/manyNumbers.kt");
-        }
-
-        @Test
-        @TestMetadata("rewriteWithDifferent.kt")
-        public void testRewriteWithDifferent() throws Exception {
-            runTest("compiler/testData/codegen/box/hashPMap/rewriteWithDifferent.kt");
-        }
-
-        @Test
-        @TestMetadata("rewriteWithEqual.kt")
-        public void testRewriteWithEqual() throws Exception {
-            runTest("compiler/testData/codegen/box/hashPMap/rewriteWithEqual.kt");
-        }
-
-        @Test
-        @TestMetadata("simplePlusGet.kt")
-        public void testSimplePlusGet() throws Exception {
-            runTest("compiler/testData/codegen/box/hashPMap/simplePlusGet.kt");
-        }
-
-        @Test
-        @TestMetadata("simplePlusMinus.kt")
-        public void testSimplePlusMinus() throws Exception {
-            runTest("compiler/testData/codegen/box/hashPMap/simplePlusMinus.kt");
         }
     }
 
@@ -35230,9 +35218,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @Test
-                @TestMetadata("charRangeLiteral.kt")
-                public void testCharRangeLiteral() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/contains/generated/charRangeLiteral.kt");
+                @TestMetadata("charRangeTo.kt")
+                public void testCharRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/charRangeTo.kt");
                 }
 
                 @Test
@@ -35254,15 +35242,15 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @Test
-                @TestMetadata("doubleRangeLiteral.kt")
-                public void testDoubleRangeLiteral() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/contains/generated/doubleRangeLiteral.kt");
+                @TestMetadata("doubleRangeTo.kt")
+                public void testDoubleRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/doubleRangeTo.kt");
                 }
 
                 @Test
-                @TestMetadata("floatRangeLiteral.kt")
-                public void testFloatRangeLiteral() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/contains/generated/floatRangeLiteral.kt");
+                @TestMetadata("floatRangeTo.kt")
+                public void testFloatRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/floatRangeTo.kt");
                 }
 
                 @Test
@@ -35272,9 +35260,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @Test
-                @TestMetadata("intRangeLiteral.kt")
-                public void testIntRangeLiteral() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/contains/generated/intRangeLiteral.kt");
+                @TestMetadata("intRangeTo.kt")
+                public void testIntRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/intRangeTo.kt");
                 }
 
                 @Test
@@ -35290,15 +35278,51 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @Test
-                @TestMetadata("longRangeLiteral.kt")
-                public void testLongRangeLiteral() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/contains/generated/longRangeLiteral.kt");
+                @TestMetadata("longRangeTo.kt")
+                public void testLongRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/longRangeTo.kt");
                 }
 
                 @Test
                 @TestMetadata("longUntil.kt")
                 public void testLongUntil() throws Exception {
                     runTest("compiler/testData/codegen/box/ranges/contains/generated/longUntil.kt");
+                }
+
+                @Test
+                @TestMetadata("uintDownTo.kt")
+                public void testUintDownTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/uintDownTo.kt");
+                }
+
+                @Test
+                @TestMetadata("uintRangeTo.kt")
+                public void testUintRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/uintRangeTo.kt");
+                }
+
+                @Test
+                @TestMetadata("uintUntil.kt")
+                public void testUintUntil() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/uintUntil.kt");
+                }
+
+                @Test
+                @TestMetadata("ulongDownTo.kt")
+                public void testUlongDownTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/ulongDownTo.kt");
+                }
+
+                @Test
+                @TestMetadata("ulongRangeTo.kt")
+                public void testUlongRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/ulongRangeTo.kt");
+                }
+
+                @Test
+                @TestMetadata("ulongUntil.kt")
+                public void testUlongUntil() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/ulongUntil.kt");
                 }
             }
         }
@@ -35633,21 +35657,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
-            @TestMetadata("openRangeUntil.kt")
-            public void testOpenRangeUntil() throws Exception {
-                runTest("compiler/testData/codegen/box/ranges/expression/openRangeUntil.kt");
-            }
-
-            @Test
             @TestMetadata("overflowZeroDownToMaxValue.kt")
             public void testOverflowZeroDownToMaxValue() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/expression/overflowZeroDownToMaxValue.kt");
-            }
-
-            @Test
-            @TestMetadata("overflowZeroToMinValue.kt")
-            public void testOverflowZeroToMinValue() throws Exception {
-                runTest("compiler/testData/codegen/box/ranges/expression/overflowZeroToMinValue.kt");
             }
 
             @Test
@@ -36659,21 +36671,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
-            @TestMetadata("openRangeUntil.kt")
-            public void testOpenRangeUntil() throws Exception {
-                runTest("compiler/testData/codegen/box/ranges/literal/openRangeUntil.kt");
-            }
-
-            @Test
             @TestMetadata("overflowZeroDownToMaxValue.kt")
             public void testOverflowZeroDownToMaxValue() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/literal/overflowZeroDownToMaxValue.kt");
-            }
-
-            @Test
-            @TestMetadata("overflowZeroToMinValue.kt")
-            public void testOverflowZeroToMinValue() throws Exception {
-                runTest("compiler/testData/codegen/box/ranges/literal/overflowZeroToMinValue.kt");
             }
 
             @Test
@@ -37248,66 +37248,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
                     }
 
-                    @Test
-                    @TestMetadata("emptyProgression.kt")
-                    public void testEmptyProgression() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/emptyProgression.kt");
-                    }
-
-                    @Test
-                    @TestMetadata("illegalStepNegative.kt")
-                    public void testIllegalStepNegative() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/illegalStepNegative.kt");
-                    }
-
-                    @Test
-                    @TestMetadata("illegalStepThenLegalStep.kt")
-                    public void testIllegalStepThenLegalStep() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/illegalStepThenLegalStep.kt");
-                    }
-
-                    @Test
-                    @TestMetadata("illegalStepZero.kt")
-                    public void testIllegalStepZero() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/illegalStepZero.kt");
-                    }
-
-                    @Test
-                    @TestMetadata("legalStepThenIllegalStep.kt")
-                    public void testLegalStepThenIllegalStep() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/legalStepThenIllegalStep.kt");
-                    }
-
-                    @Test
-                    @TestMetadata("singleElementStepTwo.kt")
-                    public void testSingleElementStepTwo() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/singleElementStepTwo.kt");
-                    }
-
-                    @Test
-                    @TestMetadata("stepOne.kt")
-                    public void testStepOne() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/stepOne.kt");
-                    }
-
-                    @Test
-                    @TestMetadata("stepToOutsideRange.kt")
-                    public void testStepToOutsideRange() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/stepToOutsideRange.kt");
-                    }
-
-                    @Test
-                    @TestMetadata("stepToSameLast.kt")
-                    public void testStepToSameLast() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/stepToSameLast.kt");
-                    }
-
-                    @Test
-                    @TestMetadata("stepToSmallerLast.kt")
-                    public void testStepToSmallerLast() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/stepToSmallerLast.kt");
-                    }
-
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/nestedStep")
                     @TestDataPath("$PROJECT_ROOT")
@@ -37315,54 +37255,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                         @Test
                         public void testAllFilesPresentInNestedStep() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-                        }
-
-                        @Test
-                        @TestMetadata("stepOneThenStepOne.kt")
-                        public void testStepOneThenStepOne() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/nestedStep/stepOneThenStepOne.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepThenSameStep.kt")
-                        public void testStepThenSameStep() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/nestedStep/stepThenSameStep.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepToSameLastThenStepOne.kt")
-                        public void testStepToSameLastThenStepOne() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/nestedStep/stepToSameLastThenStepOne.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepToSameLastThenStepToSameLast.kt")
-                        public void testStepToSameLastThenStepToSameLast() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/nestedStep/stepToSameLastThenStepToSameLast.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepToSameLastThenStepToSmallerLast.kt")
-                        public void testStepToSameLastThenStepToSmallerLast() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/nestedStep/stepToSameLastThenStepToSmallerLast.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepToSmallerLastThenStepOne.kt")
-                        public void testStepToSmallerLastThenStepOne() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/nestedStep/stepToSmallerLastThenStepOne.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepToSmallerLastThenStepToSameLast.kt")
-                        public void testStepToSmallerLastThenStepToSameLast() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/nestedStep/stepToSmallerLastThenStepToSameLast.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepToSmallerLastThenStepToSmallerLast.kt")
-                        public void testStepToSmallerLastThenStepToSmallerLast() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/nestedStep/stepToSmallerLastThenStepToSmallerLast.kt");
                         }
                     }
 
@@ -37373,42 +37265,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                         @Test
                         public void testAllFilesPresentInReversed() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-                        }
-
-                        @Test
-                        @TestMetadata("reversedThenStep.kt")
-                        public void testReversedThenStep() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/reversed/reversedThenStep.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("reversedThenStepThenReversed.kt")
-                        public void testReversedThenStepThenReversed() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/reversed/reversedThenStepThenReversed.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("reversedThenStepThenReversedThenStep.kt")
-                        public void testReversedThenStepThenReversedThenStep() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/reversed/reversedThenStepThenReversedThenStep.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepThenReversed.kt")
-                        public void testStepThenReversed() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/reversed/stepThenReversed.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepThenReversedThenStep.kt")
-                        public void testStepThenReversedThenStep() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/reversed/stepThenReversedThenStep.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepThenReversedThenStepThenReversed.kt")
-                        public void testStepThenReversedThenStepThenReversed() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/reversed/stepThenReversedThenStepThenReversed.kt");
                         }
                     }
                 }
@@ -38068,66 +37924,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
                     }
 
-                    @Test
-                    @TestMetadata("emptyProgression.kt")
-                    public void testEmptyProgression() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/emptyProgression.kt");
-                    }
-
-                    @Test
-                    @TestMetadata("illegalStepNegative.kt")
-                    public void testIllegalStepNegative() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/illegalStepNegative.kt");
-                    }
-
-                    @Test
-                    @TestMetadata("illegalStepThenLegalStep.kt")
-                    public void testIllegalStepThenLegalStep() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/illegalStepThenLegalStep.kt");
-                    }
-
-                    @Test
-                    @TestMetadata("illegalStepZero.kt")
-                    public void testIllegalStepZero() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/illegalStepZero.kt");
-                    }
-
-                    @Test
-                    @TestMetadata("legalStepThenIllegalStep.kt")
-                    public void testLegalStepThenIllegalStep() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/legalStepThenIllegalStep.kt");
-                    }
-
-                    @Test
-                    @TestMetadata("singleElementStepTwo.kt")
-                    public void testSingleElementStepTwo() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/singleElementStepTwo.kt");
-                    }
-
-                    @Test
-                    @TestMetadata("stepOne.kt")
-                    public void testStepOne() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/stepOne.kt");
-                    }
-
-                    @Test
-                    @TestMetadata("stepToOutsideRange.kt")
-                    public void testStepToOutsideRange() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/stepToOutsideRange.kt");
-                    }
-
-                    @Test
-                    @TestMetadata("stepToSameLast.kt")
-                    public void testStepToSameLast() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/stepToSameLast.kt");
-                    }
-
-                    @Test
-                    @TestMetadata("stepToSmallerLast.kt")
-                    public void testStepToSmallerLast() throws Exception {
-                        runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/stepToSmallerLast.kt");
-                    }
-
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/nestedStep")
                     @TestDataPath("$PROJECT_ROOT")
@@ -38135,54 +37931,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                         @Test
                         public void testAllFilesPresentInNestedStep() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-                        }
-
-                        @Test
-                        @TestMetadata("stepOneThenStepOne.kt")
-                        public void testStepOneThenStepOne() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/nestedStep/stepOneThenStepOne.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepThenSameStep.kt")
-                        public void testStepThenSameStep() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/nestedStep/stepThenSameStep.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepToSameLastThenStepOne.kt")
-                        public void testStepToSameLastThenStepOne() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/nestedStep/stepToSameLastThenStepOne.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepToSameLastThenStepToSameLast.kt")
-                        public void testStepToSameLastThenStepToSameLast() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/nestedStep/stepToSameLastThenStepToSameLast.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepToSameLastThenStepToSmallerLast.kt")
-                        public void testStepToSameLastThenStepToSmallerLast() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/nestedStep/stepToSameLastThenStepToSmallerLast.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepToSmallerLastThenStepOne.kt")
-                        public void testStepToSmallerLastThenStepOne() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/nestedStep/stepToSmallerLastThenStepOne.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepToSmallerLastThenStepToSameLast.kt")
-                        public void testStepToSmallerLastThenStepToSameLast() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/nestedStep/stepToSmallerLastThenStepToSameLast.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepToSmallerLastThenStepToSmallerLast.kt")
-                        public void testStepToSmallerLastThenStepToSmallerLast() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/nestedStep/stepToSmallerLastThenStepToSmallerLast.kt");
                         }
                     }
 
@@ -38193,42 +37941,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                         @Test
                         public void testAllFilesPresentInReversed() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-                        }
-
-                        @Test
-                        @TestMetadata("reversedThenStep.kt")
-                        public void testReversedThenStep() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/reversed/reversedThenStep.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("reversedThenStepThenReversed.kt")
-                        public void testReversedThenStepThenReversed() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/reversed/reversedThenStepThenReversed.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("reversedThenStepThenReversedThenStep.kt")
-                        public void testReversedThenStepThenReversedThenStep() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/reversed/reversedThenStepThenReversedThenStep.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepThenReversed.kt")
-                        public void testStepThenReversed() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/reversed/stepThenReversed.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepThenReversedThenStep.kt")
-                        public void testStepThenReversedThenStep() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/reversed/stepThenReversedThenStep.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepThenReversedThenStepThenReversed.kt")
-                        public void testStepThenReversedThenStepThenReversed() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/reversed/stepThenReversedThenStepThenReversed.kt");
                         }
                     }
                 }
@@ -38897,66 +38609,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
                         }
 
-                        @Test
-                        @TestMetadata("emptyProgression.kt")
-                        public void testEmptyProgression() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/emptyProgression.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("illegalStepNegative.kt")
-                        public void testIllegalStepNegative() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/illegalStepNegative.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("illegalStepThenLegalStep.kt")
-                        public void testIllegalStepThenLegalStep() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/illegalStepThenLegalStep.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("illegalStepZero.kt")
-                        public void testIllegalStepZero() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/illegalStepZero.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("legalStepThenIllegalStep.kt")
-                        public void testLegalStepThenIllegalStep() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/legalStepThenIllegalStep.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("singleElementStepTwo.kt")
-                        public void testSingleElementStepTwo() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/singleElementStepTwo.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepOne.kt")
-                        public void testStepOne() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/stepOne.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepToOutsideRange.kt")
-                        public void testStepToOutsideRange() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/stepToOutsideRange.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepToSameLast.kt")
-                        public void testStepToSameLast() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/stepToSameLast.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepToSmallerLast.kt")
-                        public void testStepToSmallerLast() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/stepToSmallerLast.kt");
-                        }
-
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/nestedStep")
                         @TestDataPath("$PROJECT_ROOT")
@@ -38964,54 +38616,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                             @Test
                             public void testAllFilesPresentInNestedStep() throws Exception {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-                            }
-
-                            @Test
-                            @TestMetadata("stepOneThenStepOne.kt")
-                            public void testStepOneThenStepOne() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/nestedStep/stepOneThenStepOne.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("stepThenSameStep.kt")
-                            public void testStepThenSameStep() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/nestedStep/stepThenSameStep.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("stepToSameLastThenStepOne.kt")
-                            public void testStepToSameLastThenStepOne() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/nestedStep/stepToSameLastThenStepOne.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("stepToSameLastThenStepToSameLast.kt")
-                            public void testStepToSameLastThenStepToSameLast() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/nestedStep/stepToSameLastThenStepToSameLast.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("stepToSameLastThenStepToSmallerLast.kt")
-                            public void testStepToSameLastThenStepToSmallerLast() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/nestedStep/stepToSameLastThenStepToSmallerLast.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("stepToSmallerLastThenStepOne.kt")
-                            public void testStepToSmallerLastThenStepOne() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/nestedStep/stepToSmallerLastThenStepOne.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("stepToSmallerLastThenStepToSameLast.kt")
-                            public void testStepToSmallerLastThenStepToSameLast() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/nestedStep/stepToSmallerLastThenStepToSameLast.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("stepToSmallerLastThenStepToSmallerLast.kt")
-                            public void testStepToSmallerLastThenStepToSmallerLast() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/nestedStep/stepToSmallerLastThenStepToSmallerLast.kt");
                             }
                         }
 
@@ -39022,42 +38626,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                             @Test
                             public void testAllFilesPresentInReversed() throws Exception {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-                            }
-
-                            @Test
-                            @TestMetadata("reversedThenStep.kt")
-                            public void testReversedThenStep() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/reversed/reversedThenStep.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("reversedThenStepThenReversed.kt")
-                            public void testReversedThenStepThenReversed() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/reversed/reversedThenStepThenReversed.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("reversedThenStepThenReversedThenStep.kt")
-                            public void testReversedThenStepThenReversedThenStep() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/reversed/reversedThenStepThenReversedThenStep.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("stepThenReversed.kt")
-                            public void testStepThenReversed() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/reversed/stepThenReversed.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("stepThenReversedThenStep.kt")
-                            public void testStepThenReversedThenStep() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/reversed/stepThenReversedThenStep.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("stepThenReversedThenStepThenReversed.kt")
-                            public void testStepThenReversedThenStepThenReversed() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/reversed/stepThenReversedThenStepThenReversed.kt");
                             }
                         }
                     }
@@ -39717,66 +39285,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
                         }
 
-                        @Test
-                        @TestMetadata("emptyProgression.kt")
-                        public void testEmptyProgression() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/emptyProgression.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("illegalStepNegative.kt")
-                        public void testIllegalStepNegative() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/illegalStepNegative.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("illegalStepThenLegalStep.kt")
-                        public void testIllegalStepThenLegalStep() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/illegalStepThenLegalStep.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("illegalStepZero.kt")
-                        public void testIllegalStepZero() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/illegalStepZero.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("legalStepThenIllegalStep.kt")
-                        public void testLegalStepThenIllegalStep() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/legalStepThenIllegalStep.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("singleElementStepTwo.kt")
-                        public void testSingleElementStepTwo() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/singleElementStepTwo.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepOne.kt")
-                        public void testStepOne() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/stepOne.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepToOutsideRange.kt")
-                        public void testStepToOutsideRange() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/stepToOutsideRange.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepToSameLast.kt")
-                        public void testStepToSameLast() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/stepToSameLast.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("stepToSmallerLast.kt")
-                        public void testStepToSmallerLast() throws Exception {
-                            runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/stepToSmallerLast.kt");
-                        }
-
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/nestedStep")
                         @TestDataPath("$PROJECT_ROOT")
@@ -39784,54 +39292,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                             @Test
                             public void testAllFilesPresentInNestedStep() throws Exception {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/nestedStep"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-                            }
-
-                            @Test
-                            @TestMetadata("stepOneThenStepOne.kt")
-                            public void testStepOneThenStepOne() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/nestedStep/stepOneThenStepOne.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("stepThenSameStep.kt")
-                            public void testStepThenSameStep() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/nestedStep/stepThenSameStep.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("stepToSameLastThenStepOne.kt")
-                            public void testStepToSameLastThenStepOne() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/nestedStep/stepToSameLastThenStepOne.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("stepToSameLastThenStepToSameLast.kt")
-                            public void testStepToSameLastThenStepToSameLast() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/nestedStep/stepToSameLastThenStepToSameLast.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("stepToSameLastThenStepToSmallerLast.kt")
-                            public void testStepToSameLastThenStepToSmallerLast() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/nestedStep/stepToSameLastThenStepToSmallerLast.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("stepToSmallerLastThenStepOne.kt")
-                            public void testStepToSmallerLastThenStepOne() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/nestedStep/stepToSmallerLastThenStepOne.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("stepToSmallerLastThenStepToSameLast.kt")
-                            public void testStepToSmallerLastThenStepToSameLast() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/nestedStep/stepToSmallerLastThenStepToSameLast.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("stepToSmallerLastThenStepToSmallerLast.kt")
-                            public void testStepToSmallerLastThenStepToSmallerLast() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/nestedStep/stepToSmallerLastThenStepToSmallerLast.kt");
                             }
                         }
 
@@ -39842,42 +39302,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                             @Test
                             public void testAllFilesPresentInReversed() throws Exception {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/reversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-                            }
-
-                            @Test
-                            @TestMetadata("reversedThenStep.kt")
-                            public void testReversedThenStep() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/reversed/reversedThenStep.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("reversedThenStepThenReversed.kt")
-                            public void testReversedThenStepThenReversed() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/reversed/reversedThenStepThenReversed.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("reversedThenStepThenReversedThenStep.kt")
-                            public void testReversedThenStepThenReversedThenStep() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/reversed/reversedThenStepThenReversedThenStep.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("stepThenReversed.kt")
-                            public void testStepThenReversed() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/reversed/stepThenReversed.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("stepThenReversedThenStep.kt")
-                            public void testStepThenReversedThenStep() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/reversed/stepThenReversedThenStep.kt");
-                            }
-
-                            @Test
-                            @TestMetadata("stepThenReversedThenStepThenReversed.kt")
-                            public void testStepThenReversedThenStepThenReversed() throws Exception {
-                                runTest("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/reversed/stepThenReversedThenStepThenReversed.kt");
                             }
                         }
                     }
@@ -40222,21 +39646,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @Test
-                @TestMetadata("openRangeUntil.kt")
-                public void testOpenRangeUntil() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/openRangeUntil.kt");
-                }
-
-                @Test
                 @TestMetadata("overflowZeroDownToMaxValue.kt")
                 public void testOverflowZeroDownToMaxValue() throws Exception {
                     runTest("compiler/testData/codegen/box/ranges/unsigned/expression/overflowZeroDownToMaxValue.kt");
-                }
-
-                @Test
-                @TestMetadata("overflowZeroToMinValue.kt")
-                public void testOverflowZeroToMinValue() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/unsigned/expression/overflowZeroToMinValue.kt");
                 }
 
                 @Test
@@ -40418,21 +39830,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @Test
-                @TestMetadata("openRangeUntil.kt")
-                public void testOpenRangeUntil() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/openRangeUntil.kt");
-                }
-
-                @Test
                 @TestMetadata("overflowZeroDownToMaxValue.kt")
                 public void testOverflowZeroDownToMaxValue() throws Exception {
                     runTest("compiler/testData/codegen/box/ranges/unsigned/literal/overflowZeroDownToMaxValue.kt");
-                }
-
-                @Test
-                @TestMetadata("overflowZeroToMinValue.kt")
-                public void testOverflowZeroToMinValue() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/unsigned/literal/overflowZeroToMinValue.kt");
                 }
 
                 @Test
@@ -44796,6 +44196,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("callableReferenceInlinedFunFromOtherModule.kt")
+        public void testCallableReferenceInlinedFunFromOtherModule() throws Exception {
+            runTest("compiler/testData/codegen/box/reified/callableReferenceInlinedFunFromOtherModule.kt");
+        }
+
+        @Test
         @TestMetadata("checkcast.kt")
         public void testCheckcast() throws Exception {
             runTest("compiler/testData/codegen/box/reified/checkcast.kt");
@@ -47915,6 +47321,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("toTypedArray.kt")
         public void testToTypedArray() throws Exception {
             runTest("compiler/testData/codegen/box/toArray/toTypedArray.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/topLevelInitializtion")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TopLevelInitializtion {
+        @Test
+        public void testAllFilesPresentInTopLevelInitializtion() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/topLevelInitializtion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
     }
 

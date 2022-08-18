@@ -4,6 +4,7 @@
  */
 
 import com.jakewharton.dex.*
+import com.jakewharton.dex.DexParser.Companion.toDexParser
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
@@ -56,18 +57,18 @@ abstract class DexMethodCount : DefaultTask() {
 
     @TaskAction
     fun invoke() {
-        val methods = dexMethods(jarFile)
+        val methods = jarFile.toDexParser().listMethods()
         val counts = methods.getCounts().also { this.counts = it }
         outputDetails(counts)
     }
 
     private fun List<DexMethod>.getCounts(): Counts {
         val byPackage = this.groupingBy { it.`package` }.eachCount()
-        val byClass = this.groupingBy { it.declaringType }.eachCount()
+        val byClass = this.groupingBy { it.declaringTypeFqn }.eachCount()
 
         val ownPackages = ownPackages.map { list -> list.map { "$it." } }
         val byOwnPackages = if (ownPackages.isPresent) {
-            this.partition { method -> ownPackages.get().any { method.declaringType.startsWith(it) } }.let {
+            this.partition { method -> ownPackages.get().any { method.declaringTypeFqn.startsWith(it) } }.let {
                 it.first.size to it.second.size
             }
         } else (null to null)
@@ -167,5 +168,9 @@ fun Project.dexMethodCount(action: DexMethodCount.() -> Unit): TaskProvider<DexM
     return dexMethodCount
 }
 
-private val DexMethod.`package`: String get() = declaringType.substringBeforeLast('.')
+private val DexMethod.`package`: String get() = declaringTypeFqn.substringBeforeLast('.')
 private fun Int.padRight() = toString().padStart(5, ' ')
+
+private val DexMethod.declaringTypeFqn: String get() {
+    return this.render(false).substringBefore(' ')
+}

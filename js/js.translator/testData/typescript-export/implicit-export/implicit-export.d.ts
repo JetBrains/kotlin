@@ -12,7 +12,7 @@ declare namespace JS_TESTS {
             constructor(value: any/* foo.NonExportedType */);
             get value(): any/* foo.NonExportedType */;
             set value(value: any/* foo.NonExportedType */);
-            increment<T>(t: T): any/* foo.NonExportedType */;
+            increment<T extends unknown/* foo.NonExportedType */>(t: T): any/* foo.NonExportedType */;
         }
         class B /* extends foo.NonExportedType */ {
             constructor(v: number);
@@ -41,5 +41,6 @@ declare namespace JS_TESTS {
         function bar(): Error;
         const console: Console;
         const error: WebAssembly.CompileError;
+        function functionWithTypeAliasInside(x: any/* foo.NonExportedGenericInterface<foo.NonExportedType> */): any/* foo.NonExportedGenericInterface<foo.NonExportedType> */;
     }
 }

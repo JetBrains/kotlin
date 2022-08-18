@@ -10,6 +10,8 @@ pill {
     variant = PillExtension.Variant.FULL
 }
 
+testsJar()
+
 val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
 
 dependencies {

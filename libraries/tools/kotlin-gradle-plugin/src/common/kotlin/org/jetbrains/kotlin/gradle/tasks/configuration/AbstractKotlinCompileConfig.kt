@@ -67,7 +67,8 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                     kotlinDaemonJvmArgs.split("\\s+".toRegex())
                 })
             }
-            task.compilerExecutionStrategy.value(propertiesProvider.kotlinCompilerExecutionStrategy)
+            task.compilerExecutionStrategy.convention(propertiesProvider.kotlinCompilerExecutionStrategy).finalizeValueOnRead()
+            task.useDaemonFallbackStrategy.convention(propertiesProvider.kotlinDaemonUseFallbackStrategy).finalizeValueOnRead()
 
             task.incremental = false
             task.useModuleDetection.convention(false)

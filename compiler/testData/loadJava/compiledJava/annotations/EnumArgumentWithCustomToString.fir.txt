@@ -11,6 +11,9 @@ public open class EnumArgumentWithCustomToString : R|kotlin/Any| {
         public final static fun valueOf(value: R|kotlin/String|): R|test/EnumArgumentWithCustomToString.E| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<test/EnumArgumentWithCustomToString.E>|
+            public get(): R|kotlin/enums/EnumEntries<test/EnumArgumentWithCustomToString.E>|
+
     }
     public final annotation class EnumAnno : R|kotlin/Annotation| {
         public constructor(value: R|test/EnumArgumentWithCustomToString.E|): R|test/EnumArgumentWithCustomToString.EnumAnno|

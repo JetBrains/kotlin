@@ -14,17 +14,13 @@ class CacheTesting(val buildCacheTask: Task, val compilerArgs: List<String>, val
 
 fun configureCacheTesting(project: Project): CacheTesting? {
     val cacheKindString = project.findProperty("test_with_cache_kind") as String? ?: return null
-    val isDynamic = when (cacheKindString) {
-        "dynamic" -> true
-        "static" -> false
+    val (cacheKind, makePerFileCache) = when (cacheKindString) {
+        "dynamic" -> CompilerOutputKind.DYNAMIC_CACHE to false
+        "static" -> CompilerOutputKind.STATIC_CACHE to false
+        "static_per_file" -> CompilerOutputKind.STATIC_CACHE to true
         else -> error(cacheKindString)
     }
-
-    val cacheKind = if (isDynamic) {
-        CompilerOutputKind.DYNAMIC_CACHE
-    } else {
-        CompilerOutputKind.STATIC_CACHE
-    }
+    val isDynamic = cacheKind == CompilerOutputKind.DYNAMIC_CACHE
 
     val target = project.testTarget
     val dist = project.kotlinNativeDist
@@ -43,7 +39,7 @@ fun configureCacheTesting(project: Project): CacheTesting? {
     }
 
     val cacheDir = project.file("${project.buildDir}/cache")
-    val cacheFile = "$cacheDir/stdlib-cache"
+    val cacheFile = "$cacheDir/stdlib${if (makePerFileCache) "-per-file" else ""}-cache"
     val stdlib = "$dist/klib/common/stdlib"
     val compilerArgs = listOf("-Xcached-library=$stdlib,$cacheFile")
 
@@ -54,15 +50,18 @@ fun configureCacheTesting(project: Project): CacheTesting? {
 
         dependsOnDist()
 
-        commandLine(
+        val args = mutableListOf(
                 "$dist/bin/konanc",
                 "-p", cacheKind.visibleName,
-                "-o", "$cacheDir/stdlib-cache",
-                "-Xmake-cache=$stdlib",
+                "-Xadd-cache=$stdlib", "-Xcache-directory=$cacheDir",
                 "-no-default-libs", "-nostdlib",
                 "-target", target,
                 "-g"
         )
+        if (makePerFileCache)
+            args.add("-Xmake-per-file-cache")
+
+        commandLine(args)
     }
 
     return CacheTesting(buildCacheTask, compilerArgs, isDynamic)

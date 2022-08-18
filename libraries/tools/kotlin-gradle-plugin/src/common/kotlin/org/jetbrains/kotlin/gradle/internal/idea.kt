@@ -6,20 +6,11 @@
 package org.jetbrains.kotlin.gradle.internal
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.utils.getSystemProperty
+import org.jetbrains.kotlin.gradle.plugin.internal.IdeaSyncDetector
+import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 
-internal val Project.isInIdeaSync: Boolean
-    get() {
-        // "idea.sync.active" was introduced in 2019.1
-        if (getSystemProperty("idea.sync.active")?.toBoolean() == true) return true
-
-        // before 2019.1 there is "idea.active" that was true only on sync,
-        // but since 2019.1 "idea.active" present in task execution too.
-        // So let's check Idea version
-        val majorIdeaVersion = getSystemProperty("idea.version")
-            ?.split(".")
-            ?.getOrNull(0)
-        val isBeforeIdea2019 = majorIdeaVersion == null || majorIdeaVersion.toInt() < 2019
-
-        return isBeforeIdea2019 && getSystemProperty("idea.active")?.toBoolean() == true
-    }
+internal val Project.isInIdeaSync
+    get() = gradle
+        .variantImplementationFactory<IdeaSyncDetector.IdeaSyncDetectorVariantFactory>()
+        .getInstance(this)
+        .isInIdeaSync

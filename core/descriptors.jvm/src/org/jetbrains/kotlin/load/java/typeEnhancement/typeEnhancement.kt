@@ -199,7 +199,7 @@ private fun getEnhancedNullability(qualifiers: JavaTypeQualifiers, position: Typ
     }
 }
 
-private val ENHANCED_NULLABILITY_ANNOTATIONS = EnhancedTypeAnnotations(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)
+val ENHANCED_NULLABILITY_ANNOTATIONS: Annotations = EnhancedTypeAnnotations(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)
 private val ENHANCED_MUTABILITY_ANNOTATIONS = EnhancedTypeAnnotations(JvmAnnotationNames.ENHANCED_MUTABILITY_ANNOTATION)
 
 private class EnhancedTypeAnnotations(private val fqNameToMatch: FqName) : Annotations {

@@ -155,21 +155,34 @@ fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescri
     val stdSer = findStandardKotlinTypeSerializer(module, kType) // see if there is a standard serializer
         ?: findEnumTypeSerializer(module, kType)
     if (stdSer != null) return stdSer
-    if (kType.isInterface() && kType.toClassDescriptor?.isSealedSerializableInterface == false) return module.getClassFromSerializationPackage(SpecialBuiltins.polymorphicSerializer)
+    if (kType.isInterface() && kType.toClassDescriptor?.isSealedSerializableInterface == false) return module.getClassFromSerializationPackage(
+        SpecialBuiltins.polymorphicSerializer
+    )
     return kType.toClassDescriptor?.classSerializer // check for serializer defined on the type
 }
 
 fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {
-    val name = when (kType.getJetTypeFqName(false)) {
-        "Z" -> if (kType.isBoolean()) "BooleanSerializer" else return null
-        "B" -> if (kType.isByte()) "ByteSerializer" else return null
-        "S" -> if (kType.isShort()) "ShortSerializer" else return null
-        "I" -> if (kType.isInt()) "IntSerializer" else return null
-        "J" -> if (kType.isLong()) "LongSerializer" else return null
-        "F" -> if (kType.isFloat()) "FloatSerializer" else return null
-        "D" -> if (kType.isDouble()) "DoubleSerializer" else return null
-        "C" -> if (kType.isChar()) "CharSerializer" else return null
+    val typeName = kType.getJetTypeFqName(false)
+    val name = when (typeName) {
+        "Z" -> if (kType.isBoolean()) "BooleanSerializer" else null
+        "B" -> if (kType.isByte()) "ByteSerializer" else null
+        "S" -> if (kType.isShort()) "ShortSerializer" else null
+        "I" -> if (kType.isInt()) "IntSerializer" else null
+        "J" -> if (kType.isLong()) "LongSerializer" else null
+        "F" -> if (kType.isFloat()) "FloatSerializer" else null
+        "D" -> if (kType.isDouble()) "DoubleSerializer" else null
+        "C" -> if (kType.isChar()) "CharSerializer" else null
+        else -> findStandardKotlinTypeSerializer(typeName)
+    } ?: return null
+    val identifier = Name.identifier(name)
+    return module.findClassAcrossModuleDependencies(ClassId(internalPackageFqName, identifier))
+        ?: module.findClassAcrossModuleDependencies(ClassId(SerializationPackages.packageFqName, identifier))
+}
+
+fun findStandardKotlinTypeSerializer(typeName: String): String? {
+    return when (typeName) {
         "kotlin.Unit" -> "UnitSerializer"
+        "kotlin.Nothing" -> "NothingSerializer"
         "kotlin.Boolean" -> "BooleanSerializer"
         "kotlin.Byte" -> "ByteSerializer"
         "kotlin.Short" -> "ShortSerializer"
@@ -196,6 +209,10 @@ fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType
         "kotlin.ShortArray" -> "ShortArraySerializer"
         "kotlin.IntArray" -> "IntArraySerializer"
         "kotlin.LongArray" -> "LongArraySerializer"
+        "kotlin.UByteArray" -> "UByteArraySerializer"
+        "kotlin.UShortArray" -> "UShortArraySerializer"
+        "kotlin.UIntArray" -> "UIntArraySerializer"
+        "kotlin.ULongArray" -> "ULongArraySerializer"
         "kotlin.CharArray" -> "CharArraySerializer"
         "kotlin.FloatArray" -> "FloatArraySerializer"
         "kotlin.DoubleArray" -> "DoubleArraySerializer"
@@ -218,9 +235,6 @@ fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType
         "java.util.Map.Entry" -> "MapEntrySerializer"
         else -> return null
     }
-    val identifier = Name.identifier(name)
-    return module.findClassAcrossModuleDependencies(ClassId(internalPackageFqName, identifier))
-        ?: module.findClassAcrossModuleDependencies(ClassId(SerializationPackages.packageFqName, identifier))
 }
 
 fun findEnumTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {

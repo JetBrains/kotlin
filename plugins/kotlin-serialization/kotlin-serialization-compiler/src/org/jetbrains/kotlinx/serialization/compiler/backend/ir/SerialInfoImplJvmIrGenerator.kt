@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
+import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.kotlinFqName
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -40,11 +42,11 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 class SerialInfoImplJvmIrGenerator(
     private val context: SerializationPluginContext,
     private val moduleFragment: IrModuleFragment,
-) : IrBuilderExtension {
+) : IrBuilderWithPluginContext {
     override val compilerContext: SerializationPluginContext
         get() = context
 
-    private val jvmNameClass get() = context.referenceClass(DescriptorUtils.JVM_NAME)!!.owner
+    private val jvmNameClass get() = context.referenceClass(ClassId.topLevel(DescriptorUtils.JVM_NAME))!!.owner
 
     private val javaLangClass = createClass(createPackage("java.lang"), "Class", ClassKind.CLASS)
     private val javaLangType = javaLangClass.starProjectedType
@@ -54,6 +56,7 @@ class SerialInfoImplJvmIrGenerator(
 
     fun getImplClass(serialInfoAnnotationClass: IrClass): IrClass =
         annotationToImpl.getOrPut(serialInfoAnnotationClass) {
+            @OptIn(FirIncompatiblePluginAPI::class) // TODO
             val implClassSymbol = context.referenceClass(serialInfoAnnotationClass.kotlinFqName.child(SerialEntityNames.IMPL_NAME))
             implClassSymbol!!.owner.apply(this::generate)
         }

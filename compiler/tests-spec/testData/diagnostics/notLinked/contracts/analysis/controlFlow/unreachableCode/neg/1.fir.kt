@@ -1,3 +1,4 @@
+// LANGUAGE: -BreakContinueInInlineLambdas
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 // SKIP_TXT
 

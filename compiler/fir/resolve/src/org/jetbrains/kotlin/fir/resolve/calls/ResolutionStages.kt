@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visibilityChecker
@@ -166,7 +166,7 @@ object CheckDispatchReceiver : ResolutionStage() {
         val smartcastedReceiver = when (explicitReceiverExpression) {
             is FirCheckNotNullCall -> explicitReceiverExpression.argument
             else -> explicitReceiverExpression
-        } as? FirExpressionWithSmartcast
+        } as? FirSmartCastExpression
 
         if (smartcastedReceiver != null &&
             !smartcastedReceiver.isStable &&
@@ -184,7 +184,7 @@ object CheckDispatchReceiver : ResolutionStage() {
                 UnstableSmartCast(
                     smartcastedReceiver,
                     targetType,
-                    context.session.typeContext.isTypeMismatchDueToNullability(smartcastedReceiver.originalType.coneType, targetType)
+                    context.session.typeContext.isTypeMismatchDueToNullability(smartcastedReceiver.originalExpression.typeRef.coneType, targetType)
                 )
             )
         } else if (isReceiverNullable) {
@@ -432,7 +432,7 @@ internal object MapArguments : ResolutionStage() {
 
 internal object CheckArguments : CheckerStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
-        candidate.symbol.ensureResolved(FirResolvePhase.STATUS)
+        candidate.symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         val argumentMapping =
             candidate.argumentMapping ?: error("Argument should be already mapped while checking arguments!")
         for (argument in callInfo.arguments) {

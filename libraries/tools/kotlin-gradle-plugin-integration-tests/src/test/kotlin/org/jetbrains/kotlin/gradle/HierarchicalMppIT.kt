@@ -273,6 +273,29 @@ class HierarchicalMppIT : KGPBaseTest() {
         )
     }
 
+    @GradleTest
+    @DisplayName("Test that disambiguation attribute of Kotlin JVM Target is propagated to Java configurations")
+    fun testMultipleJvmTargetsWithJavaAndDisambiguationAttributeKt31468(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kt-31468-multiple-jvm-targets-with-java",
+            gradleVersion = gradleVersion
+        ) {
+            build("assemble", "testClasses") {
+                assertTasksExecuted(
+                    ":dependsOnPlainJvm:compileKotlinJvm",
+                    ":dependsOnPlainJvm:compileJava",
+                    ":dependsOnJvmWithJava:compileKotlinJvm",
+                    ":dependsOnJvmWithJava:compileJava",
+
+                    ":dependsOnPlainJvm:compileTestKotlinJvm",
+                    ":dependsOnPlainJvm:compileTestJava",
+                    ":dependsOnJvmWithJava:compileTestKotlinJvm",
+                    ":dependsOnJvmWithJava:compileTestJava",
+                )
+            }
+        }
+    }
+
     private fun publishThirdPartyLib(
         projectName: String = "third-party-lib".withPrefix,
         withGranularMetadata: Boolean,
@@ -729,18 +752,14 @@ class HierarchicalMppIT : KGPBaseTest() {
             }
 
             val configCacheIncompatibleTasks = listOf(
-                ":generateProjectStructureMetadata",
-                ":transformCommonMainDependenciesMetadata",
-                ":cinteropFooLinuxX64",
-                ":compileKotlinLinuxX64",
-                ":linkDebugSharedLinuxX64",
+                ":lib:transformCommonMainDependenciesMetadata",
             )
 
             build("clean", "assemble", buildOptions = options) {
                 assertTasksExecuted(configCacheIncompatibleTasks)
                 configCacheIncompatibleTasks.forEach { task ->
                     assertOutputContains(
-                        """Task `:$task` of type `.+`: .+(at execution time is unsupported)|(not supported with the configuration cache)"""
+                        """Task `${task}` of type `.+`: .+(at execution time is unsupported|not supported with the configuration cache)"""
                             .toRegex()
                     )
                 }

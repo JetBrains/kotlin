@@ -12,6 +12,9 @@ FILE: missingEnumEntry.kt
         public final static fun valueOf(value: R|kotlin/String|): R|SomeEnum| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<SomeEnum>|
+            public get(): R|kotlin/enums/EnumEntries<SomeEnum>|
+
     }
     public final fun test_1(enum: R|SomeEnum|): R|kotlin/Unit| {
         lval x: R|kotlin/Unit| = when (R|<local>/enum|) {

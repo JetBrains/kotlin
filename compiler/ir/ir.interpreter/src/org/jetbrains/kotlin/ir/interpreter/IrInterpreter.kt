@@ -206,7 +206,6 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         if (callStack.peekState() == null) callStack.pushState(getUnitState()) // implicit Unit result
     }
 
-    @Suppress("UNUSED_PARAMETER")
     private fun interpretConstructor(constructor: IrConstructor) {
         callStack.pushState(callStack.loadState(constructor.parentAsClass.thisReceiver!!.symbol))
         callStack.dropFrameAndCopyResult()
@@ -390,27 +389,13 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
     private fun interpretEnumEntry(enumEntry: IrEnumEntry) {
         callInterceptor.interceptEnumEntry(enumEntry) {
-            val enumClass = enumEntry.symbol.owner.parentAsClass
-            val enumEntries = enumClass.declarations.filterIsInstance<IrEnumEntry>()
+            val enumClassObject = enumEntry.toState(irBuiltIns)
+            environment.mapOfEnums[enumEntry.symbol] = enumClassObject
+
             val enumInitializer = enumEntry.initializerExpression?.expression
                 ?: throw InterpreterError("Initializer at enum entry ${enumEntry.fqName} is null")
             val enumConstructorCall = enumInitializer as? IrEnumConstructorCall
                 ?: (enumInitializer as IrBlock).statements.filterIsInstance<IrEnumConstructorCall>().single()
-
-            val enumClassObject = Common(enumEntry.correspondingClass ?: enumClass)
-            environment.mapOfEnums[enumEntry.symbol] = enumClassObject
-
-            if (enumEntries.isNotEmpty()) {
-                // these fields will be evaluated during interpretation of constructor call
-                // but we need them right away to create correct call to Enum's constructor
-                val valueArguments = listOf(
-                    Primitive(enumEntry.name.asString(), irBuiltIns.stringType),
-                    Primitive(enumEntries.indexOf(enumEntry), irBuiltIns.intType)
-                )
-                irBuiltIns.enumClass.owner.declarations.filterIsInstance<IrProperty>().zip(valueArguments).forEach { (property, argument) ->
-                    enumClassObject.setField(property.symbol, argument)
-                }
-            }
 
             callStack.newSubFrame(enumEntry)
             callStack.pushCompoundInstruction(enumEntry) // not really a compound instruction
@@ -581,8 +566,8 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
     private fun interpretFunctionReference(reference: IrFunctionReference) {
         val irFunction = reference.symbol.owner
 
-        val dispatchReceiver = reference.dispatchReceiver?.let { callStack.popState() }
-        val extensionReceiver = reference.extensionReceiver?.let { callStack.popState() }
+        val dispatchReceiver = irFunction.getDispatchReceiver()?.let { reference.dispatchReceiver?.let { callStack.popState() } }
+        val extensionReceiver = irFunction.getExtensionReceiver()?.let { reference.extensionReceiver?.let { callStack.popState() } }
 
         val function = KFunctionState(
             reference,
@@ -596,7 +581,11 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
     private fun interpretPropertyReference(propertyReference: IrPropertyReference) {
         // it is impossible to get KProperty2 through ::, so only one receiver can be not null (or both null)
-        val receiver = (propertyReference.dispatchReceiver ?: propertyReference.extensionReceiver)?.let { callStack.popState() }
+        val getter = propertyReference.getter?.owner
+        val dispatchReceiver = getter?.getDispatchReceiver()?.let { propertyReference.dispatchReceiver?.let { callStack.popState() } }
+        val extensionReceiver = getter?.getExtensionReceiver()?.let { propertyReference.extensionReceiver?.let { callStack.popState() } }
+        val receiver = dispatchReceiver ?: extensionReceiver
+
         val propertyState = KPropertyState(propertyReference, receiver)
 
         fun List<IrTypeParameter>.addToFields() {

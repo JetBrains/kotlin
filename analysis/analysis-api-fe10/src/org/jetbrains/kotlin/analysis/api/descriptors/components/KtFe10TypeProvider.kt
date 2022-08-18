@@ -22,13 +22,10 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe1
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.PublicApproximatorConfiguration
-import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValidAndAccessible
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -45,6 +42,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
+import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
@@ -67,37 +65,37 @@ internal class KtFe10TypeProvider(
 
     override val builtinTypes: KtBuiltinTypes by lazy(LazyThreadSafetyMode.PUBLICATION) { KtFe10BuiltinTypes(analysisContext) }
 
-    override fun approximateToSuperPublicDenotableType(type: KtType): KtType?  {
+    override fun approximateToSuperPublicDenotableType(type: KtType): KtType? {
         require(type is KtFe10Type)
         return typeApproximator.approximateToSuperType(type.type, PublicApproximatorConfiguration)?.toKtType(analysisContext)
     }
 
-    override fun buildSelfClassType(symbol: KtNamedClassOrObjectSymbol): KtType  {
+    override fun buildSelfClassType(symbol: KtNamedClassOrObjectSymbol): KtType {
         val kotlinType = (getSymbolDescriptor(symbol) as? ClassDescriptor)?.defaultType
             ?: ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_CLASS_TYPE, symbol.nameOrAnonymous.toString())
 
         return kotlinType.toKtType(analysisContext)
     }
 
-    override fun commonSuperType(types: Collection<KtType>): KtType  {
+    override fun commonSuperType(types: Collection<KtType>): KtType {
         val kotlinTypes = types.map { (it as KtFe10Type).type }
         return CommonSupertypes.commonSupertype(kotlinTypes).toKtType(analysisContext)
     }
 
-    override fun getKtType(ktTypeReference: KtTypeReference): KtType  {
+    override fun getKtType(ktTypeReference: KtTypeReference): KtType {
         val bindingContext = analysisContext.analyze(ktTypeReference, AnalysisMode.PARTIAL)
         val kotlinType = bindingContext[BindingContext.TYPE, ktTypeReference]
             ?: ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, ktTypeReference.text)
         return kotlinType.toKtType(analysisContext)
     }
 
-    override fun getReceiverTypeForDoubleColonExpression(expression: KtDoubleColonExpression): KtType?  {
+    override fun getReceiverTypeForDoubleColonExpression(expression: KtDoubleColonExpression): KtType? {
         val bindingContext = analysisContext.analyze(expression, AnalysisMode.PARTIAL)
         val lhs = bindingContext[BindingContext.DOUBLE_COLON_LHS, expression] ?: return null
         return lhs.type.toKtType(analysisContext)
     }
 
-    override fun withNullability(type: KtType, newNullability: KtTypeNullability): KtType  {
+    override fun withNullability(type: KtType, newNullability: KtTypeNullability): KtType {
         require(type is KtFe10Type)
         return type.type.makeNullableAsSpecified(newNullability == KtTypeNullability.NULLABLE).toKtType(analysisContext)
     }
@@ -153,7 +151,7 @@ internal class KtFe10TypeProvider(
             return bConstructor.supertypes.all { areTypesCompatible(a, it) }
         }
 
-        val intersectionType = TypeIntersector.intersectTypes(listOf(a, b)) ?: return false
+        val intersectionType = intersectWrappedTypes(listOf(a, b))
         val intersectionTypeConstructor = intersectionType.constructor
 
         if (intersectionTypeConstructor is IntersectionTypeConstructor) {

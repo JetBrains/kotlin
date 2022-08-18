@@ -57,7 +57,6 @@ fun box() {
 // test.kt:8 Companion_19
 // test.kt:11 Companion_19
 // test.kt:26 x
-// test.kt:26 x
 // test.kt:13 Companion_19
 // test.kt:16 Companion_19
 // test.kt:21 Companion_19

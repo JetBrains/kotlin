@@ -169,7 +169,8 @@ internal expect annotation class JvmPackageName(val name: String)
 
 
 /**
- * Makes the annotated lambda function `java.io.Serializable`, generates a pretty `toString` implementation and adds reflection metadata.
+ * Makes the annotated lambda function implement `java.io.Serializable`,
+ * generates a pretty `toString` implementation and adds reflection metadata.
  */
 @Target(EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)

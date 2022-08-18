@@ -71,6 +71,12 @@ object SpecialNames {
     val RECEIVER = Name.special("<receiver>")
 
     /**
+     * Kotlin-generated `entries` read-only property
+     */
+    @JvmField
+    val ENUM_GET_ENTRIES = Name.special("<get-entries>")
+
+    /**
      * Special name to store expressions used as indexes in subscription operators (`get` and `set`).
      *
      * For example, `bar1()` and `bar2()` are indexes in `foo[bar1(), bar2()]` call.

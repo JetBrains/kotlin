@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.declarations
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import java.util.*
 
@@ -23,7 +23,7 @@ private var FirDeclaration.actualForExpectMap: WeakHashMap<FirSession, FirBasedS
 
 val FirBasedSymbol<*>.expectForActual: ExpectForActualData?
     get() {
-        ensureResolved(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
+        lazyResolveToPhase(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
         return fir.expectForActual
     }
 
@@ -46,7 +46,7 @@ fun FirDeclaration.getActualForExpect(useSiteSession: FirSession): FirBasedSymbo
 }
 
 fun FirBasedSymbol<*>.getActualForExpect(session: FirSession): FirBasedSymbol<*>? {
-    ensureResolved(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
+    lazyResolveToPhase(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
     return fir.getActualForExpect(session)
 }
 

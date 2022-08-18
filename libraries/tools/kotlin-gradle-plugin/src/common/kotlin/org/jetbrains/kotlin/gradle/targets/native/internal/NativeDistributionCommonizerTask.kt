@@ -7,22 +7,35 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.*
+import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
+import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCommonizerToolRunner
 import org.jetbrains.kotlin.compilerRunner.konanHome
-import org.jetbrains.kotlin.compilerRunner.registerCommonizerClasspathConfigurationIfNecessary
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.chainedFinalizeValueOnRead
+import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_KLIB_DIR
 import java.io.File
 import java.net.URLEncoder
+import javax.inject.Inject
 
-internal open class NativeDistributionCommonizerTask : DefaultTask() {
+internal open class NativeDistributionCommonizerTask
+@Inject constructor(
+    private val objectFactory: ObjectFactory,
+    private val execOperations: ExecOperations,
+) : DefaultTask() {
 
     private val konanHome = project.file(project.konanHome)
 
@@ -30,37 +43,66 @@ internal open class NativeDistributionCommonizerTask : DefaultTask() {
         project.collectAllSharedCommonizerTargetsFromBuild()
     }
 
-    private val commonizer by lazy {
-        NativeDistributionCommonizationCache(
-            logger = project.logger,
-            isCachingEnabled = project.kotlinPropertiesProvider.enableNativeDistributionCommonizationCache,
-            commonizer = GradleCliCommonizer(KotlinNativeCommonizerToolRunner(project))
-        )
-    }
+    @get:Internal
+    internal val kotlinPluginVersion: Property<String> = objectFactory
+        .property<String>()
+        .chainedFinalizeValueOnRead()
+
+    @get:Classpath
+    internal val commonizerClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
+
+    @get:Input
+    internal val customJvmArgs: ListProperty<String> = objectFactory
+        .listProperty<String>()
+        .chainedFinalizeValueOnRead()
+
+    private val runnerSettings: Provider<KotlinNativeCommonizerToolRunner.Settings> = kotlinPluginVersion
+        .zip(customJvmArgs) { pluginVersion, customJvmArgs ->
+            KotlinNativeCommonizerToolRunner.Settings(
+                pluginVersion,
+                commonizerClasspath.files,
+                customJvmArgs
+            )
+        }
+
+    private val logLevel = project.commonizerLogLevel
+
+    private val additionalSettings = project.additionalCommonizerSettings
 
     @get:Internal
-    internal val rootOutputDirectory: File by lazy {
-        project.file(konanHome)
+    internal val rootOutputDirectory: File = project.file {
+        project.file(project.konanHome)
             .resolve(KONAN_DISTRIBUTION_KLIB_DIR)
             .resolve(KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR)
             .resolve(URLEncoder.encode(project.getKotlinPluginVersion(), Charsets.UTF_8.name()))
     }
 
+    private val commonizerCache = NativeDistributionCommonizerCache(
+        outputDirectory = rootOutputDirectory,
+        konanHome = konanHome,
+        logger = logger,
+        isCachingEnabled = project.kotlinPropertiesProvider.enableNativeDistributionCommonizationCache
+    )
+
     @TaskAction
     protected fun run() {
-        commonizer.commonizeNativeDistribution(
-            konanHome = konanHome,
-            outputDirectory = rootOutputDirectory,
-            outputTargets = commonizerTargets,
-            logLevel = project.commonizerLogLevel,
-            additionalSettings = project.additionalCommonizerSettings,
+        val commonizerRunner = KotlinNativeCommonizerToolRunner(
+            context = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger),
+            settings = runnerSettings.get()
         )
+
+        commonizerCache.writeCacheForUncachedTargets(commonizerTargets) { todoOutputTargets ->
+            val commonizer = GradleCliCommonizer(commonizerRunner)
+            /* Invoke commonizer with only 'to do' targets */
+            commonizer.commonizeNativeDistribution(
+                konanHome, rootOutputDirectory, todoOutputTargets, logLevel, additionalSettings
+            )
+        }
     }
 
     init {
-        project.registerCommonizerClasspathConfigurationIfNecessary()
         outputs.upToDateWhen {
-            commonizer.isUpToDate(konanHome, rootOutputDirectory, commonizerTargets)
+            commonizerCache.isUpToDate(commonizerTargets)
         }
     }
 }

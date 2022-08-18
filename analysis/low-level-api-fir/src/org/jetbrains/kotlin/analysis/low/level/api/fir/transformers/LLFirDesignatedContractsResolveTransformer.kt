@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesigna
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ensurePhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 
 /**
  * Transform designation into CONTRACTS declaration. Affects only for target declaration and it's children
@@ -45,7 +45,7 @@ internal class LLFirDesignatedContractsResolveTransformer(
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.declaration.resolvePhase >= FirResolvePhase.CONTRACTS) return
-        designation.declaration.ensurePhase(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
+        designation.declaration.checkPhase(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
 
         FirLazyBodiesCalculator.calculateLazyBodiesInside(designation)
         ResolveTreeBuilder.resolvePhase(designation.declaration, FirResolvePhase.CONTRACTS) {
@@ -56,21 +56,14 @@ internal class LLFirDesignatedContractsResolveTransformer(
 
         ideDeclarationTransformer.ensureDesignationPassed()
         updatePhaseDeep(designation.declaration, FirResolvePhase.CONTRACTS)
-        ensureResolved(designation.declaration)
-        ensureResolvedDeep(designation.declaration)
+        checkIsResolved(designation.declaration)
     }
 
-    override fun ensureResolved(declaration: FirDeclaration) {
-        when (declaration) {
-            is FirSimpleFunction, is FirConstructor, is FirAnonymousInitializer ->
-                declaration.ensurePhase(FirResolvePhase.CONTRACTS)
-            is FirProperty -> {
-                declaration.ensurePhase(FirResolvePhase.CONTRACTS)
-//                declaration.getter?.ensurePhase(FirResolvePhase.CONTRACTS)
-//                declaration.setter?.ensurePhase(FirResolvePhase.CONTRACTS)
-            }
-            is FirClass, is FirTypeAlias, is FirEnumEntry, is FirField -> Unit
-            else -> error("Unexpected type: ${declaration::class.simpleName}")
+    override fun checkIsResolved(declaration: FirDeclaration) {
+        declaration.checkPhase(FirResolvePhase.CONTRACTS)
+        if (declaration is FirContractDescriptionOwner) {
+           // TODO checkContractDescriptionIsResolved(declaration)
         }
+        checkNestedDeclarationsAreResolved(declaration)
     }
 }

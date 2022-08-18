@@ -57,7 +57,8 @@ enum class TestProperty(shortName: String) {
     GC_TYPE("gcType"),
     GC_SCHEDULER("gcScheduler"),
     CACHE_MODE("cacheMode"),
-    EXECUTION_TIMEOUT("executionTimeout");
+    EXECUTION_TIMEOUT("executionTimeout"),
+    SANITIZER("sanitizer");
 
     private val propertyName = "kotlin.internal.native.test.$shortName"
 
@@ -130,6 +131,7 @@ fun nativeTest(taskName: String, vararg tags: String) = projectTest(
         TestProperty.GC_SCHEDULER.setUpFromGradleProperty(this)
         TestProperty.CACHE_MODE.setUpFromGradleProperty(this)
         TestProperty.EXECUTION_TIMEOUT.setUpFromGradleProperty(this)
+        TestProperty.SANITIZER.setUpFromGradleProperty(this)
 
         // Pass the current Gradle task name so test can use it in logging.
         environment("GRADLE_TASK_NAME", path)

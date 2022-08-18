@@ -12,7 +12,7 @@ import org.gradle.api.tasks.Internal
 
 enum class KotlinCompilerExecutionStrategy(
     /**
-     * Value that should be passed for `kotlin.compiler.execution.strategy` Gradle or system property to choose the strategy
+     * Value that should be passed for `kotlin.compiler.execution.strategy` Gradle property to choose the strategy
      */
     val propertyValue: String
 ) {
@@ -64,4 +64,12 @@ interface CompileUsingKotlinDaemon : Task {
      */
     @get:Internal
     val compilerExecutionStrategy: Property<KotlinCompilerExecutionStrategy>
+
+    /**
+     * Defines whether task execution should fail when [compilerExecutionStrategy] is set to [KotlinCompilerExecutionStrategy.DAEMON]
+     * and compilation via Kotlin daemon was not possible. If set to true then compilation in such case will be retried without the daemon.
+     * Default is `true`
+     */
+    @get:Internal
+    val useDaemonFallbackStrategy: Property<Boolean>
 }

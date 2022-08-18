@@ -57,7 +57,6 @@ internal class FileStructure private constructor(
             ?: error("FileStructureElement for was not defined for \n${declaration.getElementTextInContext()}")
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     fun getAllDiagnosticsForFile(diagnosticCheckerFilter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> {
         val structureElements = getAllStructureElements()
 
@@ -103,7 +102,7 @@ internal class FileStructure private constructor(
             firProvider,
             firFile
         )
-        moduleComponents.lazyFirDeclarationsResolver.lazyResolveDeclaration(
+        moduleComponents.firModuleLazyDeclarationResolver.lazyResolveDeclaration(
             firDeclarationToResolve = firDeclaration,
             scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
             toPhase = FirResolvePhase.BODY_RESOLVE,
@@ -120,7 +119,7 @@ internal class FileStructure private constructor(
     private fun createStructureElement(container: KtAnnotated): FileStructureElement = when (container) {
         is KtFile -> {
             val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
-            moduleComponents.lazyFirDeclarationsResolver.resolveFileAnnotations(
+            moduleComponents.firModuleLazyDeclarationResolver.resolveFileAnnotations(
                 firFile = firFile,
                 annotations = firFile.annotations,
                 scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),

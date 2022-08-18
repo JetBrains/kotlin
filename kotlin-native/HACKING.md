@@ -90,12 +90,13 @@ To run blackbox compiler tests use:
 | `forceStandalone `      | If `true` then all tests with `// KIND: REGULAR` inside test data file are executed as if they were be with `// KIND: STANDALONE`. The default is `false`.                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `compileOnly `          | If `true` then tests are fully compiled to the executable binary, but not executed afterwards. The default is `false`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `optimizationMode`      | Compiler optimization mode: `DEBUG` (default), `OPT`, `NO`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| `memoryModel`           | The memory model: `LEGACY` or `EXPERIMENTAL` (default)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `memoryModel`           | The memory model: `LEGACY` or `EXPERIMENTAL` (default)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `useThreadStateChecker` | If `true` the thread state checker is enabled. The default is `false`.<br/><br/>Note: Thread state checker can be enabled only in combination with `optimizationMode=DEBUG`, `memoryModel=EXPERIMENTAL` and `cacheMode=NO`.                                                                                                                                                                                                                                                                                                                                                                         |
 | `gcType`                | The type of GC: `UNSPECIFIED` (default), `NOOP`, `STMS`, `CMS`<br/><br/>Note: The GC type can be specified only in combination with `memoryModel=EXPERIMENTAL`.                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | `gcScheduler`           | The type of GC scheduler: `UNSPECIFIED` (default), `DISABLED`, `WITH_TIMER`, `ON_SAFE_POINTS`, `AGGRESSIVE`<br/><br/>Note: The GC scheduler type can be specified only in combination with `memoryModel=EXPERIMENTAL`.                                                                                                                                                                                                                                                                                                                                                                              |
 | `cacheMode`             | * `NO`: no caches <br/>* `STATIC_ONLY_DIST` (default): use only caches for libs from the distribution <br/>* `STATIC_EVERYWHERE`: use caches for libs from the distribution and generate caches for all produced KLIBs<br/><br/>Note: Any cache mode that permits using caches can be enabled only when thread state checker is disabled.                                                                                                                                                                                                                                                           |
 | `executionTimeout`      | Max permitted duration of each individual test execution in milliseconds                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `sanitizer`             | Run tests with sanitizer: `NONE` (default), `THREAD`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 
 ### Target-specific tests
 
@@ -104,7 +105,8 @@ In common, they are called "target-specific tests".
 
 To run Kotlin/Native target-specific tests use (takes time):
 
-    ./gradlew :kotlin-native:backend.native:tests:run
+    ./gradlew :kotlin-native:backend.native:tests:sanity  2>&1 | tee log                             # quick one
+    ./gradlew :kotlin-native:backend.native:tests:run  2>&1 | tee log                                # sanity tests + platform tests
 
 * **-Pprefix** allows one to choose tests by prefix to run.
 
@@ -245,24 +247,19 @@ so it's need to be additionally enabled while compiling application with `-Xbina
 compiler flag or corresponding setting in gradle build script. After doing this, Kotlin/Native runtime in application
 is debuggable in CLion, with Attach to process tool.
 
+
  ## Performance measurement
-  
- Firstly, it's necessary to build analyzer tool to have opportunity to compare different performance results:
- 
-    cd kotlin-native/tools/benchmarksAnalyzer
-    ../../../gradlew build
-    
+ ### Pre-requisite
+  **konanRun** task needs built compiler and platform POSIX libs. To test against working tree make sure to run
+
+    ./gradlew :kotlin-native:dist :kotlin-native:distPlatformLibs
+
+ ### Run tests
  To measure performance of Kotlin/Native compiler on existing benchmarks:
  
     cd kotlin-native/performance
     ../../gradlew :konanRun
-
- **NOTE**: **konanRun** task needs built compiler and libs. To test against working tree make sure to run
-
-    ./gradlew :kotlin-native:dist :kotlin-native:distPlatformLibs
-
- before **konanRun**
-    
+ 
  **konanRun** task can be run separately for one/several benchmark applications:
  
     cd kotlin-native/performance
@@ -272,6 +269,7 @@ is debuggable in CLion, with Attach to process tool.
  
     cd kotlin-native/performance
     ../../gradlew :cinterop:konanRun --filter=struct,macros
+    ../../gradlew :ring:konanRun --filter=Euler.problem9,ForLoops.charArrayIndicesLoop
     
  Or you can use `filterRegex` if you want to specify the filter as regexes:
  
@@ -292,22 +290,25 @@ is debuggable in CLion, with Attach to process tool.
  
     cd kotlin-native/performance
     ../../gradlew :jvmRun
-    
- Files with results of benchmarks run are saved in `performance/build/nativeReport.json` for konanRun and `jvmReport.json` for jvmRun.
- You can change the output filename by setting the `nativeJson` property for konanRun and `jvmJson` for jvmRun:
-
-    cd kotlin-native/performance
-    ../../gradlew :ring:konanRun --filter=String.*,Loop.* -PnativeJson=stringsAndLoops.json
 
  You can use the `compilerArgs` property to pass flags to the compiler used to compile the benchmarks:
 
     cd kotlin-native/performance
     ../../gradlew :konanRun -PcompilerArgs="--time -g"
 
- To compare different results run benchmarksAnalyzer tool:
- 
-    cd kotlin-native/tools/benchmarksAnalyzer/build/bin/<target>/benchmarksAnalyzerReleaseExecutable/
-    ./benchmarksAnalyzer.kexe <file1> <file2>
+ ### Analyze the results
+ Files with results of benchmarks run are saved in `kotlin-native/performance/build` folder: `nativeReport.json` for konanRun and `jvmReport.json` for jvmRun.
+ You can change the output filename by setting the `nativeJson` property for konanRun and `jvmJson` for jvmRun:
+
+    cd kotlin-native/performance
+    ../../gradlew :ring:konanRun --filter=String.*,Loop.* -PnativeJson=stringsAndLoops.json
+
+ To compare different results use benchmarksAnalyzer tool:
+
+    ./gradlew macos_arm64PlatformLibs  # use target of your laptop here instead
+    cd kotlin-native/tools/benchmarksAnalyzer
+    ../../../gradlew build
+    ./build/bin/<target>/benchmarksAnalyzerReleaseExecutable/benchmarksAnalyzer.kexe <file1> <file2>
     
  Tool has several renders which allow produce output report in different forms (text, html, etc.). To set up render use flag `--render/-r`.
  Output can be redirected to file with flag `--output/-o`.
@@ -336,31 +337,6 @@ is debuggable in CLion, with Attach to process tool.
  By default analyzing tool splits benchmarks into stable and unstable taking information from database. If you have no connection to inner network please use `-f` flag.
 
     ./benchmarksAnalyzer.kexe -f <file1> <file2>
-
-### Testing native
-
-For a quick check use:
-```
-$ ./gradlew :kotlin-native:backend.native:tests:sanity 2>&1 | tee log
-```
-
-For a longer, more thorough testing build the complete build. Make sure you are running it on a macOS. 
-
-
-Have a complete build:
-
-```
-$ ./gradlew :kotlin-native:bundle # includes dist as its part
-```
-
-then run two test sets:
-
-```
-$ ./gradlew :kotlin-native:backend.native:tests:run 2>&1 | tee log
-
-$ ./gradlew :kotlin-native:backend.native:tests:runExternal -Ptest_two_stage=true 2>&1 | tee log
-
-```
 
 ## LLVM
 

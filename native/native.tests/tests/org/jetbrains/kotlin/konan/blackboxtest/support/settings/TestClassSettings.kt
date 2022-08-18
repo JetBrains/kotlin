@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.settings
 
+import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseId
 import java.io.File
 
 /**
@@ -28,3 +30,9 @@ internal class Binaries(val testBinariesDir: File, val sharedBinariesDir: File)
  * The [TestConfiguration] of the current test class and the [Annotation] with specific parameters.
  */
 internal data class ComputedTestConfiguration(val configuration: TestConfiguration, val annotation: Annotation)
+
+/**
+ * The tests (test data files and directories with test data files) that are disabled.
+ * This is applicable only to inheritors of [AbstractNativeBlackBoxTest] that use [TestCaseId.TestDataFile].
+ */
+internal class DisabledTestDataFiles(val filesAndDirectories: Set<File>)

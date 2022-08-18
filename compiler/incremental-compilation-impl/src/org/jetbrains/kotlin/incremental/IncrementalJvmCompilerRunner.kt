@@ -478,12 +478,12 @@ open class IncrementalJvmCompilerRunner(
         return exitCode to sourcesToCompile
     }
 
-    override fun performWorkAfterSuccessfulCompilation(caches: IncrementalJvmCachesManager) {
+    override fun performWorkAfterSuccessfulCompilation(caches: IncrementalJvmCachesManager, wasIncremental: Boolean) {
         if (classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
             reporter.measure(BuildTime.SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION) {
                 shrinkAndSaveClasspathSnapshot(
-                    classpathChanges, caches.lookupCache, currentClasspathSnapshot, shrunkCurrentClasspathAgainstPreviousLookups,
-                    ClasspathSnapshotBuildReporter(reporter)
+                    wasIncremental, classpathChanges, caches.lookupCache, currentClasspathSnapshot,
+                    shrunkCurrentClasspathAgainstPreviousLookups, ClasspathSnapshotBuildReporter(reporter)
                 )
             }
         }

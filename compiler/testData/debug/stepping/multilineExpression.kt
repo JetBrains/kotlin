@@ -25,4 +25,3 @@ fun test(a: Boolean, b: Boolean, c: Boolean): Boolean {
 // EXPECTATIONS JS_IR
 // test.kt:5 box
 // test.kt:9 test
-// test.kt:9 test

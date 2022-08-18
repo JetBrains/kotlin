@@ -18,7 +18,6 @@
 
 package kotlin.reflect.full
 
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.*
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KType

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.llvm
@@ -514,8 +514,8 @@ internal abstract class FunctionGenerationContext(
     init {
         irFunction?.let {
             if (!irFunction.isExported()) {
-                LLVMSetLinkage(function, LLVMLinkage.LLVMInternalLinkage)
-                // (Cannot do this before the function body is created).
+                if (!context.config.producePerFileCache || irFunction !in context.calledFromExportedInlineFunctions)
+                    LLVMSetLinkage(function, LLVMLinkage.LLVMInternalLinkage) // (Cannot do this before the function body is created)
             }
         }
     }
@@ -579,15 +579,21 @@ internal abstract class FunctionGenerationContext(
 
     fun param(index: Int): LLVMValueRef = LLVMGetParam(this.function, index)!!
 
-    fun load(value: LLVMValueRef, name: String = ""): LLVMValueRef {
-        val result = LLVMBuildLoad(builder, value, name)!!
+    fun load(address: LLVMValueRef, name: String = "", memoryOrder: LLVMAtomicOrdering? = null): LLVMValueRef {
+        val value = LLVMBuildLoad(builder, address, name)!!
+        if (memoryOrder != null) {
+            LLVMSetOrdering(value, memoryOrder)
+        }
         // Use loadSlot() API for that.
         assert(!isObjectRef(value))
-        return result
+        return value
     }
 
-    fun loadSlot(address: LLVMValueRef, isVar: Boolean, resultSlot: LLVMValueRef? = null, name: String = ""): LLVMValueRef {
+    fun loadSlot(address: LLVMValueRef, isVar: Boolean, resultSlot: LLVMValueRef? = null, name: String = "", memoryOrder: LLVMAtomicOrdering? = null): LLVMValueRef {
         val value = LLVMBuildLoad(builder, address, name)!!
+        if (memoryOrder != null) {
+            LLVMSetOrdering(value, memoryOrder)
+        }
         if (isObjectRef(value) && isVar) {
             val slot = resultSlot ?: alloca(LLVMTypeOf(value), variableLocation = null)
             storeStackRef(value, slot)
@@ -1138,13 +1144,24 @@ internal abstract class FunctionGenerationContext(
 
     fun loadTypeInfo(objPtr: LLVMValueRef): LLVMValueRef {
         val typeInfoOrMetaPtr = structGep(objPtr, 0  /* typeInfoOrMeta_ */)
-        val typeInfoOrMetaWithFlags = load(typeInfoOrMetaPtr)
+
+        val memoryOrder = if (context.config.targetHasAddressDependency) {
+            /**
+             * Formally, this ordering is too weak, and doesn't prevent data race with installing extra object.
+             * Check comment in ObjHeader::type_info for details.
+             */
+            LLVMAtomicOrdering.LLVMAtomicOrderingMonotonic
+        } else {
+            LLVMAtomicOrdering.LLVMAtomicOrderingAcquire
+        }
+
+        val typeInfoOrMetaWithFlags = load(typeInfoOrMetaPtr, memoryOrder = memoryOrder)
         // Clear two lower bits.
         val typeInfoOrMetaWithFlagsRaw = ptrToInt(typeInfoOrMetaWithFlags, codegen.intPtrType)
         val typeInfoOrMetaRaw = and(typeInfoOrMetaWithFlagsRaw, codegen.immTypeInfoMask)
         val typeInfoOrMeta = intToPtr(typeInfoOrMetaRaw, kTypeInfoPtr)
         val typeInfoPtrPtr = structGep(typeInfoOrMeta, 0 /* typeInfo */)
-        return load(typeInfoPtrPtr)
+        return load(typeInfoPtrPtr, memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingMonotonic)
     }
 
     fun lookupInterfaceTableRecord(typeInfo: LLVMValueRef, interfaceId: Int): LLVMValueRef {
@@ -1317,7 +1334,7 @@ internal abstract class FunctionGenerationContext(
         }
         val bbInit = basicBlock("label_init", startLocationInfo, endLocationInfo)
         val bbExit = basicBlock("label_continue", startLocationInfo, endLocationInfo)
-        val objectVal = loadSlot(objectPtr, false)
+        val objectVal = loadSlot(objectPtr, false, memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingAcquire)
         val objectInitialized = icmpUGt(ptrToInt(objectVal, codegen.intPtrType), codegen.immOneIntPtrType)
         val bbCurrent = currentBlock
         condBr(objectInitialized, bbExit, bbInit)
@@ -1349,19 +1366,10 @@ internal abstract class FunctionGenerationContext(
      */
     fun getEnumEntry(enumEntry: IrEnumEntry, exceptionHandler: ExceptionHandler): LLVMValueRef {
         val enumClass = enumEntry.parentAsClass
-        val loweredEnum = context.specialDeclarationsFactory.getLoweredEnum(enumClass)
-
-        val getterId = loweredEnum.entriesMap[enumEntry.name]!!.getterId
-        val values = call(
-                loweredEnum.valuesGetter.llvmFunction.llvmValue,
-                emptyList(),
-                Lifetime.ARGUMENT,
-                exceptionHandler
-        )
-
+        val getterId = context.enumsSupport.enumEntriesMap(enumClass)[enumEntry.name]!!.getterId
         return call(
-                loweredEnum.itemGetterSymbol.owner.llvmFunction.llvmValue,
-                listOf(values, Int32(getterId).llvm),
+                context.enumsSupport.getValueGetter(enumClass).llvmFunction.llvmValue,
+                listOf(Int32(getterId).llvm),
                 Lifetime.GLOBAL,
                 exceptionHandler
         )

@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.DuplicatedFirSourceElementsException
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isErrorElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -115,6 +112,7 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
                         it.kind == KtFakeSourceElementKind.ImplicitConstructor ||
                         it.kind == KtFakeSourceElementKind.DesugaredPrefixNameReference ||
                         it.kind == KtFakeSourceElementKind.DesugaredPostfixNameReference ||
+                        it.kind == KtFakeSourceElementKind.SmartCastExpression ||
                         it.isSourceForCompoundAccess(element)
             }.psi as? KtElement
             ?: return
@@ -189,7 +187,6 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
     }
 
     companion object {
-        @OptIn(ExperimentalStdlibApi::class)
         fun recordElementsFrom(firElement: FirElement, recorder: FirElementsRecorder): Map<KtElement, FirElement> =
             buildMap { firElement.accept(recorder, this) }
     }

@@ -51,8 +51,8 @@ object VersionReader {
         return versions
     }
 
-    fun getVersionsForCurrentModuleFromContext(module: ModuleDescriptor, context: BindingContext): RuntimeVersions? {
-        context.get(VERSIONS_SLICE, module)?.let { return it }
+    fun getVersionsForCurrentModuleFromContext(module: ModuleDescriptor, context: BindingContext?): RuntimeVersions? {
+        context?.get(VERSIONS_SLICE, module)?.let { return it }
         return getVersionsForCurrentModule(module)
     }
 

@@ -11,6 +11,10 @@
       @11:4..18 VALUE_PARAMETER name:<this> type:test.Test
       @11:16..18 BLOCK_BODY
     @17:4..18 FUN name:test2 visibility:public modality:FINAL <> ($this:test.Test) returnType:kotlin.Unit
+      annotations:
+        @14:4..16:5 CONSTRUCTOR_CALL 'public constructor <init> (vararg names: kotlin.String) [primary] declared in kotlin.Suppress' type=kotlin.Suppress origin=null
+          @15:8..25 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+            @15:8..25 CONST String type=kotlin.String value="UNUSED_VARIABLE"
       @14:4..17:18 VALUE_PARAMETER name:<this> type:test.Test
       @17:16..18 BLOCK_BODY
     @21:4..18 FUN name:test3 visibility:private modality:FINAL <> ($this:test.Test) returnType:kotlin.Unit

@@ -47,20 +47,29 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
 
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
-        declaration.takeIf { declaration.isAnnotationClass }?.constructors?.singleOrNull()?.apply {
-            // Compatibility hack. Now, frontend generates constructor body for annotations and makes them open
-            // but, if one gets annotation from pre-1.6.20 klib, it would have no constructor body and would be final,
-            // so we need to fix it
-            if (body == null) {
-                declaration.modality = Modality.OPEN
-                body = context.createIrBuilder(symbol)
-                    .irBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET) {
-                        +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
-                        +IrInstanceInitializerCallImpl(startOffset, endOffset, declaration.symbol, context.irBuiltIns.unitType)
-                    }
-            }
-        }
+        declaration.addConstructorBodyForCompatibility()
         return super.visitClassNew(declaration)
+    }
+
+    protected fun IrClass.addConstructorBodyForCompatibility() {
+        if (!isAnnotationClass) return
+        val primaryConstructor = constructors.singleOrNull() ?: return
+
+        if (primaryConstructor.body != null) return
+        // Compatibility hack. Now, frontend generates constructor body for annotations and makes them open
+        // but, if one gets annotation from pre-1.6.20 klib, it would have no constructor body and would be final,
+        // so we need to fix it
+        modality = Modality.OPEN
+        primaryConstructor.body = context.createIrBuilder(symbol)
+            .irBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET) {
+                +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
+                +IrInstanceInitializerCallImpl(
+                    startOffset,
+                    endOffset,
+                    this@addConstructorBodyForCompatibility.symbol,
+                    context.irBuiltIns.unitType
+                )
+            }
     }
 
     abstract fun chooseConstructor(implClass: IrClass, expression: IrConstructorCall) : IrConstructor
@@ -69,6 +78,7 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
         val constructedClass = expression.type.classOrNull?.owner ?: return super.visitConstructorCall(expression)
         if (!constructedClass.isAnnotationClass) return super.visitConstructorCall(expression)
         if (constructedClass.typeParameters.isNotEmpty()) return super.visitConstructorCall(expression) // Not supported yet
+        require(expression.symbol.owner.isPrimary) { "Non-primary constructors of annotations are not supported" }
 
         val implClass = implementations.getOrPut(constructedClass) { createAnnotationImplementation(constructedClass) }
         val ctor = chooseConstructor(implClass, expression)

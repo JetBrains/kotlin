@@ -21,4 +21,3 @@ fun box(): String {
 // test.kt:4 box
 // test.kt:6 box
 // test.kt:8 box
-// test.kt:8 box

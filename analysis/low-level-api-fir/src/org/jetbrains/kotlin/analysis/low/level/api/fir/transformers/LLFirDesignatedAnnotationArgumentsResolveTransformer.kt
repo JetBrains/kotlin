@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ensurePhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -49,7 +51,7 @@ internal class LLFirDesignatedAnnotationArgumentsResolveTransformer(
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.declaration.resolvePhase >= FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS) return
-        designation.declaration.ensurePhase(FirResolvePhase.STATUS)
+        designation.declaration.checkPhase(FirResolvePhase.STATUS)
 
         val designationIterator = designation.toSequenceWithFile(includeTarget = false).iterator()
 
@@ -60,26 +62,25 @@ internal class LLFirDesignatedAnnotationArgumentsResolveTransformer(
         }
 
         LLFirLazyTransformer.updatePhaseDeep(designation.declaration, FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
-        ensureResolved(designation.declaration)
-        ensureResolvedDeep(designation.declaration)
+        checkIsResolved(designation.declaration)
     }
 
-    override fun ensureResolved(declaration: FirDeclaration) {
+    override fun checkIsResolved(declaration: FirDeclaration) {
         val unresolvedAnnotation = declaration.annotations.firstOrNull { it.annotationTypeRef !is FirResolvedTypeRef }
         check(unresolvedAnnotation == null) {
             "Unexpected annotationTypeRef annotation, expected resolvedType but actual ${unresolvedAnnotation?.annotationTypeRef}"
         }
-        when (declaration) {
-            is FirSimpleFunction, is FirConstructor, is FirAnonymousInitializer ->
-                declaration.ensurePhase(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
-            is FirProperty -> {
-                declaration.ensurePhase(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
-//                declaration.getter?.ensurePhase(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
-//                declaration.setter?.ensurePhase(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
+        declaration.checkPhase(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
+
+        for (annotation in declaration.annotations) {
+            for (argument in annotation.argumentMapping.mapping.values) {
+                checkTypeRefIsResolved(argument.typeRef, "annotation argument", declaration) {
+                    withFirEntry("firAnnotation", annotation)
+                    withFirEntry("firArgument", argument)
+                }
             }
-            is FirClass, is FirTypeAlias, is FirEnumEntry, is FirField -> Unit
-            else -> error("Unexpected type: ${declaration::class.simpleName}")
         }
+        checkNestedDeclarationsAreResolved(declaration)
     }
 
 }

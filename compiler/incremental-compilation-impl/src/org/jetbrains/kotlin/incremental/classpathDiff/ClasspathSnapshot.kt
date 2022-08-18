@@ -62,7 +62,14 @@ class RegularKotlinClassSnapshot(
     override val classId: ClassId,
     override val classAbiHash: Long,
     override val classMemberLevelSnapshot: KotlinClassInfo?,
-    val supertypes: List<JvmClassName>
+    val supertypes: List<JvmClassName>,
+
+    /** Name of the companion object of this class (default is "Companion") iff this class HAS a companion object, or null otherwise. */
+    val companionObjectName: String?,
+
+    /** List of constants defined in this class iff this class IS a companion object, or null otherwise. The list could be empty. */
+    val constantsInCompanionObject: List<String>?
+
 ) : KotlinClassSnapshot()
 
 /** [KotlinClassSnapshot] where class kind == [FILE_FACADE] or [MULTIFILE_CLASS_PART]. */

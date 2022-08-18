@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptorRepresentation
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 
@@ -205,8 +205,8 @@ class JavaOverrideChecker internal constructor(
         overrideCandidate: FirCallableDeclaration,
         baseDeclaration: FirCallableDeclaration
     ): ConeSubstitutor {
-        overrideCandidate.ensureResolved(FirResolvePhase.TYPES)
-        baseDeclaration.ensureResolved(FirResolvePhase.TYPES)
+        overrideCandidate.lazyResolveToPhase(FirResolvePhase.TYPES)
+        baseDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
 
         if (!overrideCandidate.isTypeParameterDependent() && !baseDeclaration.isTypeParameterDependent()) {
             return ConeSubstitutor.Empty
@@ -220,8 +220,8 @@ class JavaOverrideChecker internal constructor(
     override fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction): Boolean {
         if (overrideCandidate.isStatic != baseDeclaration.isStatic) return false
 
-        overrideCandidate.ensureResolved(FirResolvePhase.TYPES)
-        baseDeclaration.ensureResolved(FirResolvePhase.TYPES)
+        overrideCandidate.lazyResolveToPhase(FirResolvePhase.TYPES)
+        baseDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
 
         // NB: overrideCandidate is from Java and has no receiver
         val receiverTypeRef = baseDeclaration.receiverTypeRef
@@ -244,8 +244,8 @@ class JavaOverrideChecker internal constructor(
     override fun isOverriddenProperty(overrideCandidate: FirCallableDeclaration, baseDeclaration: FirProperty): Boolean {
         if (baseDeclaration.modality == Modality.FINAL) return false
 
-        overrideCandidate.ensureResolved(FirResolvePhase.TYPES)
-        baseDeclaration.ensureResolved(FirResolvePhase.TYPES)
+        overrideCandidate.lazyResolveToPhase(FirResolvePhase.TYPES)
+        baseDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
 
         val receiverTypeRef = baseDeclaration.receiverTypeRef
         return when (overrideCandidate) {

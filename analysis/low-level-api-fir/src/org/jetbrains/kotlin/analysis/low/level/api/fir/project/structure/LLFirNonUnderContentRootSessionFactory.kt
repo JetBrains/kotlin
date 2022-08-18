@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseManager
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirDependentModuleProvidersBySessions
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
-import org.jetbrains.kotlin.fir.symbols.FirPhaseManager
+import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import java.util.concurrent.ConcurrentHashMap
@@ -77,7 +77,7 @@ internal class LLFirNonUnderContentRootSessionFactory(private val project: Proje
             )
 
             register(FirProvider::class, provider)
-            register(FirPhaseManager::class, LLFirPhaseManager(sessionInvalidator))
+            register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver(sessionInvalidator))
 
             val dependencyProvider = LLFirDependentModuleProvidersBySessions(this) {
                 add(builtinsSession)

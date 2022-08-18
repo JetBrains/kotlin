@@ -47,7 +47,7 @@ internal fun getSerializationLibraryJar(classToDetect: String): File? = try {
     null
 }
 
-internal fun TestConfigurationBuilder.configureForKotlinxSerialization(librariesPaths: List<File>) {
+internal fun TestConfigurationBuilder.configureForKotlinxSerialization(librariesPaths: List<File>, registerAdditionalExtensions: ExtensionStorage.() -> Unit = {}) {
     useConfigurators(
         { services ->
             object : EnvironmentConfigurator(services) {
@@ -60,6 +60,7 @@ internal fun TestConfigurationBuilder.configureForKotlinxSerialization(libraries
 
                 override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
                     SerializationComponentRegistrar.registerExtensions(this)
+                    registerAdditionalExtensions()
                 }
             }
         })

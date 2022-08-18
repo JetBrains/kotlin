@@ -35,66 +35,68 @@ digraph incorrectSmartcastToNothing_kt {
                     color=blue
                     12 [label="Enter when branch condition "];
                     13 [label="Access variable R|<local>/cacheExtSetting|"];
-                    14 [label="Function call: R|<local>/cacheExtSetting|.R|kotlin/text/isBlank|()"];
-                    15 [label="Exit when branch condition"];
+                    14 [label="Smart cast: R|<local>/cacheExtSetting|"];
+                    15 [label="Function call: R|<local>/cacheExtSetting|.R|kotlin/text/isBlank|()"];
+                    16 [label="Exit when branch condition"];
                 }
                 subgraph cluster_6 {
                     color=blue
-                    16 [label="Enter when branch condition else"];
-                    17 [label="Exit when branch condition"];
+                    17 [label="Enter when branch condition else"];
+                    18 [label="Exit when branch condition"];
                 }
-                18 [label="Enter when branch result"];
+                19 [label="Enter when branch result"];
                 subgraph cluster_7 {
                     color=blue
-                    19 [label="Enter block"];
-                    20 [label="Access variable R|<local>/cacheExtSetting|"];
-                    21 [label="Function call: R|java/io/File.File|(...)"];
-                    22 [label="Exit block"];
+                    20 [label="Enter block"];
+                    21 [label="Access variable R|<local>/cacheExtSetting|"];
+                    22 [label="Smart cast: R|<local>/cacheExtSetting|"];
+                    23 [label="Function call: R|java/io/File.File|(...)"];
+                    24 [label="Exit block"];
                 }
-                23 [label="Exit when branch result"];
-                24 [label="Enter when branch result"];
+                25 [label="Exit when branch result"];
+                26 [label="Enter when branch result"];
                 subgraph cluster_8 {
                     color=blue
-                    25 [label="Enter block"];
-                    26 [label="Const: Null(null)"];
-                    27 [label="Exit block"];
+                    27 [label="Enter block"];
+                    28 [label="Const: Null(null)"];
+                    29 [label="Exit block"];
                 }
-                28 [label="Exit when branch result"];
-                29 [label="Enter when branch result"];
+                30 [label="Exit when branch result"];
+                31 [label="Enter when branch result"];
                 subgraph cluster_9 {
                     color=blue
-                    30 [label="Enter block"];
-                    31 [label="Access variable R|/cache|"];
-                    32 [label="Enter safe call"];
-                    33 [label="Postponed enter to lambda"];
+                    32 [label="Enter block"];
+                    33 [label="Access variable R|/cache|"];
+                    34 [label="Enter safe call"];
+                    35 [label="Postponed enter to lambda"];
                     subgraph cluster_10 {
                         color=blue
-                        45 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                        47 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                         subgraph cluster_11 {
                             color=blue
-                            46 [label="Enter block"];
-                            47 [label="Access variable R|<local>/it|"];
-                            48 [label="Const: String(main.kts.compiled.cache)"];
-                            49 [label="Function call: R|java/io/File.File|(...)"];
-                            50 [label="Exit block"];
+                            48 [label="Enter block"];
+                            49 [label="Access variable R|<local>/it|"];
+                            50 [label="Const: String(main.kts.compiled.cache)"];
+                            51 [label="Function call: R|java/io/File.File|(...)"];
+                            52 [label="Exit block"];
                         }
-                        51 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                        53 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                     }
-                    34 [label="Postponed exit from lambda"];
-                    35 [label="Function call: $subj$.R|kotlin/let|<R|java/io/File|, R|java/io/File|>(...)"];
-                    36 [label="Exit safe call"];
-                    37 [label="Exit block"];
+                    36 [label="Postponed exit from lambda"];
+                    37 [label="Function call: $subj$.R|kotlin/let|<R|java/io/File|, R|java/io/File|>(...)"];
+                    38 [label="Exit safe call"];
+                    39 [label="Exit block"];
                 }
-                38 [label="Exit when branch result"];
-                39 [label="Exit when"];
+                40 [label="Exit when branch result"];
+                41 [label="Exit when"];
             }
-            40 [label="Variable declaration: lval cacheBaseDir: R|java/io/File?|"];
-            41 [label="Exit block"];
+            42 [label="Variable declaration: lval cacheBaseDir: R|java/io/File?|"];
+            43 [label="Exit block"];
         }
-        42 [label="Exit function test" style="filled" fillcolor=red];
+        44 [label="Exit function test" style="filled" fillcolor=red];
     }
-    43 [label="Merge postponed lambda exits"];
-    44 [label="Merge postponed lambda exits"];
+    45 [label="Merge postponed lambda exits"];
+    46 [label="Merge postponed lambda exits"];
     4 -> {5};
     5 -> {6};
     6 -> {7};
@@ -102,47 +104,49 @@ digraph incorrectSmartcastToNothing_kt {
     8 -> {9};
     9 -> {10};
     10 -> {11};
-    11 -> {29 12};
+    11 -> {31 12};
     12 -> {13};
     13 -> {14};
     14 -> {15};
-    15 -> {24 16};
-    16 -> {17};
+    15 -> {16};
+    16 -> {26 17};
     17 -> {18};
     18 -> {19};
     19 -> {20};
     20 -> {21};
     21 -> {22};
     22 -> {23};
-    23 -> {39};
+    23 -> {24};
     24 -> {25};
-    25 -> {26};
+    25 -> {41};
     26 -> {27};
     27 -> {28};
-    28 -> {39};
+    28 -> {29};
     29 -> {30};
-    30 -> {31};
-    31 -> {32 36};
+    30 -> {41};
+    31 -> {32};
     32 -> {33};
-    33 -> {45};
-    33 -> {34} [color=red];
-    33 -> {45} [style=dashed];
+    33 -> {34 38};
     34 -> {35};
-    35 -> {36};
-    36 -> {43 37};
+    35 -> {47};
+    35 -> {36} [color=red];
+    35 -> {47} [style=dashed];
+    36 -> {37};
     37 -> {38};
-    38 -> {39};
-    39 -> {44 40};
+    38 -> {45 39};
+    39 -> {40};
     40 -> {41};
-    41 -> {42};
-    43 -> {44} [color=red];
-    45 -> {46};
-    46 -> {47};
+    41 -> {46 42};
+    42 -> {43};
+    43 -> {44};
+    45 -> {46} [color=red];
     47 -> {48};
     48 -> {49};
     49 -> {50};
     50 -> {51};
-    51 -> {43} [color=red];
-    51 -> {34} [color=green];
+    51 -> {52};
+    52 -> {53};
+    53 -> {45} [color=red];
+    53 -> {36} [color=green];
 
 }

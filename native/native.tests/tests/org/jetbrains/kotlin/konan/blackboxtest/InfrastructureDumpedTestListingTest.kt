@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest
 
+import com.intellij.openapi.util.text.StringUtil.convertLineSeparators
 import com.intellij.testFramework.TestDataFile
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.konan.blackboxtest.InfrastructureDumpedTestListingTest.Companion.TEST_SUITE_PATH
@@ -152,8 +153,8 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
     private fun KLIB.asIncludedLibraryDependency() = ExistingDependency(this, IncludedLibrary)
 
     private fun assertDumpFilesEqual(expected: File, actual: File) {
-        val expectedDumpFileContents = expected.readText().trimEnd()
-        val actualDumpFileContents = actual.readText().trimEnd()
+        val expectedDumpFileContents = convertLineSeparators(expected.readText().trimEnd())
+        val actualDumpFileContents = convertLineSeparators(actual.readText().trimEnd())
 
         assertEquals(expectedDumpFileContents, actualDumpFileContents) {
             """

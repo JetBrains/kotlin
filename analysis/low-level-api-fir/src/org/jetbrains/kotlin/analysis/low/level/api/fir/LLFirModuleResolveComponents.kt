@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBui
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCacheImpl
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureCache
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirModuleLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirScopeSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -27,7 +27,7 @@ internal class LLFirModuleResolveComponents(
 ) {
     val cache: ModuleFileCache = ModuleFileCacheImpl(this)
     val firFileBuilder: LLFirFileBuilder = LLFirFileBuilder(this)
-    val lazyFirDeclarationsResolver = FirLazyDeclarationResolver(this)
+    val firModuleLazyDeclarationResolver = LLFirModuleLazyDeclarationResolver(this)
 
     val scopeSessionProvider: LLFirScopeSessionProvider = LLFirScopeSessionProvider.create(
         globalResolveComponents.project,

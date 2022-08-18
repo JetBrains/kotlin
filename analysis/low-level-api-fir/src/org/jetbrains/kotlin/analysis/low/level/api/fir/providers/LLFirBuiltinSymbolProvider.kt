@@ -24,7 +24,6 @@ class LLFirBuiltinSymbolProvider(
     moduleData: FirModuleData,
     kotlinScopeProvider: FirKotlinScopeProvider
 ) : FirBuiltinSymbolProvider(session, moduleData, kotlinScopeProvider) {
-    @OptIn(ExperimentalStdlibApi::class)
     private val functionsCache = session.firCachesFactory.createCache { callableId: CallableId ->
         buildList {
             getTopLevelFunctionSymbolsToByPackageFragments(this, callableId.packageName, callableId.callableName)

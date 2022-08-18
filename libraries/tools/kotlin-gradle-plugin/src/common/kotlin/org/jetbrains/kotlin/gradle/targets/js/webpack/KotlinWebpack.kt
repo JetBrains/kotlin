@@ -297,7 +297,7 @@ constructor(
 
     @TaskAction
     fun doExecute() {
-        resolutionManager.checkRequiredDependencies(task = this, services = services, logger = logger, projectPath = projectPath)
+        resolutionManager.checkRequiredDependencies(task = this)
 
         val runner = createRunner()
 

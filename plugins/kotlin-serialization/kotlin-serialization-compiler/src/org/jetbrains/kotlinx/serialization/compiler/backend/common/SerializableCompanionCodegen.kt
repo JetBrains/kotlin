@@ -15,12 +15,12 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SE
 
 abstract class SerializableCompanionCodegen(
     protected val companionDescriptor: ClassDescriptor,
-    bindingContext: BindingContext
+    bindingContext: BindingContext?
 ) : AbstractSerialGenerator(bindingContext, companionDescriptor) {
     protected val serializableDescriptor: ClassDescriptor = getSerializableClassDescriptorByCompanion(companionDescriptor)!!
 
-    fun generate() {
-        val serializerGetterDescriptor = companionDescriptor.unsubstitutedMemberScope.getContributedFunctions(
+    open fun getSerializerGetterDescriptor(): FunctionDescriptor {
+        return companionDescriptor.unsubstitutedMemberScope.getContributedFunctions(
             SERIALIZER_PROVIDER_NAME,
             NoLookupLocation.FROM_BACKEND
         ).firstOrNull {
@@ -32,6 +32,10 @@ abstract class SerializableCompanionCodegen(
             "Can't find synthesized 'Companion.serializer()' function to generate, " +
                     "probably clash with user-defined function has occurred"
         )
+    }
+
+    fun generate() {
+        val serializerGetterDescriptor = getSerializerGetterDescriptor()
 
         if (serializableDescriptor.isSerializableObject
             || serializableDescriptor.isAbstractOrSealedSerializableClass()

@@ -390,6 +390,7 @@ class FirRenderer(
         override fun visitTypeParameter(typeParameter: FirTypeParameter) {
             annotationRenderer?.render(typeParameter)
             modifierRenderer.renderModifiers(typeParameter)
+            resolvePhaseRenderer?.render(typeParameter)
             typeParameter.variance.renderVariance()
             print(typeParameter.name)
 
@@ -905,8 +906,8 @@ class FirRenderer(
             visitQualifiedAccessExpression(thisReceiverExpression)
         }
 
-        override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast) {
-            visitQualifiedAccessExpression(expressionWithSmartcast)
+        override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression) {
+            smartCastExpression.originalExpression.accept(this)
         }
 
         override fun visitVariableAssignment(variableAssignment: FirVariableAssignment) {

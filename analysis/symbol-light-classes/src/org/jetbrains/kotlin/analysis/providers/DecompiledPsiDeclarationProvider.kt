@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.analysis.providers
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.providers.PsiDeclarationAndKtSymbolEqualityChecker.representsTheSameDeclaration
 
-public object DecompiledPsiDeclarationProvider {
-    public fun findPsi(ktSymbol: KtSymbol, project: Project): PsiElement? {
+object DecompiledPsiDeclarationProvider {
+    fun KtAnalysisSession.findPsi(ktSymbol: KtSymbol, project: Project): PsiElement? {
         return when (ktSymbol) {
             is KtConstructorSymbol -> providePsiForConstructor(ktSymbol, project)
             is KtFunctionLikeSymbol -> providePsiForFunction(ktSymbol, project)
@@ -22,7 +24,7 @@ public object DecompiledPsiDeclarationProvider {
         }
     }
 
-    private fun providePsiForConstructor(
+    private fun KtAnalysisSession.providePsiForConstructor(
         constructorSymbol: KtConstructorSymbol,
         project: Project
     ): PsiElement? {
@@ -30,17 +32,24 @@ public object DecompiledPsiDeclarationProvider {
         val psiClass = project.createPsiDeclarationProvider(constructorSymbol.scope(project))
             ?.getClassesByClassId(classId)
             ?.firstOrNull() ?: return null
-        return psiClass.constructors.firstOrNull()
+        return psiClass.constructors.find { psiMethod ->
+            representsTheSameDeclaration(psiMethod, constructorSymbol)
+        }
     }
 
-    private fun providePsiForFunction(
+    private fun KtAnalysisSession.providePsiForFunction(
         functionLikeSymbol: KtFunctionLikeSymbol,
         project: Project
     ): PsiElement? {
         return functionLikeSymbol.callableIdIfNonLocal?.let {
-            project.createPsiDeclarationProvider(functionLikeSymbol.scope(project))
+            val candidates = project.createPsiDeclarationProvider(functionLikeSymbol.scope(project))
                 ?.getFunctions(it)
-                ?.firstOrNull()
+            if (candidates?.size == 1)
+                candidates.single()
+            else
+                candidates?.find { psiMethod ->
+                    representsTheSameDeclaration(psiMethod, functionLikeSymbol)
+                }
         }
     }
 

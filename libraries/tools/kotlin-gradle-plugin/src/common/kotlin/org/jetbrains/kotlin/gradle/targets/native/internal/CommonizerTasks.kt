@@ -9,8 +9,10 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
@@ -73,6 +75,10 @@ internal val Project.commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>
                 configureTask = {
                     group = "interop"
                     description = "Invokes the commonizer on c-interop bindings of the project"
+
+                    kotlinPluginVersion.set(getKotlinPluginVersion())
+                    commonizerClasspath.from(project.maybeCreateCommonizerClasspathConfiguration())
+                    customJvmArgs.set(PropertiesProvider(project).commonizerJvmArgs)
                 }
             )
         }
@@ -110,6 +116,15 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
         return rootProject.locateOrRegisterTask(
             "commonizeNativeDistribution",
             invokeWhenRegistered = {
+                /**
+                 * https://github.com/gradle/gradle/issues/13252
+                 * https://github.com/gradle/gradle/issues/20145
+                 * https://youtrack.jetbrains.com/issue/KT-51583
+                 */
+                if (rootProject.plugins.findPlugin("jvm-ecosystem") == null) {
+                    rootProject.plugins.apply("jvm-ecosystem")
+                }
+
                 commonizeTask.dependsOn(this)
                 rootProject.commonizeTask.dependsOn(this)
                 cleanNativeDistributionCommonizerTask
@@ -117,6 +132,10 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
             configureTask = {
                 group = "interop"
                 description = "Invokes the commonizer on platform libraries provided by the Kotlin/Native distribution"
+
+                kotlinPluginVersion.set(getKotlinPluginVersion())
+                commonizerClasspath.from(rootProject.maybeCreateCommonizerClasspathConfiguration())
+                customJvmArgs.set(PropertiesProvider(rootProject).commonizerJvmArgs)
             }
         )
     }

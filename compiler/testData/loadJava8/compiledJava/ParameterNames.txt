@@ -16,6 +16,7 @@ public open class ParameterNames {
         public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.ParameterNames.Enum!>!
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.ParameterNames.Enum>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.ParameterNames.Enum
         public final /*synthesized*/ fun values(): kotlin.Array<test.ParameterNames.Enum>
     }

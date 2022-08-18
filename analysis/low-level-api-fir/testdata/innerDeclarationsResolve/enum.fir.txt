@@ -20,4 +20,7 @@ FILE: enum.kt
         public final static [BODY_RESOLVE] fun valueOf([BODY_RESOLVE] value: R|kotlin/String|): R|Enum| {
         }
 
+        public final static [BODY_RESOLVE] val entries: R|kotlin/enums/EnumEntries<Enum>|
+            public [RAW_FIR] get(): R|kotlin/enums/EnumEntries<Enum>|
+
     }

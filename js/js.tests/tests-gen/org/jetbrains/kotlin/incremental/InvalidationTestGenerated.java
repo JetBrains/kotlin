@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -80,6 +80,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/exportsThroughInlineFunction/");
     }
 
+    @TestMetadata("fakeOverrideClassFunctionQualifiers")
+    public void testFakeOverrideClassFunctionQualifiers() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideClassFunctionQualifiers/");
+    }
+
     @TestMetadata("fakeOverrideInheritance")
     public void testFakeOverrideInheritance() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInheritance/");
@@ -98,6 +103,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
     @TestMetadata("fakeOverrideInlineProperty")
     public void testFakeOverrideInlineProperty() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInlineProperty/");
+    }
+
+    @TestMetadata("fakeOverrideInterfaceFunctionQualifiers")
+    public void testFakeOverrideInterfaceFunctionQualifiers() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInterfaceFunctionQualifiers/");
     }
 
     @TestMetadata("fastPath1")

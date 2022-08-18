@@ -464,7 +464,7 @@ class DiagnosticReporterByTrackingStrategy(
                 val parameter = lambdaExpression.valueParameters.getOrNull(index) ?: return@lambda
                 val diagnosticFactory =
                     if (isWarning) EXPECTED_PARAMETER_TYPE_MISMATCH_WARNING else EXPECTED_PARAMETER_TYPE_MISMATCH
-                report(diagnosticFactory.on(parameter, error.upperKotlinType))
+                report(diagnosticFactory.on(parameter, error.lowerKotlinType))
                 return
             }
 

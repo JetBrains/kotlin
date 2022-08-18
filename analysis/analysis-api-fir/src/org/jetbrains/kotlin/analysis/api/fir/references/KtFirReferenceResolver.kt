@@ -14,6 +14,7 @@ import com.intellij.psi.impl.source.resolve.ResolveCache
 import org.jetbrains.kotlin.analysis.api.KtAllowAnalysisOnEdt
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.lifetime.allowAnalysisOnEdt
+import org.jetbrains.kotlin.analysis.utils.errors.shouldIjPlatformExceptionBeRethrown
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 
 object KtFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
@@ -27,7 +28,7 @@ object KtFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
             val resolveToPsiElements = try {
                 analyze(ref.expression) { ref.getResolvedToPsi(this) }
             } catch (e: Throwable) {
-                if (e is ControlFlowException || e is IndexNotReadyException) throw e
+                if (shouldIjPlatformExceptionBeRethrown(e)) throw e
 
                 throw KtReferenceResolveException(ref, e)
             }

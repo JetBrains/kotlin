@@ -11,9 +11,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
+import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.PackagePartProviderFactory
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderImpl
 import org.jetbrains.kotlin.idea.references.KotlinFirReferenceContributor
 import org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor
-import org.jetbrains.kotlin.light.classes.symbol.KotlinAsJavaFirSupport
+import org.jetbrains.kotlin.light.classes.symbol.SymbolKotlinAsJavaSupport
 import org.jetbrains.kotlin.light.classes.symbol.caches.SymbolLightClassFacadeCache
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
@@ -45,6 +45,10 @@ import org.jetbrains.kotlin.psi.KtFile
  *   * [KotlinReferenceProvidersService]
  *   * [KotlinReferenceProviderContributor]
  */
+@Deprecated(
+    "Use StandaloneAnalysisAPISessionBuilder.",
+    ReplaceWith("buildStandaloneAnalysisAPISession { }")
+)
 public fun configureApplicationEnvironment(app: MockApplication) {
     if (app.getServiceIfCreated(KotlinReferenceProvidersService::class.java) == null) {
         app.registerService(
@@ -65,7 +69,7 @@ public fun configureApplicationEnvironment(app: MockApplication) {
  *
  * In particular, this will register:
  *   * [KtAnalysisSessionProvider]
- *   * [KotlinAsJavaFirSupport]
+ *   * [SymbolKotlinAsJavaSupport]
  *   * [SymbolLightClassFacadeCache] for FIR light class support
  *   * [ClsJavaStubByVirtualFileCache]
  *   * [KotlinModificationTrackerFactory]
@@ -83,6 +87,10 @@ public fun configureApplicationEnvironment(app: MockApplication) {
  *    * other Java sources in [compilerConfig] (set via [addJavaSourceRoots])
  *    * JVM class paths in [compilerConfig] (set via [addJvmClasspathRoots]) as library.
  */
+@Deprecated(
+    "Use StandaloneAnalysisAPISessionBuilder.",
+    ReplaceWith("buildStandaloneAnalysisAPISession { }")
+)
 public fun configureProjectEnvironment(
     project: MockProject,
     compilerConfig: CompilerConfiguration,
@@ -171,7 +179,7 @@ private fun reRegisterJavaElementFinder(project: Project) {
         picoContainer.unregisterComponent(KotlinAsJavaSupport::class.qualifiedName)
         picoContainer.registerComponentInstance(
             KotlinAsJavaSupport::class.qualifiedName,
-            KotlinAsJavaFirSupport(project)
+            SymbolKotlinAsJavaSupport(project)
         )
     }
     @Suppress("DEPRECATION")

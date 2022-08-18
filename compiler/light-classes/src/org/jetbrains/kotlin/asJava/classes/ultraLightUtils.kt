@@ -191,12 +191,11 @@ private fun annotateByKotlinType(
     psiType: PsiType,
     kotlinType: KotlinType,
     psiContext: PsiElement,
-    ultraLightSupport: KtUltraLightSupport
 ): PsiType {
 
     fun KotlinType.getAnnotationsSequence(): Sequence<List<PsiAnnotation>> =
         sequence {
-            yield(annotations.mapNotNull { it.toLightAnnotation(ultraLightSupport, psiContext) })
+            yield(annotations.mapNotNull { it.toLightAnnotation(psiContext) })
             for (argument in arguments) {
                 yieldAll(argument.type.getAnnotationsSequence())
             }
@@ -246,7 +245,7 @@ internal fun KtUltraLightSupport.mapType(
     return createTypeFromCanonicalText(kotlinType, canonicalSignature, psiContext)
 }
 
-private fun KtUltraLightSupport.createTypeFromCanonicalText(
+private fun createTypeFromCanonicalText(
     kotlinType: KotlinType?,
     canonicalSignature: String,
     psiContext: PsiElement,
@@ -257,7 +256,7 @@ private fun KtUltraLightSupport.createTypeFromCanonicalText(
     val typeText = TypeInfo.createTypeText(typeInfo) ?: return PsiType.NULL
 
     val typeElement = ClsTypeElementImpl(psiContext, typeText, '\u0000')
-    val type = if (kotlinType != null) annotateByKotlinType(typeElement.type, kotlinType, typeElement, this) else typeElement.type
+    val type = if (kotlinType != null) annotateByKotlinType(typeElement.type, kotlinType, typeElement) else typeElement.type
 
     if (type is PsiArrayType && psiContext is KtUltraLightParameter && psiContext.isVarArgs) {
         return PsiEllipsisType(type.componentType, type.annotationProvider)

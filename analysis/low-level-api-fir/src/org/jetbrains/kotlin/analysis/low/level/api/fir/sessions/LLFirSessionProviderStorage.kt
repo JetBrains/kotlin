@@ -114,7 +114,6 @@ private class LLFirSessionsCache {
         return newMappings to result
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun getSessions(): Map<KtModule, LLFirSession> = buildMap {
         val sessions = mappings.values
         val wasSessionInvalidated = sessions.associateWithTo(hashMapOf()) { false }

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.resolve
 
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -110,6 +112,7 @@ object SerialEntityNames {
     internal const val typeArgPrefix = "typeSerial"
 
     internal val wrapIntoNullableExt = SerializationPackages.builtinsPackageFqName.child(Name.identifier("nullable"))
+    internal val wrapIntoNullableCallableId = CallableId(SerializationPackages.builtinsPackageFqName, Name.identifier("nullable"))
 }
 
 object SpecialBuiltins {

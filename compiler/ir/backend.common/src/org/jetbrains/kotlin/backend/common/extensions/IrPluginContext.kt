@@ -22,6 +22,15 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.BindingContext
 
+/**
+ * Indicates methods and properties that are not available in backend after FIR
+ *
+ * Invocation of such methods in IR plugins if frontend was a FIR results in compiler crash.
+ * It's still possible to use them in IR plugins with old frontend.
+ */
+@RequiresOptIn("This API is not available after FIR")
+annotation class FirIncompatiblePluginAPI(val hint: String = "")
+
 interface IrPluginContext : IrGeneratorContext {
     val languageVersionSettings: LanguageVersionSettings
 
@@ -29,11 +38,13 @@ interface IrPluginContext : IrGeneratorContext {
     val moduleDescriptor: ModuleDescriptor
 
     @ObsoleteDescriptorBasedAPI
+    @FirIncompatiblePluginAPI
     val bindingContext: BindingContext
 
     val symbolTable: ReferenceSymbolTable
 
     @ObsoleteDescriptorBasedAPI
+    @FirIncompatiblePluginAPI
     val typeTranslator: TypeTranslator
 
     val symbols: BuiltinSymbolsBase
@@ -49,10 +60,15 @@ interface IrPluginContext : IrGeneratorContext {
     fun createDiagnosticReporter(pluginId: String): IrMessageLogger
 
     // The following API is experimental
+    @FirIncompatiblePluginAPI("Use classId overload instead")
     fun referenceClass(fqName: FqName): IrClassSymbol?
+    @FirIncompatiblePluginAPI("Use classId overload instead")
     fun referenceTypeAlias(fqName: FqName): IrTypeAliasSymbol?
+    @FirIncompatiblePluginAPI("Use classId overload instead")
     fun referenceConstructors(classFqn: FqName): Collection<IrConstructorSymbol>
+    @FirIncompatiblePluginAPI("Use callableId overload instead")
     fun referenceFunctions(fqName: FqName): Collection<IrSimpleFunctionSymbol>
+    @FirIncompatiblePluginAPI("Use callableId overload instead")
     fun referenceProperties(fqName: FqName): Collection<IrPropertySymbol>
 
     // This one is experimental too

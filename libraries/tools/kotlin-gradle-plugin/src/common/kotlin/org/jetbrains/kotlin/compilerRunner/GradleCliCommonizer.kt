@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
@@ -20,25 +21,15 @@ import org.jetbrains.kotlin.gradle.utils.named
 
 private const val KOTLIN_KLIB_COMMONIZER_EMBEDDABLE = "kotlin-klib-commonizer-embeddable"
 
-/**
- * Creates an instance of [CliCommonizer] that is backed by [KotlinNativeCommonizerToolRunner] to adhere to user defined settings
- * when executing the commonizer (like jvm arguments, running in separate process, etc)
- */
-internal fun GradleCliCommonizer(project: Project): CliCommonizer {
-    return GradleCliCommonizer(
-        KotlinNativeCommonizerToolRunner(project)
-    )
-}
-
 internal fun GradleCliCommonizer(commonizerToolRunner: KotlinNativeCommonizerToolRunner): CliCommonizer {
     return CliCommonizer(CliCommonizer.Executor { arguments ->
         commonizerToolRunner.run(arguments)
     })
 }
 
-internal fun Project.registerCommonizerClasspathConfigurationIfNecessary() {
-    if (configurations.findByName(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME) == null) {
-        project.configurations.create(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME).run {
+internal fun Project.maybeCreateCommonizerClasspathConfiguration(): Configuration {
+    return configurations.findByName(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME)
+        ?: project.configurations.create(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME).run {
             isCanBeResolved = true
             isCanBeConsumed = false
             attributes.attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
@@ -50,5 +41,4 @@ internal fun Project.registerCommonizerClasspathConfigurationIfNecessary() {
                 )
             }
         }
-    }
 }

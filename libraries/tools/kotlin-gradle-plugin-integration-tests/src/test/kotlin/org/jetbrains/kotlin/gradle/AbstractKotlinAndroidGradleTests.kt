@@ -4,6 +4,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
+import org.jetbrains.kotlin.gradle.testbase.NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.util.*
@@ -694,7 +695,7 @@ open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
 
         project.build(":app:testDebugUnitTest", options = options) {
             assertSuccessful()
-            assertNotContains("Non-incremental compilation will be performed")
+            assertNotContains(NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED)
         }
     }
 
@@ -780,6 +781,31 @@ open class KotlinAndroid71GradleIT : KotlinAndroid70GradleIT() {
             build(":plainAndroidConsumer:assemble", options = buildOptions) {
                 assertSuccessful(
                     "plainAndroidConsumer build failed with consumer agpVersion $agpVersion (Producer: $androidGradlePluginVersion)"
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `test associate compilation dependencies are passed correctly to android test compilations`() {
+        with(Project("kt-49877")) {
+            build("allTests") {
+                assertSuccessful()
+                assertTasksExecuted(
+                    ":compileDebugKotlinAndroid",
+                    ":compileReleaseKotlinAndroid",
+                    ":compileDebugUnitTestKotlinAndroid",
+                    ":compileReleaseUnitTestKotlinAndroid",
+                    ":testDebugUnitTest",
+                    ":testReleaseUnitTest",
+                )
+            }
+
+            // instrumented tests don't work without a device, so we only compile them
+            build("packageDebugAndroidTest") {
+                assertSuccessful()
+                assertTasksExecuted(
+                    ":compileDebugAndroidTestKotlinAndroid",
                 )
             }
         }
@@ -1001,12 +1027,12 @@ abstract class AbstractKotlinAndroidGradleTests : BaseGradleIT() {
 
         project.projectDir.resolve("app/build.gradle").appendText(
             """
-        |
-        |androidExtensions {
-            |    experimental = true
             |
-        }
-        """.trimMargin()
+            |androidExtensions {
+            |    experimental = true
+            |}
+            |
+            """.trimMargin()
         )
 
         project.build("assembleDebug") {

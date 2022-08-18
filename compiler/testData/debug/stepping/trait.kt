@@ -49,11 +49,7 @@ fun box() {
 // test.kt:14 box
 // test.kt:7 bar
 // test.kt:4 foo
-// test.kt:4 foo
-// test.kt:7 bar
 // test.kt:15 box
 // test.kt:15 box
 // test.kt:7 bar
 // test.kt:4 foo
-// test.kt:4 foo
-// test.kt:7 bar

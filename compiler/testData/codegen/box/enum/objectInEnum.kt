@@ -1,5 +1,4 @@
 // !LANGUAGE: -NestedClassesInEnumEntryShouldBeInner
-// IGNORE_BACKEND: NATIVE
 
 enum class E {
     ENTRY,

@@ -8,15 +8,14 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
-import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNothing
+import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.scopes.scopeForClass
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -25,17 +24,16 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 
-fun FirExpressionWithSmartcast.smartcastScope(
+fun FirSmartCastExpression.smartcastScope(
     useSiteSession: FirSession,
     scopeSession: ScopeSession
 ): FirTypeScope? {
-    val smartcastType =
-        if (this is FirExpressionWithSmartcastToNothing) smartcastTypeWithoutNullableNothing.coneType else smartcastType.coneType
+    val smartcastType = smartcastTypeWithoutNullableNothing?.coneType ?: smartcastType.coneType
     val smartcastScope = smartcastType.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
     if (isStable) {
         return smartcastScope
     }
-    val originalScope = originalType.coneType.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+    val originalScope = originalExpression.typeRef.coneType.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
         ?: return smartcastScope
 
     if (smartcastScope == null) {
@@ -61,7 +59,7 @@ private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: Scope
             val fullyExpandedType = fullyExpandedType(useSiteSession)
             val fir = fullyExpandedType.lookupTag.toSymbol(useSiteSession)?.fir as? FirClass ?: return null
 
-            fir.symbol.ensureResolved(requiredPhase)
+            fir.symbol.lazyResolveToPhase(requiredPhase)
 
             val substitution = createSubstitution(fir.typeParameters, fullyExpandedType, useSiteSession)
 
@@ -119,13 +117,6 @@ fun ClassId.defaultType(parameters: List<FirTypeParameterSymbol>): ConeClassLike
             )
         }.toTypedArray(),
         isNullable = false,
-    )
-
-fun FirClass.typeWithStarProjections(): ConeClassLikeType =
-    ConeClassLikeTypeImpl(
-        symbol.toLookupTag(),
-        typeParameters.map { ConeStarProjection }.toTypedArray(),
-        isNullable = false
     )
 
 val TYPE_PARAMETER_SCOPE_KEY = scopeSessionKey<FirTypeParameterSymbol, FirTypeScope>()

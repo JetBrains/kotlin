@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 private enum class ScopeKind {
     TOP,
@@ -71,6 +70,9 @@ private val KotlinType.shortNameForPredefinedType
 
 private val KotlinType.createNullableNameForPredefinedType
         get() = "createNullable${this.shortNameForPredefinedType}"
+
+private val KotlinType.createGetNonNullValueOfPredefinedType
+    get() = "getNonNullValueOf${this.shortNameForPredefinedType}"
 
 internal val cKeywords = setOf(
         // Actual C keywords.
@@ -166,6 +168,11 @@ private class ExportedElementScope(val kind: ScopeKind, val name: String) {
         scopes.forEach {
             it.generateCAdapters()
         }
+    }
+
+    // collects names of inner scopes to make sure function<->scope name clashes would be detected, and functions would be mangled with "_" suffix
+    fun collectInnerScopeName(innerScope: ExportedElementScope) {
+        scopeNames += innerScope.name
     }
 
     fun scopeUniqueName(descriptor: DeclarationDescriptor, shortName: Boolean): String {
@@ -532,12 +539,17 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
     private var symbolTableOrNull: SymbolTable? = null
     internal val symbolTable get() = symbolTableOrNull!!
 
+    // Primitive built-ins and unsigned types
     private val predefinedTypes = listOf(
             context.builtIns.byteType, context.builtIns.shortType,
             context.builtIns.intType, context.builtIns.longType,
             context.builtIns.floatType, context.builtIns.doubleType,
             context.builtIns.charType, context.builtIns.booleanType,
-            context.builtIns.unitType)
+            context.builtIns.unitType
+    ) + UnsignedType.values().map {
+        // Unfortunately, `context.ir` and `context.irBuiltins` are not initialized, so `context.ir.symbols.ubyte`, etc, are unreachable.
+        context.builtIns.builtInsModule.findClassAcrossModuleDependencies(it.classId)!!.defaultType
+    }
 
     internal fun paramsToUniqueNames(params: List<ParameterDescriptor>): Map<ParameterDescriptor, String> {
         paramNamesRecorded.clear()
@@ -780,8 +792,11 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
             return
         if (kind == DefinitionKind.C_HEADER_STRUCT) output("struct {", indent)
         if (kind == DefinitionKind.C_SOURCE_STRUCT) output(".${scope.name} = {", indent)
+        scope.scopes.forEach {
+            scope.collectInnerScopeName(it)
+            makeScopeDefinitions(it, kind, indent + 1)
+        }
         scope.elements.forEach { makeElementDefinition(it, kind, indent + 1) }
-        scope.scopes.forEach { makeScopeDefinitions(it, kind, indent + 1) }
         if (kind == DefinitionKind.C_HEADER_STRUCT) output("} ${scope.name};", indent)
         if (kind == DefinitionKind.C_SOURCE_STRUCT) output("},", indent)
     }
@@ -800,7 +815,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         defineUsedTypesImpl(scope, usedTypes)
         val usedReferenceTypes = usedTypes.filter { isMappedToReference(it) }
         // Add nullable primitives, which are used in prototypes of "(*createNullable<PRIMITIVE_TYPE_NAME>)"
-        val predefinedNullableTypes = predefinedTypes.map { it.makeNullable() }
+        val predefinedNullableTypes: List<KotlinType> = predefinedTypes.map { it.makeNullable() }
 
         (predefinedNullableTypes + usedReferenceTypes)
                 .map { translateType(it) }
@@ -880,6 +895,8 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
             val nullableIt = it.makeNullable()
             val argument = if (!it.isUnit()) translateType(it) else "void"
             output("${translateType(nullableIt)} (*${it.createNullableNameForPredefinedType})($argument);", 1)
+            if(!it.isUnit())
+                output("$argument (*${it.createGetNonNullValueOfPredefinedType})(${translateType(nullableIt)});", 1)
         }
 
         output("")
@@ -1009,6 +1026,16 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
             output("KObjHeader* result = Kotlin_box${it.shortNameForPredefinedType}($argument result_holder.slot());", 1)
             output("return ${translateType(nullableIt)} { .pinned = CreateStablePointer(result) };", 1)
             output("}")
+
+            if (!it.isUnit()) {
+                output("extern \"C\" ${translateType(it)} Kotlin_unbox${it.shortNameForPredefinedType}(KObjHeader*);")
+                output("static ${translateType(it)} ${it.createGetNonNullValueOfPredefinedType}Impl(${translateType(nullableIt)} value) {")
+                output("Kotlin_initRuntimeIfNeeded();", 1)
+                output("ScopedRunnableState stateGuard;", 1)
+                output("KObjHolder value_holder;", 1)
+                output("return Kotlin_unbox${it.shortNameForPredefinedType}(DerefStablePointer(value.pinned, value_holder.slot()));", 1)
+                output("}")
+            }
         }
         makeScopeDefinitions(top, DefinitionKind.C_SOURCE_DECLARATION, 0)
         output("static ${prefix}_ExportedSymbols __konan_symbols = {")
@@ -1017,6 +1044,9 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         output(".IsInstance = IsInstanceImpl,", 1)
         predefinedTypes.forEach {
             output(".${it.createNullableNameForPredefinedType} = ${it.createNullableNameForPredefinedType}Impl,", 1)
+            if (!it.isUnit()) {
+                output(".${it.createGetNonNullValueOfPredefinedType} = ${it.createGetNonNullValueOfPredefinedType}Impl,", 1)
+            }
         }
 
         makeScopeDefinitions(top, DefinitionKind.C_SOURCE_STRUCT, 1)

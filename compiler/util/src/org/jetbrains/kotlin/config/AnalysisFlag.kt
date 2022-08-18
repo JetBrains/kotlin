@@ -36,10 +36,5 @@ class AnalysisFlag<out T> internal constructor(
         object ListOfStrings {
             operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, emptyList<String>())
         }
-
-        object ConstraintSystemForOverloadResolution {
-            operator fun provideDelegate(instance: Any?, property: KProperty<*>) =
-                Delegate(property.name, ConstraintSystemForOverloadResolutionMode.CONSTRAINT_SYSTEM_FOR_NEW_INFERENCE)
-        }
     }
 }

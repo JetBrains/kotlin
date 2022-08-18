@@ -32,11 +32,16 @@ interface LookupTracker {
         name: String
     )
 
+    fun clear()
+
     object DO_NOTHING : LookupTracker {
         override val requiresPosition: Boolean
             get() = false
 
         override fun record(filePath: String, position: Position, scopeFqName: String, scopeKind: ScopeKind, name: String) {
+        }
+
+        override fun clear() {
         }
     }
 }

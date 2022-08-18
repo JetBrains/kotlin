@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProviderFactory
 import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
     private val project: Project,
     override val scope: GlobalSearchScope,
+    override val packagePartProvider: PackagePartProvider,
     private val binaryModules: Collection<KtBinaryModule>,
     override val jarFileSystem: CoreJarFileSystem,
 ) : KotlinPsiDeclarationProvider(), AbstractDeclarationFromBinaryModuleProvider {
@@ -36,7 +38,11 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
     ): Collection<ClsClassImpl> {
         return binaryModules
             .flatMap {
-                virtualFilesFromModule(it, fqName, isPackageName)
+                val virtualFilesFromKotlinModule = if (isPackageName) virtualFilesFromKotlinModule(it, fqName) else emptySet()
+                // NB: this assumes Kotlin module has a valid `kotlin_module` info,
+                // i.e., package part info for the given `fqName` points to exact class paths we're looking for,
+                // and thus it's redundant to walk through the folders in an exhaustive way.
+                virtualFilesFromKotlinModule.ifEmpty { virtualFilesFromModule(it, fqName, isPackageName) }
             }
             .mapNotNull {
                 createClsJavaClassFromVirtualFile(it)
@@ -61,6 +67,7 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
         return clsClassImplsByFqName(classId.asSingleFqName(), isPackageName = false)
     }
 
+    // TODO(dimonchik0036): support 'is' accessor
     override fun getProperties(callableId: CallableId): Collection<PsiMember> {
         val classes = callableId.classId?.let { classId ->
             getClassesByClassId(classId)
@@ -96,12 +103,19 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
 
 // TODO: we can't register this in IDE yet due to non-trivial parameters: lib modules and jar file system.
 //  We need a session or facade that maintains such information
-public class KotlinStaticPsiDeclarationProviderFactory(
+class KotlinStaticPsiDeclarationProviderFactory(
     private val project: Project,
+    private val createPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
     private val binaryModules: Collection<KtBinaryModule>,
     private val jarFileSystem: CoreJarFileSystem,
 ) : KotlinPsiDeclarationProviderFactory() {
     override fun createPsiDeclarationProvider(searchScope: GlobalSearchScope): KotlinPsiDeclarationProvider {
-        return KotlinStaticPsiDeclarationFromBinaryModuleProvider(project, searchScope, binaryModules, jarFileSystem)
+        return KotlinStaticPsiDeclarationFromBinaryModuleProvider(
+            project,
+            searchScope,
+            createPackagePartProvider.invoke(searchScope),
+            binaryModules,
+            jarFileSystem,
+        )
     }
 }

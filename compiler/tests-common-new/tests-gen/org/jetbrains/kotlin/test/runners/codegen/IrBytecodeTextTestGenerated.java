@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -2195,6 +2195,24 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("enumEntries.kt")
+        public void testEnumEntries() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/enum/enumEntries.kt");
+        }
+
+        @Test
+        @TestMetadata("enumEntriesMapping.kt")
+        public void testEnumEntriesMapping() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/enum/enumEntriesMapping.kt");
+        }
+
+        @Test
+        @TestMetadata("enumEntriesMultiMapping.kt")
+        public void testEnumEntriesMultiMapping() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/enum/enumEntriesMultiMapping.kt");
+        }
+
+        @Test
         @TestMetadata("kt18731.kt")
         public void testKt18731() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/enum/kt18731.kt");
@@ -3394,6 +3412,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         @TestMetadata("deleteClassOnTransformation.kt")
         public void testDeleteClassOnTransformation() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inline/deleteClassOnTransformation.kt");
+        }
+
+        @Test
+        @TestMetadata("entriesMappingOnCallSite.kt")
+        public void testEntriesMappingOnCallSite() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inline/entriesMappingOnCallSite.kt");
         }
 
         @Test
@@ -5662,12 +5686,6 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         @Test
         public void testAllFilesPresentInUnsignedTypes() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/unsignedTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-        }
-
-        @Test
-        @TestMetadata("unsignedIntCompare_before.kt")
-        public void testUnsignedIntCompare_before() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedIntCompare_before.kt");
         }
 
         @Test

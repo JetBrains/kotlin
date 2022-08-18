@@ -41,13 +41,10 @@ public abstract class KtSignatureSubstitutor : KtAnalysisSessionComponent() {
         substitutor: KtSubstitutor
     ): KtVariableLikeSignature<S>
 
-    @Suppress("UNCHECKED_CAST")
-    public open fun <S : KtCallableSymbol> substitute(symbol: S, substitutor: KtSubstitutor): KtCallableSignature<S> {
-        return when (symbol) {
-            is KtFunctionLikeSymbol -> substitute(symbol, substitutor)
-            is KtVariableLikeSymbol -> substitute(symbol, substitutor)
-            else -> unexpectedElementError("symbol", symbol)
-        }
+    public open fun <S : KtCallableSymbol> substitute(symbol: S, substitutor: KtSubstitutor): KtCallableSignature<S> = when (symbol) {
+        is KtFunctionLikeSymbol -> substitute(symbol, substitutor)
+        is KtVariableLikeSymbol -> substitute(symbol, substitutor)
+        else -> unexpectedElementError("symbol", symbol)
     }
 
     public abstract fun <S : KtFunctionLikeSymbol> substitute(symbol: S, substitutor: KtSubstitutor): KtFunctionLikeSignature<S>

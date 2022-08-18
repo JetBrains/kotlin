@@ -42,7 +42,4 @@ fun bar(x: Int) =
 // test.kt:18 bar
 // foo.kt:4 foo
 // foo.kt:5 foo
-// foo.kt:5 foo
 // test.kt:21 bar
-// test.kt:21 bar
-// foo.kt:7 foo

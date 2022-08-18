@@ -125,7 +125,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 }
 
 @FirBuilderDsl
-internal class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuilder {
+class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuilder {
     lateinit var visibility: Visibility
     var modality: Modality? = null
     var isFromSource: Boolean by Delegates.notNull()
@@ -174,6 +174,6 @@ internal class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationCont
         }
 }
 
-internal inline fun buildJavaClass(init: FirJavaClassBuilder.() -> Unit): FirJavaClass {
+inline fun buildJavaClass(init: FirJavaClassBuilder.() -> Unit): FirJavaClass {
     return FirJavaClassBuilder().apply(init).build()
 }

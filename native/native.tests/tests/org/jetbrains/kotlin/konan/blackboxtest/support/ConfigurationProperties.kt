@@ -51,7 +51,8 @@ internal enum class ClassLevelProperty(shortName: String) {
     GC_TYPE("gcType"),
     GC_SCHEDULER("gcScheduler"),
     CACHE_MODE("cacheMode"),
-    EXECUTION_TIMEOUT("executionTimeout");
+    EXECUTION_TIMEOUT("executionTimeout"),
+    SANITIZER("sanitizer");
 
     internal val propertyName = fullPropertyName(shortName)
 

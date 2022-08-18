@@ -36,6 +36,8 @@ interface AnnotationDescriptor : AnnotationMarker {
     val allValueArguments: Map<Name, ConstantValue<*>>
 
     val source: SourceElement
+
+    fun getSourceForArgument(name: Name): SourceElement = SourceElement.NO_SOURCE
 }
 
 val AnnotationDescriptor.abbreviationFqName: FqName?

@@ -86,3 +86,10 @@ val console: Console
 @JsExport
 val error: CompileError
     get() = js("{}")
+
+typealias NotExportedTypeAlias = NonExportedGenericInterface<NonExportedType>
+
+@JsExport
+fun functionWithTypeAliasInside(x: NotExportedTypeAlias): NotExportedTypeAlias {
+    return x
+}

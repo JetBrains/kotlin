@@ -18,4 +18,9 @@ fun main() {
     val hook1 = getUnhandledExceptionHook()
     assertEquals(exceptionHook, hook1)
     val hook2 = getUnhandledExceptionHook()
+    assertEquals(exceptionHook, hook2)
+    val hook3 = setUnhandledExceptionHook(null)
+    assertEquals(exceptionHook, hook3)
+    val hook4 = getUnhandledExceptionHook()
+    assertNull(hook4)
 }

@@ -188,10 +188,10 @@ FILE: lambdaAsSAMInterface.kt
 
     }
     public abstract fun [SUPER_TYPES] interface Foo : R|kotlin/Any| {
-        public abstract [STATUS] fun foo([RAW_FIR] a: R|foo/Arg|): R|foo/Arg|
+        public abstract [STATUS] fun foo([STATUS] a: R|foo/Arg|): R|foo/Arg|
 
     }
-    public final [CONTRACTS] fun testMe([RAW_FIR] f: R|foo/Foo|): R|kotlin/Unit| {
+    public final [CONTRACTS] fun testMe([CONTRACTS] f: R|foo/Foo|): R|kotlin/Unit| {
     }
     public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|foo/testMe|(<L> = [BODY_RESOLVE] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([BODY_RESOLVE] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {

@@ -67,28 +67,30 @@ digraph thisOfExtensionProperty_kt {
                 22 [label="Exit left part of &&"];
                 23 [label="Enter right part of &&"];
                 24 [label="Access variable this@R|/check_2|"];
-                25 [label="Access variable R|/B.b|"];
-                26 [label="Exit &&"];
+                25 [label="Smart cast: this@R|/check_2|"];
+                26 [label="Access variable R|/B.b|"];
+                27 [label="Exit &&"];
             }
-            27 [label="Jump: ^ (this@R|/check_2| is R|B|) && this@R|/check_2|.R|/B.b|"];
-            28 [label="Stub" style="filled" fillcolor=gray];
-            29 [label="Exit block" style="filled" fillcolor=gray];
+            28 [label="Jump: ^ (this@R|/check_2| is R|B|) && this@R|/check_2|.R|/B.b|"];
+            29 [label="Stub" style="filled" fillcolor=gray];
+            30 [label="Exit block" style="filled" fillcolor=gray];
         }
-        30 [label="Exit function getter" style="filled" fillcolor=red];
+        31 [label="Exit function getter" style="filled" fillcolor=red];
     }
     17 -> {18};
     18 -> {19};
     19 -> {20};
     20 -> {21};
     21 -> {22};
-    22 -> {26 23};
+    22 -> {27 23};
     23 -> {24};
     24 -> {25};
     25 -> {26};
     26 -> {27};
-    27 -> {30};
-    27 -> {28} [style=dotted];
+    27 -> {28};
+    28 -> {31};
     28 -> {29} [style=dotted];
     29 -> {30} [style=dotted];
+    30 -> {31} [style=dotted];
 
 }

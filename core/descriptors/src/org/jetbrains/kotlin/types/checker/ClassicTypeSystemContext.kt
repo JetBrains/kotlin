@@ -425,10 +425,9 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return when (this) {
             is SimpleTypeMarker -> this.withNullability(nullable)
             is FlexibleTypeMarker -> createFlexibleType(lowerBound().withNullability(nullable), upperBound().withNullability(nullable))
-            else -> error("sealed")
+            else -> asSimpleType()?.withNullability(nullable) ?: error("Unwrapped type should be simple")
         }
     }
-
 
     override fun newTypeCheckerState(
         errorTypesEqualToAnything: Boolean,
@@ -476,6 +475,20 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         require(this is UnwrappedType, this::errorMessage)
         val annotationsWithoutExact = this.annotations.filterNot(AnnotationDescriptor::isExactAnnotation)
         return this.replaceAnnotations(Annotations.create(annotationsWithoutExact))
+    }
+
+    override fun KotlinTypeMarker.canHaveSubtypes(typeChecker: AbstractTypeChecker): Boolean? {
+        require(this is KotlinType, this::errorMessage)
+
+        val kotlinTypeChecker = object : KotlinTypeChecker {
+            override fun isSubtypeOf(subtype: KotlinType, supertype: KotlinType): Boolean =
+                typeChecker.isSubtypeOf(this@ClassicTypeSystemContext, subtype, supertype)
+
+            override fun equalTypes(a: KotlinType, b: KotlinType): Boolean =
+                typeChecker.equalTypes(this@ClassicTypeSystemContext, a, b)
+        }
+
+        return TypeUtils.canHaveSubtypes(kotlinTypeChecker, this)
     }
 
     override fun KotlinTypeMarker.hasExactAnnotation(): Boolean {

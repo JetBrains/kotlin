@@ -75,15 +75,92 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         )
     }
 
-    @DisplayName("Compilation via Kotlin daemon enabled using system property")
+    @DisplayName("Compilation via Kotlin daemon with fallback strategy")
     @GradleTest
-    fun testDaemonViaSystemProperty(gradleVersion: GradleVersion) {
+    fun testDaemonFallbackStrategy(gradleVersion: GradleVersion) {
         doTestExecutionStrategy(
             gradleVersion,
             KotlinCompilerExecutionStrategy.DAEMON,
             addHeapDumpOptions = false,
-            viaSystemProperty = true
+            testFallbackStrategy = true,
         )
+    }
+
+    @DisplayName("Compilation via Kotlin daemon with disabled fallback strategy")
+    @GradleTest
+    fun testDaemonFallbackStrategyDisabled(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kotlinBuiltins",
+            gradleVersion = gradleVersion,
+            addHeapDumpOptions = false
+        ) {
+            setupProject(this)
+
+            buildAndFail(
+                "build",
+                "-Pkotlin.compiler.execution.strategy=${KotlinCompilerExecutionStrategy.DAEMON}",
+                "-Pkotlin.daemon.jvmargs=-Xmxqwerty",
+                "-Pkotlin.daemon.useFallbackStrategy=false"
+            ) {
+                assertOutputContains("Failed to compile with Kotlin daemon. Fallback strategy (compiling without Kotlin daemon) is turned off.")
+            }
+        }
+    }
+
+    @DisplayName("Compilation via Kotlin daemon with disabled fallback strategy via task property")
+    @GradleTest
+    fun testDaemonFallbackStrategyDisabledTaskProperty(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kotlinBuiltins",
+            gradleVersion = gradleVersion,
+            addHeapDumpOptions = false
+        ) {
+            setupProject(this)
+
+            // This task configuration action is registered before all the KGP configuration actions,
+            // so this test also checks if KGP doesn't override value that is set before KGP configuration actions
+            //language=Gradle
+            buildGradle.append(
+                """
+                subprojects {
+                    tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile).configureEach {
+                        useDaemonFallbackStrategy = false
+                    }
+                }
+                """.trimIndent()
+            )
+
+            buildAndFail(
+                "build",
+                "-Pkotlin.daemon.jvmargs=-Xmxqwerty",
+            ) {
+                assertOutputContains("Failed to compile with Kotlin daemon. Fallback strategy (compiling without Kotlin daemon) is turned off.")
+            }
+        }
+    }
+
+    @DisplayName("Compilation inside Gradle daemon configured via task property")
+    @GradleTest
+    fun testInProcessTaskProperty(gradleVersion: GradleVersion) {
+        doTestExecutionStrategy(
+            gradleVersion,
+            KotlinCompilerExecutionStrategy.IN_PROCESS,
+            shouldConfigureStrategyViaGradleProperty = false
+        ) {
+            // This task configuration action is registered before all the KGP configuration actions,
+            // so this test also checks if KGP doesn't override value that is set before KGP configuration actions
+            // KT-53617
+            //language=Gradle
+            buildGradle.append(
+                """
+                subprojects {
+                    tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile).configureEach {
+                        compilerExecutionStrategy = org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy.IN_PROCESS
+                    }
+                }
+                """.trimIndent()
+            )
+        }
     }
 
     @DisplayName("Compilation inside Gradle daemon")
@@ -92,16 +169,6 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         doTestExecutionStrategy(
             gradleVersion,
             KotlinCompilerExecutionStrategy.IN_PROCESS
-        )
-    }
-
-    @DisplayName("Compilation inside Gradle daemon enabled using system property")
-    @GradleTest
-    fun testInProcessViaSystemProperty(gradleVersion: GradleVersion) {
-        doTestExecutionStrategy(
-            gradleVersion,
-            KotlinCompilerExecutionStrategy.IN_PROCESS,
-            viaSystemProperty = true
         )
     }
 
@@ -114,21 +181,13 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         )
     }
 
-    @DisplayName("Compilation via separate compiler process enabled via system property")
-    @GradleTest
-    fun testOutOfProcessViaSystemProperty(gradleVersion: GradleVersion) {
-        doTestExecutionStrategy(
-            gradleVersion,
-            KotlinCompilerExecutionStrategy.OUT_OF_PROCESS,
-            viaSystemProperty = true
-        )
-    }
-
     private fun doTestExecutionStrategy(
         gradleVersion: GradleVersion,
         executionStrategy: KotlinCompilerExecutionStrategy,
         addHeapDumpOptions: Boolean = true,
-        viaSystemProperty: Boolean = false
+        testFallbackStrategy: Boolean = false,
+        shouldConfigureStrategyViaGradleProperty: Boolean = true,
+        additionalProjectConfiguration: TestProject.() -> Unit = {},
     ) {
         project(
             projectName = "kotlinBuiltins",
@@ -136,17 +195,29 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             addHeapDumpOptions = addHeapDumpOptions
         ) {
             setupProject(this)
+            additionalProjectConfiguration()
 
-            val cliArgPrefix = if (viaSystemProperty) "-D" else "-P"
-            val strategyCLIArg = "${cliArgPrefix}kotlin.compiler.execution.strategy=${executionStrategy.propertyValue}"
-            val finishMessage = "Finished executing kotlin compiler using $executionStrategy strategy"
+            @OptIn(ExperimentalStdlibApi::class)
+            val args = buildList {
+                if (shouldConfigureStrategyViaGradleProperty) {
+                    add("-Pkotlin.compiler.execution.strategy=${executionStrategy.propertyValue}")
+                }
+                if (testFallbackStrategy) {
+                    // add jvm option that JVM fails to parse
+                    add("-Pkotlin.daemon.jvmargs=-Xmxqwerty")
+                }
+            }.toTypedArray()
+            val expectedFinishStrategy = if (testFallbackStrategy) KotlinCompilerExecutionStrategy.OUT_OF_PROCESS else executionStrategy
+            val finishMessage = "Finished executing kotlin compiler using $expectedFinishStrategy strategy"
 
-            build("build", strategyCLIArg) {
+            build("build", *args) {
                 assertOutputContains(finishMessage)
                 checkOutput(this@project)
                 assertNoBuildWarnings()
 
-                if (executionStrategy == KotlinCompilerExecutionStrategy.DAEMON) {
+                if (testFallbackStrategy) {
+                    assertOutputContains("Using fallback strategy: Compile without Kotlin daemon")
+                } else if (executionStrategy == KotlinCompilerExecutionStrategy.DAEMON) {
                     // 256m is the default value for Gradle 5.0+
                     assertKotlinDaemonJvmOptions(
                         listOf("-XX:MaxMetaspaceSize=256m", "-ea")
@@ -158,7 +229,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             classesKt.modify {
                 it.checkedReplace("class B", "//class B")
             }
-            build("build", strategyCLIArg) {
+            build("build", *args) {
                 assertOutputContains(finishMessage)
                 checkOutputAfterChange(this@project)
                 assertNoBuildWarnings()

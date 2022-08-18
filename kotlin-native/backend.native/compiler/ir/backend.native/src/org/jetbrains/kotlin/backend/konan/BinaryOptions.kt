@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.konan.target.SanitizerKind
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 
@@ -37,6 +38,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val bundleVersion by stringOption()
 
     val appStateTracking by option<AppStateTracking>()
+
+    val sanitizer by option<SanitizerKind>()
 }
 
 open class BinaryOption<T : Any>(

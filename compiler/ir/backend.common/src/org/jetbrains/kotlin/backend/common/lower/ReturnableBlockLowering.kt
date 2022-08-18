@@ -127,7 +127,7 @@ class ReturnableBlockTransformer(val context: CommonBackendContext, val containe
         returnMap.remove(expression.symbol)
 
         if (!hasReturned) {
-            return IrCompositeImpl(
+            return IrBlockImpl(
                 expression.startOffset,
                 expression.endOffset,
                 expression.type,
@@ -143,7 +143,7 @@ class ReturnableBlockTransformer(val context: CommonBackendContext, val containe
                 newStatements
             )
 
-            return builder.irComposite(expression, expression.origin) {
+            return builder.irBlock(expression, expression.origin) {
                 +variable
                 +loop
                 +irGet(variable)

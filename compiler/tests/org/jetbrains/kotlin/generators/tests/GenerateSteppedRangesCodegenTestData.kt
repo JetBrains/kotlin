@@ -46,7 +46,7 @@ object GenerateSteppedRangesCodegenTestData {
         }
     }
 
-    private enum class Function(val infixFunctionName: String, val subdir: String) {
+    enum class Function(val infixFunctionName: String, val subdir: String) {
         RANGE_TO("..", "rangeTo"),
         RANGE_UNTIL("..<", "rangeUntil"),
         UNTIL(" until ", "until"),
@@ -185,6 +185,7 @@ object GenerateSteppedRangesCodegenTestData {
                     println(KT_34166_HEADER)
                 }
                 if (function == Function.RANGE_UNTIL) { // until 1.8
+                    println("// DONT_TARGET_EXACT_BACKEND: JVM")
                     println("// !LANGUAGE: +RangeUntilOperator")
                     println("@file:OptIn(ExperimentalStdlibApi::class)")
                 }

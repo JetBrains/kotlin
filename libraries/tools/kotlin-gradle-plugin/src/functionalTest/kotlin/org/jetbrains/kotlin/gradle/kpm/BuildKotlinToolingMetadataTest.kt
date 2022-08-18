@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.kpm
 
+import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
@@ -99,10 +100,10 @@ class KotlinToolingMetadataWithModelMappingTest {
         project.plugins.apply("com.android.application")
         project.plugins.apply("kotlin-multiplatform")
 
-        val android = project.extensions.getByType(BaseExtension::class.java)
+        val android = project.extensions.getByType(ApplicationExtension::class.java)
         val kotlin = multiplatformExtension
 
-        android.compileSdkVersion(28)
+        android.compileSdk = 31
         kotlin.android()
         kotlin.jvm()
         kotlin.js {

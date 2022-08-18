@@ -26,4 +26,3 @@ fun box() {
 // EXPECTATIONS JS_IR
 // test.kt:12 box
 // test.kt:9 makeFace
-// test.kt:9 makeFace

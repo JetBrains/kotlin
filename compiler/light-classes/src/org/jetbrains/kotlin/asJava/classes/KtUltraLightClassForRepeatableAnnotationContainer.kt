@@ -81,7 +81,7 @@ private class KtUltraLightModifierListForRepeatableAnnotationContainer(
 ) : KtUltraLightModifierList<KtLightClassForSourceDeclaration>(containingClass, support) {
     override fun hasModifierProperty(name: String): Boolean = name in modifiers
     override fun copy() = KtUltraLightModifierListForRepeatableAnnotationContainer(containingClass, support)
-    override fun PsiAnnotation.additionalConverter(): KtLightAbstractAnnotation? = tryConvertAsRepeatableContainer(support)
+    override fun PsiAnnotation.additionalConverter(): KtLightAbstractAnnotation? = tryConvertAsRepeatableContainer()
     override val annotationsFilter: ((KtLightAbstractAnnotation) -> Boolean) = { it.qualifiedName in allowedAnnotations }
 
     companion object {

@@ -13,6 +13,9 @@ FILE: enums.kt
         public final static fun valueOf(value: R|kotlin/String|): R|Order| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<Order>|
+            public get(): R|kotlin/enums/EnumEntries<Order>|
+
     }
     public? final? enum class Planet : R|kotlin/Enum<Planet>| {
         private constructor(m: Double, r: Double): R|Planet| {
@@ -79,6 +82,9 @@ FILE: enums.kt
         public final static fun valueOf(value: R|kotlin/String|): R|Planet| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<Planet>|
+            public get(): R|kotlin/enums/EnumEntries<Planet>|
+
     }
     public? final? enum class PseudoInsn : R|kotlin/Enum<PseudoInsn>| {
         private constructor(signature: String = String(()V)): R|PseudoInsn| {
@@ -144,5 +150,8 @@ FILE: enums.kt
 
         public final static fun valueOf(value: R|kotlin/String|): R|PseudoInsn| {
         }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<PseudoInsn>|
+            public get(): R|kotlin/enums/EnumEntries<PseudoInsn>|
 
     }

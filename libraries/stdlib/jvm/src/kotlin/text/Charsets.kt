@@ -70,6 +70,8 @@ public object Charsets {
             utf_32 = charset
             charset
         }
+
+    @Volatile
     private var utf_32: Charset? = null
 
     /**
@@ -82,6 +84,8 @@ public object Charsets {
             utf_32le = charset
             charset
         }
+
+    @Volatile
     private var utf_32le: Charset? = null
 
     /**
@@ -94,6 +98,8 @@ public object Charsets {
             utf_32be = charset
             charset
         }
+
+    @Volatile
     private var utf_32be: Charset? = null
 
 }

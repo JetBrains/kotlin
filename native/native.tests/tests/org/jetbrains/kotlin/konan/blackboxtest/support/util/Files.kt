@@ -36,7 +36,7 @@ internal fun generateBoxFunctionLauncher(entryPointFunctionFQN: String): String 
     """
         @kotlin.test.Test
         fun runTest() {
-            val result = $entryPointFunctionFQN()
+            val result = @Suppress("OPT_IN_USAGE_ERROR") $entryPointFunctionFQN()
             kotlin.test.assertEquals("OK", result, "Test failed with: ${'$'}result")
         }
         

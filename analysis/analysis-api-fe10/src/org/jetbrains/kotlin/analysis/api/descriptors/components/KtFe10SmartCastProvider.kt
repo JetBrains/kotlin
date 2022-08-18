@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.ExplicitSmartCasts
 import org.jetbrains.kotlin.resolve.calls.smartcasts.MultipleSmartCasts
-import org.jetbrains.kotlin.types.TypeIntersector
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 
 internal class KtFe10SmartCastProvider(
     override val analysisSession: KtFe10AnalysisSession
@@ -46,17 +47,24 @@ internal class KtFe10SmartCastProvider(
 
     private fun ExplicitSmartCasts.getKtType(): KtType? {
         if (this is MultipleSmartCasts) {
-            return TypeIntersector.intersectTypes(map.values)?.toKtType(analysisContext)
+            return intersectWrappedTypes(map.values).toKtType(analysisContext)
         }
         return defaultType?.toKtType(analysisContext)
+    }
+
+    private fun smartCastedImplicitReceiver(type: KotlinType?, kind: KtImplicitReceiverSmartCastKind): KtImplicitReceiverSmartCast? {
+        if (type == null) return null
+        return KtImplicitReceiverSmartCast(type.toKtType(analysisContext), kind, token)
     }
 
     override fun getImplicitReceiverSmartCast(expression: KtExpression): Collection<KtImplicitReceiverSmartCast> {
         val bindingContext = analysisContext.analyze(expression)
         val smartCasts = bindingContext[BindingContext.IMPLICIT_RECEIVER_SMARTCAST, expression] ?: return emptyList()
-        return smartCasts.receiverTypes.map { (_, type) ->
-            val kind = KtImplicitReceiverSmartCastKind.DISPATCH // TODO provide precise kind
-            KtImplicitReceiverSmartCast(type.toKtType(analysisContext), kind, token)
-        }
+        val call = bindingContext[BindingContext.CALL, expression] ?: return emptyList()
+        val resolvedCall = bindingContext[BindingContext.RESOLVED_CALL, call] ?: return emptyList()
+        return listOfNotNull(
+            smartCastedImplicitReceiver(smartCasts.receiverTypes[resolvedCall.dispatchReceiver], KtImplicitReceiverSmartCastKind.DISPATCH),
+            smartCastedImplicitReceiver(smartCasts.receiverTypes[resolvedCall.extensionReceiver], KtImplicitReceiverSmartCastKind.EXTENSION)
+        )
     }
 }

@@ -16,29 +16,32 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.resolve
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.psi.KtDeclarationWithInitializer
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.ValueArgument
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.analyzeSpecialSerializers
+
+interface ISerializableProperty {
+    val isConstructorParameterWithDefault: Boolean
+    val name: String
+    val originalDescriptorName: Name
+    val optional: Boolean
+    val transient: Boolean
+}
 
 class SerializableProperty(
     val descriptor: PropertyDescriptor,
-    val isConstructorParameterWithDefault: Boolean,
+    override val isConstructorParameterWithDefault: Boolean,
     hasBackingField: Boolean,
     declaresDefaultValue: Boolean
-) {
-    val name = descriptor.annotations.serialNameValue ?: descriptor.name.asString()
+) : ISerializableProperty {
+    override val name = descriptor.annotations.serialNameValue ?: descriptor.name.asString()
+    override val originalDescriptorName: Name = descriptor.name
     val type = descriptor.type
     val genericIndex = type.genericIndex
     val module = descriptor.module
     val serializableWith = descriptor.serializableWith ?: analyzeSpecialSerializers(module, descriptor.annotations)?.defaultType
-    val optional = !descriptor.annotations.serialRequired && declaresDefaultValue
-    val transient = descriptor.annotations.serialTransient || !hasBackingField
-    val annotationsWithArguments: List<Triple<ClassDescriptor, List<ValueArgument>, List<ValueParameterDescriptor>>> =
-        descriptor.annotationsWithArguments()
+    override val optional = !descriptor.annotations.serialRequired && declaresDefaultValue
+    override val transient = descriptor.annotations.serialTransient || !hasBackingField
 }
+

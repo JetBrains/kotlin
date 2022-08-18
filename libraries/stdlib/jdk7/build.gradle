@@ -2,8 +2,7 @@ description = 'Kotlin Standard Library JDK 7 extension'
 
 apply plugin: 'kotlin'
 
-JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_7)
-JvmToolchain.updateJvmTarget(project, "1.6")
+JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_8)
 
 configurePublishing(project)
 configureSourcesJar()
@@ -63,7 +62,6 @@ compileKotlin {
             "-Xmultifile-parts-inherit",
             "-opt-in=kotlin.RequiresOptIn",
             "-opt-in=kotlin.contracts.ExperimentalContracts",
-            "-Xsuppress-deprecated-jvm-target-warning",
     ]
     kotlinOptions.moduleName = project.name
 }
@@ -77,9 +75,12 @@ compileTestKotlin {
             "-opt-in=kotlin.ExperimentalStdlibApi",
             "-opt-in=kotlin.io.path.ExperimentalPathApi",
             "-Xcommon-sources=${fileTree('../test').join(',')}",
-            "-Xsuppress-deprecated-jvm-target-warning",
             "-XXLanguage:+RangeUntilOperator",
     ]
+}
+
+tasks.withType(Test) {
+    systemProperty("supportsNamedCapturingGroup", false)
 }
 
 configureFrontendIr(project)

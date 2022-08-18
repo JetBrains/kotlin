@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.lombok.processor
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 
 /**
  * Generates synthetic parts for [ClassDescriptor]
  */
 interface Processor {
 
+    context(LazyJavaResolverContext)
     fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder)
 
 }

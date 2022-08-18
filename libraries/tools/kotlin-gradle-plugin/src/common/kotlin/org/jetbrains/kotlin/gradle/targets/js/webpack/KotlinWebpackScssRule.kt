@@ -11,7 +11,9 @@ import javax.inject.Inject
 
 @Suppress("LeakingThis")
 abstract class KotlinWebpackScssRule @Inject constructor(name: String) : KotlinWebpackCssRule(name) {
-    override var test: String = "/\\.(scss|sass)\$/"
+    init {
+        test.convention("/\\.(scss|sass)\$/")
+    }
 
     override fun dependencies(versions: NpmVersions): Collection<RequiredKotlinJsDependency> {
         return super.dependencies(versions) + versions.sass + versions.sassLoader

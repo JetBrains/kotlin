@@ -30,11 +30,10 @@ import javax.inject.Inject
 internal class GradleCompilerRunnerWithWorkers(
     taskProvider: GradleCompileTaskProvider,
     jdkToolsJar: File?,
-    kotlinDaemonJvmArgs: List<String>?,
+    compilerExecutionSettings: CompilerExecutionSettings,
     buildMetrics: BuildMetricsReporter,
-    compilerExecutionStrategy: KotlinCompilerExecutionStrategy,
     private val workerExecutor: WorkerExecutor
-) : GradleCompilerRunner(taskProvider, jdkToolsJar, kotlinDaemonJvmArgs, buildMetrics, compilerExecutionStrategy) {
+) : GradleCompilerRunner(taskProvider, jdkToolsJar, compilerExecutionSettings, buildMetrics) {
     override fun runCompilerAsync(
         workArgs: GradleKotlinCompilerWorkArguments,
         taskOutputsBackup: TaskOutputsBackup?

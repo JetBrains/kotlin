@@ -23,13 +23,12 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
     override fun processModule(module: TestModule, info: IrBackendInput) {
         val irModule = info.irModuleFragment
         irModule.acceptChildrenVoid(InlineFunctionsCollector())
-        assertions.assertTrue(declaredInlineFunctionSignatures.isNotEmpty())
         irModule.acceptChildrenVoid(InlineCallBodiesCheck())
         assertions.assertTrue((info as IrBackendInput.JvmIrBackendInput).backendInput.symbolTable.allUnbound.isEmpty())
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        // TODO("Not yet implemented")
+        assertions.assertTrue(declaredInlineFunctionSignatures.isNotEmpty())
     }
 
     inner class InlineFunctionsCollector : IrElementVisitorVoid {

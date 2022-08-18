@@ -88,6 +88,9 @@ internal val ClassDescriptor.isInheritableSerialInfoAnnotation: Boolean
 internal val Annotations.serialNameValue: String?
     get() = findAnnotationConstantValue(SerializationAnnotations.serialNameAnnotationFqName, "value")
 
+internal val Annotations.serialNameAnnotation: AnnotationDescriptor?
+    get() = findAnnotation(SerializationAnnotations.serialNameAnnotationFqName)
+
 internal val Annotations.serialRequired: Boolean
     get() = hasAnnotation(SerializationAnnotations.requiredAnnotationFqName)
 
@@ -195,6 +198,11 @@ private fun Annotated.findSerializableAnnotationDeclaration(): KtAnnotationEntry
 internal fun Annotated.findSerializableOrMetaAnnotationDeclaration(): KtAnnotationEntry? {
     val lazyDesc = (annotations.findAnnotation(serializableAnnotationFqName)
         ?: annotations.firstOrNull { it.isMetaSerializableAnnotation }) as? LazyAnnotationDescriptor
+    return lazyDesc?.annotationEntry
+}
+
+internal fun Annotated.findAnnotationDeclaration(fqName: FqName): KtAnnotationEntry? {
+    val lazyDesc = annotations.findAnnotation(fqName) as? LazyAnnotationDescriptor
     return lazyDesc?.annotationEntry
 }
 

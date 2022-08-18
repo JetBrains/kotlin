@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import javax.lang.model.type.IntersectionType
 
 private const val Nullable = "Nullable"
 private const val objects = "_objects_"
@@ -176,10 +179,7 @@ class ExportModelToTsDeclarations {
 
         var t: ExportedType = ExportedType.InlineInterfaceType(members)
 
-        if (superClass != null)
-            t = ExportedType.IntersectionType(t, superClass)
-
-        for (superInterface in superInterfaces) {
+        for (superInterface in superClasses + superInterfaces) {
             t = ExportedType.IntersectionType(t, superInterface)
         }
 
@@ -210,13 +210,13 @@ class ExportModelToTsDeclarations {
             property.generateTypeScriptString(indent, prefix)
         } else {
             val propertyRef = "$objects.$propertyName"
-            val shouldCreateExtraProperty = members.isNotEmpty() || superInterfaces.isNotEmpty() || superClass != null
+            val shouldCreateExtraProperty = members.isNotEmpty() || superInterfaces.isNotEmpty() || superClasses.isNotEmpty()
             val newSuperClass = ExportedType.ClassType(propertyRef, emptyList(), ir).takeIf { shouldCreateExtraProperty }
             ExportedRegularClass(
                 name = name,
                 isInterface = false,
                 isAbstract = true,
-                superClass = newSuperClass,
+                superClasses = listOfNotNull(newSuperClass),
                 superInterfaces = superInterfaces,
                 typeParameters = emptyList(),
                 members = listOf(ExportedConstructor(emptyList(), ExportedVisibility.PRIVATE)),
@@ -232,7 +232,7 @@ class ExportModelToTsDeclarations {
         val keyword = if (isInterface) "interface" else "class"
         val superInterfacesKeyword = if (isInterface) "extends" else "implements"
 
-        val superClassClause = superClass?.let { it.toExtendsClause(indent) } ?: ""
+        val superClassClause = superClasses.toExtendsClause(indent)
         val superInterfacesClause = superInterfaces.toImplementsClause(superInterfacesKeyword, indent)
 
         val (memberObjects, nestedDeclarations) = nestedClasses.partition { it.couldBeProperty() }
@@ -279,12 +279,18 @@ class ExportModelToTsDeclarations {
         return if (name.isValidES5Identifier()) klassExport + staticsExport else ""
     }
 
-    private fun ExportedType.toExtendsClause(indent: String): String {
-        val isImplicitlyExportedType = this is ExportedType.ImplicitlyExportedType
-        val extendsClause = " extends ${toTypeScript(indent, isImplicitlyExportedType)}"
-        return when {
-            isImplicitlyExportedType -> " /*$extendsClause */"
-            else -> extendsClause
+    private fun List<ExportedType>.toExtendsClause(indent: String): String {
+        if (isEmpty()) return ""
+
+        val implicitlyExportedClasses = filterIsInstance<ExportedType.ImplicitlyExportedType>()
+        val implicitlyExportedClassesString = implicitlyExportedClasses.joinToString(", ") { it.toTypeScript(indent, true) }
+
+        return if (implicitlyExportedClasses.count() == count()) {
+            " /* extends $implicitlyExportedClassesString */"
+        } else {
+            val originallyDefinedSuperClass = implicitlyExportedClassesString.takeIf { it.isNotEmpty() }?.let { "/* $it */ " }.orEmpty()
+            val transitivelyDefinedSuperClass = firstIsInstance<ExportedType.ClassType>().toTypeScript(indent, false)
+            " extends $originallyDefinedSuperClass$transitivelyDefinedSuperClass"
         }
     }
 
@@ -383,7 +389,12 @@ class ExportModelToTsDeclarations {
         is ExportedType.LiteralType.NumberLiteralType -> value.toString()
         is ExportedType.ImplicitlyExportedType -> {
             val typeString = type.toTypeScript("", true)
-            if (isInCommentContext) typeString else ExportedType.Primitive.Any.toTypeScript(indent) + "/* $typeString */"
+            if (isInCommentContext) {
+                typeString
+            } else {
+                val superTypeString = exportedSupertype.toTypeScript(indent)
+                superTypeString.let { if (exportedSupertype is ExportedType.IntersectionType) "($it)" else it } + "/* $typeString */"
+            }
         }
 
         is ExportedType.PropertyType -> "${container.toTypeScript(indent, isInCommentContext)}[${

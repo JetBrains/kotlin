@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModulePr
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
-import org.jetbrains.kotlin.test.ExecutionListenerBasedDisposableProvider
-import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.testConfiguration
@@ -47,6 +45,7 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
         configureTest()
         defaultConfiguration(this)
         registerAnalysisApiBaseTestServices(disposable, FirLowLevelCompilerBasedTestConfigurator)
+        usePreAnalysisHandlers(::SealedClassesInheritorsCaclulatorPreAnalysisHandler)
 
         firHandlersStep {
             useHandlers(::LLDiagnosticParameterChecker)
@@ -91,12 +90,12 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
         if (ignoreTest(filePath, configuration)) {
             return
         }
-        val oldEnableDeepEnsure = LLFirLazyTransformer.enableDeepEnsure
+        val oldEnableDeepEnsure = LLFirLazyTransformer.needCheckingIfClassMembersAreResolved
         try {
-            LLFirLazyTransformer.enableDeepEnsure = true
+            LLFirLazyTransformer.needCheckingIfClassMembersAreResolved = true
             super.runTest(filePath)
         } finally {
-            LLFirLazyTransformer.enableDeepEnsure = oldEnableDeepEnsure
+            LLFirLazyTransformer.needCheckingIfClassMembersAreResolved = oldEnableDeepEnsure
         }
     }
 }

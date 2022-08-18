@@ -109,6 +109,9 @@ FILE: RedundantVisibilityModifierChecker.kt
         public final static fun valueOf(value: R|kotlin/String|): R|F| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<F>|
+            public get(): R|kotlin/enums/EnumEntries<F>|
+
     }
     public sealed class G : R|kotlin/Any| {
         protected constructor(y: R|kotlin/Int|): R|G| {

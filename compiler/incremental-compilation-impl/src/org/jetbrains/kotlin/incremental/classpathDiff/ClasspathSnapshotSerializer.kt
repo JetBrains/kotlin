@@ -120,6 +120,8 @@ private object RegularKotlinClassSnapshotExternalizer : DataExternalizer<Regular
         LongExternalizer.save(output, snapshot.classAbiHash)
         NullableValueExternalizer(KotlinClassInfoExternalizer).save(output, snapshot.classMemberLevelSnapshot)
         ListExternalizer(JvmClassNameExternalizer).save(output, snapshot.supertypes)
+        NullableValueExternalizer(StringExternalizer).save(output, snapshot.companionObjectName)
+        NullableValueExternalizer(ListExternalizer(StringExternalizer)).save(output, snapshot.constantsInCompanionObject)
     }
 
     override fun read(input: DataInput): RegularKotlinClassSnapshot {
@@ -128,7 +130,9 @@ private object RegularKotlinClassSnapshotExternalizer : DataExternalizer<Regular
             classId = ClassIdExternalizerWithInterning.read(input),
             classAbiHash = LongExternalizer.read(input),
             classMemberLevelSnapshot = NullableValueExternalizer(KotlinClassInfoExternalizer).read(input),
-            supertypes = ListExternalizer(JvmClassNameExternalizerWithInterning).read(input)
+            supertypes = ListExternalizer(JvmClassNameExternalizerWithInterning).read(input),
+            companionObjectName = NullableValueExternalizer(StringExternalizer).read(input),
+            constantsInCompanionObject = NullableValueExternalizer(ListExternalizer(StringExternalizer)).read(input)
         )
     }
 }

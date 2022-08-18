@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateErr
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -178,7 +178,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
     private val FirExpression.unwrapped: FirExpression
         get() =
             when (this) {
-                is FirExpressionWithSmartcast -> this.originalExpression
+                is FirSmartCastExpression -> this.originalExpression
                 is FirWrappedExpression -> this.expression
                 else -> this
             }
@@ -186,7 +186,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
     private val FirQualifiedAccessExpression.resolvedVariable: FirVariable?
         get() {
             val symbol = calleeReference.resolvedSymbol as? FirVariableSymbol<*> ?: return null
-            symbol.ensureResolved(FirResolvePhase.BODY_RESOLVE)
+            symbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             @OptIn(SymbolInternals::class)
             return symbol.fir
         }

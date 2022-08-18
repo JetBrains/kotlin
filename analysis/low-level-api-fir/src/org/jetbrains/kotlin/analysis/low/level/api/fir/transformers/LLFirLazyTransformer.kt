@@ -14,12 +14,47 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 internal interface LLFirLazyTransformer {
     fun transformDeclaration(phaseRunner: LLFirPhaseRunner)
-    fun ensureResolved(declaration: FirDeclaration)
-    fun ensureResolvedDeep(declaration: FirDeclaration) {
-        if (!enableDeepEnsure) return
-        ensureResolved(declaration)
-        if (declaration is FirRegularClass) {
-            declaration.declarations.forEach(::ensureResolvedDeep)
+
+    fun checkIsResolved(declaration: FirDeclaration)
+
+    fun checkNestedDeclarationsAreResolved(declaration: FirDeclaration) {
+        checkFunctionParametersAreResolved(declaration)
+        checkPropertyAccessorsAreResolved(declaration)
+        checkClassMembersAreResolved(declaration)
+    }
+
+    fun checkClassMembersAreResolved(declaration: FirDeclaration) {
+        if (!needCheckingIfClassMembersAreResolved) return
+        if (declaration is FirClass) {
+            for (member in declaration.declarations) {
+                checkClassMembersAreResolved(member)
+            }
+        }
+    }
+
+    fun checkPropertyAccessorsAreResolved(declaration: FirDeclaration) {
+        if (declaration is FirProperty) {
+            declaration.getter?.let { checkIsResolved(it) }
+            declaration.setter?.let { checkIsResolved(it) }
+        }
+    }
+
+
+    fun checkFunctionParametersAreResolved(declaration: FirDeclaration) {
+        if (declaration is FirFunction) {
+            for (parameter in declaration.valueParameters) {
+                checkIsResolved(parameter)
+            }
+        }
+    }
+
+    fun checkTypeParametersAreResolved(declaration: FirDeclaration) {
+        if (declaration is FirTypeParameterRefsOwner) {
+            for (parameter in declaration.typeParameters) {
+                if (parameter is FirTypeParameter) {
+                    checkIsResolved(parameter)
+                }
+            }
         }
     }
 
@@ -38,10 +73,22 @@ internal interface LLFirLazyTransformer {
             if (element.resolvePhase >= newPhase) return
             element.replaceResolvePhase(newPhase)
 
+            if (element is FirTypeParameterRefsOwner) {
+                element.typeParameters.forEach { typeParameter ->
+                    // if it is not a type parameter of outer declaration
+                    if (typeParameter is FirTypeParameter) {
+                        updatePhaseForNonLocals(typeParameter, newPhase)
+                    }
+                }
+            }
+
             when (element) {
+                is FirFunction -> {
+                    element.valueParameters.forEach { updatePhaseForNonLocals(it, newPhase) }
+                }
                 is FirProperty -> {
-                    element.getter?.run { if (resolvePhase < newPhase) replaceResolvePhase(newPhase) }
-                    element.setter?.run { if (resolvePhase < newPhase) replaceResolvePhase(newPhase) }
+                    element.getter?.let { updatePhaseForNonLocals(it, newPhase) }
+                    element.setter?.let { updatePhaseForNonLocals(it, newPhase) }
                 }
                 is FirClass -> {
                     element.declarations.forEach {
@@ -60,12 +107,12 @@ internal interface LLFirLazyTransformer {
             }
         }
 
-        internal var enableDeepEnsure: Boolean = false
+        internal var needCheckingIfClassMembersAreResolved: Boolean = false
             @TestOnly set
 
         val DUMMY = object : LLFirLazyTransformer {
             override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) = Unit
-            override fun ensureResolved(declaration: FirDeclaration) = error("Not implemented")
+            override fun checkIsResolved(declaration: FirDeclaration) = error("Not implemented")
         }
     }
 }

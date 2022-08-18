@@ -11,10 +11,14 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeMapping
 import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
@@ -26,13 +30,61 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullableAny
-import org.jetbrains.kotlin.ir.util.simpleFunctions
-import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 
+internal class BridgesSupport(mapping: NativeMapping, val irBuiltIns: IrBuiltIns, val irFactory: IrFactory) {
+    private val bridges = mapping.bridges
+
+    fun getBridge(overriddenFunction: OverriddenFunctionInfo): IrSimpleFunction {
+        val irFunction = overriddenFunction.function
+        assert(overriddenFunction.needBridge) {
+            "Function ${irFunction.render()} doesn't need a bridge to call overridden function ${overriddenFunction.overriddenFunction.render()}"
+        }
+        val key = NativeMapping.BridgeKey(irFunction, overriddenFunction.bridgeDirections)
+        return bridges.getOrPut(key) { createBridge(key) }
+    }
+
+    private fun BridgeDirection.type() =
+            if (this.kind == BridgeDirectionKind.NONE)
+                null
+            else this.irClass?.defaultType ?: irBuiltIns.anyNType
+
+    private fun createBridge(key: NativeMapping.BridgeKey): IrSimpleFunction {
+        val (function, bridgeDirections) = key
+
+        return irFactory.buildFun {
+            startOffset = function.startOffset
+            endOffset = function.endOffset
+            origin = DECLARATION_ORIGIN_BRIDGE_METHOD(function)
+            name = "<bridge-$bridgeDirections>${function.computeFunctionName()}".synthesizedName
+            visibility = function.visibility
+            modality = function.modality
+            returnType = bridgeDirections.returnDirection.type() ?: function.returnType
+            isSuspend = function.isSuspend
+        }.apply {
+            parent = function.parent
+            val bridge = this
+
+            dispatchReceiverParameter = function.dispatchReceiverParameter?.let {
+                it.copyTo(bridge, type = bridgeDirections.dispatchReceiverDirection.type() ?: it.type)
+            }
+            extensionReceiverParameter = function.extensionReceiverParameter?.let {
+                it.copyTo(bridge, type = bridgeDirections.extensionReceiverDirection.type() ?: it.type)
+            }
+            valueParameters = function.valueParameters.map {
+                it.copyTo(bridge, type = bridgeDirections.parameterDirectionAt(it.index).type() ?: it.type)
+            }
+
+            typeParameters = function.typeParameters.map { parameter ->
+                parameter.copyToWithoutSuperTypes(bridge).also { it.superTypes += parameter.superTypes }
+            }
+        }
+    }
+}
 internal class WorkersBridgesBuilding(val context: Context) : DeclarationContainerLoweringPass, IrElementTransformerVoid() {
 
     val symbols = context.ir.symbols
@@ -230,7 +282,7 @@ private fun Context.buildBridge(startOffset: Int, endOffset: Int,
                                 overriddenFunction: OverriddenFunctionInfo, targetSymbol: IrSimpleFunctionSymbol,
                                 superQualifierSymbol: IrClassSymbol? = null): IrFunction {
 
-    val bridge = specialDeclarationsFactory.getBridge(overriddenFunction)
+    val bridge = bridgesSupport.getBridge(overriddenFunction)
 
     if (bridge.modality == Modality.ABSTRACT) {
         return bridge

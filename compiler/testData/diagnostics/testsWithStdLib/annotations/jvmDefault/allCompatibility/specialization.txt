@@ -56,6 +56,7 @@ public final enum class EnumSpecialized : kotlin.Enum<EnumSpecialized>, Foo<kotl
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<EnumSpecialized>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EnumSpecialized
     public final /*synthesized*/ fun values(): kotlin.Array<EnumSpecialized>
 }

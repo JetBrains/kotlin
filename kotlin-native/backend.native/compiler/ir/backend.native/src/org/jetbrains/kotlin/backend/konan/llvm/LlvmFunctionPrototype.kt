@@ -184,6 +184,9 @@ private fun mustNotInline(context: Context, irFunction: IrFunction): Boolean {
             return true
         }
     }
+    if (irFunction.symbol == context.ir.symbols.entryPoint) {
+        return true
+    }
 
     return false
 }

@@ -97,8 +97,6 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
                 }
             }
             throw e
-        } finally {
-            clearReflectionCache(classLoader)
         }
     }
 

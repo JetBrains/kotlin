@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
+import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
@@ -58,8 +58,8 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker()
         if (callableSymbol is FirPropertySymbol && shouldInvisibleSetterBeReported(callableSymbol)) {
             val explicitReceiver = expression.explicitReceiver
             // Try to get type from smartcast
-            if (explicitReceiver is FirExpressionWithSmartcast) {
-                val symbol = explicitReceiver.originalType.toRegularClassSymbol(context.session)
+            if (explicitReceiver is FirSmartCastExpression) {
+                val symbol = explicitReceiver.originalExpression.typeRef.toRegularClassSymbol(context.session)
                 if (symbol != null) {
                     for (declarationSymbol in symbol.declarationSymbols) {
                         if (declarationSymbol is FirPropertySymbol && declarationSymbol.name == callableSymbol.name) {

@@ -7,7 +7,7 @@ plugins {
 
 // This module does not apply Kotlin plugin, so we are setting toolchain via
 // java extension
-configureJavaOnlyToolchain(JdkMajorVersion.JDK_1_6)
+configureJavaOnlyToolchain(JdkMajorVersion.JDK_1_8)
 
 val kotlinVersion: String by rootProject.extra
 

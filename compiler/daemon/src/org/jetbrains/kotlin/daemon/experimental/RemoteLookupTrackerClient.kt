@@ -36,6 +36,10 @@ class RemoteLookupTrackerClient(
         lookups.add(LookupInfo(internedFilePath, position, internedScopeFqName, scopeKind, internedName))
     }
 
+    override fun clear() {
+        lookups.clear()
+    }
+
     init {
         runBlocking {
             eventManager.onCompilationFinished { flush() }

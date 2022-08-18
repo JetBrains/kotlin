@@ -113,4 +113,5 @@ sealed class LlvmFunctionAttribute(private val llvmAttributeName: String) : Llvm
     object NoUnwind : LlvmFunctionAttribute("nounwind")
     object NoReturn : LlvmFunctionAttribute("noreturn")
     object NoInline : LlvmFunctionAttribute("noinline")
+    object SanitizeThread : LlvmFunctionAttribute("sanitize_thread")
 }

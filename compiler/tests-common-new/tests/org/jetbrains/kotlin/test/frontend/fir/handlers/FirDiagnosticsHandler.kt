@@ -54,6 +54,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             KtRealSourceElementKind,
             KtFakeSourceElementKind.DesugaredCompoundAssignment,
             KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess,
+            KtFakeSourceElementKind.SmartCastExpression
         )
     }
 
@@ -158,7 +159,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                         )
                     )
                 }
-                if (element is FirExpressionWithSmartcast) {
+                if (element is FirSmartCastExpression) {
                     element.originalExpression.acceptChildren(this)
                 } else {
                     element.acceptChildren(this)
@@ -205,7 +206,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         diagnosedRangesToDiagnosticNames: Map<IntRange, Set<String>>
     ): KtDiagnosticWithParameters1<String>? =
         DebugInfoDiagnosticFactory1.EXPRESSION_TYPE.createDebugInfoDiagnostic(element, diagnosedRangesToDiagnosticNames) {
-            element.typeRef.renderAsString((element as? FirExpressionWithSmartcast)?.takeIf { it.isStable }?.originalType)
+            element.typeRef.renderAsString((element as? FirSmartCastExpression)?.takeIf { it.isStable }?.originalExpression?.typeRef)
         }
 
     private fun FirTypeRef.renderAsString(originalTypeRef: FirTypeRef?): String {

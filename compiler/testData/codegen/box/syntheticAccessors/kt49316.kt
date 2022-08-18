@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 //  java.lang.AssertionError
 //    at org.jetbrains.kotlin.js.translate.context.TranslationContext.getDispatchReceiver(TranslationContext.java:590)
 //    at org.jetbrains.kotlin.js.translate.utils.TranslationUtils.backingFieldReference(TranslationUtils.java:237)

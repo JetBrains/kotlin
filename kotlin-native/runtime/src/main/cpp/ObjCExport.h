@@ -23,8 +23,7 @@ inline static void SetAssociatedObject(ObjHeader* obj, id value) {
 }
 
 inline static id AtomicCompareAndSwapAssociatedObject(ObjHeader* obj, id expectedValue, id newValue) {
-    id* location = reinterpret_cast<id*>(obj->GetAssociatedObjectLocation());
-    return __sync_val_compare_and_swap(location, expectedValue, newValue);
+    return static_cast<id>(obj->CasAssociatedObject(expectedValue, newValue));
 }
 
 inline static OBJ_GETTER(AllocInstanceWithAssociatedObject, const TypeInfo* typeInfo, id associatedObject) {

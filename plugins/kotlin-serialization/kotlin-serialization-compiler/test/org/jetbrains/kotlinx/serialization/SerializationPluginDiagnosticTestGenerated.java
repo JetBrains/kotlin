@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -32,6 +32,16 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
     @TestMetadata("DuplicateSerialName.kt")
     public void testDuplicateSerialName() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/DuplicateSerialName.kt");
+    }
+
+    @TestMetadata("EnumDuplicateSerialName.kt")
+    public void testEnumDuplicateSerialName() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/EnumDuplicateSerialName.kt");
+    }
+
+    @TestMetadata("ExternalSerializers.kt")
+    public void testExternalSerializers() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/ExternalSerializers.kt");
     }
 
     @TestMetadata("IncorrectTransient.kt")

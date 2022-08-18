@@ -10,15 +10,17 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_FRAMEWORK_PREFIX
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
-import org.jetbrains.kotlin.gradle.targets.native.tasks.PodDownloadUrlTask
 import org.jetbrains.kotlin.gradle.tasks.addArg
 import org.jetbrains.kotlin.gradle.tasks.addArgs
+import org.jetbrains.kotlin.gradle.utils.relativeToRoot
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.net.URI
@@ -91,13 +93,15 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
     /**
      * Configure framework of the pod built from this project.
      */
-    fun framework(configure: Framework.() -> Unit) = configureRegisteredFrameworks(configure)
+    fun framework(configure: Framework.() -> Unit) {
+        forAllPodFrameworks(configure)
+    }
 
     /**
      * Configure framework of the pod built from this project.
      */
-    fun framework(configure: Action<Framework>) = framework {
-        configure.execute(this)
+    fun framework(configure: Action<Framework>) {
+        forAllPodFrameworks(configure)
     }
 
     val ios: PodspecPlatformSettings = PodspecPlatformSettings("ios")
@@ -108,21 +112,17 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
 
     val watchos: PodspecPlatformSettings = PodspecPlatformSettings("watchos")
 
-    /**
-     * Configure framework name of the pod built from this project.
-     */
-    @Deprecated("Use 'baseName' property within framework{} block to configure framework name")
-    var frameworkName: String
-        get() = frameworkNameInternal
-        set(value) {
-            configureRegisteredFrameworks {
-                baseName = value
-            }
-        }
+    private val anyPodFramework = project.provider {
+        val anyTarget = project.multiplatformExtension.supportedTargets().first()
+        val anyFramework = anyTarget.binaries
+            .matching { it.name.startsWith(POD_FRAMEWORK_PREFIX) }
+            .withType(Framework::class.java)
+            .first()
+        anyFramework
+    }
 
-    internal var frameworkNameInternal: String = project.name.asValidFrameworkName()
-
-    internal var useDynamicFramework: Boolean = false
+    internal val podFrameworkName = anyPodFramework.map { it.baseName }
+    internal val podFrameworkIsStatic = anyPodFramework.map { it.isStatic }
 
     /**
      * Configure custom Xcode Configurations to Native Build Types mapping
@@ -240,41 +240,11 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
         configure.execute(this)
     }
 
-    private fun configureRegisteredFrameworks(configure: Framework.() -> Unit) {
+    private fun forAllPodFrameworks(action: Action<in Framework>) {
         project.multiplatformExtension.supportedTargets().all { target ->
-            target.binaries.withType(Framework::class.java) { framework ->
-                framework.configure()
-                frameworkNameInternal = framework.baseName
-                useDynamicFramework = framework.isStatic.not()
-                if (useDynamicFramework) {
-                    configureLinkingOptions(framework)
-                }
-            }
-        }
-    }
-
-    internal fun configureLinkingOptions(binary: NativeBinary, setRPath: Boolean = false) {
-        pods.all { pod ->
-            binary.linkTaskProvider.configure { task ->
-                if (HostManager.hostIsMac) {
-                    val podBuildTaskProvider = project.getPodBuildTaskProvider(binary.target, pod)
-                    task.inputs.file(podBuildTaskProvider.map { it.buildSettingsFile })
-                    task.dependsOn(podBuildTaskProvider)
-                }
-
-                task.doFirst { _ ->
-                    val podBuildSettings = project.getPodBuildSettingsProperties(binary.target, pod)
-                    val frameworkFileName = pod.moduleName + ".framework"
-                    val frameworkSearchPaths = podBuildSettings.frameworkSearchPaths
-
-                    val frameworkFileExists = frameworkSearchPaths.any { dir -> File(dir, frameworkFileName).exists() }
-                    if (frameworkFileExists) binary.linkerOpts.addArg("-framework", pod.moduleName)
-
-                    binary.linkerOpts.addAll(frameworkSearchPaths.map { "-F$it" })
-
-                    if (setRPath) binary.linkerOpts.addArgs("-rpath", frameworkSearchPaths)
-                }
-            }
+            target.binaries
+                .matching { it.name.startsWith(POD_FRAMEWORK_PREFIX) }
+                .withType(Framework::class.java) { action.execute(it) }
         }
     }
 
@@ -303,18 +273,6 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
 
         @Input
         override fun getName(): String = name
-
-        /**
-         * Url to archived (tar, jar, zip) pod folder, that should contain the podspec file and all sources required by it.
-         *
-         * Archive name should match pod name.
-         *
-         * @param url url to tar, jar or zip archive.
-         * @param flatten does archive contains subdirectory that needs to be expanded
-         * @param isAllowInsecureProtocol enables communication with a repository over an insecure HTTP connection.
-         */
-        @JvmOverloads
-        fun url(url: String, flatten: Boolean = false, isAllowInsecureProtocol: Boolean = false): PodLocation = Url(URI(url), flatten, isAllowInsecureProtocol)
 
         /**
          * Path to local pod
@@ -346,29 +304,15 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
         }
 
         sealed class PodLocation {
-            internal abstract fun getLocalPath(project: Project, podName: String): String
-
-            data class Url(
-                @get:Input val url: URI,
-                @get:Input var flatten: Boolean,
-                @get:Input var isAllowInsecureProtocol: Boolean
-            ) : PodLocation() {
-                override fun getLocalPath(project: Project, podName: String): String {
-                    val fileName = url.toString().substringAfterLast("/")
-                    val extension = PodDownloadUrlTask.getFileExtension(fileName) ?: error("Unknown file extension: $fileName")
-                    val dirName = fileName.substringBeforeLast(".$extension")
-                    return project.cocoapodsBuildDirs.externalSources("url").resolve(podName).resolve(dirName).absolutePath
-                }
-            }
+            @Internal
+            internal abstract fun getPodSourcePath(): String
 
             data class Path(
                 @get:InputDirectory
                 @get:IgnoreEmptyDirectories
                 val dir: File
             ) : PodLocation() {
-                override fun getLocalPath(project: Project, podName: String): String {
-                    return dir.absolutePath
-                }
+                override fun getPodSourcePath() = ":path => '${dir.absolutePath}'"
             }
 
             data class Git(
@@ -377,8 +321,13 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
                 @get:Input @get:Optional var tag: String? = null,
                 @get:Input @get:Optional var commit: String? = null
             ) : PodLocation() {
-                override fun getLocalPath(project: Project, podName: String): String {
-                    return project.cocoapodsBuildDirs.externalSources("git").resolve(podName).absolutePath
+                override fun getPodSourcePath() = buildString {
+                    append(":git => '$url'")
+                    when {
+                        branch != null -> append(", :branch => '$branch'")
+                        tag != null -> append(", :tag => '$tag'")
+                        commit != null -> append(", :commit => '$commit'")
+                    }
                 }
             }
         }

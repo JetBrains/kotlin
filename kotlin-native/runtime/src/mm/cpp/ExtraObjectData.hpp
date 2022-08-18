@@ -44,7 +44,7 @@ public:
     void Uninstall() noexcept;
 
 #ifdef KONAN_OBJC_INTEROP
-    void** GetAssociatedObjectLocation() noexcept { return &associatedObject_; }
+    std::atomic<void*>& AssociatedObject() noexcept { return associatedObject_; }
 #endif
     bool HasAssociatedObject() noexcept;
     void DetachAssociatedObject() noexcept;
@@ -78,7 +78,8 @@ public:
 
     // info must be equal to objHeader->type_info(), but it needs to be loaded in advance to avoid data races
     explicit ExtraObjectData(ObjHeader* objHeader, const TypeInfo *info) noexcept :
-        typeInfo_(info), weakReferenceCounterOrBaseObject_(objHeader) {
+        typeInfo_(nullptr), weakReferenceCounterOrBaseObject_(objHeader) {
+        atomicSetRelease(&typeInfo_, info);
     }
     ~ExtraObjectData();
 private:
@@ -89,7 +90,7 @@ private:
     std::atomic<uint32_t> flags_ = 0;
 
 #ifdef KONAN_OBJC_INTEROP
-    void* associatedObject_ = nullptr;
+    std::atomic<void*> associatedObject_ = nullptr;
 #endif
 
     std::atomic<ObjHeader*> weakReferenceCounterOrBaseObject_;

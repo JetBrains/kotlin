@@ -38,4 +38,6 @@ object KonanFqNames {
     val eagerInitialization = FqName("kotlin.native.EagerInitialization")
     val noReorderFields = FqName("kotlin.native.internal.NoReorderFields")
     val objCName = FqName("kotlin.native.ObjCName")
+    val reflectionPackageName = FqName("kotlin.native.internal.ReflectionPackageName")
+    val cachesInternalAbi = FqName("kotlin.native.caches.abi")
 }

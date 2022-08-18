@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -2444,6 +2444,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 runTest("compiler/testData/psi/recovery/SameLineStatementRecovery.kt");
             }
 
+            @TestMetadata("TypeParameterBeforeEqualSign.kt")
+            public void testTypeParameterBeforeEqualSign() throws Exception {
+                runTest("compiler/testData/psi/recovery/TypeParameterBeforeEqualSign.kt");
+            }
+
             @TestMetadata("UnfinishedExtension.kt")
             public void testUnfinishedExtension() throws Exception {
                 runTest("compiler/testData/psi/recovery/UnfinishedExtension.kt");
@@ -2901,6 +2906,70 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             @TestMetadata("StringTemplateWithTryWithoutBlockInShortEntry.kt")
             public void testStringTemplateWithTryWithoutBlockInShortEntry() throws Exception {
                 runTest("compiler/testData/psi/stringTemplates/StringTemplateWithTryWithoutBlockInShortEntry.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/psi/typeArgumentList")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TypeArgumentList extends AbstractParsingTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInTypeArgumentList() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/typeArgumentList"), Pattern.compile("^(.*)\\.kts?$"), null, true);
+            }
+
+            @TestMetadata("compiler/testData/psi/typeArgumentList/correctness")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Correctness extends AbstractParsingTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInCorrectness() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/typeArgumentList/correctness"), Pattern.compile("^(.*)\\.kts?$"), null, true);
+                }
+
+                @TestMetadata("binaryExpressionsInFunctionCall.kt")
+                public void testBinaryExpressionsInFunctionCall() throws Exception {
+                    runTest("compiler/testData/psi/typeArgumentList/correctness/binaryExpressionsInFunctionCall.kt");
+                }
+
+                @TestMetadata("callExpressionsAnyLHSAtomicExpression.kt")
+                public void testCallExpressionsAnyLHSAtomicExpression() throws Exception {
+                    runTest("compiler/testData/psi/typeArgumentList/correctness/callExpressionsAnyLHSAtomicExpression.kt");
+                }
+
+                @TestMetadata("callExpressionsInFunctionCall.kt")
+                public void testCallExpressionsInFunctionCall() throws Exception {
+                    runTest("compiler/testData/psi/typeArgumentList/correctness/callExpressionsInFunctionCall.kt");
+                }
+            }
+
+            @TestMetadata("compiler/testData/psi/typeArgumentList/recovery")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Recovery extends AbstractParsingTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInRecovery() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/typeArgumentList/recovery"), Pattern.compile("^(.*)\\.kts?$"), null, true);
+                }
+
+                @TestMetadata("callExpressions.kt")
+                public void testCallExpressions() throws Exception {
+                    runTest("compiler/testData/psi/typeArgumentList/recovery/callExpressions.kt");
+                }
+
+                @TestMetadata("callExpressions_ERR.kt")
+                public void testCallExpressions_ERR() throws Exception {
+                    runTest("compiler/testData/psi/typeArgumentList/recovery/callExpressions_ERR.kt");
+                }
             }
         }
     }

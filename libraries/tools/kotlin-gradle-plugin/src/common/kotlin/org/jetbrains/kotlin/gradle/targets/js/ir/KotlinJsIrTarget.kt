@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.internal.RewriteSourceMapFilterReader
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -42,6 +43,7 @@ constructor(
     KotlinWasmTargetDsl,
     KotlinJsSubTargetContainerDsl,
     KotlinWasmSubTargetContainerDsl {
+    private val propertiesProvider = PropertiesProvider(project)
     override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
         internal set
 
@@ -115,6 +117,7 @@ constructor(
                 .withType(JsIrBinary::class.java)
                 .all { binary ->
                     val syncTask = registerCompileSync(binary)
+                    val tsValidationTask = registerTypeScriptCheckTask(binary)
 
                     binary.linkTask.configure {
                         it.kotlinOptions.outputFile = project.buildDir
@@ -125,7 +128,12 @@ constructor(
                             .canonicalPath
 
                         it.finalizedBy(syncTask)
+
+                        if (tsValidationTask != null) {
+                            it.finalizedBy(tsValidationTask)
+                        }
                     }
+
                 }
         }
     }
@@ -133,16 +141,10 @@ constructor(
     private fun registerCompileSync(binary: JsIrBinary): TaskProvider<Copy> {
         val compilation = binary.compilation
         val npmProject = compilation.npmProject
-        return project.registerTask(
+        return project.registerTask<Copy>(
             binary.linkSyncTaskName
         ) { task ->
-            task.from(
-                project.layout.file(
-                    binary.linkTask.flatMap { linkTask ->
-                        linkTask.normalizedDestinationDirectory.map { it.asFile }
-                    }
-                )
-            )
+            task.from(project.layout.file(binary.linkTask.normalizedDestinationDirectory))
 
             task.from(project.tasks.named(compilation.processResourcesTaskName))
 
@@ -162,6 +164,30 @@ constructor(
             task.into(npmProject.dist)
         }
     }
+
+    private fun registerTypeScriptCheckTask(binary: JsIrBinary): TaskProvider<TypeScriptValidationTask>? {
+        val linkTask = binary.linkTask
+        val compilation = binary.compilation
+        return if (compilation.name == KotlinCompilation.TEST_COMPILATION_NAME) {
+            null
+        } else {
+            project.registerTask(binary.validateGeneratedTsTaskName, listOf(compilation)) {
+                it.inputDir.set(project.layout.dir(linkTask.normalizedDestinationDirectory))
+                it.validationStrategy.set(
+                    when (binary.mode) {
+                        KotlinJsBinaryMode.DEVELOPMENT -> propertiesProvider.jsIrGeneratedTypeScriptValidationDevStrategy
+                        KotlinJsBinaryMode.PRODUCTION -> propertiesProvider.jsIrGeneratedTypeScriptValidationProdStrategy
+                    }
+                )
+            }
+        }
+    }
+
+    private val TaskProvider<KotlinJsIrLink>.normalizedDestinationDirectory
+        get() =
+            flatMap { linkTask ->
+                linkTask.normalizedDestinationDirectory.map { it.asFile }
+            }
 
     //Binaryen
     private val applyBinaryenHandlers = mutableListOf<(BinaryenExec.() -> Unit) -> Unit>()

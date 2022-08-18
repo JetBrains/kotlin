@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesigna
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ensurePhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -39,7 +39,7 @@ internal class LLFirDesignatedExpectActualMatcherTransformer(
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.declaration.resolvePhase >= FirResolvePhase.EXPECT_ACTUAL_MATCHING) return
-        designation.declaration.ensurePhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+        designation.declaration.checkPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
 
         FirLazyBodiesCalculator.calculateLazyBodiesInside(designation)
         ResolveTreeBuilder.resolvePhase(designation.declaration, FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
@@ -50,20 +50,13 @@ internal class LLFirDesignatedExpectActualMatcherTransformer(
 
         declarationTransformer.ensureDesignationPassed()
         updatePhaseDeep(designation.declaration, FirResolvePhase.EXPECT_ACTUAL_MATCHING)
-        ensureResolved(designation.declaration)
-        ensureResolvedDeep(designation.declaration)
+        checkIsResolved(designation.declaration)
     }
 
-    override fun ensureResolved(declaration: FirDeclaration) {
-        when (declaration) {
-            is FirSimpleFunction, is FirConstructor, is FirAnonymousInitializer ->
-                declaration.ensurePhase(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
-            is FirProperty -> {
-                declaration.ensurePhase(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
-            }
-            is FirClass, is FirTypeAlias, is FirEnumEntry, is FirField -> Unit
-            else -> error("Unexpected type: ${declaration::class.simpleName}")
-        }
+    override fun checkIsResolved(declaration: FirDeclaration) {
+        declaration.checkPhase(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
+        // TODO check if expect-actual matching is present
+        checkNestedDeclarationsAreResolved(declaration)
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -54,6 +54,12 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
         @Test
         public void testAllFilesPresentInAnonymousObject() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+        }
+
+        @Test
+        @TestMetadata("anonymousObjectInCallChildren.kt")
+        public void testAnonymousObjectInCallChildren() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/anonymousObjectInCallChildren.kt");
         }
 
         @Test
@@ -315,6 +321,36 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
         }
 
         @Test
+        @TestMetadata("kt52795.kt")
+        public void testKt52795() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795.kt");
+        }
+
+        @Test
+        @TestMetadata("kt52795_2.kt")
+        public void testKt52795_2() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_2.kt");
+        }
+
+        @Test
+        @TestMetadata("kt52795_3.kt")
+        public void testKt52795_3() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_3.kt");
+        }
+
+        @Test
+        @TestMetadata("kt52795_4.kt")
+        public void testKt52795_4() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_4.kt");
+        }
+
+        @Test
+        @TestMetadata("kt52795_5.kt")
+        public void testKt52795_5() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_5.kt");
+        }
+
+        @Test
         @TestMetadata("kt6007.kt")
         public void testKt6007() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt6007.kt");
@@ -402,6 +438,16 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
         @TestMetadata("withInlineMethod.kt")
         public void testWithInlineMethod() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/withInlineMethod.kt");
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumEntries")
+        @TestDataPath("$PROJECT_ROOT")
+        public class EnumEntries {
+            @Test
+            public void testAllFilesPresentInEnumEntries() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumEntries"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+            }
         }
 
         @Nested
@@ -830,6 +876,12 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
         @TestMetadata("constructor.kt")
         public void testConstructor() throws Exception {
             runTest("compiler/testData/codegen/boxInline/callableReference/constructor.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineCallableReference.kt")
+        public void testInlineCallableReference() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/callableReference/inlineCallableReference.kt");
         }
 
         @Test

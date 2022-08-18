@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -340,6 +340,16 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("emptySources.args")
         public void testEmptySources() throws Exception {
             runTest("compiler/testData/cli/jvm/emptySources.args");
+        }
+
+        @TestMetadata("enumEntriesForJavaNotEnabled.args")
+        public void testEnumEntriesForJavaNotEnabled() throws Exception {
+            runTest("compiler/testData/cli/jvm/enumEntriesForJavaNotEnabled.args");
+        }
+
+        @TestMetadata("enumEntriesNotEnabled.args")
+        public void testEnumEntriesNotEnabled() throws Exception {
+            runTest("compiler/testData/cli/jvm/enumEntriesNotEnabled.args");
         }
 
         @TestMetadata("experimentalDeprecated.args")

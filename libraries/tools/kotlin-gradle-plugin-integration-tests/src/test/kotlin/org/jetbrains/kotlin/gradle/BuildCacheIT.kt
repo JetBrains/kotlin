@@ -160,11 +160,9 @@ class BuildCacheIT : KGPBaseTest() {
             bKtSourceFile.modify { it.replace("fun b() {}", "fun b() {}\nfun b2() {}") }
 
             build("assemble", buildOptions = defaultBuildOptions.copy(useICClasspathSnapshot = true, logLevel = LogLevel.DEBUG)) {
-                assertOutputDoesNotContain("[KOTLIN] [IC] Non-incremental compilation will be performed")
+                assertIncrementalCompilation(expectedCompiledKotlinFiles = setOf(bKtSourceFile).map { it.relativeTo(projectPath)})
                 assertOutputContains("Incremental compilation with ABI snapshot enabled")
-                assertCompiledKotlinSources(setOf(bKtSourceFile).map { it.relativeTo(projectPath)}, output)
             }
-
         }
     }
 

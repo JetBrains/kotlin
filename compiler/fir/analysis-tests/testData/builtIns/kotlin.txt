@@ -394,6 +394,9 @@ public final enum class DeprecationLevel : R|kotlin/Enum<kotlin/DeprecationLevel
     public final static fun values(): R|kotlin/Array<kotlin/DeprecationLevel>| {
     }
 
+    public final static val entries: R|kotlin/enums/EnumEntries<kotlin/DeprecationLevel>|
+        public get(): R|kotlin/enums/EnumEntries<kotlin/DeprecationLevel>|
+
     private constructor(): R|kotlin/DeprecationLevel|
 
     public final static enum entry WARNING: R|kotlin/DeprecationLevel|

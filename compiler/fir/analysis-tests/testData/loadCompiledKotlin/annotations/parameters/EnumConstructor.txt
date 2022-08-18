@@ -15,6 +15,9 @@ public final enum class E : R|kotlin/Enum<test/E>| {
     public final static fun values(): R|kotlin/Array<test/E>| {
     }
 
+    public final static val entries: R|kotlin/enums/EnumEntries<test/E>|
+        public get(): R|kotlin/enums/EnumEntries<test/E>|
+
     public final val x: R|kotlin/String|
         public get(): R|kotlin/String|
 

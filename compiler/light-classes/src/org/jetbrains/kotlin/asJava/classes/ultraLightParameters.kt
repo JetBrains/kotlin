@@ -56,7 +56,7 @@ internal class KtUltraLightSuspendContinuationParameter(
         ktType?.asPsiType(support, TypeMappingMode.DEFAULT, method) ?: PsiType.NULL
     }
 
-    private val lightModifierList by lazyPub { KtLightSimpleModifierList(this, emptySet()) }
+    private val lightModifierList by lazyPub { KtUltraLightSimpleModifierList(this, emptySet()) }
 
     override fun getType(): PsiType = psiType
 
@@ -94,7 +94,7 @@ internal abstract class KtUltraLightParameter(
         return another is KtParameter && kotlinOrigin?.isEquivalentTo(another) == true || this == another
     }
 
-    private val lightModifierList by lazyPub { KtLightSimpleModifierList(this, emptySet()) }
+    private val lightModifierList by lazyPub { KtUltraLightSimpleModifierList(this, emptySet()) }
 
     override fun getModifierList(): PsiModifierList = lightModifierList
 
@@ -289,7 +289,7 @@ internal class KtUltraLightParameterForDescriptor(
     override fun isVarArgs() = _isVarArgs
 
     override val givenAnnotations: List<KtLightAbstractAnnotation> by getAndAddLazy {
-        descriptor.obtainLightAnnotations(support, this)
+        descriptor.obtainLightAnnotations(this)
     }
 
     private val _parameterType by getAndAddLazy {

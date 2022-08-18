@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -90,7 +90,7 @@ internal fun FirCallableSymbol<*>.dispatchReceiverType(
 }
 
 internal fun FirVariableSymbol<*>.getKtConstantInitializer(): KtInitializerValue? {
-    ensureResolved(FirResolvePhase.BODY_RESOLVE)
+    lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
     val firInitializer = fir.initializer ?: return null
     return firInitializer.asKtInitializerValue()
 }
