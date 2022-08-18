@@ -254,6 +254,8 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
                 }, null)
                 context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, localVals.filterNotNull() + body.statements)
             }
+
+            copyAnnotationsFrom(irFunction)
         }
     }
 

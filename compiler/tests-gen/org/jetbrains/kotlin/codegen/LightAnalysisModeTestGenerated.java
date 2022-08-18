@@ -322,6 +322,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class AnnotatedLambda extends AbstractLightAnalysisModeTest {
+            @TestMetadata("suspendLambda.kt")
+            public void ignoreSuspendLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/annotatedLambda/suspendLambda.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
