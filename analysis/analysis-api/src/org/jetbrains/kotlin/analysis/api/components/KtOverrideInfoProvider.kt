@@ -51,7 +51,7 @@ public interface KtMemberSymbolProviderMixin : KtAnalysisSessionMixIn {
      * in `A` that takes the type parameter `T`. Given such a derived symbol, [originalOverriddenSymbol] recovers the original declared
      * symbol.
      *
-     * Such situation can also happens for intersection symbols (in case of multiple super types containing symbols with identical signature
+     * Such situation can also happen for intersection symbols (in case of multiple super types containing symbols with identical signature
      * after specialization) and delegation.
      */
     public val KtCallableSymbol.originalOverriddenSymbol: KtCallableSymbol?
