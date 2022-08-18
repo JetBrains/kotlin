@@ -115,4 +115,20 @@ class SanityCheckCodegenTests : AbstractCodegenTest() {
         """
         )
     }
+
+    // Regression validating b/237863365
+    fun testComposableAsLastStatementInUnitReturningLambda() {
+        testCompile(
+            """
+            import androidx.compose.runtime.Composable
+
+            fun foo(lambda: ()->Unit){}
+            fun main() {
+                foo {
+                    @Composable {}
+                }
+            }
+            """
+        )
+    }
 }

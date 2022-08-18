@@ -60,6 +60,7 @@ open class ComposeTypeResolutionInterceptorExtension : TypeResolutionInterceptor
         resultType: KotlinType
     ): KotlinType {
         if (resultType === TypeUtils.NO_EXPECTED_TYPE) return resultType
+        if (resultType === TypeUtils.UNIT_EXPECTED_TYPE) return resultType
         if (element !is KtLambdaExpression) return resultType
 
         if (
