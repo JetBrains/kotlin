@@ -576,13 +576,23 @@ open class DeepCopyIrTreeWithSymbols(
         }.copyAttributes(expression)
     }
 
-    private fun <T : IrMemberAccessExpression<*>> T.transformReceiverArguments(original: T): T =
+    private fun <T : IrCallableReference<*>> T.transformReceiversAndCaptureArguments(original: T): T =
         apply {
             dispatchReceiver = original.dispatchReceiver?.transform()
             extensionReceiver = original.extensionReceiver?.transform()
+
+            for (i in 0 until original.valueArgumentsCount) {
+                putValueArgument(i, original.getValueArgument(i)?.transform())
+            }
         }
 
-    private fun <T : IrMemberAccessExpression<*>> T.transformValueArguments(original: T) {
+    private fun <T : IrFunctionAccessExpression> T.transformReceiverArguments(original: T): T =
+        apply {
+            dispatchReceiver = original.dispatchReceiver?.transform()
+            putExtensionReceiverAsArgumentIfNotNull(original.extensionReceiver?.transform())
+        }
+
+    private fun <T : IrFunctionAccessExpression> T.transformValueArguments(original: T) {
         transformReceiverArguments(original)
         for (i in 0 until original.valueArgumentsCount) {
             putValueArgument(i, original.getValueArgument(i)?.transform())
@@ -660,7 +670,7 @@ open class DeepCopyIrTreeWithSymbols(
             mapStatementOrigin(expression.origin)
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
-            transformReceiverArguments(expression)
+            transformReceiversAndCaptureArguments(expression)
         }.copyAttributes(expression)
 
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrLocalDelegatedPropertyReference =
