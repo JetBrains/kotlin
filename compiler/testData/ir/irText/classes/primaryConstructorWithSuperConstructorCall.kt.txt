@@ -32,6 +32,10 @@ class TestWithDelegatingConstructor : Base {
 
   }
 
+  constructor(x: Int) {
+    this/*TestWithDelegatingConstructor*/(x = x, y = 0)
+  }
+
   val x: Int
     field = x
     get
@@ -40,8 +44,5 @@ class TestWithDelegatingConstructor : Base {
     field = y
     get
 
-  constructor(x: Int) {
-    this/*TestWithDelegatingConstructor*/(x = x, y = 0)
-  }
-
 }
+

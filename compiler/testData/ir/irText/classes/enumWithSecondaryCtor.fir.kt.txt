@@ -5,15 +5,15 @@ open enum class Test0 : Enum<Test0> {
 
   }
 
+  private constructor() {
+    this/*Test0*/(x = 0)
+  }
+
   val x: Int
     field = x
     get
 
   ZERO = Test0()
-
-  private constructor() {
-    this/*Test0*/(x = 0)
-  }
 
   fun values(): Array<Test0> /* Synthetic body for ENUM_VALUES */
 
@@ -28,6 +28,10 @@ open enum class Test1 : Enum<Test1> {
 
   }
 
+  private constructor() {
+    this/*Test1*/(x = 0)
+  }
+
   val x: Int
     field = x
     get
@@ -35,10 +39,6 @@ open enum class Test1 : Enum<Test1> {
   ZERO = Test1()
 
   ONE = Test1(x = 1)
-
-  private constructor() {
-    this/*Test1*/(x = 0)
-  }
 
   fun values(): Array<Test1> /* Synthetic body for ENUM_VALUES */
 
@@ -51,6 +51,10 @@ abstract enum class Test2 : Enum<Test2> {
     super/*Enum*/<Test2>()
     /* <init>() */
 
+  }
+
+  private constructor() {
+    this/*Test2*/(x = 0)
   }
 
   val x: Int
@@ -83,10 +87,6 @@ abstract enum class Test2 : Enum<Test2> {
       println(message = "ONE")
     }
 
-  }
-
-  private constructor() {
-    this/*Test2*/(x = 0)
   }
 
   abstract fun foo()

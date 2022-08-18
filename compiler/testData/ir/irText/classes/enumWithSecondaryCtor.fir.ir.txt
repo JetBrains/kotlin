@@ -7,6 +7,10 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
           <E>: <root>.Test0
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Test0 modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.Test0>]'
+    CONSTRUCTOR visibility:private <> () returnType:<root>.Test0
+      BLOCK_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test0'
+          x: CONST Int type=kotlin.Int value=0
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -21,10 +25,6 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
     ENUM_ENTRY name:ZERO
       init: EXPRESSION_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.Test0'
-    CONSTRUCTOR visibility:private <> () returnType:<root>.Test0
-      BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test0'
-          x: CONST Int type=kotlin.Int value=0
     FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.Test0>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.Test0
@@ -82,6 +82,10 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
           <E>: <root>.Test1
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Test1 modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.Test1>]'
+    CONSTRUCTOR visibility:private <> () returnType:<root>.Test1
+      BLOCK_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test1'
+          x: CONST Int type=kotlin.Int value=0
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -100,10 +104,6 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       init: EXPRESSION_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test1'
           x: CONST Int type=kotlin.Int value=1
-    CONSTRUCTOR visibility:private <> () returnType:<root>.Test1
-      BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test1'
-          x: CONST Int type=kotlin.Int value=0
     FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.Test1>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.Test1
@@ -161,6 +161,10 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
           <E>: <root>.Test2
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Test2 modality:ABSTRACT visibility:public superTypes:[kotlin.Enum<<root>.Test2>]'
+    CONSTRUCTOR visibility:private <> () returnType:<root>.Test2
+      BLOCK_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test2'
+          x: CONST Int type=kotlin.Int value=0
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -309,10 +313,6 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
           overridden:
             public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.Test2?>? [fake_override] declared in <root>.Test2
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
-    CONSTRUCTOR visibility:private <> () returnType:<root>.Test2
-      BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test2'
-          x: CONST Int type=kotlin.Int value=0
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.Test2) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Test2
     FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.Test2>

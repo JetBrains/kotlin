@@ -29,27 +29,27 @@ class Test2 {
 }
 
 class Test3 {
-  init {
-    println()
-  }
-
   constructor() {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  init {
+    println()
   }
 
 }
 
 class Test4 {
-  init {
-    println(message = "1")
-  }
-
   constructor() {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  init {
+    println(message = "1")
   }
 
   init {

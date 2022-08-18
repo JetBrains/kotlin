@@ -10,6 +10,12 @@ FILE fqName:<root> fileName:/classMembers.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    CONSTRUCTOR visibility:public <> () returnType:<root>.C
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.Int, z: kotlin.Int) [primary] declared in <root>.C'
+          x: CONST Int type=kotlin.Int value=0
+          y: CONST Int type=kotlin.Int value=0
+          z: CONST Int type=kotlin.Int value=0
     PROPERTY name:y visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -40,12 +46,6 @@ FILE fqName:<root> fileName:/classMembers.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-z>' type=<root>.C origin=null
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.C.<set-z>' type=kotlin.Int origin=null
-    CONSTRUCTOR visibility:public <> () returnType:<root>.C
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.Int, z: kotlin.Int) [primary] declared in <root>.C'
-          x: CONST Int type=kotlin.Int value=0
-          y: CONST Int type=kotlin.Int value=0
-          z: CONST Int type=kotlin.Int value=0
     PROPERTY name:property visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:property type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY

@@ -149,6 +149,10 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
 
   }
 
+  constructor() {
+    this/*ArrayMapImpl*/<T>(data = arrayOfNulls<Any>(size = 20))
+  }
+
   private var data: Array<Any?>
     field = data
     private get
@@ -169,10 +173,6 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
       field = 2
       private get
 
-  }
-
-  constructor() {
-    this/*ArrayMapImpl*/<T>(data = arrayOfNulls<Any>(size = 20))
   }
 
   override var size: Int

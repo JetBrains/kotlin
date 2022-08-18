@@ -33,13 +33,13 @@ class Test2 {
 
     }
 
-    val z: Z
-      field = z
-      get
-
     constructor(z: Z, i: Int) {
       <this>.this/*TestInner*/<Z>(z = z)
     }
+
+    val z: Z
+      field = z
+      get
 
   }
 
@@ -69,12 +69,12 @@ class Test4<T : Any?> {
 
   }
 
-  val x: Int
-    field = x
-    get
-
   constructor(x: Int, y: Int = 42) {
     this/*Test4*/<T>(x = x.plus(other = y))
   }
+
+  val x: Int
+    field = x
+    get
 
 }

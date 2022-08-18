@@ -12,13 +12,13 @@ class Outer {
 
     }
 
-    val x: Int
-      field = x
-      get
-
     constructor() {
       <this>.this/*Inner*/(x = 0)
     }
+
+    val x: Int
+      field = x
+      get
 
   }
 
