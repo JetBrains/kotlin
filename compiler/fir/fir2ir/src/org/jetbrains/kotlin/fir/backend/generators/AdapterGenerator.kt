@@ -228,8 +228,10 @@ internal class AdapterGenerator(
             when {
                 boundReceiver == null ->
                     irAdapterFunction.hasExtensionReceiver = false
+
                 boundDispatchReceiver != null && boundExtensionReceiver != null ->
                     error("Bound callable references can't have both receivers: ${callableReferenceAccess.render()}")
+
                 else -> {
                     irAdapterFunction.hasExtensionReceiver = true
                     irAdapterFunction.allValueParameters +=
@@ -300,6 +302,7 @@ internal class AdapterGenerator(
         val irCall = when (adapteeSymbol) {
             is IrConstructorSymbol ->
                 IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, adapteeSymbol)
+
             is IrSimpleFunctionSymbol ->
                 IrCallImpl(
                     startOffset,
@@ -311,6 +314,7 @@ internal class AdapterGenerator(
                     origin = null,
                     superQualifierSymbol = null
                 )
+
             else ->
                 error("unknown callee kind: ${adapteeFunction.render()}")
         }
@@ -330,7 +334,7 @@ internal class AdapterGenerator(
                 startOffset, endOffset, adaptedReceiverParameter.type, adaptedReceiverParameter.symbol
             )
             if (adapteeFunction.extensionReceiverParameter != null) {
-                irCall.extensionReceiver = adaptedReceiverValue
+                irCall.putExtensionReceiverAsArgument(adaptedReceiverValue)
             } else {
                 irCall.dispatchReceiver = adaptedReceiverValue
             }
@@ -385,9 +389,11 @@ internal class AdapterGenerator(
                     }
                     irCall.putValueArgument(index, valueArgument)
                 }
+
                 ResolvedCallArgument.DefaultArgument -> {
                     irCall.putValueArgument(index, null)
                 }
+
                 is ResolvedCallArgument.SimpleArgument -> {
                     val irValueArgument = buildIrGetValueArgument(mappedArgument.callArgument)
                     if (valueParameter.isVararg) {
@@ -402,6 +408,7 @@ internal class AdapterGenerator(
                         irCall.putValueArgument(index, irValueArgument)
                     }
                 }
+
                 null -> {
                 }
             }
