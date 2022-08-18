@@ -11,27 +11,22 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
         moduleDescriptors: List<ModuleDescriptor>,
         mapper: ObjCExportMapper,
         namer: ObjCExportNamer,
-        problemCollector: ObjCExportProblemCollector,
-        objcGenerics: Boolean,
         private val restrictToLocalModules: Boolean,
         frameworkName: String,
         moduleBuilder: SXClangModuleBuilder,
-        crossModuleResolver: CrossModuleResolver,
+        eventQueue: EventQueue,
 ) : ObjCExportHeaderGenerator(
         moduleDescriptors,
         mapper,
         namer,
-        objcGenerics,
-        problemCollector,
         frameworkName,
         moduleBuilder,
-        crossModuleResolver,
+        eventQueue
 ) {
 
     companion object {
         fun createInstance(
                 configuration: ObjCExportLazy.Configuration,
-                problemCollector: ObjCExportProblemCollector,
                 builtIns: KotlinBuiltIns,
                 moduleDescriptors: List<ModuleDescriptor>,
                 deprecationResolver: DeprecationResolver? = null,
@@ -39,7 +34,7 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
                 restrictToLocalModules: Boolean = false,
                 frameworkName: String,
                 moduleBuilder: SXClangModuleBuilder,
-                crossModuleResolver: CrossModuleResolver,
+                eventQueue: EventQueue
         ): ObjCExportHeaderGenerator {
             val mapper = ObjCExportMapper(deprecationResolver, local, configuration.unitSuspendFunctionExport)
             val namerConfiguration = createNamerConfiguration(configuration)
@@ -49,12 +44,10 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
                     moduleDescriptors,
                     mapper,
                     namer,
-                    problemCollector,
-                    configuration.objcGenerics,
                     restrictToLocalModules,
                     frameworkName,
                     moduleBuilder,
-                    crossModuleResolver
+                    eventQueue
             )
         }
     }

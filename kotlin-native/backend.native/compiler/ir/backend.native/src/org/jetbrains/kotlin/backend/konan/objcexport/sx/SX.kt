@@ -78,88 +78,111 @@ class SXObjCHeader(val name: String) {
     }
 }
 
-class SXClangModuleBuilder(
-        private val kotlinModules: Set<ModuleDescriptor>,
-        private val headerPerModule: Boolean,
-        private val umbrellaHeaderName: String,
-        val containsStdlib: Boolean,
-        private val stdlibHeaderProvider: () -> SXObjCHeader
-) {
-    private val theModule = SXClangModule()
-    private val theHeader = SXObjCHeader(umbrellaHeaderName)
-    private val theStdlibHeader: SXObjCHeader? = SXObjCHeader("Kotlin.h")
-            .takeIf { containsStdlib && headerPerModule }
+/**
+ * Abstact clang module building facility.
+ *
+ * Possible cases:
+ * - Whole world, single header
+ * - Whole world, header per module
+ * - Standard library, single header
+ * - Multiple modules, single header
+ * - Multiple modules, header per module (is it really possible?)
+ * - Single module, single header (~ stdlib)
+ * - Single module, multiple headers (really? E.g. per class separation?)
+ */
+sealed interface SXClangModuleBuilder {
+    /**
+     * Finalize all building procedures and generate [SXClangModule]
+     */
+    fun build(): SXClangModule
 
-    private var umbrellaHeader: SXObjCHeader? = null
+    /**
+     * Returns [SXObjCHeader] that should contain ObjC representation of [declarationDescriptor]
+     * Returns null if there is no such header in the module.
+     */
+    fun findHeaderForDeclaration(declarationDescriptor: DeclarationDescriptor): SXObjCHeader?
+}
 
-    private val moduleToHeader = mutableMapOf<ModuleDescriptor, SXObjCHeader>()
+/**
+ * Module builder for a whole-world.
+ */
+class SingleHeaderWholeWorldClangModuleBuilder(
+        private val stdlibHeaderName: String
+) : SXClangModuleBuilder, ModuleBuilderWithStdlib {
 
-    init {
-        addStdlib()
-        if (headerPerModule) {
-            kotlinModules.forEach { module ->
-                val header = addHeaderFor(module)
-                moduleToHeader[module] = header
-                if (header.name == umbrellaHeaderName) {
-                    umbrellaHeader = header
-                }
-            }
-        } else {
-            kotlinModules.forEach {
-                moduleToHeader[it] = theHeader
-            }
-            theModule.addObjCHeader(theHeader)
+    private val theModule: SXClangModule by lazy { SXClangModule() }
+    private val theHeader: SXObjCHeader by lazy {
+        SXObjCHeader(stdlibHeaderName).also {
+            theModule.addObjCHeader(it)
         }
     }
 
-    private fun addStdlib() {
-        if (theStdlibHeader == null) return
-        val stdlib = if (containsStdlib) {
-            kotlinModules.first { it.isNativeStdlib() }
-        } else {
-            kotlinModules.first().allDependencyModules.first { it.isNativeStdlib() }
-        }
-        moduleToHeader[stdlib] = findHeaderForStdlib()
-        theModule.addObjCHeader(theStdlibHeader)
+    override fun getStdlibHeader(): SXObjCHeader {
+        return theHeader
     }
 
-    private fun addHeaderFor(module: ModuleDescriptor): SXObjCHeader {
-        val header = SXObjCHeader(inferHeaderName(module))
-        // A bit conservative, but ok for now.
-        header.addImport(findHeaderForStdlib())
-        theModule.addObjCHeader(header)
-        return header
-    }
-
-    private fun inferHeaderName(module: ModuleDescriptor): String {
-        // TODO: Better normalization
-        val normalized = module.name.asStringStripSpecialMarkers()
-                .replace('.', '_')
-                .replace(':', '_')
-        return "$normalized.h"
-    }
-
-    fun build(): SXClangModule {
-        umbrellaHeader?.let { umbrellaHeader ->
-            theModule.headers
-                    .filter { it.name != umbrellaHeaderName }
-                    .forEach {
-                        umbrellaHeader.addImport(it)
-                    }
-        }
+    override fun build(): SXClangModule {
         return theModule
     }
 
-    fun findHeaderForDeclaration(declarationDescriptor: DeclarationDescriptor): SXObjCHeader {
-        if (!headerPerModule) return theHeader
-        return moduleToHeader.getOrPut(declarationDescriptor.module) {
-            addHeaderFor(declarationDescriptor.module)
+    override fun findHeaderForDeclaration(declarationDescriptor: DeclarationDescriptor): SXObjCHeader? {
+        return theHeader
+    }
+}
+
+interface ModuleBuilderWithStdlib {
+    fun getStdlibHeader(): SXObjCHeader
+}
+
+/**
+ * Module builder for an isolated non-stdlib kotlin modules.
+ */
+class SimpleClangModuleBuilder(
+        private val umbrellaHeaderName: String,
+        private val stdlibHeaderProvider: () -> SXObjCHeader
+) : SXClangModuleBuilder {
+
+    private val theModule: SXClangModule by lazy { SXClangModule() }
+    private val theHeader: SXObjCHeader by lazy {
+        SXObjCHeader(umbrellaHeaderName).also {
+            it.addImport(stdlibHeaderProvider())
+            theModule.addObjCHeader(it)
         }
     }
 
-    fun findHeaderForStdlib(): SXObjCHeader = when {
-        !containsStdlib -> stdlibHeaderProvider()
-        headerPerModule -> theStdlibHeader!!
-        else -> theHeader
+
+    override fun build(): SXClangModule {
+        return theModule
     }
+
+    override fun findHeaderForDeclaration(declarationDescriptor: DeclarationDescriptor): SXObjCHeader? {
+        return theHeader
+    }
+}
+
+/**
+ * Module builder for an isolated standard library.
+ */
+class StdlibClangModuleBuilder(
+        private val stdlibModule: ModuleDescriptor,
+        private val stdlibHeaderName: String,
+) : SXClangModuleBuilder, ModuleBuilderWithStdlib {
+
+    private val theModule: SXClangModule by lazy { SXClangModule() }
+    private val theHeader: SXObjCHeader by lazy {
+        SXObjCHeader(stdlibHeaderName).also {
+            theModule.addObjCHeader(it)
+        }
+    }
+
+    override fun getStdlibHeader(): SXObjCHeader {
+        return theHeader
+    }
+
+    override fun build(): SXClangModule {
+        return theModule
+    }
+
+    override fun findHeaderForDeclaration(declarationDescriptor: DeclarationDescriptor): SXObjCHeader? =
+            theHeader.takeIf { declarationDescriptor.module == stdlibModule }
 }

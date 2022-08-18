@@ -29,6 +29,9 @@ import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+/**
+ *
+ */
 interface ReferenceTracker {
     fun trackReference(declaration: ClassDescriptor): ObjCExportNamer.ClassOrProtocolName
 

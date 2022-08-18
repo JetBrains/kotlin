@@ -10,7 +10,12 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
-import org.jetbrains.kotlin.backend.konan.objcexport.sx.SXClangModuleBuilder
+import org.jetbrains.kotlin.backend.konan.objcexport.sx.*
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageUtil
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -20,17 +25,38 @@ import org.jetbrains.kotlin.konan.file.createTempFile
 import org.jetbrains.kotlin.konan.file.use
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.source.getPsi
 import java.util.*
+
+private class EventQueueImpl : EventQueue {
+
+    private val events: MutableList<Event> = mutableListOf()
+
+    override fun add(event: Event) {
+        events += event
+    }
+}
 
 internal class ObjCExport(val context: Context) {
     private val target get() = context.config.target
 
-    private val resolver = CrossModuleResolver { declaration -> objcHeaderGenerators.first { declaration.module in it.moduleDescriptors } }
+    private val resolver = object : CrossModuleResolver {
+        override fun findExportGenerator(declaration: DeclarationDescriptor): ObjCExportHeaderGenerator =
+            objcHeaderGenerators.first { it.moduleDescriptors.contains(declaration.module) }
+
+        override fun findNamer(declaration: DeclarationDescriptor): ObjCExportNamer =
+                objcHeaderGenerators.first { it.moduleDescriptors.contains(declaration.module) }.namer
+    }
 
     private val objcHeaderGenerators: List<ObjCExportHeaderGenerator> by lazy { prepareObjCHeaderGenerators() }
 
     private val exportedInterfaces by lazy { produceInterfaces() }
+
+    private val eventQueue: EventQueue = EventQueueImpl()
+
+    private val index: SXIndex = SXIndex()
 
     val namers: MutableList<ObjCExportNamer> = mutableListOf()
     private val codeSpecs: MutableMap<ObjCExportedInterface, ObjCExportCodeSpec> = mutableMapOf()
@@ -46,8 +72,8 @@ internal class ObjCExport(val context: Context) {
         val objcGenerics = context.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
         val mapper = ObjCExportMapper(context.frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
 
-        val moduleDescriptors = listOf(context.moduleDescriptor) + context.getExportedDependencies()
-        val stdlib = moduleDescriptors.first().allDependencyModules.first { it.isNativeStdlib() }
+        val moduleDescriptors: List<ModuleDescriptor> = listOf(context.moduleDescriptor) + context.getExportedDependencies()
+        val stdlib: ModuleDescriptor = moduleDescriptors.first().allDependencyModules.first { it.isNativeStdlib() }
         val otherModules = (moduleDescriptors - stdlib).toSet()
 
         val stdlibNamer = ObjCExportNamerImpl(
@@ -59,16 +85,13 @@ internal class ObjCExport(val context: Context) {
                 objcGenerics = objcGenerics,
         )
 
-        val stdlibModuleBuilder = SXClangModuleBuilder(
-                setOf(stdlib),
-                headerPerModule = false,
+        val stdlibModuleBuilder = StdlibClangModuleBuilder(
+                stdlib,
                 "Kotlin.h",
-                containsStdlib = true,
-                { TODO() }
         )
 
         val stdlibHeaderGenerator = ObjCExportHeaderGeneratorImpl(
-                context, listOf(stdlib), mapper, stdlibNamer, objcGenerics, "Kotlin", stdlibModuleBuilder, this.resolver
+                context, listOf(stdlib), mapper, stdlibNamer, "Kotlin", stdlibModuleBuilder, eventQueue
         )
 
         return otherModules.map {
@@ -81,15 +104,9 @@ internal class ObjCExport(val context: Context) {
                     local = false,
                     objcGenerics = objcGenerics
             )
-            val theModuleBuilder = SXClangModuleBuilder(
-                    setOf(it),
-                    headerPerModule = false,
-                    "${baseName}.h",
-                    containsStdlib = false,
-                    { stdlibModuleBuilder.findHeaderForStdlib() }
-            )
+            val theModuleBuilder = SimpleClangModuleBuilder("${baseName}.h", stdlibModuleBuilder::getStdlibHeader)
             ObjCExportHeaderGeneratorImpl(
-                    context, listOf(it), mapper, namer, objcGenerics, baseName, theModuleBuilder, this.resolver
+                    context, listOf(it), mapper, namer, baseName, theModuleBuilder, eventQueue
             )
         } + stdlibHeaderGenerator
     }
@@ -114,8 +131,27 @@ internal class ObjCExport(val context: Context) {
 
         return if (produceFramework) {
             objcHeaderGenerators.forEach { builder ->
-                builder.translateModule()
+                builder.indexModule()
             }
+
+            objcHeaderGenerators.forEach { builder ->
+                builder.namer.warmup(index)
+            }
+
+            objcHeaderGenerators.forEach {
+                val objcGenerics = true
+                val problemCollector = ProblemCollector(context)
+                val x = ObjCExportModuleTranslator(
+                        it.moduleBuilder,
+                        objcGenerics,
+                        problemCollector,
+                        it.mapper,
+                        it.namer,
+                        resolver,
+                        eventQueue,
+                )
+            }
+
             // We have to split these two loops because module translation might affect API of each module.
             objcHeaderGenerators.map { builder ->
                 builder.buildInterface()
@@ -214,3 +250,25 @@ internal class ObjCExport(val context: Context) {
         }
     }
 }
+
+private class ProblemCollector(val context: Context) : ObjCExportProblemCollector {
+    override fun reportWarning(text: String) {
+        context.reportCompilationWarning(text)
+    }
+
+    override fun reportWarning(method: FunctionDescriptor, text: String) {
+        val psi = (method as? DeclarationDescriptorWithSource)?.source?.getPsi()
+                ?: return reportWarning(
+                        "$text\n    (at ${DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(method)})"
+                )
+
+        val location = MessageUtil.psiElementToMessageLocation(psi)
+
+        context.messageCollector.report(CompilerMessageSeverity.WARNING, text, location)
+    }
+
+    override fun reportException(throwable: Throwable) {
+        throw throwable
+    }
+}
+

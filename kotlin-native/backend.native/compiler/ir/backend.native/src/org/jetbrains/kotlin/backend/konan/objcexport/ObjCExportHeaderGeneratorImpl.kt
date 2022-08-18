@@ -22,43 +22,19 @@ internal class ObjCExportHeaderGeneratorImpl(
         moduleDescriptors: List<ModuleDescriptor>,
         mapper: ObjCExportMapper,
         namer: ObjCExportNamer,
-        objcGenerics: Boolean,
         frameworkName: String,
         moduleBuilder: SXClangModuleBuilder,
-        crossModuleResolver: CrossModuleResolver,
+        eventQueue: EventQueue
 ) : ObjCExportHeaderGenerator(
         moduleDescriptors,
         mapper,
         namer,
-        objcGenerics,
-        ProblemCollector(context),
         frameworkName,
         moduleBuilder,
-        crossModuleResolver,
+        eventQueue,
 ) {
 
     override val shouldExportKDoc = context.shouldExportKDoc()
-
-    private class ProblemCollector(val context: Context) : ObjCExportProblemCollector {
-        override fun reportWarning(text: String) {
-            context.reportCompilationWarning(text)
-        }
-
-        override fun reportWarning(method: FunctionDescriptor, text: String) {
-            val psi = (method as? DeclarationDescriptorWithSource)?.source?.getPsi()
-                    ?: return reportWarning(
-                            "$text\n    (at ${DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(method)})"
-                    )
-
-            val location = MessageUtil.psiElementToMessageLocation(psi)
-
-            context.messageCollector.report(CompilerMessageSeverity.WARNING, text, location)
-        }
-
-        override fun reportException(throwable: Throwable) {
-            throw throwable
-        }
-    }
 
     override fun getAdditionalImports(): List<String> =
             context.config.configuration.getNotNull(KonanConfigKeys.FRAMEWORK_IMPORT_HEADERS)

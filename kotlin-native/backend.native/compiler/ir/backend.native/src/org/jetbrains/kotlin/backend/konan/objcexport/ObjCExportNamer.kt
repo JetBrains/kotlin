@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
+import org.jetbrains.kotlin.backend.konan.objcexport.sx.SXIndex
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -75,6 +76,8 @@ interface ObjCExportNamer {
 
     fun getObjectPropertySelector(descriptor: ClassDescriptor): String
     fun getCompanionObjectPropertySelector(descriptor: ClassDescriptor): String
+
+    fun warmup(index: SXIndex)
 
     companion object {
         internal const val kotlinThrowableAsErrorMethodName: String = "asError"
@@ -658,6 +661,12 @@ internal class ObjCExportNamerImpl(
         return ObjCExportNamer.companionObjectPropertyName
     }
 
+    override fun warmup(index: SXIndex) {
+        index.storage.forEach { item ->
+
+        }
+    }
+
     init {
         if (!local) {
             forceAssignPredefined(builtIns)
@@ -848,7 +857,7 @@ internal class ObjCExportNamerImpl(
 
 }
 
-private inline fun StringBuilder.mangledSequence(crossinline mangle: StringBuilder.() -> Unit) =
+internal inline fun StringBuilder.mangledSequence(crossinline mangle: StringBuilder.() -> Unit) =
         generateSequence(this.toString()) {
             this@mangledSequence.mangle()
             this@mangledSequence.toString()
@@ -945,7 +954,7 @@ private fun ObjCExportMapper.canHaveSameName(first: PropertyDescriptor, second: 
     return bridgePropertyType(first) == bridgePropertyType(second)
 }
 
-private class ObjCName(
+internal class ObjCName(
         private val kotlinName: String,
         private val objCName: String?,
         private val swiftName: String?,
@@ -973,7 +982,7 @@ private fun DeclarationDescriptor.getObjCName(): ObjCName {
 
 private fun <T> T.upcast(): T = this
 
-private fun CallableDescriptor.getObjCName(): ObjCName =
+internal fun CallableDescriptor.getObjCName(): ObjCName =
         overriddenDescriptors.firstOrNull()?.getObjCName() ?: upcast<DeclarationDescriptor>().getObjCName()
 
 private fun ParameterDescriptor.getObjCName(): ObjCName {
@@ -1068,4 +1077,4 @@ internal fun String.toValidObjCSwiftIdentifier(): String {
 }
 
 // Private shortcut.
-private fun String.toIdentifier(): String = this.toValidObjCSwiftIdentifier()
+internal fun String.toIdentifier(): String = this.toValidObjCSwiftIdentifier()

@@ -61,7 +61,9 @@ fun createObjCExportLazy(
         descriptorResolver: DescriptorResolver,
         fileScopeProvider: FileScopeProvider,
         builtIns: KotlinBuiltIns,
-        deprecationResolver: DeprecationResolver? = null
+        deprecationResolver: DeprecationResolver? = null,
+        referenceTracker: ReferenceTracker,
+        eventQueue: EventQueue,
 ): ObjCExportLazy = ObjCExportLazyImpl(
         configuration,
         problemCollector,
@@ -70,7 +72,9 @@ fun createObjCExportLazy(
         descriptorResolver,
         fileScopeProvider,
         builtIns,
-        deprecationResolver
+        deprecationResolver,
+        referenceTracker,
+        eventQueue,
 )
 
 internal class ObjCExportLazyImpl(
@@ -81,7 +85,9 @@ internal class ObjCExportLazyImpl(
         private val descriptorResolver: DescriptorResolver,
         private val fileScopeProvider: FileScopeProvider,
         builtIns: KotlinBuiltIns,
-        deprecationResolver: DeprecationResolver?
+        deprecationResolver: DeprecationResolver?,
+        referenceTracker: ReferenceTracker,
+        eventQueue: EventQueue,
 ) : ObjCExportLazy {
 
     private val namerConfiguration = createNamerConfiguration(configuration)
@@ -93,11 +99,12 @@ internal class ObjCExportLazyImpl(
     private val namer = ObjCExportNamerImpl(namerConfiguration, builtIns, mapper, local = true)
 
     private val translator: ObjCExportTranslator = ObjCExportTranslatorImpl(
-            null,
             mapper,
             namer,
             problemCollector,
-            configuration.objcGenerics
+            configuration.objcGenerics,
+            referenceTracker,
+            eventQueue,
     )
 
     private val isValid: Boolean
