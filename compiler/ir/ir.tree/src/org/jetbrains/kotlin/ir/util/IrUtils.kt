@@ -125,7 +125,7 @@ fun IrMemberAccessExpression<*>.getArgumentsWithIr(): List<Pair<IrValueParameter
  * Sets arguments that are specified by given mapping of parameters.
  */
 @ObsoleteDescriptorBasedAPI
-fun IrMemberAccessExpression<*>.addArguments(args: Map<ParameterDescriptor, IrExpression>) {
+fun IrFunctionAccessExpression.addArguments(args: Map<ParameterDescriptor, IrExpression>) {
     val descriptor = symbol.descriptor as CallableDescriptor
     descriptor.dispatchReceiverParameter?.let {
         val arg = args[it]
@@ -144,14 +144,14 @@ fun IrMemberAccessExpression<*>.addArguments(args: Map<ParameterDescriptor, IrEx
     descriptor.valueParameters.forEach {
         val arg = args[it]
         if (arg != null) {
-            this.putValueArgument(it.index, arg)
+            this.putValueArgumentViaSourceBasedArgumentIndex(it.index, arg)
         }
     }
 }
 
 @ObsoleteDescriptorBasedAPI
 @Suppress("unused") // Used in kotlin-native
-fun IrMemberAccessExpression<*>.addArguments(args: List<Pair<ParameterDescriptor, IrExpression>>) =
+fun IrFunctionAccessExpression.addArguments(args: List<Pair<ParameterDescriptor, IrExpression>>) =
     this.addArguments(args.toMap())
 
 fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrConstKind.Null
@@ -216,14 +216,11 @@ val IrDeclarationContainer.properties: Sequence<IrProperty>
 
 fun IrFunction.addExplicitParametersTo(parametersList: MutableList<IrValueParameter>) {
     parametersList.addIfNotNull(dispatchReceiverParameter)
-    parametersList.addAll(valueParameters.take(contextReceiverParametersCount))
-    parametersList.addIfNotNull(extensionReceiverParameter)
-    parametersList.addAll(valueParameters.drop(contextReceiverParametersCount))
+    parametersList.addAll(valueParameters)
 }
 
 val IrFunction.explicitParametersCount: Int
-    get() = (dispatchReceiverParameter != null).toInt() + (extensionReceiverParameter != null).toInt() +
-            valueParameters.size
+    get() = (dispatchReceiverParameter != null).toInt() + valueParameters.size
 
 val IrFunction.explicitParameters: List<IrValueParameter>
     get() = ArrayList<IrValueParameter>(explicitParametersCount).also {
@@ -472,18 +469,6 @@ fun IrMemberAccessExpression<IrFunctionSymbol>.copyValueArgumentsFrom(
         }
     }
 
-    when {
-        receiversAsArguments && srcFunction.extensionReceiverParameter != null -> {
-            putValueArgument(destValueArgumentIndex++, src.extensionReceiver)
-        }
-        argumentsAsReceivers && destFunction.extensionReceiverParameter != null -> {
-            extensionReceiver = src.getValueArgument(srcValueArgumentIndex++)
-        }
-        else -> {
-            extensionReceiver = src.extensionReceiver
-        }
-    }
-
     while (srcValueArgumentIndex < src.valueArgumentsCount) {
         putValueArgument(destValueArgumentIndex++, src.getValueArgument(srcValueArgumentIndex++))
     }
@@ -676,7 +661,7 @@ fun IrClass.addSimpleDelegatingConstructor(
         this.visibility = superConstructor.visibility
         this.isPrimary = isPrimary
     }.also { constructor ->
-        constructor.allValueParameters = superConstructor.allParameters.mapIndexed { index, parameter ->
+        constructor.allValueParameters = superConstructor.valueParameters.mapIndexed { index, parameter ->
             parameter.copyTo(constructor, index = index)
         }
 
@@ -1158,12 +1143,12 @@ fun IrFactory.createStaticFunctionWithReceivers(
         val extensionReceiver = oldFunction.extensionReceiverParameter?.copyTo(
             this,
             name = Name.identifier("\$receiver"),
-            index = offset++,
+            index = offset,
             origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER,
             remapTypeMap = typeParameterMap
         )
         allValueParameters = listOfNotNull(dispatchReceiver, extensionReceiver) +
-                oldFunction.valueParameters.map {
+                oldFunction.valueParametersWithoutReceivers().map {
                     it.copyTo(
                         this,
                         index = it.index + offset,
