@@ -1,0 +1,24 @@
+FILE: errorOnStubReceiver.fir.kt
+    public final fun R|kotlin/Any?|.test(): R|kotlin/Unit| {
+    }
+    public final class Bar : R|kotlin/Any| {
+        public constructor(): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|kotlin/collections/buildList|<R|Bar|>(<L> = buildList@fun R|kotlin/collections/MutableList<Bar>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(R|/Bar.Bar|())
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.get: R|Stub (chain inference): TypeVariable(E)|>|(Int(0)).R|/test|()
+        }
+        )
+        R|kotlin/collections/buildList|<R|Bar|>(<L> = buildList@fun R|kotlin/collections/MutableList<Bar>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(R|/Bar.Bar|())
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.get: R|Bar|>|(Int(0)).R|/Bar.test|()
+        }
+        )
+    }
