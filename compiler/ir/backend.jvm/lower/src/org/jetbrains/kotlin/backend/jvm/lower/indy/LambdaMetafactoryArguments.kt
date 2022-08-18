@@ -334,22 +334,16 @@ internal class LambdaMetafactoryArgumentsBuilder(
             return null
         }
 
-        val newReference =
-            if (implFun.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA)
-                remapExtensionLambda(implFun as IrSimpleFunction, reference)
-            else
-                reference
-
         if (samMethod.isFakeOverride && nonFakeOverriddenFuns.size == 1) {
             return LambdaMetafactoryArguments(
                 nonFakeOverriddenFuns.single(),
                 fakeInstanceMethod,
-                newReference,
+                reference,
                 listOf(),
                 shouldBeSerializable
             )
         }
-        return LambdaMetafactoryArguments(samMethod, fakeInstanceMethod, newReference, nonFakeOverriddenFuns, shouldBeSerializable)
+        return LambdaMetafactoryArguments(samMethod, fakeInstanceMethod, reference, nonFakeOverriddenFuns, shouldBeSerializable)
     }
 
     private fun checkMethodSignatureCompliance(
@@ -432,41 +426,6 @@ internal class LambdaMetafactoryArgumentsBuilder(
                         "  (${methodParameters.size} parameters)"
             )
     }
-
-    private fun remapExtensionLambda(lambda: IrSimpleFunction, reference: IrFunctionReference): IrFunctionReference {
-        val oldExtensionReceiver = lambda.extensionReceiverParameter
-            ?: return reference
-
-        val newValueParameters = ArrayList<IrValueParameter>()
-        val oldToNew = HashMap<IrValueParameter, IrValueParameter>()
-        var newParameterIndex = 0
-
-        newValueParameters.add(
-            oldExtensionReceiver.copy(lambda, newParameterIndex++, Name.identifier("\$receiver")).also {
-                oldToNew[oldExtensionReceiver] = it
-            }
-        )
-
-        lambda.valueParameters.mapTo(newValueParameters) { oldParameter ->
-            oldParameter.copy(lambda, newParameterIndex++).also {
-                oldToNew[oldParameter] = it
-            }
-        }
-
-        lambda.body?.transformChildrenVoid(VariableRemapper(oldToNew))
-
-        lambda.allValueParameters = newValueParameters
-
-        return IrFunctionReferenceImpl(
-            reference.startOffset, reference.endOffset, reference.type,
-            lambda.symbol,
-            typeArgumentsCount = 0,
-            valueArgumentsCount = newValueParameters.size,
-            reflectionTarget = null,
-            origin = reference.origin
-        )
-    }
-
 
     private fun IrValueParameter.copy(parent: IrSimpleFunction, newIndex: Int, newName: Name = this.name): IrValueParameter =
         buildValueParameter(parent) {
@@ -667,7 +626,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
     private fun IrDeclarationParent.isCrossinlineLambda(): Boolean =
         this is IrSimpleFunction && this in crossinlineLambdas
 
-    fun collectValueParameters(
+    private fun collectValueParameters(
         irFun: IrFunction,
         withDispatchReceiver: Boolean = false,
         withExtensionReceiver: Boolean = true
@@ -675,7 +634,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         if ((!withDispatchReceiver || irFun.dispatchReceiverParameter == null) &&
             (!withExtensionReceiver || !irFun.hasExtensionReceiver)
         )
-            return irFun.valueParameters
+            return irFun.valueParametersWithoutReceivers()
         return ArrayList<IrValueParameter>().apply {
             if (withDispatchReceiver) {
                 addIfNotNull(irFun.dispatchReceiverParameter)
@@ -683,7 +642,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
             if (withExtensionReceiver) {
                 addIfNotNull(irFun.extensionReceiverParameter)
             }
-            addAll(irFun.valueParameters)
+            addAll(irFun.valueParametersWithoutReceivers())
         }
     }
 }
