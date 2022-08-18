@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR
 // FIR status: List is empty for val argumentType = mycType.arguments.single().type!!
 // TARGET_BACKEND: JVM
 // WITH_REFLECT

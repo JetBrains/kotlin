@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR
 // FIR status: NSME: Test.remove(Ljava/lang/String;Ljava/lang/String;)Z
 // FIR + JVM_IR:
 //  INVOKEVIRTUAL Test.remove (Ljava/lang/String;Ljava/lang/String;)Z

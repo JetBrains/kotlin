@@ -1,6 +1,6 @@
 // WITH_STDLIB
 
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR
 // FIR status:
 //  java.lang.StackOverflowError
 //	at Nat$Companion$invoke$1.next(kt36853_fibonacci.kt:40) ...

@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.configureJsArtifactsHandlersStep
-import org.jetbrains.kotlin.test.builders.firHandlersStep
-import org.jetbrains.kotlin.test.builders.jsArtifactsHandlersStep
+import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
@@ -32,6 +29,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.runners.codegen.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import java.lang.Boolean.getBoolean
 
@@ -218,7 +216,6 @@ open class AbstractFirJsTest(
 
             firHandlersStep {
                 useHandlers(
-                    ::FirDiagnosticsHandler,
                     ::FirDumpHandler,
                     ::FirCfgDumpHandler,
                     ::FirCfgConsistencyHandler,
@@ -249,7 +246,14 @@ open class AbstractFirBoxJsTest : AbstractFirJsTest(
 open class AbstractFirJsCodegenBoxTest : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/codegen/box/",
     testGroupOutputDirPrefix = "codegen/irBox/"
-)
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureFirHandlersStep {
+            commonFirHandlersForCodegenTest()
+        }
+    }
+}
 
 open class AbstractFirJsCodegenBoxErrorTest : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/codegen/boxError/",
@@ -261,35 +265,38 @@ open class AbstractFirJsCodegenInlineTest : AbstractFirJsTest(
     testGroupOutputDirPrefix = "codegen/irBoxInline/"
 )
 
-open class AbstractFirJsTypeScriptExportTest : AbstractFirJsTest(
-    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/",
-    testGroupOutputDirPrefix = "typescript-export/"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        configureIrJsTypeScriptExportTest(builder)
-    }
-}
+// TODO: implement method order independent comparison to reuse testdata, disabled for now
+//open class AbstractFirJsTypeScriptExportTest : AbstractFirJsTest(
+//    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/",
+//    testGroupOutputDirPrefix = "typescript-export/"
+//) {
+//    override fun configure(builder: TestConfigurationBuilder) {
+//        super.configure(builder)
+//        configureIrJsTypeScriptExportTest(builder)
+//    }
+//}
 
-open class AbstractJsFirLineNumberTest : AbstractFirJsTest(
-    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/lineNumbers/",
-    testGroupOutputDirPrefix = "irLineNumbers/"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        configureJsIrLineNumberTest(builder)
-    }
-}
+// TODO: implement separate expectations for FIR/JS to reuse testdata, disabled for now
+//open class AbstractJsFirLineNumberTest : AbstractFirJsTest(
+//    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/lineNumbers/",
+//    testGroupOutputDirPrefix = "irLineNumbers/"
+//) {
+//    override fun configure(builder: TestConfigurationBuilder) {
+//        super.configure(builder)
+//        configureJsIrLineNumberTest(builder)
+//    }
+//}
 
-open class AbstractFirJsSteppingTest : AbstractFirJsTest(
-    pathToTestDir = "compiler/testData/debug/stepping/",
-    testGroupOutputDirPrefix = "debug/stepping/"
-) {
-    override fun TestConfigurationBuilder.configuration() {
-        commonConfigurationForJsBlackBoxCodegenTest()
-        configurationForIrJsSteppingTest()
-    }
-}
+// TODO: implement separate expectations for FIR/JS to reuse testdata, disabled for now
+//open class AbstractFirJsSteppingTest : AbstractFirJsTest(
+//    pathToTestDir = "compiler/testData/debug/stepping/",
+//    testGroupOutputDirPrefix = "debug/stepping/"
+//) {
+//    override fun TestConfigurationBuilder.configuration() {
+//        commonConfigurationForJsBlackBoxCodegenTest()
+//        configurationForIrJsSteppingTest()
+//    }
+//}
 
 open class AbstractFirCodegenWasmJsInteropJsTest : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/codegen/wasmJsInterop",
