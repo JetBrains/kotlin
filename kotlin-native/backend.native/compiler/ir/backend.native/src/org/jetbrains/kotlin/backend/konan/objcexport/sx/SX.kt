@@ -130,7 +130,7 @@ class SingleHeaderWholeWorldClangModuleBuilder(
     }
 }
 
-interface ModuleBuilderWithStdlib {
+interface ModuleBuilderWithStdlib : SXClangModuleBuilder {
     fun getStdlibHeader(): SXObjCHeader
 }
 

@@ -200,7 +200,6 @@ internal class ObjCExportTranslatorImpl(
     private fun referenceClass(descriptor: ClassDescriptor): ObjCExportNamer.ClassOrProtocolName {
         assert(mapper.shouldBeExposed(descriptor)) { "Shouldn't be exposed: $descriptor" }
         assert(!descriptor.isInterface)
-        eventQueue.add(Event.TranslateClass(descriptor))
         return tracker.trackReference(descriptor)
     }
 
@@ -218,7 +217,6 @@ internal class ObjCExportTranslatorImpl(
     private fun referenceProtocol(descriptor: ClassDescriptor): ObjCExportNamer.ClassOrProtocolName {
         assert(mapper.shouldBeExposed(descriptor)) { "Shouldn't be exposed: $descriptor" }
         assert(descriptor.isInterface)
-        eventQueue.add(Event.TranslateInterface(descriptor))
         return tracker.trackReference(descriptor)
     }
 
@@ -251,7 +249,6 @@ internal class ObjCExportTranslatorImpl(
                     .asSequence()
                     .filter { mapper.shouldBeExposed(it) }
                     .map {
-                        eventQueue.add(Event.TranslateInterface(it))
                         referenceProtocol(it).objCName
                     }
                     .toList()
@@ -260,8 +257,6 @@ internal class ObjCExportTranslatorImpl(
             classDescriptor: ClassDescriptor,
             declarations: List<CallableMemberDescriptor>
     ): ObjCInterface {
-        eventQueue.add(Event.TranslateClass(classDescriptor))
-
         val name = referenceClass(classDescriptor).objCName
         val members = buildMembers {
             translatePlainMembers(declarations, ObjCNoneExportScope)
@@ -308,7 +303,6 @@ internal class ObjCExportTranslatorImpl(
         val superName = if (superClass == null) {
             kotlinAnyName
         } else {
-            eventQueue.add(Event.TranslateClass(superClass))
             referenceClass(superClass)
         }
 

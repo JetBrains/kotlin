@@ -7,30 +7,16 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.backend.konan.objcexport.sx.SXClangModuleBuilder
-import org.jetbrains.kotlin.backend.konan.reportCompilationWarning
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageUtil
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.source.getPsi
 
-internal class ObjCExportHeaderGeneratorImpl(
+internal class ObjCExporModulesIndexerImpl(
         val context: Context,
         moduleDescriptors: List<ModuleDescriptor>,
         mapper: ObjCExportMapper,
-        namer: ObjCExportNamer,
-        frameworkName: String,
-        moduleBuilder: SXClangModuleBuilder,
         eventQueue: EventQueue
-) : ObjCExportHeaderGenerator(
+) : ObjCExportModulesIndexer(
         moduleDescriptors,
         mapper,
-        namer,
-        frameworkName,
-        moduleBuilder,
         eventQueue,
 ) {
 

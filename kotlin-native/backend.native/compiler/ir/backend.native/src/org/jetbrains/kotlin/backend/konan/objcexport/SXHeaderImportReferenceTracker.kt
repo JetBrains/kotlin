@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.types.error.ErrorUtils
 
 internal class SXHeaderImportReferenceTracker(
-    private val header: SXObjCHeader,
-    private val resolver: CrossModuleResolver,
-    private val mapper: ObjCExportMapper,
-    private val eventQueue: EventQueue,
+        private val header: SXObjCHeader,
+        private val resolver: CrossModuleResolver,
+        private val mapper: ObjCExportMapper,
+        private val eventQueue: EventQueue,
 ) : ReferenceTracker {
 
     private fun getClassOrProtocolName(descriptor: ClassDescriptor): ObjCExportNamer.ClassOrProtocolName {
@@ -27,7 +27,13 @@ internal class SXHeaderImportReferenceTracker(
     }
 
     override fun trackReference(declaration: ClassDescriptor): ObjCExportNamer.ClassOrProtocolName {
+        if (declaration.isInterface) {
+            eventQueue.add(Event.TranslateInterface(declaration))
+        } else {
+            eventQueue.add(Event.TranslateClass(declaration))
+        }
         val name = getClassOrProtocolName(declaration)
+        // Add a forward declaration because we don't control layout of the declarations in the header.
         if (header.hasDeclarationWithName(name.objCName)) {
             if (declaration.isInterface) {
                 eventQueue.add(Event.TranslateInterfaceForwardDeclaration(declaration))
@@ -35,7 +41,8 @@ internal class SXHeaderImportReferenceTracker(
                 eventQueue.add(Event.TranslateClassForwardDeclaration(declaration))
             }
         } else {
-            val declarationHeader = resolver.findExportGenerator(declaration).moduleBuilder.findHeaderForDeclaration(declaration)
+            val declarationHeader = resolver.findModuleBuilder(declaration).findHeaderForDeclaration(declaration)
+                    ?: error("$declaration has no header")
             header.addImport(declarationHeader)
         }
         return name

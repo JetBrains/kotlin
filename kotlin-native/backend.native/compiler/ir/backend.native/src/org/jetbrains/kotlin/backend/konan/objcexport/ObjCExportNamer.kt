@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
-import org.jetbrains.kotlin.backend.konan.objcexport.sx.SXIndex
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -76,8 +75,6 @@ interface ObjCExportNamer {
 
     fun getObjectPropertySelector(descriptor: ClassDescriptor): String
     fun getCompanionObjectPropertySelector(descriptor: ClassDescriptor): String
-
-    fun warmup(index: SXIndex)
 
     companion object {
         internal const val kotlinThrowableAsErrorMethodName: String = "asError"
@@ -659,12 +656,6 @@ internal class ObjCExportNamerImpl(
 
     override fun getCompanionObjectPropertySelector(descriptor: ClassDescriptor): String {
         return ObjCExportNamer.companionObjectPropertyName
-    }
-
-    override fun warmup(index: SXIndex) {
-        index.storage.forEach { item ->
-
-        }
     }
 
     init {

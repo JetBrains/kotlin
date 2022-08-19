@@ -30,33 +30,65 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.source.getPsi
 import java.util.*
 
-private class EventQueueImpl : EventQueue {
+private class SimpleEventQueue : EventQueue {
 
-    private val events: MutableList<Event> = mutableListOf()
+    private val uniqueEvents: MutableSet<Event> = mutableSetOf()
+    private val queue: MutableList<Event> = mutableListOf()
 
     override fun add(event: Event) {
-        events += event
+        if (event in uniqueEvents) return
+        queue += event
+        uniqueEvents += event
+    }
+
+    /**
+     * Consume all events from the queue until it is empty
+     */
+    fun drain(eventProcessors: Collection<EventProcessor>) {
+        // finalization of event processor might generate more events
+        while (queue.isNotEmpty()) {
+            while (queue.isNotEmpty()) {
+                val event = queue.removeFirst()
+                eventProcessors.forEach { it.process(event) }
+            }
+            eventProcessors.forEach { it.finalize() }
+        }
     }
 }
 
 internal class ObjCExport(val context: Context) {
+
+    private val unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport
+    private val objcGenerics = context.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
+
+    private val mapper = ObjCExportMapper(context.frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
+
     private val target get() = context.config.target
 
     private val resolver = object : CrossModuleResolver {
-        override fun findExportGenerator(declaration: DeclarationDescriptor): ObjCExportHeaderGenerator =
-            objcHeaderGenerators.first { it.moduleDescriptors.contains(declaration.module) }
+        override fun findModuleBuilder(declaration: DeclarationDescriptor): SXClangModuleBuilder =
+                translationsConfigurations.first { it.modules.contains(declaration.module) }.moduleBuilder
 
         override fun findNamer(declaration: DeclarationDescriptor): ObjCExportNamer =
-                objcHeaderGenerators.first { it.moduleDescriptors.contains(declaration.module) }.namer
+                translationsConfigurations.first { it.modules.contains(declaration.module) }.namer
     }
 
-    private val objcHeaderGenerators: List<ObjCExportHeaderGenerator> by lazy { prepareObjCHeaderGenerators() }
+    data class TranslationConfiguration(
+            val modules: Set<ModuleDescriptor>,
+            val namer: ObjCExportNamer,
+            val mapper: ObjCExportMapper,
+            val moduleBuilder: SXClangModuleBuilder,
+            val frameworkName: String,
+            val createProducer: (ObjCExportProblemCollector) -> ObjCExportModuleTranslator
+    )
+
+    private val translationsConfigurations: List<TranslationConfiguration> by lazy { prepareTranslationConfigurations() }
+
+    private val objcModuleIndexers: List<ObjCExportModulesIndexer> by lazy { prepareObjCHeaderIndexers() }
 
     private val exportedInterfaces by lazy { produceInterfaces() }
 
-    private val eventQueue: EventQueue = EventQueueImpl()
-
-    private val index: SXIndex = SXIndex()
+    private val eventQueue: SimpleEventQueue = SimpleEventQueue()
 
     val namers: MutableList<ObjCExportNamer> = mutableListOf()
     private val codeSpecs: MutableMap<ObjCExportedInterface, ObjCExportCodeSpec> = mutableMapOf()
@@ -67,15 +99,11 @@ internal class ObjCExport(val context: Context) {
         }
     }
 
-    private fun prepareObjCHeaderGenerators(): List<ObjCExportHeaderGenerator> {
-        val unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport
-        val objcGenerics = context.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
-        val mapper = ObjCExportMapper(context.frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
-
+    private fun prepareTranslationConfigurations(): List<TranslationConfiguration> {
+        val translationsConfigurations: MutableList<TranslationConfiguration> = mutableListOf()
         val moduleDescriptors: List<ModuleDescriptor> = listOf(context.moduleDescriptor) + context.getExportedDependencies()
         val stdlib: ModuleDescriptor = moduleDescriptors.first().allDependencyModules.first { it.isNativeStdlib() }
         val otherModules = (moduleDescriptors - stdlib).toSet()
-
         val stdlibNamer = ObjCExportNamerImpl(
                 setOf(stdlib),
                 stdlib.builtIns,
@@ -84,17 +112,29 @@ internal class ObjCExport(val context: Context) {
                 local = false,
                 objcGenerics = objcGenerics,
         )
-
         val stdlibModuleBuilder = StdlibClangModuleBuilder(
                 stdlib,
                 "Kotlin.h",
         )
+        translationsConfigurations += TranslationConfiguration(
+                setOf(stdlib),
+                stdlibNamer,
+                mapper,
+                stdlibModuleBuilder,
+                "Kotlin", { problemCollector ->
+            ObjCExportStdlibTranslator(
+                    stdlibModuleBuilder,
+                    objcGenerics,
+                    problemCollector,
+                    mapper,
+                    stdlibNamer,
+                    resolver,
+                    eventQueue,
+                    "Kotlin"
+            )
+        })
 
-        val stdlibHeaderGenerator = ObjCExportHeaderGeneratorImpl(
-                context, listOf(stdlib), mapper, stdlibNamer, "Kotlin", stdlibModuleBuilder, eventQueue
-        )
-
-        return otherModules.map {
+        otherModules.map {
             val baseName = inferBaseName(it)
             val namer = ObjCExportNamerImpl(
                     setOf(it),
@@ -104,9 +144,44 @@ internal class ObjCExport(val context: Context) {
                     local = false,
                     objcGenerics = objcGenerics
             )
-            val theModuleBuilder = SimpleClangModuleBuilder("${baseName}.h", stdlibModuleBuilder::getStdlibHeader)
-            ObjCExportHeaderGeneratorImpl(
-                    context, listOf(it), mapper, namer, baseName, theModuleBuilder, eventQueue
+            val theModuleBuilder = SimpleClangModuleBuilder(
+                    "${baseName}.h",
+                    stdlibModuleBuilder::getStdlibHeader
+            )
+
+            translationsConfigurations += TranslationConfiguration(
+                    setOf(it),
+                    namer,
+                    mapper,
+                    theModuleBuilder,
+                    baseName,
+                    { problemCollector ->
+                        ObjCExportModuleTranslator(
+                        theModuleBuilder,
+                        objcGenerics,
+                        problemCollector,
+                        mapper,
+                        namer,
+                        resolver,
+                        eventQueue,
+                        baseName,
+                        )
+                    })
+        }
+        return translationsConfigurations
+    }
+
+    private fun prepareObjCHeaderIndexers(): List<ObjCExportModulesIndexer> {
+        val moduleDescriptors: List<ModuleDescriptor> = listOf(context.moduleDescriptor) + context.getExportedDependencies()
+        val stdlib: ModuleDescriptor = moduleDescriptors.first().allDependencyModules.first { it.isNativeStdlib() }
+        val otherModules = (moduleDescriptors - stdlib).toSet()
+
+        val stdlibHeaderGenerator = ObjCExporModulesIndexerImpl(
+                context, listOf(stdlib), mapper, eventQueue
+        )
+        return otherModules.map {
+            ObjCExporModulesIndexerImpl(
+                    context, listOf(it), mapper, eventQueue
             )
         } + stdlibHeaderGenerator
     }
@@ -130,32 +205,20 @@ internal class ObjCExport(val context: Context) {
         val produceFramework = context.config.produce == CompilerOutputKind.FRAMEWORK
 
         return if (produceFramework) {
-            objcHeaderGenerators.forEach { builder ->
+            val problemCollector = ProblemCollector(context)
+            objcModuleIndexers.forEach { builder ->
                 builder.indexModule()
             }
 
-            objcHeaderGenerators.forEach { builder ->
-                builder.namer.warmup(index)
-            }
-
-            objcHeaderGenerators.forEach {
-                val objcGenerics = true
-                val problemCollector = ProblemCollector(context)
-                val x = ObjCExportModuleTranslator(
-                        it.moduleBuilder,
-                        objcGenerics,
-                        problemCollector,
-                        it.mapper,
-                        it.namer,
-                        resolver,
-                        eventQueue,
-                )
-            }
-
             // We have to split these two loops because module translation might affect API of each module.
-            objcHeaderGenerators.map { builder ->
-                builder.buildInterface()
+            val translators = translationsConfigurations.toList().map {
+                it.createProducer(problemCollector)
             }
+
+            // Smells bad.
+            eventQueue.drain(translators)
+
+            translators.map { it.buildInterface() }
         } else {
             emptyList()
         }

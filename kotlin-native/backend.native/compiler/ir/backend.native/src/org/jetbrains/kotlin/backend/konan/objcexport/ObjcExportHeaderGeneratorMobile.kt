@@ -10,43 +10,28 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 class ObjcExportHeaderGeneratorMobile internal constructor(
         moduleDescriptors: List<ModuleDescriptor>,
         mapper: ObjCExportMapper,
-        namer: ObjCExportNamer,
         private val restrictToLocalModules: Boolean,
-        frameworkName: String,
-        moduleBuilder: SXClangModuleBuilder,
         eventQueue: EventQueue,
-) : ObjCExportHeaderGenerator(
+) : ObjCExportModulesIndexer(
         moduleDescriptors,
         mapper,
-        namer,
-        frameworkName,
-        moduleBuilder,
-        eventQueue
+        eventQueue,
 ) {
 
     companion object {
         fun createInstance(
                 configuration: ObjCExportLazy.Configuration,
-                builtIns: KotlinBuiltIns,
                 moduleDescriptors: List<ModuleDescriptor>,
                 deprecationResolver: DeprecationResolver? = null,
                 local: Boolean = false,
                 restrictToLocalModules: Boolean = false,
-                frameworkName: String,
-                moduleBuilder: SXClangModuleBuilder,
                 eventQueue: EventQueue
-        ): ObjCExportHeaderGenerator {
+        ): ObjCExportModulesIndexer {
             val mapper = ObjCExportMapper(deprecationResolver, local, configuration.unitSuspendFunctionExport)
-            val namerConfiguration = createNamerConfiguration(configuration)
-            val namer = ObjCExportNamerImpl(namerConfiguration, builtIns, mapper, local)
-
             return ObjcExportHeaderGeneratorMobile(
                     moduleDescriptors,
                     mapper,
-                    namer,
                     restrictToLocalModules,
-                    frameworkName,
-                    moduleBuilder,
                     eventQueue
             )
         }
