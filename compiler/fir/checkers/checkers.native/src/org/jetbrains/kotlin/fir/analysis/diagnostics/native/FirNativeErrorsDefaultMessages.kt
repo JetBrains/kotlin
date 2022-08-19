@@ -15,10 +15,13 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAP
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_THREAD_LOCAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCOMPATIBLE_THROWS_INHERITED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCOMPATIBLE_THROWS_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_CHARACTERS_NATIVE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_OBJC_REFINEMENT_TARGETS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.REDUNDANT_SWIFT_REFINEMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.THROWS_LIST_EMPTY
 
 object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
@@ -41,6 +44,17 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL, "@ThreadLocal is applicable only to top level declarations")
         map.put(INVALID_CHARACTERS_NATIVE, "Name {0}", TO_STRING)
+        map.put(REDUNDANT_SWIFT_REFINEMENT, "An ObjC refined declaration can't also be refined in Swift")
+        map.put(
+            INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE,
+            "Refined declaration \"{0}\" overrides declarations with different or no refinement from {1}",
+            SYMBOL,
+            SYMBOLS
+        )
+        map.put(
+            INVALID_OBJC_REFINEMENT_TARGETS,
+            "Refines annotations are only applicable to annotations with targets FUNCTION and/or PROPERTY"
+        )
 
         map.checkMissingMessages(FirNativeErrors)
     }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -32,6 +33,9 @@ object FirNativeErrors {
     val INAPPLICABLE_THREAD_LOCAL by error0<KtElement>()
     val INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL by error0<KtElement>()
     val INVALID_CHARACTERS_NATIVE by deprecationError1<PsiElement, String>(ProhibitInvalidCharsInNativeIdentifiers, SourceElementPositioningStrategies.NAME_IDENTIFIER)
+    val REDUNDANT_SWIFT_REFINEMENT by error0<KtElement>()
+    val INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE by error2<KtElement, FirBasedSymbol<*>, Collection<FirRegularClassSymbol>>()
+    val INVALID_OBJC_REFINEMENT_TARGETS by error0<KtElement>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirNativeErrorsDefaultMessages)
