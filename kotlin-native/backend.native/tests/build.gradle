@@ -3305,6 +3305,14 @@ standaloneTest("codegen_escapeAnalysis_stackAllocated") {
     source = "codegen/escapeAnalysis/stackAllocated.kt"
 }
 
+standaloneTest("codegen_escapeAnalysis_string") {
+    disabled = (cacheTesting != null) || // Cache is not compatible with -opt.
+        project.globalTestArgs.contains('-g') || // -g and -opt are incompatible
+        !isExperimentalMM // strings are frozen in legacy GC
+    flags = ['-opt', '-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
+    source = "codegen/escapeAnalysis/string.kt"
+}
+
 task memory_var1(type: KonanLocalTest) {
     source = "runtime/memory/var1.kt"
 }
