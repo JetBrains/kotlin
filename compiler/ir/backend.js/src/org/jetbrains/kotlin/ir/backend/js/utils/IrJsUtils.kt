@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.name.FqName
@@ -29,9 +30,14 @@ fun IrDeclaration?.isExportedClass(context: JsIrBackendContext) =
 fun IrDeclaration?.isExportedInterface(context: JsIrBackendContext) =
     this is IrClass && kind.isInterface && isExported(context)
 
-fun IrReturn.isTheLastReturnStatementIn(target: IrReturnableBlockSymbol): Boolean {
-    return target.owner.statements.lastOrNull() === this
+fun IrReturn.isTheLastReturnStatementIn(target: IrReturnableBlockSymbol) = isTheLastReturnStatementIn(target.owner)
+
+fun IrReturn.isTheLastReturnStatementIn(function: IrFunction) = when (function.body) {
+    is IrStatementContainer -> this.isTheLastReturnStatementIn(function.body as IrStatementContainer)
+    else -> false
 }
+
+fun IrReturn.isTheLastReturnStatementIn(container: IrStatementContainer) = container.statements.lastOrNull() === this
 
 fun IrDeclarationWithName.getFqNameWithJsNameWhenAvailable(shouldIncludePackage: Boolean): FqName {
     val name = getJsNameOrKotlinName()

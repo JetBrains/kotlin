@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isMethodOfAny
 import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun TODO(element: IrElement): Nothing = TODO(element::class.java.simpleName + " is not supported yet here")
@@ -83,23 +84,24 @@ val IrValueDeclaration.isDispatchReceiver: Boolean
         return false
     }
 
-fun IrBody.prependFunctionCall(
-    call: IrCall
+fun IrBody.prependStatement(
+    statement: IrStatement
 ) {
     when (this) {
         is IrExpressionBody -> {
             expression = JsIrBuilder.buildComposite(
                 type = expression.type,
                 statements = listOf(
-                    call,
+                    statement,
                     expression
                 )
             )
         }
+
         is IrBlockBody -> {
             statements.add(
                 0,
-                call
+                statement
             )
         }
     }
@@ -117,3 +119,33 @@ fun invokeFunForLambda(call: IrCall) =
         .type
         .getClass()!!
         .invokeFun!!
+
+fun StringBuilder.collectNamesForLambda(d: IrDeclarationWithName) {
+    val parent = d.parent
+
+    if (parent is IrPackageFragment) {
+        append(d.name.asString())
+        return
+    }
+
+    collectNamesForLambda(parent as IrDeclarationWithName)
+
+    if (d is IrAnonymousInitializer) return
+
+    fun IrDeclaration.isLambdaFun(): Boolean = origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+
+    when {
+        d.isLambdaFun() -> {
+            append('$')
+            if (d is IrSimpleFunction && d.isSuspend) append('s')
+            append("lambda")
+        }
+
+        d.name == SpecialNames.NO_NAME_PROVIDED -> append("\$o")
+
+        else -> {
+            append('$')
+            append(d.name.asString())
+        }
+    }
+}

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.utils.collectNamesForLambda
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -134,34 +135,6 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             else
                 context.ir.symbols.functionN(arity).owner
         } else null
-
-        private fun StringBuilder.collectNamesForLambda(d: IrDeclarationWithName) {
-            val parent = d.parent
-
-            if (parent is IrPackageFragment) {
-                append(d.name.asString())
-                return
-            }
-
-            collectNamesForLambda(parent as IrDeclarationWithName)
-
-            if (d is IrAnonymousInitializer) return
-
-            fun IrDeclaration.isLambdaFun(): Boolean = origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
-
-            when {
-                d.isLambdaFun() -> {
-                    append('$')
-                    if (d is IrSimpleFunction && d.isSuspend) append('s')
-                    append("lambda")
-                }
-                d.name == SpecialNames.NO_NAME_PROVIDED -> append("\$o")
-                else -> {
-                    append('$')
-                    append(d.name.asString())
-                }
-            }
-        }
 
         private fun makeContextDependentName(): Name {
             val sb = StringBuilder()

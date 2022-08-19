@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.backend.common.CompilationException
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.backend.js.utils.isTheLastReturnStatementIn
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
@@ -18,10 +20,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.util.constructedClassType
-import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.*
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
@@ -113,19 +112,34 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
 
     override fun visitReturn(expression: IrReturn, context: JsGenerationContext): JsStatement {
         val targetSymbol = expression.returnTargetSymbol
+        val returnValue = expression.value
+
+        val returnValueIsUnit = returnValue is IrCall && returnValue.symbol.isUnitInstanceFunction(context)
+
         val lastStatementTransformer: (JsExpression) -> JsStatement =
             if (targetSymbol is IrReturnableBlockSymbol) {
-                // TODO assert that value is Unit?
-                {
+                if (!returnValueIsUnit)
+                    throw CompilationException("Expected unit value in IrReturn", context.currentFile, expression)
+                ({
                     context.getNameForReturnableBlock(targetSymbol.owner)
-                    .takeIf { !expression.isTheLastReturnStatementIn(targetSymbol) }
-                    ?.run { JsBreak(makeRef()) } ?: JsEmpty
+                        .takeIf { !expression.isTheLastReturnStatementIn(targetSymbol) }
+                        ?.run { JsBreak(makeRef()) } ?: JsEmpty
+                })
+            } else if (returnValueIsUnit &&
+                targetSymbol is IrFunctionSymbol &&
+                targetSymbol.owner.origin == JsLoweredDeclarationOrigin.INLINE_FUNCTION_IIFE
+            ) {
+                // It is important to not return a true-like object. Unit_getInstance() returns a true-like object.
+                if (expression.isTheLastReturnStatementIn(targetSymbol.owner)) {
+                    { JsEmpty }
+                } else {
+                    { JsReturn(null) }
                 }
             } else {
                 { JsReturn(it) }
             }
 
-        return expression.value.maybeOptimizeIntoSwitch(context, lastStatementTransformer).withSource(expression, context)
+        return returnValue.maybeOptimizeIntoSwitch(context, lastStatementTransformer).withSource(expression, context)
     }
 
     override fun visitThrow(expression: IrThrow, context: JsGenerationContext): JsStatement {

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.prependFunctionCall
+import org.jetbrains.kotlin.ir.backend.js.utils.prependStatement
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
@@ -71,7 +71,7 @@ class PropertyLazyInitLowering(
             origin = PROPERTY_INIT_FUN_CALL
         )
 
-        if (container is IrSimpleFunction) irBody.prependFunctionCall(initializationCall)
+        if (container is IrSimpleFunction) irBody.prependStatement(initializationCall)
     }
 
     private fun createInitializationFunction(

@@ -19,4 +19,6 @@ object JsLoweredDeclarationOrigin : IrDeclarationOrigin {
     object JS_SUPER_CONTEXT_PARAMETER : IrDeclarationOriginImpl("JS_SUPER_CONTEXT_PARAMETER")
     object JS_SHADOWED_DEFAULT_PARAMETER : IrDeclarationOriginImpl("JS_SHADOWED_DEFAULT_PARAMETER")
     object ENUM_GET_INSTANCE_FUNCTION : IrDeclarationOriginImpl("ENUM_GET_INSTANCE_FUNCTION")
+
+    object INLINE_FUNCTION_IIFE : IrDeclarationOriginImpl("INLINE_FUNCTION_IIFE")
 }

@@ -5257,6 +5257,12 @@ public class FirJsTestGenerated extends AbstractFirJsTest {
         }
 
         @Test
+        @TestMetadata("iifeForInlinedFunctions.kt")
+        public void testIifeForInlinedFunctions() throws Exception {
+            runTest("js/js.translator/testData/box/inline/iifeForInlinedFunctions.kt");
+        }
+
+        @Test
         @TestMetadata("incrementProperty.kt")
         public void testIncrementProperty() throws Exception {
             runTest("js/js.translator/testData/box/inline/incrementProperty.kt");

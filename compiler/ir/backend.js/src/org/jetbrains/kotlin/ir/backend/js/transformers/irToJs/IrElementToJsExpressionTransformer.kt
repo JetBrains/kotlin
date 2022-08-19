@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
@@ -45,7 +47,11 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, context: JsGenerationContext): JsExpression {
         val irFunction = expression.function
-        return irFunction.accept(IrFunctionToJsTransformer(), context).apply { name = null }
+        return irFunction.accept(IrFunctionToJsTransformer(), context).apply {
+            // For IIFEs generated for inline functions, we want to use named functions, so that the stack trace is nicer.
+            if (expression.function.origin != JsLoweredDeclarationOrigin.INLINE_FUNCTION_IIFE)
+                name = null
+        }
     }
 
     override fun visitConst(expression: IrConst<*>, context: JsGenerationContext): JsExpression {

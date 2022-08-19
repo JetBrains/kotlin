@@ -121,7 +121,7 @@ class UselessDeclarationsRemover(
             )
         }
 
-        body?.prependFunctionCall(call)
+        body?.prependStatement(call)
     }
 
     private fun IrField.processFieldWithDiagnostic() {
