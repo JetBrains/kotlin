@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.llvm
@@ -96,8 +96,8 @@ internal class DebugInfo internal constructor(override val context: Context):Con
  */
 private val NO_SOURCE_FILE = "no source file"
 private fun IrFileEntry.location(offset: Int, offsetToNumber: (Int) -> Int): Int {
-    assert(offset != UNDEFINED_OFFSET)
     // Part "name.isEmpty() || name == NO_SOURCE_FILE" is an awful hack, @minamoto, please fix properly.
+    if (offset == UNDEFINED_OFFSET) return 0
     if (offset == SYNTHETIC_OFFSET || name.isEmpty() || name == NO_SOURCE_FILE) return 1
     // lldb uses 1-based unsigned integers, so 0 is "no-info".
     val result = offsetToNumber(offset) + 1

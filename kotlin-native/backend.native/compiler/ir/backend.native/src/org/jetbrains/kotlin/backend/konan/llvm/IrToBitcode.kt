@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.llvm
@@ -2167,11 +2167,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     private val IrElement.startLocation: LocationInfo?
-        get() = if (!context.shouldContainLocationDebugInfo() || startOffset == UNDEFINED_OFFSET) null
+        get() = if (!context.shouldContainLocationDebugInfo()) null
             else currentCodeContext.location(startOffset)
 
     private val IrElement.endLocation: LocationInfo?
-        get() = if (!context.shouldContainLocationDebugInfo() || startOffset == UNDEFINED_OFFSET) null
+        get() = if (!context.shouldContainLocationDebugInfo()) null
             else currentCodeContext.location(endOffset)
 
     //-------------------------------------------------------------------------//
@@ -2974,11 +2974,7 @@ private fun Name.debugNameConversion(): Name = when(this) {
 internal class LocationInfo(val scope: DIScopeOpaqueRef,
                             val line: Int,
                             val column: Int,
-                            val inlinedAt: LocationInfo? = null) {
-    init {
-        assert(line != 0)
-    }
-}
+                            val inlinedAt: LocationInfo? = null)
 
 internal fun Context.generateRuntimeConstantsModule() : LLVMModuleRef {
     val llvmModule = LLVMModuleCreateWithNameInContext("constants", llvmContext)!!
