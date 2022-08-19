@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -39,5 +41,11 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
         ) {
             parameter<String>("message")
         }
+        val REDUNDANT_SWIFT_REFINEMENT by error<KtElement>()
+        val INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE by error<KtElement> {
+            parameter<FirBasedSymbol<*>>("declaration")
+            parameter<Collection<FirRegularClassSymbol>>("containingClasses")
+        }
+        val INVALID_OBJC_REFINEMENT_TARGETS by error<KtElement>()
     }
 }
