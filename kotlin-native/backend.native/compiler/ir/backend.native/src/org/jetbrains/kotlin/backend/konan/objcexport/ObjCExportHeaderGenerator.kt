@@ -613,7 +613,7 @@ internal class ObjCExportTranslatorImpl(
         val getterSelector = getSelector(baseProperty.getter!!)
         val getterName: String? = if (getterSelector != name) getterSelector else null
 
-        val declarationAttributes = mutableListOf(swiftNameAttribute(propertyName.swiftName))
+        val declarationAttributes = mutableListOf(property.getSwiftPrivateAttribute() ?: swiftNameAttribute(propertyName.swiftName))
         declarationAttributes.addIfNotNull(mapper.getDeprecation(property)?.toDeprecationAttribute())
 
         val visibilityComments = visibilityComments(property.visibility, "property")
@@ -701,7 +701,7 @@ internal class ObjCExportTranslatorImpl(
         val swiftName = namer.getSwiftName(baseMethod)
         val attributes = mutableListOf<String>()
 
-        attributes += swiftNameAttribute(swiftName)
+        attributes += method.getSwiftPrivateAttribute() ?: swiftNameAttribute(swiftName)
         if (baseMethodBridge.returnBridge is MethodBridge.ReturnValue.WithError.ZeroForError
                 && baseMethodBridge.returnBridge.successMayBeZero) {
 
@@ -806,7 +806,7 @@ internal class ObjCExportTranslatorImpl(
         }
     }
 
-    private val mustBeDocumentedAnnotationsStopList = setOf(StandardNames.FqNames.deprecated, KonanFqNames.objCName)
+    private val mustBeDocumentedAnnotationsStopList = setOf(StandardNames.FqNames.deprecated, KonanFqNames.objCName, KonanFqNames.shouldRefineInSwift)
     private fun mustBeDocumentedAnnotations(annotations: Annotations): List<String> {
         return annotations.mapNotNull { it ->
             it.annotationClass?.let { annotationClass ->
@@ -1430,6 +1430,17 @@ private fun DeprecationInfo.toDeprecationAttribute(): String {
 }
 
 private fun renderDeprecationAttribute(attribute: String, message: String) = "$attribute(${quoteAsCStringLiteral(message)})"
+
+private fun CallableMemberDescriptor.isRefinedInSwift(): Boolean = when {
+    // Note: the front-end checker requires all overridden descriptors to be either refined or not refined.
+    overriddenDescriptors.isNotEmpty() -> overriddenDescriptors.first().isRefinedInSwift()
+    else -> annotations.any { annotation ->
+        annotation.annotationClass?.annotations?.any { it.fqName == KonanFqNames.refinesInSwift } == true
+    }
+}
+
+private fun CallableMemberDescriptor.getSwiftPrivateAttribute(): String? =
+        if (isRefinedInSwift()) "swift_private" else null
 
 private fun quoteAsCStringLiteral(str: String): String = buildString {
     append('"')

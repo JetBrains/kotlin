@@ -38,6 +38,14 @@ public final annotation class ExperimentalObjCName : kotlin.Annotation {
     public constructor ExperimentalObjCName()
 }
 
+@kotlin.RequiresOptIn
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.ANNOTATION_CLASS})
+@kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
+@kotlin.annotation.MustBeDocumented
+public final annotation class ExperimentalObjCRefinement : kotlin.Annotation {
+    public constructor ExperimentalObjCRefinement()
+}
+
 @kotlin.RequiresOptIn(level = Level.ERROR)
 @kotlin.annotation.MustBeDocumented
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
