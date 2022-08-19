@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.konan.blackboxtest
 
 import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.konan.blackboxtest.support.ClassLevelProperty
-import org.jetbrains.kotlin.konan.blackboxtest.support.group.DisabledTestsIfProperty
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.ExternalSourceTransformersProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ExternalSourceTransformer
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ExternalSourceTransformers
@@ -15,11 +13,6 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
 import java.io.File
 
-@DisabledTestsIfProperty( // Temporarily disable String codegen/box tests with "-opt"
-    sourceLocations = ["compiler/testData/codegen/box/strings/*.kt"],
-    property = ClassLevelProperty.OPTIMIZATION_MODE,
-    propertyValue = "OPT"
-)
 abstract class AbstractNativeCodegenBoxTest : ExternalSourceTransformersProvider, AbstractNativeBlackBoxTest() {
     private val registeredSourceTransformers: ThreadSafeCache<File, MutableList<ExternalSourceTransformer>> = ThreadSafeCache()
 
