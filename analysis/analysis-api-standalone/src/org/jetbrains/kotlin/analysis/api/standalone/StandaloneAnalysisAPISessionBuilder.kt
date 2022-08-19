@@ -143,11 +143,7 @@ public class StandaloneAnalysisAPISessionBuilder(
             RegisterComponentService.registerLLFirResolveSessionService(this)
             registerService(
                 PackagePartProviderFactory::class.java,
-                object : PackagePartProviderFactory() {
-                    override fun createPackagePartProviderForLibrary(scope: GlobalSearchScope): PackagePartProvider {
-                        return packagePartProvider(scope)
-                    }
-                }
+                KotlinStaticPackagePartProviderFactory(packagePartProvider)
             )
 
             registerService(SymbolLightClassFacadeCache::class.java, SymbolLightClassFacadeCache(this))
