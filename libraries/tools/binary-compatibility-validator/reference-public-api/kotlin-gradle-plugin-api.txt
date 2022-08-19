@@ -505,6 +505,17 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeXCFr
 	public abstract fun targets ([Lorg/jetbrains/kotlin/konan/target/KonanTarget;)V
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTargetHierarchyDsl {
+	public abstract fun apply (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyDescriptor;Lkotlin/jvm/functions/Function1;)V
+	public abstract fun custom (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun default (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetHierarchyDsl$DefaultImpls {
+	public static synthetic fun apply$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetHierarchyDsl;Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyDescriptor;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static synthetic fun default$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetHierarchyDsl;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtensionConfig {
 	public abstract fun explicitApi ()V
 	public abstract fun explicitApiWarning ()V
@@ -1015,6 +1026,39 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetC
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetExecution : org/jetbrains/kotlin/gradle/plugin/KotlinExecution {
 	public abstract fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder {
+	public abstract fun common (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun getCompilation ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;
+	public abstract fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
+	public abstract fun group (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public abstract fun isAndroidJvm ()Z
+	public abstract fun isAndroidNative ()Z
+	public abstract fun isApple ()Z
+	public abstract fun isIos ()Z
+	public abstract fun isJs ()Z
+	public abstract fun isJsLegacy ()Z
+	public abstract fun isJvm ()Z
+	public abstract fun isLinux ()Z
+	public abstract fun isMacos ()Z
+	public abstract fun isNative ()Z
+	public abstract fun isTvos ()Z
+	public abstract fun isWatchos ()Z
+	public abstract fun isWindows ()Z
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder$DefaultImpls {
+	public static fun common (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun group$default (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyDescriptor : kotlin/jvm/functions/Function1 {
+	public abstract fun extend (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyDescriptor;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyDescriptorKt {
+	public static final fun KotlinTargetHierarchyDescriptor (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyDescriptor;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset : org/gradle/api/Named {

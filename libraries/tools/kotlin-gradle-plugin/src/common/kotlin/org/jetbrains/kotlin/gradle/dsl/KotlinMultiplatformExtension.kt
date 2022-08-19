@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-import org.gradle.api.Action
-import org.gradle.api.InvalidUserCodeException
-import org.gradle.api.NamedDomainObjectCollection
-import org.gradle.api.Project
+import org.gradle.api.*
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.logging.Logger
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.KotlinTargetHierarchyDslImpl
 import javax.inject.Inject
 
 abstract class KotlinMultiplatformExtension(project: Project) :
@@ -52,6 +51,9 @@ abstract class KotlinMultiplatformExtension(project: Project) :
     fun targets(configure: TargetsFromPresetExtension.() -> Unit) {
         configure(presetExtension)
     }
+
+    @ExperimentalKotlinGradlePluginApi
+    val targetHierarchy: KotlinTargetHierarchyDsl get() = KotlinTargetHierarchyDslImpl(targets, sourceSets)
 
     @Suppress("unused") // DSL
     val testableTargets: NamedDomainObjectCollection<KotlinTargetWithTests<*, *>>
@@ -180,12 +182,14 @@ internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCre
             configure(existingTarget as T)
             return existingTarget
         }
+
         existingTarget == null -> {
             val newTarget = targetPreset.createTarget(targetName)
             targets.add(newTarget)
             configure(newTarget)
             return newTarget
         }
+
         else -> {
             throw InvalidUserCodeException(
                 "The target '$targetName' already exists, but it was not created with the '${targetPreset.name}' preset. " +
