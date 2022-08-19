@@ -40,7 +40,7 @@ open class Y: X() {
 // MODULE: mainLib(lib)
 // FILE: mainLib.kt
 
-// Note that frontend woulnb'y allow us to have Any->String->Int chain of overrides.
+// Note that frontend wouldn't allow us to have Any->String->Int chain of overrides.
 
 class Z: X() {
     fun nux() = "non-open member function sudden conflict"
