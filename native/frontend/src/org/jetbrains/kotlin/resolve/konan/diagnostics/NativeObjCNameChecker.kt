@@ -16,17 +16,17 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object NativeObjCNameChecker : DeclarationChecker {
+
     private val objCNameFqName = FqName("kotlin.native.ObjCName")
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         checkDeclaration(declaration, descriptor, context)
-        checkOverrides(declaration, descriptor, context)
-        checkFakeOverrides(declaration, descriptor, context)
+        if (descriptor is CallableMemberDescriptor) {
+            NativeObjCNameOverridesChecker.check(declaration, descriptor, context)
+        }
     }
 
     private fun checkDeclaration(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -84,29 +84,7 @@ object NativeObjCNameChecker : DeclarationChecker {
         }
     }
 
-    private fun checkOverrides(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        if (descriptor !is CallableMemberDescriptor || descriptor.overriddenDescriptors.isEmpty()) return
-        val objCNames = descriptor.overriddenDescriptors.map { it.getFirstBaseDescriptor().getObjCNames() }
-        if (!objCNames.allNamesEquals()) {
-            val containingDeclarations = descriptor.overriddenDescriptors.map { it.containingDeclaration }
-            context.trace.report(ErrorsNative.INCOMPATIBLE_OBJC_NAME_OVERRIDE.on(declaration, descriptor, containingDeclarations))
-        }
-    }
-
-    private fun checkFakeOverrides(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        if (descriptor !is ClassDescriptor) return
-        descriptor.defaultType.memberScope
-            .getContributedDescriptors(DescriptorKindFilter.ALL, MemberScope.Companion.ALL_NAME_FILTER)
-            .forEach {
-                if (it !is CallableMemberDescriptor || it.kind.isReal) return@forEach
-                checkOverrides(declaration, it, context)
-            }
-    }
-
-    private fun CallableMemberDescriptor.getFirstBaseDescriptor(): CallableMemberDescriptor =
-        if (overriddenDescriptors.isEmpty()) this else overriddenDescriptors.first().getFirstBaseDescriptor()
-
-    private class ObjCName(
+    class ObjCName(
         val annotation: AnnotationDescriptor
     ) {
         val name: String? = annotation.argumentValue("name")?.value?.safeAs<String>()?.takeIf { it.isNotBlank() }
@@ -126,20 +104,13 @@ object NativeObjCNameChecker : DeclarationChecker {
 
     private fun DeclarationDescriptor.getObjCName(): ObjCName? = annotations.findAnnotation(objCNameFqName)?.let(::ObjCName)
 
-    private fun DeclarationDescriptor.getObjCNames(): List<ObjCName?> = when (this) {
+    fun DeclarationDescriptor.getObjCNames(): List<ObjCName?> = when (this) {
         is FunctionDescriptor -> buildList {
             add(getObjCName())
             add(extensionReceiverParameter?.getObjCName())
             valueParameters.forEach { add(it.getObjCName()) }
         }
-        else -> listOf(getObjCName())
-    }
 
-    private fun List<List<ObjCName?>>.allNamesEquals(): Boolean {
-        val first = this[0]
-        for (i in 1 until size) {
-            if (first != this[i]) return false
-        }
-        return true
+        else -> listOf(getObjCName())
     }
 }
