@@ -109,7 +109,7 @@ internal val buildDFGPhase = makeKonanModuleOpPhase(
 internal val returnsInsertionPhase = makeKonanModuleOpPhase(
         name = "ReturnsInsertion",
         description = "Returns insertion for Unit functions",
-        prerequisite = setOf(autoboxPhase, coroutinesPhase, enumClassPhase),
+        //prerequisite = setOf(autoboxPhase, coroutinesPhase, enumClassPhase), TODO: if there are no files in the module, this requirement fails.
         op = { context, irModule -> irModule.files.forEach { ReturnsInsertionLowering(context).lower(it) } }
 )
 
