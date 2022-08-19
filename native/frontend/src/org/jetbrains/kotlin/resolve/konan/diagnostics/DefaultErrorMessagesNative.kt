@@ -54,6 +54,17 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsNative.INAPPLICABLE_EXACT_OBJC_NAME, "Exact @ObjCName is only applicable to classes, objects and interfaces")
         put(ErrorsNative.MISSING_EXACT_OBJC_NAME, "Exact @ObjCName is required to have an ObjC name")
         put(ErrorsNative.NON_LITERAL_OBJC_NAME_ARG, "@ObjCName accepts only literal string and boolean values")
+        put(ErrorsNative.REDUNDANT_SWIFT_REFINEMENT, "An ObjC refined declaration can't also be refined in Swift")
+        put(
+            ErrorsNative.INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE,
+            "Refined declaration \"{0}\" overrides declarations with different or no refinement from {1}",
+            Renderers.NAME,
+            CommonRenderers.commaSeparated(Renderers.NAME)
+        )
+        put(
+            ErrorsNative.INVALID_OBJC_REFINEMENT_TARGETS,
+            "Refines annotations are only applicable to annotations with targets FUNCTION and/or PROPERTY"
+        )
     }
 }
 
