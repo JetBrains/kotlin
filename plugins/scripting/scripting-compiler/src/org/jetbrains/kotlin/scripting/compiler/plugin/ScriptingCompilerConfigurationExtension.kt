@@ -10,6 +10,7 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -99,10 +100,12 @@ class ScriptingCompilerConfigurationExtension(
             // Register new file extensions
             val fileTypeRegistry = FileTypeRegistry.getInstance() as CoreFileTypeRegistry
 
-            scriptDefinitionProvider.getKnownFilenameExtensions().filter {
-                fileTypeRegistry.getFileTypeByExtension(it) != KotlinFileType.INSTANCE
-            }.forEach {
-                fileTypeRegistry.registerFileType(KotlinFileType.INSTANCE, it)
+            KotlinCoreEnvironment.underApplicationLock {
+                scriptDefinitionProvider.getKnownFilenameExtensions().filter {
+                    fileTypeRegistry.getFileTypeByExtension(it) != KotlinFileType.INSTANCE
+                }.forEach {
+                    fileTypeRegistry.registerFileType(KotlinFileType.INSTANCE, it)
+                }
             }
         }
     }
