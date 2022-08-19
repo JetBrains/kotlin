@@ -325,6 +325,7 @@ internal class StackLocalsManagerImpl(
             symbols.array              to functionGenerationContext.kObjHeaderPtr,
             symbols.byteArray          to int8Type,
             symbols.charArray          to int16Type,
+            symbols.string             to int16Type,
             symbols.shortArray         to int16Type,
             symbols.intArray           to int32Type,
             symbols.longArray          to int64Type,
