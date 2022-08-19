@@ -64,12 +64,6 @@ FILE fqName:<root> fileName:/primaryConstructorWithSuperConstructorCall.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Base'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestWithDelegatingConstructor modality:FINAL visibility:public superTypes:[<root>.Base]'
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.TestWithDelegatingConstructor
-      VALUE_PARAMETER name:x index:0 type:kotlin.Int
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.Int) [primary] declared in <root>.TestWithDelegatingConstructor'
-          x: GET_VAR 'x: kotlin.Int declared in <root>.TestWithDelegatingConstructor.<init>' type=kotlin.Int origin=null
-          y: CONST Int type=kotlin.Int value=0
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -92,6 +86,12 @@ FILE fqName:<root> fileName:/primaryConstructorWithSuperConstructorCall.kt
           RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.TestWithDelegatingConstructor'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.TestWithDelegatingConstructor declared in <root>.TestWithDelegatingConstructor.<get-y>' type=<root>.TestWithDelegatingConstructor origin=null
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.TestWithDelegatingConstructor
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.Int) [primary] declared in <root>.TestWithDelegatingConstructor'
+          x: GET_VAR 'x: kotlin.Int declared in <root>.TestWithDelegatingConstructor.<init>' type=kotlin.Int origin=null
+          y: CONST Int type=kotlin.Int value=0
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Base

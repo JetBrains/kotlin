@@ -60,12 +60,6 @@ class TestInitVarWithCustomSetter {
 }
 
 class TestInitVarWithCustomSetterWithExplicitCtor {
-  constructor() {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   var x: Int
     get
     set(value: Int) {
@@ -76,21 +70,27 @@ class TestInitVarWithCustomSetterWithExplicitCtor {
     <this>.<set-x>(value = 0)
   }
 
+  constructor() {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
 
 class TestInitVarWithCustomSetterInCtor {
+  var x: Int
+    get
+    set(value: Int) {
+      <this>.#x = value
+    }
+
   constructor() {
     super/*Any*/()
     /* <init>() */
 
     <this>.<set-x>(value = 42)
   }
-
-  var x: Int
-    get
-    set(value: Int) {
-      <this>.#x = value
-    }
 
 }
 

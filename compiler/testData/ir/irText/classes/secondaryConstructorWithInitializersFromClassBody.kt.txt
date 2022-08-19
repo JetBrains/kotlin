@@ -8,19 +8,26 @@ open class Base {
 }
 
 class TestProperty : Base {
+  val x: Int
+    field = 0
+    get
+
   constructor() {
     super/*Base*/()
     /* <init>() */
 
   }
 
-  val x: Int
-    field = 0
-    get
-
 }
 
 class TestInitBlock : Base {
+  val x: Int
+    get
+
+  init {
+    <this>.#x = 0
+  }
+
   constructor() {
     super/*Base*/()
     /* <init>() */
@@ -35,13 +42,6 @@ class TestInitBlock : Base {
 
   constructor(y: Int) {
     this/*TestInitBlock*/()
-  }
-
-  val x: Int
-    get
-
-  init {
-    <this>.#x = 0
   }
 
 }
