@@ -359,6 +359,9 @@ include ":plugins:parcelize:parcelize-compiler",
         ":plugins:parcelize:parcelize-runtime",
         ":kotlin-parcelize-compiler"
 
+include ":plugins:better-web-workers:better-web-workers-compiler",
+        ":plugins:better-web-workers:annotations"
+
 include ":kotlin-lombok-compiler-plugin",
         ":kotlin-lombok-compiler-plugin.common",
         ":kotlin-lombok-compiler-plugin.k1",
