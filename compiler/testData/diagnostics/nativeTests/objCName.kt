@@ -33,7 +33,16 @@ class KotlinSubClass: KotlinClass() {
 }
 
 <!INVALID_OBJC_NAME!>@ObjCName()<!>
-val invalidObjCName: Int = 0
+val invalidObjCNameA: Int = 0
+
+<!INVALID_OBJC_NAME!>@ObjCName("", "")<!>
+val invalidObjCNameB: Int = 0
+
+@ObjCName("validName", "")
+val validBlankObjCNameA: Int = 0
+
+@ObjCName("", "validName")
+val validBlankObjCNameB: Int = 0
 
 <!INVALID_OBJC_NAME_CHARS!>@ObjCName("validName", "invalid.name")<!>
 val invalidCharactersObjCNameA: Int = 0
