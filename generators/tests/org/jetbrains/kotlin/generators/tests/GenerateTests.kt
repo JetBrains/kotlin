@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.samWithReceiver.*
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJsIrTest
 import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJvmIrTest
+import org.jetbrains.kotlinx.coroutines.webworkers.AbstractBetterWebWorkersJsIrTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationIrBytecodeListingTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginBytecodeListingTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginDiagnosticTest
@@ -271,6 +272,15 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirPluginBlackBoxCodegenTest> {
                 model("box")
+            }
+        }
+
+        testGroup(
+            "plugins/better-web-workers/better-web-workers-compiler/tests-gen",
+            "plugins/better-web-workers/better-web-workers-compiler/testData"
+        ) {
+            testClass<AbstractBetterWebWorkersJsIrTest> {
+                model("box/")
             }
         }
 
