@@ -503,8 +503,9 @@ class Fir2IrClassifierStorage(
                         }
                         // Otherwise, this is a default-ish enum entry whose initializer would be a delegating constructor call,
                         // which will be translated via visitor later.
-                    } else if (irParent != null && enumEntry.origin.fromSource) {
-                        val constructor = irParent.defaultConstructor ?: error("Assuming that default constructor should exist and be converted at this point")
+                    } else if (irParent != null && enumEntry.origin is FirDeclarationOrigin.Source) {
+                        val constructor = irParent.defaultConstructor ?:
+                            error("Assuming that default constructor should exist and be converted at this point")
                         this.initializerExpression = factory.createExpressionBody(
                             IrEnumConstructorCallImpl(
                                 startOffset, endOffset, irType, constructor.symbol,
