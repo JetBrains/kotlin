@@ -213,7 +213,6 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
         addKey("-opt", enableOptimizations)
         addKey("-ea", enableAssertions)
         addKey("-Xtime", measureTime)
-        addKey("-Xprofile-phases", measureTime)
         addKey("-no-default-libs", noDefaultLibs)
         addKey("-no-endorsed-libs", noEndorsedLibs)
         addKey("-Xmulti-platform", enableMultiplatform)

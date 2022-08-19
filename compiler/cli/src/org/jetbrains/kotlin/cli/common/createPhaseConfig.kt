@@ -39,7 +39,6 @@ fun createPhaseConfig(
 
     val namesOfElementsExcludedFromDumping = arguments.namesExcludedFromDumping?.toSet() ?: emptySet()
 
-    val needProfiling = arguments.profilePhases
     val checkConditions = arguments.checkPhaseConditions
     val checkStickyConditions = arguments.checkStickyPhaseConditions
 
@@ -55,7 +54,6 @@ fun createPhaseConfig(
         toValidateStateBefore,
         toValidateStateAfter,
         namesOfElementsExcludedFromDumping,
-        needProfiling,
         checkConditions,
         checkStickyConditions
     ).also {

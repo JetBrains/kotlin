@@ -279,12 +279,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var phasesToValidate: Array<String>? by FreezableVar(null)
 
     @Argument(
-        value = "-Xprofile-phases",
-        description = "Profile backend phases"
-    )
-    var profilePhases: Boolean by FreezableVar(false)
-
-    @Argument(
         value = "-Xcheck-phase-conditions",
         description = "Check pre- and postconditions on phases"
     )
