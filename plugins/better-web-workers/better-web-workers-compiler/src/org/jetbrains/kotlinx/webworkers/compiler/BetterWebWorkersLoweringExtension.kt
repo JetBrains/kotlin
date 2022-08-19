@@ -1,0 +1,23 @@
+/*
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlinx.webworkers.compiler
+
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.platform.js.isJs
+
+class BetterWebWorkersLoweringExtension : IrGenerationExtension {
+    override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
+//        if (pluginContext.platform.isJs()) {
+//            val transformers = listOf(WorkerFileJsIrTransformer(pluginContext))
+//            for (transformer in transformers) {
+//                moduleFragment.acceptChildrenVoid(transformer)
+//            }
+//        }
+    }
+}
