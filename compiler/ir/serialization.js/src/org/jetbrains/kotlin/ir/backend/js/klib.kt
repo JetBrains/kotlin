@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDes
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataIncrementalSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupportImpl
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -376,7 +377,7 @@ fun getIrModuleInfoForKlib(
     val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 
     val allowUnboundSymbols = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
-    val unlinkedDeclarationsSupport = JsUnlinkedDeclarationsSupport(irBuiltIns, allowUnboundSymbols)
+    val unlinkedDeclarationsSupport = UnlinkedDeclarationsSupportImpl(irBuiltIns, allowUnboundSymbols)
 
     val irLinker = JsIrLinker(
         currentModule = null,
@@ -435,7 +436,7 @@ fun getIrModuleInfoForSourceFiles(
     }
 
     val allowUnboundSymbols = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
-    val unlinkedDeclarationsSupport = JsUnlinkedDeclarationsSupport(irBuiltIns, allowUnboundSymbols)
+    val unlinkedDeclarationsSupport = UnlinkedDeclarationsSupportImpl(irBuiltIns, allowUnboundSymbols)
 
     val irLinker = JsIrLinker(
         currentModule = psi2IrContext.moduleDescriptor,

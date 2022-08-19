@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupport.UnlinkedMarkerTypeHandler
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UsedClassifierSymbolStatus.*
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -20,19 +21,31 @@ import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-abstract class BasicUnlinkedDeclarationsSupport : UnlinkedDeclarationsSupport {
-    protected abstract val handler: UnlinkedDeclarationsSupport.UnlinkedMarkerTypeHandler
-    protected abstract val builtIns: IrBuiltIns
+class UnlinkedDeclarationsSupportImpl(
+    private val builtIns: IrBuiltIns,
+    override val allowUnboundSymbols: Boolean
+) : UnlinkedDeclarationsSupport {
+    private val handler = object : UnlinkedMarkerTypeHandler {
+        override val unlinkedMarkerType = IrSimpleTypeImpl(
+            classifier = builtIns.anyClass,
+            hasQuestionMark = true,
+            arguments = emptyList(),
+            annotations = emptyList()
+        )
+
+        override fun IrType.isUnlinkedMarkerType(): Boolean = this === unlinkedMarkerType
+    }
 
     private val usedClassifierSymbols = UsedClassifierSymbols()
 
-    final override fun markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder: FakeOverrideBuilder) {
+    override fun markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder: FakeOverrideBuilder) {
         if (!allowUnboundSymbols) return
 
         val entries = fakeOverrideBuilder.fakeOverrideCandidates
