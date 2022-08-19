@@ -18,4 +18,5 @@ internal class ObjCExportedInterface(
     val mapper: ObjCExportMapper,
     val clangModule: SXClangModule,
     val frameworkName: String,
+    val containsStdlib: Boolean,
 )

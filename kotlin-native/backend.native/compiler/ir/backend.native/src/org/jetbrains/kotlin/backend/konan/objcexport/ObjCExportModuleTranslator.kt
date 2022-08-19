@@ -35,6 +35,8 @@ internal open class ObjCExportModuleTranslator(
 
     private var finalized = false
 
+    open protected val containsStdlib = false
+
     override fun process(event: Event) {
         if (event in processedEvents) return
         processedEvents += event
@@ -114,7 +116,8 @@ internal open class ObjCExportModuleTranslator(
                 namer,
                 mapper,
                 moduleBuilder.build(),
-                frameworkName
+                frameworkName,
+                containsStdlib,
         )
     }
 
@@ -149,6 +152,9 @@ internal class ObjCExportStdlibTranslator(
         translateBaseDeclarations()
         buildImports()
     }
+
+    override val containsStdlib: Boolean
+        get() = true
 
     private fun translateBaseDeclarations() {
         val headerForStdlib = moduleBuilder.getStdlibHeader()

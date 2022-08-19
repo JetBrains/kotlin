@@ -237,7 +237,7 @@ internal class ObjCExport(val context: Context) {
             namers += exportedInterface.namer
             ObjCExportCodeGenerator(codegen, exportedInterface.namer, exportedInterface.mapper).use { objCCodeGenerator ->
                 exportedInterface.generateWorkaroundForSwiftSR10177()
-                objCCodeGenerator.generate(codeSpec)
+                objCCodeGenerator.generate(codeSpec, exportedInterface.containsStdlib)
             }
         }
     }

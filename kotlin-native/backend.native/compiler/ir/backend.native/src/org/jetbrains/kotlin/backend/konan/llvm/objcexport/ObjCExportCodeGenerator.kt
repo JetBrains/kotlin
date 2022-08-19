@@ -443,17 +443,20 @@ internal class ObjCExportCodeGenerator(
         emitTypeAdapters(objCTypeAdapters)
     }
 
-    internal fun generate(spec: ObjCExportCodeSpec?) {
+
+    internal fun generate(spec: ObjCExportCodeSpec?, containsStdlib: Boolean) {
         generateTypeAdapters(spec)
 
-        NSNumberKind.values().mapNotNull { it.mappedKotlinClassId }.forEach {
-            dataGenerator.exportClass(namer.numberBoxName(it).binaryName)
-        }
-        dataGenerator.exportClass(namer.mutableSetName.binaryName)
-        dataGenerator.exportClass(namer.mutableMapName.binaryName)
-        dataGenerator.exportClass(namer.kotlinAnyName.binaryName)
+        if (containsStdlib) {
+            NSNumberKind.values().mapNotNull { it.mappedKotlinClassId }.forEach {
+                dataGenerator.exportClass(namer.numberBoxName(it).binaryName)
+            }
+            dataGenerator.exportClass(namer.mutableSetName.binaryName)
+            dataGenerator.exportClass(namer.mutableMapName.binaryName)
+            dataGenerator.exportClass(namer.kotlinAnyName.binaryName)
 
-        emitSpecialClassesConvertions()
+            emitSpecialClassesConvertions()
+        }
 
         // Replace runtime global with weak linkage:
         replaceExternalWeakOrCommonGlobal(
