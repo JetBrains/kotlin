@@ -53,8 +53,9 @@ object ComposeConfiguration {
         CompilerConfigurationKey<String>("Directory to save compose build reports")
     val INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Enable optimization to treat remember as an intrinsic")
-    val SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK =
-        CompilerConfigurationKey<Boolean>("Suppress Kotlin version compatibility check")
+    val SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK = CompilerConfigurationKey<String?>(
+            "Version of Kotlin for which version compatibility check should be suppressed"
+        )
     val DECOYS_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Generate decoy methods in IR transform")
 }
@@ -176,7 +177,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         )
         SUPPRESS_KOTLIN_VERSION_CHECK_ENABLED_OPTION -> configuration.put(
             ComposeConfiguration.SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK,
-            value == "true"
+            value
         )
         DECOYS_ENABLED_OPTION -> configuration.put(
             ComposeConfiguration.DECOYS_ENABLED_KEY,
@@ -206,20 +207,50 @@ class ComposeComponentRegistrar : ComponentRegistrar {
         ) {
             val KOTLIN_VERSION_EXPECTATION = "1.7.10"
             KotlinCompilerVersion.getVersion()?.let { version ->
+                val msgCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
                 val suppressKotlinVersionCheck = configuration.get(
-                    ComposeConfiguration.SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK,
-                    false
+                    ComposeConfiguration.SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK
                 )
-                if (!suppressKotlinVersionCheck && version != KOTLIN_VERSION_EXPECTATION) {
-                    val msgCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                if (suppressKotlinVersionCheck != null && suppressKotlinVersionCheck != version) {
+                    if (suppressKotlinVersionCheck == "true") {
+                        msgCollector?.report(
+                            CompilerMessageSeverity.STRONG_WARNING,
+                            " `suppressKotlinVersionCompatibilityCheck` should" +
+                                " specify the version of Kotlin for which you want the" +
+                                " compatibility check to be disabled. For example," +
+                                " `suppressKotlinVersionCompatibilityCheck=$version`"
+                        )
+                    } else {
+                        msgCollector?.report(
+                            CompilerMessageSeverity.STRONG_WARNING,
+                            " `suppressKotlinVersionCompatibilityCheck` is set to a" +
+                                " version of Kotlin ($suppressKotlinVersionCheck) that you" +
+                                " are not using and should be set properly. (you are using" +
+                                " Kotlin $version)"
+                        )
+                    }
+                }
+                if (suppressKotlinVersionCheck == KOTLIN_VERSION_EXPECTATION) {
+                    msgCollector?.report(
+                        CompilerMessageSeverity.STRONG_WARNING,
+                        " `suppressKotlinVersionCompatibilityCheck` is set to the same" +
+                            " version of Kotlin that the Compose Compiler was already expecting" +
+                            " (Kotlin $suppressKotlinVersionCheck), and thus has no effect and" +
+                            " should be removed."
+                    )
+                }
+                if (suppressKotlinVersionCheck != "true" &&
+                    version != KOTLIN_VERSION_EXPECTATION &&
+                    version != suppressKotlinVersionCheck) {
                     msgCollector?.report(
                         CompilerMessageSeverity.ERROR,
-                        "This version (${VersionChecker.compilerVersion}) of the Compose" +
-                            " Compiler requires Kotlin version $KOTLIN_VERSION_EXPECTATION but" +
-                            " you appear to be using Kotlin version $version which is not known" +
-                            " to be compatible.  Please fix your configuration (or" +
-                            " `suppressKotlinVersionCompatibilityCheck` but don't say I didn't" +
-                            " warn you!)."
+                        "This version (${VersionChecker.compilerVersion}) of the" +
+                            " Compose Compiler requires Kotlin version" +
+                            " $KOTLIN_VERSION_EXPECTATION but you appear to be using Kotlin" +
+                            " version $version which is not known to be compatible.  Please" +
+                            " fix your configuration (or" +
+                            " `suppressKotlinVersionCompatibilityCheck` but don't say I" +
+                            " didn't warn you!)."
                     )
 
                     // Return without registering the Compose plugin because the registration
