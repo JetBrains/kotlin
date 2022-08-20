@@ -23,7 +23,7 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
 
         val module = file.findModule().takeIf { facadeIsApplicable(it, file) } ?: return null
         val facadeFqName = file.javaFileFacadeFqName
-        val facadeFiles = if (file.isJvmMultifileClassFile) {
+        val facadeFiles = if (file.isJvmMultifileClassFile && !file.isCompiled) {
             findFilesForFacade(facadeFqName, module.contentSearchScope).filter(KtFile::isJvmMultifileClassFile)
         } else {
             listOf(file)
