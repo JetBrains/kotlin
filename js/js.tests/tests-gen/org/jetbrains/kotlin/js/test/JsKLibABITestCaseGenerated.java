@@ -30,6 +30,26 @@ public class JsKLibABITestCaseGenerated extends AbstractJsKLibABITestCase {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klibABI"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR, false);
     }
 
+    @TestMetadata("nonAbstractFunctionInAbstractClassBecomesAbstract")
+    public void testNonAbstractFunctionInAbstractClassBecomesAbstract() throws Exception {
+        runTest("compiler/testData/klibABI/nonAbstractFunctionInAbstractClassBecomesAbstract/");
+    }
+
+    @TestMetadata("nonAbstractFunctionInInterfaceBecomesAbstract")
+    public void testNonAbstractFunctionInInterfaceBecomesAbstract() throws Exception {
+        runTest("compiler/testData/klibABI/nonAbstractFunctionInInterfaceBecomesAbstract/");
+    }
+
+    @TestMetadata("nonAbstractPropertyInAbstractClassBecomesAbstract")
+    public void testNonAbstractPropertyInAbstractClassBecomesAbstract() throws Exception {
+        runTest("compiler/testData/klibABI/nonAbstractPropertyInAbstractClassBecomesAbstract/");
+    }
+
+    @TestMetadata("nonAbstractPropertyInInterfaceBecomesAbstract")
+    public void testNonAbstractPropertyInInterfaceBecomesAbstract() throws Exception {
+        runTest("compiler/testData/klibABI/nonAbstractPropertyInInterfaceBecomesAbstract/");
+    }
+
     @TestMetadata("removeAbstractFunctionFromAbstractClass")
     public void testRemoveAbstractFunctionFromAbstractClass() throws Exception {
         runTest("compiler/testData/klibABI/removeAbstractFunctionFromAbstractClass/");
