@@ -101,9 +101,7 @@ class KotlinKarma(
     }
 
     private fun usePropBrowsers() {
-        val propKey = "kotlin.js.browser.karma.browsers"
-        val propValue = project.kotlinPropertiesProvider.compositeProperty("$propKey.${compilation.target.name}")
-            ?: project.kotlinPropertiesProvider.compositeProperty(propKey)
+        val propValue = project.kotlinPropertiesProvider.jsKarmaBrowsers(compilation.target)
         val propBrowsers = propValue?.split(",")
         propBrowsers?.map(String::trim)?.forEach {
             when (it.toLowerCase()) {

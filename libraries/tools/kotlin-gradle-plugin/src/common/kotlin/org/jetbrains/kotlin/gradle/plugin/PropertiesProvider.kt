@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler.Companion.IGNORE_TCSM_OVERFLOW
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.Companion.jsCompilerProperty
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_ABI_SNAPSHOT
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JS_KARMA_BROWSERS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION_1_NO_WARN
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import org.jetbrains.kotlin.util.prefixIfNot
 import java.io.File
 import java.util.*
 
@@ -54,10 +56,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     @Deprecated(message = "Please use kotlin.build.report.output=SINGLE_FILE and kotlin.build.report.single_file ")
     val singleBuildMetricsFile: File?
-        get() = property("kotlin.internal.single.build.metrics.file")?.let { File(it) }
+        get() = this.property("kotlin.internal.single.build.metrics.file")?.let { File(it) }
 
     val buildReportSingleFile: File?
-        get() = property("kotlin.build.report.single_file")?.let { File(it) }
+        get() = this.property("kotlin.build.report.single_file")?.let { File(it) }
 
     @Deprecated(message = "Please use kotlin.build.report.output instead ")
     val buildReportEnabled: Boolean
@@ -76,24 +78,24 @@ internal class PropertiesProvider private constructor(private val project: Proje
         }
 
     val buildReportOutputs: List<String>
-        get() = property("kotlin.build.report.output")?.split(",") ?: emptyList()
+        get() = this.property("kotlin.build.report.output")?.split(",") ?: emptyList()
 
     val buildReportLabel: String?
-        get() = property("kotlin.build.report.label")
+        get() = this.property("kotlin.build.report.label")
 
     val buildReportFileOutputDir: File?
-        get() = property("kotlin.build.report.file.output_dir")?.let { File(it) }
+        get() = this.property("kotlin.build.report.file.output_dir")?.let { File(it) }
 
     val buildReportHttpUrlProperty = "kotlin.build.report.http.url"
 
     val buildReportHttpUrl: String?
-        get() = property(buildReportHttpUrlProperty)
+        get() = this.property(buildReportHttpUrlProperty)
 
     val buildReportHttpUser: String?
-        get() = property("kotlin.build.report.http.user")
+        get() = this.property("kotlin.build.report.http.user")
 
     val buildReportHttpPassword: String?
-        get() = property("kotlin.build.report.http.password")
+        get() = this.property("kotlin.build.report.http.password")
 
     val buildReportMetrics: Boolean
         get() = booleanProperty("kotlin.build.report.metrics") ?: false
@@ -103,7 +105,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     @Deprecated("Please use \"kotlin.build.report.file.output_dir\" property instead")
     val buildReportDir: File?
-        get() = property("kotlin.build.report.dir")?.let { File(it) }
+        get() = this.property("kotlin.build.report.dir")?.let { File(it) }
 
     val incrementalJvm: Boolean?
         get() = booleanProperty("kotlin.incremental")
@@ -118,18 +120,18 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty("kotlin.incremental.js.ir") ?: false
 
     val jsIrOutputGranularity: KotlinJsIrOutputGranularity
-        get() = property("kotlin.js.ir.output.granularity")?.let { KotlinJsIrOutputGranularity.byArgument(it) }
+        get() = this.property("kotlin.js.ir.output.granularity")?.let { KotlinJsIrOutputGranularity.byArgument(it) }
             ?: KotlinJsIrOutputGranularity.PER_MODULE
 
     val jsIrGeneratedTypeScriptValidationDevStrategy: KotlinIrJsGeneratedTSValidationStrategy
-        get() = property("kotlin.js.ir.development.typescript.validation.strategy")?.let {
+        get() = this.property("kotlin.js.ir.development.typescript.validation.strategy")?.let {
             KotlinIrJsGeneratedTSValidationStrategy.byArgument(
                 it
             )
         } ?: KotlinIrJsGeneratedTSValidationStrategy.IGNORE
 
     val jsIrGeneratedTypeScriptValidationProdStrategy: KotlinIrJsGeneratedTSValidationStrategy
-        get() = property("kotlin.js.ir.production.typescript.validation.strategy")?.let {
+        get() = this.property("kotlin.js.ir.production.typescript.validation.strategy")?.let {
             KotlinIrJsGeneratedTSValidationStrategy.byArgument(
                 it
             )
@@ -218,7 +220,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty(KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN) ?: false
 
     val mppAndroidSourceSetLayoutVersion: Int?
-        get() = property(KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION)?.toIntOrNull()
+        get() = this.property(KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION)?.toIntOrNull()
 
     val ignoreMppAndroidSourceSetLayoutVersion: Boolean
         get() = booleanProperty(KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION_1_NO_WARN) ?: false
@@ -244,7 +246,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      *  - prebuilt - Includes all platform libraries.
      */
     val nativeDistributionType: String?
-        get() = property("kotlin.native.distribution.type")
+        get() = this.property("kotlin.native.distribution.type")
 
     /**
      * Allows overriding Kotlin/Native base download url.
@@ -252,7 +254,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * When Kotlin/native will try to download native compiler, it will append compiler version and os type to this url.
      */
     val nativeBaseDownloadUrl: String
-        get() = property("kotlin.native.distribution.baseDownloadUrl") ?: NativeCompilerDownloader.BASE_DOWNLOAD_URL
+        get() = this.property("kotlin.native.distribution.baseDownloadUrl") ?: NativeCompilerDownloader.BASE_DOWNLOAD_URL
 
     /**
      * A property that was used to choose a restricted distribution in 1.3.
@@ -265,7 +267,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * A main purpose of this property is working around potential problems with the metadata mode.
      */
     val nativePlatformLibrariesMode: String?
-        get() = property("kotlin.native.platform.libraries.mode")
+        get() = this.property("kotlin.native.platform.libraries.mode")
 
     /**
      * Allows a user to provide a local Kotlin/Native distribution instead of a downloaded one.
@@ -301,7 +303,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * Allows a user to specify free compiler arguments for K/N linker.
      */
     val nativeLinkArgs: List<String>
-        get() = property("kotlin.native.linkArgs").orEmpty().split(' ').filterNot { it.isBlank() }
+        get() = this.property("kotlin.native.linkArgs").orEmpty().split(' ').filterNot { it.isBlank() }
 
     /**
      * Forces to run a compilation in a separate JVM.
@@ -343,7 +345,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
 
     val commonizerLogLevel: String?
-        get() = property("kotlin.mpp.commonizerLogLevel")
+        get() = this.property("kotlin.mpp.commonizerLogLevel")
 
     val enableNativeDistributionCommonizationCache: Boolean
         get() = booleanProperty("kotlin.mpp.enableNativeDistributionCommonizationCache") ?: true
@@ -355,13 +357,13 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * Dependencies caching strategy for all targets that support caches.
      */
     val nativeCacheKind: NativeCacheKind?
-        get() = property("kotlin.native.cacheKind")?.let { NativeCacheKind.byCompilerArgument(it) }
+        get() = this.property("kotlin.native.cacheKind")?.let { NativeCacheKind.byCompilerArgument(it) }
 
     /**
      * Dependencies caching strategy for [target].
      */
     fun nativeCacheKindForTarget(target: KonanTarget): NativeCacheKind? =
-        property("kotlin.native.cacheKind.${target.presetName}")?.let { NativeCacheKind.byCompilerArgument(it) }
+        this.property("kotlin.native.cacheKind.${target.presetName}")?.let { NativeCacheKind.byCompilerArgument(it) }
 
     /**
      * Ignore overflow in [org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler]
@@ -385,13 +387,13 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * Use Kotlin/JS backend compiler type
      */
     val jsCompiler: KotlinJsCompilerType
-        get() = property(jsCompilerProperty)?.let { KotlinJsCompilerType.byArgumentOrNull(it) } ?: KotlinJsCompilerType.LEGACY
+        get() = this.property(jsCompilerProperty)?.let { KotlinJsCompilerType.byArgumentOrNull(it) } ?: KotlinJsCompilerType.LEGACY
 
     /**
      * Use Webpack 4 for compatibility
      */
     val webpackMajorVersion: WebpackMajorVersion
-        get() = property(WebpackMajorVersion.webpackMajorVersion)?.let { WebpackMajorVersion.byArgument(it) }
+        get() = this.property(WebpackMajorVersion.webpackMajorVersion)?.let { WebpackMajorVersion.byArgument(it) }
             ?.also { version ->
                 if (!WebpackMajorVersion.webpackVersionWarning && version != WebpackMajorVersion.DEFAULT) {
                     WebpackMajorVersion.webpackVersionWarning = true
@@ -405,7 +407,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * Default mode of generating of Dukat
      */
     val externalsOutputFormat: ExternalsOutputFormat?
-        get() = property(externalsOutputFormatProperty)?.let { ExternalsOutputFormat.byArgumentOrNull(it) }
+        get() = this.property(externalsOutputFormatProperty)?.let { ExternalsOutputFormat.byArgumentOrNull(it) }
 
     /**
      * Use Kotlin/JS backend compiler type
@@ -430,47 +432,48 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = enumProperty("kotlin.jvm.target.validation.mode", JvmTargetValidationMode.WARNING)
 
     val kotlinDaemonJvmArgs: String?
-        get() = property("kotlin.daemon.jvmargs")
+        get() = this.property("kotlin.daemon.jvmargs")
 
     val kotlinCompilerExecutionStrategy: KotlinCompilerExecutionStrategy
-        get() = KotlinCompilerExecutionStrategy.fromProperty(property("kotlin.compiler.execution.strategy")?.toLowerCase())
+        get() = KotlinCompilerExecutionStrategy.fromProperty(this.property("kotlin.compiler.execution.strategy")?.toLowerCase())
 
     val kotlinDaemonUseFallbackStrategy: Boolean
         get() = booleanProperty("kotlin.daemon.useFallbackStrategy") ?: true
 
+    /**
+     * Retrieves a comma-separated list of browsers to use when running karma tests for [target]
+     * @see KOTLIN_JS_KARMA_BROWSERS
+     */
+    fun jsKarmaBrowsers(target: KotlinTarget? = null): String? =
+        target?.name?.prefixIfNot("$KOTLIN_JS_KARMA_BROWSERS.")?.let(::property) ?: property(KOTLIN_JS_KARMA_BROWSERS)
+
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
-        val deprecatedProperty = property(deprecatedPropName)
+        val deprecatedProperty = this.property(deprecatedPropName)
         if (deprecatedProperty != null) {
             SingleWarningPerBuild.show(project, "Project property '$deprecatedPropName' is deprecated. Please use '$propName' instead.")
         }
-        return property(propName) ?: deprecatedProperty
+        return this.property(propName) ?: deprecatedProperty
     }
 
     private fun booleanProperty(propName: String): Boolean? =
-        property(propName)?.toBoolean()
+        this.property(propName)?.toBoolean()
 
     private inline fun <reified T : Enum<T>> enumProperty(
         propName: String,
         defaultValue: T
-    ): T = property(propName)?.let { enumValueOf<T>(it.toUpperCase()) } ?: defaultValue
+    ): T = this.property(propName)?.let { enumValueOf<T>(it.toUpperCase()) } ?: defaultValue
 
+    /**
+     * Looks up the property in the following sources with decreasing priority:
+     * 1. Project properties (-P, gradle.properties, etc...)
+     * 2. `local.properties`
+     */
     private fun property(propName: String): String? =
         if (project.hasProperty(propName)) {
             project.property(propName) as? String
         } else {
             localProperties.getProperty(propName)
         }
-
-    /**
-     * A resolved property lookup that combines the following sources with decreasing priority:
-     * 1. Gradle command line properties (`-P`)
-     * 2. `local.properties`
-     * 3. `gradle.properties`
-     */
-    fun compositeProperty(propName: String): String? {
-        val prop = project.gradle.startParameter.projectProperties[propName] ?: localProperties[propName] ?: project.findProperty(propName)
-        return prop?.toString()
-    }
 
     private fun propertiesWithPrefix(prefix: String): Map<String, String> {
         val result = mutableMapOf<String, String>()
@@ -502,6 +505,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_KPM_EXPERIMENTAL_MODEL_MAPPING = "kotlin.kpm.experimentalModelMapping"
         const val KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION = "kotlin.mpp.enablePlatformIntegerCommonization"
         const val KOTLIN_ABI_SNAPSHOT = "kotlin.incremental.classpath.snapshot.enabled"
+        const val KOTLIN_JS_KARMA_BROWSERS = "kotlin.js.browser.karma.browsers"
     }
 
     companion object {
