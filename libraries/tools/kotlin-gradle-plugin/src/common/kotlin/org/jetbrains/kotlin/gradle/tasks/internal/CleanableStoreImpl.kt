@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.tasks.internal
 
-import org.gradle.util.GFileUtils
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.UncheckedIOException
 import java.nio.file.Files
+import java.nio.file.attribute.FileTime
 import java.time.Instant
 
 internal class CleanableStoreImpl(dirPath: String) : CleanableStore {
@@ -18,7 +21,7 @@ internal class CleanableStoreImpl(dirPath: String) : CleanableStore {
 
     override fun markUsed() {
         if (dir.exists()) {
-            GFileUtils.touchExisting(dir)
+            touchExisting(dir)
         }
     }
 
@@ -32,5 +35,28 @@ internal class CleanableStoreImpl(dirPath: String) : CleanableStore {
                 modificationDate(file).isBefore(expirationDate)
             }
             ?.forEach { file -> file.deleteRecursively() }
+    }
+
+    private fun touchExisting(file: File) {
+        try {
+            Files.setLastModifiedTime(file.toPath(), FileTime.fromMillis(System.currentTimeMillis()))
+        } catch (e: IOException) {
+            if (file.isFile && file.length() == 0L) {
+                // On Linux, users cannot touch files they don't own but have write access to
+                // because the JDK uses futimes() instead of futimens() [note the 'n'!]
+                // see https://github.com/gradle/gradle/issues/7873
+                touchFileByWritingEmptyByteArray(file)
+            } else {
+                throw UncheckedIOException("Could not update timestamp for $file", e)
+            }
+        }
+    }
+
+    private fun touchFileByWritingEmptyByteArray(file: File) {
+        try {
+            FileOutputStream(file).use { it.write(ByteArray(0)) }
+        } catch (e: IOException) {
+            throw UncheckedIOException("Could not update timestamp for $file", e)
+        }
     }
 }
