@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K2: JS_IR
 
 enum class Test {
     A(0),

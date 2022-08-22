@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K2: JS_IR
 // MODULE: lib
 // FILE: Typography.kt
 object Typography {
