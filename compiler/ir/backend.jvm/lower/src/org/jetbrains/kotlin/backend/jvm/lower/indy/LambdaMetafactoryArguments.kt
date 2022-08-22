@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower.indy
 
-import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -22,12 +21,10 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.overrides.buildFakeOverrideMember
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
@@ -176,11 +173,8 @@ internal class LambdaMetafactoryArgumentsBuilder(
         }
 
         // Don't use JDK LambdaMetafactory for big arity lambdas.
-        if (plainLambda) {
-            var parametersCount = implFun.valueParameters.size
-            if (implFun.hasExtensionReceiver) ++parametersCount
-            if (parametersCount >= BuiltInFunctionArity.BIG_ARITY)
-                abiHazard = true
+        if (plainLambda && implFun.valueParameters.size >= BuiltInFunctionArity.BIG_ARITY) {
+            abiHazard = true
         }
 
         // Can't use indy-based SAM conversion inside inline fun (Ok in inline lambda).
