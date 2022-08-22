@@ -36,6 +36,9 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -679,6 +682,42 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
             declaration
         } else {
             super.visitProperty(declaration)
+        }
+    }
+
+    override fun visitBlock(expression: IrBlock): IrExpression {
+        if (expression is IrReturnableBlock && expression.inlineFunctionSymbol?.isAutoreleasepool() == true) {
+            // Prohibit calling suspend functions from `autoreleasepool {}` block.
+            // See https://youtrack.jetbrains.com/issue/KT-50786 for more details.
+            // Note: we can't easily check this in frontend, because we need to prohibit indirect cases like
+            ///    inline fun <T> myAutoreleasepool(block: () -> T) = autoreleasepool(block)
+            ///    myAutoreleasepool { suspendHere() }
+
+            expression.acceptVoid(object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
+
+                override fun visitCall(expression: IrCall) {
+                    super.visitCall(expression)
+
+                    if (expression.symbol.owner.isSuspend) {
+                        context.reportCompilationError(
+                                "Calling suspend functions from `autoreleasepool {}` is prohibited, " +
+                                        "see https://youtrack.jetbrains.com/issue/KT-50786",
+                                currentFile,
+                                expression
+                        )
+                    }
+                }
+            })
+        }
+        return super.visitBlock(expression)
+    }
+
+    private fun IrFunctionSymbol.isAutoreleasepool(): Boolean {
+        return this.owner.name.asString() == "autoreleasepool" && this.owner.parent.let { parent ->
+            parent is IrPackageFragment && parent.fqName == InteropFqNames.packageName
         }
     }
 
