@@ -208,7 +208,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         }
     }
 
-    protected fun rememberClosure(parameterType: Type, index: Int, lambdaInfo: LambdaInfo) {
+    protected fun rememberClosure(parameterType: Type, lambdaInfo: LambdaInfo) {
         invocationParamBuilder.addNextValueParameter(parameterType, true, null).functionalArgument = lambdaInfo
     }
 
@@ -225,7 +225,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         }
     }
 
-    protected fun putArgumentToLocalVal(jvmKotlinType: JvmKotlinType, stackValue: StackValue, parameterIndex: Int, kind: ValueKind) {
+    protected fun putArgumentToLocalVal(jvmKotlinType: JvmKotlinType, stackValue: StackValue, kind: ValueKind) {
         if (kind === ValueKind.DEFAULT_MASK || kind === ValueKind.METHOD_HANDLE_IN_DEFAULT) {
             return processDefaultMaskOrMethodHandler(stackValue, kind)
         }

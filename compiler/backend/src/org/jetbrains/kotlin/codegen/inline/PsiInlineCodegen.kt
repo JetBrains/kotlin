@@ -153,7 +153,7 @@ class PsiInlineCodegen(
         } else null
 
         val lambda = PsiExpressionLambda(ktLambda!!, state, parameter.isCrossinline, boundReceiver != null)
-        rememberClosure(type, parameter.index, lambda)
+        rememberClosure(type, lambda)
         closuresToGenerate += lambda
         if (boundReceiver != null) {
             // Has to be done immediately to preserve evaluation order.
@@ -179,7 +179,7 @@ class PsiInlineCodegen(
     }
 
     override fun putValueIfNeeded(parameterType: JvmKotlinType, value: StackValue, kind: ValueKind, parameterIndex: Int) =
-        putArgumentToLocalVal(parameterType, value, parameterIndex, kind)
+        putArgumentToLocalVal(parameterType, value, kind)
 
     override fun putCapturedValueOnStack(stackValue: StackValue, valueType: Type, paramIndex: Int) =
         putCapturedToLocalVal(stackValue, activeLambda!!.capturedVars[paramIndex], stackValue.kotlinType)

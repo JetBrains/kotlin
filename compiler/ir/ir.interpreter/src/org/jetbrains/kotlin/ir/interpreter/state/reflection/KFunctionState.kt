@@ -59,13 +59,13 @@ internal class KFunctionState(
         val hasExtensionReceiver = irFunction.extensionReceiverParameter?.let { getField(it.symbol) } != null
         environment.getCachedFunction(irFunction.symbol, hasDispatchReceiver, hasExtensionReceiver) ?: environment.setCachedFunction(
             irFunction.symbol, hasDispatchReceiver, hasExtensionReceiver,
-            newFunction = createInvokeFunction(irFunction, irClass, hasDispatchReceiver, hasExtensionReceiver).symbol
+            newFunction = createInvokeFunction(irFunction, irClass, hasDispatchReceiver).symbol
         )
     }
 
     companion object {
         private fun createInvokeFunction(
-            irFunction: IrFunction, irClass: IrClass, hasDispatchReceiver: Boolean, hasExtensionReceiver: Boolean
+            irFunction: IrFunction, irClass: IrClass, hasDispatchReceiver: Boolean
         ): IrSimpleFunction {
             val invokeFunction = irClass.declarations
                 .filterIsInstance<IrSimpleFunction>()
