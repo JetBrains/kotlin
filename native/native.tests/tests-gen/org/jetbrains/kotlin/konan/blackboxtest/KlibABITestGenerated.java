@@ -25,6 +25,18 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     }
 
     @Test
+    @TestMetadata("changeFunctionVisibility")
+    public void testChangeFunctionVisibility() throws Exception {
+        runTest("compiler/testData/klibABI/changeFunctionVisibility/");
+    }
+
+    @Test
+    @TestMetadata("changePropertyVisibility")
+    public void testChangePropertyVisibility() throws Exception {
+        runTest("compiler/testData/klibABI/changePropertyVisibility/");
+    }
+
+    @Test
     @TestMetadata("nonAbstractFunctionInAbstractClassBecomesAbstract")
     public void testNonAbstractFunctionInAbstractClassBecomesAbstract() throws Exception {
         runTest("compiler/testData/klibABI/nonAbstractFunctionInAbstractClassBecomesAbstract/");
