@@ -1,0 +1,12 @@
+internal fun publicToInternalFunction() = 42
+private fun publicToPrivateFunction() = 42
+
+open class Container {
+    protected fun publicToProtectedFunction() = 42
+    internal fun publicToInternalFunction() = 42
+    private fun publicToPrivateFunction() = 42
+
+    public fun protectedToPublicFunction() = 42
+    internal fun protectedToInternalFunction() = 42
+    private fun protectedToPrivateFunction() = 42
+}

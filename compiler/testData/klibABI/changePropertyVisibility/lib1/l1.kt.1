@@ -1,0 +1,20 @@
+internal val publicToInternalProperty1 = 42
+internal val publicToInternalProperty2 get() = 42
+private val publicToPrivateProperty1 = 42
+private val publicToPrivateProperty2 get() = 42
+
+open class Container {
+    protected val publicToProtectedProperty1 = 42
+    protected val publicToProtectedProperty2 get() = 42
+    internal val publicToInternalProperty1 = 42
+    internal val publicToInternalProperty2 get() = 42
+    private val publicToPrivateProperty1 = 42
+    private val publicToPrivateProperty2 get() = 42
+
+    public val protectedToPublicProperty1 = 42
+    public val protectedToPublicProperty2 get() = 42
+    internal val protectedToInternalProperty1 = 42
+    internal val protectedToInternalProperty2 get() = 42
+    private val protectedToPrivateProperty1 = 42
+    private val protectedToPrivateProperty2 get() = 42
+}
