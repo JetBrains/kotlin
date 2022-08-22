@@ -71,8 +71,8 @@ class JvmBackendContext(
 
     override val builtIns = state.module.builtIns
     override val typeSystem: IrTypeSystemContext = JvmIrTypeSystemContext(irBuiltIns)
-    val typeMapper = IrTypeMapper(this)
-    val methodSignatureMapper = MethodSignatureMapper(this)
+    val defaultTypeMapper = IrTypeMapper(this)
+    val defaultMethodSignatureMapper = MethodSignatureMapper(this, defaultTypeMapper)
 
     val innerClassesSupport = JvmInnerClassesSupport(irFactory)
     val cachedDeclarations = JvmCachedDeclarations(
@@ -153,7 +153,7 @@ class JvmBackendContext(
 
     init {
         state.mapInlineClass = { descriptor ->
-            typeMapper.mapType(referenceClass(descriptor).defaultType)
+            defaultTypeMapper.mapType(referenceClass(descriptor).defaultType)
         }
     }
 

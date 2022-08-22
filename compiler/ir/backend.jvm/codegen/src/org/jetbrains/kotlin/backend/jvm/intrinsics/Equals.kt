@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.ir.isSmartcastFromHigherThanNullable
 import org.jetbrains.kotlin.backend.jvm.ir.receiverAndArgs
@@ -155,12 +154,12 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
-        context: JvmBackendContext
+        classCodegen: ClassCodegen
     ): IrIntrinsicFunction {
         class Ieee754AreEqual(
             val left: Type,
             val right: Type
-        ) : IrIntrinsicFunction(expression, signature, context, listOf(left, right)) {
+        ) : IrIntrinsicFunction(expression, signature, classCodegen, listOf(left, right)) {
             override fun genInvokeInstruction(v: InstructionAdapter) {
                 v.invokestatic(
                     IntrinsicMethods.INTRINSICS_CLASS_NAME, "areEqual",
@@ -185,15 +184,15 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
         val arg1isNullable = arg1Type.isNullable()
 
         val useNonIEEE754Comparison =
-            !context.state.languageVersionSettings.supportsFeature(LanguageFeature.ProperIeee754Comparisons)
-                    && (arg0.isSmartcastFromHigherThanNullable(context) || arg1.isSmartcastFromHigherThanNullable(context))
+            !classCodegen.context.state.languageVersionSettings.supportsFeature(LanguageFeature.ProperIeee754Comparisons)
+                    && (arg0.isSmartcastFromHigherThanNullable(classCodegen.context) || arg1.isSmartcastFromHigherThanNullable(classCodegen.context))
 
         return when {
             useNonIEEE754Comparison ->
                 Ieee754AreEqual(AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE)
 
             !arg0isNullable && !arg1isNullable ->
-                object : IrIntrinsicFunction(expression, signature, context, listOf(operandType, operandType)) {
+                object : IrIntrinsicFunction(expression, signature, classCodegen, listOf(operandType, operandType)) {
                     override fun genInvokeInstruction(v: InstructionAdapter) {
                         StackValue.cmp(KtTokens.EQEQ, operandType, StackValue.onStack(operandType), StackValue.onStack(operandType))
                             .put(Type.BOOLEAN_TYPE, v)

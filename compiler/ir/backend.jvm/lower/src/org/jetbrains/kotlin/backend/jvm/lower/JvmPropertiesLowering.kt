@@ -29,7 +29,10 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -222,7 +225,7 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
                             getter.extensionReceiverParameter?.type?.requiresMangling == true ||
                                     (state.functionsWithInlineClassReturnTypesMangled && getter.hasMangledReturnType)
                         val mangled = if (needsMangling) inlineClassReplacements.getReplacementFunction(getter) else null
-                        methodSignatureMapper.mapFunctionName(mangled ?: getter)
+                        defaultMethodSignatureMapper.mapFunctionName(mangled ?: getter)
                     } else JvmAbi.getterName(property.name.asString())
                 } else {
                     property.name.asString()

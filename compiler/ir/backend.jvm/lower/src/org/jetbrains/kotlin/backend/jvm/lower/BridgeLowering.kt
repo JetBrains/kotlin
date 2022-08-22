@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.backend.jvm.*
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.SpecialBridge
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -143,7 +145,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             // We should rewrite this static replacement as well ('remove' function itself is handled during special bridge processing).
             val remove = declaration.functions.find {
                 val original = context.inlineClassReplacements.originalFunctionForStaticReplacement[it]
-                original != null && context.methodSignatureMapper.shouldBoxSingleValueParameterForSpecialCaseOfRemove(original)
+                original != null && context.defaultMethodSignatureMapper.shouldBoxSingleValueParameterForSpecialCaseOfRemove(original)
             }
             if (remove != null) {
                 makeLastParameterNullable(remove)
@@ -389,7 +391,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
 
     // List of special bridge methods which were not implemented in Kotlin superclasses.
     private fun IrSimpleFunction.overriddenSpecialBridges(): List<SpecialBridge> {
-        val targetJvmMethod = context.methodSignatureMapper.mapCalleeToAsmMethod(this)
+        val targetJvmMethod = context.defaultMethodSignatureMapper.mapCalleeToAsmMethod(this)
         return allOverridden()
             .filter { it.parentAsClass.isInterface || it.isFromJava() }
             .mapNotNull { it.specialBridgeOrNull }
@@ -498,7 +500,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                 overriddenSymbols = listOf(specialBridge.overridden.symbol)
             }
 
-            if (context.methodSignatureMapper.shouldBoxSingleValueParameterForSpecialCaseOfRemove(this)) {
+            if (context.defaultMethodSignatureMapper.shouldBoxSingleValueParameterForSpecialCaseOfRemove(this)) {
                 makeLastParameterNullable(this)
             }
         }
@@ -549,7 +551,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             // If the signature of this method will be changed in the output to take a boxed argument instead of a primitive,
             // rewrite the argument so that code will be generated for a boxed argument and not a primitive.
             valueParameters = valueParameters.mapIndexed { i, p ->
-                if (AsmUtil.isPrimitive(context.typeMapper.mapType(p.type)) && ourSignature.argumentTypes[i].sort == Type.OBJECT) {
+                if (AsmUtil.isPrimitive(context.defaultTypeMapper.mapType(p.type)) && ourSignature.argumentTypes[i].sort == Type.OBJECT) {
                     val newParameter = p.copyTo(this, type = p.type.makeNullable())
                     variableMap[p] = newParameter
                     newParameter

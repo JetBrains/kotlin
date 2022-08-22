@@ -43,4 +43,5 @@ public final class MyMap {
     public bridge final method values(): java.util.ArrayList
     public synthetic bridge method values(): java.util.Collection
     public final inner class MyMap$MySet
+    public inner class java/util/Map$Entry
 }

@@ -1,0 +1,36 @@
+@kotlin.Metadata
+public final class A$DefaultImpls {
+    // source: 'kt49715.kt'
+    public static @org.jetbrains.annotations.NotNull method toString(@org.jetbrains.annotations.NotNull p0: A, @org.jetbrains.annotations.NotNull p1: java.lang.Object): java.lang.String
+    public final inner class A$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface A {
+    // source: 'kt49715.kt'
+    public abstract @org.jetbrains.annotations.NotNull method toString(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.String
+    public final inner class A$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class B {
+    // source: 'kt49715.kt'
+    private final field x: int
+    public method <init>(p0: int): void
+    public final method component1(): int
+    public synthetic static method copy$default(p0: B, p1: int, p2: int, p3: java.lang.Object): B
+    public final @org.jetbrains.annotations.NotNull method copy(p0: int): B
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public final @org.jetbrains.annotations.NotNull method hi(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.String
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method toString(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.String
+    public final inner class A$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class Kt49715Kt {
+    // source: 'kt49715.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

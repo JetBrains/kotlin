@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -17,9 +17,9 @@ object StringPlus : IntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
-        context: JvmBackendContext
+        classCodegen: ClassCodegen
     ): IrIntrinsicFunction =
-        IrIntrinsicFunction.create(expression, signature, context, listOf(AsmTypes.JAVA_STRING_TYPE, AsmTypes.OBJECT_TYPE)) {
+        IrIntrinsicFunction.create(expression, signature, classCodegen, listOf(AsmTypes.JAVA_STRING_TYPE, AsmTypes.OBJECT_TYPE)) {
             it.invokestatic(
                 IntrinsicMethods.INTRINSICS_CLASS_NAME,
                 "stringPlus",

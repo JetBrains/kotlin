@@ -155,7 +155,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     }
 
     private fun IrSimpleFunction.toJvmSignature(): String =
-        context.methodSignatureMapper.mapAsmMethod(this).toString()
+        context.defaultMethodSignatureMapper.mapAsmMethod(this).toString()
 
     private fun createStubMethod(
         function: IrSimpleFunction,

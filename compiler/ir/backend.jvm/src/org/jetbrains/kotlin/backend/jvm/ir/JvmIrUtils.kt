@@ -67,9 +67,9 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.utils.DFS
-import java.io.File
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
+import java.io.File
 
 fun IrDeclaration.getJvmNameFromAnnotation(): String? {
     // TODO lower @JvmName?
@@ -481,7 +481,7 @@ fun IrFunctionAccessExpression.receiverAndArgs(): List<IrExpression> {
 }
 
 fun classFileContainsMethod(classId: ClassId, function: IrFunction, context: JvmBackendContext): Boolean? {
-    val originalSignature = context.methodSignatureMapper.mapAsmMethod(function)
+    val originalSignature = context.defaultMethodSignatureMapper.mapAsmMethod(function)
     val originalDescriptor = originalSignature.descriptor
     val descriptor = if (function.isSuspend)
         listOf(*Type.getArgumentTypes(originalDescriptor), Type.getObjectType("kotlin/coroutines/Continuation"))

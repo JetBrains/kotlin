@@ -20,7 +20,7 @@ object TypeOf : IntrinsicMethod() {
         if (putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.TYPE_OF)) {
             mv.aconst(null) // see ReifiedTypeInliner.processTypeOf
         } else {
-            val support = IrInlineIntrinsicsSupport(context, typeMapper, expression, codegen.irFunction.fileParent)
+            val support = IrInlineIntrinsicsSupport(codegen.classCodegen, expression, codegen.irFunction.fileParent)
             typeMapper.typeSystem.generateTypeOf(mv, type, support)
         }
         expression.onStack

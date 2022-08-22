@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.genIncrement
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
 class Increment(private val myDelta: Int) : IntrinsicMethod() {
-    override fun toCallable(expression: IrFunctionAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
-        return IrIntrinsicFunction.create(expression, signature, context) {
+    override fun toCallable(expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen): IrIntrinsicFunction {
+        return IrIntrinsicFunction.create(expression, signature, classCodegen) {
             genIncrement(signature.returnType, myDelta, it)
         }
     }

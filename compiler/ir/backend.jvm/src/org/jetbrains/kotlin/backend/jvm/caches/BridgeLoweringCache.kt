@@ -28,7 +28,7 @@ class BridgeLoweringCache(private val context: JvmBackendContext) {
     private val signatureCache = ConcurrentHashMap<IrFunctionSymbol, Method>()
 
     fun computeJvmMethod(function: IrFunction): Method =
-        signatureCache.getOrPut(function.symbol) { context.methodSignatureMapper.mapAsmMethod(function) }
+        signatureCache.getOrPut(function.symbol) { context.defaultMethodSignatureMapper.mapAsmMethod(function) }
 
     private fun canHaveSpecialBridge(function: IrSimpleFunction): Boolean {
         if (function.name in specialBridgeMethods.specialMethodNames)

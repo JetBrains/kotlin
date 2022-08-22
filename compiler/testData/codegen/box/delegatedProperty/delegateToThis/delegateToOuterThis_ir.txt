@@ -2,6 +2,7 @@
 public final class DelegateToOuterThisKt {
     // source: 'delegateToOuterThis.kt'
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final inner class O$I
 }
 
 @kotlin.Metadata

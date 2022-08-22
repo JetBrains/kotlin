@@ -193,6 +193,7 @@ public final class DIntMap {
     public method replaceAll(p0: java.util.function.BiFunction): void
     public bridge final method size(): int
     public bridge final method values(): java.util.Collection
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
@@ -206,6 +207,7 @@ public final class DIntMapEntry {
     public synthetic bridge method getValue(): java.lang.Object
     public method setValue(p0: double): java.lang.Double
     public synthetic bridge method setValue(p0: java.lang.Object): java.lang.Object
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata

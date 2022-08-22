@@ -11,6 +11,7 @@ public abstract class<<A:Ljava/lang/Object;B:Ljava/lang/Object;>Ljava/lang/Objec
     public abstract <null> method getSize(): int
     public abstract <null> method getValues(): java.util.Collection
     public bridge final <null> method size(): int
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
@@ -31,4 +32,5 @@ public abstract class<<A:Ljava/lang/Number;B:Ljava/lang/Object;>Ljava/lang/Objec
     public abstract <null> method getValues(): java.util.Collection
     public abstract <null> method remove(p0: java.lang.Number): java.lang.Object
     public bridge final <null> method size(): int
+    public inner class java/util/Map$Entry
 }
