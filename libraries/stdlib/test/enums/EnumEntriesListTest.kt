@@ -19,6 +19,12 @@ class EnumEntriesListTest {
     }
 
     @Test
+    fun testCannotBeCasted() {
+        val list = enumEntries(EmptyEnum::values)
+        assertTrue { list !is MutableList<*> }
+    }
+
+    @Test
     fun testForEmptyEnum() {
         val list = enumEntries(EmptyEnum::values)
         assertTrue(list.isEmpty())
@@ -53,5 +59,34 @@ class EnumEntriesListTest {
     fun testyEnumBehaviour() {
         val list = enumEntries(NonEmptyEnum::values)
         compare(NonEmptyEnum.values().toList(), list) { listBehavior() }
+    }
+
+    enum class E1 {
+        A
+    }
+
+    enum class E2 {
+        A, B
+    }
+
+    @Test
+    fun testVariantEnumBehaviour() {
+        val list = enumEntries(E1::values)
+
+        // Index of
+        val enumList: List<Enum<*>> = list
+        assertEquals(0, enumList.indexOf(E1.A))
+        assertEquals(-1, enumList.indexOf(E2.A))
+        assertEquals(-1, enumList.indexOf(E2.B))
+
+        // Last index of
+        assertEquals(0, enumList.lastIndexOf(E1.A))
+        assertEquals(-1, enumList.lastIndexOf(E2.A))
+        assertEquals(-1, enumList.lastIndexOf(E2.B))
+
+        // Contains
+        assertTrue(enumList.contains(E1.A))
+        assertFalse(enumList.contains(E2.A))
+        assertFalse(enumList.contains(E2.B))
     }
 }

@@ -51,6 +51,10 @@ Low-level building blocks for libraries that provide coroutine-based APIs.
 
 Utility functions for working with the browser DOM.
 
+# Package kotlin.enum
+
+Utilities for working with Kotlin enum classes.
+
 # Package kotlin.experimental
 
 Experimental APIs, subject to change in future versions of Kotlin.

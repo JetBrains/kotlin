@@ -3143,6 +3143,7 @@ public abstract interface class kotlin/enums/EnumEntries : java/util/List, kotli
 
 public final class kotlin/enums/EnumEntriesKt {
 	public static final fun enumEntries (Lkotlin/jvm/functions/Function0;)Lkotlin/enums/EnumEntries;
+	public static final fun enumEntries ([Ljava/lang/Enum;)Lkotlin/enums/EnumEntries;
 }
 
 public abstract interface annotation class kotlin/experimental/ExperimentalObjCName : java/lang/annotation/Annotation {

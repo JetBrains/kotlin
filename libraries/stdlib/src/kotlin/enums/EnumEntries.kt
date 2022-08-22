@@ -21,8 +21,13 @@ public sealed interface EnumEntries<E : Enum<E>> : List<E>
 
 @PublishedApi
 @ExperimentalStdlibApi
-@SinceKotlin("1.8")
+@SinceKotlin("1.8") // Used by JVM compiler
 internal fun <E : Enum<E>> enumEntries(entriesProvider: () -> Array<E>): EnumEntries<E> = EnumEntriesList(entriesProvider)
+
+@PublishedApi
+@ExperimentalStdlibApi
+@SinceKotlin("1.8") // Used by Native/JS compilers and Java serialization
+internal fun <E : Enum<E>> enumEntries(entries: Array<E>): EnumEntries<E> = EnumEntriesList { entries }
 
 /*
  * For enum class E, this class is instantiated in the following manner (NB it's pseudocode that does not
@@ -55,24 +60,7 @@ internal fun <E : Enum<E>> enumEntries(entriesProvider: () -> Array<E>): EnumEnt
  */
 @SinceKotlin("1.8")
 @ExperimentalStdlibApi
-private class EnumEntriesList<E : Enum<E>>(private val entriesProvider: () -> Array<E>) : EnumEntries<E>, AbstractList<E>() {
-
-    /*
-     * Open questions to implementation:
-     *
-     * - Are we allowed to use e.ordinal as an index?
-     *   - e.g. indexOf(e) = e.ordinal
-     *
-     * - Are we allowed to short-circuit methods?
-     *     - e.g. `EEL.contains(anyE)` is always true as long as no reflection is involved
-     *
-     *  - Should it be Java-serializable? (then we definitely can suffer from short-circuiting and should be extra-careful around read-resolve)
-     *
-     *  - Should it be sealed or just a class with internal constructor? TODO discuss on design to align this policy over all the language
-     *    - Probably should to avoid exposing AbstractList superclass directly?
-     *
-     *  - TODO package-info for kotlinlang
-     */
+private class EnumEntriesList<E : Enum<E>>(private val entriesProvider: () -> Array<E>) : EnumEntries<E>, AbstractList<E>(), Serializable {
 
     @Volatile // Volatile is required for safe publication of the array. It doesn't incur any real-world penalties
     private var _entries: Array<E>? = null
@@ -93,4 +81,33 @@ private class EnumEntriesList<E : Enum<E>>(private val entriesProvider: () -> Ar
         checkElementIndex(index, entries.size)
         return entries[index]
     }
+
+    // By definition, EnumEntries contains **all** enums in declaration order,
+    // thus we are able to short-circuit the implementation here
+
+    override fun contains(element: E): Boolean {
+        @Suppress("SENSELESS_COMPARISON")
+        if (element === null) return false // WA for JS IR bug
+        // Check identity due to UnsafeVariance
+        val target = entries.getOrNull(element.ordinal)
+        return target === element
+    }
+
+    override fun indexOf(element: E): Int {
+        @Suppress("SENSELESS_COMPARISON")
+        if (element === null) return -1 // WA for JS IR bug
+        // Check identity due to UnsafeVariance
+        val ordinal = element.ordinal
+        val target = entries.getOrNull(ordinal)
+        return if (target === element) ordinal else -1
+    }
+
+    override fun lastIndexOf(element: E): Int = indexOf(element)
+
+    @Suppress("unused") // Used for Java serialization
+    private fun writeReplace(): Any {
+        return EnumEntriesSerializationProxy(entries)
+    }
 }
+
+internal expect class EnumEntriesSerializationProxy<E : Enum<E>>(entries: Array<E>)

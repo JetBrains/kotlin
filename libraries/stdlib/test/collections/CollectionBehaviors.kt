@@ -24,6 +24,18 @@ public fun <T> CompareContext<List<T>>.listBehavior() {
     propertyEquals { indexOf(elementAtOrNull(0)) }
     propertyEquals { lastIndexOf(elementAtOrNull(0)) }
 
+    for (element in expected) {
+        propertyEquals { this.indexOf(element) }
+        propertyEquals { this.lastIndexOf(element) }
+    }
+
+    val nonExisting = object {}
+    propertyEquals { this.indexOf(nonExisting as Any?) }
+    propertyEquals { this.lastIndexOf(nonExisting as Any?) }
+
+    propertyEquals { this.indexOf(null as Any?) }
+    propertyEquals { this.lastIndexOf(null as Any?) }
+
     propertyFails { subList(0, size + 1) }
     propertyFails { subList(-1, 0) }
     propertyEquals { subList(0, size) }
