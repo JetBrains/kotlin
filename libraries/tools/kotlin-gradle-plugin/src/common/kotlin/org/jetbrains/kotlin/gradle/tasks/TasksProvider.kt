@@ -58,6 +58,8 @@ internal fun TaskProvider<*>.dependsOn(other: TaskProvider<*>) = configure { it.
 
 internal fun TaskProvider<*>.dependsOn(other: Task) = configure { it.dependsOn(other) }
 
+internal fun TaskProvider<*>.dependsOn(otherPath: String) = configure { it.dependsOn(otherPath) }
+
 internal inline fun <reified S : Task> TaskCollection<in S>.withType(): TaskCollection<S> = withType(S::class.java)
 
 /**

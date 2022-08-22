@@ -73,9 +73,11 @@ private fun configureMetadataExposure(module: GradleKpmModule) {
     val sourcesArtifactAppendix = dashSeparatedName(module.moduleClassifier, "all", "sources")
     val sourcesArtifact = sourcesJarTaskNamed(
         module.disambiguateName("allSourcesJar"),
+        module.name,
         project,
         lazy { GradleKpmFragmentSourcesProvider().getAllFragmentSourcesAsMap(module).entries.associate { it.key.fragmentName to it.value.get() } },
-        sourcesArtifactAppendix
+        sourcesArtifactAppendix,
+        "module",
     )
     DocumentationVariantConfigurator().createSourcesElementsConfiguration(
         project, sourceElementsConfigurationName(module),
