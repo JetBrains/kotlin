@@ -369,6 +369,7 @@ val coreLibProjects by extra {
 val projectsWithEnabledContextReceivers by extra {
     listOf(
         ":core:descriptors.jvm",
+        ":compiler:frontend.common",
         ":compiler:fir:fir2ir",
         ":kotlin-lombok-compiler-plugin.k1",
     )
