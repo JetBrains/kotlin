@@ -7,15 +7,16 @@ package org.jetbrains.kotlin.gradle.testing.internal
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.getSystemProperty
-import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 
 /**
  * Internal service for creating aggregated test tasks and registering all test tasks.
@@ -102,10 +103,12 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
     private val Project.cleanAllTestTask: TaskProvider<*>
         get() {
             val taskName = cleanTaskName(allTestsTask.name)
-            return project.locateTask<Task>(taskName)
-                ?: project.registerTask<Task>(taskName).also { cleanAllTest ->
-                    tasks.named(LifecycleBasePlugin.CLEAN_TASK_NAME).dependsOn(cleanAllTest)
-                }
+            return project.locateOrRegisterTask<Task>(taskName) { cleanAllTest ->
+                cleanAllTest.group = BasePlugin.BUILD_GROUP
+                cleanAllTest.description = "Deletes all the test results."
+            }.also { cleanAllTest ->
+                tasks.named(LifecycleBasePlugin.CLEAN_TASK_NAME).dependsOn(cleanAllTest)
+            }
         }
 
     companion object {

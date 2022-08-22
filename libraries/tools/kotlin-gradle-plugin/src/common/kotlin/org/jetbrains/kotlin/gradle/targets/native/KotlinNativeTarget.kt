@@ -10,6 +10,7 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.plugins.BasePlugin
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
@@ -65,6 +66,8 @@ abstract class KotlinNativeTarget @Inject constructor(
                 val hostSpecificMetadataJar = project.locateOrRegisterTask<Jar>(hostSpecificMetadataJarTaskName) { metadataJar ->
                     metadataJar.archiveAppendix.set(project.provider { disambiguationClassifier.orEmpty().toLowerCase() })
                     metadataJar.archiveClassifier.set("metadata")
+                    metadataJar.group = BasePlugin.BUILD_GROUP
+                    metadataJar.description = "Assembles Kotlin metadata of target '${name}'."
 
                     val publishable = this@KotlinNativeTarget.publishable
                     metadataJar.onlyIf { publishable }

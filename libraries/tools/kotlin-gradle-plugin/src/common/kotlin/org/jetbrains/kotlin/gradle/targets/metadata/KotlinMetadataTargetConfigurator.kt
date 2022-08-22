@@ -341,7 +341,9 @@ class KotlinMetadataTargetConfigurator :
         project.registerTask<TransformKotlinGranularMetadata>(
             transformGranularMetadataTaskName(compilation.name),
             listOf(sourceSet)
-        ) { }
+        ) {
+            it.description = "Generates serialized dependencies metadata for compilation '${compilation.name}' of target '${compilation.target.name}' (for tooling)"
+        }
 
         compilation.compileDependencyFiles += createMetadataDependencyTransformationClasspath(
             project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME),
@@ -498,11 +500,13 @@ internal class NativeSharedCompilationProcessor(
 internal fun Project.createGenerateProjectStructureMetadataTask(module: GradleKpmModule): TaskProvider<GenerateProjectStructureMetadata> =
     project.registerTask(lowerCamelCaseName("generate", module.moduleClassifier, "ProjectStructureMetadata")) { task ->
         task.lazyKotlinProjectStructureMetadata = lazy { buildProjectStructureMetadata(module) }
+        task.description = "Generates serialized project structure metadata of module '${module.name}' (for tooling)"
     }
 
 internal fun Project.createGenerateProjectStructureMetadataTask(): TaskProvider<GenerateProjectStructureMetadata> =
     project.registerTask(lowerCamelCaseName("generateProjectStructureMetadata")) { task ->
         task.lazyKotlinProjectStructureMetadata = lazy { project.multiplatformExtension.kotlinProjectStructureMetadata }
+        task.description = "Generates serialized project structure metadata of the current project (for tooling)"
     }
 
 internal interface ResolvedMetadataFilesProvider {
