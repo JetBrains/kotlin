@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.psi.KtFile
 abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) : KotlinAsJavaSupport() {
     fun createLightFacade(file: KtFile): KtLightClassForFacade? {
         if (file.isScript()) return null
+        if (file.isCompiled && !file.name.endsWith(".class")) return null
 
         val module = file.findModule().takeIf { facadeIsApplicable(it, file) } ?: return null
         val facadeFqName = file.javaFileFacadeFqName

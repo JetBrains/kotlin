@@ -113,7 +113,7 @@ object DecompiledLightClassesFactory {
     ): KtLightClassForFacade? {
         assert(files.all(KtFile::isCompiled))
         val file = files.firstOrNull { it.javaFileFacadeFqName == facadeClassFqName } as? KtClsFile
-            ?: error("Can't find the representative decompiled file for $facadeClassFqName")
+            ?: error("Can't find the representative decompiled file for $facadeClassFqName in ${files.map { it.name }}")
 
         return createLightClassForDecompiledKotlinFile(project, file) { kotlinClsFile, javaClsClass, classOrObject ->
             KtLightClassForDecompiledFacade(javaClsClass, javaClsClass.parent, kotlinClsFile, classOrObject, files)
