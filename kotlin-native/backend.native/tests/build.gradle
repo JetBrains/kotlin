@@ -1115,6 +1115,11 @@ standaloneTest("worker_threadlocal_no_leak") {
     source = "runtime/workers/worker_threadlocal_no_leak.kt"
 }
 
+task worker_list_workers(type: KonanLocalTest) {
+    disabled = (project.testTarget == 'wasm32') // Needs pthreads.
+    source = "runtime/workers/worker_list_workers.kt"
+}
+
 standaloneTest("freeze0") {
     enabled = (project.testTarget != 'wasm32') && (cacheTesting == null) // No workers on WASM.
     useGoldenData = true
@@ -4322,6 +4327,12 @@ createInterop("threadStates") {
     it.extraOpts "-Xcompile-source", "$projectDir/interop/threadStates/threadStates.cpp"
 }
 
+createInterop("workerSignals") {
+    it.defFile "interop/workerSignals/workerSignals.def"
+    it.headers "$projectDir/interop/workerSignals/workerSignals.h"
+    it.extraOpts "-Xcompile-source", "$projectDir/interop/workerSignals/workerSignals.cpp"
+}
+
 if (PlatformInfo.isAppleTarget(project)) {
     createInterop("objcSmoke") {
         it.defFile 'interop/objc/objcSmoke.def'
@@ -4825,6 +4836,13 @@ interopTest("interop_cppSkiaSignature") {
     interop = "cppSkiaSignature"
     useGoldenData = true
     UtilsKt.dependsOnPlatformLibs(it)
+}
+
+interopTest("interop_workerSignals") {
+    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
+        (project.testTarget == 'mingw_x86' || project.testTarget == 'mingw_x64') // cross-thread signalling does not work on Windows
+    source = "interop/workerSignals/workerSignals.kt"
+    interop = "workerSignals"
 }
 
 /*

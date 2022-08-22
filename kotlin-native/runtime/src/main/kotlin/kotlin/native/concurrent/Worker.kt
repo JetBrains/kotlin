@@ -60,6 +60,16 @@ public value class Worker @PublishedApi internal constructor(val id: Int) {
         @Deprecated("Use kotlinx.cinterop.StableRef instead", level = DeprecationLevel.WARNING)
         public fun fromCPointer(pointer: COpaquePointer?): Worker =
                 if (pointer != null) Worker(pointer.toLong().toInt()) else throw IllegalArgumentException()
+
+        /**
+         * Get a list of all unterminated workers.
+         *
+         * Thread safety: If some other thread calls [Worker.requestTermination] at the same time then this may
+         * return a [Worker] that's already terminated.
+         */
+        @ExperimentalStdlibApi
+        public val activeWorkers: List<Worker>
+            get() = getActiveWorkersInternal().map { Worker(it) }
     }
 
     /**
@@ -170,6 +180,15 @@ public value class Worker @PublishedApi internal constructor(val id: Int) {
      */
     @Deprecated("Use kotlinx.cinterop.StableRef instead", level = DeprecationLevel.WARNING)
     public fun asCPointer() : COpaquePointer? = id.toLong().toCPointer()
+
+    /**
+     * Get platform thread id of the worker thread.
+     *
+     * Usually returns `pthread_t` casted to [ULong].
+     */
+    @ExperimentalStdlibApi
+    public val platformThreadId: ULong
+        get() = getPlatfromThreadIdInternal(id)
 }
 
 /**

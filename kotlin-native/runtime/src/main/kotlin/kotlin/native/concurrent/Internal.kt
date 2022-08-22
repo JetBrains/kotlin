@@ -128,3 +128,9 @@ external internal fun checkIfFrozen(ref: Any?)
 @InternalForKotlinNative
 @GCUnsafeCall("Kotlin_Worker_waitTermination")
 external public fun waitWorkerTermination(worker: Worker)
+
+@GCUnsafeCall("Kotlin_Worker_getPlatformThreadIdInternal")
+external internal fun getPlatfromThreadIdInternal(id: Int): ULong
+
+@GCUnsafeCall("Kotlin_Worker_getActiveWorkersInternal")
+external internal fun getActiveWorkersInternal(): IntArray

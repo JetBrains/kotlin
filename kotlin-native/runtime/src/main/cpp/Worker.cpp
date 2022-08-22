@@ -30,6 +30,7 @@
 #include "Exceptions.h"
 #include "KAssert.h"
 #include "Memory.h"
+#include "Natives.h"
 #include "ObjCMMAPI.h"
 #include "Runtime.h"
 #include "Types.h"
@@ -632,6 +633,33 @@ class State {
     }
   }
 
+  KULong getWorkerPlatformThreadIdUnlocked(KInt id) {
+      Locker locker(&lock_);
+      auto it = workers_.find(id);
+      if (it == workers_.end()) {
+          ThrowWorkerAlreadyTerminated();
+      }
+      pthread_t thread = it->second->thread();
+      static_assert(sizeof(pthread_t) <= sizeof(KULong), "Casting pthread_t to ULong will lose data");
+      return reinterpret_cast<KULong>(thread);
+  }
+
+  OBJ_GETTER0(getActiveWorkers) {
+      std_support::vector<KInt> workers;
+      {
+          Locker locker(&lock_);
+
+          workers.reserve(workers_.size());
+          for (auto [id, worker] : workers_) {
+              workers.push_back(id);
+          }
+      }
+      ObjHolder arrayHolder;
+      AllocArrayInstance(theIntArrayTypeInfo, workers.size(), arrayHolder.slot());
+      std::copy(workers.begin(), workers.end(), IntArrayAddressOfElementAt(arrayHolder.obj()->array(), 0));
+      RETURN_OBJ(arrayHolder.obj());
+  }
+
  private:
   pthread_mutex_t lock_;
   pthread_cond_t cond_;
@@ -764,6 +792,14 @@ KNativePtr detachObjectGraphInternal(KInt transferMode, KRef producer) {
    }
 }
 
+KULong platformThreadId(KInt id) {
+    return theState()->getWorkerPlatformThreadIdUnlocked(id);
+}
+
+OBJ_GETTER0(activeWorkers) {
+    RETURN_RESULT_OF0(theState()->getActiveWorkers);
+}
+
 #else
 
 KInt startWorker(WorkerExceptionHandling exceptionHandling, KRef customName) {
@@ -820,6 +856,14 @@ OBJ_GETTER(attachObjectGraphInternal, KNativePtr stable) {
 
 KNativePtr detachObjectGraphInternal(KInt transferMode, KRef producer) {
   ThrowWorkerUnsupported();
+}
+
+KULong platformThreadId(KInt id) {
+    ThrowWorkerUnsupported();
+}
+
+OBJ_GETTER0(activeWorkers) {
+    ThrowWorkerUnsupported();
 }
 
 #endif  // WITH_WORKERS
@@ -1222,6 +1266,14 @@ void Kotlin_Worker_ensureNeverFrozen(KRef object) {
 
 void Kotlin_Worker_waitTermination(KInt id) {
     WaitNativeWorkerTermination(id);
+}
+
+KULong Kotlin_Worker_getPlatformThreadIdInternal(KInt id) {
+    return platformThreadId(id);
+}
+
+OBJ_GETTER0(Kotlin_Worker_getActiveWorkersInternal) {
+    RETURN_RESULT_OF0(activeWorkers);
 }
 
 }  // extern "C"
