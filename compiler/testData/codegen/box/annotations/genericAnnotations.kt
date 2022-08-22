@@ -1,4 +1,5 @@
 // IGNORE_LEAKED_INTERNAL_TYPES: KT-54517
+// IGNORE_BACKEND_K2: JS_IR
 // MODULE: lib
 // FILE: l1.kt
 package ann

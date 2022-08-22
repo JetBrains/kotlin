@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K2: JS_IR
 // WITH_STDLIB
 
 import kotlin.math.*
