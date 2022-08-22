@@ -30,6 +30,16 @@ public class JsKLibABIWithICTestCaseGenerated extends AbstractJsKLibABIWithICTes
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klibABI"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR, false);
     }
 
+    @TestMetadata("changeFunctionVisibility")
+    public void testChangeFunctionVisibility() throws Exception {
+        runTest("compiler/testData/klibABI/changeFunctionVisibility/");
+    }
+
+    @TestMetadata("changePropertyVisibility")
+    public void testChangePropertyVisibility() throws Exception {
+        runTest("compiler/testData/klibABI/changePropertyVisibility/");
+    }
+
     @TestMetadata("nonAbstractFunctionInAbstractClassBecomesAbstract")
     public void testNonAbstractFunctionInAbstractClassBecomesAbstract() throws Exception {
         runTest("compiler/testData/klibABI/nonAbstractFunctionInAbstractClassBecomesAbstract/");
