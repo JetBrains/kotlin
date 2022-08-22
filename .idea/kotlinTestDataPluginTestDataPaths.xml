@@ -79,11 +79,11 @@
         <option value="$PROJECT_DIR$/plugins/kapt3/kapt3-base/testData" />
         <option value="$PROJECT_DIR$/plugins/kapt3/kapt3-cli/testData" />
         <option value="$PROJECT_DIR$/plugins/kapt3/kapt3-compiler/testData" />
-        <option value="$PROJECT_DIR$/plugins/kotlin-serialization/kotlin-serialization-compiler/testData" />
         <option value="$PROJECT_DIR$/plugins/noarg/testData" />
         <option value="$PROJECT_DIR$/plugins/parcelize/parcelize-compiler/testData" />
         <option value="$PROJECT_DIR$/plugins/lombok/testData" />
         <option value="$PROJECT_DIR$/plugins/sam-with-receiver/testData" />
+        <option value="$PROJECT_DIR$/plugins/kotlinx-serialization/testData" />
       </array>
     </option>
   </component>

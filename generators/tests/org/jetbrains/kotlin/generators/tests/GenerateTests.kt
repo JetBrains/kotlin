@@ -207,23 +207,6 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup(
-            "plugins/kotlin-serialization/kotlin-serialization-compiler/test",
-            "plugins/kotlin-serialization/kotlin-serialization-compiler/testData"
-        ) {
-            testClass<AbstractSerializationPluginDiagnosticTest> {
-                model("diagnostics")
-            }
-
-            testClass<AbstractSerializationPluginBytecodeListingTest> {
-                model("codegen")
-            }
-
-            testClass<AbstractSerializationIrBytecodeListingTest> {
-                model("codegen")
-            }
-        }
-
         testGroup("plugins/fir-plugin-prototype/fir-plugin-ic-test/tests-gen", "plugins/fir-plugin-prototype/fir-plugin-ic-test/testData") {
             testClass<AbstractIncrementalFirJvmWithPluginCompilerRunnerTest> {
                 model("pureKotlin", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)

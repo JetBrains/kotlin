@@ -310,9 +310,6 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":plugins:jvm-abi-gen",
         ":plugins:jvm-abi-gen-embeddable",
         ":test-instrumenter",
-        ":kotlinx-serialization-compiler-plugin",
-        ":kotlin-serialization",
-        ":kotlin-serialization-unshaded",
         ":wasm:wasm.ir"
 
 
@@ -370,6 +367,15 @@ include ":kotlin-lombok-compiler-plugin",
         ":kotlin-lombok-compiler-plugin.k2",
         ":kotlin-lombok-compiler-plugin.cli",
         ":kotlin-lombok"
+
+include ":kotlinx-serialization-compiler-plugin",
+        ":kotlinx-serialization-compiler-plugin.common",
+        ":kotlinx-serialization-compiler-plugin.k1",
+        ":kotlinx-serialization-compiler-plugin.k2",
+        ":kotlinx-serialization-compiler-plugin.backend",
+        ":kotlinx-serialization-compiler-plugin.cli",
+        ":kotlin-serialization",
+        ":kotlin-serialization-unshaded"
 
 if (!buildProperties.inJpsBuildIdeaSync) {
     include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide",
@@ -804,7 +810,12 @@ project(':plugins:jvm-abi-gen-embeddable').projectDir = "$rootDir/plugins/jvm-ab
 project(':js:js.tests').projectDir = "$rootDir/js/js.tests" as File
 project(':js:js.engines').projectDir = "$rootDir/js/js.engines" as File
 
-project(':kotlinx-serialization-compiler-plugin').projectDir = file("$rootDir/plugins/kotlin-serialization/kotlin-serialization-compiler")
+project(':kotlinx-serialization-compiler-plugin').projectDir = "$rootDir/plugins/kotlinx-serialization" as File
+project(':kotlinx-serialization-compiler-plugin.cli').projectDir = "$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.cli" as File
+project(':kotlinx-serialization-compiler-plugin.backend').projectDir = "$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.backend" as File
+project(':kotlinx-serialization-compiler-plugin.k1').projectDir = "$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.k1" as File
+project(':kotlinx-serialization-compiler-plugin.k2').projectDir = "$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.k2" as File
+project(':kotlinx-serialization-compiler-plugin.common').projectDir = "$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.common" as File
 project(':kotlin-serialization').projectDir = file("$rootDir/libraries/tools/kotlin-serialization")
 project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/tools/kotlin-serialization-unshaded")
 

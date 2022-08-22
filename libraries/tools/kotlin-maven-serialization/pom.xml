@@ -6,8 +6,12 @@
     <modelVersion>4.0.0</modelVersion>
     <properties>
         <maven.version>3.0.5</maven.version>
-        <serialization.src>${basedir}/../../../plugins/kotlin-serialization/kotlin-serialization-compiler/src/</serialization.src>
-        <serialization.resources>${basedir}/../../../plugins/kotlin-serialization/kotlin-serialization-compiler/resources/</serialization.resources>
+        <serialization.common.src>${basedir}/../../../plugins/kotlinx-serialization/kotlinx-serialization.common/src</serialization.common.src>
+        <serialization.k1.src>${basedir}/../../../plugins/kotlinx-serialization/kotlinx-serialization.k1/src</serialization.k1.src>
+        <serialization.k2.src>${basedir}/../../../plugins/kotlinx-serialization/kotlinx-serialization.k2/src</serialization.k2.src>
+        <serialization.backend.src>${basedir}/../../../plugins/kotlinx-serialization/kotlinx-serialization.backend/src</serialization.backend.src>
+        <serialization.cli.src>${basedir}/../../../plugins/kotlinx-serialization/kotlinx-serialization.cli/src</serialization.cli.src>
+        <serialization.resources>${basedir}/../../../plugins/kotlinx-serialization/kotlinx-serialization.cli/resources</serialization.resources>
         <serialization.maven.plugin.src>${basedir}/src/main/kotlin</serialization.maven.plugin.src>
     </properties>
 
@@ -53,7 +57,11 @@
                         <goals><goal>add-source</goal></goals>
                         <configuration>
                             <sources>
-                                <source>${serialization.src}</source>
+                                <source>${serialization.common.src}</source>
+                                <source>${serialization.k1.src}</source>
+                                <source>${serialization.k2.src}</source>
+                                <source>${serialization.backend.src}</source>
+                                <source>${serialization.cli.src}</source>
                                 <source>${serialization.maven.plugin.src}</source>
                             </sources>
                         </configuration>
