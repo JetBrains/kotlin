@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.common.psi.PsiSourceManager
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
@@ -17,12 +16,9 @@ import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
 import org.jetbrains.kotlin.utils.SmartSet
-import org.jetbrains.org.objectweb.asm.Type
 
 class JvmSignatureClashDetector(
-    private val irClass: IrClass,
-    private val type: Type,
-    private val context: JvmBackendContext
+    private val classCodegen: ClassCodegen
 ) {
     private val methodsBySignature = LinkedHashMap<RawSignature, MutableSet<IrFunction>>()
     private val fieldsBySignature = LinkedHashMap<RawSignature, MutableSet<IrField>>()
@@ -46,7 +42,7 @@ class JvmSignatureClashDetector(
     }
 
     private fun mapRawSignature(irFunction: IrFunction): RawSignature {
-        val jvmSignature = context.methodSignatureMapper.mapSignatureSkipGeneric(irFunction)
+        val jvmSignature = classCodegen.methodSignatureMapper.mapSignatureSkipGeneric(irFunction)
         return RawSignature(jvmSignature.asmMethod.name, jvmSignature.asmMethod.descriptor, MemberKind.METHOD)
     }
 
@@ -88,10 +84,10 @@ class JvmSignatureClashDetector(
 
             when {
                 realMethodsCount == 0 && (fakeOverridesCount > 1 || specialOverridesCount > 1) ->
-                    if (irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
+                    if (classCodegen.irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
                         reportJvmSignatureClash(
                             JvmBackendErrors.CONFLICTING_INHERITED_JVM_DECLARATIONS,
-                            listOf(irClass),
+                            listOf(classCodegen.irClass),
                             conflictingJvmDeclarationsData
                         )
                     }
@@ -99,7 +95,7 @@ class JvmSignatureClashDetector(
                 fakeOverridesCount == 0 && specialOverridesCount == 0 -> {
                     // In IFoo$DefaultImpls we should report errors only if there are private methods among conflicting ones
                     // (otherwise such errors would be reported twice: once for IFoo and once for IFoo$DefaultImpls).
-                    if (irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS ||
+                    if (classCodegen.irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS ||
                         methods.any { DescriptorVisibilities.isPrivate(it.visibility) }
                     ) {
                         reportJvmSignatureClash(
@@ -111,7 +107,7 @@ class JvmSignatureClashDetector(
                 }
 
                 else ->
-                    if (irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
+                    if (classCodegen.irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
                         reportJvmSignatureClash(
                             JvmBackendErrors.ACCIDENTAL_OVERRIDE,
                             methods.filter { !it.isFakeOverride && !it.isSpecialOverride() },
@@ -128,7 +124,7 @@ class JvmSignatureClashDetector(
             val methods = knownMethods.filter { !it.isFakeOverride && !it.isSpecialOverride() }
             if (methods.isEmpty()) continue
             val conflictingJvmDeclarationsData = ConflictingJvmDeclarationsData(
-                type.internalName, classOrigin, predefinedSignature,
+                classCodegen.type.internalName, classOrigin, predefinedSignature,
                 methods.map { it.getJvmDeclarationOrigin() } + JvmDeclarationOrigin(JvmDeclarationOriginKind.OTHER, null, null)
             )
             reportJvmSignatureClash(JvmBackendErrors.ACCIDENTAL_OVERRIDE, methods, conflictingJvmDeclarationsData)
@@ -149,7 +145,7 @@ class JvmSignatureClashDetector(
         conflictingJvmDeclarationsData: ConflictingJvmDeclarationsData
     ) {
         irDeclarations.mapNotNullTo(LinkedHashSet()) { irDeclaration ->
-            context.ktDiagnosticReporter.atFirstValidFrom(irDeclaration, irClass, containingIrFile = irDeclaration.file)
+            classCodegen.context.ktDiagnosticReporter.atFirstValidFrom(irDeclaration, classCodegen.irClass, containingIrFile = irDeclaration.file)
         }.forEach {
             it.report(diagnosticFactory1, conflictingJvmDeclarationsData)
         }
@@ -161,7 +157,7 @@ class JvmSignatureClashDetector(
         methods: Collection<IrDeclaration>
     ): ConflictingJvmDeclarationsData =
         ConflictingJvmDeclarationsData(
-            type.internalName,
+            classCodegen.type.internalName,
             classOrigin,
             rawSignature,
             methods.map { it.getJvmDeclarationOrigin() }

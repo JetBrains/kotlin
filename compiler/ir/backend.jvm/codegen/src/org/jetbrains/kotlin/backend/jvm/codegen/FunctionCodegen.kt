@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.mapType
@@ -48,7 +47,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         }
 
     private fun doGenerate(reifiedTypeParameters: ReifiedTypeParametersUsages): SMAPAndMethodNode {
-        val signature = context.methodSignatureMapper.mapSignatureWithGeneric(irFunction)
+        val signature = classCodegen.methodSignatureMapper.mapSignatureWithGeneric(irFunction)
         val flags = irFunction.calculateMethodFlags()
         val isSynthetic = flags.and(Opcodes.ACC_SYNTHETIC) != 0
         val methodNode = MethodNode(
@@ -72,7 +71,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
 
         if (irFunction.origin !in methodOriginsWithoutAnnotations) {
             val skipNullabilityAnnotations = flags and Opcodes.ACC_PRIVATE != 0 || flags and Opcodes.ACC_SYNTHETIC != 0
-            object : AnnotationCodegen(classCodegen, context, skipNullabilityAnnotations) {
+            object : AnnotationCodegen(classCodegen, skipNullabilityAnnotations) {
                 override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                     return methodVisitor.visitAnnotation(descr, visible)
                 }
@@ -95,7 +94,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             }
 
             if (shouldGenerateAnnotationsOnValueParameters()) {
-                generateParameterAnnotations(irFunction, methodVisitor, signature, classCodegen, context, skipNullabilityAnnotations)
+                generateParameterAnnotations(irFunction, methodVisitor, signature, classCodegen, skipNullabilityAnnotations)
             }
         }
 
@@ -214,13 +213,13 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         // @Throws(vararg exceptionClasses: KClass<out Throwable>)
         val exceptionClasses = function.getAnnotation(JVM_THROWS_ANNOTATION_FQ_NAME)?.getValueArgument(0) ?: return null
         return (exceptionClasses as IrVararg).elements.map { exceptionClass ->
-            context.typeMapper.mapType((exceptionClass as IrClassReference).classType).internalName
+            classCodegen.typeMapper.mapType((exceptionClass as IrClassReference).classType).internalName
         }
     }
 
     private fun generateAnnotationDefaultValueIfNeeded(methodVisitor: MethodVisitor) {
         getAnnotationDefaultValueExpression()?.let { defaultValueExpression ->
-            val annotationCodegen = object : AnnotationCodegen(classCodegen, context) {
+            val annotationCodegen = object : AnnotationCodegen(classCodegen) {
                 override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                     return methodVisitor.visitAnnotationDefault()
                 }
@@ -247,18 +246,18 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         val frameMap = IrFrameMap()
         val receiver = if (this is IrConstructor) parentAsClass.thisReceiver else dispatchReceiverParameter
         receiver?.let {
-            frameMap.enter(it, context.typeMapper.mapTypeAsDeclaration(it.type))
+            frameMap.enter(it, classCodegen.typeMapper.mapTypeAsDeclaration(it.type))
         }
         val contextReceivers = valueParameters.subList(0, contextReceiverParametersCount)
         for (contextReceiver in contextReceivers) {
-            frameMap.enter(contextReceiver, context.typeMapper.mapType(contextReceiver.type))
+            frameMap.enter(contextReceiver, classCodegen.typeMapper.mapType(contextReceiver.type))
         }
         extensionReceiverParameter?.let {
-            frameMap.enter(it, context.typeMapper.mapType(it))
+            frameMap.enter(it, classCodegen.typeMapper.mapType(it))
         }
         val regularParameters = valueParameters.subList(contextReceiverParametersCount, valueParameters.size)
         for (parameter in regularParameters) {
-            frameMap.enter(parameter, context.typeMapper.mapType(parameter.type))
+            frameMap.enter(parameter, classCodegen.typeMapper.mapType(parameter.type))
         }
         return frameMap
     }
@@ -268,8 +267,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         irFunction: IrFunction,
         mv: MethodVisitor,
         jvmSignature: JvmMethodSignature,
-        innerClassConsumer: InnerClassConsumer,
-        context: JvmBackendContext,
+        classCodegen: ClassCodegen,
         skipNullabilityAnnotations: Boolean = false
     ) {
         val iterator = irFunction.valueParameters.iterator()
@@ -286,7 +284,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             }
 
             if (annotated != null && !kind.isSkippedInGenericSignature && !annotated.isSyntheticMarkerParameter()) {
-                object : AnnotationCodegen(innerClassConsumer, context, skipNullabilityAnnotations) {
+                object : AnnotationCodegen(classCodegen, skipNullabilityAnnotations) {
                     override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                         return mv.visitParameterAnnotation(
                             i - syntheticParameterCount,

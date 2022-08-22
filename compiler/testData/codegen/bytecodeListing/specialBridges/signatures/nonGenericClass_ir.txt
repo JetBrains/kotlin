@@ -26,6 +26,7 @@ public abstract class<Ljava/lang/Object;Ljava/util/Map<Ljava/lang/String;Ljava/l
     public bridge final <null> method remove(p0: java.lang.Object): java.lang.String
     public bridge final <null> method size(): int
     private synthetic final field <Ljava/util/HashMap<Ljava/lang/String;Ljava/lang/String;>;> $$delegate_0: java.util.HashMap
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
@@ -56,4 +57,5 @@ public final class<Ljava/lang/Object;Ljava/util/Map<Ljava/lang/String;Ljava/lang
     public bridge final <null> method remove(p0: java.lang.Object): java.lang.String
     public bridge final <null> method size(): int
     private synthetic final field <Ljava/util/HashMap<Ljava/lang/String;Ljava/lang/String;>;> $$delegate_0: java.util.HashMap
+    public inner class java/util/Map$Entry
 }

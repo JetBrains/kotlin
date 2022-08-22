@@ -47,8 +47,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
-class MethodSignatureMapper(private val context: JvmBackendContext) {
-    private val typeMapper: IrTypeMapper = context.typeMapper
+class MethodSignatureMapper(private val context: JvmBackendContext, private val typeMapper: IrTypeMapper) {
     private val typeSystem: IrTypeSystemContext = typeMapper.typeSystem
 
     fun mapAsmMethod(function: IrFunction): Method =

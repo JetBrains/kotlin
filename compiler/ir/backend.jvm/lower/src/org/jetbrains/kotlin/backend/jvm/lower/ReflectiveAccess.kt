@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.SyntheticAccessorLowering.Companion.isAccessible
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -511,7 +512,7 @@ internal class ReflectiveAccessLowering(
     // invokespecial via JDI from which it *is* possible to do the required
     // super call.
     private fun generateInvokeSpecialForCall(expression: IrCall, superQualifier: IrClassSymbol): IrExpression {
-        val jvmSignature = context.methodSignatureMapper.mapSignatureSkipGeneric(expression.symbol.owner)
+        val jvmSignature = context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(expression.symbol.owner)
         val owner = superQualifier.owner
         val builder = context.createJvmIrBuilder(expression.symbol)
 

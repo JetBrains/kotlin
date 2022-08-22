@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.isRawType as isRawTypeImpl
 import org.jetbrains.kotlin.ir.types.isKClass as isKClassImpl
 import org.jetbrains.kotlin.ir.util.isSuspendFunction as isSuspendFunctionImpl
 
-class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBase(), TypeMappingContext<JvmSignatureWriter> {
+open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBase(), TypeMappingContext<JvmSignatureWriter> {
     override val typeSystem: IrTypeSystemContext = context.typeSystem
     override val typeContext: TypeSystemCommonBackendContextForTypeMapping = IrTypeCheckerContextForTypeMapping(typeSystem, context)
 
@@ -125,7 +125,7 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
         return AsmUtil.boxPrimitiveType(type) ?: type
     }
 
-    fun mapType(
+    open fun mapType(
         type: IrType,
         mode: TypeMappingMode = TypeMappingMode.DEFAULT,
         sw: JvmSignatureWriter? = null

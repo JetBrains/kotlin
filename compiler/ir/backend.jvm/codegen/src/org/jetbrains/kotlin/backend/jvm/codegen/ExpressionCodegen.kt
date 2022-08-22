@@ -150,8 +150,8 @@ class ExpressionCodegen(
         get() = generateSequence(irFunction) { context.enclosingMethodOverride[it] }.last()
 
     val context = classCodegen.context
-    val typeMapper = context.typeMapper
-    val methodSignatureMapper = context.methodSignatureMapper
+    val typeMapper = classCodegen.typeMapper
+    val methodSignatureMapper = classCodegen.methodSignatureMapper
 
     val state = context.state
 
@@ -1479,7 +1479,7 @@ class ExpressionCodegen(
 
         val reifiedTypeInliner = ReifiedTypeInliner(
             mappings,
-            IrInlineIntrinsicsSupport(context, typeMapper, element, irFunction.fileParent),
+            IrInlineIntrinsicsSupport(classCodegen, element, irFunction.fileParent),
             context.typeSystem,
             state.languageVersionSettings,
             state.unifiedNullChecks,

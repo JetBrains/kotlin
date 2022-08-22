@@ -36,4 +36,5 @@ public final class InlineMap {
     public static method toString-impl(p0: java.util.Map): java.lang.String
     public synthetic final method unbox-impl(): java.util.Map
     public synthetic bridge method values(): java.util.Collection
+    public inner class java/util/Map$Entry
 }

@@ -7,6 +7,7 @@ public final class NoInitializationOfOuterClassKt {
     private static method getResult$delegate(): java.lang.Object
     public final static @org.jetbrains.annotations.NotNull method getResult(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.NotNull p0: O$P, @org.jetbrains.annotations.Nullable p1: java.lang.Object, @org.jetbrains.annotations.Nullable p2: java.lang.Object): java.lang.String
+    public final inner class O$P
 }
 
 @kotlin.Metadata

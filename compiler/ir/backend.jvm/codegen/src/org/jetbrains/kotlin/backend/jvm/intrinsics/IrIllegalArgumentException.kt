@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
+import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
@@ -32,9 +32,9 @@ object IrIllegalArgumentException : IntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
-        context: JvmBackendContext
+        classCodegen: ClassCodegen
     ): IrIntrinsicFunction {
-        return object : IrIntrinsicFunction(expression, signature, context, listOf(JAVA_STRING_TYPE)) {
+        return object : IrIntrinsicFunction(expression, signature, classCodegen, listOf(JAVA_STRING_TYPE)) {
             override fun genInvokeInstruction(v: InstructionAdapter) {
                 v.invokespecial(
                     exceptionTypeDescriptor.internalName,

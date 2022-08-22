@@ -14,4 +14,5 @@ public abstract class<<K:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Map<TK;
     public abstract <null> method getValues(): java.util.Collection
     public synthetic bridge <null> method remove(p0: java.lang.Object): java.lang.Object
     public bridge final <null> method size(): int
+    public inner class java/util/Map$Entry
 }

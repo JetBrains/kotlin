@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.peek
@@ -328,7 +328,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                 if (flag.capturesCrossinline || function.isInline) {
                     result += context.irFactory.buildFun {
                         containerSource = view.containerSource
-                        name = Name.identifier(context.methodSignatureMapper.mapFunctionName(view) + FOR_INLINE_SUFFIX)
+                        name = Name.identifier(context.defaultMethodSignatureMapper.mapFunctionName(view) + FOR_INLINE_SUFFIX)
                         returnType = view.returnType
                         modality = view.modality
                         isSuspend = view.isSuspend

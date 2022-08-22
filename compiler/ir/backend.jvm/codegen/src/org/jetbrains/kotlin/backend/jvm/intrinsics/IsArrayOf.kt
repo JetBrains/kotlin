@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -14,9 +14,9 @@ object IsArrayOf : IntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
-        context: JvmBackendContext
-    ): IrIntrinsicFunction = IrIntrinsicFunction.create(expression, signature, context) { v ->
-        val arrayType = context.irBuiltIns.arrayClass.typeWith(expression.getTypeArgument(0)!!)
-        v.instanceOf(context.typeMapper.mapType(arrayType))
+        classCodegen: ClassCodegen
+    ): IrIntrinsicFunction = IrIntrinsicFunction.create(expression, signature, classCodegen) { v ->
+        val arrayType = classCodegen.context.irBuiltIns.arrayClass.typeWith(expression.getTypeArgument(0)!!)
+        v.instanceOf(classCodegen.typeMapper.mapType(arrayType))
     }
 }

@@ -350,9 +350,9 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
 
     private fun mapDeserializedLambda(info: SerializableMethodRefInfo) =
         DeserializedLambdaInfo(
-            functionalInterfaceClass = backendContext.typeMapper.mapType(info.samType).internalName,
-            implMethodHandle = backendContext.methodSignatureMapper.mapToMethodHandle(info.implFunSymbol.owner),
-            functionalInterfaceMethod = backendContext.methodSignatureMapper.mapAsmMethod(info.samMethodSymbol.owner)
+            functionalInterfaceClass = backendContext.defaultTypeMapper.mapType(info.samType).internalName,
+            implMethodHandle = backendContext.defaultMethodSignatureMapper.mapToMethodHandle(info.implFunSymbol.owner),
+            functionalInterfaceMethod = backendContext.defaultMethodSignatureMapper.mapAsmMethod(info.samMethodSymbol.owner)
         )
 
     private fun JvmIrBuilder.generateSerializedLambdaEquals(
@@ -569,12 +569,12 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
         samMethod: IrSimpleFunction,
         extraOverriddenMethods: List<IrSimpleFunction>
     ): Collection<IrSimpleFunction> {
-        val jvmInstanceMethod = backendContext.methodSignatureMapper.mapAsmMethod(instanceMethod)
-        val jvmSamMethod = backendContext.methodSignatureMapper.mapAsmMethod(samMethod)
+        val jvmInstanceMethod = backendContext.defaultMethodSignatureMapper.mapAsmMethod(instanceMethod)
+        val jvmSamMethod = backendContext.defaultMethodSignatureMapper.mapAsmMethod(samMethod)
 
         val signatureToNonFakeOverride = LinkedHashMap<Method, IrSimpleFunction>()
         for (overridden in extraOverriddenMethods) {
-            val jvmOverriddenMethod = backendContext.methodSignatureMapper.mapAsmMethod(overridden)
+            val jvmOverriddenMethod = backendContext.defaultMethodSignatureMapper.mapAsmMethod(overridden)
             if (jvmOverriddenMethod != jvmInstanceMethod && jvmOverriddenMethod != jvmSamMethod) {
                 signatureToNonFakeOverride[jvmOverriddenMethod] = overridden
             }

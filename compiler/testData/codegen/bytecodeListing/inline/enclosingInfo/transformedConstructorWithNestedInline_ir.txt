@@ -27,6 +27,7 @@ public final class _2Kt {
     // source: '2.kt'
     inner (anonymous) class _2Kt$box$res$1$1$1
     public final static method box(): void
+    public final inner class kotlin/jvm/internal/Ref$ObjectRef
 }
 
 @kotlin.Metadata

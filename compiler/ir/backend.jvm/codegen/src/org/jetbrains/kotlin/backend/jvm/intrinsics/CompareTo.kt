@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.ir.isSmartcastFromHigherThanNullable
@@ -40,7 +39,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 object CompareTo : IntrinsicMethod() {
-    private fun genInvoke(type: Type?, v: InstructionAdapter, context: JvmBackendContext) {
+    private fun genInvoke(type: Type?, v: InstructionAdapter, classCodegen: ClassCodegen) {
         when (type) {
             Type.CHAR_TYPE, Type.BYTE_TYPE, Type.SHORT_TYPE, Type.INT_TYPE ->
                 v.invokestatic(JvmSymbols.INTRINSICS_CLASS_NAME, "compare", "(II)I", false)
@@ -50,7 +49,7 @@ object CompareTo : IntrinsicMethod() {
             Type.BOOLEAN_TYPE -> {
                 // We could support it for JVM target 1.6, but it's prohibited now anyway (except for stdlib, which doesn't have such code),
                 // so throwing an exception instead.
-                check(context.state.target >= JvmTarget.JVM_1_8) {
+                check(classCodegen.context.state.target >= JvmTarget.JVM_1_8) {
                     "Cannot generate boolean comparison for JVM target 1.6"
                 }
                 v.invokestatic("java/lang/Boolean", "compare", "(ZZ)I", false)
@@ -62,16 +61,16 @@ object CompareTo : IntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
-        context: JvmBackendContext
+        classCodegen: ClassCodegen
     ): IrIntrinsicFunction {
         val callee = expression.symbol.owner
         val calleeParameter = callee.dispatchReceiverParameter ?: callee.extensionReceiverParameter!!
         val parameterType = comparisonOperandType(
-            context.typeMapper.mapType(calleeParameter.type),
+            classCodegen.typeMapper.mapType(calleeParameter.type),
             signature.valueParameters.single().asmType,
         )
-        return IrIntrinsicFunction.create(expression, signature, context, listOf(parameterType, parameterType)) {
-            genInvoke(parameterType, it, context)
+        return IrIntrinsicFunction.create(expression, signature, classCodegen, listOf(parameterType, parameterType)) {
+            genInvoke(parameterType, it, classCodegen)
         }
     }
 }

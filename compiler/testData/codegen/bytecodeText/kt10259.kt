@@ -27,6 +27,7 @@ inline fun test(s: () -> Unit) {
 // this behavior is equivalent to javac and seems to be correct.
 
 // JVM_IR_TEMPLATES
-// 5 INNERCLASS
+// 8 INNERCLASS
 // 3 INNERCLASS Kt10259Kt\$box\$1\$lam1\$1 null null
 // 2 INNERCLASS Kt10259Kt\$box\$1\$lam1\$1\$lam2\$1
+// 3 INNERCLASS kotlin.jvm.internal.Ref\$ObjectRef kotlin.jvm.internal.Ref ObjectRef

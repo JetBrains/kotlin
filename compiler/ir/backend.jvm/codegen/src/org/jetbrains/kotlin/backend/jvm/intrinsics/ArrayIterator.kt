@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
@@ -27,10 +27,10 @@ object ArrayIterator : IntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
-        context: JvmBackendContext
+        classCodegen: ClassCodegen
     ): IrIntrinsicFunction {
-        val owner = context.typeMapper.mapClass(expression.symbol.owner.parentAsClass)
-        return IrIntrinsicFunction.create(expression, signature, context, owner) {
+        val owner = classCodegen.typeMapper.mapClass(expression.symbol.owner.parentAsClass)
+        return IrIntrinsicFunction.create(expression, signature, classCodegen, owner) {
             val methodSignature = "(${owner.descriptor})${signature.returnType.descriptor}"
             val intrinsicOwner =
                 if (AsmUtil.isPrimitive(owner.elementType))

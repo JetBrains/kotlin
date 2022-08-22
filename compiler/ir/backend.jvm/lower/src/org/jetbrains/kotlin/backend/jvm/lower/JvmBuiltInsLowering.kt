@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isInt
+import org.jetbrains.kotlin.ir.types.isLong
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.render
@@ -113,8 +115,8 @@ class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLoweringPass {
     private fun IrExpression.coerceIfPossible(toType: IrType): IrExpression? {
         // TODO maybe UnsafeCoerce could handle types with different, but coercible underlying representations.
         // See KT-43286 and related tests for details.
-        val fromJvmType = context.typeMapper.mapType(type)
-        val toJvmType = context.typeMapper.mapType(toType)
+        val fromJvmType = context.defaultTypeMapper.mapType(type)
+        val toJvmType = context.defaultTypeMapper.mapType(toType)
         return if (fromJvmType != toJvmType)
             null
         else

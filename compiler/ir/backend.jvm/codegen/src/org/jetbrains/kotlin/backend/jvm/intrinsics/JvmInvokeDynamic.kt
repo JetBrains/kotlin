@@ -109,7 +109,7 @@ object JvmInvokeDynamic : IntrinsicMethod() {
     }
 
     private fun generateMethodHandle(irRawFunctionReference: IrRawFunctionReference, codegen: ExpressionCodegen): Handle =
-        codegen.context.methodSignatureMapper.mapToMethodHandle(irRawFunctionReference.symbol.owner)
+        codegen.methodSignatureMapper.mapToMethodHandle(irRawFunctionReference.symbol.owner)
 
     private fun evalOriginalMethodType(irCall: IrCall, codegen: ExpressionCodegen): Type {
         val irRawFunRef = irCall.getValueArgument(0) as? IrRawFunctionReference

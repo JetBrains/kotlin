@@ -31,7 +31,7 @@ class DescriptorMetadataSerializer(
     private val serializationBindings: JvmSerializationBindings,
     parent: MetadataSerializer?
 ) : MetadataSerializer {
-    private val serializerExtension = JvmSerializerExtension(serializationBindings, context.state, context.typeMapper)
+    private val serializerExtension = JvmSerializerExtension(serializationBindings, context.state, context.defaultTypeMapper)
     private val serializer: DescriptorSerializer? =
         when (val metadata = irClass.metadata) {
             is DescriptorMetadataSource.Class -> DescriptorSerializer.create(
@@ -51,7 +51,7 @@ class DescriptorMetadataSerializer(
             context.state.bindingTrace.record(
                 CodegenBinding.DELEGATED_PROPERTIES_WITH_METADATA,
                 // key for local delegated properties metadata in interfaces depends on jvmDefaultMode
-                if (irClass.isInterface && !context.state.jvmDefaultMode.forAllMethodsWithBody) context.typeMapper.mapClass(
+                if (irClass.isInterface && !context.state.jvmDefaultMode.forAllMethodsWithBody) context.defaultTypeMapper.mapClass(
                     context.cachedDeclarations.getDefaultImplsClass(
                         irClass
                     )

@@ -34,6 +34,7 @@ public final class test/C {
     public synthetic final static method access$h$s66(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method f(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method g(): kotlin.jvm.functions.Function0
+    public inner class A$B
 }
 
 @kotlin.Metadata

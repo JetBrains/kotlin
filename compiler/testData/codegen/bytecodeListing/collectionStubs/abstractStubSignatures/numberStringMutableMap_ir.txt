@@ -20,4 +20,5 @@ public abstract class<Ljava/lang/Object;Ljava/util/Map<Ljava/lang/Number;Ljava/l
     public synthetic bridge final <null> method remove(p0: java.lang.Object): java.lang.Object
     public bridge final <null> method remove(p0: java.lang.Object): java.lang.String
     public bridge final <null> method size(): int
+    public inner class java/util/Map$Entry
 }

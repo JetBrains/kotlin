@@ -49,12 +49,12 @@ import org.jetbrains.org.objectweb.asm.TypeReference
 import java.lang.annotation.RetentionPolicy
 
 abstract class AnnotationCodegen(
-    private val innerClassConsumer: InnerClassConsumer,
-    private val context: JvmBackendContext,
+    private val classCodegen: ClassCodegen,
     private val skipNullabilityAnnotations: Boolean = false
 ) {
-    private val typeMapper = context.typeMapper
-    private val methodSignatureMapper = context.methodSignatureMapper
+    private val context = classCodegen.context
+    private val typeMapper = classCodegen.typeMapper
+    private val methodSignatureMapper = classCodegen.methodSignatureMapper
 
     /**
      * @param returnType can be null if not applicable (e.g. [annotated] is a class)
@@ -195,7 +195,7 @@ abstract class AnnotationCodegen(
         // (Otherwise we would've resolved the entry to the actual annotation class.)
         if (annotationClass.isOptionalAnnotationClass) return null
 
-        innerClassConsumer.addInnerClassInfoFromAnnotation(annotationClass)
+        classCodegen.addInnerClassInfo(annotationClass)
 
         val asmTypeDescriptor = typeMapper.mapType(annotation.type).descriptor
         val annotationVisitor =
@@ -249,7 +249,7 @@ abstract class AnnotationCodegen(
                         val annotationClassType = callee.returnType
                         val internalAnnName = typeMapper.mapType(annotationClassType).descriptor
                         val visitor = annotationVisitor.visitAnnotation(name, internalAnnName)
-                        annotationClassType.classOrNull?.owner?.let(innerClassConsumer::addInnerClassInfoFromAnnotation)
+                        annotationClassType.classOrNull?.owner?.let(classCodegen::addInnerClassInfo)
                         genAnnotationArguments(value, visitor)
                         visitor.visitEnd()
                     }
@@ -259,7 +259,7 @@ abstract class AnnotationCodegen(
             is IrGetEnumValue -> {
                 val enumEntry = value.symbol.owner
                 val enumClass = enumEntry.parentAsClass
-                innerClassConsumer.addInnerClassInfoFromAnnotation(enumClass)
+                classCodegen.addInnerClassInfo(enumClass)
                 annotationVisitor.visitEnum(name, typeMapper.mapClass(enumClass).descriptor, enumEntry.name.asString())
             }
             is IrVararg -> { // array constructor
@@ -271,7 +271,7 @@ abstract class AnnotationCodegen(
             }
             is IrClassReference -> {
                 val classType = value.classType
-                classType.classOrNull?.owner?.let(innerClassConsumer::addInnerClassInfoFromAnnotation)
+                classType.classOrNull?.owner?.let(classCodegen::addInnerClassInfo)
                 val mappedType =
                     if (classType.isInlineClassType()) typeMapper.mapClass(classType.erasedUpperBound)
                     else typeMapper.mapType(classType)
@@ -294,7 +294,7 @@ abstract class AnnotationCodegen(
         ) {
             if (context.state.target != JVM_1_6) {
                 typeParameterContainer.typeParameters.forEachIndexed { index, typeParameter ->
-                    object : AnnotationCodegen(classCodegen, context, true) {
+                    object : AnnotationCodegen(classCodegen, true) {
                         override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
 
                             return visitor(
@@ -318,7 +318,7 @@ abstract class AnnotationCodegen(
                         typeParameter.superTypes.forEach { superType ->
                             val isClassOrTypeParameter = !superType.isInterface() && !superType.isAnnotation()
                             val superIndex = if (isClassOrTypeParameter) 0 else superInterfaceIndex++
-                            object : AnnotationCodegen(classCodegen, context, true) {
+                            object : AnnotationCodegen(classCodegen, true) {
                                 override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                                     throw RuntimeException(
                                         "Error during generation: only type annotations should be presented on type parameters bounds: " +
@@ -406,7 +406,7 @@ abstract class AnnotationCodegen(
             return
         }
         val infos: Iterable<TypePathInfo<IrConstructorCall>> =
-            IrTypeAnnotationCollector(context.typeMapper.typeSystem).collectTypeAnnotations(type)
+            IrTypeAnnotationCollector(classCodegen.typeMapper.typeSystem).collectTypeAnnotations(type)
         for (info in infos) {
             for (annotation in info.annotations) {
                 genAnnotation(annotation, info.path, true)
@@ -433,10 +433,6 @@ abstract class AnnotationCodegen(
                         isCompiledToJvm8OrHigher(source)
     }
 
-}
-
-interface InnerClassConsumer {
-    fun addInnerClassInfoFromAnnotation(innerClass: IrClass)
 }
 
 private fun isBareTypeParameterWithNullableUpperBound(type: IrType): Boolean {

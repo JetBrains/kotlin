@@ -10,4 +10,5 @@ public final class<<K:Ljava/lang/Object;V:Ljava/lang/Object;>LJImpl<TK;TV;>;>  M
     public <null> method <init>(): void
     public bridge <null> method getSize(): int
     public bridge final <null> method size(): int
+    public inner class java/util/Map$Entry
 }

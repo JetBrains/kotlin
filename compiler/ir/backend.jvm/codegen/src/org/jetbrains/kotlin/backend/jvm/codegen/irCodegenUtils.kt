@@ -87,7 +87,7 @@ fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
     return SourceMapper(
         SourceInfo(
             sourceFileName,
-            typeMapper.mapClass(declaration).internalName,
+            defaultTypeMapper.mapClass(declaration).internalName,
             endLineNumber + 1
         )
     )
