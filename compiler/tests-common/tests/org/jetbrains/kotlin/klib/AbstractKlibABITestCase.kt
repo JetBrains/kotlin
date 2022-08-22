@@ -33,6 +33,7 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
 
     override fun tearDown() {
         buildDir.deleteRecursively()
+        super.tearDown()
     }
 
     protected abstract fun stdlibFile(): File
