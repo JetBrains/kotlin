@@ -151,11 +151,10 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             it.description = "Assembles outputs for compilation '${compilation.name}' of target '${compilation.target.name}'"
             it.inputs.files(project.provider {
                 // the task may not be registered at this point, reference it lazily
-                compilation.compileKotlinTaskProvider.map { it.outputs.files }
+                compilation.output.classesDirs
             })
             it.inputs.files(compilation.output.resourcesDirProvider)
         }
-        compilation.output.classesDirs.from(project.files().builtBy(compilation.compileAllTaskName))
     }
 
     override fun defineConfigurationsForTarget(target: KotlinTargetType) {
