@@ -38,6 +38,13 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
         if (isFromTypeUnboxed && !isToTypeUnboxed) {
             val boxed = typeMapper.mapType(erasedSourceType, TypeMappingMode.CLASS_DECLARATION)
             StackValue.boxInlineClass(type, boxed, erasedSourceType.isNullable(), mv)
+
+            if (typeMapper.mapType(erasedTargetType) == target) {
+                if (!erasedSourceType.isSubtypeOf(erasedTargetType, codegen.context.typeSystem)) {
+                    StackValue.coerce(boxed, target, mv, false)
+                }
+            }
+
             return
         }
         if (!isFromTypeUnboxed && isToTypeUnboxed) {

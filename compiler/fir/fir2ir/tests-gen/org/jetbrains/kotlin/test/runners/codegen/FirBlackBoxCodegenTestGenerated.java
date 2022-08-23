@@ -21288,6 +21288,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("implicitCastToNonValueClassType.kt")
+        public void testImplicitCastToNonValueClassType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/implicitCastToNonValueClassType.kt");
+        }
+
+        @Test
         @TestMetadata("initBlock.kt")
         public void testInitBlock() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/initBlock.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
