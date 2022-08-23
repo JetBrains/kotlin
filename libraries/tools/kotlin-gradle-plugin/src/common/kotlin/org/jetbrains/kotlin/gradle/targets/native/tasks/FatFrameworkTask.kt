@@ -74,12 +74,16 @@ class FrameworkLayout(
         modulesDir.mkdirs()
         if (isMacosFramework) {
             macosResourcesDir.mkdirs()
+
+            val currentVersion = macosVersionsDir.resolve("Current")
+            Files.createSymbolicLink(currentVersion.toPath(), macosADir.relativeTo(macosVersionsDir).toPath())
+
             val root = rootDir.toPath()
-            Files.createSymbolicLink(root.resolve("Headers"), headerDir.toPath())
-            Files.createSymbolicLink(root.resolve("Modules"), modulesDir.toPath())
-            Files.createSymbolicLink(root.resolve("Resources"), macosResourcesDir.toPath())
-            Files.createSymbolicLink(root.resolve(frameworkName), binary.toPath())
-            Files.createSymbolicLink(macosVersionsDir.toPath().resolve("Current"), macosADir.toPath())
+            val current = currentVersion.relativeTo(rootDir).toPath()
+            Files.createSymbolicLink(root.resolve("Headers"), current.resolve("Headers"))
+            Files.createSymbolicLink(root.resolve("Modules"), current.resolve("Modules"))
+            Files.createSymbolicLink(root.resolve("Resources"), current.resolve("Resources"))
+            Files.createSymbolicLink(root.resolve(frameworkName), current.resolve(frameworkName))
         }
     }
 
@@ -403,6 +407,7 @@ open class FatFrameworkTask : DefaultTask() {
     @TaskAction
     protected fun createFatFramework() {
         val outFramework = FrameworkLayout(fatFramework, getFatFrameworkFamily() == Family.OSX)
+        if (outFramework.exists()) outFramework.rootDir.deleteRecursively()
 
         outFramework.mkdirs()
         mergeBinaries(outFramework.binary)
