@@ -1,3 +1,5 @@
-fun box(): String {
-    return C2().foo + I2().foo
+import abitestutils.abiTest
+
+fun box() = abiTest {
+    expectSuccess { C2().foo + I2().foo }
 }
