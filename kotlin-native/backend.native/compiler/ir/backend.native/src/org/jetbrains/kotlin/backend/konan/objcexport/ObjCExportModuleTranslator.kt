@@ -37,6 +37,10 @@ internal open class ObjCExportModuleTranslator(
 
     open protected val containsStdlib = false
 
+    open override fun begin() {
+
+    }
+
     override fun process(event: Event) {
         if (event in processedEvents) return
         processedEvents += event
@@ -147,9 +151,14 @@ internal class ObjCExportStdlibTranslator(
         eventQueue: EventQueue,
         frameworkName: String,
 ) : ObjCExportModuleTranslator(moduleBuilder, objcGenerics, problemCollector, mapper, namer, resolver, eventQueue, frameworkName) {
+
+    override fun begin() {
+        super.begin()
+        translateBaseDeclarations()
+    }
+
     override fun finalize() {
         super.finalize()
-        translateBaseDeclarations()
         buildImports()
     }
 
@@ -184,11 +193,4 @@ internal class ObjCExportStdlibTranslator(
                 "Foundation/NSValue.h"
         )
     }
-}
-
-internal class ObjCExportStdlibHeaderTranslator(
-        val moduleBuilder: ModuleBuilderWithStdlib,
-        val translator: ObjCExportTranslatorImpl,
-) {
-
 }

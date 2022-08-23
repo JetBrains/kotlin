@@ -46,6 +46,7 @@ private class SimpleEventQueue : EventQueue {
      */
     fun drain(eventProcessors: Collection<EventProcessor>) {
         // finalization of event processor might generate more events
+        eventProcessors.forEach { it.begin() }
         while (queue.isNotEmpty()) {
             while (queue.isNotEmpty()) {
                 val event = queue.removeFirst()
@@ -146,6 +147,7 @@ internal class ObjCExport(val context: Context) {
                     objcGenerics = objcGenerics
             )
             val theModuleBuilder = SimpleClangModuleBuilder(
+                    setOf(it),
                     "${baseName}.h",
                     stdlibModuleBuilder::getStdlibHeader
             )

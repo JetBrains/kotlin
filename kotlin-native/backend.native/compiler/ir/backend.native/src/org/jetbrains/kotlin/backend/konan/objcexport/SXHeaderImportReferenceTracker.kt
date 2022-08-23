@@ -34,7 +34,7 @@ internal class SXHeaderImportReferenceTracker(
         }
         val name = getClassOrProtocolName(declaration)
         // Add a forward declaration because we don't control layout of the declarations in the header.
-        if (header.hasDeclarationWithName(name.objCName)) {
+        if (resolver.findModuleBuilder(declaration).findHeaderForDeclaration(declaration) == header) {
             if (declaration.isInterface) {
                 eventQueue.add(Event.TranslateInterfaceForwardDeclaration(declaration))
             } else {

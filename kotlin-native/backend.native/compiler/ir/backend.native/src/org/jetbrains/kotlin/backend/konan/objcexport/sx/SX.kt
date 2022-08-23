@@ -42,8 +42,8 @@ class SXObjCHeader(val name: String) {
     val topLevelDeclarations: List<ObjCTopLevel<*>>
         get() = declarations.toList()
 
-    val classForwardDeclarations = mutableListOf<ObjCClassForwardDeclaration>()
-    val protocolForwardDeclarations = mutableListOf<String>()
+    val classForwardDeclarations = mutableSetOf<ObjCClassForwardDeclaration>()
+    val protocolForwardDeclarations = mutableSetOf<String>()
 
     val headerImports = mutableSetOf<SXHeaderImport>()
 
@@ -138,6 +138,7 @@ interface ModuleBuilderWithStdlib : SXClangModuleBuilder {
  * Module builder for an isolated non-stdlib kotlin modules.
  */
 class SimpleClangModuleBuilder(
+        private val modules: Set<ModuleDescriptor>,
         private val umbrellaHeaderName: String,
         private val stdlibHeaderProvider: () -> SXObjCHeader
 ) : SXClangModuleBuilder {
@@ -156,7 +157,7 @@ class SimpleClangModuleBuilder(
     }
 
     override fun findHeaderForDeclaration(declarationDescriptor: DeclarationDescriptor): SXObjCHeader? {
-        return theHeader
+        return theHeader.takeIf { declarationDescriptor.module in modules }
     }
 }
 

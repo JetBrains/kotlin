@@ -10,6 +10,9 @@ interface EventQueue {
 }
 
 interface EventProcessor {
+
+    fun begin()
+
     fun process(event: Event)
 
     fun finalize()
