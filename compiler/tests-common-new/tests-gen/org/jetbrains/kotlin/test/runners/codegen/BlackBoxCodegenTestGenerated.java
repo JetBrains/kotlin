@@ -47898,6 +47898,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("incorrectTypeOfTypealiasForSuspendFTMM.kt")
+        public void testIncorrectTypeOfTypealiasForSuspendFTMM() throws Exception {
+            runTest("compiler/testData/codegen/box/typealias/incorrectTypeOfTypealiasForSuspendFTMM.kt");
+        }
+
+        @Test
         @TestMetadata("incorrectTypeOfTypealiasForSuspendFunctionalType.kt")
         public void testIncorrectTypeOfTypealiasForSuspendFunctionalType() throws Exception {
             runTest("compiler/testData/codegen/box/typealias/incorrectTypeOfTypealiasForSuspendFunctionalType.kt");

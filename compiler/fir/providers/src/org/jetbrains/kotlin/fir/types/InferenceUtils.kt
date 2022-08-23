@@ -112,9 +112,9 @@ fun ConeKotlinType.suspendFunctionTypeToFunctionTypeWithContinuation(session: Fi
     val kind =
         if (isKFunctionType(session)) FunctionClassKind.KFunction
         else FunctionClassKind.Function
-    val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(typeArguments.size))
     val fullyExpandedType = type.fullyExpandedType(session)
     val typeArguments = fullyExpandedType.typeArguments
+    val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(typeArguments.size))
     val lastTypeArgument = typeArguments.last()
     return ConeClassLikeTypeImpl(
         ConeClassLikeLookupTagImpl(functionalTypeId),

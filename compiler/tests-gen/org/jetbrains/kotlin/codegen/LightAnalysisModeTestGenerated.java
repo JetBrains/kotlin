@@ -38869,6 +38869,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/typealias/genericTypeAliasConstructor2.kt");
         }
 
+        @TestMetadata("incorrectTypeOfTypealiasForSuspendFTMM.kt")
+        public void testIncorrectTypeOfTypealiasForSuspendFTMM() throws Exception {
+            runTest("compiler/testData/codegen/box/typealias/incorrectTypeOfTypealiasForSuspendFTMM.kt");
+        }
+
         @TestMetadata("incorrectTypeOfTypealiasForSuspendFunctionalType.kt")
         public void testIncorrectTypeOfTypealiasForSuspendFunctionalType() throws Exception {
             runTest("compiler/testData/codegen/box/typealias/incorrectTypeOfTypealiasForSuspendFunctionalType.kt");
