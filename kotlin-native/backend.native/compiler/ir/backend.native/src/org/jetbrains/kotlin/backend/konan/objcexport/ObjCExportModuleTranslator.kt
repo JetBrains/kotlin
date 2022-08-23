@@ -175,7 +175,7 @@ internal class ObjCExportStdlibTranslator(
     private fun buildImports() {
         val headerForStdlib = moduleBuilder.getStdlibHeader()
         foundationImports.forEach {
-            headerForStdlib.addImport(it)
+            headerForStdlib.addImport(it, "Foundation")
         }
 //            getAdditionalImports().forEach {
 //                headerForStdlib.addImport(it)

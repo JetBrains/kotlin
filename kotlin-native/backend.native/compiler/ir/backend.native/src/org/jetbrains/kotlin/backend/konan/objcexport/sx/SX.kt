@@ -9,15 +9,14 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClassForwardDeclaration
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 /**
  * SX — Swift Export. Represents both Objective-C and Swift declarations.
  */
-class SXClangModule {
+class SXClangModule(val name: String) {
 
-    private val moduleDependencies: MutableList<SXClangModule> = mutableListOf()
+    val moduleDependencies: MutableSet<String> = mutableSetOf()
 
     val headers: MutableSet<SXObjCHeader> = mutableSetOf()
 
@@ -25,8 +24,9 @@ class SXClangModule {
         headers += header
     }
 
-    fun addDependency(module: SXClangModule) {
-        moduleDependencies += module
+    fun addDependency(moduleName: String) {
+        if (moduleName == name) return
+        moduleDependencies += moduleName
     }
 }
 
@@ -38,7 +38,9 @@ data class SXHeaderImport(val headerName: String, val local: Boolean) {
     }
 }
 
-class SXObjCHeader(val name: String) {
+class SXObjCHeader(
+        val name: String,
+        private val moduleDependencyTracker: (String) -> Unit = {}) {
     val topLevelDeclarations: List<ObjCTopLevel<*>>
         get() = declarations.toList()
 
@@ -61,16 +63,15 @@ class SXObjCHeader(val name: String) {
         declarations += stub
     }
 
-    fun hasDeclarationWithName(name: String): Boolean =
-            declarations.find { it.name == name } != null
-
-    fun addImport(header: String) {
+    fun addImport(header: String, moduleName: String? = null) {
         headerImports += SXHeaderImport(header, local = false)
+        moduleName?.let(moduleDependencyTracker)
     }
 
-    fun addImport(header: SXObjCHeader) {
+    fun addImport(header: SXObjCHeader, moduleName: String? = null) {
         if (header == this) return
         headerImports += SXHeaderImport(header.name, local = true)
+        moduleName?.let(moduleDependencyTracker)
     }
 
     override fun toString(): String {
@@ -96,6 +97,8 @@ sealed interface SXClangModuleBuilder {
      */
     fun build(): SXClangModule
 
+    val moduleName: String
+
     /**
      * Returns [SXObjCHeader] that should contain ObjC representation of [declarationDescriptor]
      * Returns null if there is no such header in the module.
@@ -107,12 +110,12 @@ sealed interface SXClangModuleBuilder {
  * Module builder for a whole-world.
  */
 class SingleHeaderWholeWorldClangModuleBuilder(
-        private val stdlibHeaderName: String
+        override val moduleName: String
 ) : SXClangModuleBuilder, ModuleBuilderWithStdlib {
 
-    private val theModule: SXClangModule by lazy { SXClangModule() }
+    private val theModule: SXClangModule by lazy { SXClangModule(moduleName) }
     private val theHeader: SXObjCHeader by lazy {
-        SXObjCHeader(stdlibHeaderName).also {
+        SXObjCHeader("$moduleName.h").also {
             theModule.addObjCHeader(it)
         }
     }
@@ -139,18 +142,17 @@ interface ModuleBuilderWithStdlib : SXClangModuleBuilder {
  */
 class SimpleClangModuleBuilder(
         private val modules: Set<ModuleDescriptor>,
-        private val umbrellaHeaderName: String,
-        private val stdlibHeaderProvider: () -> SXObjCHeader
+        override val moduleName: String,
+        private val stdlibProvider: () -> ModuleBuilderWithStdlib
 ) : SXClangModuleBuilder {
 
-    private val theModule: SXClangModule by lazy { SXClangModule() }
+    private val theModule: SXClangModule by lazy { SXClangModule(moduleName) }
     private val theHeader: SXObjCHeader by lazy {
-        SXObjCHeader(umbrellaHeaderName).also {
-            it.addImport(stdlibHeaderProvider())
+        SXObjCHeader("$moduleName.h", theModule::addDependency).also {
+            it.addImport(stdlibProvider().getStdlibHeader(), stdlibProvider().moduleName)
             theModule.addObjCHeader(it)
         }
     }
-
 
     override fun build(): SXClangModule {
         return theModule
@@ -166,12 +168,12 @@ class SimpleClangModuleBuilder(
  */
 class StdlibClangModuleBuilder(
         private val stdlibModule: ModuleDescriptor,
-        private val stdlibHeaderName: String,
+        override val moduleName: String,
 ) : SXClangModuleBuilder, ModuleBuilderWithStdlib {
 
-    private val theModule: SXClangModule by lazy { SXClangModule() }
+    private val theModule: SXClangModule by lazy { SXClangModule(moduleName) }
     private val theHeader: SXObjCHeader by lazy {
-        SXObjCHeader(stdlibHeaderName).also {
+        SXObjCHeader("$moduleName.h", theModule::addDependency).also {
             theModule.addObjCHeader(it)
         }
     }

@@ -6,19 +6,19 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 class ModuleMapBuilder(
-        private val frameworkName: String
+        private val frameworkName: String,
+        private val moduleDependencies: Set<String>
 ) {
-    fun build(): String {
-        val moduleMap = """
-            |framework module $frameworkName {
-            |    umbrella header "$frameworkName.h"
-            |
-            |    export *
-            |    module * { export * }
-            |
-            |    use Foundation
-            |}
-        """.trimMargin()
-        return moduleMap
+    fun build(): String = buildString {
+        appendLine("framework module $frameworkName {")
+        appendLine("    umbrella header \"$frameworkName.h\"")
+        appendLine()
+        appendLine("    export *")
+        appendLine("    module * { export * }")
+        appendLine()
+        moduleDependencies.forEach {
+            appendLine("    use $it")
+        }
+        appendLine("}")
     }
 }

@@ -116,7 +116,7 @@ internal class ObjCExport(val context: Context) {
         )
         val stdlibModuleBuilder = StdlibClangModuleBuilder(
                 stdlib,
-                "Kotlin.h",
+                coreFrameworkPrefix,
         )
         translationsConfigurations += TranslationConfiguration(
                 setOf(stdlib),
@@ -148,8 +148,8 @@ internal class ObjCExport(val context: Context) {
             )
             val theModuleBuilder = SimpleClangModuleBuilder(
                     setOf(it),
-                    "${baseName}.h",
-                    stdlibModuleBuilder::getStdlibHeader
+                    baseName,
+                    { stdlibModuleBuilder }
             )
 
             translationsConfigurations += TranslationConfiguration(
@@ -160,14 +160,14 @@ internal class ObjCExport(val context: Context) {
                     baseName,
                     { problemCollector ->
                         ObjCExportModuleTranslator(
-                        theModuleBuilder,
-                        objcGenerics,
-                        problemCollector,
-                        mapper,
-                        namer,
-                        resolver,
-                        eventQueue,
-                        baseName,
+                                theModuleBuilder,
+                                objcGenerics,
+                                problemCollector,
+                                mapper,
+                                namer,
+                                resolver,
+                                eventQueue,
+                                baseName,
                         )
                     })
         }
@@ -267,7 +267,10 @@ internal class ObjCExport(val context: Context) {
                     context.getExportedDependencies()
             )
             val infoPListBuilder = InfoPListBuilder(target, properties, context.configuration, mainPackageGuesser)
-            val moduleMapBuilder = ModuleMapBuilder(exportedInterface.frameworkName)
+            val moduleMapBuilder = ModuleMapBuilder(
+                    exportedInterface.frameworkName,
+                    exportedInterface.clangModule.moduleDependencies,
+            )
             FrameworkBuilder(
                     exportedInterface.clangModule,
                     target,
