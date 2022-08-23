@@ -1,6 +1,7 @@
 #include "workerSignals.h"
 
 #include <cassert>
+#include <cstring>
 #include <pthread.h>
 #include <signal.h>
 
@@ -21,7 +22,8 @@ extern "C" void setupSignalHandler(void) {
 
 extern "C" void signalThread(uint64_t thread, int value) {
     pendingValue = value;
-    auto t = reinterpret_cast<pthread_t>(thread);
+    pthread_t t = {};
+    memcpy(&t, &thread, sizeof(pthread_t));
     auto result = pthread_kill(t, SIGUSR1);
     assert(result == 0);
 }

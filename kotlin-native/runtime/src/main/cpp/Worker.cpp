@@ -249,6 +249,14 @@ void waitInNativeState(pthread_cond_t* cond,
     CallWithThreadState<ThreadState::kNative>(WaitOnCondVar, cond, mutex, timeoutNanoseconds, microsecondsPassed);
 }
 
+KULong pthreadToNumber(pthread_t thread) {
+    static_assert(sizeof(pthread_t) <= sizeof(KULong), "Casting pthread_t to ULong will lose data");
+    // That's almost std::bit_cast. The latter requires sizeof equality of types.
+    KULong result = 0;
+    memcpy(&result, &thread, sizeof(pthread_t));
+    return result;
+}
+
 class Locker {
 public:
     explicit Locker(pthread_mutex_t* lock, bool switchThreadState = true) : lock_(lock), switchThreadState_(switchThreadState) {
@@ -639,9 +647,7 @@ class State {
       if (it == workers_.end()) {
           ThrowWorkerAlreadyTerminated();
       }
-      pthread_t thread = it->second->thread();
-      static_assert(sizeof(pthread_t) <= sizeof(KULong), "Casting pthread_t to ULong will lose data");
-      return reinterpret_cast<KULong>(thread);
+      return pthreadToNumber(it->second->thread());
   }
 
   OBJ_GETTER0(getActiveWorkers) {
