@@ -45,13 +45,15 @@ publish(moduleMetadata = true) {
     val kotlinLibraryComponent = components[ADHOC_COMPONENT_NAME] as AdhocComponentWithVariants
 
     kotlinLibraryComponent.addVariantsFromConfiguration(configurations.testFixturesApiElements.get()) {
-        mapToMavenScope("compile")
         skipUnpublishable()
+        mapToMavenScope("compile")
+        mapToOptional()
     }
 
     kotlinLibraryComponent.addVariantsFromConfiguration(configurations.testFixturesRuntimeElements.get()) {
-        mapToMavenScope("runtime")
         skipUnpublishable()
+        mapToMavenScope("runtime")
+        mapToOptional()
     }
 }
 
