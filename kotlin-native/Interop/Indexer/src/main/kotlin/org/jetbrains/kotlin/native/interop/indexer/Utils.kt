@@ -405,7 +405,7 @@ data class CompilationImpl(
  * @return the library which includes the precompiled header instead of original ones.
  */
 fun Compilation.precompileHeaders(): CompilationWithPCH = withIndex { index ->
-    val options = CXTranslationUnit_ForSerialization
+    val options = CXTranslationUnit_ForSerialization or CXTranslationUnit_DetailedPreprocessingRecord
     val translationUnit = copyWithArgsForPCH().parse(index, options)
     try {
         translationUnit.ensureNoCompileErrors()
@@ -471,7 +471,7 @@ fun List<List<String>>.mapFragmentIsCompilable(originalLibrary: CompilationWithP
 
     withIndex(excludeDeclarationsFromPCH = true) { index ->
         val sourceFile = library.createTempSource()
-        val translationUnit = parseTranslationUnit(index, sourceFile, library.compilerArgs, options = 0)
+        val translationUnit = parseTranslationUnit(index, sourceFile, library.compilerArgs, options = CXTranslationUnit_DetailedPreprocessingRecord)
         try {
             translationUnit.ensureNoCompileErrors()
             while (fragmentsToCheck.isNotEmpty()) {
@@ -486,7 +486,7 @@ fun List<List<String>>.mapFragmentIsCompilable(originalLibrary: CompilationWithP
                     }
                 }
 
-                clang_reparseTranslationUnit(translationUnit, 0, null, 0)
+                clang_reparseTranslationUnit(translationUnit, 0, null, CXTranslationUnit_DetailedPreprocessingRecord)
                 val errorLineNumbers = translationUnit.getErrorLineNumbers().toSet()
 
                 // Retain only those fragments that contain compilation error locations:
