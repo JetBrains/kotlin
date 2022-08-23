@@ -89,6 +89,13 @@ public final class ClassId {
         return parent.isRoot() ? null : new ClassId(getPackageFqName(), parent, local);
     }
 
+    @NotNull
+    public ClassId getOutermostClassId() {
+        FqName name = relativeClassName;
+        while (!name.parent().isRoot()) name = name.parent();
+        return new ClassId(packageFqName, name, false);
+    }
+
     public boolean isNestedClass() {
         return !relativeClassName.parent().isRoot();
     }
