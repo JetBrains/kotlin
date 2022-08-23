@@ -113,7 +113,8 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
                 directory.set(compileTask.compilerWorkingDirectory)
                 files.setFrom(compileTask.inputFiles)
                 arguments.set(args)
-                output.set(compileTask.outputFile.asFile.map { it.absolutePath })
+                // Only the location of output file matters, compdb does not depend on the compilation result.
+                output.set(compileTask.outputFile.locationOnly.map { it.asFile.absolutePath })
             }
         }
     }
