@@ -38,6 +38,7 @@ dependencies {
     //implementation(files("/home/nikitak/.m2/repository/org/jetbrains/kotlinx/dataframe-core/0.9.0-dev/dataframe-core-0.9.0-dev.jar"))
     implementation("org.jetbrains.kotlinx:dataframe:0.9.0-dev")
     testImplementation("io.kotest:kotest-assertions-core:4.6.3")
+    implementation("org.jetbrains.kotlinx.dataframe:bridge-generator:0.9.0-dev")
 }
 
 optInToExperimentalCompilerApi()

@@ -127,8 +127,8 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
                 "kproperty_2" to KPropertyApproximation("name", TypeApproximationImpl("kotlin.Int", false)),
                 "addExpression_1" to TypeApproximationImpl("kotlin.Int", nullable = false),
                 "addExpression_2" to TypeApproximationImpl("kotlin.Any", nullable = true),
-                "add0_schema" to pluginJsonFormat.decodeFromString<PluginDataFrameSchema>("""{"columns":[{"type":"org.jetbrains.kotlinx.dataframe.plugin.SimpleCol","name":"a","valuesType":{"type":"org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl","fqName":"kotlin.Int","nullable":false}}]}"""),
-                "add0" to pluginJsonFormat.decodeFromString<PluginDataFrameSchema>("""{"columns":[{"type":"org.jetbrains.kotlinx.dataframe.plugin.SimpleCol","name":"a","valuesType":{"type":"org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl","fqName":"kotlin.Int","nullable":false}},{"type":"org.jetbrains.kotlinx.dataframe.plugin.SimpleCol","name":"untitled","valuesType":{"type":"org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl","fqName":"kotlin.Int","nullable":false}}]}"""),
+                "add0_schema" to AddData.test0Schema,
+                "add0" to AddData.test0After,
                 "varargKProperty_0" to listOf(
                     KPropertyApproximation("col1", TypeApproximationImpl("kotlin.Int", false)),
                     KPropertyApproximation("col2", TypeApproximationImpl("kotlin.Int", true))
