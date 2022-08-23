@@ -447,14 +447,14 @@ internal class ObjCExportCodeGenerator(
     internal fun generate(spec: ObjCExportCodeSpec?) {
         generateTypeAdapters(spec)
 
-            NSNumberKind.values().mapNotNull { it.mappedKotlinClassId }.forEach {
-                dataGenerator.exportClass(namer.numberBoxName(it).binaryName)
-            }
-            dataGenerator.exportClass(namer.mutableSetName.binaryName)
-            dataGenerator.exportClass(namer.mutableMapName.binaryName)
-            dataGenerator.exportClass(namer.kotlinAnyName.binaryName)
+        NSNumberKind.values().mapNotNull { it.mappedKotlinClassId }.forEach {
+            dataGenerator.exportClass(namer.numberBoxName(it).binaryName)
+        }
+        dataGenerator.exportClass(namer.mutableSetName.binaryName)
+        dataGenerator.exportClass(namer.mutableMapName.binaryName)
+        dataGenerator.exportClass(namer.kotlinAnyName.binaryName)
 
-            emitSpecialClassesConvertions()
+        emitSpecialClassesConvertions()
 
         // Replace runtime global with weak linkage:
         replaceExternalWeakOrCommonGlobal(
@@ -847,17 +847,18 @@ private fun ObjCExportCodeGenerator.generateUnitContinuationToRetainedCompletion
         val resultArgument = ifThenElse(icmpNe(errorArgument, kNullInt8Ptr), kNullObjHeaderPtr) {
             codegen.theUnitInstanceRef.llvm
         }
-        
+
         callFromBridge(context.llvm.Kotlin_ObjCExport_resumeContinuation, listOf(continuation, resultArgument, errorArgument))
         ret(null)
     }
 }
 
 // TODO: find out what to use instead here and in the dependent code
-private val ObjCExportBlockCodeGenerator.mappedFunctionNClasses get() =
-    // failed attempt to migrate to descriptor-less IrBuiltIns
-    ((context.irBuiltIns as IrBuiltInsOverDescriptors).functionFactory as BuiltInFictitiousFunctionIrClassFactory).builtFunctionNClasses
-        .filter { it.descriptor.isMappedFunctionClass() }
+private val ObjCExportBlockCodeGenerator.mappedFunctionNClasses
+    get() =
+            // failed attempt to migrate to descriptor-less IrBuiltIns
+        ((context.irBuiltIns as IrBuiltInsOverDescriptors).functionFactory as BuiltInFictitiousFunctionIrClassFactory).builtFunctionNClasses
+                .filter { it.descriptor.isMappedFunctionClass() }
 
 private fun ObjCExportBlockCodeGenerator.emitFunctionConverters() {
     require(context.shouldDefineFunctionClasses)
@@ -1021,7 +1022,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
         ) -> LLVMValueRef?
 ): LLVMValueRef = generateObjCImpBy(
         methodBridge,
-        debugInfo = isDirect /* see below */,
+        debugInfo = isDirect, /* see below */
         suffix = bridgeSuffix,
 ) {
     // Considering direct calls inlinable above. If such a call is inlined into a bridge with no debug information,
@@ -1127,6 +1128,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
                 val kotlinHashCode = targetResult!!
                 if (codegen.context.is64BitNSInteger()) zext(kotlinHashCode, int64Type) else kotlinHashCode
             }
+
             is MethodBridge.ReturnValue.Mapped -> if (LLVMTypeOf(targetResult!!) == voidType) {
                 returnBridge.bridge.makeNothing()
             } else {
@@ -1136,6 +1138,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
                     is ValueTypeBridge -> kotlinToObjC(targetResult, returnBridge.bridge.objCValueType)
                 }
             }
+
             MethodBridge.ReturnValue.WithError.Success -> Int8(1).llvm // true
             is MethodBridge.ReturnValue.WithError.ZeroForError -> return genReturnOnSuccess(returnBridge.successBridge)
             MethodBridge.ReturnValue.Instance.InitResult -> param(0)
@@ -1257,6 +1260,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                             is ReferenceBridge -> kotlinReferenceToRetainedObjC(kotlinValue).also { objCReferenceArgsToRelease += it }
                             is BlockPointerBridge -> kotlinFunctionToRetainedObjCBlockPointer(bridge.bridge, kotlinValue) // TODO: use stack-allocated block here.
                                     .also { objCReferenceArgsToRelease += it }
+
                             is ValueTypeBridge -> kotlinToObjC(kotlinValue, bridge.bridge.objCValueType)
                         }
                     }
@@ -1270,6 +1274,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                     // without using autoreleasepool or any other reference counting operations.
                     kotlinReferenceToLocalObjC(parameters[parameter]!!)
                 }
+
                 MethodBridgeSelector -> {
                     val selector = baseMethod.selector
                     // Selector is referenced thus should be defined to avoid false positive non-public API rejection:
@@ -1413,10 +1418,12 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                 genKotlinBaseMethodResult(Lifetime.ARGUMENT, methodBridge.returnBridge)
                 null
             }
+
             baseReturnType.isUnit() || baseReturnType.isNothing() -> {
                 genKotlinBaseMethodResult(Lifetime.ARGUMENT, methodBridge.returnBridge)
                 codegen.theUnitInstanceRef.llvm
             }
+
             else ->
                 convertKotlin(
                         { lifetime -> genKotlinBaseMethodResult(lifetime, methodBridge.returnBridge)!! },
@@ -1449,10 +1456,12 @@ private fun MethodBridge.ReturnValue.isAutoreleasedObjCReference(): Boolean = wh
     MethodBridge.ReturnValue.Suspend, // void
     MethodBridge.ReturnValue.WithError.Success, // boolean
     MethodBridge.ReturnValue.Void -> false
+
     is MethodBridge.ReturnValue.Mapped -> when (this.bridge) {
         is BlockPointerBridge, ReferenceBridge -> true
         is ValueTypeBridge -> false
     }
+
     is MethodBridge.ReturnValue.WithError.ZeroForError -> this.successBridge.isAutoreleasedObjCReference()
 }
 
@@ -1629,15 +1638,19 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
             is ObjCInitMethodForKotlinConstructor -> {
                 adapters += createConstructorAdapter(it.baseMethod)
             }
+
             is ObjCFactoryMethodForKotlinArrayConstructor -> {
                 classAdapters += createArrayConstructorAdapter(it.baseMethod)
             }
+
             is ObjCGetterForKotlinEnumEntry -> {
                 classAdapters += createEnumEntryAdapter(it.irEnumEntrySymbol.owner, it.selector)
             }
+
             is ObjCClassMethodForKotlinEnumValues -> {
                 classAdapters += createEnumValuesAdapter(it.valuesFunctionSymbol.owner, it.selector)
             }
+
             is ObjCGetterForObjectInstance -> {
                 classAdapters += if (it.classSymbol.owner.isUnit()) {
                     createUnitInstanceAdapter(it.selector)
@@ -1645,9 +1658,11 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
                     createObjectInstanceAdapter(it.classSymbol.owner, it.selector, irClass)
                 }
             }
+
             ObjCKotlinThrowableAsErrorMethod -> {
                 adapters += createThrowableAsErrorAdapter()
             }
+
             is ObjCMethodForKotlinMethod -> {} // Handled below.
         }.let {} // Force exhaustive.
     }
@@ -1812,10 +1827,10 @@ private fun ObjCExportCodeGenerator.nonOverridableAdapter(
         selector: String,
         hasSelectorAmbiguity: Boolean
 ): ObjCExportCodeGenerator.KotlinToObjCMethodAdapter = KotlinToObjCMethodAdapter(
-    selector,
-    vtableIndex = if (hasSelectorAmbiguity) -2 else -1, // Describes the reason.
-    kotlinImpl = NullPointer(int8Type),
-    itablePlace = ClassLayoutBuilder.InterfaceTablePlace.INVALID
+        selector,
+        vtableIndex = if (hasSelectorAmbiguity) -2 else -1, // Describes the reason.
+        kotlinImpl = NullPointer(int8Type),
+        itablePlace = ClassLayoutBuilder.InterfaceTablePlace.INVALID
 )
 
 private val ObjCTypeForKotlinType.kotlinMethods: List<ObjCMethodForKotlinMethod>
@@ -1955,21 +1970,22 @@ private fun objCFunctionType(context: Context, methodBridge: MethodBridge): Llvm
     return LlvmFunctionSignature(returnType, paramTypes, isVararg = false)
 }
 
-private val ObjCValueType.llvmType: LLVMTypeRef get() = when (this) {
-    ObjCValueType.BOOL -> int8Type
-    ObjCValueType.UNICHAR -> int16Type
-    ObjCValueType.CHAR -> int8Type
-    ObjCValueType.SHORT -> int16Type
-    ObjCValueType.INT -> int32Type
-    ObjCValueType.LONG_LONG -> int64Type
-    ObjCValueType.UNSIGNED_CHAR -> int8Type
-    ObjCValueType.UNSIGNED_SHORT -> int16Type
-    ObjCValueType.UNSIGNED_INT -> int32Type
-    ObjCValueType.UNSIGNED_LONG_LONG -> int64Type
-    ObjCValueType.FLOAT -> floatType
-    ObjCValueType.DOUBLE -> doubleType
-    ObjCValueType.POINTER -> kInt8Ptr
-}
+private val ObjCValueType.llvmType: LLVMTypeRef
+    get() = when (this) {
+        ObjCValueType.BOOL -> int8Type
+        ObjCValueType.UNICHAR -> int16Type
+        ObjCValueType.CHAR -> int8Type
+        ObjCValueType.SHORT -> int16Type
+        ObjCValueType.INT -> int32Type
+        ObjCValueType.LONG_LONG -> int64Type
+        ObjCValueType.UNSIGNED_CHAR -> int8Type
+        ObjCValueType.UNSIGNED_SHORT -> int16Type
+        ObjCValueType.UNSIGNED_INT -> int32Type
+        ObjCValueType.UNSIGNED_LONG_LONG -> int64Type
+        ObjCValueType.FLOAT -> floatType
+        ObjCValueType.DOUBLE -> doubleType
+        ObjCValueType.POINTER -> kInt8Ptr
+    }
 
 private fun MethodBridgeParameter.toLlvmParamType(): LlvmParamType = when (this) {
     is MethodBridgeValueParameter.Mapped -> this.bridge.toLlvmParamType()
@@ -1984,12 +2000,14 @@ private fun MethodBridge.ReturnValue.toLlvmRetType(
 ): LlvmRetType = when (this) {
     MethodBridge.ReturnValue.Suspend,
     MethodBridge.ReturnValue.Void -> LlvmRetType(voidType)
+
     MethodBridge.ReturnValue.HashCode -> LlvmRetType(if (context.is64BitNSInteger()) int64Type else int32Type)
     is MethodBridge.ReturnValue.Mapped -> this.bridge.toLlvmParamType()
     MethodBridge.ReturnValue.WithError.Success -> ValueTypeBridge(ObjCValueType.BOOL).toLlvmParamType()
 
     MethodBridge.ReturnValue.Instance.InitResult,
     MethodBridge.ReturnValue.Instance.FactoryResult -> ReferenceBridge.toLlvmParamType()
+
     is MethodBridge.ReturnValue.WithError.ZeroForError -> this.successBridge.toLlvmRetType(context)
 }
 
@@ -2018,27 +2036,31 @@ internal fun ObjCExportCodeGenerator.getEncoding(methodBridge: MethodBridge): St
 private fun MethodBridge.ReturnValue.getObjCEncoding(context: Context): String = when (this) {
     MethodBridge.ReturnValue.Suspend,
     MethodBridge.ReturnValue.Void -> "v"
+
     MethodBridge.ReturnValue.HashCode -> if (context.is64BitNSInteger()) "Q" else "I"
     is MethodBridge.ReturnValue.Mapped -> this.bridge.objCEncoding
     MethodBridge.ReturnValue.WithError.Success -> ObjCValueType.BOOL.encoding
 
     MethodBridge.ReturnValue.Instance.InitResult,
     MethodBridge.ReturnValue.Instance.FactoryResult -> ReferenceBridge.objCEncoding
+
     is MethodBridge.ReturnValue.WithError.ZeroForError -> this.successBridge.getObjCEncoding(context)
 }
 
-private val MethodBridgeParameter.objCEncoding: String get() = when (this) {
-    is MethodBridgeValueParameter.Mapped -> this.bridge.objCEncoding
-    is MethodBridgeReceiver -> ReferenceBridge.objCEncoding
-    MethodBridgeSelector -> ":"
-    MethodBridgeValueParameter.ErrorOutParameter -> "^${ReferenceBridge.objCEncoding}"
-    is MethodBridgeValueParameter.SuspendCompletion -> "@"
-}
+private val MethodBridgeParameter.objCEncoding: String
+    get() = when (this) {
+        is MethodBridgeValueParameter.Mapped -> this.bridge.objCEncoding
+        is MethodBridgeReceiver -> ReferenceBridge.objCEncoding
+        MethodBridgeSelector -> ":"
+        MethodBridgeValueParameter.ErrorOutParameter -> "^${ReferenceBridge.objCEncoding}"
+        is MethodBridgeValueParameter.SuspendCompletion -> "@"
+    }
 
-private val TypeBridge.objCEncoding: String get() = when (this) {
-    ReferenceBridge, is BlockPointerBridge -> "@"
-    is ValueTypeBridge -> this.objCValueType.encoding
-}
+private val TypeBridge.objCEncoding: String
+    get() = when (this) {
+        ReferenceBridge, is BlockPointerBridge -> "@"
+        is ValueTypeBridge -> this.objCValueType.encoding
+    }
 
 private fun Context.is64BitNSInteger(): Boolean {
     val configurables = this.config.platform.configurables
