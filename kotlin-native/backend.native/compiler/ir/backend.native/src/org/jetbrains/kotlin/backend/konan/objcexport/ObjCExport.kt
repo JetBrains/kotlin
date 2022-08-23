@@ -90,7 +90,7 @@ internal class ObjCExport(val context: Context) {
 
     private val eventQueue: SimpleEventQueue = SimpleEventQueue()
 
-    val namers: MutableList<ObjCExportNamer> = mutableListOf()
+    lateinit var mainNamer: ObjCExportNamer
     private val codeSpecs: MutableMap<ObjCExportedInterface, ObjCExportCodeSpec> = mutableMapOf()
 
     fun buildCodeSpecs(symbolTable: SymbolTable) {
@@ -104,11 +104,12 @@ internal class ObjCExport(val context: Context) {
         val moduleDescriptors: List<ModuleDescriptor> = listOf(context.moduleDescriptor) + context.getExportedDependencies()
         val stdlib: ModuleDescriptor = moduleDescriptors.first().allDependencyModules.first { it.isNativeStdlib() }
         val otherModules = (moduleDescriptors - stdlib).toSet()
+        val coreFrameworkPrefix = "KotlinCore"
         val stdlibNamer = ObjCExportNamerImpl(
                 setOf(stdlib),
                 stdlib.builtIns,
                 mapper,
-                "Kotlin",
+                coreFrameworkPrefix,
                 local = false,
                 objcGenerics = objcGenerics,
         )
@@ -121,7 +122,7 @@ internal class ObjCExport(val context: Context) {
                 stdlibNamer,
                 mapper,
                 stdlibModuleBuilder,
-                "Kotlin", { problemCollector ->
+                coreFrameworkPrefix, { problemCollector ->
             ObjCExportStdlibTranslator(
                     stdlibModuleBuilder,
                     objcGenerics,
@@ -130,7 +131,7 @@ internal class ObjCExport(val context: Context) {
                     stdlibNamer,
                     resolver,
                     eventQueue,
-                    "Kotlin"
+                    coreFrameworkPrefix
             )
         })
 
@@ -233,12 +234,14 @@ internal class ObjCExport(val context: Context) {
 
         if (!context.config.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
 
-        codeSpecs.forEach { (exportedInterface, codeSpec) ->
-            namers += exportedInterface.namer
-            ObjCExportCodeGenerator(codegen, exportedInterface.namer, exportedInterface.mapper).use { objCCodeGenerator ->
-                exportedInterface.generateWorkaroundForSwiftSR10177()
-                objCCodeGenerator.generate(codeSpec, exportedInterface.containsStdlib)
-            }
+
+        val codespec = codeSpecs.values.reduce { acc, spec -> acc.merge(spec) }
+        val exportedInterface = codeSpecs.keys.first { it.containsStdlib }
+        mainNamer = exportedInterface.namer
+
+        ObjCExportCodeGenerator(codegen, exportedInterface.namer, exportedInterface.mapper).use { objCCodeGenerator ->
+            exportedInterface.generateWorkaroundForSwiftSR10177()
+            objCCodeGenerator.generate(codespec)
         }
     }
 

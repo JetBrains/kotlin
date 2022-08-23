@@ -444,10 +444,9 @@ internal class ObjCExportCodeGenerator(
     }
 
 
-    internal fun generate(spec: ObjCExportCodeSpec?, containsStdlib: Boolean) {
+    internal fun generate(spec: ObjCExportCodeSpec?) {
         generateTypeAdapters(spec)
 
-        if (containsStdlib) {
             NSNumberKind.values().mapNotNull { it.mappedKotlinClassId }.forEach {
                 dataGenerator.exportClass(namer.numberBoxName(it).binaryName)
             }
@@ -456,7 +455,6 @@ internal class ObjCExportCodeGenerator(
             dataGenerator.exportClass(namer.kotlinAnyName.binaryName)
 
             emitSpecialClassesConvertions()
-        }
 
         // Replace runtime global with weak linkage:
         replaceExternalWeakOrCommonGlobal(

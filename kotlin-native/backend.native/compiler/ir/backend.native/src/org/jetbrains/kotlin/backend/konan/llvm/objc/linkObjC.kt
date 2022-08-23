@@ -20,7 +20,7 @@ internal fun patchObjCRuntimeModule(context: Context): LLVMModuleRef? {
     val bitcodeFile = config.objCNativeLibrary
     val parsedModule = parseBitcodeFile(bitcodeFile)
 
-    context.objCExport.namers.forEach { namer ->
+    context.objCExport.mainNamer.let { namer ->
         val patchBuilder = PatchBuilder(namer)
         patchBuilder.addObjCPatches()
         patchBuilder.buildAndApply(parsedModule)

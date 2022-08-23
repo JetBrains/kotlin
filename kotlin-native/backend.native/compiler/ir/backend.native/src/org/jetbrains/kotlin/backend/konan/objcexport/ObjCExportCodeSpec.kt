@@ -137,7 +137,10 @@ internal fun <S : IrFunctionSymbol> createObjCMethodSpecBaseMethod(
 internal class ObjCExportCodeSpec(
         val files: List<ObjCClassForKotlinFile>,
         val types: List<ObjCTypeForKotlinType>
-)
+) {
+    fun merge(other: ObjCExportCodeSpec): ObjCExportCodeSpec =
+            ObjCExportCodeSpec((files + other.files).distinct(), (types + other.types).distinct())
+}
 
 internal sealed class ObjCMethodSpec {
     /**
