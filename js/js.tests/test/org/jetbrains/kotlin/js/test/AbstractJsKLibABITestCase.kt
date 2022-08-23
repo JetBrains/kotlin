@@ -98,12 +98,12 @@ abstract class AbstractJsKLibABITestCase : AbstractKlibABITestCase() {
         val psiManager = PsiManager.getInstance(project)
         val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL) as CoreLocalFileSystem
 
-        val sourceFile = sourceDir.listFiles()!!.first()
-        val vFile = fileSystem.findFileByIoFile(sourceFile) ?: error("Virtual File for $sourceFile not found")
-
-        val provider = SingleRootFileViewProvider(psiManager, vFile)
-        val allfiles = provider.allFiles
-        return allfiles.mapNotNull { it as? KtFile }
+        return sourceDir.walkTopDown().filter { file ->
+            file.isFile && file.extension == "kt"
+        }.flatMap { file ->
+            val virtualFile = fileSystem.findFileByIoFile(file) ?: error("VirtualFile for $file not found")
+            SingleRootFileViewProvider(psiManager, virtualFile).allFiles
+        }.filterIsInstance<KtFile>().toList()
     }
 
     private fun File.binJsFile(name: String): File = File(this, "$name.js")
