@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.getDeprecationsProvider
 import org.jetbrains.kotlin.fir.deserialization.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.kotlin.*
@@ -97,23 +98,24 @@ class JvmClassFileBasedSymbolProvider(
     private val KotlinJvmBinaryClass.isPreReleaseInvisible: Boolean
         get() = classHeader.isPreRelease
 
-    private fun loadJavaClass(classId: ClassId, content: ByteArray?): ClassMetadataFindResult? {
-        val javaClass = javaFacade.findClass(classId, content) ?: return null
-        return ClassMetadataFindResult.NoMetadata { symbol ->
-            javaFacade.convertJavaClassToFir(symbol, classId.outerClassId?.let(::getClass), javaClass)
-        }
-    }
-
     override fun extractClassMetadata(classId: ClassId, parentContext: FirDeserializationContext?): ClassMetadataFindResult? {
         // Kotlin classes are annotated Java classes, so this check also looks for them.
         if (!javaFacade.hasTopLevelClassOf(classId)) return null
 
         val result = kotlinClassFinder.findKotlinClassOrContent(classId)
-        val kotlinClass = when (result) {
-            is KotlinClassFinder.Result.KotlinClass -> result.kotlinJvmBinaryClass
-            is KotlinClassFinder.Result.ClassFileContent -> return loadJavaClass(classId, result.content)
-            null -> return loadJavaClass(classId, null)
+        if (result !is KotlinClassFinder.Result.KotlinClass) {
+            if (parentContext != null || (classId.isNestedClass && getClass(classId.outermostClassId)?.fir !is FirJavaClass)) {
+                // Nested class of Kotlin class should have been a Kotlin class.
+                return null
+            }
+            val javaClass = javaFacade.findClass(classId, (result as? KotlinClassFinder.Result.ClassFileContent)?.content)
+                ?: return null
+            return ClassMetadataFindResult.NoMetadata { symbol ->
+                javaFacade.convertJavaClassToFir(symbol, classId.outerClassId?.let(::getClass), javaClass)
+            }
         }
+
+        val kotlinClass = result.kotlinJvmBinaryClass
         if (kotlinClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null
         val data = kotlinClass.classHeader.data ?: return null
         val strings = kotlinClass.classHeader.strings ?: return null
