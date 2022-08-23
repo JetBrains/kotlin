@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.*
+import java.util.stream.Collectors
 
 enum class TranslationMode(
     val dce: Boolean,
@@ -168,10 +169,10 @@ class IrModuleToJsTransformerTmp(
                 JsIrModule(
                     m.safeName,
                     m.externalModuleName(),
-                    m.files.map {
+                    m.files.parallelStream().map {
                         val exports = exportData[m]!![it]!!
                         generateProgramFragment(it, exports, minimizedMemberNames)
-                    },
+                    }.collect(Collectors.toList()),
                 )
             }
         )
