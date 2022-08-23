@@ -48,11 +48,14 @@ object KlibABITestUtils {
                 val moduleBuildDirs = createModuleDirs(buildDir, moduleName)
 
                 // Populate the source dir with *.kt files.
-                val moduleSourceDir = moduleBuildDirs.sourceDir.apply { mkdirs() }
-                moduleTestDir.walk().filter { it.isFile && it.extension == "kt" }.forEach { sourceFile ->
-                    val destFile = moduleSourceDir.resolve(sourceFile.relativeTo(moduleTestDir))
-                    destFile.parentFile.mkdirs()
-                    sourceFile.copyTo(destFile)
+                copySources(from = moduleTestDir, to = moduleBuildDirs.sourceDir)
+
+                // Include ABI utils into the main module.
+                if (moduleName == MAIN_MODULE_NAME) {
+                    val utilsDir = testDir.parentFile.resolve(ABI_UTILS_DIR)
+                    KtUsefulTestCase.assertExists(utilsDir)
+
+                    copySources(from = utilsDir, to = moduleBuildDirs.sourceDir)
                 }
 
                 val moduleOutputDir = moduleBuildDirs.outputDir.apply { mkdirs() }
@@ -101,6 +104,14 @@ object KlibABITestUtils {
         buildBinaryAndRun(mainModuleKlibFile, allKlibs)
     }
 
+    private fun copySources(from: File, to: File) {
+        from.walk().filter { it.isFile && it.extension == "kt" }.forEach { sourceFile ->
+            val destFile = to.resolve(sourceFile.relativeTo(from))
+            destFile.parentFile.mkdirs()
+            sourceFile.copyTo(destFile)
+        }
+    }
+
     fun createModuleDirs(buildDir: File, moduleName: String): ModuleBuildDirs {
         val moduleBuildDir = buildDir.resolve(moduleName)
 
@@ -125,4 +136,5 @@ object KlibABITestUtils {
     )
 
     const val MAIN_MODULE_NAME = "main"
+    private const val ABI_UTILS_DIR = "__utils__"
 }
