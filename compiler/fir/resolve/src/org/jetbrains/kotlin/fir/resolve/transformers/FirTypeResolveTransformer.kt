@@ -120,6 +120,7 @@ open class FirTypeResolveTransformer(
             property.transformTypeParameters(this, data)
                 .transformReturnTypeRef(this, data)
                 .transformReceiverTypeRef(this, data)
+                .transformContextReceivers(this, data)
                 .transformGetter(this, data)
                 .transformSetter(this, data)
                 .transformBackingField(this, data)
