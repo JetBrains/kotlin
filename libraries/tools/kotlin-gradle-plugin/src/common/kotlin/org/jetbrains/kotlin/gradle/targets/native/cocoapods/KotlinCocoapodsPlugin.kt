@@ -10,7 +10,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.daemon.common.trimQuotes
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -23,11 +22,13 @@ import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkTask
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.asValidTaskName
+import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -156,15 +157,17 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         }
     }
 
-    private fun Project.createSyncFrameworkTask(originalDirectory: Provider<File>, buildingTask: TaskProvider<*>) =
-        registerTask<Sync>(SYNC_TASK_NAME) {
-            it.group = TASK_GROUP
-            it.description = "Copies a framework for given platform and build type into the CocoaPods build directory"
+    private fun Project.createCopyFrameworkTask(
+        originalDirectory: Provider<File>,
+        buildingTask: TaskProvider<*>
+    ) = registerTask<FrameworkCopy>(SYNC_TASK_NAME) {
+        it.group = TASK_GROUP
+        it.description = "Copies a framework for given platform and build type into the CocoaPods build directory"
 
-            it.dependsOn(buildingTask)
-            it.from(originalDirectory)
-            it.destinationDir = cocoapodsBuildDirs.framework
-        }
+        it.dependsOn(buildingTask)
+        it.files = filesProvider { originalDirectory.map { dir -> dir.listFiles().orEmpty() } }
+        it.destDir = cocoapodsBuildDirs.framework
+    }
 
     private fun createSyncForFatFramework(
         project: Project,
@@ -198,7 +201,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             }
         }
 
-        project.createSyncFrameworkTask(fatFrameworkTask.map { it.destinationDir }, fatFrameworkTask)
+        project.createCopyFrameworkTask(fatFrameworkTask.map { it.destinationDir }, fatFrameworkTask)
     }
 
     private fun createSyncForRegularFramework(
@@ -213,7 +216,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         check(targets.size == 1) { "The project has more than one target for the requested platform: `${requestedPlatform.visibleName}`" }
 
         val frameworkLinkTask = targets.single().binaries.getFramework(POD_FRAMEWORK_PREFIX, requestedBuildType).linkTaskProvider
-        project.createSyncFrameworkTask(frameworkLinkTask.flatMap { it.destinationDirectory.map { it.asFile } }, frameworkLinkTask)
+        project.createCopyFrameworkTask(frameworkLinkTask.flatMap { it.destinationDirectory.map { it.asFile } }, frameworkLinkTask)
     }
 
     private fun createSyncTask(

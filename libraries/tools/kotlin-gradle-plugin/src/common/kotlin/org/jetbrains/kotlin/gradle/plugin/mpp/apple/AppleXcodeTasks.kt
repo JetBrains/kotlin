@@ -214,7 +214,7 @@ private fun Project.appleFrameworkDir(frameworkSearchDir: File) =
  * To preserve these symlinks we are using the `cp` command instead.
  * See https://youtrack.jetbrains.com/issue/KT-48594.
  */
-private abstract class FrameworkCopy : DefaultTask() {
+internal abstract class FrameworkCopy : DefaultTask() {
 
     @get:InputFiles
     @get:SkipWhenEmpty
