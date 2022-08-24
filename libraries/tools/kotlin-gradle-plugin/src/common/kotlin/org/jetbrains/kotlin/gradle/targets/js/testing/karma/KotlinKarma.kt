@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.internal.processLogMessage
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
@@ -93,9 +94,39 @@ class KotlinKarma(
         useMocha()
         useWebpack()
         useSourceMapSupport()
+        usePropBrowsers()
 
         // necessary for debug as a fallback when no debuggable browsers found
         addChromeLauncher()
+    }
+
+    private fun usePropBrowsers() {
+        val propValue = project.kotlinPropertiesProvider.jsKarmaBrowsers(compilation.target)
+        val propBrowsers = propValue?.split(",")
+        propBrowsers?.map(String::trim)?.forEach {
+            when (it.toLowerCase()) {
+                "chrome" -> useChrome()
+                "chrome-canary" -> useChromeCanary()
+                "chrome-canary-headless" -> useChromeCanaryHeadless()
+                "chrome-headless" -> useChromeHeadless()
+                "chrome-headless-no-sandbox" -> useChromeHeadlessNoSandbox()
+                "chromium" -> useChromium()
+                "chromium-headless" -> useChromiumHeadless()
+                "firefox" -> useFirefox()
+                "firefox-aurora" -> useFirefoxAurora()
+                "firefox-aurora-headless" -> useFirefoxAuroraHeadless()
+                "firefox-developer" -> useFirefoxDeveloper()
+                "firefox-developer-headless" -> useFirefoxDeveloperHeadless()
+                "firefox-headless" -> useFirefoxHeadless()
+                "firefox-nightly" -> useFirefoxNightly()
+                "firefox-nightly-headless" -> useFirefoxNightlyHeadless()
+                "ie" -> useIe()
+                "opera" -> useOpera()
+                "phantom-js" -> usePhantomJS()
+                "safari" -> useSafari()
+                else -> project.logger.warn("Unrecognised `kotlin.js.browser.karma.browsers` value [$it]. Ignoring...")
+            }
+        }
     }
 
     private fun useKotlinReporter() {
