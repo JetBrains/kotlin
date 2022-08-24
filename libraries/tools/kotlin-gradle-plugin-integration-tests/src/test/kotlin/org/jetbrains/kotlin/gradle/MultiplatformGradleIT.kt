@@ -377,4 +377,11 @@ class MultiplatformGradleIT : BaseGradleIT() {
             assertTasksExecuted(":lib1:compileDebugKotlin")
         }
     }
+
+    @Test
+    fun testKt53704CurlIncludesEagerInitialization() = with(Project("native-curl", GradleVersionRequired.FOR_MPP_SUPPORT)) {
+        build(":assemble") {
+            assertSuccessful()
+        }
+    }
 }

@@ -1,0 +1,117 @@
+group 'com.example'
+version '1.0'
+
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin-multiplatform'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+static String getHostName() {
+    def target = System.getProperty("os.name")
+    if (target == 'Linux') return 'linux'
+    if (target.startsWith('Windows')) return 'windows'
+    if (target.startsWith('Mac'))
+        if (System.getProperty("os.arch") == "aarch64")
+            return 'macosArm64'
+        else
+            return 'macosX64'
+    return 'unknown'
+}
+
+static String getMingwPath() {
+    def directory = System.getenv("MINGW64_DIR")
+    if (directory == null)
+        directory = "c:/msys64/mingw64"
+    return directory
+}
+
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlin_version"
+            }
+        }
+    }
+
+    targets {
+        fromPreset(presets.jvm, 'jvm') {
+            compilations.all {
+                tasks[compileKotlinTaskName].kotlinOptions {
+                    jvmTarget = '1.8'
+                }
+                tasks[compileKotlinTaskName].kotlinOptions.suppressWarnings = true
+            }
+        }
+        fromPreset(presets.mingwX64, 'windows') {
+            binaries.all {
+                linkerOpts = ["-L${getMingwPath()}/lib".toString()]
+            }
+            compilations.main.cinterops {
+                libcurl {
+                    includeDirs.headerFilterOnly "${getMingwPath()}/include"
+                }
+            }
+        }
+
+        fromPreset(presets.linuxX64, 'linux') {
+            compilations.main.cinterops {
+                libcurl {
+                    includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
+                }
+            }
+        }
+        fromPreset(presets.macosX64, 'macosX64') {
+            compilations.main.cinterops {
+                libcurl {
+                    includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
+                }
+            }
+        }
+        fromPreset(presets.macosArm64, 'macosArm64') {
+            compilations.main.cinterops {
+                libcurl {
+                    includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
+                }
+            }
+        }
+        fromPreset(presets.js, 'js') {
+            compilations.main.kotlinOptions {
+                main = "noCall"
+            }
+        }
+
+        configure([findByName('windows'), findByName('linux'), findByName('macosX64'), findByName('macosArm64')]) {
+            def isCurrentHost = (name == getHostName())
+            compilations.all {
+                cinterops.all {
+                    project.tasks[interopProcessingTaskName].enabled = isCurrentHost
+                }
+                compileKotlinTask.enabled = isCurrentHost
+            }
+            binaries.all {
+                linkTask.enabled = isCurrentHost
+            }
+
+            binaries {
+                executable('benchmarksAnalyzer', [RELEASE]) {
+                    if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+                        linkerOpts("-L${getMingwPath()}/lib")
+                    }
+                }
+            }
+        }
+    }
+}
