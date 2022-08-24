@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.findStandardKotlinTypeSerializer
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SpecialBuiltins
+import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.contextSerializerId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.enumSerializerId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.objectSerializerId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.polymorphicSerializerId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.referenceArraySerializerId
 
 class IrSerialTypeInfo(
     val property: IrSerializableProperty,
@@ -182,7 +182,7 @@ fun findStandardKotlinTypeSerializer(context: SerializationPluginContext, type: 
         "D" -> if (type.isDouble()) "DoubleSerializer" else null
         "C" -> if (type.isChar()) "CharSerializer" else null
         null -> null
-        else -> findStandardKotlinTypeSerializer(typeName)
+        else -> findStandardKotlinTypeSerializerName(typeName)
     } ?: return null
     return context.getClassFromRuntimeOrNull(name, SerializationPackages.internalPackageFqName, SerializationPackages.packageFqName)
 }

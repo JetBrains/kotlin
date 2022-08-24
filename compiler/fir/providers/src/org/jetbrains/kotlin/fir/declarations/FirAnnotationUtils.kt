@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -99,11 +96,15 @@ private val DEFAULT_USE_SITE_TARGETS: Set<AnnotationUseSiteTarget> =
     USE_SITE_TARGET_NAME_MAP.values.fold(setOf<AnnotationUseSiteTarget>()) { a, b -> a + b } - setOf(AnnotationUseSiteTarget.FILE)
 
 fun FirDeclaration.hasAnnotation(classId: ClassId): Boolean {
-    return annotations.any { it.toAnnotationClassId() == classId }
+    return annotations.hasAnnotation(classId)
 }
 
 fun FirBasedSymbol<*>.hasAnnotation(classId: ClassId): Boolean {
-    return resolvedAnnotationsWithClassIds.any { it.toAnnotationClassId() == classId }
+    return resolvedAnnotationsWithClassIds.hasAnnotation(classId)
+}
+
+fun List<FirAnnotation>.hasAnnotation(classId: ClassId): Boolean {
+    return this.any { it.toAnnotationClassId() == classId }
 }
 
 fun <D> FirBasedSymbol<out D>.getAnnotationByClassId(classId: ClassId): FirAnnotation? where D : FirAnnotationContainer, D : FirDeclaration {
@@ -111,7 +112,11 @@ fun <D> FirBasedSymbol<out D>.getAnnotationByClassId(classId: ClassId): FirAnnot
 }
 
 fun FirAnnotationContainer.getAnnotationByClassId(classId: ClassId): FirAnnotation? {
-    return annotations.find {
+    return annotations.getAnnotationByClassId(classId)
+}
+
+fun List<FirAnnotation>.getAnnotationByClassId(classId: ClassId): FirAnnotation? {
+    return find {
         it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == classId
     }
 }
@@ -171,6 +176,15 @@ private inline fun <reified T> FirAnnotation.getPrimitiveArgumentValue(name: Nam
     return findArgumentByName(name)?.let { expression ->
         (expression as? FirConstExpression<*>)?.value as? T
     }
+}
+
+fun FirAnnotation.getKClassArgument(name: Name): ConeKotlinType? {
+    val argument = findArgumentByName(name) as? FirGetClassCall ?: return null
+    return argument.getTargetType()
+}
+
+fun FirGetClassCall.getTargetType(): ConeKotlinType? {
+    return typeRef.coneType.typeArguments.getOrNull(0)?.type
 }
 
 fun FirAnnotationContainer.getJvmNameFromAnnotation(target: AnnotationUseSiteTarget? = null): String? {

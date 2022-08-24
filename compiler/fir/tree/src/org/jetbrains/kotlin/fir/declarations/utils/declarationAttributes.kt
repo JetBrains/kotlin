@@ -10,7 +10,12 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 
@@ -26,6 +31,12 @@ var FirProperty.isReferredViaField: Boolean? by FirDeclarationDataRegistry.data(
 var FirProperty.fromPrimaryConstructor: Boolean? by FirDeclarationDataRegistry.data(IsFromPrimaryConstructor)
 var FirClassLikeDeclaration.sourceElement: SourceElement? by FirDeclarationDataRegistry.data(SourceElementKey)
 var FirRegularClass.moduleName: String? by FirDeclarationDataRegistry.data(ModuleNameKey)
+
+val FirClassLikeSymbol<*>.sourceElement: SourceElement?
+    get() = fir.sourceElement
+
+val FirPropertySymbol.fromPrimaryConstructor: Boolean
+    get() = fir.fromPrimaryConstructor ?: false
 
 /**
  * Constraint without corresponding type argument
@@ -93,6 +104,12 @@ val FirProperty.hasBackingField: Boolean
         }
     }
 
+val FirPropertySymbol.hasBackingField: Boolean
+    get() {
+        lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+        return fir.hasBackingField
+    }
+
 fun FirDeclaration.getDanglingTypeConstraintsOrEmpty(): List<DanglingTypeConstraint> {
     return when (this) {
         is FirRegularClass -> danglingTypeConstraints
@@ -101,3 +118,11 @@ fun FirDeclaration.getDanglingTypeConstraintsOrEmpty(): List<DanglingTypeConstra
         else -> null
     } ?: emptyList()
 }
+
+val FirPropertySymbol.correspondingValueParameterFromPrimaryConstructor: FirValueParameterSymbol?
+    get() {
+        if (!fromPrimaryConstructor) return null
+        val initializer = resolvedInitializer as? FirPropertyAccessExpression ?: return null
+        val reference = initializer.calleeReference as? FirPropertyFromParameterResolvedNamedReference ?: return null
+        return reference.resolvedSymbol as? FirValueParameterSymbol
+    }

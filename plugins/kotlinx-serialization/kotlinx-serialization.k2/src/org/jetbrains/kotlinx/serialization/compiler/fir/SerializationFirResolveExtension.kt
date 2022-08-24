@@ -135,7 +135,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         val owner = context?.owner ?: return emptyList()
         if (callableId.callableName == SerialEntityNames.SERIALIZER_PROVIDER_NAME) {
-            val serializableClass = session.getSerializableClassDescriptorByCompanion(owner) ?: return emptyList()
+            val serializableClass = owner.getSerializableClassSymbolIfCompanion(session) ?: return emptyList()
             return listOf(generateSerializerGetterInCompanion(owner, serializableClass, callableId))
         }
         if (owner.name != SerialEntityNames.SERIALIZER_CLASS_NAME) return emptyList()

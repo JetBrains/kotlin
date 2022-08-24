@@ -8,6 +8,7 @@ plugins {
 dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":core:compiler.common"))
+    compileOnly(project(":core:deserialization.common.jvm"))
     compileOnly(intellijCore())
 }
 

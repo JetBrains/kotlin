@@ -101,3 +101,12 @@ internal val FirCallableDeclaration.isExtensionMember: Boolean
 
 internal val FirCallableSymbol<*>.isExtensionMember: Boolean
     get() = resolvedReceiverTypeRef != null && dispatchReceiverType != null
+
+fun FirClassSymbol<*>.primaryConstructorSymbol(): FirConstructorSymbol? {
+    for (declarationSymbol in this.declarationSymbols) {
+        if (declarationSymbol is FirConstructorSymbol && declarationSymbol.isPrimary) {
+            return declarationSymbol
+        }
+    }
+    return null
+}

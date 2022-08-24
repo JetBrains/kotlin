@@ -372,6 +372,7 @@ val projectsWithEnabledContextReceivers by extra {
         ":compiler:frontend.common",
         ":compiler:fir:fir2ir",
         ":kotlin-lombok-compiler-plugin.k1",
+        ":kotlinx-serialization-compiler-plugin.k2",
     )
 }
 

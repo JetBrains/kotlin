@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -222,15 +221,5 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
             }
             return annotationHasCycle(referencedAnnotation)
         }
-    }
-
-
-    private fun FirRegularClassSymbol.primaryConstructorSymbol(): FirConstructorSymbol? {
-        for (declarationSymbol in this.declarationSymbols) {
-            if (declarationSymbol is FirConstructorSymbol && declarationSymbol.isPrimary) {
-                return declarationSymbol
-            }
-        }
-        return null
     }
 }

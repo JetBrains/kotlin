@@ -6,6 +6,7 @@
 package org.jetbrains.kotlinx.serialization
 
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlinx.serialization.compiler.diagnostic.CommonVersionReader
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.VersionReader
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -34,7 +35,7 @@ class RuntimeLibraryInClasspathTest {
 
     @Test
     fun testRuntimeHasSufficientVersion() {
-        val version = VersionReader.getVersionsFromManifest(coreLibraryPath!!)
+        val version = CommonVersionReader.getVersionsFromManifest(coreLibraryPath!!)
         assertTrue(version.currentCompilerMatchRequired(), "Runtime version too high")
         assertTrue(version.implementationVersionMatchSupported(), "Runtime version too low")
     }

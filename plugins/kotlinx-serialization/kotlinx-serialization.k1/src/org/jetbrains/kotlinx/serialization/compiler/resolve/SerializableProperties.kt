@@ -21,13 +21,6 @@ import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SERIALIZABLE_PROP
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginMetadataExtensions
 
-interface ISerializableProperties<S : ISerializableProperty> {
-    val serializableProperties: List<S>
-    val isExternallySerializable: Boolean
-    val serializableConstructorProperties: List<S>
-    val serializableStandaloneProperties: List<S>
-}
-
 class SerializableProperties(private val serializableClass: ClassDescriptor, val bindingContext: BindingContext) :
     ISerializableProperties<SerializableProperty> {
     private val primaryConstructorParameters: List<ValueParameterDescriptor> =
@@ -119,38 +112,6 @@ fun PropertyDescriptor.declaresDefaultValue(): Boolean {
     return false
 }
 
-
-val ISerializableProperties<*>.goldenMask: Int
-    get() {
-        var goldenMask = 0
-        var requiredBit = 1
-        for (property in serializableProperties) {
-            if (!property.optional) {
-                goldenMask = goldenMask or requiredBit
-            }
-            requiredBit = requiredBit shl 1
-        }
-        return goldenMask
-    }
-
-val ISerializableProperties<*>.goldenMaskList: List<Int>
-    get() {
-        val maskSlotCount = serializableProperties.bitMaskSlotCount()
-        val goldenMaskList = MutableList(maskSlotCount) { 0 }
-
-        for (i in serializableProperties.indices) {
-            if (!serializableProperties[i].optional) {
-                val slotNumber = i / 32
-                val bitInSlot = i % 32
-                goldenMaskList[slotNumber] = goldenMaskList[slotNumber] or (1 shl bitInSlot)
-            }
-        }
-        return goldenMaskList
-    }
-
-fun List<ISerializableProperty>.bitMaskSlotCount() = size / 32 + 1
-fun bitMaskSlotAt(propertyIndex: Int) = propertyIndex / 32
-
 fun BindingContext.serializablePropertiesFor(
     classDescriptor: ClassDescriptor,
     serializationDescriptorSerializer: SerializationDescriptorSerializerPlugin? = null
@@ -160,7 +121,7 @@ fun BindingContext.serializablePropertiesFor(
     return props
 }
 
-fun <P: ISerializableProperty> restoreCorrectOrderFromClassProtoExtension(descriptor: ClassDescriptor, props: List<P>): List<P> {
+fun <P : ISerializableProperty> restoreCorrectOrderFromClassProtoExtension(descriptor: ClassDescriptor, props: List<P>): List<P> {
     if (descriptor !is DeserializedClassDescriptor) return props
     val correctOrder: List<Name> = descriptor.classProto.getExtension(SerializationPluginMetadataExtensions.propertiesNamesInProgramOrder)
         .map { descriptor.c.nameResolver.getName(it) }

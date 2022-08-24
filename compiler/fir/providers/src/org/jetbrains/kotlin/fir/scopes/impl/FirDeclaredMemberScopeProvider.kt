@@ -118,6 +118,10 @@ fun FirSession.declaredMemberScope(klass: FirClassSymbol<*>): FirContainingNames
     return declaredMemberScope(klass.fir)
 }
 
+fun FirClassSymbol<*>.declaredMemberScope(session: FirSession): FirContainingNamesAwareScope {
+    return session.declaredMemberScope(fir)
+}
+
 fun FirSession.declaredMemberScopeWithLazyNestedScope(
     klass: FirClass,
     existingNames: List<Name>,

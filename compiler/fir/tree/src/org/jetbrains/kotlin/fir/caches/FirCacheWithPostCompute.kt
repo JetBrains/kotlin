@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.caches
 
+import kotlin.reflect.KProperty
+
 abstract class FirCache<in K : Any, out V, in CONTEXT> {
     abstract fun getValue(key: K, context: CONTEXT): V
     abstract fun getValueIfComputed(key: K): V?
@@ -22,6 +24,10 @@ class FirLazyValue<out V, in CONTEXT>(private val cache: FirCache<Unit, V, CONTE
     fun getValue(context: CONTEXT): V {
         return cache.getValue(Unit, context)
     }
+}
+
+operator fun <V> FirLazyValue<V, Nothing?>.getValue(thisRef: Any?, property: KProperty<*>): V {
+    return getValue(context = null)
 }
 
 @Suppress("NOTHING_TO_INLINE")

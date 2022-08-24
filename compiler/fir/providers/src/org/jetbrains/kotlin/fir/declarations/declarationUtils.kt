@@ -32,12 +32,13 @@ fun FirClass.primaryConstructorIfAny(session: FirSession): FirConstructorSymbol?
     return constructors(session).find(FirConstructorSymbol::isPrimary)
 }
 
-fun FirRegularClass.collectEnumEntries(): Collection<FirEnumEntry> {
+// TODO: dog shit, rewrite with scopes
+fun FirClass.collectEnumEntries(): Collection<FirEnumEntry> {
     assert(classKind == ClassKind.ENUM_CLASS)
     return declarations.filterIsInstance<FirEnumEntry>()
 }
 
-fun FirRegularClassSymbol.collectEnumEntries(): Collection<FirEnumEntrySymbol> {
+fun FirClassSymbol<*>.collectEnumEntries(): Collection<FirEnumEntrySymbol> {
     return fir.collectEnumEntries().map { it.symbol }
 }
 

@@ -6,10 +6,22 @@
 package org.jetbrains.kotlinx.serialization.compiler.fir
 
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.FirSerializationCheckersComponent
+import org.jetbrains.kotlinx.serialization.compiler.fir.services.ContextualSerializersProvider
+import org.jetbrains.kotlinx.serialization.compiler.fir.services.DependencySerializationInfoProvider
+import org.jetbrains.kotlinx.serialization.compiler.fir.services.FirSerializablePropertiesProvider
+import org.jetbrains.kotlinx.serialization.compiler.fir.services.FirVersionReader
 
 class FirSerializationExtensionRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::SerializationFirResolveExtension
         +::SerializationFirSupertypesExtension
+        +::FirSerializationCheckersComponent
+
+        // services
+        +::DependencySerializationInfoProvider
+        +::FirSerializablePropertiesProvider
+        +::FirVersionReader
+        +::ContextualSerializersProvider
     }
 }

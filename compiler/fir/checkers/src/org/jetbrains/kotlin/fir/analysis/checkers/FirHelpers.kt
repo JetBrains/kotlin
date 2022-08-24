@@ -114,7 +114,7 @@ fun FirTypeRef.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol?
  * or null if no proper declaration has been found.
  */
 fun FirDeclaration.getContainingClassSymbol(session: FirSession): FirClassLikeSymbol<*>? =
-    this.safeAs<FirCallableDeclaration>()?.containingClass()?.toSymbol(session)
+    (this as? FirCallableDeclaration)?.containingClass()?.toSymbol(session)
 
 @OptIn(SymbolInternals::class)
 fun FirBasedSymbol<*>.getContainingClassSymbol(session: FirSession): FirClassLikeSymbol<*>? = fir.getContainingClassSymbol(session)

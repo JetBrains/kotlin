@@ -21,14 +21,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.analyzeSpecialSerializers
 
-interface ISerializableProperty {
-    val isConstructorParameterWithDefault: Boolean
-    val name: String
-    val originalDescriptorName: Name
-    val optional: Boolean
-    val transient: Boolean
-}
-
 class SerializableProperty(
     val descriptor: PropertyDescriptor,
     override val isConstructorParameterWithDefault: Boolean,

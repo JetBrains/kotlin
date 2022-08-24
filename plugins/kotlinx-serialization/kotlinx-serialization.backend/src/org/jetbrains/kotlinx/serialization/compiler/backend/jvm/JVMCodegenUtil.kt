@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.internalName
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.DescriptorFactory
@@ -57,8 +56,12 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ST
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.STRUCTURE_ENCODER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.UNKNOWN_FIELD_EXC
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.typeArgPrefix
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages.internalPackageFqName
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages.packageFqName
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.contextSerializerId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.enumSerializerId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.objectSerializerId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.polymorphicSerializerId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.referenceArraySerializerId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.sealedSerializerId
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter

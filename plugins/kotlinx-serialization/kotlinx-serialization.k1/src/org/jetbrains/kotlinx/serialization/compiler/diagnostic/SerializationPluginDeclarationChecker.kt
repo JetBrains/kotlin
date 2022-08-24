@@ -107,7 +107,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         }
     }
 
-    private fun checkMinRuntime(versions: VersionReader.RuntimeVersions, descriptor: ClassDescriptor, trace: BindingTrace) {
+    private fun checkMinRuntime(versions: RuntimeVersions, descriptor: ClassDescriptor, trace: BindingTrace) {
         // if RuntimeVersions are present, but implementation version is not,
         // it means that we are reading from jar which does not have this manifest parameter - a pre-1.0 serialization runtime.
         // For non-JAR distributions (klib, js) this method is not invoked, since getVersionsForCurrentModule
@@ -119,14 +119,14 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
                         it,
                         versions.implementationVersion?.toString() ?: "too low",
                         KotlinCompilerVersion.getVersion() ?: "unknown",
-                        VersionReader.MINIMAL_SUPPORTED_VERSION.toString(),
+                        RuntimeVersions.MINIMAL_SUPPORTED_VERSION.toString(),
                     )
                 )
             }
         }
     }
 
-    private fun checkMinKotlin(versions: VersionReader.RuntimeVersions, descriptor: ClassDescriptor, trace: BindingTrace) {
+    private fun checkMinKotlin(versions: RuntimeVersions, descriptor: ClassDescriptor, trace: BindingTrace) {
         if (versions.currentCompilerMatchRequired()) return
         descriptor.onSerializableOrMetaAnnotation {
             trace.report(
@@ -192,7 +192,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
                 trace.report(
                     SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED.on(
                         it,
-                        VersionReader.minVersionForInlineClasses.toString(),
+                        RuntimeVersions.MINIMAL_VERSION_FOR_INLINE_CLASSES.toString(),
                         VersionReader.getVersionsForCurrentModuleFromTrace(descriptor.module, trace)?.implementationVersion.toString()
                     )
                 )
@@ -386,7 +386,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             trace.report(
                 SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED.on(
                     element ?: fallbackElement,
-                    VersionReader.minVersionForInlineClasses.toString(),
+                    RuntimeVersions.MINIMAL_VERSION_FOR_INLINE_CLASSES.toString(),
                     VersionReader.getVersionsForCurrentModuleFromTrace(module, trace)?.implementationVersion.toString()
                 )
             )

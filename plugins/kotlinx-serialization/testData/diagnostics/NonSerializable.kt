@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// FIR_DIFFERENCE: KT-53861
 // FILE: test.kt
 import kotlinx.serialization.*
 

@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.*
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.enumSerializerId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.referenceArraySerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages.internalPackageFqName
 
 open class SerialTypeInfo(
@@ -164,77 +164,19 @@ fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescri
 fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {
     val typeName = kType.getJetTypeFqName(false)
     val name = when (typeName) {
-        "Z" -> if (kType.isBoolean()) "BooleanSerializer" else null
-        "B" -> if (kType.isByte()) "ByteSerializer" else null
-        "S" -> if (kType.isShort()) "ShortSerializer" else null
-        "I" -> if (kType.isInt()) "IntSerializer" else null
-        "J" -> if (kType.isLong()) "LongSerializer" else null
-        "F" -> if (kType.isFloat()) "FloatSerializer" else null
-        "D" -> if (kType.isDouble()) "DoubleSerializer" else null
-        "C" -> if (kType.isChar()) "CharSerializer" else null
-        else -> findStandardKotlinTypeSerializer(typeName)
+        "Z" -> if (kType.isBoolean()) PrimitiveBuiltins.booleanSerializer else null
+        "B" -> if (kType.isByte()) PrimitiveBuiltins.byteSerializer else null
+        "S" -> if (kType.isShort()) PrimitiveBuiltins.shortSerializer else null
+        "I" -> if (kType.isInt()) PrimitiveBuiltins.intSerializer else null
+        "J" -> if (kType.isLong()) PrimitiveBuiltins.longSerializer else null
+        "F" -> if (kType.isFloat()) PrimitiveBuiltins.floatSerializer else null
+        "D" -> if (kType.isDouble()) PrimitiveBuiltins.doubleSerializer else null
+        "C" -> if (kType.isChar()) PrimitiveBuiltins.charSerializer else null
+        else -> findStandardKotlinTypeSerializerName(typeName)
     } ?: return null
     val identifier = Name.identifier(name)
     return module.findClassAcrossModuleDependencies(ClassId(internalPackageFqName, identifier))
         ?: module.findClassAcrossModuleDependencies(ClassId(SerializationPackages.packageFqName, identifier))
-}
-
-fun findStandardKotlinTypeSerializer(typeName: String): String? {
-    return when (typeName) {
-        "kotlin.Unit" -> "UnitSerializer"
-        "kotlin.Nothing" -> "NothingSerializer"
-        "kotlin.Boolean" -> "BooleanSerializer"
-        "kotlin.Byte" -> "ByteSerializer"
-        "kotlin.Short" -> "ShortSerializer"
-        "kotlin.Int" -> "IntSerializer"
-        "kotlin.Long" -> "LongSerializer"
-        "kotlin.Float" -> "FloatSerializer"
-        "kotlin.Double" -> "DoubleSerializer"
-        "kotlin.Char" -> "CharSerializer"
-        "kotlin.UInt" -> "UIntSerializer"
-        "kotlin.ULong" -> "ULongSerializer"
-        "kotlin.UByte" -> "UByteSerializer"
-        "kotlin.UShort" -> "UShortSerializer"
-        "kotlin.String" -> "StringSerializer"
-        "kotlin.Pair" -> "PairSerializer"
-        "kotlin.Triple" -> "TripleSerializer"
-        "kotlin.collections.Collection", "kotlin.collections.List",
-        "kotlin.collections.ArrayList", "kotlin.collections.MutableList" -> "ArrayListSerializer"
-        "kotlin.collections.Set", "kotlin.collections.LinkedHashSet", "kotlin.collections.MutableSet" -> "LinkedHashSetSerializer"
-        "kotlin.collections.HashSet" -> "HashSetSerializer"
-        "kotlin.collections.Map", "kotlin.collections.LinkedHashMap", "kotlin.collections.MutableMap" -> "LinkedHashMapSerializer"
-        "kotlin.collections.HashMap" -> "HashMapSerializer"
-        "kotlin.collections.Map.Entry" -> "MapEntrySerializer"
-        "kotlin.ByteArray" -> "ByteArraySerializer"
-        "kotlin.ShortArray" -> "ShortArraySerializer"
-        "kotlin.IntArray" -> "IntArraySerializer"
-        "kotlin.LongArray" -> "LongArraySerializer"
-        "kotlin.UByteArray" -> "UByteArraySerializer"
-        "kotlin.UShortArray" -> "UShortArraySerializer"
-        "kotlin.UIntArray" -> "UIntArraySerializer"
-        "kotlin.ULongArray" -> "ULongArraySerializer"
-        "kotlin.CharArray" -> "CharArraySerializer"
-        "kotlin.FloatArray" -> "FloatArraySerializer"
-        "kotlin.DoubleArray" -> "DoubleArraySerializer"
-        "kotlin.BooleanArray" -> "BooleanArraySerializer"
-        "kotlin.time.Duration" -> "DurationSerializer"
-        "java.lang.Boolean" -> "BooleanSerializer"
-        "java.lang.Byte" -> "ByteSerializer"
-        "java.lang.Short" -> "ShortSerializer"
-        "java.lang.Integer" -> "IntSerializer"
-        "java.lang.Long" -> "LongSerializer"
-        "java.lang.Float" -> "FloatSerializer"
-        "java.lang.Double" -> "DoubleSerializer"
-        "java.lang.Character" -> "CharSerializer"
-        "java.lang.String" -> "StringSerializer"
-        "java.util.Collection", "java.util.List", "java.util.ArrayList" -> "ArrayListSerializer"
-        "java.util.Set", "java.util.LinkedHashSet" -> "LinkedHashSetSerializer"
-        "java.util.HashSet" -> "HashSetSerializer"
-        "java.util.Map", "java.util.LinkedHashMap" -> "LinkedHashMapSerializer"
-        "java.util.HashMap" -> "HashMapSerializer"
-        "java.util.Map.Entry" -> "MapEntrySerializer"
-        else -> return null
-    }
 }
 
 fun findEnumTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {
