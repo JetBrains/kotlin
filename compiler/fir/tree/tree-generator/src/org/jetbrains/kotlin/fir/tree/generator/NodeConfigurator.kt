@@ -325,6 +325,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         property.configure {
+            +fieldList(contextReceiver, withReplace = true).withTransform()
             +symbol("FirPropertySymbol")
             +field("delegateFieldSymbol", delegateFieldSymbolType, nullable = true)
             +booleanField("isLocal")

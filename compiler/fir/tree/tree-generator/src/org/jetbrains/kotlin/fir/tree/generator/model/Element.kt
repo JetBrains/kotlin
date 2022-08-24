@@ -102,6 +102,7 @@ class Element(override val name: String, kind: Kind) : AbstractElement {
                 existingField.needsSeparateTransform = existingField.needsSeparateTransform || parentField.needsSeparateTransform
                 existingField.needTransformInOtherChildren = existingField.needTransformInOtherChildren || parentField.needTransformInOtherChildren
                 existingField.withReplace = parentField.withReplace || existingField.withReplace
+                existingField.parentHasSeparateTransform = parentField.needsSeparateTransform
                 if (parentField.type != existingField.type && parentField.withReplace) {
                     existingField.overridenTypes += parentField
                     overridenFields[existingField, parentField] = false

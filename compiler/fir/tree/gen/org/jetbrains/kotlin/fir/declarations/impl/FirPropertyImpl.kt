@@ -50,7 +50,6 @@ internal class FirPropertyImpl(
     override var deprecationsProvider: DeprecationsProvider,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
-    override val contextReceivers: MutableList<FirContextReceiver>,
     override val name: Name,
     override var initializer: FirExpression?,
     override var delegate: FirExpression?,
@@ -59,6 +58,7 @@ internal class FirPropertyImpl(
     override var setter: FirPropertyAccessor?,
     override var backingField: FirBackingField?,
     override val annotations: MutableList<FirAnnotation>,
+    override val contextReceivers: MutableList<FirContextReceiver>,
     override val symbol: FirPropertySymbol,
     override val delegateFieldSymbol: FirDelegateFieldSymbol?,
     override val isLocal: Boolean,
@@ -77,7 +77,6 @@ internal class FirPropertyImpl(
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
-        contextReceivers.forEach { it.accept(visitor, data) }
         initializer?.accept(visitor, data)
         delegate?.accept(visitor, data)
         getter?.accept(visitor, data)
@@ -85,6 +84,7 @@ internal class FirPropertyImpl(
         backingField?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
+        contextReceivers.forEach { it.accept(visitor, data) }
         typeParameters.forEach { it.accept(visitor, data) }
     }
 
@@ -97,6 +97,7 @@ internal class FirPropertyImpl(
         transformGetter(transformer, data)
         transformSetter(transformer, data)
         transformBackingField(transformer, data)
+        transformContextReceivers(transformer, data)
         transformTypeParameters(transformer, data)
         transformOtherChildren(transformer, data)
         return this
@@ -147,13 +148,17 @@ internal class FirPropertyImpl(
         return this
     }
 
+    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
+        contextReceivers.transformInplace(transformer, data)
+        return this
+    }
+
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
         typeParameters.transformInplace(transformer, data)
         return this
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        contextReceivers.transformInplace(transformer, data)
         transformAnnotations(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         return this
@@ -175,11 +180,6 @@ internal class FirPropertyImpl(
         deprecationsProvider = newDeprecationsProvider
     }
 
-    override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
-        contextReceivers.clear()
-        contextReceivers.addAll(newContextReceivers)
-    }
-
     override fun replaceInitializer(newInitializer: FirExpression?) {
         initializer = newInitializer
     }
@@ -194,6 +194,11 @@ internal class FirPropertyImpl(
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference
+    }
+
+    override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
+        contextReceivers.clear()
+        contextReceivers.addAll(newContextReceivers)
     }
 
     override fun replaceBodyResolveState(newBodyResolveState: FirPropertyBodyResolveState) {

@@ -117,7 +117,7 @@ fun SmartPrinter.printElement(element: Element) {
                 if (!field.needsSeparateTransform) continue
                 println()
                 abstract()
-                if (field.fromParent) {
+                if (field.fromParent && field.parentHasSeparateTransform) {
                     print("override ")
                 }
                 println(field.transformFunctionDeclaration(typeWithArguments))

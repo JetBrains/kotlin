@@ -36,7 +36,6 @@ abstract class FirProperty : FirVariable(), FirTypeParametersOwner, FirControlFl
     abstract override val deprecationsProvider: DeprecationsProvider
     abstract override val containerSource: DeserializedContainerSource?
     abstract override val dispatchReceiverType: ConeSimpleKotlinType?
-    abstract override val contextReceivers: List<FirContextReceiver>
     abstract override val name: Name
     abstract override val initializer: FirExpression?
     abstract override val delegate: FirExpression?
@@ -47,6 +46,7 @@ abstract class FirProperty : FirVariable(), FirTypeParametersOwner, FirControlFl
     abstract override val backingField: FirBackingField?
     abstract override val annotations: List<FirAnnotation>
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
+    abstract override val contextReceivers: List<FirContextReceiver>
     abstract override val symbol: FirPropertySymbol
     abstract val delegateFieldSymbol: FirDelegateFieldSymbol?
     abstract val isLocal: Boolean
@@ -67,8 +67,6 @@ abstract class FirProperty : FirVariable(), FirTypeParametersOwner, FirControlFl
 
     abstract override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)
 
-    abstract override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>)
-
     abstract override fun replaceInitializer(newInitializer: FirExpression?)
 
     abstract override fun replaceGetter(newGetter: FirPropertyAccessor?)
@@ -76,6 +74,8 @@ abstract class FirProperty : FirVariable(), FirTypeParametersOwner, FirControlFl
     abstract override fun replaceSetter(newSetter: FirPropertyAccessor?)
 
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
+
+    abstract override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>)
 
     abstract fun replaceBodyResolveState(newBodyResolveState: FirPropertyBodyResolveState)
 
@@ -96,6 +96,8 @@ abstract class FirProperty : FirVariable(), FirTypeParametersOwner, FirControlFl
     abstract override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirProperty
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirProperty
+
+    abstract fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirProperty
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirProperty
 

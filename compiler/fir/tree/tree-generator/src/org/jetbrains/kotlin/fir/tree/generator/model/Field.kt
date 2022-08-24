@@ -17,6 +17,7 @@ sealed class Field : Importable {
 
     var fromParent: Boolean = false
     open var needsSeparateTransform: Boolean = false
+    var parentHasSeparateTransform: Boolean = true
     open var needTransformInOtherChildren: Boolean = false
 
     open val defaultValueInImplementation: String? get() = null
@@ -46,6 +47,7 @@ sealed class Field : Importable {
             copy.useNullableForReplace = useNullableForReplace
         }
         copy.fromParent = fromParent
+        copy.parentHasSeparateTransform = parentHasSeparateTransform
     }
 
     protected abstract fun internalCopy(): Field
