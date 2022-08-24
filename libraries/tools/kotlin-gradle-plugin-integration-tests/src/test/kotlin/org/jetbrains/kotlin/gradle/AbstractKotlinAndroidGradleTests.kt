@@ -1125,6 +1125,31 @@ abstract class AbstractKotlinAndroidGradleTests : BaseGradleIT() {
     }
 
     @Test
+    fun testAndroidExtensionsIncremental() {
+        val project = Project("AndroidExtensionsProject")
+        val options = defaultBuildOptions().copy(incremental = true, useClasspathSnapshot = true)
+
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+            val affectedSources = project.projectDir.getFilesByNames(
+                "MyActivity.kt", "noLayoutUsages.kt"
+            )
+            val relativePaths = project.relativize(affectedSources)
+            assertCompiledKotlinSources(relativePaths)
+        }
+
+        val activityLayout = File(project.projectDir, "app/src/main/res/layout/activity_main.xml")
+        activityLayout.modify { it.replace("textView", "newTextView") }
+
+        project.build("assembleDebug", options = options) {
+            assertFailed()
+            val affectedSources = project.projectDir.getFilesByNames("MyActivity.kt")
+            val relativePaths = project.relativize(affectedSources)
+            assertCompiledKotlinSources(relativePaths)
+        }
+    }
+
+    @Test
     fun testAndroidExtensionsManyVariants() {
         val project = Project("AndroidExtensionsManyVariants")
         val options = defaultBuildOptions().copy(incremental = false)
