@@ -1,6 +1,6 @@
 package
 
-public fun main(): kotlin.Unit
+@kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi::class}) public fun main(): kotlin.Unit
 public fun manipulateWithEnum(/*0*/ x: kotlin.Enum<*>): kotlin.Int
 
 public final external enum class Foo : kotlin.ExternalEnum {
