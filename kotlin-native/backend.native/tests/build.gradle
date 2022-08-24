@@ -2760,6 +2760,11 @@ standaloneTest("stack_trace_inline") {
     outputChecker = { str -> str.split("\n").contains("0") }
 }
 
+standaloneTest("kt-49240-stack-trace-completeness") {
+    disabled = !supportsExceptions(project) || project.globalTestArgs.contains('-opt')
+    source = "runtime/exceptions/kt-49240-stack-trace-completeness.kt"
+}
+
 standaloneTest("stack_trace_out_of_bounds") {
     disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt') || (project.testTarget == 'ios_arm64')
     flags = ['-g', '-Xg-generate-debug-trampoline=enable', '-Xbinary=stripDebugInfoFromNativeLibs=false']

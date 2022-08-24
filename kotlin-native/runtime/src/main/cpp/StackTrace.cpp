@@ -10,6 +10,15 @@
 #elif USE_GCC_UNWIND
 // GCC unwinder for backtrace.
 #include <unwind.h>
+#if __MINGW64__
+#error // GCC unwinder in MinGW64/libgcc has a bugfix only in version 12. With previous libgcc versions, use RTL unwinder instead.
+#endif
+
+#elif USE_WINAPI_UNWIND
+// Use RtlCaptureContext, RtlLookupFunctionEntry, RtlVirtualUnwind
+#include <windows.h>
+#include <winnt.h>
+
 #else
 // Glibc backtrace() function.
 #include <execinfo.h>
@@ -46,11 +55,7 @@ struct Backtrace {
 };
 
 _Unwind_Ptr getUnwindPtr(_Unwind_Context* context) {
-#if (__MINGW32__ || __MINGW64__)
-    return _Unwind_GetRegionStart(context);
-#else
     return _Unwind_GetIP(context);
-#endif
 }
 
 _Unwind_Reason_Code depthCountCallback(struct _Unwind_Context* context, void* arg) {
@@ -76,6 +81,39 @@ _Unwind_Reason_Code unwindCallback(struct _Unwind_Context* context, void* arg) {
 
     return _URC_NO_REASON;
 }
+#elif USE_WINAPI_UNWIND
+// winAPIUnwind() does:
+// - if `result` is not empty -> stores IPs of stacktrace(ignoring first `skipCount` entries) into `result`, and returns amount of stored IPs
+// - if `result` is empty  -> returns depth of stacktrace(ignoring first `skipCount` entries)
+NO_INLINE size_t winAPIUnwind(size_t skipCount, std_support::span<void*> result)
+{
+    size_t resultSize = result.size();
+    bool doStoreIPs = resultSize > 0;
+    size_t currentSize = 0;
+    CONTEXT context = {};
+    context.ContextFlags = CONTEXT_ALL;
+    RtlCaptureContext (&context);
+    do {
+        DWORD64 imageBase = 0;
+        UNWIND_HISTORY_TABLE historyTable = {};
+        PRUNTIME_FUNCTION FunctionEntry = RtlLookupFunctionEntry (context.Rip, &imageBase, &historyTable);
+        if (!FunctionEntry)
+            break;
+        PVOID handlerData = nullptr;
+        ULONG64 establisherFramePointers[2] = { 0, 0 };
+        RtlVirtualUnwind (UNW_FLAG_NHANDLER, imageBase, context.Rip, FunctionEntry, &context, &handlerData, establisherFramePointers, nullptr);
+
+        if (skipCount > 0) {
+            skipCount--;
+        } else {
+            if(doStoreIPs)
+                result[currentSize] = reinterpret_cast<void*>(context.Rip);
+            ++currentSize;
+        }
+    } while (context.Rip != 0 && (currentSize < resultSize || !doStoreIPs));
+
+    return currentSize;
+}
 #endif
 
 THREAD_LOCAL_VARIABLE bool disallowSourceInfo = false;
@@ -96,13 +134,8 @@ NO_INLINE std_support::vector<void*> kotlin::internal::GetCurrentStackTrace(size
     return {};
 #else
 
-#if (__MINGW32__ || __MINGW64__)
-    // Skip GetCurrentStackTrace, _Unwind_Backtrace + anything asked by the caller.
-    const size_t kSkipFrames = 2 + skipFrames;
-#else
     // Skip GetCurrentStackTrace + anything asked by the caller.
     const size_t kSkipFrames = 1 + skipFrames;
-#endif
 
     std_support::vector<void*> result;
 #if USE_GCC_UNWIND
@@ -115,6 +148,13 @@ NO_INLINE std_support::vector<void*> kotlin::internal::GetCurrentStackTrace(size
     _Unwind_Backtrace(unwindCallback, static_cast<void*>(&traceHolder));
     RuntimeAssert(result.size() == traceHolder.currentSize, "Expected and collected sizes of the stacktrace differ");
 
+    return result;
+#elif USE_WINAPI_UNWIND
+    size_t depth = winAPIUnwind(kSkipFrames, std_support::span<void*>());
+    if (depth <= 0) return {};
+    result.resize(depth);
+
+    winAPIUnwind(kSkipFrames, std_support::span<void*>(result.data(), result.size()));
     return result;
 #else
     // Take into account this function and StackTrace::current.
@@ -139,18 +179,15 @@ NO_INLINE size_t kotlin::internal::GetCurrentStackTrace(size_t skipFrames, std_s
     return {};
 #else
 
-#if (__MINGW32__ || __MINGW64__)
-    // Skip GetCurrentStackTrace, _Unwind_Backtrace + anything asked by the caller.
-    const size_t kSkipFrames = 2 + skipFrames;
-#else
     // Skip GetCurrentStackTrace + anything asked by the caller.
     const size_t kSkipFrames = 1 + skipFrames;
-#endif
 
 #if USE_GCC_UNWIND
     Backtrace traceHolder(kSkipFrames, buffer);
     _Unwind_Backtrace(unwindCallback, static_cast<void*>(&traceHolder));
     return traceHolder.currentSize;
+#elif USE_WINAPI_UNWIND
+    return winAPIUnwind(kSkipFrames, buffer);
 #else
     // Take into account this function and StackTrace::current.
     constexpr size_t maxSize = GetMaxStackTraceDepth<StackTraceCapacityKind::kFixed>() + 2;

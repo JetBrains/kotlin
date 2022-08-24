@@ -144,7 +144,7 @@ TEST(StackTraceTest, DeepStackTrace) {
     auto stackTrace = GetDeepStackTrace(knownStackDepth);
     auto symbolicStackTrace = GetStackTraceStrings(stackTrace.data());
 
-#if USE_GCC_UNWIND
+#if USE_GCC_UNWIND || USE_WINAPI_UNWIND
     EXPECT_GE(stackTrace.size(), knownStackDepth);
     size_t lastKnownIndex = knownStackDepth - 1;
 #else
@@ -177,7 +177,7 @@ TEST(StackTraceTest, StackAllocatedDeepTraceWithEnoughCapacity) {
     constexpr size_t capacity = 150;
     auto stackTrace = GetDeepStackTrace<capacity>(knownStackDepth);
 
-#if USE_GCC_UNWIND
+#if USE_GCC_UNWIND || USE_WINAPI_UNWIND
     EXPECT_GE(stackTrace.size(), knownStackDepth);
 #else
     // For platforms where the libc unwind is used (e.g. MacOS) the size of a collected trace is limited (see StackTrace::maxDepth).

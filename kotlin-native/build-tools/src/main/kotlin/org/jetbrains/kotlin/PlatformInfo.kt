@@ -42,6 +42,11 @@ object PlatformInfo {
     }
 
     @JvmStatic
+    fun supportsExceptions(project: Project): Boolean {
+        return getTarget(project).supportsExceptions()
+    }
+
+    @JvmStatic
     fun supportsLibBacktrace(project: Project): Boolean {
         return getTarget(project).supportsLibBacktrace()
     }

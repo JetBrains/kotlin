@@ -72,8 +72,9 @@ fun KonanTarget.supportsCoreSymbolication(): Boolean =
                 KonanTarget.WATCHOS_X86, KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_SIMULATOR_ARM64
         )
 
-fun KonanTarget.supportsGccUnwind(): Boolean = family == Family.ANDROID || family == Family.LINUX || family == Family.MINGW
-
+fun KonanTarget.supportsGccUnwind(): Boolean = family == Family.ANDROID || family == Family.LINUX || this is KonanTarget.MINGW_X86
+// MINGW_X64 target does not support GCC unwind, since its sysroot contains libgcc version < 12 having misfeature, see KT-49240
+fun KonanTarget.supportsWinAPIUnwind(): Boolean = this is KonanTarget.MINGW_X64
 
 fun KonanTarget.supportsThreads(): Boolean = when(this) {
     is KonanTarget.WASM32 -> false
