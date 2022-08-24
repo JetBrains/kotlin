@@ -18,13 +18,17 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.checkers.RttiExpressionChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.RttiExpressionInformation
 import org.jetbrains.kotlin.resolve.calls.checkers.RttiOperation
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ClassLiteralChecker
 
@@ -46,7 +50,7 @@ class JsNativeRttiChecker : RttiExpressionChecker, ClassLiteralChecker {
                     RttiOperation.SAFE_AS -> ErrorsJs.UNCHECKED_CAST_TO_EXTERNAL_INTERFACE.on(reportOn, sourceType, targetType)
                 }
 
-            AnnotationsUtils.isNativeEnum(targetDescriptor) ->
+            AnnotationsUtils.isNativeEnum(targetDescriptor) && !targetDescriptor.getAllSuperClassifiers().any { it.isEnumClass() } ->
                 when (rttiInformation.operation) {
                     RttiOperation.IS,
                     RttiOperation.NOT_IS -> ErrorsJs.CANNOT_CHECK_FOR_EXTERNAL_ENUM.on(reportOn, targetType)
@@ -60,6 +64,9 @@ class JsNativeRttiChecker : RttiExpressionChecker, ClassLiteralChecker {
 
         error?.let { trace.report(error) }
     }
+
+    private fun ClassifierDescriptor.isEnumClass(): Boolean =
+        this is ClassDescriptor && classId == StandardClassIds.Enum
 
     override fun check(expression: KtClassLiteralExpression, type: KotlinType, context: ResolutionContext<*>) {
         val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return
