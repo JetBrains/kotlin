@@ -31,5 +31,17 @@ fun box(): String {
     assertEquals(enumValues<JsEnum>().asList(), listOf(JsEnum.Foo, JsEnum.Bar, JsEnum.Baz))
     assertEquals(JsEnum.values().asList(), listOf(JsEnum.Foo, JsEnum.Bar, JsEnum.Baz))
 
+    assertTrue(JsEnum.Foo == JsEnum.Foo)
+    assertFalse(JsEnum.Foo == JsEnum.Bar)
+
+    assertTrue(JsEnum.Foo.equals(JsEnum.Foo))
+    assertFalse(JsEnum.Foo.equals(JsEnum.Bar))
+
+    assertTrue(JsEnum.Foo.toString() == JsEnum.Foo.toString())
+    assertFalse(JsEnum.Foo.toString() == JsEnum.Bar.toString())
+
+    assertTrue(JsEnum.Foo.hashCode() == JsEnum.Foo.hashCode())
+    assertFalse(JsEnum.Foo.hashCode() == JsEnum.Bar.hashCode())
+
     return "OK"
 }
