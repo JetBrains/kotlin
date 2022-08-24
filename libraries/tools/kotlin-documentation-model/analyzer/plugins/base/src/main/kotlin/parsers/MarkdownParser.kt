@@ -12,6 +12,7 @@ import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.flavours.gfm.GFMTokenTypes
 import org.jetbrains.dokka.base.parsers.factories.DocTagsFromIElementFactory
 import org.jetbrains.dokka.links.DRI
+import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.doc.Suppress
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
@@ -51,7 +52,7 @@ open class MarkdownParser(
                 val dri = externalDri(referencedName)
                 See(
                     parseStringToDocNode(content.substringAfter(' ')),
-                    dri?.fqName() ?: referencedName,
+                    dri?.fqDeclarationName() ?: referencedName,
                     dri
                 )
             }
@@ -59,7 +60,7 @@ open class MarkdownParser(
                 val dri = externalDri(content.substringBefore(' '))
                 Throws(
                     parseStringToDocNode(content.substringAfter(' ')),
-                    dri?.fqName() ?: content.substringBefore(' '),
+                    dri?.fqDeclarationName() ?: content.substringBefore(' '),
                     dri
                 )
             }
@@ -523,7 +524,7 @@ open class MarkdownParser(
                                 val dri = pointedLink(it)
                                 Throws(
                                     parseStringToDocNode(it.getContent()),
-                                    dri?.fqName() ?: it.getSubjectName().orEmpty(),
+                                    dri?.fqDeclarationName() ?: it.getSubjectName().orEmpty(),
                                     dri,
                                 )
                             }
@@ -531,7 +532,7 @@ open class MarkdownParser(
                                 val dri = pointedLink(it)
                                 Throws(
                                     parseStringToDocNode(it.getContent()),
-                                    dri?.fqName() ?: it.getSubjectName().orEmpty(),
+                                    dri?.fqDeclarationName() ?: it.getSubjectName().orEmpty(),
                                     dri
                                 )
                             }
@@ -545,7 +546,7 @@ open class MarkdownParser(
                                 val dri = pointedLink(it)
                                 See(
                                     parseStringToDocNode(it.getContent()),
-                                    dri?.fqName() ?: it.getSubjectName().orEmpty(),
+                                    dri?.fqDeclarationName() ?: it.getSubjectName().orEmpty(),
                                     dri,
                                 )
                             }
@@ -567,7 +568,19 @@ open class MarkdownParser(
         }
 
         //Horrible hack but since link resolution is passed as a function i am not able to resolve them otherwise
+        @kotlin.Suppress("DeprecatedCallableAddReplaceWith")
+        @Deprecated("This function makes wrong assumptions and is missing a lot of corner cases related to generics, " +
+                "parameters and static members. This is not supposed to be public API and will not be supported in the future")
         fun DRI.fqName(): String? = "$packageName.$classNames".takeIf { packageName != null && classNames != null }
+
+        private fun DRI.fqDeclarationName(): String? {
+            if (this.target !is PointingToDeclaration) {
+                return null
+            }
+            return listOfNotNull(this.packageName, this.classNames, this.callable?.name)
+                .joinToString(separator = ".")
+                .takeIf { it.isNotBlank() }
+        }
 
         private fun findParent(kDoc: PsiElement): PsiElement =
             if (kDoc.canHaveParent()) findParent(kDoc.parent) else kDoc
