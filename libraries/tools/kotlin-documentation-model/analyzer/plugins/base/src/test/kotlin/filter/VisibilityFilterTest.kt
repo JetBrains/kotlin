@@ -43,7 +43,8 @@ class VisibilityFilterTest : BaseAbstractTest() {
     fun `should document public`() {
         testVisibility(
             """
-            | class TestClass {
+            | class TestClass<out V> {
+            |     private var privateToThisVisibility: V? = null
             |     val publicProperty: String = "publicProperty"
             |     internal val noise: String = "noise"
             |
