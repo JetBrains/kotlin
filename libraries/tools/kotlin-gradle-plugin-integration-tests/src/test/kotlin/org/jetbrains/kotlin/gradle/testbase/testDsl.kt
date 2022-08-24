@@ -67,9 +67,9 @@ fun KGPBaseTest.project(
         projectPath,
         buildOptions,
         gradleVersion,
-        enableGradleDebug,
-        forceOutput,
-        enableBuildScan
+        forceOutput = forceOutput,
+        enableBuildScan = enableBuildScan,
+        enableGradleDebug = enableGradleDebug,
     )
     localRepoDir?.let { testProject.configureLocalRepository(localRepoDir) }
     if (buildJdk != null) testProject.setupNonDefaultJdk(buildJdk)
