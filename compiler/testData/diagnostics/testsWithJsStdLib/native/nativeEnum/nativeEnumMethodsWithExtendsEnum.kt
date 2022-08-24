@@ -8,10 +8,11 @@ fun manipulateWithEnum(x: Enum<*>): Int {
     return x.ordinal
 }
 
+@OptIn(ExperimentalStdlibApi::class)
 fun main() {
     Foo.values()
     Foo.valueOf("A")
-    Foo.<!UNRESOLVED_REFERENCE!>entries<!>
+    Foo.entries
 
     enumValues<Foo>()
     enumValueOf<Foo>("A")

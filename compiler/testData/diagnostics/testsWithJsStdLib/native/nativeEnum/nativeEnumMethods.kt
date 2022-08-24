@@ -9,6 +9,7 @@ fun manipulateWithEnum(x: Enum<*>): Int {
     return x.ordinal
 }
 
+@OptIn(ExperimentalStdlibApi::class)
 fun main() {
     Foo.values()
     Foo.valueOf("A")

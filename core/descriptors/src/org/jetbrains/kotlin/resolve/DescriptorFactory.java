@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.types.*;
 import java.util.Collections;
 
 import static org.jetbrains.kotlin.builtins.StandardNames.*;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.getContainingModule;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.getDefaultConstructorVisibility;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getClassId;
 
 public class DescriptorFactory {
     private static class DefaultClassConstructorDescriptor extends ClassConstructorDescriptorImpl {
@@ -177,7 +177,8 @@ public class DescriptorFactory {
     public static PropertyDescriptor createEnumEntriesProperty(@NotNull ClassDescriptor enumClass) {
         ClassDescriptor enumEntriesClass = FindClassInModuleKt.findClassAcrossModuleDependencies(getContainingModule(enumClass),
                                                                                                  StandardClassIds.INSTANCE.getEnumEntries());
-        if (enumEntriesClass == null || enumClass.isExternal()) {
+        ClassDescriptor superClass = getSuperClassDescriptor(enumClass);
+        if (enumEntriesClass == null || superClass == null || !getClassId(superClass).equals(StandardClassIds.INSTANCE.getEnum())) {
             return null;
         }
         PropertyDescriptorImpl entries =

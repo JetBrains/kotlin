@@ -17,6 +17,7 @@ public final external enum class Foo1 : kotlin.Enum<Foo1> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<Foo1>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Foo1
     public final /*synthesized*/ fun values(): kotlin.Array<Foo1>
 }
@@ -36,6 +37,7 @@ public final external enum class Foo2 : kotlin.Enum<Foo2> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<Foo2>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Foo2
     public final /*synthesized*/ fun values(): kotlin.Array<Foo2>
 }
