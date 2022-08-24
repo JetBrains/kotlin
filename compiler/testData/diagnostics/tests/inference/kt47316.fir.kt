@@ -30,6 +30,8 @@ fun String.asFsdAddress(): String {
 fun box(): String {
     val state = Test().state
     if (state is GoBuildingRunningState<*>) {
+        // Actually, that code is valid and met at IJ, but unfortunately it was broken since 1.7.0
+        // See KT-52782 and testData/diagnostics/tests/inference/capturedTypes/kt52782.kt
         state.buildingWorkingDirectory.asFsdAddress()
     }
     return "OK"
