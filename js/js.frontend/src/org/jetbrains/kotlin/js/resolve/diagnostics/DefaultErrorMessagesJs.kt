@@ -64,7 +64,9 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.WRONG_JS_QUALIFIER, "Qualifier contains illegal characters")
 
         put(ErrorsJs.CANNOT_CHECK_FOR_EXTERNAL_INTERFACE, "Cannot check for external interface: {0}", RENDER_TYPE)
+        put(ErrorsJs.CANNOT_CHECK_FOR_EXTERNAL_ENUM, "Cannot check for external enum: {0}", RENDER_TYPE)
         put(ErrorsJs.UNCHECKED_CAST_TO_EXTERNAL_INTERFACE, "Unchecked cast to external interface: {0} to {1}", RENDER_TYPE, RENDER_TYPE)
+        put(ErrorsJs.UNCHECKED_CAST_TO_EXTERNAL_ENUM, "Unchecked cast to external enum: {0} to {1}", RENDER_TYPE, RENDER_TYPE)
         put(ErrorsJs.EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT, "Cannot pass external interface {0} for reified type parameter", RENDER_TYPE)
         put(ErrorsJs.EXTERNAL_INTERFACE_AS_CLASS_LITERAL, "Can't refer to external interface from class literal")
         put(ErrorsJs.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE, "External type extends non-external type")

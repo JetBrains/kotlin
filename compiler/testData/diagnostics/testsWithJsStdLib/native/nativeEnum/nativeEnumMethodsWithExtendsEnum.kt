@@ -1,3 +1,4 @@
+// !LANGUAGE: +EnumEntries
 external enum class Foo : Enum<Foo> {
     A,
     B
@@ -10,6 +11,7 @@ fun manipulateWithEnum(x: Enum<*>): Int {
 fun main() {
     Foo.values()
     Foo.valueOf("A")
+    Foo.<!UNRESOLVED_REFERENCE!>entries<!>
 
     enumValues<Foo>()
     enumValueOf<Foo>("A")

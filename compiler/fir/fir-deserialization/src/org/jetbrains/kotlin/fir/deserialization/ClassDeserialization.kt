@@ -188,7 +188,10 @@ fun deserializeClassToSymbol(
                 classId.relativeClassName
             )
             generateValueOfFunction(moduleData, classId.packageFqName, classId.relativeClassName)
-            generateEntriesGetter(moduleData, classId.packageFqName, classId.relativeClassName)
+
+            if (!status.isExternal) {
+                generateEntriesGetter(moduleData, classId.packageFqName, classId.relativeClassName)
+            }
         }
 
         addCloneForArrayIfNeeded(classId, context.dispatchReceiver)

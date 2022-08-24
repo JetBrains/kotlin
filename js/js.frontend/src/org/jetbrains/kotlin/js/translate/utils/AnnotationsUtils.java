@@ -151,6 +151,10 @@ public final class AnnotationsUtils {
         return isNativeObject(descriptor) && DescriptorUtils.isInterface(descriptor);
     }
 
+    public static boolean isNativeEnum(@NotNull DeclarationDescriptor descriptor) {
+        return isNativeObject(descriptor) && DescriptorUtils.isEnumClass(descriptor);
+    }
+
     private static boolean isEffectivelyExternalMember(@NotNull DeclarationDescriptor descriptor) {
         return descriptor instanceof MemberDescriptor && isEffectivelyExternal((MemberDescriptor) descriptor);
     }

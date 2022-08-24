@@ -177,7 +177,7 @@ public class DescriptorFactory {
     public static PropertyDescriptor createEnumEntriesProperty(@NotNull ClassDescriptor enumClass) {
         ClassDescriptor enumEntriesClass = FindClassInModuleKt.findClassAcrossModuleDependencies(getContainingModule(enumClass),
                                                                                                  StandardClassIds.INSTANCE.getEnumEntries());
-        if (enumEntriesClass == null) {
+        if (enumEntriesClass == null || enumClass.isExternal()) {
             return null;
         }
         PropertyDescriptorImpl entries =

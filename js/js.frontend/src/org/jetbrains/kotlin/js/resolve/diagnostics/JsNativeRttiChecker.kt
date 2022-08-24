@@ -33,15 +33,32 @@ class JsNativeRttiChecker : RttiExpressionChecker, ClassLiteralChecker {
         val sourceType = rttiInformation.sourceType
         val targetType = rttiInformation.targetType
         val targetDescriptor = targetType?.constructor?.declarationDescriptor
-        if (sourceType != null && targetDescriptor != null && AnnotationsUtils.isNativeInterface(targetDescriptor)) {
-            when (rttiInformation.operation) {
-                RttiOperation.IS,
-                RttiOperation.NOT_IS -> trace.report(ErrorsJs.CANNOT_CHECK_FOR_EXTERNAL_INTERFACE.on(reportOn, targetType))
 
-                RttiOperation.AS,
-                RttiOperation.SAFE_AS -> trace.report(ErrorsJs.UNCHECKED_CAST_TO_EXTERNAL_INTERFACE.on(reportOn, sourceType, targetType))
-            }
+        if (sourceType == null || targetDescriptor == null) return
+
+        val error = when {
+            AnnotationsUtils.isNativeInterface(targetDescriptor) ->
+                when (rttiInformation.operation) {
+                    RttiOperation.IS,
+                    RttiOperation.NOT_IS -> ErrorsJs.CANNOT_CHECK_FOR_EXTERNAL_INTERFACE.on(reportOn, targetType)
+
+                    RttiOperation.AS,
+                    RttiOperation.SAFE_AS -> ErrorsJs.UNCHECKED_CAST_TO_EXTERNAL_INTERFACE.on(reportOn, sourceType, targetType)
+                }
+
+            AnnotationsUtils.isNativeEnum(targetDescriptor) ->
+                when (rttiInformation.operation) {
+                    RttiOperation.IS,
+                    RttiOperation.NOT_IS -> ErrorsJs.CANNOT_CHECK_FOR_EXTERNAL_ENUM.on(reportOn, targetType)
+
+                    RttiOperation.AS,
+                    RttiOperation.SAFE_AS -> ErrorsJs.UNCHECKED_CAST_TO_EXTERNAL_ENUM.on(reportOn, sourceType, targetType)
+                }
+
+            else -> null
         }
+
+        error?.let { trace.report(error) }
     }
 
     override fun check(expression: KtClassLiteralExpression, type: KotlinType, context: ResolutionContext<*>) {
