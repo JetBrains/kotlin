@@ -88,7 +88,7 @@ public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
         create(probeCompletion)
     else
         createCoroutineFromSuspendFunction(probeCompletion) {
-            (this as Function1<Continuation<T>, Any?>).invoke(it)
+            this.startCoroutineUninterceptedOrReturn(it)
         }
 }
 
@@ -124,7 +124,7 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
         create(receiver, probeCompletion)
     else {
         createCoroutineFromSuspendFunction(probeCompletion) {
-            (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, it)
+            this.startCoroutineUninterceptedOrReturn(receiver, it)
         }
     }
 }
