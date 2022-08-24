@@ -204,6 +204,11 @@ class NaiveSourceBasedFileEntryImpl(
             val index = lineStartOffsets.binarySearch(key)
             return if (index >= 0) index else -index - 2
         }
+
+        @Synchronized
+        override fun get(key: Int?): Int {
+            return super.get(key)
+        }
     }
 
     override fun getLineNumber(offset: Int): Int {
