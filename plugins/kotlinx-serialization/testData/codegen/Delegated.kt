@@ -1,4 +1,4 @@
-// CURIOUS_ABOUT <init>, <clinit>
+// CURIOUS_ABOUT: <init>, <clinit>
 // WITH_STDLIB
 
 import kotlinx.serialization.*

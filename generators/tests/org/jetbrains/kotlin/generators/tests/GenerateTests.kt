@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPluginDiagnosticTest
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
-import org.jetbrains.kotlin.generators.model.AnnotationModel
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.jvm.abi.*
@@ -38,9 +37,6 @@ import org.jetbrains.kotlin.samWithReceiver.*
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJsIrTest
 import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJvmIrTest
-import org.jetbrains.kotlinx.serialization.AbstractSerializationIrBytecodeListingTest
-import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginBytecodeListingTest
-import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginDiagnosticTest
 import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {

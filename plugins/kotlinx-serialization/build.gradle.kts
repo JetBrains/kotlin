@@ -16,14 +16,12 @@ dependencies {
     testApi(project(":compiler:cli"))
     testApi(project(":kotlinx-serialization-compiler-plugin.cli"))
 
-    testApi(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":generators:test-generator"))
-    testApi(commonDependency("junit:junit"))
-    testApiJUnit5(vintageEngine = true)
+    testApiJUnit5()
 
     testImplementation(project(":kotlinx-serialization-compiler-plugin.common"))
     testImplementation(project(":kotlinx-serialization-compiler-plugin.k1"))
@@ -37,6 +35,7 @@ dependencies {
     testRuntimeOnly(intellijCore())
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
+    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 }
 
 optInToExperimentalCompilerApi()
