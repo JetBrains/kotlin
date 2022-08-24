@@ -440,7 +440,7 @@ object ConeTypeCompatibilityChecker {
         val isInterface: Boolean get() = firClass.isInterface
 
         val superClasses: Set<FirClassWithSuperClasses> by lazy {
-            firClass.superConeTypes.mapNotNull { it.lookupTag.toFirClassWithSuperClasses(ctx) }.toSet()
+            firClass.resolvedSuperTypes.mapNotNull { (it as? ConeClassLikeType)?.lookupTag?.toFirClassWithSuperClasses(ctx) }.toSet()
         }
 
         @OptIn(ExperimentalStdlibApi::class)

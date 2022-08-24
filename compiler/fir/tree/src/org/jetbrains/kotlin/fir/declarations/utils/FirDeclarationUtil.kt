@@ -24,12 +24,6 @@ val FirClassLikeDeclaration.classId
 
 val FirClass.classId: ClassId get() = symbol.classId
 
-val FirClassSymbol<*>.superConeTypes: List<ConeClassLikeType>
-    get() = when (this) {
-        is FirRegularClassSymbol -> fir.superConeTypes
-        is FirAnonymousObjectSymbol -> fir.superConeTypes
-    }
-
 val FirClass.superConeTypes: List<ConeClassLikeType> get() = superTypeRefs.mapNotNull { it.coneTypeSafe() }
 
 val FirClass.anonymousInitializers: List<FirAnonymousInitializer>

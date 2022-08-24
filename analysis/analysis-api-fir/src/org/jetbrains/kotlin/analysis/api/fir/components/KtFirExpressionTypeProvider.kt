@@ -48,7 +48,7 @@ internal class KtFirExpressionTypeProvider(
                 val containingClass =
                     (fir.dispatchReceiver as? FirThisReceiverExpression)?.calleeReference?.boundSymbol as? FirClassSymbol<*>
                 if (fir.calleeReference is FirSuperReference && fir.typeRef is FirErrorTypeRef && containingClass != null) {
-                    val superTypes = containingClass.superConeTypes
+                    val superTypes = containingClass.resolvedSuperTypes
                     when (superTypes.size) {
                         0 -> analysisSession.builtinTypes.ANY
                         1 -> superTypes.single().asKtType()
