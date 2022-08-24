@@ -134,6 +134,15 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     public void visitEnd() {
     }
 
+    /**
+     * JVM bytecode format doesn't allow {@code null} as the annotation argument value, so we use the default value of the argument's type
+     * to signify that the argument is absent. So if we read an empty string, for example, we should interpret it as if there was no
+     * value at all.
+     * <p>
+     * If we didn't, it could lead to problems for arguments like {@link ReadKotlinClassHeaderAnnotationVisitor#packageName}
+     * (corresponding to {@link kotlin.Metadata#pn}): the class could be loaded as if it's JVM package name is the default package,
+     * which makes no sense and leads to problems in IDE like KT-39492, KTIJ-18094.
+     */
     private class KotlinMetadataArgumentVisitor implements AnnotationArgumentVisitor {
         @Override
         public void visit(@Nullable Name name, @Nullable Object value) {
@@ -151,7 +160,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                 }
             }
             else if (METADATA_EXTRA_STRING_FIELD_NAME.equals(string)) {
-                if (value instanceof String) {
+                if (value instanceof String && !((String) value).isEmpty()) {
                     extraString = (String) value;
                 }
             }
@@ -161,7 +170,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                 }
             }
             else if (METADATA_PACKAGE_NAME_FIELD_NAME.equals(string)) {
-                if (value instanceof String) {
+                if (value instanceof String && !((String) value).isEmpty()) {
                     packageName = (String) value;
                 }
             }
@@ -191,7 +200,9 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             return new CollectStringArrayAnnotationVisitor() {
                 @Override
                 protected void visitEnd(@NotNull String[] result) {
-                    data = result;
+                    if (result.length > 0) {
+                        data = result;
+                    }
                 }
             };
         }
@@ -201,7 +212,9 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             return new CollectStringArrayAnnotationVisitor() {
                 @Override
                 protected void visitEnd(@NotNull String[] result) {
-                    strings = result;
+                    if (result.length > 0) {
+                        strings = result;
+                    }
                 }
             };
         }
