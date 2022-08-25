@@ -1,4 +1,4 @@
-depends = CFNetwork CoreFoundation CoreGraphics EAGL Foundation Metal Security darwin posix
+depends = CFNetwork CoreFoundation CoreGraphics CoreVideo EAGL Foundation Metal Security darwin posix
 language = Objective-C
 package = platform.QuartzCore
 headers = QuartzCore/QuartzCore.h

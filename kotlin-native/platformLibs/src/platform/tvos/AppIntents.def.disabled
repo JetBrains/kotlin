@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.AppIntents
+
+modules = AppIntents
+compilerOpts = -framework AppIntents
+linkerOpts = -framework AppIntents
+#Disabled: Swift-only framework
