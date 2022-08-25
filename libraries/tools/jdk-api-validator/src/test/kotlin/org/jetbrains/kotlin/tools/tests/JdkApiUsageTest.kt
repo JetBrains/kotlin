@@ -51,6 +51,7 @@ class JdkApiUsageTest {
     private fun checkSignatures(artifact: Path, signatures: Path, logger: Logger) {
         val checker = SignatureChecker(signatures.inputStream(), emptySet(), logger)
         checker.setSourcePath(emptyList())
+        checker.setAnnotationTypes(suppressAnnotations)
         checker.process(artifact.toFile()) // the overload that takes Path can't handle jar files
     }
 
@@ -86,6 +87,11 @@ class JdkApiUsageTest {
         return files.singleOrNull() ?: throw Exception("No single file matching $regex in $base:\n${files.joinToString("\n")}")
     }
 }
+
+private val suppressAnnotations = listOf(
+    "kotlin.reflect.jvm.internal.SuppressAnimalSniffer",
+    "kotlin.jvm.internal.SuppressAnimalSniffer",
+)
 
 private val undefinedReferencesToIgnore = listOf(
     "int Integer.compareUnsigned(int, int)",
