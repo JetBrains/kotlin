@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.js.backend.ast.JsLocation
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsScope
 
@@ -27,7 +28,9 @@ class JsGenerationContext(
     val localNames: LocalNameGenerator? = null,
     private val nameCache: MutableMap<IrElement, JsName> = mutableMapOf(),
     private val useBareParameterNames: Boolean = false,
-): IrNamer by staticContext {
+) : IrNamer by staticContext {
+    private val locationCache = mutableMapOf<Int, JsLocation>()
+
     fun newFile(file: IrFile, func: IrFunction? = null, localNames: LocalNameGenerator? = null): JsGenerationContext {
         return JsGenerationContext(
             currentFile = file,
@@ -79,4 +82,8 @@ class JsGenerationContext(
     fun checkIfJsCode(symbol: IrFunctionSymbol): Boolean = symbol == staticContext.backendContext.intrinsics.jsCode
 
     fun checkIfHasAssociatedJsCode(symbol: IrFunctionSymbol): Boolean = staticContext.backendContext.getJsCodeForFunction(symbol) != null
+
+    fun getLocationFromCache(node: IrElement) = locationCache[node.startOffset]
+
+    fun saveLocationToCache(node: IrElement, location: JsLocation) = locationCache.put(node.startOffset, location)
 }
