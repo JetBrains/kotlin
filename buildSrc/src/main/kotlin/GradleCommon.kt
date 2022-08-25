@@ -114,7 +114,7 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
 
         dependencies {
             compileOnlyConfigurationName(kotlinStdlib())
-            "commonGradleApiCompileOnly"("dev.gradleplugins:gradle-api:7.2")
+            "commonGradleApiCompileOnly"("dev.gradleplugins:gradle-api:7.5")
             if (this@createGradleCommonSourceSet.name != "kotlin-gradle-plugin-api" &&
                 this@createGradleCommonSourceSet.name != "android-test-fixes"
             ) {
