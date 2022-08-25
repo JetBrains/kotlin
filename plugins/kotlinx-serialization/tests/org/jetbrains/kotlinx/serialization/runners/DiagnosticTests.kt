@@ -6,6 +6,7 @@
 package org.jetbrains.kotlinx.serialization.runners
 
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
 import org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest
 import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTest
@@ -15,7 +16,10 @@ import org.jetbrains.kotlinx.serialization.configureForKotlinxSerialization
 abstract class AbstractSerializationPluginDiagnosticTest : AbstractDiagnosticTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.configureForKotlinxSerialization()
+        with(builder) {
+            configureForKotlinxSerialization()
+            disableOptInErrors()
+        }
     }
 }
 
@@ -24,6 +28,7 @@ abstract class AbstractSerializationFirDiagnosticTest : AbstractFirDiagnosticTes
         super.configure(builder)
         with(builder) {
             configureForKotlinxSerialization()
+            disableOptInErrors()
 
             forTestsMatching("*/diagnostics/*") {
                 configurationForClassicAndFirTestsAlongside()
@@ -35,5 +40,11 @@ abstract class AbstractSerializationFirDiagnosticTest : AbstractFirDiagnosticTes
                 }
             }
         }
+    }
+}
+
+private fun TestConfigurationBuilder.disableOptInErrors() {
+    defaultDirectives {
+        DIAGNOSTICS with listOf("-OPT_IN_USAGE", "-OPT_IN_USAGE_ERROR")
     }
 }

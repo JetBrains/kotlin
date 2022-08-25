@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
 // WITH_STDLIB
 // SKIP_TXT
 // !USE_EXPERIMENTAL: kotlinx.serialization.ExperimentalSerializationApi
