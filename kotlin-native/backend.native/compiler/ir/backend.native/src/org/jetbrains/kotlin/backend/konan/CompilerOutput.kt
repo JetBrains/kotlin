@@ -243,7 +243,7 @@ internal fun produceOutput(context: Context) {
 private fun produceKotlinLibrary(context: Context): KonanLibraryLayout {
     val config = context.config.configuration
     val nopack = config.getBoolean(KonanConfigKeys.NOPACK)
-    val output = context.config.outputFiles.klibOutputFileName(!nopack)
+    val output = (context.config.outputFiles as KlibOutputs).klibOutputFileName(!nopack)
     val libraryName = context.config.moduleId
     val shortLibraryName = context.config.shortModuleName
     val neededLibraries = context.librariesWithDependencies

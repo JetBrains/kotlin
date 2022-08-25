@@ -400,9 +400,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val producePerFileCache = libraryToCache?.strategy is CacheDeserializationStrategy.SingleFile
 
-    val outputFiles =
-            OutputFiles(configuration.get(KonanConfigKeys.OUTPUT) ?: cacheSupport.tryGetImplicitOutput(),
-                    target, produce, producePerFileCache)
+    val outputFiles: AbstractOutputs = createOutputFiles()
 
     val tempFiles = TempFiles(outputFiles.outputName, configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR))
 
@@ -427,6 +425,28 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 configuration.report(CompilerMessageSeverity.STRONG_WARNING,
                         "Trying to disable framework binary compilation when producing ${produce.name.lowercase()} is meaningless.")
             }
+        }
+    }
+
+    private fun createOutputFiles(): AbstractOutputs {
+        val outputPath = configuration.get(KonanConfigKeys.OUTPUT) ?: cacheSupport.tryGetImplicitOutput()
+        return when (produce) {
+            CompilerOutputKind.PROGRAM -> {
+                OutputFiles(
+                        outputPath,
+                        target,
+                        produce,
+                        producePerFileCache
+                )
+            }
+            CompilerOutputKind.DYNAMIC -> CLibraryOutputs(outputPath, target, prodice)
+            CompilerOutputKind.STATIC -> CLibraryOutputs(outputPath, target, produce)
+            CompilerOutputKind.FRAMEWORK -> FrameworkOutputs(outputPath, target)
+            CompilerOutputKind.LIBRARY -> KlibOutputs(outputPath, target)
+            CompilerOutputKind.BITCODE -> OutputFiles(outputPath, target, produce, producePerFileCache)
+            CompilerOutputKind.DYNAMIC_CACHE,
+            CompilerOutputKind.STATIC_CACHE,
+            CompilerOutputKind.PRELIMINARY_CACHE -> CacheOutputs(outputPath)
         }
     }
 }

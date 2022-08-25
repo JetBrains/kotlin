@@ -251,14 +251,9 @@ internal class ObjCExport(val context: Context) {
      * Populate framework directory with headers, module and info.plist.
      */
     fun produceFrameworkInterface() {
+        val outputs = context.config.outputFiles as FrameworkOutputs
         exportedInterfaces.forEach { exportedInterface ->
-            val dir = File(context.config.outputFile).parentFile
-            val name = if (!exportedInterface.frameworkName.endsWith(".framework")) {
-                exportedInterface.frameworkName + ".framework"
-            } else {
-                exportedInterface.frameworkName
-            }
-            val frameworkDirectory = dir.child(name)
+            val frameworkDirectory = outputs.directoryForFramework(exportedInterface.frameworkName)
             val properties = context.config.platform.configurables as AppleConfigurables
             // TODO: per-module.
             val mainPackageGuesser = MainPackageGuesser(

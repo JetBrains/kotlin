@@ -36,18 +36,18 @@ internal fun determineLinkerOutput(context: Context): LinkerOutputKind =
 
 internal class CacheStorage(val context: Context) {
     private val isPreliminaryCache = context.config.produce == CompilerOutputKind.PRELIMINARY_CACHE
+    private val outputFiles = context.config.outputFiles as CacheOutputs
 
     fun renameOutput() {
-        val outputFiles = context.config.outputFiles
         // For caches the output file is a directory. It might be created by someone else,
         // we have to delete it in order for the next renaming operation to succeed.
         outputFiles.mainFile.delete()
-        if (!outputFiles.tempCacheDirectory!!.renameTo(outputFiles.mainFile))
+        if (!outputFiles.tempCacheDirectory.renameTo(outputFiles.mainFile))
             outputFiles.tempCacheDirectory.deleteRecursively()
     }
 
     fun saveAdditionalCacheInfo() {
-        context.config.outputFiles.tempCacheDirectory!!.mkdirs()
+        outputFiles.tempCacheDirectory.mkdirs()
         if (!isPreliminaryCache)
             saveCacheBitcodeDependencies()
         if (isPreliminaryCache || context.configuration.get(KonanConfigKeys.FILE_TO_CACHE) == null) {
@@ -64,16 +64,16 @@ internal class CacheStorage(val context: Context) {
                     context.llvmImports.bitcodeIsUsed(it)
                             && it != context.config.cacheSupport.libraryToCache?.klib // Skip loops.
                 }.cast<List<KonanLibrary>>()
-        context.config.outputFiles.bitcodeDependenciesFile!!.writeLines(bitcodeDependencies.map { it.uniqueName })
+        outputFiles.bitcodeDependenciesFile.writeLines(bitcodeDependencies.map { it.uniqueName })
     }
 
     private fun saveInlineFunctionBodies() {
-        context.config.outputFiles.inlineFunctionBodiesFile!!.writeBytes(
+        outputFiles.inlineFunctionBodiesFile.writeBytes(
                 InlineFunctionBodyReferenceSerializer.serialize(context.inlineFunctionBodies))
     }
 
     private fun saveClassFields() {
-        context.config.outputFiles.classFieldsFile!!.writeBytes(
+        outputFiles.classFieldsFile.writeBytes(
                 ClassFieldsSerializer.serialize(context.classFields))
     }
 }

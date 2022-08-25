@@ -521,6 +521,8 @@ private fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescript
 
 internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVisitor<Boolean, Void?> {
 
+    private val outputs = context.config.outputFiles as CLibraryOutputs
+
     private val scopes = mutableListOf<ExportedElementScope>()
     internal val prefix = context.config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
     private lateinit var outputStreamWriter: PrintWriter
@@ -815,7 +817,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
     val exportedSymbols = mutableListOf<String>()
 
     private fun makeGlobalStruct(top: ExportedElementScope) {
-        val headerFile = context.config.outputFiles.cAdapterHeader
+        val headerFile = outputs.cAdapterHeader
         outputStreamWriter = headerFile.printWriter()
 
         val exportedSymbol = "${prefix}_symbols"
@@ -1025,7 +1027,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         outputStreamWriter.close()
 
         if (context.config.target.family == Family.MINGW) {
-            outputStreamWriter = context.config.outputFiles
+            outputStreamWriter = outputs
                     .cAdapterDef
                     .printWriter()
             output("EXPORTS")
