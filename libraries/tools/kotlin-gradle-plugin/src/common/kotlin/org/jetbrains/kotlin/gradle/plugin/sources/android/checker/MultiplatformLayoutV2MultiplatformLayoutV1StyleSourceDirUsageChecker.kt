@@ -55,8 +55,8 @@ internal object MultiplatformLayoutV2MultiplatformLayoutV1StyleSourceDirUsageChe
 
     data class V1StyleSourceDirUsageDiagnostic(
         private val layout: KotlinAndroidSourceSetLayout,
-        private val v1StyleSourceDirInUse: File,
-        private val v2StyleSourceDirToUse: File
+        val v1StyleSourceDirInUse: File,
+        val v2StyleSourceDirToUse: File
     ) : KotlinAndroidSourceSetLayoutChecker.Diagnostic {
         override val message: String
             get() = """

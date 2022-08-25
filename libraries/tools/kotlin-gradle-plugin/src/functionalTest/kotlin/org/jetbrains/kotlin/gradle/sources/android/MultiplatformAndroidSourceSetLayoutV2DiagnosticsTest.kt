@@ -13,10 +13,12 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.android.checker.MultiplatformLayoutV2AndroidStyleSourceDirUsageChecker.AndroidStyleSourceDirUsageDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.sources.android.checker.MultiplatformLayoutV2MultiplatformLayoutV1StyleSourceDirUsageChecker.V1StyleSourceDirUsageDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.sources.android.findAndroidSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.fail
 
 class MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest {
 
@@ -51,7 +53,6 @@ class MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest {
 
     @Test
     fun `test - KT-53709 - androidTest_kotlin in use`() {
-
         val project = buildMinimalAndroidMultiplatformProject()
 
         /* Ensure that the problematic androidTest/kotlin source dir is 'in use' */
@@ -65,5 +66,56 @@ class MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest {
         val diagnostic = assertIsInstance<AndroidStyleSourceDirUsageDiagnostic>(diagnosticsReporter.assertSingleWarning())
         assertEquals(androidTestKotlinSourceDir, diagnostic.androidStyleSourceDirInUse)
         assertEquals(project.file("src/androidInstrumentedTest/kotlin"), diagnostic.kotlinStyleSourceDirToUse)
+    }
+
+    @Test
+    fun `test - android style source dir usage checker`() {
+        val project = buildMinimalAndroidMultiplatformProject()
+        val androidStyleMain = project.file("src/main/kotlin")
+        val androidStyleUnitTest = project.file("src/test/kotlin")
+
+        androidStyleMain.mkdirs()
+        androidStyleUnitTest.mkdirs()
+        project.evaluate()
+
+        project.checkCreatedSourceSets()
+
+        val warnings = diagnosticsReporter.warnings
+        if (warnings.size != 2) fail("Expected exactly two warnings emitted. Found $warnings")
+
+        val androidMainWarning = warnings.filterIsInstance<AndroidStyleSourceDirUsageDiagnostic>()
+            .find { warning -> warning.androidStyleSourceDirInUse == androidStyleMain }
+            ?: fail("Missing warning for '$androidStyleMain'. Found $warnings")
+
+        assertEquals(
+            project.file("src/androidMain/kotlin"), androidMainWarning.kotlinStyleSourceDirToUse
+        )
+
+        val androidUnitTestWarning = warnings.filterIsInstance<AndroidStyleSourceDirUsageDiagnostic>()
+            .find { warning -> warning.androidStyleSourceDirInUse == androidStyleUnitTest }
+            ?: fail("Missing warning for '$androidStyleUnitTest'. Found $warnings")
+
+        assertEquals(
+            project.file("src/androidUnitTest/kotlin"), androidUnitTestWarning.kotlinStyleSourceDirToUse
+        )
+    }
+
+    @Test
+    fun `test - v1 style source dir usage checker`() {
+        val project = buildMinimalAndroidMultiplatformProject()
+        val v1StyleInstrumentedTest = project.file("src/androidAndroidTest/kotlin")
+        v1StyleInstrumentedTest.mkdirs()
+        project.evaluate()
+        project.checkCreatedSourceSets()
+
+        val warning = assertIsInstance<V1StyleSourceDirUsageDiagnostic>(diagnosticsReporter.assertSingleWarning())
+
+        assertEquals(
+            v1StyleInstrumentedTest, warning.v1StyleSourceDirInUse,
+        )
+
+        assertEquals(
+            project.file("src/androidInstrumentedTest/kotlin"), warning.v2StyleSourceDirToUse
+        )
     }
 }
