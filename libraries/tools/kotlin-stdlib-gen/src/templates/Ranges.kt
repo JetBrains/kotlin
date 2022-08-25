@@ -152,31 +152,6 @@ object RangeOps : TemplateGroupBase() {
         }
     }
 
-    val f_rangeUntil = fn("rangeUntil(to: Primitive)").byTwoPrimitives {
-        include(Primitives, integralCombinations + unsignedMappings)
-    } builderWith { (fromType, toType) ->
-        operator()
-        inlineOnly()
-        since("1.7")
-        annotation("@ExperimentalStdlibApi")
-        suppress("EXTENSION_SHADOWED_BY_MEMBER")
-        signature("rangeUntil(to: $toType)")
-
-        val elementType = rangeElementType(fromType, toType)
-        val progressionType = elementType.name + "Range"
-        returns(progressionType)
-
-        doc {
-            """
-            Returns a range from this value up to but excluding the specified [to] value.
-
-            If the [to] value is less than or equal to `this` value, then the returned range is empty.
-            """
-        }
-
-        body { "return until(to)" }
-    }
-
     val f_containsMixedClosed = fn("contains(value: Primitive)").byTwoPrimitives {
         include(Ranges, numericCombinations)
         filter { _, (rangeType, itemType) -> rangeType != itemType }
