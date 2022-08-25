@@ -68,7 +68,7 @@ internal object CompilerArgumentsGradleInput {
         K2JVMCompilerArguments::javaSourceRoots, // handled in inputs
 
         K2JSCompilerArguments::outputFile, // already handled by Gradle task property
-        K2JSCompilerArguments::libraries, // defined by by classpath and friendDependency of the Gradle task
+        K2JSCompilerArguments::libraries, // defined by classpath and friendDependency of the Gradle task
         K2JSCompilerArguments::sourceMapBaseDirs, // defined by sources
         K2JSCompilerArguments::friendModules, // handled by Gradle task friendDependency property
         K2JSCompilerArguments::pluginOptions, // handled specially in the task

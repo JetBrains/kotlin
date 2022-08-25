@@ -74,7 +74,7 @@ open class GeneratorExtensions : StubGeneratorExtensions() {
      * declared and the right-hand side, implying the repeated evaluation of the
      * right-hand side.
      *
-     * When `true`, only the stores to `x` and `y` in the generated code are are
+     * When `true`, only the stores to `x` and `y` in the generated code are
      * given source offsets, the source offsets of `x` and `y` in the original
      * declaration, giving fewer, more accurate steps, that are closer to the JVM
      * backend in behavior.

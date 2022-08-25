@@ -101,7 +101,7 @@ abstract class SingletonDescriptor(val container: ComponentContainer) : Componen
             ComponentState.Corrupted -> {
             } // corrupted component is in the undefined state, ignore
             ComponentState.Null -> {
-            } // it's ok to to remove null component, it may have been never needed
+            } // it's ok to remove null component, it may have been never needed
 
             ComponentState.Initializing ->
                 throw ContainerConsistencyException("The component is being initialized and cannot be disposed.")

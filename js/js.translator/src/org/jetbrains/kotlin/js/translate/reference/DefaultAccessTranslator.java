@@ -40,12 +40,12 @@ public class DefaultAccessTranslator implements AccessTranslator {
     @NotNull
     @Override
     public JsExpression translateAsSet(@NotNull JsExpression setTo) {
-        throw new UnsupportedOperationException("This method is not meant to be supported in in DefaultAccessTranslator");
+        throw new UnsupportedOperationException("This method is not meant to be supported in DefaultAccessTranslator");
     }
 
     @NotNull
     @Override
     public AccessTranslator getCached() {
-        throw new UnsupportedOperationException("This method is not meant to be supported in in DefaultAccessTranslator");
+        throw new UnsupportedOperationException("This method is not meant to be supported in DefaultAccessTranslator");
     }
 }

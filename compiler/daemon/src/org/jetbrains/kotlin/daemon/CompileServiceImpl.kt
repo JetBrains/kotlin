@@ -435,7 +435,7 @@ abstract class CompileServiceImplBase(
                     log.info(it)
                 }
 
-                // this will only be reported if if appropriate (e.g. ByClass) profiler is used
+                // this will only be reported if appropriate (e.g. ByClass) profiler is used
                 for ((obj, counters) in rpcProfiler.getCounters()) {
                     "PERF: rpc by $obj: ${counters.count} calls, ${counters.time.ms()} ms, thread ${counters.threadTime.ms()} ms".let {
                         daemonMessageReporter.report(ReportSeverity.INFO, it)

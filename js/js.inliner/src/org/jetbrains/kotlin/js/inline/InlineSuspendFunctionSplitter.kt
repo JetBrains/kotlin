@@ -37,7 +37,7 @@ class InlineSuspendFunctionSplitter(
             return false
         }
 
-        // Is it `wrapFunction(...)`? Which means it'a a private inline function
+        // Is it `wrapFunction(...)`? Which means it's a private inline function
         InlineMetadata.tryExtractFunction(x)?.let { fn ->
             if (fn.function.coroutineMetadata != null) {
                 // This function will be exported to JS

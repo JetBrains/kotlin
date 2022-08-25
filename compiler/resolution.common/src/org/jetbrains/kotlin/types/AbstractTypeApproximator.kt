@@ -258,7 +258,7 @@ abstract class AbstractTypeApproximator(
 
             // Important note that from the point of type system first type is more specific:
             // Here, approximation of KClass<Cap<out A!>> is a type KClass<T> such that KClass<Cap<out A!>> <: KClass<out T> =>
-            // So, the the more specific type for T would be "some non-null (because of declared upper bound type) subtype of A", which is `out A`
+            // So, the more specific type for T would be "some non-null (because of declared upper bound type) subtype of A", which is `out A`
 
             // But for now, to reduce differences in behaviour of old and new inference, we'll approximate such types to `KClass<out A!>`
 

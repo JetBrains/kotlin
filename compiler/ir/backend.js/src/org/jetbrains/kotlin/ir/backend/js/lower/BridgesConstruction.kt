@@ -119,7 +119,7 @@ abstract class BridgesConstruction<T : JsCommonBackendContext>(val context: T) :
         return result
     }
 
-    // Ported from from jvm.lower.BridgeLowering
+    // Ported from jvm.lower.BridgeLowering
     private fun createBridge(
         function: IrSimpleFunction,
         bridge: IrSimpleFunction,

@@ -47,7 +47,7 @@ import kotlin.script.templates.ScriptTemplateDefinition
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 // TODO: the contetnts of this file should go into ScriptTest.kt and replace appropriate xml-based functionality,
-// as soon as the the latter is removed from the codebase
+// as soon as the latter is removed from the codebase
 
 class ScriptTemplateTest : TestCase() {
     fun testScriptWithParam() {

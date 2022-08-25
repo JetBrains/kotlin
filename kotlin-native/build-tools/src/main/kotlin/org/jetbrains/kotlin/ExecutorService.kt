@@ -213,7 +213,7 @@ private fun emulatorExecutor(project: Project, target: KonanTarget) = object : E
         action.execute(this)
 
         val exe = executable
-        // TODO: Move these to konan.properties when when it will be possible
+        // TODO: Move these to konan.properties when it will be possible
         //  to represent absolute path there.
         val qemuSpecificArguments = listOf("-L", absoluteTargetSysRoot)
         val targetSpecificArguments = when (target) {

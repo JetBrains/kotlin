@@ -17,7 +17,7 @@ fun test1(x: String?) {
     if (p != null) {
         run2(
             { p = null; n() },
-            { <!SMARTCAST_IMPOSSIBLE!>p<!>.length; 123 } // Bad: may or may not not be called first
+            { <!SMARTCAST_IMPOSSIBLE!>p<!>.length; 123 } // Bad: may or may not be called first
         )
         p<!UNSAFE_CALL!>.<!>length // Bad: p = null
     }
@@ -27,7 +27,7 @@ fun test1_tail(x: String?) {
     var p = x
     if (p != null) {
         run2({ p = null; n() }) {
-            <!SMARTCAST_IMPOSSIBLE!>p<!>.length // Bad: may or may not not be called first
+            <!SMARTCAST_IMPOSSIBLE!>p<!>.length // Bad: may or may not be called first
             123
         }
         p<!UNSAFE_CALL!>.<!>length // Bad: p = null

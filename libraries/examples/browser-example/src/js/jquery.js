@@ -2911,7 +2911,7 @@ jQuery.event = {
 			if ( (!special._default || special._default.call( elem.ownerDocument, event ) === false) &&
 				!(type === "click" && jQuery.nodeName( elem, "a" )) && jQuery.acceptData( elem ) ) {
 
-				// Call a native DOM method on the target with the same name name as the event.
+				// Call a native DOM method on the target with the same name as the event.
 				// Can't use an .isFunction)() check here because IE6/7 fails that test.
 				// IE<9 dies on focus to hidden element (#1486), may want to revisit a try/catch.
 				try {
