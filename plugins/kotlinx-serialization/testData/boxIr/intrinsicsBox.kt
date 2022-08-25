@@ -7,6 +7,7 @@ import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import kotlinx.serialization.internal.*
 import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.modules.*
 
 @Serializable
 class Simple(val firstName: String, val lastName: String)
@@ -17,16 +18,18 @@ data class Box<out T>(val boxed: T)
 @Serializable
 object SerializableObject {}
 
-inline fun <reified T : Any> getSer(): KSerializer<T> {
-    return serializer<T>()
+val module = SerializersModule {}
+
+inline fun <reified T: Any> getSer(module: SerializersModule): KSerializer<T> {
+    return module.serializer<T>()
 }
 
-inline fun <reified T : Any> getBoxSer(): KSerializer<Box<T>> {
-    return serializer<Box<T>>()
+inline fun <reified T : Any> getBoxSer(module: SerializersModule): KSerializer<Box<T>> {
+    return module.serializer<Box<T>>()
 }
 
-inline fun <reified T : Any> listSer(): KSerializer<List<T>> {
-    return serializer<List<T>>()
+inline fun <reified T : Any> listSer(module: SerializersModule): KSerializer<List<T>> {
+    return module.serializer<List<T>>()
 }
 
 fun SerialDescriptor.recursiveToString(): String {
@@ -46,17 +49,17 @@ fun assertHasSerializers(kSerializer: KSerializer<*>, list: List<String>) {
 
 fun box(): String {
     assertHasSerializers(serializer<Simple>(), listOf("Simple"))
-    assertHasSerializers(getSer<Simple>(), listOf("Simple"))
+    assertHasSerializers(getSer<Simple>(module), listOf("Simple"))
 
-    assertHasSerializers(getSer<Box<Simple>>(), listOf("Box", "Simple"))
-    assertHasSerializers(getBoxSer<Simple>(), listOf("Box", "Simple"))
+    assertHasSerializers(getSer<Box<Simple>>(module), listOf("Box", "Simple"))
+    assertHasSerializers(getBoxSer<Simple>(module), listOf("Box", "Simple"))
 
-    assertHasSerializers(listSer<Simple>(), listOf("ArrayList", "Simple"))
+    assertHasSerializers(listSer<Simple>(module), listOf("ArrayList", "Simple"))
     assertHasSerializers(serializer<Box<List<Simple>>>(), listOf("Box", "ArrayList", "Simple"))
-    assertHasSerializers(listSer<Box<List<Simple>>>(), listOf("ArrayList", "Box", "ArrayList", "Simple"))
+    assertHasSerializers(listSer<Box<List<Simple>>>(module), listOf("ArrayList", "Box", "ArrayList", "Simple"))
 
     assertHasSerializers(serializer<Int>(), listOf("Int"))
     assertHasSerializers(serializer<SerializableObject>(), listOf("SerializableObject"))
-    assertHasSerializers(listSer<List<Box<Int>>>(), listOf("ArrayList", "ArrayList", "Box", "Int"))
+    assertHasSerializers(listSer<List<Box<Int>>>(module), listOf("ArrayList", "ArrayList", "Box", "Int"))
     return "OK"
 }

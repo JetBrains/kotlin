@@ -5,6 +5,10 @@ plugins {
     id("jps-compatible")
 }
 
+repositories {
+    mavenLocal()
+}
+
 dependencies {
     embedded(project(":kotlinx-serialization-compiler-plugin.common"))
     embedded(project(":kotlinx-serialization-compiler-plugin.k1"))

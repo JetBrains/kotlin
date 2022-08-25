@@ -139,8 +139,7 @@ open class SerializationLoweringExtension @JvmOverloads constructor(
     }
 
     override fun retrieveIntrinsic(symbol: IrFunctionSymbol): Any? {
-        if (!SerializationJvmIrIntrinsicSupport.isSerializerReifiedFunction(symbol.owner)) return null
-        return SerializationJvmIrIntrinsicSupport.ReifiedSerializerMethod
+        return SerializationJvmIrIntrinsicSupport.intrinsicForMethod(symbol.owner)
     }
 
     override fun applyPluginDefinedReifiedOperationMarker(
