@@ -46,3 +46,17 @@ pluginManagement {
         id("com.gradle.plugin-publish") version "0.20.0"
     }
 }
+
+val isCiBuild = System.getenv("GITHUB_ACTIONS") != null || System.getenv("TEAMCITY_VERSION") != null
+
+plugins {
+    `gradle-enterprise`
+}
+
+gradleEnterprise {
+    buildScan {
+        termsOfServiceUrl = "https://gradle.com/terms-of-service"
+        termsOfServiceAgree = "yes"
+        publishAlwaysIf(isCiBuild)
+    }
+}
