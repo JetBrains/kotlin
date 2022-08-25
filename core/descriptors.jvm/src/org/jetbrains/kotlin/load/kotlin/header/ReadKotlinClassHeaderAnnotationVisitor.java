@@ -200,9 +200,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             return new CollectStringArrayAnnotationVisitor() {
                 @Override
                 protected void visitEnd(@NotNull String[] result) {
-                    if (result.length > 0) {
-                        data = result;
-                    }
+                    data = result;
                 }
             };
         }
@@ -212,9 +210,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             return new CollectStringArrayAnnotationVisitor() {
                 @Override
                 protected void visitEnd(@NotNull String[] result) {
-                    if (result.length > 0) {
-                        strings = result;
-                    }
+                    strings = result;
                 }
             };
         }
