@@ -65,7 +65,10 @@ sealed class ClangArgs(
                     "USE_PE_COFF_SYMBOLS=1".takeIf { target.binaryFormat() == BinaryFormat.PE_COFF },
                     "UNICODE".takeIf { target.family == Family.MINGW },
                     "USE_WINAPI_UNWIND=1".takeIf { target.supportsWinAPIUnwind() },
-                    "USE_GCC_UNWIND=1".takeIf { target.supportsGccUnwind() }
+                    "USE_GCC_UNWIND=1".takeIf { target.supportsGccUnwind() },
+                    // Clang 11 does not support this attribute. We don't need to handle it properly,
+                    // so just undefine it.
+                    "NS_FORMAT_ARGUMENT(A)=".takeIf { target.family.isAppleFamily },
             )
             val customOptions = target.customArgsForKonanSources()
             return (konanOptions + otherOptions + customOptions).map { "-D$it" }
