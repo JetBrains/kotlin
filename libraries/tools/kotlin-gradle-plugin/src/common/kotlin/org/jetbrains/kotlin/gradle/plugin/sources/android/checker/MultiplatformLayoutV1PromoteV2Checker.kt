@@ -24,12 +24,12 @@ internal object MultiplatformLayoutV1PromoteV2Checker : KotlinAndroidSourceSetLa
         if (target.project.kotlinPropertiesProvider.ignoreMppAndroidSourceSetLayoutVersion) return
         runCatching {
             if (MultiplatformLayoutV2AgpRequirementChecker.isAgpRequirementMet()) {
-                diagnosticReporter.warning(PromoteV2LayoutDiagnostic())
+                diagnosticReporter.warning(PromoteV2LayoutDiagnostic)
             }
         }
     }
 
-    class PromoteV2LayoutDiagnostic : KotlinAndroidSourceSetLayoutChecker.Diagnostic {
+    object PromoteV2LayoutDiagnostic : KotlinAndroidSourceSetLayoutChecker.Diagnostic {
         override val message: String
             get() = """
                 ${multiplatformAndroidSourceSetLayoutV1.name} is deprecated. Use ${multiplatformAndroidSourceSetLayoutV2.name} instead. 
@@ -39,5 +39,7 @@ internal object MultiplatformLayoutV1PromoteV2Checker : KotlinAndroidSourceSetLa
                 To suppress this warning: put the following in your gradle.properties:
                 ${PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION_1_NO_WARN}=true
             """.trimIndent()
+
+        override fun toString(): String = "PromoteV2LayoutDiagnostic"
     }
 }

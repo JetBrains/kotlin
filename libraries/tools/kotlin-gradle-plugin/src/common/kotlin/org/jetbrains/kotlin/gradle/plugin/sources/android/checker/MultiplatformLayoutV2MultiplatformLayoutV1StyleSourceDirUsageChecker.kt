@@ -45,7 +45,7 @@ internal object MultiplatformLayoutV2MultiplatformLayoutV1StyleSourceDirUsageChe
         }
     }
 
-    class V1StyleSourceDirUsageDiagnostic(
+    data class V1StyleSourceDirUsageDiagnostic(
         private val layout: KotlinAndroidSourceSetLayout,
         private val v1StyleSourceDirInUse: File,
         private val v2StyleSourceDirToUse: File

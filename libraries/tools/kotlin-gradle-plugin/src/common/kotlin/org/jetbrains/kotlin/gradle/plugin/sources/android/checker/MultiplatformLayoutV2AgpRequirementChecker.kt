@@ -28,7 +28,7 @@ internal object MultiplatformLayoutV2AgpRequirementChecker : KotlinAndroidSource
         return compareVersionNumbers(Version.ANDROID_GRADLE_PLUGIN_VERSION, AGP_VERSION_MIN) >= 0
     }
 
-    internal class AgpRequirementNotMetDiagnostic(
+    internal data class AgpRequirementNotMetDiagnostic(
         val requiredMinAgpVersion: String,
         val currentAgpVersion: String
     ) : KotlinAndroidSourceSetLayoutChecker.Diagnostic {

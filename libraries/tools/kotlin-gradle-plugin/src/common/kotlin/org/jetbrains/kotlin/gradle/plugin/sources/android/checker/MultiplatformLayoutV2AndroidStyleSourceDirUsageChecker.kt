@@ -31,9 +31,9 @@ internal object MultiplatformLayoutV2AndroidStyleSourceDirUsageChecker : KotlinA
         }
     }
 
-    class AndroidStyleSourceDirUsageDiagnostic(
-        private val androidStyleSourceDirInUse: File,
-        private val kotlinStyleSourceDirToUse: File
+    data class AndroidStyleSourceDirUsageDiagnostic(
+        val androidStyleSourceDirInUse: File,
+        val kotlinStyleSourceDirToUse: File
     ) : KotlinAndroidSourceSetLayoutChecker.Diagnostic {
         override val message: String
             get() = """
