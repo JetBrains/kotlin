@@ -14,18 +14,28 @@ internal object MultiplatformLayoutV2AgpRequirementChecker : KotlinAndroidSource
 
     private const val AGP_VERSION_MIN = "7.0.0"
 
-    override fun checkBeforeLayoutApplied(target: KotlinAndroidTarget, layout: KotlinAndroidSourceSetLayout) {
+    override fun checkBeforeLayoutApplied(
+        diagnosticReporter: KotlinAndroidSourceSetLayoutChecker.DiagnosticReporter,
+        target: KotlinAndroidTarget,
+        layout: KotlinAndroidSourceSetLayout
+    ) {
         if (!isAgpRequirementMet()) {
-            throw KotlinAndroidSourceSetLayoutChecker.ProjectMisconfiguredException(
-                """
-                    ${layout.name} requires Android Gradle Plugin Version >= $AGP_VERSION_MIN.
-                    Found ${Version.ANDROID_GRADLE_PLUGIN_VERSION}
-                """.trimIndent()
-            )
+            diagnosticReporter.error(AgpRequirementNotMetDiagnostic(AGP_VERSION_MIN, Version.ANDROID_GRADLE_PLUGIN_VERSION))
         }
     }
 
     internal fun isAgpRequirementMet(): Boolean {
         return compareVersionNumbers(Version.ANDROID_GRADLE_PLUGIN_VERSION, AGP_VERSION_MIN) >= 0
+    }
+
+    internal class AgpRequirementNotMetDiagnostic(
+        val requiredMinAgpVersion: String,
+        val currentAgpVersion: String
+    ) : KotlinAndroidSourceSetLayoutChecker.Diagnostic {
+        override val message: String
+            get() = """
+                requires Android Gradle Plugin Version >= $requiredMinAgpVersion.
+                Found $currentAgpVersion
+            """.trimIndent()
     }
 }
