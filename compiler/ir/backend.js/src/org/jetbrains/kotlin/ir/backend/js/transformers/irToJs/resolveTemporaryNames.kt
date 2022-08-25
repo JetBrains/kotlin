@@ -78,7 +78,6 @@ private fun JsNode.computeScopes(): Scope {
             x.name?.let { currentScope.declaredNames += it }
             val oldScope = currentScope
             currentScope = Scope().apply {
-                parent = currentScope
                 currentScope.children += this
             }
             currentScope.declaredNames += x.parameters.map { it.name }
@@ -114,7 +113,6 @@ private fun JsNode.computeScopes(): Scope {
 }
 
 private class Scope {
-    var parent: Scope? = null
     val declaredNames = mutableSetOf<JsName>()
     val usedNames = mutableSetOf<JsName>()
     val children = mutableSetOf<Scope>()

@@ -83,7 +83,7 @@ class NewNamerImpl(
     val context: JsIrBackendContext,
     val unit: IrToJs.CodegenUnit,
     val exportId: (IrDeclarationWithName) -> String,
-    val stableNames: Set<String>,
+    stableNames: Set<String>,
 ) : IrNamerBase() {
     val staticNames = NameTable<IrDeclaration>(
         reserved = stableNames.toMutableSet()
