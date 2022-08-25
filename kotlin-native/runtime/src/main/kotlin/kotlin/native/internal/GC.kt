@@ -49,6 +49,7 @@ object GC {
      * Legacy MM: Request global cyclic collector, operation is async and just triggers the collection.
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_collectCyclic")
+    @Deprecated("No-op in modern GC implementation")
     external fun collectCyclic()
 
     /**
@@ -66,6 +67,7 @@ object GC {
      * Legacy MM: Resume garbage collection. Can potentially lead to GC immediately.
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_resume")
+    @Deprecated("No-op in modern GC implementation")
     external fun resume()
 
     /**
@@ -74,6 +76,7 @@ object GC {
      * Legacy MM: Stop garbage collection. Cyclical garbage is no longer collected.
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_stop")
+    @Deprecated("No-op in modern GC implementation")
     external fun stop()
 
     /**
@@ -83,6 +86,7 @@ object GC {
      * cannot be reclaimed, but all new garbage is collected.
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_start")
+    @Deprecated("No-op in modern GC implementation")
     external fun start()
 
     /**
@@ -114,6 +118,7 @@ object GC {
      *
      * @throws [IllegalArgumentException] when value is not positive.
      */
+    @Deprecated("No-op in modern GC implementation")
     var collectCyclesThreshold: Long
         get() = getCollectCyclesThreshold()
         set(value) {
@@ -157,6 +162,7 @@ object GC {
      *
      * Legacy MM: If cyclic collector for atomic references to be deployed.
      */
+    @Deprecated("No-op in modern GC implementation")
     var cyclicCollectorEnabled: Boolean
         get() = getCyclicCollectorEnabled()
         set(value) = setCyclicCollectorEnabled(value)
@@ -261,6 +267,7 @@ object GC {
      * leak detector availability.
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_detectCycles")
+    @Deprecated("No-op in modern GC implementation")
     external fun detectCycles(): Array<Any>?
 
     /**
@@ -269,6 +276,7 @@ object GC {
      * Legacy MM: Find a reference cycle including from the given object, `null` if no cycles detected.
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_findCycle")
+    @Deprecated("No-op in modern GC implementation")
     external fun findCycle(root: Any): Array<Any>?
 
     @GCUnsafeCall("Kotlin_native_internal_GC_getThreshold")
