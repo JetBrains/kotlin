@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigur
 import org.jetbrains.kotlin.gradle.targets.metadata.ResolvedMetadataFilesProvider
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import org.jetbrains.kotlin.gradle.utils.getValue
-import org.jetbrains.kotlin.gradle.utils.notCompatibleWithConfigurationCache
+import org.jetbrains.kotlin.gradle.utils.notCompatibleWithConfigurationCacheCompat
 import java.io.File
 import javax.inject.Inject
 
@@ -36,7 +36,9 @@ open class MetadataDependencyTransformationTask
 ) : DefaultTask() {
 
     init {
-        notCompatibleWithConfigurationCache("Task $name does not support Gradle Configuration Cache. Check KT-49933 for more info")
+        notCompatibleWithConfigurationCacheCompat(
+            "Task $name does not support Gradle Configuration Cache. Check KT-49933 for more info"
+        )
     }
 
     @get:OutputDirectory
