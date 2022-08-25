@@ -1,0 +1,31 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    repositories {
+        mavenLocal()
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath('com.android.tools.build:gradle:' + android_tools_version)
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+subprojects { project ->
+    project.plugins.withId('com.android.application') {
+        boolean enableVariantFilter = properties.containsKey("enableVariantFilter")
+        if (enableVariantFilter) {
+            logger.quiet("enableVariantFilter")
+            android {
+                variantFilter { variant ->
+                    variant.ignore = variant.buildType.name != 'debug'
+                }
+            }
+        }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
