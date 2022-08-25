@@ -282,11 +282,6 @@ internal object CompilationSourceSetUtil {
 
         return compilationNamesBySourceSetName.get()
     }
-
-    fun sourceSetsInMultipleCompilations(project: Project) =
-        compilationsBySourceSets(project).mapNotNullTo(mutableSetOf()) { (sourceSet, compilations) ->
-            sourceSet.name.takeIf { compilations.size > 1 }
-        }
 }
 
 private val invalidModuleNameCharactersRegex = """[\\/\r\n\t]""".toRegex()

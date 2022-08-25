@@ -287,7 +287,9 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
                 addSourcesToCompileTask(
                     sourceSet,
                     addAsCommonSources = lazy {
-                        CompilationSourceSetUtil.sourceSetsInMultipleCompilations(project).contains(sourceSet.name)
+                        target.project.kotlinExtension.sourceSets.any { otherSourceSet ->
+                            sourceSet in otherSourceSet.dependsOn
+                        }
                     }
                 )
 
