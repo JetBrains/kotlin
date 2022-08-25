@@ -406,10 +406,8 @@ internal val bitcodePhase = NamedCompilerPhase(
                 createLLVMDeclarationsPhase then
                 ghaPhase then
                 RTTIPhase then
-                generateDebugInfoHeaderPhase then
                 escapeAnalysisPhase then
                 codegenPhase then
-                finalizeDebugInfoPhase then
                 cStubsPhase
 )
 
@@ -544,10 +542,6 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         disableUnless(rewriteExternalCallsCheckerGlobals, getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
         disableUnless(stringConcatenationTypeNarrowingPhase, config.optimizationsEnabled)
         disableUnless(optimizeTLSDataLoadsPhase, config.optimizationsEnabled)
-        if (!config.debug && !config.lightDebug) {
-            disable(generateDebugInfoHeaderPhase)
-            disable(finalizeDebugInfoPhase)
-        }
         if (!config.involvesLinkStage) {
             disable(bitcodePostprocessingPhase)
             disable(linkBitcodeDependenciesPhase)

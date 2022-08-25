@@ -40,12 +40,6 @@ internal val RTTIPhase = makeKonanModuleOpPhase(
         }
 )
 
-internal val generateDebugInfoHeaderPhase = makeKonanModuleOpPhase(
-        name = "GenerateDebugInfoHeader",
-        description = "Generate debug info header",
-        op = { context, _ -> generateDebugInfoHeader(context) }
-)
-
 internal val buildDFGPhase = makeKonanModuleOpPhase(
         name = "BuildDFG",
         description = "Data flow graph building",
@@ -253,13 +247,12 @@ internal val escapeAnalysisPhase = makeKonanModuleOpPhase(
 internal val codegenPhase = makeKonanModuleOpPhase(
         name = "Codegen",
         description = "Code generation",
-        op = { context, irModule -> irModule.acceptVoid(CodeGeneratorVisitor(context, context.lifetimes)) }
-)
+        op = { context, irModule ->
+            irModule.acceptVoid(CodeGeneratorVisitor(context, context.lifetimes))
 
-internal val finalizeDebugInfoPhase = makeKonanModuleOpPhase(
-        name = "FinalizeDebugInfo",
-        description = "Finalize debug info",
-        op = { context, _ -> DIFinalize(context.generationState.debugInfo.builder) }
+            if (context.generationState.hasDebugInfo())
+                DIFinalize(context.generationState.debugInfo.builder)
+        }
 )
 
 internal val cStubsPhase = makeKonanModuleOpPhase(

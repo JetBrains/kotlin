@@ -759,7 +759,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         private val scope by lazy {
             if (!context.shouldContainLocationDebugInfo() || declaration == null)
                 return@lazy null
-            declaration.scope() ?: llvmFunction.scope(0, subroutineType(context, codegen.llvmTargetData, listOf(context.irBuiltIns.intType)))
+            declaration.scope() ?: llvmFunction.scope(0, debugInfo.subroutineType(codegen.llvmTargetData, listOf(context.irBuiltIns.intType)))
         }
 
         private val fileScope = (fileScope() as? FileScope)
@@ -1453,7 +1453,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             is IrVariable -> if (shouldGenerateDebugInfo(element)) debugInfoLocalVariableLocation(
                     builder       = debugInfo.builder,
                     functionScope = locationInfo.scope,
-                    diType        = element.type.diType(context, codegen.llvmTargetData),
+                    diType        = with(debugInfo) { element.type.diType(codegen.llvmTargetData) },
                     name          = element.debugNameConversion(),
                     file          = file,
                     line          = locationInfo.line,
@@ -1462,7 +1462,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             is IrValueParameter -> debugInfoParameterLocation(
                     builder       = debugInfo.builder,
                     functionScope = locationInfo.scope,
-                    diType        = element.type.diType(context, codegen.llvmTargetData),
+                    diType        = with(debugInfo) { element.type.diType(codegen.llvmTargetData) },
                     name          = element.debugNameConversion(),
                     argNo         = function.allParameters.indexOf(element) + 1,
                     file          = file,
@@ -2188,31 +2188,33 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun debugFieldDeclaration(expression: IrField) {
         val scope = currentCodeContext.classScope() as? ClassScope ?: return
         if (!scope.isExported || !context.shouldContainDebugInfo()) return
-        val irFile = (currentCodeContext.fileScope() as FileScope).file
-        val sizeInBits = expression.type.size(context)
-        scope.offsetInBits += sizeInBits
-        val alignInBits = expression.type.alignment(context)
-        scope.offsetInBits = alignTo(scope.offsetInBits, alignInBits)
-        @Suppress("UNCHECKED_CAST")
-        scope.members.add(DICreateMemberType(
-                refBuilder   = debugInfo.builder,
-                refScope     = scope.scope as DIScopeOpaqueRef,
-                name         = expression.computeSymbolName(),
-                file         = irFile.file(),
-                lineNum      = expression.startLine(),
-                sizeInBits   = sizeInBits,
-                alignInBits  = alignInBits,
-                offsetInBits = scope.offsetInBits,
-                flags        = 0,
-                type         = expression.type.diType(context, codegen.llvmTargetData)
-        )!!)
+        with(debugInfo) {
+            val irFile = (currentCodeContext.fileScope() as FileScope).file
+            val sizeInBits = expression.type.size
+            scope.offsetInBits += sizeInBits
+            val alignInBits = expression.type.alignment
+            scope.offsetInBits = alignTo(scope.offsetInBits, alignInBits)
+            @Suppress("UNCHECKED_CAST")
+            scope.members.add(DICreateMemberType(
+                    refBuilder = builder,
+                    refScope = scope.scope as DIScopeOpaqueRef,
+                    name = expression.computeSymbolName(),
+                    file = irFile.file(),
+                    lineNum = expression.startLine(),
+                    sizeInBits = sizeInBits,
+                    alignInBits = alignInBits,
+                    offsetInBits = scope.offsetInBits,
+                    flags = 0,
+                    type = expression.type.diType(codegen.llvmTargetData)
+            )!!)
+        }
     }
 
 
     //-------------------------------------------------------------------------//
     private fun IrFile.file(): DIFileRef {
         return debugInfo.files.getOrPut(this.fileEntry.name) {
-            val path = this.fileEntry.name.toFileAndFolder(context)
+            val path = this.fileEntry.name.toFileAndFolder(context.config)
             DICreateFile(debugInfo.builder, path.file, path.folder)!!
         }
     }
@@ -2244,23 +2246,25 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             this is IrSimpleFunction && isSuspend -> this.getOrCreateFunctionWithContinuationStub(context).let { codegen.llvmFunctionOrNull(it)?.llvmValue }
             else -> codegen.llvmFunctionOrNull(this)?.llvmValue
         }
-        return if (functionLlvmValue != null) {
-            debugInfo.subprograms.getOrPut(functionLlvmValue) {
-                memScoped {
-                    val subroutineType = subroutineType(context, codegen.llvmTargetData)
-                    diFunctionScope(name.asString(), functionLlvmValue.name!!, startLine, subroutineType).also {
-                        if (!this@scope.isInline)
-                            DIFunctionAddSubprogram(functionLlvmValue, it)
+        return with(debugInfo) {
+            if (functionLlvmValue != null) {
+                subprograms.getOrPut(functionLlvmValue) {
+                    memScoped {
+                        val subroutineType = subroutineType(codegen.llvmTargetData)
+                        diFunctionScope(name.asString(), functionLlvmValue.name!!, startLine, subroutineType).also {
+                            if (!this@scope.isInline)
+                                DIFunctionAddSubprogram(functionLlvmValue, it)
+                        }
                     }
-                }
-            } as DIScopeOpaqueRef
-        } else {
-            debugInfo.inlinedSubprograms.getOrPut(this) {
-                memScoped {
-                    val subroutineType = subroutineType(context, codegen.llvmTargetData)
-                    diFunctionScope(name.asString(), "<inlined-out:$name>", startLine, subroutineType)
-                }
-            } as DIScopeOpaqueRef
+                } as DIScopeOpaqueRef
+            } else {
+                inlinedSubprograms.getOrPut(this@scope) {
+                    memScoped {
+                        val subroutineType = subroutineType(codegen.llvmTargetData)
+                        diFunctionScope(name.asString(), "<inlined-out:$name>", startLine, subroutineType)
+                    }
+                } as DIScopeOpaqueRef
+            }
         }
 
     }
