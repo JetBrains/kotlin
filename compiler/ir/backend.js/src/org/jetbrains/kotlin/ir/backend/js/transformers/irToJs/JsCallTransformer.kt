@@ -31,7 +31,7 @@ class JsCallTransformer(private val jsOrJsFuncCall: IrCall, private val context:
             0 -> JsEmpty
             1 -> newStatements.single().withSource(jsOrJsFuncCall, context)
             // TODO: use transparent block (e.g. JsCompositeBlock)
-            else -> JsCompositeBlock().apply { statements += newStatements }
+            else -> JsCompositeBlock(newStatements)
         }
     }
 

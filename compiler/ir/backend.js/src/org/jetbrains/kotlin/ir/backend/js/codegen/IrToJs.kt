@@ -423,7 +423,7 @@ private val IrModuleFragment.jsModuleName: String
     get() = name.asString().dropWhile { it == '<' }.dropLastWhile { it == '>' }
 
 private fun List<JsStatement>.toJsCodeString(): String =
-    JsCompositeBlock().also { it.statements += this }.toString()
+    JsCompositeBlock(this).toString()
 
 enum class JsGenerationGranularity {
     WHOLE_PROGRAM,
