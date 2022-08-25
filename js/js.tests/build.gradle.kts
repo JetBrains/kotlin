@@ -169,7 +169,11 @@ fun sequential(first: Task, tasks: List<Task>): Task {
 }
 
 fun generateTypeScriptTestFor(dir: String): Task = task<NpmTask>("generate-ts-for-$dir") {
+    val baseDir = fileTree(testDataDir.resolve("./typescript-export/$dir"))
+
     workingDir.set(testDataDir)
+    inputs.files(baseDir.include("*.ts"))
+    outputs.files(baseDir.include("*.js"))
     args.set(listOf("run", "generateTypeScriptTests", "--", "./typescript-export/$dir/tsconfig.json"))
 }
 
