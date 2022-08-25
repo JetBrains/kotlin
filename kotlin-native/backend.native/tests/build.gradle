@@ -2761,7 +2761,8 @@ standaloneTest("stack_trace_inline") {
 }
 
 standaloneTest("kt-49240-stack-trace-completeness") {
-    disabled = !supportsExceptions(project) || project.globalTestArgs.contains('-opt')
+    disabled = !supportsExceptions(project) || project.globalTestArgs.contains('-opt') ||
+            project.testTarget == 'linux_mips32' // https://youtrack.jetbrains.com/issue/KT-48949/Linux-MIPS32-libbacktrace-stacktrace-has-no-lines
     source = "runtime/exceptions/kt-49240-stack-trace-completeness.kt"
 }
 
