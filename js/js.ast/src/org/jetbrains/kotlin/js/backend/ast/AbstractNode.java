@@ -16,16 +16,30 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor;
 import org.jetbrains.kotlin.js.backend.ast.metadata.HasMetadata;
+import org.jetbrains.kotlin.js.backend.ast.metadata.HasMetadataImpl;
 import org.jetbrains.kotlin.js.util.TextOutputImpl;
 
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
-abstract class AbstractNode extends HasMetadata implements JsNode {
-    private List<JsComment> commentsBefore = null;
-    private List<JsComment> commentsAfter = null;
+abstract class AbstractNode implements JsNode, HasMetadata {
+    private static class Internals extends HasMetadataImpl {
+        List<JsComment> commentsBefore = null;
+        List<JsComment> commentsAfter = null;
+    }
+
+    private Internals internals = null;
+
+    private Internals getInternals() {
+        if (internals == null) {
+            internals = new Internals();
+        }
+        return internals;
+    }
 
     @Override
     public String toString() {
@@ -48,21 +62,56 @@ abstract class AbstractNode extends HasMetadata implements JsNode {
 
     @Override
     public List<JsComment> getCommentsBeforeNode() {
-        return commentsBefore;
+        return internals == null ? null : internals.commentsBefore;
     }
 
     @Override
     public List<JsComment> getCommentsAfterNode() {
-        return commentsAfter;
+        return internals == null ? null : internals.commentsAfter;
     }
 
     @Override
     public void setCommentsBeforeNode(List<JsComment> comments) {
-        commentsBefore = comments;
+        getInternals().commentsBefore = comments;
     }
 
     @Override
     public void setCommentsAfterNode(List<JsComment> comments) {
-        commentsAfter = comments;
+        getInternals().commentsAfter = comments;
+    }
+
+    @Override
+    public <T> T getData(@NotNull String key) {
+        return getInternals().getData(key);
+    }
+
+    @Override
+    public <T> void setData(@NotNull String key, T value) {
+        getInternals().setData(key, value);
+    }
+
+    @Override
+    public boolean hasData(@NotNull String key) {
+        return internals != null && internals.hasData(key);
+    }
+
+    @Override
+    public void removeData(@NotNull String key) {
+        if (internals != null) {
+            internals.removeData(key);
+        }
+    }
+
+    @Override
+    public void copyMetadataFrom(@NotNull HasMetadata other) {
+        if (!other.getRawMetadata().isEmpty()) {
+            getInternals().copyMetadataFrom(other);
+        }
+    }
+
+    @NotNull
+    @Override
+    public Map<String, Object> getRawMetadata() {
+        return internals != null ? internals.getRawMetadata() : Collections.emptyMap();
     }
 }
