@@ -629,7 +629,6 @@ public class DefaultErrorMessages {
                                                "See https://youtrack.jetbrains.com/issue/KT-49276 for more details. " +
                                                "Please specify a progression type of argument explicitly through explicit cast to resolve to a proper declaration", COMPACT);
         MAP.put(EXPRESSION_AFTER_TYPE_REFERENCE_WITHOUT_SPACING_NOT_ALLOWED, "Expression body directly after type without a whitespace in-between the '>=' is only allowed since version 1.8");
-        MAP.put(TYPE_ARGUMENT_LIST_LIKE_EXPRESSION, "Type argument list like expressions are only allowed since version 1.8");
 
         MAP.put(TOO_MANY_ARGUMENTS, "Too many arguments for {0}", FQ_NAMES_IN_TYPES);
 

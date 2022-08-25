@@ -37,48 +37,57 @@ KtFile: complicateLTGT.kt
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
         CONDITION
-          BINARY_EXPRESSION
+          CALL_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('x')
             PsiWhiteSpace(' ')
-            TYPE_ARGUMENT_LIST_LIKE_EXPRESSION
-              <empty list>
-            OPERATION_REFERENCE
+            TYPE_ARGUMENT_LIST
               PsiElement(LT)('<')
-            PsiWhiteSpace(' ')
-            PARENTHESIZED
-              PsiElement(LPAR)('(')
-              IF
-                PsiElement(if)('if')
-                PsiWhiteSpace(' ')
-                PsiElement(LPAR)('(')
-                CONDITION
-                  BINARY_EXPRESSION
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('y')
-                    PsiWhiteSpace(' ')
-                    OPERATION_REFERENCE
-                      PsiElement(GT)('>')
-                    PsiWhiteSpace(' ')
-                    INTEGER_CONSTANT
-                      PsiElement(INTEGER_LITERAL)('115')
-                PsiElement(RPAR)(')')
-                PsiWhiteSpace(' ')
-                THEN
-                  INTEGER_CONSTANT
-                    PsiElement(INTEGER_LITERAL)('1')
-                PsiWhiteSpace(' ')
-                PsiElement(else)('else')
-                PsiWhiteSpace(' ')
-                ELSE
-                  INTEGER_CONSTANT
-                    PsiElement(INTEGER_LITERAL)('2')
-              PsiElement(RPAR)(')')
-        PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  FUNCTION_TYPE
+                    VALUE_PARAMETER_LIST
+                      PsiElement(LPAR)('(')
+                      VALUE_PARAMETER
+                        TYPE_REFERENCE
+                          PsiErrorElement:Type expected
+                            PsiElement(if)('if')
+                      PsiErrorElement:Expecting comma or ')'
+                        <empty list>
+                      PsiWhiteSpace(' ')
+                      PsiErrorElement:Expecting ')'
+                        PsiElement(LPAR)('(')
+                    PsiErrorElement:Expecting '->' to specify return type of a function type
+                      <empty list>
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('y')
+              PsiWhiteSpace(' ')
+              PsiElement(GT)('>')
+        PsiErrorElement:Expecting ')
+          <empty list>
         PsiWhiteSpace(' ')
         THEN
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('115')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace(' ')
+        PsiElement(else)('else')
+        PsiWhiteSpace(' ')
+        PsiElement(INTEGER_LITERAL)('2')
+        PsiElement(RPAR)(')')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      LAMBDA_EXPRESSION
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
           BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
+            <empty list>
+          PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

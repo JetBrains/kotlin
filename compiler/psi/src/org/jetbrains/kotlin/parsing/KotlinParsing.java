@@ -105,21 +105,6 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private final static TokenSet EOL_OR_SEMICOLON_RBRACE_SET = TokenSet.create(EOL_OR_SEMICOLON, RBRACE);
     private final static TokenSet CLASS_INTERFACE_SET = TokenSet.create(CLASS_KEYWORD, INTERFACE_KEYWORD);
 
-    private static final TokenSet TYPE_ARGUMENT_LIST_RECOVERY_SET = TokenSet.create(
-            INTEGER_LITERAL, FLOAT_LITERAL, CHARACTER_LITERAL, OPEN_QUOTE,
-            PACKAGE_KEYWORD, AS_KEYWORD, TYPE_ALIAS_KEYWORD, INTERFACE_KEYWORD, CLASS_KEYWORD, THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
-            FUN_KEYWORD, FOR_KEYWORD, NULL_KEYWORD,
-            TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD,
-            CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD, TRY_KEYWORD, ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD,
-            WHEN_KEYWORD, RBRACKET, RBRACE, RPAR, PLUSPLUS, MINUSMINUS, EXCLEXCL,
-            //            MUL,
-            PLUS, MINUS, EXCL, DIV, PERC, LTEQ,
-            GTEQ, GT, EQEQEQ, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR, SAFE_ACCESS, ELVIS,
-            SEMICOLON, RANGE, RANGE_UNTIL, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ, NOT_IN, NOT_IS,
-            COLONCOLON,
-            COLON
-    );
-
     static KotlinParsing createForTopLevel(SemanticWhitespaceAwarePsiBuilder builder) {
         return new KotlinParsing(builder, true);
     }
@@ -210,7 +195,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     void parseTypeCodeFragment() {
         PsiBuilder.Marker marker = mark();
-        parseTypeRef(/* partOfExpression */ false);
+        parseTypeRef();
 
         checkForUnexpectedSymbols();
 
@@ -729,7 +714,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         if (myExpressionParsing.isAtLabelDefinitionOrMissingIdentifier()) {
             myExpressionParsing.parseLabelDefinition();
         }
-        parseTypeRef(/* partOfExpression */ false);
+        parseTypeRef();
         contextReceiver.done(CONTEXT_RECEIVER);
     }
 
@@ -954,11 +939,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         PsiBuilder.Marker reference = mark();
         PsiBuilder.Marker typeReference = mark();
-        parseUserType(/* partOfExpression */ false);
+        parseUserType();
         typeReference.done(TYPE_REFERENCE);
         reference.done(CONSTRUCTOR_CALLEE);
 
-        parseTypeArgumentList(/* partOfExpression */ false);
+        parseTypeArgumentList();
 
         boolean whitespaceAfterAnnotation = WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(-1));
         boolean shouldBeParsedNextAsFunctionalType = at(LPAR) && whitespaceAfterAnnotation && mode.withSignificantWhitespaceBeforeArguments;
@@ -1440,7 +1425,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         expect(EQ, "Expecting '='", TOP_LEVEL_DECLARATION_FIRST_SEMICOLON_SET);
 
-        parseTypeRef(/* partOfExpression */ false);
+        parseTypeRef();
 
         consumeIf(SEMICOLON);
 
@@ -1512,7 +1497,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             noTypeReference = false;
             PsiBuilder.Marker type = mark();
             advance(); // COLON
-            parseTypeRef(/* partOfExpression */ false);
+            parseTypeRef();
             errorIf(type, multiDeclaration, "Type annotations are not allowed on destructuring declarations");
         }
 
@@ -1614,7 +1599,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
                 if (at(COLON)) {
                     advance(); // COLON
-                    parseTypeRef(follow, /* partOfExpression */ false);
+                    parseTypeRef(follow);
                 }
                 property.done(DESTRUCTURING_DECLARATION_ENTRY);
 
@@ -1709,7 +1694,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
                 if (at(COLON)) {
                     advance(); // COLON
-                    parseTypeRef(/* partOfExpression */ false);
+                    parseTypeRef();
                 }
                 setterParameter.done(VALUE_PARAMETER);
                 if (at(COMMA)) {
@@ -1729,7 +1714,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         if (at(COLON)) {
             advance();
 
-            parseTypeRef(/* partOfExpression */ false);
+            parseTypeRef();
         }
 
         if (propertyComponentKind != PropertyComponentKind.FIELD) {
@@ -1823,7 +1808,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         if (at(COLON)) {
             advance(); // COLON
 
-            parseTypeRef(/* partOfExpression */ false);
+            parseTypeRef();
         }
 
         boolean functionContractOccurred = parseFunctionContract();
@@ -1866,7 +1851,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         if (!receiverPresent) return false;
 
-        createTruncatedBuilder(lastDot).parseTypeRefWithoutIntersections(/* partOfExpression */ false);
+        createTruncatedBuilder(lastDot).parseTypeRefWithoutIntersections();
 
         if (atSet(RECEIVER_TYPE_TERMINATORS)) {
             advance(); // expectation
@@ -2007,7 +1992,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private void parseDelegationSpecifier() {
         PsiBuilder.Marker delegator = mark();
         PsiBuilder.Marker reference = mark();
-        parseTypeRef(/* partOfExpression */ false);
+        parseTypeRef();
 
         if (at(BY_KEYWORD)) {
             reference.drop();
@@ -2118,7 +2103,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         expect(COLON, "Expecting ':' before the upper bound", LBRACE_RBRACE_TYPE_REF_FIRST_SET);
 
-        parseTypeRef(/* partOfExpression */ false);
+        parseTypeRef();
 
         constraint.done(TYPE_CONSTRAINT);
     }
@@ -2150,7 +2135,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         if (at(COLON)) {
             advance(); // COLON
-            parseTypeRef(/* partOfExpression */ false);
+            parseTypeRef();
         }
 
         mark.done(TYPE_PARAMETER);
@@ -2173,30 +2158,26 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : typeReference "?"
      *   ;
      */
-    void parseTypeRef(boolean partOfExpression) {
-        parseTypeRef(TokenSet.EMPTY, partOfExpression);
+    void parseTypeRef() {
+        parseTypeRef(TokenSet.EMPTY);
     }
 
-    void parseTypeRefWithoutIntersections(boolean partOfExpression) {
-        parseTypeRef(TokenSet.EMPTY, partOfExpression, /* allowSimpleIntersectionTypes */ false);
+    void parseTypeRefWithoutIntersections() {
+        parseTypeRef(TokenSet.EMPTY, /* allowSimpleIntersectionTypes */ false);
     }
 
-    void parseTypeRef(TokenSet extraRecoverySet, boolean partOfExpression) {
-        parseTypeRef(extraRecoverySet, partOfExpression, /* allowSimpleIntersectionTypes */ true);
+    void parseTypeRef(TokenSet extraRecoverySet) {
+        parseTypeRef(extraRecoverySet, /* allowSimpleIntersectionTypes */ true);
     }
 
-    private void parseTypeRef(TokenSet extraRecoverySet, boolean partOfExpression, boolean allowSimpleIntersectionTypes) {
-        PsiBuilder.Marker typeRefMarker = parseTypeRefContents(extraRecoverySet, partOfExpression, allowSimpleIntersectionTypes);
+    private void parseTypeRef(TokenSet extraRecoverySet, boolean allowSimpleIntersectionTypes) {
+        PsiBuilder.Marker typeRefMarker = parseTypeRefContents(extraRecoverySet, allowSimpleIntersectionTypes);
         typeRefMarker.done(TYPE_REFERENCE);
     }
 
     // The extraRecoverySet is needed for the foo(bar<x, 1, y>(z)) case, to tell whether we should stop
     // on expression-indicating symbols or not
-    private PsiBuilder.Marker parseTypeRefContents(
-            TokenSet extraRecoverySet,
-            boolean partOfExpression,
-            boolean allowSimpleIntersectionTypes
-    ) {
+    private PsiBuilder.Marker parseTypeRefContents(TokenSet extraRecoverySet, boolean allowSimpleIntersectionTypes) {
         PsiBuilder.Marker typeRefMarker = mark();
 
         parseTypeModifierList();
@@ -2222,14 +2203,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
             dynamicType.done(DYNAMIC_TYPE);
         }
         else if (at(IDENTIFIER) || at(PACKAGE_KEYWORD) || atParenthesizedMutableForPlatformTypes(0)) {
-            parseUserType(partOfExpression);
+            parseUserType();
         }
         else if (at(LPAR)) {
             PsiBuilder.Marker functionOrParenthesizedType = mark();
 
             // This may be a function parameter list or just a parenthesized type
             advance(); // LPAR
-            parseTypeRefContents(TokenSet.EMPTY, /* partOfExpression */ false, /* allowSimpleIntersectionTypes */ true).drop(); // parenthesized types, no reference element around it is needed
+            parseTypeRefContents(TokenSet.EMPTY, /* allowSimpleIntersectionTypes */ true).drop(); // parenthesized types, no reference element around it is needed
 
             if (at(RPAR) && lookahead(1) != ARROW) {
                 // It's a parenthesized type
@@ -2271,7 +2252,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             leftTypeRef.done(TYPE_REFERENCE);
 
             advance(); // &
-            parseTypeRef(extraRecoverySet, /* allowSimpleIntersectionTypes */ false, true /* partOfExpression */);
+            parseTypeRef(extraRecoverySet, /* allowSimpleIntersectionTypes */ true);
 
             intersectionType.done(INTERSECTION_TYPE);
             wasIntersection = true;
@@ -2336,7 +2317,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *    - (Mutable)List<Foo>!
      *    - Array<(out) Foo>!
      */
-    private void parseUserType(boolean partOfExpression) {
+    private void parseUserType() {
         PsiBuilder.Marker userType = mark();
 
         if (at(PACKAGE_KEYWORD)) {
@@ -2359,7 +2340,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 break;
             }
 
-            parseTypeArgumentList(partOfExpression);
+            parseTypeArgumentList();
 
             recoverOnPlatformTypeSuffix();
 
@@ -2429,71 +2410,19 @@ public class KotlinParsing extends AbstractKotlinParsing {
     /*
      *  (optionalProjection type){","}
      */
-    private void parseTypeArgumentList(boolean partOfExpression) {
+    private void parseTypeArgumentList() {
         if (!at(LT)) return;
 
-        PsiBuilder.Marker typeArgumentList = mark();
+        PsiBuilder.Marker list = mark();
 
-        TypeArgumentListKind kind = tryParseTypeArgumentList();
+        tryParseTypeArgumentList(TokenSet.EMPTY);
 
-        if (kind == TypeArgumentListKind.NONE && partOfExpression) {
-            typeArgumentList.rollbackTo();
-
-            mark().done(TYPE_ARGUMENT_LIST_LIKE_EXPRESSION);
-            return;
-        }
-
-        // Type argument lists that appear inside of expressions might also be comparisons:
-        // some(a as Int < 3, y > z)
-        if (kind == TypeArgumentListKind.FAULTY_TYPE_ARGUMENT_LIST && partOfExpression) {
-            typeArgumentList.rollbackTo();
-
-            if (myExpressionParsing.isAtConditionalExpression()) {
-                mark().done(TYPE_ARGUMENT_LIST_LIKE_EXPRESSION);
-                return;
-            }
-
-            typeArgumentList = mark();
-
-            tryParseTypeArgumentList();
-        }
-
-        typeArgumentList.done(TYPE_ARGUMENT_LIST);
+        list.done(TYPE_ARGUMENT_LIST);
     }
 
-    /**
-     * Tries to parse a section into a type argument list and reports how successful the attempt was.
-     * <p>
-     * The returned value of the method indicates to what degree the parsed section can be considered a type
-     * argument list.
-     * <p>
-     * {@link TypeArgumentListKind#TYPE_ARGUMENT_LIST} states the section should most likely be considered as
-     * a type argument list. This is the case, if any of the following conditions apply:
-     * <ul>
-     *  <li> the type argument list contains no syntax errors.
-     *  <li> the type argument list is empty
-     * </ul>
-     * <p>
-     * {@link TypeArgumentListKind#FAULTY_TYPE_ARGUMENT_LIST} indicates that the section may be considered as
-     * a type argument list. This is the case, if any of the following conditions apply:
-     * <ul>
-     *  <li> the sections contains syntax errors, but ends with a '>'
-     * </ul>
-     * <p>
-     * {@link TypeArgumentListKind#NONE} indicates that the section must not be considered as a type argument
-     * list. This is the case, if none of the above cases apply.
-     */
-    TypeArgumentListKind tryParseTypeArgumentList() {
-        assert _at(LT) : "caller must check that current token is LT";
-
-        PsiBuilder.Marker errorScope = mark();
-
+    boolean tryParseTypeArgumentList(TokenSet extraRecoverySet) {
         myBuilder.disableNewlines();
         advance(); // LT
-
-        // Even if the type argument list is empty, we still want to "try" to parse it in
-        // order to get error highlighting for the missing type
-        boolean empty = at(GT) || at(GTEQ);
 
         while (true) {
             PsiBuilder.Marker projection = mark();
@@ -2508,46 +2437,25 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 advance(); // MUL
             }
             else {
-                parseTypeRef(TYPE_ARGUMENT_LIST_RECOVERY_SET, /* partOfExpression */ false);
+                parseTypeRef(extraRecoverySet);
             }
             projection.done(TYPE_PROJECTION);
-
             if (!at(COMMA)) break;
             advance(); // COMMA
-            if (at(GT) || at(GTEQ)) break;
+            if (at(GT)) {
+                break;
+            }
         }
-
-        myBuilder.disableJoiningComplexTokens();
 
         boolean atGT = at(GT);
-
-        if (atGT) {
-            advance(); // GT
-        }
-        else {
+        if (!atGT) {
             error("Expecting a '>'");
         }
-
-        myBuilder.restoreJoiningComplexTokensState();
-
-        myBuilder.restoreNewlinesState();
-
-        boolean success = !myBuilder.hasErrorsAfter(errorScope);
-        errorScope.drop();
-
-        if (success || empty) {
-            return TypeArgumentListKind.TYPE_ARGUMENT_LIST;
-        }
-        else if (atGT) {
-            return TypeArgumentListKind.FAULTY_TYPE_ARGUMENT_LIST;
-        }
         else {
-            return TypeArgumentListKind.NONE;
+            advance(); // GT
         }
-    }
-
-    public enum TypeArgumentListKind {
-        TYPE_ARGUMENT_LIST, FAULTY_TYPE_ARGUMENT_LIST, NONE,
+        myBuilder.restoreNewlinesState();
+        return atGT;
     }
 
     /*
@@ -2565,7 +2473,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         parseValueParameterList(true, /* typeRequired  = */ true, TokenSet.EMPTY);
 
         expect(ARROW, "Expecting '->' to specify return type of a function type", TYPE_REF_FIRST);
-        parseTypeRef(/* partOfExpression */ false);
+        parseTypeRef();
 
         return functionType;
     }
@@ -2605,7 +2513,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                     if (!tryParseValueParameter(typeRequired)) {
                         PsiBuilder.Marker valueParameter = mark();
                         parseFunctionTypeValueParameterModifierList();
-                        parseTypeRef(/* partOfExpression */ false);
+                        parseTypeRef();
                         closeDeclarationWithCommentBinders(valueParameter, VALUE_PARAMETER, false);
                     }
                 }
@@ -2685,7 +2593,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             else {
                 noErrors = false;
             }
-            parseTypeRef(/* partOfExpression */ false);
+            parseTypeRef();
         }
         else {
             expect(IDENTIFIER, "Parameter name expected", PARAMETER_NAME_RECOVERY_SET);
@@ -2700,7 +2608,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                     return false;
                 }
 
-                parseTypeRef(/* partOfExpression */ false);
+                parseTypeRef();
             }
             else if (typeRequired) {
                 errorWithRecovery("Parameters must have type annotation", PARAMETER_NAME_RECOVERY_SET);
