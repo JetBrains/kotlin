@@ -456,6 +456,16 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             runTest("compiler/testData/psi/IncompleteFunctionLiteral.kt");
         }
 
+        @TestMetadata("incorrectLTGTFallback.kt")
+        public void testIncorrectLTGTFallback() throws Exception {
+            runTest("compiler/testData/psi/incorrectLTGTFallback.kt");
+        }
+
+        @TestMetadata("incorrectLTGTFallback_ERR.kt")
+        public void testIncorrectLTGTFallback_ERR() throws Exception {
+            runTest("compiler/testData/psi/incorrectLTGTFallback_ERR.kt");
+        }
+
         @TestMetadata("Inner.kt")
         public void testInner() throws Exception {
             runTest("compiler/testData/psi/Inner.kt");

@@ -1,0 +1,115 @@
+KtFile: incorrectLTGTFallback_ERR.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PsiComment(EOL_COMMENT)('// ISSUE: KT-53719')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('main')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      BINARY_EXPRESSION
+        BINARY_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo')
+          TYPE_ARGUMENT_LIST_LIKE_EXPRESSION
+            <empty list>
+          OPERATION_REFERENCE
+            PsiElement(LT)('<')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Int')
+        OPERATION_REFERENCE
+          PsiElement(GT)('>')
+        PsiWhiteSpace(' ')
+        LABELED_EXPRESSION
+          LABEL_QUALIFIER
+            LABEL
+              PsiElement(IDENTIFIER)('label')
+              PsiElement(AT)('@')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      BINARY_EXPRESSION
+        BINARY_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo')
+          TYPE_ARGUMENT_LIST_LIKE_EXPRESSION
+            <empty list>
+          OPERATION_REFERENCE
+            PsiElement(LT)('<')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Int')
+        OPERATION_REFERENCE
+          PsiElement(GT)('>')
+        PsiWhiteSpace(' ')
+        LABELED_EXPRESSION
+          LABEL_QUALIFIER
+            LABEL
+              PsiElement(IDENTIFIER)('label')
+              PsiElement(AT)('@')
+          PsiWhiteSpace(' ')
+          PARENTHESIZED
+            PsiElement(LPAR)('(')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('2')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      BINARY_EXPRESSION
+        BINARY_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo')
+          TYPE_ARGUMENT_LIST_LIKE_EXPRESSION
+            <empty list>
+          OPERATION_REFERENCE
+            PsiElement(LT)('<')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Int')
+        OPERATION_REFERENCE
+          PsiElement(GT)('>')
+        PsiWhiteSpace(' ')
+        LABELED_EXPRESSION
+          LABEL_QUALIFIER
+            LABEL
+              PsiElement(IDENTIFIER)('label')
+              PsiElement(AT)('@')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('3')
+      PsiWhiteSpace('\n    ')
+      BINARY_EXPRESSION
+        BINARY_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo')
+          TYPE_ARGUMENT_LIST_LIKE_EXPRESSION
+            <empty list>
+          OPERATION_REFERENCE
+            PsiElement(LT)('<')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Int')
+        OPERATION_REFERENCE
+          PsiElement(GT)('>')
+        PsiWhiteSpace(' ')
+        LABELED_EXPRESSION
+          LABEL_QUALIFIER
+            LABEL
+              PsiElement(IDENTIFIER)('label')
+              PsiElement(AT)('@')
+          PARENTHESIZED
+            PsiElement(LPAR)('(')
+            LAMBDA_EXPRESSION
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
+                BLOCK
+                  <empty list>
+                PsiElement(RBRACE)('}')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

@@ -31423,6 +31423,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             public void testComplicatedLTGTE() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/syntax/complicatedLTGTE.kt");
             }
+
+            @Test
+            @TestMetadata("incorrectLTGTFallback.kt")
+            public void testIncorrectLTGTFallback() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/syntax/incorrectLTGTFallback.kt");
+            }
         }
 
         @Nested

@@ -704,7 +704,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             return true;
         }
         // IDENTIFIER "@" "{"
-        else if (_at(IDENTIFIER) && myBuilder.rawLookup(1) == AT && myBuilder.rawLookup(2) == LBRACE) {
+        else if (_at(IDENTIFIER) && myBuilder.rawLookup(1) == AT && lookahead(2) == LBRACE) {
             return true;
         }
         // "@"
