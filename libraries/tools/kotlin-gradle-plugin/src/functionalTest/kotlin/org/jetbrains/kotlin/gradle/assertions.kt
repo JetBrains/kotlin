@@ -91,3 +91,8 @@ fun Project.assertNotContainsDependencies(configurationName: String, vararg depe
         "Unexpected dependencies '$foundUnexpectedDependencies' found in configuration '$configurationName'"
     )
 }
+
+inline fun <reified T> assertIsInstance(value: Any?): T {
+    if (value is T) return value
+    fail("Expected $value to implement ${T::class.java}")
+}

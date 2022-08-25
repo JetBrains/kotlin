@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSet
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 
 internal interface KotlinAndroidSourceSetLayoutChecker {
-    class ProjectMisconfiguredException(message: String) : Exception(message)
+    open class ProjectMisconfiguredException(message: String) : Exception(message)
 
     interface DiagnosticReporter {
         fun error(diagnostic: Diagnostic): Nothing
