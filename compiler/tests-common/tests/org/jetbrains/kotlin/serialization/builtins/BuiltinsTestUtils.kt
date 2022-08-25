@@ -22,6 +22,7 @@ object BuiltinsTestUtils {
                 allFilesUnder("core/builtins/native"),
                 allFilesUnder("core/builtins/src"),
                 allFilesUnder("core/builtins/build/src/ranges"),
+                allFilesUnder("core/builtins/build/src/reflect"),
             )
         )
         return createResolveSessionForFiles(environment.project, files, false).moduleDescriptor
