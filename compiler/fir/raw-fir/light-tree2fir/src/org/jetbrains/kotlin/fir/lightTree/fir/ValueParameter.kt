@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
@@ -83,6 +84,14 @@ class ValueParameter(
                 isConst = modifiers.hasConst()
                 isLateInit = false
             }
+            backingField = FirDefaultPropertyBackingField(
+                moduleData = moduleData,
+                annotations = mutableListOf(),
+                returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                isVar = isVar,
+                propertySymbol = symbol,
+                status = status.copy(),
+            )
             annotations += modifiers.annotations.filter {
                 it.useSiteTarget == null || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY ||
                         it.useSiteTarget == AnnotationUseSiteTarget.FIELD ||

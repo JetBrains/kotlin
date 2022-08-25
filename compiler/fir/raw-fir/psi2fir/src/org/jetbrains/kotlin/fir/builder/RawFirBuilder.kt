@@ -601,6 +601,15 @@ open class RawFirBuilder(
                 isVar = isMutable
                 symbol = FirPropertySymbol(callableIdForName(propertyName))
                 isLocal = false
+                backingField = FirDefaultPropertyBackingField(
+                    moduleData = baseModuleData,
+                    annotations = mutableListOf(),
+                    returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                    isVar = isVar,
+                    propertySymbol = symbol,
+                    status = status.copy(),
+                )
+
                 this.status = status
                 val defaultAccessorSource = propertySource.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
                 getter = FirDefaultPropertyGetter(
