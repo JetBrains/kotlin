@@ -348,6 +348,8 @@ class GenerationState private constructor(
 
     val abiStability = configuration.get(JVMConfigurationKeys.ABI_STABILITY)
 
+    val noNewJavaAnnotationTargets = configuration.getBoolean(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS)
+
     val globalSerializationBindings = JvmSerializationBindings()
     var mapInlineClass: (ClassDescriptor) -> Type = { descriptor -> typeMapper.mapType(descriptor.defaultType) }
 

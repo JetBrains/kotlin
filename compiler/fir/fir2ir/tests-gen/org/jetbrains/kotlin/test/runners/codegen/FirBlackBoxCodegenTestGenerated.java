@@ -288,6 +288,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("noTypeUseIfFlagIsSpecified.kt")
+        public void testNoTypeUseIfFlagIsSpecified() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/noTypeUseIfFlagIsSpecified.kt");
+        }
+
+        @Test
         @TestMetadata("objectConstValInAnnotationArgument.kt")
         public void testObjectConstValInAnnotationArgument() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/objectConstValInAnnotationArgument.kt");

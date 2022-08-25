@@ -43,6 +43,8 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
         context.state.jvmBackendClassResolver.resolveToClassDescriptors(
             Type.getObjectType("java/lang/invoke/LambdaMetafactory")
         ).isNotEmpty()
+    private val noNewJavaAnnotationTargets =
+        context.state.noNewJavaAnnotationTargets || !isCompilingAgainstJdk8OrLater
 
     override fun lower(irClass: IrClass) {
         if (!irClass.isAnnotationClass) return
@@ -113,8 +115,8 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
 
     private fun mapTarget(target: KotlinTarget): IrEnumEntry? =
         when (target) {
-            KotlinTarget.TYPE_PARAMETER -> symbols.typeParameterTarget.takeUnless { isCompilingAgainstJdk8OrLater }
-            KotlinTarget.TYPE -> symbols.typeUseTarget.takeUnless { isCompilingAgainstJdk8OrLater }
+            KotlinTarget.TYPE_PARAMETER -> symbols.typeParameterTarget.takeUnless { noNewJavaAnnotationTargets }
+            KotlinTarget.TYPE -> symbols.typeUseTarget.takeUnless { noNewJavaAnnotationTargets }
             else -> symbols.jvmTargetMap[target]
         }
 

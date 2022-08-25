@@ -93,6 +93,8 @@ where advanced options include:
   -Xno-call-assertions       Don't generate not-null assertions for arguments of platform types
   -Xno-kotlin-nothing-value-exception
                              Do not use KotlinNothingValueException available since 1.4
+  -Xno-new-java-annotation-targets
+                             Do not generate Java 1.8+ targets for Kotlin annotation classes
   -Xno-optimize              Disable optimizations
   -Xno-optimized-callable-references
                              Do not use optimized callable reference superclasses available from 1.4

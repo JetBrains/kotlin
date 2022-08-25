@@ -276,6 +276,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("noTypeUseIfFlagIsSpecified.kt")
+        public void testNoTypeUseIfFlagIsSpecified() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/noTypeUseIfFlagIsSpecified.kt");
+        }
+
+        @Test
         @TestMetadata("parameterAnnotationInDefaultImpls.kt")
         public void testParameterAnnotationInDefaultImpls() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/parameterAnnotationInDefaultImpls.kt");

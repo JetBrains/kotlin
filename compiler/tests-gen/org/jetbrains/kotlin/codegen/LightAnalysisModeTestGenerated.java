@@ -35,6 +35,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Annotations extends AbstractLightAnalysisModeTest {
+        @TestMetadata("noTypeUseIfDependOnJvm6.kt")
+        public void ignoreNoTypeUseIfDependOnJvm6() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/noTypeUseIfDependOnJvm6.kt");
+        }
+
+        @TestMetadata("noTypeUseIfFlagIsSpecified.kt")
+        public void ignoreNoTypeUseIfFlagIsSpecified() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/noTypeUseIfFlagIsSpecified.kt");
+        }
+
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
@@ -236,11 +246,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("nestedClassesInAnnotations.kt")
         public void testNestedClassesInAnnotations() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/nestedClassesInAnnotations.kt");
-        }
-
-        @TestMetadata("noTypeUseIfDependOnJvm6.kt")
-        public void testNoTypeUseIfDependOnJvm6() throws Exception {
-            runTest("compiler/testData/codegen/box/annotations/noTypeUseIfDependOnJvm6.kt");
         }
 
         @TestMetadata("parameterAnnotationInDefaultImpls.kt")

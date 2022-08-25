@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_OPTIMI
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_UNIFIED_NULL_CHECKS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.PARAMETERS_METADATA
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.JDK_RELEASE
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_NEW_JAVA_ANNOTATION_TARGETS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.USE_TYPE_TABLE
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -173,6 +174,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         register(JDK_RELEASE, JVMConfigurationKeys.JDK_RELEASE)
         register(USE_TYPE_TABLE, JVMConfigurationKeys.USE_TYPE_TABLE)
         register(ENABLE_DEBUG_MODE, JVMConfigurationKeys.ENABLE_DEBUG_MODE)
+        register(NO_NEW_JAVA_ANNOTATION_TARGETS, JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS)
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
