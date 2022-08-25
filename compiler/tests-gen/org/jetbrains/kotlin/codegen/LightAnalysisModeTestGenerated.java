@@ -238,6 +238,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/annotations/nestedClassesInAnnotations.kt");
         }
 
+        @TestMetadata("noTypeUseIfDependOnJvm6.kt")
+        public void testNoTypeUseIfDependOnJvm6() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/noTypeUseIfDependOnJvm6.kt");
+        }
+
         @TestMetadata("parameterAnnotationInDefaultImpls.kt")
         public void testParameterAnnotationInDefaultImpls() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/parameterAnnotationInDefaultImpls.kt");

@@ -282,6 +282,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("noTypeUseIfDependOnJvm6.kt")
+        public void testNoTypeUseIfDependOnJvm6() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/noTypeUseIfDependOnJvm6.kt");
+        }
+
+        @Test
         @TestMetadata("objectConstValInAnnotationArgument.kt")
         public void testObjectConstValInAnnotationArgument() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/objectConstValInAnnotationArgument.kt");
