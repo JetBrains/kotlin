@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2022 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -8,14 +8,13 @@ package kotlin.native
 import kotlin.reflect.KClass
 
 /**
- * [SymbolName] annotation is deprecated and became internal. Please avoid using it.
- * It is dangerous when combined with the new experimental memory manager.
+ * [SymbolName] is a dangerous deprecated and internal annotation. Please avoid using it.
+ *
  * If you absolutely need to use the annotation, please comment at
  * [KT-46649](https://youtrack.jetbrains.com/issue/KT-46649).
  */
 @RequiresOptIn(
-        message = "@SymbolName annotation is internal. " +
-                "It is dangerous when combined with the new experimental memory manager. " +
+        message = "@SymbolName is dangerous deprecated and internal annotation. " +
                 "See https://youtrack.jetbrains.com/issue/KT-46649",
         level = RequiresOptIn.Level.ERROR
 )
@@ -24,8 +23,8 @@ import kotlin.reflect.KClass
 internal annotation class SymbolNameIsInternal
 
 /**
- * This annotation is deprecated and became internal. Please avoid using it.
- * It is dangerous when combined with the new experimental memory manager.
+ * This is a dangerous deprecated and internal annotation. Please avoid using it.
+ *
  * If you absolutely need to use the annotation, please comment at
  * [KT-46649](https://youtrack.jetbrains.com/issue/KT-46649).
  */

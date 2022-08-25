@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,7 +21,7 @@ package kotlin.native.concurrent
 public expect annotation class ThreadLocal()
 
 /**
- * Note: with the new MM this annotation has no effect.
+ * Note: this annotation has effect only in Kotlin/Native with legacy memory manager.
  *
  * Marks a top level property with a backing field as immutable.
  * It is possible to share the value of such property between multiple threads, but it becomes deeply frozen,
