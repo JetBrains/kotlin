@@ -8,7 +8,8 @@ repositories {
     maven("file://$localRepo")
 }
 
-val mingwPath = File(System.getenv("MINGW64_DIR") ?: "C:/msys64/mingw64")
+//val mingwPath = File(System.getenv("MINGW64_DIR") ?: "C:/msys64/mingw64")
+val mingwPath = File("C:/msys64/mingw64") // use only preinstalled verions from this path, otherwise fail with linkage errors
 
 kotlin {
     // Determine host preset.
