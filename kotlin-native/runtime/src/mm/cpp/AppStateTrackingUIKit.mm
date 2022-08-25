@@ -9,11 +9,7 @@
 
 #include <functional>
 
-// Workaround from https://youtrack.jetbrains.com/issue/KT-48807#focus=Comments-27-5210791.0-0
-// TODO: remove this once our clang supports NSAttributedString as a valid return from the formatter function.
-#define NS_FORMAT_ARGUMENT(x)
 #import <UIKit/UIApplication.h>
-#undef NS_FORMAT_ARGUMENT
 
 #include "CompilerConstants.hpp"
 #include "objc_support/NSNotificationSubscription.hpp"
