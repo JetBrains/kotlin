@@ -1,4 +1,4 @@
-// CURIOUS_ABOUT test
+// CURIOUS_ABOUT: test
 // WITH_STDLIB
 
 import kotlinx.serialization.*

@@ -7,10 +7,7 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
-import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.backend.jvm.codegen.MaterialValue
-import org.jetbrains.kotlin.backend.jvm.codegen.PromisedValue
+import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
@@ -50,20 +47,41 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.getClassFromSerializ
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.InsnList
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
+import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
 
 class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContext) : SerializationBaseContext {
-    companion object {
-        fun isSerializerReifiedFunction(targetFunction: IrFunction): Boolean =
-            targetFunction.fqNameWhenAvailable?.asString() == "kotlinx.serialization.SerializersKt.serializer"
-                    && targetFunction.valueParameters.isEmpty()
-                    && targetFunction.typeParameters.size == 1
-                    && targetFunction.dispatchReceiverParameter == null
-                    && targetFunction.extensionReceiverParameter == null
+    sealed class IntrinsicType(val methodDescriptor: String) {
+        object Simple : IntrinsicType(stubCallDescriptor)
+
+        class WithModule(val storedIndex: Int) :
+            IntrinsicType(stubCallDescriptorWithModule) {
+        }
     }
 
-    object ReifiedSerializerMethod : IntrinsicMethod() {
+    companion object {
+        fun intrinsicForMethod(method: IrFunction): IntrinsicMethod? {
+            if (method.fqNameWhenAvailable?.asString() != "kotlinx.serialization.SerializersKt.serializer"
+                || method.dispatchReceiverParameter != null
+                || method.typeParameters.size != 1
+                || method.valueParameters.isNotEmpty()
+            ) return null
+            return ReifiedSerializerMethod(method.extensionReceiverParameter != null)
+        }
+
+        val serializersModuleType: Type = Type.getObjectType("kotlinx/serialization/modules/SerializersModule")
+
+        val stubCallDescriptorWithModule = "(${serializersModuleType.descriptor})${kSerializerType.descriptor}"
+        val stubCallDescriptor = "()${kSerializerType.descriptor}"
+        const val serializersKtInternalName = "kotlinx/serialization/SerializersKt"
+        const val callMethodName = "serializer"
+        const val noCompiledSerializerMethodName = "noCompiledSerializer"
+
+    }
+
+    class ReifiedSerializerMethod(private val withModule: Boolean) : IntrinsicMethod() {
         override fun invoke(
             expression: IrFunctionAccessExpression,
             codegen: ExpressionCodegen,
@@ -71,10 +89,21 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
         ): PromisedValue {
             with(codegen) {
                 val argument = expression.getTypeArgument(0)!!
+                val intrinsicType = if (withModule) {
+                    val moduleReceiver = expression.extensionReceiver!!
+                    val materialVal = moduleReceiver.accept(codegen, data).materializedAt(moduleReceiver.type)
+                    val storedIndex = frameMap.enterTemp(materialVal.type)
+                    mv.store(storedIndex, materialVal.type)
+                    IntrinsicType.WithModule(storedIndex)
+                } else IntrinsicType.Simple
                 SerializationJvmIrIntrinsicSupport(codegen.context).generateSerializerForType(
                     argument,
-                    mv
+                    mv,
+                    intrinsicType
                 )
+                if (withModule) {
+                    frameMap.leaveTemp(serializersModuleType)
+                }
                 return MaterialValue(codegen, kSerializerType, expression.type)
             }
         }
@@ -115,17 +144,50 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
         instructions: InsnList,
         type: IrType,
     ): Int {
+        val intrinsicType = getOperationTypeFromInsn(insn) ?: return -1
         val newMethodNode = newMethodNodeWithCorrectStackSize {
-            generateSerializerForType(type, it)
+            generateSerializerForType(type, it, intrinsicType)
         }
 
-        instructions.remove(insn.next)
+        when (intrinsicType) {
+            is IntrinsicType.Simple -> instructions.remove(insn.next)
+            is IntrinsicType.WithModule -> {
+                instructions.remove(insn.next.next)
+                instructions.remove(insn.next)
+            }
+        }
         instructions.insert(insn, newMethodNode.instructions)
 
         return newMethodNode.maxStack
     }
 
-    private fun InstructionAdapter.putReifyMarkerIfNeeded(type: KotlinTypeMarker): Boolean =
+    private fun getOperationTypeFromInsn(insn: MethodInsnNode): IntrinsicType? {
+        // insn is reification marker
+        // insn.next is serializer() OR load(module)
+        // insn.next.next is serializer(module) if insn.next was load(module)
+        val mayBeSerializerModuleCall: AbstractInsnNode? = insn.next?.next
+        val next = insn.next ?: error("Reification marker cannot be the last instruction in method")
+        if (
+            mayBeSerializerModuleCall is MethodInsnNode
+            && mayBeSerializerModuleCall.opcode == Opcodes.INVOKESTATIC
+            && mayBeSerializerModuleCall.owner == serializersKtInternalName
+            && mayBeSerializerModuleCall.name == callMethodName
+            && mayBeSerializerModuleCall.desc == stubCallDescriptorWithModule
+        ) {
+            val loadIns = next as? VarInsnNode ?: error("Expected load(SerializersModule) instruction")
+            // It's possible to also check opcode, but that doesn't seem necessary
+            return IntrinsicType.WithModule(loadIns.`var`)
+        } else if (next is MethodInsnNode
+            && next.opcode == Opcodes.INVOKESTATIC
+            && next.owner == serializersKtInternalName
+            && next.name == callMethodName
+            && next.desc == stubCallDescriptor
+        ) {
+            return IntrinsicType.Simple
+        } else return null // May be reification marker from other plugin
+    }
+
+    private fun InstructionAdapter.putReifyMarkerIfNeeded(type: KotlinTypeMarker, intrinsicType: IntrinsicType): Boolean =
         with(typeSystemContext) {
             val typeDescriptor = type.typeConstructor().getTypeParameterClassifier()
             if (typeDescriptor != null) { // need further reification
@@ -136,7 +198,10 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                     this@putReifyMarkerIfNeeded,
                     typeSystemContext
                 )
-                invokestatic("kotlinx/serialization/SerializersKt", "serializer", "()Lkotlinx/serialization/KSerializer;", false)
+                if (intrinsicType is IntrinsicType.WithModule) {
+                    load(intrinsicType.storedIndex, serializersModuleType)
+                }
+                invokestatic(serializersKtInternalName, callMethodName, intrinsicType.methodDescriptor, false)
                 return true
             }
             return false
@@ -144,10 +209,11 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
 
     fun generateSerializerForType(
         type: IrType,
-        adapter: InstructionAdapter
+        adapter: InstructionAdapter,
+        intrinsicType: IntrinsicType
     ) {
         with(typeSystemContext) {
-            if (adapter.putReifyMarkerIfNeeded(type)) return
+            if (adapter.putReifyMarkerIfNeeded(type, intrinsicType)) return
             val typeDescriptor: IrClass = type.classOrNull!!.owner
 
             val support = this@SerializationJvmIrIntrinsicSupport
@@ -158,7 +224,7 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                 val companionType = if (typeDescriptor.isSerializableObject) typeDescriptor else typeDescriptor.companionObject()!!
                 support.instantiateObject(adapter, companionType.symbol)
                 val args = type.getArguments().map { it.getType() }
-                args.forEach { generateSerializerForType(it, adapter) }
+                args.forEach { generateSerializerForType(it, adapter, intrinsicType) }
                 val signature = kSerializerType.descriptor.repeat(args.size)
                 adapter.invokevirtual(
                     typeMapper.mapClass(companionType).internalName,
@@ -172,9 +238,10 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                 support.stackValueSerializerInstance(
                     type,
                     serializer,
-                    adapter
+                    adapter,
+                    intrinsicType
                 ) { genericArg ->
-                    assert(putReifyMarkerIfNeeded(genericArg))
+                    assert(putReifyMarkerIfNeeded(genericArg, intrinsicType))
                 }
                 if (type.isMarkedNullable()) adapter.wrapStackValueIntoNullableSerializer()
             }
@@ -183,30 +250,31 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
 
     private fun stackValueSerializerInstance(
         kType: IrType, maybeSerializer: IrClassSymbol?,
-        iv: InstructionAdapter?,
+        iv: InstructionAdapter,
+        intrinsicType: IntrinsicType,
         genericIndex: Int? = null,
         genericSerializerFieldGetter: (InstructionAdapter.(IrType) -> Unit)? = null,
     ): Boolean = with(typeSystemContext) {
         if (maybeSerializer == null && genericIndex != null) {
             // get field from serializer object
-            iv?.run { genericSerializerFieldGetter?.invoke(this, kType) }
+            genericSerializerFieldGetter?.invoke(iv, kType)
             return true
         }
-        val serializer = maybeSerializer ?: run {
-            iv?.apply {
+        if (maybeSerializer == null && intrinsicType == IntrinsicType.Simple) {
+            iv.apply {
                 aconst(kType.classFqName!!.asString())
                 invokestatic(
-                    "kotlinx/serialization/SerializersKt",
-                    "noCompiledSerializer",
-                    "(Ljava/lang/String;)Lkotlinx/serialization/KSerializer;",
+                    serializersKtInternalName,
+                    noCompiledSerializerMethodName,
+                    "(Ljava/lang/String;)${kSerializerType.descriptor}",
                     false
                 )
             }
             return false
         }
-        if (serializer.owner.isObject) {
+        if (maybeSerializer != null && maybeSerializer.owner.isObject) {
             // singleton serializer -- just get it
-            iv?.let { instantiateObject(it, serializer) }
+            instantiateObject(iv, maybeSerializer)
             return true
         }
         // serializer is not singleton object and shall be instantiated
@@ -218,8 +286,50 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
             // check if it can be properly serialized with its args recursively
             Pair(argType, argSerializer)
         }
+
+        fun instantiate(typeArgument: Pair<IrType, IrClassSymbol?>, signature: StringBuilder?) {
+            val (argType, argSerializer) = typeArgument
+            stackValueSerializerInstance(
+                argType,
+                argSerializer,
+                iv,
+                intrinsicType,
+                argType.genericIndex,
+                genericSerializerFieldGetter
+            )
+            // wrap into nullable serializer if argType is nullable
+            if (argType.isMarkedNullable()) iv.wrapStackValueIntoNullableSerializer()
+            signature?.append(kSerializerType.descriptor)
+        }
+
+        val serializer = maybeSerializer ?: iv.run {
+            require(intrinsicType is IntrinsicType.WithModule) // SIMPLE is covered in previous if
+            // SerializersModule
+            load(intrinsicType.storedIndex, serializersModuleType)
+            // KClass
+            aconst(typeMapper.mapTypeCommon(kType, TypeMappingMode.GENERIC_ARGUMENT))
+            AsmUtil.wrapJavaClassIntoKClass(this)
+
+            val descriptor = StringBuilder("(${serializersModuleType.descriptor}${AsmTypes.K_CLASS_TYPE.descriptor}")
+            // Generic args (if present)
+            if (argSerializers.isNotEmpty()) {
+                fillArray(kSerializerType, argSerializers) { _, serializer ->
+                    instantiate(serializer, null)
+                }
+                descriptor.append(kSerializerArrayType.descriptor)
+            }
+            descriptor.append(")${kSerializerType.descriptor}")
+            invokestatic(
+                serializersKtInternalName,
+                noCompiledSerializerMethodName,
+                descriptor.toString(),
+                false
+            )
+            return false
+        }
+
         // new serializer if needed
-        iv?.apply {
+        iv.apply {
             val serializerType = typeMapper.mapClass(serializer.owner)
             if (serializer.owner.classId == enumSerializerId && runtimeHasEnumSerializerFactoryFunctions) {
                 val enumIrClass = kType.classOrNull!!.owner
@@ -277,21 +387,6 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
             dup()
             // instantiate all arg serializers on stack
             val signature = StringBuilder("(")
-
-            fun instantiate(typeArgument: Pair<IrType, IrClassSymbol?>, writeSignature: Boolean = true) {
-                val (argType, argSerializer) = typeArgument
-                stackValueSerializerInstance(
-                    argType,
-                    argSerializer,
-                    this,
-                    argType.genericIndex,
-                    genericSerializerFieldGetter
-                )
-                // wrap into nullable serializer if argType is nullable
-                if (argType.isMarkedNullable()) wrapStackValueIntoNullableSerializer()
-                if (writeSignature) signature.append(kSerializerType.descriptor)
-            }
-
             val serialName = kType.serialName()
             when (serializer.owner.classId) {
                 enumSerializerId -> {
@@ -314,13 +409,13 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                         // append new additional arguments
                         val fallbackDefaultSerializer = findTypeSerializer(this@SerializationJvmIrIntrinsicSupport, kType)
                         if (fallbackDefaultSerializer != null && fallbackDefaultSerializer != serializer) {
-                            instantiate(kType to fallbackDefaultSerializer, writeSignature = false)
+                            instantiate(kType to fallbackDefaultSerializer, null)
                         } else {
                             aconst(null)
                         }
                         signature.append(kSerializerType.descriptor)
                         fillArray(kSerializerType, argSerializers) { _, serializer ->
-                            instantiate(serializer, writeSignature = false)
+                            instantiate(serializer, null)
                         }
                         signature.append(kSerializerArrayType.descriptor)
                     }
@@ -331,7 +426,7 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                     AsmUtil.wrapJavaClassIntoKClass(this)
                     signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
                     // Reference array serializer still needs serializer for its argument type
-                    instantiate(argSerializers[0])
+                    instantiate(argSerializers[0], signature)
                 }
                 sealedSerializerId -> {
                     aconst(serialName)
@@ -357,6 +452,7 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                                 argType,
                                 argSerializer,
                                 this,
+                                intrinsicType,
                                 argType.genericIndex
                             ) { genericType ->
                                 // if we encountered generic type parameter in one of subclasses of sealed class, use polymorphism from upper bound
@@ -364,7 +460,7 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                                     stackValueSerializerInstance(
                                         (genericType.classifierOrNull as IrTypeParameterSymbol).owner.representativeUpperBound,
                                         jvmBackendContext.referenceClass(module.getClassFromSerializationPackage(SpecialBuiltins.polymorphicSerializer)),
-                                        this
+                                        this, intrinsicType
                                     )
                                 )
                             }
@@ -380,7 +476,7 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                     signature.append("Ljava/lang/Object;")
                 }
                 // all serializers get arguments with serializers of their generic types
-                else -> argSerializers.forEach { instantiate(it) }
+                else -> argSerializers.forEach { instantiate(it, signature) }
             }
             signature.append(")V")
             // invoke constructor

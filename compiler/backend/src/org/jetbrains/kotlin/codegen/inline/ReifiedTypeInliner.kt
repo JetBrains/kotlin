@@ -298,7 +298,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         return true
     }
 
-    inline private fun rewriteNextTypeInsn(
+    private inline fun rewriteNextTypeInsn(
         marker: MethodInsnNode,
         expectedNextOpcode: Int,
         rewrite: (AbstractInsnNode) -> Boolean

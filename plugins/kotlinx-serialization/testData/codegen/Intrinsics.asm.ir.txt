@@ -85,7 +85,7 @@ public final class IntrinsicsKt : java/lang/Object {
           GETSTATIC (Simple, Companion, LSimple$Companion;)
           INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
         LABEL (L2)
-        LINENUMBER (44)
+        LINENUMBER (45)
           NOP
         LABEL (L3)
           POP
@@ -99,7 +99,7 @@ public final class IntrinsicsKt : java/lang/Object {
           INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
           INVOKEVIRTUAL (Box$Companion, serializer, (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;)
         LABEL (L6)
-        LINENUMBER (45)
+        LINENUMBER (46)
           NOP
         LABEL (L7)
           POP
@@ -113,7 +113,7 @@ public final class IntrinsicsKt : java/lang/Object {
           INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
           INVOKEVIRTUAL (Box$Companion, serializer, (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;)
         LABEL (L10)
-        LINENUMBER (46)
+        LINENUMBER (47)
           NOP
         LABEL (L11)
           POP
@@ -128,7 +128,7 @@ public final class IntrinsicsKt : java/lang/Object {
           INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
           INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
         LABEL (L14)
-        LINENUMBER (47)
+        LINENUMBER (48)
           NOP
         LABEL (L15)
           POP
@@ -154,7 +154,7 @@ public final class IntrinsicsKt : java/lang/Object {
           INVOKEVIRTUAL (Box$Companion, serializer, (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;)
           INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
         LABEL (L18)
-        LINENUMBER (48)
+        LINENUMBER (49)
           NOP
         LABEL (L19)
           POP
@@ -179,7 +179,7 @@ public final class IntrinsicsKt : java/lang/Object {
           INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
           INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
         LABEL (L22)
-        LINENUMBER (49)
+        LINENUMBER (50)
           NOP
         LABEL (L23)
           POP
