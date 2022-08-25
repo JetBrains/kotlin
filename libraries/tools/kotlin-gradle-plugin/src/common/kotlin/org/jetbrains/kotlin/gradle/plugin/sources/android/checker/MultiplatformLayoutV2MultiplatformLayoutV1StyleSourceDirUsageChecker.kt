@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSetLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfo
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
+import org.jetbrains.kotlin.gradle.utils.androidExtension
 import java.io.File
 
 /**
@@ -32,6 +33,13 @@ internal object MultiplatformLayoutV2MultiplatformLayoutV1StyleSourceDirUsageChe
 
         /* Layouts did agree on the name of this KotlinSourceSet -> LGTM */
         if (v1kotlinSourceSetName == kotlinSourceSet.name) return
+
+        /*
+        Detect naming ambiguity of old 'androidTest' like source sets:
+        If also an android source set with the name of the v1 KotlinSourceSet exists,
+        then we expect the 'android style source dir usage checker' to warn about this situation.
+         */
+        if (target.project.androidExtension.sourceSets.findByName(v1kotlinSourceSetName) != null) return
 
         val v1KotlinSourceDir = target.project.file("src/$v1kotlinSourceSetName/kotlin")
         if (v1KotlinSourceDir.exists()) {
