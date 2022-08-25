@@ -1192,19 +1192,22 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                 index,
                 options = CXTranslationUnit_DetailedPreprocessingRecord or CXTranslationUnit_ForSerialization
         )
-        val translationUnitsImportedViaAST = mutableListOf<CXTranslationUnit>()
+        val translationUnitsByCanonicalPath = mutableMapOf<String, CXTranslationUnit>()
+        translationUnitsByCanonicalPath["<main module>"] = translationUnit
         try {
             translationUnit.ensureNoCompileErrors()
 
             val compilation = nativeIndex.library.withPrecompiledHeader(translationUnit)
 
-            val headers = getFilteredHeaders(nativeIndex, index, translationUnit)
+            val headers = getFilteredHeaders(nativeIndex, index, translationUnit, translationUnitsByCanonicalPath)
+            val headersCanonicalPaths = headers.filterNotNull().map { it.canonicalPath }
 
             nativeIndex.includedHeaders = headers.map {
                 nativeIndex.getHeaderId(it)
             }
 
-            indexTranslationUnit(index, translationUnit, 0, object : Indexer {
+            lateinit var indexer: Indexer
+            indexer = object : Indexer {
                 override fun indexDeclaration(info: CXIdxDeclInfo) {
                     val file = memScoped {
                         val fileVar = alloc<CXFileVar>()
@@ -1212,37 +1215,26 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                         fileVar.value
                     }
 
-                    if (file in headers) {
+                    if (file?.canonicalPath in headersCanonicalPaths) {
                         nativeIndex.indexDeclaration(info)
                     }
                 }
 
                 override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
                     // FIXME find a way to extract header filename from PCH file, so it can be directly compared to `headers` elements
-                    if (headers.filterNotNull().any { it.canonicalPath.endsWith("/${info.module!!.fullName}.h") }) {
-                        val moduleTranslationUnit = clang_createTranslationUnit(index, info.file!!.canonicalPath)!!
-                        translationUnitsImportedViaAST.add(moduleTranslationUnit)
-                        val outerInfo = info
-
-                        indexTranslationUnit(index, moduleTranslationUnit, 0, object : Indexer {
-                            override fun indexDeclaration(info: CXIdxDeclInfo) {
-                                nativeIndex.indexDeclaration(info)
-                            }
-
-                            override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
-                                assert(false, ) {
-                                    "Recursive AST import is not yet implemented for ${info.module?.fullName}(${info.file!!.canonicalPath}) " +
-                                            "imported from ${outerInfo.module?.fullName}(${outerInfo.file!!.canonicalPath})"
-                                }
-                            }
-                        })
+                    if (headersCanonicalPaths.any { it.endsWith("${info.module!!.fullName}.h") }) {
+                        val unit = translationUnitsByCanonicalPath.getOrPut(info.file!!.canonicalPath) {
+                            val moduleTranslationUnit = clang_createTranslationUnit(index, info.file!!.canonicalPath)!!
+                            moduleTranslationUnit
+                        }
+                        indexTranslationUnit(index, unit, 0, indexer)
                     }
                 }
-            })
-            val translationUnits = listOf(translationUnit) + translationUnitsImportedViaAST
+            }
+            indexTranslationUnit(index, translationUnit, 0, indexer)
 
             if (nativeIndex.library.language == Language.CPP) {
-                translationUnits.forEach {
+                translationUnitsByCanonicalPath.values.forEach {
                     visitChildren(clang_getTranslationUnitCursor(it)) { cursor, _ ->
                         if (getContainingFile(cursor) in headers) {
                             nativeIndex.indexCxxDeclaration(cursor)
@@ -1252,7 +1244,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                 }
             }
 
-            translationUnits.forEach {
+            translationUnitsByCanonicalPath.values.forEach {
                 visitChildren(clang_getTranslationUnitCursor(it)) { cursor, _ ->
                     val file = getContainingFile(cursor)
                     if (file in headers && nativeIndex.library.includesDeclaration(cursor)) {
@@ -1278,8 +1270,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
 
             return compilation
         } finally {
-            clang_disposeTranslationUnit(translationUnit)
-            translationUnitsImportedViaAST.forEach { clang_disposeTranslationUnit(it) }
+            translationUnitsByCanonicalPath.values.forEach { clang_disposeTranslationUnit(it) }
         }
     }
 }
