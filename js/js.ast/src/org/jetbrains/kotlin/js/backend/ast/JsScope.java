@@ -154,8 +154,10 @@ public abstract class JsScope {
     }
 
     public void copyOwnNames(JsScope other) {
-        names = new HashMap<>(names);
-        names.putAll(other.names);
+        if (!other.names.isEmpty()) {
+            names = new HashMap<>(names);
+            names.putAll(other.names);
+        }
     }
 
     @NotNull

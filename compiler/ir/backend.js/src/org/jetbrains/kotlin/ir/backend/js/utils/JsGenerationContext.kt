@@ -14,12 +14,15 @@ import org.jetbrains.kotlin.js.backend.ast.JsLocation
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsScope
 
-val emptyScope: JsScope
-    get() = object : JsScope("nil") {
-        override fun doCreateName(ident: String): JsName {
-            error("Trying to create name in empty scope")
-        }
+val emptyScope: JsScope = object : JsScope("nil") {
+    override fun doCreateName(ident: String): JsName {
+        error("Trying to create name in empty scope")
     }
+
+    override fun copyOwnNames(other: JsScope?) {
+        error("Trying to copy names to empty scope")
+    }
+}
 
 class JsGenerationContext(
     val currentFile: IrFile,
