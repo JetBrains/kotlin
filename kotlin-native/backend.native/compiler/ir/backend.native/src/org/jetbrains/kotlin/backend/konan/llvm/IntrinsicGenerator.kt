@@ -192,7 +192,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 environment.evaluateCall(suspendFunction,
                         environment.evaluateExplicitArgs(suspendFunctionCall) + listOf(continuation),
                         environment.calculateLifetime(suspendFunctionCall),
-                        suspendFunction.parent as? IrClass, // Call non-virtually.
+                        suspendFunctionCall.superQualifierSymbol?.owner,
                         resultSlot,
                 )
             }
