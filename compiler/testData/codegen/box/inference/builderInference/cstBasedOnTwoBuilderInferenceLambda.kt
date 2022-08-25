@@ -54,11 +54,11 @@ fun box(): String {
     val y2 = build4({ val x: B = get() }, { val x: C = get() })
     <!DEBUG_INFO_EXPRESSION_TYPE("A")!>y2<!>
 
-    val x3 = build3({ val x: Float = get() }, { val x: Double = get() })
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number}")!>x2<!>
+    val x3 = build5({ val x: Float = get() }, { val x: Double = get() })
+    <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number}")!>x3<!>
 
-    val y3 = build4({ val x: B = get() }, { val x: C = get() })
-    <!DEBUG_INFO_EXPRESSION_TYPE("A")!>y2<!>
+    val y3 = build6({ val x: B = get() }, { val x: C = get() })
+    <!DEBUG_INFO_EXPRESSION_TYPE("A")!>y3<!>
 
     return "OK"
 }
