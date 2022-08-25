@@ -59,7 +59,7 @@ private fun writeLibrary(
 
 /**
  * Returns [ResultsConsumer.ModuleResult.libraryName] but replaces potentially occurring colons ':' with underscores '_'.
- * Colons cannot be used as filenames on Windows, but they occured as libraryNames for Klibs produced by the cinterop tool.
+ * Colons cannot be used as filenames on Windows, but they occurred as libraryNames for Klibs produced by the cinterop tool.
  */
 val ResultsConsumer.ModuleResult.fileSystemCompatibleLibraryName: String
     get() = libraryName.replace(":", "_")
