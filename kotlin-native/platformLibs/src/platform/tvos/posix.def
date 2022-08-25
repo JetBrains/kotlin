@@ -19,8 +19,11 @@ linkerOpts = -ldl -lresolv
 excludedFunctions = acl_valid_link_np pfctlinput profil unwhiteout zopen getdirentries \
                     uuid_generate_early_random setgrfile
 excludedFunctions.tvos_arm64 = longjmperror
-excludedFunctions.tvos_simulator_arm64 = longjmperror
-excludedFunctions.tvos_x64 = pthread_jit_write_protect_np pthread_jit_write_protect_supported_np
+excludedFunctions.tvos_simulator_arm64 = longjmperror \
+    openat_dprotected_np mkfifoat mknodat openat_authenticated_np
+excludedFunctions.tvos_x64 = openat_dprotected_np mkfifoat mknodat openat_authenticated_np
+
+#excludedFunctions.tvos_x64 = pthread_jit_write_protect_np pthread_jit_write_protect_supported_np
 
 ---
 // Wrapper to access errno variable.
