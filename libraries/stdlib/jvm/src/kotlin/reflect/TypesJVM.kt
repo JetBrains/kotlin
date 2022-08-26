@@ -136,8 +136,9 @@ private class TypeVariableImpl(private val typeParameter: KTypeParameter) : Type
     @Suppress("VIRTUAL_MEMBER_HIDDEN")
     fun getDeclaredAnnotations(): Array<Annotation> = emptyArray()
 
-    @Suppress("VIRTUAL_MEMBER_HIDDEN")
-    fun getAnnotatedBounds(): Array<Annotation> = emptyArray()
+    // There is also [getAnnotatedBounds] which returns an array of [AnnotatedType]; because [AnnotatedType] is JDK 8+,
+    // we can't declare that method here for compatibility with Android SDK 25 and lower, so we leave it unimplemented
+    // to throw an exception at runtime if called.
 }
 
 @ExperimentalStdlibApi
