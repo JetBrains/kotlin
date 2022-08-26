@@ -151,7 +151,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
     override lateinit var includedHeaders: List<HeaderId>
 
-    private fun log(message: String) {
+    internal fun log(message: String) {
         if (verbose) {
             println(message)
         }
@@ -1221,12 +1221,18 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                 }
 
                 override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
-                    // FIXME find a way to extract header filename from PCH file, so it can be directly compared to `headers` elements
-                    if (headersCanonicalPaths.any { it.endsWith("${info.module!!.fullName}.h") }) {
-                        val unit = translationUnitsByCanonicalPath.getOrPut(info.file!!.canonicalPath) {
-                            val moduleTranslationUnit = clang_createTranslationUnit(index, info.file!!.canonicalPath)!!
-                            moduleTranslationUnit
-                        }
+                    val unit = translationUnitsByCanonicalPath.getOrPut(info.file!!.canonicalPath) {
+                        val moduleTranslationUnit = clang_createTranslationUnit(index, info.file!!.canonicalPath)!!
+                        moduleTranslationUnit
+                    }
+                    val numTopLevelHeaders = clang_Module_getNumTopLevelHeaders(unit, info.module)
+                    val topLevelHeaders = (0 until numTopLevelHeaders).map {
+                        clang_Module_getTopLevelHeader(unit, info.module, it)?.canonicalPath
+                    }
+                    if (numTopLevelHeaders != 1) {
+                        nativeIndex.log("Warning: Expected one SUBMODULE_TOPHEADER entry in ${info.file!!.canonicalPath} but actual is $topLevelHeaders")
+                    }
+                    if (headersCanonicalPaths.contains(topLevelHeaders.firstOrNull())) {
                         indexTranslationUnit(index, unit, 0, indexer)
                     }
                 }
