@@ -1,6 +1,7 @@
 // WITH_STDLIB
 // !DIAGNOSTICS: -OPT_IN_USAGE_ERROR
 // For FIR, see: KT-50704
+import kotlin.experimental.ExperimentalTypeInference
 
 @JvmName("foo1")
 fun foo(x: Inv<String>) {}
@@ -201,7 +202,8 @@ interface Foo2<K, V> {
     fun entries(): MutableSet<MutableMap.MutableEntry<K, V>>
 }
 
-fun <L, K, V> twoBuilderLambdas(block: Foo<L>.() -> Unit, block2: Foo2<K, V>.() -> Unit) {}
+@OptIn(ExperimentalTypeInference::class)
+fun <L, K, V> twoBuilderLambdas(@BuilderInference block: Foo<L>.() -> Unit, @BuilderInference block2: Foo2<K, V>.() -> Unit) {}
 
 fun test() {
     twoBuilderLambdas(

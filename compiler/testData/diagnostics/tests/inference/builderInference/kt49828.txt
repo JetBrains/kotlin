@@ -19,7 +19,7 @@ public fun foo11(/*0*/ x: kotlin.collections.MutableSet<kotlin.collections.Mutab
 @kotlin.jvm.JvmName(name = "foo111") public fun foo11(/*0*/ x: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.String, kotlin.Int>>): kotlin.Unit
 public fun main(): kotlin.Unit
 public fun test(): kotlin.Unit
-public fun </*0*/ L, /*1*/ K, /*2*/ V> twoBuilderLambdas(/*0*/ block: Foo<L>.() -> kotlin.Unit, /*1*/ block2: Foo2<K, V>.() -> kotlin.Unit): kotlin.Unit
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ L, /*1*/ K, /*2*/ V> twoBuilderLambdas(/*0*/ @kotlin.BuilderInference block: Foo<L>.() -> kotlin.Unit, /*1*/ @kotlin.BuilderInference block2: Foo2<K, V>.() -> kotlin.Unit): kotlin.Unit
 public fun kotlin.Int.bar(): kotlin.Unit
 @kotlin.jvm.JvmName(name = "bar1") public fun kotlin.String.bar(): kotlin.Unit
 public fun kotlin.Int.foo0003(/*0*/ y: kotlin.Number, /*1*/ z: kotlin.String): kotlin.Unit

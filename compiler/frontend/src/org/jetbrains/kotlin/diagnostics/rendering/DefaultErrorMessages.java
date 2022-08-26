@@ -939,6 +939,7 @@ public class DefaultErrorMessages {
                 STRING, STRING, STRING);
         MAP.put(STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY, "The type of an argument hasn''t been inferred yet. To disambiguate this call, explicitly cast it to `{0}` if you want the builder''s type parameter(s) `{1}` to be inferred to `{2}`.", RENDER_TYPE, STRING, STRING);
         MAP.put(STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY, "The type of a receiver hasn''t been inferred yet. To disambiguate this call, explicitly cast it to `{0}` if you want the builder''s type parameter(s) `{1}` to be inferred to `{2}`.", RENDER_TYPE, STRING, STRING, null);
+        MAP.put(BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION, "Unstable inference behaviour with multiple lambdas. Please either specify type argument for generic parameter `{0}` of `{1}` explicitly or add @BuilderInference to corresponding parameter declaration", TO_STRING, TO_STRING);
         MAP.put(NONE_APPLICABLE, "None of the following functions can be called with the arguments supplied: {0}", AMBIGUOUS_CALLS);
         MAP.put(CANNOT_COMPLETE_RESOLVE, "Cannot choose among the following candidates without completing type inference: {0}", AMBIGUOUS_CALLS);
         MAP.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, "Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: {0}", AMBIGUOUS_CALLS);

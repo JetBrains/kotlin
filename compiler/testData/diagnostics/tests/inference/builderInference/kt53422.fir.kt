@@ -1,9 +1,8 @@
 // WITH_STDLIB
-// SKIP_TXT
 fun test() {
     foo(
         flow { emit(0) }
-    ) <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{ it.collect <!TOO_MANY_ARGUMENTS!>{}<!> }<!>
+    ) { it.collect <!TOO_MANY_ARGUMENTS!>{}<!> }
 
     // 0. Initial
     // W <: Any / declared upper bound

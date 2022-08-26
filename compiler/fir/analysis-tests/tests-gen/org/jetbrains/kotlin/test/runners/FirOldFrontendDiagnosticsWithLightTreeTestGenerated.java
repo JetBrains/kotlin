@@ -14216,6 +14216,18 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("multiLambdaRestriction.kt")
+                public void testMultiLambdaRestriction() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/multiLambdaRestriction.kt");
+                }
+
+                @Test
+                @TestMetadata("multiLambdaRestrictionDisabled.kt")
+                public void testMultiLambdaRestrictionDisabled() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/multiLambdaRestrictionDisabled.kt");
+                }
+
+                @Test
                 @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
                 public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
