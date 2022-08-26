@@ -59,11 +59,6 @@ public class KotlinpTestGenerated extends AbstractKotlinpTest {
         runTest("libraries/tools/kotlinp/testData/Lambda.kt");
     }
 
-    @TestMetadata("LocalClass.kt")
-    public void testLocalClass() throws Exception {
-        runTest("libraries/tools/kotlinp/testData/LocalClass.kt");
-    }
-
     @TestMetadata("LocalDelegatedProperties.kt")
     public void testLocalDelegatedProperties() throws Exception {
         runTest("libraries/tools/kotlinp/testData/LocalDelegatedProperties.kt");
@@ -154,6 +149,39 @@ public class KotlinpTestGenerated extends AbstractKotlinpTest {
         @TestMetadata("withoutCompatibility.kt")
         public void testWithoutCompatibility() throws Exception {
             runTest("libraries/tools/kotlinp/testData/jvmDefault/withoutCompatibility.kt");
+        }
+    }
+
+    @TestMetadata("libraries/tools/kotlinp/testData/localClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class LocalClasses extends AbstractKotlinpTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInLocalClasses() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlinp/testData/localClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("AnonymousObject.kt")
+        public void testAnonymousObject() throws Exception {
+            runTest("libraries/tools/kotlinp/testData/localClasses/AnonymousObject.kt");
+        }
+
+        @TestMetadata("DeepInnerLocalChain.kt")
+        public void testDeepInnerLocalChain() throws Exception {
+            runTest("libraries/tools/kotlinp/testData/localClasses/DeepInnerLocalChain.kt");
+        }
+
+        @TestMetadata("LocalClassInConstructor.kt")
+        public void testLocalClassInConstructor() throws Exception {
+            runTest("libraries/tools/kotlinp/testData/localClasses/LocalClassInConstructor.kt");
+        }
+
+        @TestMetadata("LocalClassInSignature.kt")
+        public void testLocalClassInSignature() throws Exception {
+            runTest("libraries/tools/kotlinp/testData/localClasses/LocalClassInSignature.kt");
         }
     }
 }

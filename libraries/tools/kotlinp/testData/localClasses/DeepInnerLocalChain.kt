@@ -1,8 +1,4 @@
-package test
-
-// CLASS_NAME_SUFFIX: Deepest
-
-fun main() {
+fun test() {
     class Local {
         inner class Inner {
             val prop = object {

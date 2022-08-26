@@ -1,3 +1,0 @@
-local final class `A$foo$Local`
-
-public constructor `A$foo$Local`()

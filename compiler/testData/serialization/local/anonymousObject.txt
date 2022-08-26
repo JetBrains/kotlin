@@ -1,3 +1,0 @@
-local final class `AnonymousObjectKt$main$1` : java.lang.Runnable
-
-public open override /*1*/ fun run(): kotlin.Unit

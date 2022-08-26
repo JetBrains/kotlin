@@ -1,6 +1,4 @@
-// CLASS_NAME_SUFFIX: $main$Local
-
-fun main() {
+fun test() {
     open class Local {
         fun param(l: Local) {}
 
