@@ -14567,6 +14567,18 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                     public void testRenderingStubTypes() throws Exception {
                         runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/renderingStubTypes.kt");
                     }
+
+                    @Test
+                    @TestMetadata("stubTypeReceiverRestriction.kt")
+                    public void testStubTypeReceiverRestriction() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/stubTypeReceiverRestriction.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("stubTypeReceiverRestrictionDisabled.kt")
+                    public void testStubTypeReceiverRestrictionDisabled() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/stubTypeReceiverRestrictionDisabled.kt");
+                    }
                 }
             }
 
