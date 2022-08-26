@@ -549,7 +549,8 @@ abstract class KotlinCompile @Inject constructor(
 
     @Deprecated(
         "Replaced with 'libraries' input",
-        replaceWith = ReplaceWith("libraries")
+        replaceWith = ReplaceWith("libraries"),
+        level = DeprecationLevel.ERROR
     )
     @get:Internal
     var classpath: FileCollection
