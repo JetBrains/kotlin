@@ -200,9 +200,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var declarationsOutputPath: String? by NullableStringFreezableVar(null)
 
-    @Argument(value = "-Xsingle-module", description = "Combine modules for source files and binary dependencies into a single module")
-    var singleModule: Boolean by FreezableVar(false)
-
     @Argument(
         value = "-Xsuppress-missing-builtins-error",
         description = "Suppress the \"cannot access built-in declaration\" error (useful with -no-stdlib)"

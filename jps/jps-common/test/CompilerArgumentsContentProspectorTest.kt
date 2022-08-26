@@ -150,7 +150,6 @@ class CompilerArgumentsContentProspectorTest {
             K2JVMCompilerArguments::inheritMultifileParts,
             K2JVMCompilerArguments::useTypeTable,
             K2JVMCompilerArguments::useOldClassFilesReading,
-            K2JVMCompilerArguments::singleModule,
             K2JVMCompilerArguments::suppressMissingBuiltinsError,
             K2JVMCompilerArguments::useJavac,
             K2JVMCompilerArguments::compileJava,

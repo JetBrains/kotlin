@@ -124,7 +124,6 @@ where advanced options include:
                              Script resolver environment in key-value pairs (the value could be quoted and escaped)
   -Xserialize-ir={none|inline|all}
                              Save IR to metadata (EXPERIMENTAL)
-  -Xsingle-module            Combine modules for source files and binary dependencies into a single module
   -Xgenerate-strict-metadata-version
                              Generate metadata with strict version semantics (see kdoc on Metadata.extraInt)
   -Xstring-concat={indy-with-constants|indy|inline}
