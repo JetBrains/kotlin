@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilati
  * [IncludedLibrary] - similarly but included modules (-Xinclude).
  */
 internal sealed class TestCompilationDependencyType<A : TestCompilationArtifact>(private val artifactClass: Class<A>) {
-    fun canYield(artifactClass: Class<out TestCompilationArtifact>): Boolean = this.artifactClass.isAssignableFrom(artifactClass)
-
     object Library : TestCompilationDependencyType<KLIB>(KLIB::class.java)
     object FriendLibrary : TestCompilationDependencyType<KLIB>(KLIB::class.java)
     object IncludedLibrary : TestCompilationDependencyType<KLIB>(KLIB::class.java)
