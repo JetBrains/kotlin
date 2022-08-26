@@ -1228,8 +1228,8 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                     val numTopLevelHeaders = clang_Module_getNumTopLevelHeaders(unit, info.module)
                     val topLevelHeaders = (0 until numTopLevelHeaders).map {
                         clang_Module_getTopLevelHeader(unit, info.module, it)?.canonicalPath
-                    }
-                    if (numTopLevelHeaders != 1) {
+                    }.toSet()
+                    if (topLevelHeaders.size != 1) {
                         nativeIndex.log("Warning: Expected one SUBMODULE_TOPHEADER entry in ${info.file!!.canonicalPath} but actual is $topLevelHeaders")
                     }
                     if (headersCanonicalPaths.contains(topLevelHeaders.firstOrNull())) {
