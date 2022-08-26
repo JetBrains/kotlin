@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl
 import org.jetbrains.kotlinx.dataframe.api.Infer
 import org.jetbrains.kotlinx.dataframe.plugin.*
+import org.jetbrains.kotlinx.dataframe.plugin.AddData.test0After
+import org.jetbrains.kotlinx.dataframe.plugin.AddData.test0Schema
 import org.jetbrains.kotlinx.dataframe.plugin.testing.atoms.Context
 
 abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest() {
@@ -84,7 +86,7 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
         val queue: ArrayDeque<ClassId>,
         val state: MutableMap<ClassId, SchemaContext>,
         val getTestFilePath: () -> String
-    ) : FirExpressionResolutionExtension(session) {
+    ) : MyFirExpressionResolutionExtension(session) {
         override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
             functionCall.calleeReference.name.identifierOrNullIfSpecial?.let {
                 if (it == "test") {
@@ -114,7 +116,7 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
                 "dataFrame_2" to PluginDataFrameSchema(emptyList()),
                 "dataFrame_3" to PluginDataFrameSchema(
                     listOf(
-                        SimpleColumnGroup("person", listOf(SimpleCol("age", TypeApproximationImpl("kotlin.Number", true))))
+                        SimpleColumnGroup("person", listOf(SimpleCol("age", TypeApproximationImpl("kotlin.Number", true))), anyRow)
                     )
                 ),
                 "type_1" to TypeApproximationImpl("kotlin.Int", nullable = false),
@@ -127,8 +129,8 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
                 "kproperty_2" to KPropertyApproximation("name", TypeApproximationImpl("kotlin.Int", false)),
                 "addExpression_1" to TypeApproximationImpl("kotlin.Int", nullable = false),
                 "addExpression_2" to TypeApproximationImpl("kotlin.Any", nullable = true),
-                "add0_schema" to AddData.test0Schema,
-                "add0" to AddData.test0After,
+                "add0_schema" to test0Schema,
+                "add0" to test0After,
                 "varargKProperty_0" to listOf(
                     KPropertyApproximation("col1", TypeApproximationImpl("kotlin.Int", false)),
                     KPropertyApproximation("col2", TypeApproximationImpl("kotlin.Int", true))

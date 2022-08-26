@@ -58,7 +58,7 @@ class FirDataFrameReceiverInjector(
     session: FirSession,
     private val state: MutableMap<ClassId, SchemaContext>,
     private val ids: ArrayDeque<ClassId>
-) : FirExpressionResolutionExtension(session) {
+) : MyFirExpressionResolutionExtension(session) {
 
     override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
         return coneKotlinTypes(functionCall, state, ids, id)
@@ -93,7 +93,7 @@ val any: RootMarkerStrategy = {
     session.builtinTypes.anyType.type
 }
 
-fun FirExpressionResolutionExtension.coneKotlinTypes(
+fun MyFirExpressionResolutionExtension.coneKotlinTypes(
     functionCall: FirFunctionCall,
     state: MutableMap<ClassId, SchemaContext>,
     ids: ArrayDeque<ClassId>,
@@ -155,8 +155,8 @@ fun FirExpressionResolutionExtension.coneKotlinTypes(
                 is SimpleCol -> SchemaProperty(
                     marker = marker,
                     name = it.name,
-                    dataRowReturnType = it.type.convert(),
-                    columnContainerReturnType = it.type.convert().toFirResolvedTypeRef().projectOverDataColumnType()
+                    dataRowReturnType = it.type.type(),
+                    columnContainerReturnType = it.type.type().toFirResolvedTypeRef().projectOverDataColumnType()
                 )
 
                 else -> TODO("shouldn't happen")
@@ -169,21 +169,6 @@ fun FirExpressionResolutionExtension.coneKotlinTypes(
 
     dataFrameSchema.materialize(rootMarker)
     return types
-}
-
-private fun TypeApproximation.convert(): ConeKotlinType {
-    return when (this) {
-        is ColumnGroupTypeApproximation -> TODO()
-        is FrameColumnTypeApproximation -> TODO()
-        is TypeApproximationImpl -> {
-            ConeClassLikeLookupTagImpl(
-                ClassId(
-                    FqName(fqName.substringBeforeLast(".", missingDelimiterValue = "")),
-                    Name.identifier(fqName.substringAfterLast("."))
-                )
-            ).constructType(emptyArray(), this.nullable)
-        }
-    }
 }
 
 fun FirFunctionCall.functionSymbol(): FirNamedFunctionSymbol {

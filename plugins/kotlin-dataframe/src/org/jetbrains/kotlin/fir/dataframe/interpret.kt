@@ -20,13 +20,16 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
+import org.jetbrains.kotlinx.dataframe.Marker
 import org.jetbrains.kotlinx.dataframe.annotations.*
 import org.jetbrains.kotlinx.dataframe.plugin.*
 
-fun <T> FirExpressionResolutionExtension.interpret(
+abstract class MyFirExpressionResolutionExtension(session: FirSession) : FirExpressionResolutionExtension(session), KotlinTypeFacade
+
+fun <T> MyFirExpressionResolutionExtension.interpret(
     functionCall: FirFunctionCall,
     processor: Interpreter<T>,
     additionalArguments: Map<String, Interpreter.Success<Any?>> = emptyMap()
@@ -68,7 +71,7 @@ fun <T> FirExpressionResolutionExtension.interpret(
                             when (it) {
                                 is FirConstExpression<*> -> it.value
                                 is FirCallableReferenceAccess -> {
-                                    it.toKPropertyApproximation(session)
+                                    toKPropertyApproximation(it, session)
                                 }
                                 else -> TODO(it::class.toString())
                             }
@@ -93,57 +96,32 @@ fun <T> FirExpressionResolutionExtension.interpret(
                                     )
                                 )
                             } else {
-                                TODO(expression::class.toString())
+                                Interpreter.Success(extracted(expression))
                             }
                         }
                     }
                     is FirCallableReferenceAccess -> {
-                        Interpreter.Success(expression.toKPropertyApproximation(session))
+                        Interpreter.Success(toKPropertyApproximation(expression, session))
                     }
                     is FirLambdaArgumentExpression -> {
-                        val col: ColumnWithPathApproximation = when (val lambda = expression.expression) {
+                        val col: List<ColumnWithPathApproximation> = when (val lambda = expression.expression) {
                             is FirAnonymousFunctionExpression -> {
                                 val result = (lambda.anonymousFunction.body!!.statements.last() as FirReturnExpression).result
                                 when (result) {
                                     is FirPropertyAccessExpression -> {
-//                                        val symbol = result.calleeReference.toResolvedCallableSymbol()!!
-//                                        result.let {
-//                                            println(it)
-//                                        }
-//                                        result.typeRef.let {
-//                                            println(it)
-//                                        }
-                                        (result.typeRef as FirResolvedTypeRef).type.let {
-                                            val column = when {
-                                                it.classId == Names.DATA_COLUMN_CLASS_ID -> {
-                                                    val arg = it.typeArguments.single() as ConeClassLikeType
-                                                    when {
-                                                        arg.classId == Names.DF_CLASS_ID -> TODO()
-                                                        else -> SimpleCol(
-                                                            f(result),
-                                                            TypeApproximation.of(arg.lookupTag.classId, arg.isNullable)
-                                                        )
-                                                    }
-                                                }
-                                                it.classId == Names.COLUM_GROUP_CLASS_ID -> TODO()
-                                                else -> TODO()
-                                            }
-                                            ColumnWithPathApproximation(
-                                                path = ColumnPathApproximation(path(result)),
-                                                column
-                                            )
-                                        }
-//                                        val col = when (symbol.resolvedReturnType) {
-//                                            else -> TODO()
-//                                        }
-                                        //listOf()
+                                        extracted(result)
+                                    }
+                                    is FirFunctionCall -> {
+                                        val interpreter = result.loadInterpreter() ?: TODO("")
+                                        @Suppress("UNCHECKED_CAST")
+                                        interpret(result, interpreter)?.value as List<ColumnWithPathApproximation>
                                     }
                                     else -> TODO(result::class.toString())
                                 }
                             }
                             else -> TODO(lambda::class.toString())
                         }
-                        Interpreter.Success(listOf(col))
+                        Interpreter.Success(col)
                     }
                     else -> TODO(expression::class.toString())
                 }
@@ -151,7 +129,7 @@ fun <T> FirExpressionResolutionExtension.interpret(
 
             is Interpreter.ReturnType -> {
                 val returnType = it.expression.typeRef.coneType.returnType(session)
-                Interpreter.Success(TypeApproximation(returnType.classId?.asFqNameString()!!, returnType.isNullable))
+                Interpreter.Success(TypeApproximationImpl(returnType.classId?.asFqNameString()!!, returnType.isNullable))
             }
 
             is Interpreter.Dsl -> {
@@ -189,8 +167,9 @@ fun <T> FirExpressionResolutionExtension.interpret(
         value?.let { value1 -> it.name.identifier to value1 }
     }
 
-    functionCall.typeArguments.mapIndexed { index, firTypeProjection ->
+    functionCall.typeArguments.forEachIndexed { index, firTypeProjection ->
         val type = firTypeProjection.toConeTypeProjection().type ?: session.builtinTypes.nullableAnyType.type
+        if (type is ConeIntersectionType) return@forEachIndexed
         val approximation = TypeApproximationImpl(
             type.classId!!.asFqNameString(),
             type.isMarkedNullable
@@ -200,7 +179,7 @@ fun <T> FirExpressionResolutionExtension.interpret(
 
     return if (interpretationResults.size == refinedArguments.refinedArguments.size) {
         arguments.putAll(interpretationResults)
-        when (val res = processor.interpret(arguments)) {
+        when (val res = processor.interpret(arguments, this)) {
             is Interpreter.Success -> res
             is Interpreter.Error -> {
                 error(res.message.toString())
@@ -211,7 +190,34 @@ fun <T> FirExpressionResolutionExtension.interpret(
     }
 }
 
-private fun FirExpressionResolutionExtension.simpleCol(it: FirPropertySymbol): SimpleCol =
+private fun KotlinTypeFacade.extracted(result: FirPropertyAccessExpression): List<ColumnWithPathApproximation> {
+    return (result.typeRef as FirResolvedTypeRef).type.let {
+        val column = when {
+            it.classId == Names.DATA_COLUMN_CLASS_ID -> {
+                val arg = it.typeArguments.single() as ConeClassLikeType
+                when {
+                    arg.classId == Names.DF_CLASS_ID -> TODO()
+                    else -> SimpleCol(
+                        f(result),
+                        TypeApproximationImpl(arg.lookupTag.classId.asFqNameString(), arg.isNullable)
+                    )
+                }
+            }
+
+            it.classId == Names.COLUM_GROUP_CLASS_ID -> TODO()
+            else -> TODO()
+        }
+        listOf(
+            ColumnWithPathApproximation(
+                path = ColumnPathApproximation(path(result)),
+                column
+            )
+        )
+    }
+}
+
+
+private fun MyFirExpressionResolutionExtension.simpleCol(it: FirPropertySymbol): SimpleCol =
     when (it.resolvedReturnType.classId) {
         Names.DATA_ROW_CLASS_ID -> {
             val nestedColumns = it.resolvedReturnType.typeArguments[0].type
@@ -220,7 +226,7 @@ private fun FirExpressionResolutionExtension.simpleCol(it: FirPropertySymbol): S
                 ?.filterIsInstance<FirPropertySymbol>()
                 ?.map { simpleCol(it) }
                 ?: emptyList()
-            SimpleColumnGroup(it.name.identifier, nestedColumns)
+            SimpleColumnGroup(it.name.identifier, nestedColumns, anyRow)
         }
 
         else -> SimpleCol(
@@ -243,13 +249,9 @@ fun f(propertyAccessExpression: FirPropertyAccessExpression): String {
     return propertyAccessExpression.calleeReference.resolved!!.name.identifier
 }
 
-private fun TypeApproximation.Companion.of(classId: ClassId, nullable: Boolean): TypeApproximationImpl {
-    return TypeApproximationImpl(classId.asFqNameString(), nullable)
-}
-
-private fun FirCallableReferenceAccess.toKPropertyApproximation(session: FirSession): KPropertyApproximation {
-    val propertyName = calleeReference.name.identifier
-    return (calleeReference as FirResolvedCallableReference).let {
+private fun MyFirExpressionResolutionExtension.toKPropertyApproximation(firCallableReferenceAccess: FirCallableReferenceAccess, session: FirSession): KPropertyApproximation {
+    val propertyName = firCallableReferenceAccess.calleeReference.name.identifier
+    return (firCallableReferenceAccess.calleeReference as FirResolvedCallableReference).let {
         val symbol = it.toResolvedCallableSymbol()!!
         val columnName = symbol.annotations
             .find { it.fqName(session)!!.asString() == ColumnName::class.qualifiedName!! }
@@ -257,8 +259,9 @@ private fun FirCallableReferenceAccess.toKPropertyApproximation(session: FirSess
                 (it.argumentMapping.mapping[Name.identifier(ColumnName::name.name)] as FirConstExpression<*>).value as String
             }
         val kotlinType = symbol.resolvedReturnTypeRef.type
-        val type = kotlinType.classId?.asFqNameString()!!
-        KPropertyApproximation(columnName ?: propertyName, TypeApproximation(type, kotlinType.isNullable))
+
+        val type1 = Marker(kotlinType)
+        KPropertyApproximation(columnName ?: propertyName, type1)
     }
 }
 
