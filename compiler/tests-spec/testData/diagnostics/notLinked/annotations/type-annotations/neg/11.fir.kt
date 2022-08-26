@@ -18,7 +18,7 @@ fun case_3(a: Any) {
 // TESTCASE NUMBER: 4
 open class TypeToken<T>
 
-val case_4 = object : TypeToken<<!WRONG_ANNOTATION_TARGET!>@Ann(10)<!> String>() {}
+val case_4 = object : TypeToken<<!WRONG_ANNOTATION_TARGET, WRONG_ANNOTATION_TARGET, WRONG_ANNOTATION_TARGET!>@Ann(10)<!> String>() {}
 
 // TESTCASE NUMBER: 5
 fun case_5(a: Any) {
