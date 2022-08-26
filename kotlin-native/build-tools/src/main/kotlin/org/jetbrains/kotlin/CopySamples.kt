@@ -12,7 +12,7 @@ import java.io.File
  */
 open class CopySamples : Copy() {
     @InputDirectory
-    var samplesDir: File = project.file("samples")
+    var samplesDir: File = project.file("backend.native/tests/samples")
 
     private fun configureReplacements() {
         from(samplesDir) {

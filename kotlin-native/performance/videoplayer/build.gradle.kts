@@ -15,7 +15,7 @@ plugins {
 val dist = file(findProperty("kotlin.native.home") ?: "dist")
 val toolSuffix = if (System.getProperty("os.name").startsWith("Windows")) ".bat" else ""
 val binarySuffix = getNativeProgramExtension()
-val videoplayerDir = "$projectDir/../../samples/videoplayer"
+val videoplayerDir = "$projectDir/../../backend.native/tests/samples/videoplayer"
 
 val linkerOpts = when {
     PlatformInfo.isMac() -> listOf("-linker-options", "-L/opt/local/lib", "-linker-options", "-L/usr/local/lib", "-linker-options", "-L/opt/homebrew/lib", "-linker-options", "-L/opt/homebrew/opt/ffmpeg@4/lib")
