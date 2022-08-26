@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: NATIVE
+
 // MODULE: lib
 // FILE: l.kt
 
