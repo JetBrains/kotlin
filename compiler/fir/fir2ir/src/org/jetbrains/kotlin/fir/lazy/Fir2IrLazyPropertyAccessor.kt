@@ -61,7 +61,7 @@ class Fir2IrLazyPropertyAccessor(
 
     override var dispatchReceiverParameter: IrValueParameter? by lazyVar(lock) {
         val containingClass = (parent as? IrClass)?.takeUnless { it.isFacadeClass }
-        if (containingClass != null && shouldHaveDispatchReceiver(containingClass, firParentProperty)
+        if (containingClass != null && shouldHaveDispatchReceiver(containingClass, firParentProperty, fir)
         ) {
             createThisReceiverParameter(thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class"))
         } else null

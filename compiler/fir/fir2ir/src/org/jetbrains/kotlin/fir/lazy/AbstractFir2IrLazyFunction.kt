@@ -88,10 +88,10 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
 
     protected fun shouldHaveDispatchReceiver(
         containingClass: IrClass,
-        staticOwner: FirCallableDeclaration
+        vararg staticOwners: FirCallableDeclaration
     ): Boolean {
-        return !staticOwner.isStatic && !containingClass.isFacadeClass &&
-                (!containingClass.isObject || containingClass.isCompanion || !staticOwner.hasAnnotation(JVM_STATIC_CLASS_ID))
+        return !staticOwners.any { it.isStatic } && !containingClass.isFacadeClass &&
+                (!containingClass.isObject || containingClass.isCompanion || !staticOwners.any { it.hasAnnotation(JVM_STATIC_CLASS_ID) })
     }
 
     protected fun createThisReceiverParameter(thisType: IrType): IrValueParameter {
