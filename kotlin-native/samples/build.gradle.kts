@@ -32,16 +32,6 @@ val clean by tasks.creating(Delete::class) {
     delete(localRepo)
 }
 
-val buildSh by tasks.creating(Exec::class) {
-    errorOutput = System.out
-    isIgnoreExitValue = true
-    workingDir = projectDir
-    enabled = !isWindows
-    if (isLinux || isMacos) {
-        commandLine = listOf(projectDir.resolve("build.sh").toString())
-    }
-}
-
 val buildSamplesWithPlatformLibs by tasks.creating {
     dependsOn(":csvparser:assemble")
     dependsOn(":curl:assemble")
@@ -66,11 +56,4 @@ val buildSamplesWithPlatformLibs by tasks.creating {
     if (isWindows) {
         dependsOn(":win32:assemble")
     }
-}
-
-val buildAllSamples by tasks.creating {
-    subprojects.forEach {
-        dependsOn("${it.path}:assemble")
-    }
-    finalizedBy(buildSh)
 }
