@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.js.test.handlers
 
+import kotlinx.coroutines.withTimeout
 import org.jetbrains.kotlin.KtPsiSourceFileLinesMapping
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
@@ -104,6 +105,8 @@ class JsDebugRunner(testServices: TestServices) : AbstractJsArtifactsCollector(t
                     debugger.stepInto()
                     waitForResumeEvent()
                 }
+                debugger.resume()
+                waitForResumeEvent()
             }
         }
         checkSteppingTestResult(
@@ -216,7 +219,8 @@ class JsDebugRunner(testServices: TestServices) : AbstractJsArtifactsCollector(t
  */
 private class NodeJsDebuggerFacade(jsFilePath: String) {
 
-    private val inspector = NodeJsInspectorClient("js/js.translator/testData/runIrTestInNode.js", listOf(jsFilePath))
+    private val inspector =
+        NodeJsInspectorClient("js/js.tests/test/org/jetbrains/kotlin/js/test/debugger/stepping_test_executor.js", listOf(jsFilePath))
 
     private val scriptUrls = mutableMapOf<Runtime.ScriptId, String>()
 
@@ -228,12 +232,15 @@ private class NodeJsDebuggerFacade(jsFilePath: String) {
                 is Debugger.Event.ScriptParsed -> {
                     scriptUrls[event.scriptId] = event.url
                 }
+
                 is Debugger.Event.Paused -> {
                     pausedEvent = event
                 }
+
                 is Debugger.Event.Resumed -> {
                     pausedEvent = null
                 }
+
                 else -> {}
             }
         }
@@ -248,7 +255,9 @@ private class NodeJsDebuggerFacade(jsFilePath: String) {
         runtime.runIfWaitingForDebugger()
         waitForPauseEvent { it.reason == Debugger.PauseReason.BREAK_ON_START }
 
-        body()
+        withTimeout(30000) {
+            body()
+        }
     }
 
     fun scriptUrlByScriptId(scriptId: Runtime.ScriptId) = scriptUrls[scriptId] ?: error("unknown scriptId")
