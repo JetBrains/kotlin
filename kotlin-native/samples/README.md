@@ -13,8 +13,6 @@ More Kotlin Multiplatform Mobile samples can be found here: https://kotlinlang.o
 The samples that are in this directory mostly illustrate the other use cases for Kotlin/Native:
   * `csvparser` - simple CSV file parser and analyzer
   * `echoServer` - TCP/IP echo server
-  * `gitchurn` - program interoperating with `libgit2` for GIT repository analysis
-  * `gtk` - GTK3 interoperability example
   * `html5Canvas` - WebAssembly example
   * `libcurl` - using of FTP/HTTP/HTTPS client library `libcurl`
   * `nonBlockingEchoServer` - multi-client TCP/IP echo server using co-routines
@@ -22,7 +20,6 @@ The samples that are in this directory mostly illustrate the other use cases for
   * `opengl` - OpenGL/GLUT teapot example
   * `python_extension` - Python extension written in Kotlin/Native
   * `tensorflow` - simple client for TensorFlow Machine Intelligence library
-  * `tetris` - Tetris game implementation (using SDL2 for rendering)
   * `uikit` - UIKit Objective-C interoperability example for iOS
   * `videoplayer` - SDL and FFMPEG-based video and audio player
   * `win32` - trivial Win32 GUI application
