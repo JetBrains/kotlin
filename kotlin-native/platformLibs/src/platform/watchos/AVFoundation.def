@@ -3,5 +3,7 @@ language = Objective-C
 package = platform.AVFoundation
 modules = AVFoundation
 
+excludedFunctions = AVCaptureLensPositionCurrent
+
 compilerOpts = -framework AVFoundation
 linkerOpts = -framework AVFoundation
