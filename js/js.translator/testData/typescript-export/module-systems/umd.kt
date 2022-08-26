@@ -6,14 +6,15 @@
 // MODULE_KIND: UMD
 // FILE: umd.kt
 
-@file:JsExport
-
 package foo
 
+@JsExport
 val prop = 10
 
+@JsExport
 class C(val x: Int) {
     fun doubleX() = x * 2
 }
 
+@JsExport
 fun box(): String = "OK"

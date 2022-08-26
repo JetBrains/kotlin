@@ -414,9 +414,21 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         @Test
+        @TestMetadata("nonConsumableIdentifiersInExportedFile.kt")
+        public void testNonConsumableIdentifiersInExportedFile() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/nonConsumableIdentifiersInExportedFile.kt");
+        }
+
+        @Test
         @TestMetadata("secondaryConstructorWithoutJsName.kt")
         public void testSecondaryConstructorWithoutJsName() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/secondaryConstructorWithoutJsName.kt");
+        }
+
+        @Test
+        @TestMetadata("secondaryConstructorWithoutJsNameInExportedFile.kt")
+        public void testSecondaryConstructorWithoutJsNameInExportedFile() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/secondaryConstructorWithoutJsNameInExportedFile.kt");
         }
 
         @Test

@@ -8,6 +8,7 @@
 
 package foo
 
+@JsExport
 @JsName("Object")
 external interface WeirdInterface {
     val constructor: dynamic

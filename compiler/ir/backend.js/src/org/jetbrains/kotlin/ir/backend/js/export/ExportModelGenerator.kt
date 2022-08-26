@@ -719,6 +719,12 @@ private fun shouldDeclarationBeExportedImplicitlyOrExplicitly(declaration: IrDec
 }
 
 private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, context: JsIrBackendContext): Boolean {
+    // Formally, user have no ability to annotate EnumEntry as exported, without Enum Class
+    // But, when we add @file:JsExport, the annotation appears on the all of enum entries
+    // what make a wrong behaviour on non-exported members inside Enum Entry (check exportEnumClass and exportFileWithEnumClass tests)
+    if (declaration is IrClass && declaration.kind == ClassKind.ENUM_ENTRY)
+        return false
+
     if (context.additionalExportedDeclarationNames.contains(declaration.fqNameWhenAvailable))
         return true
 

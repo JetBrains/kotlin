@@ -22,21 +22,19 @@ fun f(x1: C1, x2: C2, x3: C3): String {
 
 // FILE: file2.kt
 
-@file:JsExport
-
 package a.b
 
 import foo.bar.baz.*
 import C3
 
+@JsExport
 data class C2(val value: String)
+@JsExport
 fun f(x1: C1, x2: C2, x3: C3): String {
     return "a.b.f($x1, $x2, $x3)"
 }
 
 // FILE: file3.kt
-
-@file:JsExport
 
 import a.b.*
 import foo.bar.baz.*
