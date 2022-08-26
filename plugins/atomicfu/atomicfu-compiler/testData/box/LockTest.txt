@@ -6,6 +6,7 @@ public final class LockTest {
     static method <clinit>(): void
     public method <init>(): void
     public final method testLock(): void
+    public final method tryAcquire$atomicfu(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater): boolean
 }
 
 @kotlin.Metadata
@@ -13,6 +14,4 @@ public final class LockTestKt {
     // source: 'LockTest.kt'
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method reflectionTest(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.util.Map): java.util.List
-    public final static method tryAcquire$atomicfu$array(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.util.concurrent.atomic.AtomicIntegerArray, p2: int): boolean
-    public final static method tryAcquire$atomicfu(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater): boolean
 }
