@@ -40,7 +40,6 @@ data class BuildOptions(
 ) {
     data class KaptOptions(
         val verbose: Boolean = false,
-        val useWorkers: Boolean = false,
         val incrementalKapt: Boolean = false,
         val includeCompileClasspath: Boolean = false,
         val classLoadersCacheSize: Int? = null
@@ -102,7 +101,6 @@ data class BuildOptions(
 
         if (kaptOptions != null) {
             arguments.add("-Pkapt.verbose=${kaptOptions.verbose}")
-            arguments.add("-Pkapt.use.worker.api=${kaptOptions.useWorkers}")
             arguments.add("-Pkapt.incremental.apt=${kaptOptions.incrementalKapt}")
             arguments.add("-Pkapt.include.compile.classpath=${kaptOptions.includeCompileClasspath}")
             kaptOptions.classLoadersCacheSize?.let { cacheSize ->

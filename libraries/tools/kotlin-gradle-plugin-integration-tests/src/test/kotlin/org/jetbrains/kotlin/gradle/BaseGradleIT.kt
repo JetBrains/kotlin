@@ -287,7 +287,6 @@ abstract class BaseGradleIT {
 
     data class KaptOptions(
         val verbose: Boolean,
-        val useWorkers: Boolean,
         val incrementalKapt: Boolean = false,
         val includeCompileClasspath: Boolean = true,
         val classLoadersCacheSize: Int? = null
@@ -897,7 +896,6 @@ Finished executing task ':$taskName'|
 
             options.kaptOptions?.also { kaptOptions ->
                 add("-Pkapt.verbose=${kaptOptions.verbose}")
-                add("-Pkapt.use.worker.api=${kaptOptions.useWorkers}")
                 add("-Pkapt.incremental.apt=${kaptOptions.incrementalKapt}")
                 add("-Pkapt.include.compile.classpath=${kaptOptions.includeCompileClasspath}")
                 kaptOptions.classLoadersCacheSize?.also { cacheSize ->

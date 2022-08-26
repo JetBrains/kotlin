@@ -11,11 +11,6 @@ import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 
-class Kapt3WorkersAndroid36IT : Kapt3Android36IT() {
-    override fun kaptOptions(): KaptOptions =
-        super.kaptOptions().copy(useWorkers = true)
-}
-
 open class Kapt3Android36IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_6_0
@@ -142,7 +137,7 @@ class Kapt3Android42IT : BaseGradleIT() {
     }
 
     private fun kaptOptions(): KaptOptions =
-        KaptOptions(verbose = true, useWorkers = false)
+        KaptOptions(verbose = true)
 
     private fun CompiledProject.assertKaptSuccessful() {
         KAPT_SUCCESSFUL_REGEX.findAll(this.output).count() > 0
@@ -174,7 +169,7 @@ abstract class Kapt3AndroidIT : BaseGradleIT() {
     }
 
     protected open fun kaptOptions(): KaptOptions =
-        KaptOptions(verbose = true, useWorkers = false)
+        KaptOptions(verbose = true)
 
     fun CompiledProject.assertKaptSuccessful() {
         KAPT_SUCCESSFUL_REGEX.findAll(this.output).count() > 0

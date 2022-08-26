@@ -118,7 +118,7 @@ open class KotlinAndroid36GradleIT : KotlinAndroid3GradleIT() {
 
         build(
             ":Android:kaptFlavor1DebugKotlin", "--dry-run",
-            options = defaultBuildOptions().copy(kaptOptions = KaptOptions(verbose = false, useWorkers = false))
+            options = defaultBuildOptions().copy(kaptOptions = KaptOptions(verbose = false))
         ) {
             assertSuccessful()
         }

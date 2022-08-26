@@ -226,35 +226,4 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
     }
 }
 
-internal class KaptWithKotlincConfig(kotlinCompileTask: KotlinCompile, ext: KaptExtension) :
-    KaptConfig<KaptWithKotlincTask>(kotlinCompileTask, ext) {
-
-    init {
-        configureTask { task ->
-            if (project.isIncrementalKapt()) {
-                val incAptCacheOption = task.incAptCache.locationOnly.map { incAptCacheDir ->
-                    CompilerPluginOptions().also {
-                        it.addPluginArgument(
-                            KAPT_SUBPLUGIN_ID, SubpluginOption("incrementalCache", lazy { incAptCacheDir.asFile.absolutePath })
-                        )
-                    }
-                }
-                task.kaptPluginOptions.add(incAptCacheOption)
-            }
-
-            task.compilerClasspath.from(providers.provider { kotlinCompileTask.defaultCompilerClasspath })
-            task.pluginClasspath.from(kotlinCompileTask.pluginClasspath)
-            task.additionalPluginOptionsAsInputs.value(kotlinCompileTask.pluginOptions).disallowChanges()
-            task.compileKotlinArgumentsContributor.set(providers.provider { kotlinCompileTask.compilerArgumentsContributor })
-            task.javaPackagePrefix.set(providers.provider { kotlinCompileTask.javaPackagePrefix })
-            task.reportingSettings.set(providers.provider { kotlinCompileTask.reportingSettings() })
-            propertiesProvider.kotlinDaemonJvmArgs?.let {
-                task.kotlinDaemonJvmArguments.value(it.split("\\s+".toRegex())).disallowChanges()
-            }
-            task.compilerExecutionStrategy.convention(propertiesProvider.kotlinCompilerExecutionStrategy).finalizeValueOnRead()
-            task.useDaemonFallbackStrategy.convention(propertiesProvider.kotlinDaemonUseFallbackStrategy).finalizeValueOnRead()
-        }
-    }
-}
-
 private val artifactType = Attribute.of("artifactType", String::class.java)

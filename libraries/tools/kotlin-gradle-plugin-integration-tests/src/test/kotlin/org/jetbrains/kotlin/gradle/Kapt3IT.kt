@@ -51,7 +51,6 @@ abstract class Kapt3BaseIT : KGPBaseTest() {
 
     protected open fun kaptOptions(): BuildOptions.KaptOptions = BuildOptions.KaptOptions(
         verbose = true,
-        useWorkers = false
     )
 
     fun BuildResult.assertKaptSuccessful() {
@@ -68,11 +67,52 @@ abstract class Kapt3BaseIT : KGPBaseTest() {
     protected val String.withPrefix get() = "kapt2/$this"
 }
 
-@DisplayName("Kapt executing via workers")
-open class Kapt3WorkersIT : Kapt3IT() {
-    override fun kaptOptions(): BuildOptions.KaptOptions =
-        super.kaptOptions().copy(useWorkers = true)
+@DisplayName("Kapt with classloaders cache")
+class Kapt3ClassLoadersCacheIT : Kapt3IT() {
+    override fun kaptOptions(): BuildOptions.KaptOptions = super.kaptOptions().copy(
+        classLoadersCacheSize = 10,
+        includeCompileClasspath = false
+    )
 
+    @Disabled("classloaders cache is incompatible with AP discovery in classpath")
+    override fun testDisableDiscoveryInCompileClasspath(gradleVersion: GradleVersion) {
+    }
+
+    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    override fun testChangesInLocalAnnotationProcessor(gradleVersion: GradleVersion) {
+    }
+
+    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    override fun testKt19179andKt37241(gradleVersion: GradleVersion) {
+    }
+
+    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    override fun testChangesToKaptConfigurationDoNotTriggerStubGeneration(gradleVersion: GradleVersion) {
+    }
+
+    override fun testAnnotationProcessorAsFqName(gradleVersion: GradleVersion) {
+        project("annotationProcessorAsFqName".withPrefix, gradleVersion) {
+            //classloaders caching is not compatible with includeCompileClasspath
+            buildGradle.modify {
+                it.addBeforeSubstring(
+                    "kapt \"org.jetbrains.kotlin:annotation-processor-example:\$kotlin_version\"\n",
+                    "implementation \"org.jetbrains.kotlin:annotation-processor-example"
+                )
+            }
+
+            build("build") {
+                assertKaptSuccessful()
+                assertTasksExecuted(":compileKotlin", ":compileJava")
+                assertFileInProjectExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
+                assertFileExists(kotlinClassesDir().resolve("example/TestClass.class"))
+                assertFileExists(javaClassesDir().resolve("example/TestClassGenerated.class"))
+            }
+        }
+    }
+}
+
+@DisplayName("Kapt base checks")
+open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("Kapt is skipped when no annotation processors are added")
     @GradleTest
     fun testKaptSkipped(gradleVersion: GradleVersion) {
@@ -188,54 +228,6 @@ open class Kapt3WorkersIT : Kapt3IT() {
             }
         }
     }
-}
-
-@DisplayName("Kapt with classloaders cache executing via workers ")
-class Kapt3ClassLoadersCacheIT : Kapt3WorkersIT() {
-    override fun kaptOptions(): BuildOptions.KaptOptions = super.kaptOptions().copy(
-        classLoadersCacheSize = 10,
-        includeCompileClasspath = false
-    )
-
-    @Disabled("classloaders cache is incompatible with AP discovery in classpath")
-    override fun testDisableDiscoveryInCompileClasspath(gradleVersion: GradleVersion) {
-    }
-
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    override fun testChangesInLocalAnnotationProcessor(gradleVersion: GradleVersion) {
-    }
-
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    override fun testKt19179andKt37241(gradleVersion: GradleVersion) {
-    }
-
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    override fun testChangesToKaptConfigurationDoNotTriggerStubGeneration(gradleVersion: GradleVersion) {
-    }
-
-    override fun testAnnotationProcessorAsFqName(gradleVersion: GradleVersion) {
-        project("annotationProcessorAsFqName".withPrefix, gradleVersion) {
-            //classloaders caching is not compatible with includeCompileClasspath
-            buildGradle.modify {
-                it.addBeforeSubstring(
-                    "kapt \"org.jetbrains.kotlin:annotation-processor-example:\$kotlin_version\"\n",
-                    "implementation \"org.jetbrains.kotlin:annotation-processor-example"
-                )
-            }
-
-            build("build") {
-                assertKaptSuccessful()
-                assertTasksExecuted(":compileKotlin", ":compileJava")
-                assertFileInProjectExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
-                assertFileExists(kotlinClassesDir().resolve("example/TestClass.class"))
-                assertFileExists(javaClassesDir().resolve("example/TestClassGenerated.class"))
-            }
-        }
-    }
-}
-
-@DisplayName("Kapt without workers")
-open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("Should find annotation processor via FQName")
     @GradleTest

@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.gradle.tasks.configuration.*
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
-import org.jetbrains.kotlin.gradle.utils.isParentOf
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.ObjectOutputStream
@@ -91,17 +90,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
         fun Project.isKaptVerbose(): Boolean {
             return getBooleanOptionValue(BooleanOption.KAPT_VERBOSE)
-        }
-
-        fun Project.isUseWorkerApi(): Boolean {
-            return getBooleanOptionValue(BooleanOption.KAPT_USE_WORKER_API) {
-                """
-                |Warning: '${BooleanOption.KAPT_USE_WORKER_API.optionName}' is deprecated and scheduled to be removed in Kotlin 1.8 release.
-                |
-                |By default Kapt plugin is using Gradle workers to run annotation processing. Running annotation processing
-                |directly in the Kotlin compiler is deprecated.
-                """.trimMargin()
-            }
         }
 
         fun Project.isIncrementalKapt(): Boolean {
@@ -214,10 +202,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             val defaultValue: Boolean
         ) {
             KAPT_VERBOSE("kapt.verbose", false),
-            KAPT_USE_WORKER_API(
-                "kapt.use.worker.api", // Currently doesn't have a matching KaptFlag
-                true
-            ),
             KAPT_INCREMENTAL_APT(
                 "kapt.incremental.apt",
                 true // Currently doesn't match the default value of KaptFlag.INCREMENTAL_APT, but it's fine (see https://github.com/JetBrains/kotlin/pull/3942#discussion_r532578690).
@@ -302,7 +286,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         )
 
         val kaptGenerateStubsTaskProvider: TaskProvider<KaptGenerateStubsTask> = context.createKaptGenerateStubsTask()
-        val kaptTaskProvider: TaskProvider<out KaptTask> = context.createKaptKotlinTask(useWorkerApi = project.isUseWorkerApi())
+        val kaptTaskProvider: TaskProvider<out KaptTask> = context.createKaptKotlinTask()
 
         kaptGenerateStubsTaskProvider.configure { kaptGenerateStubsTask ->
             kaptGenerateStubsTask.dependsOn(*buildDependencies.toTypedArray())
@@ -331,25 +315,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
         /** Plugin options are applied to kapt*Compile inside [createKaptKotlinTask] */
         return project.provider { emptyList<SubpluginOption>() }
-    }
-
-    // This method should be called no more than once for each Kapt3SubpluginContext
-    private fun Kapt3SubpluginContext.buildOptionsForAptMode(
-        javacOptions: Provider<Map<String, String>>
-    ): Provider<List<SubpluginOption>> {
-        return project.provider {
-            buildKaptSubpluginOptions(
-                kaptExtension,
-                project,
-                javacOptions.get(),
-                "apt",
-                generatedSourcesDir = listOf(sourcesOutputDir),
-                generatedClassesDir = listOf(getKaptGeneratedClassesDir(project, sourceSetName)),
-                incrementalDataDir = listOf(getKaptIncrementalDataDir()),
-                includeCompileClasspath = includeCompileClasspath,
-                kaptStubsDir = listOf(getKaptStubsDir())
-            ) + getAPOptions().get() // apOptions are needed only for "apt" mode
-        }
     }
 
     private fun Kapt3SubpluginContext.getAPOptions(): Provider<CompositeSubpluginOption> = project.provider {
@@ -395,15 +360,9 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         ).get()
     }
 
-    private fun Kapt3SubpluginContext.createKaptKotlinTask(useWorkerApi: Boolean): TaskProvider<out KaptTask> {
-        val taskClass = if (useWorkerApi) KaptWithoutKotlincTask::class.java else KaptWithKotlincTask::class.java
+    private fun Kapt3SubpluginContext.createKaptKotlinTask(): TaskProvider<out KaptTask> {
         val taskName = getKaptTaskName("kapt")
-
-        val taskConfigAction = if (taskClass == KaptWithoutKotlincTask::class.java ) {
-            KaptWithoutKotlincConfig(kotlinCompilation.compileKotlinTaskProvider.get() as KotlinCompile, kaptExtension)
-        } else {
-            KaptWithKotlincConfig(kotlinCompilation.compileKotlinTaskProvider.get() as KotlinCompile, kaptExtension)
-        }
+        val taskConfigAction = KaptWithoutKotlincConfig(kotlinCompilation.compileKotlinTaskProvider.get() as KotlinCompile, kaptExtension)
 
         val kaptClasspathConfiguration = project.configurations.create("kaptClasspath_$taskName")
             .setExtendsFrom(kaptClasspathConfigurations).also {
@@ -451,26 +410,13 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
                 task.annotationProcessorOptionProviders.add(it)
             }
 
-            val pluginOptions: Provider<CompilerPluginOptions> = if (taskClass == KaptWithKotlincTask::class.java) {
-                buildOptionsForAptMode(taskConfigAction.getJavaOptions(task.defaultJavaSourceCompatibility))
-            } else {
-                check(taskClass == KaptWithoutKotlincTask::class.java)
-                getDslKaptApOptions()
-            }.toCompilerPluginOptions()
+            val pluginOptions: Provider<CompilerPluginOptions> = getDslKaptApOptions().toCompilerPluginOptions()
 
             task.kaptPluginOptions.add(pluginOptions)
         }
 
-        return if (taskClass == KaptWithoutKotlincTask::class.java) {
-            taskConfigAction as KaptWithoutKotlincConfig
-            project.registerTask(taskName, KaptWithoutKotlincTask::class.java, emptyList()).also {
-                taskConfigAction.execute(it)
-            }
-        } else {
-            taskConfigAction as KaptWithKotlincConfig
-            project.registerTask(taskName, KaptWithKotlincTask::class.java, emptyList()).also {
-                taskConfigAction.execute(it)
-            }
+        return project.registerTask(taskName, KaptWithoutKotlincTask::class.java, emptyList()).also {
+            taskConfigAction.execute(it)
         }
     }
 
