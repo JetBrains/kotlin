@@ -71,6 +71,13 @@ class MultiLambdaBuilderInferenceRestriction(
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
 }
 
+class StubBuilderInferenceReceiver(
+    val receiver: SimpleKotlinCallArgument,
+    val extensionReceiverParameter: ReceiverParameterDescriptor,
+) : KotlinCallDiagnostic(RESOLVED) {
+    override fun report(reporter: DiagnosticReporter) = reporter.onCallReceiver(receiver, this)
+}
+
 class MixingNamedAndPositionArguments(override val argument: KotlinCallArgument) : InapplicableArgumentDiagnostic()
 
 class NamedArgumentNotAllowed(val argument: KotlinCallArgument, val descriptor: CallableDescriptor) : KotlinCallDiagnostic(INAPPLICABLE) {

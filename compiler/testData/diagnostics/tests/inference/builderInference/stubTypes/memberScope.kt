@@ -20,9 +20,9 @@ fun test() {
     val ret1 = build {
         emit(1)
         emit(null)
-        get()?.test()
-        get()?.test2()
-        get().test2()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test2()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>.test2()
         get()?.hashCode()
         get()?.equals(1)
         // there is `String?.equals` extension
@@ -31,9 +31,9 @@ fun test() {
     val ret2 = build {
         emit(1)
         emit(null)
-        get()?.test()
-        get()?.test2()
-        get().test2()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test2()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>.test2()
         get()?.hashCode()
         get()?.equals(1)
         val x = get()
@@ -44,9 +44,9 @@ fun test() {
     val ret3 = build {
         emit(1)
         emit(null)
-        get()?.test()
-        get()?.test2()
-        get().test2()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test2()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>.test2()
         get()?.hashCode()
         get()?.equals(1)
         val x = get()
@@ -62,9 +62,9 @@ fun test() {
             x.equals("")
             x.hashCode()
             x.toString()
-            x.test()
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
-            x.test2()
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>.test()
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!>test2()
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>.test2()
         }
 
         ""
@@ -104,7 +104,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
+            <!BUILDER_INFERENCE_STUB_RECEIVER, TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
         }
 
         ""
@@ -144,7 +144,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x === null) {
-            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
+            <!BUILDER_INFERENCE_STUB_RECEIVER, TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
         }
 
         ""
@@ -153,16 +153,16 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
+        <!BUILDER_INFERENCE_STUB_RECEIVER, TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
 
         ""
     }
     val ret41 = build {
         emit(1)
         emit(null)
-        get()?.test()
-        get()?.test2()
-        get().test2()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test2()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>.test2()
         get()?.hashCode()
         get()?.equals(1)
         val x = get()
@@ -181,11 +181,11 @@ fun test() {
         }
 
         if (x == null) {
-            <!DEBUG_INFO_CONSTANT!>x<!>?.test2()
+            <!BUILDER_INFERENCE_STUB_RECEIVER, DEBUG_INFO_CONSTANT!>x<!>?.test2()
         }
 
         if (x == null) {
-            x.test2()
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>.test2()
         }
 
         if (x === null) {
@@ -197,11 +197,11 @@ fun test() {
         }
 
         if (x === null) {
-            <!DEBUG_INFO_CONSTANT!>x<!>?.test2()
+            <!BUILDER_INFERENCE_STUB_RECEIVER, DEBUG_INFO_CONSTANT!>x<!>?.test2()
         }
 
         if (x === null) {
-            x.test2()
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>.test2()
         }
 
         ""
@@ -239,7 +239,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
+            <!BUILDER_INFERENCE_STUB_RECEIVER, TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
         }
         ""
     }
@@ -276,7 +276,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x === null) {
-            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
+            <!BUILDER_INFERENCE_STUB_RECEIVER, TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
         }
         ""
     }
@@ -284,15 +284,15 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
+        <!BUILDER_INFERENCE_STUB_RECEIVER, TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
         ""
     }
     val ret51 = build {
         emit(1)
         emit(null)
-        get()?.test()
-        get()?.test2()
-        get().test2()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test2()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>.test2()
         get()?.hashCode()
         get()?.equals(1)
         val x = get()
@@ -305,8 +305,8 @@ fun test() {
         if (x == null) {
             <!DEBUG_INFO_CONSTANT!>x<!>?.hashCode()
             <!DEBUG_INFO_CONSTANT!>x<!>?.equals(1)
-            <!DEBUG_INFO_CONSTANT!>x<!>?.test2()
-            x.test2()
+            <!BUILDER_INFERENCE_STUB_RECEIVER, DEBUG_INFO_CONSTANT!>x<!>?.test2()
+            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>.test2()
         }
 
         ""
