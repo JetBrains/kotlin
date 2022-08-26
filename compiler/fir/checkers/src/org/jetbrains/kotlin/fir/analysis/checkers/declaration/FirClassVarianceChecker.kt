@@ -64,10 +64,12 @@ object FirClassVarianceChecker : FirClassChecker() {
             if (member is FirProperty && member.isVar) Variance.INVARIANT else Variance.OUT_VARIANCE
 
         var returnSource = member.returnTypeRef.source
-        if (returnSource != null && memberSource != null) {
-            if (returnSource.kind is KtFakeSourceElementKind && memberSource.kind !is KtFakeSourceElementKind) {
+        if (returnSource != null) {
+            if (memberSource != null && returnSource.kind is KtFakeSourceElementKind && memberSource.kind !is KtFakeSourceElementKind) {
                 returnSource = memberSource
             }
+        } else {
+            returnSource = memberSource
         }
 
         checkVarianceConflict(member.returnTypeRef, returnTypeVariance, context, reporter, returnSource)
