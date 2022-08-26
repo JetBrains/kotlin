@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// SKIP_TXT
 fun test() {
     foo(
         flow { emit(0) }
