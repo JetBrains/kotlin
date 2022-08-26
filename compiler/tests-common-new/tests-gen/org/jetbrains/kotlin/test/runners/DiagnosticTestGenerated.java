@@ -14782,12 +14782,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
-                @TestMetadata("kt52782.kt")
-                public void testKt52782() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/kt52782.kt");
-                }
-
-                @Test
                 @TestMetadata("memberScopeOfCaptured.kt")
                 public void testMemberScopeOfCaptured() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/memberScopeOfCaptured.kt");
