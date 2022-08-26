@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation Foundation Network Security UniformTypeIdentifiers darwin posix
+language = Objective-C
+package = platform.DeviceDiscoveryExtension
+
+modules = DeviceDiscoveryExtension
+compilerOpts = -framework DeviceDiscoveryExtension
+linkerOpts = -framework DeviceDiscoveryExtension
