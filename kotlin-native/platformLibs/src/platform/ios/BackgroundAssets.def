@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation Foundation Security darwin posix
+language = Objective-C
+package = platform.BackgroundAssets
+
+modules = BackgroundAssets
+compilerOpts = -framework BackgroundAssets
+linkerOpts = -framework BackgroundAssets
