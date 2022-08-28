@@ -149,13 +149,9 @@ internal fun KtAnalysisSession.getTypeNullability(ktType: KtType): NullabilityTy
     if (ktType.isUnit) return NullabilityType.NotNull
 
     if (ktType is KtTypeParameterType) {
-//        TODO Make supertype checking
-//        val subtypeOfNullableSuperType = context.firRef.withFir(phase) {
-//            it.session.typeCheckerContext.nullableAnyType().isSupertypeOf(it.session.typeCheckerContext, coneType)
-//        }
-//        if (!subtypeOfNullableSuperType) return NullabilityType.NotNull
-
-        return if (!ktType.isMarkedNullable) NullabilityType.Unknown else NullabilityType.NotNull
+        if (ktType.isMarkedNullable) return NullabilityType.Nullable
+        val subtypeOfNullableSuperType = ktType.symbol.upperBounds.all { upperBound -> upperBound.canBeNull }
+        return if (!subtypeOfNullableSuperType) NullabilityType.NotNull else NullabilityType.Unknown
     }
     if (ktType !is KtClassType) return NullabilityType.NotNull
 
