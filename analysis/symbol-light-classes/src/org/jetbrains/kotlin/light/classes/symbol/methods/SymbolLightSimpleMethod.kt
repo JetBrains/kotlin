@@ -99,7 +99,7 @@ internal class SymbolLightSimpleMethod(
 
         functionSymbol.computeModalityForMethod(
             isTopLevel = isTopLevel,
-            suppressFinal = !finalModifier && functionSymbol.isOverride,
+            suppressFinal = containingClass.isInterface || (!finalModifier && functionSymbol.isOverride),
             result = modifiers
         )
 
