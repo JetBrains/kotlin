@@ -176,7 +176,7 @@ internal fun SymbolLightClassBase.createMethods(
     isTopLevel: Boolean = false,
     suppressStatic: Boolean = false
 ) {
-    val declarationGroups = declarations.groupBy { it is KtPropertySymbol && it.isFromPrimaryConstructor }
+    val (ctorProperties, regularMembers) = declarations.partition { it is KtPropertySymbol && it.isFromPrimaryConstructor }
 
     fun handleDeclaration(declaration: KtCallableSymbol) {
         when (declaration) {
@@ -229,11 +229,11 @@ internal fun SymbolLightClassBase.createMethods(
     }
 
     // Regular members
-    declarationGroups[false]?.forEach {
+    regularMembers.forEach {
         handleDeclaration(it)
     }
     // Then, properties from the primary constructor parameters
-    declarationGroups[true]?.forEach {
+    ctorProperties.forEach {
         handleDeclaration(it)
     }
 }
