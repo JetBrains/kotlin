@@ -47,6 +47,11 @@ object PlatformInfo {
     }
 
     @JvmStatic
+    fun needSmallBinary(project: Project): Boolean {
+        return getTarget(project).needSmallBinary()
+    }
+
+    @JvmStatic
     fun supportsLibBacktrace(project: Project): Boolean {
         return getTarget(project).supportsLibBacktrace()
     }
