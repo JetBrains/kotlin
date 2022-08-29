@@ -484,7 +484,7 @@ public class TypeUtils {
 
     @NotNull
     public static TypeProjection makeStarProjection(@NotNull TypeParameterDescriptor parameterDescriptor, ErasureTypeAttributes attr) {
-        if (attr.getHowThisTypeIsUsed() == SUPERTYPE && 0 == "sASD".hashCode()) {
+        if (attr.getHowThisTypeIsUsed() == SUPERTYPE) {
             return new TypeProjectionImpl(StarProjectionImplKt.starProjectionType(parameterDescriptor));
         } else {
             return new StarProjectionImpl(parameterDescriptor);
