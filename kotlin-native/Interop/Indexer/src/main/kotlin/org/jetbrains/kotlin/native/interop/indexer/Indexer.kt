@@ -1192,91 +1192,97 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                 index,
                 options = CXTranslationUnit_DetailedPreprocessingRecord or CXTranslationUnit_ForSerialization
         )
-        val translationUnitsByCanonicalPath = mutableMapOf<String, CXTranslationUnit>()
-        translationUnitsByCanonicalPath["<main module>"] = translationUnit
         try {
             translationUnit.ensureNoCompileErrors()
 
             val compilation = nativeIndex.library.withPrecompiledHeader(translationUnit)
 
-            val headers = getFilteredHeaders(nativeIndex, index, translationUnit, translationUnitsByCanonicalPath)
-            val headersCanonicalPaths = headers.filterNotNull().map { it.canonicalPath }
+            val cachedHeaders = getHeaders(nativeIndex.library, index, translationUnit)
+            val translationUnitsCacheByCanonicalPath = cachedHeaders.cache
+            try {
+                val headers = cachedHeaders.nativeLibraryHeaders.ownHeaders
+                val headersCanonicalPaths = headers.filterNotNull().map { it.canonicalPath }
 
-            nativeIndex.includedHeaders = headers.map {
-                nativeIndex.getHeaderId(it)
-            }
+                nativeIndex.includedHeaders = headers.map {
+                    nativeIndex.getHeaderId(it)
+                }
 
-            lateinit var indexer: Indexer
-            indexer = object : Indexer {
-                override fun indexDeclaration(info: CXIdxDeclInfo) {
-                    val file = memScoped {
-                        val fileVar = alloc<CXFileVar>()
-                        clang_indexLoc_getFileLocation(info.loc.readValue(), null, fileVar.ptr, null, null, null)
-                        fileVar.value
+                lateinit var indexer: Indexer
+                indexer = object : Indexer {
+                    override fun indexDeclaration(info: CXIdxDeclInfo) {
+                        val file = memScoped {
+                            val fileVar = alloc<CXFileVar>()
+                            clang_indexLoc_getFileLocation(info.loc.readValue(), null, fileVar.ptr, null, null, null)
+                            fileVar.value
+                        }
+
+                        if (file?.canonicalPath in headersCanonicalPaths) {
+                            nativeIndex.indexDeclaration(info)
+                        }
                     }
 
-                    if (file?.canonicalPath in headersCanonicalPaths) {
-                        nativeIndex.indexDeclaration(info)
+                    override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
+                        val moduleTranslationUnit = translationUnitsCacheByCanonicalPath[info.file!!.canonicalPath]!!
+                        if (headersCanonicalPaths.contains(getOnlyTopLevelHeader(moduleTranslationUnit, info))) {
+                            indexTranslationUnit(index, moduleTranslationUnit, 0, indexer)
+                        }
+                    }
+
+                    private fun getOnlyTopLevelHeader(unit: CXTranslationUnit, info: CXIdxImportedASTFileInfo): String? {
+                        val numTopLevelHeaders = clang_Module_getNumTopLevelHeaders(unit, info.module)
+                        val topLevelHeaders = (0 until numTopLevelHeaders).map {
+                            clang_Module_getTopLevelHeader(unit, info.module, it)?.canonicalPath
+                        }.toSet()
+                        if (topLevelHeaders.size != 1) {
+                            nativeIndex.log("Warning: Expected one SUBMODULE_TOPHEADER entry in ${info.file!!.canonicalPath} but actual is $topLevelHeaders")
+                        }
+                        val onlyTopLevelHeader = topLevelHeaders.firstOrNull()
+                        return onlyTopLevelHeader
+                    }
+                }
+                indexTranslationUnit(index, translationUnit, 0, indexer)
+
+                if (nativeIndex.library.language == Language.CPP) {
+                    translationUnitsCacheByCanonicalPath.values.forEach {
+                        visitChildren(clang_getTranslationUnitCursor(it)) { cursor, _ ->
+                            if (getContainingFile(cursor) in headers) {
+                                nativeIndex.indexCxxDeclaration(cursor)
+                            }
+                            CXChildVisitResult.CXChildVisit_Continue
+                        }
                     }
                 }
 
-                override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
-                    val unit = translationUnitsByCanonicalPath.getOrPut(info.file!!.canonicalPath) {
-                        val moduleTranslationUnit = clang_createTranslationUnit(index, info.file!!.canonicalPath)!!
-                        moduleTranslationUnit
-                    }
-                    val numTopLevelHeaders = clang_Module_getNumTopLevelHeaders(unit, info.module)
-                    val topLevelHeaders = (0 until numTopLevelHeaders).map {
-                        clang_Module_getTopLevelHeader(unit, info.module, it)?.canonicalPath
-                    }.toSet()
-                    if (topLevelHeaders.size != 1) {
-                        nativeIndex.log("Warning: Expected one SUBMODULE_TOPHEADER entry in ${info.file!!.canonicalPath} but actual is $topLevelHeaders")
-                    }
-                    if (headersCanonicalPaths.contains(topLevelHeaders.firstOrNull())) {
-                        indexTranslationUnit(index, unit, 0, indexer)
-                    }
-                }
-            }
-            indexTranslationUnit(index, translationUnit, 0, indexer)
-
-            if (nativeIndex.library.language == Language.CPP) {
-                translationUnitsByCanonicalPath.values.forEach {
+                translationUnitsCacheByCanonicalPath.values.forEach {
                     visitChildren(clang_getTranslationUnitCursor(it)) { cursor, _ ->
-                        if (getContainingFile(cursor) in headers) {
-                            nativeIndex.indexCxxDeclaration(cursor)
+                        val file = getContainingFile(cursor)
+                        if (file in headers && nativeIndex.library.includesDeclaration(cursor)) {
+                            when (cursor.kind) {
+                                CXCursorKind.CXCursor_ObjCInterfaceDecl -> nativeIndex.indexObjCClass(cursor)
+                                CXCursorKind.CXCursor_ObjCProtocolDecl -> nativeIndex.indexObjCProtocol(cursor)
+                                CXCursorKind.CXCursor_ObjCCategoryDecl -> {
+                                    // This fixes https://youtrack.jetbrains.com/issue/KT-49455, which effectively seems to be a bug in libclang:
+                                    // the libclang indexer doesn't properly index categories with
+                                    // `__attribute__((external_source_symbol(language="Swift",...)))`.
+                                    // As a workaround, additionally enumerate all the categories explicitly.
+                                    nativeIndex.indexObjCCategory(cursor)
+                                }
+
+                                else -> {}
+                            }
                         }
                         CXChildVisitResult.CXChildVisit_Continue
                     }
                 }
+
+                findMacros(nativeIndex, compilation, translationUnit, headers)
+
+                return compilation
+            } finally {
+                translationUnitsCacheByCanonicalPath.values.forEach { clang_disposeTranslationUnit(it) }
             }
-
-            translationUnitsByCanonicalPath.values.forEach {
-                visitChildren(clang_getTranslationUnitCursor(it)) { cursor, _ ->
-                    val file = getContainingFile(cursor)
-                    if (file in headers && nativeIndex.library.includesDeclaration(cursor)) {
-                        when (cursor.kind) {
-                            CXCursorKind.CXCursor_ObjCInterfaceDecl -> nativeIndex.indexObjCClass(cursor)
-                            CXCursorKind.CXCursor_ObjCProtocolDecl -> nativeIndex.indexObjCProtocol(cursor)
-                            CXCursorKind.CXCursor_ObjCCategoryDecl -> {
-                                // This fixes https://youtrack.jetbrains.com/issue/KT-49455, which effectively seems to be a bug in libclang:
-                                // the libclang indexer doesn't properly index categories with
-                                // `__attribute__((external_source_symbol(language="Swift",...)))`.
-                                // As a workaround, additionally enumerate all the categories explicitly.
-                                nativeIndex.indexObjCCategory(cursor)
-                            }
-
-                            else -> {}
-                        }
-                    }
-                    CXChildVisitResult.CXChildVisit_Continue
-                }
-            }
-
-            findMacros(nativeIndex, compilation, translationUnit, headers)
-
-            return compilation
         } finally {
-            translationUnitsByCanonicalPath.values.forEach { clang_disposeTranslationUnit(it) }
+            clang_disposeTranslationUnit(translationUnit)
         }
     }
 }
