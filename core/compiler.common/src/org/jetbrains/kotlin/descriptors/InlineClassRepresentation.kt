@@ -19,4 +19,7 @@ class InlineClassRepresentation<Type : SimpleTypeMarker> constructor(
     override fun containsPropertyWithName(name: Name): Boolean = underlyingPropertyName == name
 
     override fun getPropertyTypeByName(name: Name): Type? = underlyingType.takeIf { containsPropertyWithName(name) }
+
+    override fun toString(): String =
+        "InlineClassRepresentation(underlyingPropertyName=$underlyingPropertyName, underlyingType=$underlyingType)"
 }

@@ -18,4 +18,7 @@ class MultiFieldValueClassRepresentation<Type : SimpleTypeMarker>(
 
     override fun containsPropertyWithName(name: Name): Boolean = name in map
     override fun getPropertyTypeByName(name: Name): Type? = map[name]
+
+    override fun toString(): String =
+        "MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=$underlyingPropertyNamesToTypes)"
 }

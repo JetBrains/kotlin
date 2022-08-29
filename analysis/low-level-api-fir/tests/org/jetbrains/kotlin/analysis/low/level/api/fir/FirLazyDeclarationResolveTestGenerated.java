@@ -152,6 +152,12 @@ public class FirLazyDeclarationResolveTestGenerated extends AbstractFirLazyDecla
         public void testClassWithTypeParameters() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/lazyResolve/classes/classWithTypeParameters.kt");
         }
+
+        @Test
+        @TestMetadata("functionInValueClass.kt")
+        public void testFunctionInValueClass() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/classes/functionInValueClass.kt");
+        }
     }
 
     @Nested
