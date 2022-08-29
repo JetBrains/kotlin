@@ -117,6 +117,15 @@ internal fun SymbolLightClassBase.createConstructors(
                 methodIndex = METHOD_INDEX_BASE
             )
         )
+        createJvmOverloadsIfNeeded(constructor, result) { methodIndex, argumentSkipMask ->
+            SymbolLightConstructor(
+                constructorSymbol = constructor,
+                lightMemberOrigin = null,
+                containingClass = this@createConstructors,
+                methodIndex = methodIndex,
+                argumentsSkipMask = argumentSkipMask
+            )
+        }
     }
     val primaryConstructor = constructors.singleOrNull { it.isPrimary }
     if (primaryConstructor != null && shouldGenerateNoArgOverload(primaryConstructor, constructors)) {
@@ -186,33 +195,27 @@ internal fun SymbolLightClassBase.createMethods(
                     declaration.isHiddenOrSynthetic()
                 ) return
 
-                var methodIndex = METHOD_INDEX_BASE
                 result.add(
                     SymbolLightSimpleMethod(
                         functionSymbol = declaration,
                         lightMemberOrigin = null,
                         containingClass = this@createMethods,
+                        methodIndex = METHOD_INDEX_BASE,
                         isTopLevel = isTopLevel,
-                        methodIndex = methodIndex,
                         suppressStatic = suppressStatic
                     )
                 )
 
-                if (declaration.hasJvmOverloadsAnnotation()) {
-                    val skipMask = BitSet(declaration.valueParameters.size)
-
-                    for (i in declaration.valueParameters.size - 1 downTo 0) {
-
-                        if (!declaration.valueParameters[i].hasDefaultValue) continue
-
-                        skipMask.set(i)
-
-                        result.add(
-                            SymbolLightSimpleMethod(
-                                declaration, null, this@createMethods, methodIndex++, isTopLevel, skipMask.copy()
-                            )
-                        )
-                    }
+                createJvmOverloadsIfNeeded(declaration, result) { methodIndex, argumentSkipMask ->
+                    SymbolLightSimpleMethod(
+                        functionSymbol = declaration,
+                        lightMemberOrigin = null,
+                        containingClass = this@createMethods,
+                        methodIndex = methodIndex,
+                        isTopLevel = isTopLevel,
+                        argumentsSkipMask = argumentSkipMask,
+                        suppressStatic = suppressStatic
+                    )
                 }
             }
 
@@ -235,6 +238,24 @@ internal fun SymbolLightClassBase.createMethods(
     // Then, properties from the primary constructor parameters
     ctorProperties.forEach {
         handleDeclaration(it)
+    }
+}
+
+context(KtAnalysisSession)
+private inline fun <T : KtFunctionLikeSymbol> SymbolLightClassBase.createJvmOverloadsIfNeeded(
+    declaration: T,
+    result: MutableList<KtLightMethod>,
+    lightMethodCreator: (Int, BitSet) -> KtLightMethod
+) {
+    if (!declaration.hasJvmOverloadsAnnotation()) return
+    var methodIndex = METHOD_INDEX_BASE
+    val skipMask = BitSet(declaration.valueParameters.size)
+    for (i in declaration.valueParameters.size - 1 downTo 0) {
+        if (!declaration.valueParameters[i].hasDefaultValue) continue
+        skipMask.set(i)
+        result.add(
+            lightMethodCreator.invoke(methodIndex++, skipMask.copy())
+        )
     }
 }
 

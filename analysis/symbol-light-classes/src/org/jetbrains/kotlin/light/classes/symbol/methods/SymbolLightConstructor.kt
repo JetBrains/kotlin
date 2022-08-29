@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
+import java.util.*
 
 context(KtAnalysisSession)
 internal class SymbolLightConstructor(
@@ -25,7 +26,14 @@ internal class SymbolLightConstructor(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
-) : SymbolLightMethod(constructorSymbol, lightMemberOrigin, containingClass, methodIndex) {
+    argumentsSkipMask: BitSet? = null,
+) : SymbolLightMethod(
+    functionSymbol = constructorSymbol,
+    lightMemberOrigin = lightMemberOrigin,
+    containingClass = containingClass,
+    methodIndex = methodIndex,
+    argumentsSkipMask = argumentsSkipMask
+) {
 
     private val _name: String? = containingClass.name
 
