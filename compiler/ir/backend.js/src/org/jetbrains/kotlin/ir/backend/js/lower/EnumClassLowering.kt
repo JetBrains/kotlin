@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.builders.declarations.addField
+import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
@@ -548,7 +551,7 @@ class EnumSyntheticFunctionsAndPropertiesLowering(
 
     private fun IrBuilderWithScope.referenceFor(function: IrFunction, type: IrType): IrDeclarationReference {
         return if (supportRawFunctionReference) {
-            irRawFunctionReferefence(type, function.symbol)
+            irRawFunctionReference(type, function.symbol)
         } else {
             irFunctionReference(type, function.symbol)
         }
