@@ -166,7 +166,7 @@ abstract class XCFrameworkTask : DefaultTask() {
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:SkipWhenEmpty
     val inputFrameworkFiles: Collection<File>
-        get() = groupedFrameworkFiles.values.flatten().map { it.file }
+        get() = groupedFrameworkFiles.values.flatten().map { it.file }.filter { it.exists() }
 
     /**
      * A parent directory for the XCFramework.
