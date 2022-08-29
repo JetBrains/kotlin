@@ -51,7 +51,12 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         }
     }
 
-    val jvmTargetValue = releaseTargetArg ?: jvmTargetArg
+    val jvmTargetValue = when (releaseTargetArg) {
+        "6" -> "1.6"
+        "8" -> "1.8"
+        null -> jvmTargetArg
+        else -> releaseTargetArg
+    }
     if (jvmTargetValue != null) {
         val jvmTarget = JvmTarget.fromString(jvmTargetValue)
         if (jvmTarget != null) {
