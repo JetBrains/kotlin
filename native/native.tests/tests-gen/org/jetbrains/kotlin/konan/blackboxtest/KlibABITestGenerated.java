@@ -163,6 +163,12 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     }
 
     @Test
+    @TestMetadata("replaceCallableReturnType")
+    public void testReplaceCallableReturnType() throws Exception {
+        runTest("compiler/testData/klibABI/replaceCallableReturnType/");
+    }
+
+    @Test
     @TestMetadata("typeAliasRHSTypeChange")
     public void testTypeAliasRHSTypeChange() throws Exception {
         runTest("compiler/testData/klibABI/typeAliasRHSTypeChange/");
