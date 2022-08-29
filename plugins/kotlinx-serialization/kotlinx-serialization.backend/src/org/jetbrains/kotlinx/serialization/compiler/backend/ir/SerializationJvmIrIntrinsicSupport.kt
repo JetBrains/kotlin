@@ -248,7 +248,7 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                     false
                 )
             } else {
-                // More general path, including special ol built-in serializers for e.g. List
+                // More general path, including special or built-in serializers for e.g. List
                 val serializer = support.findTypeSerializerOrContext(type)
                 support.stackValueSerializerInstance(
                     type,

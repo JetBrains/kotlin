@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
+import org.jetbrains.kotlin.backend.jvm.codegen.JvmIrIntrinsicExtension
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.ir.getIoFile
 import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
@@ -286,10 +287,12 @@ open class JvmIrCodegenFactory(
         if (evaluatorFragmentInfoForPsi2Ir != null) {
             context.localDeclarationsLoweringData = mutableMapOf()
         }
-        // todo: pass it here
         val generationExtensions = IrGenerationExtension.getInstances(state.project)
+            .mapNotNull { it.getPlatformIntrinsicExtension() as? JvmIrIntrinsicExtension }
         val intrinsics by lazy { IrIntrinsicMethods(irModuleFragment.irBuiltins, context.ir.symbols) }
-        context.getIntrinsic = { symbol: IrFunctionSymbol -> intrinsics.getIntrinsic(symbol) ?: generationExtensions.firstNotNullOfOrNull { it.retrieveIntrinsic(symbol) as? IntrinsicMarker } }
+        context.getIntrinsic = { symbol: IrFunctionSymbol ->
+            intrinsics.getIntrinsic(symbol) ?: generationExtensions.firstNotNullOfOrNull { it.getIntrinsic(symbol) }
+        }
         /* JvmBackendContext creates new unbound symbols, have to resolve them. */
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
 

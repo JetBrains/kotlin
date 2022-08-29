@@ -34,6 +34,8 @@ class PsiInlineIntrinsicsSupport(
     private val reportErrorsOn: KtElement,
     private val typeSystem: TypeSystemCommonBackendContext
 ) : ReifiedTypeInliner.IntrinsicsSupport<KotlinType> {
+    private val pluginExtensions = ExpressionCodegenExtension.getInstances(state.project)
+
     override fun putClassInstance(v: InstructionAdapter, type: KotlinType) {
         DescriptorAsmUtil.putJavaLangClassInstance(v, state.typeMapper.mapType(type), type, state.typeMapper)
     }
@@ -90,9 +92,15 @@ class PsiInlineIntrinsicsSupport(
         instructions: InsnList,
         type: KotlinType,
         asmType: Type
-    ): Int {
-        return ExpressionCodegenExtension.getInstances(state.project)
-            .map { it.applyPluginDefinedReifiedOperationMarker(insn, instructions, type, asmType, state.typeMapper, typeSystem, state.module) }
-            .maxOrNull() ?: -1
-    }
+    ): Int = pluginExtensions.maxOfOrNull {
+        it.applyPluginDefinedReifiedOperationMarker(
+            insn,
+            instructions,
+            type,
+            asmType,
+            state.typeMapper,
+            typeSystem,
+            state.module
+        )
+    } ?: -1
 }
