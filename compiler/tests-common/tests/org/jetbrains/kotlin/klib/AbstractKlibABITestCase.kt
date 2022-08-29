@@ -56,7 +56,8 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
         stdlibFile = stdlibFile(),
         buildKlib = ::buildKlib,
         buildBinaryAndRun = ::buildBinaryAndRun,
-        onNonEmptyBuildDirectory = { directory -> directory.listFiles()?.forEach(File::deleteRecursively) }
+        onNonEmptyBuildDirectory = { directory -> directory.listFiles()?.forEach(File::deleteRecursively) },
+        onIgnoredTest = { /* Do nothing specific. JUnit 3 does not support programmatic tests muting. */ }
     )
 
     companion object {
@@ -66,12 +67,18 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
             stdlibFile: File,
             buildKlib: (moduleName: String, moduleSourceDir: File, moduleDependencies: Collection<File>, klibFile: File) -> Unit,
             buildBinaryAndRun: (mainModuleKlibFile: File, allDependencies: Collection<File>) -> Unit,
-            onNonEmptyBuildDirectory: (directory: File) -> Unit
+            onNonEmptyBuildDirectory: (directory: File) -> Unit,
+            onIgnoredTest: () -> Unit
         ) {
             val projectName = testDir.name
 
             val projectInfoFile = File(testDir, PROJECT_INFO_FILE)
             val projectInfo: ProjectInfo = ProjectInfoParser(projectInfoFile).parse(projectName)
+
+            if (projectInfo.muted) {
+                onIgnoredTest() // Ignore muted tests.
+                return
+            }
 
             val modulesMap: Map<String, ModuleUnderTest> = buildMap {
                 projectInfo.modules.forEach { moduleName ->

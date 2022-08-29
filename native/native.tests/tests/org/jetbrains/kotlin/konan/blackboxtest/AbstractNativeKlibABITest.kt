@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.junit.jupiter.api.Tag
+import org.opentest4j.TestAbortedException
 import java.io.File
 
 @Tag("klib-abi")
@@ -30,7 +31,8 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
         stdlibFile = stdlibFile,
         buildKlib = ::buildKlib,
         buildBinaryAndRun = { _, allDependencies -> buildBinaryAndRun(allDependencies) },
-        onNonEmptyBuildDirectory = ::backupDirectoryContents
+        onNonEmptyBuildDirectory = ::backupDirectoryContents,
+        onIgnoredTest = { throw TestAbortedException() }
     )
 
     private fun buildKlib(moduleName: String, moduleSourceDir: File, moduleDependencies: Collection<File>, klibFile: File) {
