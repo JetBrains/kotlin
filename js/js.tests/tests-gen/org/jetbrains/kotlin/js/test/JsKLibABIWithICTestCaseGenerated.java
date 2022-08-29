@@ -145,6 +145,11 @@ public class JsKLibABIWithICTestCaseGenerated extends AbstractJsKLibABIWithICTes
         runTest("compiler/testData/klibABI/removeProperty/");
     }
 
+    @TestMetadata("replaceCallableReturnType")
+    public void testReplaceCallableReturnType() throws Exception {
+        runTest("compiler/testData/klibABI/replaceCallableReturnType/");
+    }
+
     @TestMetadata("typeAliasRHSTypeChange")
     public void testTypeAliasRHSTypeChange() throws Exception {
         runTest("compiler/testData/klibABI/typeAliasRHSTypeChange/");
