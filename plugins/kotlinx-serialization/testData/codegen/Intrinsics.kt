@@ -40,4 +40,6 @@ fun test() {
     serializer<SerializableObject>()
 
     listSer<List<Box<Int>>>()
+
+    serializer<Simple?>()
 }

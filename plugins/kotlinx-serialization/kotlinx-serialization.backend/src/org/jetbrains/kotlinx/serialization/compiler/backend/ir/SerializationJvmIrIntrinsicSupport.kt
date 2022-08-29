@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.inline.newMethodNodeWithCorrectStackSize
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -34,6 +35,7 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.kSerializerArray
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.kSerializerType
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.stringArrayType
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.stringType
+import org.jetbrains.kotlinx.serialization.compiler.diagnostic.VersionReader
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ENUM_SERIALIZER_FACTORY_FUNC_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MARKED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.contextSerializerId
@@ -57,8 +59,7 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
         object Simple : IntrinsicType(stubCallDescriptor)
 
         class WithModule(val storedIndex: Int) :
-            IntrinsicType(stubCallDescriptorWithModule) {
-        }
+            IntrinsicType(stubCallDescriptorWithModule)
     }
 
     companion object {
@@ -68,7 +69,12 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                 || method.typeParameters.size != 1
                 || method.valueParameters.isNotEmpty()
             ) return null
-            return ReifiedSerializerMethod(method.extensionReceiverParameter != null)
+            val receiver = method.extensionReceiverParameter
+            return if (receiver == null)
+                ReifiedSerializerMethod(withModule = false)
+            else if (receiver.type.classFqName?.asString() == "kotlinx.serialization.modules.SerializersModule")
+                ReifiedSerializerMethod(withModule = true)
+            else null
         }
 
         val serializersModuleType: Type = Type.getObjectType("kotlinx/serialization/modules/SerializersModule")
@@ -95,7 +101,10 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                     val storedIndex = frameMap.enterTemp(materialVal.type)
                     mv.store(storedIndex, materialVal.type)
                     IntrinsicType.WithModule(storedIndex)
-                } else IntrinsicType.Simple
+                } else {
+                    codegen.markLineNumber(expression)
+                    IntrinsicType.Simple
+                }
                 SerializationJvmIrIntrinsicSupport(codegen.context).generateSerializerForType(
                     argument,
                     mv,
@@ -124,8 +133,14 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
         return module.findClassAcrossModuleDependencies(classId)?.let { jvmBackendContext.referenceClass(it) }
     }
 
+    private val currentVersion = VersionReader.getVersionsForCurrentModuleFromTrace(module, jvmBackendContext.state.bindingTrace)
+        ?.implementationVersion
+
     override val runtimeHasEnumSerializerFactoryFunctions: Boolean
-        get() = false // TODO
+        get() = currentVersion != null && currentVersion > ApiVersion.parse("1.4.0")!!
+
+    private val hasNewContextSerializerSignature: Boolean
+        get() = currentVersion != null && currentVersion >= ApiVersion.parse("1.2.0")!!
 
     private fun findTypeSerializerOrContext(argType: IrType): IrClassSymbol? =
         emptyGenerator.findTypeSerializerOrContextUnchecked(this, argType)
@@ -243,8 +258,8 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                 ) { genericArg ->
                     assert(putReifyMarkerIfNeeded(genericArg, intrinsicType))
                 }
-                if (type.isMarkedNullable()) adapter.wrapStackValueIntoNullableSerializer()
             }
+            if (type.isMarkedNullable()) adapter.wrapStackValueIntoNullableSerializer()
         }
     }
 
@@ -405,7 +420,7 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                     aconst(typeMapper.mapTypeCommon(kType, TypeMappingMode.GENERIC_ARGUMENT))
                     AsmUtil.wrapJavaClassIntoKClass(this)
                     signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
-                    if (serializer.owner.classId == contextSerializerId && serializer.constructors.any { it.owner.valueParameters.size == 3 }) { // TODO: this isn't working with LAZY IR CLASS
+                    if (serializer.owner.classId == contextSerializerId && hasNewContextSerializerSignature) {
                         // append new additional arguments
                         val fallbackDefaultSerializer = findTypeSerializer(this@SerializationJvmIrIntrinsicSupport, kType)
                         if (fallbackDefaultSerializer != null && fallbackDefaultSerializer != serializer) {
