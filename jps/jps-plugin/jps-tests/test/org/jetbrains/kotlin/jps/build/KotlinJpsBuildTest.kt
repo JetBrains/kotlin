@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTestBase.LibraryDependency.*
@@ -83,7 +84,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         private val EXCLUDE_FILES = arrayOf("Excluded.class", "YetAnotherExcluded.class")
         private val NOTHING = arrayOf<String>()
         private const val KOTLIN_JS_LIBRARY = "jslib-example"
-        private val PATH_TO_KOTLIN_JS_LIBRARY = AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/KotlinJavaScriptProjectWithDirectoryAsLibrary/" + KOTLIN_JS_LIBRARY
+        private val PATH_TO_KOTLIN_JS_LIBRARY = TEST_DATA_PATH + "general/KotlinJavaScriptProjectWithDirectoryAsLibrary/" + KOTLIN_JS_LIBRARY
         private const val KOTLIN_JS_LIBRARY_JAR = "$KOTLIN_JS_LIBRARY.jar"
 
         private fun getMethodsOfClass(classFile: File): Set<String> {
@@ -607,7 +608,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
         val libraryJar = MockLibraryUtilExt.compileJvmLibraryToJar(workDir.absolutePath + File.separator + "oldModuleLib/src", "module-lib")
 
-        AbstractKotlinJpsBuildTestCase.addDependency(JpsJavaDependencyScope.COMPILE, listOf(findModule("module1"), findModule("module2")), false, "module-lib", libraryJar)
+        addDependency(JpsJavaDependencyScope.COMPILE, listOf(findModule("module1"), findModule("module2")), false, "module-lib", libraryJar)
 
         val result = buildAllModules()
         result.assertSuccessful()
@@ -618,7 +619,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
         val libraryJar = MockLibraryUtilExt.compileJvmLibraryToJar(workDir.absolutePath + File.separator + "oldModuleLib/src", "module-lib")
 
-        AbstractKotlinJpsBuildTestCase.addDependency(JpsJavaDependencyScope.COMPILE, listOf(findModule("module")), false, "module-lib", libraryJar)
+        addDependency(JpsJavaDependencyScope.COMPILE, listOf(findModule("module")), false, "module-lib", libraryJar)
 
         addKotlinStdlibDependency()
 
@@ -989,6 +990,121 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         checkWhen(emptyArray(), null, packageClasses("kotlinProject", "src/test1.kt", "Test1Kt"))
     }
 
+    @WorkingDir("KotlinProject")
+    fun testModuleRebuildOnJvmTargetChange() {
+        initProject(JVM_MOCK_RUNTIME)
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments()
+            (facet.compilerArguments as K2JVMCompilerArguments).jvmTarget = "1.8"
+
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+        buildAllModules().assertSuccessful()
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments()
+            (facet.compilerArguments as K2JVMCompilerArguments).jvmTarget = "9"
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+
+        checkWhen(emptyArray(), null, packageClasses("kotlinProject", "src/test1.kt", "Test1Kt"))
+    }
+
+    @WorkingDir("KotlinProject")
+    fun testModuleRebuildOnBackendChange() {
+        initProject(JVM_MOCK_RUNTIME)
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments()
+            (facet.compilerArguments as K2JVMCompilerArguments).useK2 = false
+
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+        buildAllModules().assertSuccessful()
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments()
+            (facet.compilerArguments as K2JVMCompilerArguments).useK2 = true
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+
+        checkWhen(emptyArray(), null, packageClasses("kotlinProject", "src/test1.kt", "Test1Kt"))
+    }
+
+    @WorkingDir("KotlinProject")
+    fun testModuleRebuildOnJvmDefaultChange() {
+        initProject(JVM_MOCK_RUNTIME)
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments()
+            (facet.compilerArguments as K2JVMCompilerArguments).jvmDefault = JvmDefaultMode.DEFAULT.description
+
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+        buildAllModules().assertSuccessful()
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments()
+            (facet.compilerArguments as K2JVMCompilerArguments).jvmDefault = JvmDefaultMode.ALL_COMPATIBILITY.description
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+
+        checkWhen(emptyArray(), null, packageClasses("kotlinProject", "src/test1.kt", "Test1Kt"))
+    }
+
+    @WorkingDir("KotlinProject")
+    fun testModuleRebuildOnAddJavaMoudlesChange() {
+        initProject(JVM_MOCK_RUNTIME)
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments()
+
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+        buildAllModules().assertSuccessful()
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments()
+            (facet.compilerArguments as K2JVMCompilerArguments).additionalJavaModules = arrayOf("ALL-MODULE-PATH")
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+
+        checkWhen(emptyArray(), null, packageClasses("kotlinProject", "src/test1.kt", "Test1Kt"))
+    }
+
     fun testBuildAfterGdwBuild() {
         initProject(JVM_FULL_RUNTIME)
         findModule("module2").let {
@@ -1022,7 +1138,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         KotlinTestUtils.assertEqualsToFile(expectedFile, actualErrors)
     }
 
-    private fun getCurrentTestDataRoot() = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/" + getTestName(false))
+    private fun getCurrentTestDataRoot() = File(TEST_DATA_PATH + "general/" + getTestName(false))
 
     private fun buildCustom(
             canceledStatus: CanceledStatus,

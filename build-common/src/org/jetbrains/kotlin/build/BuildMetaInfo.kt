@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.build
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.PluginClasspaths
@@ -25,6 +26,10 @@ interface BuildMetaInfo {
     val coroutinesVersion: Int
     val multiplatformVersion: Int
     val pluginClasspaths: String
+    val target: String
+    val useK2: Boolean
+    val jvmDefault: String
+    val additionalJavaModules: String
 }
 
 abstract class BuildMetaInfoFactory<T : BuildMetaInfo>(private val metaInfoClass: KClass<T>) {
@@ -38,7 +43,11 @@ abstract class BuildMetaInfoFactory<T : BuildMetaInfo>(private val metaInfoClass
         coroutinesVersion: Int,
         multiplatformVersion: Int,
         metadataVersionArray: IntArray?,
-        pluginClasspaths: String
+        pluginClasspaths: String,
+        target: String,
+        useK2: Boolean,
+        jvmDefault: String,
+        additionalJavaModules: String
     ): T
 
     fun create(args: CommonCompilerArguments): T {
@@ -54,7 +63,11 @@ abstract class BuildMetaInfoFactory<T : BuildMetaInfo>(private val metaInfoClass
             coroutinesVersion = COROUTINES_VERSION,
             multiplatformVersion = MULTIPLATFORM_VERSION,
             metadataVersionArray = args.metadataVersion?.let { BinaryVersion.parseVersionArray(it) },
-            pluginClasspaths = PluginClasspaths(args.pluginClasspaths).serialize()
+            pluginClasspaths = PluginClasspaths(args.pluginClasspaths).serialize(),
+            target = (args as? K2JVMCompilerArguments)?.jvmTarget ?: "",
+            useK2 = (args as? K2JVMCompilerArguments)?.useK2 ?: false,
+            jvmDefault = (args as? K2JVMCompilerArguments)?.jvmDefault ?: "",
+            additionalJavaModules = (args as? K2JVMCompilerArguments)?.additionalJavaModules?.joinToString(":") ?: ""
         )
     }
 

@@ -306,7 +306,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
     )
 
     inner class SourcesToCompile(
-        sources: Collection<KotlinModuleBuildTarget.Source>,
+        sources: Collection<Source>,
         val removedFiles: Collection<File>
     ) {
         val allFiles = sources.map { it.file }
@@ -357,6 +357,10 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
                 // If EAP->Non-EAP build with IC, then rebuild all kotlin
                 "Last build was compiled with EAP-plugin"
             }
+            prevBuildMetaInfo.target != buildMetaInfo.target -> "JVM target was changed"
+            prevBuildMetaInfo.useK2 != buildMetaInfo.useK2 -> "Kotlin compiler backend was changed"
+            prevBuildMetaInfo.jvmDefault != buildMetaInfo.jvmDefault -> "-Xjvm-default flag was changed"
+            prevBuildMetaInfo.additionalJavaModules != buildMetaInfo.additionalJavaModules -> "-Xadd-modules flag was changed"
             else -> PluginClasspathsComparator(
                 prevBuildMetaInfo.pluginClasspaths,
                 buildMetaInfo.pluginClasspaths

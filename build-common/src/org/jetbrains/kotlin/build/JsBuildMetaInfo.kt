@@ -22,7 +22,11 @@ data class JsBuildMetaInfo(
     override val ownVersion: Int,
     override val coroutinesVersion: Int,
     override val multiplatformVersion: Int,
-    override val pluginClasspaths: String
+    override val pluginClasspaths: String,
+    override val target: String,
+    override val useK2: Boolean,
+    override val jvmDefault: String,
+    override val additionalJavaModules: String
 ) : BuildMetaInfo {
     companion object : BuildMetaInfoFactory<JsBuildMetaInfo>(JsBuildMetaInfo::class) {
         override fun create(
@@ -35,7 +39,11 @@ data class JsBuildMetaInfo(
             coroutinesVersion: Int,
             multiplatformVersion: Int,
             metadataVersionArray: IntArray?,
-            pluginClasspaths: String
+            pluginClasspaths: String,
+            target: String,
+            useK2: Boolean,
+            jvmDefault: String,
+            additionalJavaModules: String
         ): JsBuildMetaInfo {
             val metadataVersion = metadataVersionArray?.let(::JsMetadataVersion) ?: JsMetadataVersion.INSTANCE
             return JsBuildMetaInfo(
@@ -50,7 +58,11 @@ data class JsBuildMetaInfo(
                 ownVersion = ownVersion,
                 coroutinesVersion = coroutinesVersion,
                 multiplatformVersion = multiplatformVersion,
-                pluginClasspaths = pluginClasspaths
+                pluginClasspaths = pluginClasspaths,
+                target = target,
+                useK2 = useK2,
+                jvmDefault = jvmDefault,
+                additionalJavaModules = additionalJavaModules
             )
         }
     }
