@@ -274,7 +274,7 @@ abstract class XCFrameworkTask : DefaultTask() {
             buildType: NativeBuildType,
             appleTarget: AppleTarget? = null
         ) = project.buildDir
-            .resolve(xcFrameworkName + "XCFrameworkTemp")
+            .resolve(xcFrameworkName.asValidFrameworkName() + "XCFrameworkTemp")
             .resolve("fatframework")
             .resolve(buildType.getName())
             .resolveIfNotNull(appleTarget?.targetName)
