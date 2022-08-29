@@ -96,7 +96,7 @@ abstract class KotlinNativeCompilation @Inject constructor(
 
     // Interop DSL.
     val cinterops = project.container(DefaultCInteropSettings::class.java) { cinteropName ->
-        project.objects.newInstance(DefaultCInteropSettings::class.java, project, cinteropName, this)
+        project.objects.newInstance(DefaultCInteropSettings::class.java, cinteropName, this)
     }
 
     fun cinterops(action: Action<NamedDomainObjectContainer<DefaultCInteropSettings>>) = action.execute(cinterops)
