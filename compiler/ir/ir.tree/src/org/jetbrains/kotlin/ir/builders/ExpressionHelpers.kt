@@ -347,7 +347,7 @@ fun IrBuilderWithScope.irConcat() =
 fun IrBuilderWithScope.irVararg(elementType: IrType, values: List<IrExpression>) =
     IrVarargImpl(startOffset, endOffset, context.irBuiltIns.arrayClass.typeWith(elementType), elementType, values)
 
-fun IrBuilderWithScope.irRawFunctionReferefence(type: IrType, symbol: IrFunctionSymbol) =
+fun IrBuilderWithScope.irRawFunctionReference(type: IrType, symbol: IrFunctionSymbol) =
     IrRawFunctionReferenceImpl(startOffset, endOffset, type, symbol)
 
 fun IrBuilderWithScope.irFunctionReference(type: IrType, symbol: IrFunctionSymbol) =

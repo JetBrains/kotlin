@@ -417,7 +417,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
     }
 
     private fun IrBuilderWithScope.irRawFunctionRef(irFun: IrFunction) =
-        irRawFunctionReferefence(context.irBuiltIns.anyType, irFun.symbol)
+        irRawFunctionReference(context.irBuiltIns.anyType, irFun.symbol)
 
     private fun IrBuilderWithScope.irVarargOfRawFunctionRefs(irFuns: List<IrFunction>) =
         irVararg(context.irBuiltIns.anyType, irFuns.map { irRawFunctionRef(it) })

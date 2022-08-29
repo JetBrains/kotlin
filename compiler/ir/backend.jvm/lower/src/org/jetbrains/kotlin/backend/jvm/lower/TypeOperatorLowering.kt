@@ -165,7 +165,7 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
 
     private fun JvmIrBuilder.jvmOriginalMethodType(methodSymbol: IrFunctionSymbol) =
         irCall(backendContext.ir.symbols.jvmOriginalMethodTypeIntrinsic, context.irBuiltIns.anyType).apply {
-            putValueArgument(0, irRawFunctionReferefence(context.irBuiltIns.anyType, methodSymbol))
+            putValueArgument(0, irRawFunctionReference(context.irBuiltIns.anyType, methodSymbol))
         }
 
     /**
@@ -511,7 +511,7 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
         dynamicCall: IrCall
     ): IrCall {
         val samMethodType = jvmOriginalMethodType(samMethodSymbol)
-        val implFunRawRef = irRawFunctionReferefence(context.irBuiltIns.anyType, implFunSymbol)
+        val implFunRawRef = irRawFunctionReference(context.irBuiltIns.anyType, implFunSymbol)
         val instanceMethodType = jvmOriginalMethodType(instanceMethodSymbol)
 
         var bootstrapMethod = jdkMetafactoryHandle

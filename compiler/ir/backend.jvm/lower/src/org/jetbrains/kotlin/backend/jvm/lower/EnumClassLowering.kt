@@ -345,9 +345,9 @@ internal fun IrBuilderWithScope.irCreateEnumEntriesIndy(
      */
     val indyCall = irCall(symbols.indyLambdaMetafactoryIntrinsic, type).apply {
         putTypeArgument(0, type)
-        putValueArgument(0, irRawFunctionReferefence(context.irBuiltIns.anyType, sam))
+        putValueArgument(0, irRawFunctionReference(context.irBuiltIns.anyType, sam))
         putValueArgument(1, IrFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, functionThatReturnsEnumArray.symbol, 0, 0))
-        putValueArgument(2, irRawFunctionReferefence(context.irBuiltIns.anyType, sam))
+        putValueArgument(2, irRawFunctionReference(context.irBuiltIns.anyType, sam))
         putValueArgument(3, irVararg(context.irBuiltIns.anyType, emptyList()))
         putValueArgument(4, irBoolean(false))
     }
