@@ -34,7 +34,8 @@ data class FileReportSettings(
 data class HttpReportSettings(
     val url: String,
     val password: String?,
-    val user: String?
+    val user: String?,
+    val verboseEnvironment: Boolean
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 0
@@ -42,7 +43,7 @@ data class HttpReportSettings(
 }
 
 data class BuildScanSettings(
-    val customValueLimit: Int
+    val customValueLimit: Int,
 ): Serializable {
     companion object {
         const val serialVersionUID: Long = 0

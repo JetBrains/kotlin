@@ -32,7 +32,7 @@ internal fun reportingSettings(rootProject: Project): ReportingSettings {
             ?: throw IllegalStateException("Can't configure http report: '${properties.buildReportHttpUrlProperty}' property is mandatory")
         val password = properties.buildReportHttpPassword
         val user = properties.buildReportHttpUser
-        HttpReportSettings(url, password, user)
+        HttpReportSettings(url, password, user, properties.buildReportHttpVerboseEnvironment)
     } else {
         null
     }

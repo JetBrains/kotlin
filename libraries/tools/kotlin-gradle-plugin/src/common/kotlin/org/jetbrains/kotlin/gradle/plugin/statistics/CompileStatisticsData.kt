@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 //Sensitive data. This object is used directly for statistic via http
+private val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").also { it.timeZone = TimeZone.getTimeZone("UTC")}
 data class CompileStatisticsData(
     val version: Int = 2,
     val projectName: String?,
@@ -32,11 +33,8 @@ data class CompileStatisticsData(
     val buildTimesMetrics: Map<BuildTime, Long>,
     val performanceMetrics: Map<BuildPerformanceMetric, Long>,
     val type: String = BuildDataType.TASK_DATA.name
-) {
-    companion object {
-        private val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").also { it.timeZone = TimeZone.getTimeZone("UTC")}
-    }
-}
+)
+
 
 enum class StatTag {
     ABI_SNAPSHOT,
@@ -58,7 +56,7 @@ enum class BuildDataType {
 data class GradleBuildStartParameters(
     val tasks: List<String>,
     val excludedTasks: Set<String>,
-    val currentDir: String,
+    val currentDir: String?,
     val projectProperties: List<String>,
     val systemProperties: List<String>,
 ) : java.io.Serializable
@@ -70,7 +68,10 @@ data class BuildFinishStatisticsData(
     val buildUuid: String = "Unset",
     val label: String?,
     val totalTime: Long,
-    val type: String = BuildDataType.BUILD_DATA.name
+    val type: String = BuildDataType.BUILD_DATA.name,
+    val finishTime: Long,
+    val timestamp: String = formatter.format(finishTime),
+    val hostName: String? = "Unset",
 )
 
 
