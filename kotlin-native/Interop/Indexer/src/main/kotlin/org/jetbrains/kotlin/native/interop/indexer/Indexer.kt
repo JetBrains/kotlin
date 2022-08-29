@@ -1198,7 +1198,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
             val compilation = nativeIndex.library.withPrecompiledHeader(translationUnit)
 
             val cachedHeaders = getHeaders(nativeIndex.library, index, translationUnit)
-            val translationUnitsCacheByCanonicalPath = cachedHeaders.cache
+            val translationUnitsCacheByCanonicalPath = cachedHeaders.cache + ("main module" to translationUnit)
             try {
                 val headers = cachedHeaders.nativeLibraryHeaders.ownHeaders
                 val headersCanonicalPaths = headers.filterNotNull().map { it.canonicalPath }
@@ -1275,11 +1275,11 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                     }
                 }
 
-                findMacros(nativeIndex, compilation, translationUnit, headers)
+                findMacros(nativeIndex, compilation, translationUnitsCacheByCanonicalPath, headers)
 
                 return compilation
             } finally {
-                translationUnitsCacheByCanonicalPath.values.forEach { clang_disposeTranslationUnit(it) }
+                cachedHeaders.cache.values.forEach { clang_disposeTranslationUnit(it) }
             }
         } finally {
             clang_disposeTranslationUnit(translationUnit)
