@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarFileSystem
@@ -656,7 +657,7 @@ class KotlinCoreEnvironment private constructor(
                     if (registrar.javaClass.simpleName == "ScriptingCompilerConfigurationComponentRegistrar") {
                         messageCollector?.report(STRONG_WARNING, "Default scripting plugin is disabled: $message")
                     } else {
-                        throw IllegalStateException(message, e)
+                        messageCollector?.report(ERROR, message)
                     }
                 }
             }
