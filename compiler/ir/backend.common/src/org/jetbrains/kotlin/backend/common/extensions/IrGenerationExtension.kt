@@ -5,15 +5,9 @@
 
 package org.jetbrains.kotlin.backend.common.extensions
 
-import org.jetbrains.org.objectweb.asm.tree.InsnList
-import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
-import org.jetbrains.kotlin.backend.common.BackendContext
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 
 interface IrGenerationExtension : IrDeserializer.IrLinkerExtension {
     companion object :
@@ -23,14 +17,11 @@ interface IrGenerationExtension : IrDeserializer.IrLinkerExtension {
 
     fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext)
 
-    // TODO: normal dependency & typing
-    fun retrieveIntrinsic(symbol: IrFunctionSymbol): Any? = null
-
-
-    fun applyPluginDefinedReifiedOperationMarker(
-        insn: MethodInsnNode,
-        instructions: InsnList,
-        type: IrType,
-        jvmBackendContext: BackendContext,
-    ): Int = -1
+    fun getPlatformIntrinsicExtension(): IrIntrinsicExtension? = null
 }
+
+/**
+ * This interface for common IR is empty because intrinsics are done in a platform-specific way (because of inliner).
+ * Currently, only JVM intrinsics are supported via JvmIrIntrinsicExtension interface.
+ */
+interface IrIntrinsicExtension

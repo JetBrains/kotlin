@@ -9,9 +9,12 @@ import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.extensions.IrIntrinsicExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.codegen.JvmIrIntrinsicExtension
+import org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -138,22 +141,22 @@ open class SerializationLoweringExtension @JvmOverloads constructor(
         moduleFragment.files.forEach(pass2::runOnFileInOrder)
     }
 
-    override fun retrieveIntrinsic(symbol: IrFunctionSymbol): Any? {
-        return SerializationJvmIrIntrinsicSupport.intrinsicForMethod(symbol.owner)
-    }
+    override fun getPlatformIntrinsicExtension(): IrIntrinsicExtension? {
+        return object : JvmIrIntrinsicExtension {
+            override fun getIntrinsic(symbol: IrFunctionSymbol): IntrinsicMethod? =
+                SerializationJvmIrIntrinsicSupport.intrinsicForMethod(symbol.owner)
 
-    override fun applyPluginDefinedReifiedOperationMarker(
-        insn: MethodInsnNode,
-        instructions: InsnList,
-        type: IrType,
-        jvmBackendContext: BackendContext,
-    ): Int {
-        val ctx = jvmBackendContext as? JvmBackendContext ?: return -1
-        return SerializationJvmIrIntrinsicSupport(ctx).applyPluginDefinedReifiedOperationMarker(
-            insn,
-            instructions,
-            type,
-        )
+            override fun applyPluginDefinedReifiedOperationMarker(
+                insn: MethodInsnNode,
+                instructions: InsnList,
+                type: IrType,
+                jvmBackendContext: JvmBackendContext
+            ): Int = SerializationJvmIrIntrinsicSupport(jvmBackendContext).applyPluginDefinedReifiedOperationMarker(
+                insn,
+                instructions,
+                type,
+            )
+        }
     }
 }
 
