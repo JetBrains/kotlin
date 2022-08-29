@@ -27,13 +27,13 @@ val strMap: Map<String, String> = null!!
 
 fun main() {
     val rawA = Test.rawAField
-    rawA.x = strList
-    rawA.y = strMap
-    rawA.foo("", strList, strList)
+    rawA.x = <!TYPE_MISMATCH!>strList<!>
+    rawA.y = <!TYPE_MISMATCH!>strMap<!>
+    rawA.foo(<!TYPE_MISMATCH!>""<!>, <!TYPE_MISMATCH!>strList<!>, <!TYPE_MISMATCH!>strList<!>)
 
     val barResult = rawA.bar()
 
-    barResult.x = strList
-    barResult.y = strMap
-    barResult.foo("", strList, null)
+    barResult.x = <!TYPE_MISMATCH!>strList<!>
+    barResult.y = <!TYPE_MISMATCH!>strMap<!>
+    barResult.foo(<!TYPE_MISMATCH!>""<!>, <!TYPE_MISMATCH!>strList<!>, null)
 }

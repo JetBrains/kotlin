@@ -26,18 +26,18 @@ fun <T> arrayOf(): Array<T> = null!!
 fun main() {
     val raw = Test.rawAField
 
-    raw.charSequences = arrayOf<String>()
+    raw.charSequences = <!TYPE_MISMATCH, TYPE_MISMATCH!>arrayOf<String>()<!>
     raw.charSequences = <!TYPE_MISMATCH, TYPE_MISMATCH!>arrayOf<Double>()<!>
 
-    raw.maps = arrayOf<Map<Int, Int>>()
-    raw.maps = arrayOf<MutableMap<Int, Int>>()
+    raw.maps = <!TYPE_MISMATCH, TYPE_MISMATCH!>arrayOf<Map<Int, Int>>()<!>
+    raw.maps = <!TYPE_MISMATCH, TYPE_MISMATCH!>arrayOf<MutableMap<Int, Int>>()<!>
     raw.maps = <!TYPE_MISMATCH, TYPE_MISMATCH!>arrayOf<List<String>>()<!>
 
-    raw.arraysOfLists = arrayOf<Array<List<*>>>()
+    raw.arraysOfLists = <!TYPE_MISMATCH, TYPE_MISMATCH!>arrayOf<Array<List<*>>>()<!>
     raw.arraysOfLists = <!TYPE_MISMATCH, TYPE_MISMATCH!>arrayOf<List<String>>()<!>
     raw.arraysOfLists = <!TYPE_MISMATCH, TYPE_MISMATCH!>arrayOf<Array<Array<String>>>()<!>
 
-    raw.arraysOfAny = arrayOf<Array<Array<String>>>()
+    raw.arraysOfAny = <!TYPE_MISMATCH, TYPE_MISMATCH!>arrayOf<Array<Array<String>>>()<!>
 
-    raw.erasedLists = arrayOf<List<String>>()
+    raw.erasedLists = <!TYPE_MISMATCH, TYPE_MISMATCH!>arrayOf<List<String>>()<!>
 }

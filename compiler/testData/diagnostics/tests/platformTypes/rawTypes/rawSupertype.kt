@@ -27,10 +27,10 @@ val strMap: Map<String, String> = null!!
 fun main() {
     val rawADerived = Test.RawADerived()
     rawADerived.x = strList
-    rawADerived.foo("", strList)
+    rawADerived.foo(<!TYPE_MISMATCH!>""<!>, <!TYPE_MISMATCH!>strList<!>)
 
 
     val rawA = rawADerived.bar()
-    rawA.x = strList
-    rawA.foo("", strList)
+    rawA.x = <!TYPE_MISMATCH!>strList<!>
+    rawA.foo(<!TYPE_MISMATCH!>""<!>, <!TYPE_MISMATCH!>strList<!>)
 }

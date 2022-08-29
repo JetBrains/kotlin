@@ -15,4 +15,4 @@ interface X {
     fun foo(l: MutableList<Int>): List<String>?
 }
 
-internal class C : B()
+internal <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>C<!><!> : B()

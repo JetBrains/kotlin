@@ -21,9 +21,9 @@ val strList: List<String> = null!!
 
 fun main() {
     val rawA = Test.rawAField
-    rawA.first = Test.rawAField.second
-    Test.rawAField.second = rawA.first.second
+    rawA.first = <!TYPE_MISMATCH!>Test.rawAField.second<!>
+    Test.rawAField.second = <!TYPE_MISMATCH!>rawA.first.second<!>
 
-    rawA.listOfDoubles = strList
+    rawA.listOfDoubles = <!TYPE_MISMATCH!>strList<!>
     rawA.listOfDoubles = <!TYPE_MISMATCH!>""<!> // first should be List
 }

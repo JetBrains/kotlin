@@ -33,8 +33,8 @@ public abstract class C {
 }
 
 // FILE: main.kt
-class E1 : C.D(), B {
-    override fun foo(x: Any, y: Fun<Any?>) {}
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>E1<!><!> : C.D(), B {
+    <!NOTHING_TO_OVERRIDE!>override<!> fun foo(x: Any, y: Fun<Any?>) {}
 }
 
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class E2<!> : B {

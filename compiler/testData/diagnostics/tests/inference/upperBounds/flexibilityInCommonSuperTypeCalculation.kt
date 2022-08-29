@@ -261,12 +261,12 @@ fun case_14() {
     val result_7 = select(A(x3), A(x1), A(x2))
     val result_8 = select(A(x1), A(x3))
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.collections.List<kotlin.Any?>..kotlin.collections.List<*>?)")!>result_1<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.collections.List<kotlin.Any?>..kotlin.collections.List<*>?)")!>result_2<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.collections.List<kotlin.Any?>?..kotlin.collections.List<*>?)")!>result_3<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.collections.MutableList<out kotlin.Any?>?..kotlin.collections.List<*>?)")!>result_4<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<out (kotlin.collections.List<kotlin.Any?>..kotlin.collections.List<*>?)>")!>result_5<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<out (kotlin.collections.List<kotlin.Any?>..kotlin.collections.List<*>?)>")!>result_6<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<out (kotlin.collections.List<kotlin.Any?>?..kotlin.collections.List<*>?)>")!>result_7<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<out (kotlin.collections.MutableList<out kotlin.Any?>?..kotlin.collections.List<*>?)>")!>result_8<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.collections.List<kotlin.Any?>..kotlin.collections.List<kotlin.Any?>?)")!>result_1<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.collections.List<kotlin.Any?>..kotlin.collections.List<kotlin.Any?>?)")!>result_2<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.List<kotlin.Any?>?")!>result_3<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.collections.MutableList<out kotlin.Any?>?..kotlin.collections.List<kotlin.Any?>?)")!>result_4<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("A<out (kotlin.collections.List<*>..kotlin.collections.List<kotlin.Any?>?)>")!>result_5<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("A<out (kotlin.collections.List<*>..kotlin.collections.List<kotlin.Any?>?)>")!>result_6<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("A<out (kotlin.collections.List<*>?..kotlin.collections.List<kotlin.Any?>?)>")!>result_7<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("A<out (kotlin.collections.MutableList<*>?..kotlin.collections.List<kotlin.Any?>?)>")!>result_8<!>
 }

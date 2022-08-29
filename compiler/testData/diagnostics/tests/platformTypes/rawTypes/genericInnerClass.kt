@@ -27,8 +27,7 @@ val strList: List<String> = null!!
 
 fun main() {
     val rawA = Test.rawAField
-    var rawInner = rawA.Inner<Double>("", "", strList)
-    rawInner.foo("", "", strList)
-    rawInner.bar().foo("")
+    var rawInner = rawA.Inner<Double>(<!TYPE_MISMATCH!>""<!>, <!TYPE_MISMATCH!>""<!>, <!TYPE_MISMATCH!>strList<!>)
+    rawInner.foo(<!TYPE_MISMATCH!>""<!>, <!TYPE_MISMATCH!>""<!>, <!TYPE_MISMATCH!>strList<!>)
+    rawInner.bar().foo(<!TYPE_MISMATCH!>""<!>)
 }
-

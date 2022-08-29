@@ -29,7 +29,7 @@ public class D extends C {
 
 // FILE: main.kt
 
-class E : D(), B {
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class E<!> : D(), B {
     override fun foo(x: Any, y: List<Any?>): String = ""
     override fun bar(x: CharSequence?, y: List<*>?): String = ""
 }

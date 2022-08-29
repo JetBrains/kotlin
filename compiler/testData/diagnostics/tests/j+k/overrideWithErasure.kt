@@ -16,5 +16,5 @@ public class Derived<E extends CharSequence> extends Base<E> {
 // FILE: main.kt
 
 fun main(d: Derived<CharSequence>) {
-    d.foo("")
+    d.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>("")
 }

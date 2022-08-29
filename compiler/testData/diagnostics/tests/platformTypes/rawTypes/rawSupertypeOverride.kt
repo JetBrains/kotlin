@@ -18,15 +18,15 @@ public class RawADerived extends A {
 import java.util.*;
 
 class B1 : RawADerived() {
-    override fun foo(x: CharSequence, y: Map<Any?, Any?>, z: HashMap<Any, Any>): A<*> = null!!
+    <!NOTHING_TO_OVERRIDE!>override<!> fun foo(x: CharSequence, y: Map<Any?, Any?>, z: HashMap<Any, Any>): A<*> = null!!
 
-    override fun bar(d: Array<Array<List<*>>>) {}
+    <!NOTHING_TO_OVERRIDE!>override<!> fun bar(d: Array<Array<List<*>>>) {}
 }
 
 class B2 : RawADerived() {
-    override fun foo(x: CharSequence?, y: MutableMap<Any?, Any?>, z: HashMap<Any?, Any?>): A<String> = null!!
+    <!NOTHING_TO_OVERRIDE!>override<!> fun foo(x: CharSequence?, y: MutableMap<Any?, Any?>, z: HashMap<Any?, Any?>): A<String> = null!!
 
-    override fun bar(d: Array<Array<MutableList<*>>>) {}
+    <!NOTHING_TO_OVERRIDE!>override<!> fun bar(d: Array<Array<MutableList<*>>>) {}
 }
 
 class B3 : RawADerived() {
@@ -37,5 +37,5 @@ class B3 : RawADerived() {
 
 class B4 : RawADerived() {
     // Type of first parameter is not equal to overridden
-    <!NOTHING_TO_OVERRIDE!>override<!> fun bar(d: Array<Array<MutableList<Array<Double>>>>) {}
+    override fun bar(d: Array<Array<MutableList<Array<Double>>>>) {}
 }

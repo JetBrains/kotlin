@@ -19,7 +19,7 @@ public class IStubFileElementType<X extends StubElement> extends ObjectStubSeria
 }
 
 // FILE: main.kt
-class MakefileStubFileElementType : IStubFileElementType<StubElement<CharSequence>>() {
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>MakefileStubFileElementType<!><!> : IStubFileElementType<StubElement<CharSequence>>() {
     // FIR: ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED: indexStub, should be ok
     // FE 1.0: Ok
 }
