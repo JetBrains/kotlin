@@ -33,6 +33,7 @@ class CtSymDirectoryContainer(
             when {
                 child.isDirectory -> {
                     val childPackage = if (currentPackage.isEmpty()) child.name else currentPackage + "." + child.name
+                    var addingEntry: CtSymDirectoryContainer? = null
                     if (skipPackageCheck || packages.contains(childPackage)) {
                         containers.getOrPut(childPackage) {
                             val list = mutableListOf<VirtualFile>()
@@ -43,9 +44,10 @@ class CtSymDirectoryContainer(
                                 childPackage,
                                 moduleRoot,
                                 skipPackageCheck
-                            ) to list
-                        }.also { it.second.add(child) }.first
-                    } else null
+                            ).also { addingEntry = it } to list
+                        }.also { it.second.add(child) }
+                    }
+                    addingEntry
                 }
                 isExported -> CtSymClassVirtualFile(this, child)
                 else -> null
