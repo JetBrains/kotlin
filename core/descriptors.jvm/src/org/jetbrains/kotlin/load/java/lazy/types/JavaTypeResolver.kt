@@ -253,7 +253,7 @@ class JavaTypeResolver(
 
         val typeParameters = constructor.parameters
         if (eraseTypeParameters) {
-            return typeParameters.map { makeStarProjection(it, attr) }
+            return computeRawTypeArguments(javaType, typeParameters, constructor, attr)
         }
 
         if (typeParameters.size != javaType.typeArguments.size) {
