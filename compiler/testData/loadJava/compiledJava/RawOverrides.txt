@@ -9,7 +9,7 @@ public open class RawOverrides {
 
     public open inner class B : test.RawOverrides.A<kotlin.Any!> {
         public constructor B()
-        public open fun foo(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.collections.(Mutable)List<*>!): kotlin.String!
+        public open fun foo(/*0*/ p0: kotlin.Any!, /*1*/ p1: (kotlin.collections.MutableList<kotlin.Any?>..kotlin.collections.List<*>?)): kotlin.String!
     }
 
     public open inner class C {
@@ -20,6 +20,6 @@ public open class RawOverrides {
     public open inner class D : test.RawOverrides.C {
         public constructor D()
         public/*package*/ open override /*1*/ /*fake_override*/ fun </*0*/ E : kotlin.CharSequence!, /*1*/ F : E!> bar(/*0*/ p0: F!, /*1*/ p1: kotlin.collections.(Mutable)List<kotlin.collections.(Mutable)Map<E!, F!>!>!): E!
-        public open fun bar(/*0*/ p0: kotlin.CharSequence!, /*1*/ p1: kotlin.collections.(Mutable)List<*>!): kotlin.String!
+        public open fun bar(/*0*/ p0: kotlin.CharSequence!, /*1*/ p1: (kotlin.collections.MutableList<kotlin.Any?>..kotlin.collections.List<*>?)): kotlin.String!
     }
 }

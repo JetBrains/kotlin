@@ -4,22 +4,22 @@ public interface SubclassWithRawType {
 
     public interface Sub : test.SubclassWithRawType.Super {
         public abstract override /*1*/ fun array1(): kotlin.Array<(out) kotlin.collections.(Mutable)List<kotlin.String!>!>!
-        public abstract override /*1*/ fun array2(): kotlin.Array<(out) kotlin.collections.(Mutable)List<*>!>!
+        public abstract override /*1*/ fun array2(): kotlin.Array<(out) (kotlin.collections.MutableList<kotlin.Any?>..kotlin.collections.List<*>?)>!
         public abstract override /*1*/ fun boundWildcard1(): (kotlin.collections.MutableList<out kotlin.collections.(Mutable)List<kotlin.String!>!>..kotlin.collections.List<kotlin.collections.(Mutable)List<kotlin.String!>!>?)
-        public abstract override /*1*/ fun boundWildcard2(): kotlin.collections.MutableList<in kotlin.collections.(Mutable)List<*>!>!
+        public abstract override /*1*/ fun boundWildcard2(): kotlin.collections.MutableList<in (kotlin.collections.MutableList<kotlin.Any?>..kotlin.collections.List<*>?)>!
         public abstract override /*1*/ fun simple1(): kotlin.collections.(Mutable)List<kotlin.String!>!
         public abstract override /*1*/ fun simple2(): kotlin.collections.(Mutable)List<kotlin.collections.(Mutable)List<kotlin.String!>!>!
-        public abstract override /*1*/ fun simple3(): kotlin.collections.(Mutable)List<*>!
-        public abstract override /*1*/ fun wildcard(): kotlin.collections.(Mutable)List<*>!
+        public abstract override /*1*/ fun simple3(): (kotlin.collections.MutableList<kotlin.Any?>..kotlin.collections.List<*>?)
+        public abstract override /*1*/ fun wildcard(): (kotlin.collections.MutableList<kotlin.Any?>..kotlin.collections.List<*>?)
     }
 
     public interface Super {
-        public abstract fun array1(): kotlin.Array<(out) kotlin.collections.(Mutable)List<*>!>!
+        public abstract fun array1(): kotlin.Array<(out) (kotlin.collections.MutableList<kotlin.Any?>..kotlin.collections.List<*>?)>!
         public abstract fun array2(): kotlin.Array<(out) kotlin.collections.(Mutable)List<kotlin.String!>!>!
-        public abstract fun boundWildcard1(): (kotlin.collections.MutableList<out kotlin.collections.(Mutable)List<*>!>..kotlin.collections.List<kotlin.collections.(Mutable)List<*>!>?)
+        public abstract fun boundWildcard1(): (kotlin.collections.MutableList<out (kotlin.collections.MutableList<kotlin.Any?>..kotlin.collections.List<*>?)>..kotlin.collections.List<(kotlin.collections.MutableList<kotlin.Any?>..kotlin.collections.List<*>?)>?)
         public abstract fun boundWildcard2(): kotlin.collections.MutableList<in kotlin.collections.(Mutable)List<kotlin.String!>!>!
-        public abstract fun simple1(): kotlin.collections.(Mutable)List<*>!
-        public abstract fun simple2(): kotlin.collections.(Mutable)List<*>!
+        public abstract fun simple1(): (kotlin.collections.MutableList<kotlin.Any?>..kotlin.collections.List<*>?)
+        public abstract fun simple2(): (kotlin.collections.MutableList<kotlin.Any?>..kotlin.collections.List<*>?)
         public abstract fun simple3(): kotlin.collections.(Mutable)List<kotlin.String!>!
         public abstract fun wildcard(): kotlin.collections.(Mutable)List<*>!
     }
