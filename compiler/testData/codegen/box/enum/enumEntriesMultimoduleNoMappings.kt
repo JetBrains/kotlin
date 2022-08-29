@@ -1,5 +1,4 @@
-// TARGET_BACKEND: JVM_IR
-// TARGET_BACKEND: NATIVE
+// IGNORE_BACKEND: JS, JVM, WASM
 // WITH_STDLIB
 
 // MODULE: lib
@@ -9,7 +8,7 @@ enum class MyEnum {
     Nope, OK
 }
 
-// MODULE: caller(lib)
+// MODULE: main(lib)
 // !LANGUAGE: +EnumEntries
 // FILE: Box.kt
 @OptIn(ExperimentalStdlibApi::class)

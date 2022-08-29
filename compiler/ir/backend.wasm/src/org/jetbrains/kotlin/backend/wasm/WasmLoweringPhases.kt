@@ -207,10 +207,14 @@ private val enumEntryCreateGetInstancesFunsLoweringPhase = makeWasmModulePhase(
 )
 
 private val enumSyntheticFunsLoweringPhase = makeWasmModulePhase(
-    ::EnumSyntheticFunctionsLowering,
-    name = "EnumSyntheticFunctionsLowering",
-    description = "Implement `valueOf` and `values`",
-    prerequisite = setOf(enumClassConstructorLoweringPhase, enumClassCreateInitializerLoweringPhase)
+    { EnumSyntheticFunctionsAndPropertiesLowering(it, syntheticFieldsShouldBeReinitialized = true) },
+    name = "EnumSyntheticFunctionsAndPropertiesLowering",
+    description = "Implement `valueOf`, `values` and `entries`",
+    prerequisite = setOf(
+        enumClassConstructorLoweringPhase,
+        enumClassCreateInitializerLoweringPhase,
+        enumEntryCreateGetInstancesFunsLoweringPhase
+    )
 )
 
 private val enumUsageLoweringPhase = makeWasmModulePhase(
@@ -574,6 +578,11 @@ val wasmPhases = NamedCompilerPhase(
 
             enumClassConstructorLoweringPhase then
             enumClassConstructorBodyLoweringPhase then
+            enumEntryInstancesLoweringPhase then
+            enumEntryInstancesBodyLoweringPhase then
+            enumClassCreateInitializerLoweringPhase then
+            enumEntryCreateGetInstancesFunsLoweringPhase then
+            enumSyntheticFunsLoweringPhase then
 
             sharedVariablesLoweringPhase then
             propertyReferenceLowering then
@@ -596,11 +605,6 @@ val wasmPhases = NamedCompilerPhase(
             jsInteropFunctionsLowering then
             jsInteropFunctionCallsLowering then
 
-            enumEntryInstancesLoweringPhase then
-            enumEntryInstancesBodyLoweringPhase then
-            enumClassCreateInitializerLoweringPhase then
-            enumEntryCreateGetInstancesFunsLoweringPhase then
-            enumSyntheticFunsLoweringPhase then
             enumUsageLoweringPhase then
             enumEntryRemovalLoweringPhase then
 

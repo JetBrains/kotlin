@@ -105,6 +105,9 @@ class WasmBackendContext(
     val wasmSymbols: WasmSymbols = WasmSymbols(this@WasmBackendContext, symbolTable)
     override val reflectionSymbols: ReflectionSymbols get() = wasmSymbols.reflectionSymbols
 
+    override val enumEntries = wasmSymbols.enumEntries
+    override val createEnumEntries = wasmSymbols.createEnumEntries
+
     override val propertyLazyInitialization: PropertyLazyInitialization =
         PropertyLazyInitialization(enabled = propertyLazyInitialization, eagerInitialization = wasmSymbols.eagerInitialization)
 
