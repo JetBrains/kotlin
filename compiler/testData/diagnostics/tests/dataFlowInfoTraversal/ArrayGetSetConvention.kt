@@ -1,28 +1,18 @@
-// !CHECK_TYPE
+// FILE: Plugin.java
+public interface Plugin<T> {}
 
-interface G {
-    operator fun get(x: Int, y: Int): Int = x + y
-    operator fun set(x: Int, y: Int, value: Int) {}
-}
+// FILE: PluginContainer.java
+public interface PluginContainer extends PluginCollection<Plugin> {}
 
-fun foo1(a: Int?, b: G) {
-    b[a!!, a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>] = <!DEBUG_INFO_SMARTCAST!>a<!>
-    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>a<!>)
-}
+// FILE: PluginCollection.java
+public interface PluginCollection<T> {}
 
-fun foo2(a: Int?, b: G) {
-    b[0, a!!] = <!DEBUG_INFO_SMARTCAST!>a<!>
-    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>a<!>)
-}
+// FILE: JavaPlugin.java
+public class JavaPlugin implements Plugin<String> {}
 
-fun foo3(a: Int?, b: G) {
-    val r = b[a!!, <!DEBUG_INFO_SMARTCAST!>a<!>]
-    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>a<!>)
-    checkSubtype<Int>(r)
-}
+// FILE: main.kt
+fun <S : Any> PluginCollection<in S>.withType() {}
 
-fun foo4(a: Int?, b: G) {
-    val r = b[0, a!!]
-    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>a<!>)
-    checkSubtype<Int>(r)
+fun foo(p: PluginContainer) {
+    p.withType<JavaPlugin>()
 }

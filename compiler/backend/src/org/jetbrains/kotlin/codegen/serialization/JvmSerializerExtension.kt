@@ -13,10 +13,8 @@ import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil
-import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
@@ -153,13 +151,6 @@ class JvmSerializerExtension @JvmOverloads constructor(
         upperProto: ProtoBuf.Type.Builder
     ) {
         lowerProto.flexibleTypeCapabilitiesId = stringTable.getStringIndex(JvmProtoBufUtil.PLATFORM_TYPE_ID)
-
-        if (flexibleType is RawTypeImpl) {
-            lowerProto.setExtension(JvmProtoBuf.isRaw, true)
-
-            // we write this Extension for compatibility with old compiler
-            upperProto.setExtension(JvmProtoBuf.isRaw, true)
-        }
     }
 
     override fun serializeType(type: KotlinType, proto: ProtoBuf.Type.Builder) {

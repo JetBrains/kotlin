@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.load.java.lazy.types
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.types.TypeUsage
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.TypeParameterUpperBoundEraser
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 
@@ -34,14 +32,10 @@ internal class RawSubstitution(typeParameterUpperBoundEraser: TypeParameterUpper
                             "but \"$declarationForUpper\" while for lower it's \"$declaration\""
                 }
 
-                val (lower, isRawL) = eraseInflexibleBasedOnClassDescriptor(type.lowerIfFlexible(), declaration, lowerTypeAttr)
-                val (upper, isRawU) = eraseInflexibleBasedOnClassDescriptor(type.upperIfFlexible(), declarationForUpper, upperTypeAttr)
+                val lower = eraseInflexibleBasedOnClassDescriptor(type.lowerIfFlexible(), declaration, lowerTypeAttr)
+                val upper = eraseInflexibleBasedOnClassDescriptor(type.upperIfFlexible(), declarationForUpper, upperTypeAttr)
 
-                if (isRawL || isRawU) {
-                    RawTypeImpl(lower, upper)
-                } else {
-                    KotlinTypeFactory.flexibleType(lower, upper)
-                }
+                KotlinTypeFactory.flexibleType(lower, upper)
             }
             else -> error("Unexpected declaration kind: $declaration")
         }
@@ -50,8 +44,8 @@ internal class RawSubstitution(typeParameterUpperBoundEraser: TypeParameterUpper
     // false means that type cannot be raw
     private fun eraseInflexibleBasedOnClassDescriptor(
         type: SimpleType, declaration: ClassDescriptor, attr: JavaTypeAttributes
-    ): Pair<SimpleType, Boolean> {
-        if (type.constructor.parameters.isEmpty()) return type to false
+    ): SimpleType {
+        if (type.constructor.parameters.isEmpty()) return type
 
         if (KotlinBuiltIns.isArray(type)) {
             val componentTypeProjection = type.arguments[0]
@@ -60,11 +54,11 @@ internal class RawSubstitution(typeParameterUpperBoundEraser: TypeParameterUpper
             )
             return KotlinTypeFactory.simpleType(
                 type.attributes, type.constructor, arguments, type.isMarkedNullable
-            ) to false
+            )
         }
 
         if (type.isError) {
-            return ErrorUtils.createErrorType(ErrorTypeKind.ERROR_RAW_TYPE, type.constructor.toString()) to false
+            return ErrorUtils.createErrorType(ErrorTypeKind.ERROR_RAW_TYPE, type.constructor.toString())
         }
 
         val memberScope = declaration.getMemberScope(this)
@@ -81,8 +75,8 @@ internal class RawSubstitution(typeParameterUpperBoundEraser: TypeParameterUpper
             val refinedClassDescriptor = kotlinTypeRefiner.findClassAcrossModuleDependencies(classId) ?: return@factory null
             if (refinedClassDescriptor == declaration) return@factory null
 
-            eraseInflexibleBasedOnClassDescriptor(type, refinedClassDescriptor, attr).first
-        } to true
+            eraseInflexibleBasedOnClassDescriptor(type, refinedClassDescriptor, attr)
+        }
     }
 
     override fun isEmpty() = false

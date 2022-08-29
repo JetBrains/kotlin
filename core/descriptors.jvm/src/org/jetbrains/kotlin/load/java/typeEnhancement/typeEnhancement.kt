@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.lazy.JavaResolverSettings
-import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
 import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifier.MUTABLE
 import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifier.READ_ONLY
 import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier.*
@@ -60,12 +59,11 @@ class JavaTypeEnhancement(private val javaResolverSettings: JavaResolverSettings
         if (isError) return Result(null, 1)
         return when (this) {
             is FlexibleType -> {
-                val isRawType = this is RawType
                 val lowerResult = lowerBound.enhanceInflexible(
-                    qualifiers, index, TypeComponentPosition.FLEXIBLE_LOWER, isRawType, isSuperTypesEnhancement
+                    qualifiers, index, TypeComponentPosition.FLEXIBLE_LOWER, isSuperTypesEnhancement
                 )
                 val upperResult = upperBound.enhanceInflexible(
-                    qualifiers, index, TypeComponentPosition.FLEXIBLE_UPPER, isRawType, isSuperTypesEnhancement
+                    qualifiers, index, TypeComponentPosition.FLEXIBLE_UPPER, isSuperTypesEnhancement
                 )
                 assert(lowerResult.subtreeSize == upperResult.subtreeSize) {
                     "Different tree sizes of bounds: " +
@@ -80,7 +78,6 @@ class JavaTypeEnhancement(private val javaResolverSettings: JavaResolverSettings
                             ?: lowerResult.type!!
                         wrapEnhancement(enhancement)
                     }
-                    isRawType -> RawTypeImpl(lowerResult.type ?: lowerBound, upperResult.type ?: upperBound)
                     else -> KotlinTypeFactory.flexibleType(lowerResult.type ?: lowerBound, upperResult.type ?: upperBound)
                 }
                 Result(type, lowerResult.subtreeSize)
@@ -98,11 +95,10 @@ class JavaTypeEnhancement(private val javaResolverSettings: JavaResolverSettings
         qualifiers: (Int) -> JavaTypeQualifiers,
         index: Int,
         position: TypeComponentPosition,
-        isBoundOfRawType: Boolean = false,
         isSuperTypesEnhancement: Boolean = false
     ): SimpleResult {
         val shouldEnhance = position.shouldEnhance()
-        val shouldEnhanceArguments = !isSuperTypesEnhancement || !isBoundOfRawType
+        val shouldEnhanceArguments = !isSuperTypesEnhancement
         if (!shouldEnhance && arguments.isEmpty()) return SimpleResult(null, 1, false)
 
         val originalClass = constructor.declarationDescriptor

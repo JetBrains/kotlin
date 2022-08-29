@@ -21,21 +21,24 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.extractNullabilityAnnotationOnBoundedWildcard
-import org.jetbrains.kotlin.types.TypeUsage.COMMON
-import org.jetbrains.kotlin.types.TypeUsage.SUPERTYPE
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaAnnotations
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.TypeParameterResolver
-import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeFlexibility.*
+import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeFlexibility.FLEXIBLE_LOWER_BOUND
+import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeFlexibility.FLEXIBLE_UPPER_BOUND
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.TypeUsage.COMMON
+import org.jetbrains.kotlin.types.TypeUsage.SUPERTYPE
 import org.jetbrains.kotlin.types.TypeUtils.makeStarProjection
 import org.jetbrains.kotlin.types.Variance.*
-import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
-import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.typeUtil.createProjection
+import org.jetbrains.kotlin.types.typeUtil.hasTypeParameterRecursiveBounds
+import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.utils.sure
 
 private val JAVA_LANG_CLASS_FQ_NAME: FqName = FqName("java.lang.Class")
@@ -110,11 +113,7 @@ class JavaTypeResolver(
             computeSimpleJavaClassifierType(javaType, attr.withFlexibility(FLEXIBLE_UPPER_BOUND), lowerResult = lower)
                 ?: return errorType()
 
-        return if (isRaw) {
-            RawTypeImpl(lower, upper)
-        } else {
-            KotlinTypeFactory.flexibleType(lower, upper)
-        }
+        return KotlinTypeFactory.flexibleType(lower, upper)
     }
 
     private fun computeSimpleJavaClassifierType(
@@ -254,7 +253,7 @@ class JavaTypeResolver(
 
         val typeParameters = constructor.parameters
         if (eraseTypeParameters) {
-            return computeRawTypeArguments(javaType, typeParameters, constructor, attr)
+            return typeParameters.map { makeStarProjection(it, attr) }
         }
 
         if (typeParameters.size != javaType.typeArguments.size) {
