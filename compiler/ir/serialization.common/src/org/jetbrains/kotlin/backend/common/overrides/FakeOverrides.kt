@@ -112,12 +112,12 @@ class FakeOverrideBuilder(
         return true
     }
 
-    override fun linkFunctionFakeOverride(declaration: IrFakeOverrideFunction, compatibilityMode: Boolean) {
+    override fun linkFunctionFakeOverride(declaration: IrFunctionWithLateBinding, compatibilityMode: Boolean) {
         val signature = composeSignature(declaration, compatibilityMode)
         declareFunctionFakeOverride(declaration, signature)
     }
 
-    override fun linkPropertyFakeOverride(declaration: IrFakeOverrideProperty, compatibilityMode: Boolean) {
+    override fun linkPropertyFakeOverride(declaration: IrPropertyWithLateBinding, compatibilityMode: Boolean) {
         // To compute a signature for a property with type parameters,
         // we must have its accessor's correspondingProperty pointing to the property's symbol.
         // See IrMangleComputer.mangleTypeParameterReference() for details.
@@ -139,18 +139,18 @@ class FakeOverrideBuilder(
 
         declaration.getter?.let {
             it.correspondingPropertySymbol = declaration.symbol
-            linkFunctionFakeOverride(it as? IrFakeOverrideFunction ?: error("Unexpected fake override getter: $it"), compatibilityMode)
+            linkFunctionFakeOverride(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override getter: $it"), compatibilityMode)
         }
         declaration.setter?.let {
             it.correspondingPropertySymbol = declaration.symbol
-            linkFunctionFakeOverride(it as? IrFakeOverrideFunction ?: error("Unexpected fake override setter: $it"), compatibilityMode)
+            linkFunctionFakeOverride(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override setter: $it"), compatibilityMode)
         }
     }
 
     private fun composeSignature(declaration: IrDeclaration, compatibleMode: Boolean) =
         fakeOverrideDeclarationTable.signaturer.composeSignatureForDeclaration(declaration, compatibleMode)
 
-    private fun declareFunctionFakeOverride(declaration: IrFakeOverrideFunction, signature: IdSignature) {
+    private fun declareFunctionFakeOverride(declaration: IrFunctionWithLateBinding, signature: IdSignature) {
         val parent = declaration.parentAsClass
         val symbol = linker.tryReferencingSimpleFunctionByLocalSignature(parent, signature)
             ?: symbolTable.referenceSimpleFunction(signature, false)
@@ -160,7 +160,7 @@ class FakeOverrideBuilder(
         }
     }
 
-    private fun declarePropertyFakeOverride(declaration: IrFakeOverrideProperty, signature: IdSignature) {
+    private fun declarePropertyFakeOverride(declaration: IrPropertyWithLateBinding, signature: IdSignature) {
         val parent = declaration.parentAsClass
         val symbol = linker.tryReferencingPropertyByLocalSignature(parent, signature)
             ?: symbolTable.referenceProperty(signature, false)

@@ -24,14 +24,14 @@ abstract class FakeOverrideBuilderStrategy(private val friendModules: Map<String
 
     fun linkFakeOverride(fakeOverride: IrOverridableMember, compatibilityMode: Boolean) {
         when (fakeOverride) {
-            is IrFakeOverrideFunction -> linkFunctionFakeOverride(fakeOverride, compatibilityMode)
-            is IrFakeOverrideProperty -> linkPropertyFakeOverride(fakeOverride, compatibilityMode)
+            is IrFunctionWithLateBinding -> linkFunctionFakeOverride(fakeOverride, compatibilityMode)
+            is IrPropertyWithLateBinding -> linkPropertyFakeOverride(fakeOverride, compatibilityMode)
             else -> error("Unexpected fake override: $fakeOverride")
         }
     }
 
-    protected abstract fun linkFunctionFakeOverride(declaration: IrFakeOverrideFunction, compatibilityMode: Boolean)
-    protected abstract fun linkPropertyFakeOverride(declaration: IrFakeOverrideProperty, compatibilityMode: Boolean)
+    protected abstract fun linkFunctionFakeOverride(declaration: IrFunctionWithLateBinding, compatibilityMode: Boolean)
+    protected abstract fun linkPropertyFakeOverride(declaration: IrPropertyWithLateBinding, compatibilityMode: Boolean)
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class) // Because of the LazyIR, have to use descriptors here.
@@ -376,7 +376,7 @@ class IrOverridingUtil(
         newModality: Modality,
         newVisibility: DescriptorVisibility
     ): IrSimpleFunction? {
-        require(this is IrFakeOverrideFunction) {
+        require(this is IrFunctionWithLateBinding) {
             "Unexpected fake override accessor kind: $this"
         }
         // For descriptors it gets INVISIBLE_FAKE.
@@ -405,13 +405,13 @@ class IrOverridingUtil(
 
         val fakeOverride = mostSpecific.apply {
             when (this) {
-                is IrFakeOverrideProperty -> {
+                is IrPropertyWithLateBinding -> {
                     this.visibility = visibility
                     this.modality = modality
                     this.getter = this.getter?.updateAccessorModalityAndVisibility(modality, visibility)
                     this.setter = this.setter?.updateAccessorModalityAndVisibility(modality, visibility)
                 }
-                is IrFakeOverrideFunction -> {
+                is IrFunctionWithLateBinding -> {
                     this.visibility = visibility
                     this.modality = modality
                 }

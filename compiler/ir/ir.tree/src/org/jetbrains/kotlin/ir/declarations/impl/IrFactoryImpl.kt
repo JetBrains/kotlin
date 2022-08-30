@@ -132,7 +132,7 @@ abstract class AbstractIrFactoryImpl : IrFactory {
             containerSource, factory = this
         )
 
-    override fun createFakeOverrideFunction(
+    override fun createFunctionWithLateBinding(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
@@ -148,7 +148,7 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         isInfix: Boolean,
         isExpect: Boolean,
     ): IrSimpleFunction =
-        IrFakeOverrideFunctionImpl(
+        IrFunctionWithLateBindingImpl(
             startOffset, endOffset, origin, name, visibility, modality, returnType,
             isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,
             factory = this
@@ -188,7 +188,7 @@ abstract class AbstractIrFactoryImpl : IrFactory {
             containerSource, factory = this
         )
 
-    override fun createFakeOverrideProperty(
+    override fun createPropertyWithLateBinding(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
@@ -202,7 +202,7 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         isExternal: Boolean,
         isExpect: Boolean,
     ): IrProperty =
-        IrFakeOverridePropertyImpl(
+        IrPropertyWithLateBindingImpl(
             startOffset, endOffset, origin, name, visibility, modality,
             isVar, isConst, isLateinit, isDelegated, isExternal, isExpect,
             factory = this
