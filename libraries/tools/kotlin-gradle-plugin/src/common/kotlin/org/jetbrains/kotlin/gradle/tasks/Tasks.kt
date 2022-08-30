@@ -723,9 +723,8 @@ abstract class KotlinCompile @Inject constructor(
         logger.info("Script source files: ${scriptSources.joinToString()}")
         logger.info("Script file extensions: ${scriptExtensions.get().joinToString()}")
         compilerRunner.runJvmCompilerAsync(
-            (kotlinSources + scriptSources).toList(),
+            (kotlinSources + scriptSources + javaSources.files).toList(),
             commonSourceSet.toList(),
-            javaSources.files, // we need here only directories where Java sources are located
             javaPackagePrefix,
             args,
             environment,

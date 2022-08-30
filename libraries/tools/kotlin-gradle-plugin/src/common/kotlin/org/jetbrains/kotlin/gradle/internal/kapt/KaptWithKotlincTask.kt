@@ -122,9 +122,8 @@ abstract class KaptWithKotlincTask @Inject constructor(
             metrics.get(),
         )
         compilerRunner.runJvmCompilerAsync(
-            sourcesToCompile = emptyList(),
+            sourcesToCompile = source.files.toList(),
             commonSources = emptyList(),
-            javaSourceRoots = source.files,
             javaPackagePrefix = javaPackagePrefix.orNull,
             args = args,
             environment = environment,
