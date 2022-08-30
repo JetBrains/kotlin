@@ -4,6 +4,7 @@ import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
+import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.plugability.DokkaPlugin
@@ -535,6 +536,58 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
 
                 val publicFinal = testedClass.properties.single { it.name == "a" }
                 assertNull(publicFinal.extra[IsVar])
+            }
+        }
+    }
+
+    @Test // see https://github.com/Kotlin/dokka/issues/2646
+    fun `should resolve PsiImmediateClassType as class reference`() {
+        testInline(
+            """
+            |/src/main/java/test/JavaEnum.java
+            |package test;
+            |public enum JavaEnum {
+            |    FOO, BAR
+            |}
+            |
+            |/src/main/java/test/ContainingEnumType.java
+            |package test;
+            |public class ContainingEnumType {
+            |
+            |    public JavaEnum returningEnumType() {
+            |        return null;
+            |    }
+            |
+            |    public JavaEnum[] returningEnumTypeArray() {
+            |        return null;
+            |    }
+            |
+            |    public void acceptingEnumType(JavaEnum javaEnum) {}
+            |}
+        """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val expectedType = GenericTypeConstructor(
+                    dri = DRI(packageName = "test", classNames = "JavaEnum", target = PointingToDeclaration),
+                    projections = emptyList()
+                )
+                val expectedArrayType = GenericTypeConstructor(
+                    dri = DRI("kotlin", "Array", target = PointingToDeclaration),
+                    projections = listOf(expectedType)
+                )
+
+                val classWithEnumUsage = module.packages.single().classlikes.single { it.name == "ContainingEnumType" }
+
+                val returningEnum = classWithEnumUsage.functions.single { it.name == "returningEnumType" }
+                assertEquals(expectedType, returningEnum.type)
+
+                val acceptingEnum = classWithEnumUsage.functions.single { it.name == "acceptingEnumType" }
+                assertEquals(1, acceptingEnum.parameters.size)
+                assertEquals(expectedType, acceptingEnum.parameters[0].type)
+
+                val returningArray = classWithEnumUsage.functions.single { it.name == "returningEnumTypeArray" }
+                assertEquals(expectedArrayType, returningArray.type)
             }
         }
     }
