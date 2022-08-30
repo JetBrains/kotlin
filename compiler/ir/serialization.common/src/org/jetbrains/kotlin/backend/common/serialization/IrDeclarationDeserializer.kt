@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.backend.common.enums.EnumEntriesBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
@@ -74,6 +75,7 @@ class IrDeclarationDeserializer(
     private val platformFakeOverrideClassFilter: FakeOverrideClassFilter,
     private val fakeOverrideBuilder: FakeOverrideBuilder,
     private val compatibilityMode: CompatibilityMode,
+    private val enumEntriesBuilder: EnumEntriesBuilder? = null,
 ) {
 
     private val bodyDeserializer = IrBodyDeserializer(builtIns, allowErrorNodes, irFactory, libraryFile, this)
@@ -390,6 +392,10 @@ class IrDeclarationDeserializer(
                 sealedSubclasses = proto.sealedSubclassList.map { deserializeIrSymbol(it) as IrClassSymbol }
 
                 fakeOverrideBuilder.enqueueClass(this, signature, compatibilityMode)
+
+                if (isEnumClass) {
+                    enumEntriesBuilder?.enqueueClass(this)
+                }
             }
         }
 

@@ -56,7 +56,7 @@ abstract class BasicWasmBoxTest(
         val fileContent = transformer.apply(KtTestUtil.doLoadFile(file))
 
         TestFileFactoryImpl().use { testFactory ->
-            val inputFiles: MutableList<TestFile> = TestFiles.createTestFiles(file.name, fileContent, testFactory, true)
+            val inputFiles: MutableList<TestFile> = TestFiles.createTestFiles(file.name, fileContent, testFactory, true, true)
             val testPackage = testFactory.testPackage
 
             val languageVersionSettings = inputFiles.firstNotNullOfOrNull { it.languageVersionSettings }

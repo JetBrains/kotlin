@@ -60,7 +60,8 @@ public abstract class KotlinBuiltIns {
                     getBuiltInsModule().getPackage(BUILT_INS_PACKAGE_FQ_NAME),
                     getBuiltInsModule().getPackage(COLLECTIONS_PACKAGE_FQ_NAME),
                     getBuiltInsModule().getPackage(RANGES_PACKAGE_FQ_NAME),
-                    getBuiltInsModule().getPackage(ANNOTATION_PACKAGE_FQ_NAME)
+                    getBuiltInsModule().getPackage(ANNOTATION_PACKAGE_FQ_NAME),
+                    getBuiltInsModule().getPackage(ENUMS_PACKAGE_FQ_NAME)
                 );
             }
         });
@@ -342,6 +343,11 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getEnum() {
         return getBuiltInClassByName("Enum");
+    }
+
+    @NotNull
+    public ClassDescriptor getEnumEntries() {
+        return getBuiltInClassByFqName(FqNames.enumEntries.toSafe());
     }
 
     @NotNull

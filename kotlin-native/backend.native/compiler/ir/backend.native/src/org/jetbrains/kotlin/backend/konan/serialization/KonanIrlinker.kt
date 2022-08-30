@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.lower.parents
+import org.jetbrains.kotlin.backend.common.enums.EnumEntriesBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.serialization.*
@@ -339,6 +340,8 @@ internal class KonanIrLinker(
     private val forwardDeclarationDeserializer = forwardModuleDescriptor?.let { KonanForwardDeclarationModuleDeserializer(it) }
     override val fakeOverrideBuilder: FakeOverrideBuilder =
         FakeOverrideBuilder(this, symbolTable, KonanManglerIr, IrTypeSystemContextImpl(builtIns), friendModules, KonanFakeOverrideClassFilter)
+
+    override val enumEntriesBuilder = EnumEntriesBuilder(builtIns, symbolTable, this, KonanManglerIr)
 
     val moduleDeserializers = mutableMapOf<ModuleDescriptor, KonanPartialModuleDeserializer>()
     val klibToModuleDeserializerMap = mutableMapOf<KotlinLibrary, KonanPartialModuleDeserializer>()

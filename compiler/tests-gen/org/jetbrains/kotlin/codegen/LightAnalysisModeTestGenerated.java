@@ -13201,6 +13201,21 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/enum/enumEntries.kt");
         }
 
+        @TestMetadata("enumEntriesMultimodule.kt")
+        public void ignoreEnumEntriesMultimodule() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntriesMultimodule.kt");
+        }
+
+        @TestMetadata("enumEntriesMultimoduleMultipleMappings.kt")
+        public void ignoreEnumEntriesMultimoduleMultipleMappings() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntriesMultimoduleMultipleMappings.kt");
+        }
+
+        @TestMetadata("enumEntriesMultimoduleMultipleMappingsForMultipleClassfiles.kt")
+        public void ignoreEnumEntriesMultimoduleMultipleMappingsForMultipleClassfiles() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntriesMultimoduleMultipleMappingsForMultipleClassfiles.kt");
+        }
+
         @TestMetadata("enumEntriesMultimoduleNoMappings.kt")
         public void ignoreEnumEntriesMultimoduleNoMappings() throws Exception {
             runTest("compiler/testData/codegen/box/enum/enumEntriesMultimoduleNoMappings.kt");

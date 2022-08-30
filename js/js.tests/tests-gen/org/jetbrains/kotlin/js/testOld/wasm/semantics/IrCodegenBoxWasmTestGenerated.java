@@ -11119,6 +11119,21 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/enum/enumEntries.kt");
         }
 
+        @TestMetadata("enumEntriesMultimodule.kt")
+        public void testEnumEntriesMultimodule() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntriesMultimodule.kt");
+        }
+
+        @TestMetadata("enumEntriesMultimoduleMultipleMappings.kt")
+        public void testEnumEntriesMultimoduleMultipleMappings() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntriesMultimoduleMultipleMappings.kt");
+        }
+
+        @TestMetadata("enumEntriesMultimoduleMultipleMappingsForMultipleClassfiles.kt")
+        public void testEnumEntriesMultimoduleMultipleMappingsForMultipleClassfiles() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntriesMultimoduleMultipleMappingsForMultipleClassfiles.kt");
+        }
+
         @TestMetadata("enumEntriesMultimoduleNoMappings.kt")
         public void testEnumEntriesMultimoduleNoMappings() throws Exception {
             runTest("compiler/testData/codegen/box/enum/enumEntriesMultimoduleNoMappings.kt");

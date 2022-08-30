@@ -5,19 +5,14 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
+import org.jetbrains.kotlin.backend.common.enums.EnumEntriesBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.serialization.*
-import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupport
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
-import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.IrLibrary
@@ -49,6 +44,7 @@ class JsIrLinker(
     }) {
 
     override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, JsManglerIr, IrTypeSystemContextImpl(builtIns), friendModules)
+    override val enumEntriesBuilder = EnumEntriesBuilder(builtIns, symbolTable, this, JsManglerIr)
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
         moduleDescriptor === moduleDescriptor.builtIns.builtInsModule

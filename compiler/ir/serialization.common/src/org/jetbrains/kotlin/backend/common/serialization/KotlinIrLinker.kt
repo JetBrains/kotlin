@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.backend.common.enums.EnumEntriesBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
@@ -44,12 +45,14 @@ abstract class KotlinIrLinker(
     protected val deserializersForModules = mutableMapOf<String, IrModuleDeserializer>()
 
     abstract val fakeOverrideBuilder: FakeOverrideBuilder
+    abstract val enumEntriesBuilder: EnumEntriesBuilder
 
     abstract val translationPluginContext: TranslationPluginContext?
 
     private val triedToDeserializeDeclarationForSymbol = mutableSetOf<IrSymbol>()
 
     private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
+
 
     protected open val unlinkedDeclarationsSupport: UnlinkedDeclarationsSupport get() = UnlinkedDeclarationsSupport.DISABLED
     protected open val userVisibleIrModulesSupport: UserVisibleIrModulesSupport get() = UserVisibleIrModulesSupport.DEFAULT
@@ -220,6 +223,7 @@ abstract class KotlinIrLinker(
 
         unlinkedDeclarationsSupport.markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder)
 
+        enumEntriesBuilder.provideEnumEntries()
         fakeOverrideBuilder.provideFakeOverrides()
         triedToDeserializeDeclarationForSymbol.clear()
 

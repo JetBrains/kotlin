@@ -485,6 +485,10 @@ class IrBuiltInsOverFir(
     private val enum by loadClass(StandardClassIds.Enum)
     override val enumClass: IrClassSymbol get() = enum.klass
 
+    private val enumEntries by loadClass(StandardClassIds.EnumEntries)
+    override val enumEntriesClass: IrClassSymbol
+        get() = enumEntries.klass
+
     override val intPlusSymbol: IrSimpleFunctionSymbol
         get() = intClass.functions.single {
             it.owner.name == OperatorNameConventions.PLUS && it.owner.valueParameters[0].type == intType

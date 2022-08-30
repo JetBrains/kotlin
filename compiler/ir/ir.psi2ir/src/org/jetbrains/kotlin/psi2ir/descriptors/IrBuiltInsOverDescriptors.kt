@@ -466,6 +466,8 @@ class IrBuiltInsOverDescriptors(
 
     override val enumClass = builtIns.enum.toIrSymbol()
 
+    override val enumEntriesClass: IrClassSymbol = builtIns.enumEntries.toIrSymbol()
+
     private fun builtInsPackage(vararg packageNameSegments: String) =
         builtIns.builtInsModule.getPackage(FqName.fromSegments(listOf(*packageNameSegments))).memberScope
 

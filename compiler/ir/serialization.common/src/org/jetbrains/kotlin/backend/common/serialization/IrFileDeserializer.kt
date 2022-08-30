@@ -90,7 +90,8 @@ class FileDeserializationState(
         symbolDeserializer,
         linker.fakeOverrideBuilder.platformSpecificClassFilter,
         linker.fakeOverrideBuilder,
-        compatibilityMode = moduleDeserializer.compatibilityMode
+        compatibilityMode = moduleDeserializer.compatibilityMode,
+        linker.enumEntriesBuilder,
     )
 
     val fileDeserializer = IrFileDeserializer(file, fileReader, fileProto, symbolDeserializer, declarationDeserializer)

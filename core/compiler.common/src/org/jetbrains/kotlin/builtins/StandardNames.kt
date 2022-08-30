@@ -69,6 +69,9 @@ object StandardNames {
     val COLLECTIONS_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("collections"))
 
     @JvmField
+    val ENUMS_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("enums"))
+
+    @JvmField
     val RANGES_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("ranges"))
 
     @JvmField
@@ -84,7 +87,8 @@ object StandardNames {
         ANNOTATION_PACKAGE_FQ_NAME,
         KOTLIN_REFLECT_FQ_NAME,
         KOTLIN_INTERNAL_FQ_NAME,
-        COROUTINES_PACKAGE_FQ_NAME
+        COROUTINES_PACKAGE_FQ_NAME,
+        ENUMS_PACKAGE_FQ_NAME
     )
 
     object FqNames {
@@ -96,7 +100,6 @@ object StandardNames {
         @JvmField val charSequence: FqNameUnsafe = fqNameUnsafe("CharSequence")
         @JvmField val string: FqNameUnsafe = fqNameUnsafe("String")
         @JvmField val array: FqNameUnsafe = fqNameUnsafe("Array")
-
         @JvmField val _boolean: FqNameUnsafe = fqNameUnsafe("Boolean")
         @JvmField val _char: FqNameUnsafe = fqNameUnsafe("Char")
         @JvmField val _byte: FqNameUnsafe = fqNameUnsafe("Byte")
@@ -108,6 +111,8 @@ object StandardNames {
         @JvmField val number: FqNameUnsafe = fqNameUnsafe("Number")
 
         @JvmField val _enum: FqNameUnsafe = fqNameUnsafe("Enum")
+
+        @JvmField val enumEntries: FqNameUnsafe = enums("EnumEntries")
 
         @JvmField val functionSupertype: FqNameUnsafe = fqNameUnsafe("Function")
 
@@ -223,6 +228,11 @@ object StandardNames {
         @JvmStatic
         fun reflect(simpleName: String): FqNameUnsafe {
             return KOTLIN_REFLECT_FQ_NAME.child(Name.identifier(simpleName)).toUnsafe()
+        }
+
+        @JvmStatic
+        fun enums(simpleName: String): FqNameUnsafe {
+            return ENUMS_PACKAGE_FQ_NAME.child(Name.identifier(simpleName)).toUnsafe()
         }
 
         private fun annotationName(simpleName: String): FqName {

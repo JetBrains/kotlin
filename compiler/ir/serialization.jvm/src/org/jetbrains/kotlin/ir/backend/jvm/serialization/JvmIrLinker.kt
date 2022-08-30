@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.jvm.serialization
 
+import org.jetbrains.kotlin.backend.common.enums.EnumEntriesBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
@@ -45,6 +46,7 @@ class JvmIrLinker(
 
     // TODO: provide friend modules
     override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, JvmIrMangler, typeSystem, emptyMap())
+    override val enumEntriesBuilder = EnumEntriesBuilder(builtIns, symbolTable, this, JvmIrMangler)
 
     private val javaName = Name.identifier("java")
 
