@@ -9,7 +9,6 @@ import org.intellij.markdown.flavours.gfm.GFMTokenTypes
 import org.jetbrains.dokka.base.translators.parseWithNormalisedSpaces
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.doc.DocTag.Companion.contentTypeParam
-import java.lang.NullPointerException
 
 object DocTagsFromIElementFactory {
 
@@ -40,7 +39,12 @@ object DocTagsFromIElementFactory {
                 body.orEmpty(),
                 children,
                 params
-            ) else body?.parseWithNormalisedSpaces(renderWhiteCharactersAsSpaces = false).orEmpty()
+            ) else {
+                // corner case: there are only spaces between two Markdown nodes
+                val containsOnlySpaces = body?.isNotEmpty() == true && body.all { it.isWhitespace() }
+                if (containsOnlySpaces) Text(" ", children, params)
+                else body?.parseWithNormalisedSpaces(renderWhiteCharactersAsSpaces = false).orEmpty()
+            }
             MarkdownTokenTypes.HORIZONTAL_RULE          -> HorizontalRule
             MarkdownTokenTypes.HARD_LINE_BREAK          -> Br
             GFMElementTypes.STRIKETHROUGH               -> Strikethrough(children, params)

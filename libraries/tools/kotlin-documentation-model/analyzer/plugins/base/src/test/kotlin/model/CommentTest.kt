@@ -251,4 +251,20 @@ class CommentTest : AbstractModelTest("/src/main/kotlin/comment/Test.kt", "comme
             }
         }
     }
+
+    @Test
+    fun `should be space between Markdown nodes`() {
+        inlineModelTest(
+            """
+            |/**
+            | * Rotates paths by `amount` **radians** around (`x`, `y`).
+            | */
+            |val property = "test"
+        """
+        ) {
+            with((this / "comment" / "property").cast<DProperty>()) {
+                comments() equals "Rotates paths by amount radians around (x, y).\n"
+            }
+        }
+    }
 }
