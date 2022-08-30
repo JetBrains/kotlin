@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.fakeOverrideFunction
+ * @sample org.jetbrains.kotlin.ir.generator.IrTree.functionWithLateBinding
  */
-interface IrFakeOverrideFunction : IrDeclaration {
+interface IrFunctionWithLateBinding : IrDeclaration {
     override val symbol: IrSimpleFunctionSymbol
 
     var modality: Modality

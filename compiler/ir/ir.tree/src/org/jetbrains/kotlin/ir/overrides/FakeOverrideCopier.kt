@@ -48,7 +48,7 @@ class FakeOverrideCopier(
         }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction =
-        declaration.factory.createFakeOverrideFunction(
+        declaration.factory.createFunctionWithLateBinding(
             declaration.startOffset, declaration.endOffset,
             IrDeclarationOrigin.FAKE_OVERRIDE,
             symbolRenamer.getFunctionName(declaration.symbol),
@@ -68,7 +68,7 @@ class FakeOverrideCopier(
 
 
     override fun visitProperty(declaration: IrProperty): IrProperty =
-        declaration.factory.createFakeOverrideProperty(
+        declaration.factory.createPropertyWithLateBinding(
             declaration.startOffset, declaration.endOffset,
             IrDeclarationOrigin.FAKE_OVERRIDE,
             declaration.name,
