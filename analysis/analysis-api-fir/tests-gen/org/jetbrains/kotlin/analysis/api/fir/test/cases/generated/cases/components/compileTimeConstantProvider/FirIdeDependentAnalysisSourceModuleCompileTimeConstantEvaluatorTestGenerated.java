@@ -189,4 +189,40 @@ public class FirIdeDependentAnalysisSourceModuleCompileTimeConstantEvaluatorTest
     public void testStringLiteral() throws Exception {
         runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/stringLiteral.kt");
     }
+
+    @Test
+    @TestMetadata("string_compareTo.kt")
+    public void testString_compareTo() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_compareTo.kt");
+    }
+
+    @Test
+    @TestMetadata("string_length.kt")
+    public void testString_length() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_length.kt");
+    }
+
+    @Test
+    @TestMetadata("string_plusMany.kt")
+    public void testString_plusMany() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_plusMany.kt");
+    }
+
+    @Test
+    @TestMetadata("string_plusOnce.kt")
+    public void testString_plusOnce() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_plusOnce.kt");
+    }
+
+    @Test
+    @TestMetadata("string_plusTwice.kt")
+    public void testString_plusTwice() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_plusTwice.kt");
+    }
+
+    @Test
+    @TestMetadata("string_toString.kt")
+    public void testString_toString() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_toString.kt");
+    }
 }
