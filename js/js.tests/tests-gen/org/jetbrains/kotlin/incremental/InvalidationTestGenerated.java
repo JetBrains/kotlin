@@ -180,6 +180,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/jsModuleAnnotation/");
     }
 
+    @TestMetadata("localInlineFunction")
+    public void testLocalInlineFunction() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/localInlineFunction/");
+    }
+
     @TestMetadata("mainModuleInvalidation")
     public void testMainModuleInvalidation() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/mainModuleInvalidation/");
