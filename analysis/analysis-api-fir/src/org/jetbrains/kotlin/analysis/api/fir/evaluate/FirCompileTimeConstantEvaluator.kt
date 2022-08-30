@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.constants.evaluate.CompileTimeType
 import org.jetbrains.kotlin.resolve.constants.evaluate.evalBinaryOp
@@ -47,7 +49,13 @@ internal object FirCompileTimeConstantEvaluator {
         when (fir) {
             is FirPropertyAccessExpression -> {
                 when (val referredVariable = fir.referredVariableSymbol) {
-                    is FirPropertySymbol -> referredVariable.toConstExpression(mode)
+                    is FirPropertySymbol -> {
+                        if (referredVariable.callableId.isStringLength) {
+                            evaluate(fir.explicitReceiver, mode)?.evaluateStringLength()
+                        } else {
+                            referredVariable.toConstExpression(mode)
+                        }
+                    }
                     is FirFieldSymbol -> referredVariable.toConstExpression(mode)
                     else -> null
                 }
@@ -66,6 +74,9 @@ internal object FirCompileTimeConstantEvaluator {
             }
             else -> null
         }
+
+    private val CallableId.isStringLength: Boolean
+        get() = classId == StandardClassIds.String && callableName.identifierOrNullIfSpecial == "length"
 
     private fun FirPropertySymbol.toConstExpression(
         mode: KtConstantEvaluationMode,
@@ -172,7 +183,15 @@ internal object FirCompileTimeConstantEvaluator {
     // Unary operators
     private fun FirConstExpression<*>.evaluate(function: FirSimpleFunction): FirConstExpression<*>? {
         if (value == null) return null
-        // TODO: there are a couple operations on String, such as .length and .toString
+        (value as? String)?.let { opr ->
+            evalUnaryOp(
+                function.name.asString(),
+                kind.toCompileTimeType(),
+                opr
+            )?.let {
+                return it.toConstantValueKind().toConstExpression(source, it)
+            }
+        }
         return kind.convertToNumber(value as? Number)?.let { opr ->
             evalUnaryOp(
                 function.name.asString(),
@@ -184,13 +203,37 @@ internal object FirCompileTimeConstantEvaluator {
         }
     }
 
+    private fun FirConstExpression<*>.evaluateStringLength(): FirConstExpression<*>? {
+        return (value as? String)?.length?.let {
+            it.toConstantValueKind().toConstExpression(source, it)
+        }
+    }
+
     // Binary operators
     private fun FirConstExpression<*>.evaluate(
         function: FirSimpleFunction,
         other: FirConstExpression<*>
     ): FirConstExpression<*>? {
         if (value == null || other.value == null) return null
-        // TODO: there are a couple operations on Strings, such as .compareTo, .equals, or .plus
+        // NB: some utils accept very general types, and due to the way operation map works, we should up-cast rhs type.
+        val rightType = when {
+            function.symbol.callableId.isStringEquals -> CompileTimeType.ANY
+            function.symbol.callableId.isStringPlus -> CompileTimeType.ANY
+            else -> other.kind.toCompileTimeType()
+        }
+        (value as? String)?.let { opr1 ->
+            other.value?.let { opr2 ->
+                evalBinaryOp(
+                    function.name.asString(),
+                    kind.toCompileTimeType(),
+                    opr1,
+                    rightType,
+                    opr2
+                )?.let {
+                    return it.toConstantValueKind().toConstExpression(source, it)
+                }
+            }
+        }
         return kind.convertToNumber(value as? Number)?.let { opr1 ->
             other.kind.convertToNumber(other.value as? Number)?.let { opr2 ->
                 evalBinaryOp(
@@ -205,6 +248,12 @@ internal object FirCompileTimeConstantEvaluator {
             }
         }
     }
+
+    private val CallableId.isStringEquals: Boolean
+        get() = classId == StandardClassIds.String && callableName.identifierOrNullIfSpecial == "equals"
+
+    private val CallableId.isStringPlus: Boolean
+        get() = classId == StandardClassIds.String && callableName.identifierOrNullIfSpecial == "plus"
 
     ////// KINDS
 
