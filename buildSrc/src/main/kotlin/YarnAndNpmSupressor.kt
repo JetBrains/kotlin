@@ -31,7 +31,7 @@ private val allowImplicitDependOnNpmForTasks = setOf("compileTestKotlinJs", "com
  * Kotlin JS gradle plugin implicitly define dependency to installing NPM and Yarn
  * https://youtrack.jetbrains.com/issue/KT-53687/Dont-trigger-npm-and-yarn-related-tasks-if-it-not-relevant-for-assemble
  * We would like to explicitly disable this behaviour for kotlin standard library publication as it's shouldn't be needed but make the
- * build slower, make it less stable, generated additional traiffic, make the build less secure and so on.
+ * build slower, make it less stable, generated additional traffic, make the build less secure and so on.
  *
  * Implemented by manually removing dependencies set by Kotlin Gradle Plugin.
  */
