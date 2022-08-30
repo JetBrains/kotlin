@@ -57,7 +57,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
         global.pointer.bitcast(pointerType(int8TypePtr))
     }
 
-    val classObjectType = codegen.runtime.getStructType("_class_t")
+    private val classObjectType = codegen.runtime.objCClassObjectType
 
     fun exportClass(name: String) {
         context.llvm.usedGlobals += getClassGlobal(name, isMetaclass = false).llvm
@@ -83,7 +83,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
     private val emptyCache = constPointer(
             codegen.importGlobal(
                     "_objc_empty_cache",
-                    codegen.runtime.getStructType("_objc_cache"),
+                    codegen.runtime.objCCache,
                     CurrentKlibModuleOrigin
             )
     )
@@ -96,14 +96,13 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
 
     fun emitClass(name: String, superName: String, instanceMethods: List<Method>) {
         val runtime = context.llvm.runtime
-        fun struct(name: String) = runtime.getStructType(name)
 
-        val classRoType = struct("_class_ro_t")
-        val methodType = struct("_objc_method")
-        val methodListType = struct("__method_list_t")
-        val protocolListType = struct("_objc_protocol_list")
-        val ivarListType = struct("_ivar_list_t")
-        val propListType = struct("_prop_list_t")
+        val classRoType = runtime.objCClassRoType
+        val methodType = runtime.objCMethodType
+        val methodListType = runtime.objCMethodListType
+        val protocolListType = runtime.objCProtocolListType
+        val ivarListType = runtime.objCIVarListType
+        val propListType = runtime.objCPropListType
 
         val classNameLiteral = classNames.get(name)
 

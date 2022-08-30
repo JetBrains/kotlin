@@ -456,8 +456,6 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
 
     private fun importRtFunction(name: String) = importFunction(name, runtime.llvmModule)
 
-    private fun importRtGlobal(name: String) = importGlobal(name, runtime.llvmModule)
-
     val allocInstanceFunction = importRtFunction("AllocInstance")
     val allocArrayFunction = importRtFunction("AllocArrayInstance")
     val initThreadLocalSingleton = importRtFunction("InitThreadLocalSingleton")

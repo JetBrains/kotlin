@@ -123,8 +123,7 @@ private fun FunctionGenerationContext.loadBlockInvoke(
         blockPtr: LLVMValueRef,
         bridge: BlockPointerBridge
 ): LLVMValueRef {
-    val blockLiteralType = codegen.runtime.getStructType("Block_literal_1")
-    val invokePtr = structGep(bitcast(pointerType(blockLiteralType), blockPtr), 3)
+    val invokePtr = structGep(bitcast(pointerType(codegen.runtime.blockLiteralType), blockPtr), 3)
 
     return bitcast(pointerType(bridge.blockType.blockInvokeLlvmType.llvmFunctionType), load(invokePtr))
 }
@@ -157,14 +156,11 @@ private val BlockPointerBridge.nameSuffix: String
     get() = numberOfParameters.toString() + if (returnsVoid) "V" else ""
 
 internal class BlockGenerator(private val codegen: CodeGenerator) {
-    private val kRefSharedHolderType = LLVMGetTypeByName(codegen.runtime.llvmModule, "class.KRefSharedHolder")!!
 
     private val blockLiteralType = structType(
-            codegen.runtime.getStructType("Block_literal_1"),
-            kRefSharedHolderType
+            codegen.runtime.blockLiteralType,
+            codegen.runtime.kRefSharedHolderType
     )
-
-    private val blockDescriptorType = codegen.runtime.getStructType("Block_descriptor_1")
 
     val disposeHelper = generateFunction(
             codegen,
@@ -234,7 +230,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             }
         }
 
-        return Struct(blockDescriptorType,
+        return Struct(codegen.runtime.blockDescriptorType,
                 codegen.context.LongInt(0L),
                 codegen.context.LongInt(LLVMStoreSizeOfType(codegen.runtime.targetData, blockLiteralType)),
                 constPointer(copyHelper),
