@@ -170,6 +170,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/jsExport/");
     }
 
+    @TestMetadata("jsModuleAnnotation")
+    public void testJsModuleAnnotation() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/jsModuleAnnotation/");
+    }
+
     @TestMetadata("mainModuleInvalidation")
     public void testMainModuleInvalidation() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/mainModuleInvalidation/");
