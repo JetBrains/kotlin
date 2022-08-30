@@ -44587,6 +44587,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("arrayOfNullableReified.kt")
+            public void testArrayOfNullableReified() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/typeOf/arrayOfNullableReified.kt");
+            }
+
+            @Test
             @TestMetadata("caching.kt")
             public void testCaching() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/typeOf/caching.kt");
@@ -44674,6 +44680,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("rawTypes_before.kt")
             public void testRawTypes_before() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/typeOf/rawTypes_before.kt");
+            }
+
+            @Test
+            @TestMetadata("reifiedAsNestedArgument.kt")
+            public void testReifiedAsNestedArgument() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/typeOf/reifiedAsNestedArgument.kt");
             }
 
             @Test
@@ -45987,6 +45999,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("spreads.kt")
         public void testSpreads() throws Exception {
             runTest("compiler/testData/codegen/box/reified/spreads.kt");
+        }
+
+        @Test
+        @TestMetadata("typeTokenWrapper.kt")
+        public void testTypeTokenWrapper() throws Exception {
+            runTest("compiler/testData/codegen/box/reified/typeTokenWrapper.kt");
         }
 
         @Test

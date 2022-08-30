@@ -2928,33 +2928,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @NotNull
     CallGenerator getOrCreateCallGenerator(@NotNull ResolvedCall<?> resolvedCall, @NotNull CallableDescriptor descriptor) {
-        Map<TypeParameterDescriptor, KotlinType> typeArguments = getTypeArgumentsForResolvedCall(resolvedCall, descriptor);
-
-        TypeParameterMappings<KotlinType> mappings = new TypeParameterMappings<>();
-        for (Map.Entry<TypeParameterDescriptor, KotlinType> entry : typeArguments.entrySet()) {
-            TypeParameterDescriptor key = entry.getKey();
-            KotlinType type = entry.getValue();
-
-            boolean isReified = key.isReified() || InlineUtil.isArrayConstructorWithLambda(resolvedCall.getResultingDescriptor());
-
-            Pair<TypeParameterMarker, ReificationArgument> typeParameterAndReificationArgument =
-                    extractReificationArgument(typeSystem, type);
-            if (typeParameterAndReificationArgument == null) {
-                KotlinType approximatedType = approximateCapturedType(type);
-                JvmSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE);
-                Type asmType = typeMapper.mapTypeArgument(approximatedType, signatureWriter);
-
-                mappings.addParameterMappingToType(
-                        key.getName().getIdentifier(), approximatedType, asmType, signatureWriter.toString(), isReified
-                );
-            }
-            else {
-                mappings.addParameterMappingForFurtherReification(
-                        key.getName().getIdentifier(), type, typeParameterAndReificationArgument.getSecond(), isReified
-                );
-            }
-        }
-
+        TypeParameterMappings<KotlinType> mappings = new TypeParameterMappings<>(
+                typeSystem,
+                getTypeArgumentsForResolvedCall(resolvedCall, descriptor),
+                InlineUtil.isArrayConstructorWithLambda(resolvedCall.getResultingDescriptor()),
+                (KotlinType type, BothSignatureWriter sw) -> typeMapper.mapTypeArgument(approximateCapturedType(type), sw)
+        );
         return getOrCreateCallGenerator(descriptor, resolvedCall.getCall().getCallElement(), mappings, false);
     }
 

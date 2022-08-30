@@ -57,7 +57,6 @@ import org.jetbrains.kotlin.types.computeExpandedTypeForInlineClass
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -1455,30 +1454,12 @@ class ExpressionCodegen(
             if (element.typeArgumentsCount == 0) {
                 //avoid ambiguity with type constructor type parameters
                 emptyMap()
-            } else typeArgumentContainer.typeParameters.keysToMap {
-                element.getTypeArgumentOrDefault(it)
+            } else typeArgumentContainer.typeParameters.associate {
+                it.symbol to element.getTypeArgumentOrDefault(it)
             }
 
-        val mappings = TypeParameterMappings<IrType>()
-        for ((key, type) in typeArguments.entries) {
-            val reificationArgument = typeMapper.typeSystem.extractReificationArgument(type)
-            if (reificationArgument == null) {
-                // type is not generic
-                val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
-                val asmType = typeMapper.mapTypeParameter(type, signatureWriter)
-
-                mappings.addParameterMappingToType(
-                    key.name.identifier, type, asmType, signatureWriter.toString(), key.isReified
-                )
-            } else {
-                mappings.addParameterMappingForFurtherReification(
-                    key.name.identifier, type, reificationArgument.second, key.isReified
-                )
-            }
-        }
-
+        val mappings = TypeParameterMappings(typeMapper.typeSystem, typeArguments, allReified = false, typeMapper::mapTypeParameter)
         val sourceCompiler = IrSourceCompilerForInline(state, element, callee, this, data)
-
         val reifiedTypeInliner = ReifiedTypeInliner(
             mappings,
             IrInlineIntrinsicsSupport(classCodegen, element, irFunction.fileParent),
