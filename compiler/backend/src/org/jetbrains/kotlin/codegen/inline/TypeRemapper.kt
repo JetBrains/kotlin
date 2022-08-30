@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.codegen.inline
 
 import java.util.*
 
-class TypeParameter(val oldName: String, val newName: String?, val isReified: Boolean, val signature: String?)
-
 //typeMapping data could be changed outside through method processing
 class TypeRemapper private constructor(
     private val typeMapping: MutableMap<String, String?>,
@@ -27,7 +25,7 @@ class TypeRemapper private constructor(
     private val isRootInlineLambda: Boolean = false
 ) {
     private val additionalMappings = hashMapOf<String, String>()
-    private val typeParametersMapping = hashMapOf<String, TypeParameter>()
+    private val typeParametersMapping = hashMapOf<String, TypeParameterMapping<*>?>()
 
     fun addMapping(type: String, newType: String) {
         typeMapping[type] = newType
@@ -50,26 +48,24 @@ class TypeRemapper private constructor(
 //        assert(typeParametersMapping[name] == null) {
 //            "Type parameter already registered $name"
 //        }
-        typeParametersMapping[name] = TypeParameter(name, name, false, null)
+        typeParametersMapping[name] = null
     }
 
-    fun registerTypeParameter(mapping: TypeParameterMapping<*>) {
-        typeParametersMapping[mapping.name] = TypeParameter(
-            mapping.name, mapping.reificationArgument?.parameterName, mapping.isReified, mapping.signature
-        )
+    fun registerTypeParameter(name: String, mapping: TypeParameterMapping<*>) {
+        typeParametersMapping[name] = mapping
     }
 
-    fun mapTypeParameter(name: String): TypeParameter? {
-        return typeParametersMapping[name] ?: if (!isRootInlineLambda) parent?.mapTypeParameter(name) else null
+    fun mapTypeParameter(name: String): TypeParameterMapping<*>? = when {
+        name in typeParametersMapping -> typeParametersMapping[name]
+        !isRootInlineLambda -> parent?.mapTypeParameter(name)
+        else -> null
     }
 
     companion object {
         @JvmStatic
-        fun createRoot(formalTypeParameters: TypeParameterMappings<*>?): TypeRemapper {
+        fun createRoot(formalTypeParameters: TypeParameterMappings<*>): TypeRemapper {
             return TypeRemapper(HashMap()).apply {
-                formalTypeParameters?.forEach {
-                    registerTypeParameter(it)
-                }
+                formalTypeParameters.forEach(::registerTypeParameter)
             }
         }
 

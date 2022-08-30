@@ -30,16 +30,16 @@ class AsmTypeRemapper(val typeRemapper: TypeRemapper, val result: InlineResult) 
         return object : SignatureRemapper(v, this) {
             override fun visitTypeVariable(name: String) {
                 /*TODO try to erase absent type variable*/
-                val mapping = typeRemapper.mapTypeParameter(name) ?: return super.visitTypeVariable(name)
-
-                if (mapping.newName != null) {
+                val mapping = typeRemapper.mapTypeParameter(name)
+                if (mapping != null) {
+                    // TODO: what is this condition
                     if (mapping.isReified) {
-                        result.reifiedTypeParametersUsages.addUsedReifiedParameter(mapping.newName)
+                        result.reifiedTypeParametersUsages.mergeAll(mapping.reifiedTypeParametersUsages)
                     }
-                    return super.visitTypeVariable(mapping.newName)
+                    SignatureReader(mapping.signature).accept(v)
+                    return
                 }
-                // else TypeVariable is replaced by concrete type
-                SignatureReader(mapping.signature).accept(v)
+                return super.visitTypeVariable(name)
             }
 
             override fun visitFormalTypeParameter(name: String) {
