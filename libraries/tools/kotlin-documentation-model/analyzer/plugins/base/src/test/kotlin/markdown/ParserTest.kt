@@ -2,15 +2,17 @@ package org.jetbrains.dokka.tests
 
 import markdown.KDocTest
 import org.intellij.markdown.MarkdownElementTypes
+import org.jetbrains.dokka.base.parsers.MarkdownParser
 import org.jetbrains.dokka.model.doc.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 
 class ParserTest : KDocTest() {
+
+    private fun parseMarkdownToDocNode(text: String) =
+        MarkdownParser( { null }, "").parseStringToDocNode(text)
 
     @Test
     fun `Simple text`() {
@@ -1518,6 +1520,53 @@ class ParserTest : KDocTest() {
             )
         )
         executeTest(kdoc, expectedDocumentationNode)
+    }
+
+    @Test
+    fun `code with backticks`() {
+        val kdoc = "` `` `  ` ``` `"
+        val expectedDocumentationNode = DocumentationNode(
+            listOf(
+                Description(
+                    CustomDocTag(
+                        listOf(
+                            P(
+                                listOf(
+                                    CodeInline(listOf(Text("`` "))),
+                                    Text(" "),
+                                    CodeInline(listOf(Text("``` "))),
+                                )
+                            )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
+                    )
+                )
+            )
+        )
+        executeTest(kdoc, expectedDocumentationNode)
+    }
+
+    @Test
+    fun `should filter spaces in markdown`() {
+        val markdown = """
+        | sdsdds f,*()hhh
+        |    dssd hf
+        | 
+        | sdsdsds sdd
+        | 
+        | 
+        | eweww  
+        | 
+        | 
+        | 
+        """.trimMargin()
+        val actualDocumentationNode = parseMarkdownToDocNode(markdown).children
+        val expectedDocumentationNode = listOf(
+            P(listOf(Text(" sdsdds f,*()hhh     dssd hf"))),
+            P(listOf(Text(" sdsdsds sdd"))),
+            P(listOf(Text(" eweww  ")))
+        )
+        print(expectedDocumentationNode)
+        assertEquals(actualDocumentationNode, expectedDocumentationNode)
     }
 }
 
