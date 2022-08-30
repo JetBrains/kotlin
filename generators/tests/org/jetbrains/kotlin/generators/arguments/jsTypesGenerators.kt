@@ -72,3 +72,34 @@ internal fun generateJsModuleKind(
         }
     }
 }
+
+internal fun generateJsSourceMapEmbedMode(
+    apiDir: File,
+    filePrinter: (targetFile: File, Printer.() -> Unit) -> Unit
+) {
+    val jsSourceMapEmbedKindFqName = FqName("org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode")
+    filePrinter(file(apiDir, jsSourceMapEmbedKindFqName)) {
+        generateDeclaration("enum class", jsSourceMapEmbedKindFqName, afterType = "(val mode: String)") {
+            val modes = hashMapOf(
+                K2JsArgumentConstants::SOURCE_MAP_SOURCE_CONTENT_ALWAYS.name to K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS,
+                K2JsArgumentConstants::SOURCE_MAP_SOURCE_CONTENT_NEVER.name to K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER,
+                K2JsArgumentConstants::SOURCE_MAP_SOURCE_CONTENT_INLINING.name to K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING,
+            )
+
+            val lastIndex = modes.size - 1
+            modes.entries.forEachIndexed { index, mode ->
+                val lastChar = if (index == lastIndex) ";" else ","
+                println("${mode.key}(\"${mode.value}\")$lastChar")
+            }
+
+            println()
+            println("companion object {")
+            withIndent {
+                println("fun fromMode(mode: String): JsSourceMapEmbedMode =")
+                println("    JsSourceMapEmbedMode.values().firstOrNull { it.mode == mode }")
+                println("        ?: throw IllegalArgumentException(\"Unknown JS source map embed mode: ${'$'}mode\")")
+            }
+            println("}")
+        }
+    }
+}

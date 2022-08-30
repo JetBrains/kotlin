@@ -37,6 +37,7 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
     generateJvmTarget(apiSrcDir, withPrinterToFile)
     generateJsMainFunctionExecutionMode(apiSrcDir, withPrinterToFile)
     generateJsModuleKind(apiSrcDir, withPrinterToFile)
+    generateJsSourceMapEmbedMode(apiSrcDir, withPrinterToFile)
 
     // common interface
     val commonInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions")
