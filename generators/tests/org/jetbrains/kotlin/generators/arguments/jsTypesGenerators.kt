@@ -39,3 +39,36 @@ internal fun generateJsMainFunctionExecutionMode(
         }
     }
 }
+
+internal fun generateJsModuleKind(
+    apiDir: File,
+    filePrinter: (targetFile: File, Printer.() -> Unit) -> Unit
+) {
+    val jsModuleKindFqName = FqName("org.jetbrains.kotlin.gradle.dsl.JsModuleKind")
+    filePrinter(file(apiDir, jsModuleKindFqName)) {
+        generateDeclaration("enum class", jsModuleKindFqName, afterType = "(val kind: String)") {
+            val kinds = hashMapOf(
+                K2JsArgumentConstants::MODULE_PLAIN.name to K2JsArgumentConstants.MODULE_PLAIN,
+                K2JsArgumentConstants::MODULE_AMD.name to K2JsArgumentConstants.MODULE_AMD,
+                K2JsArgumentConstants::MODULE_COMMONJS.name to K2JsArgumentConstants.MODULE_COMMONJS,
+                K2JsArgumentConstants::MODULE_UMD.name to K2JsArgumentConstants.MODULE_UMD,
+                K2JsArgumentConstants::MODULE_ES.name to K2JsArgumentConstants.MODULE_ES
+            )
+
+            val lastIndex = kinds.size - 1
+            kinds.entries.forEachIndexed { index, mode ->
+                val lastChar = if (index == lastIndex) ";" else ","
+                println("${mode.key}(\"${mode.value}\")$lastChar")
+            }
+
+            println()
+            println("companion object {")
+            withIndent {
+                println("fun fromKind(kind: String): JsModuleKind =")
+                println("    JsModuleKind.values().firstOrNull { it.kind == kind }")
+                println("        ?: throw IllegalArgumentException(\"Unknown JS module kind: ${'$'}kind\")")
+            }
+            println("}")
+        }
+    }
+}
