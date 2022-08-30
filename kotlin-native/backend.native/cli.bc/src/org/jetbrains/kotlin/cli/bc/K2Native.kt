@@ -285,14 +285,10 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 libraryToAddToCache?.let { put(LIBRARY_TO_ADD_TO_CACHE, it) }
                 put(CACHE_DIRECTORIES, cacheDirectories)
                 put(CACHED_LIBRARIES, parseCachedLibraries(arguments, configuration))
-                val filesToCache = arguments.filesToCache ?: emptyArray()
-                if (filesToCache.isNotEmpty() && arguments.fileToCache != null)
-                    configuration.report(ERROR, "Both file-to-cache and files-to-cache were specified")
-                val fileToCache = arguments.fileToCache ?: filesToCache.singleOrNull()
+                val fileToCache = arguments.fileToCache
                 if (outputKind == CompilerOutputKind.PRELIMINARY_CACHE && fileToCache == null)
                     configuration.report(ERROR, "preliminary_cache only supported for per-file caches")
-                fileToCache?.let { put(FILE_TO_CACHE, it) }
-                filesToCache.takeIf { it.size > 1 }?.let { put(FILES_TO_CACHE, it.toList()) }
+                fileToCache?.let { put(FILES_TO_CACHE, it.toList()) }
                 put(MAKE_PER_FILE_CACHE, arguments.makePerFileCache)
                 putIfNotNull(BATCHED_PER_FILE_CACHE_BUILD, when (arguments.batchedPerFileCacheBuild) {
                     null -> null

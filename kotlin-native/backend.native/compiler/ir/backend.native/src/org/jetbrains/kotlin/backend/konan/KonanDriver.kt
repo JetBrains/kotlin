@@ -29,7 +29,7 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
     fun run() {
         val fileNames = configuration.get(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE)?.let { libPath ->
             if (configuration.get(KonanConfigKeys.MAKE_PER_FILE_CACHE) != true)
-                null
+                configuration.get(KonanConfigKeys.FILES_TO_CACHE)
             else {
                 val lib = createKonanLibrary(File(libPath), "default", null, true)
                 (0 until lib.fileCount()).map { fileIndex ->
@@ -42,6 +42,7 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
         if (fileNames == null) {
             KonanConfig(project, configuration).runTopLevelPhases()
         } else {
+            configuration.put(KonanConfigKeys.MAKE_PER_FILE_CACHE, true)
             if (configuration.get(KonanConfigKeys.BATCHED_PER_FILE_CACHE_BUILD) == false) {
                 fileNames.forEach { buildFileCache(it, CompilerOutputKind.PRELIMINARY_CACHE) }
                 fileNames.forEach { buildFileCache(it, configuration.get(KonanConfigKeys.PRODUCE)!!) }
@@ -56,7 +57,7 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
         val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)!!
         val subConfiguration = configuration.copy()
         subConfiguration.put(KonanConfigKeys.PRODUCE, cacheKind)
-        subConfiguration.put(KonanConfigKeys.FILE_TO_CACHE, fileName)
+        subConfiguration.put(KonanConfigKeys.FILES_TO_CACHE, listOf(fileName))
         subConfiguration.put(CLIConfigurationKeys.PHASE_CONFIG, phaseConfig.toBuilder().build())
         KonanConfig(project, subConfiguration).runTopLevelPhases()
     }

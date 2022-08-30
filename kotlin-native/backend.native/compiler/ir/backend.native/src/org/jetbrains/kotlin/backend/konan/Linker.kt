@@ -41,7 +41,7 @@ internal class CacheStorage(val context: Context) {
     fun renameOutput() {
         // For caches the output file is a directory. It might be created by someone else,
         // we have to delete it in order for the next renaming operation to succeed.
-        outputFiles.mainFile.delete()
+        outputFiles.mainFile.deleteRecursively()
         if (!outputFiles.tempCacheDirectory!!.renameTo(outputFiles.mainFile))
             outputFiles.tempCacheDirectory.deleteRecursively()
     }
@@ -50,7 +50,7 @@ internal class CacheStorage(val context: Context) {
         outputFiles.prepareTempDirectories()
         if (!isPreliminaryCache)
             saveCacheBitcodeDependencies()
-        if (isPreliminaryCache || context.configuration.get(KonanConfigKeys.FILE_TO_CACHE) == null) {
+        if (isPreliminaryCache || !context.config.producePerFileCache || context.config.produceBatchedPerFileCache) {
             saveInlineFunctionBodies()
             saveClassFields()
         }

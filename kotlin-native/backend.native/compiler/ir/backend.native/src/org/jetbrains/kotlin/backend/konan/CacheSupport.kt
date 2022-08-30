@@ -134,8 +134,7 @@ class CacheSupport(
         if (libraryCache != null && libraryCache.granularity == CachedLibraries.Granularity.MODULE)
             null
         else {
-            val fileToCache = configuration.get(KonanConfigKeys.FILE_TO_CACHE)
-            val filesToCache = configuration.get(KonanConfigKeys.FILES_TO_CACHE) ?: fileToCache?.let { listOf(it) }
+            val filesToCache = configuration.get(KonanConfigKeys.FILES_TO_CACHE)
 
             val strategy = if (filesToCache.isNullOrEmpty())
                 CacheDeserializationStrategy.WholeModule
