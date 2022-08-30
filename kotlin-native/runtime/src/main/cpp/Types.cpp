@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2022 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
  */
 
 #include "Types.h"
@@ -72,11 +61,6 @@ OBJ_GETTER(Kotlin_TypeInfo_getRelativeName, KNativePtr typeInfo, KBoolean checkF
     return NULL;
   }
 }
-
-struct AssociatedObjectTableRecord {
-  const TypeInfo* key;
-  OBJ_GETTER0((*getAssociatedObjectInstance));
-};
 
 OBJ_GETTER(Kotlin_TypeInfo_findAssociatedObject, KNativePtr typeInfo, KNativePtr key) {
   const AssociatedObjectTableRecord* associatedObjects = reinterpret_cast<const TypeInfo*>(typeInfo)->associatedObjects;

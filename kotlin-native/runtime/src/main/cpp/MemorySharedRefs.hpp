@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2022 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -74,5 +74,12 @@ class BackRefFromAssociatedObject {
 static_assert(
         std::is_trivially_destructible_v<BackRefFromAssociatedObject>,
         "BackRefFromAssociatedObject destructor is not guaranteed to be called.");
+
+extern "C" {
+RUNTIME_NOTHROW void KRefSharedHolder_initLocal(KRefSharedHolder* holder, ObjHeader* obj);
+RUNTIME_NOTHROW void KRefSharedHolder_init(KRefSharedHolder* holder, ObjHeader* obj);
+RUNTIME_NOTHROW void KRefSharedHolder_dispose(const KRefSharedHolder* holder);
+RUNTIME_NOTHROW ObjHeader* KRefSharedHolder_ref(const KRefSharedHolder* holder);
+} // extern "C"
 
 #endif // RUNTIME_MEMORYSHAREDREFS_HPP

@@ -113,6 +113,10 @@ bitcode {
         onlyIf { targetSupportsLibBacktrace(target.name) }
     }
 
+    module("compiler_interface") {
+        headersDirs.from(files("src/main/cpp"))
+    }
+
     module("launcher") {
         headersDirs.from(files("src/main/cpp"))
     }
@@ -344,7 +348,7 @@ targetList.forEach { targetName ->
 
         from(project.buildDir.resolve("stdlib/${hostName}/stdlib"))
         from(project.buildDir.resolve("bitcode/main/$targetName")) {
-            include("runtime.bc")
+            include("runtime.bc", "compiler_interface.bc")
             into("default/targets/$targetName/native")
         }
 
