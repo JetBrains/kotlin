@@ -218,16 +218,17 @@ abstract class XCFrameworkTask : DefaultTask() {
     @TaskAction
     fun assemble() {
         val frameworks = groupedFrameworkFiles.values.flatten()
+        val xcfName = xcFrameworkName.get()
         if (frameworks.isNotEmpty()) {
-            val xcfName = baseName.get()
+            val rawXcfName = baseName.get()
             val name = frameworks.first().name
             if (frameworks.any { it.name != name }) {
-                error("All inner frameworks in XCFramework '$xcfName' should have same names!" +
+                error("All inner frameworks in XCFramework '$rawXcfName' should have same names!" +
                               frameworks.joinToString("\n") { it.file.path })
             }
             if (name != xcfName) {
                 logger.warn(
-                    "Name of XCFramework '$xcfName' differs from inner frameworks name '$name'! Framework renaming is not supported yet"
+                    "Name of XCFramework '$rawXcfName' differs from inner frameworks name '$name'! Framework renaming is not supported yet"
                 )
             }
         }
@@ -236,7 +237,7 @@ abstract class XCFrameworkTask : DefaultTask() {
             when {
                 files.size == 1 -> files.first()
                 files.size > 1 -> FrameworkDescriptor(
-                    fatFrameworksDir.resolve(group.targetName).resolve("${xcFrameworkName.get()}.framework"),
+                    fatFrameworksDir.resolve(group.targetName).resolve("$xcfName.framework"),
                     files.all { it.isStatic },
                     group.targets.first() //will be not used
                 )
