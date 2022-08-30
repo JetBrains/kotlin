@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.util.typeSubstitutionMap
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 // Replace callable reference on inline function with reified parameter
 // with callable reference on new non inline function with substituted types
@@ -67,6 +68,15 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
                 }.apply {
                     parent = container as IrDeclarationParent
                     val irBuilder = context.createIrBuilder(symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
+                    val forwardExtensionReceiverAsParam = owner.extensionReceiverParameter?.let { extensionReceiver ->
+                        runIf(expression.extensionReceiver == null) {
+                            addValueParameter(
+                                extensionReceiver.name,
+                                typeSubstitutor.substitute(extensionReceiver.type)
+                            )
+                            true
+                        }
+                    } ?: false
                     owner.valueParameters.forEach { valueParameter ->
                         addValueParameter(
                             valueParameter.name,
@@ -80,9 +90,15 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
                         statements.add(
                             irBuilder.irReturn(
                                 irBuilder.irCall(owner.symbol).also { call ->
+                                    val (extensionReceiver, forwardedParams) = if (forwardExtensionReceiverAsParam) {
+                                        irBuilder.irGet(valueParameters.first()) to valueParameters.subList(1, valueParameters.size)
+                                    } else {
+                                        expression.extensionReceiver to valueParameters
+                                    }
+                                    call.extensionReceiver = extensionReceiver
                                     call.dispatchReceiver = expression.dispatchReceiver
-                                    call.extensionReceiver = expression.extensionReceiver
-                                    valueParameters.forEachIndexed { index, valueParameter ->
+
+                                    forwardedParams.forEachIndexed { index, valueParameter ->
                                         call.putValueArgument(index, irBuilder.irGet(valueParameter))
                                     }
                                     for (i in 0 until expression.typeArgumentsCount) {

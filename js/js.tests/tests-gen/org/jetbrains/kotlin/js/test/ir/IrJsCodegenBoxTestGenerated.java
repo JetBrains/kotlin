@@ -2785,6 +2785,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("genericCallableReferenceWithReifiedTypeParam.kt")
+            public void testGenericCallableReferenceWithReifiedTypeParam() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/function/genericCallableReferenceWithReifiedTypeParam.kt");
+            }
+
+            @Test
             @TestMetadata("genericCallableReferencesWithNullableTypes.kt")
             public void testGenericCallableReferencesWithNullableTypes() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/function/genericCallableReferencesWithNullableTypes.kt");
