@@ -154,7 +154,8 @@ context(KtAnalysisSession)
 private fun SymbolLightClassBase.defaultConstructor(): KtLightMethod {
     val classOrObject = kotlinOrigin
     val visibility = when {
-        classOrObject is KtObjectDeclaration || classOrObject?.hasModifier(SEALED_KEYWORD) == true || isEnum -> PsiModifier.PRIVATE
+        classOrObject is KtObjectDeclaration || isEnum -> PsiModifier.PRIVATE
+        classOrObject?.hasModifier(SEALED_KEYWORD) == true -> PsiModifier.PROTECTED
         classOrObject is KtEnumEntry -> PsiModifier.PACKAGE_LOCAL
         else -> PsiModifier.PUBLIC
     }
