@@ -135,7 +135,7 @@ internal class KonanCliInteropRunner(
         additionalJvmArgs: List<String> = emptyList(),
         konanHome: String = project.konanHome
 ) : KonanCliRunner("cinterop", project, additionalJvmArgs, konanHome) {
-    override val mustRunViaExec get() = false
+    override val mustRunViaExec get() = true
 
     private val projectDir = project.projectDir.toString()
 
