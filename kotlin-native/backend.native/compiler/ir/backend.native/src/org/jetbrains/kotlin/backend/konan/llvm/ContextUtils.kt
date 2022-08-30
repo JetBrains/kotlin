@@ -444,7 +444,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
 
     private val target = context.config.target
 
-    val runtimeFile = context.config.distribution.runtime(target)
+    val runtimeFile = context.config.distribution.compilerInterface(target)
     override val runtime = Runtime(runtimeFile) // TODO: dispose
 
     val targetTriple = runtime.target
