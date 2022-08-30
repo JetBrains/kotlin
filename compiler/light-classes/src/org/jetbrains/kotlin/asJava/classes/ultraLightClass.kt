@@ -442,7 +442,8 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     private fun defaultConstructor(): KtUltraLightMethod {
         val visibility =
             when {
-                classOrObject is KtObjectDeclaration || classOrObject.hasModifier(SEALED_KEYWORD) || isEnum -> PsiModifier.PRIVATE
+                classOrObject is KtObjectDeclaration || isEnum -> PsiModifier.PRIVATE
+                classOrObject.hasModifier(SEALED_KEYWORD) -> PsiModifier.PROTECTED
                 classOrObject is KtEnumEntry -> PsiModifier.PACKAGE_LOCAL
                 else -> PsiModifier.PUBLIC
             }
