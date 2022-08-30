@@ -57,6 +57,8 @@ artifacts {
 }
 
 compileKotlin {
+    kotlinJavaToolchain.toolchain.use(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_1_7))
+    kotlinOptions.jvmTarget = "1.8"
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
             "-Xmultifile-parts-inherit",
