@@ -273,7 +273,7 @@ object IrTree : AbstractTreeBuilder() {
             baseGetter = code("error(\"Should never be called\")")
         }
     }
-    val fakeOverrideFunction: ElementConfig by element(Declaration) {
+    val functionWithLateBinding: ElementConfig by element(Declaration) {
         typeKind = TypeKind.Interface
 
         parent(declaration)
@@ -291,7 +291,7 @@ object IrTree : AbstractTreeBuilder() {
             )
         }
     }
-    val fakeOverrideProperty: ElementConfig by element(Declaration) {
+    val propertyWithLateBinding: ElementConfig by element(Declaration) {
         typeKind = TypeKind.Interface
 
         parent(declaration)

@@ -101,7 +101,7 @@ class IrFunctionImpl(
     }
 }
 
-class IrFakeOverrideFunctionImpl(
+class IrFunctionWithLateBindingImpl(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
@@ -121,7 +121,7 @@ class IrFakeOverrideFunctionImpl(
     startOffset, endOffset, origin, name, visibility, returnType, isInline,
     isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,
     containerSource = null,
-), IrFakeOverrideFunction {
+), IrFunctionWithLateBinding {
     override val isFakeOverride: Boolean
         get() = true
 

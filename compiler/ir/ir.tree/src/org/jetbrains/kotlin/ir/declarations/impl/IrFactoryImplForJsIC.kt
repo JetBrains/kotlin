@@ -199,7 +199,7 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         ).register()
     }
 
-    override fun createFakeOverrideFunction(
+    override fun createFunctionWithLateBinding(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
@@ -215,7 +215,7 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         isInfix: Boolean,
         isExpect: Boolean
     ): IrSimpleFunction {
-        return super.createFakeOverrideFunction(
+        return super.createFunctionWithLateBinding(
             startOffset,
             endOffset,
             origin,
@@ -289,7 +289,7 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         ).register()
     }
 
-    override fun createFakeOverrideProperty(
+    override fun createPropertyWithLateBinding(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
@@ -303,7 +303,7 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         isExternal: Boolean,
         isExpect: Boolean
     ): IrProperty {
-        return super.createFakeOverrideProperty(
+        return super.createPropertyWithLateBinding(
             startOffset,
             endOffset,
             origin,
