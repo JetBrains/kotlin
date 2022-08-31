@@ -44,8 +44,8 @@ abstract class KotlinIrLinker(
 
     protected val deserializersForModules = mutableMapOf<String, IrModuleDeserializer>()
 
-    abstract val fakeOverrideBuilder: FakeOverrideBuilder
     abstract val enumEntriesBuilder: EnumEntriesBuilder
+    abstract val fakeOverrideBuilder: FakeOverrideBuilder
 
     abstract val translationPluginContext: TranslationPluginContext?
 

@@ -337,11 +337,11 @@ internal class KonanIrLinker(
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean = moduleDescriptor.isNativeStdlib()
 
+    override val enumEntriesBuilder = EnumEntriesBuilder(builtIns, symbolTable, this, KonanManglerIr)
+
     private val forwardDeclarationDeserializer = forwardModuleDescriptor?.let { KonanForwardDeclarationModuleDeserializer(it) }
     override val fakeOverrideBuilder: FakeOverrideBuilder =
         FakeOverrideBuilder(this, symbolTable, KonanManglerIr, IrTypeSystemContextImpl(builtIns), friendModules, KonanFakeOverrideClassFilter)
-
-    override val enumEntriesBuilder = EnumEntriesBuilder(builtIns, symbolTable, this, KonanManglerIr)
 
     val moduleDeserializers = mutableMapOf<ModuleDescriptor, KonanPartialModuleDeserializer>()
     val klibToModuleDeserializerMap = mutableMapOf<KotlinLibrary, KonanPartialModuleDeserializer>()

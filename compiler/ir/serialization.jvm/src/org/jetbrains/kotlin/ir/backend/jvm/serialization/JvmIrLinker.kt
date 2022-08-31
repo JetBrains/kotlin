@@ -45,8 +45,8 @@ class JvmIrLinker(
 ) : KotlinIrLinker(currentModule, messageLogger, typeSystem.irBuiltIns, symbolTable, emptyList()) {
 
     // TODO: provide friend modules
-    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, JvmIrMangler, typeSystem, emptyMap())
     override val enumEntriesBuilder = EnumEntriesBuilder(builtIns, symbolTable, this, JvmIrMangler)
+    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, JvmIrMangler, typeSystem, emptyMap())
 
     private val javaName = Name.identifier("java")
 

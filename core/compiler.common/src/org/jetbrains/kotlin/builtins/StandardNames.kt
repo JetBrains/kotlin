@@ -88,7 +88,6 @@ object StandardNames {
         KOTLIN_REFLECT_FQ_NAME,
         KOTLIN_INTERNAL_FQ_NAME,
         COROUTINES_PACKAGE_FQ_NAME,
-        ENUMS_PACKAGE_FQ_NAME
     )
 
     object FqNames {

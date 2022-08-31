@@ -134,7 +134,7 @@ abstract class IrBuiltIns {
     abstract val dataClassArrayMemberHashCodeSymbol: IrSimpleFunctionSymbol
     abstract val dataClassArrayMemberToStringSymbol: IrSimpleFunctionSymbol
     abstract val enumClass: IrClassSymbol
-    abstract val enumEntriesClass: IrClassSymbol
+    abstract val enumEntriesClass: IrClassSymbol?
 
     abstract val intPlusSymbol: IrSimpleFunctionSymbol
     abstract val intTimesSymbol: IrSimpleFunctionSymbol

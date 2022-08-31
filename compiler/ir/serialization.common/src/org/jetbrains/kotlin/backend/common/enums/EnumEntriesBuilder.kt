@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.common.enums
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -32,9 +34,10 @@ class EnumEntriesBuilder(
 ) {
     private val candidatesForEnumEntries = mutableSetOf<IrClass>()
     private val signatureComputer = PublicIdSignatureComputer(mangler)
+    private val isEnumEntriesSupported = builtIns.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)
 
     fun enqueueClass(irClass: IrClass) {
-        if (irClass.containsEnumEntriesProperty()) return
+        if (!isEnumEntriesSupported || irClass.containsEnumEntriesProperty()) return
         candidatesForEnumEntries.add(irClass)
     }
 
@@ -86,7 +89,7 @@ class EnumEntriesBuilder(
     }
 
     private fun IrClass.generateEnumEntriesType(): IrType {
-        return builtIns.enumEntriesClass.typeWith(defaultType)
+        return builtIns.enumEntriesClass?.typeWith(defaultType) ?: error("Expect EnumEntries to be loaded")
     }
 
     private fun IrClass.generateEnumEntriesGetter(propertySymbol: IrPropertySymbol): IrSimpleFunction {
