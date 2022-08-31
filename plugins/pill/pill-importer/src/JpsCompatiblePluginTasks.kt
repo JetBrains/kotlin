@@ -55,7 +55,6 @@ class JpsCompatiblePluginTasks(
             ":kotlin-compiler",
             ":kotlin-daemon-embeddable",
             ":kotlin-compiler-embeddable",
-            ":kotlin-android-extensions",
             ":kotlin-scripting-compiler-embeddable",
             ":kotlin-scripting-compiler-impl-embeddable",
             ":kotlin-scripting-jvm-host"

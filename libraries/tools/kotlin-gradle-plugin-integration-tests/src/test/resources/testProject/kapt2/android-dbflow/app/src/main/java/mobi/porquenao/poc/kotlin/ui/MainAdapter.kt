@@ -1,12 +1,14 @@
 package mobi.porquenao.poc.kotlin.ui
 
 import android.graphics.Color
+import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.main_item.view.*
+import android.widget.TextView
+import android.widget.LinearLayout
 import mobi.porquenao.poc.kotlin.R
 import mobi.porquenao.poc.kotlin.core.Item
 import mobi.porquenao.poc.kotlin.core.ItemRepository
@@ -59,9 +61,9 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.ViewHolder>() {
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val card = view.card
-        val container = view.container
-        val title = view.title
-        val date = view.date
+        val card = view.findViewById(R.id.card) as CardView
+        val container = view.findViewById(R.id.container) as LinearLayout
+        val title = view.findViewById(R.id.title) as TextView
+        val date = view.findViewById(R.id.date) as TextView
     }
 }

@@ -20,9 +20,8 @@ import java.io.File
 class ParcelizeEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val runtimeLibrary = File(PathUtil.kotlinPathsForCompiler.libPath, PathUtil.PARCELIZE_RUNTIME_PLUGIN_JAR_NAME)
-        val androidExtensionsRuntimeLibrary = File(PathUtil.kotlinPathsForCompiler.libPath, PathUtil.ANDROID_EXTENSIONS_RUNTIME_PLUGIN_JAR_NAME)
         val androidApiJar = KtTestUtil.findAndroidApiJar()
-        configuration.addJvmClasspathRoots(listOf(runtimeLibrary, androidExtensionsRuntimeLibrary, androidApiJar))
+        configuration.addJvmClasspathRoots(listOf(runtimeLibrary, androidApiJar))
     }
 
     override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(

@@ -48,7 +48,6 @@ dependencies {
     testApi(project(":js:js.frontend"))
     testApi(project(":js:js.translator"))
     testApi(project(":native:frontend.native"))
-    testCompileOnly(project(":plugins:android-extensions-compiler"))
     testApi(projectTests(":generators:test-generator"))
     testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(project(":kotlin-test:kotlin-test-jvm"))

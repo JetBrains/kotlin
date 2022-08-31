@@ -39,7 +39,6 @@ dependencies {
     commonCompileOnly(project(":compiler:incremental-compilation-impl"))
     commonCompileOnly(project(":daemon-common"))
     commonCompileOnly(project(":native:kotlin-native-utils"))
-    commonCompileOnly(project(":kotlin-android-extensions"))
     commonCompileOnly(project(":kotlin-build-common"))
     commonCompileOnly(project(":kotlin-compiler-runner"))
     commonCompileOnly(project(":kotlin-annotation-processing"))
@@ -71,7 +70,6 @@ dependencies {
 
     commonRuntimeOnly(project(":kotlin-compiler-embeddable"))
     commonRuntimeOnly(project(":kotlin-annotation-processing-gradle"))
-    commonRuntimeOnly(project(":kotlin-android-extensions"))
     commonRuntimeOnly(project(":kotlin-compiler-runner"))
     commonRuntimeOnly(project(":kotlin-scripting-compiler-embeddable"))
     commonRuntimeOnly(project(":kotlin-scripting-compiler-impl-embeddable"))
@@ -107,7 +105,6 @@ dependencies {
 
     testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     testImplementation(projectTests(":kotlin-build-common"))
-    testImplementation(project(":kotlin-android-extensions"))
     testImplementation(project(":kotlin-compiler-runner"))
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(commonDependency("junit:junit"))
@@ -198,12 +195,6 @@ gradlePlugin {
             description = "Kotlin Android plugin"
             displayName = description
             implementationClass = "org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper"
-        }
-        create("kotlinAndroidExtensionsPlugin") {
-            id = "org.jetbrains.kotlin.android.extensions"
-            description = "Kotlin Android Extensions plugin"
-            displayName = description
-            implementationClass = "org.jetbrains.kotlin.gradle.internal.AndroidExtensionsSubpluginIndicator"
         }
         create("kotlinParcelizePlugin") {
             id = "org.jetbrains.kotlin.plugin.parcelize"

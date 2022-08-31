@@ -1,6 +1,0 @@
--d
-$TEMP_DIR$
--Xcompiler-plugin=dist/kotlinc/lib/android-extensions-compiler.jar=package=com.myapp,variant=main;$TESTDATA_DIR$/../androidPlugin/res
-$TESTDATA_DIR$/pluginSimple.kt
-$TESTDATA_DIR$/../androidPlugin
--Xuse-k2

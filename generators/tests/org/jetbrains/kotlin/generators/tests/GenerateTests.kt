@@ -8,14 +8,6 @@ package org.jetbrains.kotlin.generators.tests
 import org.jetbrains.kotlin.allopen.AbstractBytecodeListingTestForAllOpen
 import org.jetbrains.kotlin.allopen.AbstractFirBytecodeListingTestForAllOpen
 import org.jetbrains.kotlin.allopen.AbstractIrBytecodeListingTestForAllOpen
-import org.jetbrains.kotlin.android.parcel.AbstractParcelBoxTest
-import org.jetbrains.kotlin.android.parcel.AbstractParcelBytecodeListingTest
-import org.jetbrains.kotlin.android.parcel.AbstractParcelIrBoxTest
-import org.jetbrains.kotlin.android.parcel.AbstractParcelIrBytecodeListingTest
-import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
-import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
-import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidIrBoxTest
-import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPluginBlackBoxCodegenTest
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPluginDiagnosticTest
 import org.jetbrains.kotlin.generators.TestGroup
@@ -105,51 +97,6 @@ fun main(args: Array<String>) {
             }
             testClass<AbstractIncrementalMultiplatformJsCompilerRunnerTest> {
                 model("incremental/mpp/allPlatforms", extension = null, excludeParentDirs = true)
-            }
-        }
-
-        testGroup(
-            "plugins/android-extensions/android-extensions-compiler/test",
-            "plugins/android-extensions/android-extensions-compiler/testData"
-        ) {
-            testClass<AbstractAndroidSyntheticPropertyDescriptorTest> {
-                model("descriptors", recursive = false, extension = null)
-            }
-
-            testClass<AbstractAndroidBoxTest> {
-                model("codegen/android", recursive = false, extension = null, testMethod = "doCompileAgainstAndroidSdkTest")
-                model("codegen/android", recursive = false, extension = null, testMethod = "doFakeInvocationTest", testClassName = "Invoke")
-            }
-
-            testClass<AbstractAndroidIrBoxTest> {
-                model(
-                    "codegen/android", recursive = false, extension = null, testMethod = "doCompileAgainstAndroidSdkTest",
-                    targetBackend = TargetBackend.JVM_IR
-                )
-                model(
-                    "codegen/android", recursive = false, extension = null, testMethod = "doFakeInvocationTest", testClassName = "Invoke",
-                    targetBackend = TargetBackend.JVM_IR
-                )
-            }
-
-            testClass<AbstractAndroidBytecodeShapeTest> {
-                model("codegen/bytecodeShape", recursive = false, extension = null)
-            }
-
-            testClass<AbstractParcelBoxTest> {
-                model("parcel/box", targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractParcelIrBoxTest> {
-                model("parcel/box", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractParcelBytecodeListingTest> {
-                model("parcel/codegen", targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractParcelIrBytecodeListingTest> {
-                model("parcel/codegen", targetBackend = TargetBackend.JVM_IR)
             }
         }
 

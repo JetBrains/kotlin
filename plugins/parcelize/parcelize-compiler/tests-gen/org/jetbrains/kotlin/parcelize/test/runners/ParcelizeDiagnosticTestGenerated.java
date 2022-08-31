@@ -55,12 +55,6 @@ public class ParcelizeDiagnosticTestGenerated extends AbstractParcelizeDiagnosti
     }
 
     @Test
-    @TestMetadata("deprecatedAnnotations.kt")
-    public void testDeprecatedAnnotations() throws Exception {
-        runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/deprecatedAnnotations.kt");
-    }
-
-    @Test
     @TestMetadata("emptyPrimaryConstructor.kt")
     public void testEmptyPrimaryConstructor() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/emptyPrimaryConstructor.kt");
