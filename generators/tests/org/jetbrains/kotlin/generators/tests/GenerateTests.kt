@@ -214,7 +214,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    generateTestGroupSuiteWithJUnit5 {
+    generateTestGroupSuiteWithJUnit5(generatorName = "GenerateTests.kt") {
         val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
 
         testGroup("plugins/parcelize/parcelize-compiler/tests-gen", "plugins/parcelize/parcelize-compiler/testData") {

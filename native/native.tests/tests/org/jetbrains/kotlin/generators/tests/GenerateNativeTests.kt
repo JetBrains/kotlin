@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Tag
 fun main() {
     System.setProperty("java.awt.headless", "true")
 
-    generateTestGroupSuiteWithJUnit5 {
+    generateTestGroupSuiteWithJUnit5(generatorName = "GenerateNativeTests.kt") {
         // Codegen box tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
             testClass<AbstractNativeCodegenBoxTest>(

@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.IOException
 
-private const val TEST_GENERATOR_NAME = "GenerateNewCompilerTests.kt"
+private const val TEST_GENERATOR_NAME = "NewTestGeneratorImpl.kt"
 
 private val METHOD_GENERATORS = listOf(
     SimpleTestClassModelTestAllFilesPresentMethodGenerator,

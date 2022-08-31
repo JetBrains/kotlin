@@ -64,7 +64,7 @@ fun generateTests() {
         }
     }
 
-    generateTestGroupSuiteWithJUnit5 {
+    generateTestGroupSuiteWithJUnit5(generatorName = "GenerateSpecTests.kt") {
         testGroup(testsRoot = "compiler/fir/analysis-tests/tests-gen", testDataRoot = SPEC_TESTDATA_PATH) {
             testClass<AbstractFirDiagnosticTestSpec> {
                 model(

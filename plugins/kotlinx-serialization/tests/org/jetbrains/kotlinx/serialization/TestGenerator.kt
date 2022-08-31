@@ -30,7 +30,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    generateTestGroupSuiteWithJUnit5(args) {
+    generateTestGroupSuiteWithJUnit5(args, generatorName = "TestGenerator.kt") {
         testGroup(
             "plugins/kotlinx-serialization/tests-gen",
             "plugins/kotlinx-serialization/testData"

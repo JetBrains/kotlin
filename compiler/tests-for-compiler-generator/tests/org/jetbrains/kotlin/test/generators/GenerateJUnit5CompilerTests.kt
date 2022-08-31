@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizerTest
 fun generateJUnit5CompilerTests(args: Array<String>) {
     val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
 
-    generateTestGroupSuiteWithJUnit5(args) {
+    generateTestGroupSuiteWithJUnit5(args, generatorName = "GenerateJUnit5CompilerTests.kt") {
         testGroup(testsRoot = "compiler/tests-common-new/tests-gen", testDataRoot = "compiler/testData") {
             testClass<AbstractDiagnosticTest> {
                 model("diagnostics/tests", pattern = "^(.*)\\.kts?$", excludedPattern = excludedFirTestdataPattern)

@@ -8,20 +8,22 @@ package org.jetbrains.kotlin.generators
 fun generateTestGroupSuiteWithJUnit5(
     args: Array<String>,
     additionalMethodGenerators: List<MethodGenerator<Nothing>> = emptyList(),
+    generatorName: String = "NewTestGenerationDSL.kt",
     init: TestGroupSuite.() -> Unit
 ) {
-    generateTestGroupSuiteWithJUnit5(InconsistencyChecker.hasDryRunArg(args), additionalMethodGenerators, init)
+    generateTestGroupSuiteWithJUnit5(InconsistencyChecker.hasDryRunArg(args), additionalMethodGenerators, generatorName, init)
 }
 
 fun generateTestGroupSuiteWithJUnit5(
     dryRun: Boolean = false,
     additionalMethodGenerators: List<MethodGenerator<Nothing>> = emptyList(),
+    generatorName: String = "NewTestGenerationDSL.kt",
     init: TestGroupSuite.() -> Unit
 ) {
     val suite = TestGroupSuite(ReflectionBasedTargetBackendComputer).apply(init)
     for (testGroup in suite.testGroups) {
         for (testClass in testGroup.testClasses) {
-            val (changed, testSourceFilePath) = NewTestGeneratorImpl(additionalMethodGenerators).generateAndSave(testClass, dryRun)
+            val (changed, testSourceFilePath) = NewTestGeneratorImpl(additionalMethodGenerators, generatorName = generatorName).generateAndSave(testClass, dryRun)
             if (changed) {
                 InconsistencyChecker.inconsistencyChecker(dryRun).add(testSourceFilePath)
             }
