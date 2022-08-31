@@ -177,8 +177,8 @@ task compileJs(type: NoDebugJavaExec) {
     def compileKotlin2JsFiles = compileKotlin2Js.destinationDirectory
     doFirst {
         args = [jsOutputFileName, rootDir, "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path }.sort() +
-                (compileBuiltinsKotlin2JsFiles.asFile.get().listFiles().sort() +
-                        compileKotlin2JsFiles.asFile.get().listFiles().sort()).findAll {
+                (compileBuiltinsKotlin2JsFiles.asFileTree.files.sort() +
+                        compileKotlin2JsFiles.asFileTree.files.sort()).findAll {
                     it.name.endsWith(".js") && !it.name.endsWith(".meta.js")
                 }
     }

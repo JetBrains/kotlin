@@ -259,7 +259,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     // avoid creating directory in getter: this can lead to failure in parallel build
     @get:OutputDirectory
-    internal val taskBuildCacheableOutputDirectory: DirectoryProperty = objectFactory.directoryProperty()
+    internal open val taskBuildCacheableOutputDirectory: DirectoryProperty = objectFactory.directoryProperty()
 
     // avoid creating directory in getter: this can lead to failure in parallel build
     @get:LocalState

@@ -75,6 +75,11 @@ abstract class KotlinJsIrLink @Inject constructor(
     @get:Input
     val outputGranularity: KotlinJsIrOutputGranularity = propertiesProvider.jsIrOutputGranularity
 
+    // Incremental stuff of link task is inside compiler
+    @get:Internal
+    override val taskBuildCacheableOutputDirectory: DirectoryProperty
+        get() = super.taskBuildCacheableOutputDirectory
+
     @get:Internal
     @get:Deprecated("Please use modeProperty instead.")
     var mode: KotlinJsBinaryMode
