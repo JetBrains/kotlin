@@ -13,16 +13,6 @@ import kotlin.test.assertEquals
 
 class CInteropTaskTest : MultiplatformExtensionTest() {
 
-    @BeforeTest
-    override fun setup() {
-        super.setup()
-        setupDefaultProjectWithCinterop()
-    }
-
-    private fun setupDefaultProjectWithCinterop() {
-
-    }
-
     @Test
     fun `cinterop properties can be changed after creating`() {
         fun DefaultCInteropSettings.setDummyValues(prefix: String) {

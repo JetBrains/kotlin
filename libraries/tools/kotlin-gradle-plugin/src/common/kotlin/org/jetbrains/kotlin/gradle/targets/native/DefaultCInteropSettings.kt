@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmNativeVariantCompila
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
 
@@ -73,8 +74,9 @@ abstract class DefaultCInteropSettings @Inject constructor(
             target?.disambiguationClassifier ?: compilation.compilationClassifier
         )
 
-    val defFileProperty: Property<File> = objectFactory.property(File::class.java)
-        .apply { set(projectLayout.projectDirectory.asFile.resolve("src/nativeInterop/cinterop/$name.def")) }
+    val defFileProperty: Property<File> = objectFactory.property<File>().value(
+        projectLayout.projectDirectory.file("src/nativeInterop/cinterop/$name.def").asFile
+    )
 
     var defFile: File
         get() = defFileProperty.get()
