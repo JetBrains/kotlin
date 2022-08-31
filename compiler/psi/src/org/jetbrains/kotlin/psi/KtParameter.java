@@ -112,6 +112,7 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         return getValOrVarKeyword() != null;
     }
 
+    @Override
     @Nullable
     public PsiElement getValOrVarKeyword() {
         KotlinParameterStub stub = getStub();
