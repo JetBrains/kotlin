@@ -182,7 +182,7 @@ private fun Project.configureKotlinCompilation(
     val apiBuild = task<KotlinApiBuildTask>(targetConfig.apiTaskName("Build"), extension) {
         // Do not enable task for empty umbrella modules
         isEnabled =
-            apiCheckEnabled(extension) && compilation.allKotlinSourceSets.any { it.kotlin.srcDirs.any { it.exists() } }
+            apiCheckEnabled(projectName, extension) && compilation.allKotlinSourceSets.any { it.kotlin.srcDirs.any { it.exists() } }
         // 'group' is not specified deliberately, so it will be hidden from ./gradlew tasks
         description =
             "Builds Kotlin API for 'main' compilations of $projectName. Complementary task and shouldn't be called manually"
@@ -206,8 +206,8 @@ private fun Project.configureKotlinCompilation(
 val Project.sourceSets: SourceSetContainer
     get() = convention.getPlugin(JavaPluginConvention::class.java).sourceSets
 
-fun Project.apiCheckEnabled(extension: ApiValidationExtension): Boolean =
-    name !in extension.ignoredProjects && !extension.validationDisabled
+fun apiCheckEnabled(projectName: String, extension: ApiValidationExtension): Boolean =
+    projectName !in extension.ignoredProjects && !extension.validationDisabled
 
 private fun Project.configureApiTasks(
     sourceSet: SourceSet,
@@ -217,7 +217,7 @@ private fun Project.configureApiTasks(
     val projectName = project.name
     val apiBuildDir = targetConfig.apiDir.map { buildDir.resolve(it) }
     val apiBuild = task<KotlinApiBuildTask>(targetConfig.apiTaskName("Build"), extension) {
-        isEnabled = apiCheckEnabled(extension)
+        isEnabled = apiCheckEnabled(projectName, extension)
         // 'group' is not specified deliberately so it will be hidden from ./gradlew tasks
         description =
             "Builds Kotlin API for 'main' compilations of $projectName. Complementary task and shouldn't be called manually"
@@ -244,7 +244,7 @@ private fun Project.configureCheckTasks(
         }
     }
     val apiCheck = task<KotlinApiCompareTask>(targetConfig.apiTaskName("Check")) {
-        isEnabled = apiCheckEnabled(extension) && apiBuild.map { it.enabled }.getOrElse(true)
+        isEnabled = apiCheckEnabled(projectName, extension) && apiBuild.map { it.enabled }.getOrElse(true)
         group = "verification"
         description = "Checks signatures of public API against the golden value in API folder for $projectName"
         run {
@@ -261,15 +261,12 @@ private fun Project.configureCheckTasks(
     }
 
     val apiDump = task<Sync>(targetConfig.apiTaskName("Dump")) {
-        isEnabled = apiCheckEnabled(extension) && apiBuild.map { it.enabled }.getOrElse(true)
+        isEnabled = apiCheckEnabled(projectName, extension) && apiBuild.map { it.enabled }.getOrElse(true)
         group = "other"
         description = "Syncs API from build dir to ${targetConfig.apiDir} dir for $projectName"
         from(apiBuildDir)
         into(apiCheckDir)
         dependsOn(apiBuild)
-        doFirst {
-            apiCheckDir.get().mkdirs()
-        }
     }
 
     commonApiDump?.configure { it.dependsOn(apiDump) }

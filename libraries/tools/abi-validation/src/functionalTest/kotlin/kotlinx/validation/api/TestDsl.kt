@@ -132,7 +132,7 @@ internal class AppendableScope(val filePath: String) {
 }
 
 internal class Runner {
-    val arguments: MutableList<String> = mutableListOf()
+    val arguments: MutableList<String> = mutableListOf("--configuration-cache")
 }
 
 internal fun readFileList(fileName: String): String {
