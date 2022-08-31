@@ -13,15 +13,14 @@ import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.valueOr
 
 fun PsiFile.findScriptCompilationConfiguration(): ScriptCompilationConfiguration? {
-    // Do not use psiFile.script, see comments in findScriptDefinition
-    if (this !is KtFile/* || this.script == null*/) return null
-    val file = virtualFile ?: originalFile.virtualFile ?: return null
-    if (file.isNonScript()) return null
-
-    val provider = ScriptDependenciesProvider.getInstance(project)
-    // Ignoring the error here, assuming that it will be reported elsewhere anyway (this is important scenario in IDE)
-    return provider?.getScriptConfiguration(this)?.configuration
-        ?: findScriptDefinition()?.compilationConfiguration
+    return if (isScript()) {
+        val provider = ScriptDependenciesProvider.getInstance(project)
+        // Ignoring the error here, assuming that it will be reported elsewhere anyway (this is important scenario in IDE)
+        provider?.getScriptConfiguration(this)?.configuration
+            ?: findScriptDefinition()?.compilationConfiguration
+    } else {
+        null
+    }
 }
 
 private fun ScriptCompilationConfigurationResult.valueOrError() = valueOr { failure ->
