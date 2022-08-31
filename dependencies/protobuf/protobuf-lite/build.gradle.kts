@@ -15,8 +15,8 @@ val relocatedProtobuf by configurations.creating
 val relocatedProtobufSources by configurations.creating
 
 val protobufVersion: String by rootProject.extra
-val protobufJarPrefix = "protobuf-$protobufVersion"
-val outputJarPath = "$buildDir/libs/$protobufJarPrefix-lite.jar"
+val outputJarPath = "$buildDir/libs/protobuf-lite-$protobufVersion.jar"
+val sourcesJarName = "protobuf-lite-$protobufVersion-sources.jar"
 
 dependencies {
     relocatedProtobuf(project(":protobuf-relocated"))
@@ -88,22 +88,31 @@ val prepare by tasks.registering {
     }
 }
 
+val prepareSources = tasks.register<Copy>("prepareSources") {
+    dependsOn(":protobuf-relocated:prepareSources")
+    from(provider {
+        relocatedProtobuf
+                .resolvedConfiguration
+                .resolvedArtifacts
+                .single { it.name == "protobuf-relocated" && it.classifier == "sources" }.file
+    })
+
+    into("$buildDir/libs/")
+    rename { sourcesJarName }
+}
+
 val mainArtifact = artifacts.add(
     "default",
     provider {
-        prepare.outputs.files.singleFile
+        prepare.get().outputs.files.singleFile
     }
 ) {
     builtBy(prepare)
     classifier = ""
 }
 
-val sourcesArtifact = artifacts.add(
-    "default",
-    provider {
-        relocatedProtobuf.resolvedConfiguration.resolvedArtifacts.single { it.name == "protobuf-relocated" && it.classifier == "sources" }.file
-    }
-) {
+val sourcesArtifact = artifacts.add("default", File("$buildDir/libs/$sourcesJarName")) {
+    builtBy(prepareSources)
     classifier = "sources"
 }
 
@@ -118,6 +127,12 @@ publishing {
     repositories {
         maven {
             url = uri("${rootProject.buildDir}/internal/repo")
+        }
+
+        maven {
+            name = "kotlinSpace"
+            url = uri("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
+            credentials(org.gradle.api.artifacts.repositories.PasswordCredentials::class)
         }
     }
 }

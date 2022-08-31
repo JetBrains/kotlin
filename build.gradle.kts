@@ -475,13 +475,6 @@ allprojects {
             }
         }
 
-        maven(protobufRepo) {
-            content {
-                includeModule("org.jetbrains.kotlin", "protobuf-lite")
-                includeModule("org.jetbrains.kotlin", "protobuf-relocated")
-            }
-        }
-
         maven(intellijRepo)
         maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
 
