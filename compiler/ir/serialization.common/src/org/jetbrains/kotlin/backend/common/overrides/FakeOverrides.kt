@@ -21,9 +21,14 @@ import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsProcessor.Companion.MISSING_ABSTRACT_CALLABLE_MEMBER_IMPLEMENTATION
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
 import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
+import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy
+import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy.Customization
+import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
@@ -63,17 +68,36 @@ object DefaultFakeOverrideClassFilter : FakeOverrideClassFilter {
     override fun needToConstructFakeOverrides(clazz: IrClass): Boolean = true
 }
 
+private object ImplementAsErrorThrowingStubs : IrUnimplementedOverridesStrategy {
+    override fun <T : IrOverridableMember> computeCustomization(overridableMember: T, parent: IrClass) =
+        if (overridableMember.modality == Modality.ABSTRACT
+            && parent.modality != Modality.ABSTRACT
+            && parent.modality != Modality.SEALED
+        ) {
+            Customization(
+                origin = MISSING_ABSTRACT_CALLABLE_MEMBER_IMPLEMENTATION,
+                modality = parent.modality, // Use modality of class for implemented callable member.
+                needToCreateBody = true // At least it should have empty body. Later, the body will be patched in UnlinkedDeclarationsProcessor.
+            )
+        } else
+            Customization.NO
+}
+
 class FakeOverrideBuilder(
     val linker: FileLocalAwareLinker,
     val symbolTable: SymbolTable,
     mangler: KotlinMangler.IrMangler,
     typeSystem: IrTypeSystemContext,
     friendModules: Map<String, Collection<String>>,
+    partialLinkageEnabled: Boolean,
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter,
     private val fakeOverrideDeclarationTable: DeclarationTable = FakeOverrideDeclarationTable(mangler) { builder, table ->
         IdSignatureSerializer(builder, table)
     }
-) : FakeOverrideBuilderStrategy(friendModules) {
+) : FakeOverrideBuilderStrategy(
+    friendModules = friendModules,
+    unimplementedOverridesStrategy = if (partialLinkageEnabled) ImplementAsErrorThrowingStubs else ProcessAsFakeOverrides
+) {
     private val haveFakeOverrides = mutableSetOf<IrClass>()
 
     private val irOverridingUtil = IrOverridingUtil(typeSystem, this)
