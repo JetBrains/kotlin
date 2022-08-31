@@ -19,10 +19,13 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.UPPER_BOUND_VIOLAT
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.getEnhancementDeeply
 
 // TODO: remove this checker after removing support LV < 1.6
-class WarningAwareUpperBoundChecker : UpperBoundChecker() {
+class WarningAwareUpperBoundChecker(
+    typeChecker: KotlinTypeChecker,
+) : UpperBoundChecker(typeChecker) {
     override fun checkBoundsOfExpandedTypeAlias(type: KotlinType, expression: KtExpression, trace: BindingTrace) {
         val typeParameters = type.constructor.parameters
 
