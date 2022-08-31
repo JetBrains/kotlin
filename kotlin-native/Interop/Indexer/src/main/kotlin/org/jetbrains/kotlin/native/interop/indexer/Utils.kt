@@ -656,7 +656,7 @@ internal fun getHeaderId(library: NativeLibrary, header: CXFile?): HeaderId {
 class NativeLibraryHeaders<Header>(val ownHeaders: Set<Header>, val importedHeaders: Set<Header>)
 data class CachedNativeLibraryHeaders<Header>(
         val nativeLibraryHeaders: NativeLibraryHeaders<Header>,
-        val cache: MutableMap<String, CXTranslationUnit>  // cache keys are canonical paths of source header files
+        val translationUnits: TranslationUnits
 )
 
 internal fun getHeaders(
@@ -669,7 +669,7 @@ internal fun getHeaders(
 
     val filter = library.headerFilter
 
-    val cache = when (filter) {
+    val translationUnits = when (filter) {
         is NativeLibraryHeaderFilter.NameBased ->
             filterHeadersByName(library, filter, index, translationUnit, ownHeaders, allHeaders)
 
@@ -679,7 +679,55 @@ internal fun getHeaders(
 
     ownHeaders.removeAll { library.headerExclusionPolicy.excludeAll(getHeaderId(library, it)) }
 
-    return CachedNativeLibraryHeaders(NativeLibraryHeaders(ownHeaders, allHeaders - ownHeaders), cache)
+    return CachedNativeLibraryHeaders(NativeLibraryHeaders(ownHeaders, allHeaders - ownHeaders), translationUnits)
+}
+
+class TranslationUnits {
+    val unitsByTopHeaderFile = mutableMapOf<String, CXTranslationUnit>()
+    val unitsByBinaryFile = mutableMapOf<String, CXTranslationUnit>()
+    private var mainUnits = mutableListOf<CXTranslationUnit>()
+
+    // returns created unit, in case it was not in cache
+    // return null, in case unit is already in the cache
+    internal fun put(index: CXIndex, info: CXIdxImportedASTFileInfo): CXTranslationUnit? {
+        val canonicalPath: String = info.file!!.canonicalPath
+        if (unitsByBinaryFile.contains(canonicalPath)) {
+            return null
+        }
+        return clang_createTranslationUnit(index, canonicalPath)!!.also { unit ->
+            unitsByBinaryFile[canonicalPath] = unit
+            processTopHeaderHeaders(unit, info)
+        }
+    }
+
+    private fun processTopHeaderHeaders(unit: CXTranslationUnit, info: CXIdxImportedASTFileInfo) {
+        val numTopLevelHeaders = clang_Module_getNumTopLevelHeaders(unit, info.module)
+        (0 until numTopLevelHeaders).map {
+            val topLevelHeader: String = clang_Module_getTopLevelHeader(unit, info.module, it)!!.canonicalPath
+            unitsByTopHeaderFile[topLevelHeader] = unit
+        }
+    }
+
+    internal fun putMainModule(mainUnit: CXTranslationUnit) {
+        mainUnits.add(mainUnit)
+    }
+
+    internal fun forEach(ownHeadersCanonicalPaths: Set<String>, block: (CXTranslationUnit) -> Unit) {
+        // process those translation units, which include one/some of own headers
+        val unitsIncludingSomeOwnHeaders = unitsByTopHeaderFile.filter { ownHeadersCanonicalPaths.contains(it.key) }.values
+        (unitsIncludingSomeOwnHeaders + mainUnits).forEach { block(it) }
+    }
+
+    fun dispose() {
+        unitsByBinaryFile.values.forEach { clang_disposeTranslationUnit(it) }
+    }
+
+    inline fun <R> use(block: (TranslationUnits) -> R): R =
+            try {
+                block(this)
+            } finally {
+                this.dispose()
+            }
 }
 
 private fun filterHeadersByName(
@@ -689,8 +737,8 @@ private fun filterHeadersByName(
         translationUnit: CXTranslationUnit,
         ownHeaders: MutableSet<CXFile?>,
         allHeaders: MutableSet<CXFile?>,
-): MutableMap<String, CXTranslationUnit> {
-    val translationUnitsByCanonicalPath = mutableMapOf<String, CXTranslationUnit>()
+): TranslationUnits {
+    val translationUnits = TranslationUnits()
     val topLevelFiles = mutableListOf<CXFile>()
     var mainFile: CXFile? = null
 
@@ -743,14 +791,8 @@ private fun filterHeadersByName(
         }
 
         override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
-            var needsIndexing = false
-            val moduleTranslationUnit = translationUnitsByCanonicalPath.getOrPut(info.file!!.canonicalPath) {
-                needsIndexing = true
-                clang_createTranslationUnit(index, info.file!!.canonicalPath)!!
-            }
-            if (needsIndexing) indexTranslationUnit(index, moduleTranslationUnit, 0, indexer)  // Collect ownHeaders only once per translationUnit
+            translationUnits.put(index, info)?.also { indexTranslationUnit(index, it, 0, indexer) }
         }
-
     }
     indexTranslationUnit(index, translationUnit, 0, indexer)
 
@@ -772,7 +814,7 @@ private fun filterHeadersByName(
     }
 
     ownHeaders.add(mainFile!!)
-    return translationUnitsByCanonicalPath
+    return translationUnits
 }
 
 private fun filterHeadersByPredefined(
@@ -781,8 +823,8 @@ private fun filterHeadersByPredefined(
         translationUnit: CXTranslationUnit,
         ownHeaders: MutableSet<CXFile?>,
         allHeaders: MutableSet<CXFile?>
-): MutableMap<String, CXTranslationUnit> {
-    val translationUnitsByCanonicalPath = mutableMapOf<String, CXTranslationUnit>()
+): TranslationUnits {
+    val translationUnits = TranslationUnits()
     // Note: suboptimal but simple.
     lateinit var indexer: Indexer
     indexer = object : Indexer {
@@ -800,16 +842,11 @@ private fun filterHeadersByPredefined(
         }
 
         override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
-            var needsIndexing = false
-            val moduleTranslationUnit = translationUnitsByCanonicalPath.getOrPut(info.file!!.canonicalPath) {
-                needsIndexing = true
-                clang_createTranslationUnit(index, info.file!!.canonicalPath)!!
-            }
-            if (needsIndexing) indexTranslationUnit(index, moduleTranslationUnit, 0, indexer)  // Collect ownHeaders only once per translationUnit
+            translationUnits.put(index, info)?.also { indexTranslationUnit(index, it, 0, indexer) }
         }
     }
     indexTranslationUnit(index, translationUnit, 0, indexer)
-    return translationUnitsByCanonicalPath
+    return translationUnits
 }
 
 fun NativeLibrary.getHeaderPaths(): NativeLibraryHeaders<String> {
@@ -868,6 +905,7 @@ internal val CXFile.path: String get() = clang_getFileName(this).convertAndDispo
 // TODO: this map doesn't get cleaned up but adds quite significant performance improvement.
 private val canonicalPaths = ConcurrentHashMap<String, String>()
 internal val CXFile.canonicalPath: String get() = canonicalPaths.getOrPut(this.path) { File(this.path).canonicalPath }
+internal val CXModule.fullName: String get() = clang_Module_getFullName(this).convertAndDispose()
 
 private fun createVfsOverlayFileContents(virtualPathToReal: Map<Path, Path>): ByteArray {
     val overlay = clang_VirtualFileOverlay_create(0)

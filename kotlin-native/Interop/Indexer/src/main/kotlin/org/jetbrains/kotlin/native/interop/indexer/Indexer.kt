@@ -1198,10 +1198,10 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
             val compilation = nativeIndex.library.withPrecompiledHeader(translationUnit)
 
             val cachedHeaders = getHeaders(nativeIndex.library, index, translationUnit)
-            val translationUnitsCacheByCanonicalPath = cachedHeaders.cache + ("main module" to translationUnit)
-            try {
+            cachedHeaders.translationUnits.use { translationUnits ->
+                translationUnits.putMainModule(translationUnit)
                 val headers = cachedHeaders.nativeLibraryHeaders.ownHeaders
-                val headersCanonicalPaths = headers.filterNotNull().map { it.canonicalPath }
+                val headersCanonicalPaths = headers.filterNotNull().map { it.canonicalPath }.toSet()
 
                 nativeIndex.includedHeaders = headers.map {
                     nativeIndex.getHeaderId(it)
@@ -1220,30 +1220,11 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                             nativeIndex.indexDeclaration(info)
                         }
                     }
-
-                    override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
-                        val moduleTranslationUnit = translationUnitsCacheByCanonicalPath[info.file!!.canonicalPath]!!
-                        if (headersCanonicalPaths.contains(getOnlyTopLevelHeader(moduleTranslationUnit, info))) {
-                            indexTranslationUnit(index, moduleTranslationUnit, 0, indexer)
-                        }
-                    }
-
-                    private fun getOnlyTopLevelHeader(unit: CXTranslationUnit, info: CXIdxImportedASTFileInfo): String? {
-                        val numTopLevelHeaders = clang_Module_getNumTopLevelHeaders(unit, info.module)
-                        val topLevelHeaders = (0 until numTopLevelHeaders).map {
-                            clang_Module_getTopLevelHeader(unit, info.module, it)?.canonicalPath
-                        }.toSet()
-                        if (topLevelHeaders.size != 1) {
-                            nativeIndex.log("Warning: Expected one SUBMODULE_TOPHEADER entry in ${info.file!!.canonicalPath} but actual is $topLevelHeaders")
-                        }
-                        val onlyTopLevelHeader = topLevelHeaders.firstOrNull()
-                        return onlyTopLevelHeader
-                    }
                 }
-                indexTranslationUnit(index, translationUnit, 0, indexer)
+                translationUnits.forEach(headersCanonicalPaths) { indexTranslationUnit(index, it, 0, indexer) }
 
                 if (nativeIndex.library.language == Language.CPP) {
-                    translationUnitsCacheByCanonicalPath.values.forEach {
+                    translationUnits.forEach(headersCanonicalPaths) {
                         visitChildren(clang_getTranslationUnitCursor(it)) { cursor, _ ->
                             if (getContainingFile(cursor) in headers) {
                                 nativeIndex.indexCxxDeclaration(cursor)
@@ -1253,7 +1234,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                     }
                 }
 
-                translationUnitsCacheByCanonicalPath.values.forEach {
+                translationUnits.forEach(headersCanonicalPaths) {
                     visitChildren(clang_getTranslationUnitCursor(it)) { cursor, _ ->
                         val file = getContainingFile(cursor)
                         if (file in headers && nativeIndex.library.includesDeclaration(cursor)) {
@@ -1275,11 +1256,11 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                     }
                 }
 
-                findMacros(nativeIndex, compilation, translationUnitsCacheByCanonicalPath, headers)
+                translationUnits.forEach(headersCanonicalPaths) {
+                    findMacros(nativeIndex, compilation, it, headers)
+                }
 
                 return compilation
-            } finally {
-                cachedHeaders.cache.values.forEach { clang_disposeTranslationUnit(it) }
             }
         } finally {
             clang_disposeTranslationUnit(translationUnit)
