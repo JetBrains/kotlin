@@ -57,7 +57,12 @@ fun KonanTarget.supportsMimallocAllocator(): Boolean =
         is KonanTarget.IOS_ARM64 -> true
         is KonanTarget.IOS_X64 -> true
         is KonanTarget.IOS_SIMULATOR_ARM64 -> true
-        else -> false // watchOS/tvOS/android_x86/android_arm32 aren't tested; linux_mips32/linux_mipsel32 need linking with libatomic.
+        is KonanTarget.WATCHOS_ARM32, is KonanTarget.WATCHOS_ARM64,
+        is KonanTarget.WATCHOS_SIMULATOR_ARM64, is KonanTarget.WATCHOS_X64, is KonanTarget.WATCHOS_X86,
+        is KonanTarget.TVOS_ARM64, is KonanTarget.TVOS_SIMULATOR_ARM64, is KonanTarget.TVOS_X64,
+        is KonanTarget.ANDROID_X86, is KonanTarget.ANDROID_ARM32 -> false // aren't tested.
+        is KonanTarget.LINUX_MIPS32, is KonanTarget.LINUX_MIPSEL32 -> false // need linking with libatomic.
+        is KonanTarget.WASM32, is KonanTarget.ZEPHYR -> false // likely not supported
     }
 
 fun KonanTarget.supportsLibBacktrace(): Boolean =
