@@ -56,6 +56,7 @@ fun KonanTarget.supportsMimallocAllocator(): Boolean =
         is KonanTarget.IOS_ARM32 -> true
         is KonanTarget.IOS_ARM64 -> true
         is KonanTarget.IOS_X64 -> true
+        is KonanTarget.IOS_SIMULATOR_ARM64 -> true
         else -> false // watchOS/tvOS/android_x86/android_arm32 aren't tested; linux_mips32/linux_mipsel32 need linking with libatomic.
     }
 
