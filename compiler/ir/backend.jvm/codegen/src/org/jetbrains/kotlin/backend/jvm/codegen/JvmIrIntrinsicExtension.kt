@@ -10,16 +10,22 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.InsnList
-import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 
 interface JvmIrIntrinsicExtension : IrIntrinsicExtension {
     fun getIntrinsic(symbol: IrFunctionSymbol): IntrinsicMethod?
 
-    fun applyPluginDefinedReifiedOperationMarker(
-        insn: MethodInsnNode,
+    /**
+     * Should return `true` if marker was processed.
+     * If this method returns `false`, a regular `TYPE_OF` intrinsic would be inserted.
+     */
+    fun rewritePluginDefinedOperationMarker(
+        v: InstructionAdapter,
+        next: AbstractInsnNode,
         instructions: InsnList,
         type: IrType,
-        jvmBackendContext: JvmBackendContext,
-    ): Int = -1
+        jvmBackendContext: JvmBackendContext
+    ): Boolean
 }

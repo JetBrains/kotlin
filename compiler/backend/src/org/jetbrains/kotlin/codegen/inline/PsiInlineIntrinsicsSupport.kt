@@ -86,21 +86,4 @@ class PsiInlineIntrinsicsSupport(
     override fun reportNonReifiedTypeParameterWithRecursiveBoundUnsupported(typeParameterName: Name) {
         state.diagnostics.report(TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND.on(reportErrorsOn, typeParameterName.asString()))
     }
-
-    override fun applyPluginDefinedReifiedOperationMarker(
-        insn: MethodInsnNode,
-        instructions: InsnList,
-        type: KotlinType,
-        asmType: Type
-    ): Int = pluginExtensions.maxOfOrNull {
-        it.applyPluginDefinedReifiedOperationMarker(
-            insn,
-            instructions,
-            type,
-            asmType,
-            state.typeMapper,
-            typeSystem,
-            state.module
-        )
-    } ?: -1
 }
