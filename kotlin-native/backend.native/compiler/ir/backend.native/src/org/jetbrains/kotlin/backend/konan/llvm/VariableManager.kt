@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.phases.ConfigChecks
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.util.ir2string
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 
-internal fun IrElement.needDebugInfo(context: Context) = context.shouldContainDebugInfo() || (this is IrVariable && this.isVar)
+internal fun IrElement.needDebugInfo(checks: ConfigChecks) = checks.shouldContainDebugInfo() || (this is IrVariable && this.isVar)
 
 internal class VariableManager(val functionGenerationContext: FunctionGenerationContext) {
     internal interface Record {
@@ -59,7 +59,7 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
     fun createVariable(valueDeclaration: IrValueDeclaration, value: LLVMValueRef? = null, variableLocation: VariableDebugLocation?) : Int {
         val isVar = valueDeclaration is IrVariable && valueDeclaration.isVar
         // Note that we always create slot for object references for memory management.
-        if (!functionGenerationContext.context.shouldContainDebugInfo() && !isVar && value != null)
+        if (!functionGenerationContext.context.config.checks.shouldContainDebugInfo() && !isVar && value != null)
             return createImmutable(valueDeclaration, value)
         else
             // Unfortunately, we have to create mutable slots here,

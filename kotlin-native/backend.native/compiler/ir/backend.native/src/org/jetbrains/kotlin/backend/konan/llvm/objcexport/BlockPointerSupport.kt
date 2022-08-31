@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.objcexport.BlockPointerBridge
+import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
 import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.simpleFunctions
@@ -209,7 +210,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
         LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
     }
 
-    fun org.jetbrains.kotlin.backend.konan.Context.LongInt(value: Long) =
+    fun BitcodegenContext.LongInt(value: Long) =
             when (val longWidth = llvm.longTypeWidth) {
                 32L -> Int32(value.toInt())
                 64L -> Int64(value)

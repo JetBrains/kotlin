@@ -10,6 +10,7 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.reinterpret
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -60,7 +61,7 @@ internal object DWARF {
 
 fun KonanConfig.debugInfoVersion():Int = configuration[KonanConfigKeys.DEBUG_INFO_VERSION] ?: 1
 
-internal class DebugInfo internal constructor(override val context: Context):ContextUtils {
+internal class DebugInfo(override val context: Context):ContextUtils {
     val files = mutableMapOf<String, DIFileRef>()
     val subprograms = mutableMapOf<LLVMValueRef, DISubprogramRef>()
     /* Some functions are inlined on all callsites and body is eliminated by DCE, so there's no LLVM value */
@@ -117,11 +118,11 @@ internal data class FileAndFolder(val file: String, val folder: String) {
     fun path() = if (this == NOFILE) file else "$folder/$file"
 }
 
-internal fun String?.toFileAndFolder(context: Context):FileAndFolder {
+internal fun String?.toFileAndFolder(context: BitcodegenContext):FileAndFolder {
     this ?: return FileAndFolder.NOFILE
     val file = File(this).absoluteFile
     var parent = file.parent
-    context.configuration.get(KonanConfigKeys.DEBUG_PREFIX_MAP)?.let { debugPrefixMap ->
+    context.config.configuration.get(KonanConfigKeys.DEBUG_PREFIX_MAP)?.let { debugPrefixMap ->
       for ((key, value) in debugPrefixMap) {
         if (parent.startsWith(key)) {
           parent = value + parent.removePrefix(key)
@@ -131,8 +132,8 @@ internal fun String?.toFileAndFolder(context: Context):FileAndFolder {
     return FileAndFolder(file.name, parent)
 }
 
-internal fun generateDebugInfoHeader(context: Context) {
-    if (context.shouldContainAnyDebugInfo()) {
+internal fun generateDebugInfoHeader(context: BitcodegenContext) {
+    if (context.config.checks.shouldContainAnyDebugInfo()) {
         val path = context.config.outputFile
             .toFileAndFolder(context)
         @Suppress("UNCHECKED_CAST")
@@ -188,7 +189,7 @@ internal fun generateDebugInfoHeader(context: Context) {
 }
 
 @Suppress("UNCHECKED_CAST")
-internal fun IrType.dwarfType(context: Context, targetData: LLVMTargetDataRef): DITypeOpaqueRef {
+internal fun IrType.dwarfType(context: BitcodegenContext, targetData: LLVMTargetDataRef): DITypeOpaqueRef {
     when {
         this.computePrimitiveBinaryTypeOrNull() != null -> return debugInfoBaseType(context, targetData, this.render(), llvmType(context), encoding().value.toInt())
         else -> {
@@ -200,13 +201,13 @@ internal fun IrType.dwarfType(context: Context, targetData: LLVMTargetDataRef): 
     }
 }
 
-internal fun IrType.diType(context: Context, llvmTargetData: LLVMTargetDataRef): DITypeOpaqueRef =
+internal fun IrType.diType(context: BitcodegenContext, llvmTargetData: LLVMTargetDataRef): DITypeOpaqueRef =
         context.debugInfo.types.getOrPut(this) {
             dwarfType(context, llvmTargetData)
         }
 
 @Suppress("UNCHECKED_CAST")
-private fun debugInfoBaseType(context:Context, targetData:LLVMTargetDataRef, typeName:String, type:LLVMTypeRef, encoding:Int) = DICreateBasicType(
+private fun debugInfoBaseType(context: BitcodegenContext, targetData:LLVMTargetDataRef, typeName:String, type:LLVMTypeRef, encoding:Int) = DICreateBasicType(
         context.debugInfo.builder, typeName,
         LLVMSizeOfTypeInBits(targetData, type),
         LLVMPreferredAlignmentOfType(targetData, type).toLong(), encoding) as DITypeOpaqueRef
@@ -217,11 +218,11 @@ internal val IrFunction.types:List<IrType>
         return listOf(returnType, *parameters.toTypedArray())
     }
 
-internal fun IrType.size(context:Context) = context.debugInfo.llvmTypeSizes.getOrDefault(this, context.debugInfo.otherTypeSize)
+internal fun IrType.size(context:BitcodegenContext) = context.debugInfo.llvmTypeSizes.getOrDefault(this, context.debugInfo.otherTypeSize)
 
-internal fun IrType.alignment(context:Context) = context.debugInfo.llvmTypeAlignments.getOrDefault(this, context.debugInfo.otherTypeAlignment).toLong()
+internal fun IrType.alignment(context:BitcodegenContext) = context.debugInfo.llvmTypeAlignments.getOrDefault(this, context.debugInfo.otherTypeAlignment).toLong()
 
-internal fun IrType.llvmType(context:Context): LLVMTypeRef = context.debugInfo.llvmTypes.getOrElse(this) {
+internal fun IrType.llvmType(context:BitcodegenContext): LLVMTypeRef = context.debugInfo.llvmTypes.getOrElse(this) {
     when(computePrimitiveBinaryTypeOrNull()) {
         PrimitiveBinaryType.BOOLEAN -> context.llvm.llvmInt1
         PrimitiveBinaryType.BYTE -> context.llvm.llvmInt8
@@ -254,7 +255,7 @@ internal fun IrFunction.subroutineType(context: Context, llvmTargetData: LLVMTar
     return subroutineType(context, llvmTargetData, types)
 }
 
-internal fun subroutineType(context: Context, llvmTargetData: LLVMTargetDataRef, types: List<IrType>): DISubroutineTypeRef {
+internal fun subroutineType(context: BitcodegenContext, llvmTargetData: LLVMTargetDataRef, types: List<IrType>): DISubroutineTypeRef {
     return memScoped {
         DICreateSubroutineType(context.debugInfo.builder, allocArrayOf(
                 types.map { it.diType(context, llvmTargetData) }),
@@ -263,11 +264,11 @@ internal fun subroutineType(context: Context, llvmTargetData: LLVMTargetDataRef,
 }
 
 @Suppress("UNCHECKED_CAST")
-private fun dwarfPointerType(context: Context, type: DITypeOpaqueRef) =
+private fun dwarfPointerType(context: BitcodegenContext, type: DITypeOpaqueRef) =
         DICreatePointerType(context.debugInfo.builder, type) as DITypeOpaqueRef
 
-internal fun setupBridgeDebugInfo(context: Context, function: LLVMValueRef): LocationInfo? {
-    if (!context.shouldContainLocationDebugInfo()) {
+internal fun setupBridgeDebugInfo(context: BitcodegenContext, function: LLVMValueRef): LocationInfo? {
+    if (!context.config.checks.shouldContainLocationDebugInfo()) {
         return null
     }
 

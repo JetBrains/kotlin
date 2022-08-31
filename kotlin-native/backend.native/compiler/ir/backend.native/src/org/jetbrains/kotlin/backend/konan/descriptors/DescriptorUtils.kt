@@ -259,10 +259,10 @@ fun IrDeclaration.findTopLevelDeclaration(): IrDeclaration = when {
         (this.parent as IrDeclaration).findTopLevelDeclaration()
 }
 
-internal fun IrClass.isFrozen(context: Context): Boolean {
-    val isLegacyMM = context.memoryModel != MemoryModel.EXPERIMENTAL
+internal fun IrClass.isFrozen(config: KonanConfig): Boolean {
+    val isLegacyMM = config.memoryModel != MemoryModel.EXPERIMENTAL
     return when {
-        !context.config.freezing.freezeImplicit -> false
+        !config.freezing.freezeImplicit -> false
         annotations.hasAnnotation(KonanFqNames.frozen) -> true
         annotations.hasAnnotation(KonanFqNames.frozenLegacyMM) && isLegacyMM -> true
         // RTTI is used for non-reference type box:

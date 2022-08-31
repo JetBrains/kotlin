@@ -1041,8 +1041,8 @@ internal val ModuleDescriptor.objCExportAdditionalNamePrefix: String get() {
     return abbreviate(fullPrefix)
 }
 
-internal val Context.objCExportTopLevelNamePrefix: String
-    get() = abbreviate(config.fullExportedNamePrefix)
+internal val KonanConfig.objCExportTopLevelNamePrefix: String
+    get() = abbreviate(fullExportedNamePrefix)
 
 fun abbreviate(name: String): String {
     val normalizedName = name

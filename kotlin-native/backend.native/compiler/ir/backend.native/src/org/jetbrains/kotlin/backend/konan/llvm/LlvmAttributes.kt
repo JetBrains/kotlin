@@ -6,63 +6,58 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.types.isNothing
-import org.jetbrains.kotlin.ir.util.isSuspend
-import org.jetbrains.kotlin.ir.util.isThrowable
+import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal fun addLlvmFunctionWithDefaultAttributes(
-        context: Context,
+        config: KonanConfig,
         module: LLVMModuleRef,
         name: String,
         type: LLVMTypeRef
 ): LLVMValueRef = LLVMAddFunction(module, name, type)!!.also {
-    addDefaultLlvmFunctionAttributes(context, it)
-    addTargetCpuAndFeaturesAttributes(context, it)
+    addDefaultLlvmFunctionAttributes(config, it)
+    addTargetCpuAndFeaturesAttributes(config, it)
 }
 
 /**
  * Mimics parts of clang's `CodeGenModule::getDefaultFunctionAttributes`
  * that are required for Kotlin/Native compiler.
  */
-private fun addDefaultLlvmFunctionAttributes(context: Context, llvmFunction: LLVMValueRef) {
-    if (shouldEnforceFramePointer(context)) {
+private fun addDefaultLlvmFunctionAttributes(config: KonanConfig, llvmFunction: LLVMValueRef) {
+    if (shouldEnforceFramePointer(config)) {
         // Note: this is default for clang on at least on iOS and macOS.
-        enforceFramePointer(llvmFunction, context)
+        enforceFramePointer(llvmFunction, config)
     }
 }
 
 /**
  * Set target cpu and its features to make LLVM generate correct machine code.
  */
-private fun addTargetCpuAndFeaturesAttributes(context: Context, llvmFunction: LLVMValueRef) {
-    context.config.platform.targetCpu?.let {
+private fun addTargetCpuAndFeaturesAttributes(config: KonanConfig, llvmFunction: LLVMValueRef) {
+    config.platform.targetCpu?.let {
         LLVMAddTargetDependentFunctionAttr(llvmFunction, "target-cpu", it)
     }
-    context.config.platform.targetCpuFeatures?.let {
+    config.platform.targetCpuFeatures?.let {
         LLVMAddTargetDependentFunctionAttr(llvmFunction, "target-features", it)
     }
 }
 
-private fun shouldEnforceFramePointer(context: Context): Boolean {
+private fun shouldEnforceFramePointer(config: KonanConfig): Boolean {
     // TODO: do we still need it?
-    if (!context.shouldOptimize()) {
+    if (!config.checks.shouldOptimize()) {
         return true
     }
 
-    return when (context.config.target.family) {
-        Family.OSX, Family.IOS, Family.WATCHOS, Family.TVOS -> context.shouldContainLocationDebugInfo()
+    return when (config.target.family) {
+        Family.OSX, Family.IOS, Family.WATCHOS, Family.TVOS -> config.checks.shouldContainLocationDebugInfo()
         Family.LINUX, Family.MINGW, Family.ANDROID, Family.WASM, Family.ZEPHYR -> false
     }
 }
 
-private fun enforceFramePointer(llvmFunction: LLVMValueRef, context: Context) {
-    val target = context.config.target
+private fun enforceFramePointer(llvmFunction: LLVMValueRef, config: KonanConfig) {
+    val target = config.target
 
     // Matches Clang behaviour.
     val omitLeafFp = when {

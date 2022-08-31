@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.isTypedIntrinsic
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface.functionName
+import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -26,9 +27,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import kotlin.collections.set
 
-internal fun createLlvmDeclarations(context: Context): LlvmDeclarations {
+internal fun createLlvmDeclarations(context: Context, irModuleFragment: IrModuleFragment): LlvmDeclarations {
     val generator = DeclarationsGeneratorVisitor(context)
-    context.ir.irModule.acceptChildrenVoid(generator)
+    irModuleFragment.acceptChildrenVoid(generator)
     return LlvmDeclarations(generator.uniques)
 }
 
@@ -99,8 +100,9 @@ private fun ContextUtils.createClassBodyType(name: String, fields: List<ClassLay
     return classType
 }
 
-private class DeclarationsGeneratorVisitor(override val context: Context) :
-        IrElementVisitorVoid, ContextUtils {
+private class DeclarationsGeneratorVisitor(
+        override val context: BitcodegenContext
+) : IrElementVisitorVoid, ContextUtils {
 
     val uniques = mutableMapOf<UniqueKind, UniqueLlvmDeclarations>()
 
@@ -175,10 +177,10 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         val typeInfoSymbolName = if (declaration.isExported()) {
             declaration.computeTypeInfoSymbolName()
         } else {
-            if (!context.config.producePerFileCache)
+            if (!config.producePerFileCache)
                 "${MangleConstant.CLASS_PREFIX}:$internalName"
             else {
-                val containerName = (context.config.libraryToCache!!.strategy as CacheDeserializationStrategy.SingleFile).filePath
+                val containerName = (config.libraryToCache!!.strategy as CacheDeserializationStrategy.SingleFile).filePath
                 declaration.computePrivateTypeInfoSymbolName(containerName)
             }
         }
@@ -206,7 +208,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
                     throw IllegalArgumentException("Global '$typeInfoSymbolName' already exists")
                 }
             } else {
-                if (!context.config.producePerFileCache || declaration !in context.constructedFromExportedInlineFunctions)
+                if (!config.producePerFileCache || declaration !in context.constructedFromExportedInlineFunctions)
                     LLVMSetLinkage(llvmTypeInfoPtr, LLVMLinkage.LLVMInternalLinkage)
             }
 
@@ -333,7 +335,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         } else {
             // Fields are module-private, so we use internal name:
             val name = "kvar:" + qualifyInternalName(declaration)
-            val storage = if (declaration.storageKind(context) == FieldStorageKind.THREAD_LOCAL) {
+            val storage = if (declaration.storageKind(config) == FieldStorageKind.THREAD_LOCAL) {
                 addKotlinThreadLocal(name, getLLVMType(declaration.type))
             } else {
                 addKotlinGlobal(name, getLLVMType(declaration.type), isExported = false)
@@ -376,18 +378,18 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
                     }
                 }
             } else {
-                if (!context.config.producePerFileCache)
+                if (!config.producePerFileCache)
                     "${MangleConstant.FUN_PREFIX}:${qualifyInternalName(declaration)}"
                 else {
                     val containerName = declaration.parentClassOrNull?.fqNameForIrSerialization?.asString()
-                            ?: (context.config.libraryToCache!!.strategy as CacheDeserializationStrategy.SingleFile).filePath
+                            ?: (config.libraryToCache!!.strategy as CacheDeserializationStrategy.SingleFile).filePath
                     declaration.computePrivateSymbolName(containerName)
                 }
             }
 
             val proto = LlvmFunctionProto(declaration, symbolName, this)
             val llvmFunction = addLlvmFunctionWithDefaultAttributes(
-                    context,
+                    config,
                     context.llvmModule!!,
                     symbolName,
                     proto.llvmFunctionType

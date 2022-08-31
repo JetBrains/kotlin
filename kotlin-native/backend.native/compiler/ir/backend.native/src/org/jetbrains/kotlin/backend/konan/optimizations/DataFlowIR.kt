@@ -635,7 +635,7 @@ internal object DataFlowIR {
                     val placeToFunctionsTable = !isAbstract && it !is IrConstructor && irClass != null
                             && (it.isOverridableOrOverrides || bridgeTarget != null || function.isSpecial || !irClass.isFinalClass)
                     val symbolTableIndex = if (placeToFunctionsTable) module.numberOfFunctions++ else -1
-                    val frozen = it is IrConstructor && irClass!!.isFrozen(context)
+                    val frozen = it is IrConstructor && irClass!!.isFrozen(context.config)
                     val functionSymbol = if (it.isExported())
                         FunctionSymbol.Public(name.localHash.value, module, symbolTableIndex, attributes, it, bridgeTargetSymbol, takeName { name })
                     else

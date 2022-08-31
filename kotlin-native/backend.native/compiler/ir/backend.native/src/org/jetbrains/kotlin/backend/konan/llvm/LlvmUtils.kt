@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 
 private val llvmContextHolder = ThreadLocal<LLVMContextRef>()
@@ -279,7 +280,9 @@ internal class GlobalAddressAccess(private val address: LLVMValueRef): AddressAc
 }
 
 internal class TLSAddressAccess(
-        private val context: Context, private val index: Int): AddressAccess() {
+        private val context: BitcodegenContext,
+        private val index: Int,
+): AddressAccess() {
 
     override fun getAddress(generationContext: FunctionGenerationContext?): LLVMValueRef {
         return generationContext!!.call(context.llvm.lookupTLS,

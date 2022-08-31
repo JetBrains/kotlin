@@ -306,7 +306,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
             args.single()
 
     private fun FunctionGenerationContext.emitIsExperimentalMM(): LLVMValueRef =
-            Int1(context.memoryModel == MemoryModel.EXPERIMENTAL).llvm
+            Int1(context.config.memoryModel == MemoryModel.EXPERIMENTAL).llvm
 
     private fun FunctionGenerationContext.emitGetNativeNullPtr(): LLVMValueRef =
             kNullInt8Ptr

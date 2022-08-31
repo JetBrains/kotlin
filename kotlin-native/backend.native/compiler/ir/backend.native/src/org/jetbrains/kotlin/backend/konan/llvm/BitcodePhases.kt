@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.backend.konan.lower.InlineClassPropertyAccessorsLowe
 import org.jetbrains.kotlin.backend.konan.lower.RedundantCoercionsCleaner
 import org.jetbrains.kotlin.backend.konan.lower.ReturnsInsertionLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.*
+import org.jetbrains.kotlin.backend.konan.phases.ErrorReportingContext
+import org.jetbrains.kotlin.backend.konan.phases.KlibProducingContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -26,7 +28,7 @@ import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.*
-import org.jetbrains.kotlin.konan.target.Architecture
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
@@ -66,7 +68,7 @@ internal val createLLVMDeclarationsPhase = makeKonanModuleOpPhase(
         description = "Map IR declarations to LLVM",
         prerequisite = setOf(contextLLVMSetupPhase),
         op = { context, _ ->
-            context.llvmDeclarations = createLlvmDeclarations(context)
+            context.llvmDeclarations = createLlvmDeclarations(context, context.ir.irModule)
             context.lifetimes = mutableMapOf()
             context.codegenVisitor = CodeGeneratorVisitor(context, context.lifetimes)
         }
@@ -338,7 +340,7 @@ internal val cStubsPhase = makeKonanModuleOpPhase(
 internal val linkBitcodeDependenciesPhase = makeKonanModuleOpPhase(
         name = "LinkBitcodeDependencies",
         description = "Link bitcode dependencies",
-        op = { context, _ -> linkBitcodeDependencies(context) }
+        op = { context, _ -> linkBitcodeDependencies(context, context.config) }
 )
 
 internal val checkExternalCallsPhase = makeKonanModuleOpPhase(
@@ -353,14 +355,14 @@ internal val rewriteExternalCallsCheckerGlobals = makeKonanModuleOpPhase(
         op = { context, _ -> addFunctionsListSymbolForChecker(context) }
 )
 
-
-
 internal val bitcodeOptimizationPhase = makeKonanModuleOpPhase(
         name = "BitcodeOptimization",
         description = "Optimize bitcode",
         op = { context, _ ->
-            val config = createLTOFinalPipelineConfig(context)
-            LlvmOptimizationPipeline(config, context.llvmModule!!, context).use {
+            val isFinalLlvmModule = context.llvmModuleSpecification.isFinal
+            val triple = context.llvm.targetTriple
+            val config = createLTOFinalPipelineConfig(triple, context.config, isFinalLlvmModule, context as ErrorReportingContext)
+            LlvmOptimizationPipeline(config, context.llvmModule!!, context as LoggingContext).use {
                 it.run()
             }
         }
@@ -369,13 +371,13 @@ internal val bitcodeOptimizationPhase = makeKonanModuleOpPhase(
 internal val coveragePhase = makeKonanModuleOpPhase(
         name = "Coverage",
         description = "Produce coverage information",
-        op = { context, _ -> runCoveragePass(context) }
+        op = { context, _ -> runCoveragePass(context.coverage, context.llvm.targetTriple, context.llvmModule!!) }
 )
 
 internal val optimizeTLSDataLoadsPhase = makeKonanModuleOpPhase(
         name = "OptimizeTLSDataLoads",
         description = "Optimize multiple loads of thread data",
-        op = { context, _ -> removeMultipleThreadDataLoads(context) }
+        op = { context, _ -> removeMultipleThreadDataLoads(context.llvm, context.llvmModule!!) }
 )
 
 internal val produceOutputPhase = namedUnitPhase(
@@ -383,7 +385,11 @@ internal val produceOutputPhase = namedUnitPhase(
         description = "Produce output",
         lower = object : CompilerPhase<Context, Unit, Unit> {
             override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
-                produceOutput(context)
+                if (context.config.produce == CompilerOutputKind.LIBRARY) {
+                    produceKlib(context as KlibProducingContext, context.config)
+                } else {
+                    produceOutput(context, context.config)
+                }
             }
         }
 )

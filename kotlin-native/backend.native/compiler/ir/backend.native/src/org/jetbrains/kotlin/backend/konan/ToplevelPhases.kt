@@ -1,8 +1,9 @@
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.checkDeclarationParents
 import org.jetbrains.kotlin.backend.common.IrValidator
 import org.jetbrains.kotlin.backend.common.IrValidatorConfig
+import org.jetbrains.kotlin.backend.common.LoggingContext
+import org.jetbrains.kotlin.backend.common.checkDeclarationParents
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
@@ -12,10 +13,15 @@ import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SamSuperTypesChecker
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
-import org.jetbrains.kotlin.backend.konan.serialization.*
+import org.jetbrains.kotlin.backend.konan.phases.ConfigChecks
+import org.jetbrains.kotlin.backend.konan.phases.ErrorReportingContext
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
+import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -25,10 +31,10 @@ internal fun moduleValidationCallback(state: ActionState, module: IrModuleFragme
     if (!context.config.needVerifyIr) return
 
     val validatorConfig = IrValidatorConfig(
-        abortOnError = false,
-        ensureAllNodesAreDifferent = true,
-        checkTypes = true,
-        checkDescriptors = false
+            abortOnError = false,
+            ensureAllNodesAreDifferent = true,
+            checkTypes = true,
+            checkDescriptors = false
     )
     try {
         module.accept(IrValidator(context, validatorConfig), null)
@@ -43,10 +49,10 @@ internal fun moduleValidationCallback(state: ActionState, module: IrModuleFragme
 
 internal fun fileValidationCallback(state: ActionState, irFile: IrFile, context: Context) {
     val validatorConfig = IrValidatorConfig(
-        abortOnError = false,
-        ensureAllNodesAreDifferent = true,
-        checkTypes = true,
-        checkDescriptors = false
+            abortOnError = false,
+            ensureAllNodesAreDifferent = true,
+            checkTypes = true,
+            checkDescriptors = false
     )
     try {
         irFile.accept(IrValidator(context, validatorConfig), null)
@@ -66,27 +72,22 @@ internal fun konanUnitPhase(
         op: Context.() -> Unit
 ) = namedOpUnitPhase(name, description, prerequisite, op)
 
-/**
- * Valid from [createSymbolTablePhase] until [destroySymbolTablePhase].
- */
-private var Context.symbolTable: SymbolTable? by Context.nullValue()
-
 internal val createSymbolTablePhase = konanUnitPhase(
-        op = {
-            this.symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
-        },
-        name = "CreateSymbolTable",
-        description = "Create SymbolTable"
-)
+            op = {
+                this.symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
+            },
+            name = "CreateSymbolTable",
+            description = "Create SymbolTable"
+    )
 
 internal val objCExportPhase = konanUnitPhase(
-        op = {
-            objCExport = ObjCExport(this, symbolTable!!)
-        },
-        name = "ObjCExport",
-        description = "Objective-C header generation",
-        prerequisite = setOf(createSymbolTablePhase)
-)
+            op = {
+                objCExport = ObjCExport(this, this, symbolTable!!, config)
+            },
+            name = "ObjCExport",
+            description = "Objective-C header generation",
+            prerequisite = setOf(createSymbolTablePhase)
+    )
 
 internal val buildCExportsPhase = konanUnitPhase(
         op = {
@@ -102,15 +103,17 @@ internal val buildCExportsPhase = konanUnitPhase(
 )
 
 internal val psiToIrPhase = konanUnitPhase(
-        op = {
-            this.psiToIr(symbolTable!!,
-                    isProducingLibrary = config.produce == CompilerOutputKind.LIBRARY,
-                    useLinkerWhenProducingLibrary = false)
-        },
-        name = "Psi2Ir",
-        description = "Psi to IR conversion and klib linkage",
-        prerequisite = setOf(createSymbolTablePhase)
-)
+            op = {
+                psiToIr(this,
+                        config,
+                        symbolTable!!,
+                        isProducingLibrary = config.produce == CompilerOutputKind.LIBRARY,
+                        useLinkerWhenProducingLibrary = false)
+            },
+            name = "Psi2Ir",
+            description = "Psi to IR conversion and klib linkage",
+            prerequisite = setOf(createSymbolTablePhase)
+    )
 
 internal val buildAdditionalCacheInfoPhase = konanUnitPhase(
         op = {
@@ -176,50 +179,64 @@ internal val checkSamSuperTypesPhase = konanUnitPhase(
 )
 
 internal val serializerPhase = konanUnitPhase(
-        op = {
-            val expectActualLinker = config.configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) ?: false
-            val messageLogger = config.configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
-            val relativePathBase = config.configuration.get(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES) ?: emptyList()
-            val normalizeAbsolutePaths = config.configuration.get(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH) ?: false
+            op = {
+                val expectActualLinker = config.configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) ?: false
+                val messageLogger = config.configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
+                val relativePathBase = config.configuration.get(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES) ?: emptyList()
+                val normalizeAbsolutePaths = config.configuration.get(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH) ?: false
 
-            serializedIr = irModule?.let { ir ->
-                KonanIrModuleSerializer(
-                    messageLogger, ir.irBuiltins, expectDescriptorToSymbol, skipExpects = !expectActualLinker, compatibilityMode = CompatibilityMode.CURRENT, normalizeAbsolutePaths = normalizeAbsolutePaths, sourceBaseDirs = relativePathBase
-                ).serializedIrModule(ir)
-            }
+                serializedIr = irModule?.let { ir ->
+                    KonanIrModuleSerializer(
+                            messageLogger, ir.irBuiltins, expectDescriptorToSymbol,
+                            skipExpects = !expectActualLinker,
+                            compatibilityMode = CompatibilityMode.CURRENT,
+                            normalizeAbsolutePaths = normalizeAbsolutePaths,
+                            sourceBaseDirs = relativePathBase,
+                    ).serializedIrModule(ir)
+                }
 
-            val serializer = KlibMetadataMonolithicSerializer(
-                this.config.configuration.languageVersionSettings,
-                config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!,
-                config.project,
-                exportKDoc = this.shouldExportKDoc(),
-                !expectActualLinker, includeOnlyModuleContent = true)
-            serializedMetadata = serializer.serializeModule(moduleDescriptor)
-        },
-        name = "Serializer",
-        description = "Serialize descriptor tree and inline IR bodies"
-)
+                val serializer = KlibMetadataMonolithicSerializer(
+                        config.configuration.languageVersionSettings,
+                        config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!,
+                        config.project,
+                        exportKDoc = ConfigChecks(config).shouldExportKDoc(),
+                        !expectActualLinker, includeOnlyModuleContent = true)
+                serializedMetadata = serializer.serializeModule(moduleDescriptor)
+            },
+            name = "Serializer",
+            description = "Serialize descriptor tree and inline IR bodies"
+    )
 
 internal val saveAdditionalCacheInfoPhase = konanUnitPhase(
-        op = { CacheStorage(this).saveAdditionalCacheInfo() },
+        op = { CacheStorage(this.config, this.llvmImports, this.inlineFunctionBodies, this.classFields).saveAdditionalCacheInfo() },
         name = "SaveAdditionalCacheInfo",
         description = "Save additional cache info (inline functions bodies and fields of classes)"
 )
 
 internal val objectFilesPhase = konanUnitPhase(
-        op = { compilerOutput = BitcodeCompiler(this).makeObjectFiles(bitcodeFileName) },
+        op = {
+            compilerOutput =
+                    BitcodeCompiler(this.config, this as LoggingContext).makeObjectFiles(bitcodeFileName)
+        },
         name = "ObjectFiles",
         description = "Bitcode to object file"
 )
 
 internal val linkerPhase = konanUnitPhase(
-        op = { Linker(this).link(compilerOutput) },
+        op = { Linker(
+                llvm,
+                llvmModuleSpecification,
+                coverage,
+                config,
+                this as LoggingContext,
+                this as ErrorReportingContext
+        ).link(compilerOutput) },
         name = "Linker",
         description = "Linker"
 )
 
 internal val finalizeCachePhase = konanUnitPhase(
-        op = { CacheStorage(this).renameOutput() },
+        op = { CacheStorage(config, llvmImports, inlineFunctionBodies, classFields).renameOutput() },
         name = "FinalizeCache",
         description = "Finalize cache (rename temp to the final dist)"
 )
@@ -380,7 +397,7 @@ internal val bitcodePhase = NamedCompilerPhase(
                 removeRedundantCallsToFileInitializersPhase then
                 devirtualizationPhase then
                 propertyAccessorInlinePhase then // Have to run after link dependencies phase, because fields
-                                                 // from dependencies can be changed during lowerings.
+                // from dependencies can be changed during lowerings.
                 inlineClassPropertyAccessorsPhase then
                 redundantCoercionsCleaningPhase then
                 unboxInlinePhase then
@@ -395,7 +412,7 @@ internal val bitcodePhase = NamedCompilerPhase(
                 cStubsPhase
 )
 
-private val bitcodePostprocessingPhase = NamedCompilerPhase(
+internal val bitcodePostprocessingPhase = NamedCompilerPhase(
         name = "BitcodePostprocessing",
         description = "Optimize and rewrite bitcode",
         lower = checkExternalCallsPhase then
@@ -406,7 +423,7 @@ private val bitcodePostprocessingPhase = NamedCompilerPhase(
                 rewriteExternalCallsCheckerGlobals
 )
 
-private val backendCodegen = namedUnitPhase(
+internal val backendCodegen = namedUnitPhase(
         name = "Backend codegen",
         description = "Backend code generation",
         lower = takeFromContext<Context, Unit, IrModuleFragment> { it.irModule!! } then
@@ -414,7 +431,7 @@ private val backendCodegen = namedUnitPhase(
                 functionsWithoutBoundCheck then
                 allLoweringsPhase then // Lower current module first.
                 dependenciesLowerPhase then // Then lower all libraries in topological order.
-                                            // With that we guarantee that inline functions are unlowered while being inlined.
+                // With that we guarantee that inline functions are unlowered while being inlined.
                 dumpTestsPhase then
                 bitcodePhase then
                 verifyBitcodePhase then

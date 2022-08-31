@@ -244,7 +244,7 @@ private class ExportedElement(val kind: ElementKind,
                 cname = "_konan_function_${owner.nextFunctionIndex()}"
                 // Produce type getter.
                 val getTypeFunction = addLlvmFunctionWithDefaultAttributes(
-                        context,
+                        config,
                         context.llvmModule!!,
                         "${cname}_type",
                         owner.kGetTypeFuncType

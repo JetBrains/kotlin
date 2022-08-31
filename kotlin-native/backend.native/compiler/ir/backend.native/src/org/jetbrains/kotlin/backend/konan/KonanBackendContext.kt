@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.DefaultMapping
-import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.konan.descriptors.KonanSharedVariablesManager
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
@@ -23,7 +21,24 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 
-internal abstract class KonanBackendContext(val config: KonanConfig) : CommonBackendContext {
+internal interface KonanBackendContextI : CommonBackendContext {
+    val messageCollector: MessageCollector
+
+    override val ir: KonanIr
+
+    override val builtIns: KonanBuiltIns
+
+    val lazyValues: MutableMap<LazyMember<*>, Any?>
+
+    fun <T> getValue(member: LazyMember<T>): T =
+            @Suppress("UNCHECKED_CAST") (lazyValues.getOrPut(member, { member.initializer(this) }) as T)
+
+    fun <T> setValue(member: LazyVarMember<T>, newValue: T) {
+        lazyValues[member] = newValue
+    }
+}
+
+internal abstract class KonanBackendContext(val config: KonanConfig) : KonanBackendContextI {
     abstract override val builtIns: KonanBuiltIns
 
     abstract override val ir: KonanIr
@@ -36,7 +51,7 @@ internal abstract class KonanBackendContext(val config: KonanConfig) : CommonBac
         KonanSharedVariablesManager(this)
     }
 
-    val messageCollector: MessageCollector
+    override val messageCollector: MessageCollector
         get() = config.configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
     override fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean) {

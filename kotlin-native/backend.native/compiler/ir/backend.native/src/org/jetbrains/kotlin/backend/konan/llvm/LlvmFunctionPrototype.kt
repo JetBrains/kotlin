@@ -9,9 +9,9 @@ import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.get
 import kotlinx.cinterop.memScoped
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
+import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -177,8 +177,8 @@ internal class LlvmFunctionProto(
     )
 }
 
-private fun mustNotInline(context: Context, irFunction: IrFunction): Boolean {
-    if (context.shouldContainLocationDebugInfo()) {
+private fun mustNotInline(context: BitcodegenContext, irFunction: IrFunction): Boolean {
+    if (context.config.checks.shouldContainLocationDebugInfo()) {
         if (irFunction is IrConstructor && irFunction.isPrimary && irFunction.returnType.isThrowable()) {
             // To simplify skipping this constructor when scanning call stack in Kotlin_getCurrentStackTrace.
             return true

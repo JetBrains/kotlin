@@ -45,7 +45,7 @@ private fun KonanSymbols.getTypeConversionImpl(
 
 internal object DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION : IrDeclarationOriginImpl("INLINE_CLASS_SPECIAL_FUNCTION")
 
-internal val Context.getBoxFunction: (IrClass) -> IrSimpleFunction by Context.lazyMapMember { inlinedClass ->
+internal val KonanBackendContextI.getBoxFunction: (IrClass) -> IrSimpleFunction by LazyMap.lazyMapMember { inlinedClass ->
     require(inlinedClass.isUsedAsBoxClass())
     val classes = mutableListOf<IrClass>(inlinedClass)
     var parent = inlinedClass.parent
@@ -104,7 +104,7 @@ internal val Context.getBoxFunction: (IrClass) -> IrSimpleFunction by Context.la
     }
 }
 
-internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.lazyMapMember { inlinedClass ->
+internal val KonanBackendContextI.getUnboxFunction: (IrClass) -> IrSimpleFunction by LazyMap.lazyMapMember { inlinedClass ->
     require(inlinedClass.isUsedAsBoxClass())
     val classes = mutableListOf<IrClass>(inlinedClass)
     var parent = inlinedClass.parent

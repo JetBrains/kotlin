@@ -41,6 +41,7 @@ interface BitcodeKotlinLibraryLayout : TargetedKotlinLibraryLayout, KotlinLibrar
         get() = File(targetDir, "native")
     // TODO: Experiment with separate bitcode files.
     // Per package or per class.
+    // TODO: Is it still relevant?
     val mainBitcodeFile
         get() = File(kotlinDir, "program.kt.bc")
     val mainBitcodeFileName

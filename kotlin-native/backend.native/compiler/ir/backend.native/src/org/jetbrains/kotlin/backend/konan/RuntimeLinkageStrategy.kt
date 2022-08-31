@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.backend.konan
 
 import llvm.LLVMModuleCreateWithNameInContext
 import llvm.LLVMModuleRef
-import llvm.LLVMStripModuleDebugInfo
-import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.llvm.getName
 import org.jetbrains.kotlin.backend.konan.llvm.llvmContext
 import org.jetbrains.kotlin.backend.konan.llvm.llvmLinkModules2
+import org.jetbrains.kotlin.backend.konan.phases.LlvmCodegenContext
 
 /**
  * To avoid combinatorial explosion, we split runtime into several LLVM modules.
@@ -38,7 +38,7 @@ internal sealed class RuntimeLinkageStrategy {
      * Links all runtime modules into a single one and optimizes it.
      */
     class LinkAndOptimize(
-            private val context: Context,
+            private val context: LlvmCodegenContext,
             private val runtimeNativeLibraries: List<LLVMModuleRef>
     ) : RuntimeLinkageStrategy() {
 
@@ -48,12 +48,12 @@ internal sealed class RuntimeLinkageStrategy {
             }
             val runtimeModule = LLVMModuleCreateWithNameInContext("runtime", llvmContext)!!
             runtimeNativeLibraries.forEach {
-                val failed = llvmLinkModules2(context, runtimeModule, it)
+                val failed = llvmLinkModules2(context, context, runtimeModule, it)
                 if (failed != 0) {
                     throw Error("Failed to link ${it.getName()}")
                 }
             }
-            val config = createLTOPipelineConfigForRuntime(context)
+            val config = createLTOPipelineConfigForRuntime(context.llvm.targetTriple, context.config, context)
             LlvmOptimizationPipeline(config, runtimeModule, context).use {
                 it.run()
             }
@@ -65,12 +65,12 @@ internal sealed class RuntimeLinkageStrategy {
         /**
          * Choose runtime linkage strategy based on current compiler configuration and [BinaryOptions.linkRuntime].
          */
-        internal fun pick(context: Context, runtimeLlvmModules: List<LLVMModuleRef>): RuntimeLinkageStrategy {
-            val binaryOption = context.config.configuration.get(BinaryOptions.linkRuntime)
+        internal fun pick(config: KonanConfig, context: LlvmCodegenContext, runtimeLlvmModules: List<LLVMModuleRef>): RuntimeLinkageStrategy {
+            val binaryOption = config.configuration.get(BinaryOptions.linkRuntime)
             return when {
                 binaryOption == RuntimeLinkageStrategyBinaryOption.Raw -> Raw(runtimeLlvmModules)
                 binaryOption == RuntimeLinkageStrategyBinaryOption.Optimize -> LinkAndOptimize(context, runtimeLlvmModules)
-                context.config.debug -> LinkAndOptimize(context, runtimeLlvmModules)
+                config.debug -> LinkAndOptimize(context, runtimeLlvmModules)
                 else -> Raw(runtimeLlvmModules)
             }
 

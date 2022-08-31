@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
 import org.jetbrains.kotlin.backend.konan.objcexport.*
+import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
+import org.jetbrains.kotlin.backend.konan.phases.BridgesAwareContext
 import org.jetbrains.kotlin.backend.konan.serialization.resolveFakeOverrideMaybeAbstract
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -540,7 +542,7 @@ internal class ObjCExportCodeGenerator(
     }
 
     private fun emitKt42254Hint() {
-        if (determineLinkerOutput(context) == LinkerOutputKind.STATIC_LIBRARY) {
+        if (determineLinkerOutput(context.config) == LinkerOutputKind.STATIC_LIBRARY) {
             // Might be affected by https://youtrack.jetbrains.com/issue/KT-42254.
             // The code below generally follows [replaceExternalWeakOrCommonGlobal] implementation.
             if (context.llvmModuleSpecification.importsKotlinDeclarationsFromOtherObjectFiles()) {
@@ -1841,7 +1843,7 @@ private fun ObjCExportCodeGenerator.createDirectAdapters(
     return requiredAdapters.distinctBy { it.base.selector }.map { createMethodAdapter(it) }
 }
 
-private fun findImplementation(irClass: IrClass, method: IrSimpleFunction, context: Context): IrSimpleFunction? {
+private fun findImplementation(irClass: IrClass, method: IrSimpleFunction, context: BridgesAwareContext): IrSimpleFunction? {
     val override = irClass.simpleFunctions().singleOrNull {
         method in it.allOverriddenFunctions
     } ?: error("no implementation for ${method.render()}\nin ${irClass.fqNameWhenAvailable}")
@@ -1949,7 +1951,7 @@ private fun ObjCExportCodeGenerator.createThrowableAsErrorAdapter(): ObjCExportC
     return objCToKotlinMethodAdapter(selector, methodBridge, imp)
 }
 
-private fun objCFunctionType(context: Context, methodBridge: MethodBridge): LlvmFunctionSignature {
+private fun objCFunctionType(context: BitcodegenContext, methodBridge: MethodBridge): LlvmFunctionSignature {
     val paramTypes = methodBridge.paramBridges.map { it.toLlvmParamType() }
     val returnType = methodBridge.returnBridge.toLlvmRetType(context)
     return LlvmFunctionSignature(returnType, paramTypes, isVararg = false)
@@ -1980,7 +1982,7 @@ private fun MethodBridgeParameter.toLlvmParamType(): LlvmParamType = when (this)
 }
 
 private fun MethodBridge.ReturnValue.toLlvmRetType(
-        context: Context
+        context: BitcodegenContext
 ): LlvmRetType = when (this) {
     MethodBridge.ReturnValue.Suspend,
     MethodBridge.ReturnValue.Void -> LlvmRetType(voidType)
@@ -2015,7 +2017,7 @@ internal fun ObjCExportCodeGenerator.getEncoding(methodBridge: MethodBridge): St
     return "$returnTypeEncoding$paramSize$params"
 }
 
-private fun MethodBridge.ReturnValue.getObjCEncoding(context: Context): String = when (this) {
+private fun MethodBridge.ReturnValue.getObjCEncoding(context: BitcodegenContext): String = when (this) {
     MethodBridge.ReturnValue.Suspend,
     MethodBridge.ReturnValue.Void -> "v"
     MethodBridge.ReturnValue.HashCode -> if (context.is64BitNSInteger()) "Q" else "I"
@@ -2040,7 +2042,7 @@ private val TypeBridge.objCEncoding: String get() = when (this) {
     is ValueTypeBridge -> this.objCValueType.encoding
 }
 
-private fun Context.is64BitNSInteger(): Boolean {
+private fun BitcodegenContext.is64BitNSInteger(): Boolean {
     val configurables = this.config.platform.configurables
     require(configurables is AppleConfigurables) {
         "Target ${configurables.target} has no support for NSInteger type."

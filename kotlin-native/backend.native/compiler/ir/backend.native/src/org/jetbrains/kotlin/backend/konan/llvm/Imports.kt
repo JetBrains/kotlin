@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
@@ -29,7 +28,6 @@ internal val DeclarationDescriptor.llvmSymbolOrigin: CompiledKlibModuleOrigin
         when (moduleOrigin) {
             is CompiledKlibModuleOrigin -> return moduleOrigin
             SyntheticModulesOrigin -> error("Declaration is synthetic and can't be an origin of LLVM symbol:\n${this}")
+            else -> error("Unexpected module origin $moduleOrigin")
         }
     }
-
-internal val Context.standardLlvmSymbolsOrigin: CompiledKlibModuleOrigin get() = this.stdlibModule.llvmSymbolOrigin

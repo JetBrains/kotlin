@@ -7,21 +7,18 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.toKString
 import llvm.*
-import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
-import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface.functionName
+import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -140,7 +137,10 @@ internal sealed class Lifetime(val slotType: SlotType) {
  * Provides utility methods to the implementer.
  */
 internal interface ContextUtils : RuntimeAware {
-    val context: Context
+    val context: BitcodegenContext
+
+    val config: KonanConfig
+        get() = context.config
 
     override val runtime: Runtime
         get() = context.llvm.runtime
@@ -271,7 +271,11 @@ internal class InitializersGenerationState {
             && moduleGlobalInitializers.isEmpty() && moduleThreadLocalInitializers.isEmpty()
 }
 
-internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : RuntimeAware {
+internal class Llvm(
+        val context: BitcodegenContext,
+        val config: KonanConfig,
+        val llvmModule: LLVMModuleRef
+) : RuntimeAware {
 
     private fun importFunction(name: String, otherModule: LLVMModuleRef): LlvmCallable {
         if (LLVMGetNamedFunction(llvmModule, name) != null) {
@@ -327,7 +331,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
             assert(LLVMGetLinkage(found) == LLVMLinkage.LLVMExternalLinkage)
             return LlvmCallable(found, llvmFunctionProto)
         } else {
-            val function = addLlvmFunctionWithDefaultAttributes(context, llvmModule, llvmFunctionProto.name, llvmFunctionProto.llvmFunctionType)
+            val function = addLlvmFunctionWithDefaultAttributes(config, llvmModule, llvmFunctionProto.name, llvmFunctionProto.llvmFunctionType)
             llvmFunctionProto.addFunctionAttributes(function)
             return LlvmCallable(function, llvmFunctionProto)
         }
@@ -335,17 +339,18 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
 
     val imports get() = context.llvmImports
 
-    class ImportsImpl(private val context: Context) : LlvmImports {
+    class ImportsImpl(private val librariesWithDependencies: List<KonanLibrary>) : LlvmImports {
 
         private val usedBitcode = mutableSetOf<KotlinLibrary>()
         private val usedNativeDependencies = mutableSetOf<KotlinLibrary>()
 
-        private val allLibraries by lazy { context.librariesWithDependencies.toSet() }
+        private val allLibraries by lazy { librariesWithDependencies.toSet() }
 
         override fun add(origin: CompiledKlibModuleOrigin, onlyBitcode: Boolean) {
             val library = when (origin) {
                 CurrentKlibModuleOrigin -> return
                 is DeserializedKlibModuleOrigin -> origin.library
+                else -> error("Unexpected module origin $origin")
             }
 
             if (library !in allLibraries) {
@@ -364,35 +369,35 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
     }
 
     val nativeDependenciesToLink: List<KonanLibrary> by lazy {
-        context.config.resolvedLibraries
+        config.resolvedLibraries
                 .getFullList(TopologicalLibraryOrder)
                 .filter {
                     require(it is KonanLibrary)
-                    (!it.isDefault && !context.config.purgeUserLibs) || imports.nativeDependenciesAreUsed(it)
+                    (!it.isDefault && !config.purgeUserLibs) || imports.nativeDependenciesAreUsed(it)
                 }.cast<List<KonanLibrary>>()
     }
 
     private val immediateBitcodeDependencies: List<KonanLibrary> by lazy {
-        context.config.resolvedLibraries.getFullList(TopologicalLibraryOrder).cast<List<KonanLibrary>>()
-                .filter { (!it.isDefault && !context.config.purgeUserLibs) || imports.bitcodeIsUsed(it) }
+        config.resolvedLibraries.getFullList(TopologicalLibraryOrder).cast<List<KonanLibrary>>()
+                .filter { (!it.isDefault && !config.purgeUserLibs) || imports.bitcodeIsUsed(it) }
     }
 
     val allCachedBitcodeDependencies: List<KonanLibrary> by lazy {
-        val allLibraries = context.config.resolvedLibraries.getFullList().associateBy { it.uniqueName }
+        val allLibraries = config.resolvedLibraries.getFullList().associateBy { it.uniqueName }
         val result = mutableSetOf<KonanLibrary>()
 
         fun addDependencies(cachedLibrary: CachedLibraries.Cache) {
             cachedLibrary.bitcodeDependencies.forEach {
                 val library = allLibraries[it] ?: error("Bitcode dependency to an unknown library: $it")
                 result.add(library as KonanLibrary)
-                addDependencies(context.config.cachedLibraries.getLibraryCache(library)
+                addDependencies(config.cachedLibraries.getLibraryCache(library)
                         ?: error("Library $it is expected to be cached"))
             }
         }
 
         for (library in immediateBitcodeDependencies) {
-            if (library == context.config.libraryToCache?.klib) continue
-            val cache = context.config.cachedLibraries.getLibraryCache(library)
+            if (library == config.libraryToCache?.klib) continue
+            val cache = config.cachedLibraries.getLibraryCache(library)
             if (cache != null) {
                 result += library
                 addDependencies(cache)
@@ -408,20 +413,20 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
 
     val allBitcodeDependencies: List<KonanLibrary> by lazy {
         val allNonCachedDependencies = context.librariesWithDependencies.filter {
-            context.config.cachedLibraries.getLibraryCache(it) == null || it == context.config.libraryToCache?.klib
+            config.cachedLibraries.getLibraryCache(it) == null || it == config.libraryToCache?.klib
         }
         val set = (allNonCachedDependencies + allCachedBitcodeDependencies).toSet()
         // This list is used in particular to build the libraries' initializers chain.
         // The initializers must be called in the topological order, so make sure that the
         // libraries list being returned is also toposorted.
-        context.config.resolvedLibraries
+        config.resolvedLibraries
                 .getFullList(TopologicalLibraryOrder)
                 .cast<List<KonanLibrary>>()
                 .filter { it in set }
     }
 
     val bitcodeToLink: List<KonanLibrary> by lazy {
-        (context.config.resolvedLibraries.getFullList(TopologicalLibraryOrder).cast<List<KonanLibrary>>())
+        (config.resolvedLibraries.getFullList(TopologicalLibraryOrder).cast<List<KonanLibrary>>())
                 .filter { shouldContainBitcode(it) }
     }
 
@@ -442,9 +447,9 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
 
     val staticData = KotlinStaticData(context)
 
-    private val target = context.config.target
+    private val target = config.target
 
-    val runtimeFile = context.config.distribution.runtime(target)
+    val runtimeFile = config.distribution.runtime(target)
     override val runtime = Runtime(runtimeFile) // TODO: dispose
 
     val targetTriple = runtime.target
@@ -454,9 +459,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
         LLVMSetTarget(llvmModule, targetTriple)
     }
 
-    private fun importRtFunction(name: String) = importFunction(name, runtime.llvmModule)
-
-    private fun importRtGlobal(name: String) = importGlobal(name, runtime.llvmModule)
+    private fun importRtFunction(name: String): LlvmCallable = importFunction(name, runtime.llvmModule)
 
     val allocInstanceFunction = importRtFunction("AllocInstance")
     val allocArrayFunction = importRtFunction("AllocArrayInstance")
@@ -529,6 +532,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
         when (target) {
             KonanTarget.WASM32,
             is KonanTarget.ZEPHYR -> LLVMThreadLocalMode.LLVMNotThreadLocal
+
             else -> LLVMThreadLocalMode.LLVMGeneralDynamicTLSModel
         }
     }

@@ -510,7 +510,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.backingField }.single()
 }
 
-private val Context.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpleFunction by Context.lazyMapMember { irConstructor ->
+private val Context.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpleFunction by LazyMap.lazyMapMember { irConstructor ->
     require(irConstructor.constructedClass.isInlined())
 
     val returnType = if (irConstructor.isPrimary) {

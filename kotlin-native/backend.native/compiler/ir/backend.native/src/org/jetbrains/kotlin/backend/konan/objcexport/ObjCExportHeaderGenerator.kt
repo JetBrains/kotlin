@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
@@ -1215,11 +1214,11 @@ abstract class ObjCExportHeaderGenerator internal constructor(
             packageFragment.getMemberScope().translateClasses()
         }
 
-        extensions.forEach { classDescriptor, declarations ->
+        extensions.forEach { (classDescriptor, declarations) ->
             generateExtensions(classDescriptor, declarations)
         }
 
-        topLevel.forEach { sourceFile, declarations ->
+        topLevel.forEach { (sourceFile, declarations) ->
             generateFile(sourceFile, declarations)
         }
     }

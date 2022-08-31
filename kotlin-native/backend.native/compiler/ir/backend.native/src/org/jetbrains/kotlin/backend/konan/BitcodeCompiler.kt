@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.common.LoggingContext
+import org.jetbrains.kotlin.backend.konan.phases.ConfigChecks
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.*
 
@@ -12,14 +14,14 @@ typealias BitcodeFile = String
 typealias ObjectFile = String
 typealias ExecutableFile = String
 
-internal class BitcodeCompiler(val context: Context) {
+internal class BitcodeCompiler(val config: KonanConfig, val logger: LoggingContext) {
 
-    private val platform = context.config.platform
-    private val optimize = context.shouldOptimize()
-    private val debug = context.config.debug
+    private val platform = config.platform
+    private val optimize = ConfigChecks(config).shouldOptimize()
+    private val debug = config.debug
 
     private val overrideClangOptions =
-            context.configuration.getList(KonanConfigKeys.OVERRIDE_CLANG_OPTIONS)
+            config.configuration.getList(KonanConfigKeys.OVERRIDE_CLANG_OPTIONS)
 
     private fun MutableList<String>.addNonEmpty(elements: List<String>) {
         addAll(elements.filter { it.isNotEmpty() })
@@ -27,11 +29,11 @@ internal class BitcodeCompiler(val context: Context) {
 
     private fun runTool(vararg command: String) =
             Command(*command)
-                    .logWith(context::log)
+                    .logWith(logger::log)
                     .execute()
 
     private fun temporary(name: String, suffix: String): String =
-            context.config.tempFiles.create(name, suffix).absolutePath
+            config.tempFiles.create(name, suffix).absolutePath
 
     private fun targetTool(tool: String, vararg arg: String) {
         val absoluteToolName = if (platform.configurables is AppleConfigurables) {
@@ -67,8 +69,8 @@ internal class BitcodeCompiler(val context: Context) {
                 debug -> configurables.clangDebugFlags
                 else -> configurables.clangNooptFlags
             })
-            addNonEmpty(BitcodeEmbedding.getClangOptions(context.config))
-            addNonEmpty(configurables.currentRelocationMode(context).translateToClangCc1Flag())
+            addNonEmpty(BitcodeEmbedding.getClangOptions(config))
+            addNonEmpty(configurables.currentRelocationMode(config).translateToClangCc1Flag())
         }
         if (configurables is AppleConfigurables) {
             targetTool("clang++", *flags.toTypedArray(), file, "-o", objectFile)

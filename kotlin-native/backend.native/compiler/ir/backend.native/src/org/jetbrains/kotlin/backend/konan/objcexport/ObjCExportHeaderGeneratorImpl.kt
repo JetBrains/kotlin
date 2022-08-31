@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.backend.konan.phases.ConfigChecks
+import org.jetbrains.kotlin.backend.konan.phases.ErrorReportingContext
 import org.jetbrains.kotlin.backend.konan.reportCompilationWarning
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
@@ -17,18 +19,19 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.source.getPsi
 
 internal class ObjCExportHeaderGeneratorImpl(
-        val context: Context,
+        private val config: KonanConfig,
+        errorReportingContext: ErrorReportingContext,
         moduleDescriptors: List<ModuleDescriptor>,
         mapper: ObjCExportMapper,
         namer: ObjCExportNamer,
         objcGenerics: Boolean
-) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, ProblemCollector(context)) {
+) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, ProblemCollector(errorReportingContext)) {
 
-    override val shouldExportKDoc = context.shouldExportKDoc()
+    override val shouldExportKDoc = ConfigChecks(config).shouldExportKDoc()
 
-    private class ProblemCollector(val context: Context) : ObjCExportProblemCollector {
+    private class ProblemCollector(val errorReportingContext: ErrorReportingContext) : ObjCExportProblemCollector {
         override fun reportWarning(text: String) {
-            context.reportCompilationWarning(text)
+            errorReportingContext.reportCompilationWarning(text)
         }
 
         override fun reportWarning(method: FunctionDescriptor, text: String) {
@@ -39,7 +42,7 @@ internal class ObjCExportHeaderGeneratorImpl(
 
             val location = MessageUtil.psiElementToMessageLocation(psi)
 
-            context.messageCollector.report(CompilerMessageSeverity.WARNING, text, location)
+            errorReportingContext.messageCollector.report(CompilerMessageSeverity.WARNING, text, location)
         }
 
         override fun reportException(throwable: Throwable) {
@@ -48,5 +51,5 @@ internal class ObjCExportHeaderGeneratorImpl(
     }
 
     override fun getAdditionalImports(): List<String> =
-            context.config.configuration.getNotNull(KonanConfigKeys.FRAMEWORK_IMPORT_HEADERS)
+            config.configuration.getNotNull(KonanConfigKeys.FRAMEWORK_IMPORT_HEADERS)
 }

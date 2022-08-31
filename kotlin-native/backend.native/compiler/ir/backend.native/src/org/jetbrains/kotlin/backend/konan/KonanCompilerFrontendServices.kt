@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazy
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazyImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportProblemCollector
 import org.jetbrains.kotlin.backend.konan.objcexport.dumpObjCHeader
+import org.jetbrains.kotlin.backend.konan.phases.FrontendContext
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.KtFile
@@ -45,11 +46,11 @@ internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
     }
 }
 
-internal fun ComponentProvider.postprocessComponents(context: Context, files: Collection<KtFile>) {
+internal fun ComponentProvider.postprocessComponents(context: FrontendContext, files: Collection<KtFile>, config: KonanConfig) {
     context.frontendServices = this.get<FrontendServices>()
 
-    context.config.configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)?.let {
-        this.get<ObjCExportLazy>().dumpObjCHeader(files, it, context.shouldExportKDoc())
+    config.configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)?.let {
+        this.get<ObjCExportLazy>().dumpObjCHeader(files, it, context.config.checks.shouldExportKDoc())
     }
 }
 

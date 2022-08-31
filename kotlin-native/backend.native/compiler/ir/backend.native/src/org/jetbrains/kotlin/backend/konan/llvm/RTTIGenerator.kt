@@ -11,13 +11,16 @@ import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.ir.isAny
 import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering.Companion.isLoweredFunctionReference
+import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 
-internal class RTTIGenerator(override val context: Context) : ContextUtils {
+internal class RTTIGenerator(
+        override val context: BitcodegenContext
+) : ContextUtils {
 
     private val acyclicCache = mutableMapOf<IrType, Boolean>()
     private val safeAcyclicFieldTypes = setOf(
@@ -25,7 +28,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             context.irBuiltIns.booleanClass, context.irBuiltIns.charClass,
             context.irBuiltIns.byteClass, context.irBuiltIns.shortClass, context.irBuiltIns.intClass,
             context.irBuiltIns.longClass,
-            context.irBuiltIns.floatClass,context.irBuiltIns.doubleClass) +
+            context.irBuiltIns.floatClass, context.irBuiltIns.doubleClass) +
             context.ir.symbols.primitiveTypesToPrimitiveArrays.values +
             context.ir.symbols.unsignedTypesToUnsignedArrays.values
 
@@ -50,8 +53,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
     private fun flagsFromClass(irClass: IrClass): Int {
         var result = 0
-        if (irClass.isFrozen(context))
-           result = result or TF_IMMUTABLE
+        if (irClass.isFrozen(context.config))
+            result = result or TF_IMMUTABLE
         // TODO: maybe perform deeper analysis to find surely acyclic types.
         if (!irClass.isInterface && !irClass.isAbstract() && !irClass.isAnnotationClass) {
             if (checkAcyclicClass(irClass)) {
@@ -156,18 +159,18 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     }
 
     private val arrayClasses = mapOf(
-            IdSignatureValues.array                                                       to kObjHeaderPtr,
-            primitiveArrayTypesSignatures[PrimitiveType.BYTE]                             to int8Type,
-            primitiveArrayTypesSignatures[PrimitiveType.CHAR]                             to int16Type,
-            primitiveArrayTypesSignatures[PrimitiveType.SHORT]                            to int16Type,
-            primitiveArrayTypesSignatures[PrimitiveType.INT]                              to int32Type,
-            primitiveArrayTypesSignatures[PrimitiveType.LONG]                             to int64Type,
-            primitiveArrayTypesSignatures[PrimitiveType.FLOAT]                            to floatType,
-            primitiveArrayTypesSignatures[PrimitiveType.DOUBLE]                           to doubleType,
-            primitiveArrayTypesSignatures[PrimitiveType.BOOLEAN]                          to int8Type,
-            IdSignatureValues.string                                                      to int16Type,
-            getPublicSignature(KonanFqNames.packageName, "ImmutableBlob")           to int8Type,
-            getPublicSignature(KonanFqNames.internalPackageName, "NativePtrArray")  to kInt8Ptr
+            IdSignatureValues.array to kObjHeaderPtr,
+            primitiveArrayTypesSignatures[PrimitiveType.BYTE] to int8Type,
+            primitiveArrayTypesSignatures[PrimitiveType.CHAR] to int16Type,
+            primitiveArrayTypesSignatures[PrimitiveType.SHORT] to int16Type,
+            primitiveArrayTypesSignatures[PrimitiveType.INT] to int32Type,
+            primitiveArrayTypesSignatures[PrimitiveType.LONG] to int64Type,
+            primitiveArrayTypesSignatures[PrimitiveType.FLOAT] to floatType,
+            primitiveArrayTypesSignatures[PrimitiveType.DOUBLE] to doubleType,
+            primitiveArrayTypesSignatures[PrimitiveType.BOOLEAN] to int8Type,
+            IdSignatureValues.string to int16Type,
+            getPublicSignature(KonanFqNames.packageName, "ImmutableBlob") to int8Type,
+            getPublicSignature(KonanFqNames.internalPackageName, "NativePtrArray") to kInt8Ptr
     )
 
     // Keep in sync with Konan_RuntimeType.
@@ -189,7 +192,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         return signature?.let { arrayClasses[it] }
     }
 
-    private fun getInstanceSize(classType: LLVMTypeRef?, irClass: IrClass) : Int {
+    private fun getInstanceSize(classType: LLVMTypeRef?, irClass: IrClass): Int {
         val elementType = getElementType(irClass)
         // Check if it is an array.
         if (elementType != null) return -LLVMABISizeOfType(llvmTargetData, elementType).toInt()
@@ -382,7 +385,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             runtimeTypeMap[type] ?: throw Error("Unmapped type: ${llvmtype2string(type)}")
 
     private val debugRuntimeOrNull: LLVMModuleRef? by lazy {
-        context.config.runtimeNativeLibraries.singleOrNull { it.endsWith("debug.bc")}?.let {
+        context.config.runtimeNativeLibraries.singleOrNull { it.endsWith("debug.bc") }?.let {
             parseBitcodeFile(it)
         }
     }
@@ -390,7 +393,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     private val debugOperations: ConstValue by lazy {
         if (debugRuntimeOrNull != null) {
             val external = LLVMGetNamedGlobal(debugRuntimeOrNull, "Konan_debugOperationsList")!!
-            val local = LLVMAddGlobal(context.llvmModule, LLVMGetElementType(LLVMTypeOf(external)),"Konan_debugOperationsList")!!
+            val local = LLVMAddGlobal(context.llvmModule, LLVMGetElementType(LLVMTypeOf(external)), "Konan_debugOperationsList")!!
             constPointer(LLVMConstBitCast(local, kInt8PtrPtr)!!)
         } else {
             Zero(kInt8PtrPtr)
@@ -407,7 +410,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
     private fun makeExtendedInfo(irClass: IrClass): ConstPointer {
         // TODO: shall we actually do that?
-        if (context.shouldOptimize())
+        if (context.config.checks.shouldOptimize())
             return NullPointer(runtime.extendedTypeInfoType)
 
         val className = irClass.fqNameForIrSerialization.toString()
@@ -424,6 +427,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                     debugOperationsSize, debugOperations)
         } else {
             class FieldRecord(val offset: Int, val type: Int, val name: String)
+
             val fields = context.getLayoutBuilder(irClass).fields.map {
                 FieldRecord(
                         LLVMOffsetOfElement(llvmTargetData, bodyType, it.index).toInt(),
@@ -546,7 +550,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 classId = typeHierarchyInfo.classIdLo,
                 writableTypeInfo = writableTypeInfo,
                 associatedObjects = null
-              ), vtable)
+        ), vtable)
 
         typeInfoWithVtableGlobal.setInitializer(typeInfoWithVtable)
         typeInfoWithVtableGlobal.setConstant(true)
@@ -571,7 +575,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             null
         }
 
-        val packageName: String = reflectionPackageName ?: packageFragment.fqName.asString() // Compute and store package name in TypeInfo anyways.
+        val packageName: String = reflectionPackageName
+                ?: packageFragment.fqName.asString() // Compute and store package name in TypeInfo anyways.
         val relativeName: String?
         val flags: Int
 
@@ -580,15 +585,18 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 relativeName = context.getLocalClassName(irClass)
                 flags = 0 // Forbid to use package and relative names in KClass.[simpleName|qualifiedName].
             }
+
             irClass.isLocal -> {
                 relativeName = context.getLocalClassName(irClass)
                 flags = TF_REFLECTION_SHOW_REL_NAME // Only allow relative name to be used in KClass.simpleName.
             }
+
             isLoweredFunctionReference(irClass) -> {
                 // TODO: might return null so use fallback here, to be fixed in KT-47194
                 relativeName = context.getLocalClassName(irClass) ?: generateDefaultRelativeName(irClass)
                 flags = 0 // Forbid to use package and relative names in KClass.[simpleName|qualifiedName].
             }
+
             else -> {
                 relativeName = generateDefaultRelativeName(irClass)
                 flags = TF_REFLECTION_SHOW_PKG_NAME or TF_REFLECTION_SHOW_REL_NAME // Allow both package and relative names to be used in
@@ -611,7 +619,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
 // Keep in sync with Konan_TypeFlags in TypeInfo.h.
 private const val TF_IMMUTABLE = 1
-private const val TF_ACYCLIC   = 2
+private const val TF_ACYCLIC = 2
 private const val TF_INTERFACE = 4
 private const val TF_OBJC_DYNAMIC = 8
 private const val TF_LEAK_DETECTOR_CANDIDATE = 16

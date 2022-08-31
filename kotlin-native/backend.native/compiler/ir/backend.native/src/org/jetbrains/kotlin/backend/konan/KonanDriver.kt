@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
+import org.jetbrains.kotlin.backend.konan.phases.FrontendContext
+import org.jetbrains.kotlin.backend.konan.phases.TopLevelPhasesBuilder
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -25,7 +28,13 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, val configuration: CompilerConfiguration) {
+class KonanDriver(
+        val project: Project,
+        val environment: KotlinCoreEnvironment,
+        val configuration: CompilerConfiguration,
+        // Hack
+        val arguments: K2NativeCompilerArguments,
+) {
     fun run() {
         val fileNames = configuration.get(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE)?.let { libPath ->
             if (configuration.get(KonanConfigKeys.MAKE_PER_FILE_CACHE) != true)
@@ -39,11 +48,24 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
             }
         }
 
-        if (fileNames == null) {
-            KonanConfig(project, configuration).runTopLevelPhases()
+        val config = KonanConfig(project, configuration)
+        // TODO: add allocators and frontend
+        if (config.produce == CompilerOutputKind.LIBRARY) {
+            usingNativeMemoryAllocator {
+                usingJvmCInteropCallbacks {
+                    try {
+                        TopLevelPhasesBuilder(config, arguments).buildKlib(config, environment)
+                    } finally {
+                    }
+                }
+            }
         } else {
-            fileNames.forEach { buildFileCache(it, CompilerOutputKind.PRELIMINARY_CACHE) }
-            fileNames.forEach { buildFileCache(it, configuration.get(KonanConfigKeys.PRODUCE)!!) }
+            if (fileNames == null) {
+                runTopLevelPhases(config, environment)
+            } else {
+                fileNames.forEach { buildFileCache(it, CompilerOutputKind.PRELIMINARY_CACHE) }
+                fileNames.forEach { buildFileCache(it, configuration.get(KonanConfigKeys.PRODUCE)!!) }
+            }
         }
     }
 
@@ -79,7 +101,10 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
     }
 }
 
-private fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironment) {
+private fun runTopLevelPhases(
+        konanConfig: KonanConfig,
+        environment: KotlinCoreEnvironment,
+) {
 
     val config = konanConfig.configuration
 
@@ -90,16 +115,17 @@ private fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreE
 
     val context = Context(konanConfig)
     context.environment = environment
-    context.phaseConfig.konanPhasesConfig(konanConfig) // TODO: Wrong place to call it
+    val phaseConfig = config.get(CLIConfigurationKeys.PHASE_CONFIG)!!
+    phaseConfig.konanPhasesConfig(konanConfig) // TODO: Wrong place to call it
 
     if (konanConfig.infoArgsOnly) return
 
-    if (!context.frontendPhase()) return
+    if (!context.frontendPhase(konanConfig)) return
 
     usingNativeMemoryAllocator {
         usingJvmCInteropCallbacks {
             try {
-                toplevelPhase.cast<CompilerPhase<Context, Unit, Unit>>().invokeToplevel(context.phaseConfig, context, Unit)
+                toplevelPhase.cast<CompilerPhase<Context, Unit, Unit>>().invokeToplevel(phaseConfig, context, Unit)
             } finally {
                 context.disposeLlvm()
             }
@@ -108,7 +134,7 @@ private fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreE
 }
 
 // returns true if should generate code.
-internal fun Context.frontendPhase(): Boolean {
+internal fun FrontendContext.frontendPhase(config: KonanConfig): Boolean {
     lateinit var analysisResult: AnalysisResult
 
     do {
@@ -120,7 +146,7 @@ internal fun Context.frontendPhase(): Boolean {
 
         // Build AST and binding info.
         analyzerWithCompilerReport.analyzeAndReport(environment.getSourceFiles()) {
-            TopDownAnalyzerFacadeForKonan.analyzeFiles(environment.getSourceFiles(), this)
+            TopDownAnalyzerFacadeForKonan.analyzeFiles(environment.getSourceFiles(), this, config)
         }
         if (analyzerWithCompilerReport.hasErrors()) {
             throw KonanCompilationException()
@@ -129,7 +155,7 @@ internal fun Context.frontendPhase(): Boolean {
         if (analysisResult is AnalysisResult.RetryWithAdditionalRoots) {
             environment.addKotlinSourceRoots(analysisResult.additionalKotlinRoots)
         }
-    } while(analysisResult is AnalysisResult.RetryWithAdditionalRoots)
+    } while (analysisResult is AnalysisResult.RetryWithAdditionalRoots)
 
     moduleDescriptor = analysisResult.moduleDescriptor
     bindingContext = analysisResult.bindingContext

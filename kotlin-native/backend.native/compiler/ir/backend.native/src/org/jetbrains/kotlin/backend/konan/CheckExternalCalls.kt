@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.konan
 import kotlinx.cinterop.toCValues
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.phases.LlvmCodegenContext
+import org.jetbrains.kotlin.backend.konan.phases.stdlibModule
 
 private fun LLVMValueRef.isFunctionCall() = LLVMIsACallInst(this) != null || LLVMIsAInvokeInst(this) != null
 
@@ -20,7 +22,7 @@ private fun LLVMValueRef.isLLVMBuiltin(): Boolean {
 }
 
 
-private class CallsChecker(val context: Context, goodFunctions: List<String>) {
+private class CallsChecker(val context: LlvmCodegenContext, goodFunctions: List<String>) {
     private val goodFunctionsExact = goodFunctions.filterNot { it.endsWith("*") }.toSet()
     private val goodFunctionsByPrefix = goodFunctions.filter { it.endsWith("*") }.map { it.substring(0, it.length - 1) }.sorted()
 

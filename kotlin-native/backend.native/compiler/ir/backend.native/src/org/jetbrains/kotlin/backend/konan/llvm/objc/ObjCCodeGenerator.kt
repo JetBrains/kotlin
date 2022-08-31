@@ -31,7 +31,7 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
                     LlvmRetType(int8TypePtr),
                     listOf(LlvmParamType(int8TypePtr), LlvmParamType(int8TypePtr)),
                     isVararg = true,
-                    origin = context.stdlibModule.llvmSymbolOrigin
+                    origin = context.standardLlvmSymbolsOrigin
             )).llvmValue
     )
 
@@ -41,7 +41,7 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
                 LlvmRetType(voidType),
                 listOf(LlvmParamType(int8TypePtr)),
                 listOf(LlvmFunctionAttribute.NoUnwind),
-                origin = context.stdlibModule.llvmSymbolOrigin
+                origin = context.standardLlvmSymbolsOrigin
         )
         context.llvm.externalFunction(proto)
     }
@@ -50,7 +50,7 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
             "objc_alloc",
             LlvmRetType(int8TypePtr),
             listOf(LlvmParamType(int8TypePtr)),
-            origin = context.stdlibModule.llvmSymbolOrigin
+            origin = context.standardLlvmSymbolsOrigin
     ))
 
     val objcAutoreleaseReturnValue = context.llvm.externalFunction(LlvmFunctionProto(
@@ -58,7 +58,7 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
             LlvmRetType(int8TypePtr),
             listOf(LlvmParamType(int8TypePtr)),
             listOf(LlvmFunctionAttribute.NoUnwind),
-            origin = context.stdlibModule.llvmSymbolOrigin
+            origin = context.standardLlvmSymbolsOrigin
     ))
 
     val objcRetainAutoreleasedReturnValue = context.llvm.externalFunction(LlvmFunctionProto(
@@ -66,7 +66,7 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
             LlvmRetType(int8TypePtr),
             listOf(LlvmParamType(int8TypePtr)),
             listOf(LlvmFunctionAttribute.NoUnwind),
-            origin = context.stdlibModule.llvmSymbolOrigin
+            origin = context.standardLlvmSymbolsOrigin
     ))
 
     val objcRetainAutoreleasedReturnValueMarker: LLVMValueRef? by lazy {

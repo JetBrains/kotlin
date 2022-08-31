@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.getLLVMType
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
+import org.jetbrains.kotlin.backend.konan.phases.BridgesAwareContext
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -47,7 +48,7 @@ internal class OverriddenFunctionInfo(
                 && function.target.overrides(overriddenFunction)
                 && function.bridgeDirectionsTo(overriddenFunction).allNotNeeded()
 
-    fun getImplementation(context: Context): IrSimpleFunction? {
+    fun getImplementation(context: BridgesAwareContext): IrSimpleFunction? {
         val target = function.target
         val implementation = if (!needBridge)
             target

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.backend.konan.phases.FrontendContext
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -29,9 +30,8 @@ internal object TopDownAnalyzerFacadeForKonan {
 
     private val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer, NativeTypeTransformer())
 
-    fun analyzeFiles(files: Collection<KtFile>, context: Context): AnalysisResult {
-        val config = context.config
-        val moduleName = Name.special("<${config.moduleId}>") 
+    fun analyzeFiles(files: Collection<KtFile>, context: FrontendContext, config: KonanConfig): AnalysisResult {
+        val moduleName = Name.special("<${config.moduleId}>")
 
         val projectContext = ProjectContext(config.project, "TopDownAnalyzer for Konan")
 
@@ -55,36 +55,37 @@ internal object TopDownAnalyzerFacadeForKonan {
             additionalPackages += functionInterfacePackageFragmentProvider(projectContext.storageManager, module)
         }
 
-        return analyzeFilesWithGivenTrace(files, BindingTraceContext(), moduleContext, context, projectContext, additionalPackages)
+        return analyzeFilesWithGivenTrace(files, BindingTraceContext(), moduleContext, context, projectContext, additionalPackages, config)
     }
 
     fun analyzeFilesWithGivenTrace(
             files: Collection<KtFile>,
             trace: BindingTrace,
             moduleContext: ModuleContext,
-            context: Context,
+            context: FrontendContext,
             projectContext: ProjectContext,
-            additionalPackages: List<PackageFragmentProvider> = emptyList()
+            additionalPackages: List<PackageFragmentProvider> = emptyList(),
+            config: KonanConfig
     ): AnalysisResult {
 
         // we print out each file we compile if frontend phase is verbose
         files.takeIf {
-            context.shouldPrintFiles()
+            config.checks.shouldPrintFiles()
         } ?.forEach(::println)
 
         val container = createTopDownAnalyzerProviderForKonan(
                 moduleContext, trace,
                 FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
-                context.config.configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!,
+                config.configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!,
                 additionalPackages
         ) {
-            initContainer(context.config)
+            initContainer(config)
         }.apply {
-            postprocessComponents(context, files)
+            postprocessComponents(context, files, config)
         }
 
         val analyzerForKonan = container.get<LazyTopDownAnalyzer>()
-        val project = context.config.project
+        val project = config.project
         val moduleDescriptor = moduleContext.module
         val analysisHandlerExtensions = AnalysisHandlerExtension.getInstances(project)
 

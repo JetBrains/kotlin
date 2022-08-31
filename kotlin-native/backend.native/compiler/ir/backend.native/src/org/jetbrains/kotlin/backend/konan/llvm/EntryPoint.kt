@@ -5,21 +5,25 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.backend.konan.TestRunnerKind
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
+import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind.PROGRAM
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
-internal fun findMainEntryPoint(context: Context): FunctionDescriptor? {
-
-    val config = context.config.configuration
+internal fun findMainEntryPoint(
+        config: CompilerConfiguration,
+        context: CommonBackendContext,
+): FunctionDescriptor? {
     if (config.get(KonanConfigKeys.PRODUCE) != PROGRAM) return null
 
     val entryPoint = FqName(config.get(KonanConfigKeys.ENTRY) ?: defaultEntryName(config))

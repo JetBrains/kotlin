@@ -14,8 +14,9 @@ import org.jetbrains.kotlin.backend.konan.llvm.FieldStorageKind
 import org.jetbrains.kotlin.backend.konan.llvm.needsGCRegistration
 import org.jetbrains.kotlin.backend.konan.llvm.storageKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -51,13 +52,15 @@ internal val IrField.shouldBeInitializedEagerly: Boolean
 
 // TODO: ExplicitlyExported for IR proto are not longer needed.
 internal class FileInitializersLowering(val context: Context) : FileLoweringPass {
+    private val config = context.config
+
     override fun lower(irFile: IrFile) {
         var requireGlobalInitializer = false
         var requireThreadLocalInitializer = false
         for (declaration in irFile.declarations) {
             val irField = (declaration as? IrField) ?: (declaration as? IrProperty)?.backingField
             if (irField == null || !irField.needsInitializationAtRuntime || irField.shouldBeInitializedEagerly) continue
-            if (irField.storageKind(context) != FieldStorageKind.THREAD_LOCAL) {
+            if (irField.storageKind(config) != FieldStorageKind.THREAD_LOCAL) {
                 requireGlobalInitializer = true
             } else {
                 requireThreadLocalInitializer = true // Either marked with thread local or only main thread visible.
@@ -108,6 +111,6 @@ internal class FileInitializersLowering(val context: Context) : FileLoweringPass
     }
 
     private val IrField.needsInitializationAtRuntime: Boolean
-        get() = hasNonConstInitializer || needsGCRegistration(context)
+        get() = hasNonConstInitializer || needsGCRegistration(config)
 
 }
