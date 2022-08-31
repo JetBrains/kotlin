@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.ir.overrides
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -17,18 +17,26 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-// This is basicly modelled after the inliner copier.
-class DeepCopyIrTreeWithSymbolsForFakeOverrides(typeArguments: Map<IrTypeParameterSymbol, IrType>) {
-
-    fun copy(irElement: IrElement, parent: IrClass): IrElement {
+// This is basically modelled after the inliner copier.
+class CopyIrTreeWithSymbolsForFakeOverrides(
+    private val overridableMember: IrOverridableMember,
+    typeArguments: Map<IrTypeParameterSymbol, IrType>,
+    private val parent: IrClass,
+    unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
+) {
+    fun copy(): IrOverridableMember {
         // Create new symbols.
-        irElement.acceptVoid(symbolRemapper)
+        overridableMember.acceptVoid(symbolRemapper)
 
         // Make symbol remapper aware of the callsite's type arguments.
         // Copy IR.
-        val result = irElement.transform(if (parent.isEffectivelyExternal()) copierMakingExternal else copier, data = null)
+        val result = overridableMember.transform(
+            if (parent.isEffectivelyExternal()) copierMakingExternal else copier,
+            data = null
+        ) as IrOverridableMember
 
         result.patchDeclarationParents(parent)
+
         return result
     }
 
@@ -82,10 +90,14 @@ class DeepCopyIrTreeWithSymbolsForFakeOverrides(typeArguments: Map<IrTypeParamet
             typeArguments,
             NullDescriptorsRemapper
         )
+
     private val copier = FakeOverrideCopier(
         symbolRemapper,
         FakeOverrideTypeRemapper(symbolRemapper, typeArguments),
-        SymbolRenamer.DEFAULT
+        SymbolRenamer.DEFAULT,
+        makeExternal = false,
+        parent,
+        unimplementedOverridesStrategy
     )
 
     private val copierMakingExternal = FakeOverrideCopier(
@@ -93,5 +105,7 @@ class DeepCopyIrTreeWithSymbolsForFakeOverrides(typeArguments: Map<IrTypeParamet
         FakeOverrideTypeRemapper(symbolRemapper, typeArguments),
         SymbolRenamer.DEFAULT,
         makeExternal = true,
+        parent,
+        unimplementedOverridesStrategy
     )
 }

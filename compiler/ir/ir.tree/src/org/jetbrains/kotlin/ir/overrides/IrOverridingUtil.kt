@@ -17,10 +17,12 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
 
-abstract class FakeOverrideBuilderStrategy(private val friendModules: Map<String, Collection<String>>) {
-
+abstract class FakeOverrideBuilderStrategy(
+    private val friendModules: Map<String, Collection<String>>,
+    private val unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
+) {
     open fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember =
-        buildFakeOverrideMember(superType, member, clazz, friendModules)
+        buildFakeOverrideMember(superType, member, clazz, friendModules, unimplementedOverridesStrategy)
 
     fun linkFakeOverride(fakeOverride: IrOverridableMember, compatibilityMode: Boolean) {
         when (fakeOverride) {
@@ -61,11 +63,13 @@ private fun isInFriendModules(
     return toModuleName in fromFriends
 }
 
-fun buildFakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember {
-    return buildFakeOverrideMember(superType, member, clazz, emptyMap())
-}
-
-fun buildFakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass, friendModules: Map<String, Collection<String>>): IrOverridableMember {
+fun buildFakeOverrideMember(
+    superType: IrType,
+    member: IrOverridableMember,
+    clazz: IrClass,
+    friendModules: Map<String, Collection<String>> = emptyMap(),
+    unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy = IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
+): IrOverridableMember {
     require(superType is IrSimpleType) { "superType is $superType, expected IrSimpleType" }
     val classifier = superType.classifier
     require(classifier is IrClassSymbol) { "superType classifier is not IrClassSymbol: $classifier" }
@@ -86,13 +90,12 @@ fun buildFakeOverrideMember(superType: IrType, member: IrOverridableMember, claz
         substitutionMap[tp.symbol] = ta.type
     }
 
-    val copier = DeepCopyIrTreeWithSymbolsForFakeOverrides(substitutionMap)
-    val deepCopyFakeOverride = copier.copy(member, clazz) as IrOverridableMember
-    deepCopyFakeOverride.parent = clazz
-    if (deepCopyFakeOverride.isPrivateToThisModule(clazz, classifier.owner, friendModules))
-        deepCopyFakeOverride.visibility = DescriptorVisibilities.INVISIBLE_FAKE
-
-    return deepCopyFakeOverride
+    return CopyIrTreeWithSymbolsForFakeOverrides(member, substitutionMap, clazz, unimplementedOverridesStrategy)
+        .copy()
+        .apply {
+            if (isPrivateToThisModule(clazz, classifier.owner, friendModules))
+                visibility = DescriptorVisibilities.INVISIBLE_FAKE
+        }
 }
 
 

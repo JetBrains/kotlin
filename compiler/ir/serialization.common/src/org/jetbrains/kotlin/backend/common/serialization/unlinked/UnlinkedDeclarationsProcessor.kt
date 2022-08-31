@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkage
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedIrElementRenderer.appendDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedIrElementRenderer.renderError
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UsedClassifierSymbolStatus.Companion.isUnlinked
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -60,31 +59,11 @@ internal class UnlinkedDeclarationsProcessor(
     fun signatureTransformer(): IrElementTransformerVoid = SignatureTransformer()
 
     private inner class SignatureTransformer : IrElementTransformerVoid() {
-        private val implementedFakeOverrideProperties = hashSetOf<IrProperty>()
-
-        private val IrFunction.isAccessorOfImplementedFakeOverrideProperty: Boolean
-            get() = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner in implementedFakeOverrideProperties
-
-        override fun visitProperty(declaration: IrProperty): IrStatement {
-            val newProperty = declaration.replaceIfUnimplementedFakeOverride()
-
-            val isImplementedFakeOverride = newProperty != declaration
-            if (isImplementedFakeOverride) implementedFakeOverrideProperties += newProperty
-
-            newProperty.transformChildrenVoid()
-
-            if (isImplementedFakeOverride) implementedFakeOverrideProperties -= newProperty
-
-            return newProperty
-        }
-
         override fun visitFunction(declaration: IrFunction): IrStatement {
-            val newFunction = declaration.replaceIfUnimplementedFakeOverride()
-            val removedUnlinkedTypes = newFunction.fixUnlinkedTypes()
+            val removedUnlinkedTypes = declaration.fixUnlinkedTypes()
+            val isImplementedFakeOverride = declaration.origin == MISSING_ABSTRACT_CALLABLE_MEMBER_IMPLEMENTATION
 
-            val isImplementedFakeOverride = newFunction != declaration || declaration.isAccessorOfImplementedFakeOverrideProperty
-
-            return newFunction.transformBodyIfNecessary(isImplementedFakeOverride, removedUnlinkedTypes)
+            return declaration.transformBodyIfNecessary(isImplementedFakeOverride, removedUnlinkedTypes)
         }
 
         override fun visitField(declaration: IrField): IrStatement {
@@ -109,19 +88,6 @@ internal class UnlinkedDeclarationsProcessor(
                 declaration.transformChildrenVoid()
             }
             return declaration
-        }
-
-        /**
-         * Replaces an [IrProperty] or [IrSimpleFunction] that is abstract fake override in non-abstract class
-         * by the corresponding non-abstract IR element.
-         */
-        private fun <T : IrDeclaration> T.replaceIfUnimplementedFakeOverride(): T {
-            if (this !is IrOverridableDeclaration<*> || !isFakeOverride || modality != Modality.ABSTRACT) return this
-
-            val clazz = parentAsClass
-            if (clazz.modality == Modality.ABSTRACT || clazz.modality == Modality.SEALED) return this
-
-            return deepCopyWithImplementedFakeOverrides()
         }
 
         /**
@@ -363,6 +329,9 @@ internal class UnlinkedDeclarationsProcessor(
 
     companion object {
         private val ERROR_ORIGIN = object : IrStatementOriginImpl("LINKAGE ERROR") {}
+
+        val MISSING_ABSTRACT_CALLABLE_MEMBER_IMPLEMENTATION =
+            object : IrDeclarationOriginImpl("MISSING_ABSTRACT_CALLABLE_MEMBER_IMPLEMENTATION", isSynthetic = true) {}
     }
 }
 
