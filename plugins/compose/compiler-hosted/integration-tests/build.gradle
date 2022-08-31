@@ -79,12 +79,6 @@ android {
     namespace "androidx.compose.runtime.tests"
 }
 
-tasks.withType(KotlinCompile).configureEach {
-    kotlinOptions {
-        freeCompilerArgs += ["-opt-in=kotlin.RequiresOptIn"]
-    }
-}
-
 androidx {
     name = "AndroidX Compiler CLI Tests"
     publish = Publish.NONE
