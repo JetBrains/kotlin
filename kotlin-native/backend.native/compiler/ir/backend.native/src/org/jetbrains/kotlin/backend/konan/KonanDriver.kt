@@ -49,22 +49,34 @@ class KonanDriver(
         }
 
         val config = KonanConfig(project, configuration)
-        // TODO: add allocators and frontend
-        if (config.produce == CompilerOutputKind.LIBRARY) {
-            usingNativeMemoryAllocator {
-                usingJvmCInteropCallbacks {
-                    try {
-                        TopLevelPhasesBuilder(config, arguments).buildKlib(config, environment)
-                    } finally {
+        when (config.produce) {
+            CompilerOutputKind.LIBRARY -> {
+                usingNativeMemoryAllocator {
+                    usingJvmCInteropCallbacks {
+                        try {
+                            TopLevelPhasesBuilder(config, arguments).buildKlib(config, environment)
+                        } finally {
+                        }
                     }
                 }
             }
-        } else {
-            if (fileNames == null) {
-                runTopLevelPhases(config, environment)
-            } else {
-                fileNames.forEach { buildFileCache(it, CompilerOutputKind.PRELIMINARY_CACHE) }
-                fileNames.forEach { buildFileCache(it, configuration.get(KonanConfigKeys.PRODUCE)!!) }
+            CompilerOutputKind.FRAMEWORK -> {
+                usingNativeMemoryAllocator {
+                    usingJvmCInteropCallbacks {
+                        try {
+                            TopLevelPhasesBuilder(config, arguments).buildFramework(config, environment)
+                        } finally {
+                        }
+                    }
+                }
+            }
+            else -> {
+                if (fileNames == null) {
+                    runTopLevelPhases(config, environment)
+                } else {
+                    fileNames.forEach { buildFileCache(it, CompilerOutputKind.PRELIMINARY_CACHE) }
+                    fileNames.forEach { buildFileCache(it, configuration.get(KonanConfigKeys.PRODUCE)!!) }
+                }
             }
         }
     }

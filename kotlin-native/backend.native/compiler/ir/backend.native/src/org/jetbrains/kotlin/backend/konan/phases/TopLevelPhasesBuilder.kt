@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
@@ -186,7 +187,7 @@ class TopLevelPhasesBuilder(
     fun buildKlib(config: KonanConfig, environment: KotlinCoreEnvironment) {
 
         // We don't need boolean input, but phasing machinery is too complex, so keep this hack for now.
-        val fePhase = NamedCompilerPhase<FrontendContext, Boolean>(
+        val frontendPhase = NamedCompilerPhase<FrontendContext, Boolean>(
                 "FrontEnd", "Frontend",
                 lower = object : SameTypeCompilerPhase<FrontendContext, Boolean> {
                     override fun invoke(
@@ -270,7 +271,7 @@ class TopLevelPhasesBuilder(
                 prerequisite = setOf()
         )
 
-        val psiToIr = NamedCompilerPhase<PsiToIrContext, Unit>(
+        val irGen = NamedCompilerPhase<PsiToIrContext, Unit>(
                 "IRGen",
                 "IR generation",
                 nlevels = 1,
@@ -279,7 +280,7 @@ class TopLevelPhasesBuilder(
                         destroySymbolTablePhase
         )
 
-        val middleEndPhase = NamedCompilerPhase<KlibProducingContext, Unit>(
+        val generateKlib = NamedCompilerPhase<KlibProducingContext, Unit>(
                 "GenerateKlib",
                 "Library serialization",
                 nlevels = 1,
@@ -292,27 +293,123 @@ class TopLevelPhasesBuilder(
 
         val frontendContext: FrontendContext = context
         frontendContext.environment = environment
-        fePhase.invokeToplevel(createPhaseConfig(fePhase, arguments, messageCollector), frontendContext, true)
+        frontendPhase.invokeToplevel(createPhaseConfig(frontendPhase, arguments, messageCollector), frontendContext, true)
 
         val psiToIrContext: PsiToIrContext = context
-        psiToIr.invokeToplevel(createPhaseConfig(psiToIr, arguments, messageCollector), psiToIrContext, Unit)
+        irGen.invokeToplevel(createPhaseConfig(irGen, arguments, messageCollector), psiToIrContext, Unit)
 
         // TODO: Create new specialized context instead
         val klibProducingContext: KlibProducingContext = context
-        middleEndPhase.invokeToplevel(createPhaseConfig(middleEndPhase, arguments, messageCollector), klibProducingContext, Unit)
+        generateKlib.invokeToplevel(createPhaseConfig(generateKlib, arguments, messageCollector), klibProducingContext, Unit)
+
+        val time = frontendPhase.time + irGen.time + generateKlib.time
+        println("It took ${time}")
     }
 
-//    fun build(): CompilerPhase<*, Unit, Unit> = when (outputKind) {
-//        CompilerOutputKind.PROGRAM -> buildProgramTopLevelPhases()
-//        CompilerOutputKind.DYNAMIC -> TODO()
-//        CompilerOutputKind.STATIC -> TODO()
-//        CompilerOutputKind.FRAMEWORK -> TODO()
-//        CompilerOutputKind.LIBRARY -> buildKlibTopLevelPhases()
-//        CompilerOutputKind.BITCODE -> TODO()
-//        CompilerOutputKind.DYNAMIC_CACHE -> TODO()
-//        CompilerOutputKind.STATIC_CACHE -> buildStaticCacheTopLevelPhases()
-//        CompilerOutputKind.PRELIMINARY_CACHE -> TODO()
-//    }
+    fun buildFramework(config: KonanConfig, environment: KotlinCoreEnvironment) {
+
+        var time = 0L
+
+        // We don't need boolean input, but phasing machinery is too complex, so keep this hack for now.
+        val frontendPhase = NamedCompilerPhase<FrontendContext, Boolean>(
+                "FrontEnd", "Frontend",
+                lower = object : SameTypeCompilerPhase<FrontendContext, Boolean> {
+                    override fun invoke(
+                            phaseConfig: PhaseConfig,
+                            phaserState: PhaserState<Boolean>,
+                            context: FrontendContext,
+                            input: Boolean
+                    ): Boolean {
+                        return context.frontendPhase(config)
+                    }
+                },
+        )
+
+        val createSymbolTablePhase = myLower2<PsiToIrContext, Unit>(
+                op = { context, _ ->
+                    context.symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
+                },
+                name = "CreateSymbolTable",
+                description = "Create SymbolTable",
+                prerequisite = emptySet()
+        )
+
+        val objCExportPhase = myLower2<ObjCExportContext, Unit>(
+                op = { context, _ ->
+                    context.objCExport = ObjCExport(context, context, context.symbolTable!!, context.config)
+                },
+                name = "ObjCExport",
+                description = "Objective-C header generation",
+                prerequisite = setOf(createSymbolTablePhase)
+        )
+
+        val psiToIrPhase = myLower2<PsiToIrContext, Unit>(
+                op = { context, _ ->
+                    psiToIr(context,
+                            config,
+                            context.symbolTable!!,
+                            isProducingLibrary = true,
+                            useLinkerWhenProducingLibrary = false)
+                },
+                name = "Psi2Ir",
+                description = "Psi to IR conversion and klib linkage",
+                prerequisite = setOf(createSymbolTablePhase)
+        )
+
+        val destroySymbolTablePhase = myLower2<PsiToIrContext, Unit>(
+                op = { context, _ ->
+                    context.symbolTable = null // TODO: invalidate symbolTable itself.
+                },
+                name = "DestroySymbolTable",
+                description = "Destroy SymbolTable",
+                prerequisite = setOf(createSymbolTablePhase)
+        )
+
+        val context = Context(config)
+        val messageCollector = config.configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY) ?: MessageCollector.NONE
+
+        val frontendContext: FrontendContext = context
+        frontendContext.environment = environment
+        frontendPhase.invokeToplevel(createPhaseConfig(frontendPhase, arguments, messageCollector), frontendContext, true)
+        time += frontendPhase.time
+        if (config.omitFrameworkBinary) {
+            val irGen = NamedCompilerPhase<ObjCExportContext, Unit>(
+                    "IRGen",
+                    "IR generation",
+                    nlevels = 1,
+                    lower = createSymbolTablePhase then
+                            objCExportPhase then
+                            destroySymbolTablePhase
+            )
+            val produceFramework = myLower2<ObjCExportContext, Unit>(
+                    op = { ctx, _ ->
+                        produceFrameworkInterface(ctx.objCExport)
+                    },
+                    name = "ProduceFramework",
+                    description = "Create Apple Framework"
+            )
+            val objCExportContext: ObjCExportContext = context
+            irGen.invokeToplevel(createPhaseConfig(irGen, arguments, messageCollector), objCExportContext, Unit)
+            time += irGen.time
+            produceFramework.invokeToplevel(createPhaseConfig(produceFramework, arguments, messageCollector), objCExportContext, Unit)
+            time += produceFramework.time
+        } else {
+            val irGen = NamedCompilerPhase<ObjCExportContext, Unit>(
+                    "IRGen",
+                    "IR generation",
+                    nlevels = 1,
+                    lower = createSymbolTablePhase then
+                            objCExportPhase then
+                            psiToIrPhase then
+                            destroySymbolTablePhase
+            )
+            val psiToIrContext: ObjCExportContext = context
+            irGen.invokeToplevel(createPhaseConfig(irGen, arguments, messageCollector), psiToIrContext, Unit)
+            time += irGen.time
+        }
+
+        println("It took ${time}")
+    }
 
     private fun getDumpTestsPhase(testDumpFile: File): NamedCompilerPhase<Context, IrModuleFragment> = makeCustomPhase<Context, IrModuleFragment>(
             name = "dumpTestsPhase",

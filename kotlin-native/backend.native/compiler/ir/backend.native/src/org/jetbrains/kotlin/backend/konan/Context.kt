@@ -86,7 +86,9 @@ internal class Context(
         LlvmCodegenContext,
         BridgesAwareContext,
         LocalClassNameAwareContext,
-        LtoAwareContext {
+        LtoAwareContext,
+        ObjCExportContext
+{
     // TopDownAnalyzer Context
     override lateinit var frontendServices: FrontendServices
 
@@ -98,7 +100,7 @@ internal class Context(
     // Psi To IR context
     override var symbolTable: SymbolTable? = null
 
-    lateinit var objCExport: ObjCExport
+    override lateinit var objCExport: ObjCExport
 
     override val objCExportNamer: ObjCExportNamer
         get() = objCExport.exportedInterface!!.namer

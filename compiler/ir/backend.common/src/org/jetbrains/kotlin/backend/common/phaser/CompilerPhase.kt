@@ -77,6 +77,9 @@ class NamedCompilerPhase<in Context : CommonBackendContext, Data>(
     private val actions: Set<Action<Data, Context>> = emptySet(),
     private val nlevels: Int = 0
 ) : SameTypeCompilerPhase<Context, Data> {
+
+    var time: Long = 0
+
     override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Data>, context: Context, input: Data): Data {
         if (this !in phaseConfig.enabled) {
             return input
@@ -133,6 +136,8 @@ class NamedCompilerPhase<in Context : CommonBackendContext, Data>(
                 lower.invoke(phaseConfig, phaserState, context, source)
             }
         }
+
+        time = msec
         // TODO: use a proper logger
         println("${"\t".repeat(phaserState.depth)}$description: $msec msec")
         return result!!
