@@ -48,7 +48,14 @@ class JsIrLinker(
         symbol
     }) {
 
-    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, JsManglerIr, IrTypeSystemContextImpl(builtIns), friendModules)
+    override val fakeOverrideBuilder = FakeOverrideBuilder(
+        linker = this,
+        symbolTable = symbolTable,
+        mangler = JsManglerIr,
+        typeSystem = IrTypeSystemContextImpl(builtIns),
+        friendModules = friendModules,
+        partialLinkageEnabled = unlinkedDeclarationsSupport.allowUnboundSymbols
+    )
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
         moduleDescriptor === moduleDescriptor.builtIns.builtInsModule
