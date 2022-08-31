@@ -545,7 +545,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
             createImplicitParameterDeclarationWithWrappedDescriptor()
             copyAttributes(irFunctionReference)
-            if (!isLightweightLambda) {
+            if (isHeavyweightLambda) {
                 metadata = irFunctionReference.symbol.owner.metadata
             }
         }

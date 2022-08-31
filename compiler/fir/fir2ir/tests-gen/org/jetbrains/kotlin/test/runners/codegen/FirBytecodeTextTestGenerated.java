@@ -959,6 +959,12 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("noMetadata.kt")
+        public void testNoMetadata() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/callableReference/noMetadata.kt");
+        }
+
+        @Test
         @TestMetadata("unboundFieldReferenceInInline.kt")
         public void testUnboundFieldReferenceInInline() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/callableReference/unboundFieldReferenceInInline.kt");
