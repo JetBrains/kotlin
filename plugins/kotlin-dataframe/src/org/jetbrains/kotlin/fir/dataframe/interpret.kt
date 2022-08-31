@@ -157,8 +157,8 @@ fun <T> MyFirExpressionResolutionExtension.interpret(
                 } else {
                     val declarationSymbols =
                         ((schemaTypeArg.type as ConeClassLikeType).toSymbol(session) as FirRegularClassSymbol).declarationSymbols
-                    val columns = declarationSymbols.filterIsInstance<FirPropertySymbol>().map {
-                        simpleCol(it)
+                    val columns = declarationSymbols.filterIsInstance<FirPropertySymbol>().map { propertySymbol ->
+                        columnOf(propertySymbol)
                     }
                     PluginDataFrameSchema(columns)
                 }.let { Interpreter.Success(it) }
@@ -217,23 +217,30 @@ private fun KotlinTypeFacade.extracted(result: FirPropertyAccessExpression): Lis
 }
 
 
-private fun MyFirExpressionResolutionExtension.simpleCol(it: FirPropertySymbol): SimpleCol =
+private fun MyFirExpressionResolutionExtension.columnOf(it: FirPropertySymbol): SimpleCol =
     when (it.resolvedReturnType.classId) {
+        Names.DF_CLASS_ID -> {
+            val nestedColumns = it.resolvedReturnType.typeArguments[0].type
+                ?.toRegularClassSymbol(session)
+                ?.declarationSymbols
+                ?.filterIsInstance<FirPropertySymbol>()
+                ?.map { columnOf(it) }
+                ?: emptyList()
+
+            SimpleFrameColumn(it.name.identifier, nestedColumns, false, anyDataFrame)
+        }
         Names.DATA_ROW_CLASS_ID -> {
             val nestedColumns = it.resolvedReturnType.typeArguments[0].type
                 ?.toRegularClassSymbol(session)
                 ?.declarationSymbols
                 ?.filterIsInstance<FirPropertySymbol>()
-                ?.map { simpleCol(it) }
+                ?.map { columnOf(it) }
                 ?: emptyList()
             SimpleColumnGroup(it.name.identifier, nestedColumns, anyRow)
         }
 
         else -> SimpleCol(
-            it.name.identifier, TypeApproximationImpl(
-                it.resolvedReturnType.classId!!.asFqNameString(),
-                it.resolvedReturnType.isMarkedNullable
-            )
+            it.name.identifier, TypeApproximation(it.resolvedReturnType)
         )
     }
 
