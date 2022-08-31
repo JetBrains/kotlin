@@ -26,10 +26,10 @@ import java.io.File
 internal fun findMacros(
         nativeIndex: NativeIndexImpl,
         compilation: CompilationWithPCH,
-        translationUnits: Map<String, CXTranslationUnit>,
+        translationUnit: CXTranslationUnit,
         headers: Set<CXFile?>
 ) {
-    val names = collectMacroNames(nativeIndex, translationUnits, headers)
+    val names = collectMacroNames(nativeIndex, translationUnit, headers)
     // TODO: apply user-defined filters.
     val macros = expandMacros(compilation, names, typeConverter = { nativeIndex.convertType(it) })
 
@@ -188,7 +188,7 @@ private fun reparseWithCodeSnippets(library: CompilationWithPCH,
             codeSnippetLines.forEach { writer.appendLine(it) }
         }
     }
-    clang_reparseTranslationUnit(translationUnit, 0, null, 0)
+    clang_reparseTranslationUnit(translationUnit, 0, null, CXTranslationUnit_DetailedPreprocessingRecord) // CXTranslationUnit_DetailedPreprocessingRecord
 }
 
 /**
@@ -291,27 +291,25 @@ enum class VisitorState {
     EXPECT_END, INVALID
 }
 
-private fun collectMacroNames(nativeIndex: NativeIndexImpl, translationUnits: Map<String, CXTranslationUnit>, headers: Set<CXFile?>): List<String> {
+private fun collectMacroNames(nativeIndex: NativeIndexImpl, translationUnit: CXTranslationUnit, headers: Set<CXFile?>): List<String> {
     val result = mutableSetOf<String>()
 
-    translationUnits.values.forEach { translationUnit ->
-        visitChildren(translationUnit) { cursor, _ ->
-            val file = memScoped {
-                val fileVar = alloc<CXFileVar>()
-                clang_getFileLocation(clang_getCursorLocation(cursor), fileVar.ptr, null, null, null)
-                fileVar.value
-            }
-
-            if (cursor.kind == CXCursorKind.CXCursor_MacroDefinition &&
-                    nativeIndex.library.includesDeclaration(cursor) &&
-                    file != null && // Builtin macros mostly seem to be useless.
-                    file in headers &&
-                    canMacroBeConstant(cursor)) {
-                val spelling = getCursorSpelling(cursor)
-                result.add(spelling)
-            }
-            CXChildVisitResult.CXChildVisit_Continue
+    visitChildren(translationUnit) { cursor, _ ->
+        val file = memScoped {
+            val fileVar = alloc<CXFileVar>()
+            clang_getFileLocation(clang_getCursorLocation(cursor), fileVar.ptr, null, null, null)
+            fileVar.value
         }
+
+        if (cursor.kind == CXCursorKind.CXCursor_MacroDefinition &&
+                nativeIndex.library.includesDeclaration(cursor) &&
+                file != null && // Builtin macros mostly seem to be useless.
+                file in headers &&
+                canMacroBeConstant(cursor)) {
+            val spelling = getCursorSpelling(cursor)
+            result.add(spelling)
+        }
+        CXChildVisitResult.CXChildVisit_Continue
     }
 
     return result.toList()
