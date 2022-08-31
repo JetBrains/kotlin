@@ -1000,6 +1000,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
         public void testBasic() throws Exception {
             runTest("compiler/testData/loadJava/compiledKotlin/coroutines/Basic.kt");
         }
+
+        @TestMetadata("TypeAliasFTSuspendWithReceiver.kt")
+        public void testTypeAliasFTSuspendWithReceiver() throws Exception {
+            runTest("compiler/testData/loadJava/compiledKotlin/coroutines/TypeAliasFTSuspendWithReceiver.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/dataClass")
