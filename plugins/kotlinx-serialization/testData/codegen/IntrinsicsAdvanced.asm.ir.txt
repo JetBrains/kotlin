@@ -16,11 +16,15 @@ public final class IntrinsicsAdvancedKt : java/lang/Object {
         LINENUMBER (18)
           ALOAD (0)
           ASTORE (2)
-          BIPUSH (7)
+          BIPUSH (6)
           LDC (T)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, reifiedOperationMarker, (ILjava/lang/String;)V)
+          ACONST_NULL
+          LDC (kotlinx.serialization.serializer.withModule)
+          INVOKESTATIC (kotlin/jvm/internal/MagicApiIntrinsics, voidMagicApiCall, (Ljava/lang/Object;)V)
           ALOAD (2)
-          INVOKESTATIC (kotlinx/serialization/SerializersKt, serializer, (Lkotlinx/serialization/modules/SerializersModule;)Lkotlinx/serialization/KSerializer;)
+          SWAP
+          INVOKESTATIC (kotlinx/serialization/SerializersKt, serializer, (Lkotlinx/serialization/modules/SerializersModule;Lkotlin/reflect/KType;)Lkotlinx/serialization/KSerializer;)
           ARETURN
         LABEL (L2)
     }

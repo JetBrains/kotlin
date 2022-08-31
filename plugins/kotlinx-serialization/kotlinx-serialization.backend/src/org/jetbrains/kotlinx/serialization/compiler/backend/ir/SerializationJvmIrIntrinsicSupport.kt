@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
-import org.jetbrains.kotlin.codegen.inline.newMethodNodeWithCorrectStackSize
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.pluginIntrinsicsMarkerMethod
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.pluginIntrinsicsMarkerOwner
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.pluginIntrinsicsMarkerSignature
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -51,7 +53,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.InsnList
-import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
+import org.jetbrains.org.objectweb.asm.tree.LdcInsnNode
 import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
 
 class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContext) : SerializationBaseContext {
@@ -60,6 +62,11 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
 
         class WithModule(val storedIndex: Int) :
             IntrinsicType(stubCallDescriptorWithModule)
+
+        fun magicMarkerString(): String = magicMarkerStringPrefix + when(this) {
+            is Simple -> "simple"
+            is WithModule -> "withModule"
+        }
     }
 
     companion object {
@@ -78,12 +85,15 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
         }
 
         val serializersModuleType: Type = Type.getObjectType("kotlinx/serialization/modules/SerializersModule")
+        val kTypeType: Type = AsmTypes.K_TYPE
 
-        val stubCallDescriptorWithModule = "(${serializersModuleType.descriptor})${kSerializerType.descriptor}"
-        val stubCallDescriptor = "()${kSerializerType.descriptor}"
+        val stubCallDescriptorWithModule = "(${serializersModuleType.descriptor}${kTypeType.descriptor})${kSerializerType.descriptor}"
+        val stubCallDescriptor = "(${kTypeType.descriptor})${kSerializerType.descriptor}"
         const val serializersKtInternalName = "kotlinx/serialization/SerializersKt"
         const val callMethodName = "serializer"
         const val noCompiledSerializerMethodName = "noCompiledSerializer"
+
+        const val magicMarkerStringPrefix = "kotlinx.serialization.serializer."
 
     }
 
@@ -154,54 +164,53 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
         iv.visitFieldInsn(Opcodes.GETSTATIC, ownerType.internalName, targetField.name.asString(), fieldType.descriptor)
     }
 
-    fun applyPluginDefinedReifiedOperationMarker(
-        insn: MethodInsnNode,
+    /**
+     * Instructions at the moment of call:
+     *
+     * -3: iconst(6) // TYPE_OF
+     * -2: aconst(typeParamName) // TYPE_OF
+     * -1: invokestatic(reifiedOperationMarker)
+     * < instructions from instructionAdapter will be inserted here by inliner >
+     *  0 (stubConstNull): aconst(null)
+     * 1: aconst(kotlinx.serialization.serializer.<operationType>)
+     * 2: invokestatic(voidMagicApiCall)
+     * 3: aload(moduleVar) // if withModule
+     * 4: swap // if withModule
+     * 5: invokestatic(kotlinx.serialization.serializer(module?, kType)
+     *
+     * We need to remove instructions from 1 to 5
+     * Instructions 0, -1 -2 and -3 would be removed by inliner.
+     */
+    fun rewritePluginDefinedReifiedOperationMarker(
+        v: InstructionAdapter,
+        stubConstNull: AbstractInsnNode,
         instructions: InsnList,
-        type: IrType,
-    ): Int {
-        val intrinsicType = getOperationTypeFromInsn(insn) ?: return -1
-        val newMethodNode = newMethodNodeWithCorrectStackSize {
-            generateSerializerForType(type, it, intrinsicType)
-        }
-
-        when (intrinsicType) {
-            is IntrinsicType.Simple -> instructions.remove(insn.next)
-            is IntrinsicType.WithModule -> {
-                instructions.remove(insn.next.next)
-                instructions.remove(insn.next)
-            }
-        }
-        instructions.insert(insn, newMethodNode.instructions)
-
-        return newMethodNode.maxStack
+        type: IrType
+    ): Boolean {
+        val operationTypeStr = (stubConstNull.next as LdcInsnNode).cst as String
+        if (!operationTypeStr.startsWith(magicMarkerStringPrefix)) return false
+        val operationType = if (operationTypeStr.endsWith("withModule")) {
+            val aload = stubConstNull.next.next.next as VarInsnNode
+            val storedVar = aload.`var`
+            instructions.remove(aload.next)
+            instructions.remove(aload)
+            IntrinsicType.WithModule(storedVar)
+        } else IntrinsicType.Simple
+        // Remove other instructions
+        instructions.remove(stubConstNull.next.next.next)
+        instructions.remove(stubConstNull.next.next)
+        instructions.remove(stubConstNull.next)
+        // generate serializer
+        generateSerializerForType(type, v, operationType)
+        return true
     }
 
-    private fun getOperationTypeFromInsn(insn: MethodInsnNode): IntrinsicType? {
-        // insn is reification marker
-        // insn.next is serializer() OR load(module)
-        // insn.next.next is serializer(module) if insn.next was load(module)
-        val mayBeSerializerModuleCall: AbstractInsnNode? = insn.next?.next
-        val next = insn.next ?: error("Reification marker cannot be the last instruction in method")
-        if (
-            mayBeSerializerModuleCall is MethodInsnNode
-            && mayBeSerializerModuleCall.opcode == Opcodes.INVOKESTATIC
-            && mayBeSerializerModuleCall.owner == serializersKtInternalName
-            && mayBeSerializerModuleCall.name == callMethodName
-            && mayBeSerializerModuleCall.desc == stubCallDescriptorWithModule
-        ) {
-            val loadIns = next as? VarInsnNode ?: error("Expected load(SerializersModule) instruction")
-            // It's possible to also check opcode, but that doesn't seem necessary
-            return IntrinsicType.WithModule(loadIns.`var`)
-        } else if (next is MethodInsnNode
-            && next.opcode == Opcodes.INVOKESTATIC
-            && next.owner == serializersKtInternalName
-            && next.name == callMethodName
-            && next.desc == stubCallDescriptor
-        ) {
-            return IntrinsicType.Simple
-        } else return null // May be reification marker from other plugin
-    }
-
+    /**
+     * This function produces identical to TYPE_OF reification marker. This is needed for compatibility reasons:
+     * old compiler should be able to inline and run newer versions of kotlinx-serialization or other libraries.
+     *
+     * Operation detection in new compilers performed by voidMagicApiCall.
+     */
     private fun InstructionAdapter.putReifyMarkerIfNeeded(type: KotlinTypeMarker, intrinsicType: IntrinsicType): Boolean =
         with(typeSystemContext) {
             val typeDescriptor = type.typeConstructor().getTypeParameterClassifier()
@@ -209,12 +218,17 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                 ReifiedTypeInliner.putReifiedOperationMarkerIfNeeded(
                     typeDescriptor,
                     false,
-                    ReifiedTypeInliner.OperationKind.PLUGIN_DEFINED,
+                    ReifiedTypeInliner.OperationKind.TYPE_OF,
                     this@putReifyMarkerIfNeeded,
                     typeSystemContext
                 )
+                aconst(null)
+                aconst(intrinsicType.magicMarkerString())
+                invokestatic(pluginIntrinsicsMarkerOwner, pluginIntrinsicsMarkerMethod, pluginIntrinsicsMarkerSignature, false)
                 if (intrinsicType is IntrinsicType.WithModule) {
+                    // Force emit load instruction so we can retrieve var index later
                     load(intrinsicType.storedIndex, serializersModuleType)
+                    swap()
                 }
                 invokestatic(serializersKtInternalName, callMethodName, intrinsicType.methodDescriptor, false)
                 return true
@@ -317,7 +331,7 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
             signature?.append(kSerializerType.descriptor)
         }
 
-        val serializer = maybeSerializer ?: iv.run {
+        val serializer = maybeSerializer ?: iv.run {// insert noCompilerSerializer(module, kClass, arguments)
             require(intrinsicType is IntrinsicType.WithModule) // SIMPLE is covered in previous if
             // SerializersModule
             load(intrinsicType.storedIndex, serializersModuleType)

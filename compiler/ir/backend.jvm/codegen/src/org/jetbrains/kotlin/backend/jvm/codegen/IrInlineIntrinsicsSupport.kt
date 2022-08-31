@@ -32,8 +32,8 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Type.INT_TYPE
 import org.jetbrains.org.objectweb.asm.Type.VOID_TYPE
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.InsnList
-import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 
 class IrInlineIntrinsicsSupport(
     private val classCodegen: ClassCodegen,
@@ -127,17 +127,7 @@ class IrInlineIntrinsicsSupport(
             .report(JvmBackendErrors.TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND, typeParameterName.asString())
     }
 
-    override fun applyPluginDefinedReifiedOperationMarker(
-        insn: MethodInsnNode,
-        instructions: InsnList,
-        type: IrType,
-        asmType: Type
-    ): Int = pluginExtensions.maxOfOrNull {
-        it.applyPluginDefinedReifiedOperationMarker(
-            insn,
-            instructions,
-            type,
-            classCodegen.context
-        )
-    } ?: -1
+    override fun rewritePluginDefinedOperationMarker(v: InstructionAdapter, next: AbstractInsnNode, instructions: InsnList, type: IrType): Boolean {
+        return pluginExtensions.any { it.rewritePluginDefinedOperationMarker(v, next, instructions, type, classCodegen.context) }
+    }
 }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.extensions
 
-import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
@@ -34,8 +33,9 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmI
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.InsnList
-import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -146,16 +146,17 @@ open class SerializationLoweringExtension @JvmOverloads constructor(
             override fun getIntrinsic(symbol: IrFunctionSymbol): IntrinsicMethod? =
                 SerializationJvmIrIntrinsicSupport.intrinsicForMethod(symbol.owner)
 
-            override fun applyPluginDefinedReifiedOperationMarker(
-                insn: MethodInsnNode,
+            override fun rewritePluginDefinedOperationMarker(
+                v: InstructionAdapter,
+                next: AbstractInsnNode,
                 instructions: InsnList,
                 type: IrType,
                 jvmBackendContext: JvmBackendContext
-            ): Int = SerializationJvmIrIntrinsicSupport(jvmBackendContext).applyPluginDefinedReifiedOperationMarker(
-                insn,
-                instructions,
-                type,
-            )
+            ): Boolean {
+                return SerializationJvmIrIntrinsicSupport(jvmBackendContext).rewritePluginDefinedReifiedOperationMarker(
+                    v, next, instructions, type
+                )
+            }
         }
     }
 }

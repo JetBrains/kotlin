@@ -42,22 +42,6 @@ interface ExpressionCodegenExtension {
      */
     fun applyFunction(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: Context): StackValue? = null
 
-    /**
-     * Called when inliner encounters [ReifiedTypeInliner.OperationKind.PLUGIN_DEFINED] marker
-     * to perform extension-specific operation with reified type parameter.
-     *
-     * @return Required stack size for method after inlining is performed, 0 if the size is unknown, or -1 if extension ignores this marker
-     */
-    fun applyPluginDefinedReifiedOperationMarker(
-        insn: MethodInsnNode,
-        instructions: InsnList,
-        type: KotlinType,
-        asmType: Type,
-        typeMapper: KotlinTypeMapper,
-        typeSystem: TypeSystemCommonBackendContext,
-        module: ModuleDescriptor
-    ): Int = -1
-
     fun generateClassSyntheticParts(codegen: ImplementationBodyCodegen) {}
 
     val shouldGenerateClassSyntheticPartsInLightClassesMode: Boolean
