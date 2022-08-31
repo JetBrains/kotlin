@@ -33,6 +33,10 @@ FILE: columnsSelector.kt
             ^ this@R|special/anonymous|.R|/group|.R|/stringField|
         }
         ))
+        R|org/jetbrains/kotlinx/dataframe/plugin/testing/test|<R|(org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<Schema0>, org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<Schema0>) -> org/jetbrains/kotlinx/dataframe/columns/ColumnSet<it(kotlin/Comparable<*> & java/io/Serializable)>|>(id = String(columnsSelector_3), call = R|org/jetbrains/kotlinx/dataframe/plugin/testing/atoms/columnsSelector|<R|Schema0|, R|it(kotlin/Comparable<*> & java/io/Serializable)|>(<L> = columnsSelector@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<Schema0>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<Schema0>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<it(kotlin/Comparable<*> & java/io/Serializable)>| <inline=NoInline>  {
+            ^ (this@R|special/anonymous|, this@R|special/anonymous|.R|/intField|).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl.and: R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<C>|>|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(this@R|special/anonymous|.R|/group|.R|/stringField|)
+        }
+        ))
     }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe

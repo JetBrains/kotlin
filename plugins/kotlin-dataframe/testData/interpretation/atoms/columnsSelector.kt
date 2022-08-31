@@ -22,4 +22,5 @@ internal val ColumnsContainer<Group0>.stringField: DataColumn<String> get() = TO
 internal fun columnsSelectorTest() {
     test(id = "columnsSelector_1", call = columnsSelector<Schema0, _> { intField })
     test(id = "columnsSelector_2", call = columnsSelector<Schema0, _> { group.stringField })
+    test(id = "columnsSelector_3", call = columnsSelector<Schema0, _> { intField and group.stringField })
 }

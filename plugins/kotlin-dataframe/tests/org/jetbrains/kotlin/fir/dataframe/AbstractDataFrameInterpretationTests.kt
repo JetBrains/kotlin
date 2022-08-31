@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.dataframe
 
 import io.kotest.assertions.withClue
 import io.kotest.matchers.shouldBe
-import kotlinx.serialization.decodeFromString
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.unwrapArgument
-import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -145,6 +143,16 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
                     )
                 ),
                 "columnsSelector_2" to listOf(
+                    ColumnWithPathApproximation(
+                        ColumnPathApproximation(listOf("group", "stringField")),
+                        SimpleCol(name = "stringField", type = TypeApproximationImpl(fqName = "kotlin.String", nullable = false))
+                    )
+                ),
+                "columnsSelector_3" to listOf(
+                    ColumnWithPathApproximation(
+                        ColumnPathApproximation(listOf("intField")),
+                        SimpleCol(name = "intField", type = TypeApproximationImpl(fqName = "kotlin.Int", nullable = false))
+                    ),
                     ColumnWithPathApproximation(
                         ColumnPathApproximation(listOf("group", "stringField")),
                         SimpleCol(name = "stringField", type = TypeApproximationImpl(fqName = "kotlin.String", nullable = false))

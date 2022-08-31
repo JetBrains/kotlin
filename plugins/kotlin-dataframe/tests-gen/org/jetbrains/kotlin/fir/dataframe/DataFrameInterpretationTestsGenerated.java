@@ -162,5 +162,11 @@ public class DataFrameInterpretationTestsGenerated extends AbstractDataFrameInte
         public void testConvert6() throws Exception {
             runTest("plugins/kotlin-dataframe/testData/interpretation/convert/Convert6.kt");
         }
+
+        @Test
+        @TestMetadata("Convert7.kt")
+        public void testConvert7() throws Exception {
+            runTest("plugins/kotlin-dataframe/testData/interpretation/convert/Convert7.kt");
+        }
     }
 }
