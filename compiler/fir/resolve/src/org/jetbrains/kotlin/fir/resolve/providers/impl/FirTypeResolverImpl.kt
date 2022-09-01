@@ -523,14 +523,11 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             is FirDynamicTypeRef -> ConeDynamicType.create(session) to null
             is FirIntersectionTypeRef -> {
                 val leftType = typeRef.leftType.coneType
-                val rightType = typeRef.rightType.coneType
-
-                if (rightType.isAny && leftType is ConeTypeParameterType) {
+                if (leftType is ConeTypeParameterType) {
                     ConeDefinitelyNotNullType(leftType) to null
                 } else {
-                    ConeErrorType(ConeUnsupported("Intersection types are not supported yet", typeRef.source)) to null
+                    ConeErrorType(ConeForbiddenIntersection) to null
                 }
-
             }
             else -> error(typeRef.render())
         }

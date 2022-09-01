@@ -1722,6 +1722,21 @@ internal class InferredTypeVariableIntoPossibleEmptyIntersectionImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.InferredTypeVariableIntoPossibleEmptyIntersection(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class IncorrectLeftComponentOfIntersectionImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.IncorrectLeftComponentOfIntersection(), KtAbstractFirDiagnostic<KtTypeReference>
+
+internal class IncorrectRightComponentOfIntersectionImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.IncorrectRightComponentOfIntersection(), KtAbstractFirDiagnostic<KtTypeReference>
+
+internal class NullableOnDefinitelyNotNullableImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.NullableOnDefinitelyNotNullable(), KtAbstractFirDiagnostic<KtTypeReference>
+
 internal class ExtensionInClassReferenceNotAllowedImpl(
     override val referencedDeclaration: KtCallableSymbol,
     override val firDiagnostic: KtPsiDiagnostic,

@@ -237,3 +237,7 @@ class ConeAmbiguousAlteredAssign(val altererNames: List<String?>) : ConeDiagnost
     override val reason: String
         get() = "Assign altered by multiple extensions"
 }
+
+object ConeForbiddenIntersection : ConeDiagnostic {
+    override val reason: String get() = "Such an intersection type is not allowed"
+}

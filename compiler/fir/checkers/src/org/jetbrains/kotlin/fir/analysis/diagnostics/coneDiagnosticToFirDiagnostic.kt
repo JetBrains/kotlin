@@ -128,6 +128,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeLocalVariableNoTypeOrInitializer -> runIf(variable.isLocalMember) {
         FirErrors.VARIABLE_WITH_NO_TYPE_NO_INITIALIZER.createOn(source)
     }
+    is ConeForbiddenIntersection -> null // reported in FirDefinitelyNotNullableChecker
 
     is ConeUnderscoreIsReserved -> FirErrors.UNDERSCORE_IS_RESERVED.createOn(this.source)
     is ConeUnderscoreUsageWithoutBackticks -> FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS.createOn(this.source)
