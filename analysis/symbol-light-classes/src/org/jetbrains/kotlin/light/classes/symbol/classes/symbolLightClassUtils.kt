@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiReferenceList
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analysis.api.KtAllowAnalysisOnEdt
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.allowAnalysisOnEdt
@@ -21,12 +19,12 @@ import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.getKtModuleOfTypeSafe
-import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.Modality
@@ -48,30 +46,8 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import java.util.*
 
-internal fun getOrCreateSymbolLightClass(classOrObject: KtClassOrObject): KtLightClass? =
-    CachedValuesManager.getCachedValue(classOrObject) {
-        CachedValueProvider.Result
-            .create(
-                createSymbolLightClassNoCache(classOrObject),
-                classOrObject.project.createProjectWideOutOfBlockModificationTracker()
-            )
-    }
-
 @OptIn(KtAllowAnalysisOnEdt::class)
 internal fun createSymbolLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? = allowAnalysisOnEdt {
-
-    val containingFile = classOrObject.containingFile
-    if (containingFile is KtCodeFragment) {
-        // Avoid building light classes for code fragments
-        return null
-    }
-
-    if (containingFile is KtFile && containingFile.isCompiled) return null
-
-    if (classOrObject.shouldNotBeVisibleAsLightClass()) {
-        return null
-    }
-
     val anonymousObject = classOrObject.parent as? KtObjectLiteralExpression
     if (anonymousObject != null) {
         return analyzeForLightClasses(anonymousObject) {
@@ -113,14 +89,10 @@ context(KtAnalysisSession)
 private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
     if (ktEnumEntry.body == null) return null
 
-    val symbolLightClass = ktEnumEntry
-        .containingClass()
-        ?.let { getOrCreateSymbolLightClass(it) } as? SymbolLightClass
-        ?: return null
-
-    val targetField = symbolLightClass.ownFields
-        .firstOrNull { it is SymbolLightFieldForEnumEntry && it.kotlinOrigin == ktEnumEntry }
-        ?: return null
+    val symbolLightClass = ktEnumEntry.containingClass()?.toLightClass() as? SymbolLightClass ?: return null
+    val targetField = symbolLightClass.ownFields.firstOrNull {
+        it is SymbolLightFieldForEnumEntry && it.kotlinOrigin == ktEnumEntry
+    } ?: return null
 
     return (targetField as? SymbolLightFieldForEnumEntry)?.initializingClass as? KtLightClass
 }

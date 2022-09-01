@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.light.classes.symbol.SymbolFakeFile
 import org.jetbrains.kotlin.light.classes.symbol.SymbolLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.allowLightClassesOnEdt
@@ -160,7 +161,7 @@ internal abstract class SymbolLightClassForClassOrObject(
 
         val kotlinOrigin = kotlinOrigin ?: return@lazyPub null
 
-        val containingClass = isTopLevel.ifFalse { getOrCreateSymbolLightClass(getOutermostClassOrObject(kotlinOrigin)) } ?: this
+        val containingClass = isTopLevel.ifFalse { getOutermostClassOrObject(kotlinOrigin).toLightClass() } ?: this
 
         SymbolFakeFile(kotlinOrigin, containingClass)
     }
@@ -209,7 +210,7 @@ internal abstract class SymbolLightClassForClassOrObject(
     override fun getContainingClass(): PsiClass? {
         val containingBody = kotlinOrigin?.parent as? KtClassBody
         val containingClass = containingBody?.parent as? KtClassOrObject
-        containingClass?.let { return getOrCreateSymbolLightClass(it) }
+        containingClass?.let { return it.toLightClass() }
         return null
     }
 

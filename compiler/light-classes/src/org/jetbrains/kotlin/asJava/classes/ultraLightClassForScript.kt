@@ -15,6 +15,7 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
@@ -136,6 +137,6 @@ class KtUltraLightClassForScript(
             // inner classes with null names can't be searched for and can't be used from java anyway
             // we can't prohibit creating light classes with null names either since they can contain members
             .filter { it.name != null }
-            .mapNotNull { KotlinLightClassFactory.createClass(it) }
+            .mapNotNull(KtClassOrObject::toLightClass)
     }
 }

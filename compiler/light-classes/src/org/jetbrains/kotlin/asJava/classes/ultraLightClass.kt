@@ -18,6 +18,7 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtUltraLightModifierList
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -484,7 +485,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
         val containingBody = classOrObject.parent as? KtClassBody
         val containingClass = containingBody?.parent as? KtClassOrObject
-        containingClass?.let { return KotlinLightClassFactory.createClass(it) }
+        containingClass?.let { return it.toLightClass() }
 
         val containingBlock = classOrObject.parent as? KtBlockExpression
         val containingScript = containingBlock?.parent as? KtScript

@@ -12,12 +12,12 @@ import com.intellij.psi.scope.PsiScopeProcessor
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
-import org.jetbrains.kotlin.light.classes.symbol.classes.getOrCreateSymbolLightClass
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal class SymbolFakeFile(private val classOrObject: KtClassOrObject, ktClass: KtLightClass) : FakeFileForLightClass(
     classOrObject.containingKtFile,
-    { if (classOrObject.isTopLevel()) ktClass else getOrCreateSymbolLightClass(getOutermostClassOrObject(classOrObject))!! },
+    { if (classOrObject.isTopLevel()) ktClass else getOutermostClassOrObject(classOrObject).toLightClass()!! },
 ) {
 
     override fun findReferenceAt(offset: Int) = ktFile.findReferenceAt(offset)

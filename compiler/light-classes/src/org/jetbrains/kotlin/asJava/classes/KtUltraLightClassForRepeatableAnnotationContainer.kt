@@ -11,6 +11,7 @@ import com.intellij.psi.impl.light.LightModifierList
 import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -22,7 +23,7 @@ class KtUltraLightClassForRepeatableAnnotationContainer(classOrObject: KtClassOr
     override fun getParent() = containingClass
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = emptyArray()
-    override fun getContainingClass(): KtLightClassForSourceDeclaration? = KotlinLightClassFactory.createClass(classOrObject)
+    override fun getContainingClass(): KtLightClass? = classOrObject.toLightClass()
     override fun getScope(): PsiElement? = containingClass
     override fun getOwnInnerClasses() = emptyList<PsiClass>()
     override fun getOwnFields(): List<KtLightField> = emptyList()

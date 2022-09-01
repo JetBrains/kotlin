@@ -8,16 +8,14 @@ package org.jetbrains.kotlin.light.classes.symbol
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
-import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.createAllLibrariesModificationTracker
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
-import org.jetbrains.kotlin.analysis.providers.createModuleWithoutDependenciesOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
+import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -25,7 +23,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolBasedFakeLightClass
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForFacade
 import org.jetbrains.kotlin.light.classes.symbol.classes.analyzeForLightClasses
-import org.jetbrains.kotlin.light.classes.symbol.classes.getOrCreateSymbolLightClass
+import org.jetbrains.kotlin.light.classes.symbol.classes.createSymbolLightClassNoCache
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
@@ -89,17 +87,24 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
             .getKotlinSubPackageFqNames(fqn)
             .map { fqn.child(it) }
 
-    override fun getLightClass(classOrObject: KtClassOrObject): KtLightClass? {
-        return when (classOrObject.getKtModule(project)) {
-            is KtSourceModule -> getOrCreateSymbolLightClass(classOrObject)
-            is KtLibraryModule -> DecompiledLightClassesFactory.getLightClassForDecompiledClassOrObject(classOrObject, project)
-            else -> null
-        }
-    }
-
     override fun getLightClassForScript(script: KtScript): KtLightClass = error("Should not be called")
 
     override fun KtFile.findModule(): KtModule = getKtModule(project)
+
+    override fun declarationLocation(file: KtFile, module: KtModule): DeclarationLocation? = when (module) {
+        is KtSourceModule -> DeclarationLocation.ProjectSources
+        is KtLibraryModule -> DeclarationLocation.LibraryClasses
+        is KtLibrarySourceModule -> DeclarationLocation.LibrarySources
+        else -> null
+    }
+
+    override fun createInstanceOfDecompiledLightClass(classOrObject: KtClassOrObject, module: KtModule): KtLightClass? {
+        return DecompiledLightClassesFactory.getLightClassForDecompiledClassOrObject(classOrObject, project)
+    }
+
+    override fun createInstanceOfLightClass(classOrObject: KtClassOrObject, module: KtModule): KtLightClass? {
+        return createSymbolLightClassNoCache(classOrObject)
+    }
 
     override fun createInstanceOfDecompiledLightFacade(
         facadeFqName: FqName,
@@ -107,10 +112,16 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
         module: KtModule,
     ): KtLightClassForFacade? = DecompiledLightClassesFactory.createLightFacadeForDecompiledKotlinFile(project, facadeFqName, files)
 
-    override fun tracker(file: KtFile): ModificationTracker = when (val module = file.getKtModule(project)) {
-        is KtSourceModule -> module.createModuleWithoutDependenciesOutOfBlockModificationTracker(project)
-        is KtLibraryModule -> project.createAllLibrariesModificationTracker()
-        else -> super.tracker(file)
+    override fun projectWideOutOfBlockModificationTracker(): ModificationTracker {
+        return project.createProjectWideOutOfBlockModificationTracker()
+    }
+
+    override fun outOfBlockModificationTracker(element: PsiElement, module: KtModule): ModificationTracker {
+        return project.createProjectWideOutOfBlockModificationTracker()
+    }
+
+    override fun librariesTracker(element: PsiElement, module: KtModule): ModificationTracker {
+        return project.createAllLibrariesModificationTracker()
     }
 
     override fun createInstanceOfLightFacade(
