@@ -93,4 +93,10 @@ public class Fe10IdeNormalAnalysisSourceModuleDeclarationReturnTypeTestGenerated
     public void testTypeParameters() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/typeParameters.kt");
     }
+
+    @Test
+    @TestMetadata("varargParam.kt")
+    public void testVarargParam() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/varargParam.kt");
+    }
 }
