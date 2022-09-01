@@ -36,7 +36,7 @@ public:
         stableRefThreadQueue_(StableRefRegistry::Instance()),
         extraObjectDataThreadQueue_(ExtraObjectDataFactory::Instance()),
         gc_(GlobalData::Instance().gc(), *this),
-        suspensionData_(ThreadState::kNative) {}
+        suspensionData_(ThreadState::kNative, *this) {}
 
     ~ThreadData() = default;
 

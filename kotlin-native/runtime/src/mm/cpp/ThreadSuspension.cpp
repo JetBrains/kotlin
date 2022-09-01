@@ -44,20 +44,23 @@ void yield() noexcept {
 
 THREAD_LOCAL_VARIABLE bool gSuspensionRequestedByCurrentThread = false;
 [[clang::no_destroy]] std::mutex gSuspensionMutex;
-[[clang::no_destroy]] std::condition_variable gSuspendsionCondVar;
+[[clang::no_destroy]] std::condition_variable gSuspensionCondVar;
+[[clang::no_destroy]] std::function<void(kotlin::mm::ThreadData&)> gPreSuspend = nullptr;
 
 } // namespace
 
 std::atomic<bool> kotlin::mm::internal::gSuspensionRequested = false;
 
 NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequestedSlowPath() noexcept {
-    std::unique_lock lock(gSuspensionMutex);
     if (IsThreadSuspensionRequested()) {
+        if (gPreSuspend)
+            gPreSuspend(threadData_);
+        std::unique_lock lock(gSuspensionMutex);
         auto threadId = konan::currentThreadId();
         auto suspendStartMs = konan::getTimeMicros();
         RuntimeLogDebug({kTagGC, kTagMM}, "Suspending thread %d", threadId);
-        AutoReset scopedAssign(&suspended_, true);
-        gSuspendsionCondVar.wait(lock, []() { return !IsThreadSuspensionRequested(); });
+        AutoReset scopedAssignSuspended(&suspended_, true);
+        gSuspensionCondVar.wait(lock, []() { return !IsThreadSuspensionRequested(); });
         auto suspendEndMs = konan::getTimeMicros();
         RuntimeLogDebug({kTagGC, kTagMM}, "Resuming thread %d after %" PRIu64 " microseconds of suspension",
                         threadId, suspendEndMs - suspendStartMs);
@@ -96,6 +99,10 @@ ALWAYS_INLINE void kotlin::mm::SuspendIfRequested() noexcept {
     }
 }
 
+void kotlin::mm::SetOnSuspendCallback(std::function<void(mm::ThreadData&)> preSuspend) noexcept {
+    gPreSuspend = preSuspend;
+}
+
 void kotlin::mm::ResumeThreads() noexcept {
     // From the std::condition_variable docs:
     // Even if the shared variable is atomic, it must be modified under
@@ -106,5 +113,5 @@ void kotlin::mm::ResumeThreads() noexcept {
         internal::gSuspensionRequested = false;
     }
     gSuspensionRequestedByCurrentThread = false;
-    gSuspendsionCondVar.notify_all();
+    gSuspensionCondVar.notify_all();
 }

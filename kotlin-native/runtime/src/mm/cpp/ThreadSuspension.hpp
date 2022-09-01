@@ -13,6 +13,8 @@
 namespace kotlin {
 namespace mm {
 
+class ThreadData;
+
 namespace internal {
 
 extern std::atomic<bool> gSuspensionRequested;
@@ -26,7 +28,7 @@ inline bool IsThreadSuspensionRequested() noexcept {
 
 class ThreadSuspensionData : private Pinned {
 public:
-    explicit ThreadSuspensionData(ThreadState initialState) noexcept : state_(initialState), suspended_(false) {}
+    explicit ThreadSuspensionData(ThreadState initialState, mm::ThreadData& threadData) noexcept : state_(initialState), threadData_(threadData), suspended_(false) {}
 
     ~ThreadSuspensionData() = default;
 
@@ -52,6 +54,7 @@ private:
     friend void SuspendIfRequestedSlowPath() noexcept;
 
     std::atomic<ThreadState> state_;
+    mm::ThreadData& threadData_;
     std::atomic<bool> suspended_;
     void suspendIfRequestedSlowPath() noexcept;
 };
@@ -74,6 +77,11 @@ inline bool SuspendThreads() noexcept {
     WaitForThreadsSuspension();
     return true;
 }
+
+/**
+ * Set function `preSuspend` which will be called in threads before suspending.
+ */
+void SetOnSuspendCallback(std::function<void(mm::ThreadData&)>) noexcept;
 
 /**
  * Resumes all threads registered in ThreadRegistry that were suspended by the SuspendThreads call.

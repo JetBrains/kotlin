@@ -31,6 +31,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val gcSchedulerType by option<GCSchedulerType>()
 
+    val gcMarkSingleThreaded by booleanOption()
+
     val linkRuntime by option<RuntimeLinkageStrategyBinaryOption>()
 
     val bundleId by stringOption()

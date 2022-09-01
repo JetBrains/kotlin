@@ -216,8 +216,12 @@ WeakCounter& InstallWeakCounter(mm::ThreadData& threadData, ObjHeader* objHeader
     return weakCounter;
 }
 
-class ConcurrentMarkAndSweepTest : public testing::Test {
+class ConcurrentMarkAndSweepTest : public testing::TestWithParam<gc::ConcurrentMarkAndSweep::MarkingBehavior> {
 public:
+
+    ConcurrentMarkAndSweepTest() {
+        mm::GlobalData::Instance().gc().impl().gc().SetMarkingBehaviorForTests(GetParam());
+    }
 
     ~ConcurrentMarkAndSweepTest() {
         mm::GlobalsRegistry::Instance().ClearForTests();
@@ -233,7 +237,7 @@ private:
 
 } // namespace
 
-TEST_F(ConcurrentMarkAndSweepTest, RootSet) {
+TEST_P(ConcurrentMarkAndSweepTest, RootSet) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global1{threadData};
         GlobalObjectArrayHolder global2{threadData};
@@ -268,7 +272,7 @@ TEST_F(ConcurrentMarkAndSweepTest, RootSet) {
     });
 }
 
-TEST_F(ConcurrentMarkAndSweepTest, InterconnectedRootSet) {
+TEST_P(ConcurrentMarkAndSweepTest, InterconnectedRootSet) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global1{threadData};
         GlobalObjectArrayHolder global2{threadData};
@@ -314,7 +318,7 @@ TEST_F(ConcurrentMarkAndSweepTest, InterconnectedRootSet) {
     });
 }
 
-TEST_F(ConcurrentMarkAndSweepTest, FreeObjects) {
+TEST_P(ConcurrentMarkAndSweepTest, FreeObjects) {
     RunInNewThread([](mm::ThreadData& threadData) {
         auto& object1 = AllocateObject(threadData);
         auto& object2 = AllocateObject(threadData);
@@ -329,7 +333,7 @@ TEST_F(ConcurrentMarkAndSweepTest, FreeObjects) {
     });
 }
 
-TEST_F(ConcurrentMarkAndSweepTest, FreeObjectsWithFinalizers) {
+TEST_P(ConcurrentMarkAndSweepTest, FreeObjectsWithFinalizers) {
     RunInNewThread([this](mm::ThreadData& threadData) {
         auto& object1 = AllocateObjectWithFinalizer(threadData);
         auto& object2 = AllocateObjectWithFinalizer(threadData);
@@ -346,7 +350,7 @@ TEST_F(ConcurrentMarkAndSweepTest, FreeObjectsWithFinalizers) {
     });
 }
 
-TEST_F(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeak) {
+TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeak) {
     RunInNewThread([](mm::ThreadData& threadData) {
         auto& object1 = AllocateObject(threadData);
         auto& weak1 = ([&threadData, &object1]() -> WeakCounter& {
@@ -365,7 +369,7 @@ TEST_F(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeak) {
     });
 }
 
-TEST_F(ConcurrentMarkAndSweepTest, FreeObjectWithHoldedWeak) {
+TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithHoldedWeak) {
     RunInNewThread([](mm::ThreadData& threadData) {
         auto& object1 = AllocateObject(threadData);
         StackObjectHolder stack{threadData};
@@ -384,7 +388,7 @@ TEST_F(ConcurrentMarkAndSweepTest, FreeObjectWithHoldedWeak) {
     });
 }
 
-TEST_F(ConcurrentMarkAndSweepTest, ObjectReferencedFromRootSet) {
+TEST_P(ConcurrentMarkAndSweepTest, ObjectReferencedFromRootSet) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global{threadData};
         StackObjectHolder stack{threadData};
@@ -424,7 +428,7 @@ TEST_F(ConcurrentMarkAndSweepTest, ObjectReferencedFromRootSet) {
     });
 }
 
-TEST_F(ConcurrentMarkAndSweepTest, ObjectsWithCycles) {
+TEST_P(ConcurrentMarkAndSweepTest, ObjectsWithCycles) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global{threadData};
         StackObjectHolder stack{threadData};
@@ -473,7 +477,7 @@ TEST_F(ConcurrentMarkAndSweepTest, ObjectsWithCycles) {
     });
 }
 
-TEST_F(ConcurrentMarkAndSweepTest, ObjectsWithCyclesAndFinalizers) {
+TEST_P(ConcurrentMarkAndSweepTest, ObjectsWithCyclesAndFinalizers) {
     RunInNewThread([this](mm::ThreadData& threadData) {
         GlobalObjectHolder global{threadData};
         StackObjectHolder stack{threadData};
@@ -524,7 +528,7 @@ TEST_F(ConcurrentMarkAndSweepTest, ObjectsWithCyclesAndFinalizers) {
     });
 }
 
-TEST_F(ConcurrentMarkAndSweepTest, ObjectsWithCyclesIntoRootSet) {
+TEST_P(ConcurrentMarkAndSweepTest, ObjectsWithCyclesIntoRootSet) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global{threadData};
         StackObjectHolder stack{threadData};
@@ -552,7 +556,7 @@ TEST_F(ConcurrentMarkAndSweepTest, ObjectsWithCyclesIntoRootSet) {
     });
 }
 
-TEST_F(ConcurrentMarkAndSweepTest, RunGCTwice) {
+TEST_P(ConcurrentMarkAndSweepTest, RunGCTwice) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global{threadData};
         StackObjectHolder stack{threadData};
@@ -602,7 +606,7 @@ TEST_F(ConcurrentMarkAndSweepTest, RunGCTwice) {
     });
 }
 
-TEST_F(ConcurrentMarkAndSweepTest, PermanentObjects) {
+TEST_P(ConcurrentMarkAndSweepTest, PermanentObjects) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalPermanentObjectHolder global1{threadData};
         GlobalObjectHolder global2{threadData};
@@ -624,7 +628,7 @@ TEST_F(ConcurrentMarkAndSweepTest, PermanentObjects) {
     });
 }
 
-TEST_F(ConcurrentMarkAndSweepTest, SameObjectInRootSet) {
+TEST_P(ConcurrentMarkAndSweepTest, SameObjectInRootSet) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global{threadData};
         StackObjectHolder stack(*global);
@@ -710,7 +714,7 @@ private:
 
 } // namespace
 
-TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsCollect) {
+TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsCollect) {
     std_support::vector<Mutator> mutators(kDefaultThreadCount);
     std_support::vector<ObjHeader*> globals(kDefaultThreadCount);
     std_support::vector<ObjHeader*> locals(kDefaultThreadCount);
@@ -766,7 +770,7 @@ TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsCollect) {
     }
 }
 
-TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsAllCollect) {
+TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsAllCollect) {
     std_support::vector<Mutator> mutators(kDefaultThreadCount);
     std_support::vector<ObjHeader*> globals(kDefaultThreadCount);
     std_support::vector<ObjHeader*> locals(kDefaultThreadCount);
@@ -828,7 +832,7 @@ TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsAllCollect) {
     }
 }
 
-TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsAddToRootSetAfterCollectionRequested) {
+TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsAddToRootSetAfterCollectionRequested) {
     std_support::vector<Mutator> mutators(kDefaultThreadCount);
     std_support::vector<ObjHeader*> globals(kDefaultThreadCount);
     std_support::vector<ObjHeader*> locals(kDefaultThreadCount);
@@ -900,7 +904,7 @@ TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsAddToRootSetAfterCollectionRe
     }
 }
 
-TEST_F(ConcurrentMarkAndSweepTest, CrossThreadReference) {
+TEST_P(ConcurrentMarkAndSweepTest, CrossThreadReference) {
     std_support::vector<Mutator> mutators(kDefaultThreadCount);
     std_support::vector<ObjHeader*> globals(kDefaultThreadCount);
     std_support::vector<ObjHeader*> locals(kDefaultThreadCount);
@@ -966,7 +970,7 @@ TEST_F(ConcurrentMarkAndSweepTest, CrossThreadReference) {
     }
 }
 
-TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsWeaks) {
+TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsWeaks) {
     std_support::vector<Mutator> mutators(kDefaultThreadCount);
     ObjHeader* globalRoot = nullptr;
     WeakCounter* weak = nullptr;
@@ -1018,7 +1022,7 @@ TEST_F(ConcurrentMarkAndSweepTest, MultipleMutatorsWeaks) {
     }
 }
 
-TEST_F(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
+TEST_P(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
     std_support::vector<Mutator> mutators(kDefaultThreadCount);
     std_support::vector<ObjHeader*> globals(2 * kDefaultThreadCount);
     std_support::vector<ObjHeader*> locals(2 * kDefaultThreadCount);
@@ -1100,7 +1104,7 @@ TEST_F(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
 }
 
 
-TEST_F(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
+TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
     std_support::vector<Mutator> mutators(2);
     std::atomic<test_support::Object<Payload>*> object1 = nullptr;
     std::atomic<WeakCounter*> weak = nullptr;
@@ -1139,3 +1143,61 @@ TEST_F(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
     f0.wait();
     f1.wait();
 }
+
+TEST_P(ConcurrentMarkAndSweepTest, MutatorsCanMarkOwnLocals) {
+    std_support::vector<Mutator> mutators(kDefaultThreadCount);
+    std_support::vector<ObjHeader*> globals(kDefaultThreadCount);
+    std_support::vector<ObjHeader*> locals(kDefaultThreadCount);
+    std_support::vector<ObjHeader*> reachablesLocals(kDefaultThreadCount);
+    std_support::vector<ObjHeader*> reachablesGlobals(kDefaultThreadCount);
+
+    auto expandRootSet = [&globals, &locals, &reachablesLocals, &reachablesGlobals](mm::ThreadData& threadData, Mutator& mutator, int i) {
+        auto& global = mutator.AddGlobalRoot();
+        auto& local = mutator.AddStackRoot();
+        auto& reachableLocal = AllocateObject(threadData);
+        auto& reachableGlobal = AllocateObject(threadData);
+        local->field1 = reachableLocal.header();
+        global->field1 = reachableGlobal.header();
+        globals[i] = global.header();
+        locals[i] = local.header();
+        reachablesLocals[i] = reachableLocal.header();
+        reachablesGlobals[i] = reachableGlobal.header();
+    };
+
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        mutators[i]
+                .Execute([i, expandRootSet](mm::ThreadData& threadData, Mutator& mutator) { expandRootSet(threadData, mutator, i); })
+                .wait();
+    }
+
+    std_support::vector<std::future<void>> gcFutures(kDefaultThreadCount);
+
+    mm::GlobalData::Instance().gc().impl().gc().SetMarkingRequested();
+
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        gcFutures[i] = mutators[i]
+            .Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().impl().gc().PublishAndMark(); });
+    }
+
+    if (GetParam() == gc::ConcurrentMarkAndSweep::kMarkOwnStack) {
+        mm::GlobalData::Instance().gc().impl().gc().WaitForThreadsReadyToMark();
+        mm::GlobalData::Instance().gc().impl().gc().CollectRootSetAndStartMarking();
+    }
+
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        gcFutures[i].wait();
+        // Verify that threads marked their own locals (but not their globals) according to the configured marking behavior:
+        ASSERT_THAT(GetColor(reachablesLocals[i]), GetParam() == kotlin::gc::ConcurrentMarkAndSweep::kMarkOwnStack ? Color::kBlack : Color::kWhite);
+        ASSERT_THAT(GetColor(reachablesGlobals[i]), Color::kWhite);
+    }
+
+    for (auto& future : gcFutures) {
+        future.wait();
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(,
+                         ConcurrentMarkAndSweepTest,
+                         testing::Values(gc::ConcurrentMarkAndSweep::MarkingBehavior::kDoNotMark, gc::ConcurrentMarkAndSweep::MarkingBehavior::kMarkOwnStack),
+                         [] (const testing::TestParamInfo<gc::ConcurrentMarkAndSweep::MarkingBehavior>& behavior) { return (behavior.param == gc::ConcurrentMarkAndSweep::MarkingBehavior::kDoNotMark) ? "SingleThreadedMarking" : "MutatorsMarkOwnStack"; });
+

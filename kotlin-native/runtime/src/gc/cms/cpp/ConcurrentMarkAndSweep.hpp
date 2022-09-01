@@ -5,11 +5,13 @@
 
 #pragma once
 
+#include <atomic>
 #include <cstddef>
 
 #include "Allocator.hpp"
 #include "GCScheduler.hpp"
 #include "IntrusiveList.hpp"
+#include "MarkAndSweepUtils.hpp"
 #include "ObjectFactory.hpp"
 #include "ScopedThread.hpp"
 #include "Types.h"
@@ -27,8 +29,8 @@ namespace gc {
 
 class FinalizerProcessor;
 
-// Stop-the-world mark + concurrent sweep. The GC runs in a separate thread, finalizers run in another thread of their own.
-// TODO: Also make mark concurrent.
+// Stop-the-world parallel mark + concurrent sweep. The GC runs in a separate thread, finalizers run in another thread of their own.
+// TODO: Also make marking run concurrently with Kotlin threads.
 class ConcurrentMarkAndSweep : private Pinned {
 public:
     class ObjectData {
@@ -41,19 +43,28 @@ public:
             kBlack, // Objects encountered during mark phase.
         };
 
-        Color color() const noexcept { return static_cast<Color>(getPointerBits(next_, colorMask)); }
-        void setColor(Color color) noexcept { next_ = setPointerBits(clearPointerBits(next_, colorMask), static_cast<unsigned>(color)); }
+        Color color() const noexcept { return static_cast<Color>(getPointerBits(next_.load(std::memory_order_relaxed), colorMask)); }
+        void setColor(Color color) noexcept { next_.store(setPointerBits(clearPointerBits(next_.load(std::memory_order_relaxed), colorMask), static_cast<unsigned>(color)), std::memory_order_relaxed); }
+        bool atomicSetToBlack() noexcept {
+            ObjectData* before = next_.load(std::memory_order_relaxed);
+            if (getPointerBits(before, colorMask) != static_cast<unsigned>(Color::kWhite))
+                return false;
+            ObjectData* black = setPointerBits(before, static_cast<unsigned>(Color::kBlack));
+            bool success = next_.compare_exchange_strong(before, black, std::memory_order_relaxed);
+            RuntimeAssert(success || hasPointerBits(before, colorMask), "next_ must have been marked black");
+            return success;
+        }
 
-        ObjectData* next() const noexcept { return clearPointerBits(next_, colorMask); }
+        ObjectData* next() const noexcept { return clearPointerBits(next_.load(std::memory_order_relaxed), colorMask); }
         void setNext(ObjectData* next) noexcept {
             RuntimeAssert(!hasPointerBits(next, colorMask), "next must be untagged: %p", next);
-            auto bits = getPointerBits(next_, colorMask);
-            next_ = setPointerBits(next, bits);
+            auto bits = getPointerBits(next_.load(std::memory_order_relaxed), colorMask);
+            next_.store(setPointerBits(next, bits), std::memory_order_relaxed);
         }
 
     private:
         // Color is encoded in low bits.
-        ObjectData* next_ = nullptr;
+        std::atomic<ObjectData*> next_ = nullptr;
     };
 
     struct MarkQueueTraits {
@@ -61,6 +72,8 @@ public:
 
         static void setNext(ObjectData& value, ObjectData* next) noexcept { value.setNext(next); }
     };
+
+    enum MarkingBehavior { kMarkOwnStack, kDoNotMark };
 
     using MarkQueue = intrusive_forward_list<ObjectData, MarkQueueTraits>;
 
@@ -70,7 +83,7 @@ public:
         using Allocator = AllocatorWithGC<Allocator, ThreadData>;
 
         explicit ThreadData(ConcurrentMarkAndSweep& gc, mm::ThreadData& threadData, GCSchedulerThreadData& gcScheduler) noexcept :
-            gc_(gc), gcScheduler_(gcScheduler) {}
+            gc_(gc), threadData_(threadData), gcScheduler_(gcScheduler) {}
         ~ThreadData() = default;
 
         void SafePointAllocation(size_t size) noexcept;
@@ -80,11 +93,16 @@ public:
 
         void OnOOM(size_t size) noexcept;
 
+        void PublishAndMark() noexcept;
+
         Allocator CreateAllocator() noexcept { return Allocator(gc::Allocator(), *this); }
 
     private:
+        friend ConcurrentMarkAndSweep;
         ConcurrentMarkAndSweep& gc_;
+        mm::ThreadData& threadData_;
         GCSchedulerThreadData& gcScheduler_;
+        std::atomic<bool> marking_;
     };
 
     using Allocator = ThreadData::Allocator;
@@ -95,10 +113,15 @@ public:
     void StartFinalizerThreadIfNeeded() noexcept;
     void StopFinalizerThreadIfRunning() noexcept;
     bool FinalizersThreadIsRunning() noexcept;
+    void SetMarkingBehaviorForTests(MarkingBehavior markingBehavior) noexcept;
+    void SetMarkingRequested() noexcept;
+    void WaitForThreadsReadyToMark() noexcept;
+    void CollectRootSetAndStartMarking() noexcept;
 
 private:
     // Returns `true` if GC has happened, and `false` if not (because someone else has suspended the threads).
     bool PerformFullGC(int64_t epoch) noexcept;
+    void MergeMarkStats(MarkStats stats) noexcept;
 
     mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory_;
     GCScheduler& gcScheduler_;
@@ -109,6 +132,8 @@ private:
     std_support::unique_ptr<FinalizerProcessor> finalizerProcessor_;
 
     MarkQueue markQueue_;
+    MarkStats lastGCMarkStats_;
+    MarkingBehavior markingBehavior_;
 };
 
 } // namespace gc
