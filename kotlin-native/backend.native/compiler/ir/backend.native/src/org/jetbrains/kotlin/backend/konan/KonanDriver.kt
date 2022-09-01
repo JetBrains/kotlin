@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
-import org.jetbrains.kotlin.backend.konan.phases.FrontendContext
 import org.jetbrains.kotlin.backend.konan.phases.DynamicNativeCompilerDriver
+import org.jetbrains.kotlin.backend.konan.phases.FrontendContext
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -49,34 +49,15 @@ class KonanDriver(
         }
 
         val config = KonanConfig(project, configuration)
-        when (config.produce) {
-            CompilerOutputKind.LIBRARY -> {
-                usingNativeMemoryAllocator {
-                    usingJvmCInteropCallbacks {
-                        try {
-                            DynamicNativeCompilerDriver(config, arguments).buildKlib(config, environment)
-                        } finally {
-                        }
-                    }
-                }
-            }
-            CompilerOutputKind.FRAMEWORK -> {
-                usingNativeMemoryAllocator {
-                    usingJvmCInteropCallbacks {
-                        try {
-                            DynamicNativeCompilerDriver(config, arguments).buildFramework(config, environment)
-                        } finally {
-                        }
-                    }
-                }
-            }
-            else -> {
-                if (fileNames == null) {
-                    runTopLevelPhases(config, environment)
-                } else {
-                    fileNames.forEach { buildFileCache(it, CompilerOutputKind.PRELIMINARY_CACHE) }
-                    fileNames.forEach { buildFileCache(it, configuration.get(KonanConfigKeys.PRODUCE)!!) }
-                }
+
+        if (DynamicNativeCompilerDriver.canRun(config)) {
+            DynamicNativeCompilerDriver(config, arguments).build(config, environment, config.produce)
+        } else {
+            if (fileNames == null) {
+                runTopLevelPhases(config, environment)
+            } else {
+                fileNames.forEach { buildFileCache(it, CompilerOutputKind.PRELIMINARY_CACHE) }
+                fileNames.forEach { buildFileCache(it, configuration.get(KonanConfigKeys.PRODUCE)!!) }
             }
         }
     }

@@ -211,13 +211,13 @@ internal val saveAdditionalCacheInfoPhase = konanUnitPhase<CacheAwareContext>(
 
 internal val objectFilesPhase = konanUnitPhase<ObjectFilesContext>(
         op = {
-            compilerOutput = BitcodeCompiler(this.config, this as LoggingContext).makeObjectFiles(bitcodeFileName)
+            compilerOutput = BitcodeCompiler(this.config, this as LoggingContext).makeObjectFiles((this as Context).bitcodeFileName)
         },
         name = "ObjectFiles",
         description = "Bitcode to object file"
 )
 
-internal val linkerPhase = konanUnitPhase<ObjectFilesContext>(
+internal val linkerPhase = konanUnitPhase<LinkerContext>(
         op = { Linker(
                 necessaryLlvmParts,
                 llvmModuleSpecification,
@@ -225,7 +225,7 @@ internal val linkerPhase = konanUnitPhase<ObjectFilesContext>(
                 config,
                 this as LoggingContext,
                 this as ErrorReportingContext
-        ).link(compilerOutput) },
+        ).link((this as Context).compilerOutput) },
         name = "Linker",
         description = "Linker"
 )
@@ -413,8 +413,8 @@ internal val bitcodePostprocessingPhase = NamedCompilerPhase<LlvmCodegenContext,
                 bitcodeOptimizationPhase then
                 coveragePhase then
                 removeRedundantSafepointsPhase then
-                optimizeTLSDataLoadsPhase then
-                rewriteExternalCallsCheckerGlobals
+                optimizeTLSDataLoadsPhase //then
+//                rewriteExternalCallsCheckerGlobals
 )
 
 internal val backendCodegen = namedUnitPhase<Context>(

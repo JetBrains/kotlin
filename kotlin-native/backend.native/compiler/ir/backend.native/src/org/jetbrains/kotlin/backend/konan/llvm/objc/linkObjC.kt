@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.backend.konan.phases.LlvmCodegenContext
 
 internal fun patchObjCRuntimeModule(config: KonanConfig, context: LlvmCodegenContext): LLVMModuleRef? {
     if (!(config.isFinalBinary && config.target.family.isAppleFamily)) return null
-
-    val patchBuilder = PatchBuilder(context.objCExportNamer)
+    require(context.objCExportNamer != null)
+    val patchBuilder = PatchBuilder(context.objCExportNamer!!)
     patchBuilder.addObjCPatches()
 
     val bitcodeFile = config.objCNativeLibrary

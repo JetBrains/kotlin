@@ -445,9 +445,7 @@ internal class CodeGeneratorVisitor(
 
         runAndProcessInitializers(null) {
             // Note: it is here because it also generates some bitcode.
-            if (context.objCExport.exportedInterface != null && context.objCExport.codeSpec != null) {
-                context.objcExportCodegen(context.objCExport.exportedInterface!!, context.objCExport.codeSpec!!, codegen)
-            }
+            context.objcExportCodegen(context.objCExport, codegen)
 
             codegen.objCDataGenerator?.finishModule()
 

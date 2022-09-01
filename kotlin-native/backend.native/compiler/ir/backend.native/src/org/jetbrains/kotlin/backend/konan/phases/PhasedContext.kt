@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysisRes
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.lower.*
-import org.jetbrains.kotlin.backend.konan.objcexport.*
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodegen
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
 import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
 import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFG
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
@@ -45,7 +47,11 @@ internal interface PhaseContext : KonanBackendContext {
     val isNativeLibrary: Boolean
 
     val memoryModel get() = config.memoryModel
+
+    override val configuration get() = config.configuration
 }
+
+
 
 internal typealias ErrorReportingContext = KonanBackendContext
 
@@ -82,6 +88,7 @@ interface ConfigChecks {
     fun useLazyFileInitializers() = config.propertyLazyInitialization
 }
 
+// It shouldn't inherit from KonanBackendContext, but our phase manager forces us to do so
 internal interface FrontendContext : PhaseContext {
     var environment: KotlinCoreEnvironment
 
@@ -112,7 +119,7 @@ internal interface PsiToIrContext :
 }
 
 internal interface ObjCExportContext : PsiToIrContext {
-    var objCExport: ObjCExport
+    var objCExport: ObjCExport?
 }
 
 internal interface CExportContext : PsiToIrContext {
@@ -199,14 +206,13 @@ internal interface BitcodegenContext :
 
     val interopBuiltIns: InteropBuiltIns
 
-    var objCExport: ObjCExport
+    var objCExport: ObjCExport?
 
     fun objcExportCodegen(
-            exportedInterface: ObjCExportedInterface,
-            codeSpec: ObjCExportCodeSpec,
+            objCExport: ObjCExport?,
             codegen: CodeGenerator,
     ) {
-        ObjCExportCodegen(this, exportedInterface, codeSpec, config).generate(codegen)
+        ObjCExportCodegen(this, objCExport, config).generate(codegen)
     }
 }
 
@@ -222,7 +228,7 @@ internal interface LlvmCodegenContext : PhaseContext, LlvmModuleSpecificationCon
 
     val llvm: Llvm
 
-    val objCExportNamer: ObjCExportNamer
+    val objCExportNamer: ObjCExportNamer?
 
     val cStubsManager: CStubsManager
 
@@ -306,14 +312,14 @@ internal interface MiddleEndContext :
     var irModules: Map<String, IrModuleFragment>
 }
 
-internal interface ObjectFilesContext : PhaseContext, CoverageAwareContext {
+internal interface ObjectFilesContext : PhaseContext {
+    var compilerOutput: List<ObjectFile>
+}
+
+internal interface LinkerContext : PhaseContext, CoverageAwareContext {
     val llvmModuleSpecification: LlvmModuleSpecification
 
-    val bitcodeFileName: String
-
-    var compilerOutput: List<ObjectFile>
-
-    var necessaryLlvmParts: NecessaryLlvmParts
+    val necessaryLlvmParts: NecessaryLlvmParts
 }
 
 internal interface CacheAwareContext : PhaseContext, LayoutBuildingContext {

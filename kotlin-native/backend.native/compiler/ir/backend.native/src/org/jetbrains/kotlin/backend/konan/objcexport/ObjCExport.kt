@@ -8,22 +8,15 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys.Companion.BUNDLE_ID
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
-import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
-import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
-import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
-import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
 import org.jetbrains.kotlin.backend.konan.phases.ErrorReportingContext
 import org.jetbrains.kotlin.backend.konan.phases.FrontendContext
-import org.jetbrains.kotlin.backend.konan.phases.LlvmModuleSpecificationContext
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.file.createTempFile
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -49,6 +42,8 @@ internal class ObjCExport(
 
     val exportedInterface = produceInterface()
     val codeSpec = exportedInterface?.createCodeSpec(symbolTable)
+
+    var namer: ObjCExportNamer? = null
 
     private fun produceInterface(): ObjCExportedInterface? {
         if (!target.family.isAppleFamily) return null

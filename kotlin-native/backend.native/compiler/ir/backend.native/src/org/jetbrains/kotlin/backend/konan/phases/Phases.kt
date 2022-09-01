@@ -15,12 +15,9 @@ import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysis
+import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
 import org.jetbrains.kotlin.backend.konan.lower.*
-import org.jetbrains.kotlin.backend.konan.lower.ExpectDeclarationsRemoving
-import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
-import org.jetbrains.kotlin.backend.konan.lower.InlineClassPropertyAccessorsLowering
-import org.jetbrains.kotlin.backend.konan.lower.SpecialBackendChecksTraversal
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
@@ -126,6 +123,30 @@ internal object Phases {
             prerequisite = setOf(createSymbolTablePhase)
     )
 
+    fun buildBuildAdditionalCacheInfoPhase(psiToIrPhase: NamedCompilerPhase<PsiToIrContext, Unit>): NamedCompilerPhase<MiddleEndContext, Unit> = myLower2(
+            op = { ctx, _ ->
+                ctx.irModules.values.single().let { module ->
+                    val moduleDeserializer = ctx.irLinker.moduleDeserializers[module.descriptor]
+                    if (moduleDeserializer == null) {
+                        require(module.descriptor.isFromInteropLibrary()) { "No module deserializer for ${module.descriptor}" }
+                    } else {
+                        CacheInfoBuilder(ctx, moduleDeserializer).build()
+                    }
+                }
+            },
+            name = "BuildAdditionalCacheInfo",
+            description = "Build additional cache info (inline functions bodies and fields of classes) $psiToIrPhase",
+            prerequisite = setOf()//setOf(psiToIrPhase)
+    )
+
+    fun buildSaveAdditionalCacheInfoPhase(): NamedCompilerPhase<CacheAwareContext, Unit> = myLower2(
+            op = { ctx, _ ->
+                CacheStorage(ctx.config, ctx.llvmImports, ctx.inlineFunctionBodies, ctx.classFields).saveAdditionalCacheInfo()
+            },
+            name = "SaveAdditionalCacheInfo",
+            description = "Save additional cache info (inline functions bodies and fields of classes)"
+    )
+
     fun buildProduceKlibPhase(): NamedCompilerPhase<KlibProducingContext, Unit> = namedUnitPhase(
             name = "ProduceOutput",
             description = "Produce output",
@@ -204,7 +225,7 @@ internal object Phases {
             }
     )
 
-    fun getDevirtualizationAnalysisPhase(dfgPhase: NamedCompilerPhase<LtoContext, IrModuleFragment>,): NamedCompilerPhase<LtoContext, IrModuleFragment> = makeKonanModuleOpPhase<LtoContext>(
+    fun getDevirtualizationAnalysisPhase(dfgPhase: NamedCompilerPhase<LtoContext, IrModuleFragment>): NamedCompilerPhase<LtoContext, IrModuleFragment> = makeKonanModuleOpPhase<LtoContext>(
             name = "DevirtualizationAnalysis",
             description = "Devirtualization analysis",
             prerequisite = setOf(dfgPhase),
@@ -215,7 +236,7 @@ internal object Phases {
             }
     )
 
-    fun getRemoveRedundantCallsToFileInitializersPhase(devirtualizationAnalysisPhase: NamedCompilerPhase<LtoContext, IrModuleFragment>,) = makeKonanModuleOpPhase(
+    fun getRemoveRedundantCallsToFileInitializersPhase(devirtualizationAnalysisPhase: NamedCompilerPhase<LtoContext, IrModuleFragment>) = makeKonanModuleOpPhase(
             name = "RemoveRedundantCallsToFileInitializersPhase",
             description = "Redundant file initializers calls removal",
             prerequisite = setOf(devirtualizationAnalysisPhase),
@@ -254,8 +275,7 @@ internal object Phases {
                             // so can take those. In theory we can always unfold call sites using type hierarchy, but
                             // the analysis might converge much, much slower, so take only reasonably small for now.
                             5
-                        }
-                        else {
+                        } else {
                             // Can't tolerate any non-devirtualized call site for a library.
                             // TODO: What about private virtual functions?
                             // Note: 0 is also bad - this means that there're no inheritors in the current source set,
@@ -352,8 +372,8 @@ internal object Phases {
                                 coroutinesPhase,
                                 typeOperatorPhase,
                                 expressionBodyTransformPhase,
-    //                        Disabled for now because it leads to problems with Double.NaN and Float.NaN on macOS AArch 64.
-    //                        constantInliningPhase,
+                                //                        Disabled for now because it leads to problems with Double.NaN and Float.NaN on macOS AArch 64.
+                                //                        constantInliningPhase,
                                 fileInitializersPhase,
                                 bridgesPhase,
                                 exportInternalAbiPhase,
@@ -373,7 +393,7 @@ internal object Phases {
             description = "Bitcode to object file"
     )
 
-    fun buildLinkerPhase(objectFiles: List<ObjectFile>) = myLower2<ObjectFilesContext, Unit>(
+    fun buildLinkerPhase(objectFiles: List<ObjectFile>) = myLower2<LinkerContext, Unit>(
             op = { ctx, _ ->
                 Linker(
                         ctx.necessaryLlvmParts,
@@ -398,7 +418,7 @@ internal object Phases {
             op: (C, Data) -> Data,
             description: String,
             name: String,
-            prerequisite: Set<NamedCompilerPhase<C, *>> = emptySet()
+            prerequisite: Set<NamedCompilerPhase<*, *>> = emptySet()
     ): NamedCompilerPhase<C, Data> =
             NamedCompilerPhase(
                     name = name,
@@ -417,7 +437,7 @@ internal object Phases {
                     actions = setOf()
             )
 
-    fun getDcePhase(devirtualizationAnalysisPhase: NamedCompilerPhase<LtoContext, IrModuleFragment>,) = makeKonanModuleOpPhase<LtoContext>(
+    fun getDcePhase(devirtualizationAnalysisPhase: NamedCompilerPhase<LtoContext, IrModuleFragment>) = makeKonanModuleOpPhase<LtoContext>(
             name = "DCEPhase",
             description = "Dead code elimination",
             prerequisite = setOf(devirtualizationAnalysisPhase),

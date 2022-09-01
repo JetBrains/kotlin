@@ -40,7 +40,7 @@ internal interface KonanBackendContext : CommonBackendContext {
     }
 }
 
-internal abstract class KonanBackendContextAbstract(val config: KonanConfig) : KonanBackendContext {
+internal abstract class AbstractKonanBackendContext(open val config: KonanConfig) : KonanBackendContext {
     abstract override val builtIns: KonanBuiltIns
 
     abstract override val ir: KonanIr
@@ -69,6 +69,13 @@ internal abstract class KonanBackendContextAbstract(val config: KonanConfig) : K
     override val mapping: NativeMapping = NativeMapping()
 
     override val irFactory: IrFactory = IrFactoryImpl
+
+    override var inVerbosePhase = false
+    override fun log(message: () -> String) {
+        if (inVerbosePhase) {
+            println(message())
+        }
+    }
 }
 
 internal fun IrElement.getCompilerMessageLocation(containingFile: IrFile): CompilerMessageLocation? =

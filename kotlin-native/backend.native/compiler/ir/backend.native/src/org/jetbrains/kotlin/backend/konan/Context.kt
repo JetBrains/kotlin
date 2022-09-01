@@ -73,7 +73,7 @@ internal class NativeMapping() : DefaultMapping() {
 
 internal class Context(
         config: KonanConfig,
-) : KonanBackendContextAbstract(config),
+) : AbstractKonanBackendContext(config),
         ConfigChecks,
         FrontendContext,
         PsiToIrContext,
@@ -89,8 +89,8 @@ internal class Context(
         MiddleEndContext,
         ObjectFilesContext,
         CacheAwareContext,
-        CExportContext
-{
+        CExportContext,
+        LinkerContext {
     // TopDownAnalyzer Context
     override lateinit var frontendServices: FrontendServices
 
@@ -99,18 +99,25 @@ internal class Context(
     override lateinit var bindingContext: BindingContext
     override lateinit var moduleDescriptor: ModuleDescriptor
 
+    fun populateFromFrontend(frontendContext: FrontendContext) {
+        environment = frontendContext.environment
+        bindingContext = frontendContext.bindingContext
+        moduleDescriptor = frontendContext.moduleDescriptor
+        frontendServices = frontendContext.frontendServices
+    }
+
     // Psi To IR context
     override var symbolTable: SymbolTable? = null
 
-    override lateinit var objCExport: ObjCExport
+    override var objCExport: ObjCExport? = null
 
     override val isNativeLibrary: Boolean by lazy {
         val kind = config.configuration.get(KonanConfigKeys.PRODUCE)
         kind == CompilerOutputKind.DYNAMIC || kind == CompilerOutputKind.STATIC
     }
 
-    override val objCExportNamer: ObjCExportNamer
-        get() = objCExport.exportedInterface!!.namer
+    override val objCExportNamer: ObjCExportNamer?
+        get() = objCExport?.namer
 
     override lateinit var cAdapterGenerator: CAdapterGenerator
     override lateinit var expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>
@@ -118,8 +125,6 @@ internal class Context(
     override val builtIns: KonanBuiltIns by lazy(PUBLICATION) {
         moduleDescriptor.builtIns as KonanBuiltIns
     }
-
-    override val configuration get() = config.configuration
 
     override val internalPackageFqn: FqName = RuntimeNames.kotlinNativeInternalPackageName
 
@@ -240,13 +245,6 @@ internal class Context(
     override val coverage: CoverageManager = CoverageManager(this, config)
 
     override fun ghaEnabled(): Boolean = ::globalHierarchyAnalysisResult.isInitialized
-
-    override var inVerbosePhase = false
-    override fun log(message: () -> String) {
-        if (inVerbosePhase) {
-            println(message())
-        }
-    }
 
     override lateinit var debugInfo: DebugInfo
     override var moduleDFG: ModuleDFG? = null

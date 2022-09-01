@@ -246,8 +246,8 @@ internal fun produceKlib(context: KlibProducingContext, config: KonanConfig) {
             context.dataFlowGraph)
 }
 
-internal fun produceFrameworkInterface(objcExport: ObjCExport) {
-    objcExport.produceFrameworkInterface()
+internal fun produceFrameworkInterface(objcExport: ObjCExport?) {
+    objcExport?.produceFrameworkInterface()
 }
 
 internal fun produceBitcode(config: KonanConfig, context: Context, llvmModule: LLVMModuleRef) {

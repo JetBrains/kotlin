@@ -17,15 +17,16 @@ import org.jetbrains.kotlin.konan.exec.Command
 
 internal class ObjCExportCodegen(
         private val context: BitcodegenContext,
-        private val exportedInterface: ObjCExportedInterface,
-        private val codeSpec: ObjCExportCodeSpec,
+        private val objCExport: ObjCExport?,
         private val config: KonanConfig,
 ) {
+    private val topLevelNamePrefix get() = config.objCExportTopLevelNamePrefix
+
     private val target get() = config.target
 
-    lateinit var namer: ObjCExportNamer
-
     fun generate(codegen: CodeGenerator) {
+        val exportedInterface = objCExport?.exportedInterface
+        val codeSpec = objCExport?.codeSpec
         if (!target.family.isAppleFamily) return
 
         if (context.shouldDefineFunctionClasses) {
@@ -33,13 +34,21 @@ internal class ObjCExportCodegen(
         }
 
         if (!config.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
+        require(objCExport != null)
+        val mapper = exportedInterface?.mapper ?: ObjCExportMapper(unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport)
+        val objCExportNamer = exportedInterface?.namer ?: ObjCExportNamerImpl(
+                // TODO: private val topLevelNamePrefix get() = config.objCExportTopLevelNamePrefix
+                setOf(),
+                context.builtIns,
+                mapper,
+                topLevelNamePrefix,
+                local = false
+        )
+        objCExport.namer = objCExportNamer
 
-        val mapper = exportedInterface.mapper
-        namer = exportedInterface.namer
+        val objCCodeGenerator = ObjCExportCodeGenerator(codegen, objCExportNamer, mapper)
 
-        val objCCodeGenerator = ObjCExportCodeGenerator(codegen, namer, mapper)
-
-        exportedInterface.generateWorkaroundForSwiftSR10177()
+        exportedInterface?.generateWorkaroundForSwiftSR10177()
 
         objCCodeGenerator.generate(codeSpec)
         objCCodeGenerator.dispose()
