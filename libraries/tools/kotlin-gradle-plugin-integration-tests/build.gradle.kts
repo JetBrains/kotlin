@@ -40,6 +40,11 @@ dependencies {
             requireCapability("org.jetbrains.kotlin:kotlin-sam-with-receiver-common")
         }
     }
+    testImplementation(project(":kotlin-assignment")) {
+        capabilities {
+            requireCapability("org.jetbrains.kotlin:kotlin-assignment-common")
+        }
+    }
     testImplementation(project(":atomicfu")) {
         capabilities {
             requireCapability("org.jetbrains.kotlin:atomicfu-common")

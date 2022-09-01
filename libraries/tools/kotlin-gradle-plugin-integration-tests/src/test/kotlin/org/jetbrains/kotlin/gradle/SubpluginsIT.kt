@@ -123,6 +123,14 @@ class SubpuginsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("assignment works")
+    @GradleTest
+    fun testAssignmentSimple(gradleVersion: GradleVersion) {
+        project("assignmentSimple", gradleVersion) {
+            build("assemble")
+        }
+    }
+
     @DisplayName("Allopen plugin works when classpath dependency is not declared in current or root project ")
     @GradleTest
     fun testAllOpenFromNestedBuildscript(gradleVersion: GradleVersion) {
