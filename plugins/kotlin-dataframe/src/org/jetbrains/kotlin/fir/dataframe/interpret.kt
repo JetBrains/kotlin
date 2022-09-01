@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
-import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fqName
@@ -27,17 +26,20 @@ import org.jetbrains.kotlinx.dataframe.Marker
 import org.jetbrains.kotlinx.dataframe.annotations.*
 import org.jetbrains.kotlinx.dataframe.plugin.*
 
-abstract class MyFirExpressionResolutionExtension(session: FirSession) : FirExpressionResolutionExtension(session), KotlinTypeFacade
+fun interface InterpretationErrorReporter {
+    fun reportInterpretationError(call: FirFunctionCall, message: String)
+}
 
-fun <T> MyFirExpressionResolutionExtension.interpret(
+fun <T> KotlinTypeFacade.interpret(
     functionCall: FirFunctionCall,
     processor: Interpreter<T>,
-    additionalArguments: Map<String, Interpreter.Success<Any?>> = emptyMap()
+    additionalArguments: Map<String, Interpreter.Success<Any?>> = emptyMap(),
+    reporter: InterpretationErrorReporter,
 ): Interpreter.Success<T>? {
 
     val refinedArguments: Arguments = functionCall.collectArgumentExpressions()
 
-    val defaultArguments =  processor.expectedArguments.filter { it.defaultValue is Present }.map { it.name }.toSet()
+    val defaultArguments = processor.expectedArguments.filter { it.defaultValue is Present }.map { it.name }.toSet()
     val actualArgsMap = refinedArguments.associateBy { it.name.identifier }.toSortedMap()
     val expectedArgsMap = processor.expectedArguments
         .filterNot { it.name.startsWith("typeArg") }
@@ -53,7 +55,8 @@ fun <T> MyFirExpressionResolutionExtension.interpret(
             appendLine("add arguments to an interpeter:")
             appendLine(diff.map { actualArgsMap[it] })
         }
-        error(message)
+        reporter.reportInterpretationError(functionCall, message)
+        return null
     }
 
     val arguments = mutableMapOf<String, Interpreter.Success<Any?>>()
@@ -73,17 +76,20 @@ fun <T> MyFirExpressionResolutionExtension.interpret(
                                 is FirCallableReferenceAccess -> {
                                     toKPropertyApproximation(it, session)
                                 }
+
                                 else -> TODO(it::class.toString())
                             }
 
                         }
                         Interpreter.Success(args)
                     }
+
                     is FirFunctionCall -> {
                         val interpreter = expression.loadInterpreter()
                             ?: TODO("receiver ${expression.calleeReference} is not annotated with Interpretable. It can be DataFrame instance, but it's not supported rn")
-                        interpret(expression, interpreter, emptyMap())
+                        interpret(expression, interpreter, emptyMap(), reporter)
                     }
+
                     is FirPropertyAccessExpression -> {
                         (expression.calleeReference as? FirResolvedNamedReference)?.let {
                             val symbol = it.resolvedSymbol
@@ -100,9 +106,11 @@ fun <T> MyFirExpressionResolutionExtension.interpret(
                             }
                         }
                     }
+
                     is FirCallableReferenceAccess -> {
                         Interpreter.Success(toKPropertyApproximation(expression, session))
                     }
+
                     is FirLambdaArgumentExpression -> {
                         val col: List<ColumnWithPathApproximation> = when (val lambda = expression.expression) {
                             is FirAnonymousFunctionExpression -> {
@@ -111,18 +119,22 @@ fun <T> MyFirExpressionResolutionExtension.interpret(
                                     is FirPropertyAccessExpression -> {
                                         extracted(result)
                                     }
+
                                     is FirFunctionCall -> {
                                         val interpreter = result.loadInterpreter() ?: TODO("")
                                         @Suppress("UNCHECKED_CAST")
-                                        interpret(result, interpreter)?.value as List<ColumnWithPathApproximation>
+                                        interpret(result, interpreter, reporter = reporter)?.value as List<ColumnWithPathApproximation>
                                     }
+
                                     else -> TODO(result::class.toString())
                                 }
                             }
+
                             else -> TODO(lambda::class.toString())
                         }
                         Interpreter.Success(col)
                     }
+
                     else -> TODO(expression::class.toString())
                 }
             }
@@ -139,7 +151,12 @@ fun <T> MyFirExpressionResolutionExtension.interpret(
                         .statements.filterIsInstance<FirFunctionCall>()
                         .forEach { call ->
                             val schemaProcessor = call.loadInterpreter() ?: return@forEach
-                            interpret(call, schemaProcessor, mapOf("dsl" to Interpreter.Success(receiver)))
+                            interpret(
+                                call,
+                                schemaProcessor,
+                                mapOf("dsl" to Interpreter.Success(receiver)),
+                                reporter
+                            )
                         }
                 }.let { Interpreter.Success(it) }
             }
@@ -182,11 +199,12 @@ fun <T> MyFirExpressionResolutionExtension.interpret(
         when (val res = processor.interpret(arguments, this)) {
             is Interpreter.Success -> res
             is Interpreter.Error -> {
-                error(res.message.toString())
+                reporter.reportInterpretationError(functionCall, res.message ?: "")
+                return null
             }
         }
     } else {
-        error("")
+        return null
     }
 }
 
@@ -217,7 +235,7 @@ private fun KotlinTypeFacade.extracted(result: FirPropertyAccessExpression): Lis
 }
 
 
-private fun MyFirExpressionResolutionExtension.columnOf(it: FirPropertySymbol): SimpleCol =
+private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol): SimpleCol =
     when (it.resolvedReturnType.classId) {
         Names.DF_CLASS_ID -> {
             val nestedColumns = it.resolvedReturnType.typeArguments[0].type
@@ -256,7 +274,10 @@ fun f(propertyAccessExpression: FirPropertyAccessExpression): String {
     return propertyAccessExpression.calleeReference.resolved!!.name.identifier
 }
 
-private fun MyFirExpressionResolutionExtension.toKPropertyApproximation(firCallableReferenceAccess: FirCallableReferenceAccess, session: FirSession): KPropertyApproximation {
+private fun KotlinTypeFacade.toKPropertyApproximation(
+    firCallableReferenceAccess: FirCallableReferenceAccess,
+    session: FirSession
+): KPropertyApproximation {
     val propertyName = firCallableReferenceAccess.calleeReference.name.identifier
     return (firCallableReferenceAccess.calleeReference as FirResolvedCallableReference).let {
         val symbol = it.toResolvedCallableSymbol()!!
@@ -286,7 +307,7 @@ internal fun FirFunctionCall.collectArgumentExpressions(): Arguments {
     return Arguments(refinedArgument)
 }
 
-internal val FirExpressionResolutionExtension.getSchema: FirExpression.() -> ObjectWithSchema get() = { getSchema(session) }
+internal val KotlinTypeFacade.getSchema: FirExpression.() -> ObjectWithSchema get() = { getSchema(session) }
 
 internal fun FirExpression.getSchema(session: FirSession): ObjectWithSchema {
     return typeRef.toClassLikeSymbol(session)!!.let {

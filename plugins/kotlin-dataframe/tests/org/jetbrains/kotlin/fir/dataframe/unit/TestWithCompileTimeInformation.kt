@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsPro
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.unwrapArgument
+import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -97,13 +98,13 @@ abstract class TestWithCompileTimeInformation : AbstractKotlinCompilerTest() {
         val getTestFilePath: () -> String,
         val setTestSubject: (PluginDataFrameSchema) -> Unit,
         val onCompile: (FirSession) -> Unit
-    ) : MyFirExpressionResolutionExtension(session) {
+    ) : FirExpressionResolutionExtension(session), KotlinTypeFacade {
         override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
             functionCall.calleeReference.name.identifierOrNullIfSpecial?.let {
                 if (it == "test") {
                     val call = functionCall.arguments[1].unwrapArgument() as FirFunctionCall
                     val interpreter = call.loadInterpreter()!!
-                    val result = interpret(call, interpreter)?.value ?: TODO("test error cases")
+                    val result = interpret(call, interpreter, reporter = { _, _ -> })?.value ?: TODO("test error cases")
 
                     setTestSubject(result as PluginDataFrameSchema)
                     onCompile(session)

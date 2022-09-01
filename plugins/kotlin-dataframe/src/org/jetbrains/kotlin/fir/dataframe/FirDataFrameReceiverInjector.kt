@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.annotations.*
 import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
@@ -58,7 +59,7 @@ class FirDataFrameReceiverInjector(
     session: FirSession,
     private val state: MutableMap<ClassId, SchemaContext>,
     private val ids: ArrayDeque<ClassId>
-) : MyFirExpressionResolutionExtension(session) {
+) : FirExpressionResolutionExtension(session), KotlinTypeFacade {
 
     override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
         return coneKotlinTypes(functionCall, state, ids, id)
@@ -81,7 +82,7 @@ class FirDataFrameReceiverInjector(
     object DataFramePluginKey : GeneratedDeclarationKey()
 }
 
-typealias RootMarkerStrategy = FirExpressionResolutionExtension.(FirFunctionCall) -> ConeTypeProjection
+typealias RootMarkerStrategy = KotlinTypeFacade.(FirFunctionCall) -> ConeTypeProjection
 
 
 val id: RootMarkerStrategy = {
@@ -93,17 +94,19 @@ val any: RootMarkerStrategy = {
     session.builtinTypes.anyType.type
 }
 
-fun MyFirExpressionResolutionExtension.coneKotlinTypes(
+fun KotlinTypeFacade.coneKotlinTypes(
     functionCall: FirFunctionCall,
     state: MutableMap<ClassId, SchemaContext>,
     ids: ArrayDeque<ClassId>,
-    getRootMarker: FirExpressionResolutionExtension.(FirFunctionCall) -> ConeTypeProjection
+    getRootMarker: KotlinTypeFacade.(FirFunctionCall) -> ConeTypeProjection,
+    reporter: InterpretationErrorReporter = InterpretationErrorReporter { _, _ -> }
 ): List<ConeKotlinType> {
     val callReturnType = functionCall.typeRef.coneTypeSafe<ConeClassLikeType>() ?: return emptyList()
     if (callReturnType.classId != DF_CLASS_ID) return emptyList()
     val processor = functionCall.loadInterpreter(session) ?: return emptyList()
 
-    val dataFrameSchema = interpret(functionCall, processor)?.let { it.value as PluginDataFrameSchema } ?: return emptyList()
+    val dataFrameSchema =
+        interpret(functionCall, processor, reporter = reporter)?.let { it.value as PluginDataFrameSchema } ?: return emptyList()
 
     val types: MutableList<ConeClassLikeType> = mutableListOf()
 

@@ -29,6 +29,7 @@ class FirDataFrameExtensionRegistrar : FirExtensionRegistrar() {
 
         +{ it: FirSession -> FirDataFrameExtensionsGenerator(it, ids, state) }
         +{ it: FirSession -> FirDataFrameReceiverInjector(it, state, queue) }
+        +::FirDataFrameAdditionalCheckers
 //        +::FirDataFrameExtensionsGenerator
 //        +::FirDataFrameReceiverInjector
     }

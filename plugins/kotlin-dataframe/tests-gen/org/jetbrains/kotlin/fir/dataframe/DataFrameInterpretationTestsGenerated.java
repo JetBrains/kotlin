@@ -70,6 +70,12 @@ public class DataFrameInterpretationTestsGenerated extends AbstractDataFrameInte
         }
 
         @Test
+        @TestMetadata("interpretationError.kt")
+        public void testInterpretationError() throws Exception {
+            runTest("plugins/kotlin-dataframe/testData/interpretation/atoms/interpretationError.kt");
+        }
+
+        @Test
         @TestMetadata("KProperties.kt")
         public void testKProperties() throws Exception {
             runTest("plugins/kotlin-dataframe/testData/interpretation/atoms/KProperties.kt");

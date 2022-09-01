@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.unwrapArgument
+import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl
 import org.jetbrains.kotlinx.dataframe.api.Infer
 import org.jetbrains.kotlinx.dataframe.plugin.*
@@ -74,6 +76,7 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
                 override fun ExtensionRegistrarContext.configurePlugin() {
                     +{ it: FirSession -> FirDataFrameExtensionsGenerator(it, ids, state) }
                     +{ it: FirSession -> InterpretersRunner(it, queue, state, getTestFilePath) }
+                    +{ it: FirSession -> FirDataFrameAdditionalCheckers(it) }
                 }
             })
         }
@@ -84,14 +87,15 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
         val queue: ArrayDeque<ClassId>,
         val state: MutableMap<ClassId, SchemaContext>,
         val getTestFilePath: () -> String
-    ) : MyFirExpressionResolutionExtension(session) {
+    ) : FirExpressionResolutionExtension(session), KotlinTypeFacade {
         override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
             functionCall.calleeReference.name.identifierOrNullIfSpecial?.let {
                 if (it == "test") {
                     val id = (functionCall.arguments[0].unwrapArgument() as FirConstExpression<*>).value as String
                     val call = functionCall.arguments[1].unwrapArgument() as FirFunctionCall
                     val interpreter = call.loadInterpreter()!!
-                    val result = interpret(call, interpreter)?.value ?: TODO("test error cases")
+
+                    val result = interpret(call, interpreter, reporter = { _, _ -> })?.value ?: return emptyList()
 
                     withClue(id) {
                         result shouldBe expectedResult(id)
