@@ -5,12 +5,24 @@
 
 #include "ObjectAlloc.hpp"
 
+#include <mutex>
+
 #include "../../mimalloc/c/include/mimalloc.h"
 #include "Alignment.hpp"
+#include "CompilerConstants.hpp"
 
 using namespace kotlin;
 
+namespace {
+
+std::once_flag initOptions;
+
+}
+
 void kotlin::initObjectPool() noexcept {
+    if (!compiler::mimallocUseDefaultOptions()) {
+        std::call_once(initOptions, [] { mi_option_enable(mi_option_reset_decommits); });
+    }
     mi_thread_init();
 }
 

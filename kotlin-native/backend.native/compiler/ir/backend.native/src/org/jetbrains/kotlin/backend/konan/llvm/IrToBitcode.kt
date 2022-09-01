@@ -2792,6 +2792,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             overrideRuntimeGlobal("Kotlin_printToAndroidLogcat", Int32(if (programType.consolePrintsToLogcat) 1 else 0))
         }
         overrideRuntimeGlobal("Kotlin_appStateTracking", Int32(context.config.appStateTracking.value))
+        overrideRuntimeGlobal("Kotlin_mimallocUseDefaultOptions", Int32(if (context.config.mimallocUseDefaultOptions) 1 else 0))
     }
 
     //-------------------------------------------------------------------------//

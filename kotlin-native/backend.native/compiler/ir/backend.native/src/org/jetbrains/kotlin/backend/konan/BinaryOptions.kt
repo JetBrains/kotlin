@@ -40,6 +40,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val appStateTracking by option<AppStateTracking>()
 
     val sanitizer by option<SanitizerKind>()
+
+    val mimallocUseDefaultOptions by booleanOption()
 }
 
 open class BinaryOption<T : Any>(
