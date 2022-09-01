@@ -210,6 +210,12 @@ include ":kotlin-sam-with-receiver-compiler-plugin",
         ":kotlin-sam-with-receiver-compiler-plugin.k2",
         ":kotlin-sam-with-receiver-compiler-plugin.cli"
 
+include ":kotlin-value-container-assignment-compiler-plugin",
+        ":kotlin-value-container-assignment-compiler-plugin.common",
+        ":kotlin-value-container-assignment-compiler-plugin.k1",
+        ":kotlin-value-container-assignment-compiler-plugin.k2",
+        ":kotlin-value-container-assignment-compiler-plugin.cli"
+
 include ":kotlin-imports-dumper-compiler-plugin",
         ":kotlin-script-runtime",
         ":plugins:fir-plugin-prototype",
@@ -735,6 +741,12 @@ project(':kotlin-sam-with-receiver-compiler-plugin.common').projectDir = "$rootD
 project(':kotlin-sam-with-receiver-compiler-plugin.k1').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver.k1" as File
 project(':kotlin-sam-with-receiver-compiler-plugin.k2').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver.k2" as File
 project(':kotlin-sam-with-receiver-compiler-plugin.cli').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver.cli" as File
+
+project(':kotlin-value-container-assignment-compiler-plugin').projectDir = "$rootDir/plugins/value-container-assignment" as File
+project(':kotlin-value-container-assignment-compiler-plugin.common').projectDir = "$rootDir/plugins/value-container-assignment/value-container-assignment.common" as File
+project(':kotlin-value-container-assignment-compiler-plugin.k1').projectDir = "$rootDir/plugins/value-container-assignment/value-container-assignment.k1" as File
+project(':kotlin-value-container-assignment-compiler-plugin.k2').projectDir = "$rootDir/plugins/value-container-assignment/value-container-assignment.k2" as File
+project(':kotlin-value-container-assignment-compiler-plugin.cli').projectDir = "$rootDir/plugins/value-container-assignment/value-container-assignment.cli" as File
 
 project(':tools:kotlinp').projectDir = "$rootDir/libraries/tools/kotlinp" as File
 project(':kotlin-project-model').projectDir = "$rootDir/libraries/tools/kotlin-project-model" as File

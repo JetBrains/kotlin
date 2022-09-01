@@ -1,0 +1,28 @@
+/methodDeclarationTest.kt:8:28: error: function 'assign' used for '=' overload should return 'Unit'
+    fun assign(v: String): String {
+                           ^
+/methodDeclarationTest.kt:12:36: error: function 'assign' used for '=' overload should return 'Unit'
+    fun assign(v: StringProperty): String {
+                                   ^
+/methodDeclarationTest.kt:19:36: error: function 'assign' used for '=' overload should return 'Unit'
+fun StringProperty.assign(v: Int): String {
+                                   ^
+/methodDeclarationTest.kt:30:9: error: val cannot be reassigned
+        task.input = "42"
+        ^
+/methodDeclarationTest.kt:30:20: error: function 'assign' used for '=' overload should return 'Unit'
+        task.input = "42"
+                   ^
+/methodDeclarationTest.kt:31:9: error: val cannot be reassigned
+        task.input = 42
+        ^
+/methodDeclarationTest.kt:31:20: error: function 'assign' used for '=' overload should return 'Unit'
+        task.input = 42
+                   ^
+/methodDeclarationTest.kt:41:9: error: val cannot be reassigned
+        task.input = 42
+        ^
+/methodDeclarationTest.kt:41:22: error: the integer literal does not conform to the expected type IntProperty
+        task.input = 42
+                     ^
+

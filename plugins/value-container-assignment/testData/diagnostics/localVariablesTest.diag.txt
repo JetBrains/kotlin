@@ -1,0 +1,22 @@
+/localVariablesTest.kt:21:9: error: val cannot be reassigned
+        property = "Fail"
+        ^
+/localVariablesTest.kt:21:20: error: type mismatch: inferred type is String but StringProperty was expected
+        property = "Fail"
+                   ^
+/localVariablesTest.kt:27:9: error: val cannot be reassigned
+        property = StringProperty("Fail")
+        ^
+/localVariablesTest.kt:33:20: error: type mismatch: inferred type is String but StringProperty was expected
+        property = "Fail"
+                   ^
+/localVariablesTest.kt:45:13: error: val cannot be reassigned
+            property = "Fail"
+            ^
+/localVariablesTest.kt:45:24: error: type mismatch: inferred type is String but StringProperty was expected
+            property = "Fail"
+                       ^
+/localVariablesTest.kt:48:13: error: val cannot be reassigned
+            property = StringProperty("Fail")
+            ^
+

@@ -16,12 +16,15 @@ import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidIrBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
+import org.jetbrains.kotlin.container.assignment.AbstractFirBlackBoxCodegenTestForValueContainerAssignment
+import org.jetbrains.kotlin.container.assignment.AbstractFirValueContainerAssignmentTest
+import org.jetbrains.kotlin.container.assignment.AbstractIrBlackBoxCodegenTestForValueContainerAssignment
+import org.jetbrains.kotlin.container.assignment.AbstractValueContainerAssignmentTest
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPluginBlackBoxCodegenTest
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPluginDiagnosticTest
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
-import org.jetbrains.kotlin.generators.model.AnnotationModel
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.jvm.abi.*
@@ -38,9 +41,6 @@ import org.jetbrains.kotlin.samWithReceiver.*
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJsIrTest
 import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJvmIrTest
-import org.jetbrains.kotlinx.serialization.AbstractSerializationIrBytecodeListingTest
-import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginBytecodeListingTest
-import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginDiagnosticTest
 import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
@@ -215,6 +215,7 @@ fun main(args: Array<String>) {
     }
 
     generateTestGroupSuiteWithJUnit5 {
+        val firTestdataPattern = "^(.+)\\.fir\\.kts?\$"
         val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
 
         testGroup("plugins/parcelize/parcelize-compiler/tests-gen", "plugins/parcelize/parcelize-compiler/testData") {
@@ -378,5 +379,19 @@ fun main(args: Array<String>) {
             }
         }
 
+        testGroup("plugins/value-container-assignment/tests-gen", "plugins/value-container-assignment/testData") {
+            testClass<AbstractValueContainerAssignmentTest> {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractFirValueContainerAssignmentTest> {
+                model("diagnostics", pattern = firTestdataPattern)
+            }
+            testClass<AbstractIrBlackBoxCodegenTestForValueContainerAssignment> {
+                model("codegen", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractFirBlackBoxCodegenTestForValueContainerAssignment> {
+                model("codegen", excludedPattern = excludedFirTestdataPattern)
+            }
+        }
     }
 }

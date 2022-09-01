@@ -66,6 +66,7 @@ dependencies {
     testApi(projectTests(":kotlin-noarg-compiler-plugin"))
     testApi(projectTests(":kotlin-lombok-compiler-plugin"))
     testApi(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
+    testApi(projectTests(":kotlin-value-container-assignment-compiler-plugin"))
     testApi(projectTests(":kotlinx-serialization-compiler-plugin"))
     testApi(projectTests(":kotlinx-atomicfu-compiler-plugin"))
     testApi(projectTests(":plugins:fir-plugin-prototype"))
