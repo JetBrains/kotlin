@@ -64,6 +64,7 @@ compileKotlin {
             "-Xmultifile-parts-inherit",
             "-opt-in=kotlin.RequiresOptIn",
             "-opt-in=kotlin.contracts.ExperimentalContracts",
+            "-Xno-new-java-annotation-targets",
     ]
     kotlinOptions.moduleName = project.name
 }

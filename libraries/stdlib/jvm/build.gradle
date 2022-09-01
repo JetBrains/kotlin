@@ -117,6 +117,7 @@ compileKotlin {
                 "-Xuse-14-inline-classes-mangling-scheme",
                 "-Xbuiltins-from-sources",
                 "-XXLanguage:+RangeUntilOperator",
+                "-Xno-new-java-annotation-targets",
         ]
         moduleName = "kotlin-stdlib"
     }

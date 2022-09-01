@@ -52,6 +52,7 @@ compileKotlin {
                 "-Xno-optimized-callable-references",
                 "-Xno-kotlin-nothing-value-exception",
                 "-opt-in=kotlin.RequiresOptIn",
+                "-Xno-new-java-annotation-targets",
         ]
         moduleName = "kotlin-reflection"
     }
