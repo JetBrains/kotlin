@@ -87,7 +87,7 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
             .getKotlinSubPackageFqNames(fqn)
             .map { fqn.child(it) }
 
-    override fun getLightClassForScript(script: KtScript): KtLightClass = error("Should not be called")
+    override fun createInstanceOfLightScript(script: KtScript): KtLightClass? = error("Should not be called")
 
     override fun KtFile.findModule(): KtModule = getKtModule(project)
 

@@ -42,8 +42,6 @@ import com.intellij.util.lang.UrlClassLoader
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.asJava.classes.KotlinK1LightClassFactory
-import org.jetbrains.kotlin.asJava.classes.KotlinLightClassFactory
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.*
@@ -674,7 +672,6 @@ class KotlinCoreEnvironment private constructor(
             // ability to get text from annotations xml files
             applicationEnvironment.registerFileType(PlainTextFileType.INSTANCE, "xml")
             applicationEnvironment.registerParserDefinition(JavaParserDefinition())
-            applicationEnvironment.registerApplicationService(KotlinLightClassFactory::class.java, KotlinK1LightClassFactory())
         }
 
         // made public for Upsource

@@ -12,7 +12,10 @@ import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.asJava.classes.*
+import org.jetbrains.kotlin.asJava.classes.KtDescriptorBasedFakeLightClass
+import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.load.java.components.FilesByFacadeFqNameIndexer
 import org.jetbrains.kotlin.name.FqName
@@ -94,7 +97,9 @@ class CliKotlinAsJavaSupport(project: Project, private val traceHolder: CliTrace
         ).mapNotNull { member -> (member as? PackageViewDescriptor)?.fqName }
     }
 
-    override fun getLightClassForScript(script: KtScript): KtLightClassForScript? = KotlinLightClassFactory.createScript(script)
+    override fun createInstanceOfLightScript(script: KtScript): KtLightClass {
+        return LightClassGenerationSupport.getInstance(script.project).createUltraLightClassForScript(script)
+    }
 
     override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject> {
         return ResolveSessionUtils.getClassDescriptorsByFqName(traceHolder.module, fqName).mapNotNull {

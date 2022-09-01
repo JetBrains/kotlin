@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.asJava.classes.shouldNotBeVisibleAsLightClass
 import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KotlinDeclarationNavigationPolicy
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.analysisContext
+import org.jetbrains.kotlin.psi.*
 
 abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) : KotlinAsJavaSupport() {
     fun createLightFacade(file: KtFile): Pair<KtLightClassForFacade?, ModificationTracker>? {
@@ -166,6 +163,25 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
         CachedValuesManager.getCachedValue(classOrObject) {
             val (clazz, tracker) = createLightClass(classOrObject) ?: (null to projectWideOutOfBlockModificationTracker())
             CachedValueProvider.Result.createSingleDependency(clazz, tracker)
+        }
+    }
+
+    fun createLightScript(script: KtScript): Pair<KtLightClass?, ModificationTracker>? {
+        val containingFile = script.containingFile
+        if (containingFile is KtCodeFragment) {
+            // Avoid building light classes for code fragments
+            return null
+        }
+
+        return createInstanceOfLightScript(script) to projectWideOutOfBlockModificationTracker()
+    }
+
+    protected abstract fun createInstanceOfLightScript(script: KtScript): KtLightClass?
+
+    override fun getLightClassForScript(script: KtScript): KtLightClass? = ifValid(script) {
+        CachedValuesManager.getCachedValue(script) {
+            val (lightScript, tracker) = createLightScript(script) ?: (null to projectWideOutOfBlockModificationTracker())
+            CachedValueProvider.Result.createSingleDependency(lightScript, tracker)
         }
     }
 }
