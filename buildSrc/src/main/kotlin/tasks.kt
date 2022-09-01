@@ -26,6 +26,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 val kotlinGradlePluginAndItsRequired = arrayOf(
+    ":kotlin-assignment",
     ":kotlin-allopen",
     ":kotlin-noarg",
     ":kotlin-sam-with-receiver",
