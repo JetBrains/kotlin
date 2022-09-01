@@ -210,6 +210,12 @@ include ":kotlin-sam-with-receiver-compiler-plugin",
         ":kotlin-sam-with-receiver-compiler-plugin.k2",
         ":kotlin-sam-with-receiver-compiler-plugin.cli"
 
+include ":kotlin-assignment-compiler-plugin",
+        ":kotlin-assignment-compiler-plugin.common",
+        ":kotlin-assignment-compiler-plugin.k1",
+        ":kotlin-assignment-compiler-plugin.k2",
+        ":kotlin-assignment-compiler-plugin.cli"
+
 include ":kotlin-imports-dumper-compiler-plugin",
         ":kotlin-script-runtime",
         ":plugins:fir-plugin-prototype",
@@ -735,6 +741,12 @@ project(':kotlin-sam-with-receiver-compiler-plugin.common').projectDir = "$rootD
 project(':kotlin-sam-with-receiver-compiler-plugin.k1').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver.k1" as File
 project(':kotlin-sam-with-receiver-compiler-plugin.k2').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver.k2" as File
 project(':kotlin-sam-with-receiver-compiler-plugin.cli').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver.cli" as File
+
+project(':kotlin-assignment-compiler-plugin').projectDir = "$rootDir/plugins/assign-plugin" as File
+project(':kotlin-assignment-compiler-plugin.common').projectDir = "$rootDir/plugins/assign-plugin/assign-plugin.common" as File
+project(':kotlin-assignment-compiler-plugin.k1').projectDir = "$rootDir/plugins/assign-plugin/assign-plugin.k1" as File
+project(':kotlin-assignment-compiler-plugin.k2').projectDir = "$rootDir/plugins/assign-plugin/assign-plugin.k2" as File
+project(':kotlin-assignment-compiler-plugin.cli').projectDir = "$rootDir/plugins/assign-plugin/assign-plugin.cli" as File
 
 project(':tools:kotlinp').projectDir = "$rootDir/libraries/tools/kotlinp" as File
 project(':kotlin-project-model').projectDir = "$rootDir/libraries/tools/kotlin-project-model" as File

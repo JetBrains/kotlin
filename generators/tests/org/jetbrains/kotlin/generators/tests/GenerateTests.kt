@@ -16,6 +16,10 @@ import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidIrBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
+import org.jetbrains.kotlin.assignment.plugin.AbstractFirBlackBoxCodegenTestForAssignmentPlugin
+import org.jetbrains.kotlin.assignment.plugin.AbstractFirAssignmentPluginDiagnosticTest
+import org.jetbrains.kotlin.assignment.plugin.AbstractIrBlackBoxCodegenTestAssignmentPlugin
+import org.jetbrains.kotlin.assignment.plugin.AbstractAssignmentPluginDiagnosticTest
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPluginBlackBoxCodegenTest
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPluginDiagnosticTest
 import org.jetbrains.kotlin.generators.TestGroup
@@ -361,5 +365,19 @@ fun main(args: Array<String>) {
             }
         }
 
+        testGroup("plugins/assign-plugin/tests-gen", "plugins/assign-plugin/testData") {
+            testClass<AbstractAssignmentPluginDiagnosticTest> {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractFirAssignmentPluginDiagnosticTest> {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractIrBlackBoxCodegenTestAssignmentPlugin> {
+                model("codegen", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractFirBlackBoxCodegenTestForAssignmentPlugin> {
+                model("codegen", excludedPattern = excludedFirTestdataPattern)
+            }
+        }
     }
 }

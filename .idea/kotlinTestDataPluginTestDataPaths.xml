@@ -84,6 +84,7 @@
         <option value="$PROJECT_DIR$/plugins/lombok/testData" />
         <option value="$PROJECT_DIR$/plugins/sam-with-receiver/testData" />
         <option value="$PROJECT_DIR$/plugins/kotlinx-serialization/testData" />
+        <option value="$PROJECT_DIR$/plugins/assign-plugin/testData" />
       </array>
     </option>
   </component>
