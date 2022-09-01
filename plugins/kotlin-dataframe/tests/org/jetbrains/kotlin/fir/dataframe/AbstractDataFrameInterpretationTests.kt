@@ -10,6 +10,7 @@ import io.kotest.matchers.shouldBe
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.dataframe.extensions.*
 import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall

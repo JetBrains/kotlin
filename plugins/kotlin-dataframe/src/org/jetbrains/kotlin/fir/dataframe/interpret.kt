@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.dataframe
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
+import org.jetbrains.kotlin.fir.dataframe.extensions.Arguments
+import org.jetbrains.kotlin.fir.dataframe.extensions.RefinedArgument
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList

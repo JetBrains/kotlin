@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
-import org.jetbrains.kotlin.fir.dataframe.functionSymbol
+import org.jetbrains.kotlin.fir.dataframe.extensions.functionSymbol
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar

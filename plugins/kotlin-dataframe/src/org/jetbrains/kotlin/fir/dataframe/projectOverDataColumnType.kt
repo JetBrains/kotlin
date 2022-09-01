@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.types.toTypeProjection
 import org.jetbrains.kotlin.types.Variance
 
 fun FirResolvedTypeRef.projectOverDataColumnType() =
-        ConeClassLikeTypeImpl(
-            ConeClassLikeLookupTagImpl(Names.DATA_COLUMN_CLASS_ID),
-            arrayOf(coneType.toTypeProjection(Variance.INVARIANT)),
-            isNullable = false
-        )
+    ConeClassLikeTypeImpl(
+        ConeClassLikeLookupTagImpl(Names.DATA_COLUMN_CLASS_ID),
+        arrayOf(coneType.toTypeProjection(Variance.INVARIANT)),
+        isNullable = false
+    )

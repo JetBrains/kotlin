@@ -3,25 +3,23 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.dataframe
+package org.jetbrains.kotlin.fir.dataframe.extensions
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.dataframe.*
 import org.jetbrains.kotlin.fir.dataframe.Names.COLUM_GROUP_CLASS_ID
 import org.jetbrains.kotlin.fir.dataframe.Names.DF_CLASS_ID
+import org.jetbrains.kotlin.fir.dataframe.loadInterpreter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.fqName
-import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.annotations.*
@@ -32,29 +30,6 @@ import org.jetbrains.kotlinx.dataframe.plugin.SimpleFrameColumn
 
 class SchemaContext(val properties: List<SchemaProperty>)
 
-object Names {
-    val DF_CLASS_ID: ClassId
-        get() = ClassId.topLevel(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "DataFrame")))
-    val COLUM_GROUP_CLASS_ID: ClassId
-        get() = ClassId(FqName("org.jetbrains.kotlinx.dataframe.columns"), Name.identifier("ColumnGroup"))
-    val DATA_COLUMN_CLASS_ID: ClassId
-        get() = ClassId(
-            FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")),
-            Name.identifier("DataColumn")
-        )
-    val COLUMNS_CONTAINER_CLASS_ID: ClassId
-        get() = ClassId(
-            FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")),
-            Name.identifier("ColumnsContainer")
-        )
-    val DATA_ROW_CLASS_ID: ClassId
-        get() = ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), Name.identifier("DataRow"))
-    val DF_ANNOTATIONS_PACKAGE: Name
-        get() = Name.identifier("org.jetbrains.kotlinx.dataframe.annotations")
-    val INTERPRETABLE_FQNAME: FqName
-        get() = FqName(Interpretable::class.qualifiedName!!)
-}
-
 class FirDataFrameReceiverInjector(
     session: FirSession,
     private val state: MutableMap<ClassId, SchemaContext>,
@@ -63,20 +38,6 @@ class FirDataFrameReceiverInjector(
 
     override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
         return coneKotlinTypes(functionCall, state, ids, id)
-    }
-
-    private fun findSchemaProcessor(functionCall: FirFunctionCall): SchemaModificationInterpreter? {
-        val firNamedFunctionSymbol = functionCall.calleeReference.resolvedSymbol as? FirNamedFunctionSymbol
-            ?: error("cannot resolve symbol for ${functionCall.calleeReference.name}")
-        val annotation = firNamedFunctionSymbol.annotations.firstOrNull {
-            val name1 = it.fqName(session)!!
-            val name2 = FqName("org.jetbrains.kotlinx.dataframe.annotations.SchemaProcessor")
-            name1 == name2
-        } ?: return null
-
-        val name = Name.identifier("processor")
-        val getClassCall = (annotation.argumentMapping.mapping[name] as FirGetClassCall)
-        return getClassCall.classId.load<SchemaModificationInterpreter>()
     }
 
     object DataFramePluginKey : GeneratedDeclarationKey()

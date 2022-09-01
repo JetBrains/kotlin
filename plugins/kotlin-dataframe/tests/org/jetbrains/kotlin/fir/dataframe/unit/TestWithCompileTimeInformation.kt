@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.*
+import org.jetbrains.kotlin.fir.dataframe.extensions.FirDataFrameExtensionsGenerator
+import org.jetbrains.kotlin.fir.dataframe.extensions.SchemaContext
 import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.arguments

@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.dataframe
+package org.jetbrains.kotlin.fir.dataframe.extensions
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.dataframe.Names
+import org.jetbrains.kotlin.fir.dataframe.projectOverDataColumnType
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -143,32 +145,6 @@ class FirDataFrameExtensionsGenerator(
                     listOf(dataRowExtension.symbol, columnContainerExtension.symbol)
                 }
         }
-    }
-
-    fun firPropertySymbols(
-        resolvedReturnTypeRef: FirResolvedTypeRef,
-        propertyName: Name,
-        callableId: CallableId,
-        marker: ConeTypeProjection
-    ): List<FirPropertySymbol> {
-        val rowExtension = generateExtensionProperty(
-            callableId, ConeClassLikeTypeImpl(
-                ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID),
-                typeArguments = arrayOf(marker),
-                isNullable = false
-            ), propertyName, resolvedReturnTypeRef
-        )
-        val frameExtension = generateExtensionProperty(
-            callableId,
-            ConeClassLikeTypeImpl(
-                ConeClassLikeLookupTagImpl(Names.COLUMNS_CONTAINER_CLASS_ID),
-                typeArguments = arrayOf(marker),
-                isNullable = false
-            ),
-            propertyName,
-            resolvedReturnTypeRef.projectOverDataColumnType().toFirResolvedTypeRef()
-        )
-        return listOf(rowExtension.symbol, frameExtension.symbol)
     }
 
     private fun generateExtensionProperty(

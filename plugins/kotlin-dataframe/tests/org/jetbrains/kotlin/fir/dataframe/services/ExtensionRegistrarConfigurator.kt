@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.dataframe.services
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.fir.dataframe.DataFrameIrBodyFiller
+import org.jetbrains.kotlin.fir.dataframe.extensions.DataFrameIrBodyFiller
 import org.jetbrains.kotlin.fir.dataframe.FirDataFrameExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.test.model.TestModule
