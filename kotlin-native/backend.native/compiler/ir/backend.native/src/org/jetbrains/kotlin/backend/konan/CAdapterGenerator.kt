@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
+import org.jetbrains.kotlin.backend.konan.phases.PsiToIrContext
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -161,12 +163,12 @@ private class ExportedElementScope(val kind: ScopeKind, val name: String) {
         return "$kind: $name ${elements.joinToString(", ")} ${scopes.joinToString("\n")}"
     }
 
-    fun generateCAdapters() {
+    fun generateCAdapters(context: BitcodegenContext) {
         elements.forEach {
-            it.generateCAdapter()
+            it.generateCAdapter(context)
         }
         scopes.forEach {
-            it.generateCAdapters()
+            it.generateCAdapters(context)
         }
     }
 
@@ -196,7 +198,7 @@ private class ExportedElementScope(val kind: ScopeKind, val name: String) {
 private class ExportedElement(val kind: ElementKind,
                               val scope: ExportedElementScope,
                               val declaration: DeclarationDescriptor,
-                              val owner: CAdapterGenerator) : ContextUtils {
+                              val owner: CAdapterGenerator) {
     init {
         scope.elements.add(this)
     }
@@ -210,9 +212,8 @@ private class ExportedElement(val kind: ElementKind,
         return "$kind: $name (aliased to ${if (::cname.isInitialized) cname.toString() else "<unknown>"})"
     }
 
-    override val context = owner.context
 
-    fun generateCAdapter() {
+    fun generateCAdapter(context: BitcodegenContext) {
         when {
             isFunction -> {
                 val function = declaration as FunctionDescriptor
@@ -244,7 +245,7 @@ private class ExportedElement(val kind: ElementKind,
                 cname = "_konan_function_${owner.nextFunctionIndex()}"
                 // Produce type getter.
                 val getTypeFunction = addLlvmFunctionWithDefaultAttributes(
-                        config,
+                        context.config,
                         context.llvmModule!!,
                         "${cname}_type",
                         owner.kGetTypeFuncType
@@ -252,7 +253,7 @@ private class ExportedElement(val kind: ElementKind,
                 val builder = LLVMCreateBuilderInContext(llvmContext)!!
                 val bb = LLVMAppendBasicBlockInContext(llvmContext, getTypeFunction, "")!!
                 LLVMPositionBuilderAtEnd(builder, bb)
-                LLVMBuildRet(builder, irClass.typeInfoPtr.llvm)
+                with(ContextUtils(context)) { LLVMBuildRet(builder, irClass.typeInfoPtr.llvm) }
                 LLVMDisposeBuilder(builder)
                 // Produce instance getter if needed.
                 if (isSingletonObject) {
@@ -526,7 +527,7 @@ private fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescript
             getPackage(it).fragments.filter { it.module == this }
         }
 
-internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVisitor<Boolean, Void?> {
+internal class CAdapterGenerator(val context: PsiToIrContext) : DeclarationDescriptorVisitor<Boolean, Void?> {
 
     private val scopes = mutableListOf<ExportedElementScope>()
     internal val prefix = context.config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
@@ -691,7 +692,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
     fun generateBindings(codegen: CodeGenerator) {
         this.codegenOrNull = codegen
         try {
-            generateBindings()
+            generateBindings(codegen.context)
         } finally {
             this.codegenOrNull = null
         }
@@ -700,7 +701,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
     private fun buildExports() {
         scopes.push(ExportedElementScope(ScopeKind.TOP, "kotlin"))
         moduleDescriptors += context.moduleDescriptor
-        moduleDescriptors += context.getExportedDependencies()
+        moduleDescriptors += context.config.getExportedDependencies(context.moduleDescriptor)
 
         currentPackageFragments = moduleDescriptors.flatMap { it.getPackageFragments() }.toSet().sortedWith(
                 Comparator { o1, o2 ->
@@ -710,12 +711,12 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         context.moduleDescriptor.getPackage(FqName.ROOT).accept(this, null)
     }
 
-    private fun generateBindings() {
+    private fun generateBindings(context: BitcodegenContext) {
         val top = scopes.pop()
         assert(scopes.isEmpty() && top.kind == ScopeKind.TOP)
 
         // Now, let's generate C world adapters for all functions.
-        top.generateCAdapters()
+        top.generateCAdapters(context)
 
         // Then generate data structure, describing generated adapters.
         makeGlobalStruct(top)

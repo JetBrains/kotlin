@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -239,7 +240,101 @@ class DynamicNativeCompilerDriver(
         runTopLevelPhaseUnit(objCExportContext, irGen)
         time += irGen.time
 
+        val irProcessing = NamedCompilerPhase<MiddleEndContext, Unit>(
+                "IRProcessing",
+                "Process linked IR",
+                nlevels = 1,
+                lower = Phases.buildCopyDefaultValuesToActualPhase() then
+                        Phases.buildSpecialBackendChecksPhase() then
+                        Phases.buildFunctionsWithoutBoundCheck()
+        )
+        val middleEndContext: MiddleEndContext = context
+        runTopLevelPhaseUnit(middleEndContext, irProcessing)
 
+        val allLowerings = Phases.buildAllLoweringsPhase()
+        runTopLevelPhase(middleEndContext, allLowerings, middleEndContext.irModule!!)
+
+        dependenciesLowering(middleEndContext.irModule!!, middleEndContext)
+
+        val bitcodegenPhase = NamedCompilerPhase<BitcodegenContext, IrModuleFragment>(
+                name = "BitcodeGen",
+                description = "Generation of LLVM module",
+                nlevels = 1,
+                lower = contextLLVMSetupPhase then
+                        returnsInsertionPhase then
+                        buildDFGPhase then
+                        devirtualizationAnalysisPhase then
+                        dcePhase then
+                        removeRedundantCallsToFileInitializersPhase then
+                        devirtualizationPhase then
+                        propertyAccessorInlinePhase then // Have to run after link dependencies phase, because fields
+                        // from dependencies can be changed during lowerings.
+                        inlineClassPropertyAccessorsPhase then
+                        redundantCoercionsCleaningPhase then
+                        unboxInlinePhase then
+                        createLLVMDeclarationsPhase then
+                        ghaPhase then
+                        RTTIPhase then
+                        generateDebugInfoHeaderPhase then
+                        escapeAnalysisPhase then
+                        localEscapeAnalysisPhase then
+                        codegenPhase then
+                        finalizeDebugInfoPhase
+        )
+        val bitcodegenContext: BitcodegenContext = context
+        runTopLevelPhase(bitcodegenContext, bitcodegenPhase, bitcodegenContext.irModule!!)
+
+        val llvmCodegenPhase = NamedCompilerPhase<LlvmCodegenContext, IrModuleFragment>(
+                name = "LlvmCodegen",
+                description = "Generation of bitcode file",
+                lower = verifyBitcodePhase then
+                        printBitcodePhase then
+                        linkBitcodeDependenciesPhase then
+                        bitcodePostprocessingPhase
+        )
+        val llvmcodegenContext: LlvmCodegenContext = context
+        runTopLevelPhase(llvmcodegenContext, llvmCodegenPhase, bitcodegenContext.irModule!!)
+
+        val writeLlvmModulePhase = Phases.buildWriteLlvmModule()
+        runTopLevelPhaseUnit(llvmcodegenContext, writeLlvmModulePhase)
+
+        val objectFilesContext: ObjectFilesContext = context
+        val objectFilesPhase = Phases.buildObjectFilesPhase(llvmcodegenContext.bitcodeFileName)
+        runTopLevelPhaseUnit(objectFilesContext, objectFilesPhase)
+
+        val linkerPhase = Phases.buildLinkerPhase(objectFilesContext.compilerOutput)
+        runTopLevelPhaseUnit(objectFilesContext, linkerPhase)
+    }
+
+    private fun dependenciesLowering(input: IrModuleFragment, context: MiddleEndContext, ) {
+        val files = mutableListOf<IrFile>()
+        files += input.files
+        input.files.clear()
+
+        // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
+        context.config.librariesWithDependencies(context.moduleDescriptor)
+                .reversed()
+                .forEach {
+                    val libModule = context.irModules[it.libraryName]
+                            ?: return@forEach
+
+                    input.files += libModule.files
+                    val lowerings = Phases.buildAllLoweringsPhase()
+                    runTopLevelPhase(context, lowerings, input)
+
+                    input.files.clear()
+                }
+
+        // Save all files for codegen in reverse topological order.
+        // This guarantees that libraries initializers are emitted in correct order.
+        context.config.librariesWithDependencies(context.moduleDescriptor)
+                .forEach {
+                    val libModule = context.irModules[it.libraryName]
+                            ?: return@forEach
+                    input.files += libModule.files
+                }
+
+        input.files += files
     }
 
     private fun getDumpTestsPhase(testDumpFile: File): NamedCompilerPhase<Context, IrModuleFragment> = makeCustomPhase<Context, IrModuleFragment>(
@@ -296,8 +391,7 @@ class DynamicNativeCompilerDriver(
                         generateDebugInfoHeader then
                         escapeAnalysisPhase then
                         codegenPhase then
-                        finalizeDebugInfoPhase then
-                        cStubsPhase
+                        finalizeDebugInfoPhase
         )
     }
 

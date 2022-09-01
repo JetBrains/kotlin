@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
-internal class NativeSuspendFunctionsLowering(ctx: MiddleEndContext): AbstractSuspendFunctionsLowering<Context>(ctx) {
+internal class NativeSuspendFunctionsLowering(ctx: MiddleEndContext): AbstractSuspendFunctionsLowering<MiddleEndContext>(ctx) {
     private val symbols = context.ir.symbols
 
     override val stateMachineMethodName = Name.identifier("invokeSuspend")

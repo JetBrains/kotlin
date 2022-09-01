@@ -197,7 +197,7 @@ internal fun linkBitcodeDependencies(context: LlvmCodegenContext, config: KonanC
         embedAppleLinkerOptionsToBitcode(context.llvm, config)
     }
     val cstubs = produceCStubs(context)
-    linkAllDependencies(context.llvmModule!!, context, generatedBitcodeFiles)
+    linkAllDependencies(context.llvmModule!!, context, generatedBitcodeFiles + cstubs)
 
 }
 

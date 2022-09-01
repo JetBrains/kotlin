@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -167,7 +168,7 @@ internal val KonanBackendContext.getUnboxFunction: (IrClass) -> IrSimpleFunction
  * Initialize static boxing.
  * If output target is native binary then the cache is created.
  */
-internal fun initializeCachedBoxes(context: Context) {
+internal fun initializeCachedBoxes(context: BitcodegenContext) {
     BoxCache.values().forEach { cache ->
         val cacheName = "${cache.name}_CACHE"
         val rangeStart = "${cache.name}_RANGE_FROM"
@@ -181,7 +182,7 @@ internal fun initializeCachedBoxes(context: Context) {
 /**
  * Adds global that refers to the cache.
  */
-private fun initCache(cache: BoxCache, context: Context, cacheName: String,
+private fun initCache(cache: BoxCache, context: BitcodegenContext, cacheName: String,
                       rangeStartName: String, rangeEndName: String, declareOnly: Boolean) : StaticData.Global {
 
     val kotlinType = context.irBuiltIns.getKotlinClass(cache)
@@ -206,7 +207,7 @@ private fun initCache(cache: BoxCache, context: Context, cacheName: String,
     }
 }
 
-internal fun IrConstantPrimitive.toBoxCacheValue(context: Context): ConstValue? {
+internal fun IrConstantPrimitive.toBoxCacheValue(context: BitcodegenContext): ConstValue? {
     val cacheType = when (value.type) {
         context.irBuiltIns.booleanType -> BoxCache.BOOLEAN
         context.irBuiltIns.byteType -> BoxCache.BYTE

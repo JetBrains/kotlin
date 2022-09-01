@@ -1,9 +1,6 @@
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.IrValidator
-import org.jetbrains.kotlin.backend.common.IrValidatorConfig
-import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.common.checkDeclarationParents
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
@@ -13,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SamSuperTypesChecker
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
+import org.jetbrains.kotlin.backend.konan.phases.*
 import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
 import org.jetbrains.kotlin.backend.konan.phases.ErrorReportingContext
 import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
@@ -67,14 +65,14 @@ internal fun fileValidationCallback(state: ActionState, irFile: IrFile, context:
     }
 }
 
-internal fun konanUnitPhase(
+internal fun <Context : CommonBackendContext> konanUnitPhase(
         name: String,
         description: String,
         prerequisite: Set<AnyNamedPhase> = emptySet(),
         op: Context.() -> Unit
 ) = namedOpUnitPhase(name, description, prerequisite, op)
 
-internal val createSymbolTablePhase = konanUnitPhase(
+internal val createSymbolTablePhase = konanUnitPhase<PsiToIrContext>(
             op = {
                 this.symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
             },
@@ -82,7 +80,7 @@ internal val createSymbolTablePhase = konanUnitPhase(
             description = "Create SymbolTable"
     )
 
-internal val objCExportPhase = konanUnitPhase(
+internal val objCExportPhase = konanUnitPhase<ObjCExportContext>(
             op = {
                 objCExport = ObjCExport(this, this, symbolTable!!, config)
             },
@@ -91,7 +89,7 @@ internal val objCExportPhase = konanUnitPhase(
             prerequisite = setOf(createSymbolTablePhase)
     )
 
-internal val buildCExportsPhase = konanUnitPhase(
+internal val buildCExportsPhase = konanUnitPhase<CExportContext>(
         op = {
             if (this.isNativeLibrary) {
                 this.cAdapterGenerator = CAdapterGenerator(this).also {
@@ -104,7 +102,7 @@ internal val buildCExportsPhase = konanUnitPhase(
         prerequisite = setOf(createSymbolTablePhase)
 )
 
-internal val psiToIrPhase = konanUnitPhase(
+internal val psiToIrPhase = konanUnitPhase<PsiToIrContext>(
             op = {
                 psiToIr(this,
                         config,
@@ -117,7 +115,7 @@ internal val psiToIrPhase = konanUnitPhase(
             prerequisite = setOf(createSymbolTablePhase)
     )
 
-internal val buildAdditionalCacheInfoPhase = konanUnitPhase(
+internal val buildAdditionalCacheInfoPhase = konanUnitPhase<MiddleEndContext>(
         op = {
             irModules.values.single().let { module ->
                 val moduleDeserializer = irLinker.moduleDeserializers[module.descriptor]
@@ -133,7 +131,7 @@ internal val buildAdditionalCacheInfoPhase = konanUnitPhase(
         prerequisite = setOf(psiToIrPhase)
 )
 
-internal val destroySymbolTablePhase = konanUnitPhase(
+internal val destroySymbolTablePhase = konanUnitPhase<PsiToIrContext>(
         op = {
             this.symbolTable = null // TODO: invalidate symbolTable itself.
         },
@@ -145,7 +143,7 @@ internal val destroySymbolTablePhase = konanUnitPhase(
 // TODO: We copy default value expressions from expects to actuals before IR serialization,
 // because the current infrastructure doesn't allow us to get them at deserialization stage.
 // That requires some design and implementation work.
-internal val copyDefaultValuesToActualPhase = konanUnitPhase(
+internal val copyDefaultValuesToActualPhase = konanUnitPhase<MiddleEndContext>(
         op = {
             ExpectToActualDefaultValueCopier(irModule!!).process()
         },
@@ -160,7 +158,7 @@ internal val copyDefaultValuesToActualPhase = konanUnitPhase(
  * even if they do, then it's better to throw an error right away than to dig out weird crashes down the pipeline or even at runtime.
  * We explicitly check this, also fixing older klibs built with previous compiler versions by applying the same trick as before.
  */
-internal val checkSamSuperTypesPhase = konanUnitPhase(
+internal val checkSamSuperTypesPhase = konanUnitPhase<MiddleEndContext>(
         op = {
             // Handling types in current module not recursively:
             // psi2ir can produce SAM conversions with variances in type arguments of type arguments.
@@ -180,7 +178,7 @@ internal val checkSamSuperTypesPhase = konanUnitPhase(
         description = "Check SAM conversions super types"
 )
 
-internal val serializerPhase = konanUnitPhase(
+internal val serializerPhase = konanUnitPhase<KlibProducingContext>(
             op = {
                 val expectActualLinker = config.configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) ?: false
                 val messageLogger = config.configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
@@ -209,24 +207,23 @@ internal val serializerPhase = konanUnitPhase(
             description = "Serialize descriptor tree and inline IR bodies"
     )
 
-internal val saveAdditionalCacheInfoPhase = konanUnitPhase(
+internal val saveAdditionalCacheInfoPhase = konanUnitPhase<CacheAwareContext>(
         op = { CacheStorage(this.config, this.llvmImports, this.inlineFunctionBodies, this.classFields).saveAdditionalCacheInfo() },
         name = "SaveAdditionalCacheInfo",
         description = "Save additional cache info (inline functions bodies and fields of classes)"
 )
 
-internal val objectFilesPhase = konanUnitPhase(
+internal val objectFilesPhase = konanUnitPhase<ObjectFilesContext>(
         op = {
-            compilerOutput =
-                    BitcodeCompiler(this.config, this as LoggingContext).makeObjectFiles(bitcodeFileName)
+            compilerOutput = BitcodeCompiler(this.config, this as LoggingContext).makeObjectFiles(bitcodeFileName)
         },
         name = "ObjectFiles",
         description = "Bitcode to object file"
 )
 
-internal val linkerPhase = konanUnitPhase(
+internal val linkerPhase = konanUnitPhase<ObjectFilesContext>(
         op = { Linker(
-                llvm,
+                necessaryLlvmParts,
                 llvmModuleSpecification,
                 coverage,
                 config,
@@ -237,13 +234,13 @@ internal val linkerPhase = konanUnitPhase(
         description = "Linker"
 )
 
-internal val finalizeCachePhase = konanUnitPhase(
+internal val finalizeCachePhase = konanUnitPhase<CacheAwareContext>(
         op = { CacheStorage(config, llvmImports, inlineFunctionBodies, classFields).renameOutput() },
         name = "FinalizeCache",
         description = "Finalize cache (rename temp to the final dist)"
 )
 
-internal val allLoweringsPhase = NamedCompilerPhase(
+internal val allLoweringsPhase = NamedCompilerPhase<MiddleEndContext>(
         name = "IrLowering",
         description = "IR Lowering",
         // TODO: The lowerings before inlinePhase should be aligned with [NativeInlineFunctionResolver.kt]
@@ -368,7 +365,7 @@ internal val dumpTestsPhase = makeCustomPhase<Context, IrModuleFragment>(
         }
 )
 
-internal val entryPointPhase = makeCustomPhase<Context, IrModuleFragment>(
+internal val entryPointPhase = makeCustomPhase<MiddleEndContext, IrModuleFragment>(
         name = "addEntryPoint",
         description = "Add entry point for program",
         prerequisite = emptySet(),
@@ -413,7 +410,7 @@ internal val bitcodePhase = NamedCompilerPhase<BitcodegenContext, IrModuleFragme
                 finalizeDebugInfoPhase
 )
 
-internal val bitcodePostprocessingPhase = NamedCompilerPhase<Context, IrModuleFragment>(
+internal val bitcodePostprocessingPhase = NamedCompilerPhase<LlvmCodegenContext, IrModuleFragment>(
         name = "BitcodePostprocessing",
         description = "Optimize and rewrite bitcode",
         lower = checkExternalCallsPhase then

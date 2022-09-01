@@ -1,10 +1,8 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmImports
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
-import org.jetbrains.kotlin.backend.konan.phases.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.phases.ErrorReportingContext
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
@@ -14,7 +12,10 @@ import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.LinkerOutputKind
+import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -95,9 +96,18 @@ internal class CacheStorage(
     }
 }
 
+/**
+ * Parts of [org.jetbrains.kotlin.backend.konan.llvm.Llvm] that are required at linker stage.
+ */
+class NecessaryLlvmParts(
+        val allCachedBitcodeDependencies: List<KonanLibrary>,
+        val nativeDependenciesToLink: List<KonanLibrary>,
+        val allNativeDependencies: List<KonanLibrary>,
+)
+
 // TODO: We have a Linker.kt file in the shared module.
 internal class Linker(
-        private val llvm: Llvm,
+        private val llvm: NecessaryLlvmParts,
         private val llvmModuleSpecification: LlvmModuleSpecification,
         private val coverage: CoverageManager,
         private val config: KonanConfig,
@@ -262,7 +272,7 @@ private class LinkerInput(
 
 private class CachesToLink(val static: List<String>, val dynamic: List<String>)
 
-private fun determineCachesToLink(llvm: Llvm, llvmModuleSpecification: LlvmModuleSpecification, config: KonanConfig): CachesToLink {
+private fun determineCachesToLink(llvm: NecessaryLlvmParts, llvmModuleSpecification: LlvmModuleSpecification, config: KonanConfig): CachesToLink {
     val staticCaches = mutableListOf<String>()
     val dynamicCaches = mutableListOf<String>()
 

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
 import org.jetbrains.kotlin.backend.konan.phases.LayoutBuildingContext
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -450,7 +451,7 @@ internal class CodeGeneratorVisitor(
 
             codegen.objCDataGenerator?.finishModule()
 
-            context.coverage.writeRegionInfo()
+            context.coverage.writeRegionInfo(context)
             overrideRuntimeGlobals()
             appendLlvmUsed("llvm.used", context.llvm.usedFunctions + context.llvm.usedGlobals)
             appendLlvmUsed("llvm.compiler.used", context.llvm.compilerUsedGlobals)
@@ -508,7 +509,7 @@ internal class CodeGeneratorVisitor(
                 // Globals initializers may contain accesses to objects, so visit them first.
                 appendingTo(bbInit) {
                     context.llvm.initializersGenerationState.topLevelFields
-                            .filter { !context.config.checks.useLazyFileInitializers() || it.shouldBeInitializedEagerly }
+                            .filter { !context.useLazyFileInitializers() || it.shouldBeInitializedEagerly }
                             .filterNot { it.storageKind(context.config) == FieldStorageKind.THREAD_LOCAL }
                             .forEach { initGlobalField(it) }
                     context.llvm.initializersGenerationState.moduleGlobalInitializers.forEach {
@@ -524,7 +525,7 @@ internal class CodeGeneratorVisitor(
                         LLVMSetInitializer(address, Int32(FILE_NOT_INITIALIZED).llvm)
                     }
                     context.llvm.initializersGenerationState.topLevelFields
-                            .filter { !config.checks.useLazyFileInitializers() || it.shouldBeInitializedEagerly }
+                            .filter { !context.useLazyFileInitializers() || it.shouldBeInitializedEagerly }
                             .filter { it.storageKind(config) == FieldStorageKind.THREAD_LOCAL }
                             .forEach { initThreadLocalField(it) }
                     context.llvm.initializersGenerationState.moduleThreadLocalInitializers.forEach {
@@ -738,7 +739,7 @@ internal class CodeGeneratorVisitor(
                 this(functionGenerationContext, null, llvmFunction)
 
         val coverageInstrumentation: LLVMCoverageInstrumentation? =
-                context.coverage.tryGetInstrumentation(declaration) { function, args -> functionGenerationContext.call(function, args) }
+                context.coverage.tryGetInstrumentation(context, declaration) { function, args -> functionGenerationContext.call(function, args) }
 
         override fun genReturn(target: IrSymbolOwner, value: LLVMValueRef?) {
             if (declaration == null || target == declaration) {
@@ -963,10 +964,17 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
 
+    fun needGlobalInit(field: IrField): Boolean {
+        if (field.descriptor.containingDeclaration !is PackageFragmentDescriptor) return false
+        // TODO: add some smartness here. Maybe if package of the field is in never accessed
+        // assume its global init can be actually omitted.
+        return true
+    }
+
     override fun visitField(declaration: IrField) {
         context.log { "visitField                     : ${ir2string(declaration)}" }
         debugFieldDeclaration(declaration)
-        if (context.needGlobalInit(declaration)) {
+        if (needGlobalInit(declaration)) {
             val type = codegen.getLLVMType(declaration.type)
             val globalPropertyAccess = context.llvmDeclarations.forStaticField(declaration).storageAddressAccess
             val initializer = declaration.initializer?.expression

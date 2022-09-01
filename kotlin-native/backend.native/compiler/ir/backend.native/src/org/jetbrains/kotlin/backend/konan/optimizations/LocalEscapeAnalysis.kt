@@ -19,7 +19,7 @@ internal object LocalEscapeAnalysis {
         NO_ESCAPE            // object does not escape
     }
 
-    class FunctionAnalyzer(val function: DataFlowIR.Function, val context: Context) {
+    class FunctionAnalyzer(val function: DataFlowIR.Function, val context: LtoContext) {
         // Escape states of nodes.
         private val nodesEscapeStates = mutableMapOf<DataFlowIR.Node, EscapeState>()
         // Connected objects map, escape state change of key node influences on all connected nodes states.

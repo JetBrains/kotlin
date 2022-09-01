@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
@@ -56,7 +55,7 @@ import kotlin.reflect.KProperty
 
 internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
 
-internal class NativeMapping : DefaultMapping() {
+internal class NativeMapping() : DefaultMapping() {
     data class BridgeKey(val target: IrSimpleFunction, val bridgeDirections: BridgeDirections)
 
     val outerThisFields = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrField>()
@@ -87,7 +86,10 @@ internal class Context(
         LocalClassNameAwareContext,
         LtoContext,
         ObjCExportContext,
-        MiddleEndContext
+        MiddleEndContext,
+        ObjectFilesContext,
+        CacheAwareContext,
+        CExportContext
 {
     // TopDownAnalyzer Context
     override lateinit var frontendServices: FrontendServices
@@ -102,10 +104,15 @@ internal class Context(
 
     override lateinit var objCExport: ObjCExport
 
+    override val isNativeLibrary: Boolean by lazy {
+        val kind = config.configuration.get(KonanConfigKeys.PRODUCE)
+        kind == CompilerOutputKind.DYNAMIC || kind == CompilerOutputKind.STATIC
+    }
+
     override val objCExportNamer: ObjCExportNamer
         get() = objCExport.exportedInterface!!.namer
 
-    lateinit var cAdapterGenerator: CAdapterGenerator
+    override lateinit var cAdapterGenerator: CAdapterGenerator
     override lateinit var expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>
 
     override val builtIns: KonanBuiltIns by lazy(PUBLICATION) {
@@ -129,7 +136,7 @@ internal class Context(
     override val localClassNames = mutableMapOf<IrAttributeContainer, String>()
 
     /* test suite class -> test function names */
-    val testCasesToDump = mutableMapOf<ClassId, MutableCollection<String>>()
+    override val testCasesToDump = mutableMapOf<ClassId, MutableCollection<String>>()
 
     override val reflectionTypes: KonanReflectionTypes by lazy(PUBLICATION) {
         KonanReflectionTypes(moduleDescriptor)
@@ -169,13 +176,6 @@ internal class Context(
     override var functionReferenceCount = 0
     override var coroutineCount = 0
 
-    fun needGlobalInit(field: IrField): Boolean {
-        if (field.descriptor.containingDeclaration !is PackageFragmentDescriptor) return false
-        // TODO: add some smartness here. Maybe if package of the field is in never accessed
-        // assume its global init can be actually omitted.
-        return true
-    }
-
     override lateinit var irModules: Map<String, IrModuleFragment>
 
     // TODO: make lateinit?
@@ -214,10 +214,12 @@ internal class Context(
     override lateinit var llvm: Llvm
     override val llvmImports: LlvmImports by lazy { Llvm.ImportsImpl(this.librariesWithDependencies) }
     override lateinit var llvmDeclarations: LlvmDeclarations
-    lateinit var bitcodeFileName: String
+    override lateinit var bitcodeFileName: String
     lateinit var library: KonanLibraryLayout
 
     private var llvmDisposed = false
+
+    override lateinit var necessaryLlvmParts: NecessaryLlvmParts
 
     fun disposeLlvm() {
         if (llvmDisposed) return
@@ -239,8 +241,6 @@ internal class Context(
 
     override fun ghaEnabled(): Boolean = ::globalHierarchyAnalysisResult.isInitialized
 
-    val memoryModel = config.memoryModel
-
     override var inVerbosePhase = false
     override fun log(message: () -> String) {
         if (inVerbosePhase) {
@@ -255,13 +255,7 @@ internal class Context(
     override var devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult? = null
 
     override var referencedFunctions: Set<IrFunction>? = null
-
-    val isNativeLibrary: Boolean by lazy {
-        val kind = config.configuration.get(KonanConfigKeys.PRODUCE)
-        kind == CompilerOutputKind.DYNAMIC || kind == CompilerOutputKind.STATIC
-    }
-
-    lateinit var compilerOutput: List<ObjectFile>
+    override lateinit var compilerOutput: List<ObjectFile>
 
     override val llvmModuleSpecification: LlvmModuleSpecification by lazy {
         when {
@@ -276,8 +270,8 @@ internal class Context(
 
     override lateinit var irLinker: KonanIrLinker
 
-    val inlineFunctionBodies = mutableListOf<SerializedInlineFunctionReference>()
-    val classFields = mutableListOf<SerializedClassFields>()
+    override val inlineFunctionBodies = mutableListOf<SerializedInlineFunctionReference>()
+    override val classFields = mutableListOf<SerializedClassFields>()
     override val calledFromExportedInlineFunctions = mutableSetOf<IrFunction>()
     override val constructedFromExportedInlineFunctions = mutableSetOf<IrClass>()
 

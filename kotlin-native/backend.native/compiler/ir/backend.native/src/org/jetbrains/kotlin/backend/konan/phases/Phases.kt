@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.backend.konan.phases
 
+import llvm.LLVMWriteBitcodeToFile
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
+import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SpecialBackendChecksTraversal
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
@@ -139,6 +143,12 @@ internal object Phases {
             description = "Special backend checks"
     )
 
+    fun buildCopyDefaultValuesToActualPhase(): NamedCompilerPhase<MiddleEndContext, Unit> = myLower2(
+            op = { ctx, _ -> ExpectToActualDefaultValueCopier(ctx.irModule!!).process() },
+            name = "SpecialBackendChecks",
+            description = "Special backend checks"
+    )
+
     fun buildEntryPointPhase(): NamedCompilerPhase<MiddleEndContext, Unit> = myLower2(
             name = "addEntryPoint",
             description = "Add entry point for program",
@@ -156,6 +166,27 @@ internal object Phases {
                 }
 
                 file.addChild(makeEntryPoint(context))
+            }
+    )
+
+    fun buildWriteLlvmModule() = NamedCompilerPhase<LlvmCodegenContext, Unit> = myLower2(
+            name = "WriteLlvm",
+            description = "Write LLVM module to file",
+            op = { context, _ ->
+                val output = context.config.tempFiles.nativeBinaryFileName
+                context.bitcodeFileName = output
+                // Insert `_main` after pipeline so we won't worry about optimizations
+                // corrupting entry point.
+                insertAliasToEntryPoint(context.llvmModule!!, context.config)
+                LLVMWriteBitcodeToFile(context.llvmModule!!, output)
+            }
+    )
+
+    fun buildFunctionsWithoutBoundCheck(): NamedCompilerPhase<MiddleEndContext, Unit> = myLower2(
+            name = "FunctionsWithoutBoundCheckGenerator",
+            description = "Functions without bounds check generation",
+            op = { context, _ ->
+                FunctionsWithoutBoundCheckGenerator(context).generate()
             }
     )
 
@@ -221,6 +252,27 @@ internal object Phases {
                     )
             ),
             actions = setOf(defaultDumper, ::moduleValidationCallback)
+    )
+
+    fun buildObjectFilesPhase(bitcodeFile: BitcodeFile) = myLower2<ObjectFilesContext, Unit>(
+            op = { ctx, _ ->
+                ctx.compilerOutput = BitcodeCompiler(ctx.config, ctx as LoggingContext).makeObjectFiles(bitcodeFile)
+            },
+            name = "ObjectFiles",
+            description = "Bitcode to object file"
+    )
+
+    fun buildLinkerPhase(objectFiles: List<ObjectFile>) = myLower2<ObjectFilesContext, Unit>(
+            op = { ctx, _ -> Linker(
+                    ctx.necessaryLlvmParts,
+                    ctx.llvmModuleSpecification,
+                    ctx.coverage,
+                    ctx.config,
+                    ctx as LoggingContext,
+                    ctx as ErrorReportingContext
+            ).link(objectFiles) },
+            name = "Linker",
+            description = "Linker"
     )
 
     private fun <C : CommonBackendContext, Input, Output> myLower(op: (C, Input) -> Output) = object : CompilerPhase<C, Input, Output> {

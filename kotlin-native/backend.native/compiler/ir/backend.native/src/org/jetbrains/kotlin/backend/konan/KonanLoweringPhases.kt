@@ -84,7 +84,7 @@ internal fun <Context : KonanBackendContext> makeKonanModuleOpPhase(
 //        actions = modulePhaseActions
 )
 
-internal val specialBackendChecksPhase = konanUnitPhase(
+internal val specialBackendChecksPhase = konanUnitPhase<MiddleEndContext>(
         op = { irModule!!.files.forEach { SpecialBackendChecksTraversal(this).lower(it) } },
         name = "SpecialBackendChecks",
         description = "Special backend checks"

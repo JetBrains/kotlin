@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.backend.konan.phases.LtoContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.konan.target.pointerBits
 import kotlin.math.min
 
 private val DataFlowIR.Node.isAlloc
@@ -167,7 +168,7 @@ internal object EscapeAnalysis {
     private class FunctionAnalysisResult(val function: DataFlowIR.Function,
                                          val nodesRoles: Map<DataFlowIR.Node, NodeInfo>)
 
-    private class IntraproceduralAnalysis(val context: Context,
+    private class IntraproceduralAnalysis(val context: LtoContext,
                                           val moduleDFG: ModuleDFG, val externalModulesDFG: ExternalModulesDFG,
                                           val callGraph: CallGraph) {
 
@@ -456,7 +457,7 @@ internal object EscapeAnalysis {
     }
 
     private class InterproceduralAnalysis(
-            val context: Context,
+            val context: LtoContext,
             val callGraph: CallGraph,
             val intraproceduralAnalysisResults: Map<DataFlowIR.FunctionSymbol, FunctionAnalysisResult>,
             val externalModulesDFG: ExternalModulesDFG,
@@ -643,7 +644,7 @@ internal object EscapeAnalysis {
                         ?: (node as? DataFlowIR.Node.Variable)
                                 ?.values?.singleOrNull()?.let { arrayLengthOf(it.node) }
 
-        private val pointerSize = context.llvm.runtime.pointerSize
+        private val pointerSize = context.config.target.pointerBits() / 8
 
         private fun arrayItemSizeOf(irClass: IrClass): Int? = when (irClass.symbol) {
             symbols.array -> pointerSize

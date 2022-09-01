@@ -8,8 +8,8 @@ import llvm.LLVMConstBitCast
 import llvm.LLVMCreatePGOFunctionNameVar
 import llvm.LLVMInstrProfIncrement
 import llvm.LLVMValueRef
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
  * region in [functionRegions].
  */
 internal class LLVMCoverageInstrumentation(
-        override val context: Context,
+        override val context: BitcodegenContext,
         private val functionRegions: FunctionRegions,
         private val callSitePlacer: (function: LLVMValueRef, args: List<LLVMValueRef>) -> Unit
 ) : ContextUtils {

@@ -250,7 +250,7 @@ internal fun IrType.encoding(): DwarfTypeKind = when(computePrimitiveBinaryTypeO
 
 internal fun alignTo(value:Long, align:Long):Long = (value + align - 1) / align * align
 
-internal fun IrFunction.subroutineType(context: Context, llvmTargetData: LLVMTargetDataRef): DISubroutineTypeRef {
+internal fun IrFunction.subroutineType(context: BitcodegenContext, llvmTargetData: LLVMTargetDataRef): DISubroutineTypeRef {
     val types = this@subroutineType.types
     return subroutineType(context, llvmTargetData, types)
 }

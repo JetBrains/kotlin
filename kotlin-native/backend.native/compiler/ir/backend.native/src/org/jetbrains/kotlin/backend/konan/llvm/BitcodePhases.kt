@@ -317,6 +317,11 @@ internal val codegenPhase = makeKonanModuleOpPhase<BitcodegenContext>(
         description = "Code generation",
         op = { context, irModule ->
             irModule.acceptVoid(context.codegenVisitor)
+            context.necessaryLlvmParts = NecessaryLlvmParts(
+                    context.llvm.allCachedBitcodeDependencies,
+                    context.llvm.nativeDependenciesToLink,
+                    context.llvm.allNativeDependencies,
+            )
         }
 )
 

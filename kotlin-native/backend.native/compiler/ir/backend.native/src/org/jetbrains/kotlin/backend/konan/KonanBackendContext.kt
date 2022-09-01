@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.ir.util.getPackageFragment
 internal interface KonanBackendContext : CommonBackendContext {
     val messageCollector: MessageCollector
 
+    override val mapping: NativeMapping
+
     override val ir: KonanIr
 
     override val builtIns: KonanBuiltIns

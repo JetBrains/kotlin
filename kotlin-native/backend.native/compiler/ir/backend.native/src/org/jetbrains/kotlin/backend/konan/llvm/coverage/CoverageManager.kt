@@ -6,8 +6,8 @@ package org.jetbrains.kotlin.backend.konan.llvm.coverage
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.reportCompilationError
+import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
+import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 /**
  * "Umbrella" class of all the of the code coverage related logic.
  */
-internal class CoverageManager(val context: Context, private val config: KonanConfig) {
+internal class CoverageManager(val context: MiddleEndContext, private val config: KonanConfig) {
 
     private val shouldCoverSources: Boolean =
             config.shouldCoverSources
@@ -47,7 +47,7 @@ internal class CoverageManager(val context: Context, private val config: KonanCo
         }
     }
 
-    private fun checkRestrictions(): Boolean  {
+    private fun checkRestrictions(): Boolean {
         val isKindAllowed = config.produce.involvesBitcodeGeneration
         val target = config.target
         val isTargetAllowed = target.supportsCodeCoverage()
@@ -63,7 +63,7 @@ internal class CoverageManager(val context: Context, private val config: KonanCo
         val coveredUserCode = if (shouldCoverSources) setOf(context.moduleDescriptor) else emptySet()
         val coveredLibs = context.irModules.filter { it.key in librariesToCover }.values
                 .map { it.descriptor }.toSet()
-        val coveredIncludedLibs = if (shouldCoverSources) context.getIncludedLibraryDescriptors().toSet() else emptySet()
+        val coveredIncludedLibs = if (shouldCoverSources) context.config.getIncludedLibraryDescriptors(context.moduleDescriptor).toSet() else emptySet()
         coveredLibs + coveredUserCode + coveredIncludedLibs
     }
 
@@ -83,17 +83,20 @@ internal class CoverageManager(val context: Context, private val config: KonanCo
     /**
      * @return [LLVMCoverageInstrumentation] instance if [irFunction] should be covered.
      */
-    fun tryGetInstrumentation(irFunction: IrFunction?, callSitePlacer: (function: LLVMValueRef, args: List<LLVMValueRef>) -> Unit) =
-            if (enabled && irFunction != null) {
-                getFunctionRegions(irFunction)?.let { LLVMCoverageInstrumentation(context, it, callSitePlacer) }
-            } else {
-                null
-            }
+    fun tryGetInstrumentation(
+            context: BitcodegenContext,
+            irFunction: IrFunction?,
+            callSitePlacer: (function: LLVMValueRef, args: List<LLVMValueRef>) -> Unit
+    ) = if (enabled && irFunction != null) {
+        getFunctionRegions(irFunction)?.let { LLVMCoverageInstrumentation(context, it, callSitePlacer) }
+    } else {
+        null
+    }
 
     /**
      * Add __llvm_coverage_mapping to the LLVM module.
      */
-    fun writeRegionInfo() {
+    fun writeRegionInfo(context: BitcodegenContext) {
         if (enabled) {
             LLVMCoverageWriter(context, filesRegionsInfo).write()
         }
@@ -114,11 +117,11 @@ internal class CoverageManager(val context: Context, private val config: KonanCo
      * __llvm_profile_filename need to be added to exported symbols.
      */
     fun addExportedSymbols(): List<String> =
-        if (enabled) {
-             listOf(llvmProfileFilenameGlobal)
-        } else {
-            emptyList()
-        }
+            if (enabled) {
+                listOf(llvmProfileFilenameGlobal)
+            } else {
+                emptyList()
+            }
 }
 
 internal fun runCoveragePass(coverage: CoverageManager, targetTriple: String, llvmModule: LLVMModuleRef) {

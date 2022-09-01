@@ -6,8 +6,8 @@ package org.jetbrains.kotlin.backend.konan.llvm.coverage
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.llvm.name
+import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.konan.file.File
@@ -34,7 +34,7 @@ private fun LLVMCoverageRegion.populateFrom(region: Region, regionId: Int, files
  * See http://llvm.org/docs/CoverageMappingFormat.html for the format description.
  */
 internal class LLVMCoverageWriter(
-        private val context: Context,
+        private val context: BitcodegenContext,
         private val filesRegionsInfo: List<FileRegionInfo>
 ) {
     fun write() {

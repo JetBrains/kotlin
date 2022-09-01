@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_FUNCTION_CLASS
+import org.jetbrains.kotlin.backend.konan.phases.CacheAwareContext
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.ir.IrElement
@@ -19,7 +19,10 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-internal class CacheInfoBuilder(private val context: Context, private val moduleDeserializer: KonanIrLinker.KonanPartialModuleDeserializer) {
+internal class CacheInfoBuilder(
+        private val context: CacheAwareContext,
+        private val moduleDeserializer: KonanIrLinker.KonanPartialModuleDeserializer
+) {
     fun build() = with(moduleDeserializer) {
         moduleFragment.acceptChildrenVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {

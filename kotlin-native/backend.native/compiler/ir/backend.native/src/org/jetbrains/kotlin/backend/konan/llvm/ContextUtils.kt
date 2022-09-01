@@ -133,6 +133,10 @@ internal sealed class Lifetime(val slotType: SlotType) {
     }
 }
 
+internal fun ContextUtils(context: BitcodegenContext): ContextUtils = object : ContextUtils {
+    override val context: BitcodegenContext = context
+}
+
 /**
  * Provides utility methods to the implementer.
  */
