@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
-import org.jetbrains.kotlin.diagnostics.deprecationError2
-import org.jetbrains.kotlin.diagnostics.error0
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
@@ -426,7 +424,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INNER_CLASS_INSIDE_VALUE_CLASS by error<KtDeclaration>(PositioningStrategy.INNER_MODIFIER)
         val VALUE_CLASS_CANNOT_BE_CLONEABLE by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
         val VALUE_OBJECT_NOT_SEALED_INLINE_CHILD by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
-        val SEALED_INLINE_CLASS_WITH_UNDERLYING_VALUE by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
+        val SEALED_INLINE_CLASS_WITH_PRIMARY_CONSTRUCTOR by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
         val SEALED_INLINE_CHILD_NOT_VALUE by error<KtDeclaration>()
         val SEALED_INLINE_CHILD_OVERLAPPING_TYPE by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
     }

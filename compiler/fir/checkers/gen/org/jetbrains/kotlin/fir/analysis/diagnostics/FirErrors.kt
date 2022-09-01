@@ -322,7 +322,7 @@ object FirErrors {
     val INNER_CLASS_INSIDE_VALUE_CLASS by error0<KtDeclaration>(SourceElementPositioningStrategies.INNER_MODIFIER)
     val VALUE_CLASS_CANNOT_BE_CLONEABLE by error0<KtDeclaration>(SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER)
     val VALUE_OBJECT_NOT_SEALED_INLINE_CHILD by error0<KtDeclaration>(SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER)
-    val SEALED_INLINE_CLASS_WITH_UNDERLYING_VALUE by error0<KtDeclaration>(SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER)
+    val SEALED_INLINE_CLASS_WITH_PRIMARY_CONSTRUCTOR by error0<KtDeclaration>(SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER)
     val SEALED_INLINE_CHILD_NOT_VALUE by error0<KtDeclaration>()
     val SEALED_INLINE_CHILD_OVERLAPPING_TYPE by error0<KtDeclaration>(SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER)
 

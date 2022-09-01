@@ -80,7 +80,12 @@ object InlineClassDeclarationChecker : DeclarationChecker {
         }
 
         if (modalityModifier != null && isSealed && !context.languageVersionSettings.supportsFeature(LanguageFeature.SealedInlineClasses)) {
-            trace.report(Errors.VALUE_CLASS_NOT_FINAL.on(modalityModifier))
+            trace.report(
+                Errors.UNSUPPORTED_FEATURE.on(
+                    modalityModifier,
+                    LanguageFeature.SealedInlineClasses to context.languageVersionSettings
+                )
+            )
             return
         }
 
@@ -91,19 +96,19 @@ object InlineClassDeclarationChecker : DeclarationChecker {
         }
 
         if (isSealed && primaryConstructor != null) {
-            trace.report(Errors.SEALED_INLINE_CLASS_WITH_UNDERLYING_VALUE.on(primaryConstructor))
+            trace.report(Errors.SEALED_INLINE_CLASS_WITH_PRIMARY_CONSTRUCTOR.on(primaryConstructor))
             return
         }
 
-        if (!isNoinlineChildOfSealedInlineClass) {
-            if (context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses) && descriptor.isValueClass()) {
-                if (primaryConstructor != null && primaryConstructor.valueParameters.isEmpty()) {
+        if (!isNoinlineChildOfSealedInlineClass && primaryConstructor != null) {
+            if (context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)) {
+                if (primaryConstructor.valueParameters.isEmpty()) {
                     (primaryConstructor.valueParameterList ?: declaration).let {
                         trace.report(Errors.VALUE_CLASS_EMPTY_CONSTRUCTOR.on(it))
                         return
                     }
                 }
-            } else if (!isSealed && primaryConstructor != null && primaryConstructor.valueParameters.size != 1) {
+            } else if (primaryConstructor.valueParameters.size != 1) {
                 (primaryConstructor.valueParameterList ?: declaration).let {
                     trace.report(Errors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE.on(it))
                     return
@@ -114,7 +119,7 @@ object InlineClassDeclarationChecker : DeclarationChecker {
         var baseParametersOk = true
         val baseParameterTypes = descriptor.safeAs<ClassDescriptor>()?.defaultType?.substitutedUnderlyingTypes() ?: emptyList()
 
-        for ((baseParameter, baseParameterType) in (primaryConstructor?.valueParameters ?: emptyList()) zip baseParameterTypes) {
+        for ((baseParameter, baseParameterType) in primaryConstructor?.valueParameters.orEmpty() zip baseParameterTypes) {
             if (!isParameterAcceptableForInlineClass(baseParameter)) {
                 trace.report(Errors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER.on(baseParameter))
                 baseParametersOk = false

@@ -1372,8 +1372,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.SEALED_INLINE_CLASS_WITH_UNDERLYING_VALUE) { firDiagnostic ->
-        SealedInlineClassWithUnderlyingValueImpl(
+    add(FirErrors.SEALED_INLINE_CLASS_WITH_PRIMARY_CONSTRUCTOR) { firDiagnostic ->
+        SealedInlineClassWithPrimaryConstructorImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

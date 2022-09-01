@@ -35,6 +35,6 @@ fun foo() {
 final inline class D0(val x: Int)
 <!VALUE_CLASS_NOT_FINAL!>open<!> inline class D1(val x: Int)
 <!VALUE_CLASS_NOT_FINAL!>abstract<!> inline class D2(val x: Int)
-<!VALUE_CLASS_NOT_FINAL!>sealed<!> inline class D3(val x: Int)
+<!UNSUPPORTED_FEATURE!>sealed<!> inline class D3(val x: Int)
 
 <!INCOMPATIBLE_MODIFIERS!>inline<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class D4(val x: String)

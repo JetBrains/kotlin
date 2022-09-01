@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -52,11 +53,19 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
             reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_TOP_LEVEL, context)
         }
 
-        if (declaration.modality != Modality.FINAL &&
-            !(declaration.modality == Modality.SEALED &&
-                    context.languageVersionSettings.supportsFeature(LanguageFeature.SealedInlineClasses))
-        ) {
-            reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_FINAL, context)
+        if (declaration.modality != Modality.FINAL) {
+            if (declaration.modality == Modality.SEALED) {
+                if (!context.languageVersionSettings.supportsFeature(LanguageFeature.SealedInlineClasses)) {
+                    reporter.reportOn(
+                        declaration.getModifier(KtTokens.SEALED_KEYWORD)?.source,
+                        FirErrors.UNSUPPORTED_FEATURE,
+                        LanguageFeature.SealedInlineClasses to context.languageVersionSettings,
+                        context
+                    )
+                }
+            } else {
+                reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_FINAL, context)
+            }
         }
 
         for (supertypeEntry in declaration.superTypeRefs) {
@@ -182,7 +191,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
             context.languageVersionSettings.supportsFeature(LanguageFeature.SealedInlineClasses) &&
             primaryConstructor?.source?.kind is KtRealSourceElementKind
         ) {
-            reporter.reportOn(declaration.source, FirErrors.SEALED_INLINE_CLASS_WITH_UNDERLYING_VALUE, context)
+            reporter.reportOn(declaration.source, FirErrors.SEALED_INLINE_CLASS_WITH_PRIMARY_CONSTRUCTOR, context)
             return
         }
 

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -153,9 +152,7 @@ class MemoizedInlineClassReplacements(
                 copyTypeParametersFrom(irClass)
                 addValueParameter {
                     name = InlineClassDescriptorResolver.BOXING_VALUE_PARAMETER_NAME
-                    type =
-                        if (irClass.modality == Modality.SEALED) context.irBuiltIns.anyNType
-                        else getInlineClassUnderlyingType(irClass)
+                    type = context.irBuiltIns.getInlineClassUnderlyingType(irClass)
                 }
             }
         }
@@ -170,9 +167,7 @@ class MemoizedInlineClassReplacements(
             irFactory.buildFun {
                 name = Name.identifier(KotlinTypeMapper.UNBOX_JVM_METHOD_NAME)
                 origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
-                returnType =
-                    if (irClass.modality == Modality.SEALED) context.irBuiltIns.anyNType
-                    else getInlineClassUnderlyingType(irClass)
+                returnType = context.irBuiltIns.getInlineClassUnderlyingType(irClass)
                 if (irClass.modality == Modality.SEALED) {
                     modality = Modality.OPEN
                 }
@@ -257,18 +252,18 @@ class MemoizedInlineClassReplacements(
             }.apply {
                 parent = irClass
                 // We ignore type arguments here, since there is no good way to go from type arguments to types in the IR anyway.
-                val typeArgument =
+                val argumentType =
                     if (irClass.modality == Modality.SEALED) context.irBuiltIns.anyNType
                     else IrSimpleTypeImpl(
                         irClass.symbol, false, List(irClass.typeParameters.size) { IrStarProjectionImpl }, listOf()
                     )
                 addValueParameter {
                     name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_FIRST_PARAMETER_NAME
-                    type = typeArgument
+                    type = argumentType
                 }
                 addValueParameter {
                     name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_SECOND_PARAMETER_NAME
-                    type = typeArgument
+                    type = argumentType
                 }
             }
         }

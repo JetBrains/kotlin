@@ -5,15 +5,17 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
-import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
 
-fun getInlineClassUnderlyingType(irClass: IrClass): IrSimpleType {
+fun IrBuiltIns.getInlineClassUnderlyingType(irClass: IrClass): IrType {
     val representation = irClass.inlineClassRepresentation ?: error("Not an inline class: ${irClass.render()}")
-    return representation.underlyingType
+    return if (irClass.modality == Modality.SEALED) anyNType else representation.underlyingType
 }
 
 fun getInlineClassBackingField(irClass: IrClass): IrField {
