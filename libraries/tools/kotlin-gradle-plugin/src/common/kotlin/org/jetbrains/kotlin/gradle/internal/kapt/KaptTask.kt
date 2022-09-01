@@ -11,6 +11,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.ClasspathSnapshot
@@ -47,6 +48,7 @@ abstract class KaptTask @Inject constructor(
     @get:PathSensitive(PathSensitivity.NONE)
     @get:Incremental
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:Optional
     @get:InputFiles
     abstract val classpathStructure: ConfigurableFileCollection

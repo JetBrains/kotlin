@@ -121,7 +121,6 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     }
 
     @Suppress("unused")
-    @get:InputFiles
     @get:Classpath
     protected val inputArtifactFiles: FileCollection = project.filesProvider {
         sourceSet.dependencyTransformations.values.map { it.configurationToResolve.withoutProjectDependencies() }

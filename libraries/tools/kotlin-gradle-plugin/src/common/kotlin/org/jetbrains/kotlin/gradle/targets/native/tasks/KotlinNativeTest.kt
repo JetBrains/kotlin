@@ -15,6 +15,7 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.options.Option
 import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.DefaultProcessForkOptions
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
@@ -39,6 +40,7 @@ abstract class KotlinNativeTest: KotlinTest() {
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:InputFiles // use FileCollection & @InputFiles rather than @InputFile to allow for task dependencies built-into this FileCollection
     @get:SkipWhenEmpty
     @Suppress("UNUSED") // Gradle input

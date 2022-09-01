@@ -28,6 +28,7 @@ import org.gradle.api.tasks.util.PatternSet
 import org.gradle.work.ChangeType
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
+import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.metrics.*
@@ -303,6 +304,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @get:InputFiles
     @get:IgnoreEmptyDirectories
     @get:Incremental
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val commonSourceSet: ConfigurableFileCollection = objectFactory.fileCollection()
 
@@ -644,6 +646,7 @@ abstract class KotlinCompile @Inject constructor(
     @get:InputFiles
     @get:SkipWhenEmpty
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal open val scriptSources: FileCollection = scriptSourceFiles
         .asFileTree
@@ -804,6 +807,7 @@ abstract class KotlinCompile @Inject constructor(
     @get:Incremental
     @get:InputFiles
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     open val javaSources: FileCollection = objectFactory.fileCollection()
         .from(
@@ -821,6 +825,7 @@ abstract class KotlinCompile @Inject constructor(
     @get:Incremental
     @get:InputFiles
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal open val androidLayoutResources: FileCollection = androidLayoutResourceFiles
         .asFileTree
@@ -957,6 +962,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:IgnoreEmptyDirectories
     @get:Incremental
     @get:Optional
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val friendDependencies: FileCollection = objectFactory
         .fileCollection()
@@ -972,6 +978,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:InputFiles
     @get:IgnoreEmptyDirectories
     @get:Optional
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val sourceMapBaseDirs: FileCollection?
         get() = (kotlinOptions as KotlinJsOptionsImpl).sourceMapBaseDirs
@@ -1119,6 +1126,7 @@ data class KotlinCompilerPluginData(
 
         @get:InputFiles
         @get:IgnoreEmptyDirectories
+        @get:NormalizeLineEndings
         @get:PathSensitive(PathSensitivity.RELATIVE)
         val inputFiles: Set<File>,
 

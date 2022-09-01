@@ -91,6 +91,7 @@ abstract class KotlinJsIrLink @Inject constructor(
 
     @get:SkipWhenEmpty
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal abstract val entryModule: DirectoryProperty

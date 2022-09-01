@@ -14,6 +14,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.util.PatternFilterable
 import org.gradle.work.Incremental
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.plugin.CompilerPluginConfig
@@ -22,6 +23,7 @@ interface KotlinCompileTool : PatternFilterable, Task {
     @get:InputFiles
     @get:SkipWhenEmpty
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val sources: FileCollection
 
@@ -138,6 +140,7 @@ interface BaseKapt : Task {
     @get:InputFiles
     @get:IgnoreEmptyDirectories
     @get:Incremental
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val source: ConfigurableFileCollection
 

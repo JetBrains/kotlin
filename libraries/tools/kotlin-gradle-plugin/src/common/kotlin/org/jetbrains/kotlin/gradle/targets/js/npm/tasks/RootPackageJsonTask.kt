@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.*
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import java.io.File
@@ -31,6 +32,7 @@ open class RootPackageJsonTask : DefaultTask() {
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:InputFiles
     val packageJsonFiles: Collection<File> by lazy {
         resolutionManager.packageJsonFiles

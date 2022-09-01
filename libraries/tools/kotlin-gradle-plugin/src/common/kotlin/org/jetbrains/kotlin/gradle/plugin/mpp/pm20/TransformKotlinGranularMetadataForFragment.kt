@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.getAllCompiledSourceSetMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
@@ -32,6 +33,7 @@ internal open class TransformKotlinGranularMetadataForFragment
 
     @Suppress("unused") // Gradle input
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val allSourceSetsMetadataConfiguration: FileCollection by lazy {

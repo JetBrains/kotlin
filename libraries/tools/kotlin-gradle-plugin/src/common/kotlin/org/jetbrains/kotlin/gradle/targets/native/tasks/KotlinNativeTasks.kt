@@ -27,6 +27,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.compilerRunner.*
@@ -1201,6 +1202,7 @@ open class CInteropProcess
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:NormalizeLineEndings
     val defFile: File get() = settings.defFileProperty.get()
 
     @get:Optional
@@ -1215,6 +1217,7 @@ open class CInteropProcess
 
     @get:IgnoreEmptyDirectories
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val headers: FileCollection get() = settings.headers
 
@@ -1228,6 +1231,7 @@ open class CInteropProcess
 
     @get:IgnoreEmptyDirectories
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val libraries: FileCollection get() = settings.dependencyFiles.filterOutPublishableInteropLibs(libDirectories)
 

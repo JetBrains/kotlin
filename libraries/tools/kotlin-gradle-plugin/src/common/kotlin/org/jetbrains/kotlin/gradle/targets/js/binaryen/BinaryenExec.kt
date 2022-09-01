@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.binaryen
 
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -41,6 +42,7 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
     )
 
     @InputFile
+    @NormalizeLineEndings
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
 
     @OutputFile

@@ -22,6 +22,7 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.Incremental
+import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
@@ -63,6 +64,7 @@ abstract class KaptGenerateStubsTask @Inject constructor(
      */
     @get:InputFiles
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:Incremental
     abstract val additionalSources: ConfigurableFileCollection
@@ -71,6 +73,7 @@ abstract class KaptGenerateStubsTask @Inject constructor(
 
     // Task need to run even if there is no Kotlin sources, but only Java
     @get:Incremental
+    @get:NormalizeLineEndings
     @get:InputFiles
     @get:IgnoreEmptyDirectories
     @get:PathSensitive(PathSensitivity.RELATIVE)

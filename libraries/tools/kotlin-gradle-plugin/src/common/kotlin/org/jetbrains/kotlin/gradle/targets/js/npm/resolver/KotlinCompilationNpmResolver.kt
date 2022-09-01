@@ -17,6 +17,7 @@ import org.gradle.api.internal.artifacts.DefaultProjectComponentIdentifier
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.configurationcache.extensions.serviceOf
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -390,11 +391,13 @@ internal class KotlinCompilationNpmResolver(
 
         @get:PathSensitive(PathSensitivity.ABSOLUTE)
         @get:IgnoreEmptyDirectories
+        @get:NormalizeLineEndings
         @get:InputFiles
         val internalCompositeDependencies: Collection<File>,
 
         @get:PathSensitive(PathSensitivity.ABSOLUTE)
         @get:IgnoreEmptyDirectories
+        @get:NormalizeLineEndings
         @get:InputFiles
         val externalGradleDependencies: Collection<File>,
 

@@ -12,9 +12,12 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import java.io.File
 import javax.inject.Inject
 
+@DisableCachingByDefault
 internal abstract class InspectClassesForMultiModuleIC @Inject constructor(
     objects: ObjectFactory
 ) : DefaultTask() {
@@ -30,11 +33,13 @@ internal abstract class InspectClassesForMultiModuleIC @Inject constructor(
     @get:IgnoreEmptyDirectories
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFiles
+    @get:NormalizeLineEndings
     internal abstract val sourceSetOutputClassesDir: ConfigurableFileCollection
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories
     @get:InputFiles
+    @get:NormalizeLineEndings
     internal val classFiles: FileCollection = objects.fileCollection()
         .from({ sourceSetOutputClassesDir.asFileTree.matching { it.include("**/*.class") } })
 

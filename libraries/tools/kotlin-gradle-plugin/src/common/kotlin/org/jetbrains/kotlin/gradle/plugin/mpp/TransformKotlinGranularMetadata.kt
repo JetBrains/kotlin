@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -40,6 +41,7 @@ open class TransformKotlinGranularMetadata
 
     @Suppress("unused") // Gradle input
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val allSourceSetsMetadataConfiguration: FileCollection by lazy {

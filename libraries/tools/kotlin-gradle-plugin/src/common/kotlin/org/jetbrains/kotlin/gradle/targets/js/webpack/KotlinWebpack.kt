@@ -19,6 +19,7 @@ import org.gradle.deployment.internal.DeploymentHandle
 import org.gradle.deployment.internal.DeploymentRegistry
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
@@ -100,6 +101,7 @@ constructor(
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFile
+    @get:NormalizeLineEndings
     val entryProperty: RegularFileProperty = objects.fileProperty().fileProvider(compilation.compileKotlinTask.outputFileProperty)
 
     init {
@@ -115,6 +117,7 @@ constructor(
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories
     @get:InputFiles
+    @get:NormalizeLineEndings
     val runtimeClasspath: FileCollection by lazy {
         compilation.compileDependencyFiles
     }
@@ -171,6 +174,7 @@ constructor(
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:Optional
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:InputDirectory
     open val configDirectory: File?
         get() = projectDir.resolve("webpack.config.d").takeIf { it.isDirectory }

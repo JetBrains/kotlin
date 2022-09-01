@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
@@ -44,6 +45,7 @@ constructor(
     @Optional
     @PathSensitive(PathSensitivity.ABSOLUTE)
     @InputFile
+    @NormalizeLineEndings
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
 
     @get:Internal
