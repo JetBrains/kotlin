@@ -3267,6 +3267,57 @@ public final class kotlin/io/TextStreamsKt {
 	public static final fun useLines (Ljava/io/Reader;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
+public abstract interface annotation class kotlin/io/path/ExperimentalPathApi : java/lang/annotation/Annotation {
+}
+
+public abstract interface class kotlin/io/path/FileVisitorBuilder {
+	public abstract fun onPostVisitDirectory (Lkotlin/jvm/functions/Function2;)V
+	public abstract fun onPreVisitDirectory (Lkotlin/jvm/functions/Function2;)V
+	public abstract fun onVisitFile (Lkotlin/jvm/functions/Function2;)V
+	public abstract fun onVisitFileFailed (Lkotlin/jvm/functions/Function2;)V
+}
+
+public final class kotlin/io/path/PathWalkOption : java/lang/Enum {
+	public static final field BREADTH_FIRST Lkotlin/io/path/PathWalkOption;
+	public static final field FOLLOW_LINKS Lkotlin/io/path/PathWalkOption;
+	public static final field INCLUDE_DIRECTORIES Lkotlin/io/path/PathWalkOption;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/io/path/PathWalkOption;
+	public static fun values ()[Lkotlin/io/path/PathWalkOption;
+}
+
+public final class kotlin/io/path/PathsKt {
+	public static final fun appendText (Ljava/nio/file/Path;Ljava/lang/CharSequence;Ljava/nio/charset/Charset;)V
+	public static synthetic fun appendText$default (Ljava/nio/file/Path;Ljava/lang/CharSequence;Ljava/nio/charset/Charset;ILjava/lang/Object;)V
+	public static final fun createTempDirectory (Ljava/nio/file/Path;Ljava/lang/String;[Ljava/nio/file/attribute/FileAttribute;)Ljava/nio/file/Path;
+	public static synthetic fun createTempDirectory$default (Ljava/nio/file/Path;Ljava/lang/String;[Ljava/nio/file/attribute/FileAttribute;ILjava/lang/Object;)Ljava/nio/file/Path;
+	public static final fun createTempFile (Ljava/nio/file/Path;Ljava/lang/String;Ljava/lang/String;[Ljava/nio/file/attribute/FileAttribute;)Ljava/nio/file/Path;
+	public static synthetic fun createTempFile$default (Ljava/nio/file/Path;Ljava/lang/String;Ljava/lang/String;[Ljava/nio/file/attribute/FileAttribute;ILjava/lang/Object;)Ljava/nio/file/Path;
+	public static final fun fileAttributeViewNotAvailable (Ljava/nio/file/Path;Ljava/lang/Class;)Ljava/lang/Void;
+	public static final fun fileVisitor (Lkotlin/jvm/functions/Function1;)Ljava/nio/file/FileVisitor;
+	public static final fun getExtension (Ljava/nio/file/Path;)Ljava/lang/String;
+	public static final fun getInvariantSeparatorsPathString (Ljava/nio/file/Path;)Ljava/lang/String;
+	public static final fun getName (Ljava/nio/file/Path;)Ljava/lang/String;
+	public static final fun getNameWithoutExtension (Ljava/nio/file/Path;)Ljava/lang/String;
+	public static final fun listDirectoryEntries (Ljava/nio/file/Path;Ljava/lang/String;)Ljava/util/List;
+	public static synthetic fun listDirectoryEntries$default (Ljava/nio/file/Path;Ljava/lang/String;ILjava/lang/Object;)Ljava/util/List;
+	public static final fun readText (Ljava/nio/file/Path;Ljava/nio/charset/Charset;)Ljava/lang/String;
+	public static synthetic fun readText$default (Ljava/nio/file/Path;Ljava/nio/charset/Charset;ILjava/lang/Object;)Ljava/lang/String;
+	public static final fun relativeTo (Ljava/nio/file/Path;Ljava/nio/file/Path;)Ljava/nio/file/Path;
+	public static final fun relativeToOrNull (Ljava/nio/file/Path;Ljava/nio/file/Path;)Ljava/nio/file/Path;
+	public static final fun relativeToOrSelf (Ljava/nio/file/Path;Ljava/nio/file/Path;)Ljava/nio/file/Path;
+	public static final fun visitFileTree (Ljava/nio/file/Path;IZLkotlin/jvm/functions/Function1;)V
+	public static final fun visitFileTree (Ljava/nio/file/Path;Ljava/nio/file/FileVisitor;IZ)V
+	public static synthetic fun visitFileTree$default (Ljava/nio/file/Path;IZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static synthetic fun visitFileTree$default (Ljava/nio/file/Path;Ljava/nio/file/FileVisitor;IZILjava/lang/Object;)V
+	public static final fun walk (Ljava/nio/file/Path;[Lkotlin/io/path/PathWalkOption;)Lkotlin/sequences/Sequence;
+	public static final fun writeText (Ljava/nio/file/Path;Ljava/lang/CharSequence;Ljava/nio/charset/Charset;[Ljava/nio/file/OpenOption;)V
+	public static synthetic fun writeText$default (Ljava/nio/file/Path;Ljava/lang/CharSequence;Ljava/nio/charset/Charset;[Ljava/nio/file/OpenOption;ILjava/lang/Object;)V
+}
+
+public final class kotlin/jdk7/AutoCloseableKt {
+	public static final fun closeFinally (Ljava/lang/AutoCloseable;Ljava/lang/Throwable;)V
+}
+
 public abstract interface annotation class kotlin/js/ExperimentalJsExport : java/lang/annotation/Annotation {
 }
 
@@ -4256,6 +4307,16 @@ public abstract interface class kotlin/jvm/internal/markers/KMutableMap$Entry : 
 public abstract interface class kotlin/jvm/internal/markers/KMutableSet : kotlin/jvm/internal/markers/KMutableCollection {
 }
 
+public final class kotlin/jvm/optionals/OptionalsKt {
+	public static final fun asSequence (Ljava/util/Optional;)Lkotlin/sequences/Sequence;
+	public static final fun getOrDefault (Ljava/util/Optional;Ljava/lang/Object;)Ljava/lang/Object;
+	public static final fun getOrElse (Ljava/util/Optional;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+	public static final fun getOrNull (Ljava/util/Optional;)Ljava/lang/Object;
+	public static final fun toCollection (Ljava/util/Optional;Ljava/util/Collection;)Ljava/util/Collection;
+	public static final fun toList (Ljava/util/Optional;)Ljava/util/List;
+	public static final fun toSet (Ljava/util/Optional;)Ljava/util/Set;
+}
+
 public final class kotlin/math/MathKt {
 	public static final field E D
 	public static final field PI D
@@ -5189,6 +5250,18 @@ public final class kotlin/sequences/USequencesKt {
 	public static final fun sumOfUShort (Lkotlin/sequences/Sequence;)I
 }
 
+public final class kotlin/streams/jdk8/StreamsKt {
+	public static final fun asSequence (Ljava/util/stream/DoubleStream;)Lkotlin/sequences/Sequence;
+	public static final fun asSequence (Ljava/util/stream/IntStream;)Lkotlin/sequences/Sequence;
+	public static final fun asSequence (Ljava/util/stream/LongStream;)Lkotlin/sequences/Sequence;
+	public static final fun asSequence (Ljava/util/stream/Stream;)Lkotlin/sequences/Sequence;
+	public static final fun asStream (Lkotlin/sequences/Sequence;)Ljava/util/stream/Stream;
+	public static final fun toList (Ljava/util/stream/DoubleStream;)Ljava/util/List;
+	public static final fun toList (Ljava/util/stream/IntStream;)Ljava/util/List;
+	public static final fun toList (Ljava/util/stream/LongStream;)Ljava/util/List;
+	public static final fun toList (Ljava/util/stream/Stream;)Ljava/util/List;
+}
+
 public final class kotlin/system/TimingKt {
 	public static final fun measureNanoTime (Lkotlin/jvm/functions/Function0;)J
 	public static final fun measureTimeMillis (Lkotlin/jvm/functions/Function0;)J
@@ -5799,6 +5872,10 @@ public final class kotlin/text/UStringsKt {
 	public static final fun toUShort (Ljava/lang/String;I)S
 	public static final fun toUShortOrNull (Ljava/lang/String;)Lkotlin/UShort;
 	public static final fun toUShortOrNull (Ljava/lang/String;I)Lkotlin/UShort;
+}
+
+public final class kotlin/text/jdk8/RegexExtensionsJDK8Kt {
+	public static final fun get (Lkotlin/text/MatchGroupCollection;Ljava/lang/String;)Lkotlin/text/MatchGroup;
 }
 
 public abstract class kotlin/time/AbstractDoubleTimeSource : kotlin/time/TimeSource {
