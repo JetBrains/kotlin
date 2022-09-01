@@ -171,7 +171,7 @@ private fun linkAllDependencies(llvmModule: LLVMModuleRef, context: LlvmCodegenC
     }
 }
 
-private fun insertAliasToEntryPoint(module: LLVMModuleRef, config: KonanConfig) {
+internal fun insertAliasToEntryPoint(module: LLVMModuleRef, config: KonanConfig) {
     val nomain = config.configuration.get(KonanConfigKeys.NOMAIN) ?: false
     if (config.produce != CompilerOutputKind.PROGRAM || nomain)
         return

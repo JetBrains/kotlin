@@ -11,10 +11,6 @@ import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SamSuperTypesChecker
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.phases.*
-import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
-import org.jetbrains.kotlin.backend.konan.phases.ErrorReportingContext
-import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
-import org.jetbrains.kotlin.backend.konan.phases.PhaseContext
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
@@ -240,7 +236,7 @@ internal val finalizeCachePhase = konanUnitPhase<CacheAwareContext>(
         description = "Finalize cache (rename temp to the final dist)"
 )
 
-internal val allLoweringsPhase = NamedCompilerPhase<MiddleEndContext>(
+internal val allLoweringsPhase = NamedCompilerPhase<MiddleEndContext, IrModuleFragment>(
         name = "IrLowering",
         description = "IR Lowering",
         // TODO: The lowerings before inlinePhase should be aligned with [NativeInlineFunctionResolver.kt]
@@ -413,7 +409,7 @@ internal val bitcodePhase = NamedCompilerPhase<BitcodegenContext, IrModuleFragme
 internal val bitcodePostprocessingPhase = NamedCompilerPhase<LlvmCodegenContext, IrModuleFragment>(
         name = "BitcodePostprocessing",
         description = "Optimize and rewrite bitcode",
-        lower = checkExternalCallsPhase then
+        lower = //checkExternalCallsPhase then
                 bitcodeOptimizationPhase then
                 coveragePhase then
                 removeRedundantSafepointsPhase then
