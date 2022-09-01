@@ -16,16 +16,16 @@ fun g() = f()
 @Retain
 fun h(cond: Boolean): Any {
     // CHECK: _ZN6kotlin2mm8internal20gSuspensionRequestedE
-    // CHECK-ARM: {{call .*Kotlin_mm_safePointFunctionPrologue}}
+    // CHECK-SMALLBINARY: {{call .*Kotlin_mm_safePointFunctionPrologue}}
     // CHECK-NOT: _ZN6kotlin2mm8internal20gSuspensionRequestedE
     // CHECK-NOT: {{call .*Kotlin_mm_safePointFunctionPrologue}}
     // CHECK: br
-    // CHECK-ARM: br
+    // CHECK-SMALLBINARY: br
     if (cond) {
         // CHECK-NOT: _ZN6kotlin2mm8internal20gSuspensionRequestedE
         // CHECK-NOT: {{call .*Kotlin_mm_safePointFunctionPrologue}}
         // CHECK: br
-        // CHECK-ARM: br
+        // CHECK-SMALLBINARY: br
         return listOf(C(), C())
     } else {
         // CHECK-NOT: _ZN6kotlin2mm8internal20gSuspensionRequestedE
@@ -39,7 +39,7 @@ fun h(cond: Boolean): Any {
 @Retain
 fun main() {
     // CHECK: _ZN6kotlin2mm8internal20gSuspensionRequestedE
-    // CHECK-ARM: {{call .*Kotlin_mm_safePointFunctionPrologue}}
+    // CHECK-SMALLBINARY: {{call .*Kotlin_mm_safePointFunctionPrologue}}
     // CHECK-NOT: _ZN6kotlin2mm8internal20gSuspensionRequestedE
     // CHECK-NOT: {{call .*Kotlin_mm_safePointFunctionPrologue}}
     println(g())
