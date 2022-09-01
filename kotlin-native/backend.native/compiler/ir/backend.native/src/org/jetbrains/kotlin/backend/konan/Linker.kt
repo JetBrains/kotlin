@@ -105,7 +105,7 @@ internal class Linker(
         private val errorReporter: ErrorReportingContext,
 ) {
 
-    private val checks = ConfigChecks(config)
+    private val checks = config.checks
     private val platform = config.platform
     private val configuration = config.configuration
     private val linkerOutput = determineLinkerOutput(config)

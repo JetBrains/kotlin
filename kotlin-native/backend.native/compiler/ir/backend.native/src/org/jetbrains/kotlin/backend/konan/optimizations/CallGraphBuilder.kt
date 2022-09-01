@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.DirectedGraph
 import org.jetbrains.kotlin.backend.konan.DirectedGraphNode
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.phases.LtoContext
 
 internal class CallGraphNode(val graph: CallGraph, val symbol: DataFlowIR.FunctionSymbol.Declared)
     : DirectedGraphNode<DataFlowIR.FunctionSymbol.Declared> {
@@ -52,7 +52,7 @@ internal class CallGraph(val directEdges: Map<DataFlowIR.FunctionSymbol.Declared
 }
 
 internal class CallGraphBuilder(
-        val context: Context,
+        val context: LtoContext,
         val moduleDFG: ModuleDFG,
         val externalModulesDFG: ExternalModulesDFG,
         val devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult,

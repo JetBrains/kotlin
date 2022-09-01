@@ -4,7 +4,8 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.konan.exec.Command
-import org.jetbrains.kotlin.konan.file.*
+import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.file.createTempFile
 import org.jetbrains.kotlin.konan.target.ClangArgs
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -19,7 +20,7 @@ class CStubsManager(private val target: KonanTarget) {
         stubs += Stub(kotlinLocation, lines)
     }
 
-    fun compile(clang: ClangArgs, messageCollector: MessageCollector, verbose: Boolean): List<File> {
+    fun compile(clang: ClangArgs, messageCollector: MessageCollector, verbose: Boolean): List<String> {
         if (languageToStubs.isEmpty()) return emptyList()
 
         val bitcodes = languageToStubs.entries.map { (language, stubs) ->
@@ -58,7 +59,7 @@ class CStubsManager(private val target: KonanTarget) {
             if (result.exitCode != 0) {
                 reportCompilationErrors(cSourcePath, stubs, result, messageCollector, verbose)
             }
-            bitcode
+            bitcode.absolutePath
         }
 
         return bitcodes

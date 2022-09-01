@@ -127,7 +127,7 @@ internal fun createLTOFinalPipelineConfig(
         isFinalLlvmModule: Boolean,
         errorReportingContext: ErrorReportingContext
 ): LlvmPipelineConfig {
-    val checks = ConfigChecks(config)
+    val checks = config.checks
     val target = config.target
     val configurables: Configurables = config.platform.configurables
     val cpuModel = getCpuModel(config, errorReportingContext)

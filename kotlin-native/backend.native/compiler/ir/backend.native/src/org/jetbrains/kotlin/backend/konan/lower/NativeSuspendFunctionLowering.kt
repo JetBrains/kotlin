@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
-internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunctionsLowering<Context>(ctx) {
+internal class NativeSuspendFunctionsLowering(ctx: MiddleEndContext): AbstractSuspendFunctionsLowering<Context>(ctx) {
     private val symbols = context.ir.symbols
 
     override val stateMachineMethodName = Name.identifier("invokeSuspend")

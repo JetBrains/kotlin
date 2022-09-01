@@ -74,20 +74,20 @@ internal class NativeMapping : DefaultMapping() {
 
 internal class Context(
         config: KonanConfig,
-) : KonanBackendContext(config),
+) : KonanBackendContextAbstract(config),
         ConfigChecks,
         FrontendContext,
         PsiToIrContext,
         TopDownAnalyzerContext,
-        LlvmModuleContext,
         LlvmModuleSpecificationContext,
         KlibProducingContext,
         BitcodegenContext,
         LlvmCodegenContext,
         BridgesAwareContext,
         LocalClassNameAwareContext,
-        LtoAwareContext,
-        ObjCExportContext
+        LtoContext,
+        ObjCExportContext,
+        MiddleEndContext
 {
     // TopDownAnalyzer Context
     override lateinit var frontendServices: FrontendServices
@@ -118,11 +118,11 @@ internal class Context(
 
     override val optimizeLoopsOverUnsignedArrays = true
 
-    val innerClassesSupport by lazy { InnerClassesSupport(mapping, irFactory) }
+    override val innerClassesSupport by lazy { InnerClassesSupport(mapping, irFactory) }
     override val bridgesSupport: BridgesSupport by lazy { BridgesSupport(mapping, irBuiltIns, irFactory) }
-    val inlineFunctionsSupport by lazy { InlineFunctionsSupport(mapping) }
+    override val inlineFunctionsSupport: InlineFunctionsSupport by lazy { InlineFunctionsSupport(mapping) }
     override val enumsSupport by lazy { EnumsSupport(mapping, ir.symbols, irBuiltIns, irFactory) }
-    val cachesAbiSupport by lazy { CachesAbiSupport(mapping, ir.symbols, irFactory) }
+    override val cachesAbiSupport: CachesAbiSupport by lazy { CachesAbiSupport(mapping, ir.symbols, irFactory) }
 
     override val lazyValues = mutableMapOf<LazyMember<*>, Any?>()
 
@@ -166,8 +166,8 @@ internal class Context(
         config.librariesWithDependencies(moduleDescriptor)
     }
 
-    var functionReferenceCount = 0
-    var coroutineCount = 0
+    override var functionReferenceCount = 0
+    override var coroutineCount = 0
 
     fun needGlobalInit(field: IrField): Boolean {
         if (field.descriptor.containingDeclaration !is PackageFragmentDescriptor) return false
@@ -196,7 +196,7 @@ internal class Context(
     override val typeSystem: IrTypeSystemContext
         get() = IrTypeSystemContextImpl(irBuiltIns)
 
-    val interopBuiltIns by lazy {
+    override val interopBuiltIns: InteropBuiltIns by lazy {
         InteropBuiltIns(this.builtIns)
     }
 
@@ -233,9 +233,9 @@ internal class Context(
         llvmDisposed = true
     }
 
-    val cStubsManager = CStubsManager(config.target)
+    override val cStubsManager = CStubsManager(config.target)
 
-    val coverage = CoverageManager(this, config)
+    override val coverage: CoverageManager = CoverageManager(this, config)
 
     override fun ghaEnabled(): Boolean = ::globalHierarchyAnalysisResult.isInitialized
 
@@ -249,10 +249,10 @@ internal class Context(
     }
 
     override lateinit var debugInfo: DebugInfo
-    var moduleDFG: ModuleDFG? = null
-    lateinit var lifetimes: MutableMap<IrElement, Lifetime>
-    lateinit var codegenVisitor: CodeGeneratorVisitor
-    var devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult? = null
+    override var moduleDFG: ModuleDFG? = null
+    override lateinit var lifetimes: MutableMap<IrElement, Lifetime>
+    override lateinit var codegenVisitor: CodeGeneratorVisitor
+    override var devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult? = null
 
     override var referencedFunctions: Set<IrFunction>? = null
 
@@ -327,18 +327,18 @@ internal fun LoggingContext.logMultiple(messageBuilder: ContextLogger.() -> Unit
     with(ContextLogger(this)) { messageBuilder() }
 }
 
-internal open class LazyMember<T>(val initializer: KonanBackendContextI.() -> T) {
-    operator fun getValue(thisRef: KonanBackendContextI, property: KProperty<*>): T = thisRef.getValue(this)
+internal open class LazyMember<T>(val initializer: KonanBackendContext.() -> T) {
+    operator fun getValue(thisRef: KonanBackendContext, property: KProperty<*>): T = thisRef.getValue(this)
 }
 
-internal class LazyVarMember<T>(initializer: KonanBackendContextI.() -> T) : LazyMember<T>(initializer) {
-    operator fun setValue(thisRef: KonanBackendContextI, property: KProperty<*>, newValue: T) = thisRef.setValue(this, newValue)
+internal class LazyVarMember<T>(initializer: KonanBackendContext.() -> T) : LazyMember<T>(initializer) {
+    operator fun setValue(thisRef: KonanBackendContext, property: KProperty<*>, newValue: T) = thisRef.setValue(this, newValue)
 }
 
 internal object LazyMap {
-    fun <T> lazyMember(initializer: KonanBackendContextI.() -> T) = LazyMember<T>(initializer)
+    fun <T> lazyMember(initializer: KonanBackendContext.() -> T) = LazyMember<T>(initializer)
 
-    fun <K, V> lazyMapMember(initializer: KonanBackendContextI.(K) -> V): LazyMember<(K) -> V> = lazyMember {
+    fun <K, V> lazyMapMember(initializer: KonanBackendContext.(K) -> V): LazyMember<(K) -> V> = lazyMember {
         val storage = mutableMapOf<K, V>()
         val result: (K) -> V = {
             storage.getOrPut(it, { initializer(it) })

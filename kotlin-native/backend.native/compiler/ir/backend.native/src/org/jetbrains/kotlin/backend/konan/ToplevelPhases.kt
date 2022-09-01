@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SamSuperTypesChecker
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
-import org.jetbrains.kotlin.backend.konan.phases.ConfigChecks
+import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
 import org.jetbrains.kotlin.backend.konan.phases.ErrorReportingContext
+import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
+import org.jetbrains.kotlin.backend.konan.phases.PhaseContext
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
@@ -27,7 +29,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
 
-internal fun moduleValidationCallback(state: ActionState, module: IrModuleFragment, context: Context) {
+internal fun moduleValidationCallback(state: ActionState, module: IrModuleFragment, context: PhaseContext) {
     if (!context.config.needVerifyIr) return
 
     val validatorConfig = IrValidatorConfig(
@@ -47,7 +49,7 @@ internal fun moduleValidationCallback(state: ActionState, module: IrModuleFragme
     }
 }
 
-internal fun fileValidationCallback(state: ActionState, irFile: IrFile, context: Context) {
+internal fun fileValidationCallback(state: ActionState, irFile: IrFile, context: MiddleEndContext) {
     val validatorConfig = IrValidatorConfig(
             abortOnError = false,
             ensureAllNodesAreDifferent = true,
@@ -199,7 +201,7 @@ internal val serializerPhase = konanUnitPhase(
                         config.configuration.languageVersionSettings,
                         config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!,
                         config.project,
-                        exportKDoc = ConfigChecks(config).shouldExportKDoc(),
+                        exportKDoc = config.checks.shouldExportKDoc(),
                         !expectActualLinker, includeOnlyModuleContent = true)
                 serializedMetadata = serializer.serializeModule(moduleDescriptor)
             },
@@ -386,7 +388,7 @@ internal val entryPointPhase = makeCustomPhase<Context, IrModuleFragment>(
         }
 )
 
-internal val bitcodePhase = NamedCompilerPhase(
+internal val bitcodePhase = NamedCompilerPhase<BitcodegenContext, IrModuleFragment>(
         name = "Bitcode",
         description = "LLVM Bitcode generation",
         lower = contextLLVMSetupPhase then
@@ -408,11 +410,10 @@ internal val bitcodePhase = NamedCompilerPhase(
                 escapeAnalysisPhase then
                 localEscapeAnalysisPhase then
                 codegenPhase then
-                finalizeDebugInfoPhase then
-                cStubsPhase
+                finalizeDebugInfoPhase
 )
 
-internal val bitcodePostprocessingPhase = NamedCompilerPhase(
+internal val bitcodePostprocessingPhase = NamedCompilerPhase<Context, IrModuleFragment>(
         name = "BitcodePostprocessing",
         description = "Optimize and rewrite bitcode",
         lower = checkExternalCallsPhase then
@@ -423,7 +424,7 @@ internal val bitcodePostprocessingPhase = NamedCompilerPhase(
                 rewriteExternalCallsCheckerGlobals
 )
 
-internal val backendCodegen = namedUnitPhase(
+internal val backendCodegen = namedUnitPhase<Context>(
         name = "Backend codegen",
         description = "Backend code generation",
         lower = takeFromContext<Context, Unit, IrModuleFragment> { it.irModule!! } then

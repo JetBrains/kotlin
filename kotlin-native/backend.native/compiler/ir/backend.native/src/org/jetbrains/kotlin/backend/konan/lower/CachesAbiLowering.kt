@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
 import org.jetbrains.kotlin.backend.konan.isObjCClass
+import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
@@ -125,7 +126,7 @@ internal class CachesAbiSupport(mapping: NativeMapping, symbols: KonanSymbols, p
     }
 }
 
-internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass, IrElementVisitor<Unit, MutableList<IrFunction>> {
+internal class ExportCachesAbiVisitor(val context: MiddleEndContext) : FileLoweringPass, IrElementVisitor<Unit, MutableList<IrFunction>> {
     private val cachesAbiSupport = context.cachesAbiSupport
 
     override fun lower(irFile: IrFile) {
@@ -196,7 +197,7 @@ internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass, 
     }
 }
 
-internal class ImportCachesAbiTransformer(val context: Context) : FileLoweringPass, IrElementTransformerVoid() {
+internal class ImportCachesAbiTransformer(val context: MiddleEndContext) : FileLoweringPass, IrElementTransformerVoid() {
     private val cachesAbiSupport = context.cachesAbiSupport
     private val enumsSupport = context.enumsSupport
 

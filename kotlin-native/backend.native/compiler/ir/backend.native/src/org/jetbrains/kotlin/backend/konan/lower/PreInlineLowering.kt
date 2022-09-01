@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
  *     - Assertion call removal.
  *     - First phase of typeOf intrinsic lowering.
  */
-internal class PreInlineLowering(val context: Context) : BodyLoweringPass {
+internal class PreInlineLowering(val context: MiddleEndContext) : BodyLoweringPass {
 
     private val symbols get() = context.ir.symbols
 

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.backend.konan.phases.FrontendContext
-import org.jetbrains.kotlin.backend.konan.phases.TopLevelPhasesBuilder
+import org.jetbrains.kotlin.backend.konan.phases.DynamicNativeCompilerDriver
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -54,7 +54,7 @@ class KonanDriver(
                 usingNativeMemoryAllocator {
                     usingJvmCInteropCallbacks {
                         try {
-                            TopLevelPhasesBuilder(config, arguments).buildKlib(config, environment)
+                            DynamicNativeCompilerDriver(config, arguments).buildKlib(config, environment)
                         } finally {
                         }
                     }
@@ -64,7 +64,7 @@ class KonanDriver(
                 usingNativeMemoryAllocator {
                     usingJvmCInteropCallbacks {
                         try {
-                            TopLevelPhasesBuilder(config, arguments).buildFramework(config, environment)
+                            DynamicNativeCompilerDriver(config, arguments).buildFramework(config, environment)
                         } finally {
                         }
                     }
@@ -132,7 +132,7 @@ private fun runTopLevelPhases(
 
     if (konanConfig.infoArgsOnly) return
 
-    if (!context.frontendPhase(konanConfig)) return
+    if (!context.frontendPhase()) return
 
     usingNativeMemoryAllocator {
         usingJvmCInteropCallbacks {
@@ -146,7 +146,8 @@ private fun runTopLevelPhases(
 }
 
 // returns true if should generate code.
-internal fun FrontendContext.frontendPhase(config: KonanConfig): Boolean {
+internal fun FrontendContext.frontendPhase(): Boolean {
+    val config = this.config
     lateinit var analysisResult: AnalysisResult
 
     do {

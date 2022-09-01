@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import kotlin.collections.set
 
-internal fun createLlvmDeclarations(context: Context, irModuleFragment: IrModuleFragment): LlvmDeclarations {
+internal fun createLlvmDeclarations(context: BitcodegenContext, irModuleFragment: IrModuleFragment): LlvmDeclarations {
     val generator = DeclarationsGeneratorVisitor(context)
     irModuleFragment.acceptChildrenVoid(generator)
     return LlvmDeclarations(generator.uniques)

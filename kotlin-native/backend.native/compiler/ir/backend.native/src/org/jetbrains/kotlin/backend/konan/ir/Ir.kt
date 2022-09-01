@@ -36,18 +36,18 @@ object KonanNameConventions {
 }
 
 // This is what Context collects about IR.
-internal class KonanIr(context: KonanBackendContextI, irModule: IrModuleFragment): Ir<KonanBackendContextI>(context, irModule) {
+internal class KonanIr(context: KonanBackendContext, irModule: IrModuleFragment): Ir<KonanBackendContext>(context, irModule) {
     override var symbols: KonanSymbols by Delegates.notNull()
 }
 
 internal class KonanSymbols(
-        context: KonanBackendContextI,
-        irBuiltIns: IrBuiltIns,
-        private val symbolTable: SymbolTable,
-        lazySymbolTable: ReferenceSymbolTable,
-        configuration: CompilerConfiguration,
-        descriptorsLookup: DescriptorsLookup,
-): Symbols<KonanBackendContextI>(context, irBuiltIns, symbolTable) {
+    context: KonanBackendContext,
+    irBuiltIns: IrBuiltIns,
+    private val symbolTable: SymbolTable,
+    lazySymbolTable: ReferenceSymbolTable,
+    configuration: CompilerConfiguration,
+    descriptorsLookup: DescriptorsLookup,
+): Symbols<KonanBackendContext>(context, irBuiltIns, symbolTable) {
 
     val entryPoint = findMainEntryPoint(configuration, context)?.let { symbolTable.referenceSimpleFunction(it) }
 

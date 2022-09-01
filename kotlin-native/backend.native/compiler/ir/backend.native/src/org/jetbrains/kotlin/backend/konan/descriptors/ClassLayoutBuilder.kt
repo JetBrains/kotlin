@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.getLLVMType
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.backend.konan.phases.BridgesAwareContext
+import org.jetbrains.kotlin.backend.konan.phases.LtoContext
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -95,7 +96,7 @@ internal class ClassGlobalHierarchyInfo(val classIdLo: Int, val classIdHi: Int, 
 
 internal class GlobalHierarchyAnalysisResult(val bitsPerColor: Int)
 
-internal class GlobalHierarchyAnalysis(val context: Context, val irModule: IrModuleFragment) {
+internal class GlobalHierarchyAnalysis(val context: LtoContext, val irModule: IrModuleFragment) {
     fun run() {
         /*
          * The algorithm for fast interface call and check:

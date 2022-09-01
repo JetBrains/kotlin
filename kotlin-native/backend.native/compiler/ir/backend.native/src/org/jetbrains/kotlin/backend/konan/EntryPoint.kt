@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
+import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal object DECLARATION_ORIGIN_ENTRY_POINT : IrDeclarationOriginImpl("ENTRY_POINT")
 
-internal fun makeEntryPoint(context: Context): IrFunction {
+internal fun makeEntryPoint(context: MiddleEndContext): IrFunction {
     val actualMain = context.ir.symbols.entryPoint!!.owner
     // TODO: Do we need to do something with the offsets if <main> is in a cached library?
     val startOffset = if (context.llvmModuleSpecification.containsDeclaration(actualMain))

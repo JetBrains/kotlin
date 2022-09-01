@@ -11,9 +11,10 @@ import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.hasCCallAnnotation
-import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.backend.konan.ir.isVirtualCall
+import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -23,7 +24,10 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstantPrimitiveImpl
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
+import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -31,13 +35,14 @@ import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
 /**
  * Boxes and unboxes values of value types when necessary.
  */
-internal class Autoboxing(val context: Context) : FileLoweringPass {
+internal class Autoboxing(val context: MiddleEndContext) : FileLoweringPass {
 
     private val transformer = AutoboxingTransformer(context)
 
@@ -48,7 +53,7 @@ internal class Autoboxing(val context: Context) : FileLoweringPass {
 
 }
 
-private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTransformer(
+private class AutoboxingTransformer(val context: MiddleEndContext) : AbstractValueUsageTransformer(
         context.ir.symbols,
         context.irBuiltIns
 ) {
@@ -199,7 +204,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
 
 }
 
-private class InlineClassTransformer(private val context: Context) : IrBuildingTransformer(context) {
+private class InlineClassTransformer(private val context: MiddleEndContext) : IrBuildingTransformer(context) {
 
     private val symbols = context.ir.symbols
     private val irBuiltIns = context.irBuiltIns
@@ -510,7 +515,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.backingField }.single()
 }
 
-private val Context.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpleFunction by LazyMap.lazyMapMember { irConstructor ->
+private val MiddleEndContext.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpleFunction by LazyMap.lazyMapMember { irConstructor ->
     require(irConstructor.constructedClass.isInlined())
 
     val returnType = if (irConstructor.isPrimary) {

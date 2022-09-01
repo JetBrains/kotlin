@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
+import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -36,7 +38,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-internal class FunctionReferenceLowering(val context: Context) : FileLoweringPass {
+internal class FunctionReferenceLowering(val context: MiddleEndContext) : FileLoweringPass {
 
     private object DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
 
@@ -163,7 +165,7 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
             val irFile: IrFile,
             val parent: IrDeclarationParent,
             val functionReference: IrFunctionReference,
-            val context: Context,
+            val context: MiddleEndContext,
             val irBuilder: IrBuilderWithScope,
             val samSuperType: IrType? = null,
     ) {

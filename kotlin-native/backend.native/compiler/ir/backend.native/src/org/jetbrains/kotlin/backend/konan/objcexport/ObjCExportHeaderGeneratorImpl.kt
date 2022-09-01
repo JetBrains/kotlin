@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.backend.konan.phases.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.phases.ErrorReportingContext
 import org.jetbrains.kotlin.backend.konan.reportCompilationWarning
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -27,7 +26,7 @@ internal class ObjCExportHeaderGeneratorImpl(
         objcGenerics: Boolean
 ) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, ProblemCollector(errorReportingContext)) {
 
-    override val shouldExportKDoc = ConfigChecks(config).shouldExportKDoc()
+    override val shouldExportKDoc = config.checks.shouldExportKDoc()
 
     private class ProblemCollector(val errorReportingContext: ErrorReportingContext) : ObjCExportProblemCollector {
         override fun reportWarning(text: String) {

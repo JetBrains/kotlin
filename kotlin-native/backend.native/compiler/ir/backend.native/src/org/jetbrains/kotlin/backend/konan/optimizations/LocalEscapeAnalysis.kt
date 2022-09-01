@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.backend.konan.descriptors.isArrayWithFixedSizeItems
+import org.jetbrains.kotlin.backend.konan.phases.LtoContext
 
 internal object LocalEscapeAnalysis {
     private enum class EscapeState {
@@ -193,7 +194,7 @@ internal object LocalEscapeAnalysis {
         }
     }
 
-    fun analyze(context: Context, moduleDFG: ModuleDFG, lifetimes: MutableMap<IrElement, Lifetime>) {
+    fun analyze(context: LtoContext, moduleDFG: ModuleDFG, lifetimes: MutableMap<IrElement, Lifetime>) {
         moduleDFG.functions.forEach { (name, function) ->
             context.logMultiple {
                 +"==============================================="
@@ -205,7 +206,7 @@ internal object LocalEscapeAnalysis {
         }
     }
 
-    fun computeLifetimes(context: Context, moduleDFG: ModuleDFG, lifetimes: MutableMap<IrElement, Lifetime>) {
+    fun computeLifetimes(context: LtoContext, moduleDFG: ModuleDFG, lifetimes: MutableMap<IrElement, Lifetime>) {
         context.log { "In local EA" }
         assert(lifetimes.isEmpty())
         analyze(context, moduleDFG, lifetimes)

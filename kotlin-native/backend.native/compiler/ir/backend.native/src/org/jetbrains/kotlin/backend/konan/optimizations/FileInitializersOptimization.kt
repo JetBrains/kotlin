@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
 import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.ir.actualCallee
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.ir.isUnconditional
 import org.jetbrains.kotlin.backend.konan.ir.isVirtualCall
 import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.backend.konan.lower.*
+import org.jetbrains.kotlin.backend.konan.phases.LtoContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
@@ -66,7 +66,7 @@ internal object FileInitializersOptimization {
 
     private val invalidFileId = 0
 
-    private class InterproceduralAnalysis(val context: Context, val callGraph: CallGraph,
+    private class InterproceduralAnalysis(val context: LtoContext, val callGraph: CallGraph,
                                           val rootSet: Set<IrFunction>) {
         fun analyze(): AnalysisResult {
             context.logMultiple {
@@ -537,7 +537,7 @@ internal object FileInitializersOptimization {
         }
     }
 
-    fun removeRedundantCalls(context: Context, callGraph: CallGraph, rootSet: Set<IrFunction>) {
+    fun removeRedundantCalls(context: LtoContext, callGraph: CallGraph, rootSet: Set<IrFunction>) {
         val analysisResult = InterproceduralAnalysis(context, callGraph, rootSet).analyze()
 
         var numberOfFunctionsWithGlobalInitializerCall = 0

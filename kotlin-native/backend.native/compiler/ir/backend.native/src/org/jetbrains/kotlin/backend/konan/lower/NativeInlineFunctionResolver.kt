@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.inline.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.InlineFunctionOriginInfo
 import org.jetbrains.kotlin.backend.konan.NativeMapping
+import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -28,7 +29,7 @@ internal class InlineFunctionsSupport(mapping: NativeMapping) {
 }
 
 // TODO: This is a bit hacky. Think about adopting persistent IR ideas.
-internal class NativeInlineFunctionResolver(override val context: Context) : DefaultInlineFunctionResolver(context) {
+internal class NativeInlineFunctionResolver(override val context: MiddleEndContext) : DefaultInlineFunctionResolver(context) {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
         val function = super.getFunctionDeclaration(symbol)
 

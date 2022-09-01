@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGen
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
 import org.jetbrains.kotlin.backend.konan.phases.ErrorReportingContext
 import org.jetbrains.kotlin.backend.konan.phases.FrontendContext
-import org.jetbrains.kotlin.backend.konan.phases.LlvmModuleContext
 import org.jetbrains.kotlin.backend.konan.phases.LlvmModuleSpecificationContext
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor

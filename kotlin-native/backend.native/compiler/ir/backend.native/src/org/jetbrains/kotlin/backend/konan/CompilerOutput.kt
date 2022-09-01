@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.konan.phases.stdlibModule
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.isBitcode
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
@@ -89,15 +90,12 @@ internal fun llvmIrDumpCallback(state: ActionState, module: IrModuleFragment, co
     }
 }
 
-internal fun produceCStubs(context: Context) {
-    val llvmModule = context.llvmModule!!
-    context.cStubsManager.compile(
+internal fun produceCStubs(context: LlvmCodegenContext): List<String> {
+    return context.cStubsManager.compile(
             context.config.clang,
             context.messageCollector,
             context.inVerbosePhase
-    ).forEach {
-        parseAndLinkBitcodeFile(context, llvmModule, it.absolutePath)
-    }
+    )
 }
 
 private val BaseKotlinLibrary.isStdlib: Boolean
@@ -183,7 +181,7 @@ private fun insertAliasToEntryPoint(module: LLVMModuleRef, config: KonanConfig) 
     LLVMAddAlias(module, LLVMTypeOf(entryPoint)!!, entryPoint, "main")
 }
 
-internal fun linkBitcodeDependencies(context: Context, config: KonanConfig) {
+internal fun linkBitcodeDependencies(context: LlvmCodegenContext, config: KonanConfig) {
     val tempFiles = config.tempFiles
     val produce = config.configuration.get(KonanConfigKeys.PRODUCE)
 
@@ -198,6 +196,7 @@ internal fun linkBitcodeDependencies(context: Context, config: KonanConfig) {
     if (produce == CompilerOutputKind.FRAMEWORK && config.produceStaticFramework) {
         embedAppleLinkerOptionsToBitcode(context.llvm, config)
     }
+    val cstubs = produceCStubs(context)
     linkAllDependencies(context.llvmModule!!, context, generatedBitcodeFiles)
 
 }
@@ -287,9 +286,9 @@ internal fun produceOutput(context: Context, config: KonanConfig) {
     }
 }
 
-internal fun parseAndLinkBitcodeFile(context: Context, llvmModule: LLVMModuleRef, path: String) {
+internal fun parseAndLinkBitcodeFile(context: LlvmCodegenContext, llvmModule: LLVMModuleRef, path: String) {
     val parsedModule = parseBitcodeFile(path)
-    if (!context.shouldUseDebugInfoFromNativeLibs()) {
+    if (!context.config.checks.shouldUseDebugInfoFromNativeLibs()) {
         LLVMStripModuleDebugInfo(parsedModule)
     }
     val failed = llvmLinkModules2(context, context, llvmModule, parsedModule)

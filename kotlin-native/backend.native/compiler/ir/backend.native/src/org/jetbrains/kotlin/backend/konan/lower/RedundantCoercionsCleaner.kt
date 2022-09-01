@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.getInlinedClassNative
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnboxCall
 import org.jetbrains.kotlin.ir.IrElement
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPass, IrElementTransformerVoid() {
+internal class RedundantCoercionsCleaner(val context: KonanBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
 
     private class PossiblyFoldedExpression(val expression: IrExpression, val folded: Boolean) {
         fun getFullExpression(coercion: IrCall, cast: IrTypeOperatorCall?): IrExpression {

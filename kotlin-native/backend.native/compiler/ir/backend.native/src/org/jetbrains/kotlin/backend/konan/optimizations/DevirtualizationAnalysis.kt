@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnboxCall
-import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis.irCoerce
+import org.jetbrains.kotlin.backend.konan.phases.LtoContext
 import org.jetbrains.kotlin.backend.konan.util.IntArrayList
 import org.jetbrains.kotlin.backend.konan.util.LongArrayList
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -55,7 +55,7 @@ internal object DevirtualizationAnalysis {
 
     private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
 
-    fun computeRootSet(context: Context, moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG)
+    fun computeRootSet(context: LtoContext, moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG)
             : List<DataFlowIR.FunctionSymbol> {
 
         fun DataFlowIR.FunctionSymbol.resolved(): DataFlowIR.FunctionSymbol {
@@ -117,7 +117,7 @@ internal object DevirtualizationAnalysis {
 
     private val VIRTUAL_TYPE_ID = 0 // Id of [DataFlowIR.Type.Virtual].
 
-    internal class DevirtualizationAnalysisImpl(val context: Context,
+    internal class DevirtualizationAnalysisImpl(val context: LtoContext,
                                                 val moduleDFG: ModuleDFG,
                                                 val externalModulesDFG: ExternalModulesDFG) {
 
@@ -1298,10 +1298,10 @@ internal object DevirtualizationAnalysis {
     class AnalysisResult(val devirtualizedCallSites: Map<DataFlowIR.Node.VirtualCall, DevirtualizedCallSite>,
                          val typeHierarchy: DevirtualizationAnalysisImpl.TypeHierarchy)
 
-    fun run(context: Context, moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG) =
+    fun run(context: LtoContext, moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG) =
             DevirtualizationAnalysisImpl(context, moduleDFG, externalModulesDFG).analyze()
 
-    fun devirtualize(irModule: IrModuleFragment, context: Context, externalModulesDFG: ExternalModulesDFG,
+    fun devirtualize(irModule: IrModuleFragment, context: LtoContext, externalModulesDFG: ExternalModulesDFG,
                      devirtualizedCallSites: Map<IrCall, DevirtualizedCallSite>) {
         val symbols = context.ir.symbols
         val nativePtrEqualityOperatorSymbol = symbols.areEqualByValue[PrimitiveBinaryType.POINTER]!!

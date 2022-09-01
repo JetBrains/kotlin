@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
@@ -9,20 +9,21 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLamb
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.FoldConstantLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
-import org.jetbrains.kotlin.backend.konan.lower.UnboxInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
-import org.jetbrains.kotlin.backend.konan.llvm.redundantCoercionsCleaningPhase
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.KonanBCEForLoopBodyTransformer
+import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
+import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
+import org.jetbrains.kotlin.backend.konan.phases.PhaseContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 private val validateAll = false
 
@@ -30,20 +31,21 @@ private val filePhaseActions = setOfNotNull(
         defaultDumper,
         ::fileValidationCallback.takeIf { validateAll }
 )
-private val modulePhaseActions = setOfNotNull(
+private val modulePhaseActions: Set<(ActionState, IrModuleFragment, PhaseContext) -> Unit> = setOfNotNull(
         defaultDumper,
-        ::llvmIrDumpCallback,
+        // TODO: It is not valid
+//        ::llvmIrDumpCallback,
         ::moduleValidationCallback.takeIf { validateAll }
 )
 
 private fun makeKonanFileLoweringPhase(
-        lowering: (Context) -> FileLoweringPass,
+        lowering: (MiddleEndContext) -> FileLoweringPass,
         name: String,
         description: String,
-        prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet()
+        prerequisite: Set<NamedCompilerPhase<MiddleEndContext, *>> = emptySet()
 ) = makeIrFilePhase(lowering, name, description, prerequisite, actions = filePhaseActions)
 
-private fun makeKonanModuleLoweringPhase(
+private fun <Context : PhaseContext> makeKonanModuleLoweringPhase(
         lowering: (Context) -> FileLoweringPass,
         name: String,
         description: String,
@@ -51,14 +53,14 @@ private fun makeKonanModuleLoweringPhase(
 ) = makeIrModulePhase(lowering, name, description, prerequisite, actions = modulePhaseActions)
 
 internal fun makeKonanFileOpPhase(
-        op: (Context, IrFile) -> Unit,
+        op: (MiddleEndContext, IrFile) -> Unit,
         name: String,
         description: String,
-        prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet()
+        prerequisite: Set<NamedCompilerPhase<MiddleEndContext, *>> = emptySet()
 ) = NamedCompilerPhase(
         name, description, prerequisite, nlevels = 0,
-        lower = object : SameTypeCompilerPhase<Context, IrFile> {
-            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrFile>, context: Context, input: IrFile): IrFile {
+        lower = object : SameTypeCompilerPhase<MiddleEndContext, IrFile> {
+            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrFile>, context: MiddleEndContext, input: IrFile): IrFile {
                 op(context, input)
                 return input
             }
@@ -66,12 +68,12 @@ internal fun makeKonanFileOpPhase(
         actions = filePhaseActions
 )
 
-internal fun makeKonanModuleOpPhase(
+internal fun <Context : KonanBackendContext> makeKonanModuleOpPhase(
         op: (Context, IrModuleFragment) -> Unit,
         name: String,
         description: String,
         prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet()
-) = NamedCompilerPhase(
+) = NamedCompilerPhase<Context, IrModuleFragment>(
         name, description, prerequisite, nlevels = 0,
         lower = object : SameTypeCompilerPhase<Context, IrModuleFragment> {
             override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {
@@ -79,7 +81,7 @@ internal fun makeKonanModuleOpPhase(
                 return input
             }
         },
-        actions = modulePhaseActions
+//        actions = modulePhaseActions
 )
 
 internal val specialBackendChecksPhase = konanUnitPhase(
@@ -88,7 +90,7 @@ internal val specialBackendChecksPhase = konanUnitPhase(
         description = "Special backend checks"
 )
 
-internal val propertyAccessorInlinePhase = makeKonanModuleLoweringPhase(
+internal val propertyAccessorInlinePhase = makeKonanModuleLoweringPhase<PhaseContext>(
         ::PropertyAccessorInlineLowering,
         name = "PropertyAccessorInline",
         description = "Property accessor inline lowering"
@@ -286,7 +288,7 @@ internal val rangeContainsLoweringPhase = makeKonanFileLoweringPhase(
         description = "Optimizes calls to contains() for ClosedRanges"
 )
 
-internal val functionsWithoutBoundCheck = makeKonanModuleOpPhase(
+internal val functionsWithoutBoundCheck = makeKonanModuleOpPhase<MiddleEndContext>(
         name = "FunctionsWithoutBoundCheckGenerator",
         description = "Functions without bounds check generation",
         op = { context, _ ->
@@ -416,11 +418,11 @@ internal val autoboxPhase = makeKonanFileLoweringPhase(
         prerequisite = setOf(bridgesPhase, coroutinesPhase)
 )
 
-internal val unboxInlinePhase = makeKonanModuleLoweringPhase(
+internal val unboxInlinePhase = makeKonanModuleLoweringPhase<BitcodegenContext>(
         ::UnboxInlineLowering,
         name = "UnboxInline",
         description = "Unbox functions inline lowering",
-        prerequisite = setOf(autoboxPhase, redundantCoercionsCleaningPhase)
+        prerequisite = setOf()//setOf(autoboxPhase, redundantCoercionsCleaningPhase) // Different context types
 )
 
 internal val expressionBodyTransformPhase = makeKonanFileLoweringPhase(

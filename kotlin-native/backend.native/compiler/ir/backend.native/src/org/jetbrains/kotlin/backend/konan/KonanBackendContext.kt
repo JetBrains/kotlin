@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 
-internal interface KonanBackendContextI : CommonBackendContext {
+internal interface KonanBackendContext : CommonBackendContext {
     val messageCollector: MessageCollector
 
     override val ir: KonanIr
@@ -38,7 +38,7 @@ internal interface KonanBackendContextI : CommonBackendContext {
     }
 }
 
-internal abstract class KonanBackendContext(val config: KonanConfig) : KonanBackendContextI {
+internal abstract class KonanBackendContextAbstract(val config: KonanConfig) : KonanBackendContext {
     abstract override val builtIns: KonanBuiltIns
 
     abstract override val ir: KonanIr

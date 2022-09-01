@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_MODULE_GLOBAL_INITIALIZER
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_MODULE_THREAD_LOCAL_INITIALIZER
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
+import org.jetbrains.kotlin.backend.konan.phases.LtoContext
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -434,7 +435,7 @@ internal object DataFlowIR {
         }
     }
 
-    class SymbolTable(val context: Context, val irModule: IrModuleFragment, val module: Module) {
+    class SymbolTable(val context: LtoContext, val irModule: IrModuleFragment, val module: Module) {
 
         private val TAKE_NAMES = true // Take fqNames for all functions and types (for debug purposes).
 

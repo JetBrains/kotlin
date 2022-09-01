@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.lower.erasedUpperBound
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.phases.LtoContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -87,7 +88,7 @@ private class VariableValues {
     }
 }
 
-private class ExpressionValuesExtractor(val context: Context,
+private class ExpressionValuesExtractor(val context: KonanBackendContext,
                                         val returnableBlockValues: Map<IrReturnableBlock, List<IrExpression>>,
                                         val suspendableExpressionValues: Map<IrSuspendableExpression, List<IrSuspensionPoint>>) {
 
@@ -153,7 +154,7 @@ private class ExpressionValuesExtractor(val context: Context,
 internal class ModuleDFG(val functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
                          val symbolTable: DataFlowIR.SymbolTable)
 
-internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFragment) {
+internal class ModuleDFGBuilder(val context: LtoContext, val irModule: IrModuleFragment) {
 
     private val TAKE_NAMES = true // Take fqNames for all functions and types (for debug purposes).
 

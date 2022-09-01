@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
 import org.jetbrains.kotlin.backend.konan.descriptors.propertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.ir.ModuleIndex
+import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualsForExpect
  * This pass removes all declarations with `isExpect == true`.
  * Note: org.jetbrains.kotlin.backend.common.lower.ExpectDeclarationsRemoving is copy of this lower.
  */
-internal class ExpectDeclarationsRemoving(val context: Context) : FileLoweringPass {
+internal class ExpectDeclarationsRemoving(val context: MiddleEndContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         // All declarations with `isExpect == true` are nested into a top-level declaration with `isExpect == true`.
         irFile.declarations.removeAll {

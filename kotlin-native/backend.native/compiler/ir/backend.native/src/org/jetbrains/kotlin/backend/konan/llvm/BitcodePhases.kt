@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.backend.konan.lower.InlineClassPropertyAccessorsLowe
 import org.jetbrains.kotlin.backend.konan.lower.RedundantCoercionsCleaner
 import org.jetbrains.kotlin.backend.konan.lower.ReturnsInsertionLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.*
-import org.jetbrains.kotlin.backend.konan.phases.ErrorReportingContext
-import org.jetbrains.kotlin.backend.konan.phases.KlibProducingContext
+import org.jetbrains.kotlin.backend.konan.phases.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -32,7 +31,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-internal val contextLLVMSetupPhase = makeKonanModuleOpPhase(
+internal val contextLLVMSetupPhase = makeKonanModuleOpPhase<BitcodegenContext>(
         name = "ContextLLVMSetup",
         description = "Set up Context for LLVM Bitcode generation",
         op = { context, _ ->
@@ -50,7 +49,7 @@ internal val contextLLVMSetupPhase = makeKonanModuleOpPhase(
             // clashing, which happens on linking with libraries produced from intercepting sources.
             val filePath = context.config.outputFile.toFileAndFolder(context).path()
 
-            context.debugInfo.compilationUnit = if (context.shouldContainLocationDebugInfo()) DICreateCompilationUnit(
+            context.debugInfo.compilationUnit = if (context.config.checks.shouldContainLocationDebugInfo()) DICreateCompilationUnit(
                     builder = context.debugInfo.builder,
                     lang = DWARF.language(context.config),
                     File = filePath,
@@ -63,7 +62,7 @@ internal val contextLLVMSetupPhase = makeKonanModuleOpPhase(
         }
 )
 
-internal val createLLVMDeclarationsPhase = makeKonanModuleOpPhase(
+internal val createLLVMDeclarationsPhase = makeKonanModuleOpPhase<BitcodegenContext>(
         name = "CreateLLVMDeclarations",
         description = "Map IR declarations to LLVM",
         prerequisite = setOf(contextLLVMSetupPhase),
@@ -84,7 +83,7 @@ internal val disposeLLVMPhase = namedUnitPhase(
         }
 )
 
-internal val RTTIPhase = makeKonanModuleOpPhase(
+internal val RTTIPhase = makeKonanModuleOpPhase<BitcodegenContext>(
         name = "RTTI",
         description = "RTTI generation",
         op = { context, irModule ->
@@ -94,13 +93,13 @@ internal val RTTIPhase = makeKonanModuleOpPhase(
         }
 )
 
-internal val generateDebugInfoHeaderPhase = makeKonanModuleOpPhase(
+internal val generateDebugInfoHeaderPhase = makeKonanModuleOpPhase<BitcodegenContext>(
         name = "GenerateDebugInfoHeader",
         description = "Generate debug info header",
         op = { context, _ -> generateDebugInfoHeader(context) }
 )
 
-internal val buildDFGPhase = makeKonanModuleOpPhase(
+internal val buildDFGPhase = makeKonanModuleOpPhase<LtoContext>(
         name = "BuildDFG",
         description = "Data flow graph building",
         op = { context, irModule ->
@@ -108,20 +107,20 @@ internal val buildDFGPhase = makeKonanModuleOpPhase(
         }
 )
 
-internal val returnsInsertionPhase = makeKonanModuleOpPhase(
+internal val returnsInsertionPhase = makeKonanModuleOpPhase<KonanBackendContext>(
         name = "ReturnsInsertion",
         description = "Returns insertion for Unit functions",
         //prerequisite = setOf(autoboxPhase, coroutinesPhase, enumClassPhase), TODO: if there are no files in the module, this requirement fails.
         op = { context, irModule -> irModule.files.forEach { ReturnsInsertionLowering(context).lower(it) } }
 )
 
-internal val inlineClassPropertyAccessorsPhase = makeKonanModuleOpPhase(
+internal val inlineClassPropertyAccessorsPhase = makeKonanModuleOpPhase<KonanBackendContext>(
         name = "InlineClassPropertyAccessorsLowering",
         description = "Inline class property accessors",
         op = { context, irModule -> irModule.files.forEach { InlineClassPropertyAccessorsLowering(context).lower(it) } }
 )
 
-internal val devirtualizationAnalysisPhase = makeKonanModuleOpPhase(
+internal val devirtualizationAnalysisPhase = makeKonanModuleOpPhase<LtoContext>(
         name = "DevirtualizationAnalysis",
         description = "Devirtualization analysis",
         prerequisite = setOf(buildDFGPhase),
@@ -132,13 +131,13 @@ internal val devirtualizationAnalysisPhase = makeKonanModuleOpPhase(
         }
 )
 
-internal val redundantCoercionsCleaningPhase = makeKonanModuleOpPhase(
+internal val redundantCoercionsCleaningPhase = makeKonanModuleOpPhase<KonanBackendContext>(
         name = "RedundantCoercionsCleaning",
         description = "Redundant coercions cleaning",
         op = { context, irModule -> irModule.files.forEach { RedundantCoercionsCleaner(context).lower(it) } }
 )
 
-internal val ghaPhase = makeKonanModuleOpPhase(
+internal val ghaPhase = makeKonanModuleOpPhase<LtoContext>(
         name = "GHAPhase",
         description = "Global hierarchy analysis",
         op = { context, irModule -> GlobalHierarchyAnalysis(context, irModule).run() }
@@ -147,7 +146,7 @@ internal val ghaPhase = makeKonanModuleOpPhase(
 internal val IrFunction.longName: String
         get() = "${(parent as? IrClass)?.name?.asString() ?: "<root>"}.${(this as? IrSimpleFunction)?.name ?: "<init>"}"
 
-internal val dcePhase = makeKonanModuleOpPhase(
+internal val dcePhase = makeKonanModuleOpPhase<LtoContext>(
         name = "DCEPhase",
         description = "Dead code elimination",
         prerequisite = setOf(devirtualizationAnalysisPhase),
@@ -256,7 +255,7 @@ internal val removeRedundantCallsToFileInitializersPhase = makeKonanModuleOpPhas
         }
 )
 
-internal val devirtualizationPhase = makeKonanModuleOpPhase(
+internal val devirtualizationPhase = makeKonanModuleOpPhase<LtoContext>(
         name = "Devirtualization",
         description = "Devirtualization",
         prerequisite = setOf(buildDFGPhase, devirtualizationAnalysisPhase),
@@ -271,7 +270,7 @@ internal val devirtualizationPhase = makeKonanModuleOpPhase(
         }
 )
 
-internal val escapeAnalysisPhase = makeKonanModuleOpPhase(
+internal val escapeAnalysisPhase = makeKonanModuleOpPhase<LtoContext>(
         name = "EscapeAnalysis",
         description = "Escape analysis",
         prerequisite = setOf(buildDFGPhase, devirtualizationAnalysisPhase),
@@ -304,7 +303,7 @@ internal val escapeAnalysisPhase = makeKonanModuleOpPhase(
         }
 )
 
-internal val localEscapeAnalysisPhase = makeKonanModuleOpPhase(
+internal val localEscapeAnalysisPhase = makeKonanModuleOpPhase<LtoContext>(
         name = "LocalEscapeAnalysis",
         description = "Local escape analysis",
         prerequisite = setOf(buildDFGPhase, devirtualizationAnalysisPhase),
@@ -313,7 +312,7 @@ internal val localEscapeAnalysisPhase = makeKonanModuleOpPhase(
         }
 )
 
-internal val codegenPhase = makeKonanModuleOpPhase(
+internal val codegenPhase = makeKonanModuleOpPhase<BitcodegenContext>(
         name = "Codegen",
         description = "Code generation",
         op = { context, irModule ->
@@ -321,41 +320,35 @@ internal val codegenPhase = makeKonanModuleOpPhase(
         }
 )
 
-internal val finalizeDebugInfoPhase = makeKonanModuleOpPhase(
+internal val finalizeDebugInfoPhase = makeKonanModuleOpPhase<BitcodegenContext>(
         name = "FinalizeDebugInfo",
         description = "Finalize debug info",
         op = { context, _ ->
-            if (context.shouldContainAnyDebugInfo()) {
+            if (context.config.checks.shouldContainAnyDebugInfo()) {
                 DIFinalize(context.debugInfo.builder)
             }
         }
 )
 
-internal val cStubsPhase = makeKonanModuleOpPhase(
-        name = "CStubs",
-        description = "C stubs compilation",
-        op = { context, _ -> produceCStubs(context) }
-)
-
-internal val linkBitcodeDependenciesPhase = makeKonanModuleOpPhase(
+internal val linkBitcodeDependenciesPhase = makeKonanModuleOpPhase<LlvmCodegenContext>(
         name = "LinkBitcodeDependencies",
         description = "Link bitcode dependencies",
         op = { context, _ -> linkBitcodeDependencies(context, context.config) }
 )
 
-internal val checkExternalCallsPhase = makeKonanModuleOpPhase(
+internal val checkExternalCallsPhase = makeKonanModuleOpPhase<LlvmCodegenContext>(
         name = "CheckExternalCalls",
         description = "Check external calls",
         op = { context, _ -> checkLlvmModuleExternalCalls(context) }
 )
 
-internal val rewriteExternalCallsCheckerGlobals = makeKonanModuleOpPhase(
+internal val rewriteExternalCallsCheckerGlobals = makeKonanModuleOpPhase<LlvmCodegenContext>(
         name = "RewriteExternalCallsCheckerGlobals",
         description = "Rewrite globals for external calls checker after optimizer run",
         op = { context, _ -> addFunctionsListSymbolForChecker(context) }
 )
 
-internal val bitcodeOptimizationPhase = makeKonanModuleOpPhase(
+internal val bitcodeOptimizationPhase = makeKonanModuleOpPhase<LlvmCodegenContext>(
         name = "BitcodeOptimization",
         description = "Optimize bitcode",
         op = { context, _ ->
@@ -368,13 +361,13 @@ internal val bitcodeOptimizationPhase = makeKonanModuleOpPhase(
         }
 )
 
-internal val coveragePhase = makeKonanModuleOpPhase(
+internal val coveragePhase = makeKonanModuleOpPhase<LlvmCodegenContext>(
         name = "Coverage",
         description = "Produce coverage information",
         op = { context, _ -> runCoveragePass(context.coverage, context.llvm.targetTriple, context.llvmModule!!) }
 )
 
-internal val optimizeTLSDataLoadsPhase = makeKonanModuleOpPhase(
+internal val optimizeTLSDataLoadsPhase = makeKonanModuleOpPhase<LlvmCodegenContext>(
         name = "OptimizeTLSDataLoads",
         description = "Optimize multiple loads of thread data",
         op = { context, _ -> removeMultipleThreadDataLoads(context.llvm, context.llvmModule!!) }
@@ -394,28 +387,28 @@ internal val produceOutputPhase = namedUnitPhase(
         }
 )
 
-internal val removeRedundantSafepointsPhase = makeKonanModuleOpPhase(
+internal val removeRedundantSafepointsPhase = makeKonanModuleOpPhase<LlvmCodegenContext>(
         name = "RemoveRedundantSafepoints",
         description = "Remove function prologue safepoints inlined to another function",
         op = { context, _ ->
             RemoveRedundantSafepointsPass(context).runOnModule(
                     module = context.llvmModule!!,
-                    isSafepointInliningAllowed = context.shouldInlineSafepoints()
+                    isSafepointInliningAllowed = context.config.checks.shouldInlineSafepoints()
             )
         }
 )
 
-internal val verifyBitcodePhase = makeKonanModuleOpPhase(
+internal val verifyBitcodePhase = makeKonanModuleOpPhase<LlvmModuleContext>(
         name = "VerifyBitcode",
         description = "Verify bitcode",
         op = { context, _ -> context.verifyBitCode() }
 )
 
-internal val printBitcodePhase = makeKonanModuleOpPhase(
+internal val printBitcodePhase = makeKonanModuleOpPhase<LlvmModuleContext>(
         name = "PrintBitcode",
         description = "Print bitcode",
         op = { context, _ ->
-            if (context.shouldPrintBitCode()) {
+            if (context.config.checks.shouldPrintBitCode()) {
                 context.printBitCode()
             }
         }

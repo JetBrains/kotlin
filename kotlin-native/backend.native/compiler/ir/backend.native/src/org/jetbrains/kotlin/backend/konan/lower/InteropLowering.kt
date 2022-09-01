@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
+import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
 import org.jetbrains.kotlin.backend.konan.serialization.resolveFakeOverrideMaybeAbstract
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -47,7 +48,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 
-internal class InteropLowering(context: Context) : FileLoweringPass {
+internal class InteropLowering(context: MiddleEndContext) : FileLoweringPass {
     // TODO: merge these lowerings.
     private val part1 = InteropLoweringPart1(context)
     private val part2 = InteropLoweringPart2(context)
@@ -58,7 +59,7 @@ internal class InteropLowering(context: Context) : FileLoweringPass {
     }
 }
 
-private abstract class BaseInteropIrTransformer(private val context: Context) : IrBuildingTransformer(context) {
+private abstract class BaseInteropIrTransformer(private val context: MiddleEndContext) : IrBuildingTransformer(context) {
 
     protected inline fun <T> generateWithStubs(element: IrElement? = null, block: KotlinStubs.() -> T): T =
             createKotlinStubs(element).block()
@@ -125,7 +126,7 @@ private abstract class BaseInteropIrTransformer(private val context: Context) : 
     protected abstract fun addTopLevel(declaration: IrDeclaration)
 }
 
-private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransformer(context), FileLoweringPass {
+private class InteropLoweringPart1(val context: MiddleEndContext) : BaseInteropIrTransformer(context), FileLoweringPass {
 
     private val symbols get() = context.ir.symbols
 
@@ -745,7 +746,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
 /**
  * Lowers some interop intrinsic calls.
  */
-private class InteropLoweringPart2(val context: Context) : FileLoweringPass {
+private class InteropLoweringPart2(val context: MiddleEndContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         val transformer = InteropTransformer(context, irFile)
         irFile.transformChildrenVoid(transformer)
@@ -764,7 +765,7 @@ private class InteropLoweringPart2(val context: Context) : FileLoweringPass {
     }
 }
 
-private class InteropTransformer(val context: Context, override val irFile: IrFile) : BaseInteropIrTransformer(context) {
+private class InteropTransformer(val context: MiddleEndContext, override val irFile: IrFile) : BaseInteropIrTransformer(context) {
 
     val newTopLevelDeclarations = mutableListOf<IrDeclaration>()
 

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_FILE_STANDALO
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_FILE_THREAD_LOCAL_INITIALIZER
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_MODULE_GLOBAL_INITIALIZER
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_MODULE_THREAD_LOCAL_INITIALIZER
+import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
 import org.jetbrains.kotlin.backend.konan.phases.LayoutBuildingContext
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.Modality
@@ -96,7 +97,7 @@ internal fun IrField.isGlobalNonPrimitive(config: KonanConfig) = when {
 internal fun IrField.shouldBeFrozen(config: KonanConfig): Boolean =
         this.storageKind(config) == FieldStorageKind.SHARED_FROZEN
 
-internal class RTTIGeneratorVisitor(context: Context) : IrElementVisitorVoid {
+internal class RTTIGeneratorVisitor(context: BitcodegenContext) : IrElementVisitorVoid {
     val generator = RTTIGenerator(context)
 
     val kotlinObjCClassInfoGenerator = KotlinObjCClassInfoGenerator(context)
@@ -207,7 +208,7 @@ private interface CodeContext {
 //-------------------------------------------------------------------------//
 
 internal class CodeGeneratorVisitor(
-        val context: Context,
+        val context: BitcodegenContext,
         val lifetimes: Map<IrElement, Lifetime>
 ) : IrElementVisitorVoid {
 

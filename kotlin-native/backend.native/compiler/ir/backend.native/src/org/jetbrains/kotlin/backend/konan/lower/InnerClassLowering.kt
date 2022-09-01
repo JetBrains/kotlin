@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.callsSuper
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeMapping
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
@@ -54,7 +54,7 @@ internal class InnerClassesSupport(mapping: NativeMapping, private val irFactory
     }
 }
 
-internal class OuterThisLowering(val context: Context) : ClassLoweringPass {
+internal class OuterThisLowering(val context: MiddleEndContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         if (!irClass.isInner) return
         irClass.transformChildrenVoid(Transformer(irClass, irClass))
@@ -143,7 +143,7 @@ internal class OuterThisLowering(val context: Context) : ClassLoweringPass {
     }
 }
 
-internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
+internal class InnerClassLowering(val context: MiddleEndContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         OuterThisLowering(context).lower(irClass)
         InnerClassTransformer(irClass).lowerInnerClass()

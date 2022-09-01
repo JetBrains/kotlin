@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.lower.AnnotationImplementationTransformer
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.putArgument
 
 
-internal class NativeAnnotationImplementationTransformer(context: Context, irFile: IrFile) :
+internal class NativeAnnotationImplementationTransformer(context: MiddleEndContext, irFile: IrFile) :
         AnnotationImplementationTransformer(context, irFile) {
 
     private val arrayContentEqualsMap = context.ir.symbols.arraysContentEquals

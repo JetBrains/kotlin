@@ -11,17 +11,18 @@ import llvm.LLVMTypeRef
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysisResult
-import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.backend.konan.lower.BridgesSupport
-import org.jetbrains.kotlin.backend.konan.lower.EnumsSupport
+import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
+import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.objcexport.*
+import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
+import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFG
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -35,9 +36,11 @@ import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
-internal interface PhaseContext : KonanBackendContextI
+internal interface PhaseContext : KonanBackendContext {
+    val config: KonanConfig
+}
 
-internal typealias ErrorReportingContext = KonanBackendContextI
+internal typealias ErrorReportingContext = KonanBackendContext
 
 internal val PhaseContext.stdlibModule
     get() = this.builtIns.any.module
@@ -73,9 +76,6 @@ interface ConfigChecks {
 }
 
 internal interface FrontendContext : PhaseContext {
-
-    val config: KonanConfig
-
     var environment: KotlinCoreEnvironment
 
     var moduleDescriptor: ModuleDescriptor
@@ -92,10 +92,6 @@ internal interface PsiToIrContext :
         LlvmModuleSpecificationContext {
     var symbolTable: SymbolTable?
 
-    override val llvmModuleSpecification: LlvmModuleSpecification
-
-    override val builtIns: KonanBuiltIns
-
     val reflectionTypes: KonanReflectionTypes
 
     var irModules: Map<String, IrModuleFragment>
@@ -104,8 +100,6 @@ internal interface PsiToIrContext :
     var irModule: IrModuleFragment?
 
     var irLinker: KonanIrLinker
-
-    override var ir: KonanIr
 
     var expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>
 }
@@ -118,12 +112,13 @@ internal interface TopDownAnalyzerContext : PhaseContext, ConfigChecks {
     var frontendServices: FrontendServices
 }
 
+internal interface LlvmModuleSpecificationContext : PhaseContext {
+    val llvmModuleSpecification: LlvmModuleSpecification
+
+}
+
 internal interface LlvmModuleContext : PhaseContext {
     var llvmModule: LLVMModuleRef?
-
-    var llvm: Llvm
-
-    var debugInfo: DebugInfo
 
     fun verifyBitCode() {
         if (llvmModule == null) return
@@ -134,20 +129,9 @@ internal interface LlvmModuleContext : PhaseContext {
         if (llvmModule == null) return
         LLVMDumpModule(llvmModule!!)
     }
-
-}
-
-internal interface LlvmModuleSpecificationContext : PhaseContext {
-
-    val config: KonanConfig
-
-    val llvmModuleSpecification: LlvmModuleSpecification
-
 }
 
 internal interface KlibProducingContext : PhaseContext {
-    val config: KonanConfig
-
     val moduleDescriptor: ModuleDescriptor
 
     val irModule: IrModuleFragment?
@@ -169,27 +153,22 @@ internal interface BitcodegenContext :
         LayoutBuildingContext,
         BridgesAwareContext,
         LocalClassNameAwareContext,
+        LlvmModuleContext,
         LlvmModuleSpecificationContext,
-        LtoAwareContext {
+        LtoContext {
     override val config: KonanConfig
-
-    val llvmModule: LLVMModuleRef?
 
     val llvm: Llvm
 
     val targetAbiInfo: TargetAbiInfo
 
-    val llvmDeclarations: LlvmDeclarations
+    var llvmDeclarations: LlvmDeclarations
 
     val irLinker: KonanIrLinker
-
-    override val llvmModuleSpecification: LlvmModuleSpecification
 
     val debugInfo: DebugInfo
 
     val standardLlvmSymbolsOrigin: CompiledKlibModuleOrigin
-
-    override val ir: KonanIr
 
     val llvmImports: LlvmImports
 
@@ -200,9 +179,11 @@ internal interface BitcodegenContext :
 
     val enumsSupport: EnumsSupport
 
-    val referencedFunctions: Set<IrFunction>?
-
     val declaredLocalArrays: MutableMap<String, LLVMTypeRef>
+
+    var codegenVisitor: CodeGeneratorVisitor
+
+    val interopBuiltIns: InteropBuiltIns
 
     fun objcExportCodegen(
             exportedInterface: ObjCExportedInterface,
@@ -217,18 +198,18 @@ internal interface BridgesAwareContext : PhaseContext {
     val bridgesSupport: BridgesSupport
 }
 
-internal interface LlvmCodegenContext : PhaseContext, LlvmModuleSpecificationContext {
-
-    val llvmModule: LLVMModuleRef?
+internal interface LlvmCodegenContext : PhaseContext, LlvmModuleSpecificationContext, LlvmModuleContext {
 
     val llvm: Llvm
 
     val objCExportNamer: ObjCExportNamer
+
+    val cStubsManager: CStubsManager
+
+    val coverage: CoverageManager
 }
 
 internal interface LayoutBuildingContext : PhaseContext {
-    val config: KonanConfig
-
     fun getLayoutBuilder(irClass: IrClass): ClassLayoutBuilder
 }
 
@@ -247,8 +228,47 @@ internal interface LocalClassNameAwareContext : PhaseContext {
     }
 }
 
-internal interface LtoAwareContext : PhaseContext {
+internal interface LtoContext : PhaseContext, LayoutBuildingContext, IrModuleContext {
     var globalHierarchyAnalysisResult: GlobalHierarchyAnalysisResult
 
     fun ghaEnabled(): Boolean
+
+    var devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult?
+
+    var moduleDFG: ModuleDFG?
+
+    var referencedFunctions: Set<IrFunction>?
+
+    var lifetimes: MutableMap<IrElement, Lifetime>
+}
+
+internal interface IrModuleContext : PhaseContext {
+    val irModule: IrModuleFragment?
+}
+
+internal interface MiddleEndContext :
+        PhaseContext,
+        LlvmModuleSpecificationContext,
+        LocalClassNameAwareContext,
+        BridgesAwareContext,
+        IrModuleContext
+{
+    override val config: KonanConfig
+
+    val interopBuiltIns: InteropBuiltIns
+
+    val enumsSupport: EnumsSupport
+
+    val cachesAbiSupport: CachesAbiSupport
+
+    val inlineFunctionsSupport: InlineFunctionsSupport
+
+    val innerClassesSupport: InnerClassesSupport
+
+    val llvmImports: LlvmImports
+
+    val cStubsManager: CStubsManager
+
+    var functionReferenceCount: Int
+    var coroutineCount: Int
 }

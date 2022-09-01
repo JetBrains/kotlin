@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
 import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.logMultiple
+import org.jetbrains.kotlin.backend.konan.phases.LtoContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import kotlin.math.min
@@ -1702,7 +1703,7 @@ internal object EscapeAnalysis {
         }
     }
 
-    fun computeLifetimes(context: Context, moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG,
+    fun computeLifetimes(context: LtoContext, moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG,
                          callGraph: CallGraph, lifetimes: MutableMap<IrElement, Lifetime>) {
         assert(lifetimes.isEmpty())
 

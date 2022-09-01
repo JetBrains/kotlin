@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
+import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -35,11 +36,11 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
 
-internal class SpecialBackendChecksTraversal(val context: Context) : FileLoweringPass {
+internal class SpecialBackendChecksTraversal(val context: MiddleEndContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) = irFile.acceptChildrenVoid(BackendChecker(context, irFile))
 }
 
-private class BackendChecker(val context: Context, val irFile: IrFile) : IrElementVisitorVoid {
+private class BackendChecker(val context: MiddleEndContext, val irFile: IrFile) : IrElementVisitorVoid {
     val interop = context.interopBuiltIns
     val symbols = context.ir.symbols
     val irBuiltIns = context.irBuiltIns

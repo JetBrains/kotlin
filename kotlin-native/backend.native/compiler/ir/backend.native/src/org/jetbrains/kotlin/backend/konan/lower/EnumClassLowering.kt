@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.konan.ir.KonanNameConventions
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
+import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -161,14 +162,14 @@ internal class EnumsSupport(
 
 internal object DECLARATION_ORIGIN_ENUM : IrDeclarationOriginImpl("ENUM")
 
-internal class NativeEnumWhenLowering constructor(context: Context) : EnumWhenLowering(context) {
+internal class NativeEnumWhenLowering(override val context: MiddleEndContext) : EnumWhenLowering(context) {
     override fun mapConstEnumEntry(entry: IrEnumEntry): Int {
-        val enumEntriesMap = (context as Context).enumsSupport.enumEntriesMap(entry.parentAsClass)
+        val enumEntriesMap = context.enumsSupport.enumEntriesMap(entry.parentAsClass)
         return enumEntriesMap[entry.name]!!.ordinal
     }
 }
 
-internal class EnumUsageLowering(val context: Context) : IrElementTransformer<IrBuilderWithScope?>, FileLoweringPass {
+internal class EnumUsageLowering(val context: MiddleEndContext) : IrElementTransformer<IrBuilderWithScope?>, FileLoweringPass {
     private val enumsSupport = context.enumsSupport
     private val symbols = context.ir.symbols
     private val arrayGet = symbols.arrayGet[symbols.array]!!
@@ -221,7 +222,7 @@ internal class EnumUsageLowering(val context: Context) : IrElementTransformer<Ir
             }
 }
 
-internal class EnumClassLowering(val context: Context) : FileLoweringPass {
+internal class EnumClassLowering(val context: MiddleEndContext) : FileLoweringPass {
     private val enumsSupport = context.enumsSupport
     private val symbols = context.ir.symbols
     private val createUninitializedInstance = symbols.createUninitializedInstance
@@ -325,7 +326,7 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                 statements += buildEntriesFieldInitializer()
 
                 // Needed for legacy MM targets that do not support threads.
-                if (this@EnumClassLowering.context.memoryModel != MemoryModel.EXPERIMENTAL) {
+                if (this@EnumClassLowering.context.config.memoryModel != MemoryModel.EXPERIMENTAL) {
                     statements += irBuilder.irBlock {
                         irCall(this@EnumClassLowering.context.ir.symbols.freeze, listOf(valuesField.type)).apply {
                             extensionReceiver = irGet(implObject.thisReceiver!!)

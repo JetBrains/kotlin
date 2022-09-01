@@ -17,7 +17,7 @@ typealias ExecutableFile = String
 internal class BitcodeCompiler(val config: KonanConfig, val logger: LoggingContext) {
 
     private val platform = config.platform
-    private val optimize = ConfigChecks(config).shouldOptimize()
+    private val optimize = config.checks.shouldOptimize()
     private val debug = config.debug
 
     private val overrideClangOptions =

@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.llvm.ConstantConstructorIntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetConstantConstructorIntrinsicType
+import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
 import org.jetbrains.kotlin.backend.konan.renderCompilerError
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -30,7 +29,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
  *     - Convert immutableBlobOf() arguments to special IrConst.
  *     - Convert `obj::class` and `Class::class` to calls.
  */
-internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
+internal class PostInlineLowering(val context: MiddleEndContext) : BodyLoweringPass {
 
     private val symbols get() = context.ir.symbols
 

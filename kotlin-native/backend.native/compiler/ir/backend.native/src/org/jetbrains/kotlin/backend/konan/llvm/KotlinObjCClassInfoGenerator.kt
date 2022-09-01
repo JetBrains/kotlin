@@ -10,13 +10,17 @@ import llvm.LLVMSetLinkage
 import llvm.LLVMValueRef
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
-import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.ir.getAnnotationArgumentValue
+import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
+import org.jetbrains.kotlin.backend.konan.ir.getSuperInterfaces
+import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
+import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
-internal class KotlinObjCClassInfoGenerator(override val context: Context) : ContextUtils {
+internal class KotlinObjCClassInfoGenerator(override val context: BitcodegenContext) : ContextUtils {
     fun generate(irClass: IrClass) {
         assert(irClass.isFinalClass)
 
