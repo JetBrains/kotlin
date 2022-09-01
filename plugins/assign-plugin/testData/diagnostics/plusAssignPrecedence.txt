@@ -1,0 +1,92 @@
+package
+
+public fun box(): kotlin.String
+
+public abstract class AbstractStringProperty {
+    public constructor AbstractStringProperty(/*0*/ v: kotlin.String)
+    protected final var v: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun get(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@ValueContainer public final class StringProperty : AbstractStringProperty {
+    public constructor StringProperty(/*0*/ v: kotlin.String)
+    protected final override /*1*/ /*fake_override*/ var v: kotlin.String
+    public final fun assign(/*0*/ v: StringProperty): kotlin.Unit
+    public final fun assign(/*0*/ v: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun get(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@ValueContainer public final class StringPropertyWithPlus : AbstractStringProperty {
+    public constructor StringPropertyWithPlus(/*0*/ v: kotlin.String)
+    protected final override /*1*/ /*fake_override*/ var v: kotlin.String
+    public final fun assign(/*0*/ o: StringPropertyWithPlus): kotlin.Unit
+    public final fun assign(/*0*/ v: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun get(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun plus(/*0*/ v: kotlin.String): StringPropertyWithPlus
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@ValueContainer public final class StringPropertyWithPlusAndPlusAssign : AbstractStringProperty {
+    public constructor StringPropertyWithPlusAndPlusAssign(/*0*/ v: kotlin.String)
+    protected final override /*1*/ /*fake_override*/ var v: kotlin.String
+    public final fun assign(/*0*/ o: StringPropertyWithPlusAndPlusAssign): kotlin.Unit
+    public final fun assign(/*0*/ v: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun get(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun plus(/*0*/ v: kotlin.String): StringPropertyWithPlusAndPlusAssign
+    public final operator fun plusAssign(/*0*/ v: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@ValueContainer public final class StringPropertyWithPlusAssign : AbstractStringProperty {
+    public constructor StringPropertyWithPlusAssign(/*0*/ v: kotlin.String)
+    protected final override /*1*/ /*fake_override*/ var v: kotlin.String
+    public final fun assign(/*0*/ o: StringPropertyWithPlusAssign): kotlin.Unit
+    public final fun assign(/*0*/ v: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun get(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun plusAssign(/*0*/ v: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final data class Task {
+    public constructor Task(/*0*/ valInput: StringProperty, /*1*/ varInput: StringProperty, /*2*/ valInputWithPlus: StringPropertyWithPlus, /*3*/ varInputWithPlus: StringPropertyWithPlus, /*4*/ valInputWithPlusAssign: StringPropertyWithPlusAssign, /*5*/ varInputWithPlusAssign: StringPropertyWithPlusAssign, /*6*/ valInputWithPlusAndPlusAssign: StringPropertyWithPlusAndPlusAssign, /*7*/ varInputWithPlusAndPlusAssign: StringPropertyWithPlusAndPlusAssign)
+    public final val valInput: StringProperty
+    public final val valInputWithPlus: StringPropertyWithPlus
+    public final val valInputWithPlusAndPlusAssign: StringPropertyWithPlusAndPlusAssign
+    public final val valInputWithPlusAssign: StringPropertyWithPlusAssign
+    public final var varInput: StringProperty
+    public final var varInputWithPlus: StringPropertyWithPlus
+    public final var varInputWithPlusAndPlusAssign: StringPropertyWithPlusAndPlusAssign
+    public final var varInputWithPlusAssign: StringPropertyWithPlusAssign
+    public final operator /*synthesized*/ fun component1(): StringProperty
+    public final operator /*synthesized*/ fun component2(): StringProperty
+    public final operator /*synthesized*/ fun component3(): StringPropertyWithPlus
+    public final operator /*synthesized*/ fun component4(): StringPropertyWithPlus
+    public final operator /*synthesized*/ fun component5(): StringPropertyWithPlusAssign
+    public final operator /*synthesized*/ fun component6(): StringPropertyWithPlusAssign
+    public final operator /*synthesized*/ fun component7(): StringPropertyWithPlusAndPlusAssign
+    public final operator /*synthesized*/ fun component8(): StringPropertyWithPlusAndPlusAssign
+    public final /*synthesized*/ fun copy(/*0*/ valInput: StringProperty = ..., /*1*/ varInput: StringProperty = ..., /*2*/ valInputWithPlus: StringPropertyWithPlus = ..., /*3*/ varInputWithPlus: StringPropertyWithPlus = ..., /*4*/ valInputWithPlusAssign: StringPropertyWithPlusAssign = ..., /*5*/ varInputWithPlusAssign: StringPropertyWithPlusAssign = ..., /*6*/ valInputWithPlusAndPlusAssign: StringPropertyWithPlusAndPlusAssign = ..., /*7*/ varInputWithPlusAndPlusAssign: StringPropertyWithPlusAndPlusAssign = ...): Task
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final annotation class ValueContainer : kotlin.Annotation {
+    public constructor ValueContainer()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
