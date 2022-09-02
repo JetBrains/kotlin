@@ -48,7 +48,7 @@ class ValueContainerAssignmentComponentRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val annotations = configuration.get(ANNOTATION)?.toMutableList() ?: mutableListOf()
         if (annotations.isNotEmpty()) {
-            AssignResolutionAltererExtension.Companion.registerExtension(ValueContainerAssignResolutionAltererExtension(annotations))
+            AssignResolutionAltererExtension.Companion.registerExtension(CliValueContainerAssignResolutionAltererExtension(annotations))
             StorageComponentContainerContributor.registerExtension(ValueContainerAssignmentComponentContainerContributor(annotations))
             FirExtensionRegistrarAdapter.registerExtension(FirValueContainerAssignmentExtensionRegistrar(annotations))
         }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.container.assignment
 
+import org.jetbrains.kotlin.cfg.getElementParentDeclaration
 import org.jetbrains.kotlin.container.assignment.diagnostics.ErrorsValueContainerAssignment.CALL_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT
 import org.jetbrains.kotlin.container.assignment.diagnostics.ErrorsValueContainerAssignment.NO_APPLICABLE_ASSIGN_METHOD
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -34,19 +35,21 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import java.util.*
 
-@OptIn(InternalNonStableExtensionPoints::class)
-class ValueContainerAssignResolutionAltererExtension(
+class CliValueContainerAssignResolutionAltererExtension(
     private val annotations: List<String>
-) : AssignResolutionAltererExtension {
+) : AbstractValueContainerAssignResolutionAltererExtension() {
+    override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner?): List<String> = annotations
+}
+
+@OptIn(InternalNonStableExtensionPoints::class)
+abstract class AbstractValueContainerAssignResolutionAltererExtension : AssignResolutionAltererExtension {
 
     companion object {
         val ASSIGN_METHOD = Name.identifier("assign")
     }
 
-    override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner?): List<String> = annotations
-
     override fun needOverloadAssign(expression: KtBinaryExpression, leftType: KotlinType?, bindingContext: BindingContext): Boolean {
-        return expression.isValPropertyAssignment(bindingContext) && leftType.hasSpecialAnnotation()
+        return expression.isValPropertyAssignment(bindingContext) && leftType.hasSpecialAnnotation(expression)
     }
 
     private fun KtBinaryExpression.isValPropertyAssignment(bindingContext: BindingContext): Boolean {
@@ -54,9 +57,8 @@ class ValueContainerAssignResolutionAltererExtension(
         return descriptor is PropertyDescriptor && !descriptor.isVar
     }
 
-    private fun KotlinType?.hasSpecialAnnotation(): Boolean {
-        return this?.constructor?.declarationDescriptor?.hasSpecialAnnotation(null) ?: false
-    }
+    private fun KotlinType?.hasSpecialAnnotation(expression: KtBinaryExpression): Boolean =
+        this?.constructor?.declarationDescriptor?.hasSpecialAnnotation(expression.getElementParentDeclaration()) ?: false
 
     override fun resolveAssign(
         bindingContext: BindingContext,

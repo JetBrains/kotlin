@@ -67,7 +67,7 @@ class ValueContainerAssignmentEnvironmentConfigurator(testServices: TestServices
         module: TestModule,
         configuration: CompilerConfiguration
     ) {
-        AssignResolutionAltererExtension.Companion.registerExtension(ValueContainerAssignResolutionAltererExtension(TEST_ANNOTATIONS))
+        AssignResolutionAltererExtension.Companion.registerExtension(CliValueContainerAssignResolutionAltererExtension(TEST_ANNOTATIONS))
         StorageComponentContainerContributor.registerExtension(ValueContainerAssignmentComponentContainerContributor(TEST_ANNOTATIONS))
         FirExtensionRegistrarAdapter.registerExtension(FirValueContainerAssignmentExtensionRegistrar(TEST_ANNOTATIONS))
     }
