@@ -139,6 +139,9 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         specializeType: ExportedType? = null
     ): ExportedDeclaration {
         val parentClass = property.parent as? IrClass
+        val isOptional = property.isEffectivelyExternal() &&
+                property.parent is IrClass &&
+                property.getter?.returnType?.isNullable() == true
 
         return ExportedProperty(
             name = property.getExportedIdentifier(),
@@ -149,7 +152,8 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             isProtected = property.visibility == DescriptorVisibilities.PROTECTED,
             isField = parentClass?.isInterface == true,
             irGetter = property.getter,
-            irSetter = property.setter
+            irSetter = property.setter,
+            isOptional = isOptional
         )
     }
 
