@@ -108,11 +108,11 @@ internal val buildDFGPhase = makeKonanModuleOpPhase<LtoContext>(
         }
 )
 
-internal val returnsInsertionPhase = makeKonanModuleOpPhase<KonanBackendContext>(
+internal val returnsInsertionPhase = makeKonanFileLoweringPhase(
         name = "ReturnsInsertion",
         description = "Returns insertion for Unit functions",
         //prerequisite = setOf(autoboxPhase, coroutinesPhase, enumClassPhase), TODO: if there are no files in the module, this requirement fails.
-        op = { context, irModule -> irModule.files.forEach { ReturnsInsertionLowering(context).lower(it) } }
+        lowering = ::ReturnsInsertionLowering
 )
 
 internal val inlineClassPropertyAccessorsPhase = makeKonanModuleOpPhase<KonanBackendContext>(

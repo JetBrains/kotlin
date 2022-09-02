@@ -73,6 +73,7 @@ internal class NativeMapping() : DefaultMapping() {
 
 internal class Context(
         config: KonanConfig,
+        override var objCExport: ObjCExport? = null,
 ) : AbstractKonanBackendContext(config),
         ConfigChecks,
         FrontendContext,
@@ -107,8 +108,6 @@ internal class Context(
 
     // Psi To IR context
     override var symbolTable: SymbolTable? = null
-
-    override var objCExport: ObjCExport? = null
 
     override val isNativeLibrary: Boolean by lazy {
         val kind = config.configuration.get(KonanConfigKeys.PRODUCE)

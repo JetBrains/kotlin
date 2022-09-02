@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.backend.konan.phases
 
 import kotlinx.cinterop.usingJvmCInteropCallbacks
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.phaser.*
-import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.common.phaser.NamedCompilerPhase
+import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
+import org.jetbrains.kotlin.backend.common.phaser.then
+import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
 
@@ -108,40 +108,40 @@ class DynamicNativeCompilerDriver(
 
     private fun buildFramework(config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendPhase = Phases.buildFrontendPhase()
-        val createSymbolTablePhase = Phases.buildCreateSymbolTablePhase()
-        val objCExportPhase = Phases.buildObjCExportPhase(createSymbolTablePhase)
-        val psiToIrPhase = Phases.buildTranslatePsiToIrPhase(isProducingLibrary = false, createSymbolTablePhase)
-        val destroySymbolTablePhase = Phases.buildDestroySymbolTablePhase(createSymbolTablePhase)
         val frontendContext: FrontendContext = FrontendContextImpl(config, environment)
 
         if (!runTopLevelPhase(frontendContext, frontendPhase, true)) {
             return
         }
 
-        val context = Context(config)
+        val objCExportPhase = Phases.buildObjCExportPhase()
+        val objCExport = runTopLevelPhase(frontendContext, objCExportPhase, null)
+
+        val context = Context(config, objCExport)
         context.populateFromFrontend(frontendContext)
 
         if (config.omitFrameworkBinary) {
             val produceFrameworkInterface = Phases.buildProduceFrameworkInterfacePhase()
-            val produceFramework = NamedCompilerPhase(
-                    "ProduceFramework",
-                    "Create Apple Framework",
-                    nlevels = 1,
-                    lower = createSymbolTablePhase then
-                            objCExportPhase then
-                            destroySymbolTablePhase then
-                            produceFrameworkInterface
-            )
             val objCExportContext: ObjCExportContext = context
-            runTopLevelPhaseUnit(objCExportContext, produceFramework)
+            runTopLevelPhaseUnit(objCExportContext, produceFrameworkInterface)
+            // So the only things we need is
+            // 1. Parse sources
+            // 2. Generate headers
+            // 3. Write them to frameworks directory.
             return
         }
+
+        val createSymbolTablePhase = Phases.buildCreateSymbolTablePhase()
+        val objCExportCodeSpecPhase = Phases.buildObjCCodeSpecPhase(createSymbolTablePhase)
+        val psiToIrPhase = Phases.buildTranslatePsiToIrPhase(isProducingLibrary = false, createSymbolTablePhase)
+        val destroySymbolTablePhase = Phases.buildDestroySymbolTablePhase(createSymbolTablePhase)
+
         val irGen = NamedCompilerPhase(
                 "IRGen",
                 "IR generation",
                 nlevels = 1,
                 lower = createSymbolTablePhase then
-                        objCExportPhase then
+                        objCExportCodeSpecPhase then
                         psiToIrPhase then
                         destroySymbolTablePhase
         )
@@ -165,21 +165,17 @@ class DynamicNativeCompilerDriver(
         runTopLevelPhase(middleEndContext, allLowerings, middleEndContext.irModule!!)
         dependenciesLowering(middleEndContext.irModule!!, middleEndContext)
 
-        val bitcodegenPhase = buildBitcodePhases(config)
+        val ltoPhases = Phases.buildLtoAndMiscPhases(config)
+        val ltoContext: LtoContext = context
+        runTopLevelPhase(ltoContext, ltoPhases, middleEndContext.irModule!!)
+
+        val bitcodegenPhase = Phases.buildBitcodePhases()
         val bitcodegenContext: BitcodegenContext = context
         runTopLevelPhase(bitcodegenContext, bitcodegenPhase, bitcodegenContext.irModule!!)
 
         val payload = BasicPhaseContextPayload(context.config, context.irBuiltIns, context.typeSystem, context.builtIns, context.ir)
 
-        val llvmCodegenPhase = NamedCompilerPhase<LlvmCodegenContext, IrModuleFragment>(
-                name = "LlvmCodegen",
-                description = "Generation of bitcode file",
-                nlevels = 1,
-                lower = verifyBitcodePhase then
-                        printBitcodePhase then
-                        linkBitcodeDependenciesPhase then
-                        bitcodePostprocessingPhase
-        )
+        val llvmCodegenPhase = Phases.buildLlvmCodegenPhase()
         val llvmcodegenContext: LlvmCodegenContext = LlvmCodegenContextImpl(
                 payload,
                 context.cStubsManager,
@@ -216,21 +212,26 @@ class DynamicNativeCompilerDriver(
             return
         }
 
+        val objCExportPhase = Phases.buildObjCExportPhase()
+        val objCExport = runTopLevelPhase(frontendContext, objCExportPhase, null)
+
         val createSymbolTablePhase = Phases.buildCreateSymbolTablePhase()
         val psiToIrPhase = Phases.buildTranslatePsiToIrPhase(isProducingLibrary = false, createSymbolTablePhase)
         val destroySymbolTablePhase = Phases.buildDestroySymbolTablePhase(createSymbolTablePhase)
+
+        val objcExportCodeSpecPhase = Phases.buildObjCCodeSpecPhase(createSymbolTablePhase)
+
         val buildAdditionalCacheInfoPhase = Phases.buildBuildAdditionalCacheInfoPhase(psiToIrPhase)
-        val objCExportPhase = Phases.buildObjCExportPhase(createSymbolTablePhase)
         val irGen = NamedCompilerPhase(
                 "IRGen",
                 "IR generation",
                 nlevels = 1,
                 lower = createSymbolTablePhase then
-                        objCExportPhase then
+                        objcExportCodeSpecPhase then
                         psiToIrPhase then
                         destroySymbolTablePhase
         )
-        val context = Context(config)
+        val context = Context(config, objCExport)
         context.populateFromFrontend(frontendContext)
         val objcExportContext: ObjCExportContext = context
         runTopLevelPhaseUnit(objcExportContext, irGen)
@@ -254,19 +255,15 @@ class DynamicNativeCompilerDriver(
         runTopLevelPhase(middleEndContext, allLowerings, middleEndContext.irModule!!)
         dependenciesLowering(middleEndContext.irModule!!, middleEndContext)
 
-        val bitcodegenPhase = buildBitcodePhases(config)
+        val ltoPhases = Phases.buildLtoAndMiscPhases(config)
+        val ltoContext: LtoContext = context
+        runTopLevelPhase(ltoContext, ltoPhases, middleEndContext.irModule!!)
+
+        val bitcodegenPhase = Phases.buildBitcodePhases()
         val bitcodegenContext: BitcodegenContext = context
         runTopLevelPhase(bitcodegenContext, bitcodegenPhase, bitcodegenContext.irModule!!)
 
-        val llvmCodegenPhase = NamedCompilerPhase<LlvmCodegenContext, IrModuleFragment>(
-                name = "LlvmCodegen",
-                description = "Generation of bitcode file",
-                nlevels = 1,
-                lower = verifyBitcodePhase then
-                        printBitcodePhase then
-                        linkBitcodeDependenciesPhase then
-                        bitcodePostprocessingPhase
-        )
+        val llvmCodegenPhase = Phases.buildLlvmCodegenPhase()
 
         val payload = BasicPhaseContextPayload(context.config, context.irBuiltIns, context.typeSystem, context.builtIns, context.ir)
 
@@ -302,55 +299,8 @@ class DynamicNativeCompilerDriver(
         runTopLevelPhaseUnit(linkerContext, linkerPhase)
 
         val finalizeCachePhase = Phases.buildFinalizeCachePhase()
-        val cacheContext = CacheContextImpl(
-                config,
-                context.inlineFunctionBodies,
-                context.classFields,
-                context.llvmImports,
-                context.constructedFromExportedInlineFunctions,
-                context.calledFromExportedInlineFunctions
-        )
+        val cacheContext = CacheContextImpl(config, context)
         runTopLevelPhaseUnit(cacheContext, finalizeCachePhase)
-    }
-
-    private fun buildBitcodePhases(config: KonanConfig): NamedCompilerPhase<BitcodegenContext, IrModuleFragment> {
-        // TODO: Ugly and hard to manage. Use `disable` mechanism instead.
-        val dfgPhase = optionalPhase(config.optimizationsEnabled) { Phases.getBuildDFGPhase() }
-        val devirtualizationAnalysisPhase = optionalPhase(config.optimizationsEnabled) { Phases.getDevirtualizationAnalysisPhase(dfgPhase) }
-        val removeRedundantCallsToFileInitializersPhase = optionalPhase(config.optimizationsEnabled) { Phases.getRemoveRedundantCallsToFileInitializersPhase(devirtualizationAnalysisPhase) }
-        val escapeAnalysisPhase = optionalPhase(config.optimizationsEnabled) { Phases.buildEscapeAnalysisPhase(dfgPhase, devirtualizationAnalysisPhase) }
-        val ghaPhase = optionalPhase(config.optimizationsEnabled) { Phases.getGhaPhase() }
-        val devirtualizationPhase = optionalPhase(config.optimizationsEnabled) { Phases.getDevirtualizationPhase(dfgPhase, devirtualizationAnalysisPhase) }
-        val dcePhase = optionalPhase(config.optimizationsEnabled) { Phases.getDcePhase(devirtualizationAnalysisPhase) }
-        val propertyAccessorInlinePhase = optionalPhase(config.optimizationsEnabled) { Phases.getPropertyAccessorInlinePhase() }
-        val inlineClassPropertyAccessorsPhase = optionalPhase(config.optimizationsEnabled) { Phases.getInlineClassPropertyAccessorsPhase() }
-        val unboxInlinePhase = optionalPhase(config.optimizationsEnabled) { Phases.getUnboxInlinePhase() }
-
-        val bitcodegenPhase = NamedCompilerPhase<BitcodegenContext, IrModuleFragment>(
-                name = "BitcodeGen",
-                description = "Generation of LLVM module",
-                nlevels = 1,
-                lower = contextLLVMSetupPhase then
-                        returnsInsertionPhase then
-                        dfgPhase then
-                        devirtualizationAnalysisPhase then
-                        dcePhase then
-                        removeRedundantCallsToFileInitializersPhase then
-                        devirtualizationPhase then
-                        propertyAccessorInlinePhase then // Have to run after link dependencies phase, because fields
-                        // from dependencies can be changed during lowerings.
-                        inlineClassPropertyAccessorsPhase then
-                        redundantCoercionsCleaningPhase then
-                        unboxInlinePhase then
-                        createLLVMDeclarationsPhase then
-                        ghaPhase then
-                        RTTIPhase then
-                        generateDebugInfoHeaderPhase then
-                        escapeAnalysisPhase then
-                        codegenPhase then
-                        finalizeDebugInfoPhase
-        )
-        return bitcodegenPhase
     }
 
     private fun dependenciesLowering(input: IrModuleFragment, context: MiddleEndContext) {
@@ -383,62 +333,4 @@ class DynamicNativeCompilerDriver(
 
         input.files += files
     }
-
-    private fun getDumpTestsPhase(testDumpFile: File): NamedCompilerPhase<Context, IrModuleFragment> = makeCustomPhase<Context, IrModuleFragment>(
-            name = "dumpTestsPhase",
-            description = "Dump the list of all available tests",
-            op = { context, _ ->
-                if (!testDumpFile.exists)
-                    testDumpFile.createNew()
-
-                if (context.testCasesToDump.isEmpty())
-                    return@makeCustomPhase
-
-                testDumpFile.appendLines(
-                        context.testCasesToDump
-                                .flatMap { (suiteClassId, functionNames) ->
-                                    val suiteName = suiteClassId.asString()
-                                    functionNames.asSequence().map { "$suiteName:$it" }
-                                }
-                )
-            }
-    )
-
-    private fun ltoPhases() = NamedCompilerPhase(
-            name = "IR_LTO",
-            description = "LTO over Kotlin IR",
-            lower = buildDFGPhase then
-                    devirtualizationAnalysisPhase then
-                    dcePhase then
-                    removeRedundantCallsToFileInitializersPhase then
-                    devirtualizationPhase then
-                    propertyAccessorInlinePhase then // Have to run after link dependencies phase, because fields
-                    // from dependencies can be changed during lowerings.
-                    inlineClassPropertyAccessorsPhase then
-                    redundantCoercionsCleaningPhase then
-                    unboxInlinePhase then
-                    createLLVMDeclarationsPhase then
-                    ghaPhase
-    )
 }
-
-private fun <Context : CommonBackendContext, Input, Output> sink(output: (Input) -> Output) = object : CompilerPhase<Context, Input, Output> {
-    override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output =
-            output(input)
-}
-
-private fun <Context : CommonBackendContext, Input> sinkId() = sink<Context, Input, Input> { it }
-
-private fun <Context : CommonBackendContext, Input> stealIdentity(phase: NamedCompilerPhase<Context, Input>): NamedCompilerPhase<Context, Input> {
-    return NamedCompilerPhase(phase.name, phase.description, lower = sinkId())
-}
-
-private inline fun <Context : CommonBackendContext, Input> optionalPhase(phaseOrNull: () -> NamedCompilerPhase<Context, Input>?) =
-        phaseOrNull() ?: sinkId()
-
-private inline fun <Context : CommonBackendContext, Input> optionalPhase(cond: Boolean, phase: () -> NamedCompilerPhase<Context, Input>): NamedCompilerPhase<Context, Input> =
-        if (cond) {
-            phase()
-        } else {
-            stealIdentity(phase())
-        }

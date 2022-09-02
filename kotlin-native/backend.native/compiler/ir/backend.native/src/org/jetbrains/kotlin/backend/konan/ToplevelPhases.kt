@@ -78,12 +78,21 @@ internal val createSymbolTablePhase = konanUnitPhase<PsiToIrContext>(
 
 internal val objCExportPhase = konanUnitPhase<ObjCExportContext>(
             op = {
-                objCExport = ObjCExport(this, symbolTable!!, config)
+                objCExport = ObjCExport(this, config)
             },
             name = "ObjCExport",
             description = "Objective-C header generation",
-            prerequisite = setOf(createSymbolTablePhase)
+            prerequisite = setOf()
     )
+
+internal val objcExportCodeSpecPhase = konanUnitPhase<ObjCExportContext>(
+        op = {
+            objCExport?.buildCodeSpec(symbolTable!!)
+        },
+        name = "ObjCExportCodeSpec",
+        description = "Objective-C codespec generation",
+        prerequisite = setOf(createSymbolTablePhase)
+)
 
 internal val buildCExportsPhase = konanUnitPhase<CExportContext>(
         op = {
@@ -294,6 +303,7 @@ internal val allLoweringsPhase = NamedCompilerPhase<MiddleEndContext, IrModuleFr
                         exportInternalAbiPhase,
                         useInternalAbiPhase,
                         autoboxPhase,
+                        returnsInsertionPhase
                 )
         ),
         actions = setOf(defaultDumper, ::moduleValidationCallback),
@@ -385,7 +395,6 @@ internal val bitcodePhase = NamedCompilerPhase<Context, IrModuleFragment>(
         name = "Bitcode",
         description = "LLVM Bitcode generation",
         lower = contextLLVMSetupPhase then
-                returnsInsertionPhase then
                 buildDFGPhase then
                 devirtualizationAnalysisPhase then
                 dcePhase then
@@ -439,8 +448,9 @@ internal val backendCodegen = namedUnitPhase<Context>(
 val toplevelPhase: CompilerPhase<*, Unit, Unit> = namedUnitPhase(
         name = "Compiler",
         description = "The whole compilation process",
-        lower = createSymbolTablePhase then
-                objCExportPhase then
+        lower = objCExportPhase then
+                createSymbolTablePhase then
+                objcExportCodeSpecPhase then
                 buildCExportsPhase then
                 psiToIrPhase then
                 buildAdditionalCacheInfoPhase then

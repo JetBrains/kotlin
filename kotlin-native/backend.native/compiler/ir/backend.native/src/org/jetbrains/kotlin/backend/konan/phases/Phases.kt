@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysis
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
+import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.optimizations.*
@@ -156,13 +157,21 @@ internal object Phases {
             prerequisite = setOf()
     )
 
-    fun buildObjCExportPhase(createSymbolTablePhase: NamedCompilerPhase<PsiToIrContext, Unit>): NamedCompilerPhase<ObjCExportContext, Unit> = myLower2<ObjCExportContext, Unit>(
+    // Nullable return type allows to pass null as input. Again, proper phase system should help.
+    fun buildObjCExportPhase(): NamedCompilerPhase<FrontendContext, ObjCExport?> = myLower2<FrontendContext, ObjCExport?>(
             op = { context, _ ->
-                context.objCExport = ObjCExport(context, context.symbolTable!!, context.config)
+                ObjCExport(context, context.config)
             },
             name = "ObjCExport",
             description = "Objective-C header generation",
-            // This dependency is actually optional in case of -Xomit-framework-binary.
+    )
+
+    fun buildObjCCodeSpecPhase(createSymbolTablePhase: NamedCompilerPhase<PsiToIrContext, Unit>): NamedCompilerPhase<ObjCExportContext, Unit> = myLower2<ObjCExportContext, Unit>(
+            op = { context, _ ->
+                context.objCExport?.buildCodeSpec(context.symbolTable!!)
+            },
+            name = "ObjCExportCodeSpec",
+            description = "Objective-C codespec generation",
             prerequisite = setOf(createSymbolTablePhase)
     )
 
@@ -385,6 +394,7 @@ internal object Phases {
                                 exportInternalAbiPhase,
                                 useInternalAbiPhase,
                                 autoboxPhase,
+                                returnsInsertionPhase
                         )
                 ),
                 actions = setOf(defaultDumper, ::moduleValidationCallback)
@@ -558,7 +568,7 @@ internal object Phases {
             op = { context, irModule -> irModule.files.forEach { InlineClassPropertyAccessorsLowering(context).lower(it) } }
     )
 
-    fun getUnboxInlinePhase() = makeKonanModuleLoweringPhase<BitcodegenContext>(
+    fun getUnboxInlinePhase() = makeKonanModuleLoweringPhase<BackendPhaseContext>(
             ::UnboxInlineLowering,
             name = "UnboxInline",
             description = "Unbox functions inline lowering",
@@ -570,4 +580,83 @@ internal object Phases {
             description = "Global hierarchy analysis",
             op = { context, irModule -> GlobalHierarchyAnalysis(context, irModule).run() }
     )
+
+    fun buildBitcodePhases(): NamedCompilerPhase<BitcodegenContext, IrModuleFragment> {
+        val bitcodegenPhase = NamedCompilerPhase<BitcodegenContext, IrModuleFragment>(
+                name = "BitcodeGen",
+                description = "Generation of LLVM module",
+                nlevels = 1,
+                lower = contextLLVMSetupPhase then
+                        createLLVMDeclarationsPhase then
+                        RTTIPhase then
+                        generateDebugInfoHeaderPhase then
+                        codegenPhase then
+                        finalizeDebugInfoPhase
+        )
+        return bitcodegenPhase
+    }
+
+    fun buildLtoAndMiscPhases(config: KonanConfig): NamedCompilerPhase<LtoContext, IrModuleFragment> {
+        // TODO: Ugly and hard to manage. Use `disable` mechanism instead.
+        val dfgPhase = optionalPhase(config.optimizationsEnabled) { Phases.getBuildDFGPhase() }
+        val devirtualizationAnalysisPhase = optionalPhase(config.optimizationsEnabled) { Phases.getDevirtualizationAnalysisPhase(dfgPhase) }
+        val removeRedundantCallsToFileInitializersPhase = optionalPhase(config.optimizationsEnabled) { Phases.getRemoveRedundantCallsToFileInitializersPhase(devirtualizationAnalysisPhase) }
+        val escapeAnalysisPhase = optionalPhase(config.optimizationsEnabled) { Phases.buildEscapeAnalysisPhase(dfgPhase, devirtualizationAnalysisPhase) }
+        val ghaPhase = optionalPhase(config.optimizationsEnabled) { Phases.getGhaPhase() }
+        val devirtualizationPhase = optionalPhase(config.optimizationsEnabled) { Phases.getDevirtualizationPhase(dfgPhase, devirtualizationAnalysisPhase) }
+        val dcePhase = optionalPhase(config.optimizationsEnabled) { Phases.getDcePhase(devirtualizationAnalysisPhase) }
+        val propertyAccessorInlinePhase = optionalPhase(config.optimizationsEnabled) { Phases.getPropertyAccessorInlinePhase() }
+        val inlineClassPropertyAccessorsPhase = optionalPhase(config.optimizationsEnabled) { Phases.getInlineClassPropertyAccessorsPhase() }
+        val unboxInlinePhase = optionalPhase(config.optimizationsEnabled) { Phases.getUnboxInlinePhase() }
+        val ltoAndMiscPhases = NamedCompilerPhase<LtoContext, IrModuleFragment>(
+                name = "BitcodeGen",
+                description = "Generation of LLVM module",
+                nlevels = 1,
+                lower = dfgPhase then
+                        devirtualizationAnalysisPhase then
+                        dcePhase then
+                        removeRedundantCallsToFileInitializersPhase then
+                        devirtualizationPhase then
+                        propertyAccessorInlinePhase then // Have to run after link dependencies phase, because fields
+                        // from dependencies can be changed during lowerings.
+                        inlineClassPropertyAccessorsPhase then
+                        redundantCoercionsCleaningPhase then
+                        unboxInlinePhase then
+                        ghaPhase then
+                        escapeAnalysisPhase
+        )
+        return ltoAndMiscPhases
+    }
+
+    fun buildLlvmCodegenPhase() = NamedCompilerPhase<LlvmCodegenContext, IrModuleFragment>(
+            name = "LlvmCodegen",
+            description = "Generation of bitcode file",
+            nlevels = 1,
+            lower = verifyBitcodePhase then
+                    printBitcodePhase then
+                    linkBitcodeDependenciesPhase then
+                    bitcodePostprocessingPhase
+    )
+
+    private inline fun <Context : CommonBackendContext, Input> optionalPhase(phaseOrNull: () -> NamedCompilerPhase<Context, Input>?) =
+            phaseOrNull() ?: sinkId()
+
+    private inline fun <Context : CommonBackendContext, Input> optionalPhase(cond: Boolean, phase: () -> NamedCompilerPhase<Context, Input>): NamedCompilerPhase<Context, Input> =
+            if (cond) {
+                phase()
+            } else {
+                stealIdentity(phase())
+            }
+
+
+    private fun <Context : CommonBackendContext, Input, Output> sink(output: (Input) -> Output) = object : CompilerPhase<Context, Input, Output> {
+        override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output =
+                output(input)
+    }
+
+    private fun <Context : CommonBackendContext, Input> sinkId() = sink<Context, Input, Input> { it }
+
+    private fun <Context : CommonBackendContext, Input> stealIdentity(phase: NamedCompilerPhase<Context, Input>): NamedCompilerPhase<Context, Input> {
+        return NamedCompilerPhase(phase.name, phase.description, lower = sinkId())
+    }
 }

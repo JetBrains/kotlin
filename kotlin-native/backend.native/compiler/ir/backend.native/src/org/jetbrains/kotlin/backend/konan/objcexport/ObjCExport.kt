@@ -32,14 +32,19 @@ internal class ObjCExportedInterface(
 
 internal class ObjCExport(
         val context: FrontendContext,
-        symbolTable: SymbolTable,
         private val config: KonanConfig
 ) {
     private val target get() = config.target
     private val topLevelNamePrefix get() = config.objCExportTopLevelNamePrefix
 
     val exportedInterface = produceInterface()
-    val codeSpec = exportedInterface?.createCodeSpec(symbolTable)
+
+
+    var codeSpec: ObjCExportCodeSpec? = null
+
+    fun buildCodeSpec(symbolTable: SymbolTable) {
+        codeSpec = exportedInterface?.createCodeSpec(symbolTable)
+    }
 
     var namer: ObjCExportNamer? = null
 

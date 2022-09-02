@@ -117,3 +117,12 @@ internal class CacheContextImpl(
         override val constructedFromExportedInlineFunctions: MutableSet<IrClass>,
         override val calledFromExportedInlineFunctions: MutableSet<IrFunction>,
 ) : BasicPhaseContext(config), CacheContext
+
+internal fun CacheContextImpl(config: KonanConfig, previous: CacheContext) = CacheContextImpl(
+        config,
+        previous.inlineFunctionBodies,
+        previous.classFields,
+        previous.llvmImports,
+        previous.constructedFromExportedInlineFunctions,
+        previous.calledFromExportedInlineFunctions
+)
