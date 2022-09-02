@@ -76,7 +76,7 @@ internal val createSymbolTablePhase = konanUnitPhase<PsiToIrContext>(
             description = "Create SymbolTable"
     )
 
-internal val objCExportPhase = konanUnitPhase<ObjCExportContext>(
+internal val objCExportPhase = konanUnitPhase<Context>(
             op = {
                 objCExport = ObjCExport(this, config)
             },

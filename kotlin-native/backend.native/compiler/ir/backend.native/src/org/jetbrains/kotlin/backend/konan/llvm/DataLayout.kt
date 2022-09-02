@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import llvm.*
-import org.jetbrains.kotlin.backend.konan.*
+import llvm.LLVMTypeRef
+import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
+import org.jetbrains.kotlin.backend.konan.computePrimitiveBinaryTypeOrNull
 import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.pointerBits
 
 private fun RuntimeAware.getLlvmType(primitiveBinaryType: PrimitiveBinaryType?) = when (primitiveBinaryType) {
     null -> this.kObjHeaderPtr
@@ -40,4 +43,20 @@ internal fun RuntimeAware.getLLVMReturnType(type: IrType): LLVMTypeRef {
         type.isVoidAsReturnType() -> voidType
         else -> getLLVMType(type)
     }
+}
+
+
+internal fun getPrimitiveBinaryTypeSizeInBits(target: KonanTarget, primitiveBinaryType: PrimitiveBinaryType?): Int = when (primitiveBinaryType) {
+    null -> target.pointerBits()
+
+    PrimitiveBinaryType.BOOLEAN -> 8
+    PrimitiveBinaryType.BYTE -> 8
+    PrimitiveBinaryType.SHORT -> 16
+    PrimitiveBinaryType.INT -> 32
+    PrimitiveBinaryType.LONG -> 64
+    PrimitiveBinaryType.FLOAT -> 32
+    PrimitiveBinaryType.DOUBLE -> 64
+
+    PrimitiveBinaryType.VECTOR128 -> 128
+    PrimitiveBinaryType.POINTER -> target.pointerBits()
 }

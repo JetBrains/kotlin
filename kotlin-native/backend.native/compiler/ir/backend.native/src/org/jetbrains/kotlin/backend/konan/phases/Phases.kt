@@ -158,7 +158,7 @@ internal object Phases {
     )
 
     // Nullable return type allows to pass null as input. Again, proper phase system should help.
-    fun buildObjCExportPhase(): NamedCompilerPhase<FrontendContext, ObjCExport?> = myLower2<FrontendContext, ObjCExport?>(
+    fun buildObjCExportPhase(): NamedCompilerPhase<FrontendContext, ObjCExport?> = myLower2(
             op = { context, _ ->
                 ObjCExport(context, context.config)
             },
@@ -166,7 +166,7 @@ internal object Phases {
             description = "Objective-C header generation",
     )
 
-    fun buildObjCCodeSpecPhase(createSymbolTablePhase: NamedCompilerPhase<PsiToIrContext, Unit>): NamedCompilerPhase<ObjCExportContext, Unit> = myLower2<ObjCExportContext, Unit>(
+    fun buildObjCCodeSpecPhase(createSymbolTablePhase: NamedCompilerPhase<PsiToIrContext, Unit>): NamedCompilerPhase<ObjCExportContext, Unit> = myLower2(
             op = { context, _ ->
                 context.objCExport?.buildCodeSpec(context.symbolTable!!)
             },

@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 internal interface PhaseContext : LoggingContext, ErrorReportingContext {
     val config: KonanConfig
@@ -65,7 +66,7 @@ internal interface BackendPhaseContext : PhaseContext, KonanBackendContext {
     override fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean)
 }
 
-internal val BackendPhaseContext.stdlibModule
+internal val KonanBackendContext.stdlibModule
     get() = this.builtIns.any.module
 
 fun ConfigChecks(config: KonanConfig): ConfigChecks = object : ConfigChecks {
@@ -112,9 +113,17 @@ internal interface FrontendContext : PhaseContext {
 // TODO: Consider component-based approach
 internal interface PsiToIrContext :
         BackendPhaseContext,
-        FrontendContext,
-        LlvmModuleSpecificationContext {
+        LlvmModuleSpecificationComponent,
+        IrLinkerComponent,
+        ComponentContainerProvider
+{
     var symbolTable: SymbolTable?
+
+    var moduleDescriptor: ModuleDescriptor
+
+    var environment: KotlinCoreEnvironment
+
+    var bindingContext: BindingContext
 
     val reflectionTypes: KonanReflectionTypes
 
@@ -122,8 +131,6 @@ internal interface PsiToIrContext :
 
     // TODO: make lateinit?
     var irModule: IrModuleFragment?
-
-    var irLinker: KonanIrLinker
 
     var expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>
 }
@@ -138,7 +145,7 @@ internal interface CExportContext : PsiToIrContext {
     var cAdapterGenerator: CAdapterGenerator
 }
 
-internal interface LlvmModuleSpecificationContext : BackendPhaseContext {
+internal interface LlvmModuleSpecificationComponent : BackendPhaseContext {
     val llvmModuleSpecification: LlvmModuleSpecification
 
 }
@@ -180,10 +187,12 @@ internal interface BitcodegenContext :
         BridgesAwareContext,
         LocalClassNameAwareContext,
         LlvmModuleContext,
-        LlvmModuleSpecificationContext,
+        LlvmModuleSpecificationComponent,
         LtoContext,
         ConfigChecks,
-        CacheAwareContext
+        CacheAwareContext,
+        IrLinkerComponent,
+        ComponentContainerProvider
 {
     override val config: KonanConfig
 
@@ -196,8 +205,6 @@ internal interface BitcodegenContext :
     val targetAbiInfo: TargetAbiInfo
 
     var llvmDeclarations: LlvmDeclarations
-
-    val irLinker: KonanIrLinker
 
     var cAdapterGenerator: CAdapterGenerator
 
@@ -229,7 +236,7 @@ internal interface BridgesAwareContext : BackendPhaseContext {
     val bridgesSupport: BridgesSupport
 }
 
-internal interface LlvmCodegenContext : BackendPhaseContext, LlvmModuleSpecificationContext, LlvmModuleContext {
+internal interface LlvmCodegenContext : BackendPhaseContext, LlvmModuleSpecificationComponent, LlvmModuleContext {
 
     val llvm: Llvm
 
@@ -244,6 +251,14 @@ internal interface LlvmCodegenContext : BackendPhaseContext, LlvmModuleSpecifica
 
 internal interface LayoutBuildingContext : BackendPhaseContext {
     fun getLayoutBuilder(irClass: IrClass): ClassLayoutBuilder
+}
+
+internal interface IrLinkerComponent : Component {
+    var irLinker: KonanIrLinker
+}
+
+internal interface InnerClassesSupportComponent : Component {
+    val innerClassesSupport: InnerClassesSupport
 }
 
 internal interface LocalClassNameAwareContext : BackendPhaseContext {
@@ -284,11 +299,15 @@ internal interface LtoContext :
 
 internal interface MiddleEndContext :
         PhaseContext,
-        LlvmModuleSpecificationContext,
+        LlvmModuleSpecificationComponent,
         LocalClassNameAwareContext,
         BridgesAwareContext,
-        CacheAwareContext
+        CacheAwareContext,
+        ComponentContainerProvider,
+        IrLinkerComponent
 {
+
+
     override val config: KonanConfig
 
     val irModule: IrModuleFragment?
@@ -301,16 +320,12 @@ internal interface MiddleEndContext :
 
     val inlineFunctionsSupport: InlineFunctionsSupport
 
-    val innerClassesSupport: InnerClassesSupport
-
     val cStubsManager: CStubsManager
 
     var functionReferenceCount: Int
     var coroutineCount: Int
 
     val testCasesToDump: MutableMap<ClassId, MutableCollection<String>>
-
-    var irLinker: KonanIrLinker
 
     var moduleDescriptor: ModuleDescriptor
 
@@ -338,5 +353,20 @@ internal interface CacheContext : PhaseContext {
     val calledFromExportedInlineFunctions: MutableSet<IrFunction>
 }
 
-// TODO: get rid of
-internal interface CacheAwareContext : CacheContext, LayoutBuildingContext
+internal interface CacheAwareContext : CacheContext, InnerClassesSupportComponent, BackendPhaseContext, LayoutBuildingContext
+
+internal interface Component
+
+internal interface ComponentContainerProvider {
+    val container: ComponentContainer
+}
+
+internal class ComponentContainer(
+        private val components: Set<Component>
+) {
+    inline fun <reified T : Component> get(): T =
+            components.firstIsInstance()
+
+    inline fun <reified T : Component> optional(): T? =
+            components.firstIsInstance()
+}

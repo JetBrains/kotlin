@@ -18,12 +18,11 @@ import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.phases.KlibProducingContext
 import org.jetbrains.kotlin.backend.konan.phases.LlvmCodegenContext
-import org.jetbrains.kotlin.backend.konan.phases.LlvmModuleSpecificationContext
+import org.jetbrains.kotlin.backend.konan.phases.LlvmModuleSpecificationComponent
 import org.jetbrains.kotlin.backend.konan.phases.stdlibModule
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.isBitcode
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
@@ -48,18 +47,18 @@ val KonanConfig.isFinalBinary: Boolean get() = when (this.produce) {
 val CompilerOutputKind.involvesBitcodeGeneration: Boolean
     get() = this != CompilerOutputKind.LIBRARY
 
-internal val LlvmModuleSpecificationContext.producedLlvmModuleContainsStdlib: Boolean
+internal val LlvmModuleSpecificationComponent.producedLlvmModuleContainsStdlib: Boolean
     get() = this.llvmModuleSpecification.containsModule(this.stdlibModule)
 
-internal val LlvmModuleSpecificationContext.shouldDefineFunctionClasses: Boolean
+internal val LlvmModuleSpecificationComponent.shouldDefineFunctionClasses: Boolean
     get() = producedLlvmModuleContainsStdlib &&
             config.libraryToCache?.strategy?.contains(KonanFqNames.internalPackageName, "KFunctionImpl.kt") != false
 
-internal val LlvmModuleSpecificationContext.shouldDefineCachedBoxes: Boolean
+internal val LlvmModuleSpecificationComponent.shouldDefineCachedBoxes: Boolean
     get() = producedLlvmModuleContainsStdlib &&
             config.libraryToCache?.strategy?.contains(KonanFqNames.internalPackageName, "Boxing.kt") != false
 
-internal val LlvmModuleSpecificationContext.shouldLinkRuntimeNativeLibraries: Boolean
+internal val LlvmModuleSpecificationComponent.shouldLinkRuntimeNativeLibraries: Boolean
     get() = producedLlvmModuleContainsStdlib &&
             config.libraryToCache?.strategy?.contains(KonanFqNames.packageName, "Runtime.kt") != false
 

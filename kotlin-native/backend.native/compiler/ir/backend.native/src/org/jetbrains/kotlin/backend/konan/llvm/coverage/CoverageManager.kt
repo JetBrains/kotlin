@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.llvm.coverage
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
+import org.jetbrains.kotlin.backend.konan.phases.Component
 import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 /**
  * "Umbrella" class of all the of the code coverage related logic.
  */
-internal class CoverageManager(val context: MiddleEndContext, private val config: KonanConfig) {
+internal class CoverageManager(val context: MiddleEndContext, private val config: KonanConfig) : Component {
 
     private val shouldCoverSources: Boolean =
             config.shouldCoverSources

@@ -78,7 +78,7 @@ internal class Context(
         ConfigChecks,
         FrontendContext,
         PsiToIrContext,
-        LlvmModuleSpecificationContext,
+        LlvmModuleSpecificationComponent,
         KlibProducingContext,
         BitcodegenContext,
         LlvmCodegenContext,
@@ -90,9 +90,13 @@ internal class Context(
         ObjectFilesContext,
         CacheAwareContext,
         CExportContext,
-        LinkerContext {
+        LinkerContext,
+        Component
+{
     // TopDownAnalyzer Context
     override lateinit var frontendServices: FrontendServices
+
+    override val container: ComponentContainer = ComponentContainer(setOf(this))
 
     // Frontend Context
     override lateinit var environment: KotlinCoreEnvironment

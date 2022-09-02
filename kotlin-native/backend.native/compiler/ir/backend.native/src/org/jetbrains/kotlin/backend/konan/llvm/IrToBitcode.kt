@@ -437,7 +437,6 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
     override fun visitModuleFragment(declaration: IrModuleFragment) {
         context.log { "visitModule                    : ${ir2string(declaration)}" }
-
         context.coverage.collectRegions(declaration)
 
         initializeCachedBoxes(context)

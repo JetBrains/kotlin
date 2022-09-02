@@ -404,13 +404,13 @@ internal val removeRedundantSafepointsPhase = makeKonanModuleOpPhase<LlvmCodegen
         }
 )
 
-internal val verifyBitcodePhase = makeKonanModuleOpPhase<LlvmModuleContext>(
+internal val verifyBitcodePhase = makeKonanModuleOpPhase<LlvmCodegenContext>(
         name = "VerifyBitcode",
         description = "Verify bitcode",
         op = { context, _ -> context.verifyBitCode() }
 )
 
-internal val printBitcodePhase = makeKonanModuleOpPhase<LlvmModuleContext>(
+internal val printBitcodePhase = makeKonanModuleOpPhase<LlvmCodegenContext>(
         name = "PrintBitcode",
         description = "Print bitcode",
         op = { context, _ ->
