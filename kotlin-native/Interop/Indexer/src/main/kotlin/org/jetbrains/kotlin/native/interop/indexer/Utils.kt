@@ -701,8 +701,8 @@ class TranslationUnitsCache : Disposable {
         }
     }
 
-    // Should AST file contain declarations from nested headers,
-    // both headers should refer to PCM file. This provides easy declaration filtering with `headerFilter` directive
+    // Should AST file contain declarations from nested headers, make both headers to refer to PCM file.
+    // This allows easy AST files filtering with `headerFilter` directive
     internal fun duplicateEntryForInclude(includer: String, includee: String) {
         unitsByHeaderFile[includer]?.let {
             unitsByHeaderFile[includee] = it
@@ -721,10 +721,9 @@ class TranslationUnitsCache : Disposable {
         mainUnits.add(mainUnit)
     }
 
-    internal fun forEach(ownHeadersCanonicalPaths: Set<String>, block: (CXTranslationUnit) -> Unit) {
-        // process those translation units, which include one/some of own headers
-        val unitsIncludingSomeOwnHeaders = unitsByHeaderFile.filter { ownHeadersCanonicalPaths.contains(it.key) }.values
-        (unitsIncludingSomeOwnHeaders + mainUnits).forEach { block(it) }
+    // gets main translation unit and those, which include one/some of own headers
+    internal fun filter(ownHeadersCanonicalPaths: Set<String>): List<CXTranslationUnit> {
+        return mainUnits + unitsByHeaderFile.filter { ownHeadersCanonicalPaths.contains(it.key) }.values
     }
 
     override fun dispose() {
@@ -774,9 +773,9 @@ private fun filterHeadersByName(
             } else {
                 // If it is included with `#include "$name"`, then `name` can also be the path relative to the includer.
                 val includerFile = includeLocation.getContainingFile()!!
-                translationUnitsCache.duplicateEntryForInclude(includerFile.canonicalPath, file.canonicalPath)
                 val includerName = headerToName[includerFile] ?: ""
                 val includerPath = includerFile.path
+                translationUnitsCache.duplicateEntryForInclude(includerFile.canonicalPath, file.canonicalPath)
 
                 if (clang_getFile(translationUnit, Paths.get(includerPath).resolveSibling(name).toString()) == file) {
                     // included file is accessible from the includer by `name` used as relative path, so
@@ -838,6 +837,10 @@ private fun filterHeadersByPredefined(
         override fun ppIncludedFile(info: CXIdxIncludedFileInfo) {
             val file = info.file
             allHeaders += file
+            val includeLocation = clang_indexLoc_getCXSourceLocation(info.hashLoc.readValue())
+            includeLocation.getContainingFile()?.let {
+                translationUnitsCache.duplicateEntryForInclude(it.canonicalPath, file!!.canonicalPath)
+            }
             if (file?.canonicalPath in filter.headers) {
                 ownHeaders += file
             }

@@ -1203,6 +1203,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                 translationUnits.putMainModule(translationUnit)
                 val headers = cachedHeaders.ownHeaders
                 val headersCanonicalPaths = headers.filterNotNull().map { it.canonicalPath }.toSet()
+                val unitsToProcess = translationUnits.filter(headersCanonicalPaths)
 
                 nativeIndex.includedHeaders = headers.map {
                     nativeIndex.getHeaderId(it)
@@ -1222,10 +1223,10 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                         }
                     }
                 }
-                translationUnits.forEach(headersCanonicalPaths) { indexTranslationUnit(index, it, 0, indexer) }
+                unitsToProcess.forEach { indexTranslationUnit(index, it, 0, indexer) }
 
                 if (nativeIndex.library.language == Language.CPP) {
-                    translationUnits.forEach(headersCanonicalPaths) {
+                    unitsToProcess.forEach {
                         visitChildren(clang_getTranslationUnitCursor(it)) { cursor, _ ->
                             if (getContainingFile(cursor) in headers) {
                                 nativeIndex.indexCxxDeclaration(cursor)
@@ -1235,7 +1236,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                     }
                 }
 
-                translationUnits.forEach(headersCanonicalPaths) {
+                unitsToProcess.forEach {
                     visitChildren(clang_getTranslationUnitCursor(it)) { cursor, _ ->
                         val file = getContainingFile(cursor)
                         if (file in headers && nativeIndex.library.includesDeclaration(cursor)) {
@@ -1257,9 +1258,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                     }
                 }
 
-                translationUnits.forEach(headersCanonicalPaths) {
-                    findMacros(nativeIndex, compilation, it, headers)
-                }
+                findMacros(nativeIndex, compilation, unitsToProcess, headers)
             }
             return compilation
         } finally {
