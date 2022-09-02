@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import llvm.LLVMModuleCreateWithNameInContext
 import llvm.LLVMModuleRef
-import llvm.LLVMStripModuleDebugInfo
 import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.backend.konan.llvm.llvmContext
 import org.jetbrains.kotlin.backend.konan.llvm.llvmLinkModules2
 
 /**
@@ -46,7 +44,7 @@ internal sealed class RuntimeLinkageStrategy {
             if (runtimeNativeLibraries.isEmpty()) {
                 return emptyList()
             }
-            val runtimeModule = LLVMModuleCreateWithNameInContext("runtime", llvmContext)!!
+            val runtimeModule = LLVMModuleCreateWithNameInContext("runtime", context.generationState.llvmContext)!!
             runtimeNativeLibraries.forEach {
                 val failed = llvmLinkModules2(context, runtimeModule, it)
                 if (failed != 0) {

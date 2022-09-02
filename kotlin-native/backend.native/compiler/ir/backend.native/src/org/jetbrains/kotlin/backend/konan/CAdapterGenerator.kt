@@ -249,8 +249,8 @@ private class ExportedElement(val kind: ElementKind,
                         "${cname}_type",
                         owner.kGetTypeFuncType
                 )
-                val builder = LLVMCreateBuilderInContext(llvmContext)!!
-                val bb = LLVMAppendBasicBlockInContext(llvmContext, getTypeFunction, "")!!
+                val builder = LLVMCreateBuilderInContext(llvm.llvmContext)!!
+                val bb = LLVMAppendBasicBlockInContext(llvm.llvmContext, getTypeFunction, "")!!
                 LLVMPositionBuilderAtEnd(builder, bb)
                 LLVMBuildRet(builder, irClass.typeInfoPtr.llvm)
                 LLVMDisposeBuilder(builder)

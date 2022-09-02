@@ -25,10 +25,6 @@ import org.jetbrains.kotlin.konan.file.File
 
 internal object DWARF {
     val producer = "konanc ${CompilerVersion.CURRENT} / kotlin-compiler: ${KotlinVersion.CURRENT}"
-
-    /* TODO: from LLVM sources is unclear what runtimeVersion corresponds to term in terms of dwarf specification. */
-    val dwarfVersionMetaDataNodeName get() = "Dwarf Version".mdString()
-    val dwarfDebugInfoMetaDataNodeName get() = "Debug Info Version".mdString()
     const val debugInfoVersion = 3 /* TODO: configurable? */
 
     /**
@@ -110,9 +106,12 @@ internal class DebugInfo(override val context: Context) : ContextUtils {
          * !5 = !{i32 1, !"PIC Level", i32 2}
          * !6 = !{!"Apple LLVM version 8.0.0 (clang-800.0.38)"}
          */
-        val llvmTwo = Int32(2).llvm
-        val dwarfVersion = node(llvmTwo, DWARF.dwarfVersionMetaDataNodeName, Int32(DWARF.dwarfVersion(config)).llvm)
-        val nodeDebugInfoVersion = node(llvmTwo, DWARF.dwarfDebugInfoMetaDataNodeName, Int32(DWARF.debugInfoVersion).llvm)
+        val llvmTwo = llvm.int32(2)
+        /* TODO: from LLVM sources is unclear what runtimeVersion corresponds to term in terms of dwarf specification. */
+        val dwarfVersionMetaDataNodeName = "Dwarf Version".mdString(llvm.llvmContext)
+        val dwarfDebugInfoMetaDataNodeName = "Debug Info Version".mdString(llvm.llvmContext)
+        val dwarfVersion = node(llvm.llvmContext, llvmTwo, dwarfVersionMetaDataNodeName, llvm.int32(DWARF.dwarfVersion(config)))
+        val nodeDebugInfoVersion = node(llvm.llvmContext, llvmTwo, dwarfDebugInfoMetaDataNodeName, llvm.int32(DWARF.debugInfoVersion))
         val llvmModuleFlags = "llvm.module.flags"
         LLVMAddNamedMetadataOperand(llvm.module, llvmModuleFlags, dwarfVersion)
         LLVMAddNamedMetadataOperand(llvm.module, llvmModuleFlags, nodeDebugInfoVersion)
@@ -142,17 +141,17 @@ internal class DebugInfo(override val context: Context) : ContextUtils {
     val types = mutableMapOf<IrType, DITypeOpaqueRef>()
 
     private val llvmTypes = mapOf(
-            context.irBuiltIns.booleanType to llvm.llvmInt8,
-            context.irBuiltIns.byteType to llvm.llvmInt8,
-            context.irBuiltIns.charType to llvm.llvmInt16,
-            context.irBuiltIns.shortType to llvm.llvmInt16,
-            context.irBuiltIns.intType to llvm.llvmInt32,
-            context.irBuiltIns.longType to llvm.llvmInt64,
-            context.irBuiltIns.floatType to llvm.llvmFloat,
-            context.irBuiltIns.doubleType to llvm.llvmDouble)
+            context.irBuiltIns.booleanType to llvm.int8Type,
+            context.irBuiltIns.byteType to llvm.int8Type,
+            context.irBuiltIns.charType to llvm.int16Type,
+            context.irBuiltIns.shortType to llvm.int16Type,
+            context.irBuiltIns.intType to llvm.int32Type,
+            context.irBuiltIns.longType to llvm.int64Type,
+            context.irBuiltIns.floatType to llvm.floatType,
+            context.irBuiltIns.doubleType to llvm.doubleType)
     private val llvmTypeSizes = llvmTypes.map { it.key to LLVMSizeOfTypeInBits(llvmTargetData, it.value) }.toMap()
     private val llvmTypeAlignments = llvmTypes.map { it.key to LLVMPreferredAlignmentOfType(llvmTargetData, it.value) }.toMap()
-    private val otherLlvmType = LLVMPointerType(int64Type, 0)!!
+    private val otherLlvmType = LLVMPointerType(llvm.int64Type, 0)!!
     private val otherTypeSize = LLVMSizeOfTypeInBits(llvmTargetData, otherLlvmType)
     private val otherTypeAlignment = LLVMPreferredAlignmentOfType(llvmTargetData, otherLlvmType)
 
@@ -194,14 +193,14 @@ internal class DebugInfo(override val context: Context) : ContextUtils {
 
     private fun IrType.llvmType(): LLVMTypeRef = llvmTypes.getOrElse(this@llvmType) {
         when (computePrimitiveBinaryTypeOrNull()) {
-            PrimitiveBinaryType.BOOLEAN -> llvm.llvmInt1
-            PrimitiveBinaryType.BYTE -> llvm.llvmInt8
-            PrimitiveBinaryType.SHORT -> llvm.llvmInt16
-            PrimitiveBinaryType.INT -> llvm.llvmInt32
-            PrimitiveBinaryType.LONG -> llvm.llvmInt64
-            PrimitiveBinaryType.FLOAT -> llvm.llvmFloat
-            PrimitiveBinaryType.DOUBLE -> llvm.llvmDouble
-            PrimitiveBinaryType.VECTOR128 -> llvm.llvmVector128
+            PrimitiveBinaryType.BOOLEAN -> llvm.int1Type
+            PrimitiveBinaryType.BYTE -> llvm.int8Type
+            PrimitiveBinaryType.SHORT -> llvm.int16Type
+            PrimitiveBinaryType.INT -> llvm.int32Type
+            PrimitiveBinaryType.LONG -> llvm.int64Type
+            PrimitiveBinaryType.FLOAT -> llvm.floatType
+            PrimitiveBinaryType.DOUBLE -> llvm.doubleType
+            PrimitiveBinaryType.VECTOR128 -> llvm.vector128Type
             else -> otherLlvmType
         }
     }

@@ -55,7 +55,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
 
         llvm.compilerUsedGlobals += global.pointer.llvm
 
-        global.pointer.bitcast(pointerType(int8TypePtr))
+        global.pointer.bitcast(pointerType(llvm.int8PtrType))
     }
 
     private val classObjectType = codegen.runtime.objCClassObjectType
@@ -111,12 +111,12 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
             if (instanceMethods.isEmpty()) return NullPointer(methodListType)
 
             val methodStructs = instanceMethods.map {
-                Struct(methodType, selectors.get(it.selector), encodings.get(it.encoding), it.imp.bitcast(int8TypePtr))
+                Struct(methodType, selectors.get(it.selector), encodings.get(it.encoding), it.imp.bitcast(llvm.int8PtrType))
             }
 
-            val methodList = Struct(
-                    Int32(LLVMABISizeOfType(codegen.llvmTargetData, methodType).toInt()),
-                    Int32(instanceMethods.size),
+            val methodList = llvm.struct(
+                    llvm.constInt32(LLVMABISizeOfType(codegen.llvmTargetData, methodType).toInt()),
+                    llvm.constInt32(instanceMethods.size),
                     ConstArray(methodType, methodStructs)
             )
 
@@ -151,15 +151,15 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
 
             val fields = mutableListOf<ConstValue>()
 
-            fields += Int32(flags)
-            fields += Int32(start)
-            fields += Int32(size)
-            fields += NullPointer(int8Type) // ivar layout name
+            fields += llvm.constInt32(flags)
+            fields += llvm.constInt32(start)
+            fields += llvm.constInt32(size)
+            fields += NullPointer(llvm.int8Type) // ivar layout name
             fields += classNameLiteral
             fields += if (isMetaclass) NullPointer(methodListType) else emitInstanceMethodList()
             fields += NullPointer(protocolListType)
             fields += NullPointer(ivarListType)
-            fields += NullPointer(int8Type) // ivar layout
+            fields += NullPointer(llvm.int8Type) // ivar layout
             fields += NullPointer(propListType)
 
             val roValue = Struct(classRoType, fields)
@@ -190,7 +190,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
             fields += isa
             fields += superClass
             fields += emptyCache
-            val vtableEntryType = pointerType(functionType(int8TypePtr, false, int8TypePtr, int8TypePtr))
+            val vtableEntryType = pointerType(functionType(llvm.int8PtrType, false, llvm.int8PtrType, llvm.int8PtrType))
             fields += NullPointer(vtableEntryType) // empty vtable
             fields += classRo
 
@@ -230,8 +230,8 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
 
         val global = llvm.staticData.placeGlobalArray(
                 name,
-                int8TypePtr,
-                elements.map { it.bitcast(int8TypePtr) }
+                llvm.int8PtrType,
+                elements.map { it.bitcast(llvm.int8PtrType) }
         )
 
         global.setAlignment(
@@ -257,9 +257,9 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
         private val literals = mutableMapOf<String, ConstPointer>()
 
         fun get(value: String) = literals.getOrPut(value) {
-            val globalPointer = generator.generate(llvm.module, value)
+            val globalPointer = generator.generate(llvm.module, llvm, value)
             llvm.compilerUsedGlobals += globalPointer.llvm
-            globalPointer.getElementPtr(0)
+            globalPointer.getElementPtr(llvm, 0)
         }
     }
 
@@ -275,9 +275,9 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
     }
 
     class CStringLiteralsGenerator(val label: String, val section: String) {
-        fun generate(module: LLVMModuleRef, value: String): ConstPointer {
-            val bytes = value.toByteArray(Charsets.UTF_8).map { Int8(it) } + Int8(0)
-            val initializer = ConstArray(int8Type, bytes)
+        fun generate(module: LLVMModuleRef, llvm: Llvm, value: String): ConstPointer {
+            val bytes = value.toByteArray(Charsets.UTF_8).map { llvm.constInt8(it) } + llvm.constInt8(0)
+            val initializer = ConstArray(llvm.int8Type, bytes)
             val llvmGlobal = LLVMAddGlobal(module, initializer.llvmType, label)!!
             LLVMSetInitializer(llvmGlobal, initializer.llvm)
 

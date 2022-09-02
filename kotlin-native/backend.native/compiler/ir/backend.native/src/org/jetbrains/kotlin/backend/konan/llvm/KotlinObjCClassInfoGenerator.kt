@@ -39,37 +39,37 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
         val exportedClassName = selectExportedClassName(irClass)
         val className = exportedClassName ?: selectInternalClassName(irClass)
 
-        val classNameLiteral = className?.let { staticData.cStringLiteral(it) } ?: NullPointer(int8Type)
+        val classNameLiteral = className?.let { staticData.cStringLiteral(it) } ?: NullPointer(llvm.int8Type)
         val info = Struct(runtime.kotlinObjCClassInfo,
-                classNameLiteral,
-                Int32(if (exportedClassName != null) 1 else 0),
+                          classNameLiteral,
+                          llvm.constInt32(if (exportedClassName != null) 1 else 0),
 
-                staticData.cStringLiteral(superclassName),
-                staticData.placeGlobalConstArray("", int8TypePtr,
-                        protocolNames.map { staticData.cStringLiteral(it) } + NullPointer(int8Type)),
+                          staticData.cStringLiteral(superclassName),
+                          staticData.placeGlobalConstArray("", llvm.int8PtrType,
+                        protocolNames.map { staticData.cStringLiteral(it) } + NullPointer(llvm.int8Type)),
 
-                staticData.placeGlobalConstArray("", runtime.objCMethodDescription, instanceMethods),
-                Int32(instanceMethods.size),
+                          staticData.placeGlobalConstArray("", runtime.objCMethodDescription, instanceMethods),
+                          llvm.constInt32(instanceMethods.size),
 
-                staticData.placeGlobalConstArray("", runtime.objCMethodDescription, classMethods),
-                Int32(classMethods.size),
+                          staticData.placeGlobalConstArray("", runtime.objCMethodDescription, classMethods),
+                          llvm.constInt32(classMethods.size),
 
-                objCLLvmDeclarations.bodyOffsetGlobal.pointer,
+                          objCLLvmDeclarations.bodyOffsetGlobal.pointer,
 
-                irClass.typeInfoPtr,
-                companionObject?.typeInfoPtr ?: NullPointer(runtime.typeInfoType),
+                          irClass.typeInfoPtr,
+                          companionObject?.typeInfoPtr ?: NullPointer(runtime.typeInfoType),
 
-                staticData.placeGlobal(
+                          staticData.placeGlobal(
                         "kobjcclassptr:${irClass.fqNameForIrSerialization}#internal",
-                        NullPointer(int8Type)
+                        NullPointer(llvm.int8Type)
                 ).pointer,
 
-                generateClassDataImp(irClass)
+                          generateClassDataImp(irClass)
         )
 
         objCLLvmDeclarations.classInfoGlobal.setInitializer(info)
 
-        objCLLvmDeclarations.bodyOffsetGlobal.setInitializer(Int32(0))
+        objCLLvmDeclarations.bodyOffsetGlobal.setInitializer(llvm.constInt32(0))
     }
 
     private fun IrClass.generateMethodDescs(): List<ObjCMethodDesc> = this.generateImpMethodDescs()
@@ -105,7 +105,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
         null // Generate as anonymous.
     }
 
-    private val impType = pointerType(functionType(int8TypePtr, true, int8TypePtr, int8TypePtr))
+    private val impType = pointerType(functionType(llvm.int8PtrType, true, llvm.int8PtrType, llvm.int8PtrType))
 
     private inner class ObjCMethodDesc(
             val selector: String, val encoding: String, val impFunction: LLVMValueRef
@@ -136,7 +136,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
                 Zero(runtime.kotlinObjCClassData)
         ).pointer
 
-        val functionType = functionType(classDataPointer.llvmType, false, int8TypePtr, int8TypePtr)
+        val functionType = functionType(classDataPointer.llvmType, false, llvm.int8PtrType, llvm.int8PtrType)
         val functionName = "kobjcclassdataimp:${irClass.fqNameForIrSerialization}#internal"
 
         val function = generateFunctionNoRuntime(codegen, functionType, functionName) {

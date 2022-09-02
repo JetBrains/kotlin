@@ -7,37 +7,31 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
 
-private fun RuntimeAware.getLlvmType(primitiveBinaryType: PrimitiveBinaryType?) = when (primitiveBinaryType) {
-    null -> this.kObjHeaderPtr
+private fun PrimitiveBinaryType?.toLlvmType(llvm: Llvm) = when (this) {
+    null -> llvm.kObjHeaderPtr
 
-    PrimitiveBinaryType.BOOLEAN -> int1Type
-    PrimitiveBinaryType.BYTE -> int8Type
-    PrimitiveBinaryType.SHORT -> int16Type
-    PrimitiveBinaryType.INT -> int32Type
-    PrimitiveBinaryType.LONG -> int64Type
-    PrimitiveBinaryType.FLOAT -> floatType
-    PrimitiveBinaryType.DOUBLE -> doubleType
+    PrimitiveBinaryType.BOOLEAN -> llvm.int1Type
+    PrimitiveBinaryType.BYTE -> llvm.int8Type
+    PrimitiveBinaryType.SHORT -> llvm.int16Type
+    PrimitiveBinaryType.INT -> llvm.int32Type
+    PrimitiveBinaryType.LONG -> llvm.int64Type
+    PrimitiveBinaryType.FLOAT -> llvm.floatType
+    PrimitiveBinaryType.DOUBLE -> llvm.doubleType
 
-    PrimitiveBinaryType.VECTOR128 -> vector128Type
-    PrimitiveBinaryType.POINTER -> int8TypePtr
+    PrimitiveBinaryType.VECTOR128 -> llvm.vector128Type
+    PrimitiveBinaryType.POINTER -> llvm.int8PtrType
 }
 
-internal fun RuntimeAware.getLLVMType(type: IrType): LLVMTypeRef =
-        runtime.calculatedLLVMTypes.getOrPut(type) { getLlvmType(type.computePrimitiveBinaryTypeOrNull()) }
-
-internal fun RuntimeAware.getLLVMType(type: DataFlowIR.Type) =
-        getLlvmType(type.primitiveBinaryType)
+internal fun IrType.toLLVMType(llvm: Llvm): LLVMTypeRef =
+        llvm.runtime.calculatedLLVMTypes.getOrPut(this) { computePrimitiveBinaryTypeOrNull().toLlvmType(llvm) }
 
 internal fun IrType.isVoidAsReturnType() = isUnit() || isNothing()
 
-internal fun RuntimeAware.getLLVMReturnType(type: IrType): LLVMTypeRef {
-    return when {
-        type.isVoidAsReturnType() -> voidType
-        else -> getLLVMType(type)
-    }
+internal fun IrType.getLLVMReturnType(llvm: Llvm) = when {
+    isVoidAsReturnType() -> llvm.voidType
+    else -> toLLVMType(llvm)
 }
