@@ -166,6 +166,12 @@ internal object Phases {
             prerequisite = setOf(createSymbolTablePhase)
     )
 
+    fun buildFinalizeCachePhase() = myLower2<CacheContext, Unit>(
+            op = { ctx, _ -> CacheStorage(ctx.config, ctx.llvmImports, ctx.inlineFunctionBodies, ctx.classFields).renameOutput() },
+            name = "FinalizeCache",
+            description = "Finalize cache (rename temp to the final dist)"
+    )
+
     fun buildProduceFrameworkInterfacePhase(): NamedCompilerPhase<ObjCExportContext, Unit> = myLower2(
             op = { ctx, _ -> produceFrameworkInterface(ctx.objCExport) },
             name = "ProduceFrameworkInterface",

@@ -9,8 +9,11 @@ import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.llvm.Llvm
+import org.jetbrains.kotlin.backend.konan.llvm.LlvmImports
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
+import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
+import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -18,6 +21,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -103,3 +108,12 @@ internal class LinkerContextImpl(
         override val coverage: CoverageManager,
         override val llvmModuleSpecification: LlvmModuleSpecification,
 ) : BasicPhaseContext(config), LinkerContext
+
+internal class CacheContextImpl(
+        config: KonanConfig,
+        override val inlineFunctionBodies: MutableList<SerializedInlineFunctionReference>,
+        override val classFields: MutableList<SerializedClassFields>,
+        override val llvmImports: LlvmImports,
+        override val constructedFromExportedInlineFunctions: MutableSet<IrClass>,
+        override val calledFromExportedInlineFunctions: MutableSet<IrFunction>,
+) : BasicPhaseContext(config), CacheContext

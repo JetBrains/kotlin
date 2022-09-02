@@ -318,6 +318,7 @@ internal interface MiddleEndContext :
 }
 
 internal interface ObjectFilesContext : PhaseContext {
+    // Should be a phase output
     var compilerOutput: List<ObjectFile>
 }
 
@@ -329,10 +330,13 @@ internal interface LinkerContext : PhaseContext {
     val coverage: CoverageManager
 }
 
-internal interface CacheAwareContext : BackendPhaseContext, LayoutBuildingContext {
+internal interface CacheContext : PhaseContext {
     val inlineFunctionBodies: MutableList<SerializedInlineFunctionReference>
     val classFields: MutableList<SerializedClassFields>
     val llvmImports: LlvmImports
     val constructedFromExportedInlineFunctions: MutableSet<IrClass>
     val calledFromExportedInlineFunctions: MutableSet<IrFunction>
 }
+
+// TODO: get rid of
+internal interface CacheAwareContext : CacheContext, LayoutBuildingContext

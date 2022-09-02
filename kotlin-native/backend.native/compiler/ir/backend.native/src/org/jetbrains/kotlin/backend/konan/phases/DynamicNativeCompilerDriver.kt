@@ -209,18 +209,18 @@ class DynamicNativeCompilerDriver(
     }
 
     private fun buildStaticCache(config: KonanConfig, environment: KotlinCoreEnvironment) {
+
         val frontendPhase = Phases.buildFrontendPhase()
-        val createSymbolTablePhase = Phases.buildCreateSymbolTablePhase()
-        val psiToIrPhase = Phases.buildTranslatePsiToIrPhase(isProducingLibrary = false, createSymbolTablePhase)
-        val destroySymbolTablePhase = Phases.buildDestroySymbolTablePhase(createSymbolTablePhase)
-        val buildAdditionalCacheInfoPhase = Phases.buildBuildAdditionalCacheInfoPhase(psiToIrPhase)
         val frontendContext: FrontendContext = FrontendContextImpl(config, environment)
         if (!runTopLevelPhase(frontendContext, frontendPhase, true)) {
             return
         }
+
+        val createSymbolTablePhase = Phases.buildCreateSymbolTablePhase()
+        val psiToIrPhase = Phases.buildTranslatePsiToIrPhase(isProducingLibrary = false, createSymbolTablePhase)
+        val destroySymbolTablePhase = Phases.buildDestroySymbolTablePhase(createSymbolTablePhase)
+        val buildAdditionalCacheInfoPhase = Phases.buildBuildAdditionalCacheInfoPhase(psiToIrPhase)
         val objCExportPhase = Phases.buildObjCExportPhase(createSymbolTablePhase)
-        val context = Context(config)
-        context.populateFromFrontend(frontendContext)
         val irGen = NamedCompilerPhase(
                 "IRGen",
                 "IR generation",
@@ -230,6 +230,8 @@ class DynamicNativeCompilerDriver(
                         psiToIrPhase then
                         destroySymbolTablePhase
         )
+        val context = Context(config)
+        context.populateFromFrontend(frontendContext)
         val objcExportContext: ObjCExportContext = context
         runTopLevelPhaseUnit(objcExportContext, irGen)
 
@@ -298,10 +300,21 @@ class DynamicNativeCompilerDriver(
         )
         val linkerPhase = Phases.buildLinkerPhase(objectFilesContext.compilerOutput)
         runTopLevelPhaseUnit(linkerContext, linkerPhase)
+
+        val finalizeCachePhase = Phases.buildFinalizeCachePhase()
+        val cacheContext = CacheContextImpl(
+                config,
+                context.inlineFunctionBodies,
+                context.classFields,
+                context.llvmImports,
+                context.constructedFromExportedInlineFunctions,
+                context.calledFromExportedInlineFunctions
+        )
+        runTopLevelPhaseUnit(cacheContext, finalizeCachePhase)
     }
 
     private fun buildBitcodePhases(config: KonanConfig): NamedCompilerPhase<BitcodegenContext, IrModuleFragment> {
-        // TODO: Use `disable` mechanism instead.
+        // TODO: Ugly and hard to manage. Use `disable` mechanism instead.
         val dfgPhase = optionalPhase(config.optimizationsEnabled) { Phases.getBuildDFGPhase() }
         val devirtualizationAnalysisPhase = optionalPhase(config.optimizationsEnabled) { Phases.getDevirtualizationAnalysisPhase(dfgPhase) }
         val removeRedundantCallsToFileInitializersPhase = optionalPhase(config.optimizationsEnabled) { Phases.getRemoveRedundantCallsToFileInitializersPhase(devirtualizationAnalysisPhase) }
@@ -407,33 +420,6 @@ class DynamicNativeCompilerDriver(
                     createLLVMDeclarationsPhase then
                     ghaPhase
     )
-
-    private fun getBitcodePhase(): NamedCompilerPhase<Context, IrModuleFragment> {
-        val lto = optionalPhase {
-            ltoPhases().takeIf { requiresLto() }
-        }
-        val generateDebugInfoHeader = optionalPhase {
-            generateDebugInfoHeaderPhase.takeIf { shouldContainAnyDebugInfo() }
-        }
-        return NamedCompilerPhase(
-                name = "Bitcode",
-                description = "LLVM Bitcode generation",
-                lower = contextLLVMSetupPhase then
-                        returnsInsertionPhase then
-                        lto then
-                        RTTIPhase then
-                        generateDebugInfoHeader then
-                        escapeAnalysisPhase then
-                        codegenPhase then
-                        finalizeDebugInfoPhase
-        )
-    }
-
-    private fun requiresLto() = config.optimizationsEnabled
-
-    private fun shouldContainDebugInfo() = config.debug
-    private fun shouldContainLocationDebugInfo() = shouldContainDebugInfo() || config.lightDebug
-    private fun shouldContainAnyDebugInfo() = shouldContainDebugInfo() || shouldContainLocationDebugInfo()
 }
 
 private fun <Context : CommonBackendContext, Input, Output> sink(output: (Input) -> Output) = object : CompilerPhase<Context, Input, Output> {
