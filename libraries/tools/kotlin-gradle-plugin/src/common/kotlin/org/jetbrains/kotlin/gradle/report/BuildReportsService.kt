@@ -111,15 +111,14 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
     }
 
     private fun reportBuildFinish() {
-        val finishTime = System.nanoTime()
         val buildFinishData = BuildFinishStatisticsData(
             projectName = parameters.projectName.get(),
             startParameters = parameters.startParameters.get()
                 .includeVerboseEnvironment(parameters.reportingSettings.get().httpReportSettings?.verboseEnvironment ?: false),
             buildUuid = buildUuid,
             label = parameters.label.orNull,
-            totalTime = (finishTime - startTime) / 1_000_000,
-            finishTime = finishTime,
+            totalTime = (System.nanoTime() - startTime) / 1_000_000,
+            finishTime = System.currentTimeMillis(),
             hostName = hostName
         )
         sendDataViaHttp(buildFinishData)
