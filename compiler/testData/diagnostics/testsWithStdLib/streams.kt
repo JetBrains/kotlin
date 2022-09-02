@@ -1,5 +1,6 @@
 // FIR_IDENTICAL
 // FULL_JDK
+// WITH_STDLIB
 // STDLIB_JDK8
 
 import java.util.*
