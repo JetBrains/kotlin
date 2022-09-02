@@ -50,9 +50,7 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
     }
 
     override fun findFilesForFacadeByPackage(packageFqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> {
-        return project.createDeclarationProvider(searchScope)
-            .findFilesForFacadeByPackage(packageFqName)
-            .filter { it.isFromSourceOrLibraryBinary(project) }
+        return project.createDeclarationProvider(searchScope).findFilesForFacadeByPackage(packageFqName)
     }
 
     private fun FqName.toClassIdSequence(): Sequence<ClassId> {
@@ -142,9 +140,7 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
         emptyList() //TODO Implement if necessary for symbol
 
     override fun findFilesForFacade(facadeFqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> {
-        return project.createDeclarationProvider(searchScope)
-            .findFilesForFacade(facadeFqName)
-            .filter { it.isFromSourceOrLibraryBinary(project) }
+        return project.createDeclarationProvider(searchScope).findFilesForFacade(facadeFqName)
     }
 
     override fun getFakeLightClass(classOrObject: KtClassOrObject): KtFakeLightClass = SymbolBasedFakeLightClass(classOrObject)
