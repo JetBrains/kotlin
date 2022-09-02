@@ -516,7 +516,7 @@ private inline fun <T : JsNode> T.addSourceInfoIfNeed(node: IrElement, context: 
 
 private fun JsLocation.withEmbeddedSource(
     context: JsGenerationContext
-) = JsLocationWithEmbeddedSource(this, identityObject = context.currentFile) {
+) = JsLocationWithEmbeddedSource(this, fileIdentity = context.currentFile) {
     try {
         InputStreamReader(FileInputStream(file), StandardCharsets.UTF_8)
     } catch (e: IOException) {

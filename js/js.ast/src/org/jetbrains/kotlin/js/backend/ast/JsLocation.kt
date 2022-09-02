@@ -23,7 +23,7 @@ data class JsLocation(
     override val startLine: Int,
     override val startChar: Int
 ) : JsLocationWithSource {
-    override val identityObject: Any?
+    override val fileIdentity: Any?
         get() = null
     override val sourceProvider: () -> Reader?
         get() = { null }
@@ -35,7 +35,11 @@ interface JsLocationWithSource {
     val file: String
     val startLine: Int
     val startChar: Int
-    val identityObject: Any?
+
+    /**
+     * An object to distinguish different files with the same paths
+     */
+    val fileIdentity: Any?
     val sourceProvider: () -> Reader?
 
     fun asSimpleLocation(): JsLocation
@@ -43,6 +47,6 @@ interface JsLocationWithSource {
 
 class JsLocationWithEmbeddedSource(
     private val location: JsLocation,
-    override val identityObject: Any?,
+    override val fileIdentity: Any?,
     override val sourceProvider: () -> Reader?
 ) : JsLocationWithSource by location

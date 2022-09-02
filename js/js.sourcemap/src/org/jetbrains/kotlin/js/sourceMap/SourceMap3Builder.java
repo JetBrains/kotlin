@@ -122,11 +122,11 @@ public class SourceMap3Builder implements SourceMapBuilder {
 
     @Override
     public void addMapping(
-            @NotNull String source, @Nullable Object identityObject, @NotNull Supplier<Reader> sourceContent,
+            @NotNull String source, @Nullable Object sourceFileIdentity, @NotNull Supplier<Reader> sourceContent,
             int sourceLine, int sourceColumn
     ) {
         source = source.replace(File.separatorChar, '/');
-        int sourceIndex = getSourceIndex(source, identityObject, sourceContent);
+        int sourceIndex = getSourceIndex(source, sourceFileIdentity, sourceContent);
 
         if (!currentMappingIsEmpty && previousSourceIndex == sourceIndex && previousSourceLine == sourceLine &&
             previousSourceColumn == sourceColumn) {

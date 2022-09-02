@@ -81,7 +81,7 @@ class SourceMapBuilderConsumer(
                 }
                 mappingConsumer.addMapping(
                     path,
-                    sourceInfo.identityObject,
+                    sourceInfo.fileIdentity,
                     contentSupplier,
                     sourceInfo.startLine,
                     sourceInfo.startChar
