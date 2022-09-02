@@ -7,6 +7,7 @@ import org.jetbrains.dokka.model.doc.P
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.collections.orEmpty
+import kotlin.test.asserter
 
 @DslMarker
 annotation class TestDSL
@@ -36,6 +37,16 @@ interface AssertDSL {
 
     fun <T> Collection<T>.assertCount(n: Int, prefix: String = "") =
         assert(count() == n) { "${prefix}Expected $n, got ${count()}" }
+}
+
+/*
+ * TODO replace with kotlin.test.assertContains after migrating to Kotlin 1.5+
+ */
+internal fun <T> assertContains(iterable: Iterable<T>, element: T, ) {
+    asserter.assertTrue(
+        { "Expected the collection to contain the element.\nCollection <$iterable>, element <$element>." },
+        iterable.contains(element)
+    )
 }
 
 inline fun <reified T : Any> Any?.assertIsInstance(name: String): T =
