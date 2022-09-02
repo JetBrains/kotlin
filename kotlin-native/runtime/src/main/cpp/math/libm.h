@@ -1,3 +1,5 @@
+#ifdef KONAN_WASM
+
 /* origin: FreeBSD /usr/src/lib/msun/src/math_private.h */
 /*
  * ====================================================
@@ -161,3 +163,5 @@ long double __polevll(long double, const long double *, int);
 long double __p1evll(long double, const long double *, int);
 
 #endif
+
+#endif // KONAN_WASM
