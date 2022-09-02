@@ -24,7 +24,7 @@ internal fun llvmLinkModules2(context: Context, dest: LLVMModuleRef, src: LLVMMo
         }
     })
 
-    return withLlvmDiagnosticHandler(diagnosticHandler) {
+    return withLlvmDiagnosticHandler(context.generationState.llvmContext, diagnosticHandler) {
         LLVMLinkModules2(dest, src)
     }
 }

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionW
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
-import org.jetbrains.kotlin.backend.konan.llvm.getLLVMType
+import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.descriptors.Modality
@@ -425,7 +425,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
             declaredFields
         else
             declaredFields.sortedByDescending {
-                with(context.generationState.llvm) { LLVMStoreSizeOfType(runtime.targetData, getLLVMType(it.type)) }
+                with(context.generationState.llvm) { LLVMStoreSizeOfType(runtime.targetData, it.type.toLLVMType(this)) }
             }
 
         val superFieldsCount = 1 /* First field is ObjHeader */ + superFields.size
