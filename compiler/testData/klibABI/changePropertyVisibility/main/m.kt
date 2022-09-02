@@ -2,10 +2,10 @@ import abitestutils.abiTest
 
 fun box() = abiTest {
     val c = ContainerImpl()
-    expectSuccess(42) { publicToInternalProperty1 }
-    expectSuccess(42) { publicToInternalProperty2 }
-    expectFailure(prefixed("property accessor publicToPrivateProperty1.<get-publicToPrivateProperty1> can not be called")) { publicToPrivateProperty1 }
-    expectFailure(prefixed("property accessor publicToPrivateProperty2.<get-publicToPrivateProperty2> can not be called")) { publicToPrivateProperty2 }
+    expectSuccess(42) { publicToInternalTopLevelProperty1 }
+    expectSuccess(42) { publicToInternalTopLevelProperty2 }
+    expectFailure(prefixed("property accessor publicToPrivateTopLevelProperty1.<get-publicToPrivateTopLevelProperty1> can not be called")) { publicToPrivateTopLevelProperty1 }
+    expectFailure(prefixed("property accessor publicToPrivateTopLevelProperty2.<get-publicToPrivateTopLevelProperty2> can not be called")) { publicToPrivateTopLevelProperty2 }
     expectSuccess(42) { c.publicToProtectedProperty1 }
     expectSuccess(42) { c.publicToProtectedProperty2 }
     expectFailure(prefixed("property accessor publicToInternalProperty1.<get-publicToInternalProperty1> can not be called")) { c.publicToInternalProperty1 }

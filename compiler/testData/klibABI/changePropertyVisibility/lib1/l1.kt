@@ -1,7 +1,7 @@
-public val publicToInternalProperty1 = 42
-public val publicToInternalProperty2 get() = 42
-public val publicToPrivateProperty1 = 42
-public val publicToPrivateProperty2 get() = 42
+public val publicToInternalTopLevelProperty1 = 42
+public val publicToInternalTopLevelProperty2 get() = 42
+public val publicToPrivateTopLevelProperty1 = 42
+public val publicToPrivateTopLevelProperty2 get() = 42
 
 open class Container {
     public val publicToProtectedProperty1 = 42
