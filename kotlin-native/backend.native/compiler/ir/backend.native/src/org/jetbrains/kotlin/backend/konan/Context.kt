@@ -242,7 +242,7 @@ internal class Context(
             }
             field = module!!
 
-            llvm = Llvm(this, config, module)
+            llvm = Llvm(this, this.llvmModuleSpecification, config, module)
             debugInfo = DebugInfo(this, llvm, llvm.runtime.targetData)
         }
 

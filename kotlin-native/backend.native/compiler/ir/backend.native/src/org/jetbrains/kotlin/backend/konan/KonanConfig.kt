@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.KonanHomeProvider
-import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
@@ -422,7 +421,7 @@ class KonanConfig(
     internal val libraryToCache: PartialCacheInfo?
         get() = cacheSupport.libraryToCache
 
-    internal val producePerFileCache = libraryToCache?.strategy is CacheDeserializationStrategy.SingleFile
+    internal val producePerFileCache = configuration.getBoolean(KonanConfigKeys.MAKE_PER_FILE_CACHE) //libraryToCache?.strategy is CacheDeserializationStrategy.SingleFile
 
     val outputFiles =
             OutputFiles(configuration.get(KonanConfigKeys.OUTPUT) ?: cacheSupport.tryGetImplicitOutput(),

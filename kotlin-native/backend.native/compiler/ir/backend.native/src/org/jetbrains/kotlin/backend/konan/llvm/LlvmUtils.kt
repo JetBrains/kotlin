@@ -262,7 +262,13 @@ internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef, origin: 
     val found = LLVMGetNamedGlobal(context.llvmModule, name)
     return if (found != null) {
         assert (getGlobalType(found) == type)
-        assert (LLVMGetInitializer(found) == null) { "$name is already declared in the current module" }
+        assert (LLVMGetInitializer(found) == null) {
+            val moduleName: String = memScoped {
+                val sizeVar = alloc<size_tVar>()
+                LLVMGetModuleIdentifier(context.llvmModule, sizeVar.ptr)!!.toKStringFromUtf8()
+            }
+            "$name is already declared in the current module $moduleName"
+        }
         found
     } else {
         addGlobal(name, type, isExported = false)

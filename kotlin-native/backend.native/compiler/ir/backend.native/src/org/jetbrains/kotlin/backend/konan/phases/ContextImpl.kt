@@ -236,7 +236,7 @@ internal class BitcodegenContextImpl(
         private val cacheContext: CacheContext,
 ) : BasicBackendPhaseContext(payload), BitcodegenContext {
 
-    override var necessaryLlvmParts: NecessaryLlvmParts = NecessaryLlvmParts(emptyList(), emptyList(), emptyList())
+    override var necessaryLlvmParts: NecessaryLlvmParts = NecessaryLlvmParts(emptySet(), emptySet(), emptySet())
 
     override var llvmDeclarations: LlvmDeclarations = LlvmDeclarations(emptyMap())
 

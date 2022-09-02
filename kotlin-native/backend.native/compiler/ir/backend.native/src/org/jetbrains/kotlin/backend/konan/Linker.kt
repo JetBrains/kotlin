@@ -99,9 +99,9 @@ internal class CacheStorage(
  * Parts of [org.jetbrains.kotlin.backend.konan.llvm.Llvm] that are required at linker stage.
  */
 class NecessaryLlvmParts(
-        val allCachedBitcodeDependencies: List<KonanLibrary>,
-        val nativeDependenciesToLink: List<KonanLibrary>,
-        val allNativeDependencies: List<KonanLibrary>,
+        val allCachedBitcodeDependencies: Set<KonanLibrary>,
+        val nativeDependenciesToLink: Set<KonanLibrary>,
+        val allNativeDependencies: Set<KonanLibrary>,
 )
 
 // TODO: We have a Linker.kt file in the shared module.

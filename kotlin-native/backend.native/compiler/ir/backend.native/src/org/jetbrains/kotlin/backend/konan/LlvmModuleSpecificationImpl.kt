@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
+import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.library.KotlinLibrary
 
@@ -47,4 +49,22 @@ internal class CacheLlvmModuleSpecification(
     override val isFinal = false
 
     override fun containsLibrary(library: KotlinLibrary): Boolean = library == libraryToCache
+}
+
+internal class FileCacheLlvmModuleSpecification(
+        private val context: Context,
+        cachedLibraries: CachedLibraries,
+        private val libraryToCache: PartialCacheInfo
+) : LlvmModuleSpecificationBase(cachedLibraries) {
+    override val isFinal = false
+
+    override fun containsLibrary(library: KotlinLibrary): Boolean = library == libraryToCache.klib
+
+    @Suppress("IncorrectFormatting")
+    override fun containsDeclaration(declaration: IrDeclaration): Boolean {
+        return (context.shouldDefineFunctionClasses && declaration.getPackageFragment().packageFragmentDescriptor is FunctionInterfacePackageFragment)
+                || (super.containsDeclaration(declaration)
+                && (libraryToCache.strategy as? CacheDeserializationStrategy.SingleFile)
+                ?.filePath.let { it == null || it == declaration.fileOrNull?.path })
+    }
 }

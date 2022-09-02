@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.konan.phases.ConfigChecks
 import org.jetbrains.kotlin.konan.exec.Command
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.*
 
 typealias BitcodeFile = String
@@ -50,7 +50,8 @@ internal class BitcodeCompiler(val config: KonanConfig, val logger: LoggingConte
     }
 
     private fun clang(configurables: ClangFlags, file: BitcodeFile): ObjectFile {
-        val objectFile = temporary("result", ".o")
+        val name = File(file).name
+        val objectFile = temporary("$name", ".o")
 
         val targetTriple = if (configurables is AppleConfigurables) {
             platform.targetTriple.withOSVersion(configurables.osVersionMin)

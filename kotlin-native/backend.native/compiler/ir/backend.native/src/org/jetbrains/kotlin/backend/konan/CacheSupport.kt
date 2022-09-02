@@ -34,17 +34,16 @@ sealed class CacheDeserializationStrategy {
         override fun contains(fqName: FqName, fileName: String) = true
     }
 
-    class SingleFile(val filePath: String) : CacheDeserializationStrategy() {
+    class SingleFile(val filePath: String, var fqName: String) : CacheDeserializationStrategy() {
         override fun contains(filePath: String) = filePath == this.filePath
 
-        lateinit var fqName: String
 
         override fun contains(fqName: FqName, fileName: String) =
                 fqName.asString() == this.fqName && File(filePath).name == fileName
     }
 }
 
-class PartialCacheInfo(val klib: KotlinLibrary, val strategy: CacheDeserializationStrategy)
+class PartialCacheInfo(val klib: KotlinLibrary, var strategy: CacheDeserializationStrategy)
 
 class CacheSupport(
         private val configuration: CompilerConfiguration,
@@ -133,7 +132,7 @@ class CacheSupport(
             null
         else {
             val fileToCache = configuration.get(KonanConfigKeys.FILE_TO_CACHE)
-            PartialCacheInfo(libraryToAddToCache, if (fileToCache == null) CacheDeserializationStrategy.WholeModule else CacheDeserializationStrategy.SingleFile(fileToCache))
+            PartialCacheInfo(libraryToAddToCache, if (fileToCache == null) CacheDeserializationStrategy.WholeModule else CacheDeserializationStrategy.SingleFile(fileToCache, ""))
         }
     }
 

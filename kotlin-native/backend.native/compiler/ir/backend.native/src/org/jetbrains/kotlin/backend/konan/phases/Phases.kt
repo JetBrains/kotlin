@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -230,11 +227,11 @@ internal object Phases {
             }
     )
 
-    fun buildWriteLlvmModule(): NamedCompilerPhase<LlvmCodegenContext, Unit> = myLower2(
+    fun buildWriteLlvmModule(outputFileName: String? = null): NamedCompilerPhase<LlvmCodegenContext, Unit> = myLower2(
             name = "WriteLlvm",
             description = "Write LLVM module to file",
             op = { context, _ ->
-                val output = context.config.tempFiles.nativeBinaryFileName
+                val output = outputFileName ?: context.config.tempFiles.nativeBinaryFileName
                 context.bitcodeFileName = output
                 // Insert `_main` after pipeline so we won't worry about optimizations
                 // corrupting entry point.
@@ -614,9 +611,53 @@ internal object Phases {
             }
     )
 
+    fun buildRTTIPhase() = makeKonanModuleOpPhase<BitcodegenContext>(
+            name = "RTTI",
+            description = "RTTI generation",
+            op = { context, irModule ->
+                val visitor = RTTIGeneratorVisitor(context)
+                irModule.acceptVoid(visitor)
+                visitor.dispose()
+            }
+    )
+
+    fun buildGenerateDebugInfoHeaderPhase() = makeKonanModuleOpPhase<BitcodegenContext>(
+            name = "GenerateDebugInfoHeader",
+            description = "Generate debug info header",
+            op = { context, _ -> generateDebugInfoHeader(context) }
+    )
+
+    fun buildCodegenPhase() = makeKonanModuleOpPhase<BitcodegenContext>(
+            name = "Codegen",
+            description = "Code generation",
+            op = { context, irModule ->
+                val codegenVisitor = CodeGeneratorVisitor(context, context.lifetimes)
+                irModule.acceptVoid(codegenVisitor)
+                context.necessaryLlvmParts = NecessaryLlvmParts(
+                        context.llvm.allCachedBitcodeDependencies.toSet(),
+                        context.llvm.nativeDependenciesToLink.toSet(),
+                        context.llvm.allNativeDependencies.toSet(),
+                )
+            }
+    )
+
+    fun buildFinalizeDebugInfoPhase() = makeKonanModuleOpPhase<BitcodegenContext>(
+            name = "FinalizeDebugInfo",
+            description = "Finalize debug info",
+            op = { context, _ ->
+                if (context.config.checks.shouldContainAnyDebugInfo()) {
+                    DIFinalize(context.debugInfo.builder)
+                }
+            }
+    )
+
     fun buildBitcodePhases(needSetup: Boolean): NamedCompilerPhase<BitcodegenContext, IrModuleFragment> {
         val contextLLVMSetupPhase = buildContextLLVMSetupPhase(needSetup)
         val createLLVMDeclarationsPhase = buildCreateLLVMDeclarationsPhase()
+        val RTTIPhase = buildRTTIPhase()
+        val generateDebugInfoHeaderPhase = buildGenerateDebugInfoHeaderPhase()
+        val codegenPhase = buildCodegenPhase()
+        val finalizeDebugInfoPhase = buildFinalizeDebugInfoPhase()
         val bitcodegenPhase = NamedCompilerPhase<BitcodegenContext, IrModuleFragment>(
                 name = "BitcodeGen",
                 description = "Generation of LLVM module",

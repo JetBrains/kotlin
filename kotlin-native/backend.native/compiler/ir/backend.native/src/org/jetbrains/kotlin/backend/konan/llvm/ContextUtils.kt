@@ -10,6 +10,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
+import org.jetbrains.kotlin.backend.konan.phases.BackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
 import org.jetbrains.kotlin.backend.konan.phases.LlvmModuleSpecificationComponent
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
@@ -338,7 +339,8 @@ internal class InitializersGenerationState {
 }
 
 internal class Llvm(
-        val context: LlvmModuleSpecificationComponent,
+        val context: BackendPhaseContext,
+        val llvmModuleSpecification: LlvmModuleSpecification,
         val config: KonanConfig,
         val llvmModule: LLVMModuleRef
 ) : RuntimeAware {
@@ -485,11 +487,11 @@ internal class Llvm(
     }
 
     private fun shouldContainBitcode(library: KonanLibrary): Boolean {
-        if (!context.llvmModuleSpecification.containsLibrary(library)) {
+        if (!llvmModuleSpecification.containsLibrary(library)) {
             return false
         }
 
-        if (!context.llvmModuleSpecification.isFinal) {
+        if (llvmModuleSpecification.isFinal) {
             return true
         }
 
