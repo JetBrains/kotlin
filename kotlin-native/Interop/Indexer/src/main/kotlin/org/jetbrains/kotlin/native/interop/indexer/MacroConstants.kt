@@ -26,10 +26,10 @@ import java.io.File
 internal fun findMacros(
         nativeIndex: NativeIndexImpl,
         compilation: CompilationWithPCH,
-        translationUnit: CXTranslationUnit,
+        translationUnits: List<CXTranslationUnit>,
         headers: Set<CXFile?>
 ) {
-    val names = collectMacroNames(nativeIndex, translationUnit, headers)
+    val names = collectMacroNames(nativeIndex, translationUnits, headers)
     // TODO: apply user-defined filters.
     val macros = expandMacros(compilation, names, typeConverter = { nativeIndex.convertType(it) })
 
@@ -291,25 +291,27 @@ enum class VisitorState {
     EXPECT_END, INVALID
 }
 
-private fun collectMacroNames(nativeIndex: NativeIndexImpl, translationUnit: CXTranslationUnit, headers: Set<CXFile?>): List<String> {
+private fun collectMacroNames(nativeIndex: NativeIndexImpl, translationUnits: List<CXTranslationUnit>, headers: Set<CXFile?>): List<String> {
     val result = mutableSetOf<String>()
 
-    visitChildren(translationUnit) { cursor, _ ->
-        val file = memScoped {
-            val fileVar = alloc<CXFileVar>()
-            clang_getFileLocation(clang_getCursorLocation(cursor), fileVar.ptr, null, null, null)
-            fileVar.value
-        }
+    translationUnits.forEach {
+        visitChildren(it) { cursor, _ ->
+            val file = memScoped {
+                val fileVar = alloc<CXFileVar>()
+                clang_getFileLocation(clang_getCursorLocation(cursor), fileVar.ptr, null, null, null)
+                fileVar.value
+            }
 
-        if (cursor.kind == CXCursorKind.CXCursor_MacroDefinition &&
-                nativeIndex.library.includesDeclaration(cursor) &&
-                file != null && // Builtin macros mostly seem to be useless.
-                file in headers &&
-                canMacroBeConstant(cursor)) {
-            val spelling = getCursorSpelling(cursor)
-            result.add(spelling)
+            if (cursor.kind == CXCursorKind.CXCursor_MacroDefinition &&
+                    nativeIndex.library.includesDeclaration(cursor) &&
+                    file != null && // Builtin macros mostly seem to be useless.
+                    file in headers &&
+                    canMacroBeConstant(cursor)) {
+                val spelling = getCursorSpelling(cursor)
+                result.add(spelling)
+            }
+            CXChildVisitResult.CXChildVisit_Continue
         }
-        CXChildVisitResult.CXChildVisit_Continue
     }
 
     return result.toList()
