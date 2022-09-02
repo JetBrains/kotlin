@@ -1,5 +1,5 @@
-public fun publicToInternalFunction() = 42
-public fun publicToPrivateFunction() = 42
+public fun publicToInternalTopLevelFunction() = 42
+public fun publicToPrivateTopLevelFunction() = 42
 
 open class Container {
     public fun publicToProtectedFunction() = 42
