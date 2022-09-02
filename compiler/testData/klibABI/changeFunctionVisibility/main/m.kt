@@ -2,8 +2,8 @@ import abitestutils.abiTest
 
 fun box() = abiTest {
     val c = ContainerImpl()
-    expectSuccess(42) { publicToInternalFunction() }
-    expectFailure(prefixed("function publicToPrivateFunction can not be called")) { publicToPrivateFunction() }
+    expectSuccess(42) { publicToInternalTopLevelFunction() }
+    expectFailure(prefixed("function publicToPrivateTopLevelFunction can not be called")) { publicToPrivateTopLevelFunction() }
     expectSuccess(42) { c.publicToProtectedFunction() }
     expectFailure(prefixed("function publicToInternalFunction can not be called")) { c.publicToInternalFunction() }
     expectFailure(prefixed("function publicToPrivateFunction can not be called")) { c.publicToPrivateFunction() }
