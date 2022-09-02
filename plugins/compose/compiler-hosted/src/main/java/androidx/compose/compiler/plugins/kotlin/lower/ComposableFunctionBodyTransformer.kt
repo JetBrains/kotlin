@@ -876,6 +876,8 @@ class ComposableFunctionBodyTransformer(
 
         val emitTraceMarkers = traceEventMarkersEnabled && !scope.function.isInline
 
+        scope.updateIntrinsiceRememberSafety(!mightUseDefaultGroup(false, scope, defaultParam))
+
         transformed = transformed.apply {
             transformChildrenVoid()
             if (emitTraceMarkers) {
@@ -1009,6 +1011,8 @@ class ComposableFunctionBodyTransformer(
         val (nonReturningBody, returnVar) = body.asBodyAndResultVar()
 
         val emitTraceMarkers = traceEventMarkersEnabled && !scope.isInlinedLambda
+
+        scope.updateIntrinsiceRememberSafety(!mightUseDefaultGroup(canSkipExecution, scope, null))
 
         // we must transform the body first, since that will allow us to see whether or not we
         // are using the dispatchReceiverParameter or the extensionReceiverParameter
@@ -1166,6 +1170,10 @@ class ComposableFunctionBodyTransformer(
 
         val defaultScope = transformDefaults(scope)
 
+        scope.updateIntrinsiceRememberSafety(
+            !mightUseDefaultGroup(canSkipExecution, scope, defaultParam)
+        )
+
         // we must transform the body first, since that will allow us to see whether or not we
         // are using the dispatchReceiverParameter or the extensionReceiverParameter
         val transformed = nonReturningBody.apply {
@@ -1318,6 +1326,25 @@ class ComposableFunctionBodyTransformer(
             }
         }
         return parametersScope
+    }
+
+    // Conservatively determine if a default group might be used. This must return true if
+    // if the scopes's hasDefaultGroup will be true after calling
+    // buildPreambleStatementsAndReturnIfSkippingPossible but can be true in cases where it is
+    // false. If they disagree the worst case is that intrisnic remember is disabled when it could
+    // have been enabled.
+    private fun mightUseDefaultGroup(
+        isSkippableDeclaration: Boolean,
+        scope: Scope.FunctionScope,
+        defaultParam: IrDefaultBitMaskValue?
+    ): Boolean {
+        if (!isSkippableDeclaration) return false
+        if (defaultParam == null) return false
+        val parameters = scope.allTrackedParams
+
+        // if any parameter we are tracking has a non-static default value then we will probably
+        // create a default group.
+        return parameters.any { it.defaultValue?.expression?.isStatic() == false }
     }
 
     private fun buildPreambleStatementsAndReturnIfSkippingPossible(
@@ -2172,10 +2199,6 @@ class ComposableFunctionBodyTransformer(
         )
     }
 
-    private fun irSkipCurrentGroup(): IrExpression {
-        return irMethodCall(irCurrentComposer(), skipCurrentGroupFunction)
-    }
-
     private fun irEndReplaceableGroup(
         startOffset: Int = UNDEFINED_OFFSET,
         endOffset: Int = UNDEFINED_OFFSET
@@ -2439,7 +2462,7 @@ class ComposableFunctionBodyTransformer(
         )
     }
 
-    private fun encounteredComposableCall(withGroups: Boolean) {
+    private fun encounteredComposableCall(withGroups: Boolean, isCached: Boolean) {
         var scope: Scope? = currentScope
         // it is important that we only report "withGroups: false" for the _nearest_ scope, and
         // every scope above that it effectively means there was a group even if it is false
@@ -2447,14 +2470,14 @@ class ComposableFunctionBodyTransformer(
         loop@ while (scope != null) {
             when (scope) {
                 is Scope.FunctionScope -> {
-                    scope.recordComposableCall(groups)
+                    scope.recordComposableCall(groups, isCached)
                     groups = true
                     if (!scope.isInlinedLambda) {
                         break@loop
                     }
                 }
                 is Scope.BlockScope -> {
-                    scope.recordComposableCall(groups)
+                    scope.recordComposableCall(groups, isCached)
                     groups = true
                 }
                 is Scope.ClassScope -> {
@@ -2790,7 +2813,8 @@ class ComposableFunctionBodyTransformer(
 
     private fun visitNormalComposableCall(expression: IrCall): IrExpression {
         encounteredComposableCall(
-            withGroups = !expression.symbol.owner.isReadonly()
+            withGroups = !expression.symbol.owner.isReadonly(),
+            isCached = false
         )
         // it's important that we transform all of the parameters here since this will cause the
         // IrGetValue's of remapped default parameters to point to the right variable.
@@ -2924,17 +2948,18 @@ class ComposableFunctionBodyTransformer(
         loop@ while (scope != null) {
             when (scope) {
                 is Scope.FunctionScope -> {
-                    return if (scope.hasComposableCallsWithGroups || scope.hasDefaultsGroup) {
+                    return if (
+                        !scope.isIntrinsiceRememberSafe
+                    ) {
                         false
-                    } else if (scope.isInlinedLambda) {
-                        scope = scope.parent
-                        continue@loop
-                    } else {
-                        true
-                    }
+                    } else !scope.isInlinedLambda
                 }
-                is Scope.BranchScope -> {
-                    return !scope.hasComposableCallsWithGroups
+                is Scope.ParametersScope -> {
+                    return scope.isIntrinsiceRememberSafe
+                }
+                is Scope.CaptureScope -> {
+                    scope = scope.parent
+                    continue
                 }
                 else -> {
                     // Any other scope type the behavior is undefined and we cannot rely on
@@ -2947,6 +2972,7 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun visitRememberCall(expression: IrCall): IrExpression {
+        if (!canElideRememberGroup()) return visitNormalComposableCall(expression)
         val inputArgs = mutableListOf<IrExpression>()
         var hasSpreadArgs = false
         var calculationArg: IrExpression? = null
@@ -2986,21 +3012,38 @@ class ComposableFunctionBodyTransformer(
         }
 
         if (calculationArg == null) {
-            encounteredComposableCall(withGroups = true)
+            encounteredComposableCall(withGroups = true, isCached = false)
             recordCallInSource(call = expression)
             return expression
         }
         if (hasSpreadArgs || !canElideRememberGroup()) {
-            encounteredComposableCall(withGroups = true)
+            encounteredComposableCall(withGroups = true, isCached = false)
             recordCallInSource(call = expression)
             calculationArg.transform(this, null)
             return expression
         }
 
-        encounteredComposableCall(withGroups = false)
+        encounteredComposableCall(withGroups = false, isCached = true)
+
+        // Build the change parameters as if this was a call to remember to ensure the
+        // use of the $dirty flags are calculated correctly.
+        inputArgs.map { paramMetaOf(it, isProvided = true) }.also {
+            buildChangedParamsForCall(
+                contextParams = emptyList(),
+                valueParams = it,
+                extensionParam = null,
+                dispatchParam = null
+            )
+        }
+
+        // We can only rely on the $changed or $dirty if the flags are correctly updated in
+        // the restart function or the result of replacing remember with cached will be
+        // different.
+        val changedTestFunction = if (updateChangedFlagsFunction == null) ::irChanged
+            else ::irChangedOrInferredChanged
 
         val invalidExpr = inputArgs
-            .mapNotNull(::irChangedOrInferredChanged)
+            .mapNotNull(changedTestFunction)
             .reduceOrNull { acc, changed -> irBooleanOr(acc, changed) }
             ?: irConst(false)
 
@@ -3089,7 +3132,7 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun visitKeyCall(expression: IrCall): IrExpression {
-        encounteredComposableCall(withGroups = true)
+        encounteredComposableCall(withGroups = true, isCached = false)
         val keyArgs = mutableListOf<IrExpression>()
         var blockArg: IrExpression? = null
         for (i in 0 until expression.valueArgumentsCount) {
@@ -3880,10 +3923,13 @@ class ComposableFunctionBodyTransformer(
                 makeEnd?.let { realizeEndCalls(it) }
             }
 
-            fun recordComposableCall(withGroups: Boolean) {
+            fun recordComposableCall(withGroups: Boolean, isCached: Boolean) {
                 hasComposableCalls = true
                 if (withGroups) {
                     hasComposableCallsWithGroups = true
+                }
+                if (isIntrinsiceRememberSafe && (withGroups || !isCached)) {
+                    isIntrinsiceRememberSafe = false
                 }
                 if (coalescableChilds.isNotEmpty()) {
                     // if a call happens after the coalescable child group, then we should
@@ -3983,6 +4029,8 @@ class ComposableFunctionBodyTransformer(
             var hasDefaultsGroup = false
             var hasComposableCallsWithGroups = false
                 private set
+            var isIntrinsiceRememberSafe = true
+                private set
             var hasComposableCalls = false
                 private set
             var hasReturn = false
@@ -3990,6 +4038,11 @@ class ComposableFunctionBodyTransformer(
             var hasJump = false
                 protected set
             private var coalescableChilds = mutableListOf<CoalescableGroupInfo>()
+
+            fun updateIntrinsiceRememberSafety(stillSafe: Boolean) {
+                if (isIntrinsiceRememberSafe && !stillSafe)
+                    isIntrinsiceRememberSafe = false
+            }
 
             class CoalescableGroupInfo(
                 private val scope: BlockScope,

@@ -120,6 +120,7 @@ object ComposeFqNames {
     val composableLambdaFullName =
         internalFqNameFor("ComposableLambdaKt.composableLambda")
     val remember = ComposeCallableIds.remember.asSingleFqName()
+    val cache = ComposeCallableIds.cache.asSingleFqName()
     val key = fqNameFor("key")
     val StableMarker = fqNameFor("StableMarker")
     val Stable = fqNameFor("Stable")
