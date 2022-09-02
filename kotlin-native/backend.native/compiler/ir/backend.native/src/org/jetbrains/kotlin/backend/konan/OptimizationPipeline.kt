@@ -2,10 +2,10 @@ package org.jetbrains.kotlin.backend.konan
 
 import kotlinx.cinterop.*
 import llvm.*
+import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.phases.ConfigChecks
-import org.jetbrains.kotlin.backend.konan.phases.ErrorReportingContext
 import org.jetbrains.kotlin.konan.target.*
 import java.io.Closeable
 

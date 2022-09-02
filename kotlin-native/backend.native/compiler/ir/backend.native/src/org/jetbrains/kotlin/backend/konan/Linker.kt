@@ -1,9 +1,8 @@
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmImports
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
-import org.jetbrains.kotlin.backend.konan.phases.ErrorReportingContext
+import org.jetbrains.kotlin.backend.konan.phases.PhaseContext
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
@@ -111,8 +110,7 @@ internal class Linker(
         private val llvmModuleSpecification: LlvmModuleSpecification,
         private val coverage: CoverageManager,
         private val config: KonanConfig,
-        private val logger: LoggingContext,
-        private val errorReporter: ErrorReportingContext,
+        private val logger: PhaseContext,
 ) {
 
     private val checks = config.checks
@@ -227,7 +225,7 @@ internal class Linker(
                         Also, consider filing an issue with full Gradle log here: https://kotl.in/issue
                         """.trimIndent()
                     else ""
-            errorReporter.reportCompilationError("${e.toolName} invocation reported errors\n$extraUserInfo\n${e.message}")
+            logger.reportCompilationError("${e.toolName} invocation reported errors\n$extraUserInfo\n${e.message}")
         }
         return executable
     }

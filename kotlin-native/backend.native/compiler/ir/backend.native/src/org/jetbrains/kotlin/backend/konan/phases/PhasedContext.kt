@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.konan.phases
 import llvm.LLVMDumpModule
 import llvm.LLVMModuleRef
 import llvm.LLVMTypeRef
+import org.jetbrains.kotlin.backend.common.ErrorReportingContext
+import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysisResult
@@ -22,15 +24,14 @@ import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFG
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.library.KonanLibrary
@@ -41,21 +42,30 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
-internal interface PhaseContext : KonanBackendContext {
+internal interface PhaseContext : LoggingContext, ErrorReportingContext {
     val config: KonanConfig
+    val memoryModel get() = config.memoryModel
+
+    val messageCollector: MessageCollector
+
+    override fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean) {
+        val location = element?.getCompilerMessageLocation(irFile ?: error("irFile should be not null for $element"))
+        this.messageCollector.report(
+                if (isError) CompilerMessageSeverity.ERROR else CompilerMessageSeverity.WARNING,
+                message, location
+        )
+    }
+}
+
+internal interface BackendPhaseContext : PhaseContext, KonanBackendContext {
+    override val configuration get() = config.configuration
 
     val isNativeLibrary: Boolean
 
-    val memoryModel get() = config.memoryModel
-
-    override val configuration get() = config.configuration
+    override fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean)
 }
 
-
-
-internal typealias ErrorReportingContext = KonanBackendContext
-
-internal val PhaseContext.stdlibModule
+internal val BackendPhaseContext.stdlibModule
     get() = this.builtIns.any.module
 
 fun ConfigChecks(config: KonanConfig): ConfigChecks = object : ConfigChecks {
@@ -101,7 +111,7 @@ internal interface FrontendContext : PhaseContext {
 
 // TODO: Consider component-based approach
 internal interface PsiToIrContext :
-        PhaseContext,
+        BackendPhaseContext,
         FrontendContext,
         LlvmModuleSpecificationContext {
     var symbolTable: SymbolTable?
@@ -118,24 +128,22 @@ internal interface PsiToIrContext :
     var expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>
 }
 
+// We don't need this interface if we have a proper phase system
 internal interface ObjCExportContext : PsiToIrContext {
     var objCExport: ObjCExport?
 }
 
+// We don't need this interface if we have a proper phase system
 internal interface CExportContext : PsiToIrContext {
     var cAdapterGenerator: CAdapterGenerator
 }
 
-internal interface TopDownAnalyzerContext : PhaseContext, ConfigChecks {
-    var frontendServices: FrontendServices
-}
-
-internal interface LlvmModuleSpecificationContext : PhaseContext {
+internal interface LlvmModuleSpecificationContext : BackendPhaseContext {
     val llvmModuleSpecification: LlvmModuleSpecification
 
 }
 
-internal interface LlvmModuleContext : PhaseContext {
+internal interface LlvmModuleContext : BackendPhaseContext {
     var llvmModule: LLVMModuleRef?
 
     fun verifyBitCode() {
@@ -149,7 +157,7 @@ internal interface LlvmModuleContext : PhaseContext {
     }
 }
 
-internal interface KlibProducingContext : PhaseContext {
+internal interface KlibProducingContext : BackendPhaseContext {
     val moduleDescriptor: ModuleDescriptor
 
     val irModule: IrModuleFragment?
@@ -167,7 +175,7 @@ internal interface KlibProducingContext : PhaseContext {
 }
 
 internal interface BitcodegenContext :
-        PhaseContext,
+        BackendPhaseContext,
         LayoutBuildingContext,
         BridgesAwareContext,
         LocalClassNameAwareContext,
@@ -175,10 +183,11 @@ internal interface BitcodegenContext :
         LlvmModuleSpecificationContext,
         LtoContext,
         ConfigChecks,
-        CoverageAwareContext,
         CacheAwareContext
 {
     override val config: KonanConfig
+
+    val coverage: CoverageManager
 
     val llvm: Llvm
 
@@ -216,15 +225,11 @@ internal interface BitcodegenContext :
     }
 }
 
-internal interface BridgesAwareContext : PhaseContext {
+internal interface BridgesAwareContext : BackendPhaseContext {
     val bridgesSupport: BridgesSupport
 }
 
-internal interface CoverageAwareContext {
-    val coverage: CoverageManager
-}
-
-internal interface LlvmCodegenContext : PhaseContext, LlvmModuleSpecificationContext, LlvmModuleContext, CoverageAwareContext {
+internal interface LlvmCodegenContext : BackendPhaseContext, LlvmModuleSpecificationContext, LlvmModuleContext {
 
     val llvm: Llvm
 
@@ -233,13 +238,15 @@ internal interface LlvmCodegenContext : PhaseContext, LlvmModuleSpecificationCon
     val cStubsManager: CStubsManager
 
     var bitcodeFileName: String
+
+    val coverage: CoverageManager
 }
 
-internal interface LayoutBuildingContext : PhaseContext {
+internal interface LayoutBuildingContext : BackendPhaseContext {
     fun getLayoutBuilder(irClass: IrClass): ClassLayoutBuilder
 }
 
-internal interface LocalClassNameAwareContext : PhaseContext {
+internal interface LocalClassNameAwareContext : BackendPhaseContext {
 
     val localClassNames: MutableMap<IrAttributeContainer, String>
 
@@ -255,12 +262,13 @@ internal interface LocalClassNameAwareContext : PhaseContext {
 }
 
 internal interface LtoContext :
-        PhaseContext,
+        BackendPhaseContext,
         LayoutBuildingContext,
         BridgesAwareContext,
-        IrModuleContext,
         ConfigChecks
 {
+    val irModule: IrModuleFragment?
+
     var globalHierarchyAnalysisResult: GlobalHierarchyAnalysisResult
 
     fun ghaEnabled(): Boolean
@@ -274,19 +282,16 @@ internal interface LtoContext :
     var lifetimes: MutableMap<IrElement, Lifetime>
 }
 
-internal interface IrModuleContext : PhaseContext {
-    val irModule: IrModuleFragment?
-}
-
 internal interface MiddleEndContext :
         PhaseContext,
         LlvmModuleSpecificationContext,
         LocalClassNameAwareContext,
         BridgesAwareContext,
-        IrModuleContext,
         CacheAwareContext
 {
     override val config: KonanConfig
+
+    val irModule: IrModuleFragment?
 
     val interopBuiltIns: InteropBuiltIns
 
@@ -316,13 +321,15 @@ internal interface ObjectFilesContext : PhaseContext {
     var compilerOutput: List<ObjectFile>
 }
 
-internal interface LinkerContext : PhaseContext, CoverageAwareContext {
+internal interface LinkerContext : PhaseContext {
     val llvmModuleSpecification: LlvmModuleSpecification
 
     val necessaryLlvmParts: NecessaryLlvmParts
+
+    val coverage: CoverageManager
 }
 
-internal interface CacheAwareContext : PhaseContext, LayoutBuildingContext {
+internal interface CacheAwareContext : BackendPhaseContext, LayoutBuildingContext {
     val inlineFunctionBodies: MutableList<SerializedInlineFunctionReference>
     val classFields: MutableList<SerializedClassFields>
     val llvmImports: LlvmImports

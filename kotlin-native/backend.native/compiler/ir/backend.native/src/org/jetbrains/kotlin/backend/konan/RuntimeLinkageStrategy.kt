@@ -48,7 +48,7 @@ internal sealed class RuntimeLinkageStrategy {
             }
             val runtimeModule = LLVMModuleCreateWithNameInContext("runtime", llvmContext)!!
             runtimeNativeLibraries.forEach {
-                val failed = llvmLinkModules2(context, context, runtimeModule, it)
+                val failed = llvmLinkModules2(context, runtimeModule, it)
                 if (failed != 0) {
                     throw Error("Failed to link ${it.getName()}")
                 }

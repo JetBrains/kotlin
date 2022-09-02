@@ -164,7 +164,7 @@ private fun linkAllDependencies(llvmModule: LLVMModuleRef, context: LlvmCodegenC
     val optimizedRuntimeModules = RuntimeLinkageStrategy.pick(context.config, context, runtimeModules).run()
 
     (optimizedRuntimeModules + additionalModules).forEach {
-        val failed = llvmLinkModules2(context, context, llvmModule, it)
+        val failed = llvmLinkModules2(context, llvmModule, it)
         if (failed != 0) {
             error("Failed to link ${it.getName()}")
         }
@@ -291,7 +291,7 @@ internal fun parseAndLinkBitcodeFile(context: LlvmCodegenContext, llvmModule: LL
     if (!context.config.checks.shouldUseDebugInfoFromNativeLibs()) {
         LLVMStripModuleDebugInfo(parsedModule)
     }
-    val failed = llvmLinkModules2(context, context, llvmModule, parsedModule)
+    val failed = llvmLinkModules2(context, llvmModule, parsedModule)
     if (failed != 0) {
         throw Error("failed to link $path")
     }

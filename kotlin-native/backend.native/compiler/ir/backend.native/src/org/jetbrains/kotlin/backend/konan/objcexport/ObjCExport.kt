@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys.Companion.BUNDLE_ID
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
-import org.jetbrains.kotlin.backend.konan.phases.ErrorReportingContext
 import org.jetbrains.kotlin.backend.konan.phases.FrontendContext
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -33,7 +32,6 @@ internal class ObjCExportedInterface(
 
 internal class ObjCExport(
         val context: FrontendContext,
-        private val errorReportingContext: ErrorReportingContext,
         symbolTable: SymbolTable,
         private val config: KonanConfig
 ) {
@@ -69,7 +67,7 @@ internal class ObjCExport(
             )
             val headerGenerator = ObjCExportHeaderGeneratorImpl(
                     config,
-                    errorReportingContext,
+                    context,
                     moduleDescriptors,
                     mapper,
                     namer,

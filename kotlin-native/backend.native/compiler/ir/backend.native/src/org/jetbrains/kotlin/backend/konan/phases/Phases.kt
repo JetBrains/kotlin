@@ -158,7 +158,7 @@ internal object Phases {
 
     fun buildObjCExportPhase(createSymbolTablePhase: NamedCompilerPhase<PsiToIrContext, Unit>): NamedCompilerPhase<ObjCExportContext, Unit> = myLower2<ObjCExportContext, Unit>(
             op = { context, _ ->
-                context.objCExport = ObjCExport(context, context, context.symbolTable!!, context.config)
+                context.objCExport = ObjCExport(context, context.symbolTable!!, context.config)
             },
             name = "ObjCExport",
             description = "Objective-C header generation",
@@ -400,21 +400,20 @@ internal object Phases {
                         ctx.llvmModuleSpecification,
                         ctx.coverage,
                         ctx.config,
-                        ctx as LoggingContext,
-                        ctx as ErrorReportingContext
+                        ctx as PhaseContext,
                 ).link(objectFiles)
             },
             name = "Linker",
             description = "Linker"
     )
 
-    private fun <C : CommonBackendContext, Input, Output> myLower(op: (C, Input) -> Output) = object : CompilerPhase<C, Input, Output> {
+    private fun <C : LoggingContext, Input, Output> myLower(op: (C, Input) -> Output) = object : CompilerPhase<C, Input, Output> {
         override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: C, input: Input): Output {
             return op(context, input)
         }
     }
 
-    private fun <C : CommonBackendContext, Data> myLower2(
+    private fun <C : LoggingContext, Data> myLower2(
             op: (C, Data) -> Data,
             description: String,
             name: String,
@@ -541,7 +540,7 @@ internal object Phases {
             }
     )
 
-    fun getPropertyAccessorInlinePhase() = makeKonanModuleLoweringPhase<PhaseContext>(
+    fun getPropertyAccessorInlinePhase() = makeKonanModuleLoweringPhase<BackendPhaseContext>(
             ::PropertyAccessorInlineLowering,
             name = "PropertyAccessorInline",
             description = "Property accessor inline lowering"

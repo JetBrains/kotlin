@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -32,9 +34,9 @@ internal data class BasicPhaseContextPayload(
         get() = config.configuration
 }
 
-internal abstract class BasicPhaseContext(
+internal abstract class BasicBackendPhaseContext(
         val payload: BasicPhaseContextPayload,
-) : AbstractKonanBackendContext(payload.config), PhaseContext {
+) : AbstractKonanBackendContext(payload.config), BackendPhaseContext {
     override val irBuiltIns: IrBuiltIns
         get() = payload.irBuiltIns
     override val typeSystem: IrTypeSystemContext
@@ -54,26 +56,27 @@ internal abstract class BasicPhaseContext(
     }
 }
 
+internal abstract class BasicPhaseContext(
+        override val config: KonanConfig,
+) : PhaseContext {
+    override var inVerbosePhase = false
+    override fun log(message: () -> String) {
+        if (inVerbosePhase) {
+            println(message())
+        }
+    }
+
+    override val messageCollector: MessageCollector
+        get() = config.configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+}
+
 internal class FrontendContextImpl(
         config: KonanConfig,
         override var environment: KotlinCoreEnvironment,
-) : AbstractKonanBackendContext(config), FrontendContext {
+) : FrontendContext, BasicPhaseContext(config) {
     override lateinit var moduleDescriptor: ModuleDescriptor
     override lateinit var bindingContext: BindingContext
     override lateinit var frontendServices: FrontendServices
-
-    override val irBuiltIns: IrBuiltIns
-        get() = TODO("Not yet implemented")
-    override val typeSystem: IrTypeSystemContext
-        get() = TODO("Not yet implemented")
-    override val lazyValues: MutableMap<LazyMember<*>, Any?>
-        get() = TODO("Not yet implemented")
-    override val builtIns: KonanBuiltIns
-        get() = TODO("Not yet implemented")
-    override val ir: KonanIr
-        get() = TODO("Not yet implemented")
-    override val isNativeLibrary: Boolean
-        get() = TODO("Not yet implemented")
 }
 
 internal class LlvmCodegenContextImpl(
@@ -84,19 +87,19 @@ internal class LlvmCodegenContextImpl(
         override val coverage: CoverageManager,
         override var llvmModule: LLVMModuleRef?,
         override val llvmModuleSpecification: LlvmModuleSpecification
-) : BasicPhaseContext(payload), LlvmCodegenContext {
+) : BasicBackendPhaseContext(payload), LlvmCodegenContext {
     override var bitcodeFileName: String = ""
 }
 
 internal class ObjectFilesContextImpl(
-        payload: BasicPhaseContextPayload,
-) : BasicPhaseContext(payload), ObjectFilesContext {
+        config: KonanConfig,
+) : BasicPhaseContext(config), ObjectFilesContext {
     override var compilerOutput: List<ObjectFile> = emptyList()
 }
 
 internal class LinkerContextImpl(
-        payload: BasicPhaseContextPayload,
+        config: KonanConfig,
         override val necessaryLlvmParts: NecessaryLlvmParts,
         override val coverage: CoverageManager,
         override val llvmModuleSpecification: LlvmModuleSpecification,
-) : BasicPhaseContext(payload), LinkerContext
+) : BasicPhaseContext(config), LinkerContext

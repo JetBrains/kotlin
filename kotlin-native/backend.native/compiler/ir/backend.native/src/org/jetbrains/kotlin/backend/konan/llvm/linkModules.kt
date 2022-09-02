@@ -8,16 +8,14 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import llvm.LLVMBool
 import llvm.LLVMLinkModules2
 import llvm.LLVMModuleRef
-import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.konan.phases.ErrorReportingContext
+import org.jetbrains.kotlin.backend.konan.phases.PhaseContext
 
 internal fun llvmLinkModules2(
-        errorReportingContext: ErrorReportingContext,
-        logger: LoggingContext,
+        context: PhaseContext,
         dest: LLVMModuleRef,
         src: LLVMModuleRef
 ): LLVMBool {
-    val diagnosticHandler = DefaultLlvmDiagnosticHandler(errorReportingContext, logger, object : DefaultLlvmDiagnosticHandler.Policy {
+    val diagnosticHandler = DefaultLlvmDiagnosticHandler(context, object : DefaultLlvmDiagnosticHandler.Policy {
         override fun suppressWarning(diagnostic: LlvmDiagnostic): Boolean {
             if (super.suppressWarning(diagnostic)) return true
 

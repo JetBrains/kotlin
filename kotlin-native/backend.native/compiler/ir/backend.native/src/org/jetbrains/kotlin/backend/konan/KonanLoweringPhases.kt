@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.KonanBCEForLoopBodyTransformer
+import org.jetbrains.kotlin.backend.konan.phases.BackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
 import org.jetbrains.kotlin.backend.konan.phases.MiddleEndContext
-import org.jetbrains.kotlin.backend.konan.phases.PhaseContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -31,7 +31,7 @@ internal val filePhaseActions = setOfNotNull(
         defaultDumper,
         ::fileValidationCallback.takeIf { validateAll }
 )
-internal val modulePhaseActions: Set<(ActionState, IrModuleFragment, PhaseContext) -> Unit> = setOfNotNull(
+internal val modulePhaseActions: Set<(ActionState, IrModuleFragment, BackendPhaseContext) -> Unit> = setOfNotNull(
         defaultDumper,
         // TODO: It is not valid
 //        ::llvmIrDumpCallback,
@@ -45,7 +45,7 @@ internal fun makeKonanFileLoweringPhase(
         prerequisite: Set<NamedCompilerPhase<MiddleEndContext, *>> = emptySet()
 ) = makeIrFilePhase(lowering, name, description, prerequisite, actions = filePhaseActions)
 
-internal fun <Context : PhaseContext> makeKonanModuleLoweringPhase(
+internal fun <Context : BackendPhaseContext> makeKonanModuleLoweringPhase(
         lowering: (Context) -> FileLoweringPass,
         name: String,
         description: String,
@@ -90,7 +90,7 @@ internal val specialBackendChecksPhase = konanUnitPhase<MiddleEndContext>(
         description = "Special backend checks"
 )
 
-internal val propertyAccessorInlinePhase = makeKonanModuleLoweringPhase<PhaseContext>(
+internal val propertyAccessorInlinePhase = makeKonanModuleLoweringPhase<BackendPhaseContext>(
         ::PropertyAccessorInlineLowering,
         name = "PropertyAccessorInline",
         description = "Property accessor inline lowering"

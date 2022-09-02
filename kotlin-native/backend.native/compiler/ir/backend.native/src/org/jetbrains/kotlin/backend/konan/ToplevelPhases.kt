@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
 
-internal fun moduleValidationCallback(state: ActionState, module: IrModuleFragment, context: PhaseContext) {
+internal fun moduleValidationCallback(state: ActionState, module: IrModuleFragment, context: BackendPhaseContext) {
     if (!context.config.needVerifyIr) return
 
     val validatorConfig = IrValidatorConfig(
@@ -78,7 +78,7 @@ internal val createSymbolTablePhase = konanUnitPhase<PsiToIrContext>(
 
 internal val objCExportPhase = konanUnitPhase<ObjCExportContext>(
             op = {
-                objCExport = ObjCExport(this, this, symbolTable!!, config)
+                objCExport = ObjCExport(this, symbolTable!!, config)
             },
             name = "ObjCExport",
             description = "Objective-C header generation",
@@ -209,23 +209,22 @@ internal val saveAdditionalCacheInfoPhase = konanUnitPhase<CacheAwareContext>(
         description = "Save additional cache info (inline functions bodies and fields of classes)"
 )
 
-internal val objectFilesPhase = konanUnitPhase<ObjectFilesContext>(
+internal val objectFilesPhase = konanUnitPhase<Context>(
         op = {
-            compilerOutput = BitcodeCompiler(this.config, this as LoggingContext).makeObjectFiles((this as Context).bitcodeFileName)
+            compilerOutput = BitcodeCompiler(this.config, this as LoggingContext).makeObjectFiles(this.bitcodeFileName)
         },
         name = "ObjectFiles",
         description = "Bitcode to object file"
 )
 
-internal val linkerPhase = konanUnitPhase<LinkerContext>(
+internal val linkerPhase = konanUnitPhase<Context>(
         op = { Linker(
                 necessaryLlvmParts,
                 llvmModuleSpecification,
                 coverage,
                 config,
-                this as LoggingContext,
-                this as ErrorReportingContext
-        ).link((this as Context).compilerOutput) },
+                this as PhaseContext,
+        ).link(this.compilerOutput) },
         name = "Linker",
         description = "Linker"
 )
@@ -297,10 +296,10 @@ internal val allLoweringsPhase = NamedCompilerPhase<MiddleEndContext, IrModuleFr
                         autoboxPhase,
                 )
         ),
-        actions = setOf(defaultDumper, ::moduleValidationCallback)
+        actions = setOf(defaultDumper, ::moduleValidationCallback),
 )
 
-internal val dependenciesLowerPhase = NamedCompilerPhase(
+internal val dependenciesLowerPhase = NamedCompilerPhase<Context, IrModuleFragment>(
         name = "LowerLibIR",
         description = "Lower library's IR",
         prerequisite = emptySet(),
@@ -336,7 +335,8 @@ internal val dependenciesLowerPhase = NamedCompilerPhase(
 
                 return input
             }
-        })
+        }
+)
 
 internal val dumpTestsPhase = makeCustomPhase<Context, IrModuleFragment>(
         name = "dumpTestsPhase",
@@ -381,7 +381,7 @@ internal val entryPointPhase = makeCustomPhase<MiddleEndContext, IrModuleFragmen
         }
 )
 
-internal val bitcodePhase = NamedCompilerPhase<BitcodegenContext, IrModuleFragment>(
+internal val bitcodePhase = NamedCompilerPhase<Context, IrModuleFragment>(
         name = "Bitcode",
         description = "LLVM Bitcode generation",
         lower = contextLLVMSetupPhase then

@@ -77,7 +77,6 @@ internal class Context(
         ConfigChecks,
         FrontendContext,
         PsiToIrContext,
-        TopDownAnalyzerContext,
         LlvmModuleSpecificationContext,
         KlibProducingContext,
         BitcodegenContext,

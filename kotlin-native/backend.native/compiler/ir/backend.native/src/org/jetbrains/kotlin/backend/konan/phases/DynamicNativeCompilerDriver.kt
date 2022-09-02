@@ -31,6 +31,7 @@ class DynamicNativeCompilerDriver(
     private val messageCollector = config.configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
             ?: MessageCollector.NONE
 
+    // It should be a proper (Input, Context, Phases) -> Output pure function, but NamedCompilerPhase is a bit tricky to refactor.
     private fun <Context : PhaseContext, Data> runTopLevelPhase(context: Context, phase: NamedCompilerPhase<Context, Data>, input: Data) =
             phase.invokeToplevel(createPhaseConfig(phase, arguments, messageCollector), context, input)
 
@@ -106,8 +107,6 @@ class DynamicNativeCompilerDriver(
     }
 
     private fun buildFramework(config: KonanConfig, environment: KotlinCoreEnvironment) {
-        var time = 0L
-
         val frontendPhase = Phases.buildFrontendPhase()
         val createSymbolTablePhase = Phases.buildCreateSymbolTablePhase()
         val objCExportPhase = Phases.buildObjCExportPhase(createSymbolTablePhase)
@@ -122,8 +121,6 @@ class DynamicNativeCompilerDriver(
         val context = Context(config)
         context.populateFromFrontend(frontendContext)
 
-        time += frontendPhase.time
-
         if (config.omitFrameworkBinary) {
             val produceFrameworkInterface = Phases.buildProduceFrameworkInterfacePhase()
             val produceFramework = NamedCompilerPhase(
@@ -137,8 +134,6 @@ class DynamicNativeCompilerDriver(
             )
             val objCExportContext: ObjCExportContext = context
             runTopLevelPhaseUnit(objCExportContext, produceFramework)
-            time += produceFramework.time
-            println("It took ${time}")
             return
         }
         val irGen = NamedCompilerPhase(
@@ -152,7 +147,6 @@ class DynamicNativeCompilerDriver(
         )
         val objCExportContext: ObjCExportContext = context
         runTopLevelPhaseUnit(objCExportContext, irGen)
-        time += irGen.time
 
         val specialBackendChecksPhase = Phases.buildSpecialBackendChecksPhase()
         val copyDefaultValuesToActualPhase = Phases.buildCopyDefaultValuesToActualPhase()
@@ -167,10 +161,8 @@ class DynamicNativeCompilerDriver(
         )
         val middleEndContext: MiddleEndContext = context
         runTopLevelPhaseUnit(middleEndContext, irProcessing)
-        time += irProcessing.time
         val allLowerings = Phases.buildAllLoweringsPhase()
         runTopLevelPhase(middleEndContext, allLowerings, middleEndContext.irModule!!)
-        time += allLowerings.time
         dependenciesLowering(middleEndContext.irModule!!, middleEndContext)
 
         val bitcodegenPhase = buildBitcodePhases(config)
@@ -202,12 +194,12 @@ class DynamicNativeCompilerDriver(
         val writeLlvmModulePhase = Phases.buildWriteLlvmModule()
         runTopLevelPhaseUnit(llvmcodegenContext, writeLlvmModulePhase)
 
-        val objectFilesContext: ObjectFilesContext = ObjectFilesContextImpl(payload)
+        val objectFilesContext = ObjectFilesContextImpl(config)
         val objectFilesPhase = Phases.buildObjectFilesPhase(llvmcodegenContext.bitcodeFileName)
         runTopLevelPhaseUnit(objectFilesContext, objectFilesPhase)
 
         val linkerContext = LinkerContextImpl(
-                payload,
+                config,
                 context.necessaryLlvmParts,
                 context.coverage,
                 context.llvmModuleSpecification
@@ -294,12 +286,12 @@ class DynamicNativeCompilerDriver(
         val cacheAwareContext: CacheAwareContext = context
         runTopLevelPhaseUnit(cacheAwareContext, saveAdditionalCacheInfoPhase)
 
-        val objectFilesContext: ObjectFilesContext = ObjectFilesContextImpl(payload)
+        val objectFilesContext: ObjectFilesContext = ObjectFilesContextImpl(config)
         val objectFilesPhase = Phases.buildObjectFilesPhase(llvmcodegenContext.bitcodeFileName)
         runTopLevelPhaseUnit(objectFilesContext, objectFilesPhase)
 
         val linkerContext = LinkerContextImpl(
-                payload,
+                config,
                 context.necessaryLlvmParts,
                 context.coverage,
                 context.llvmModuleSpecification
@@ -309,6 +301,7 @@ class DynamicNativeCompilerDriver(
     }
 
     private fun buildBitcodePhases(config: KonanConfig): NamedCompilerPhase<BitcodegenContext, IrModuleFragment> {
+        // TODO: Use `disable` mechanism instead.
         val dfgPhase = optionalPhase(config.optimizationsEnabled) { Phases.getBuildDFGPhase() }
         val devirtualizationAnalysisPhase = optionalPhase(config.optimizationsEnabled) { Phases.getDevirtualizationAnalysisPhase(dfgPhase) }
         val removeRedundantCallsToFileInitializersPhase = optionalPhase(config.optimizationsEnabled) { Phases.getRemoveRedundantCallsToFileInitializersPhase(devirtualizationAnalysisPhase) }
