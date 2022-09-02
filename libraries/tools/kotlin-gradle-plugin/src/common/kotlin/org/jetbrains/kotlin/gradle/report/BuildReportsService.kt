@@ -174,6 +174,9 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
             }
 
             try {
+                val json = Gson().toJson(data)
+                log.debug("Send build statistic: $json")
+
                 if (httpSettings.user != null && httpSettings.password != null) {
                     val auth = Base64.getEncoder()
                         .encode("${httpSettings.user}:${httpSettings.password}".toByteArray())
@@ -184,7 +187,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
                 connection.requestMethod = "POST"
                 connection.doOutput = true
                 connection.outputStream.use {
-                    it.write(Gson().toJson(data).toByteArray())
+                    it.write(json.toByteArray())
                 }
                 connection.connect()
                 checkResponseAndLog(connection)
@@ -201,13 +204,22 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
     private fun checkResponseAndLog(connection: HttpURLConnection) {
         val isResponseBad = connection.responseCode !in 200..299
         if (isResponseBad) {
-            val message = "Failed to send statistic to ${connection.url} with ${connection.responseCode}: ${connection.responseMessage}"
+            val body = connection.errorStream?.use {
+                it.readBytes().decodeToString()
+            }
+            val message =
+                "Failed to send statistic to ${connection.url} with ${connection.responseCode}: ${connection.responseMessage}\n$body"
             if (!requestPreviousFailed) {
                 log.warn(message)
             } else {
                 log.debug(message)
             }
             requestPreviousFailed = true
+        } else {
+            val body = connection.inputStream?.use {
+                it.readBytes().decodeToString()
+            }
+            log.debug("Success sent statistic: $body")
         }
     }
 
