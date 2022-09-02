@@ -320,6 +320,8 @@ internal class KonanSymbols(
 
     override val getContinuation = internalFunction("getContinuation")
 
+    override val continuationClass = irBuiltIns.findClass(Name.identifier("Continuation"), StandardNames.COROUTINES_PACKAGE_FQ_NAME)!!
+
     override val returnIfSuspended = internalFunction("returnIfSuspended")
 
     val coroutineLaunchpad = internalFunction("coroutineLaunchpad")
