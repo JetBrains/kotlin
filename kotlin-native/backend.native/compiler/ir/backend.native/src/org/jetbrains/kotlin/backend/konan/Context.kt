@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import kotlinx.cinterop.CPointer
 import llvm.*
 import org.jetbrains.kotlin.backend.common.DefaultDelegateFactory
 import org.jetbrains.kotlin.backend.common.DefaultMapping
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -204,8 +204,6 @@ internal class Context(
     override var serializedIr: SerializedIrModule? = null
     override var dataFlowGraph: ByteArray? = null
 
-    override val standardLlvmSymbolsOrigin: CompiledKlibModuleOrigin
-        get() = stdlibModule.llvmSymbolOrigin
     override val librariesWithDependencies by lazy {
         config.librariesWithDependencies(moduleDescriptor)
     }
@@ -245,7 +243,7 @@ internal class Context(
             field = module!!
 
             llvm = Llvm(this, config, module)
-            debugInfo = DebugInfo(this)
+            debugInfo = DebugInfo(this, llvm, llvm.runtime.targetData)
         }
 
     override lateinit var llvm: Llvm
@@ -254,10 +252,9 @@ internal class Context(
     override lateinit var bitcodeFileName: String
     lateinit var library: KonanLibraryLayout
 
-    private var llvmDisposed = false
-
     override lateinit var necessaryLlvmParts: NecessaryLlvmParts
 
+    private var llvmDisposed = false
     fun disposeLlvm() {
         if (llvmDisposed) return
         if (::debugInfo.isInitialized)
@@ -280,8 +277,7 @@ internal class Context(
 
     override lateinit var debugInfo: DebugInfo
     override var moduleDFG: ModuleDFG? = null
-    override lateinit var lifetimes: MutableMap<IrElement, Lifetime>
-    override lateinit var codegenVisitor: CodeGeneratorVisitor
+    override val lifetimes: MutableMap<IrElement, Lifetime> = mutableMapOf()
     override var devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult? = null
 
     override var referencedFunctions: Set<IrFunction>? = null
@@ -295,8 +291,6 @@ internal class Context(
             else -> DefaultLlvmModuleSpecification(config.cachedLibraries)
         }
     }
-
-    override val declaredLocalArrays: MutableMap<String, LLVMTypeRef> = HashMap()
 
     override lateinit var irLinker: KonanIrLinker
 
@@ -319,6 +313,18 @@ internal class Context(
                 DefaultTargetAbiInfo()
             }
         }
+    }
+
+    override val runtimeAnnotationMap: Map<String, List<CPointer<LLVMOpaqueValue>>> by lazy {
+        llvm.staticData.getGlobal("llvm.global.annotations")
+                ?.getInitializer()
+                ?.let { getOperands(it) }
+                ?.groupBy(
+                        { LLVMGetInitializer(LLVMGetOperand(LLVMGetOperand(it, 1), 0))?.getAsCString() ?: "" },
+                        { LLVMGetOperand(LLVMGetOperand(it, 0), 0)!! }
+                )
+                ?.filterKeys { it != "" }
+                ?: emptyMap()
     }
 }
 

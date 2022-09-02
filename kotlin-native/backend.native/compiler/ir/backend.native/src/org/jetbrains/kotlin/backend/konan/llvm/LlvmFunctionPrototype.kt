@@ -11,7 +11,6 @@ import kotlinx.cinterop.memScoped
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
-import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -167,7 +166,7 @@ internal class LlvmFunctionProto(
             independent: Boolean = false,
     ) : this(name, signature.returnType, signature.parameterTypes, signature.functionAttributes, origin, signature.isVararg, independent)
 
-    constructor(irFunction: IrFunction, symbolName: String, contextUtils: ContextUtils) : this(
+    constructor(irFunction: IrFunction, symbolName: String, contextUtils: NoContextUtils) : this(
             name = symbolName,
             returnType = contextUtils.getLlvmFunctionReturnType(irFunction),
             parameterTypes = contextUtils.getLlvmFunctionParameterTypes(irFunction),
@@ -177,27 +176,27 @@ internal class LlvmFunctionProto(
     )
 }
 
-private fun mustNotInline(context: BitcodegenContext, irFunction: IrFunction): Boolean {
+private fun mustNotInline(context: NoContextUtils, irFunction: IrFunction): Boolean {
     if (context.config.checks.shouldContainLocationDebugInfo()) {
         if (irFunction is IrConstructor && irFunction.isPrimary && irFunction.returnType.isThrowable()) {
             // To simplify skipping this constructor when scanning call stack in Kotlin_getCurrentStackTrace.
             return true
         }
     }
-    if (irFunction.symbol == context.ir.symbols.entryPoint) {
+    if (irFunction.symbol == context.symbols.entryPoint) {
         return true
     }
 
     return false
 }
 
-private fun inferFunctionAttributes(contextUtils: ContextUtils, irFunction: IrFunction): List<LlvmFunctionAttribute> =
+private fun inferFunctionAttributes(contextUtils: NoContextUtils, irFunction: IrFunction): List<LlvmFunctionAttribute> =
         mutableListOf<LlvmFunctionAttribute>().apply {
             // suspend function can return value in case of COROUTINE_SUSPENDED.
             if (irFunction.returnType.isNothing() && !irFunction.isSuspend) {
                 add(LlvmFunctionAttribute.NoReturn)
             }
-            if (mustNotInline(contextUtils.context, irFunction)) {
+            if (mustNotInline(contextUtils, irFunction)) {
                 add(LlvmFunctionAttribute.NoInline)
             }
         }

@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.library.isInterop
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-internal fun Context.getExportedDependencies(): List<ModuleDescriptor> = moduleDescriptor.getDescriptorsFromLibraries((config.resolve.exportedLibraries + config.resolve.includedLibraries).toSet())
 internal fun KonanConfig.getExportedDependencies(root: ModuleDescriptor): List<ModuleDescriptor> = root.getDescriptorsFromLibraries((this.resolve.exportedLibraries + this.resolve.includedLibraries).toSet())
-internal fun Context.getIncludedLibraryDescriptors(): List<ModuleDescriptor> = moduleDescriptor.getDescriptorsFromLibraries(config.resolve.includedLibraries.toSet())
 internal fun KonanConfig.getIncludedLibraryDescriptors(root: ModuleDescriptor): List<ModuleDescriptor> = root.getDescriptorsFromLibraries(this.resolve.includedLibraries.toSet())
 
 private fun ModuleDescriptor.getDescriptorsFromLibraries(libraries: Set<KonanLibrary>) =

@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVe
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
-import org.jetbrains.kotlin.backend.konan.phases.KlibProducingContext
-import org.jetbrains.kotlin.backend.konan.phases.LlvmCodegenContext
-import org.jetbrains.kotlin.backend.konan.phases.LlvmModuleSpecificationComponent
-import org.jetbrains.kotlin.backend.konan.phases.stdlibModule
+import org.jetbrains.kotlin.backend.konan.phases.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
@@ -75,7 +72,7 @@ val CompilerOutputKind.isCache: Boolean
     get() = this == CompilerOutputKind.STATIC_CACHE || this == CompilerOutputKind.DYNAMIC_CACHE
             || this == CompilerOutputKind.PRELIMINARY_CACHE
 
-internal fun llvmIrDumpCallback(state: ActionState, module: IrModuleFragment, context: Context) {
+internal fun llvmIrDumpCallback(state: ActionState, module: IrModuleFragment, context: LlvmModuleContext) {
     module.let{}
     if (state.beforeOrAfter == BeforeOrAfter.AFTER && state.phase.name in context.configuration.getList(KonanConfigKeys.SAVE_LLVM_IR)) {
         val moduleName: String = memScoped {
@@ -249,13 +246,7 @@ internal fun produceFrameworkInterface(objcExport: ObjCExport?) {
     objcExport?.produceFrameworkInterface()
 }
 
-internal fun produceBitcode(config: KonanConfig, context: Context, llvmModule: LLVMModuleRef) {
-    val output = config.outputFile
-    context.bitcodeFileName = output
-    LLVMWriteBitcodeToFile(llvmModule, output)
-}
-
-internal fun produceOutput(context: Context, config: KonanConfig) {
+internal fun produceOutput(context: LlvmCodegenContext, config: KonanConfig) {
 
     val tempFiles = config.tempFiles
     val produce = config.produce

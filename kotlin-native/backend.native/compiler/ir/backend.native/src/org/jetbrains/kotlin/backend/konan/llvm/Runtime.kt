@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlinx.cinterop.*
+import kotlinx.cinterop.toKString
 import llvm.*
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.types.IrType
 
 interface RuntimeAware {
     val runtime: Runtime

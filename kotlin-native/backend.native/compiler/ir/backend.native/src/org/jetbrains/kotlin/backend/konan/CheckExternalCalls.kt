@@ -169,7 +169,7 @@ internal fun checkLlvmModuleExternalCalls(context: LlvmCodegenContext) {
     val staticData = context.llvm.staticData
 
 
-    val ignoredFunctions = (context.llvm.runtimeAnnotationMap["no_external_calls_check"] ?: emptyList())
+    val ignoredFunctions = (context.runtimeAnnotationMap["no_external_calls_check"] ?: emptyList())
 
     val goodFunctions = staticData.getGlobal("Kotlin_callsCheckerGoodFunctionNames")?.getInitializer()?.run {
         getOperands(this).map {

@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.backend.konan.phases
 
+import kotlinx.cinterop.CPointer
 import llvm.LLVMDumpModule
 import llvm.LLVMModuleRef
-import llvm.LLVMTypeRef
+import llvm.LLVMOpaqueValue
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.lower.*
@@ -62,6 +64,13 @@ internal interface BackendPhaseContext : PhaseContext, KonanBackendContext {
     val isNativeLibrary: Boolean
 
     override fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean)
+
+    val standardLlvmSymbolsOrigin: CompiledKlibModuleOrigin
+        get() = stdlibModule.llvmSymbolOrigin
+
+    val librariesWithDependencies: List<KonanLibrary>
+
+    val llvmImports: LlvmImports
 }
 
 internal val KonanBackendContext.stdlibModule
@@ -173,8 +182,6 @@ internal interface KlibProducingContext : BackendPhaseContext {
     var serializedMetadata: SerializedMetadata?
     var serializedIr: SerializedIrModule?
     var dataFlowGraph: ByteArray?
-
-    val librariesWithDependencies: List<KonanLibrary>
 }
 
 internal interface BitcodegenContext :
@@ -184,15 +191,17 @@ internal interface BitcodegenContext :
         LocalClassNameAwareContext,
         LlvmModuleContext,
         LlvmModuleSpecificationComponent,
-        LtoContext,
         ConfigChecks,
         ClassITablePlacerContext,
         ClassFieldsLayoutContext,
         ClassIdComputerContext,
         ClassVTableEntriesContext,
-        CacheAwareContext,
-        IrLinkerComponent {
+        CacheContext {
     override val config: KonanConfig
+
+    val irLinker: KonanIrLinker
+
+    val irModule: IrModuleFragment?
 
     val coverage: CoverageManager
 
@@ -204,29 +213,46 @@ internal interface BitcodegenContext :
 
     var llvmDeclarations: LlvmDeclarations
 
-    var cAdapterGenerator: CAdapterGenerator
+    val cAdapterGenerator: CAdapterGenerator?
 
     val debugInfo: DebugInfo
 
-    val standardLlvmSymbolsOrigin: CompiledKlibModuleOrigin
-
-    val librariesWithDependencies: List<KonanLibrary>
-
     val enumsSupport: EnumsSupport
-
-    val declaredLocalArrays: MutableMap<String, LLVMTypeRef>
-
-    var codegenVisitor: CodeGeneratorVisitor
 
     val interopBuiltIns: InteropBuiltIns
 
-    var objCExport: ObjCExport?
+    val objCExport: ObjCExport?
+
+    val globalHierarchyAnalysisResult: GlobalHierarchyAnalysisResult
+
+    val referencedFunctions: Set<IrFunction>?
+
+    val lifetimes: Map<IrElement, Lifetime>
+
+    fun ghaEnabled(): Boolean
 
     fun objcExportCodegen(
             objCExport: ObjCExport?,
             codegen: CodeGenerator,
     ) {
         ObjCExportCodegen(this, objCExport, config).generate(codegen)
+    }
+
+    val contextUtils: ContextUtils
+        get() = ContextUtils(this)
+
+    fun ContextUtils.unique(kind: UniqueKind): ConstPointer {
+        val descriptor = when (kind) {
+            UniqueKind.UNIT -> ir.symbols.unit.owner
+            UniqueKind.EMPTY_ARRAY -> ir.symbols.array.owner
+        }
+        return if (isExternal(descriptor)) {
+            constPointer(importGlobal(
+                    kind.llvmName, llvm.runtime.objHeaderType, origin = descriptor.llvmSymbolOrigin
+            ))
+        } else {
+            llvmDeclarations.forUnique(kind).pointer
+        }
     }
 }
 
@@ -245,6 +271,8 @@ internal interface LlvmCodegenContext : BackendPhaseContext, LlvmModuleSpecifica
     var bitcodeFileName: String
 
     val coverage: CoverageManager
+
+    val runtimeAnnotationMap: Map<String, List<CPointer<LLVMOpaqueValue>>>
 }
 
 internal interface LayoutBuildingContext : BackendPhaseContext {
@@ -310,7 +338,7 @@ internal interface LtoContext :
 
     var referencedFunctions: Set<IrFunction>?
 
-    var lifetimes: MutableMap<IrElement, Lifetime>
+    val lifetimes: MutableMap<IrElement, Lifetime>
 }
 
 internal interface MiddleEndContext :
@@ -358,9 +386,9 @@ internal interface LinkerContext : PhaseContext {
 internal interface CacheContext : PhaseContext {
     val inlineFunctionBodies: MutableList<SerializedInlineFunctionReference>
     val classFields: MutableList<SerializedClassFields>
-    val llvmImports: LlvmImports
     val constructedFromExportedInlineFunctions: MutableSet<IrClass>
     val calledFromExportedInlineFunctions: MutableSet<IrFunction>
+    val llvmImports: LlvmImports
 }
 
 internal interface CacheAwareContext : CacheContext, InnerClassesSupportComponent, BackendPhaseContext, ClassFieldsLayoutContext

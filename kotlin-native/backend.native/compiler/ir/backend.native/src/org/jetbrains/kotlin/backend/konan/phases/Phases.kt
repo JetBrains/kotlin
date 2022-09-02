@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.phases
 
-import llvm.LLVMWriteBitcodeToFile
+import llvm.*
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 internal object Phases {
     fun buildFrontendPhase(): NamedCompilerPhase<FrontendContext, Boolean> {
@@ -139,6 +140,16 @@ internal object Phases {
             description = "Build additional cache info (inline functions bodies and fields of classes) $psiToIrPhase",
             prerequisite = setOf()//setOf(psiToIrPhase)
     )
+
+//    fun buildDisposeLLVMPhase() = myLower2(
+//            name = "DisposeLLVM",
+//            description = "Dispose LLVM",
+//            lower = object : CompilerPhase<Context, Unit, Unit> {
+//                override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
+//                    context.disposeLlvm()
+//                }
+//            }
+//    )
 
     fun buildSaveAdditionalCacheInfoPhase(): NamedCompilerPhase<CacheAwareContext, Unit> = myLower2(
             op = { ctx, _ ->
@@ -581,7 +592,31 @@ internal object Phases {
             op = { context, irModule -> GlobalHierarchyAnalysis(context, irModule).run() }
     )
 
-    fun buildBitcodePhases(): NamedCompilerPhase<BitcodegenContext, IrModuleFragment> {
+    fun buildCreateLLVMDeclarationsPhase(): NamedCompilerPhase<BitcodegenContext, IrModuleFragment> = makeKonanModuleOpPhase<BitcodegenContext>(
+            name = "CreateLLVMDeclarations",
+            description = "Map IR declarations to LLVM",
+//        prerequisite = setOf(contextLLVMSetupPhase),
+            op = { context, module ->
+                val generator = DeclarationsGeneratorVisitor(
+                        context,
+                        context,
+                        context,
+                        context.llvm.staticData,
+                        context.llvmModule!!,
+                        context.llvm.runtime,
+                        context.llvm,
+                        context.targetAbiInfo,
+                        context.ir.symbols,
+                        context.config,
+                )
+                module.acceptChildrenVoid(generator)
+                context.llvmDeclarations = LlvmDeclarations(generator.uniques)
+            }
+    )
+
+    fun buildBitcodePhases(needSetup: Boolean): NamedCompilerPhase<BitcodegenContext, IrModuleFragment> {
+        val contextLLVMSetupPhase = buildContextLLVMSetupPhase(needSetup)
+        val createLLVMDeclarationsPhase = buildCreateLLVMDeclarationsPhase()
         val bitcodegenPhase = NamedCompilerPhase<BitcodegenContext, IrModuleFragment>(
                 name = "BitcodeGen",
                 description = "Generation of LLVM module",
@@ -595,6 +630,40 @@ internal object Phases {
         )
         return bitcodegenPhase
     }
+
+    fun buildContextLLVMSetupPhase(needSetup: Boolean) = myLower2<BitcodegenContext, IrModuleFragment>(
+            name = "ContextLLVMSetup",
+            description = "Set up Context for LLVM Bitcode generation",
+            op = { context, m ->
+                // Note that we don't set module target explicitly.
+                // It is determined by the target of runtime.bc
+                // (see Llvm class in ContextUtils)
+                // Which in turn is determined by the clang flags
+                // used to compile runtime.bc.
+                if (needSetup) {
+                    llvmContext = LLVMContextCreate()!!
+                    val llvmModule = LLVMModuleCreateWithNameInContext("out", llvmContext)!!
+                    context.llvmModule = llvmModule
+                    context.debugInfo.builder = LLVMCreateDIBuilder(llvmModule)
+                }
+
+                // we don't split path to filename and directory to provide enough level uniquely for dsymutil to avoid symbol
+                // clashing, which happens on linking with libraries produced from intercepting sources.
+                val filePath = context.config.outputFile.toFileAndFolder(context).path()
+
+                context.debugInfo.compilationUnit = if (context.config.checks.shouldContainLocationDebugInfo()) DICreateCompilationUnit(
+                        builder = context.debugInfo.builder,
+                        lang = DWARF.language(context.config),
+                        File = filePath,
+                        dir = "",
+                        producer = DWARF.producer,
+                        isOptimized = 0,
+                        flags = "",
+                        rv = DWARF.runtimeVersion(context.config)).cast()
+                else null
+                m
+            }
+    )
 
     fun buildLtoAndMiscPhases(config: KonanConfig): NamedCompilerPhase<LtoContext, IrModuleFragment> {
         // TODO: Ugly and hard to manage. Use `disable` mechanism instead.

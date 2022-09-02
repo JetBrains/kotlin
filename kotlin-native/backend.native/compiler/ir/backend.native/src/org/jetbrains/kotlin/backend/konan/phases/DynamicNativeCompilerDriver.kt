@@ -6,11 +6,17 @@
 package org.jetbrains.kotlin.backend.konan.phases
 
 import kotlinx.cinterop.usingJvmCInteropCallbacks
+import llvm.LLVMContextCreate
+import llvm.LLVMCreateDIBuilder
+import llvm.LLVMModuleCreateWithNameInContext
 import org.jetbrains.kotlin.backend.common.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfig
+import org.jetbrains.kotlin.backend.konan.llvm.DebugInfo
+import org.jetbrains.kotlin.backend.konan.llvm.Llvm
+import org.jetbrains.kotlin.backend.konan.llvm.llvmContext
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
@@ -165,14 +171,20 @@ class DynamicNativeCompilerDriver(
         runTopLevelPhase(middleEndContext, allLowerings, middleEndContext.irModule!!)
         dependenciesLowering(middleEndContext.irModule!!, middleEndContext)
 
-        val payload = BasicPhaseContextPayload(context.config, context.irBuiltIns, context.typeSystem, context.builtIns, context.ir)
+        val payload = BasicPhaseContextPayload(
+                context.config,
+                context.irBuiltIns,
+                context.typeSystem,
+                context.builtIns,
+                context.ir,
+                librariesWithDependencies = context.librariesWithDependencies,
+        )
 
         val ltoPhases = Phases.buildLtoAndMiscPhases(config)
         val ltoContext: LtoContext = LtoContextImpl(
                 payload,
                 context.bridgesSupport,
                 context.irModule!!,
-                context.classFieldsLayoutHolder,
                 context.classIdComputerHolder,
                 context.classITablePlacer,
                 context.classVTableEntries,
@@ -180,8 +192,53 @@ class DynamicNativeCompilerDriver(
         )
         runTopLevelPhase(ltoContext, ltoPhases, middleEndContext.irModule!!)
 
-        val bitcodegenPhase = Phases.buildBitcodePhases()
-        val bitcodegenContext: BitcodegenContext = context
+        val smartHoldersCollection = SmartHoldersCollection(
+                context.classIdComputerHolder,
+                context.classITablePlacer,
+                context.classVTableEntries,
+                context.classFieldsLayoutHolder,
+                context.layoutBuildersHolder
+        )
+
+        val ltoResult = LtoResults(
+                ltoContext.globalHierarchyAnalysisResult,
+                ltoContext.ghaEnabled(),
+                ltoContext.devirtualizationAnalysisResult,
+                ltoContext.moduleDFG,
+                ltoContext.referencedFunctions,
+                ltoContext.lifetimes
+        )
+
+        val cacheContext = CacheContextImpl(config, context)
+
+        // TODO: Move into phase
+        // TODO: Dispose
+        llvmContext = LLVMContextCreate()!!
+        val llvmModule = LLVMModuleCreateWithNameInContext("out", llvmContext)!!
+        val llvm = Llvm(middleEndContext, config, llvmModule)
+        val debugInfo = DebugInfo(middleEndContext, llvm, llvm.runtime.targetData)
+        debugInfo.builder = LLVMCreateDIBuilder(llvmModule)
+
+        val bitcodegenPhase = Phases.buildBitcodePhases(needSetup = false)
+        val bitcodegenContext: BitcodegenContext = BitcodegenContextImpl(
+                payload,
+                context.llvmModuleSpecification,
+                llvmModule,
+                middleEndContext.irModule!!,
+                middleEndContext.irLinker,
+                context.coverage,
+                llvm,
+                smartHoldersCollection,
+                ltoResult,
+                cAdapterGenerator = null,
+                objCExport,
+                debugInfo,
+                middleEndContext.localClassNames,
+                middleEndContext.bridgesSupport,
+                middleEndContext.enumsSupport,
+                cacheContext
+        )
+
         runTopLevelPhase(bitcodegenContext, bitcodegenPhase, bitcodegenContext.irModule!!)
 
         val llvmCodegenPhase = Phases.buildLlvmCodegenPhase()
@@ -189,10 +246,10 @@ class DynamicNativeCompilerDriver(
                 payload,
                 context.cStubsManager,
                 context.objCExportNamer,
-                context.llvm,
-                context.coverage,
-                context.llvmModule,
-                context.llvmModuleSpecification
+                bitcodegenContext.llvm,
+                bitcodegenContext.coverage,
+                bitcodegenContext.llvmModule,
+                bitcodegenContext.llvmModuleSpecification
         )
         runTopLevelPhase(llvmcodegenContext, llvmCodegenPhase, bitcodegenContext.irModule!!)
 
@@ -205,9 +262,9 @@ class DynamicNativeCompilerDriver(
 
         val linkerContext = LinkerContextImpl(
                 config,
-                context.necessaryLlvmParts,
-                context.coverage,
-                context.llvmModuleSpecification
+                bitcodegenContext.necessaryLlvmParts,
+                bitcodegenContext.coverage,
+                bitcodegenContext.llvmModuleSpecification
         )
         val linkerPhase = Phases.buildLinkerPhase(objectFilesContext.compilerOutput)
         runTopLevelPhaseUnit(linkerContext, linkerPhase)
@@ -268,22 +325,64 @@ class DynamicNativeCompilerDriver(
         val ltoContext: LtoContext = context
         runTopLevelPhase(ltoContext, ltoPhases, middleEndContext.irModule!!)
 
-        val bitcodegenPhase = Phases.buildBitcodePhases()
-        val bitcodegenContext: BitcodegenContext = context
+        val payload = BasicPhaseContextPayload(
+                context.config,
+                context.irBuiltIns,
+                context.typeSystem,
+                context.builtIns,
+                context.ir,
+                librariesWithDependencies = context.librariesWithDependencies,
+        )
+        val cacheContext = CacheContextImpl(config, context)
+
+        val smartHoldersCollection = SmartHoldersCollection(
+                context.classIdComputerHolder,
+                context.classITablePlacer,
+                context.classVTableEntries,
+                context.classFieldsLayoutHolder,
+                context.layoutBuildersHolder
+        )
+
+        // TODO: Move into phase
+        // TODO: Dispose
+        llvmContext = LLVMContextCreate()!!
+        val llvmModule = LLVMModuleCreateWithNameInContext("out", llvmContext)!!
+        val llvm = Llvm(middleEndContext, config, llvmModule)
+        val debugInfo = DebugInfo(middleEndContext, llvm, llvm.runtime.targetData)
+        debugInfo.builder = LLVMCreateDIBuilder(llvmModule)
+
+        val bitcodegenPhase = Phases.buildBitcodePhases(needSetup = false)
+        val bitcodegenContext: BitcodegenContext = BitcodegenContextImpl(
+                payload,
+                context.llvmModuleSpecification,
+                llvmModule,
+                middleEndContext.irModule!!,
+                middleEndContext.irLinker,
+                context.coverage,
+                llvm,
+                smartHoldersCollection,
+                LtoResults.EMPTY,
+                cAdapterGenerator = null,
+                objCExport,
+                debugInfo,
+                middleEndContext.localClassNames,
+                middleEndContext.bridgesSupport,
+                middleEndContext.enumsSupport,
+                cacheContext
+        )
+
         runTopLevelPhase(bitcodegenContext, bitcodegenPhase, bitcodegenContext.irModule!!)
 
         val llvmCodegenPhase = Phases.buildLlvmCodegenPhase()
-
-        val payload = BasicPhaseContextPayload(context.config, context.irBuiltIns, context.typeSystem, context.builtIns, context.ir)
 
         val llvmcodegenContext: LlvmCodegenContext = LlvmCodegenContextImpl(
                 payload,
                 context.cStubsManager,
                 context.objCExportNamer,
-                context.llvm,
-                context.coverage,
-                context.llvmModule,
-                context.llvmModuleSpecification
+                bitcodegenContext.llvm,
+                bitcodegenContext.coverage,
+                bitcodegenContext.llvmModule,
+                bitcodegenContext.llvmModuleSpecification
         )
         runTopLevelPhase(llvmcodegenContext, llvmCodegenPhase, bitcodegenContext.irModule!!)
 
@@ -300,15 +399,14 @@ class DynamicNativeCompilerDriver(
 
         val linkerContext = LinkerContextImpl(
                 config,
-                context.necessaryLlvmParts,
-                context.coverage,
-                context.llvmModuleSpecification
+                bitcodegenContext.necessaryLlvmParts,
+                bitcodegenContext.coverage,
+                bitcodegenContext.llvmModuleSpecification
         )
         val linkerPhase = Phases.buildLinkerPhase(objectFilesContext.compilerOutput)
         runTopLevelPhaseUnit(linkerContext, linkerPhase)
 
         val finalizeCachePhase = Phases.buildFinalizeCachePhase()
-        val cacheContext = CacheContextImpl(config, context)
         runTopLevelPhaseUnit(cacheContext, finalizeCachePhase)
     }
 

@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 
 private val llvmContextHolder = ThreadLocal<LLVMContextRef>()
@@ -259,7 +257,7 @@ internal fun ContextUtils.addGlobal(name: String, type: LLVMTypeRef, isExported:
 
 internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef, origin: CompiledKlibModuleOrigin): LLVMValueRef {
 
-    context.llvm.imports.add(origin)
+    context.llvmImports.add(origin)
 
     val found = LLVMGetNamedGlobal(context.llvmModule, name)
     return if (found != null) {
@@ -280,7 +278,7 @@ internal class GlobalAddressAccess(private val address: LLVMValueRef): AddressAc
 }
 
 internal class TLSAddressAccess(
-        private val context: BitcodegenContext,
+        private val context: NoContextUtils,
         private val index: Int,
 ): AddressAccess() {
 
@@ -290,21 +288,21 @@ internal class TLSAddressAccess(
     }
 }
 
-internal fun ContextUtils.addKotlinThreadLocal(name: String, type: LLVMTypeRef): AddressAccess {
+internal fun NoContextUtils.addKotlinThreadLocal(name: String, type: LLVMTypeRef): AddressAccess {
     return if (isObjectType(type)) {
-        val index = context.llvm.tlsCount++
-        TLSAddressAccess(context, index)
+        val index = llvm.tlsCount++
+        TLSAddressAccess(this, index)
     } else {
         // TODO: This will break if Workers get decoupled from host threads.
-        GlobalAddressAccess(LLVMAddGlobal(context.llvmModule, type, name)!!.also {
-            LLVMSetThreadLocalMode(it, context.llvm.tlsMode)
+        GlobalAddressAccess(LLVMAddGlobal(llvmModule, type, name)!!.also {
+            LLVMSetThreadLocalMode(it, llvm.tlsMode)
             LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
         })
     }
 }
 
-internal fun ContextUtils.addKotlinGlobal(name: String, type: LLVMTypeRef, isExported: Boolean): AddressAccess {
-    return GlobalAddressAccess(LLVMAddGlobal(context.llvmModule, type, name)!!.also {
+internal fun NoContextUtils.addKotlinGlobal(name: String, type: LLVMTypeRef, isExported: Boolean): AddressAccess {
+    return GlobalAddressAccess(LLVMAddGlobal(llvmModule, type, name)!!.also {
         if (!isExported)
             LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
     })

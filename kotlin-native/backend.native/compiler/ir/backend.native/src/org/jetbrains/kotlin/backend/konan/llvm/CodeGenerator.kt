@@ -64,6 +64,8 @@ internal class CodeGenerator(override val context: BitcodegenContext) : ContextU
     // Keep in sync with OBJECT_TAG_MASK in C++.
     internal val immTypeInfoMask = LLVMConstNot(LLVMConstInt(intPtrType, 3, 0)!!)!!
 
+    val declaredLocalArrays: MutableMap<String, LLVMTypeRef> = mutableMapOf()
+
     //-------------------------------------------------------------------------//
 
     fun typeInfoValue(irClass: IrClass): LLVMValueRef = irClass.llvmTypeInfoPtr
@@ -315,7 +317,7 @@ internal class StackLocalsManagerImpl(
     private fun localArrayType(irClass: IrClass, count: Int) = with(functionGenerationContext) {
         val name = "local#${irClass.name}${count}#internal"
         // Create new type or get already created.
-        context.declaredLocalArrays.getOrPut(name) {
+        codegen.declaredLocalArrays.getOrPut(name) {
             val fieldTypes = listOf(kArrayHeader, LLVMArrayType(arrayToElementType[irClass.symbol]!!, count))
             val classType = LLVMStructCreateNamed(LLVMGetModuleContext(context.llvmModule), name)!!
             LLVMStructSetBody(classType, fieldTypes.toCValues(), fieldTypes.size, 1)

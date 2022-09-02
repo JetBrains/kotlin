@@ -349,7 +349,7 @@ internal class CodeGeneratorVisitor(
     }
 
     private fun appendCAdapters() {
-        context.cAdapterGenerator.generateBindings(codegen)
+        context.cAdapterGenerator?.generateBindings(codegen)
     }
 
     private fun FunctionGenerationContext.initThreadLocalField(irField: IrField) {
@@ -921,9 +921,15 @@ internal class CodeGeneratorVisitor(
             if (access is GlobalAddressAccess) {
                 // Global objects are kept in a data segment and can be accessed by any module (if exported) and also
                 // they need to be initialized statically.
-                LLVMSetInitializer(access.getAddress(null), if (declaration.storageKind(context) == ObjectStorageKind.PERMANENT)
-                    context.llvm.staticData.createConstKotlinObject(declaration,
-                            *computeFields(declaration)).llvm else codegen.kNullObjHeaderPtr)
+                val cPointer = if (declaration.storageKind(context) == ObjectStorageKind.PERMANENT) {
+                    with(context.llvm.staticData) {
+                        ContextUtils(context).createConstKotlinObject(declaration,
+                                *computeFields(declaration)).llvm
+                    }
+                } else {
+                    codegen.kNullObjHeaderPtr
+                }
+                LLVMSetInitializer(access.getAddress(null), cPointer)
             } else {
                 // Thread local objects are kept in a special map, so they need a getter function to be accessible
                 // by other modules.
@@ -1144,7 +1150,7 @@ internal class CodeGeneratorVisitor(
         // Note: even if all elements are const, they aren't guaranteed to be statically initialized.
         // E.g. an element may be a pointer to lazy-initialized object (aka singleton).
         // However it is guaranteed that all elements are already initialized at this point.
-        return codegen.staticData.createConstKotlinArray(arrayClass, elements)
+        return with(context.contextUtils) { codegen.staticData.createConstKotlinArray(arrayClass, elements) }
     }
 
     //-------------------------------------------------------------------------//
@@ -1870,7 +1876,7 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
     private fun evaluateStringConst(value: IrConst<String>) =
-            context.llvm.staticData.kotlinStringLiteral(value.value)
+            with (context.contextUtils) { context.llvm.staticData.kotlinStringLiteral(value.value) }
 
     private fun evaluateConst(value: IrConst<*>): ConstValue {
         context.log { "evaluateConst                  : ${ir2string(value)}" }
@@ -1927,10 +1933,12 @@ internal class CodeGeneratorVisitor(
                         require(codegen.getLLVMType(value.type) == codegen.kObjHeaderPtr) {
                             "Can't wrap ${value.value.kind.asString} constant to type ${value.type.render()}"
                         }
-                        value.toBoxCacheValue(context) ?: context.llvm.staticData.createConstKotlinObject(
-                                constructedType.getClass()!!,
-                                evaluateConst(value.value)
-                        )
+                        value.toBoxCacheValue(context) ?: with(context.llvm.staticData) {
+                            ContextUtils(context).createConstKotlinObject(
+                                    constructedType.getClass()!!,
+                                    evaluateConst(value.value)
+                            )
+                        }
                     }
                 } else {
                     evaluateConst(value.value)
@@ -1942,10 +1950,12 @@ internal class CodeGeneratorVisitor(
                 require(clazz.symbol == symbols.array || clazz.symbol in symbols.primitiveTypesToPrimitiveArrays.values) {
                     "Statically initialized array should have array type"
                 }
-                context.llvm.staticData.createConstKotlinArray(
-                        value.type.getClass()!!,
-                        value.elements.map { evaluateConstantValue(it) }
-                )
+                with (context.contextUtils) {
+                    context.llvm.staticData.createConstKotlinArray(
+                            value.type.getClass()!!,
+                            value.elements.map { evaluateConstantValue(it) }
+                    )
+                }
             }
 
             is IrConstantObject -> {
@@ -1973,10 +1983,12 @@ internal class CodeGeneratorVisitor(
                 }
 
                 require(codegen.getLLVMType(value.type) == codegen.kObjHeaderPtr) { "Constant object is not an object, but ${value.type.render()}" }
-                context.llvm.staticData.createConstKotlinObject(
-                        constructedClass,
-                        *fields.toTypedArray()
-                )
+                with(context.llvm.staticData) {
+                    ContextUtils(context).createConstKotlinObject(
+                            constructedClass,
+                            *fields.toTypedArray()
+                    )
+                }
             }
 
             else -> TODO("Unimplemented IrConstantValue subclass ${value::class.qualifiedName}")

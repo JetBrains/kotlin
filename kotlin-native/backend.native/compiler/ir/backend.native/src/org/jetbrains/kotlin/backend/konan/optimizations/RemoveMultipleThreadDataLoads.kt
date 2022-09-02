@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
+import kotlinx.cinterop.CPointer
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.backend.konan.llvm.getBasicBlocks
 import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
 import org.jetbrains.kotlin.backend.konan.llvm.getInstructions
+import org.jetbrains.kotlin.backend.konan.llvm.name
 
 private fun filterLoads(block: LLVMBasicBlockRef, variable: LLVMValueRef) = getInstructions(block)
         .mapNotNull { LLVMIsALoadInst(it) }
@@ -32,8 +31,11 @@ private fun process(function: LLVMValueRef, currentThreadTLV: LLVMValueRef) {
             }
 }
 
-internal fun removeMultipleThreadDataLoads(llvm: Llvm, llvmModule: LLVMModuleRef) {
-    val currentThreadTLV = llvm.runtimeAnnotationMap["current_thread_tlv"]?.singleOrNull() ?: return
+internal fun removeMultipleThreadDataLoads(
+        runtimeAnnotationMap: Map<String, List<CPointer<LLVMOpaqueValue>>>,
+        llvmModule: LLVMModuleRef
+) {
+    val currentThreadTLV = runtimeAnnotationMap["current_thread_tlv"]?.singleOrNull() ?: return
 
     getFunctions(llvmModule)
             .filter { it.name?.startsWith("kfun:") == true }

@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import llvm.*
+import llvm.LLVMArrayType
+import llvm.LLVMConstInt
+import llvm.LLVMTypeRef
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
@@ -200,7 +202,9 @@ private fun initCache(cache: BoxCache, context: BitcodegenContext, cacheName: St
                 .setConstant(true)
         staticData.placeGlobal(rangeEndName, createConstant(llvmType, end), true)
                 .setConstant(true)
-        val values = (start..end).map { staticData.createInitializer(kotlinType, createConstant(llvmType, it)) }
+        val values = (start..end).map {
+            with(staticData) { ContextUtils(context).createInitializer(kotlinType, createConstant(llvmType, it)) }
+        }
         staticData.placeGlobalArray(cacheName, llvmBoxType, values, true).also {
             it.setConstant(true)
         }

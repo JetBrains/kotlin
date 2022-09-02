@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.toKString
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
 import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
+import org.jetbrains.kotlin.backend.konan.phases.LlvmModuleSpecificationComponent
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -135,22 +138,45 @@ internal sealed class Lifetime(val slotType: SlotType) {
 
 internal fun ContextUtils(context: BitcodegenContext): ContextUtils = object : ContextUtils {
     override val context: BitcodegenContext = context
+
+    override val llvm: Llvm = context.llvm
+}
+
+internal interface NoContextUtils : RuntimeAware {
+    val config: KonanConfig
+
+    val symbols: KonanSymbols
+
+    val llvmModule: LLVMModuleRef
+
+    val llvm: Llvm
+
+    val argumentAbiInfo: TargetAbiInfo
 }
 
 /**
  * Provides utility methods to the implementer.
  */
-internal interface ContextUtils : RuntimeAware {
+internal interface ContextUtils : NoContextUtils {
     val context: BitcodegenContext
 
-    val config: KonanConfig
+    override val config: KonanConfig
         get() = context.config
 
     override val runtime: Runtime
         get() = context.llvm.runtime
 
-    val argumentAbiInfo: TargetAbiInfo
+    override val argumentAbiInfo: TargetAbiInfo
         get() = context.targetAbiInfo
+
+    override val llvmModule: LLVMModuleRef
+        get() = context.llvmModule!!
+
+    override val llvm: Llvm
+        get() = context.llvm
+
+    override val symbols: KonanSymbols
+        get() = context.ir.symbols
 
     /**
      * Describes the target platform.
@@ -233,6 +259,42 @@ internal interface ContextUtils : RuntimeAware {
     val IrClass.llvmTypeInfoPtr: LLVMValueRef
         get() = typeInfoPtr.llvm
 
+    fun KotlinStaticData.createImmutableBlob(value: IrConst<String>): LLVMValueRef {
+        val args = value.value.map { Int8(it.code.toByte()).llvm }
+        return createConstKotlinArray(symbols.immutableBlob.owner, args)
+    }
+
+    fun KotlinStaticData.createConstKotlinArray(arrayClass: IrClass, elements: List<ConstValue>): ConstPointer {
+        val typeInfo = arrayClass.typeInfoPtr
+
+        val bodyElementType: LLVMTypeRef = elements.firstOrNull()?.llvmType ?: int8Type
+        // (use [0 x i8] as body if there are no elements)
+        val arrayBody = ConstArray(bodyElementType, elements)
+
+        val compositeType = structType(runtime.arrayHeaderType, arrayBody.llvmType)
+
+        val global = this.createGlobal(compositeType, "")
+
+        val objHeaderPtr = global.pointer.getElementPtr(0)
+        val arrayHeader = arrayHeader(typeInfo, elements.size)
+
+        global.setInitializer(Struct(compositeType, arrayHeader, arrayBody))
+        global.setConstant(true)
+        global.setUnnamedAddr(true)
+
+        return createRef(objHeaderPtr)
+    }
+
+    fun KotlinStaticData.createConstKotlinArray(arrayClass: IrClass, elements: List<LLVMValueRef>) =
+            createConstKotlinArray(arrayClass, elements.map { constValue(it) }).llvm
+
+    private fun KotlinStaticData.createKotlinStringLiteral(value: String): ConstPointer {
+        val elements = value.toCharArray().map(::Char16)
+        val objRef = createConstKotlinArray(symbols.string.owner, elements)
+        return objRef
+    }
+
+    fun KotlinStaticData.kotlinStringLiteral(value: String) = stringLiterals.getOrPut(value) { createKotlinStringLiteral(value) }
 }
 
 /**
@@ -276,7 +338,7 @@ internal class InitializersGenerationState {
 }
 
 internal class Llvm(
-        val context: BitcodegenContext,
+        val context: LlvmModuleSpecificationComponent,
         val config: KonanConfig,
         val llvmModule: LLVMModuleRef
 ) : RuntimeAware {
@@ -296,18 +358,6 @@ internal class Llvm(
         attributesCopier.addFunctionAttributes(function)
 
         return LlvmCallable(function, attributesCopier)
-    }
-
-    private fun importGlobal(name: String, otherModule: LLVMModuleRef): LLVMValueRef {
-        if (LLVMGetNamedGlobal(llvmModule, name) != null) {
-            throw IllegalArgumentException("global $name already exists")
-        }
-
-        val externalGlobal = LLVMGetNamedGlobal(otherModule, name)!!
-        val globalType = getGlobalType(externalGlobal)
-        val global = LLVMAddGlobal(llvmModule, globalType, name)!!
-
-        return global
     }
 
     private fun importMemset(): LlvmCallable {
@@ -449,12 +499,13 @@ internal class Llvm(
 
     val additionalProducedBitcodeFiles = mutableListOf<String>()
 
-    val staticData = KotlinStaticData(context)
-
     private val target = config.target
 
     val runtimeFile = config.distribution.runtime(target)
     override val runtime = Runtime(runtimeFile) // TODO: dispose
+
+    val staticData by lazy { KotlinStaticData(llvmModule, runtime) }
+
 
     val targetTriple = runtime.target
 
@@ -610,19 +661,6 @@ internal class Llvm(
     val globalSharedObjects = mutableSetOf<LLVMValueRef>()
     val initializersGenerationState = InitializersGenerationState()
     val boxCacheGlobals = mutableMapOf<BoxCache, StaticData.Global>()
-
-    val runtimeAnnotationMap by lazy {
-        context.llvm.staticData.getGlobal("llvm.global.annotations")
-                ?.getInitializer()
-                ?.let { getOperands(it) }
-                ?.groupBy(
-                        { LLVMGetInitializer(LLVMGetOperand(LLVMGetOperand(it, 1), 0))?.getAsCString() ?: "" },
-                        { LLVMGetOperand(LLVMGetOperand(it, 0), 0)!! }
-                )
-                ?.filterKeys { it != "" }
-                ?: emptyMap()
-    }
-
 
     private object lazyRtFunction {
         operator fun provideDelegate(

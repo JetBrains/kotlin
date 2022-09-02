@@ -10,6 +10,7 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.reinterpret
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.phases.BackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -61,7 +62,11 @@ internal object DWARF {
 
 fun KonanConfig.debugInfoVersion():Int = configuration[KonanConfigKeys.DEBUG_INFO_VERSION] ?: 1
 
-internal class DebugInfo(override val context: Context):ContextUtils {
+internal class DebugInfo(
+        private val context: BackendPhaseContext,
+        private val llvm: Llvm,
+        private val llvmTargetData: LLVMTargetDataRef
+) {
     val files = mutableMapOf<String, DIFileRef>()
     val subprograms = mutableMapOf<LLVMValueRef, DISubprogramRef>()
     /* Some functions are inlined on all callsites and body is eliminated by DCE, so there's no LLVM value */
@@ -73,14 +78,14 @@ internal class DebugInfo(override val context: Context):ContextUtils {
     var types = mutableMapOf<IrType, DITypeOpaqueRef>()
 
     val llvmTypes = mapOf<IrType, LLVMTypeRef>(
-            context.irBuiltIns.booleanType to context.llvm.llvmInt8,
-            context.irBuiltIns.byteType    to context.llvm.llvmInt8,
-            context.irBuiltIns.charType    to context.llvm.llvmInt16,
-            context.irBuiltIns.shortType   to context.llvm.llvmInt16,
-            context.irBuiltIns.intType     to context.llvm.llvmInt32,
-            context.irBuiltIns.longType    to context.llvm.llvmInt64,
-            context.irBuiltIns.floatType   to context.llvm.llvmFloat,
-            context.irBuiltIns.doubleType  to context.llvm.llvmDouble)
+            context.irBuiltIns.booleanType to llvm.llvmInt8,
+            context.irBuiltIns.byteType    to llvm.llvmInt8,
+            context.irBuiltIns.charType    to llvm.llvmInt16,
+            context.irBuiltIns.shortType   to llvm.llvmInt16,
+            context.irBuiltIns.intType     to llvm.llvmInt32,
+            context.irBuiltIns.longType    to llvm.llvmInt64,
+            context.irBuiltIns.floatType   to llvm.llvmFloat,
+            context.irBuiltIns.doubleType  to llvm.llvmDouble)
     val llvmTypeSizes = llvmTypes.map { it.key to LLVMSizeOfTypeInBits(llvmTargetData, it.value) }.toMap()
     val llvmTypeAlignments = llvmTypes.map {it.key to LLVMPreferredAlignmentOfType(llvmTargetData, it.value)}.toMap()
     val otherLlvmType = LLVMPointerType(int64Type, 0)!!

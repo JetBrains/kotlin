@@ -19,7 +19,10 @@ import org.jetbrains.kotlin.backend.konan.lower.InlineClassPropertyAccessorsLowe
 import org.jetbrains.kotlin.backend.konan.lower.RedundantCoercionsCleaner
 import org.jetbrains.kotlin.backend.konan.lower.ReturnsInsertionLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.*
-import org.jetbrains.kotlin.backend.konan.phases.*
+import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
+import org.jetbrains.kotlin.backend.konan.phases.KlibProducingContext
+import org.jetbrains.kotlin.backend.konan.phases.LlvmCodegenContext
+import org.jetbrains.kotlin.backend.konan.phases.LtoContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -66,11 +69,9 @@ internal val contextLLVMSetupPhase = makeKonanModuleOpPhase<BitcodegenContext>(
 internal val createLLVMDeclarationsPhase = makeKonanModuleOpPhase<BitcodegenContext>(
         name = "CreateLLVMDeclarations",
         description = "Map IR declarations to LLVM",
-        prerequisite = setOf(contextLLVMSetupPhase),
+//        prerequisite = setOf(contextLLVMSetupPhase),
         op = { context, _ ->
             context.llvmDeclarations = createLlvmDeclarations(context, context.ir.irModule)
-            context.lifetimes = mutableMapOf()
-            context.codegenVisitor = CodeGeneratorVisitor(context, context.lifetimes)
         }
 )
 
@@ -317,7 +318,8 @@ internal val codegenPhase = makeKonanModuleOpPhase<BitcodegenContext>(
         name = "Codegen",
         description = "Code generation",
         op = { context, irModule ->
-            irModule.acceptVoid(context.codegenVisitor)
+            val codegenVisitor = CodeGeneratorVisitor(context, context.lifetimes)
+            irModule.acceptVoid(codegenVisitor)
             context.necessaryLlvmParts = NecessaryLlvmParts(
                     context.llvm.allCachedBitcodeDependencies,
                     context.llvm.nativeDependenciesToLink,
@@ -376,7 +378,7 @@ internal val coveragePhase = makeKonanModuleOpPhase<LlvmCodegenContext>(
 internal val optimizeTLSDataLoadsPhase = makeKonanModuleOpPhase<LlvmCodegenContext>(
         name = "OptimizeTLSDataLoads",
         description = "Optimize multiple loads of thread data",
-        op = { context, _ -> removeMultipleThreadDataLoads(context.llvm, context.llvmModule!!) }
+        op = { context, _ -> removeMultipleThreadDataLoads(context.runtimeAnnotationMap, context.llvmModule!!) }
 )
 
 internal val produceOutputPhase = namedUnitPhase(

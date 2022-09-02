@@ -18,7 +18,11 @@ import org.jetbrains.kotlin.backend.konan.descriptors.ClassVTableEntries
 import org.jetbrains.kotlin.backend.konan.descriptors.isTypedIntrinsic
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface.functionName
+import org.jetbrains.kotlin.backend.konan.phases.*
+import org.jetbrains.kotlin.backend.konan.phases.BackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
+import org.jetbrains.kotlin.backend.konan.phases.ClassFieldsLayoutContext
+import org.jetbrains.kotlin.backend.konan.phases.ClassVTableEntriesContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -32,8 +36,22 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import kotlin.collections.set
 
-internal fun createLlvmDeclarations(context: BitcodegenContext, irModuleFragment: IrModuleFragment): LlvmDeclarations {
-    val generator = DeclarationsGeneratorVisitor(context)
+internal fun createLlvmDeclarations(
+        context: BitcodegenContext,
+        irModuleFragment: IrModuleFragment
+): LlvmDeclarations {
+    val generator = DeclarationsGeneratorVisitor(
+            context,
+            context,
+            context,
+            context.llvm.staticData,
+            context.llvmModule!!,
+            context.llvm.runtime,
+            context.llvm,
+            context.targetAbiInfo,
+            context.ir.symbols,
+            context.config,
+    )
     irModuleFragment.acceptChildrenVoid(generator)
     return LlvmDeclarations(generator.uniques)
 }
@@ -90,24 +108,33 @@ internal class StaticFieldLlvmDeclarations(val storageAddressAccess: AddressAcce
 
 internal class UniqueLlvmDeclarations(val pointer: ConstPointer)
 
-private fun ContextUtils.createClassBodyType(name: String, fields: List<ClassLayoutBuilder.FieldInfo>): LLVMTypeRef {
+private fun NoContextUtils.createClassBodyType(name: String, fields: List<ClassLayoutBuilder.FieldInfo>): LLVMTypeRef {
     val fieldTypes = listOf(runtime.objHeaderType) + fields.map { getLLVMType(it.type) }
     // TODO: consider adding synthetic ObjHeader field to Any.
 
-    val classType = LLVMStructCreateNamed(LLVMGetModuleContext(context.llvmModule), name)!!
+    val classType = LLVMStructCreateNamed(LLVMGetModuleContext(llvmModule), name)!!
 
     // LLVMStructSetBody expects the struct to be properly aligned and will insert padding accordingly. In our case
     // `allocInstance` returns 16x + 8 address, i.e. always misaligned for vector types. Workaround is to use packed struct.
-    val hasBigAlignment = fields.any { LLVMABIAlignmentOfType(context.llvm.runtime.targetData, getLLVMType(it.type)) > 8 }
+    val hasBigAlignment = fields.any { LLVMABIAlignmentOfType(runtime.targetData, getLLVMType(it.type)) > 8 }
     val packed = if (hasBigAlignment) 1 else 0
     LLVMStructSetBody(classType, fieldTypes.toCValues(), fieldTypes.size, packed)
 
     return classType
 }
 
-private class DeclarationsGeneratorVisitor(
-        override val context: BitcodegenContext
-) : IrElementVisitorVoid, ContextUtils {
+internal class DeclarationsGeneratorVisitor(
+        private val classFieldsLayoutContext: ClassFieldsLayoutContext,
+        private val classVTableEntriesContext: ClassVTableEntriesContext,
+        private val cacheContext: CacheContext,
+        private val staticData: KotlinStaticData,
+        override val llvmModule: LLVMModuleRef,
+        override val runtime: Runtime,
+        override val llvm: Llvm,
+        override val argumentAbiInfo: TargetAbiInfo,
+        override val symbols: KonanSymbols,
+        override val config: KonanConfig,
+) : IrElementVisitorVoid, NoContextUtils {
 
     val uniques = mutableMapOf<UniqueKind, UniqueLlvmDeclarations>()
 
@@ -173,7 +200,7 @@ private class DeclarationsGeneratorVisitor(
     private fun createClassDeclarations(declaration: IrClass): ClassLlvmDeclarations {
         val internalName = qualifyInternalName(declaration)
 
-        val fields = context.getClassFieldLayout(declaration).fields
+        val fields = classFieldsLayoutContext.getClassFieldLayout(declaration).fields
         val bodyType = createClassBodyType("kclassbody:$internalName", fields)
 
         val typeInfoPtr: ConstPointer
@@ -197,12 +224,12 @@ private class DeclarationsGeneratorVisitor(
 
             val typeInfoWithVtableType = structType(
                     runtime.typeInfoType,
-                    LLVMArrayType(int8TypePtr, context.getClassVTableEntries(declaration).vtableEntries.size)!!
+                    LLVMArrayType(int8TypePtr, classVTableEntriesContext.getClassVTableEntries(declaration).vtableEntries.size)!!
             )
 
             typeInfoGlobal = staticData.createGlobal(typeInfoWithVtableType, typeInfoGlobalName, isExported = false)
 
-            val llvmTypeInfoPtr = LLVMAddAlias(context.llvmModule,
+            val llvmTypeInfoPtr = LLVMAddAlias(llvmModule,
                     kTypeInfoPtr,
                     typeInfoGlobal.pointer.getElementPtr(0).llvm,
                     typeInfoSymbolName)!!
@@ -213,7 +240,7 @@ private class DeclarationsGeneratorVisitor(
                     throw IllegalArgumentException("Global '$typeInfoSymbolName' already exists")
                 }
             } else {
-                if (!config.producePerFileCache || declaration !in context.constructedFromExportedInlineFunctions)
+                if (!config.producePerFileCache || declaration !in cacheContext.constructedFromExportedInlineFunctions)
                     LLVMSetLinkage(llvmTypeInfoPtr, LLVMLinkage.LLVMInternalLinkage)
             }
 
@@ -280,7 +307,7 @@ private class DeclarationsGeneratorVisitor(
             return null
         }
 
-        val storageKind = irClass.storageKind(context)
+        val storageKind = irClass.storageKind(classFieldsLayoutContext)
         val threadLocal = storageKind == ObjectStorageKind.THREAD_LOCAL
         val isExported = irClass.isExported()
         val symbolName = if (isExported) {
@@ -307,7 +334,7 @@ private class DeclarationsGeneratorVisitor(
             "kobjcclassinfo:$internalName"
         }
         val classInfoGlobal = staticData.createGlobal(
-                context.llvm.runtime.kotlinObjCClassInfo,
+                runtime.kotlinObjCClassInfo,
                 classInfoSymbolName,
                 isExported = isExported
         ).apply {
@@ -327,7 +354,7 @@ private class DeclarationsGeneratorVisitor(
             if (!containingClass.requiresRtti()) return
             val classDeclarations = (containingClass.metadata as? CodegenClassMetadata)?.llvm
                     ?: error(containingClass.descriptor.toString())
-            val allFields = context.getClassFieldLayout(containingClass).fields
+            val allFields = classFieldsLayoutContext.getClassFieldLayout(containingClass).fields
             val fieldInfo = allFields.firstOrNull { it.irField == declaration } ?: error("Field ${declaration.render()} is not found")
             declaration.metadata = CodegenInstanceFieldMetadata(
                     declaration.metadata?.name,
@@ -345,7 +372,6 @@ private class DeclarationsGeneratorVisitor(
             } else {
                 addKotlinGlobal(name, getLLVMType(declaration.type), isExported = false)
             }
-
             declaration.metadata = CodegenStaticFieldMetadata(
                     declaration.metadata?.name,
                     declaration.konanLibrary,
@@ -371,12 +397,12 @@ private class DeclarationsGeneratorVisitor(
                     || declaration.annotations.hasAnnotation(RuntimeNames.cCall)) return
 
             val proto = LlvmFunctionProto(declaration, declaration.computeSymbolName(), this)
-            context.llvm.externalFunction(proto)
+            llvm.externalFunction(proto)
         } else {
             val symbolName = if (declaration.isExported()) {
                 declaration.computeSymbolName().also {
                     if (declaration.name.asString() != "main") {
-                        assert(LLVMGetNamedFunction(context.llvm.llvmModule, it) == null) { it }
+                        assert(LLVMGetNamedFunction(llvmModule, it) == null) { it }
                     } else {
                         // As a workaround, allow `main` functions to clash because frontend accepts this.
                         // See [OverloadResolver.isTopLevelMainInDifferentFiles] usage.
@@ -395,7 +421,7 @@ private class DeclarationsGeneratorVisitor(
             val proto = LlvmFunctionProto(declaration, symbolName, this)
             val llvmFunction = addLlvmFunctionWithDefaultAttributes(
                     config,
-                    context.llvmModule!!,
+                    llvmModule,
                     symbolName,
                     proto.llvmFunctionType
             ).also {

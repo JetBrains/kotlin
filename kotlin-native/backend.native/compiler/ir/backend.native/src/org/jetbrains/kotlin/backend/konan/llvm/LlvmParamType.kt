@@ -21,7 +21,7 @@ class LlvmParamType(val llvmType: LLVMTypeRef, val attributes: List<LlvmParamete
  */
 typealias LlvmRetType = LlvmParamType
 
-internal fun ContextUtils.getLlvmFunctionParameterTypes(function: IrFunction): List<LlvmParamType> {
+internal fun NoContextUtils.getLlvmFunctionParameterTypes(function: IrFunction): List<LlvmParamType> {
     val returnType = getLlvmFunctionReturnType(function).llvmType
     val paramTypes = ArrayList(function.allParameters.map {
         LlvmParamType(getLLVMType(it.type), argumentAbiInfo.defaultParameterAttributesForIrType(it.type))
@@ -34,7 +34,7 @@ internal fun ContextUtils.getLlvmFunctionParameterTypes(function: IrFunction): L
     return paramTypes
 }
 
-internal fun ContextUtils.getLlvmFunctionReturnType(function: IrFunction): LlvmRetType {
+internal fun NoContextUtils.getLlvmFunctionReturnType(function: IrFunction): LlvmRetType {
     val returnType = when {
         function is IrConstructor -> LlvmParamType(voidType)
         function.isSuspend -> LlvmParamType(kObjHeaderPtr)                // Suspend functions return Any?.

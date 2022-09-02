@@ -94,7 +94,9 @@ internal class ClassGlobalHierarchyInfo(val classIdLo: Int, val classIdHi: Int, 
     }
 }
 
-internal class GlobalHierarchyAnalysisResult(val bitsPerColor: Int)
+internal class GlobalHierarchyAnalysisResult(val bitsPerColor: Int) {
+    fun valid(): Boolean = bitsPerColor >= 0
+}
 
 internal class GlobalHierarchyAnalysis(
         val context: LtoContext,
