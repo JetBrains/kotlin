@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.CompilationOutputs
+import org.jetbrains.kotlin.ir.backend.js.CompilerResult
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.export.*
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsTransformationExtension
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.backend.js.utils.serialization.JsIrAstSerializer
@@ -36,7 +39,7 @@ import java.util.*
 enum class TranslationMode(
     val dce: Boolean,
     val perModule: Boolean,
-    val minimizedMemberNames: Boolean,
+    val minimizedMemberNames: Boolean
 ) {
     FULL(dce = false, perModule = false, minimizedMemberNames = false),
     FULL_DCE(dce = true, perModule = false, minimizedMemberNames = false),
@@ -71,6 +74,7 @@ class IrModuleToJsTransformerTmp(
     private val relativeRequirePath: Boolean = false,
     private val moduleToName: Map<IrModuleFragment, String> = emptyMap(),
     private val removeUnusedAssociatedObjects: Boolean = true,
+    private val irToJsTransformationExtensions: List<IrToJsTransformationExtension> = emptyList()
 ) {
     private val generateRegionComments = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
 
@@ -100,6 +104,7 @@ class IrModuleToJsTransformerTmp(
             SourceMapsInfo.from(backendContext.configuration),
             relativeRequirePath,
             generateScriptModule,
+            irToJsTransformationExtensions
         )
 
         val result = EnumMap<TranslationMode, CompilationOutputs>(TranslationMode::class.java)
@@ -113,7 +118,7 @@ class IrModuleToJsTransformerTmp(
         }
 
         if (modes.any { it.dce }) {
-            eliminateDeadDeclarations(modules, backendContext, removeUnusedAssociatedObjects)
+            eliminateDeadDeclarations(modules, backendContext, removeUnusedAssociatedObjects, irToJsTransformationExtensions)
         }
 
         modes.filter { it.dce }.forEach {
@@ -164,15 +169,25 @@ class IrModuleToJsTransformerTmp(
         minimizedMemberNames: Boolean
     ): JsIrProgram {
         return JsIrProgram(
-            modules.map { m ->
-                JsIrModule(
-                    m.safeName,
-                    m.externalModuleName(),
-                    m.files.map {
-                        val exports = exportData[m]!![it]!!
-                        generateProgramFragment(it, exports, minimizedMemberNames)
-                    },
-                )
+            buildList {
+                modules.forEach { m ->
+                    for (extension in irToJsTransformationExtensions) {
+                        val generatedModules = extension.generateAdditionalJsIrModules(m, backendContext, minimizedMemberNames)
+                        generatedModules.forEach { it.origin = JsModuleOrigin.Extension(extension.extensionKey) }
+                        addAll(generatedModules)
+                    }
+
+                    add(
+                        JsIrModule(
+                            m.safeName,
+                            m.externalModuleName(),
+                            m.files.map {
+                                val exports = exportData[m]!![it]!!
+                                generateProgramFragment(it, exports, minimizedMemberNames)
+                            },
+                        )
+                    )
+                }
             }
         )
     }
@@ -180,7 +195,11 @@ class IrModuleToJsTransformerTmp(
     private val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
     private val pathPrefixMap = backendContext.configuration.getMap(JSConfigurationKeys.FILE_PATHS_PREFIX_MAP)
 
-    private fun generateProgramFragment(file: IrFile, exports: List<ExportedDeclaration>, minimizedMemberNames: Boolean): JsIrProgramFragment {
+    private fun generateProgramFragment(
+        file: IrFile,
+        exports: List<ExportedDeclaration>,
+        minimizedMemberNames: Boolean
+    ): JsIrProgramFragment {
         val nameGenerator = JsNameLinkingNamer(backendContext, minimizedMemberNames)
 
         val globalNameScope = NameTable<IrDeclaration>()
@@ -254,7 +273,9 @@ class IrModuleToJsTransformerTmp(
                 val jsName = staticContext.getNameForStaticFunction(it)
                 val generateArgv = it.valueParameters.firstOrNull()?.isStringArrayParameter() ?: false
                 val generateContinuation = it.isLoweredSuspendFunction(backendContext)
-                result.mainFunction = JsInvocation(jsName.makeRef(), generateMainArguments(generateArgv, generateContinuation, staticContext)).makeStmt()
+                val mainInvocation =
+                    JsInvocation(jsName.makeRef(), generateMainArguments(generateArgv, generateContinuation, staticContext)).makeStmt()
+                result.mainFunction = irToJsTransformationExtensions.fold(mainInvocation) { acc, ext -> ext.transformMainFunction(acc) }
             }
         }
 
@@ -332,16 +353,14 @@ private fun generateWrappedModuleBody(
     program: JsIrProgram,
     sourceMapsInfo: SourceMapsInfo?,
     relativeRequirePath: Boolean,
-    generateScriptModule: Boolean
+    generateScriptModule: Boolean,
+    irToJsTransformationExtensions: List<IrToJsTransformationExtension>
 ): CompilationOutputs {
-    if (multiModule) {
+    val moduleToRef = program.crossModuleDependencies(relativeRequirePath)
 
-        val moduleToRef = program.crossModuleDependencies(relativeRequirePath)
-
+    val (compiledMain, others) = if (multiModule) {
         val main = program.mainModule
-        val others = program.otherModules
-
-        val mainModule = generateSingleWrappedModuleBody(
+        val module = generateSingleWrappedModuleBody(
             mainModuleName,
             moduleKind,
             main.fragments,
@@ -349,33 +368,44 @@ private fun generateWrappedModuleBody(
             generateScriptModule,
             generateCallToMain = true,
             moduleToRef[main]!!,
+            irToJsTransformationExtensions = irToJsTransformationExtensions
         )
-
-        val dependencies = others.map { module ->
-            val moduleName = module.externalModuleName
-
-            moduleName to generateSingleWrappedModuleBody(
-                moduleName,
-                moduleKind,
-                module.fragments,
-                sourceMapsInfo,
-                generateScriptModule,
-                generateCallToMain = false,
-                moduleToRef[module]!!,
-            )
+        Pair(module, program.otherModules)
+    } else {
+        val (generatedModules, otherModules) = program.modules.partition { it.origin is JsModuleOrigin.Extension }
+        if (generatedModules.isNotEmpty()) {
+            error("Additional js modules generation supported only in multi module builds")
         }
 
-        return CompilationOutputs(mainModule.jsCode, mainModule.jsProgram, mainModule.sourceMap, dependencies)
-    } else {
-        return generateSingleWrappedModuleBody(
+        val module = generateSingleWrappedModuleBody(
             mainModuleName,
             moduleKind,
-            program.modules.flatMap { it.fragments },
+            otherModules.flatMap { it.fragments },
             sourceMapsInfo,
             generateScriptModule,
             generateCallToMain = true,
+            irToJsTransformationExtensions = irToJsTransformationExtensions
+        )
+        Pair(module, generatedModules)
+    }
+
+    val dependencies = others.map { module ->
+        val moduleName = module.externalModuleName
+
+        moduleName to generateSingleWrappedModuleBody(
+            moduleName,
+            moduleKind,
+            module.fragments,
+            sourceMapsInfo,
+            generateScriptModule,
+            generateCallToMain = false,
+            moduleToRef[module]!!,
+            module.origin,
+            irToJsTransformationExtensions = irToJsTransformationExtensions
         )
     }
+
+    return CompilationOutputs(compiledMain.jsCode, compiledMain.jsProgram, compiledMain.sourceMap, dependencies)
 }
 
 fun generateSingleWrappedModuleBody(
@@ -386,6 +416,8 @@ fun generateSingleWrappedModuleBody(
     generateScriptModule: Boolean,
     generateCallToMain: Boolean,
     crossModuleReferences: CrossModuleReferences = CrossModuleReferences.Empty,
+    moduleOrigin: JsModuleOrigin = JsModuleOrigin.Source,
+    irToJsTransformationExtensions: List<IrToJsTransformationExtension> = emptyList()
 ): CompilationOutputs {
     val program = Merger(
         moduleName,
@@ -395,6 +427,8 @@ fun generateSingleWrappedModuleBody(
         generateScriptModule,
         generateRegionComments = true,
         generateCallToMain,
+        moduleOrigin,
+        irToJsTransformationExtensions = irToJsTransformationExtensions
     ).merge()
 
     program.resolveTemporaryNames()
@@ -425,11 +459,10 @@ fun generateSingleWrappedModuleBody(
     }
 
     program.accept(JsToStringGenerationVisitor(jsCode, sourceMapBuilderConsumer))
-
     return CompilationOutputs(
         jsCode.toString(),
         program,
-        sourceMapBuilder?.build()
+        sourceMapBuilder?.build(),
     )
 }
 

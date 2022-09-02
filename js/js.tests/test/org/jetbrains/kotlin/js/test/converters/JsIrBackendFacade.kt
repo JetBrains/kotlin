@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationOptions
 import org.jetbrains.kotlin.ir.backend.js.codegen.generateEsModules
 import org.jetbrains.kotlin.ir.backend.js.dce.eliminateDeadDeclarations
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsTransformationExtension
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
@@ -171,12 +172,17 @@ class JsIrBackendFacade(
 
         val outputFile = File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, TranslationMode.FULL) + ".js")
         val dceOutputFile = File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, TranslationMode.FULL_DCE_MINIMIZED_NAMES) + ".js")
+
+        val project = testServices.compilerConfigurationProvider.getProject(module)
+        val irToJsTransformationExtensions = IrToJsTransformationExtension.getInstances(project)
+
         if (!esModules) {
             if (runNewIr2Js) {
                 val transformer = IrModuleToJsTransformerTmp(
                     loweredIr.context,
                     mainArguments,
-                    relativeRequirePath = false
+                    relativeRequirePath = false,
+                    irToJsTransformationExtensions = irToJsTransformationExtensions
                 )
 
                 // If runIrDce then include DCE results
@@ -205,7 +211,7 @@ class JsIrBackendFacade(
         generateEsModules(loweredIr, jsOutputSink(outputFile.parentFile.esModulesSubDir), mainArguments, granularity, options)
 
         if (runIrDce) {
-            eliminateDeadDeclarations(loweredIr.allModules, loweredIr.context)
+            eliminateDeadDeclarations(loweredIr.allModules, loweredIr.context, irToJsTransformationExtensions = irToJsTransformationExtensions)
             generateEsModules(loweredIr, jsOutputSink(dceOutputFile.parentFile.esModulesSubDir), mainArguments, granularity, options)
             return BinaryArtifacts.Js.JsEsArtifact(outputFile, dceOutputFile).dump(module)
         }
