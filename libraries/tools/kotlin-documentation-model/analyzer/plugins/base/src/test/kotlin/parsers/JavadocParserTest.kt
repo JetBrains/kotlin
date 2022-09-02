@@ -436,6 +436,38 @@ class JavadocParserTest : BaseAbstractTest() {
     }
 
     @Test
+    fun `u tag is handled properly`() {
+        val source = """
+            |/src/main/kotlin/test/Test.java
+            |package example
+            |
+            | /**
+            | * An example of using u tag: <u>underlined</u>
+            | */
+            | public class Test  {}
+            """.trimIndent()
+        testInline(
+            source,
+            configuration,
+        ) {
+            documentablesCreationStage = { modules ->
+                val docs = modules.first().packages.first().classlikes.single().documentation.first().value
+                val root = docs.children.first().root
+
+                assertEquals(
+                    listOf(
+                        P(children = listOf(
+                            Text("An example of using u tag: "),
+                            U(children = listOf(Text("underlined"))),
+                        )),
+                    ),
+                    root.children
+                )
+            }
+        }
+    }
+
+    @Test
     fun `undocumented see also from java`(){
         testInline(
             """
