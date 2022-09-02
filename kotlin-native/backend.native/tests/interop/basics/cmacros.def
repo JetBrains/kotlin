@@ -76,3 +76,8 @@ enum {
 
 void increment(int* counter);
 #define increment(counter) { (*(counter))++; }
+
+#define DEFAULT_DOUBLE_NAN __builtin_nan("")
+#define DEFAULT_FLOAT_NAN __builtin_nanf("")
+#define OTHER_DOUBLE_NAN __builtin_nan("0x7ffc0123456789ab")
+#define OTHER_FLOAT_NAN __builtin_nanf("0x7fc12345")
