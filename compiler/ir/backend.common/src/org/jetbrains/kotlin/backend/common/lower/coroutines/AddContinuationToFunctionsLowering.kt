@@ -1,17 +1,18 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
+package org.jetbrains.kotlin.backend.common.lower.coroutines
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irReturnUnit
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -34,7 +36,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * functions can return special values like [kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED]
  * which might not be a subtype of original return type.
  */
-class AddContinuationToNonLocalSuspendFunctionsLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
+class AddContinuationToNonLocalSuspendFunctionsLowering(val context: CommonBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? =
         if (declaration is IrSimpleFunction && declaration.isSuspend) {
             listOf(transformSuspendFunction(context, declaration))
@@ -47,7 +49,7 @@ class AddContinuationToNonLocalSuspendFunctionsLowering(val context: JsCommonBac
  * Similar to [AddContinuationToNonLocalSuspendFunctionsLowering] but processes local functions.
  * Useful for Kotlin/JS IR backend which keeps local declarations up until code generation.
  */
-class AddContinuationToLocalSuspendFunctionsLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
+class AddContinuationToLocalSuspendFunctionsLowering(val context: CommonBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
@@ -63,7 +65,7 @@ class AddContinuationToLocalSuspendFunctionsLowering(val context: JsCommonBacken
 }
 
 
-private fun transformSuspendFunction(context: JsCommonBackendContext, function: IrSimpleFunction): IrSimpleFunction {
+private fun transformSuspendFunction(context: CommonBackendContext, function: IrSimpleFunction): IrSimpleFunction {
     val newFunctionWithContinuation = function.getOrCreateFunctionWithContinuationStub(context)
     // Using custom mapping because number of parameters doesn't match
     val parameterMapping = function.explicitParameters.zip(newFunctionWithContinuation.explicitParameters).toMap()
@@ -84,13 +86,13 @@ private fun transformSuspendFunction(context: JsCommonBackendContext, function: 
 }
 
 
-fun IrSimpleFunction.getOrCreateFunctionWithContinuationStub(context: JsCommonBackendContext): IrSimpleFunction {
+fun IrSimpleFunction.getOrCreateFunctionWithContinuationStub(context: CommonBackendContext): IrSimpleFunction {
     return context.mapping.suspendFunctionsToFunctionWithContinuations.getOrPut(this) {
         createSuspendFunctionStub(context)
     }
 }
 
-private fun IrSimpleFunction.createSuspendFunctionStub(context: JsCommonBackendContext): IrSimpleFunction {
+private fun IrSimpleFunction.createSuspendFunctionStub(context: CommonBackendContext): IrSimpleFunction {
     require(this.isSuspend)
     return factory.buildFun {
         updateFrom(this@createSuspendFunctionStub)
@@ -127,6 +129,9 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: JsCommonBackendC
     }
 }
 
-private fun IrFunction.continuationType(context: JsCommonBackendContext): IrType {
-    return context.coroutineSymbols.continuationClass.typeWith(returnType)
+private fun IrFunction.continuationType(context: CommonBackendContext): IrType {
+    return context.ir.symbols.continuationClass.typeWith(returnType)
 }
+
+fun loweredSuspendFunctionReturnType(function: IrFunction, irBuiltIns: IrBuiltIns): IrType =
+    if (function.returnType.isNullable()) irBuiltIns.anyNType else irBuiltIns.anyType

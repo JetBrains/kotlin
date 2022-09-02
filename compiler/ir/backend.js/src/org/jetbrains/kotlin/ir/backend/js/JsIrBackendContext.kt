@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -242,6 +242,8 @@ class JsIrBackendContext(
                 get() = _arraysContentEquals.associateBy { it.owner.extensionReceiverParameter!!.type.makeNotNull() }
 
             override val getContinuation = symbolTable.referenceSimpleFunction(getJsInternalFunction("getContinuation"))
+
+            override val continuationClass = context.coroutineSymbols.continuationClass
 
             override val coroutineContextGetter =
                 symbolTable.referenceSimpleFunction(context.coroutineSymbols.coroutineContextProperty.getter!!)
