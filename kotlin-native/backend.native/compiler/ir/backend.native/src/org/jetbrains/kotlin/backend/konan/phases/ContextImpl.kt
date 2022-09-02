@@ -7,11 +7,16 @@ package org.jetbrains.kotlin.backend.konan.phases
 
 import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
+import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmImports
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
+import org.jetbrains.kotlin.backend.konan.lower.BridgesSupport
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
+import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
+import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFG
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
@@ -21,8 +26,10 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -126,3 +133,39 @@ internal fun CacheContextImpl(config: KonanConfig, previous: CacheContext) = Cac
         previous.constructedFromExportedInlineFunctions,
         previous.calledFromExportedInlineFunctions
 )
+
+internal class LtoContextImpl(
+        payload: BasicPhaseContextPayload,
+        override val bridgesSupport: BridgesSupport,
+        override val irModule: IrModuleFragment,
+        private val classFieldsLayoutHolder: SmartHolder<ClassFieldsLayout>,
+        private val classIdComputerHolder: SmartHolder<ClassIdComputer>,
+        private val classITablePlacer: SmartHolder<ClassITablePlacer>,
+        private val classVTableEntries: SmartHolder<ClassVTableEntries>,
+        private val layoutBuildersHolder: SmartHolder<ClassLayoutBuilder>,
+) : BasicBackendPhaseContext(payload), LtoContext {
+
+    override fun getLayoutBuilder(irClass: IrClass): ClassLayoutBuilder {
+        return layoutBuildersHolder.get(irClass)
+    }
+
+    override fun getClassVTableEntries(irClass: IrClass): ClassVTableEntries =
+            classVTableEntries.get(irClass)
+
+    override fun getClassITablePlacer(irClass: IrClass): ClassITablePlacer =
+            classITablePlacer.get(irClass)
+
+    override fun getClassId(irClass: IrClass): ClassIdComputer =
+            classIdComputerHolder.get(irClass)
+
+    override lateinit var globalHierarchyAnalysisResult: GlobalHierarchyAnalysisResult
+
+    override fun ghaEnabled(): Boolean =
+            ::globalHierarchyAnalysisResult.isInitialized
+
+    override var devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult? = null
+
+    override var moduleDFG: ModuleDFG? = null
+    override var referencedFunctions: Set<IrFunction>? = null
+    override lateinit var lifetimes: MutableMap<IrElement, Lifetime>
+}

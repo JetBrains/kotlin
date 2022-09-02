@@ -35,7 +35,7 @@ internal class CacheInfoBuilder(
                 if (!declaration.isInterface && !declaration.isLocal
                         && declaration.isExported && declaration.origin != DECLARATION_ORIGIN_FUNCTION_CLASS
                 ) {
-                    context.classFields.add(buildClassFields(declaration, context.getLayoutBuilder(declaration).getDeclaredFields()))
+                    context.classFields.add(buildClassFields(declaration, context.getClassFieldLayout(declaration).getDeclaredFields()))
                 }
             }
 

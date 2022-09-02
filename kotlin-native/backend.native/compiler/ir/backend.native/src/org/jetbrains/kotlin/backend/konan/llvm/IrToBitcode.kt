@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_FILE_THREAD_L
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_MODULE_GLOBAL_INITIALIZER
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_MODULE_THREAD_LOCAL_INITIALIZER
 import org.jetbrains.kotlin.backend.konan.phases.BitcodegenContext
+import org.jetbrains.kotlin.backend.konan.phases.ClassFieldsLayoutContext
 import org.jetbrains.kotlin.backend.konan.phases.LayoutBuildingContext
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.Modality
@@ -81,7 +82,7 @@ internal fun IrField.needsGCRegistration(config: KonanConfig) =
                 (hasNonConstInitializer || // which are initialized from heap object
                         !isFinal) // or are not final
 
-internal fun IrClass.storageKind(context: LayoutBuildingContext): ObjectStorageKind = when {
+internal fun IrClass.storageKind(context: ClassFieldsLayoutContext): ObjectStorageKind = when {
     this.annotations.hasAnnotation(KonanFqNames.threadLocal) &&
             context.config.threadsAreAllowed -> ObjectStorageKind.THREAD_LOCAL
 
@@ -946,7 +947,7 @@ internal class CodeGeneratorVisitor(
     }
 
     private fun computeFields(declaration: IrClass): Array<ConstValue> {
-        val fields = context.getLayoutBuilder(declaration).fields
+        val fields = context.getClassFieldLayout(declaration).fields
         return Array(fields.size) { index ->
             val initializer = fields[index].irField!!.initializer!!.expression as IrConst<*>
             evaluateConst(initializer)
@@ -1672,7 +1673,7 @@ internal class CodeGeneratorVisitor(
         return if (!context.ghaEnabled()) {
             call(context.llvm.isInstanceFunction, listOf(srcObjInfoPtr, codegen.typeInfoValue(dstClass)))
         } else {
-            val dstHierarchyInfo = context.getLayoutBuilder(dstClass).hierarchyInfo
+            val dstHierarchyInfo = context.getClassId(dstClass).hierarchyInfo
             if (!dstClass.isInterface) {
                 call(context.llvm.isInstanceOfClassFastFunction,
                         listOf(srcObjInfoPtr, Int32(dstHierarchyInfo.classIdLo).llvm, Int32(dstHierarchyInfo.classIdHi).llvm))
@@ -1960,7 +1961,7 @@ internal class CodeGeneratorVisitor(
                 val fields = if (value.constructor.owner.isConstantConstructorIntrinsic) {
                     intrinsicGenerator.evaluateConstantConstructorFields(value, value.valueArguments.map { evaluateConstantValue(it) })
                 } else {
-                    context.getLayoutBuilder(constructedClass).fields.map { field ->
+                    context.getClassFieldLayout(constructedClass).fields.map { field ->
                         val index = value.constructor.owner.valueParameters
                                 .indexOfFirst { it.name.toString() == field.name }
                                 .takeIf { it >= 0 }

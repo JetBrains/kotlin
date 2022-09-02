@@ -165,15 +165,24 @@ class DynamicNativeCompilerDriver(
         runTopLevelPhase(middleEndContext, allLowerings, middleEndContext.irModule!!)
         dependenciesLowering(middleEndContext.irModule!!, middleEndContext)
 
+        val payload = BasicPhaseContextPayload(context.config, context.irBuiltIns, context.typeSystem, context.builtIns, context.ir)
+
         val ltoPhases = Phases.buildLtoAndMiscPhases(config)
-        val ltoContext: LtoContext = context
+        val ltoContext: LtoContext = LtoContextImpl(
+                payload,
+                context.bridgesSupport,
+                context.irModule!!,
+                context.classFieldsLayoutHolder,
+                context.classIdComputerHolder,
+                context.classITablePlacer,
+                context.classVTableEntries,
+                context.layoutBuildersHolder,
+        )
         runTopLevelPhase(ltoContext, ltoPhases, middleEndContext.irModule!!)
 
         val bitcodegenPhase = Phases.buildBitcodePhases()
         val bitcodegenContext: BitcodegenContext = context
         runTopLevelPhase(bitcodegenContext, bitcodegenPhase, bitcodegenContext.irModule!!)
-
-        val payload = BasicPhaseContextPayload(context.config, context.irBuiltIns, context.typeSystem, context.builtIns, context.ir)
 
         val llvmCodegenPhase = Phases.buildLlvmCodegenPhase()
         val llvmcodegenContext: LlvmCodegenContext = LlvmCodegenContextImpl(

@@ -797,7 +797,7 @@ internal class ModuleDFGBuilder(val context: LtoContext, val irModule: IrModuleF
 
                                         val isAnyMethod = callee.target.parentAsClass.isAny()
                                         if (owner.isInterface && !isAnyMethod) {
-                                            val itablePlace = context.getLayoutBuilder(owner).itablePlace(callee)
+                                            val itablePlace = context.getClassITablePlacer(owner).itablePlace(callee)
                                             DataFlowIR.Node.ItableCall(
                                                     symbolTable.mapFunction(callee.target),
                                                     receiverType,
@@ -809,9 +809,9 @@ internal class ModuleDFGBuilder(val context: LtoContext, val irModule: IrModuleF
                                             )
                                         } else {
                                             val vtableIndex = if (isAnyMethod)
-                                                context.getLayoutBuilder(context.irBuiltIns.anyClass.owner).vtableIndex(callee.target)
+                                                context.getClassVTableEntries(context.irBuiltIns.anyClass.owner).vtableIndex(callee.target)
                                             else
-                                                context.getLayoutBuilder(owner).vtableIndex(callee)
+                                                context.getClassVTableEntries(owner).vtableIndex(callee)
                                             DataFlowIR.Node.VtableCall(
                                                     symbolTable.mapFunction(callee.target),
                                                     receiverType,

@@ -9,7 +9,12 @@ import kotlinx.cinterop.toCValues
 import llvm.*
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.descriptors.ClassFieldsLayout
+import org.jetbrains.kotlin.backend.konan.descriptors.ClassITablePlacer
+import org.jetbrains.kotlin.backend.konan.descriptors.ClassIdComputer
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
+import org.jetbrains.kotlin.backend.konan.descriptors.ClassVTableEntries
 import org.jetbrains.kotlin.backend.konan.descriptors.isTypedIntrinsic
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface.functionName
@@ -168,7 +173,7 @@ private class DeclarationsGeneratorVisitor(
     private fun createClassDeclarations(declaration: IrClass): ClassLlvmDeclarations {
         val internalName = qualifyInternalName(declaration)
 
-        val fields = context.getLayoutBuilder(declaration).fields
+        val fields = context.getClassFieldLayout(declaration).fields
         val bodyType = createClassBodyType("kclassbody:$internalName", fields)
 
         val typeInfoPtr: ConstPointer
@@ -192,7 +197,7 @@ private class DeclarationsGeneratorVisitor(
 
             val typeInfoWithVtableType = structType(
                     runtime.typeInfoType,
-                    LLVMArrayType(int8TypePtr, context.getLayoutBuilder(declaration).vtableEntries.size)!!
+                    LLVMArrayType(int8TypePtr, context.getClassVTableEntries(declaration).vtableEntries.size)!!
             )
 
             typeInfoGlobal = staticData.createGlobal(typeInfoWithVtableType, typeInfoGlobalName, isExported = false)
@@ -322,7 +327,7 @@ private class DeclarationsGeneratorVisitor(
             if (!containingClass.requiresRtti()) return
             val classDeclarations = (containingClass.metadata as? CodegenClassMetadata)?.llvm
                     ?: error(containingClass.descriptor.toString())
-            val allFields = context.getLayoutBuilder(containingClass).fields
+            val allFields = context.getClassFieldLayout(containingClass).fields
             val fieldInfo = allFields.firstOrNull { it.irField == declaration } ?: error("Field ${declaration.render()} is not found")
             declaration.metadata = CodegenInstanceFieldMetadata(
                     declaration.metadata?.name,
@@ -412,6 +417,10 @@ internal open class KonanMetadata(override val name: Name?, val konanLibrary: Ko
 internal class CodegenClassMetadata(irClass: IrClass)
     : KonanMetadata(irClass.metadata?.name, irClass.konanLibrary), MetadataSource.Class {
     var layoutBuilder: ClassLayoutBuilder? = null
+    var fieldsLayout: ClassFieldsLayout? = null
+    var classIdComputer: ClassIdComputer? = null
+    var classITablePlacer: ClassITablePlacer? = null
+    var classVTableEntries: ClassVTableEntries? = null
     var llvm: ClassLlvmDeclarations? = null
     override var serializedIr: ByteArray? = null
 }

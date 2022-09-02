@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.backend.konan.descriptors
 
-import llvm.LLVMStoreSizeOfType
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
+import org.jetbrains.kotlin.backend.konan.ir.isReal
+import org.jetbrains.kotlin.backend.konan.ir.isSpecialClassWithNoSupertypes
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
-import org.jetbrains.kotlin.backend.konan.llvm.getLLVMType
+import org.jetbrains.kotlin.backend.konan.llvm.getPrimitiveBinaryTypeSizeInBits
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
-import org.jetbrains.kotlin.backend.konan.phases.BridgesAwareContext
-import org.jetbrains.kotlin.backend.konan.phases.LtoContext
+import org.jetbrains.kotlin.backend.konan.phases.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -96,7 +96,10 @@ internal class ClassGlobalHierarchyInfo(val classIdLo: Int, val classIdHi: Int, 
 
 internal class GlobalHierarchyAnalysisResult(val bitsPerColor: Int)
 
-internal class GlobalHierarchyAnalysis(val context: LtoContext, val irModule: IrModuleFragment) {
+internal class GlobalHierarchyAnalysis(
+        val context: LtoContext,
+        val irModule: IrModuleFragment
+) {
     fun run() {
         /*
          * The algorithm for fast interface call and check:
@@ -145,7 +148,7 @@ internal class GlobalHierarchyAnalysis(val context: LtoContext, val irModule: Ir
         val root = context.irBuiltIns.anyClass.owner
         val immediateInheritors = mutableMapOf<IrClass, MutableList<IrClass>>()
         val allClasses = mutableListOf<IrClass>()
-        irModule.acceptVoid(object: IrElementVisitorVoid {
+        irModule.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
@@ -155,10 +158,10 @@ internal class GlobalHierarchyAnalysis(val context: LtoContext, val irModule: Ir
                     val color = interfaceColors[declaration]!!
                     // Numerate from 1 (reserve 0 for invalid value).
                     val interfaceId = ++colorCounts[color]
-                    assert (interfaceId <= maxInterfaceId) {
+                    assert(interfaceId <= maxInterfaceId) {
                         "Unable to assign interface id to ${declaration.name}"
                     }
-                    context.getLayoutBuilder(declaration).hierarchyInfo =
+                    context.getClassId(declaration).hierarchyInfo =
                             ClassGlobalHierarchyInfo(0, 0, color or (interfaceId shl bitsPerColor))
                 } else {
                     allClasses += declaration
@@ -179,7 +182,7 @@ internal class GlobalHierarchyAnalysis(val context: LtoContext, val irModule: Ir
             val enterTime = if (irClass == root) -1 else time
             immediateInheritors[irClass]?.forEach { dfs(it) }
             val exitTime = time
-            context.getLayoutBuilder(irClass).hierarchyInfo = ClassGlobalHierarchyInfo(enterTime, exitTime, 0)
+            context.getClassId(irClass).hierarchyInfo = ClassGlobalHierarchyInfo(enterTime, exitTime, 0)
         }
 
         dfs(root)
@@ -265,104 +268,26 @@ internal fun IrField.toFieldInfo(): ClassLayoutBuilder.FieldInfo {
     return ClassLayoutBuilder.FieldInfo(name.asString(), type, isConst, this)
 }
 
-internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
+internal class ClassLayoutBuilder(
+        val irClass: IrClass,
+        private val fieldsLayout: ClassFieldsLayout,
+        private val classIdComputer: ClassIdComputer,
+        private val classITablePlacer: ClassITablePlacer,
+        private val classVTableEntries: ClassVTableEntries,
+) {
     val vtableEntries: List<OverriddenFunctionInfo> by lazy {
-        require(!irClass.isInterface)
-
-        context.logMultiple {
-            +""
-            +"BUILDING vTable for ${irClass.render()}"
-        }
-
-        val superVtableEntries = if (irClass.isSpecialClassWithNoSupertypes()) {
-            emptyList()
-        } else {
-            val superClass = irClass.getSuperClassNotAny() ?: context.ir.symbols.any.owner
-            context.getLayoutBuilder(superClass).vtableEntries
-        }
-
-        val methods = overridableOrOverridingMethods
-        val newVtableSlots = mutableListOf<OverriddenFunctionInfo>()
-        val overridenVtableSlots = mutableMapOf<IrSimpleFunction, OverriddenFunctionInfo>()
-
-        context.logMultiple {
-            +""
-            +"SUPER vTable:"
-            superVtableEntries.forEach { +"    ${it.overriddenFunction.render()} -> ${it.function.render()}" }
-
-            +""
-            +"METHODS:"
-            methods.forEach { +"    ${it.render()}" }
-
-            +""
-            +"BUILDING INHERITED vTable"
-        }
-
-        val superVtableMap = superVtableEntries.groupBy { it.function }
-        methods.forEach { overridingMethod ->
-            overridingMethod.allOverriddenFunctions.forEach {
-                val superMethods = superVtableMap[it]
-                if (superMethods?.isNotEmpty() == true) {
-                    newVtableSlots.add(OverriddenFunctionInfo(overridingMethod, it))
-                    superMethods.forEach { superMethod ->
-                        overridenVtableSlots[superMethod.overriddenFunction] =
-                                OverriddenFunctionInfo(overridingMethod, superMethod.overriddenFunction)
-                    }
-                }
-            }
-        }
-        val inheritedVtableSlots = superVtableEntries.map { superMethod ->
-            overridenVtableSlots[superMethod.overriddenFunction]?.also {
-                context.log { "Taking overridden ${superMethod.overriddenFunction.render()} -> ${it.function.render()}" }
-            } ?: superMethod.also {
-                context.log { "Taking super ${superMethod.overriddenFunction.render()} -> ${superMethod.function.render()}" }
-            }
-        }
-
-        // Add all possible (descriptor, overriddenDescriptor) edges for now, redundant will be removed later.
-        methods.mapTo(newVtableSlots) { OverriddenFunctionInfo(it, it) }
-
-        val inheritedVtableSlotsSet = inheritedVtableSlots.map { it.function to it.bridgeDirections }.toSet()
-
-        val filteredNewVtableSlots = newVtableSlots
-            .filterNot { inheritedVtableSlotsSet.contains(it.function to it.bridgeDirections) }
-            .distinctBy { it.function to it.bridgeDirections }
-            .filter { it.function.isOverridable }
-
-        context.logMultiple {
-            +""
-            +"INHERITED vTable slots:"
-            inheritedVtableSlots.forEach { +"    ${it.overriddenFunction.render()} -> ${it.function.render()}" }
-
-            +""
-            +"MY OWN vTable slots:"
-            filteredNewVtableSlots.forEach { +"    ${it.overriddenFunction.render()} -> ${it.function.render()} ${it.function}" }
-            +"DONE vTable for ${irClass.render()}"
-        }
-
-        inheritedVtableSlots + filteredNewVtableSlots.sortedBy { it.overriddenFunction.uniqueName }
+        classVTableEntries.vtableEntries
     }
 
     fun vtableIndex(function: IrSimpleFunction): Int {
-        val bridgeDirections = function.target.bridgeDirectionsTo(function)
-        val index = vtableEntries.indexOfFirst { it.function == function && it.bridgeDirections == bridgeDirections }
-        if (index < 0) throw Error(function.render() + " $function " + " (${function.symbol.descriptor}) not in vtable of " + irClass.render())
-        return index
+        return classVTableEntries.vtableIndex(function)
     }
 
     fun overridingOf(function: IrSimpleFunction) =
-            overridableOrOverridingMethods.firstOrNull { function in it.allOverriddenFunctions }?.let {
-                OverriddenFunctionInfo(it, function).getImplementation(context)
-            }
+            classVTableEntries.overridingOf(function)
 
     val interfaceVTableEntries: List<IrSimpleFunction> by lazy {
-        require(irClass.isInterface)
-        irClass.simpleFunctions()
-                .filter { f ->
-                    f.isOverridable && f.bridgeTarget == null
-                            && (f.isReal || f.overriddenSymbols.any { f.needBridgeTo(it.owner) })
-                }
-                .sortedBy { it.uniqueName }
+        classITablePlacer.interfaceVTableEntries
     }
 
     data class InterfaceTablePlace(val interfaceId: Int, val itableSize: Int, val methodIndex: Int) {
@@ -371,32 +296,11 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         }
     }
 
-    val classId: Int get() = when {
-        irClass.isKotlinObjCClass() -> 0
-        irClass.isInterface -> {
-            if (context.ghaEnabled()) {
-                hierarchyInfo.interfaceId
-            } else {
-                localHash(irClass.fqNameForIrSerialization.asString().toByteArray()).toInt()
-            }
-        }
-        else -> {
-            if (context.ghaEnabled()) {
-                hierarchyInfo.classIdLo
-            } else {
-                0
-            }
-        }
-    }
+    val classId: Int
+        get() = classIdComputer.classId
 
     fun itablePlace(function: IrSimpleFunction): InterfaceTablePlace {
-        require(irClass.isInterface) { "An interface expected but was ${irClass.name}" }
-        val interfaceVTable = interfaceVTableEntries
-        val index = interfaceVTable.indexOf(function)
-        if (index >= 0)
-            return InterfaceTablePlace(classId, interfaceVTable.size, index)
-        val superFunction = function.overriddenSymbols.first().owner
-        return context.getLayoutBuilder(superFunction.parentAsClass).itablePlace(superFunction)
+        return classITablePlacer.itablePlace(function)
     }
 
     class FieldInfo(val name: String, val type: IrType, val isConst: Boolean, val irField: IrField?) {
@@ -408,21 +312,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
      * The order respects the class hierarchy, i.e. a class [fields] contains superclass [fields] as a prefix.
      */
     val fields: List<FieldInfo> by lazy {
-        val superClass = irClass.getSuperClassNotAny()
-        val superFields = if (superClass != null) context.getLayoutBuilder(superClass).fields else emptyList()
-
-        val declaredFields = getDeclaredFields()
-        val sortedDeclaredFields = if (irClass.hasAnnotation(KonanFqNames.noReorderFields))
-            declaredFields
-        else
-            declaredFields.sortedByDescending {
-                with(context.llvm) { LLVMStoreSizeOfType(runtime.targetData, getLLVMType(it.type)) }
-            }
-
-        val superFieldsCount = 1 /* First field is ObjHeader */ + superFields.size
-        sortedDeclaredFields.forEachIndexed { index, field -> field.index = superFieldsCount + index }
-
-        superFields + sortedDeclaredFields
+        fieldsLayout.fields
     }
 
     val associatedObjects by lazy {
@@ -461,22 +351,63 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         result
     }
 
-    lateinit var hierarchyInfo: ClassGlobalHierarchyInfo
+    var hierarchyInfo: ClassGlobalHierarchyInfo
+        set(value) {
+            classIdComputer.hierarchyInfo = value
+        }
+        get() = classIdComputer.hierarchyInfo
 
     /**
      * Fields declared in the class.
      */
     fun getDeclaredFields(): List<FieldInfo> {
+        return fieldsLayout.getDeclaredFields()
+    }
+}
+
+internal class ClassFieldsLayout(
+        val irClass: IrClass,
+        private val backendContext: BackendPhaseContext,
+        private val layoutBuildingContext: ClassFieldsLayoutContext,
+        private val linkerComponent: IrLinkerComponent,
+        private val innerClassesComponent: InnerClassesSupportComponent,
+) {
+    /**
+     * All fields of the class instance.
+     * The order respects the class hierarchy, i.e. a class [fields] contains superclass [fields] as a prefix.
+     */
+    val fields: List<ClassLayoutBuilder.FieldInfo> by lazy {
+        val superClass = irClass.getSuperClassNotAny()
+        val superFields = if (superClass != null) layoutBuildingContext.getClassFieldLayout(superClass).fields else emptyList()
+
+        val declaredFields = getDeclaredFields()
+        val sortedDeclaredFields = if (irClass.hasAnnotation(KonanFqNames.noReorderFields))
+            declaredFields
+        else
+            declaredFields.sortedByDescending {
+                getPrimitiveBinaryTypeSizeInBits(backendContext.config.target, it.type.computePrimitiveBinaryTypeOrNull())
+            }
+
+        val superFieldsCount = 1 /* First field is ObjHeader */ + superFields.size
+        sortedDeclaredFields.forEachIndexed { index, field -> field.index = superFieldsCount + index }
+
+        superFields + sortedDeclaredFields
+    }
+
+    /**
+     * Fields declared in the class.
+     */
+    fun getDeclaredFields(): List<ClassLayoutBuilder.FieldInfo> {
         val outerThisField = if (irClass.isInner)
-            context.innerClassesSupport.getOuterThisField(irClass)
+            innerClassesComponent.innerClassesSupport.getOuterThisField(irClass)
         else null
         val packageFragment = irClass.getPackageFragment()
         if (packageFragment is IrExternalPackageFragment) {
             val moduleDescriptor = packageFragment.packageFragmentDescriptor.containingDeclaration
             if (moduleDescriptor.isFromInteropLibrary()) return emptyList()
-            val moduleDeserializer = context.irLinker.moduleDeserializers[moduleDescriptor]
+            val moduleDeserializer = linkerComponent.irLinker.moduleDeserializers[moduleDescriptor]
                     ?: error("No module deserializer for ${irClass.render()}")
-            require(context.config.cachedLibraries.isLibraryCached(moduleDeserializer.klib)) {
+            require(this.backendContext.config.cachedLibraries.isLibraryCached(moduleDeserializer.klib)) {
                 "No IR and no cache for ${irClass.render()}"
             }
             return moduleDeserializer.deserializeClassFields(irClass, outerThisField)
@@ -495,9 +426,158 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
             }
         }
     }
+}
+
+internal class ClassIdComputer(
+        val irClass: IrClass,
+        private val ltoContext: LtoContext,
+) {
+    lateinit var hierarchyInfo: ClassGlobalHierarchyInfo
+
+    val classId: Int
+        get() = when {
+            irClass.isKotlinObjCClass() -> 0
+            irClass.isInterface -> {
+                if (ltoContext.ghaEnabled()) {
+                    hierarchyInfo.interfaceId
+                } else {
+                    localHash(irClass.fqNameForIrSerialization.asString().toByteArray()).toInt()
+                }
+            }
+
+            else -> {
+                if (ltoContext.ghaEnabled()) {
+                    hierarchyInfo.classIdLo
+                } else {
+                    0
+                }
+            }
+        }
+}
+
+internal class ClassITablePlacer(
+        private val irClass: IrClass,
+        private val layoutBuildingContext: ClassITablePlacerContext,
+        private val classIdComputer: ClassIdComputer,
+) {
+    fun itablePlace(function: IrSimpleFunction): ClassLayoutBuilder.InterfaceTablePlace {
+        require(irClass.isInterface) { "An interface expected but was ${irClass.name}" }
+        val interfaceVTable = interfaceVTableEntries
+        val index = interfaceVTable.indexOf(function)
+        if (index >= 0)
+            return ClassLayoutBuilder.InterfaceTablePlace(classIdComputer.classId, interfaceVTable.size, index)
+        val superFunction = function.overriddenSymbols.first().owner
+        return layoutBuildingContext.getClassITablePlacer(superFunction.parentAsClass).itablePlace(superFunction)
+    }
+
+    val interfaceVTableEntries: List<IrSimpleFunction> by lazy {
+        require(irClass.isInterface)
+        irClass.simpleFunctions()
+                .filter { f ->
+                    f.isOverridable && f.bridgeTarget == null
+                            && (f.isReal || f.overriddenSymbols.any { f.needBridgeTo(it.owner) })
+                }
+                .sortedBy { it.uniqueName }
+    }
+}
+
+internal class ClassVTableEntries(
+        private val irClass: IrClass,
+        private val backendContext: BackendPhaseContext,
+        private val layoutBuildingContext: ClassVTableEntriesContext,
+        private val bridgesContext: BridgesAwareContext,
+) {
+    val vtableEntries: List<OverriddenFunctionInfo> by lazy {
+        require(!irClass.isInterface)
+
+        this.backendContext.logMultiple {
+            +""
+            +"BUILDING vTable for ${irClass.render()}"
+        }
+
+        val superVtableEntries = if (irClass.isSpecialClassWithNoSupertypes()) {
+            emptyList()
+        } else {
+            val superClass = irClass.getSuperClassNotAny() ?: this.backendContext.ir.symbols.any.owner
+            layoutBuildingContext.getClassVTableEntries(superClass).vtableEntries
+        }
+
+        val methods = overridableOrOverridingMethods
+        val newVtableSlots = mutableListOf<OverriddenFunctionInfo>()
+        val overridenVtableSlots = mutableMapOf<IrSimpleFunction, OverriddenFunctionInfo>()
+
+        this.backendContext.logMultiple {
+            +""
+            +"SUPER vTable:"
+            superVtableEntries.forEach { +"    ${it.overriddenFunction.render()} -> ${it.function.render()}" }
+
+            +""
+            +"METHODS:"
+            methods.forEach { +"    ${it.render()}" }
+
+            +""
+            +"BUILDING INHERITED vTable"
+        }
+
+        val superVtableMap = superVtableEntries.groupBy { it.function }
+        methods.forEach { overridingMethod ->
+            overridingMethod.allOverriddenFunctions.forEach {
+                val superMethods = superVtableMap[it]
+                if (superMethods?.isNotEmpty() == true) {
+                    newVtableSlots.add(OverriddenFunctionInfo(overridingMethod, it))
+                    superMethods.forEach { superMethod ->
+                        overridenVtableSlots[superMethod.overriddenFunction] =
+                                OverriddenFunctionInfo(overridingMethod, superMethod.overriddenFunction)
+                    }
+                }
+            }
+        }
+        val inheritedVtableSlots = superVtableEntries.map { superMethod ->
+            overridenVtableSlots[superMethod.overriddenFunction]?.also {
+                this.backendContext.log { "Taking overridden ${superMethod.overriddenFunction.render()} -> ${it.function.render()}" }
+            } ?: superMethod.also {
+                this.backendContext.log { "Taking super ${superMethod.overriddenFunction.render()} -> ${superMethod.function.render()}" }
+            }
+        }
+
+        // Add all possible (descriptor, overriddenDescriptor) edges for now, redundant will be removed later.
+        methods.mapTo(newVtableSlots) { OverriddenFunctionInfo(it, it) }
+
+        val inheritedVtableSlotsSet = inheritedVtableSlots.map { it.function to it.bridgeDirections }.toSet()
+
+        val filteredNewVtableSlots = newVtableSlots
+                .filterNot { inheritedVtableSlotsSet.contains(it.function to it.bridgeDirections) }
+                .distinctBy { it.function to it.bridgeDirections }
+                .filter { it.function.isOverridable }
+
+        this.backendContext.logMultiple {
+            +""
+            +"INHERITED vTable slots:"
+            inheritedVtableSlots.forEach { +"    ${it.overriddenFunction.render()} -> ${it.function.render()}" }
+
+            +""
+            +"MY OWN vTable slots:"
+            filteredNewVtableSlots.forEach { +"    ${it.overriddenFunction.render()} -> ${it.function.render()} ${it.function}" }
+            +"DONE vTable for ${irClass.render()}"
+        }
+
+        inheritedVtableSlots + filteredNewVtableSlots.sortedBy { it.overriddenFunction.uniqueName }
+    }
+
+    fun overridingOf(function: IrSimpleFunction) =
+            overridableOrOverridingMethods.firstOrNull { function in it.allOverriddenFunctions }?.let {
+                OverriddenFunctionInfo(it, function).getImplementation(bridgesContext)
+            }
+
+    fun vtableIndex(function: IrSimpleFunction): Int {
+        val bridgeDirections = function.target.bridgeDirectionsTo(function)
+        val index = vtableEntries.indexOfFirst { it.function == function && it.bridgeDirections == bridgeDirections }
+        if (index < 0) throw Error(function.render() + " $function " + " (${function.symbol.descriptor}) not in vtable of " + irClass.render())
+        return index
+    }
 
     private val overridableOrOverridingMethods: List<IrSimpleFunction>
         get() = irClass.simpleFunctions().filter { it.isOverridableOrOverrides && it.bridgeTarget == null }
-
-    private val IrFunction.uniqueName get() = computeFunctionName()
 }
+
+private val IrFunction.uniqueName get() = computeFunctionName()

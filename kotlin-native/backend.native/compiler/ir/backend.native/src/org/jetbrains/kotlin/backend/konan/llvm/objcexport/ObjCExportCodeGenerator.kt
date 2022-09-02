@@ -1579,7 +1579,7 @@ private fun ObjCExportCodeGenerator.vtableIndex(irFunction: IrSimpleFunction): I
     return if (irClass.isInterface) {
         null
     } else {
-        context.getLayoutBuilder(irClass).vtableIndex(irFunction)
+        context.getClassVTableEntries(irClass).vtableIndex(irFunction)
     }
 }
 
@@ -1589,7 +1589,7 @@ private fun ObjCExportCodeGenerator.itablePlace(irFunction: IrSimpleFunction): C
     return if (irClass.isInterface
             && (irFunction.isReal || irFunction.resolveFakeOverrideMaybeAbstract().parent != context.irBuiltIns.anyClass.owner)
     ) {
-        context.getLayoutBuilder(irClass).itablePlace(irFunction)
+        context.getClassITablePlacer(irClass).itablePlace(irFunction)
     } else {
         null
     }
@@ -1678,7 +1678,7 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
     val vtableSize = if (irClass.kind == ClassKind.INTERFACE) {
         -1
     } else {
-        context.getLayoutBuilder(irClass).vtableEntries.size
+        context.getClassVTableEntries(irClass).vtableEntries.size
     }
 
     val vtable = if (!irClass.isInterface && !irClass.typeInfoHasVtableAttached) {
@@ -1690,7 +1690,7 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
     }
 
     val (itable, itableSize) = when {
-        irClass.isInterface -> Pair(emptyList(), context.getLayoutBuilder(irClass).interfaceVTableEntries.size)
+        irClass.isInterface -> Pair(emptyList(), context.getClassITablePlacer(irClass).interfaceVTableEntries.size)
         irClass.isAbstract() -> rttiGenerator.interfaceTableRecords(irClass)
         else -> Pair(emptyList(), -1)
     }

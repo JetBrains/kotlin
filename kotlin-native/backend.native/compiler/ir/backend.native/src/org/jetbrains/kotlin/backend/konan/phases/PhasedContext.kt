@@ -11,8 +11,7 @@ import llvm.LLVMTypeRef
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
-import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysisResult
+import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.lower.*
@@ -41,7 +40,6 @@ import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 internal interface PhaseContext : LoggingContext, ErrorReportingContext {
     val config: KonanConfig
@@ -114,9 +112,7 @@ internal interface FrontendContext : PhaseContext {
 internal interface PsiToIrContext :
         BackendPhaseContext,
         LlvmModuleSpecificationComponent,
-        IrLinkerComponent,
-        ComponentContainerProvider
-{
+        IrLinkerComponent {
     var symbolTable: SymbolTable?
 
     var moduleDescriptor: ModuleDescriptor
@@ -190,10 +186,12 @@ internal interface BitcodegenContext :
         LlvmModuleSpecificationComponent,
         LtoContext,
         ConfigChecks,
+        ClassITablePlacerContext,
+        ClassFieldsLayoutContext,
+        ClassIdComputerContext,
+        ClassVTableEntriesContext,
         CacheAwareContext,
-        IrLinkerComponent,
-        ComponentContainerProvider
-{
+        IrLinkerComponent {
     override val config: KonanConfig
 
     val coverage: CoverageManager
@@ -253,11 +251,27 @@ internal interface LayoutBuildingContext : BackendPhaseContext {
     fun getLayoutBuilder(irClass: IrClass): ClassLayoutBuilder
 }
 
-internal interface IrLinkerComponent : Component {
+internal interface ClassVTableEntriesContext : BackendPhaseContext {
+    fun getClassVTableEntries(irClass: IrClass): ClassVTableEntries
+}
+
+internal interface ClassITablePlacerContext : BackendPhaseContext {
+    fun getClassITablePlacer(irClass: IrClass): ClassITablePlacer
+}
+
+internal interface ClassFieldsLayoutContext : BackendPhaseContext {
+    fun getClassFieldLayout(irClass: IrClass): ClassFieldsLayout
+}
+
+internal interface ClassIdComputerContext : BackendPhaseContext {
+    fun getClassId(irClass: IrClass): ClassIdComputer
+}
+
+internal interface IrLinkerComponent {
     var irLinker: KonanIrLinker
 }
 
-internal interface InnerClassesSupportComponent : Component {
+internal interface InnerClassesSupportComponent {
     val innerClassesSupport: InnerClassesSupport
 }
 
@@ -279,9 +293,11 @@ internal interface LocalClassNameAwareContext : BackendPhaseContext {
 internal interface LtoContext :
         BackendPhaseContext,
         LayoutBuildingContext,
+        ClassIdComputerContext,
+        ClassVTableEntriesContext,
+        ClassITablePlacerContext,
         BridgesAwareContext,
-        ConfigChecks
-{
+        ConfigChecks {
     val irModule: IrModuleFragment?
 
     var globalHierarchyAnalysisResult: GlobalHierarchyAnalysisResult
@@ -303,13 +319,7 @@ internal interface MiddleEndContext :
         LocalClassNameAwareContext,
         BridgesAwareContext,
         CacheAwareContext,
-        ComponentContainerProvider,
-        IrLinkerComponent
-{
-
-
-    override val config: KonanConfig
-
+        IrLinkerComponent {
     val irModule: IrModuleFragment?
 
     val interopBuiltIns: InteropBuiltIns
@@ -353,20 +363,4 @@ internal interface CacheContext : PhaseContext {
     val calledFromExportedInlineFunctions: MutableSet<IrFunction>
 }
 
-internal interface CacheAwareContext : CacheContext, InnerClassesSupportComponent, BackendPhaseContext, LayoutBuildingContext
-
-internal interface Component
-
-internal interface ComponentContainerProvider {
-    val container: ComponentContainer
-}
-
-internal class ComponentContainer(
-        private val components: Set<Component>
-) {
-    inline fun <reified T : Component> get(): T =
-            components.firstIsInstance()
-
-    inline fun <reified T : Component> optional(): T? =
-            components.firstIsInstance()
-}
+internal interface CacheAwareContext : CacheContext, InnerClassesSupportComponent, BackendPhaseContext, ClassFieldsLayoutContext

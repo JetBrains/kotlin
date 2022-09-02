@@ -47,7 +47,7 @@ internal class RTTIGenerator(
     private fun checkAcyclicClass(irClass: IrClass): Boolean = when {
         irClass.symbol == context.ir.symbols.array -> false
         irClass.isArray -> true
-        context.getLayoutBuilder(irClass).fields.all { checkAcyclicFieldType(it.type) } -> true
+        context.getClassFieldLayout(irClass).fields.all { checkAcyclicFieldType(it.type) } -> true
         else -> false
     }
 
@@ -256,7 +256,7 @@ internal class RTTIGenerator(
                 reflectionInfo.packageName,
                 reflectionInfo.relativeName,
                 flagsFromClass(irClass) or reflectionInfo.reflectionFlags,
-                context.getLayoutBuilder(irClass).classId,
+                context.getClassId(irClass).classId,
                 llvmDeclarations.writableTypeInfoGlobal?.pointer,
                 associatedObjects = genAssociatedObjects(irClass)
         )
@@ -285,7 +285,7 @@ internal class RTTIGenerator(
 
     fun vtable(irClass: IrClass): ConstArray {
         // TODO: compile-time resolution limits binary compatibility.
-        val vtableEntries = context.getLayoutBuilder(irClass).vtableEntries.map {
+        val vtableEntries = context.getClassVTableEntries(irClass).vtableEntries.map {
             val implementation = it.implementation
             if (implementation == null || implementation.isExternalObjCClassMethod() || context.referencedFunctions?.contains(implementation) == false) {
                 NullPointer(int8Type)
@@ -355,7 +355,7 @@ internal class RTTIGenerator(
             irClass: IrClass,
             interfaceTableSkeleton: Array<out ClassLayoutBuilder?>
     ): List<InterfaceTableRecord> {
-        val layoutBuilder = context.getLayoutBuilder(irClass)
+        val layoutBuilder = context.getClassVTableEntries(irClass)
         val className = irClass.fqNameForIrSerialization
 
         return interfaceTableSkeleton.map { iface ->
@@ -428,7 +428,7 @@ internal class RTTIGenerator(
         } else {
             class FieldRecord(val offset: Int, val type: Int, val name: String)
 
-            val fields = context.getLayoutBuilder(irClass).fields.map {
+            val fields = context.getClassFieldLayout(irClass).fields.map {
                 FieldRecord(
                         LLVMOffsetOfElement(llvmTargetData, bodyType, it.index).toInt(),
                         mapRuntimeType(LLVMStructGetTypeAtIndex(bodyType, it.index)!!),

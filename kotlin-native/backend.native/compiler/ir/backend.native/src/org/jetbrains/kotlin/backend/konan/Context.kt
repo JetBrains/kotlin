@@ -9,9 +9,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.common.DefaultDelegateFactory
 import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.konan.descriptors.BridgeDirections
-import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
-import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysisResult
+import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
@@ -51,6 +49,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty
 
 internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
@@ -90,13 +89,13 @@ internal class Context(
         ObjectFilesContext,
         CacheAwareContext,
         CExportContext,
-        LinkerContext,
-        Component
-{
+        ClassVTableEntriesContext,
+        ClassITablePlacerContext,
+        ClassFieldsLayoutContext,
+        ClassIdComputerContext,
+        LinkerContext {
     // TopDownAnalyzer Context
     override lateinit var frontendServices: FrontendServices
-
-    override val container: ComponentContainer = ComponentContainer(setOf(this))
 
     // Frontend Context
     override lateinit var environment: KotlinCoreEnvironment
@@ -149,20 +148,51 @@ internal class Context(
         KonanReflectionTypes(moduleDescriptor)
     }
 
-    // TODO: Remove after adding special <userData> property to IrDeclaration.
-    private val layoutBuilders = mutableMapOf<IrClass, ClassLayoutBuilder>()
+    val classFieldsLayoutHolder = SmartHolder<ClassFieldsLayout>(CodegenClassMetadata::fieldsLayout) {
+        ClassFieldsLayout(it, this, this, this, this)
+    }
 
+    val classIdComputerHolder = SmartHolder<ClassIdComputer>(CodegenClassMetadata::classIdComputer) {
+        ClassIdComputer(it, this)
+    }
+
+    val classITablePlacer = SmartHolder<ClassITablePlacer>(CodegenClassMetadata::classITablePlacer) {
+        ClassITablePlacer(it, this, classIdComputerHolder.get(it))
+    }
+
+    val classVTableEntries = SmartHolder<ClassVTableEntries>(CodegenClassMetadata::classVTableEntries) {
+        ClassVTableEntries(it, this, this, this)
+    }
+
+    val layoutBuildersHolder = SmartHolder<ClassLayoutBuilder>(
+            CodegenClassMetadata::layoutBuilder
+    ) {
+        ClassLayoutBuilder(
+                it,
+                classFieldsLayoutHolder.get(it),
+                classIdComputerHolder.get(it),
+                classITablePlacer.get(it),
+                classVTableEntries.get(it)
+        )
+    }
+
+    override fun getClassFieldLayout(irClass: IrClass): ClassFieldsLayout {
+        return classFieldsLayoutHolder.get(irClass)
+    }
+
+    override fun getClassId(irClass: IrClass): ClassIdComputer {
+        return classIdComputerHolder.get(irClass)
+    }
+
+    override fun getClassITablePlacer(irClass: IrClass): ClassITablePlacer =
+            classITablePlacer.get(irClass)
+
+    override fun getClassVTableEntries(irClass: IrClass): ClassVTableEntries =
+            classVTableEntries.get(irClass)
+
+    // TODO: Remove after adding special <userData> property to IrDeclaration.
     override fun getLayoutBuilder(irClass: IrClass): ClassLayoutBuilder {
-        if (irClass is IrLazyClass)
-            return layoutBuilders.getOrPut(irClass) {
-                ClassLayoutBuilder(irClass, this)
-            }
-        val metadata = irClass.metadata as? CodegenClassMetadata
-                ?: CodegenClassMetadata(irClass).also { irClass.metadata = it }
-        metadata.layoutBuilder?.let { return it }
-        val layoutBuilder = ClassLayoutBuilder(irClass, this)
-        metadata.layoutBuilder = layoutBuilder
-        return layoutBuilder
+        return layoutBuildersHolder.get(irClass)
     }
 
     override lateinit var globalHierarchyAnalysisResult: GlobalHierarchyAnalysisResult
@@ -338,5 +368,25 @@ internal object LazyMap {
             storage.getOrPut(it, { initializer(it) })
         }
         result
+    }
+}
+
+
+internal class SmartHolder<T>(
+        private val metadataProperty: KMutableProperty1<CodegenClassMetadata, T?>,
+        private val constructor: (IrClass) -> T,
+) {
+    private val layoutBuilders = mutableMapOf<IrClass, T>()
+    fun get(irClass: IrClass): T {
+        if (irClass is IrLazyClass)
+            return layoutBuilders.getOrPut(irClass) {
+                constructor(irClass)
+            }
+        val metadata = irClass.metadata as? CodegenClassMetadata
+                ?: CodegenClassMetadata(irClass).also { irClass.metadata = it }
+        metadataProperty.get(metadata)?.let { return it }
+        val layoutBuilder = constructor(irClass)
+        metadataProperty.set(metadata, layoutBuilder)
+        return layoutBuilder
     }
 }

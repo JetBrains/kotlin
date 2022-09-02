@@ -507,7 +507,7 @@ internal object DataFlowIR {
 
             type.superTypes += irClass.superTypes.map { mapClassReferenceType(it.getClass()!!) }
             if (!isAbstract) {
-                val layoutBuilder = context.getLayoutBuilder(irClass)
+                val layoutBuilder = context.getClassVTableEntries(irClass)
                 type.vtable += layoutBuilder.vtableEntries.map {
                     val implementation = it.getImplementation(context)
                             ?: error(
@@ -540,7 +540,7 @@ internal object DataFlowIR {
                 }
             } else if (irClass.isInterface) {
                 // Warmup interface table so it is computed before DCE.
-                context.getLayoutBuilder(irClass).interfaceVTableEntries
+                context.getClassITablePlacer(irClass).interfaceVTableEntries
             }
             return type
         }
