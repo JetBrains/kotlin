@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.llvm.DebugInfo
 import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.backend.konan.llvm.llvmContext
+import org.jetbrains.kotlin.backend.konan.llvm.tryDisposeLLVMContext
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
@@ -227,7 +228,7 @@ class DynamicNativeCompilerDriver(
         val debugInfo = DebugInfo(middleEndContext, llvm, llvm.runtime.targetData)
         debugInfo.builder = LLVMCreateDIBuilder(llvmModule)
 
-        val bitcodegenPhase = Phases.buildBitcodePhases(needSetup = false)
+        val bitcodegenPhase = Phases.buildBitcodePhases(middleEndContext.irModule!!, needSetup = false)
         val bitcodegenContext: BitcodegenContext = BitcodegenContextImpl(
                 payload,
                 context.llvmModuleSpecification,
@@ -247,7 +248,7 @@ class DynamicNativeCompilerDriver(
                 cacheContext
         )
 
-        runTopLevelPhase(bitcodegenContext, bitcodegenPhase, bitcodegenContext.irModule!!)
+        runTopLevelPhaseUnit(bitcodegenContext, bitcodegenPhase)
 
         val llvmCodegenPhase = Phases.buildLlvmCodegenPhase()
         val llvmcodegenContext: LlvmCodegenContext = LlvmCodegenContextImpl(
@@ -352,7 +353,6 @@ class DynamicNativeCompilerDriver(
 
         // TODO: Move into phase
         // TODO: Dispose
-        llvmContext = LLVMContextCreate()!!
 
         val objectFiles = mutableListOf<ObjectFile>()
         val allCachedBitcodeDependencies = mutableSetOf<KonanLibrary>()
@@ -361,6 +361,7 @@ class DynamicNativeCompilerDriver(
         middleEndContext.irModule!!.files.forEachIndexed { idx, file ->
             val binaryName = "${idx}.kt.bin"
             println("Compiling ${file.fileEntry.name} as $binaryName")
+            llvmContext = LLVMContextCreate()!!
             val llvmModule = LLVMModuleCreateWithNameInContext(binaryName, llvmContext)!!
             val spec = FileCacheLlvmModuleSpecification(context, config.cachedLibraries, config.libraryToCache!!)
             val llvm = Llvm(middleEndContext, spec, config, llvmModule)
@@ -368,7 +369,7 @@ class DynamicNativeCompilerDriver(
             debugInfo.builder = LLVMCreateDIBuilder(llvmModule)
             context.config.libraryToCache!!.strategy = CacheDeserializationStrategy.SingleFile(file.path, file.fqName.asString())
 
-            val bitcodegenPhase = Phases.buildBitcodePhases(needSetup = false)
+            val bitcodegenPhase = Phases.buildBitcodePhases(file, needSetup = false)
             val bitcodegenContext: BitcodegenContext = BitcodegenContextImpl(
                     payload,
                     spec,
@@ -388,7 +389,7 @@ class DynamicNativeCompilerDriver(
                     cacheContext
             )
 
-            runTopLevelPhase(bitcodegenContext, bitcodegenPhase, bitcodegenContext.irModule!!)
+            runTopLevelPhaseUnit(bitcodegenContext, bitcodegenPhase)
 
             val llvmCodegenPhase = Phases.buildLlvmCodegenPhase()
 
@@ -417,6 +418,8 @@ class DynamicNativeCompilerDriver(
             allCachedBitcodeDependencies += bitcodegenContext.necessaryLlvmParts.allCachedBitcodeDependencies
             nativeDependenciesToLink += bitcodegenContext.necessaryLlvmParts.nativeDependenciesToLink
             allNativeDependencies += bitcodegenContext.necessaryLlvmParts.allNativeDependencies
+
+            tryDisposeLLVMContext()
         }
 
         val necessaryLlvmParts = NecessaryLlvmParts(
@@ -518,7 +521,7 @@ class DynamicNativeCompilerDriver(
         val debugInfo = DebugInfo(middleEndContext, llvm, llvm.runtime.targetData)
         debugInfo.builder = LLVMCreateDIBuilder(llvmModule)
 
-        val bitcodegenPhase = Phases.buildBitcodePhases(needSetup = false)
+        val bitcodegenPhase = Phases.buildBitcodePhases(middleEndContext.irModule!!, needSetup = false)
         val bitcodegenContext: BitcodegenContext = BitcodegenContextImpl(
                 payload,
                 context.llvmModuleSpecification,
@@ -538,7 +541,7 @@ class DynamicNativeCompilerDriver(
                 cacheContext
         )
 
-        runTopLevelPhase(bitcodegenContext, bitcodegenPhase, bitcodegenContext.irModule!!)
+        runTopLevelPhaseUnit(bitcodegenContext, bitcodegenPhase)
 
         val llvmCodegenPhase = Phases.buildLlvmCodegenPhase()
 

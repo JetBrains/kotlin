@@ -589,11 +589,11 @@ internal object Phases {
             op = { context, irModule -> GlobalHierarchyAnalysis(context, irModule).run() }
     )
 
-    fun buildCreateLLVMDeclarationsPhase(): NamedCompilerPhase<BitcodegenContext, IrModuleFragment> = makeKonanModuleOpPhase<BitcodegenContext>(
+    fun buildCreateLLVMDeclarationsPhase(declaration: IrElement): NamedCompilerPhase<BitcodegenContext, Unit> = myLower2<BitcodegenContext, Unit>(
             name = "CreateLLVMDeclarations",
             description = "Map IR declarations to LLVM",
 //        prerequisite = setOf(contextLLVMSetupPhase),
-            op = { context, module ->
+            op = { context, _ ->
                 val generator = DeclarationsGeneratorVisitor(
                         context,
                         context,
@@ -606,33 +606,33 @@ internal object Phases {
                         context.ir.symbols,
                         context.config,
                 )
-                module.acceptChildrenVoid(generator)
+                declaration.acceptChildrenVoid(generator)
                 context.llvmDeclarations = LlvmDeclarations(generator.uniques)
             }
     )
 
-    fun buildRTTIPhase() = makeKonanModuleOpPhase<BitcodegenContext>(
+    fun buildRTTIPhase(element: IrElement) = myLower2<BitcodegenContext, Unit>(
             name = "RTTI",
             description = "RTTI generation",
-            op = { context, irModule ->
+            op = { context, _ ->
                 val visitor = RTTIGeneratorVisitor(context)
-                irModule.acceptVoid(visitor)
+                element.acceptVoid(visitor)
                 visitor.dispose()
             }
     )
 
-    fun buildGenerateDebugInfoHeaderPhase() = makeKonanModuleOpPhase<BitcodegenContext>(
+    fun buildGenerateDebugInfoHeaderPhase() = myLower2<BitcodegenContext, Unit>(
             name = "GenerateDebugInfoHeader",
             description = "Generate debug info header",
             op = { context, _ -> generateDebugInfoHeader(context) }
     )
 
-    fun buildCodegenPhase() = makeKonanModuleOpPhase<BitcodegenContext>(
+    fun buildCodegenPhase(element: IrElement) = myLower2<BitcodegenContext, Unit>(
             name = "Codegen",
             description = "Code generation",
-            op = { context, irModule ->
+            op = { context, _ ->
                 val codegenVisitor = CodeGeneratorVisitor(context, context.lifetimes)
-                irModule.acceptVoid(codegenVisitor)
+                element.acceptVoid(codegenVisitor)
                 context.necessaryLlvmParts = NecessaryLlvmParts(
                         context.llvm.allCachedBitcodeDependencies.toSet(),
                         context.llvm.nativeDependenciesToLink.toSet(),
@@ -641,7 +641,7 @@ internal object Phases {
             }
     )
 
-    fun buildFinalizeDebugInfoPhase() = makeKonanModuleOpPhase<BitcodegenContext>(
+    fun buildFinalizeDebugInfoPhase() = myLower2<BitcodegenContext, Unit>(
             name = "FinalizeDebugInfo",
             description = "Finalize debug info",
             op = { context, _ ->
@@ -651,14 +651,14 @@ internal object Phases {
             }
     )
 
-    fun buildBitcodePhases(needSetup: Boolean): NamedCompilerPhase<BitcodegenContext, IrModuleFragment> {
+    fun buildBitcodePhases(irElement: IrElement, needSetup: Boolean): NamedCompilerPhase<BitcodegenContext, Unit> {
         val contextLLVMSetupPhase = buildContextLLVMSetupPhase(needSetup)
-        val createLLVMDeclarationsPhase = buildCreateLLVMDeclarationsPhase()
-        val RTTIPhase = buildRTTIPhase()
+        val createLLVMDeclarationsPhase = buildCreateLLVMDeclarationsPhase(irElement)
+        val RTTIPhase = buildRTTIPhase(irElement)
         val generateDebugInfoHeaderPhase = buildGenerateDebugInfoHeaderPhase()
-        val codegenPhase = buildCodegenPhase()
+        val codegenPhase = buildCodegenPhase(irElement)
         val finalizeDebugInfoPhase = buildFinalizeDebugInfoPhase()
-        val bitcodegenPhase = NamedCompilerPhase<BitcodegenContext, IrModuleFragment>(
+        val bitcodegenPhase = NamedCompilerPhase<BitcodegenContext, Unit>(
                 name = "BitcodeGen",
                 description = "Generation of LLVM module",
                 nlevels = 1,
@@ -672,10 +672,10 @@ internal object Phases {
         return bitcodegenPhase
     }
 
-    fun buildContextLLVMSetupPhase(needSetup: Boolean) = myLower2<BitcodegenContext, IrModuleFragment>(
+    fun buildContextLLVMSetupPhase(needSetup: Boolean) = myLower2<BitcodegenContext, Unit>(
             name = "ContextLLVMSetup",
             description = "Set up Context for LLVM Bitcode generation",
-            op = { context, m ->
+            op = { context, _ ->
                 // Note that we don't set module target explicitly.
                 // It is determined by the target of runtime.bc
                 // (see Llvm class in ContextUtils)
@@ -702,7 +702,6 @@ internal object Phases {
                         flags = "",
                         rv = DWARF.runtimeVersion(context.config)).cast()
                 else null
-                m
             }
     )
 
