@@ -685,23 +685,23 @@ internal object CheckReceivers : ResolutionPart() {
             )
 
             1 -> {
+                var extensionReceiverArgument = resolvedCall.extensionReceiverArgument
+                if (extensionReceiverArgument == null) {
+                    extensionReceiverArgument = chooseExtensionReceiverCandidate() ?: return
+                    resolvedCall.extensionReceiverArgument = extensionReceiverArgument
+                }
                 val checkBuilderInferenceRestriction =
                     !callComponents.languageVersionSettings
                         .supportsFeature(LanguageFeature.NoBuilderInferenceWithoutAnnotationRestriction)
-                if (checkBuilderInferenceRestriction) {
-                    var extensionReceiverArgument = resolvedCall.extensionReceiverArgument
-                    if (extensionReceiverArgument == null) {
-                        extensionReceiverArgument = chooseExtensionReceiverCandidate() ?: return
-                        resolvedCall.extensionReceiverArgument = extensionReceiverArgument
-                    }
-                    if (extensionReceiverArgument.receiver.receiverValue.type is StubTypeForBuilderInference) {
-                        addDiagnostic(
-                            StubBuilderInferenceReceiver(
-                                extensionReceiverArgument,
-                                candidateDescriptor.extensionReceiverParameter!!
-                            )
+                if (checkBuilderInferenceRestriction &&
+                    extensionReceiverArgument.receiver.receiverValue.type is StubTypeForBuilderInference
+                ) {
+                    addDiagnostic(
+                        StubBuilderInferenceReceiver(
+                            extensionReceiverArgument,
+                            candidateDescriptor.extensionReceiverParameter!!
                         )
-                    }
+                    )
                 }
                 checkReceiver(
                     resolvedCall.extensionReceiverArgument,

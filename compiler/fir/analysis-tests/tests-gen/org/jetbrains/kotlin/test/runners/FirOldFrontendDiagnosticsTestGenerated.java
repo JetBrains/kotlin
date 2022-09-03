@@ -14228,6 +14228,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("noBuilderInferenceRestrictionReceiverInconsistency.kt")
+                public void testNoBuilderInferenceRestrictionReceiverInconsistency() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/noBuilderInferenceRestrictionReceiverInconsistency.kt");
+                }
+
+                @Test
                 @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
                 public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
