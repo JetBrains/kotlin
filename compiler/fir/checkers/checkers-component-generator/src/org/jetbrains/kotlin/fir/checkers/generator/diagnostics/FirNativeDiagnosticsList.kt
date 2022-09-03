@@ -55,6 +55,7 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
         val INVALID_OBJC_NAME_FIRST_CHAR by error<KtElement> {
             parameter<String>("characters")
         }
+        val EMPTY_OBJC_NAME by error<KtElement>()
         val INCOMPATIBLE_OBJC_NAME_OVERRIDE by error<KtElement> {
             parameter<FirBasedSymbol<*>>("declaration")
             parameter<Collection<FirRegularClassSymbol>>("containingClasses")

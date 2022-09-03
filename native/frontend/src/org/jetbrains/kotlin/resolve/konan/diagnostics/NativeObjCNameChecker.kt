@@ -64,6 +64,9 @@ object NativeObjCNameChecker : DeclarationChecker {
         if (objCName.name == null && objCName.swiftName == null) {
             context.trace.report(ErrorsNative.INVALID_OBJC_NAME.on(reportLocation))
         }
+        if (objCName.name?.isEmpty() == true || objCName.swiftName?.isEmpty() == true) {
+            context.trace.report(ErrorsNative.EMPTY_OBJC_NAME.on(reportLocation))
+        }
         val invalidNameFirstChar = objCName.name?.firstOrNull()?.takeUnless(validFirstChars::contains)
         val invalidSwiftNameFirstChar = objCName.swiftName?.firstOrNull()?.takeUnless(validFirstChars::contains)
         val invalidFirstChars = setOfNotNull(invalidNameFirstChar, invalidSwiftNameFirstChar)
@@ -87,8 +90,8 @@ object NativeObjCNameChecker : DeclarationChecker {
     class ObjCName(
         val annotation: AnnotationDescriptor
     ) {
-        val name: String? = annotation.argumentValue("name")?.value?.safeAs<String>()?.takeIf { it.isNotBlank() }
-        val swiftName: String? = annotation.argumentValue("swiftName")?.value?.safeAs<String>()?.takeIf { it.isNotBlank() }
+        val name: String? = annotation.argumentValue("name")?.value?.safeAs<String>()
+        val swiftName: String? = annotation.argumentValue("swiftName")?.value?.safeAs<String>()
         val exact: Boolean = annotation.argumentValue("exact")?.value?.safeAs<Boolean>() ?: false
 
         override fun equals(other: Any?): Boolean =

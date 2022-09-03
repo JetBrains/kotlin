@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.checkMissingMessages
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.EMPTY_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_EXACT_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY
@@ -65,6 +66,7 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(INAPPLICABLE_OBJC_NAME, "@ObjCName is not applicable on overrides")
         map.put(INVALID_OBJC_NAME, "@ObjCName should have a name and/or swiftName")
+        map.put(EMPTY_OBJC_NAME, "Empty @ObjCName names aren't supported")
         map.put(INVALID_OBJC_NAME_CHARS, "@ObjCName contains illegal characters: {0}", TO_STRING)
         map.put(INVALID_OBJC_NAME_FIRST_CHAR, "@ObjCName contains illegal first characters: {0}", TO_STRING)
         map.put(INCOMPATIBLE_OBJC_NAME_OVERRIDE, "Member \"{0}\" inherits inconsistent @ObjCName from {1}", SYMBOL, SYMBOLS)
