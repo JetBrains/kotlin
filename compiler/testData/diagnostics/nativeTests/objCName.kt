@@ -33,16 +33,22 @@ class KotlinSubClass: KotlinClass() {
 }
 
 <!INVALID_OBJC_NAME!>@ObjCName()<!>
-val invalidObjCNameA: Int = 0
+val invalidObjCName: Int = 0
 
-<!INVALID_OBJC_NAME!>@ObjCName("", "")<!>
-val invalidObjCNameB: Int = 0
+<!EMPTY_OBJC_NAME!>@ObjCName("", "")<!>
+val emptyObjCNameA: Int = 0
 
-@ObjCName("validName", "")
-val validBlankObjCNameA: Int = 0
+<!EMPTY_OBJC_NAME!>@ObjCName("validName", "")<!>
+val emptyObjCNameB: Int = 0
 
-@ObjCName("", "validName")
-val validBlankObjCNameB: Int = 0
+<!EMPTY_OBJC_NAME!>@ObjCName("", "validName")<!>
+val emptyObjCNameC: Int = 0
+
+@ObjCName("validName")
+val validObjCNameA: Int = 0
+
+@ObjCName(swiftName = "validName")
+val validObjCNameB: Int = 0
 
 <!INVALID_OBJC_NAME_CHARS!>@ObjCName("validName", "invalid.name")<!>
 val invalidCharactersObjCNameA: Int = 0
@@ -55,6 +61,12 @@ val invalidFirstCharacterObjCNameA: Int = 0
 
 <!INVALID_OBJC_NAME_FIRST_CHAR!>@ObjCName("1validName", "validName1")<!>
 val invalidFirstCharacterObjCNameB: Int = 0
+
+<!INVALID_OBJC_NAME_CHARS, INVALID_OBJC_NAME_FIRST_CHAR!>@ObjCName("validName", " ")<!>
+val blankObjCNameA: Int = 0
+
+<!INVALID_OBJC_NAME_CHARS, INVALID_OBJC_NAME_FIRST_CHAR!>@ObjCName(" ", "validName")<!>
+val blankObjCNameB: Int = 0
 
 <!MISSING_EXACT_OBJC_NAME!>@ObjCName(swiftName = "SwiftMissingExactName", exact = true)<!>
 class MissingExactName

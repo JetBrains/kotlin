@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.EMPTY_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_EXACT_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_OBJC_NAME
@@ -79,6 +80,9 @@ object FirNativeObjCNameChecker : FirBasicDeclarationChecker() {
         if (invalidFirstChars.isNotEmpty()) {
             reporter.reportOn(annotationSource, INVALID_OBJC_NAME_FIRST_CHAR, invalidFirstChars.joinToString(""), context)
         }
+        if (objCName.name?.isEmpty() == true || objCName.swiftName?.isEmpty() == true) {
+            reporter.reportOn(annotationSource, EMPTY_OBJC_NAME, context)
+        }
         val invalidNameChars = objCName.name?.toSet()?.subtract(validChars) ?: emptySet()
         val invalidSwiftNameChars = objCName.swiftName?.toSet()?.subtract(validChars) ?: emptySet()
         val invalidChars = invalidNameChars + invalidSwiftNameChars
@@ -96,8 +100,8 @@ object FirNativeObjCNameChecker : FirBasicDeclarationChecker() {
     class ObjCName(
         val annotation: FirAnnotation
     ) {
-        val name: String? = annotation.getStringArgument(nameName)?.takeIf { it.isNotBlank() }
-        val swiftName: String? = annotation.getStringArgument(swiftNameName)?.takeIf { it.isNotBlank() }
+        val name: String? = annotation.getStringArgument(nameName)
+        val swiftName: String? = annotation.getStringArgument(swiftNameName)
         val exact: Boolean = annotation.getBooleanArgument(exactName) ?: false
 
         override fun equals(other: Any?): Boolean =

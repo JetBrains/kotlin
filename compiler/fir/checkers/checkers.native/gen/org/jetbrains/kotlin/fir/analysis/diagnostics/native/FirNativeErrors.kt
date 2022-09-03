@@ -40,6 +40,7 @@ object FirNativeErrors {
     val INVALID_OBJC_NAME by error0<KtElement>()
     val INVALID_OBJC_NAME_CHARS by error1<KtElement, String>()
     val INVALID_OBJC_NAME_FIRST_CHAR by error1<KtElement, String>()
+    val EMPTY_OBJC_NAME by error0<KtElement>()
     val INCOMPATIBLE_OBJC_NAME_OVERRIDE by error2<KtElement, FirBasedSymbol<*>, Collection<FirRegularClassSymbol>>()
     val INAPPLICABLE_EXACT_OBJC_NAME by error0<KtElement>()
     val MISSING_EXACT_OBJC_NAME by error0<KtElement>()
