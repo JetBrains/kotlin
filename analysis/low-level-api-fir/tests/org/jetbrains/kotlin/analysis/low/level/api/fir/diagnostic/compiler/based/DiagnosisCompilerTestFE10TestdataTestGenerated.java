@@ -14454,6 +14454,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("noBuilderInferenceRestrictionReceiverInconsistency.kt")
+                public void testNoBuilderInferenceRestrictionReceiverInconsistency() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/noBuilderInferenceRestrictionReceiverInconsistency.kt");
+                }
+
+                @Test
                 @TestMetadata("propertySubstitution.kt")
                 public void testPropertySubstitution() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/propertySubstitution.kt");
