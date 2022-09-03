@@ -69,7 +69,7 @@ public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT exten
     @NotNull
     @Override
     public String getExternalId() {
-        return "kotlin." + toString();
+        return "kotlin." + getDebugName();
     }
 
     @Override
