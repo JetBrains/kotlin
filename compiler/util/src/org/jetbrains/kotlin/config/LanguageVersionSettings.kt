@@ -278,7 +278,7 @@ enum class LanguageFeature(
     ApproximateIntegerLiteralTypesInReceiverPosition(sinceVersion = null),
 
     // Disabled for indefinite time. Disables restrictions of builder inference without annotation
-    NoBuilderInferenceWithoutAnnotationRestriction(sinceVersion = null, kind = BUG_FIX, defaultState = State.DISABLED),
+    NoBuilderInferenceWithoutAnnotationRestriction(sinceVersion = null, kind = OTHER, defaultState = State.DISABLED),
 
     // Experimental features
 
