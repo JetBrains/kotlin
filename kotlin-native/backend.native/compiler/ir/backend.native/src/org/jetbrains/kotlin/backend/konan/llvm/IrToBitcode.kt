@@ -2904,20 +2904,26 @@ internal class CodeGeneratorVisitor(
 
             val ctorName = when {
                 library == null -> context.config.moduleId.moduleConstructorName
-                library == context.config.libraryToCache?.klib
-                        && context.config.producePerFileCache ->
-                    fileCtorName(library.uniqueName, context.config.outputFiles.perFileCacheFileName!!)
+                library == context.config.libraryToCache?.klib && context.config.producePerFileCache -> {
+                    val strat = context.config.libraryToCache!!.strategy as CacheDeserializationStrategy.SingleFile
+                    val name = CacheSupport.cacheFileId(strat.fqName, strat.filePath)
+                    fileCtorName(library.uniqueName, name)
+                }
 
                 else -> library.moduleConstructorName
             }
 
             if (library == null || context.llvmModuleSpecification.containsLibrary(library)) {
-                val otherInitializers = context.llvm.otherStaticInitializers.takeIf { library == null }.orEmpty()
+                if (library == null && context.config.producePerFileCache)  {
+                    emptyList<LLVMValueRef>()
+                } else {
+                    val otherInitializers = context.llvm.otherStaticInitializers.takeIf { library == null }.orEmpty()
 
-                val ctorFunction = addCtorFunction(ctorName)
-                appendStaticInitializers(ctorFunction, initializers + otherInitializers)
+                    val ctorFunction = addCtorFunction(ctorName)
+                    appendStaticInitializers(ctorFunction, initializers + otherInitializers)
 
-                listOf(ctorFunction)
+                    listOf(ctorFunction)
+                }
             } else {
                 // A cached library.
                 check(initializers.isEmpty()) {
@@ -2928,7 +2934,15 @@ internal class CodeGeneratorVisitor(
                         ?: error("Library $library is expected to be cached")
 
                 when (cache.granularity) {
-                    CachedLibraries.Granularity.MODULE -> listOf(addCtorFunction(ctorName))
+                    CachedLibraries.Granularity.MODULE -> {
+                        if (cache.perFileModule) {
+                            context.irLinker.klibToModuleDeserializerMap[library]!!.sortedFileIds.map {
+                                addCtorFunction(fileCtorName(library.uniqueName, it))
+                            }
+                        } else {
+                            listOf(addCtorFunction(ctorName))
+                        }
+                    }
                     CachedLibraries.Granularity.FILE -> {
                         context.irLinker.klibToModuleDeserializerMap[library]!!.sortedFileIds.map {
                             addCtorFunction(fileCtorName(library.uniqueName, it))

@@ -425,7 +425,7 @@ class KonanConfig(
 
     val outputFiles =
             OutputFiles(configuration.get(KonanConfigKeys.OUTPUT) ?: cacheSupport.tryGetImplicitOutput(),
-                    target, produce, producePerFileCache)
+                    target, produce, false)
 
     val tempFiles = TempFiles(outputFiles.outputName, configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR))
 

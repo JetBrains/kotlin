@@ -29,7 +29,7 @@ class CachedLibraries(
         Kind.STATIC -> CompilerOutputKind.STATIC_CACHE
     }
 
-    inner class Cache(val kind: Kind, val granularity: Granularity, val path: String) {
+    inner class Cache(val kind: Kind, val granularity: Granularity, val path: String, val perFileModule: Boolean = false) {
         val fileDirs by lazy { File(path).listFiles.filter { it.isDirectory }.sortedBy { it.name } }
 
         val bitcodeDependencies by lazy {
@@ -104,7 +104,10 @@ class CachedLibraries(
                     " Library: ${library.libraryName}, path to cache: ${cacheDir.absolutePath}")
         return when {
             dynamicFile.absolutePath in cacheDirContents -> Cache(Kind.DYNAMIC, Granularity.MODULE, dynamicFile.absolutePath)
-            staticFile.absolutePath in cacheDirContents -> Cache(Kind.STATIC, Granularity.MODULE, staticFile.absolutePath)
+            staticFile.absolutePath in cacheDirContents -> {
+                val perFileModule = cacheDir.child("per_file").exists
+                Cache(Kind.STATIC, Granularity.MODULE, staticFile.absolutePath, perFileModule = perFileModule)
+            }
             else -> Cache(Kind.STATIC, Granularity.FILE, cacheDir.absolutePath)
         }
     }

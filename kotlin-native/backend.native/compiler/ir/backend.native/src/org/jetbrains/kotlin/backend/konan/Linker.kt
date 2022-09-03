@@ -61,6 +61,9 @@ internal class CacheStorage(
         outputFiles.mainFile.delete()
         if (!outputFiles.tempCacheDirectory!!.renameTo(outputFiles.mainFile))
             outputFiles.tempCacheDirectory.deleteRecursively()
+        if (config.producePerFileCache && !outputFiles.mainFile.child("per_file").exists) {
+            outputFiles.mainFile.child("per_file").createNew()
+        }
     }
 
     fun saveAdditionalCacheInfo() {

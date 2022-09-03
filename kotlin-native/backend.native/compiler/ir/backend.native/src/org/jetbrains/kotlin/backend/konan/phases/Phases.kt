@@ -207,6 +207,19 @@ internal object Phases {
             description = "Copy default values from expect to actual declarations"
     )
 
+    fun buildWriteLlvmModule(outputFileName: String? = null): NamedCompilerPhase<LlvmCodegenContext, Unit> = myLower2(
+            name = "WriteLlvm",
+            description = "Write LLVM module to file",
+            op = { context, _ ->
+                val output = outputFileName ?: context.config.tempFiles.nativeBinaryFileName
+                context.bitcodeFileName = output
+                // Insert `_main` after pipeline so we won't worry about optimizations
+                // corrupting entry point.
+                insertAliasToEntryPoint(context.llvmModule!!, context.config)
+                LLVMWriteBitcodeToFile(context.llvmModule!!, output)
+            }
+    )
+
     fun buildEntryPointPhase(): NamedCompilerPhase<MiddleEndContext, Unit> = myLower2(
             name = "addEntryPoint",
             description = "Add entry point for program",
@@ -224,19 +237,6 @@ internal object Phases {
                 }
 
                 file.addChild(makeEntryPoint(context))
-            }
-    )
-
-    fun buildWriteLlvmModule(outputFileName: String? = null): NamedCompilerPhase<LlvmCodegenContext, Unit> = myLower2(
-            name = "WriteLlvm",
-            description = "Write LLVM module to file",
-            op = { context, _ ->
-                val output = outputFileName ?: context.config.tempFiles.nativeBinaryFileName
-                context.bitcodeFileName = output
-                // Insert `_main` after pipeline so we won't worry about optimizations
-                // corrupting entry point.
-                insertAliasToEntryPoint(context.llvmModule!!, context.config)
-                LLVMWriteBitcodeToFile(context.llvmModule!!, output)
             }
     )
 

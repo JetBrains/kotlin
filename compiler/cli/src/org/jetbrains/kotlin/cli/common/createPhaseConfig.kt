@@ -22,7 +22,7 @@ fun createPhaseConfig(
 
     val phases = compoundPhase.toPhaseMap()
     val enabled = computeEnabled(phases, arguments.disablePhases, ::report).toMutableSet()
-    val verbose = phaseSetFromArguments(phases, arguments.verbosePhases, ::report)
+    val verbose = phaseSetFromArguments(phases, arguments.verbosePhases, {  })
 
     val beforeDumpSet = phaseSetFromArguments(phases, arguments.phasesToDumpBefore, ::report)
     val afterDumpSet = phaseSetFromArguments(phases, arguments.phasesToDumpAfter, ::report)

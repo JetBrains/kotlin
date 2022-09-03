@@ -4,13 +4,13 @@
  */
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.util.prefixBaseNameIfNot
-import org.jetbrains.kotlin.util.removeSuffixIfPresent
-import org.jetbrains.kotlin.util.suffixIfNot
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
+import org.jetbrains.kotlin.util.prefixBaseNameIfNot
+import org.jetbrains.kotlin.util.removeSuffixIfPresent
+import org.jetbrains.kotlin.util.suffixIfNot
 import kotlin.random.Random
 
 
