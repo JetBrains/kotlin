@@ -354,7 +354,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     }
 
     fun createModifierList(@NonNls text: String): KtModifierList {
-        return createProperty("$text val x").modifierList!!
+        return createClass("$text interface x").modifierList!!
     }
 
     fun createEmptyModifierList() = createModifierList(KtTokens.PRIVATE_KEYWORD).apply { firstChild.delete() }
