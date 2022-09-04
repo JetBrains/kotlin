@@ -213,6 +213,30 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
         ).assertEquals(changes)
     }
 
+    @Test
+    fun testPropertyAccessors() {
+        val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testPropertyAccessors/src"), tmpDir)
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "property_ChangedType", scope = "com.example.SomeClass"),
+
+                LookupSymbol(name = "inlineProperty_ChangedType", scope = "com.example"),
+                LookupSymbol(name = "inlineProperty_ChangedType_BackingField", scope = "com.example"),
+                LookupSymbol(name = "getInlineProperty_ChangedType", scope = "com.example"),
+                LookupSymbol(name = "setInlineProperty_ChangedType", scope = "com.example"),
+
+                LookupSymbol(name = "getInlineProperty_ChangedGetterImpl", scope = "com.example"),
+                LookupSymbol(name = "setInlineProperty_ChangedSetterImpl", scope = "com.example"),
+
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SomeClass")
+            ),
+            fqNames = setOf(
+                "com.example",
+                "com.example.SomeClass"
+            )
+        ).assertEquals(changes)
+    }
+
     /** Tests [SupertypesInheritorsImpact]. */
     @Test
     override fun testImpactComputation_SupertypesInheritors() {

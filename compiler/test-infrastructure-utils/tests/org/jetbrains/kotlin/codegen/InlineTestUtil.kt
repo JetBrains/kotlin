@@ -18,15 +18,15 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
-import org.jetbrains.kotlin.inline.inlineFunctionsJvmNames
+import org.jetbrains.kotlin.inline.inlineFunctionsAndAccessors
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.util.*
 
 object InlineTestUtil {
     fun checkNoCallsToInline(
@@ -57,13 +57,13 @@ object InlineTestUtil {
         val binaryClasses = hashMapOf<String, KotlinJvmBinaryClass>()
         for (file in files) {
             val binaryClass = loadBinaryClass(file)
-            val inlineFunctions = inlineFunctionsJvmNames(binaryClass.classHeader)
+            val inlineFunctionsAndAccessors = inlineFunctionsAndAccessors(binaryClass.classHeader)
 
             val classVisitor = object : ClassVisitorWithName() {
                 override fun visitMethod(
                     access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?
                 ): MethodVisitor? {
-                    if (name + desc in inlineFunctions) {
+                    if (JvmMemberSignature.Method(name, desc) in inlineFunctionsAndAccessors) {
                         inlineMethods.add(MethodInfo(className, name, desc))
                     }
                     return null
@@ -81,14 +81,14 @@ object InlineTestUtil {
         var doLambdaInliningCheck = true
         for (file in files) {
             val binaryClass = loadBinaryClass(file)
-            val inlineFunctions = inlineFunctionsJvmNames(binaryClass.classHeader)
+            val inlineFunctionsAndAccessors = inlineFunctionsAndAccessors(binaryClass.classHeader)
 
             //if inline function creates anonymous object then do not try to check that all lambdas are inlined
             val classVisitor = object : ClassVisitorWithName() {
                 override fun visitMethod(
                     access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?
                 ): MethodVisitor? {
-                    if (name + desc in inlineFunctions) {
+                    if (JvmMemberSignature.Method(name, desc) in inlineFunctionsAndAccessors) {
                         return object : MethodNodeWithAnonymousObjectCheck(inlineInfo, access, name, desc, signature, exceptions) {
                             override fun onAnonymousConstructorCallOrSingletonAccess(owner: String) {
                                 doLambdaInliningCheck = false

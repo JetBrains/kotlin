@@ -23,8 +23,11 @@ import com.intellij.util.io.EnumeratorStringDescriptor
 import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.build.GeneratedJvmClass
+import org.jetbrains.kotlin.incremental.DifferenceCalculatorForClass.Companion.getNonPrivateMembers
+import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getNonPrivateMembers
 import org.jetbrains.kotlin.incremental.storage.*
-import org.jetbrains.kotlin.inline.inlineFunctionsJvmNames
+import org.jetbrains.kotlin.inline.inlineAccessors
+import org.jetbrains.kotlin.inline.inlineFunctionsAndAccessors
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
@@ -570,19 +573,26 @@ open class IncrementalJvmCache(
             val key = kotlinClassInfo.className.internalName
             val oldMap = storage[key] ?: emptyMap()
 
-            val newMap = kotlinClassInfo.inlineFunctionsMap
+            val newMap = kotlinClassInfo.inlineFunctionsAndAccessorsMap
             if (newMap.isNotEmpty()) {
                 storage[key] = newMap
             } else {
                 storage.remove(key)
             }
 
-            for (fn in oldMap.keys + newMap.keys) {
+            for (methodSignature in oldMap.keys + newMap.keys) {
+                val inlineFunctionOrAccessorName = functionNameBySignature(methodSignature)
+                // Note: If we detect a change in an inline property accessor (e.g., `getFoo`), we have two options:
+                //   1. Report that property `foo` has changed (and ignore `getFoo`)
+                //   2. Report that property accessor `getFoo` has changed (and ignore `foo`)
+                // Both options are possible (the compiler generates `LookupSymbol`s for both `foo` and `getFoo` when `getFoo` is inlined).
+                // Currently, we choose option 2 as it is simpler (i.e., even though inline property accessors are not immediate members of
+                // a class/package, we treat them like immediate members).
                 changesCollector.collectMemberIfValueWasChanged(
                     kotlinClassInfo.scopeFqName(),
-                    functionNameBySignature(fn),
-                    oldMap[fn],
-                    newMap[fn]
+                    inlineFunctionOrAccessorName,
+                    oldMap[methodSignature],
+                    newMap[methodSignature]
                 )
             }
         }
@@ -660,6 +670,28 @@ fun <T : Comparable<T>> Collection<T>.dumpCollection(): String =
     "[${sorted().joinToString(", ", transform = Any::toString)}]"
 
 /**
+ * @param includeInlineAccessors If `true`, also include inline property accessors in the returned list. This is necessary because property
+ * accessors are not immediate members of a class/package, and in some cases we treat them like immediate members (see
+ * [org.jetbrains.kotlin.incremental.IncrementalJvmCache.InlineFunctionsMap.process]). Note that here we deal with *inline* property
+ * accessors only as [org.jetbrains.kotlin.incremental.IncrementalJvmCache.InlineFunctionsMap.process] is written only to handle *inline*
+ * property accessors (and functions).
+ */
+fun ProtoData.getNonPrivateMemberNames(includeInlineAccessors: Boolean): List<String> {
+    return when (this) {
+        is ClassProtoData -> {
+            getNonPrivateMembers() + (if (includeInlineAccessors) {
+                inlineAccessors(proto.propertyList, nameResolver, excludePrivateAccessors = true).map { it.name }
+            } else emptyList())
+        }
+        is PackagePartProtoData -> {
+            getNonPrivateMembers() + (if (includeInlineAccessors) {
+                inlineAccessors(proto.propertyList, nameResolver, excludePrivateAccessors = true).map { it.name }
+            } else emptyList())
+        }
+    }
+}
+
+/**
  * Minimal information about a Kotlin class to compute recompilation-triggering changes during an incremental run of the `KotlinCompile`
  * task (see [IncrementalJvmCache.saveClassToCache]).
  *
@@ -674,7 +706,7 @@ class KotlinClassInfo constructor(
     val classHeaderStrings: Array<String>, // Can be empty
     val multifileClassName: String?, // Not null iff classKind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
     val constantsMap: LinkedHashMap<String, Any>,
-    val inlineFunctionsMap: LinkedHashMap<String, Long>
+    val inlineFunctionsAndAccessorsMap: LinkedHashMap<String, Long>
 ) {
 
     val className: JvmClassName by lazy { JvmClassName.byClassId(classId) }
@@ -726,48 +758,53 @@ class KotlinClassInfo constructor(
         }
 
         fun createFrom(classId: ClassId, classHeader: KotlinClassHeader, classContents: ByteArray): KotlinClassInfo {
-            val constantsAndInlineFunctions = getConstantsAndInlineFunctions(classHeader, classContents)
+            val (constants, inlineFunctionsAndAccessors) = getConstantsAndInlineFunctionsOrAccessors(classHeader, classContents)
 
             return KotlinClassInfo(
                 classId,
                 classHeader.kind,
-                classHeader.data ?: classHeader.incompatibleData ?: emptyArray(),
+                classHeader.data ?: emptyArray(),
                 classHeader.strings ?: emptyArray(),
                 classHeader.multifileClassName,
-                constantsMap = constantsAndInlineFunctions.first,
-                inlineFunctionsMap = constantsAndInlineFunctions.second
+                constants.mapKeysTo(LinkedHashMap()) { it.key.name },
+                inlineFunctionsAndAccessors.mapKeysTo(LinkedHashMap()) { it.key.asString() },
             )
         }
     }
 }
 
-/** Parses the class file only once to get both constants and inline functions. */
-private fun getConstantsAndInlineFunctions(
+/**
+ * Parses the class file only once to get both constants and inline functions/property accessors. This is faster than getting them
+ * separately in two passes.
+ */
+private fun getConstantsAndInlineFunctionsOrAccessors(
     classHeader: KotlinClassHeader,
     classContents: ByteArray
-): Pair<LinkedHashMap<String, Any>, LinkedHashMap<String, Long>> {
+): Pair<Map<JvmMemberSignature.Field, Any>, Map<JvmMemberSignature.Method, Long>> {
     val constantsClassVisitor = ConstantsClassVisitor()
-    val inlineFunctionSignatures = inlineFunctionsJvmNames(classHeader)
+    val inlineFunctionsAndAccessors = inlineFunctionsAndAccessors(classHeader)
 
-    return if (inlineFunctionSignatures.isEmpty()) {
+    return if (inlineFunctionsAndAccessors.isEmpty()) {
         ClassReader(classContents).accept(constantsClassVisitor, SKIP_CODE or SKIP_DEBUG or SKIP_FRAMES)
-        Pair(constantsClassVisitor.getResult(), LinkedHashMap())
+        Pair(constantsClassVisitor.getResult(), emptyMap())
     } else {
-        val inlineFunctionsClassVisitor = InlineFunctionsClassVisitor(inlineFunctionSignatures, constantsClassVisitor)
-        ClassReader(classContents).accept(inlineFunctionsClassVisitor, 0)
-        Pair(constantsClassVisitor.getResult(), inlineFunctionsClassVisitor.getResult())
+        val inlineFunctionsAndAccessorsClassVisitor =
+            InlineFunctionsAndAccessorsClassVisitor(inlineFunctionsAndAccessors.toSet(), constantsClassVisitor)
+        // SKIP_DEBUG so that snapshotting the methods is not sensitive to line number changes
+        ClassReader(classContents).accept(inlineFunctionsAndAccessorsClassVisitor, SKIP_DEBUG)
+        Pair(constantsClassVisitor.getResult(), inlineFunctionsAndAccessorsClassVisitor.getResult())
     }
 }
 
 private class ConstantsClassVisitor : ClassVisitor(Opcodes.API_VERSION) {
-    private val result = LinkedHashMap<String, Any>()
+    private val result = mutableMapOf<JvmMemberSignature.Field, Any>()
 
     override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
         if (access and Opcodes.ACC_PRIVATE == Opcodes.ACC_PRIVATE) return null
 
         val staticFinal = Opcodes.ACC_STATIC or Opcodes.ACC_FINAL
         if (value != null && access and staticFinal == staticFinal) {
-            result[name] = value
+            result[JvmMemberSignature.Field(name, desc)] = value
         }
         return null
     }
@@ -775,12 +812,12 @@ private class ConstantsClassVisitor : ClassVisitor(Opcodes.API_VERSION) {
     fun getResult() = result
 }
 
-private class InlineFunctionsClassVisitor(
-    private val inlineFunctionSignatures: Set<String>,
-    cv: ConstantsClassVisitor // Note: cv must not override the visitMethod (it will not be called with the current implementation below)
+private class InlineFunctionsAndAccessorsClassVisitor(
+    private val inlineFunctionsAndAccessors: Set<JvmMemberSignature.Method>,
+    cv: ConstantsClassVisitor // Note: cv must not override `visitMethod` (it will not be called with the current implementation below)
 ) : ClassVisitor(Opcodes.API_VERSION, cv) {
 
-    private val result = LinkedHashMap<String, Long>()
+    private val result = mutableMapOf<JvmMemberSignature.Method, Long>()
     private var classVersion: Int? = null
 
     override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<out String>?) {
@@ -791,11 +828,8 @@ private class InlineFunctionsClassVisitor(
     override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
         if (access and Opcodes.ACC_PRIVATE == Opcodes.ACC_PRIVATE) return null
 
-        // Note: Here, functionSignature = name + descriptor.
-        // It is different from the `signature` parameter above, which is essentially a more detailed descriptor when generics are used
-        // (or null otherwise).
-        val functionSignature = JvmMemberSignature.Method(name, desc).asString()
-        if (functionSignature !in inlineFunctionSignatures) return null
+        val method = JvmMemberSignature.Method(name, desc)
+        if (method !in inlineFunctionsAndAccessors) return null
 
         val classWriter = ClassWriter(0)
 
@@ -804,7 +838,7 @@ private class InlineFunctionsClassVisitor(
 
         return object : MethodVisitor(Opcodes.API_VERSION, classWriter.visitMethod(access, name, desc, signature, exceptions)) {
             override fun visitEnd() {
-                result[functionSignature] = classWriter.toByteArray().md5()
+                result[method] = classWriter.toByteArray().md5()
             }
         }
     }
