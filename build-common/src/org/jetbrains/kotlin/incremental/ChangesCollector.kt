@@ -36,32 +36,6 @@ class ChangesCollector {
     fun protoDataChanges(): Map<FqName, ProtoData> = storage
     fun protoDataRemoved(): List<FqName> = removed
 
-    companion object {
-        fun <T> T.getNonPrivateNames(nameResolver: NameResolver, vararg members: T.() -> List<MessageLite>) =
-            members.flatMap { this.it().filterNot { it.isPrivate }.names(nameResolver) }.toSet()
-
-        fun ClassProtoData.getNonPrivateMemberNames(): Set<String> {
-            return proto.getNonPrivateNames(
-                nameResolver,
-                // The types below should match the logic at `DifferenceCalculatorForClass.difference`
-                ProtoBuf.Class::getConstructorList,
-                ProtoBuf.Class::getFunctionList,
-                ProtoBuf.Class::getPropertyList,
-                ProtoBuf.Class::getTypeAliasList
-            ) + proto.enumEntryList.map { nameResolver.getString(it.name) }
-        }
-
-        fun PackagePartProtoData.getNonPrivateMemberNames(): Set<String> {
-            return proto.getNonPrivateNames(
-                nameResolver,
-                // The types below should match the logic at `DifferenceCalculatorForPackageFacade.difference`
-                ProtoBuf.Package::getFunctionList,
-                ProtoBuf.Package::getPropertyList,
-                ProtoBuf.Package::getTypeAliasList
-            )
-        }
-    }
-
     fun changes(): List<ChangeInfo> {
         val changes = arrayListOf<ChangeInfo>()
 
@@ -192,7 +166,7 @@ class ChangesCollector {
         }
 
     private fun PackagePartProtoData.collectAllFromPackage(isRemoved: Boolean) {
-        val memberNames = getNonPrivateMemberNames()
+        val memberNames = getNonPrivateMemberNames(includeInlineAccessors = true)
         if (isRemoved) {
             collectRemovedMembers(packageFqName, memberNames)
         } else {
@@ -204,14 +178,14 @@ class ChangesCollector {
         val classFqName = nameResolver.getClassId(proto.fqName).asSingleFqName()
 
         if (proto.isCompanionObject) {
-            val memberNames = getNonPrivateMemberNames()
+            val memberNames = getNonPrivateMemberNames(includeInlineAccessors = true)
 
             val collectMember = if (isRemoved) this@ChangesCollector::collectRemovedMember else this@ChangesCollector::collectChangedMember
             collectMember(classFqName.parent(), classFqName.shortName().asString())
             memberNames.forEach { collectMember(classFqName, it) }
         } else {
             if (!isRemoved && collectAllMembersForNewClass) {
-                val memberNames = getNonPrivateMemberNames()
+                val memberNames = getNonPrivateMemberNames(includeInlineAccessors = true)
                 memberNames.forEach { this@ChangesCollector.collectChangedMember(classFqName, it) }
             }
 

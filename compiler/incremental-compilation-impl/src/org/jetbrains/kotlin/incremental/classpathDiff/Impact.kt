@@ -183,7 +183,10 @@ private object ConstantsInCompanionObjectsImpact : Impact {
                 } else null
             }
         }.toMap()
-        val classToCompanionObject: Map<ClassId, ClassId> = companionObjectToConstants.keys.associateBy { it.parentClassId!! }
+        val classToCompanionObject: Map<ClassId, ClassId> = companionObjectToConstants.keys.associateBy { companionObject ->
+            // companionObject.parentClassId should be present in `allClasses` as this is a companion object
+            companionObject.parentClassId!!
+        }
 
         return object : ImpactedSymbolsResolver {
             override fun getImpactedClasses(classId: ClassId): Set<ClassId> {
@@ -211,6 +214,7 @@ private object ConstantsInCompanionObjectsImpact : Impact {
         return object : ImpactingClassesResolver {
             override fun getImpactingClasses(classId: ClassId): Set<ClassId> {
                 return if (classId in companionObjects) {
+                    // classId.parentClassId should be present in `allClasses` as this is a companion object
                     setOf(classId.parentClassId!!)
                 } else emptySet()
             }

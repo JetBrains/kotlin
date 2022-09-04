@@ -9,10 +9,9 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.measure
-import org.jetbrains.kotlin.incremental.ChangesCollector.Companion.getNonPrivateMemberNames
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
-import org.jetbrains.kotlin.incremental.PackagePartProtoData
 import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
+import org.jetbrains.kotlin.incremental.getNonPrivateMemberNames
 import org.jetbrains.kotlin.incremental.md5
 import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*
@@ -97,7 +96,7 @@ object ClassSnapshotter {
             )
             FILE_FACADE, MULTIFILE_CLASS_PART -> PackageFacadeKotlinClassSnapshot(
                 classId, classAbiHash, classMemberLevelSnapshot,
-                packageMemberNames = (kotlinClassInfo.protoData as PackagePartProtoData).getNonPrivateMemberNames()
+                packageMemberNames = kotlinClassInfo.protoData.getNonPrivateMemberNames(includeInlineAccessors = true).toSet()
             )
             MULTIFILE_CLASS -> MultifileClassKotlinClassSnapshot(
                 classId, classAbiHash, classMemberLevelSnapshot,

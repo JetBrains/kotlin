@@ -28,11 +28,11 @@ object JavaClassSnapshotter {
 
         // First, collect all info.
         // Note the parsing options passed to ClassReader:
-        //   - SKIP_CODE and SKIP_FRAMES are set as method bodies will not be part of the ABI of the class.
-        //   - SKIP_DEBUG is not set as it would skip method parameters, which may be used by annotation processors like Room.
-        //   - EXPAND_FRAMES is not needed (and not relevant when SKIP_CODE is set).
+        //   - SKIP_CODE is set as method bodies will not be part of the ABI of the class.
+        //   - SKIP_DEBUG seems possible but is *not* set just to be safe, so that we don't skip any info that might be important.
+        //   - SKIP_FRAMES or EXPAND_FRAMES is not needed (and not relevant when SKIP_CODE is set).
         val classReader = ClassReader(classFile.contents)
-        classReader.accept(abiClass, ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES)
+        classReader.accept(abiClass, ClassReader.SKIP_CODE)
 
         // Then, remove non-ABI info, which includes:
         //   - Method bodies: Should have already been removed (see SKIP_CODE above)

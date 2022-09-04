@@ -51,17 +51,17 @@ fun ProtoMapValue.toProtoData(packageFqName: FqName): ProtoData =
     }
 
 internal val MessageLite.isPrivate: Boolean
-    get() = DescriptorVisibilities.isPrivate(
-        ProtoEnumFlags.descriptorVisibility(
-            when (this) {
-                is ProtoBuf.Constructor -> Flags.VISIBILITY.get(flags)
-                is ProtoBuf.Function -> Flags.VISIBILITY.get(flags)
-                is ProtoBuf.Property -> Flags.VISIBILITY.get(flags)
-                is ProtoBuf.TypeAlias -> Flags.VISIBILITY.get(flags)
-                else -> error("Unknown message: $this")
-            }
-        )
-    )
+    get() {
+        val visibility = when (this) {
+            is ProtoBuf.Constructor -> Flags.VISIBILITY.get(flags)
+            is ProtoBuf.Function -> Flags.VISIBILITY.get(flags)
+            is ProtoBuf.Property -> Flags.VISIBILITY.get(flags)
+            is ProtoBuf.TypeAlias -> Flags.VISIBILITY.get(flags)
+            is ProtoBuf.EnumEntry -> return false // EnumEntry doesn't have a visibility flag
+            else -> error("Unknown message: $this")
+        }
+        return DescriptorVisibilities.isPrivate(ProtoEnumFlags.descriptorVisibility(visibility))
+    }
 
 private fun MessageLite.name(nameResolver: NameResolver): String {
     return when (this) {
@@ -69,6 +69,7 @@ private fun MessageLite.name(nameResolver: NameResolver): String {
         is ProtoBuf.Function -> nameResolver.getString(name)
         is ProtoBuf.Property -> nameResolver.getString(name)
         is ProtoBuf.TypeAlias -> nameResolver.getString(name)
+        is ProtoBuf.EnumEntry -> nameResolver.getString(name)
         else -> error("Unknown message: $this")
     }
 }
@@ -307,6 +308,25 @@ class DifferenceCalculatorForClass(
 
         return Difference(isClassAffected, areSubclassesAffected, names, changedSupertypes)
     }
+
+    companion object {
+
+        fun ClassProtoData.getNonPrivateMembers(): List<String> {
+            val membersResolvers: List<(ProtoBuf.Class) -> List<MessageLite>> = listOf(
+                // This list must match the logic in `DifferenceCalculatorForClass.difference`
+                // TODO: Consider adding COMPANION_OBJECT_NAME and NESTED_CLASS_NAME_LIST as they are also members of a class (see
+                // `DifferenceCalculatorForClass.difference`)
+                ProtoBuf.Class::getConstructorList,
+                ProtoBuf.Class::getFunctionList,
+                ProtoBuf.Class::getPropertyList,
+                ProtoBuf.Class::getTypeAliasList,
+                ProtoBuf.Class::getEnumEntryList
+            )
+            return membersResolvers.flatMap { membersResolver ->
+                membersResolver(proto).filterNot { it.isPrivate }.names(nameResolver)
+            }
+        }
+    }
 }
 
 class DifferenceCalculatorForPackageFacade(
@@ -361,6 +381,21 @@ class DifferenceCalculatorForPackageFacade(
         }
 
         return Difference(changedMembersNames = names)
+    }
+
+    companion object {
+
+        fun PackagePartProtoData.getNonPrivateMembers(): List<String> {
+            val membersResolvers: List<(ProtoBuf.Package) -> List<MessageLite>> = listOf(
+                // This list must match the logic in `DifferenceCalculatorForPackageFacade.difference`
+                ProtoBuf.Package::getFunctionList,
+                ProtoBuf.Package::getPropertyList,
+                ProtoBuf.Package::getTypeAliasList
+            )
+            return membersResolvers.flatMap { membersResolver ->
+                membersResolver(proto).filterNot { it.isPrivate }.names(nameResolver)
+            }
+        }
     }
 }
 
