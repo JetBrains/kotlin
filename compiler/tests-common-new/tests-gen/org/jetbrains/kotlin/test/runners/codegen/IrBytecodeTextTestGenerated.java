@@ -4055,9 +4055,21 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("kt53804.kt")
+        public void testKt53804() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/innerClasses/kt53804.kt");
+        }
+
+        @Test
         @TestMetadata("nestedClassInAnnotationArgument.kt")
         public void testNestedClassInAnnotationArgument() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/innerClasses/nestedClassInAnnotationArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedClassInAnnotationArgumentOldMode.kt")
+        public void testNestedClassInAnnotationArgumentOldMode() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/innerClasses/nestedClassInAnnotationArgumentOldMode.kt");
         }
     }
 

@@ -75,6 +75,7 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     val PARAMETERS_METADATA by directive("Add parameters metadata for 1.8 reflection")
     val USE_TYPE_TABLE by directive("Use type table in metadata serialization")
     val NO_NEW_JAVA_ANNOTATION_TARGETS by directive("Do not generate Java annotation targets TYPE_USE/TYPE_PARAMETER for Kotlin annotation classes with Kotlin targets TYPE/TYPE_PARAMETER")
+    val OLD_INNER_CLASSES_LOGIC by directive("Use old logic for generation of InnerClasses attributes")
 
     // --------------------- Utils ---------------------
 

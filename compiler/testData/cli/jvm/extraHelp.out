@@ -108,6 +108,7 @@ where advanced options include:
                                * ignore
                                * strict
                                * warn (report a warning)
+  -Xuse-old-innerclasses-logic Use old logic for generation of InnerClasses attributes
   -Xprofile=<profilerPath:command:outputDir>
                              Debug option: Run compiler with async profiler and save snapshots to `outputDir`; `command` is passed to async-profiler on start.
                              `profilerPath` is a path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.

@@ -87,16 +87,19 @@ class ClassCodegen private constructor(
     //       under incremental compilation, as calls to `inline fun`s declared in this class cause them to be generated out of order.
     private val innerClasses = linkedSetOf<IrClass>()
 
-    val typeMapper = object : IrTypeMapper(context) {
-        override fun mapType(type: IrType, mode: TypeMappingMode, sw: JvmSignatureWriter?): Type {
-            var t = type
-            while (t.isArray()) {
-                t = t.getArrayElementType(context.irBuiltIns)
+    val typeMapper =
+        if (context.state.oldInnerClassesLogic)
+            context.defaultTypeMapper
+        else object : IrTypeMapper(context) {
+            override fun mapType(type: IrType, mode: TypeMappingMode, sw: JvmSignatureWriter?): Type {
+                var t = type
+                while (t.isArray()) {
+                    t = t.getArrayElementType(context.irBuiltIns)
+                }
+                t.classOrNull?.owner?.let(::addInnerClassInfo)
+                return super.mapType(type, mode, sw)
             }
-            t.classOrNull?.owner?.let(::addInnerClassInfo)
-            return super.mapType(type, mode, sw)
         }
-    }
 
     val methodSignatureMapper = MethodSignatureMapper(context, typeMapper)
 
