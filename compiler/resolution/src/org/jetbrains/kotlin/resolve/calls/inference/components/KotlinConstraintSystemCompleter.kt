@@ -212,7 +212,7 @@ class KotlinConstraintSystemCompleter(
         diagnosticsHolder: KotlinDiagnosticsHolder,
         analyze: (PostponedResolvedAtom) -> Unit
     ): Boolean {
-        if (completionMode == ConstraintSystemCompletionMode.PARTIAL) return false
+        if (completionMode != ConstraintSystemCompletionMode.FULL) return false
 
         val useBuilderInferenceOnlyIfNeeded = languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceOnlyIfNeeded)
 

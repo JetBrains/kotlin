@@ -183,7 +183,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         allTypeVariables: List<TypeConstructorMarker>,
         analyze: (PostponedResolvedAtom) -> Unit
     ): Boolean {
-        if (completionMode == ConstraintSystemCompletionMode.PARTIAL) return false
+        if (completionMode != ConstraintSystemCompletionMode.FULL) return false
 
         // If we use the builder inference anyway (if the annotation is presented), then we are already analysed builder inference lambdas
         if (!languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceOnlyIfNeeded)) return false

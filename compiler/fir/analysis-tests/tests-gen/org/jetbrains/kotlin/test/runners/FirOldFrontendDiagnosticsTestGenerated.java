@@ -14340,6 +14340,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("invalidateKeys.kt")
+                public void testInvalidateKeys() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/invalidateKeys.kt");
+                }
+
+                @Test
                 @TestMetadata("kt47744.kt")
                 public void testKt47744() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47744.kt");
