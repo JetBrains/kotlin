@@ -37,11 +37,11 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
         return when {
             facadeFiles.none(KtFile::hasTopLevelCallables) -> null
             facadeFiles.none(KtFile::isCompiled) -> {
-                createInstanceOfLightFacade(facadeFqName, facadeFiles, module) to outOfBlockModificationTracker(file, module)
+                createInstanceOfLightFacade(facadeFqName, facadeFiles) to outOfBlockModificationTracker(file)
             }
 
             facadeFiles.all(KtFile::isCompiled) -> {
-                createInstanceOfDecompiledLightFacade(facadeFqName, facadeFiles, module) to librariesTracker(file, module)
+                createInstanceOfDecompiledLightFacade(facadeFqName, facadeFiles) to librariesTracker(file)
             }
 
             else -> error("Source and compiled files are mixed: $facadeFiles")
@@ -52,23 +52,19 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
     protected abstract fun facadeIsApplicable(module: TModule, file: KtFile): Boolean
     protected abstract val TModule.contentSearchScope: GlobalSearchScope
 
-    protected abstract fun createInstanceOfLightFacade(facadeFqName: FqName, files: List<KtFile>, module: TModule): KtLightClassForFacade
-    protected abstract fun createInstanceOfDecompiledLightFacade(
-        facadeFqName: FqName,
-        files: List<KtFile>,
-        module: TModule,
-    ): KtLightClassForFacade?
-
-    protected open fun outOfBlockModificationTracker(element: PsiElement, module: TModule): ModificationTracker {
-        return projectWideOutOfBlockModificationTracker()
-    }
-
-    protected open fun librariesTracker(element: PsiElement, module: TModule): ModificationTracker {
-        return projectWideOutOfBlockModificationTracker()
-    }
+    protected abstract fun createInstanceOfLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade
+    protected abstract fun createInstanceOfDecompiledLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade?
 
     protected open fun projectWideOutOfBlockModificationTracker(): ModificationTracker {
         return KotlinModificationTrackerService.getInstance(project).outOfBlockModificationTracker
+    }
+
+    protected open fun outOfBlockModificationTracker(element: PsiElement): ModificationTracker {
+        return projectWideOutOfBlockModificationTracker()
+    }
+
+    protected open fun librariesTracker(element: PsiElement): ModificationTracker {
+        return projectWideOutOfBlockModificationTracker()
     }
 
     override fun getLightFacade(file: KtFile): KtLightClassForFacade? = ifValid(file) {
@@ -79,7 +75,7 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
     }
 
     override fun createFacadeForSyntheticFile(file: KtFile): KtLightClassForFacade {
-        return createInstanceOfLightFacade(file.javaFileFacadeFqName, listOf(file), file.findModule())
+        return createInstanceOfLightFacade(file.javaFileFacadeFqName, listOf(file))
     }
 
     override fun getFacadeClassesInPackage(packageFqName: FqName, scope: GlobalSearchScope): Collection<KtLightClassForFacade> {
@@ -119,14 +115,13 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
         if (classOrObject.shouldNotBeVisibleAsLightClass()) return null
 
         val containingFile = classOrObject.containingKtFile
-        val module = containingFile.findModule()
-        when (declarationLocation(containingFile, module)) {
+        when (declarationLocation(containingFile)) {
             DeclarationLocation.ProjectSources -> {
-                return createInstanceOfLightClass(classOrObject, module) to outOfBlockModificationTracker(classOrObject, module)
+                return createInstanceOfLightClass(classOrObject) to outOfBlockModificationTracker(classOrObject)
             }
 
             DeclarationLocation.LibraryClasses -> {
-                return createInstanceOfDecompiledLightClass(classOrObject, module) to librariesTracker(classOrObject, module)
+                return createInstanceOfDecompiledLightClass(classOrObject) to librariesTracker(classOrObject)
             }
 
             DeclarationLocation.LibrarySources -> {
@@ -138,22 +133,22 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
                     guardedRun { getLightClass(it) }
                 }
 
-                return value to librariesTracker(classOrObject, module)
+                return value to librariesTracker(classOrObject)
             }
 
             null -> Unit
         }
 
         if (containingFile.analysisContext != null || containingFile.originalFile.virtualFile != null) {
-            return createInstanceOfLightClass(classOrObject, module) to outOfBlockModificationTracker(classOrObject, module)
+            return createInstanceOfLightClass(classOrObject) to outOfBlockModificationTracker(classOrObject)
         }
 
         return null
     }
 
-    protected abstract fun createInstanceOfLightClass(classOrObject: KtClassOrObject, module: TModule): KtLightClass?
-    protected abstract fun createInstanceOfDecompiledLightClass(classOrObject: KtClassOrObject, module: TModule): KtLightClass?
-    protected abstract fun declarationLocation(file: KtFile, module: TModule): DeclarationLocation?
+    protected abstract fun createInstanceOfLightClass(classOrObject: KtClassOrObject): KtLightClass?
+    protected abstract fun createInstanceOfDecompiledLightClass(classOrObject: KtClassOrObject): KtLightClass?
+    protected abstract fun declarationLocation(file: KtFile): DeclarationLocation?
 
     protected enum class DeclarationLocation {
         ProjectSources, LibraryClasses, LibrarySources,

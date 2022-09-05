@@ -89,43 +89,40 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
 
     override fun KtFile.findModule(): KtModule = getKtModule(project)
 
-    override fun declarationLocation(file: KtFile, module: KtModule): DeclarationLocation? = when (module) {
+    override fun declarationLocation(file: KtFile): DeclarationLocation? = when (file.getKtModule(project)) {
         is KtSourceModule -> DeclarationLocation.ProjectSources
         is KtLibraryModule -> DeclarationLocation.LibraryClasses
         is KtLibrarySourceModule -> DeclarationLocation.LibrarySources
         else -> null
     }
 
-    override fun createInstanceOfDecompiledLightClass(classOrObject: KtClassOrObject, module: KtModule): KtLightClass? {
+    override fun createInstanceOfDecompiledLightClass(classOrObject: KtClassOrObject): KtLightClass? {
         return DecompiledLightClassesFactory.getLightClassForDecompiledClassOrObject(classOrObject, project)
     }
 
-    override fun createInstanceOfLightClass(classOrObject: KtClassOrObject, module: KtModule): KtLightClass? {
+    override fun createInstanceOfLightClass(classOrObject: KtClassOrObject): KtLightClass? {
         return createSymbolLightClassNoCache(classOrObject)
     }
 
-    override fun createInstanceOfDecompiledLightFacade(
-        facadeFqName: FqName,
-        files: List<KtFile>,
-        module: KtModule,
-    ): KtLightClassForFacade? = DecompiledLightClassesFactory.createLightFacadeForDecompiledKotlinFile(project, facadeFqName, files)
+    override fun createInstanceOfDecompiledLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade? {
+        return DecompiledLightClassesFactory.createLightFacadeForDecompiledKotlinFile(project, facadeFqName, files)
+    }
 
     override fun projectWideOutOfBlockModificationTracker(): ModificationTracker {
         return project.createProjectWideOutOfBlockModificationTracker()
     }
 
-    override fun outOfBlockModificationTracker(element: PsiElement, module: KtModule): ModificationTracker {
+    override fun outOfBlockModificationTracker(element: PsiElement): ModificationTracker {
         return project.createProjectWideOutOfBlockModificationTracker()
     }
 
-    override fun librariesTracker(element: PsiElement, module: KtModule): ModificationTracker {
+    override fun librariesTracker(element: PsiElement): ModificationTracker {
         return project.createAllLibrariesModificationTracker()
     }
 
     override fun createInstanceOfLightFacade(
         facadeFqName: FqName,
         files: List<KtFile>,
-        module: KtModule,
     ): KtLightClassForFacade = analyzeForLightClasses(files.first()) {
         SymbolLightClassForFacade(facadeFqName, files)
     }
@@ -136,8 +133,8 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
 
     override fun getScriptClasses(scriptFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> = error("Should not be called")
 
-    override fun getKotlinInternalClasses(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> =
-        emptyList() //TODO Implement if necessary for symbol
+    //TODO Implement if necessary for symbol
+    override fun getKotlinInternalClasses(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> = emptyList()
 
     override fun findFilesForFacade(facadeFqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> {
         return project.createDeclarationProvider(searchScope).findFilesForFacade(facadeFqName)

@@ -38,11 +38,11 @@ class CliKotlinAsJavaSupport(project: Project, private val traceHolder: CliTrace
 
     override fun KtFile.findModule(): KtFile = this
 
-    override fun createInstanceOfDecompiledLightFacade(facadeFqName: FqName, files: List<KtFile>, module: KtFile): KtLightClassForFacade? {
+    override fun createInstanceOfDecompiledLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade? {
         error("Should not be called")
     }
 
-    override fun createInstanceOfLightFacade(facadeFqName: FqName, files: List<KtFile>, module: KtFile): KtLightClassForFacade {
+    override fun createInstanceOfLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade {
         return LightClassGenerationSupport.getInstance(files.first().project).createUltraLightClassForFacade(facadeFqName, files)
     }
 
@@ -117,12 +117,9 @@ class CliKotlinAsJavaSupport(project: Project, private val traceHolder: CliTrace
     }
 
     override fun createFacadeForSyntheticFile(file: KtFile): KtLightClassForFacade = error("Should not be called")
-    override fun declarationLocation(file: KtFile, module: KtFile): DeclarationLocation = DeclarationLocation.ProjectSources
-    override fun createInstanceOfDecompiledLightClass(classOrObject: KtClassOrObject, module: KtFile): KtLightClass? {
-        error("Should not be called")
-    }
-
-    override fun createInstanceOfLightClass(classOrObject: KtClassOrObject, module: KtFile): KtLightClass? {
+    override fun declarationLocation(file: KtFile): DeclarationLocation = DeclarationLocation.ProjectSources
+    override fun createInstanceOfDecompiledLightClass(classOrObject: KtClassOrObject): KtLightClass = error("Should not be called")
+    override fun createInstanceOfLightClass(classOrObject: KtClassOrObject): KtLightClass {
         return LightClassGenerationSupport.getInstance(classOrObject.project).createUltraLightClass(classOrObject)
     }
 }
