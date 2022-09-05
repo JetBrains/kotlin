@@ -34,7 +34,9 @@ val clean by tasks.creating(Delete::class) {
 
 val buildSamplesWithPlatformLibs by tasks.creating {
     dependsOn(":csvparser:assemble")
-    dependsOn(":curl:assemble")
+    if (!isWindows) {
+        dependsOn(":curl:assemble")
+    }
     dependsOn(":echoServer:assemble")
     dependsOn(":globalState:assemble")
     dependsOn(":html5Canvas:assemble")
