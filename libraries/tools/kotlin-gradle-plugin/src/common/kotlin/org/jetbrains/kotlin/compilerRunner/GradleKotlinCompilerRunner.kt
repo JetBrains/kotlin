@@ -80,7 +80,6 @@ internal open class GradleCompilerRunner(
     fun runJvmCompilerAsync(
         sourcesToCompile: List<File>,
         commonSources: List<File>,
-        javaSourceRoots: Iterable<File>,
         javaPackagePrefix: String?,
         args: K2JVMCompilerArguments,
         environment: GradleCompilerEnvironment,
@@ -89,7 +88,6 @@ internal open class GradleCompilerRunner(
     ): WorkQueue? {
         args.freeArgs += sourcesToCompile.map { it.absolutePath }
         args.commonSources = commonSources.map { it.absolutePath }.toTypedArray()
-        args.javaSourceRoots = javaSourceRoots.map { it.absolutePath }.toTypedArray()
         args.javaPackagePrefix = javaPackagePrefix
         if (args.jdkHome == null && !args.noJdk) args.jdkHome = jdkHome.absolutePath
         loggerProvider.kotlinInfo("Kotlin compilation 'jdkHome' argument: ${args.jdkHome}")

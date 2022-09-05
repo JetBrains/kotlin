@@ -382,6 +382,31 @@ __attribute__((swift_name("CoroutinesKt")))
 + (void)invoke1Block:(id<KtKotlinSuspendFunction1>)block argument:(id _Nullable)argument completionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("invoke1(block:argument:completionHandler:)")));
 + (id<KtKotlinKSuspendFunction0>)getKSuspendCallableReference0 __attribute__((swift_name("getKSuspendCallableReference0()")));
 + (id<KtKotlinKSuspendFunction1>)getKSuspendCallableReference1 __attribute__((swift_name("getKSuspendCallableReference1()")));
+
+/**
+ * @note This method converts all Kotlin exceptions to errors.
+*/
++ (id _Nullable)startCoroutineUninterceptedOrReturnFn:(id<KtKotlinSuspendFunction0>)fn resultHolder:(KtResultHolder<id> *)resultHolder error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("startCoroutineUninterceptedOrReturn(fn:resultHolder:)"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ * @note This method converts all Kotlin exceptions to errors.
+*/
++ (id _Nullable)startCoroutineUninterceptedOrReturnFn:(id<KtKotlinSuspendFunction1>)fn receiver:(id _Nullable)receiver resultHolder:(KtResultHolder<id> *)resultHolder error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("startCoroutineUninterceptedOrReturn(fn:receiver:resultHolder:)"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ * @note This method converts all Kotlin exceptions to errors.
+*/
++ (id _Nullable)startCoroutineUninterceptedOrReturnFn:(id<KtKotlinSuspendFunction2>)fn receiver:(id _Nullable)receiver param:(id _Nullable)param resultHolder:(KtResultHolder<id> *)resultHolder error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("startCoroutineUninterceptedOrReturn(fn:receiver:param:resultHolder:)"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ * @note This method converts all Kotlin exceptions to errors.
+*/
++ (BOOL)createCoroutineUninterceptedAndResumeFn:(id<KtKotlinSuspendFunction0>)fn resultHolder:(KtResultHolder<id> *)resultHolder error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("createCoroutineUninterceptedAndResume(fn:resultHolder:)")));
+
+/**
+ * @note This method converts all Kotlin exceptions to errors.
+*/
++ (BOOL)createCoroutineUninterceptedAndResumeFn:(id<KtKotlinSuspendFunction1>)fn receiver:(id _Nullable)receiver resultHolder:(KtResultHolder<id> *)resultHolder error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("createCoroutineUninterceptedAndResume(fn:receiver:resultHolder:)")));
 + (void)gc __attribute__((swift_name("gc()")));
 @end
 

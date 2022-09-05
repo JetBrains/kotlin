@@ -32,13 +32,19 @@ internal fun reportingSettings(rootProject: Project): ReportingSettings {
             ?: throw IllegalStateException("Can't configure http report: '${properties.buildReportHttpUrlProperty}' property is mandatory")
         val password = properties.buildReportHttpPassword
         val user = properties.buildReportHttpUser
-        HttpReportSettings(url, password, user)
+        HttpReportSettings(url, password, user, properties.buildReportHttpVerboseEnvironment)
+    } else {
+        null
+    }
+
+    val buildScanSettings = if (buildReportOutputTypes.contains(BuildReportType.BUILD_SCAN)) {
+        BuildScanSettings(properties.buildReportBuildScanCustomValuesLimit)
     } else {
         null
     }
 
     //temporary solution. support old property
-    val oldSingleBuildMetric =  properties.singleBuildMetricsFile?.also { buildReportOutputTypes.add(BuildReportType.SINGLE_FILE) }
+    val oldSingleBuildMetric = properties.singleBuildMetricsFile?.also { buildReportOutputTypes.add(BuildReportType.SINGLE_FILE) }
 
     val singleOutputFile = if (buildReportOutputTypes.contains(BuildReportType.SINGLE_FILE)) {
         properties.buildReportSingleFile ?: oldSingleBuildMetric
@@ -49,6 +55,7 @@ internal fun reportingSettings(rootProject: Project): ReportingSettings {
         buildReportLabel = properties.buildReportLabel,
         fileReportSettings = fileReportSettings,
         httpReportSettings = httpReportSettings,
+        buildScanReportSettings = buildScanSettings,
         buildReportOutputs = buildReportOutputTypes,
         singleOutputFile = singleOutputFile,
     )

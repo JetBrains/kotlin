@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.IR
 
 plugins {
     kotlin("multiplatform")
@@ -16,6 +15,8 @@ kotlin {
         }
     }
 }
+
+suppressYarnAndNpmForAssemble()
 
 val unimplementedNativeBuiltIns =
     (file("$rootDir/core/builtins/native/kotlin/").list().toSortedSet() - file("$rootDir/libraries/stdlib/js-ir/builtins/").list())
@@ -169,3 +170,4 @@ val packFullRuntimeKLib by tasks.registering(Jar::class) {
     destinationDirectory.set(rootProject.buildDir.resolve("js-ir-runtime"))
     archiveFileName.set("full-runtime.klib")
 }
+

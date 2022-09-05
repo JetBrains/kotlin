@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -47,8 +48,15 @@ fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession)
     return createValueClassRepresentation(session.typeContext, fields)
 }
 
-private fun FirRegularClass.getValueClassUnderlyingParameters(session: FirSession): List<FirValueParameter>? =
-    if (isInline) primaryConstructorIfAny(session)?.fir?.valueParameters else null
+private fun FirRegularClass.getValueClassUnderlyingParameters(session: FirSession): List<FirValueParameter>? {
+    if (!isInline) return null
+
+    val primaryConstructorIfAny = primaryConstructorIfAny(session) ?: return null
+    // FIXME: ATM we cannot lazy-resolve value parameters individually because of KT-53573
+    primaryConstructorIfAny.lazyResolveToPhase(FirResolvePhase.TYPES)
+
+    return primaryConstructorIfAny.fir.valueParameters
+}
 
 private fun isRecursiveSingleFieldValueClass(
     type: ConeSimpleKotlinType,

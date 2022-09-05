@@ -9,6 +9,7 @@ import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.forEachVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.sources.android.checker.KotlinAndroidSourceSetLayoutChecker
 import org.jetbrains.kotlin.gradle.utils.androidExtension
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheck
 
@@ -23,10 +24,11 @@ internal object KotlinAndroidSourceSets {
         logger.debug("Applying ${KotlinAndroidSourceSetLayout::class.java.simpleName}: ${layout.name}")
 
         val android = target.project.androidExtension
-        val factory = KotlinAndroidSourceSetFactory(target, target.project.kotlinExtension, layout)
+        val diagnosticReporter = KotlinAndroidSourceSetLayoutChecker.DiagnosticReporter.create(target.project, logger, layout)
+        val factory = KotlinAndroidSourceSetFactory(target, target.project.kotlinExtension, layout, diagnosticReporter)
 
         target.project.runProjectConfigurationHealthCheck {
-            layout.checker.checkBeforeLayoutApplied(target, layout)
+            layout.checker.checkBeforeLayoutApplied(diagnosticReporter, target, layout)
         }
 
         /*

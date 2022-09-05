@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.idea.references.KotlinFirReferenceContributor
 import org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor
 import org.jetbrains.kotlin.idea.references.ReadWriteAccessChecker
 import org.jetbrains.kotlin.light.classes.symbol.SymbolKotlinAsJavaSupport
-import org.jetbrains.kotlin.light.classes.symbol.caches.SymbolLightClassFacadeCache
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.impl.testConfiguration
 import org.jetbrains.kotlin.test.services.TestServices
@@ -52,7 +51,6 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
             registerService(LLFirBuiltinsSessionFactory::class.java)
             registerService(PackagePartProviderFactory::class.java, PackagePartProviderTestImpl(testServices))
 
-            registerService(SymbolLightClassFacadeCache::class.java)
             registerService(KotlinAsJavaSupport::class.java, SymbolKotlinAsJavaSupport(project))
             registerService(KtCompilerPluginsProvider::class.java, KtCompilerPluginsProviderForTests(project))
             registerService(ReadWriteAccessChecker::class.java, ReadWriteAccessCheckerFirImpl())

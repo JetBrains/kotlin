@@ -31,6 +31,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val gcSchedulerType by option<GCSchedulerType>()
 
+    val gcMarkSingleThreaded by booleanOption()
+
     val linkRuntime by option<RuntimeLinkageStrategyBinaryOption>()
 
     val bundleId by stringOption()
@@ -40,6 +42,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val appStateTracking by option<AppStateTracking>()
 
     val sanitizer by option<SanitizerKind>()
+
+    val mimallocUseDefaultOptions by booleanOption()
 }
 
 open class BinaryOption<T : Any>(

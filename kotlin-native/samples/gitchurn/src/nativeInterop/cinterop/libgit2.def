@@ -1,5 +1,0 @@
-headers = git2.h
-headerFilter = git2/** git2.h
-linkerOpts.osx = -L/opt/local/lib -L/usr/local/lib -lgit2
-linkerOpts.linux = -L/usr/lib64 -L/usr/lib/x86_64-linux-gnu -lgit2
-linkerOpts.mingw = -lgit2

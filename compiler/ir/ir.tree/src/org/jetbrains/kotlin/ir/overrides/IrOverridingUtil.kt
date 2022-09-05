@@ -5,17 +5,12 @@
 
 package org.jetbrains.kotlin.ir.overrides
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.collectAndFilterRealOverrides
-import org.jetbrains.kotlin.ir.util.fileOrNull
-import org.jetbrains.kotlin.ir.util.isReal
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.incompatible
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -39,22 +34,19 @@ abstract class FakeOverrideBuilderStrategy(private val friendModules: Map<String
     protected abstract fun linkPropertyFakeOverride(declaration: IrFakeOverrideProperty, compatibilityMode: Boolean)
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class) // Because of the LazyIR, have to use descriptors here.
 private fun IrOverridableMember.isPrivateToThisModule(thisClass: IrClass, memberClass: IrClass, friendModules: Map<String, Collection<String>>): Boolean {
     if (visibility != DescriptorVisibilities.INTERNAL) return false
-    val thisModule = thisClass.fileOrNull?.module
-    val memberModule = memberClass.fileOrNull?.module
-    if (thisModule == memberModule) return false
 
-    //   Note: On WASM backend there is possible if `thisClass` is from `IrExternalPackageFragment` which module is null
+    val thisModule = thisClass.getPackageFragment().packageFragmentDescriptor.containingDeclaration
+    val memberModule = memberClass.getPackageFragment().packageFragmentDescriptor.containingDeclaration
 
-    if (thisModule == null || memberModule == null) return false
-
-    return !isInFriendModules(thisModule, memberModule, friendModules)
+    return thisModule != memberModule && !isInFriendModules(thisModule, memberModule, friendModules)
 }
 
 private fun isInFriendModules(
-    fromModule: IrModuleFragment,
-    toModule: IrModuleFragment,
+    fromModule: ModuleDescriptor,
+    toModule: ModuleDescriptor,
     friendModules: Map<String, Collection<String>>
 ): Boolean {
 

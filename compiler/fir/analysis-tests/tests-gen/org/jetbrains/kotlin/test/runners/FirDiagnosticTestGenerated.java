@@ -2118,6 +2118,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("plusWithAssignSmartCast.kt")
+            public void testPlusWithAssignSmartCast() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/plusWithAssignSmartCast.kt");
+            }
+
+            @Test
             @TestMetadata("privateObjectLiteral.kt")
             public void testPrivateObjectLiteral() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/privateObjectLiteral.kt");

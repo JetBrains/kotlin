@@ -417,6 +417,9 @@ object FirErrors {
     val PLATFORM_CLASS_MAPPED_TO_KOTLIN by warning1<PsiElement, FqName>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION by error4<PsiElement, String, Collection<ConeKotlinType>, String, String>()
     val INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION by warning4<PsiElement, String, Collection<ConeKotlinType>, String, String>()
+    val INCORRECT_LEFT_COMPONENT_OF_INTERSECTION by error0<KtTypeReference>()
+    val INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION by error0<KtTypeReference>()
+    val NULLABLE_ON_DEFINITELY_NOT_NULLABLE by error0<KtTypeReference>()
 
     // Reflection
     val EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED by error1<KtExpression, FirCallableSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

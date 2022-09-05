@@ -11,6 +11,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
@@ -21,12 +22,13 @@ abstract class KotlinAsJavaSupport {
 
     abstract fun getLightClassForScript(script: KtScript): KtLightClass?
 
-    abstract fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass>
-
     abstract fun getFakeLightClass(classOrObject: KtClassOrObject): KtFakeLightClass
 
-    abstract fun createFacadeForSyntheticFile(facadeClassFqName: FqName, file: KtFile): PsiClass
+    abstract fun getLightFacade(file: KtFile): KtLightClassForFacade?
 
+    abstract fun createFacadeForSyntheticFile(file: KtFile): KtLightClassForFacade
+
+    abstract fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<KtLightClassForFacade>
 
     // Returns only immediately declared classes/objects, package classes are not included (they have no declarations)
     abstract fun findClassOrObjectDeclarationsInPackage(packageFqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject>
@@ -38,7 +40,11 @@ abstract class KotlinAsJavaSupport {
     *
     * If the resulting collection is empty, it means that this package has not other declarations than sub-packages
     */
-    abstract fun findFilesForPackage(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile>
+    abstract fun findFilesForPackage(packageFqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile>
+
+    abstract fun findFilesForFacade(facadeFqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile>
+
+    abstract fun findFilesForFacadeByPackage(packageFqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile>
 
     abstract fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject>
 
@@ -50,11 +56,9 @@ abstract class KotlinAsJavaSupport {
 
     abstract fun getKotlinInternalClasses(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass>
 
-    abstract fun getFacadeClassesInPackage(packageFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass>
+    abstract fun getFacadeClassesInPackage(packageFqName: FqName, scope: GlobalSearchScope): Collection<KtLightClassForFacade>
 
     abstract fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String>
-
-    abstract fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<KtFile>
 
     companion object {
         @JvmStatic

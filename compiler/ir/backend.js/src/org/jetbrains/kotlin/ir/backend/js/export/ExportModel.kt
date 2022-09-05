@@ -59,6 +59,7 @@ class ExportedProperty(
     val isField: Boolean = false,
     val irGetter: IrFunction? = null,
     val irSetter: IrFunction? = null,
+    val isOptional: Boolean = false
 ) : ExportedDeclaration()
 
 // TODO: Cover all cases with frontend and disable error declarations

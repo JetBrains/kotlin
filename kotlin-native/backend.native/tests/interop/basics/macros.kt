@@ -45,4 +45,9 @@ fun main(args: Array<String>) {
         increment(counter.ptr)
         assertEquals(43, counter.value)
     }
+
+    assertEquals(Double.NaN.toRawBits(), DEFAULT_DOUBLE_NAN.toRawBits())
+    assertEquals(Float.NaN.toRawBits(), DEFAULT_FLOAT_NAN.toRawBits())
+    assertEquals(0x7fc12345, OTHER_FLOAT_NAN.toRawBits())
+    assertEquals(0x7ffc0123456789abL, OTHER_DOUBLE_NAN.toRawBits())
 }

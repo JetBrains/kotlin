@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.js.backend.ast
 
 import org.jetbrains.kotlin.js.common.RESERVED_KEYWORDS
-import java.util.*
+import kotlin.collections.ArrayList
 
 class JsObjectScope(parent: JsScope, description: String) : JsScope(parent, description)
 
@@ -32,21 +32,26 @@ open class JsFunctionScope(parent: JsScope, description: String) : JsDeclaration
 }
 
 open class JsDeclarationScope(parent: JsScope, description: String, useParentScopeStack: Boolean = false) : JsScope(parent, description) {
-    private val labelScopes: Stack<LabelScope> =
-            if (parent is JsDeclarationScope && useParentScopeStack) parent.labelScopes else Stack<LabelScope>()
+    private var labelScopesImpl: ArrayList<LabelScope>? =
+        if (parent is JsDeclarationScope && useParentScopeStack) parent.labelScopesImpl else null
 
     private val topLabelScope
-        get() = if (labelScopes.isNotEmpty()) labelScopes.peek() else null
+        get() = labelScopesImpl?.let { if (it.isNotEmpty()) it.last() else null }
+
+    private val labelScopes: ArrayList<LabelScope>
+        get() = labelScopesImpl ?: ArrayList<LabelScope>().also { labelScopesImpl = it }
 
     open fun enterLabel(label: String, outputName: String): JsName {
         val scope = LabelScope(topLabelScope, label, outputName)
-        labelScopes.push(scope)
+        labelScopes.add(scope)
         return scope.labelName
     }
 
     open fun exitLabel() {
-        assert(labelScopes.isNotEmpty()) { "No scope to exit from" }
-        labelScopes.pop()
+        labelScopes.let {
+            assert(it.isNotEmpty()) { "No scope to exit from" }
+            it.removeLast()
+        }
     }
 
     open fun findLabel(label: String): JsName? =

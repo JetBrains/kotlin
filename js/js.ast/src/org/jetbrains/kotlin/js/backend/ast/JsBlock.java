@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.util.SmartList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,7 +18,7 @@ public class JsBlock extends SourceInfoAwareJsNode implements JsStatement {
     private final List<JsStatement> statements;
 
     public JsBlock() {
-        this(new ArrayList<JsStatement>());
+        this(new SmartList<JsStatement>());
     }
 
     public JsBlock(JsStatement statement) {

@@ -248,14 +248,9 @@ private fun DependencyHandler.testApi(dependencyNotation: Any) {
     add("testApi", dependencyNotation)
 }
 
-val Project.protobufVersion: String get() = findProperty("versions.protobuf") as String
-
-val Project.protobufRepo: String
-    get() =
-        "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_Protobuf),status:SUCCESS,pinned:true,tag:$protobufVersion/artifacts/content/internal/repo/"
-
-fun Project.protobufLite(): String = "org.jetbrains.kotlin:protobuf-lite:$protobufVersion"
-fun Project.protobufFull(): String = "org.jetbrains.kotlin:protobuf-relocated:$protobufVersion"
+val Project.protobufRelocatedVersion: String get() = findProperty("versions.protobuf-relocated") as String
+fun Project.protobufLite(): String = "org.jetbrains.kotlin:protobuf-lite:$protobufRelocatedVersion"
+fun Project.protobufFull(): String = "org.jetbrains.kotlin:protobuf-relocated:$protobufRelocatedVersion"
 fun Project.kotlinxCollectionsImmutable() =
     "org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${rootProject.extra["versions.kotlinx-collections-immutable"]}"
 

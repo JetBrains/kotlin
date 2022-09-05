@@ -20,7 +20,6 @@ class Kapt3AndGradleDaemon : KGPDaemonsBaseTest() {
         .copy(
             kaptOptions = BuildOptions.KaptOptions(
                 verbose = true,
-                useWorkers = true,
                 includeCompileClasspath = false
             )
         )

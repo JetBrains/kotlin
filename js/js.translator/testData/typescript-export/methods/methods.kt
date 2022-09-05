@@ -8,7 +8,8 @@
 
 package foo
 
-external interface RegExpMatchArray
+@JsExport
+external interface SomeExternalInterface
 
 @JsExport
 class Test {
@@ -41,7 +42,7 @@ class Test {
 
     fun <T> genericWithMultipleConstraints(x: T): T
             where T : Comparable<T>,
-                  T : RegExpMatchArray,
+                  T : SomeExternalInterface,
                   T : Throwable = x
 
     fun <A, B, C, D, E> generic3(a: A, b: B, c: C, d: D): E? = null

@@ -1435,6 +1435,18 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val causingTypes: String
     }
 
+    abstract class IncorrectLeftComponentOfIntersection : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = IncorrectLeftComponentOfIntersection::class
+    }
+
+    abstract class IncorrectRightComponentOfIntersection : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = IncorrectRightComponentOfIntersection::class
+    }
+
+    abstract class NullableOnDefinitelyNotNullable : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = NullableOnDefinitelyNotNullable::class
+    }
+
     abstract class ExtensionInClassReferenceNotAllowed : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = ExtensionInClassReferenceNotAllowed::class
         abstract val referencedDeclaration: KtCallableSymbol

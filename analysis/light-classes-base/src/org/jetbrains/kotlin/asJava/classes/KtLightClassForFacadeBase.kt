@@ -12,7 +12,10 @@ import com.intellij.psi.impl.light.LightEmptyImplementsList
 import com.intellij.psi.impl.light.LightModifierList
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
+import org.jetbrains.kotlin.asJava.elements.KtLightField
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
@@ -27,17 +30,26 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import javax.swing.Icon
 
 abstract class KtLightClassForFacadeBase constructor(
-    manager: PsiManager,
     override val facadeClassFqName: FqName,
-    override val files: Collection<KtFile>
-) : KtLightClassBase(manager), KtLightClassForFacade {
-    private val firstFileInFacade by lazyPub { files.iterator().next() }
+    final override val files: Collection<KtFile>
+) : KtLightClassBase(files.first().manager), KtLightClassForFacade {
+    private val firstFileInFacade by lazyPub { files.first() }
 
-    private val modifierList: PsiModifierList =
-        LightModifierList(manager, KotlinLanguage.INSTANCE, PsiModifier.PUBLIC, PsiModifier.FINAL)
+    val isMultiFileClass: Boolean by lazyPub {
+        files.size > 1 || firstFileInFacade.isJvmMultifileClassFile
+    }
 
-    private val implementsList: LightEmptyImplementsList =
+    private val _modifierList: PsiModifierList by lazyPub {
+        if (isMultiFileClass)
+            LightModifierList(manager, KotlinLanguage.INSTANCE, PsiModifier.PUBLIC, PsiModifier.FINAL)
+        else
+            createModifierListForSimpleFacade()
+    }
+
+
+    private val _implementsList: LightEmptyImplementsList by lazyPub {
         LightEmptyImplementsList(manager)
+    }
 
     private val packageClsFile by lazyPub {
         FakeFileForLightClass(
@@ -47,6 +59,19 @@ abstract class KtLightClassForFacadeBase constructor(
         )
     }
 
+    private val _ownMethods: List<KtLightMethod> by lazyPub {
+        createOwnMethods()
+    }
+
+    private val _ownFields: List<KtLightField> by lazyPub {
+        createOwnFields()
+    }
+
+    abstract fun createOwnMethods(): List<KtLightMethod>
+    abstract fun createOwnFields(): List<KtLightField>
+
+    abstract fun createModifierListForSimpleFacade(): PsiModifierList
+
     override fun getParent(): PsiElement = containingFile
 
     override val kotlinOrigin: KtClassOrObject? get() = null
@@ -54,7 +79,7 @@ abstract class KtLightClassForFacadeBase constructor(
     val fqName: FqName
         get() = facadeClassFqName
 
-    override fun getModifierList() = modifierList
+    override fun getModifierList() = _modifierList
 
     override fun hasModifierProperty(@NonNls name: String) = modifierList.hasModifierProperty(name)
 
@@ -80,7 +105,7 @@ abstract class KtLightClassForFacadeBase constructor(
 
     override fun getDocComment(): Nothing? = null
 
-    override fun getImplementsList() = implementsList
+    override fun getImplementsList() = _implementsList
 
     override fun getImplementsListTypes(): Array<out PsiClassType> = PsiClassType.EMPTY_ARRAY
 
@@ -177,12 +202,12 @@ abstract class KtLightClassForFacadeBase constructor(
     override fun hashCode() = facadeClassFqName.hashCode()
 
     override fun equals(other: Any?): Boolean {
+        if (this === other) return true
         if (other == null || this::class.java != other::class.java) {
             return false
         }
 
         val lightClass = other as KtLightClassForFacadeBase
-        if (this === other) return true
 
         if (facadeClassFqName != lightClass.facadeClassFqName) return false
         if (files != lightClass.files) return false
@@ -204,6 +229,10 @@ abstract class KtLightClassForFacadeBase constructor(
     override fun getStartOffsetInParent() = firstFileInFacade.startOffsetInParent
 
     override fun isWritable() = files.all { it.isWritable }
+
+    override fun getOwnFields() = _ownFields
+
+    override fun getOwnMethods() = _ownMethods
 
     override fun getVisibleSignatures(): MutableCollection<HierarchicalMethodSignature> = PsiSuperMethodImplUtil.getVisibleSignatures(this)
 }

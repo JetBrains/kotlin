@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.*
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
 
 interface TransformableToWarning<T : KotlinCallDiagnostic> {
     fun transformToWarning(): T?
@@ -63,6 +64,20 @@ class TooManyArguments(val argument: KotlinCallArgument, val descriptor: Callabl
 
 class NonVarargSpread(val argument: KotlinCallArgument) : KotlinCallDiagnostic(INAPPLICABLE) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgumentSpread(argument, this)
+}
+
+class MultiLambdaBuilderInferenceRestriction(
+    val argument: KotlinCallArgument,
+    val typeParameter: TypeParameterMarker?
+) : KotlinCallDiagnostic(RESOLVED) {
+    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
+}
+
+class StubBuilderInferenceReceiver(
+    val receiver: SimpleKotlinCallArgument,
+    val extensionReceiverParameter: ReceiverParameterDescriptor,
+) : KotlinCallDiagnostic(RESOLVED) {
+    override fun report(reporter: DiagnosticReporter) = reporter.onCallReceiver(receiver, this)
 }
 
 class MixingNamedAndPositionArguments(override val argument: KotlinCallArgument) : InapplicableArgumentDiagnostic()

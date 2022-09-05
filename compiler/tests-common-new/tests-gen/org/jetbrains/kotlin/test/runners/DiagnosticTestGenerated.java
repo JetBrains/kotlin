@@ -10762,28 +10762,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Nested
-        @TestMetadata("compiler/testData/diagnostics/tests/expressionAfterTypeReference")
-        @TestDataPath("$PROJECT_ROOT")
-        public class ExpressionAfterTypeReference {
-            @Test
-            public void testAllFilesPresentInExpressionAfterTypeReference() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/expressionAfterTypeReference"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-            }
-
-            @Test
-            @TestMetadata("allowExpressionAfterTypeReference.kt")
-            public void testAllowExpressionAfterTypeReference() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/expressionAfterTypeReference/allowExpressionAfterTypeReference.kt");
-            }
-
-            @Test
-            @TestMetadata("forbidExpressionAfterTypeReference.kt")
-            public void testForbidExpressionAfterTypeReference() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/expressionAfterTypeReference/forbidExpressionAfterTypeReference.kt");
-            }
-        }
-
-        @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/extensions")
         @TestDataPath("$PROJECT_ROOT")
         public class Extensions {
@@ -14053,6 +14031,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("kt53124.kt")
+            public void testKt53124() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/kt53124.kt");
+            }
+
+            @Test
             @TestMetadata("kt6175.kt")
             public void testKt6175() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/kt6175.kt");
@@ -14350,6 +14334,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("errorOnStubReceiver.kt")
+                public void testErrorOnStubReceiver() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/errorOnStubReceiver.kt");
+                }
+
+                @Test
                 @TestMetadata("kt47744.kt")
                 public void testKt47744() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47744.kt");
@@ -14440,9 +14430,39 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("kt53422.kt")
+                public void testKt53422() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt53422.kt");
+                }
+
+                @Test
+                @TestMetadata("kt53639.kt")
+                public void testKt53639() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt53639.kt");
+                }
+
+                @Test
                 @TestMetadata("labaledCall.kt")
                 public void testLabaledCall() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/labaledCall.kt");
+                }
+
+                @Test
+                @TestMetadata("multiLambdaRestriction.kt")
+                public void testMultiLambdaRestriction() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/multiLambdaRestriction.kt");
+                }
+
+                @Test
+                @TestMetadata("multiLambdaRestrictionDisabled.kt")
+                public void testMultiLambdaRestrictionDisabled() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/multiLambdaRestrictionDisabled.kt");
+                }
+
+                @Test
+                @TestMetadata("noBuilderInferenceRestrictionReceiverInconsistency.kt")
+                public void testNoBuilderInferenceRestrictionReceiverInconsistency() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/noBuilderInferenceRestrictionReceiverInconsistency.kt");
                 }
 
                 @Test
@@ -14600,6 +14620,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                     @TestMetadata("renderingStubTypes.kt")
                     public void testRenderingStubTypes() throws Exception {
                         runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/renderingStubTypes.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("stubTypeReceiverRestriction.kt")
+                    public void testStubTypeReceiverRestriction() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/stubTypeReceiverRestriction.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("stubTypeReceiverRestrictionDisabled.kt")
+                    public void testStubTypeReceiverRestrictionDisabled() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/stubTypeReceiverRestrictionDisabled.kt");
                     }
                 }
             }
@@ -31423,6 +31455,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             public void testComplicatedLTGTE() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/syntax/complicatedLTGTE.kt");
             }
+
+            @Test
+            @TestMetadata("incorrectLTGTFallback.kt")
+            public void testIncorrectLTGTFallback() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/syntax/incorrectLTGTFallback.kt");
+            }
         }
 
         @Nested
@@ -32248,28 +32286,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("traitSupertypeList.kt")
             public void testTraitSupertypeList() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/traitWithRequired/traitSupertypeList.kt");
-            }
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/diagnostics/tests/typeArguments")
-        @TestDataPath("$PROJECT_ROOT")
-        public class TypeArguments {
-            @Test
-            public void testAllFilesPresentInTypeArguments() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/typeArguments"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-            }
-
-            @Test
-            @TestMetadata("allowTypeArgumentListLikeExpressions.kt")
-            public void testAllowTypeArgumentListLikeExpressions() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/typeArguments/allowTypeArgumentListLikeExpressions.kt");
-            }
-
-            @Test
-            @TestMetadata("forbidTypeArgumentListLikeExpressions.kt")
-            public void testForbidTypeArgumentListLikeExpressions() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/typeArguments/forbidTypeArgumentListLikeExpressions.kt");
             }
         }
 

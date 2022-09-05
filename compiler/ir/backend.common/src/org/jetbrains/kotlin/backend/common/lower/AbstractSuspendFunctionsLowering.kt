@@ -34,7 +34,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     protected abstract fun getCoroutineBaseClass(function: IrFunction): IrClassSymbol
     protected abstract fun nameForCoroutineClass(function: IrFunction): Name
     protected abstract fun IrBuilderWithScope.launchSuspendFunctionWithGivenContinuation(
-        symbol: IrSimpleFunctionSymbol, dispatchReceiver: IrExpression,
+        symbol: IrSimpleFunctionSymbol, superQualifierSymbol: IrClassSymbol?, dispatchReceiver: IrExpression,
         arguments: List<IrExpression>, continuation: IrExpression) : IrExpression
 
     protected abstract fun buildStateMachine(
@@ -146,6 +146,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                             +irReturn(
                                 launchSuspendFunctionWithGivenContinuation(
                                     invokeFunction.symbol,
+                                    superQualifierSymbol = invokeFunction.parentAsClass.symbol, // Call non-virtually.
                                     irGet(thisReceiver),
                                     valueParameters.dropLast(1).map { irGet(it) },
                                     irGet(valueParameters.last())

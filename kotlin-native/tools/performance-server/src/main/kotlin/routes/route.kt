@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 import org.w3c.xhr.*
@@ -216,17 +216,11 @@ internal fun <T> orderedValues(values: List<T>, buildElement: (T) -> CompositeBu
                 )
         )
 
-// ElasticSearch connector for work with custom instance.
-internal val localHostElasticConnector = UrlNetworkConnector("http://localhost", 9200)
-// ElasticSearch connector for work with AWS instance.
-internal val awsElasticConnector = AWSNetworkConnector()
-internal val networkConnector = awsElasticConnector
-
 fun urlParameterToBaseFormat(value: dynamic) =
         value.toString().replace("_", " ")
 
 // Routing of requests to current server.
-fun router() {
+fun router(networkConnector: NetworkConnector) {
     val express = require("express")
     val router = express.Router()
     val connector = ElasticSearchConnector(networkConnector)

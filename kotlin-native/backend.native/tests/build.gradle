@@ -6212,11 +6212,11 @@ if (HostManager.@Companion.hostIsMac) {
         phaseToCheck = "BitcodeOptimization"
     }
 
-    fileCheckTest("filecheck_redundant_safepoints_removal_arm") {
+    fileCheckTest("filecheck_redundant_safepoints_removal_smallbinary") {
         enabled = isExperimentalMM && project.globalTestArgs.contains("-opt")
         annotatedSource = project.file('filecheck/redundant_safepoints.kt')
         targetName = "watchos_arm32"
-        checkPrefix = "CHECK-ARM"
+        checkPrefix = "CHECK-SMALLBINARY"
         extraOpts = ["-Xbinary=memoryModel=experimental", "-opt"]
         phaseToCheck = "RemoveRedundantSafepoints"
     }
@@ -6226,8 +6226,7 @@ if (HostManager.@Companion.hostIsMac) {
 fileCheckTest("filecheck_redundant_safepoints_removal") {
     enabled = isExperimentalMM && isCmsGC &&
             project.globalTestArgs.contains("-opt") &&
-            project.testTarget != "watchos_arm32" &&
-            project.testTarget != "ios_arm32"
+            !needSmallBinary(project)
     annotatedSource = project.file('filecheck/redundant_safepoints.kt')
     phaseToCheck = "RemoveRedundantSafepoints"
 }

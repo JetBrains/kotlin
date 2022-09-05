@@ -494,11 +494,15 @@ internal fun <T : JsNode> T.withSource(node: IrElement, context: JsGenerationCon
 private inline fun <T : JsNode> T.addSourceInfoIfNeed(node: IrElement, context: JsGenerationContext) {
     if (!context.staticContext.genSourcemaps) return
 
-    val sourceInfo = node.getSourceInfo(context.currentFile.fileEntry) ?: return
+    var cachedLocation = context.getLocationFromCache(node)
+    if (cachedLocation == null) {
+        cachedLocation = node.getSourceInfo(context.currentFile.fileEntry) ?: return
+        context.saveLocationToCache(node, cachedLocation)
+    }
 
     // TODO maybe it's better to fix in JsExpressionStatement
     val locationTarget = if (this is JsExpressionStatement) this.expression else this
-    locationTarget.source = sourceInfo
+    locationTarget.source = cachedLocation
 }
 
 fun IrElement.getSourceInfo(container: IrDeclaration): JsLocation? {

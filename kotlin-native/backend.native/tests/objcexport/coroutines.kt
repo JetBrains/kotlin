@@ -222,4 +222,25 @@ suspend fun invoke1(block: suspend (Any?) -> Any?, argument: Any?): Any? = block
 fun getKSuspendCallableReference0(): KSuspendFunction0<String> = ::suspendCallableReference0Target
 fun getKSuspendCallableReference1(): KSuspendFunction1<String, String> = ::suspendCallableReference1Target
 
+@Throws(Throwable::class)
+fun startCoroutineUninterceptedOrReturn(fn: suspend () -> Any?, resultHolder: ResultHolder<Any?>) =
+        fn.startCoroutineUninterceptedOrReturn(ResultHolderCompletion(resultHolder))
+
+@Throws(Throwable::class)
+fun startCoroutineUninterceptedOrReturn(fn: suspend Any?.() -> Any?, receiver: Any?, resultHolder: ResultHolder<Any?>) =
+        fn.startCoroutineUninterceptedOrReturn(receiver, ResultHolderCompletion(resultHolder))
+
+@Throws(Throwable::class)
+@Suppress("INVISIBLE_MEMBER")
+fun startCoroutineUninterceptedOrReturn(fn: suspend Any?.(Any?) -> Any?, receiver: Any?, param: Any?, resultHolder: ResultHolder<Any?>) =
+        fn.startCoroutineUninterceptedOrReturn(receiver, param, ResultHolderCompletion(resultHolder))
+
+@Throws(Throwable::class)
+fun createCoroutineUninterceptedAndResume(fn: suspend () -> Any?, resultHolder: ResultHolder<Any?>) =
+        fn.createCoroutine(ResultHolderCompletion(resultHolder)).resume(Unit)
+
+@Throws(Throwable::class)
+fun createCoroutineUninterceptedAndResume(fn: suspend Any?.() -> Any?, receiver: Any?, resultHolder: ResultHolder<Any?>) =
+        fn.createCoroutine(receiver, ResultHolderCompletion(resultHolder)).resume(Unit)
+
 fun gc() = kotlin.native.internal.GC.collect()

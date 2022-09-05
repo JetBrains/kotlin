@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.network
@@ -57,10 +57,7 @@ external object AWSInstance {
 }
 
 // Network connector to work with AWS resources.
-class AWSNetworkConnector : NetworkConnector() {
-    val AWSDomain = "vpc-kotlin-perf-service-5e6ldakkdv526ii5hbclzcmpny.eu-west-1.es.amazonaws.com"
-    val AWSRegion = "eu-west-1"
-
+class AWSNetworkConnector(val AWSDomain: String, val AWSRegion: String) : NetworkConnector() {
     override fun <T : String?> sendBaseRequest(method: RequestMethod, path: String, user: String?, password: String?,
                                                acceptJsonContentType: Boolean, body: String?,
                                                errorHandler: (url: String, response: dynamic) -> Nothing?): Promise<T> {

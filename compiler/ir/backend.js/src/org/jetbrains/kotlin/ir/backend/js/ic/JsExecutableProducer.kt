@@ -16,27 +16,28 @@ class JsExecutableProducer(
     private val caches: List<ModuleArtifact>,
     private val relativeRequirePath: Boolean
 ) {
-    fun buildExecutable(multiModule: Boolean, rebuildCallback: (String) -> Unit = {}) = if (multiModule) {
-        buildMultiModuleExecutable(rebuildCallback)
+    fun buildExecutable(multiModule: Boolean, outJsProgram: Boolean, rebuildCallback: (String) -> Unit = {}) = if (multiModule) {
+        buildMultiModuleExecutable(outJsProgram, rebuildCallback)
     } else {
-        buildSingleModuleExecutable(rebuildCallback)
+        buildSingleModuleExecutable(outJsProgram, rebuildCallback)
     }
 
-    private fun buildSingleModuleExecutable(rebuildCallback: (String) -> Unit): CompilationOutputs {
-        val program = JsIrProgram(caches.map { cacheArtifact -> cacheArtifact.loadJsIrModule() })
+    private fun buildSingleModuleExecutable(outJsProgram: Boolean, rebuildCallback: (String) -> Unit): CompilationOutputs {
+        val modules = caches.map { cacheArtifact -> cacheArtifact.loadJsIrModule() }
         val out = generateSingleWrappedModuleBody(
             moduleName = mainModuleName,
             moduleKind = moduleKind,
-            fragments = program.modules.flatMap { it.fragments },
+            fragments = modules.flatMap { it.fragments },
             sourceMapsInfo = sourceMapsInfo,
             generateScriptModule = false,
-            generateCallToMain = true
+            generateCallToMain = true,
+            outJsProgram = outJsProgram
         )
         rebuildCallback(mainModuleName)
         return out
     }
 
-    private fun buildMultiModuleExecutable(rebuildCallback: (String) -> Unit): CompilationOutputs {
+    private fun buildMultiModuleExecutable(outJsProgram: Boolean, rebuildCallback: (String) -> Unit): CompilationOutputs {
         val jsMultiModuleCache = JsMultiModuleCache(caches)
         val cachedProgram = jsMultiModuleCache.loadProgramHeadersFromCache()
 
@@ -64,7 +65,8 @@ class JsExecutableProducer(
                 sourceMapsInfo = sourceMapsInfo,
                 generateScriptModule = false,
                 generateCallToMain = generateCallToMain,
-                crossModuleReferences = crossRef
+                crossModuleReferences = crossRef,
+                outJsProgram = outJsProgram
             )
             jsMultiModuleCache.commitCompiledJsCode(artifact, compiledModule)
             rebuildCallback(moduleName)

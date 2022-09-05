@@ -1846,6 +1846,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/overriddenJavaGetter.kt");
         }
 
+        @TestMetadata("plusWithAssignSmartCast.kt")
+        public void testPlusWithAssignSmartCast() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/plusWithAssignSmartCast.kt");
+        }
+
         @TestMetadata("privateObjectLiteral.kt")
         public void testPrivateObjectLiteral() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/privateObjectLiteral.kt");

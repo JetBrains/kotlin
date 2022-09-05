@@ -321,6 +321,9 @@ internal class StaticCacheCompilation(
     }
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
+        dependencies.friends.takeIf(Collection<*>::isNotEmpty)?.let { friends ->
+            add("-friend-modules", friends.joinToString(File.pathSeparator) { friend -> friend.path })
+        }
         addFlattened(dependencies.cachedLibraries) { (_, library) -> listOf("-l", library.path) }
         add(dependencies.uniqueCacheDirs) { libraryCacheDir -> "-Xcache-directory=${libraryCacheDir.path}" }
     }
@@ -349,8 +352,12 @@ internal class CategorizedDependencies(uncategorizedDependencies: Iterable<TestC
     val cachedLibraries: List<KLIBStaticCache> by lazy { uncategorizedDependencies.collectArtifacts<KLIBStaticCache, LibraryStaticCache>() }
 
     val libraryToCache: KLIB by lazy {
-        val libraries = uncategorizedDependencies.collectArtifacts<KLIB, TestCompilationDependencyType<KLIB>>()
-        libraries.singleOrNull<KLIB>()
+        val libraries: List<KLIB> = buildList {
+            this += libraries
+            this += includedLibraries
+            if (isEmpty()) this += friends // Friends should be ignored if they come with the main library.
+        }
+        libraries.singleOrNull()
             ?: fail { "Only one library is expected as input for ${StaticCacheCompilation::class.java}, found: $libraries" }
     }
 
@@ -359,14 +366,7 @@ internal class CategorizedDependencies(uncategorizedDependencies: Iterable<TestC
     }
 
     private inline fun <reified A : TestCompilationArtifact, reified T : TestCompilationDependencyType<A>> Iterable<TestCompilationDependency<*>>.collectArtifacts(): List<A> {
-        val concreteDependencyType = T::class.objectInstance
-        val dependencyTypeMatcher: (TestCompilationDependencyType<*>) -> Boolean = if (concreteDependencyType != null) {
-            { it == concreteDependencyType }
-        } else {
-            { it.canYield(A::class.java) }
-        }
-
-        return mapNotNull { dependency -> if (dependencyTypeMatcher(dependency.type)) dependency.artifact as A else null }
+        return mapNotNull { dependency -> if (dependency.type is T) dependency.artifact as A else null }
     }
 }
 

@@ -2189,7 +2189,7 @@ class ArraysTest {
         testShuffle(numbers.map(Int::toUByte).toUByteArray(), { shuffle() }, { toList() })
         testShuffle(numbers.map(Int::toUShort).toUShortArray(), { shuffle() }, { toList() })
 
-        testShuffle(arrayOf(1, "x", null, Any(), 'a', 2u, 5.0), { shuffle() }, { toList() })
+        testShuffle(arrayOf(1, "x", null, Any(), 'a', 2u, 5.0, 3L, true, 0), { shuffle() }, { toList() })
     }
 
     private inline fun <T> testShuffleR(array: T, shuffle: T.(Random) -> Unit, toList: T.() -> List<*>) {

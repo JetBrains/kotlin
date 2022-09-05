@@ -72,8 +72,13 @@ class KtFe10ExpressionTypeProvider(
 
             if (typeReference != null) {
                 val bindingContext = analysisContext.analyze(typeReference, AnalysisMode.PARTIAL)
-                val kotlinType = bindingContext[BindingContext.TYPE, typeReference]
-                    ?: ErrorUtils.createErrorType(ErrorTypeKind.RETURN_TYPE, typeReference.text)
+                val kotlinType =
+                    if (declaration is KtParameter && declaration.isVarArg) {
+                        // we want full Array<out T> type for parity with FIR implementation
+                        bindingContext[BindingContext.VALUE_PARAMETER, declaration]?.returnType
+                    } else {
+                        bindingContext[BindingContext.TYPE, typeReference]
+                    } ?: ErrorUtils.createErrorType(ErrorTypeKind.RETURN_TYPE, typeReference.text)
 
                 return kotlinType.toKtType(analysisContext)
             }

@@ -10,18 +10,14 @@ import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.impl.java.stubs.PsiClassStub
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.isSetter
-import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -155,7 +151,7 @@ object LightClassUtil {
 
         if (parent is KtFile) {
             // top-level declaration
-            return findFileFacade(parent)
+            return parent.findFacadeClass()
         } else if (parent is KtClassBody) {
             checkWithAttachment(parent.parent is KtClassOrObject, {
                 "Bad parent: ${parent.parent?.javaClass}"
@@ -166,17 +162,6 @@ object LightClassUtil {
         }
 
         return null
-    }
-
-    private fun findFileFacade(ktFile: KtFile): PsiClass? {
-        val fqName = ktFile.javaFileFacadeFqName
-        val project = ktFile.project
-        val classesWithMatchingFqName =
-            JavaElementFinder.getInstance(project).findClasses(fqName.asString(), GlobalSearchScope.allScope(project))
-        return classesWithMatchingFqName.singleOrNull() ?: classesWithMatchingFqName.find { psiClass ->
-            psiClass is KtLightClassForFacade && psiClass.files.any { it.virtualFile == ktFile.virtualFile } ||
-                    psiClass.containingFile?.virtualFile == ktFile.virtualFile
-        }
     }
 
     private fun getWrappingClasses(declaration: KtDeclaration): Sequence<PsiClass> {

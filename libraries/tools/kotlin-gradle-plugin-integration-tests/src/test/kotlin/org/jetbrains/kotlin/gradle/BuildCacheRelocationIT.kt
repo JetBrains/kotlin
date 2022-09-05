@@ -383,7 +383,6 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         val options = defaultBuildOptions.copy(
             kaptOptions = BuildOptions.KaptOptions(
                 verbose = true,
-                useWorkers = false,
                 incrementalKapt = true,
                 includeCompileClasspath = false
             )

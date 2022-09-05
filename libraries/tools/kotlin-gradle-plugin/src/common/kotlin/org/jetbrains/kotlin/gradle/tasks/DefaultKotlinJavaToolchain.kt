@@ -189,7 +189,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
                 "Supplied jdkHomeLocation must be a valid directory. You supplied: $jdkHomeLocation"
             }
             require(jdkHomeLocation.exists()) {
-                "Supplied jdkHomeLocation does not exists. You supplied: $jdkHomeLocation"
+                "Supplied jdkHomeLocation does not exist. You supplied: $jdkHomeLocation"
             }
 
             updateProvidedJdkCallback.invoke()

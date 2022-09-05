@@ -2473,6 +2473,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 runTest("compiler/testData/codegen/box/callableReference/function/genericCallableReferenceArguments.kt");
             }
 
+            @TestMetadata("genericCallableReferenceWithReifiedTypeParam.kt")
+            public void testGenericCallableReferenceWithReifiedTypeParam() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/function/genericCallableReferenceWithReifiedTypeParam.kt");
+            }
+
             @TestMetadata("genericCallableReferencesWithNullableTypes.kt")
             public void testGenericCallableReferencesWithNullableTypes() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/function/genericCallableReferencesWithNullableTypes.kt");
@@ -11102,6 +11107,21 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         @TestMetadata("enumConstructorParameterClashWithDefaults.kt")
         public void testEnumConstructorParameterClashWithDefaults() throws Exception {
             runTest("compiler/testData/codegen/box/enum/enumConstructorParameterClashWithDefaults.kt");
+        }
+
+        @TestMetadata("enumEntries.kt")
+        public void testEnumEntries() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntries.kt");
+        }
+
+        @TestMetadata("enumEntriesMultimoduleNoMappings.kt")
+        public void testEnumEntriesMultimoduleNoMappings() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntriesMultimoduleNoMappings.kt");
+        }
+
+        @TestMetadata("enumEntriesNameClashes.kt")
+        public void testEnumEntriesNameClashes() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntriesNameClashes.kt");
         }
 
         @TestMetadata("enumEntryMembers.kt")

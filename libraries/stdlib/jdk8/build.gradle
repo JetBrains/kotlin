@@ -64,6 +64,7 @@ compileKotlin {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
             "-Xmultifile-parts-inherit",
+            "-Xno-new-java-annotation-targets",
     ]
     kotlinOptions.moduleName = project.name
 }

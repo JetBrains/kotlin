@@ -10,23 +10,34 @@
 // MODULE: JS_TESTS
 // FILE: visibility.kt
 
-@file:JsExport
-
+@JsExport
 internal val internalVal = 10
+@JsExport
 internal fun internalFun() = 10
+@JsExport
 internal class internalClass
+@JsExport
 internal external interface internalInterface
 
+@JsExport
 private val privateVal = 10
+@JsExport
 private fun privateFun() = 10
+@JsExport
 private class privateClass
+@JsExport
 private external interface privateInterface
 
+@JsExport
 public val publicVal = 10
+@JsExport
 public fun publicFun() = 10
+@JsExport
 public class publicClass
+@JsExport
 public external interface publicInterface
 
+@JsExport
 open class Class {
     internal val internalVal = 10
     internal fun internalFun() = 10
@@ -56,6 +67,7 @@ open class Class {
     public class publicClass
 }
 
+@JsExport
 enum class EnumClass {
     EC1,
     EC2

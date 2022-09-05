@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal val functionReferencePhase = makeIrFilePhase(
     ::FunctionReferenceLowering,
@@ -418,7 +417,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
     }
 
     private fun IrBuilderWithScope.irRawFunctionRef(irFun: IrFunction) =
-        irRawFunctionReferefence(context.irBuiltIns.anyType, irFun.symbol)
+        irRawFunctionReference(context.irBuiltIns.anyType, irFun.symbol)
 
     private fun IrBuilderWithScope.irVarargOfRawFunctionRefs(irFuns: List<IrFunction>) =
         irVararg(context.irBuiltIns.anyType, irFuns.map { irRawFunctionRef(it) })
@@ -546,7 +545,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
             createImplicitParameterDeclarationWithWrappedDescriptor()
             copyAttributes(irFunctionReference)
-            if (!isLightweightLambda) {
+            if (isHeavyweightLambda) {
                 metadata = irFunctionReference.symbol.owner.metadata
             }
         }

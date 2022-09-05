@@ -1,0 +1,58 @@
+package
+
+package foo {
+    @kotlin.js.JsName(name = "this") public val bar: kotlin.Int = 4
+    public val instanceof: kotlin.Int = 4
+    public fun delete(): kotlin.Unit
+    @kotlin.js.JsName(name = "await") public fun foo(): kotlin.Unit
+
+    @kotlin.js.JsName(name = "super") public final class Baz {
+        public constructor Baz()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public object NaN {
+        private constructor NaN()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final enum class Nums : kotlin.Enum<foo.Nums> {
+        enum entry Infinity
+
+        enum entry undefined
+
+        private constructor Nums()
+        @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: foo.Nums): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<foo.Nums>
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): foo.Nums
+        public final /*synthesized*/ fun values(): kotlin.Array<foo.Nums>
+    }
+
+    public final class Test {
+        public constructor Test()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun instanceof(): kotlin.Unit
+        @kotlin.js.JsName(name = "eval") public final fun test(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class eval {
+        public constructor eval()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

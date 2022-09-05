@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -23,7 +24,13 @@ internal class ConstLowering(val context: Context) : FileLoweringPass {
 
 private class NativeInlineConstTransformer : InlineConstTransformer() {
     override val IrField.constantInitializer get() =
-        (initializer?.expression as? IrConst<*>)?.takeIf { correspondingPropertySymbol?.owner?.isConst == true }
+        (initializer?.expression as? IrConst<*>)
+                ?.takeIf { correspondingPropertySymbol?.owner?.isConst == true }
+                // NaN constants has inconsistencies between IR and metadata representation,
+                // so inlining them can lead to incorrect behaviour. Check KT-53258 for details.
+                ?.takeUnless { it.kind == IrConstKind.Double && IrConstKind.Double.valueOf(it).isNaN() }
+                ?.takeUnless { it.kind == IrConstKind.Float && IrConstKind.Float.valueOf(it).isNaN() }
+
     override fun reportInlineConst(field: IrField, value: IrConst<*>) {}
     // on jvm IrGetObjectValue is also dropped. This would be breaking change for native.
     // Some design work is required to decide what is correct, let just keep current behaviour for now

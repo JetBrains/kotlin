@@ -628,8 +628,6 @@ public class DefaultErrorMessages {
                                                "This call will resolve to another declaration: {0}. " +
                                                "See https://youtrack.jetbrains.com/issue/KT-49276 for more details. " +
                                                "Please specify a progression type of argument explicitly through explicit cast to resolve to a proper declaration", COMPACT);
-        MAP.put(EXPRESSION_AFTER_TYPE_REFERENCE_WITHOUT_SPACING_NOT_ALLOWED, "Expression body directly after type without a whitespace in-between the '>=' is only allowed since version 1.8");
-        MAP.put(TYPE_ARGUMENT_LIST_LIKE_EXPRESSION, "Type argument list like expressions are only allowed since version 1.8");
 
         MAP.put(TOO_MANY_ARGUMENTS, "Too many arguments for {0}", FQ_NAMES_IN_TYPES);
 
@@ -944,6 +942,8 @@ public class DefaultErrorMessages {
                 STRING, STRING, STRING);
         MAP.put(STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY, "The type of an argument hasn''t been inferred yet. To disambiguate this call, explicitly cast it to `{0}` if you want the builder''s type parameter(s) `{1}` to be inferred to `{2}`.", RENDER_TYPE, STRING, STRING);
         MAP.put(STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY, "The type of a receiver hasn''t been inferred yet. To disambiguate this call, explicitly cast it to `{0}` if you want the builder''s type parameter(s) `{1}` to be inferred to `{2}`.", RENDER_TYPE, STRING, STRING, null);
+        MAP.put(BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION, "Unstable inference behaviour with multiple lambdas. Please either specify type argument for generic parameter `{0}` of `{1}` explicitly or add @BuilderInference to corresponding parameter declaration", TO_STRING, TO_STRING);
+        MAP.put(BUILDER_INFERENCE_STUB_RECEIVER, "The type of a receiver hasn''t been inferred yet. Please specify type argument for generic parameter `{0}` of `{1}` explicitly", TO_STRING, TO_STRING);
         MAP.put(NONE_APPLICABLE, "None of the following functions can be called with the arguments supplied: {0}", AMBIGUOUS_CALLS);
         MAP.put(CANNOT_COMPLETE_RESOLVE, "Cannot choose among the following candidates without completing type inference: {0}", AMBIGUOUS_CALLS);
         MAP.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, "Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: {0}", AMBIGUOUS_CALLS);

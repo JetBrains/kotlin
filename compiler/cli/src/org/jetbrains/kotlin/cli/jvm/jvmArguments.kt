@@ -51,7 +51,12 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         }
     }
 
-    val jvmTargetValue = releaseTargetArg ?: jvmTargetArg
+    val jvmTargetValue = when (releaseTargetArg) {
+        "6" -> "1.6"
+        "8" -> "1.8"
+        null -> jvmTargetArg
+        else -> releaseTargetArg
+    }
     if (jvmTargetValue != null) {
         val jvmTarget = JvmTarget.fromString(jvmTargetValue)
         if (jvmTarget != null) {
@@ -312,6 +317,8 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(JVMConfigurationKeys.ENABLE_DEBUG_MODE, arguments.enableDebugMode)
     put(JVMConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS, arguments.ignoreConstOptimizationErrors)
+    put(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS, arguments.noNewJavaAnnotationTargets)
+    put(JVMConfigurationKeys.OLD_INNER_CLASSES_LOGIC, arguments.oldInnerClassesLogic)
 
     val assertionsMode =
         JVMAssertionsMode.fromStringOrNull(arguments.assertionsMode)
@@ -337,7 +344,6 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
     put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
-    put(JVMConfigurationKeys.USE_SINGLE_MODULE, arguments.singleModule)
     put(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME, arguments.useOldInlineClassesManglingScheme)
     put(JVMConfigurationKeys.ENABLE_JVM_PREVIEW, arguments.enableJvmPreview)
 

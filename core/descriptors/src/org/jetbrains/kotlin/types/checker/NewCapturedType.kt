@@ -173,16 +173,16 @@ private fun captureArguments(type: UnwrappedType, status: CaptureStatus): List<T
         val newProjection = capturedArguments[index]
 
         if (oldProjection.projectionKind == Variance.INVARIANT) continue
-        val boundSupertypes = type.constructor.parameters[index].upperBounds.mapTo(mutableListOf()) {
+        val capturedTypeSupertypes = type.constructor.parameters[index].upperBounds.mapTo(mutableListOf()) {
             KotlinTypePreparator.Default.prepareType(substitutor.safeSubstitute(it, Variance.INVARIANT).unwrap())
         }
 
-        val projectionSupertype = if (!oldProjection.isStarProjection && oldProjection.projectionKind == Variance.OUT_VARIANCE) {
-            KotlinTypePreparator.Default.prepareType(oldProjection.type.unwrap())
-        } else null
+        if (!oldProjection.isStarProjection && oldProjection.projectionKind == Variance.OUT_VARIANCE) {
+            capturedTypeSupertypes += KotlinTypePreparator.Default.prepareType(oldProjection.type.unwrap())
+        }
 
         val capturedType = newProjection.type as NewCapturedType
-        capturedType.constructor.initializeSupertypes(projectionSupertype, boundSupertypes)
+        capturedType.constructor.initializeSupertypes(capturedTypeSupertypes)
     }
 
     return capturedArguments
@@ -243,32 +243,18 @@ class NewCapturedTypeConstructor(
         original: NewCapturedTypeConstructor? = null
     ) : this(projection, { supertypes }, original)
 
-    // supertypes from the corresponding type parameter upper bounds
-    private val boundSupertypes by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val _supertypes by lazy(LazyThreadSafetyMode.PUBLICATION) {
         supertypesComputation?.invoke()
     }
 
-    private var projectionSupertype: UnwrappedType? = null
-
-    fun initializeSupertypes(projectionSupertype: UnwrappedType?, boundSupertypes: List<UnwrappedType>) {
+    fun initializeSupertypes(supertypes: List<UnwrappedType>) {
         assert(this.supertypesComputation == null) {
-            "Already initialized! oldValue = ${this.supertypesComputation}, newValue = $boundSupertypes"
+            "Already initialized! oldValue = ${this.supertypesComputation}, newValue = $supertypes"
         }
-        this.projectionSupertype = projectionSupertype
-        this.supertypesComputation = { boundSupertypes }
+        this.supertypesComputation = { supertypes }
     }
 
-    override fun getSupertypes(): List<UnwrappedType> = buildList {
-        projectionSupertype?.let { add(it) }
-        boundSupertypes?.let { addAll(it) }
-    }
-
-    fun transformSupertypes(transformation: (UnwrappedType) -> UnwrappedType): Pair<UnwrappedType?, List<UnwrappedType>> {
-        val projectionSupertypeTransformed = projectionSupertype?.let(transformation)
-        val boundSupertypesTransformed = boundSupertypes?.map(transformation) ?: emptyList()
-        return projectionSupertypeTransformed to boundSupertypesTransformed
-    }
-
+    override fun getSupertypes() = _supertypes ?: emptyList()
     override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
 
     override fun isFinal() = false

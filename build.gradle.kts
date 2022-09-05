@@ -475,13 +475,6 @@ allprojects {
             }
         }
 
-        maven(protobufRepo) {
-            content {
-                includeModule("org.jetbrains.kotlin", "protobuf-lite")
-                includeModule("org.jetbrains.kotlin", "protobuf-relocated")
-            }
-        }
-
         maven(intellijRepo)
         maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
 
@@ -894,6 +887,8 @@ if (disableVerificationTasks) {
         }
     }
 }
+
+gradle.taskGraph.whenReady(checkYarnAndNPMSuppressed)
 
 plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
     extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension::class.java) {

@@ -705,6 +705,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("description")
             parameter<String>("causingTypes")
         }
+
+        val INCORRECT_LEFT_COMPONENT_OF_INTERSECTION by error<KtTypeReference>()
+        val INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION by error<KtTypeReference>()
+        val NULLABLE_ON_DEFINITELY_NOT_NULLABLE by error<KtTypeReference>()
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {

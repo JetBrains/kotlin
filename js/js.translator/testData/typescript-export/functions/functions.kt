@@ -8,7 +8,8 @@
 
 package foo
 
-external interface RegExpMatchArray
+@JsExport
+external interface SomeExternalInterface
 
 @JsExport
 fun sum(x: Int, y: Int): Int =
@@ -50,7 +51,7 @@ fun <T: String> genericWithConstraint(x: T): T = x
 @JsExport
 fun <T> genericWithMultipleConstraints(x: T): T
         where T : Comparable<T>,
-              T : RegExpMatchArray,
+              T : SomeExternalInterface,
               T : Throwable = x
 
 @JsExport

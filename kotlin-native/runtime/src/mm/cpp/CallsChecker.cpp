@@ -42,6 +42,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "_ZNSt6chrono3_V212steady_clock3nowEv", // std::chrono::_V2::steady_clock::now()
         "_ZNSt8__detail15_List_node_base7_M_hookEPS0_", // std::__detail::_List_node_base::_M_hook(std::__detail::_List_node_base*)
         "_ZNSt8__detail15_List_node_base9_M_unhookEv", // std::__detail::_List_node_base::_M_unhook()
+        "_ZNSt8__detail15_List_node_base11_M_transferEPS0_S1_", // std::__detail::_List_node_base::_M_transfer(std::__detail::_List_node_base*, std::__detail::_List_node_base*)
         "_ZNSt9exceptionD2Ev", // std::exception::~exception()
         "_ZSt17current_exceptionv", // std::current_exception()
         "_ZSt17rethrow_exceptionSt13exception_ptr", // std::rethrow_exception(std::exception_ptr)

@@ -200,9 +200,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var declarationsOutputPath: String? by NullableStringFreezableVar(null)
 
-    @Argument(value = "-Xsingle-module", description = "Combine modules for source files and binary dependencies into a single module")
-    var singleModule: Boolean by FreezableVar(false)
-
     @Argument(
         value = "-Xsuppress-missing-builtins-error",
         description = "Suppress the \"cannot access built-in declaration\" error (useful with -no-stdlib)"
@@ -523,6 +520,18 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
         description = "Ignore all compilation exceptions while optimizing some constant expressions."
     )
     var ignoreConstOptimizationErrors: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xno-new-java-annotation-targets",
+        description = "Do not generate Java 1.8+ targets for Kotlin annotation classes"
+    )
+    var noNewJavaAnnotationTargets: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xuse-old-innerclasses-logic",
+        description = "Use old logic for generation of InnerClasses attributes"
+    )
+    var oldInnerClassesLogic: Boolean by FreezableVar(false)
 
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector, languageVersion)

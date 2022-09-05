@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.asJava.classes.shouldNotBeVisibleAsLightClass
 import org.jetbrains.kotlin.cli.jvm.compiler.builder.extraJvmDiagnosticsFromBackend
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
@@ -42,7 +43,7 @@ object CliExtraDiagnosticsProvider {
 
     private fun calculateForFacade(file: KtFile): Diagnostics {
         val project = file.project
-        val facadeFqName = JvmFileClassUtil.getFileClassInfoNoResolve(file).facadeClassFqName
+        val facadeFqName = file.javaFileFacadeFqName
         val facadeCollection = KotlinAsJavaSupport.getInstance(project)
             .findFilesForFacade(facadeFqName, GlobalSearchScope.allScope(project))
             .ifEmpty { return Diagnostics.EMPTY }

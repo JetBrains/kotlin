@@ -45,8 +45,8 @@ import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
 import org.jetbrains.kotlin.frontend.java.di.initialize
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.jvm.jvmLibrariesProvidedByDefault
 import org.jetbrains.kotlin.javac.components.JavacBasedClassFinder
 import org.jetbrains.kotlin.javac.components.JavacBasedSourceElementFactory
@@ -80,7 +80,6 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
-import java.util.*
 import kotlin.reflect.KFunction1
 
 object TopDownAnalyzerFacadeForJVM {
@@ -135,7 +134,6 @@ object TopDownAnalyzerFacadeForJVM {
         return AnalysisResult.success(trace.bindingContext, module)
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     fun createContainer(
         project: Project,
         files: Collection<KtFile>,
@@ -167,10 +165,7 @@ object TopDownAnalyzerFacadeForJVM {
         val enumWhenTracker = configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER) ?: EnumWhenTracker.DoNothing
         val targetIds = configuration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
 
-        val separateModules = !configuration.getBoolean(JVMConfigurationKeys.USE_SINGLE_MODULE)
-
-        val sourceScope = if (separateModules) sourceModuleSearchScope else GlobalSearchScope.allScope(project)
-        val moduleClassResolver = SourceOrBinaryModuleClassResolver(sourceScope)
+        val moduleClassResolver = SourceOrBinaryModuleClassResolver(sourceModuleSearchScope)
 
         val fallbackBuiltIns = JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FALLBACK).apply {
             initialize(builtInsModule, languageVersionSettings)
@@ -187,14 +182,14 @@ object TopDownAnalyzerFacadeForJVM {
             if (configuration.getBoolean(JVMConfigurationKeys.USE_JAVAC)) StorageComponentContainer::useJavac
             else null as KFunction1<StorageComponentContainer, Unit>?
 
-        val dependencyModule = if (separateModules) {
+        val dependencyModule = run {
             val dependenciesContext = ContextForNewModule(
                 moduleContext, Name.special("<dependencies of ${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>"),
                 module.builtIns, jvmPlatform
             )
 
             // Scope for the dependency module contains everything except files present in the scope for the source module
-            val dependencyScope = GlobalSearchScope.notScope(sourceScope)
+            val dependencyScope = GlobalSearchScope.notScope(sourceModuleSearchScope)
 
             val dependenciesContainer = createContainerForLazyResolveWithJava(
                 jvmPlatform,
@@ -220,9 +215,9 @@ object TopDownAnalyzerFacadeForJVM {
                 )
             )
             dependenciesContext.module
-        } else null
+        }
 
-        val partProvider = packagePartProvider(sourceScope).let { fragment ->
+        val partProvider = packagePartProvider(sourceModuleSearchScope).let { fragment ->
             if (targetIds == null || incrementalComponents == null) fragment
             else IncrementalPackagePartProvider(fragment, targetIds.map(incrementalComponents::getIncrementalCache))
         }
@@ -233,7 +228,7 @@ object TopDownAnalyzerFacadeForJVM {
         // TODO: get rid of duplicate invocation of CodeAnalyzerInitializer#initialize, or refactor CliLightClassGenerationSupport
         val container = createContainerForLazyResolveWithJava(
             jvmPlatform,
-            moduleContext, trace, declarationProviderFactory(storageManager, files), sourceScope, moduleClassResolver,
+            moduleContext, trace, declarationProviderFactory(storageManager, files), sourceModuleSearchScope, moduleClassResolver,
             targetEnvironment, lookupTracker, expectActualTracker, inlineConstTracker, enumWhenTracker,
             partProvider, languageVersionSettings,
             useBuiltInsProvider = true,
@@ -267,23 +262,9 @@ object TopDownAnalyzerFacadeForJVM {
         val klibModules = getKlibModules(klibList, dependencyModule)
 
         // TODO: remove dependencyModule from friends
-        val dependencies = buildList {
-            add(module)
-            dependencyModule?.let { add(it) }
-            add(fallbackBuiltIns)
-            addAll(klibModules)
-            @Suppress("UNCHECKED_CAST")
-            addAll(explicitModuleDependencyList)
-        }
-        val friends = buildSet {
-            if (dependencyModule != null) {
-                add(dependencyModule)
-            }
-            addAll(explicitModuleFriendsList)
-        }
         module.setDependencies(
-            dependencies,
-            friends
+            listOf(module, dependencyModule, fallbackBuiltIns) + klibModules + explicitModuleDependencyList,
+            setOf(dependencyModule) + explicitModuleFriendsList,
         )
         module.initialize(
             CompositePackageFragmentProvider(

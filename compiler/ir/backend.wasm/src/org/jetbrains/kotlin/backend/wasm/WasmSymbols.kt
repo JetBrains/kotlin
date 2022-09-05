@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -35,6 +36,8 @@ class WasmSymbols(
 
     private val kotlinTopLevelPackage: PackageViewDescriptor =
         context.module.getPackage(FqName("kotlin"))
+    private val enumsInternalPackage: PackageViewDescriptor =
+        context.module.getPackage(FqName("kotlin.enums"))
     private val wasmInternalPackage: PackageViewDescriptor =
         context.module.getPackage(FqName("kotlin.wasm.internal"))
     private val collectionsPackage: PackageViewDescriptor =
@@ -99,6 +102,11 @@ class WasmSymbols(
         getInternalFunction("getCoroutineContext")
     override val returnIfSuspended =
         getInternalFunction("returnIfSuspended")
+
+    val enumEntries = getIrClass(FqName.fromSegments(listOf("kotlin", "enums", "EnumEntries")))
+    val createEnumEntries = findFunctions(enumsInternalPackage.memberScope, Name.identifier("enumEntries"))
+        .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == true }
+        .let { symbolTable.referenceSimpleFunction(it!!) }
 
     val coroutineEmptyContinuation: IrPropertySymbol = symbolTable.referenceProperty(
         getProperty(FqName.fromSegments(listOf("kotlin", "wasm", "internal", "EmptyContinuation")))

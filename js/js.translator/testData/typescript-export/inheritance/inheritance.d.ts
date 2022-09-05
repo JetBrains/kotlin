@@ -2,8 +2,8 @@ declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     namespace foo {
         interface I<T, S, U> {
-            x: T;
-            readonly y: S;
+            x?: T;
+            readonly y?: S;
             z(u: U): void;
         }
         interface I2 {

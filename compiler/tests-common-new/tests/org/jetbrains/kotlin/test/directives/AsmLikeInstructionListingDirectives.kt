@@ -17,6 +17,10 @@ object AsmLikeInstructionListingDirectives : SimpleDirectivesContainer() {
         "If present then saves dump for IR backend in asm.ir.txt file"
     )
 
+    val FIR_DIFFERENCE by directive(
+        "If present then saves dump for IR backend in asm.fir.txt file"
+    )
+
     val CURIOUS_ABOUT by stringDirective(
         "Specifies list of methods for which asm instructions should be printed"
     )

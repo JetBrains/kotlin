@@ -2773,6 +2773,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             return
 
         overrideRuntimeGlobal("Kotlin_destroyRuntimeMode", Int32(context.config.destroyRuntimeMode.value))
+        overrideRuntimeGlobal("Kotlin_gcMarkSingleThreaded", Int32(if (context.config.gcMarkSingleThreaded) 1 else 0))
         overrideRuntimeGlobal("Kotlin_workerExceptionHandling", Int32(context.config.workerExceptionHandling.value))
         overrideRuntimeGlobal("Kotlin_suspendFunctionsFromAnyThreadFromObjC", Int32(if (context.config.suspendFunctionsFromAnyThreadFromObjC) 1 else 0))
         val getSourceInfoFunctionName = when (context.config.sourceInfoType) {
@@ -2792,6 +2793,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             overrideRuntimeGlobal("Kotlin_printToAndroidLogcat", Int32(if (programType.consolePrintsToLogcat) 1 else 0))
         }
         overrideRuntimeGlobal("Kotlin_appStateTracking", Int32(context.config.appStateTracking.value))
+        overrideRuntimeGlobal("Kotlin_mimallocUseDefaultOptions", Int32(if (context.config.mimallocUseDefaultOptions) 1 else 0))
     }
 
     //-------------------------------------------------------------------------//

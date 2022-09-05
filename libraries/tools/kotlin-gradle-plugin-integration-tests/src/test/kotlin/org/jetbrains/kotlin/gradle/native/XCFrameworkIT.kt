@@ -133,4 +133,39 @@ class XCFrameworkIT : BaseGradleIT() {
             }
         }
     }
+
+    @Test
+    fun `assemble framework does nothing when no sources rather than fail`() {
+        with(transformProjectWithPluginsDsl("appleXCFramework")) {
+            projectDir.resolve("shared/src").deleteRecursively()
+            build(":shared:assembleXCFramework") {
+                assertSuccessful()
+                assertTasksSkipped(
+                    ":shared:assembleSharedDebugXCFramework",
+                    ":shared:assembleSharedReleaseXCFramework",
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `check assemble framework handles dashes in its name correctly`() {
+        with(transformProjectWithPluginsDsl("appleXCFramework")) {
+            with(gradleBuildScript("shared")) {
+                var text = readText()
+                text = text.replace("baseName = \"shared\"", "baseName = \"sha-red\"")
+                text = text.replace("XCFramework()", "XCFramework(\"sha-red\")")
+                writeText(text)
+            }
+
+            build(":shared:assembleSha-redXCFramework") {
+                assertSuccessful()
+                assertTasksExecuted(
+                    ":shared:assembleSha-redDebugXCFramework",
+                    ":shared:assembleSha-redReleaseXCFramework",
+                )
+                assertNotContains("differs from inner frameworks name")
+            }
+        }
+    }
 }

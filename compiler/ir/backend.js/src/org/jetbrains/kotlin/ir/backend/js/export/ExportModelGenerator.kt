@@ -139,6 +139,9 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         specializeType: ExportedType? = null
     ): ExportedDeclaration {
         val parentClass = property.parent as? IrClass
+        val isOptional = property.isEffectivelyExternal() &&
+                property.parent is IrClass &&
+                property.getter?.returnType?.isNullable() == true
 
         return ExportedProperty(
             name = property.getExportedIdentifier(),
@@ -149,7 +152,8 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             isProtected = property.visibility == DescriptorVisibilities.PROTECTED,
             isField = parentClass?.isInterface == true,
             irGetter = property.getter,
-            irSetter = property.setter
+            irSetter = property.setter,
+            isOptional = isOptional
         )
     }
 
@@ -719,6 +723,12 @@ private fun shouldDeclarationBeExportedImplicitlyOrExplicitly(declaration: IrDec
 }
 
 private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, context: JsIrBackendContext): Boolean {
+    // Formally, user have no ability to annotate EnumEntry as exported, without Enum Class
+    // But, when we add @file:JsExport, the annotation appears on the all of enum entries
+    // what make a wrong behaviour on non-exported members inside Enum Entry (check exportEnumClass and exportFileWithEnumClass tests)
+    if (declaration is IrClass && declaration.kind == ClassKind.ENUM_ENTRY)
+        return false
+
     if (context.additionalExportedDeclarationNames.contains(declaration.fqNameWhenAvailable))
         return true
 

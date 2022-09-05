@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_CALL_RESULT_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_CREATE_METHOD_NAME
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
@@ -1120,7 +1119,7 @@ class JvmSymbols(
             KotlinRetention.RUNTIME to rpRuntime
         )
 
-        private val jvm6TargetMap = mutableMapOf(
+        val jvmTargetMap = mutableMapOf(
             KotlinTarget.CLASS to buildEnumEntry(elementTypeEnum, "TYPE"),
             KotlinTarget.ANNOTATION_CLASS to buildEnumEntry(elementTypeEnum, "ANNOTATION_TYPE"),
             KotlinTarget.CONSTRUCTOR to buildEnumEntry(elementTypeEnum, "CONSTRUCTOR"),
@@ -1132,13 +1131,8 @@ class JvmSymbols(
             KotlinTarget.VALUE_PARAMETER to buildEnumEntry(elementTypeEnum, "PARAMETER")
         )
 
-        private val jvm8TargetMap = jvm6TargetMap + mutableMapOf(
-            KotlinTarget.TYPE_PARAMETER to buildEnumEntry(elementTypeEnum, "TYPE_PARAMETER"),
-            KotlinTarget.TYPE to buildEnumEntry(elementTypeEnum, "TYPE_USE")
-        )
-
-        fun getAnnotationTargetMap(target: JvmTarget): Map<KotlinTarget, IrEnumEntry> =
-            if (target == JvmTarget.JVM_1_6) jvm6TargetMap else jvm8TargetMap
+        val typeParameterTarget = buildEnumEntry(elementTypeEnum, "TYPE_PARAMETER")
+        val typeUseTarget = buildEnumEntry(elementTypeEnum, "TYPE_USE")
     }
 
     companion object {

@@ -46,13 +46,11 @@ abstract class KtLightClassBase protected constructor(
     override fun findMethodsByName(name: String, checkBases: Boolean) = myInnersCache.findMethodsByName(name, checkBases)
 
     override fun findInnerClassByName(name: String, checkBases: Boolean) = myInnersCache.findInnerClassByName(name, checkBases)
+
     abstract override fun getOwnFields(): List<PsiField>
     abstract override fun getOwnMethods(): List<PsiMethod>
 
-    override fun getText(): String {
-        val origin = kotlinOrigin
-        return if (origin == null) "" else origin.text
-    }
+    override fun getText(): String = kotlinOrigin?.text ?: ""
 
     override fun getLanguage() = KotlinLanguage.INSTANCE
 

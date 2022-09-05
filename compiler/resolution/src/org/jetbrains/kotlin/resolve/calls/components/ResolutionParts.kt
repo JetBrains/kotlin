@@ -661,9 +661,25 @@ internal object CheckReceivers : ResolutionPart() {
                 candidateDescriptor.dispatchReceiverParameter,
                 shouldCheckImplicitInvoke = true,
             )
+
             1 -> {
-                if (resolvedCall.extensionReceiverArgument == null) {
-                    resolvedCall.extensionReceiverArgument = chooseExtensionReceiverCandidate() ?: return
+                var extensionReceiverArgument = resolvedCall.extensionReceiverArgument
+                if (extensionReceiverArgument == null) {
+                    extensionReceiverArgument = chooseExtensionReceiverCandidate() ?: return
+                    resolvedCall.extensionReceiverArgument = extensionReceiverArgument
+                }
+                val checkBuilderInferenceRestriction =
+                    !callComponents.languageVersionSettings
+                        .supportsFeature(LanguageFeature.NoBuilderInferenceWithoutAnnotationRestriction)
+                if (checkBuilderInferenceRestriction &&
+                    extensionReceiverArgument.receiver.receiverValue.type is StubTypeForBuilderInference
+                ) {
+                    addDiagnostic(
+                        StubBuilderInferenceReceiver(
+                            extensionReceiverArgument,
+                            candidateDescriptor.extensionReceiverParameter!!
+                        )
+                    )
                 }
                 checkReceiver(
                     resolvedCall.extensionReceiverArgument,

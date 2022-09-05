@@ -1,0 +1,7 @@
+Foo@(1,1)
+  Foo@(1,10) : Foo
+    constructorValues@(1,11) : kotlin.Array<out kotlin.String>
+test@(3,1) : kotlin.Unit
+  values@(3,10) : kotlin.Array<out kotlin.String>
+test@(5,1) : kotlin.Unit
+  primitiveValues@(5,10) : kotlin.IntArray

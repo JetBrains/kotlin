@@ -1,4 +1,3 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
 // WITH_STDLIB
 // FILE: test.kt
 import kotlinx.serialization.*
@@ -15,4 +14,4 @@ class NopeNullableSerializer: KSerializer<Nope?> {
 }
 
 @Serializable
-class Foo(val foo: <!SERIALIZER_NULLABILITY_INCOMPATIBLE("NopeNullableSerializer", "Nope")!>Nope<!>)
+class Foo(val foo: <!SERIALIZER_NULLABILITY_INCOMPATIBLE("NopeNullableSerializer; Nope")!>Nope<!>)

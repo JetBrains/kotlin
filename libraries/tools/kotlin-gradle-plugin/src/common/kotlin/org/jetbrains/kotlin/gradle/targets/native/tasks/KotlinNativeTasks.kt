@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.project.model.LanguageSettings
 import java.io.File
 import java.nio.file.Files
+import java.nio.file.Path
 import javax.inject.Inject
 import org.jetbrains.kotlin.konan.file.File as KFile
 import org.jetbrains.kotlin.utils.ResolvedDependencies as KResolvedDependencies
@@ -112,8 +113,13 @@ private fun File.providedByCompiler(project: Project): Boolean =
 
 // We need to filter out interop duplicates because we create copy of them for IDE.
 // TODO: Remove this after interop rework.
-private fun FileCollection.filterOutPublishableInteropLibs(project: Project): FileCollection {
-    val libDirectories = project.rootProject.allprojects.map { it.buildDir.resolve("libs").absoluteFile.toPath() }
+private fun FileCollection.filterOutPublishableInteropLibs(project: Project): FileCollection =
+    filterOutPublishableInteropLibs(project.buildLibDirectories())
+
+private fun Project.buildLibDirectories(): List<Path> =
+    rootProject.allprojects.map { it.buildDir.resolve("libs").absoluteFile.toPath() }
+
+private fun FileCollection.filterOutPublishableInteropLibs(libDirectories: List<Path>): FileCollection {
     return filter { file ->
         !(file.name.contains("-cinterop-") && libDirectories.any { file.toPath().startsWith(it) })
     }
@@ -1148,7 +1154,6 @@ internal class CacheBuilder(
 @CacheableTask
 open class CInteropProcess
 @Inject constructor(
-    @Transient
     @Internal
     val settings: DefaultCInteropSettings,
     private val objectFactory: ObjectFactory,
@@ -1196,36 +1201,38 @@ open class CInteropProcess
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    val defFile: File = settings.defFileProperty.get()
+    val defFile: File get() = settings.defFileProperty.get()
 
     @get:Optional
     @get:Input
-    val packageName: String? = settings.packageName
+    val packageName: String? get() = settings.packageName
 
     @get:Input
-    val compilerOpts: List<String> = settings.compilerOpts
+    val compilerOpts: List<String> get() = settings.compilerOpts
 
     @get:Input
-    val linkerOpts: List<String> = settings.linkerOpts
+    val linkerOpts: List<String> get() = settings.linkerOpts
 
     @get:IgnoreEmptyDirectories
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    val headers: FileCollection = settings.headers
+    val headers: FileCollection get() = settings.headers
 
     @get:Input
-    val allHeadersDirs: Set<File> = settings.includeDirs.allHeadersDirs.files
+    val allHeadersDirs: Set<File> get() = settings.includeDirs.allHeadersDirs.files
 
     @get:Input
-    val headerFilterDirs: Set<File> = settings.includeDirs.headerFilterDirs.files
+    val headerFilterDirs: Set<File> get() = settings.includeDirs.headerFilterDirs.files
+
+    private val libDirectories = project.buildLibDirectories()
 
     @get:IgnoreEmptyDirectories
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    val libraries: FileCollection = settings.dependencyFiles.filterOutPublishableInteropLibs(project)
+    val libraries: FileCollection get() = settings.dependencyFiles.filterOutPublishableInteropLibs(libDirectories)
 
     @get:Input
-    val extraOpts: List<String> = settings.extraOpts
+    val extraOpts: List<String> get() = settings.extraOpts
 
     private val isInIdeaSync = project.isInIdeaSync
 

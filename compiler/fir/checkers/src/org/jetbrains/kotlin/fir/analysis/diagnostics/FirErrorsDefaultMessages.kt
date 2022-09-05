@@ -252,6 +252,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_TYPE_PARAMETER_BOUNDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_TYPE_PARAMETER_VALUES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_CHARACTER_LITERAL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_LEFT_COMPONENT_OF_INTERSECTION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INC_DEC_SHOULD_NOT_RETURN_UNIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_UNSUCCESSFUL_FORK
@@ -359,6 +361,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_THIS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_TYPE_ARGUMENTS_ON_RHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_VALUE_FOR_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_INLINE_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_ON_DEFINITELY_NOT_NULLABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_TYPE_IN_CLASS_LITERAL_LHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER
@@ -981,6 +984,18 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RENDER_COLLECTION_OF_TYPES,
             TO_STRING,
             TO_STRING
+        )
+        map.put(
+            NULLABLE_ON_DEFINITELY_NOT_NULLABLE,
+            "'!!' type cannot be marked as nullable"
+        )
+        map.put(
+            INCORRECT_LEFT_COMPONENT_OF_INTERSECTION,
+            "Intersection types are only supported for definitely non-nullable types: left part should be a type parameter with nullable bounds"
+        )
+        map.put(
+            INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION,
+            "Intersection types are only supported for definitely non-nullable types: right part should be non-nullable Any"
         )
 
         map.put(TYPE_MISMATCH, "Type mismatch: inferred type is {1} but {0} was expected", TO_STRING, TO_STRING, NOT_RENDERED)

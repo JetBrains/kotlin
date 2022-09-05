@@ -35,6 +35,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Annotations extends AbstractLightAnalysisModeTest {
+        @TestMetadata("noTypeUseIfDependOnJvm6.kt")
+        public void ignoreNoTypeUseIfDependOnJvm6() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/noTypeUseIfDependOnJvm6.kt");
+        }
+
+        @TestMetadata("noTypeUseIfFlagIsSpecified.kt")
+        public void ignoreNoTypeUseIfFlagIsSpecified() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/noTypeUseIfFlagIsSpecified.kt");
+        }
+
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
@@ -3418,6 +3428,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/callableReference/function/genericCallableReferenceArguments.kt");
             }
 
+            @TestMetadata("genericCallableReferenceWithReifiedTypeParam.kt")
+            public void testGenericCallableReferenceWithReifiedTypeParam() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/function/genericCallableReferenceWithReifiedTypeParam.kt");
+            }
+
             @TestMetadata("genericCallableReferencesWithNullableTypes.kt")
             public void testGenericCallableReferencesWithNullableTypes() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/function/genericCallableReferencesWithNullableTypes.kt");
@@ -3486,6 +3501,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("kt47741.kt")
             public void testKt47741() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/function/kt47741.kt");
+            }
+
+            @TestMetadata("kt53794_protectedJavaMember.kt")
+            public void testKt53794_protectedJavaMember() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/function/kt53794_protectedJavaMember.kt");
             }
 
             @TestMetadata("nestedConstructorFromClass.kt")
@@ -13159,6 +13179,21 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("bigEnum.kt")
         public void ignoreBigEnum() throws Exception {
             runTest("compiler/testData/codegen/box/enum/bigEnum.kt");
+        }
+
+        @TestMetadata("enumEntries.kt")
+        public void ignoreEnumEntries() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntries.kt");
+        }
+
+        @TestMetadata("enumEntriesMultimoduleNoMappings.kt")
+        public void ignoreEnumEntriesMultimoduleNoMappings() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntriesMultimoduleNoMappings.kt");
+        }
+
+        @TestMetadata("enumEntriesNameClashes.kt")
+        public void ignoreEnumEntriesNameClashes() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntriesNameClashes.kt");
         }
 
         private void runTest(String testDataFilePath) throws Exception {
@@ -39606,6 +39641,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("kt47365.kt")
         public void testKt47365() throws Exception {
             runTest("compiler/testData/codegen/box/when/kt47365.kt");
+        }
+
+        @TestMetadata("kt47475.kt")
+        public void testKt47475() throws Exception {
+            runTest("compiler/testData/codegen/box/when/kt47475.kt");
         }
 
         @TestMetadata("kt5307.kt")

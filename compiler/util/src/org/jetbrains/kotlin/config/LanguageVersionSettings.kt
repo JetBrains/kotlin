@@ -264,8 +264,6 @@ enum class LanguageFeature(
     GenericInlineClassParameter(sinceVersion = KOTLIN_1_8, kind = UNSTABLE_FEATURE), // KT-32162
     DataObjects(KOTLIN_1_8), // KT-4107
     LightweightLambdas(KOTLIN_1_8, defaultState = State.DISABLED),
-    AllowExpressionAfterTypeReferenceWithoutSpacing(KOTLIN_1_8, kind = BUG_FIX), // KT-35811
-    AllowTypeArgumentListLikeExpressions(KOTLIN_1_8, kind = BUG_FIX), // KT-8263
 
     // 1.9
 
@@ -289,6 +287,9 @@ enum class LanguageFeature(
 
     // Disabled for indefinite time. See KT-48535 and related discussion
     ApproximateIntegerLiteralTypesInReceiverPosition(sinceVersion = null),
+
+    // Disabled for indefinite time. Disables restrictions of builder inference without annotation
+    NoBuilderInferenceWithoutAnnotationRestriction(sinceVersion = null, kind = OTHER, defaultState = State.DISABLED),
 
     // Experimental features
 

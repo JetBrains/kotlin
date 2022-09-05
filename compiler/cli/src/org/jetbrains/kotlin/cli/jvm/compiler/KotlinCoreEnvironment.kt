@@ -42,7 +42,6 @@ import com.intellij.util.lang.UrlClassLoader
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.asJava.classes.FacadeCache
 import org.jetbrains.kotlin.asJava.classes.KotlinK1LightClassFactory
 import org.jetbrains.kotlin.asJava.classes.KotlinLightClassFactory
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
@@ -717,7 +716,6 @@ class KotlinCoreEnvironment private constructor(
         fun registerProjectServices(project: MockProject) {
             with(project) {
                 registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
-                registerService(FacadeCache::class.java, FacadeCache(this))
                 registerService(ModuleAnnotationsResolver::class.java, CliModuleAnnotationsResolver())
             }
         }
@@ -735,7 +733,7 @@ class KotlinCoreEnvironment private constructor(
             with(project) {
                 val traceHolder = CliTraceHolder()
                 val cliLightClassGenerationSupport = CliLightClassGenerationSupport(traceHolder, project)
-                val kotlinAsJavaSupport = CliKotlinAsJavaSupport(this, traceHolder)
+                val kotlinAsJavaSupport = CliKotlinAsJavaSupport(project, traceHolder)
                 registerService(LightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
                 registerService(CliLightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
                 registerService(KotlinAsJavaSupport::class.java, kotlinAsJavaSupport)

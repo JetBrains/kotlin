@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internal.build.metrics.GradleBuildMetricsData
 import org.jetbrains.kotlin.gradle.report.BuildReportType
@@ -99,13 +100,43 @@ class BuildReportsIT : KGPBaseTest() {
             val metricsFile = projectPath.resolve("metrics.bin").toFile()
             build(
                 "compileKotlin",
-                "-Pkotlin.internal.single.build.metrics.file=${metricsFile.absolutePath}"
+                "-Pkotlin.build.report.output=SINGLE_FILE",
+                "-Pkotlin.build.report.single_file=${metricsFile.absolutePath}"
             )
 
             assertTrue { metricsFile.exists() }
             // test whether we can deserialize data from the file
             ObjectInputStream(metricsFile.inputStream().buffered()).use { input ->
                 input.readObject() as GradleBuildMetricsData
+            }
+        }
+    }
+
+    @DisplayName("custom value limit")
+    @GradleTest
+    fun testCustomValueLimitForBuildScan(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build(
+                "compileKotlin",
+                "-Pkotlin.build.report.output=BUILD_SCAN",
+                "-Pkotlin.build.report.build_scan.custom_values_limit=0",
+                "--scan"
+            ) {
+                assertOutputContains("Can't add any more custom values into build scan")
+            }
+        }
+    }
+
+    @DisplayName("build scan listener lazy initialisation")
+    @GradleTest
+    fun testBuildScanListenerLazyInitialisation(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build(
+                "compileKotlin",
+                "-Pkotlin.build.report.output=BUILD_SCAN",
+                "-Pkotlin.build.report.build_scan.custom_values_limit=0",
+            ) {
+                assertOutputDoesNotContain("Can't add any more custom values into build scan")
             }
         }
     }

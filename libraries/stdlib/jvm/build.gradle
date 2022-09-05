@@ -105,7 +105,9 @@ DexMethodCountKt.dexMethodCount(project) { task ->
 }
 
 compileKotlin {
+    kotlinJavaToolchain.toolchain.use(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_1_6))
     kotlinOptions {
+        jvmTarget = "1.8"
         freeCompilerArgs = [
                 "-Xallow-kotlin-package",
                 "-Xmultifile-parts-inherit",
@@ -115,6 +117,8 @@ compileKotlin {
                 "-Xuse-14-inline-classes-mangling-scheme",
                 "-Xbuiltins-from-sources",
                 "-XXLanguage:+RangeUntilOperator",
+                "-Xno-new-java-annotation-targets",
+                "-Xuse-old-innerclasses-logic",
         ]
         moduleName = "kotlin-stdlib"
     }

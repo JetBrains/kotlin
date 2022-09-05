@@ -9,9 +9,18 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.microseconds
 
 /**
- *  ## Cycle garbage collector interface.
+ * __Note__: this API is unstable and may change in any release.
  *
- * Konan relies upon reference counting for object management, however it could
+ * Kotlin/Native uses tracing garbage collector (GC) that is executed periodically to collect objects
+ * that are not reachable from the "roots", like local and global variables.
+ * See [documentation](https://github.com/JetBrains/kotlin/blob/master/kotlin-native/NEW_MM.md) to learn more about
+ * Kotlin/Native memory management.
+ *
+ * This object provides a set of functions and properties that allows to tune garbage collector.
+ *
+ * __Legacy memory manager__
+ *
+ * Kotlin/Native relies upon reference counting for object management, however it could
  * not collect cyclical garbage, so we perform periodic garbage collection.
  * This may slow down application, so this interface provides control over how
  * garbage collector activates and runs.
@@ -26,57 +35,68 @@ import kotlin.time.Duration.Companion.microseconds
  */
 object GC {
     /**
-     * To force garbage collection immediately, unless collector is stopped
+     * Trigger new collection and wait for its completion.
+     *
+     * Legacy MM: force garbage collection immediately, unless collector is stopped
      * with [stop] operation. Even if GC is suspended, [collect] still triggers collection.
-     * New MM: trigger new collection and wait for its completion.
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_collect")
     external fun collect()
 
     /**
-     * Request global cyclic collector, operation is async and just triggers the collection.
-     * New MM: unused.
+     * Deprecated and unused.
+     *
+     * Legacy MM: Request global cyclic collector, operation is async and just triggers the collection.
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_collectCyclic")
+    @Deprecated("No-op in modern GC implementation")
     external fun collectCyclic()
 
     /**
-     * Suspend garbage collection. Release candidates are still collected, but
+     * Deprecated and unused.
+     *
+     * Legacy MM: Suspend garbage collection. Release candidates are still collected, but
      * GC algorithm is not executed.
-     * New MM: unused.
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_suspend")
     external fun suspend()
 
     /**
-     * Resume garbage collection. Can potentially lead to GC immediately.
-     * New MM: unused.
+     * Deprecated and unused.
+     *
+     * Legacy MM: Resume garbage collection. Can potentially lead to GC immediately.
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_resume")
+    @Deprecated("No-op in modern GC implementation")
     external fun resume()
 
     /**
-     * Stop garbage collection. Cyclical garbage is no longer collected.
-     * New MM: unused.
+     * Deprecated and unused.
+     *
+     * Legacy MM: Stop garbage collection. Cyclical garbage is no longer collected.
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_stop")
+    @Deprecated("No-op in modern GC implementation")
     external fun stop()
 
     /**
-     * Start garbage collection. Cyclical garbage produced while GC was stopped
+     * Deprecated and unused.
+     *
+     * Legacy MM: Start garbage collection. Cyclical garbage produced while GC was stopped
      * cannot be reclaimed, but all new garbage is collected.
-     * New MM: unused.
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_start")
+    @Deprecated("No-op in modern GC implementation")
     external fun start()
 
     /**
      * GC threshold, controlling how frequenly GC is activated, and how much time GC
      * takes. Bigger values lead to longer GC pauses, but less GCs.
-     * New MM: usually unused. For the on-safepoints GC scheduler counts
+     * Usually unused. For the on-safepoints GC scheduler counts
      *         how many safepoints must the code pass before informing the GC scheduler.
      *
      * Default: (old MM) 8 * 1024
+     *
      * Default: (new MM) 100000
      *
      * @throws [IllegalArgumentException] when value is not positive.
@@ -89,14 +109,16 @@ object GC {
         }
 
     /**
-     * GC allocation threshold, controlling how frequenly GC collect cycles, and how much time
+     * Deprecated and unused.
+     *
+     * Legacy MM: GC allocation threshold, controlling how frequenly GC collect cycles, and how much time
      * this process takes. Bigger values lead to longer GC pauses, but less GCs.
-     * New MM: unused.
      *
      * Default: 8 * 1024
      *
      * @throws [IllegalArgumentException] when value is not positive.
      */
+    @Deprecated("No-op in modern GC implementation")
     var collectCyclesThreshold: Long
         get() = getCollectCyclesThreshold()
         set(value) {
@@ -105,12 +127,14 @@ object GC {
         }
 
     /**
-     * GC allocation threshold, controlling how many bytes allocated since last
-     * collection will trigger new GC.
-     * New MM: how many bytes a thread can allocate before informing the GC scheduler.
+     * How many bytes a thread can allocate before informing the GC scheduler.
      *
-     * Default: (old MM) 8 * 1024 * 1024
-     * Default: (new MM) 10 * 1024
+     * Default: 10 * 1024
+     *
+     * Legacy MM: GC allocation threshold, controlling how many bytes allocated since last
+     * collection will trigger new GC.
+     *
+     * Default: (legacy MM) 8 * 1024 * 1024
      *
      * @throws [IllegalArgumentException] when value is not positive.
      */
@@ -122,8 +146,9 @@ object GC {
         }
 
     /**
-     * If GC shall auto-tune thresholds, depending on how much time is spent in collection.
-     * New MM: if true update targetHeapBytes after each collection.
+     * If true update targetHeapBytes after each collection.
+     *
+     * Legacy MM: If GC shall auto-tune thresholds, depending on how much time is spent in collection.
      *
      * Default: true
      */
@@ -133,20 +158,24 @@ object GC {
 
 
     /**
-     * If cyclic collector for atomic references to be deployed.
-     * New MM: unused.
+     * Deprecated and unused.
+     *
+     * Legacy MM: If cyclic collector for atomic references to be deployed.
      */
+    @Deprecated("No-op in modern GC implementation")
     var cyclicCollectorEnabled: Boolean
         get() = getCyclicCollectorEnabled()
         set(value) = setCyclicCollectorEnabled(value)
 
     /**
-     * New MM only. Unused with on-safepoints GC scheduler.
      * When Kotlin code is not allocating enough to trigger GC, the GC scheduler uses timer to drive collection.
      * Timer-triggered collection will happen roughly in [regularGCInterval] .. 2 * [regularGCInterval] since
      * any previous collection.
+     * Unused with on-safepoints GC scheduler.
      *
      * Default: 10 seconds
+     *
+     * Unused in legacy MM.
      *
      * @throws [IllegalArgumentException] when value is negative.
      */
@@ -158,7 +187,6 @@ object GC {
         }
 
     /**
-     * New MM only.
      * Total amount of heap available for Kotlin objects. When Kotlin objects overflow this heap,
      * the garbage collection is requested. Automatically adjusts when [autotune] is true:
      * after each collection the [targetHeapBytes] is set to heapBytes / [targetHeapUtilization] and
@@ -168,6 +196,8 @@ object GC {
      * or [maxHeapBytes] is set too low), the next collection will be triggered almost immediately.
      *
      * Default: 1 MiB
+     *
+     * Unused in legacy MM.
      *
      * @throws [IllegalArgumentException] when value is negative.
      */
@@ -179,11 +209,12 @@ object GC {
         }
 
     /**
-     * New MM only.
      * What fraction of the Kotlin heap should be populated.
      * Only used if [autotune] is true. See [targetHeapBytes] for more details.
      *
      * Default: 0.5
+     *
+     * Unused in legacy MM.
      *
      * @throws [IllegalArgumentException] when value is outside (0, 1] interval.
      */
@@ -195,11 +226,12 @@ object GC {
         }
 
     /**
-     * New MM only.
      * The minimum value for [targetHeapBytes]
      * Only used if [autotune] is true. See [targetHeapBytes] for more details.
      *
      * Default: 1 MiB
+     *
+     * Unused in legacy MM.
      *
      * @throws [IllegalArgumentException] when value is negative.
      */
@@ -211,11 +243,12 @@ object GC {
         }
 
     /**
-     * New MM only.
      * The maximum value for [targetHeapBytes].
      * Only used if [autotune] is true. See [targetHeapBytes] for more details.
      *
      * Default: [Long.MAX_VALUE]
+     *
+     * Unused in legacy MM.
      *
      * @throws [IllegalArgumentException] when value is negative.
      */
@@ -227,19 +260,23 @@ object GC {
         }
 
     /**
-     * Detect cyclic references going via atomic references and return list of cycle-inducing objects
+     * Deprecated and unused. Always returns null.
+     *
+     * Legacy MM: Detect cyclic references going via atomic references and return list of cycle-inducing objects
      * or `null` if the leak detector is not available. Use [Platform.isMemoryLeakCheckerActive] to check
      * leak detector availability.
-     * New MM: unused. Always returns null.
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_detectCycles")
+    @Deprecated("No-op in modern GC implementation")
     external fun detectCycles(): Array<Any>?
 
     /**
-     * Find a reference cycle including from the given object, `null` if no cycles detected.
-     * New MM: unused. Always returns null.
+     * Deprecated and unused. Always returns null.
+     *
+     * Legacy MM: Find a reference cycle including from the given object, `null` if no cycles detected.
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_findCycle")
+    @Deprecated("No-op in modern GC implementation")
     external fun findCycle(root: Any): Array<Any>?
 
     @GCUnsafeCall("Kotlin_native_internal_GC_getThreshold")

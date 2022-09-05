@@ -6,51 +6,51 @@
 package org.jetbrains.kotlinx.serialization
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
-import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
+import org.jetbrains.kotlinx.serialization.runners.*
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
-    generateTestGroupSuite {
-        testGroup(
-            "plugins/kotlinx-serialization/tests-gen",
-            "plugins/kotlinx-serialization/testData"
-        ) {
-            testClass<AbstractSerializationPluginDiagnosticTest> {
-                model("diagnostics")
-            }
-
-            testClass<AbstractSerializationPluginBytecodeListingTest> {
-                model("codegen")
-            }
-
-            testClass<AbstractSerializationIrBytecodeListingTest> {
-                model("codegen")
-            }
-        }
-    }
+    val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(
             "plugins/kotlinx-serialization/tests-gen",
             "plugins/kotlinx-serialization/testData"
         ) {
+            // ------------------------------- diagnostics -------------------------------
+            testClass<AbstractSerializationPluginDiagnosticTest>() {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
 
-            // New test infrastructure ONLY
+            testClass<AbstractSerializationFirDiagnosticTest> {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+                model("firMembers")
+            }
+
+            // ------------------------------- asm instructions -------------------------------
+
+            testClass<AbstractSerializationAsmLikeInstructionsListingTest> {
+                model("codegen")
+            }
+
+            testClass<AbstractSerializationIrAsmLikeInstructionsListingTest> {
+                model("codegen")
+            }
+
+            // ------------------------------- box -------------------------------
+
             testClass<AbstractSerializationIrBoxTest> {
                 model("boxIr")
             }
 
+            testClass<AbstractSerializationFirBlackBoxTest> {
+                model("boxIr")
+                model("firMembers")
+            }
+
             testClass<AbstractSerializationWithoutRuntimeIrBoxTest> {
                 model("boxWithoutRuntime")
-            }
-
-            testClass<AbstractSerializationFirMembersTest> {
-                model("firMembers")
-            }
-
-            testClass<AbstractSerializationFirBlackBoxTest> {
-                model("firMembers")
             }
         }
     }

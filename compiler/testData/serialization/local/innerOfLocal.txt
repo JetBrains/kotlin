@@ -1,5 +1,0 @@
-local final inner class Inner
-
-public constructor Inner()
-public final fun inner(/*0*/ i: `InnerOfLocalKt$main$Local`.Inner): kotlin.Unit
-public final fun local(/*0*/ l: `InnerOfLocalKt$main$Local`): kotlin.Unit

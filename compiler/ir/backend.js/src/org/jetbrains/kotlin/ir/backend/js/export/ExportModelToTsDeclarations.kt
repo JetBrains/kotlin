@@ -133,7 +133,8 @@ class ExportModelToTsDeclarations {
                 ""
             } else {
                 val readonly = if (isMember && !mutable) "readonly " else ""
-                "$prefix$visibility$possibleStatic$keyword$readonly$memberName: $typeToTypeScript;"
+                val optional = if (isOptional) "?" else ""
+                "$prefix$visibility$possibleStatic$keyword$readonly$memberName$optional: $typeToTypeScript;"
             }
         }
     }

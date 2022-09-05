@@ -154,7 +154,7 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
 
         RuntimeLogInfo(
                 {kTagGC}, "Started GC epoch %zu. Time since last GC %" PRIu64 " microseconds", epoch_, timeStartUs - lastGCTimestampUs_);
-        gc::collectRootSet<MarkTraits>(markQueue_);
+        gc::collectRootSet<MarkTraits>(markQueue_, [] (mm::ThreadData&) { return true; });
         auto timeRootSetUs = konan::getTimeMicros();
         // Can be unsafe, because we've stopped the world.
         auto objectsCountBefore = objectFactory_.GetSizeUnsafe();

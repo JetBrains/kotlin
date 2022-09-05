@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.*
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isNull
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
@@ -37,6 +39,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.StubTypeForBuilderInference
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 import org.jetbrains.kotlin.types.error.ErrorUtils
@@ -197,6 +200,21 @@ class DiagnosticReporterByTrackingStrategy(
                     trace.report(SUPER_CANT_BE_EXTENSION_RECEIVER.on(psiExpression, psiExpression.text))
                 }
             }
+
+            StubBuilderInferenceReceiver::class.java -> {
+                diagnostic as StubBuilderInferenceReceiver
+
+                val stubType = callReceiver.receiver.receiverValue.type as? StubTypeForBuilderInference
+                val originalTypeParameter = stubType?.originalTypeVariable?.originalTypeParameter
+
+                trace.report(
+                    BUILDER_INFERENCE_STUB_RECEIVER.on(
+                        callReceiver.psiExpression ?: call.callElement,
+                        originalTypeParameter?.name ?: SpecialNames.NO_NAME_PROVIDED,
+                        originalTypeParameter?.containingDeclaration?.name ?: SpecialNames.NO_NAME_PROVIDED
+                    )
+                )
+            }
         }
     }
 
@@ -316,6 +334,19 @@ class DiagnosticReporterByTrackingStrategy(
                 trace.report(
                     ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE.on(
                         callArgument.psiCallArgument.valueArgument.asElement()
+                    )
+                )
+            }
+
+            MultiLambdaBuilderInferenceRestriction::class.java -> {
+                diagnostic as MultiLambdaBuilderInferenceRestriction
+                val typeParameter = diagnostic.typeParameter as? TypeParameterDescriptor
+
+                trace.reportDiagnosticOnce(
+                    BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION.on(
+                        callArgument.psiCallArgument.valueArgument.asElement(),
+                        typeParameter?.name ?: SpecialNames.NO_NAME_PROVIDED,
+                        typeParameter?.containingDeclaration?.name ?: SpecialNames.NO_NAME_PROVIDED,
                     )
                 )
             }

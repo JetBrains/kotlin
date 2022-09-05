@@ -170,6 +170,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.gcSchedulerType) ?: defaultGCSchedulerType
     }
 
+    val gcMarkSingleThreaded: Boolean
+        get() = configuration.get(BinaryOptions.gcMarkSingleThreaded) == true
+
     val needVerifyIr: Boolean
         get() = configuration.get(KonanConfigKeys.VERIFY_IR) == true
 
@@ -179,6 +182,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val appStateTracking: AppStateTracking by lazy {
         configuration.get(BinaryOptions.appStateTracking) ?: AppStateTracking.DISABLED
+    }
+
+    val mimallocUseDefaultOptions by lazy {
+        configuration.get(BinaryOptions.mimallocUseDefaultOptions) ?: false
     }
 
     init {

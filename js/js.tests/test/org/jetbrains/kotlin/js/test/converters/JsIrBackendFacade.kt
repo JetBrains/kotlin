@@ -109,7 +109,7 @@ class JsIrBackendFacade(
                         caches = testServices.jsIrIncrementalDataProvider.getCaches(),
                         relativeRequirePath = false
                     )
-                    jsExecutableProducer.buildExecutable(it.perModule)
+                    jsExecutableProducer.buildExecutable(it.perModule, true)
                 },
                 tsDefinitions = null
             )
@@ -173,11 +173,7 @@ class JsIrBackendFacade(
         val dceOutputFile = File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, TranslationMode.FULL_DCE_MINIMIZED_NAMES) + ".js")
         if (!esModules) {
             if (runNewIr2Js) {
-                val transformer = IrModuleToJsTransformerTmp(
-                    loweredIr.context,
-                    mainArguments,
-                    relativeRequirePath = false
-                )
+                val transformer = IrModuleToJsTransformerTmp(loweredIr.context, mainArguments)
 
                 // If runIrDce then include DCE results
                 // If perModuleOnly then skip whole program
@@ -186,7 +182,8 @@ class JsIrBackendFacade(
                     .filter { (!it.dce || runIrDce) && (!perModuleOnly || it.perModule) }
                     .filter { it.dce == it.minimizedMemberNames }
                     .toSet()
-                return BinaryArtifacts.Js.JsIrArtifact(outputFile, transformer.generateModule(loweredIr.allModules, translationModes)).dump(module)
+                val compilationOut = transformer.generateModule(loweredIr.allModules, translationModes, false)
+                return BinaryArtifacts.Js.JsIrArtifact(outputFile, compilationOut).dump(module)
             } else {
                 val transformer = IrModuleToJsTransformer(
                     loweredIr.context,

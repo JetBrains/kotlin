@@ -270,6 +270,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("noTypeUseIfDependOnJvm6.kt")
+        public void testNoTypeUseIfDependOnJvm6() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/noTypeUseIfDependOnJvm6.kt");
+        }
+
+        @Test
+        @TestMetadata("noTypeUseIfFlagIsSpecified.kt")
+        public void testNoTypeUseIfFlagIsSpecified() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/noTypeUseIfFlagIsSpecified.kt");
+        }
+
+        @Test
         @TestMetadata("parameterAnnotationInDefaultImpls.kt")
         public void testParameterAnnotationInDefaultImpls() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/parameterAnnotationInDefaultImpls.kt");
@@ -3907,6 +3919,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("genericCallableReferenceWithReifiedTypeParam.kt")
+            public void testGenericCallableReferenceWithReifiedTypeParam() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/function/genericCallableReferenceWithReifiedTypeParam.kt");
+            }
+
+            @Test
             @TestMetadata("genericCallableReferencesWithNullableTypes.kt")
             public void testGenericCallableReferencesWithNullableTypes() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/function/genericCallableReferencesWithNullableTypes.kt");
@@ -3988,6 +4006,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("kt47741.kt")
             public void testKt47741() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/function/kt47741.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53794_protectedJavaMember.kt")
+            public void testKt53794_protectedJavaMember() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/function/kt53794_protectedJavaMember.kt");
             }
 
             @Test
@@ -16063,6 +16087,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("enumConstructorParameterClashWithDefaults.kt")
         public void testEnumConstructorParameterClashWithDefaults() throws Exception {
             runTest("compiler/testData/codegen/box/enum/enumConstructorParameterClashWithDefaults.kt");
+        }
+
+        @Test
+        @TestMetadata("enumEntries.kt")
+        public void testEnumEntries() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntries.kt");
+        }
+
+        @Test
+        @TestMetadata("enumEntriesMultimoduleNoMappings.kt")
+        public void testEnumEntriesMultimoduleNoMappings() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntriesMultimoduleNoMappings.kt");
+        }
+
+        @Test
+        @TestMetadata("enumEntriesNameClashes.kt")
+        public void testEnumEntriesNameClashes() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntriesNameClashes.kt");
         }
 
         @Test
@@ -48737,6 +48779,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt47365.kt")
         public void testKt47365() throws Exception {
             runTest("compiler/testData/codegen/box/when/kt47365.kt");
+        }
+
+        @Test
+        @TestMetadata("kt47475.kt")
+        public void testKt47475() throws Exception {
+            runTest("compiler/testData/codegen/box/when/kt47475.kt");
         }
 
         @Test

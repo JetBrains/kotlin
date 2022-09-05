@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -67,7 +67,7 @@ public class KotlinStaticDeclarationProvider internal constructor(
     }
 
 
-    override fun getFacadeFilesInPackage(packageFqName: FqName): Collection<KtFile> =
+    override fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile> =
         index.facadeFileMap[packageFqName]
             ?.filter { ktFile ->
                 ktFile.virtualFile in scope
@@ -76,7 +76,7 @@ public class KotlinStaticDeclarationProvider internal constructor(
 
     override fun findFilesForFacade(facadeFqName: FqName): Collection<KtFile> {
         if (facadeFqName.shortNameOrSpecial().isSpecial) return emptyList()
-        return getFacadeFilesInPackage(facadeFqName.parent()) //TODO Not work correctly for classes with JvmPackageName
+        return findFilesForFacadeByPackage(facadeFqName.parent()) //TODO Not work correctly for classes with JvmPackageName
             .filter { it.javaFileFacadeFqName == facadeFqName }
     }
 

@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderImpl
 import org.jetbrains.kotlin.idea.references.KotlinFirReferenceContributor
 import org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor
 import org.jetbrains.kotlin.light.classes.symbol.SymbolKotlinAsJavaSupport
-import org.jetbrains.kotlin.light.classes.symbol.caches.SymbolLightClassFacadeCache
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
 import org.jetbrains.kotlin.psi.KtFile
@@ -70,7 +69,6 @@ public fun configureApplicationEnvironment(app: MockApplication) {
  * In particular, this will register:
  *   * [KtAnalysisSessionProvider]
  *   * [SymbolKotlinAsJavaSupport]
- *   * [SymbolLightClassFacadeCache] for FIR light class support
  *   * [ClsJavaStubByVirtualFileCache]
  *   * [KotlinModificationTrackerFactory]
  *   * [KotlinAnnotationsResolverFactory]
@@ -114,10 +112,6 @@ internal fun configureProjectEnvironment(
     )
 
     // FIR LC
-    project.registerService(
-        SymbolLightClassFacadeCache::class.java,
-        SymbolLightClassFacadeCache(project)
-    )
     project.registerService(
         ClsJavaStubByVirtualFileCache::class.java,
         ClsJavaStubByVirtualFileCache()

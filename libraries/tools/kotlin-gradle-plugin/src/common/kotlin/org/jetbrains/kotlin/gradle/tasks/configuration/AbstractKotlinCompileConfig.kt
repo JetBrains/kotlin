@@ -59,12 +59,12 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                 .disallowChanges()
 
             task.localStateDirectories.from(task.taskBuildLocalStateDirectory).disallowChanges()
-            val buildMetricsService = BuildMetricsService.registerIfAbsent(project)?.also {
+            BuildMetricsService.registerIfAbsent(project)?.also {
                 task.buildMetricsService.value(it)
+                BuildReportsService.registerIfAbsent(project, it)?.also {
+                    task.buildReportsService.value(it)
+                }
             }
-
-            buildMetricsService?.let { BuildReportsService.registerIfAbsent(project, it) }
-                ?.let { task.buildReportsService.value(it) }
 
             propertiesProvider.kotlinDaemonJvmArgs?.let { kotlinDaemonJvmArgs ->
                 task.kotlinDaemonJvmArguments.set(providers.provider {

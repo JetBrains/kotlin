@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +DefinitelyNonNullableTypes
 
 fun main(x: Collection<String>) {

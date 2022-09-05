@@ -653,9 +653,66 @@ private func testSuspendFunctionSwiftImpl() throws {
     try assertNil(error)
 }
 
+#if NO_GENERICS
+typealias AnyResultHolder = ResultHolder
+#else
+typealias AnyResultHolder = ResultHolder<AnyObject>
+#endif
+
+private extension AnyResultHolder {
+    func getSuccessfulResult() throws -> Any? {
+        try assertEquals(actual: completed, expected: 1)
+        try assertNil(exception)
+        return result
+    }
+}
+
+// Reported in https://youtrack.jetbrains.com/issue/KT-51043
+private func testSuspendFunction0SwiftImplStartInKotlin() throws {
+    let resultHolder = AnyResultHolder()
+    try CoroutinesKt.startCoroutineUninterceptedOrReturn(fn: SuspendFunction0SwiftImpl(), resultHolder: resultHolder)
+    try assertEquals(actual: resultHolder.getSuccessfulResult() as? String, expected: "Swift")
+}
+
+private func testSuspendFunction1SwiftImplStartInKotlin() throws {
+    let resultHolder = AnyResultHolder()
+    try CoroutinesKt.startCoroutineUninterceptedOrReturn(fn: SuspendFunction1SwiftImpl(), receiver: "receiver", resultHolder: resultHolder)
+    try assertEquals(actual: resultHolder.getSuccessfulResult() as? String, expected: "receiver Swift")
+}
+
+private func testSuspendFunction2SwiftImplStartInKotlin() throws {
+    let resultHolder = AnyResultHolder()
+    try CoroutinesKt.startCoroutineUninterceptedOrReturn(fn: SuspendFunction2SwiftImpl(), receiver: "receiver", param: "param", resultHolder: resultHolder)
+    try assertEquals(actual: resultHolder.getSuccessfulResult() as? String, expected: "receiver param Swift")
+}
+
+private func testSuspendFunction0SwiftImplCreateInKotlin() throws {
+    let resultHolder = AnyResultHolder()
+    try CoroutinesKt.createCoroutineUninterceptedAndResume(fn: SuspendFunction0SwiftImpl(), resultHolder: resultHolder)
+    try assertEquals(actual: resultHolder.getSuccessfulResult() as? String, expected: "Swift")
+}
+
+private func testSuspendFunction1SwiftImplCreateInKotlin() throws {
+    let resultHolder = AnyResultHolder()
+    try CoroutinesKt.createCoroutineUninterceptedAndResume(fn: SuspendFunction1SwiftImpl(), receiver: "receiver", resultHolder: resultHolder)
+    try assertEquals(actual: resultHolder.getSuccessfulResult() as? String, expected: "receiver Swift")
+}
+
+private class SuspendFunction0SwiftImpl : KotlinSuspendFunction0 {
+    func invoke(completionHandler: (Any?, Error?) -> Void) {
+        completionHandler("Swift", nil)
+    }
+}
+
 private class SuspendFunction1SwiftImpl : KotlinSuspendFunction1 {
     func invoke(p1: Any?, completionHandler: (Any?, Error?) -> Void) {
         completionHandler("\(p1 ?? "nil") Swift", nil)
+    }
+}
+
+private class SuspendFunction2SwiftImpl : KotlinSuspendFunction2 {
+    func invoke(p1: Any?, p2: Any?, completionHandler: (Any?, Error?) -> Void) {
+        completionHandler("\(p1 ?? "nil") \(p2 ?? "nil") Swift", nil)
     }
 }
 
@@ -675,5 +732,10 @@ class CoroutinesTests : SimpleTestProvider {
         test("TestSuspendFunctionType", testSuspendFunctionType)
         test("TestKSuspendFunctionType", testSuspendFunctionType)
         test("TestSuspendFunctionSwiftImpl", testSuspendFunctionSwiftImpl)
+        test("TestSuspendFunction0SwiftImplStartInKotlin", testSuspendFunction0SwiftImplStartInKotlin)
+        test("TestSuspendFunction1SwiftImplStartInKotlin", testSuspendFunction1SwiftImplStartInKotlin)
+        test("TestSuspendFunction2SwiftImplStartInKotlin", testSuspendFunction2SwiftImplStartInKotlin)
+        test("TestSuspendFunction0SwiftImplCreateInKotlin", testSuspendFunction0SwiftImplCreateInKotlin)
+        test("TestSuspendFunction1SwiftImplCreateInKotlin", testSuspendFunction1SwiftImplCreateInKotlin)
     }
 }

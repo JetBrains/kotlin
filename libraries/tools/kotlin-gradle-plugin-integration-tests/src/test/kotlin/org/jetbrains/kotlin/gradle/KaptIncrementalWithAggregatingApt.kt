@@ -27,7 +27,6 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
         incremental = true,
         kaptOptions = super.defaultBuildOptions.kaptOptions!!.copy(
             verbose = true,
-            useWorkers = true,
             incrementalKapt = true,
             includeCompileClasspath = false
         )

@@ -5,29 +5,30 @@
 
 package org.jetbrains.kotlinx.serialization
 
-import junit.framework.TestCase
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.VersionReader
-import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComponentRegistrar
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.io.File
-import kotlin.test.assertTrue
 
 class RuntimeLibraryInClasspathTest {
-    private val coreLibraryPath = getSerializationCoreLibraryJar()
+    companion object {
+        val coreLibraryPath = getSerializationLibraryJar("kotlinx.serialization.KSerializer")
+        val jsonLibraryPath = getSerializationLibraryJar("kotlinx.serialization.json.Json")
+
+        private fun getSerializationLibraryJar(classToDetect: String): File? = try {
+            PathUtil.getResourcePathForClass(Class.forName(classToDetect))
+        } catch (e: ClassNotFoundException) {
+            null
+        }
+    }
 
     @Test
     fun testRuntimeLibraryExists() {
-        TestCase.assertNotNull(
+        assertNotNull(
+            coreLibraryPath,
             "kotlinx-serialization runtime library is not found. Make sure it is present in test classpath",
-            coreLibraryPath
         )
     }
 
@@ -37,39 +38,4 @@ class RuntimeLibraryInClasspathTest {
         assertTrue(version.currentCompilerMatchRequired(), "Runtime version too high")
         assertTrue(version.implementationVersionMatchSupported(), "Runtime version too low")
     }
-}
-
-internal fun getSerializationCoreLibraryJar(): File? = getSerializationLibraryJar("kotlinx.serialization.KSerializer")
-
-internal fun getSerializationLibraryJar(classToDetect: String): File? = try {
-    PathUtil.getResourcePathForClass(Class.forName(classToDetect))
-} catch (e: ClassNotFoundException) {
-    null
-}
-
-internal fun TestConfigurationBuilder.configureForKotlinxSerialization(librariesPaths: List<File>, registerAdditionalExtensions: ExtensionStorage.() -> Unit = {}) {
-    useConfigurators(
-        { services ->
-            object : EnvironmentConfigurator(services) {
-                override fun configureCompilerConfiguration(
-                    configuration: CompilerConfiguration,
-                    module: TestModule
-                ) {
-                    configuration.addJvmClasspathRoots(librariesPaths)
-                }
-
-                override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
-                    SerializationComponentRegistrar.registerExtensions(this)
-                    registerAdditionalExtensions()
-                }
-            }
-        })
-
-    useCustomRuntimeClasspathProviders(
-        {
-            object : RuntimeClasspathProvider(it) {
-                override fun runtimeClassPaths(module: TestModule): List<File> = librariesPaths
-            }
-        }
-    )
 }

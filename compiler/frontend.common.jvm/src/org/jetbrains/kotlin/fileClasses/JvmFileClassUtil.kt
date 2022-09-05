@@ -70,7 +70,7 @@ object JvmFileClassUtil {
 
         if (jvmName == null && jvmPackageName == null) return null
 
-        val isMultifileClass = findAnnotationEntryOnFileNoResolve(file, JVM_MULTIFILE_CLASS_SHORT) != null
+        val isMultifileClass = file.isJvmMultifileClassFile
 
         return ParsedJvmFileClassAnnotations(jvmName, jvmPackageName, isMultifileClass)
     }
@@ -122,10 +122,12 @@ val KtFile.javaFileFacadeFqName: FqName
         return facadeFqName
     }
 
+val KtFile.isJvmMultifileClassFile: Boolean
+    get() = JvmFileClassUtil.findAnnotationEntryOnFileNoResolve(this, JVM_MULTIFILE_CLASS_SHORT) != null
+
 private val LOG = Logger.getInstance("JvmFileClassUtil")
 
-fun KtDeclaration.isInsideJvmMultifileClassFile() =
-    JvmFileClassUtil.findAnnotationEntryOnFileNoResolve(containingKtFile, JVM_MULTIFILE_CLASS_SHORT) != null
+fun KtDeclaration.isInsideJvmMultifileClassFile() = containingKtFile.isJvmMultifileClassFile
 
 val FqName.internalNameWithoutInnerClasses: String
     get() = JvmClassName.byFqNameWithoutInnerClasses(this).internalName

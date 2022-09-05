@@ -204,6 +204,14 @@ class PostponedArgumentsAnalyzer(
                 return
             }
 
+            // WARN: Following type constraint system unification algorithm is incorrect,
+            // as in fact direction of constraint should depend on projection direction
+            // To perform constraint unification properly, original constraints should be
+            // unified instead of simple result type based constraint
+            // Other possible solution is to add equality constraint, but it will be too strict
+            // and will limit usability
+            // Nevertheless, proper design should be done before fixing this
+            // Causes KT-53740
             for ((constructor, resultType) in postponedVariables) {
                 val variableWithConstraints = constraintSystemBuilder.currentStorage().notFixedTypeVariables[constructor] ?: continue
                 val variable = variableWithConstraints.typeVariable

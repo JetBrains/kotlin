@@ -258,7 +258,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                 )
 
                 val rebuiltModules = mutableSetOf<String>()
-                val jsOutput = jsExecutableProducer.buildExecutable(true) { rebuiltModules += it }
+                val jsOutput = jsExecutableProducer.buildExecutable(multiModule = true, outJsProgram = true) { rebuiltModules += it }
                 verifyJsExecutableProducerBuildModules(projStep.id, rebuiltModules, projStep.dirtyJS)
                 verifyJsCode(projStep.id, testInfo.last().moduleName, jsOutput)
             }

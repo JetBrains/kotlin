@@ -39,7 +39,7 @@ internal class TestCompilationFactory {
 
         /** Dependencies needed to compile KLIB static cache. */
         fun forStaticCache(klib: CompiledDependency<KLIB>): Iterable<CompiledDependency<*>> =
-            (staticCacheDependencies.asSequence() + klib).asIterable()
+            (klibDependencies.asSequence().filter { it.type == FriendLibrary } + klib + staticCacheDependencies).asIterable()
 
         /** Dependencies needed to compile one-stage executable. */
         fun forOneStageExecutable(): Iterable<CompiledDependency<*>> =

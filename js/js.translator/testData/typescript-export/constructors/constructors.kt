@@ -12,16 +12,17 @@
 // MODULE: JS_TESTS
 // FILE: f1.kt
 
-@file:JsExport
-
+@JsExport
 class ClassWithDefaultCtor {
     val x = "ClassWithDefaultCtor::x"
 }
 
+@JsExport
 class ClassWithPrimaryCtor(
     val x: String
 )
 
+@JsExport
 class ClassWithSecondaryCtor {
     val x: String
     @JsName("create")
@@ -30,6 +31,7 @@ class ClassWithSecondaryCtor {
     }
 }
 
+@JsExport
 class ClassWithMultipleSecondaryCtors {
     val x: String
 
@@ -44,6 +46,7 @@ class ClassWithMultipleSecondaryCtors {
     }
 }
 
+@JsExport
 open class OpenClassWithMixedConstructors(val x: String) {
     @JsName("createFromStrings")
     constructor(y: String, z: String) : this("fromStrings:$y:$z")
@@ -52,6 +55,7 @@ open class OpenClassWithMixedConstructors(val x: String) {
     constructor(y: Int, z: Int) : this(y.toString(), z.toString())
 }
 
+@JsExport
 class DerivedClassWithSecondaryCtor : OpenClassWithMixedConstructors {
     @JsName("delegateToPrimary")
     constructor(y: String) : super(y)

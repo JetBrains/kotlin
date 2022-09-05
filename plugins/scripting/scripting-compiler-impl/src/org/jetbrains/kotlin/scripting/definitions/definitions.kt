@@ -19,20 +19,34 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 import kotlin.script.experimental.api.SourceCode
 
 inline fun <T> runReadAction(crossinline runnable: () -> T): T {
     return ApplicationManager.getApplication().runReadAction(Computable { runnable() })
 }
 
-fun PsiFile.findScriptDefinition(): ScriptDefinition? {
+@OptIn(ExperimentalContracts::class)
+fun PsiFile.isScript(): Boolean {
+    contract {
+        returns(true) implies (this@isScript is KtFile)
+    }
+
     // Do not use psiFile.script, see comments in findScriptDefinition
-    if (this !is KtFile/* || this.script == null*/) return null
+    if (this !is KtFile/* || this.script == null*/) return false
 
-    val virtualFile = this.virtualFile ?: this.originalFile.virtualFile ?: return null
-    if (virtualFile.isNonScript()) return null
+    // Sometimes - i.e. when event system is disabled for a view provider - requesting
+    // virtual file directly from the viewProvider is the only way of obtaining it
+    val virtualFile = virtualFile ?: originalFile.virtualFile ?: viewProvider.virtualFile
+    if (virtualFile.isNonScript()) return false
 
-    return findScriptDefinition(project, KtFileScriptSource(this))
+    return true
+}
+
+fun PsiFile.findScriptDefinition(): ScriptDefinition? {
+    return if (isScript()) findScriptDefinition(project, KtFileScriptSource(this))
+    else null
 }
 
 @Deprecated("Use PsiFile.findScriptDefinition() instead")

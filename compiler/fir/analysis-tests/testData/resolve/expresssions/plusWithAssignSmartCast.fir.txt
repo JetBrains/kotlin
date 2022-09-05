@@ -1,0 +1,23 @@
+FILE: plusWithAssignSmartCast.kt
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var bar: R|kotlin/String?| = Null(null)
+            public get(): R|kotlin/String?|
+            public set(value: R|kotlin/String?|): R|kotlin/Unit|
+
+        public final fun addToBar(other: R|kotlin/String|): R|kotlin/Unit| {
+            when () {
+                ==(this@R|/Foo|.R|/Foo.bar|, Null(null)) ->  {
+                    this@R|/Foo|.R|/Foo.bar| = R|<local>/other|
+                }
+                else ->  {
+                    this@R|/Foo|.R|/Foo.bar| = this@R|/Foo|.R|/Foo.bar|.R|kotlin/plus|(<strcat>(String( ), R|<local>/other|))
+                }
+            }
+
+        }
+
+    }

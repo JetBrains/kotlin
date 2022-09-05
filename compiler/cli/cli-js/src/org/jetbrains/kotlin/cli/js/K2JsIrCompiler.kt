@@ -43,10 +43,7 @@ import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.ic.*
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformerTmp
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.SourceMapsInfo
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
@@ -55,7 +52,6 @@ import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
@@ -78,6 +74,78 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
     override fun createArguments(): K2JSCompilerArguments {
         return K2JSCompilerArguments()
     }
+
+    private data class TransformResult(val out: CompilationOutputs, val dts: String)
+
+    private class Ir2JsTransformer(
+        val arguments: K2JSCompilerArguments,
+        val module: ModulesStructure,
+        val phaseConfig: PhaseConfig,
+        val messageCollector: MessageCollector,
+        val mainCallArguments: List<String>?
+    ) {
+        private fun lowerIr(): LoweredIr {
+            val granularity = when {
+                arguments.irPerModule -> JsGenerationGranularity.PER_MODULE
+                arguments.irPerFile -> JsGenerationGranularity.PER_FILE
+                else -> JsGenerationGranularity.WHOLE_PROGRAM
+            }
+
+            val irFactory = when {
+                arguments.irNewIr2Js -> IrFactoryImplForJsIC(WholeWorldStageController())
+                else -> IrFactoryImpl
+            }
+
+            return compile(
+                module,
+                phaseConfig,
+                irFactory,
+                dceRuntimeDiagnostic = RuntimeDiagnostic.resolve(
+                    arguments.irDceRuntimeDiagnostic,
+                    messageCollector
+                ),
+                baseClassIntoMetadata = arguments.irBaseClassInMetadata,
+                safeExternalBoolean = arguments.irSafeExternalBoolean,
+                safeExternalBooleanDiagnostic = RuntimeDiagnostic.resolve(
+                    arguments.irSafeExternalBooleanDiagnostic,
+                    messageCollector
+                ),
+                granularity = granularity,
+                icCompatibleIr2Js = arguments.irNewIr2Js,
+            )
+        }
+
+        private fun makeJsCodeGeneratorAndDts(): Pair<JsCodeGenerator, String> {
+            val ir = lowerIr()
+            val transformer = IrModuleToJsTransformerTmp(ir.context, mainCallArguments, ir.moduleFragmentToUniqueName)
+
+            val mode = TranslationMode.fromFlags(arguments.irDce, arguments.irPerModule, arguments.irMinimizedMemberNames)
+            return transformer.makeJsCodeGeneratorAndDts(ir.allModules, mode)
+        }
+
+        fun compileAndTransformIrNew(): TransformResult {
+            val (generator, dts) = makeJsCodeGeneratorAndDts()
+            val out = generator.generateJsCode(relativeRequirePath = true, outJsProgram = false)
+            return TransformResult(out, dts)
+        }
+
+        fun compileAndTransformIrOld(): TransformResult {
+            val ir = lowerIr()
+            val transformer = IrModuleToJsTransformer(
+                ir.context,
+                mainCallArguments,
+                fullJs = !arguments.irDce,
+                dceJs = arguments.irDce,
+                multiModule = arguments.irPerModule,
+                relativeRequirePath = true,
+                moduleToName = ir.moduleFragmentToUniqueName
+            )
+
+            val result = transformer.generateModule(ir.allModules)
+            return TransformResult(result.outputs.values.single(), result.tsDefinitions ?: error("No ts definitions"))
+        }
+    }
+
 
     override fun doExecute(
         arguments: K2JSCompilerArguments,
@@ -301,6 +369,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
                 val outputs = jsExecutableProducer.buildExecutable(
                     multiModule = arguments.irPerModule,
+                    outJsProgram = false,
                     rebuildCallback = { rebuiltModule ->
                         messageCollector.report(INFO, "IC module builder rebuilt module [${File(rebuiltModule).name}]")
                     }
@@ -368,64 +437,15 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
             val start = System.currentTimeMillis()
 
-            val granularity = when {
-                arguments.irPerModule -> JsGenerationGranularity.PER_MODULE
-                arguments.irPerFile -> JsGenerationGranularity.PER_FILE
-                else -> JsGenerationGranularity.WHOLE_PROGRAM
-            }
             try {
-                val irFactory = when {
-                    arguments.irNewIr2Js -> IrFactoryImplForJsIC(WholeWorldStageController())
-                    else -> IrFactoryImpl
-                }
 
-                val ir = compile(
-                    module,
-                    phaseConfig,
-                    irFactory,
-                    dceRuntimeDiagnostic = RuntimeDiagnostic.resolve(
-                        arguments.irDceRuntimeDiagnostic,
-                        messageCollector
-                    ),
-                    baseClassIntoMetadata = arguments.irBaseClassInMetadata,
-                    safeExternalBoolean = arguments.irSafeExternalBoolean,
-                    safeExternalBooleanDiagnostic = RuntimeDiagnostic.resolve(
-                        arguments.irSafeExternalBooleanDiagnostic,
-                        messageCollector
-                    ),
-                    granularity = granularity,
-                    icCompatibleIr2Js = arguments.irNewIr2Js,
-                )
-
-                val compiledModule: CompilerResult = if (arguments.irNewIr2Js) {
-                    val transformer = IrModuleToJsTransformerTmp(
-                        ir.context,
-                        mainCallArguments,
-                        relativeRequirePath = true,
-                        moduleToName = ir.moduleFragmentToUniqueName
-                    )
-
-                    transformer.generateModule(
-                        ir.allModules,
-                        setOf(TranslationMode.fromFlags(arguments.irDce, arguments.irPerModule, arguments.irMinimizedMemberNames))
-                    )
+                val (outputs, tsDefinitions) = if (arguments.irNewIr2Js) {
+                    Ir2JsTransformer(arguments, module, phaseConfig, messageCollector, mainCallArguments).compileAndTransformIrNew()
                 } else {
-                    val transformer = IrModuleToJsTransformer(
-                        ir.context,
-                        mainCallArguments,
-                        fullJs = !arguments.irDce,
-                        dceJs = arguments.irDce,
-                        multiModule = arguments.irPerModule,
-                        relativeRequirePath = true,
-                        moduleToName = ir.moduleFragmentToUniqueName
-                    )
-
-                    transformer.generateModule(ir.allModules)
+                    Ir2JsTransformer(arguments, module, phaseConfig, messageCollector, mainCallArguments).compileAndTransformIrOld()
                 }
 
                 messageCollector.report(INFO, "Executable production duration: ${System.currentTimeMillis() - start}ms")
-
-                val outputs = compiledModule.outputs.values.single()
 
                 outputFile.write(outputs)
                 outputs.dependencies.forEach { (name, content) ->
@@ -433,7 +453,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 }
                 if (arguments.generateDts) {
                     val dtsFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "d.ts")!!
-                    dtsFile.writeText(compiledModule.tsDefinitions ?: error("No ts definitions"))
+                    dtsFile.writeText(tsDefinitions)
                 }
             } catch (e: CompilationException) {
                 messageCollector.report(

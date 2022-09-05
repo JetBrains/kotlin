@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR
+
 // FILE: test.kt
 
 fun foo() {
@@ -93,3 +93,28 @@ fun box() {
 // test.kt:39 box
 
 // EXPECTATIONS JS_IR
+// test.kt:34 box
+// test.kt:6 foo
+// test.kt:26 mightThrow
+// test.kt:14 foo
+// test.kt:30 mightThrow2
+// test.kt:13 foo
+// test.kt:35 box
+// test.kt:36 box
+// test.kt:6 foo
+// test.kt:26 mightThrow
+// test.kt:14 foo
+// test.kt:30 mightThrow2
+// test.kt:30 mightThrow2
+// test.kt:16 foo
+// test.kt:13 foo
+// test.kt:37 box
+// test.kt:38 box
+// test.kt:6 foo
+// test.kt:26 mightThrow
+// test.kt:26 mightThrow
+// test.kt:14 foo
+// test.kt:30 mightThrow2
+// test.kt:30 mightThrow2
+// test.kt:16 foo
+// test.kt:13 foo

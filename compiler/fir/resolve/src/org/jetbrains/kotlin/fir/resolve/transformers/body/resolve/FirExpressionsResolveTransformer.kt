@@ -605,7 +605,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                             }
                         }
                     }
-                    (leftArgument as? FirQualifiedAccess)?.let {
+                    (leftArgument.unwrapSmartcastExpression() as? FirQualifiedAccess)?.let {
                         dispatchReceiver = it.dispatchReceiver
                         extensionReceiver = it.extensionReceiver
                         contextReceiverArguments.addAll(it.contextReceiverArguments)

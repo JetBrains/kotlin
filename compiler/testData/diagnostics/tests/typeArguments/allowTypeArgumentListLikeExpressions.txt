@@ -1,4 +1,0 @@
-package
-
-public fun f(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int, /*2*/ z: () -> kotlin.Any, /*3*/ a: (kotlin.Boolean, kotlin.Boolean) -> kotlin.Unit, /*4*/ b: (kotlin.Any?) -> kotlin.Unit): kotlin.Unit
-

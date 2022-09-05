@@ -573,116 +573,11 @@ public operator fun <T : kotlin.Comparable<T>> T.rangeUntil(that: T): kotlin.ran
 
 @kotlin.SinceKotlin(version = "1.7")
 @kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.Byte.rangeUntil(to: kotlin.Byte): kotlin.ranges.IntRange
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.Byte.rangeUntil(to: kotlin.Int): kotlin.ranges.IntRange
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.Byte.rangeUntil(to: kotlin.Long): kotlin.ranges.LongRange
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.Byte.rangeUntil(to: kotlin.Short): kotlin.ranges.IntRange
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.Char.rangeUntil(to: kotlin.Char): kotlin.ranges.CharRange
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
 public operator fun kotlin.Double.rangeUntil(that: kotlin.Double): kotlin.ranges.OpenEndRange<kotlin.Double>
 
 @kotlin.SinceKotlin(version = "1.7")
 @kotlin.ExperimentalStdlibApi
 public operator fun kotlin.Float.rangeUntil(that: kotlin.Float): kotlin.ranges.OpenEndRange<kotlin.Float>
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.Int.rangeUntil(to: kotlin.Byte): kotlin.ranges.IntRange
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.Int.rangeUntil(to: kotlin.Int): kotlin.ranges.IntRange
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.Int.rangeUntil(to: kotlin.Long): kotlin.ranges.LongRange
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.Int.rangeUntil(to: kotlin.Short): kotlin.ranges.IntRange
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.Long.rangeUntil(to: kotlin.Byte): kotlin.ranges.LongRange
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.Long.rangeUntil(to: kotlin.Int): kotlin.ranges.LongRange
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.Long.rangeUntil(to: kotlin.Long): kotlin.ranges.LongRange
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.Long.rangeUntil(to: kotlin.Short): kotlin.ranges.LongRange
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.Short.rangeUntil(to: kotlin.Byte): kotlin.ranges.IntRange
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.Short.rangeUntil(to: kotlin.Int): kotlin.ranges.IntRange
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.Short.rangeUntil(to: kotlin.Long): kotlin.ranges.LongRange
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.Short.rangeUntil(to: kotlin.Short): kotlin.ranges.IntRange
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.UByte.rangeUntil(to: kotlin.UByte): kotlin.ranges.UIntRange
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.UInt.rangeUntil(to: kotlin.UInt): kotlin.ranges.UIntRange
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.ULong.rangeUntil(to: kotlin.ULong): kotlin.ranges.ULongRange
-
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline operator fun kotlin.UShort.rangeUntil(to: kotlin.UShort): kotlin.ranges.UIntRange
 
 public fun kotlin.ranges.CharProgression.reversed(): kotlin.ranges.CharProgression
 

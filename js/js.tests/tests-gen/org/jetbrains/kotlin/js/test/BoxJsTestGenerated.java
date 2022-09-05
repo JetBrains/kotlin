@@ -2101,6 +2101,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("defaultInlineClassConstructorParamInExportedFile.kt")
+        public void testDefaultInlineClassConstructorParamInExportedFile() throws Exception {
+            runTest("js/js.translator/testData/box/export/defaultInlineClassConstructorParamInExportedFile.kt");
+        }
+
+        @Test
         @TestMetadata("exportAllFile.kt")
         public void testExportAllFile() throws Exception {
             runTest("js/js.translator/testData/box/export/exportAllFile.kt");
@@ -2122,6 +2128,42 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("exportEnumClass.kt")
         public void testExportEnumClass() throws Exception {
             runTest("js/js.translator/testData/box/export/exportEnumClass.kt");
+        }
+
+        @Test
+        @TestMetadata("exportFileWithClassWithInternal.kt")
+        public void testExportFileWithClassWithInternal() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportFileWithClassWithInternal.kt");
+        }
+
+        @Test
+        @TestMetadata("exportFileWithEnumClass.kt")
+        public void testExportFileWithEnumClass() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportFileWithEnumClass.kt");
+        }
+
+        @Test
+        @TestMetadata("exportFileWithInterface.kt")
+        public void testExportFileWithInterface() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportFileWithInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("exportFileWithNestedClass.kt")
+        public void testExportFileWithNestedClass() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportFileWithNestedClass.kt");
+        }
+
+        @Test
+        @TestMetadata("exportFileWithNestedObject.kt")
+        public void testExportFileWithNestedObject() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportFileWithNestedObject.kt");
+        }
+
+        @Test
+        @TestMetadata("exportFileWithProtectedMembers.kt")
+        public void testExportFileWithProtectedMembers() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportFileWithProtectedMembers.kt");
         }
 
         @Test
@@ -2161,9 +2203,21 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("nonIndetifierModuleNameInExportedFile.kt")
+        public void testNonIndetifierModuleNameInExportedFile() throws Exception {
+            runTest("js/js.translator/testData/box/export/nonIndetifierModuleNameInExportedFile.kt");
+        }
+
+        @Test
         @TestMetadata("overriddenChainNonExportIntermediate.kt")
         public void testOverriddenChainNonExportIntermediate() throws Exception {
             runTest("js/js.translator/testData/box/export/overriddenChainNonExportIntermediate.kt");
+        }
+
+        @Test
+        @TestMetadata("overriddenChainNonExportIntermediateInExportedFile.kt")
+        public void testOverriddenChainNonExportIntermediateInExportedFile() throws Exception {
+            runTest("js/js.translator/testData/box/export/overriddenChainNonExportIntermediateInExportedFile.kt");
         }
 
         @Test
@@ -2179,6 +2233,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("overriddenExternalMethodWithSameStableNameMethodInExportedFile.kt")
+        public void testOverriddenExternalMethodWithSameStableNameMethodInExportedFile() throws Exception {
+            runTest("js/js.translator/testData/box/export/overriddenExternalMethodWithSameStableNameMethodInExportedFile.kt");
+        }
+
+        @Test
         @TestMetadata("overridenMethod.kt")
         public void testOverridenMethod() throws Exception {
             runTest("js/js.translator/testData/box/export/overridenMethod.kt");
@@ -2188,6 +2248,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("reservedModuleName.kt")
         public void testReservedModuleName() throws Exception {
             runTest("js/js.translator/testData/box/export/reservedModuleName.kt");
+        }
+
+        @Test
+        @TestMetadata("reservedModuleNameInExportedFile.kt")
+        public void testReservedModuleNameInExportedFile() throws Exception {
+            runTest("js/js.translator/testData/box/export/reservedModuleNameInExportedFile.kt");
         }
 
         @Test

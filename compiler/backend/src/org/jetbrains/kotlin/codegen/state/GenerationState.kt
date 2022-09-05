@@ -348,6 +348,8 @@ class GenerationState private constructor(
 
     val abiStability = configuration.get(JVMConfigurationKeys.ABI_STABILITY)
 
+    val noNewJavaAnnotationTargets = configuration.getBoolean(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS)
+
     val globalSerializationBindings = JvmSerializationBindings()
     var mapInlineClass: (ClassDescriptor) -> Type = { descriptor -> typeMapper.mapType(descriptor.defaultType) }
 
@@ -356,6 +358,8 @@ class GenerationState private constructor(
             TypeApproximator(module.builtIns, languageVersionSettings)
         else
             null
+
+    val oldInnerClassesLogic = configuration.getBoolean(JVMConfigurationKeys.OLD_INNER_CLASSES_LOGIC)
 
     init {
         this.interceptedBuilderFactory = builderFactory

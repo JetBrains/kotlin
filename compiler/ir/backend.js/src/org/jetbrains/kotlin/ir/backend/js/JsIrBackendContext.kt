@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -141,6 +142,7 @@ class JsIrBackendContext(
         // TODO: what is more clear way reference this getter?
         private val REFLECT_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("reflect"))
         private val JS_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("js"))
+        private val ENUMS_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("enums"))
         private val JS_POLYFILLS_PACKAGE = JS_PACKAGE_FQNAME.child(Name.identifier("polyfill"))
         private val JS_INTERNAL_PACKAGE_FQNAME = JS_PACKAGE_FQNAME.child(Name.identifier("internal"))
 
@@ -187,6 +189,11 @@ class JsIrBackendContext(
 
     override val coroutineSymbols =
         JsCommonCoroutineSymbols(symbolTable, module, this)
+
+    override val enumEntries = getIrClass(ENUMS_PACKAGE_FQNAME.child(Name.identifier("EnumEntries")))
+    override val createEnumEntries = getFunctions(ENUMS_PACKAGE_FQNAME.child(Name.identifier("enumEntries")))
+        .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == true }
+        .let { symbolTable.referenceSimpleFunction(it!!) }
 
     override val ir = object : Ir<JsIrBackendContext>(this, irModuleFragment) {
         override val symbols = object : Symbols<JsIrBackendContext>(this@JsIrBackendContext, irBuiltIns, symbolTable) {
@@ -400,5 +407,11 @@ class JsIrBackendContext(
             ?: compilationException("Provided JS code is not a js function", jsFunAnnotation)
         outlinedJsCodeFunctions[symbol] = parsedJsFunction
         return parsedJsFunction
+    }
+
+    private var irFunctionSignatureCache = hashMapOf<IrFunction, String>()
+
+    fun getFunctionSignatureFromCache(f: IrFunction): String {
+        return irFunctionSignatureCache.getOrPut(f) { calculateJsFunctionSignature(f, this) }
     }
 }

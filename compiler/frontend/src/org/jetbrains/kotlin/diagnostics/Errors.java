@@ -234,9 +234,6 @@ public interface Errors {
 
     DiagnosticFactoryForDeprecation1<PsiElement, CallableDescriptor> PROGRESSIONS_CHANGING_RESOLVE = DiagnosticFactoryForDeprecation1.create(LanguageFeature.ProgressionsChangingResolve);
 
-    DiagnosticFactory0<PsiElement> EXPRESSION_AFTER_TYPE_REFERENCE_WITHOUT_SPACING_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<PsiElement> TYPE_ARGUMENT_LIST_LIKE_EXPRESSION = DiagnosticFactory0.create(ERROR);
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Errors in declarations
@@ -861,6 +858,9 @@ public interface Errors {
     DiagnosticFactory3<PsiElement, String, String, String> OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory3<PsiElement, KotlinType, String, String> STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory4<PsiElement, KotlinType, String, String, BuilderLambdaLabelingInfo> STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY = DiagnosticFactory4.create(ERROR);
+    DiagnosticFactory2<PsiElement, Name, Name> BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<PsiElement, Name, Name> BUILDER_INFERENCE_STUB_RECEIVER = DiagnosticFactory2.create(ERROR);
+
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> NONE_APPLICABLE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> CANNOT_COMPLETE_RESOLVE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> UNRESOLVED_REFERENCE_WRONG_RECEIVER =

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -34,21 +33,12 @@ abstract class LightClassGenerationSupport {
         ConstantExpressionEvaluator(moduleDescriptor, languageVersionSettings, expression.project)
     }
 
-    internal fun canCreateUltraLightClassForFacade(files: Collection<KtFile>): Boolean = files.none { it.isScript() }
-
-    fun createUltraLightClassForFacade(
-        manager: PsiManager,
-        facadeClassFqName: FqName,
-        files: Collection<KtFile>,
-    ): KtUltraLightClassForFacade? {
-        if (!canCreateUltraLightClassForFacade(files)) return null
-
+    fun createUltraLightClassForFacade(facadeClassFqName: FqName, files: Collection<KtFile>): KtUltraLightClassForFacade {
         val filesToSupports: List<Pair<KtFile, KtUltraLightSupport>> = files.map {
             it to getUltraLightClassSupport(it)
         }
 
         return KtUltraLightClassForFacade(
-            manager,
             facadeClassFqName,
             files,
             filesToSupports
