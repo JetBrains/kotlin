@@ -6,6 +6,9 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.appendText
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createFile
 
 @JvmGradlePluginTests
 @DisplayName("KGP simple tests")
@@ -253,6 +256,19 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     @GradleTest
     internal fun kotlinDslSourceSets(gradleVersion: GradleVersion) {
         project("sourceSetsKotlinDsl", gradleVersion) {
+            build("assemble")
+        }
+    }
+
+    @DisplayName("KT-53402: ignore non project source changes")
+    @GradleTest
+    fun ignoreNonProjectSourceChanges(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            val resources = projectPath.resolve("src/main/resources").createDirectories()
+            val resourceKts = resources.resolve("resource.kts").createFile()
+            resourceKts.appendText("lkdfjgkjs invalid something")
+            build("assemble")
+            resourceKts.appendText("kajhgfkh invalid something")
             build("assemble")
         }
     }
