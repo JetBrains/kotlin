@@ -151,26 +151,14 @@ fun main(args: Array<String>) {
 
         testGroup("plugins/jvm-abi-gen/test", "plugins/jvm-abi-gen/testData") {
             testClass<AbstractCompareJvmAbiTest> {
-                model("compare", recursive = false, extension = null, targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractJvmAbiContentTest> {
-                model("content", recursive = false, extension = null, targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractCompileAgainstJvmAbiTest> {
-                model("compile", recursive = false, extension = null, targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractIrCompareJvmAbiTest> {
                 model("compare", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
             }
 
-            testClass<AbstractIrJvmAbiContentTest> {
+            testClass<AbstractJvmAbiContentTest> {
                 model("content", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
             }
 
-            testClass<AbstractIrCompileAgainstJvmAbiTest> {
+            testClass<AbstractCompileAgainstJvmAbiTest> {
                 model("compile", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
             }
         }
@@ -181,15 +169,15 @@ fun main(args: Array<String>) {
             additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_LEGACY: \"")
         ) {
             testClass<AbstractLegacyCompareJvmAbiTest> {
-                model("compare", recursive = false, extension = null, targetBackend = TargetBackend.JVM)
+                model("compare", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractLegacyJvmAbiContentTest> {
-                model("content", recursive = false, extension = null, targetBackend = TargetBackend.JVM)
+                model("content", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractLegacyCompileAgainstJvmAbiTest> {
-                model("compile", recursive = false, extension = null, targetBackend = TargetBackend.JVM)
+                model("compile", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
             }
         }
 

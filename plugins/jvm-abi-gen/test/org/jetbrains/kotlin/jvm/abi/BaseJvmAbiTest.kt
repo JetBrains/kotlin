@@ -15,13 +15,11 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
 
 abstract class BaseJvmAbiTest : TestCase() {
     private lateinit var workingDir: File
 
-    @OptIn(ExperimentalPathApi::class)
     override fun setUp() {
         super.setUp()
         workingDir = createTempDirectory(javaClass.simpleName).toFile().apply { deleteOnExit() }
@@ -82,7 +80,6 @@ abstract class BaseJvmAbiTest : TestCase() {
                 if (useLegacyAbiGen) abiOption("useLegacyAbiGen", "true") else null
             ).toTypedArray()
             destination = compilation.destinationDir.canonicalPath
-            useOldBackend = !useIrBackend
             noSourceDebugExtension =
                 directives != null && InTextDirectivesUtils.findStringWithPrefixes(directives, "// NO_SOURCE_DEBUG_EXTENSION") != null
         }
@@ -109,9 +106,6 @@ abstract class BaseJvmAbiTest : TestCase() {
             FileUtil.copyDir(compilation.javaDestinationDir, compilation.abiDir)
         }
     }
-
-    protected open val useIrBackend: Boolean
-        get() = false
 
     protected open val useLegacyAbiGen: Boolean
         get() = false

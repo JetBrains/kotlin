@@ -23,11 +23,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvmAbiTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
 
     public void testAllFilesPresentInCompile() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compile"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM, false);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compile"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
     }
 
     @TestMetadata("anonymousObject")
