@@ -359,6 +359,8 @@ class GenerationState private constructor(
         else
             null
 
+    val oldInnerClassesLogic = configuration.getBoolean(JVMConfigurationKeys.OLD_INNER_CLASSES_LOGIC)
+
     init {
         this.interceptedBuilderFactory = builderFactory
             .wrapWith(

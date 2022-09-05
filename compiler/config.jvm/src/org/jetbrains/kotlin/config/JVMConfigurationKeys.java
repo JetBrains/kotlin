@@ -162,4 +162,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> NO_NEW_JAVA_ANNOTATION_TARGETS =
             CompilerConfigurationKey.create("Do not generate Java 1.8+ targets for Kotlin annotation classes");
+
+    public static final CompilerConfigurationKey<Boolean> OLD_INNER_CLASSES_LOGIC =
+            CompilerConfigurationKey.create("Use old logic for generation of InnerClasses attributes");
 }
