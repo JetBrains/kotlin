@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.pluginIn
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -56,7 +56,7 @@ import org.jetbrains.org.objectweb.asm.tree.InsnList
 import org.jetbrains.org.objectweb.asm.tree.LdcInsnNode
 import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
 
-class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContext) : SerializationBaseContext {
+class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContext) : SerializationBaseContext, JvmIrIntrinsicExtension {
     sealed class IntrinsicType(val methodDescriptor: String) {
         object Simple : IntrinsicType(stubCallDescriptor)
 
@@ -69,35 +69,7 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
         }
     }
 
-    companion object {
-        fun intrinsicForMethod(method: IrFunction): IntrinsicMethod? {
-            if (method.fqNameWhenAvailable?.asString() != "kotlinx.serialization.SerializersKt.serializer"
-                || method.dispatchReceiverParameter != null
-                || method.typeParameters.size != 1
-                || method.valueParameters.isNotEmpty()
-            ) return null
-            val receiver = method.extensionReceiverParameter
-            return if (receiver == null)
-                ReifiedSerializerMethod(withModule = false)
-            else if (receiver.type.classFqName?.asString() == "kotlinx.serialization.modules.SerializersModule")
-                ReifiedSerializerMethod(withModule = true)
-            else null
-        }
-
-        val serializersModuleType: Type = Type.getObjectType("kotlinx/serialization/modules/SerializersModule")
-        val kTypeType: Type = AsmTypes.K_TYPE
-
-        val stubCallDescriptorWithModule = "(${serializersModuleType.descriptor}${kTypeType.descriptor})${kSerializerType.descriptor}"
-        val stubCallDescriptor = "(${kTypeType.descriptor})${kSerializerType.descriptor}"
-        const val serializersKtInternalName = "kotlinx/serialization/SerializersKt"
-        const val callMethodName = "serializer"
-        const val noCompiledSerializerMethodName = "noCompiledSerializer"
-
-        const val magicMarkerStringPrefix = "kotlinx.serialization.serializer."
-
-    }
-
-    class ReifiedSerializerMethod(private val withModule: Boolean) : IntrinsicMethod() {
+    inner class ReifiedSerializerMethod(private val withModule: Boolean) : IntrinsicMethod() {
         override fun invoke(
             expression: IrFunctionAccessExpression,
             codegen: ExpressionCodegen,
@@ -115,7 +87,7 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                     codegen.markLineNumber(expression)
                     IntrinsicType.Simple
                 }
-                SerializationJvmIrIntrinsicSupport(codegen.context).generateSerializerForType(
+                generateSerializerForType(
                     argument,
                     mv,
                     intrinsicType
@@ -126,6 +98,35 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                 return MaterialValue(codegen, kSerializerType, expression.type)
             }
         }
+    }
+
+    companion object {
+        val serializersModuleType: Type = Type.getObjectType("kotlinx/serialization/modules/SerializersModule")
+        val kTypeType: Type = AsmTypes.K_TYPE
+
+        val stubCallDescriptorWithModule = "(${serializersModuleType.descriptor}${kTypeType.descriptor})${kSerializerType.descriptor}"
+        val stubCallDescriptor = "(${kTypeType.descriptor})${kSerializerType.descriptor}"
+        const val serializersKtInternalName = "kotlinx/serialization/SerializersKt"
+        const val callMethodName = "serializer"
+        const val noCompiledSerializerMethodName = "noCompiledSerializer"
+
+        const val magicMarkerStringPrefix = "kotlinx.serialization.serializer."
+
+    }
+
+    override fun getIntrinsic(symbol: IrFunctionSymbol): IntrinsicMethod? {
+        val method = symbol.owner
+        if (method.fqNameWhenAvailable?.asString() != "kotlinx.serialization.SerializersKt.serializer"
+            || method.dispatchReceiverParameter != null
+            || method.typeParameters.size != 1
+            || method.valueParameters.isNotEmpty()
+        ) return null
+        val receiver = method.extensionReceiverParameter
+        return if (receiver == null)
+            ReifiedSerializerMethod(withModule = false)
+        else if (receiver.type.classFqName?.asString() == "kotlinx.serialization.modules.SerializersModule")
+            ReifiedSerializerMethod(withModule = true)
+        else null
     }
 
 
@@ -143,14 +144,16 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
         return module.findClassAcrossModuleDependencies(classId)?.let { jvmBackendContext.referenceClass(it) }
     }
 
-    private val currentVersion = VersionReader.getVersionsForCurrentModuleFromTrace(module, jvmBackendContext.state.bindingTrace)
-        ?.implementationVersion
+    private val currentVersion by lazy {
+        VersionReader.getVersionsForCurrentModuleFromTrace(module, jvmBackendContext.state.bindingTrace)
+            ?.implementationVersion
+    }
 
     override val runtimeHasEnumSerializerFactoryFunctions: Boolean
-        get() = currentVersion != null && currentVersion > ApiVersion.parse("1.4.0")!!
+        get() = currentVersion != null && currentVersion!! > ApiVersion.parse("1.4.0")!!
 
     private val hasNewContextSerializerSignature: Boolean
-        get() = currentVersion != null && currentVersion >= ApiVersion.parse("1.2.0")!!
+        get() = currentVersion != null && currentVersion!! >= ApiVersion.parse("1.2.0")!!
 
     private fun findTypeSerializerOrContext(argType: IrType): IrClassSymbol? =
         emptyGenerator.findTypeSerializerOrContextUnchecked(this, argType)
@@ -181,7 +184,7 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
      * We need to remove instructions from 1 to 5
      * Instructions 0, -1 -2 and -3 would be removed by inliner.
      */
-    fun rewritePluginDefinedReifiedOperationMarker(
+    override fun rewritePluginDefinedOperationMarker(
         v: InstructionAdapter,
         stubConstNull: AbstractInsnNode,
         instructions: InsnList,

@@ -66,7 +66,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         fun reportSuspendTypeUnsupported()
         fun reportNonReifiedTypeParameterWithRecursiveBoundUnsupported(typeParameterName: Name)
 
-        fun rewritePluginDefinedOperationMarker(v: InstructionAdapter, next: AbstractInsnNode, instructions: InsnList, type: KT): Boolean =
+        fun rewritePluginDefinedOperationMarker(v: InstructionAdapter, stubConstNull: AbstractInsnNode, instructions: InsnList, type: KT): Boolean =
             false
     }
 

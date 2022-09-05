@@ -288,7 +288,7 @@ open class JvmIrCodegenFactory(
             context.localDeclarationsLoweringData = mutableMapOf()
         }
         val generationExtensions = IrGenerationExtension.getInstances(state.project)
-            .mapNotNull { it.getPlatformIntrinsicExtension() as? JvmIrIntrinsicExtension }
+            .mapNotNull { it.getPlatformIntrinsicExtension(context) as? JvmIrIntrinsicExtension }
         val intrinsics by lazy { IrIntrinsicMethods(irModuleFragment.irBuiltins, context.ir.symbols) }
         context.getIntrinsic = { symbol: IrFunctionSymbol ->
             intrinsics.getIntrinsic(symbol) ?: generationExtensions.firstNotNullOfOrNull { it.getIntrinsic(symbol) }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.extensions
 
+import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
@@ -12,15 +13,12 @@ import org.jetbrains.kotlin.backend.common.extensions.IrIntrinsicExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.codegen.JvmIrIntrinsicExtension
-import org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
+import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -33,9 +31,6 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmI
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.InsnList
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -128,14 +123,20 @@ private class SerializerClassPreLowering(
     }
 }
 
+enum class SerializationIntrinsicsState {
+    NORMAL, // depends on whether we have noCompiledSerializer function in runtime
+    DISABLED, // disabled if corresponding CLI flag passed
+    FORCE_ENABLED // used for test purposes ONLY
+}
+
 open class SerializationLoweringExtension @JvmOverloads constructor(
     private val metadataPlugin: SerializationDescriptorSerializerPlugin? = null
 ) : IrGenerationExtension {
 
-    private var disableIntrinsics = false
+    private var intrinsicsState = SerializationIntrinsicsState.NORMAL
 
-    constructor(metadataPlugin: SerializationDescriptorSerializerPlugin, disableIntrinsics: Boolean) : this(metadataPlugin) {
-        this.disableIntrinsics = disableIntrinsics
+    constructor(metadataPlugin: SerializationDescriptorSerializerPlugin, intrinsicsState: SerializationIntrinsicsState) : this(metadataPlugin) {
+        this.intrinsicsState = intrinsicsState
     }
 
     override fun generate(
@@ -148,21 +149,27 @@ open class SerializationLoweringExtension @JvmOverloads constructor(
         moduleFragment.files.forEach(pass2::runOnFileInOrder)
     }
 
-    override fun getPlatformIntrinsicExtension(): IrIntrinsicExtension? {
-        return if (disableIntrinsics) null else object : JvmIrIntrinsicExtension {
-            override fun getIntrinsic(symbol: IrFunctionSymbol): IntrinsicMethod? =
-                SerializationJvmIrIntrinsicSupport.intrinsicForMethod(symbol.owner)
+    override fun getPlatformIntrinsicExtension(backendContext: BackendContext): IrIntrinsicExtension? {
+        val ctx = backendContext as? JvmBackendContext ?: return null
+        if (!canEnableIntrinsics(ctx)) return null
+        return SerializationJvmIrIntrinsicSupport(ctx)
+    }
 
-            override fun rewritePluginDefinedOperationMarker(
-                v: InstructionAdapter,
-                next: AbstractInsnNode,
-                instructions: InsnList,
-                type: IrType,
-                jvmBackendContext: JvmBackendContext
-            ): Boolean {
-                return SerializationJvmIrIntrinsicSupport(jvmBackendContext).rewritePluginDefinedReifiedOperationMarker(
-                    v, next, instructions, type
-                )
+    private fun canEnableIntrinsics(ctx: JvmBackendContext): Boolean {
+        return when (intrinsicsState) {
+            SerializationIntrinsicsState.FORCE_ENABLED -> true
+            SerializationIntrinsicsState.DISABLED -> false
+            SerializationIntrinsicsState.NORMAL -> {
+                val module = ctx.state.module
+                if (module.findClassAcrossModuleDependencies(
+                        ClassId(
+                            SerializationPackages.packageFqName,
+                            SerialEntityNames.KSERIALIZER_NAME
+                        )
+                    ) == null
+                ) return false
+                module.getPackage(SerializationPackages.packageFqName).memberScope.getFunctionNames()
+                    .any { it.asString() == SerializationJvmIrIntrinsicSupport.noCompiledSerializerMethodName }
             }
         }
     }

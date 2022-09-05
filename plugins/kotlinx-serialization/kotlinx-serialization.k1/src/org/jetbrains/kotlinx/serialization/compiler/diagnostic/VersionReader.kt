@@ -6,12 +6,15 @@
 package org.jetbrains.kotlinx.serialization.compiler.diagnostic
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.util.slicedMap.Slices
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
-import org.jetbrains.kotlinx.serialization.compiler.resolve.getClassFromSerializationPackage
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
 import java.io.File
 
 object VersionReader {
@@ -30,7 +33,12 @@ object VersionReader {
     }
 
     fun getVersionsForCurrentModule(module: ModuleDescriptor): RuntimeVersions? {
-        val markerClass = module.getClassFromSerializationPackage(SerialEntityNames.KSERIALIZER_CLASS)
+        val markerClass = module.findClassAcrossModuleDependencies(
+            ClassId(
+                SerializationPackages.packageFqName,
+                Name.identifier(SerialEntityNames.KSERIALIZER_CLASS)
+            )
+        ) ?: return null
         return CommonVersionReader.computeRuntimeVersions(markerClass.source)
     }
 

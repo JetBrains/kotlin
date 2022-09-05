@@ -42,7 +42,7 @@ class PsiInlineCodegen(
 ) : InlineCodegen<ExpressionCodegen>(
     codegen, state, signature, typeParameterMappings, sourceCompiler,
     ReifiedTypeInliner(
-        typeParameterMappings, PsiInlineIntrinsicsSupport(state, reportErrorsOn, codegen.typeSystem), codegen.typeSystem,
+        typeParameterMappings, PsiInlineIntrinsicsSupport(state, reportErrorsOn), codegen.typeSystem,
         state.languageVersionSettings, state.unifiedNullChecks
     ),
 ), CallGenerator {

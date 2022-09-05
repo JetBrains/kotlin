@@ -53,13 +53,14 @@ class SerializationComponentRegistrar : CompilerPluginRegistrar() {
         Companion.registerExtensions(this, loadDisableIntrinsic(configuration))
     }
 
-    private fun loadDisableIntrinsic(configuration: CompilerConfiguration) = configuration.get(DISABLE_INTRINSIC) ?: false
+    private fun loadDisableIntrinsic(configuration: CompilerConfiguration) =
+        if (configuration.get(DISABLE_INTRINSIC) == true) SerializationIntrinsicsState.DISABLED else SerializationIntrinsicsState.NORMAL
 
     override val supportsK2: Boolean
         get() = false
 
     companion object {
-        fun registerExtensions(extensionStorage: ExtensionStorage, disableIntrinsics: Boolean = false) = with(extensionStorage) {
+        fun registerExtensions(extensionStorage: ExtensionStorage, intrinsicsState: SerializationIntrinsicsState = SerializationIntrinsicsState.NORMAL) = with(extensionStorage) {
             // This method is never called in the IDE, therefore this extension is not available there.
             // Since IDE does not perform any serialization of descriptors, metadata written to the 'serializationDescriptorSerializer'
             // is never deleted, effectively causing memory leaks.
@@ -72,7 +73,7 @@ class SerializationComponentRegistrar : CompilerPluginRegistrar() {
 
             ExpressionCodegenExtension.registerExtension(SerializationCodegenExtension(serializationDescriptorSerializer))
             JsSyntheticTranslateExtension.registerExtension(SerializationJsExtension(serializationDescriptorSerializer))
-            IrGenerationExtension.registerExtension(SerializationLoweringExtension(serializationDescriptorSerializer, disableIntrinsics))
+            IrGenerationExtension.registerExtension(SerializationLoweringExtension(serializationDescriptorSerializer, intrinsicsState))
 
             StorageComponentContainerContributor.registerExtension(SerializationPluginComponentContainerContributor())
         }

@@ -44,7 +44,7 @@ class IrInlineIntrinsicsSupport(
         get() = classCodegen.context.state
 
     private val pluginExtensions = IrGenerationExtension.getInstances(classCodegen.context.state.project)
-        .mapNotNull { it.getPlatformIntrinsicExtension() as? JvmIrIntrinsicExtension }
+        .mapNotNull { it.getPlatformIntrinsicExtension(classCodegen.context) as? JvmIrIntrinsicExtension }
 
     override fun putClassInstance(v: InstructionAdapter, type: IrType) {
         ExpressionCodegen.generateClassInstance(v, type, classCodegen.typeMapper, wrapPrimitives = false)
@@ -127,7 +127,7 @@ class IrInlineIntrinsicsSupport(
             .report(JvmBackendErrors.TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND, typeParameterName.asString())
     }
 
-    override fun rewritePluginDefinedOperationMarker(v: InstructionAdapter, next: AbstractInsnNode, instructions: InsnList, type: IrType): Boolean {
-        return pluginExtensions.any { it.rewritePluginDefinedOperationMarker(v, next, instructions, type, classCodegen.context) }
+    override fun rewritePluginDefinedOperationMarker(v: InstructionAdapter, stubConstNull: AbstractInsnNode, instructions: InsnList, type: IrType): Boolean {
+        return pluginExtensions.any { it.rewritePluginDefinedOperationMarker(v, stubConstNull, instructions, type) }
     }
 }

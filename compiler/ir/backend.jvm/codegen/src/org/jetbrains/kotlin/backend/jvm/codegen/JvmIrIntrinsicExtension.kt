@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.extensions.IrIntrinsicExtension
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -20,12 +19,13 @@ interface JvmIrIntrinsicExtension : IrIntrinsicExtension {
     /**
      * Should return `true` if marker was processed.
      * If this method returns `false`, a regular `TYPE_OF` intrinsic would be inserted.
+     *
+     * This is plugin's responsibility to remove any calls to MagicApiIntrinsics.voidMagicApiCall and its arguments.
      */
     fun rewritePluginDefinedOperationMarker(
         v: InstructionAdapter,
-        next: AbstractInsnNode,
+        stubConstNull: AbstractInsnNode,
         instructions: InsnList,
-        type: IrType,
-        jvmBackendContext: JvmBackendContext
+        type: IrType
     ): Boolean
 }
