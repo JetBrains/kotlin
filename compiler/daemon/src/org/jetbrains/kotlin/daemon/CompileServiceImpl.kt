@@ -591,7 +591,7 @@ abstract class CompileServiceImplBase(
         k2jvmArgs.freeArgs = freeArgs
 
         val changedFiles = if (incrementalCompilationOptions.areFileChangesKnown) {
-            ChangedFiles.Known(incrementalCompilationOptions.modifiedFiles!!, incrementalCompilationOptions.deletedFiles!!)
+            ChangedFiles.Known(incrementalCompilationOptions.modifiedFiles!!.filter { allKotlinFiles.contains(it) }, incrementalCompilationOptions.deletedFiles!!)
         } else {
             ChangedFiles.Unknown()
         }
