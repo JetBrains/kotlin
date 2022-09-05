@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.descriptors.SourceElement;
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor;
 import org.jetbrains.kotlin.name.ClassId;
@@ -355,11 +354,4 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
     @Override
     public abstract String toString();
-
-    // Declared explicitly to workaround KT-18489
-    @Nullable
-    @Override
-    public String getContainingLibrary() {
-        return KotlinJvmBinaryClass.DefaultImpls.getContainingLibrary(this);
-    }
 }
