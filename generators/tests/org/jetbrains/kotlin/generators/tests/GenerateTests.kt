@@ -51,7 +51,6 @@ fun main(args: Array<String>) {
                 model("incremental/incrementalJvmCompilerOnly", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
             }
             testClass<AbstractIncrementalJvmCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM_IR))
-            testClass<AbstractIncrementalJvmOldBackendCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM))
             testClass<AbstractIncrementalFirJvmCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM_IR, excludePattern = "^.*Expect.*"))
             testClass<AbstractIncrementalFirICLightTreeJvmCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM_IR, excludePattern = "^.*Expect.*"))
             testClass<AbstractIncrementalFirLightTreeJvmCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM_IR, excludePattern = "^.*Expect.*"))
