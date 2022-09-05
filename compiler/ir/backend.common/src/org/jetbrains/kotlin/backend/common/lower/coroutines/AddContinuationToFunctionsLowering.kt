@@ -88,12 +88,14 @@ private fun transformSuspendFunction(context: CommonBackendContext, function: Ir
 
 fun IrSimpleFunction.getOrCreateFunctionWithContinuationStub(context: CommonBackendContext): IrSimpleFunction {
     return context.mapping.suspendFunctionsToFunctionWithContinuations.getOrPut(this) {
-        createSuspendFunctionStub(context)
+        createSuspendFunctionStub(context).also {
+            context.mapping.functionWithContinuationsToSuspendFunctions[it] = this
+        }
     }
 }
 
 private fun IrSimpleFunction.createSuspendFunctionStub(context: CommonBackendContext): IrSimpleFunction {
-    require(this.isSuspend)
+    require(this.isSuspend) { "$fqNameWhenAvailable should be a suspend function to create version with contunation" }
     return factory.buildFun {
         updateFrom(this@createSuspendFunctionStub)
         isSuspend = false
@@ -103,9 +105,9 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: CommonBackendCon
     }.also { function ->
         function.parent = parent
 
-        function.annotations += annotations
         function.metadata = metadata
 
+        function.copyAnnotationsFrom(this)
         function.copyAttributes(this)
         function.copyTypeParametersFrom(this)
         val substitutionMap = makeTypeParameterSubstitutionMap(this, function)

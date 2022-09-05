@@ -714,11 +714,6 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                             is IrCall -> when (value.symbol) {
                                 getContinuationSymbol -> continuationOverride ?: getContinuation().value
 
-                                symbols.coroutineLaunchpad -> getNode(
-                                        value.getValueArgument(0)!!,
-                                        continuationOverride = expressionToEdge(value.getValueArgument(1)!!).node
-                                ).value
-
                                 in arrayGetSymbols -> {
                                     val actualCallee = value.actualCallee
 

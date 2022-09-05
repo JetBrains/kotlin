@@ -72,7 +72,6 @@ internal enum class IntrinsicType {
     // Coroutines
     GET_CONTINUATION,
     RETURN_IF_SUSPENDED,
-    COROUTINE_LAUNCHPAD,
     // Interop
     INTEROP_READ_BITS,
     INTEROP_WRITE_BITS,
@@ -160,6 +159,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
      * processes it. Otherwise it returns null.
      */
     fun tryEvaluateSpecialCall(callSite: IrFunctionAccessExpression, resultSlot: LLVMValueRef?): LLVMValueRef? {
+        resultSlot.let{}
         val function = callSite.symbol.owner
         if (!function.isTypedIntrinsic) {
             return null
@@ -183,18 +183,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                         environment.calculateLifetime(initializer),
                 )
                 codegen.theUnitInstanceRef.llvm
-            }
-            IntrinsicType.COROUTINE_LAUNCHPAD -> {
-                val suspendFunctionCall = callSite.getValueArgument(0) as IrCall
-                val continuation = environment.evaluateExpression(callSite.getValueArgument(1)!!, null)
-                val suspendFunction = suspendFunctionCall.symbol.owner
-                assert(suspendFunction.isSuspend) { "Call to a suspend function expected but was ${suspendFunction.dump()}" }
-                environment.evaluateCall(suspendFunction,
-                        environment.evaluateExplicitArgs(suspendFunctionCall) + listOf(continuation),
-                        environment.calculateLifetime(suspendFunctionCall),
-                        suspendFunctionCall.superQualifierSymbol?.owner,
-                        resultSlot,
-                )
             }
             else -> null
         }
@@ -270,7 +258,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                     reportNonLoweredIntrinsic(intrinsicType)
                 IntrinsicType.INIT_INSTANCE,
                 IntrinsicType.OBJC_INIT_BY,
-                IntrinsicType.COROUTINE_LAUNCHPAD,
                 IntrinsicType.OBJC_GET_SELECTOR,
                 IntrinsicType.IMMUTABLE_BLOB ->
                     reportSpecialIntrinsic(intrinsicType)
