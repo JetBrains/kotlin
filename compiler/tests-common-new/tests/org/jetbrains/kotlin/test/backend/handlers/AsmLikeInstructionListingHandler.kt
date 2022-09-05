@@ -10,11 +10,14 @@ import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.CHECK_ASM_LIKE_INSTRUCTIONS
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.CURIOUS_ABOUT
+import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.FIR_DIFFERENCE
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.IR_DIFFERENCE
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.LOCAL_VARIABLE_TABLE
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.RENDER_ANNOTATIONS
+import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -29,11 +32,13 @@ import org.jetbrains.org.objectweb.asm.util.Printer
 import org.jetbrains.org.objectweb.asm.util.Textifier
 import org.jetbrains.org.objectweb.asm.util.TraceFieldVisitor
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
+import java.io.File
 
 class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     companion object {
         const val DUMP_EXTENSION = "asm.txt"
         const val IR_DUMP_EXTENSION = "asm.ir.txt"
+        const val FIR_DUMP_EXTENSION = "asm.fir.txt"
         const val LINE_SEPARATOR = "\n"
 
         val IGNORED_CLASS_VISIBLE_ANNOTATIONS = setOf(
@@ -382,26 +387,36 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
         if (baseDumper.isEmpty()) return
 
         val irDifference = IR_DIFFERENCE in testServices.moduleStructure.allDirectives
+        val firDifference = FIR_DIFFERENCE in testServices.moduleStructure.allDirectives
 
-        val extension = when (irDifference) {
-            false -> DUMP_EXTENSION
-            true -> when (testServices.moduleStructure.modules.first().targetBackend?.isIR) {
-                true -> IR_DUMP_EXTENSION
-                else -> DUMP_EXTENSION
-            }
+        val firstModule = testServices.moduleStructure.modules.first()
+
+        val extension = when {
+            firDifference && firstModule.frontendKind == FrontendKinds.FIR -> FIR_DUMP_EXTENSION
+            irDifference && firstModule.targetBackend?.isIR == true -> IR_DUMP_EXTENSION
+            else -> DUMP_EXTENSION
         }
 
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         val file = testDataFile.withExtension(extension)
         assertions.assertEqualsToFile(file, baseDumper.generateResultingDump())
 
+
+        val noIrDump = testDataFile.withExtension(DUMP_EXTENSION)
+        val irDump = testDataFile.withExtension(IR_DUMP_EXTENSION)
+        val firDump = testDataFile.withExtension(FIR_DUMP_EXTENSION)
+        if (firDifference) {
+            checkDifferenceDirectiveIsNotNeeded(irDump, firDump, FIR_DIFFERENCE)
+        }
         if (irDifference) {
-            val noIrDump = testDataFile.withExtension(DUMP_EXTENSION)
-            val irDump = testDataFile.withExtension(IR_DUMP_EXTENSION)
-            if (noIrDump.exists() && irDump.exists()) {
-                assertions.assertFalse(noIrDump.readText().trim() == irDump.readText().trim()) {
-                    "Dumps for IR backend and classic backend are identical. Please remove IR_DIFFERENCE directive and ${irDump.name} file"
-                }
+            checkDifferenceDirectiveIsNotNeeded(noIrDump, irDump, IR_DIFFERENCE)
+        }
+    }
+
+    private fun checkDifferenceDirectiveIsNotNeeded(baseFile: File, additionalFile: File, directiveToRemove: Directive) {
+        if (baseFile.exists() && additionalFile.exists()) {
+            assertions.assertFalse(baseFile.readText().trim() == additionalFile.readText().trim()) {
+                "Dumps for IR backend and classic backend are identical. Please remove $directiveToRemove directive and ${additionalFile.name} file"
             }
         }
     }
