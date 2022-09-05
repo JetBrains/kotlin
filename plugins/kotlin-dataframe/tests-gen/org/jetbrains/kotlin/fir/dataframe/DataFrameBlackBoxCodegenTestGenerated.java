@@ -38,8 +38,20 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
     }
 
     @Test
+    @TestMetadata("lowerManualImplicitReceiver.kt")
+    public void testLowerManualImplicitReceiver() throws Exception {
+        runTest("plugins/kotlin-dataframe/testData/box/lowerManualImplicitReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("OuterClass.kt")
     public void testOuterClass() throws Exception {
         runTest("plugins/kotlin-dataframe/testData/box/OuterClass.kt");
+    }
+
+    @Test
+    @TestMetadata("test.kt")
+    public void testTest() throws Exception {
+        runTest("plugins/kotlin-dataframe/testData/box/test.kt");
     }
 }
