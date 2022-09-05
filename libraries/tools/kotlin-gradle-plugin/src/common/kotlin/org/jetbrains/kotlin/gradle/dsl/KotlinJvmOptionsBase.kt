@@ -55,13 +55,6 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
             noJdkField = value
         }
 
-    private var useOldBackendField: kotlin.Boolean? = null
-    override var useOldBackend: kotlin.Boolean
-        get() = useOldBackendField ?: false
-        set(value) {
-            useOldBackendField = value
-        }
-
     internal open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments) {
         allWarningsAsErrorsField?.let { args.allWarningsAsErrors = it }
         suppressWarningsField?.let { args.suppressWarnings = it }
@@ -73,7 +66,6 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         jvmTarget?.let { args.jvmTarget = it }
         moduleName?.let { args.moduleName = it }
         noJdkField?.let { args.noJdk = it }
-        useOldBackendField?.let { args.useOldBackend = it }
     }
 }
 
@@ -88,7 +80,6 @@ internal fun org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments.fi
     jvmTarget = null
     moduleName = null
     noJdk = false
-    useOldBackend = false
     noStdlib = true
     noReflect = true
 }

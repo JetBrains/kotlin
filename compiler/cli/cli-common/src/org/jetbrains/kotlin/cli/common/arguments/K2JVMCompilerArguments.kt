@@ -91,7 +91,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var useIR: Boolean by FreezableVar(false)
 
-    @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-Xuse-old-backend", description = "Use the old JVM backend")
     var useOldBackend: Boolean by FreezableVar(false)
 

@@ -265,20 +265,6 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
                 arguments.useIR && !useOldBackend
             }
 
-    if (arguments.useOldBackend) {
-        messageCollector.report(
-            STRONG_WARNING,
-            "-Xuse-old-backend is deprecated and will be removed in a future release"
-        )
-        if (arguments.useIR) {
-            messageCollector.report(
-                STRONG_WARNING,
-                "Both -Xuse-ir and -Xuse-old-backend are passed. This is an inconsistent configuration. " +
-                        "The compiler will use the ${if (useIR) "JVM IR" else "old JVM"} backend"
-            )
-        }
-    }
-
     messageCollector.report(LOGGING, "Using ${if (useIR) "JVM IR" else "old JVM"} backend")
 
     put(JVMConfigurationKeys.IR, useIR)
@@ -377,7 +363,6 @@ private fun parseBackendThreads(stringValue: String, messageCollector: MessageCo
 
 fun CompilerConfiguration.configureKlibPaths(arguments: K2JVMCompilerArguments) {
     val libraries = arguments.klibLibraries ?: return
-    assert(arguments.useIR && !arguments.useOldBackend) { "Klib libraries can only be used with IR backend" }
     put(JVMConfigurationKeys.KLIB_PATHS, libraries.split(File.pathSeparator.toRegex()).filterNot(String::isEmpty))
 }
 

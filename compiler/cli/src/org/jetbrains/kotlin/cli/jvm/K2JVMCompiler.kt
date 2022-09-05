@@ -101,6 +101,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 )
             projectEnvironment.registerExtensionsFromPlugins(configuration)
 
+            if (arguments.useOldBackend) {
+                messageCollector.report(WARNING, "-Xuse-old-backend is no longer supported. Please migrate to the new JVM IR backend")
+            }
+
             if (arguments.script || arguments.expression != null) {
                 val scriptingEvaluator = ScriptEvaluationExtension.getInstances(projectEnvironment.project).find { it.isAccepted(arguments) }
                 if (scriptingEvaluator == null) {
@@ -116,6 +120,11 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 }
                 return shell.run(arguments, configuration, projectEnvironment)
             }
+        }
+
+        if (arguments.useOldBackend) {
+            messageCollector.report(ERROR, "-Xuse-old-backend is no longer supported. Please migrate to the new JVM IR backend")
+            return COMPILATION_ERROR
         }
 
         messageCollector.report(LOGGING, "Configuring the compilation environment")

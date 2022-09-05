@@ -29,10 +29,4 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      * Default value: false
      */
      var noJdk: kotlin.Boolean
-
-    /**
-     * Use the old JVM backend
-     * Default value: false
-     */
-     var useOldBackend: kotlin.Boolean
 }

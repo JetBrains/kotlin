@@ -140,7 +140,6 @@ class CompilerArgumentsContentProspectorTest {
             K2JVMCompilerArguments::noReflect,
             K2JVMCompilerArguments::javaParameters,
             K2JVMCompilerArguments::useIR,
-            K2JVMCompilerArguments::useOldBackend,
             K2JVMCompilerArguments::allowUnstableDependencies,
             K2JVMCompilerArguments::doNotClearBindingContext,
             K2JVMCompilerArguments::noCallAssertions,

@@ -151,7 +151,6 @@ internal open class GradleCompilerRunner(
                         parseCommandLineArguments(argsArray.toList(), args)
                         report(BooleanMetrics.JVM_COMPILER_IR_MODE, args.useIR)
                         report(StringMetrics.JVM_DEFAULTS, args.jvmDefault)
-                        report(StringMetrics.USE_OLD_BACKEND, args.useOldBackend.toString())
                         report(StringMetrics.USE_FIR, args.useK2.toString())
 
                         val pluginPatterns = listOf(Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_ALL_OPEN, "kotlin-allopen-.*jar"),
