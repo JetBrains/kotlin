@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.extensions
 
+import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
@@ -17,7 +18,7 @@ interface IrGenerationExtension : IrDeserializer.IrLinkerExtension {
 
     fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext)
 
-    fun getPlatformIntrinsicExtension(): IrIntrinsicExtension? = null
+    fun getPlatformIntrinsicExtension(backendContext: BackendContext): IrIntrinsicExtension? = null
 }
 
 /**
