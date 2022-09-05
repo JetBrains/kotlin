@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.kotlinNativeDist
 import org.jetbrains.kotlin.mergeManifestsByTargets
 
 if (HostManager.host == KonanTarget.MACOS_ARM64) {
-    project.configureJvmToolchain(JdkMajorVersion.JDK_17)
+    project.configureJvmToolchain(JdkMajorVersion.JDK_17_0)
 }
 
 plugins {

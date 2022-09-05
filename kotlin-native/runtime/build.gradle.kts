@@ -3,15 +3,14 @@
  * that can be found in the LICENSE file.
  */
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.bitcode.CompileToBitcode
 import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.properties.saveProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
-import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
 import org.jetbrains.kotlin.konan.file.File as KFile
+import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
 
 // These properties are used by the 'konan' plugin, thus we set them before applying it.
 val distDir: File by project
@@ -25,7 +24,7 @@ plugins {
 }
 
 if (HostManager.host == KonanTarget.MACOS_ARM64) {
-    project.configureJvmToolchain(JdkMajorVersion.JDK_17)
+    project.configureJvmToolchain(JdkMajorVersion.JDK_17_0)
 }
 
 googletest {

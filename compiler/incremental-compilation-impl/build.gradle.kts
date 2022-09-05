@@ -49,7 +49,7 @@ projectTest("testJvmICWithJdk11", parallel = true) {
     filter {
         includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerTestGenerated*")
     }
-    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11))
+    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
 }
 
 testsJar()

@@ -43,7 +43,7 @@ fun defFileToLibName(target: String, name: String) = "$target-$name"
 // endregion
 
 if (HostManager.host == KonanTarget.MACOS_ARM64) {
-    project.configureJvmToolchain(JdkMajorVersion.JDK_17)
+    project.configureJvmToolchain(JdkMajorVersion.JDK_17_0)
 }
 
 val konanTargetList: List<KonanTarget> by project

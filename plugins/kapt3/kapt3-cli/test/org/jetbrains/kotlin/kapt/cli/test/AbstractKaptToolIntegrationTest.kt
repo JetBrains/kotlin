@@ -127,7 +127,7 @@ abstract class AbstractKaptToolIntegrationTest {
     }
 
     private fun getJdk8Home(): File {
-        val homePath = System.getenv()["JDK_18"] ?: error("Can't find JDK 1.8 home")
+        val homePath = System.getenv()["JDK_1_8"] ?: System.getenv()["JDK_18"] ?: error("Can't find JDK 1.8 home, please define JDK_1_8 variable")
         return File(homePath)
     }
 }

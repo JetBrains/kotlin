@@ -343,7 +343,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                 // If the JDK that was set is not available get the JDK 11 as a default
                 service.launcherFor(object : Action<JavaToolchainSpec> {
                     override fun execute(toolchainSpec: JavaToolchainSpec) {
-                        toolchainSpec.languageVersion.set(JavaLanguageVersion.of(JdkMajorVersion.JDK_11.majorVersion))
+                        toolchainSpec.languageVersion.set(JavaLanguageVersion.of(JdkMajorVersion.JDK_11_0.majorVersion))
                     }
                 }).get()
             }

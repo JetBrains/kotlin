@@ -5,7 +5,7 @@ plugins {
     id("jps-compatible")
 }
 
-project.configureJvmToolchain(JdkMajorVersion.JDK_11)
+project.configureJvmToolchain(JdkMajorVersion.JDK_11_0)
 
 dependencies {
     testImplementation(kotlinStdlib())
@@ -179,6 +179,6 @@ val test by nativeTest("test" /* no tags */).apply {
 }
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateNativeTestsKt") {
-    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11))
+    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
     dependsOn(":compiler:generateTestData")
 }

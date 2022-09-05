@@ -18,5 +18,5 @@ sourceSets {
 }
 
 val generateIdePluginGradleFiles by generator("org.jetbrains.kotlin.generators.imltogradle.MainKt") {
-    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11))
+    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
 }

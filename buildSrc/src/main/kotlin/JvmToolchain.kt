@@ -18,11 +18,11 @@ enum class JdkMajorVersion(
     JDK_1_6(6, targetName = "1.6", overrideMajorVersion = 8),
     JDK_1_7(7, targetName = "1.7", overrideMajorVersion = 8),
     JDK_1_8(8, targetName = "1.8"),
-    JDK_9(9, overrideMajorVersion = 11),
-    JDK_10(10, mandatory = false, overrideMajorVersion = 11),
-    JDK_11(11, mandatory = false),
-    JDK_16(16, mandatory = false),
-    JDK_17(17, mandatory = false);
+    JDK_9_0(9, overrideMajorVersion = 11),
+    JDK_10_0(10, mandatory = false, overrideMajorVersion = 11),
+    JDK_11_0(11, mandatory = false),
+    JDK_16_0(16, mandatory = false),
+    JDK_17_0(17, mandatory = false);
 
     fun isMandatory(): Boolean = mandatory
 

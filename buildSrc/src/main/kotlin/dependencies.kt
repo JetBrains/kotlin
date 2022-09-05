@@ -279,7 +279,10 @@ private fun String.toMaybeVersionedJarRegex(): Regex {
     return Regex(if (hasJarExtension) escaped else "$escaped(-\\d.*)?\\.jar") // TODO: consider more precise version part of the regex
 }
 
-fun Project.firstFromJavaHomeThatExists(vararg paths: String, jdkHome: File = File(this.property("JDK_18") as String)): File? =
+fun Project.firstFromJavaHomeThatExists(
+    vararg paths: String,
+    jdkHome: File = File((this.property("JDK_1_8") ?: this.property("JDK_18") ?: error("Can't find JDK_1_8 property")) as String)
+): File? =
     paths.map { File(jdkHome, it) }.firstOrNull { it.exists() }.also {
         if (it == null)
             logger.warn("Cannot find file by paths: ${paths.toList()} in $jdkHome")

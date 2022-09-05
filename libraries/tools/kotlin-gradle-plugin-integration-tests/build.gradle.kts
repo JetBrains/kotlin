@@ -329,10 +329,10 @@ tasks.withType<Test> {
     }
 
     val jdk8Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8).map { it.metadata.installationPath.asFile.absolutePath }
-    val jdk9Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_9).map { it.metadata.installationPath.asFile.absolutePath }
-    val jdk10Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_10).map { it.metadata.installationPath.asFile.absolutePath }
-    val jdk11Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_11).map { it.metadata.installationPath.asFile.absolutePath }
-    val jdk16Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_16).map { it.metadata.installationPath.asFile.absolutePath }
+    val jdk9Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_9_0).map { it.metadata.installationPath.asFile.absolutePath }
+    val jdk10Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_10_0).map { it.metadata.installationPath.asFile.absolutePath }
+    val jdk11Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0).map { it.metadata.installationPath.asFile.absolutePath }
+    val jdk16Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_16_0).map { it.metadata.installationPath.asFile.absolutePath }
     val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").forUseAtConfigurationTime().orNull
 
     // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase
