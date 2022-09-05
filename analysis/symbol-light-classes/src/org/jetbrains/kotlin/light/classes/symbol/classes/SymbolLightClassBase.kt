@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.allowAnalysisOnEdt
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.asJava.classes.*
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.light.classes.symbol.SymbolFakeFile
+import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import javax.swing.Icon
 
 context(KtAnalysisSession)
@@ -107,6 +110,16 @@ abstract class SymbolLightClassBase protected constructor(
                     InheritanceImplUtil.isInheritor(this, baseClass, checkDeep)
         }
     }
+
+    protected open val isTopLevel: Boolean = false
+
+    private val _containingFile: PsiFile? by lazyPub {
+        val kotlinOrigin = kotlinOrigin ?: return@lazyPub null
+        val containingClass = isTopLevel.ifFalse { getOutermostClassOrObject(kotlinOrigin).toLightClass() } ?: this
+        SymbolFakeFile(kotlinOrigin, containingClass)
+    }
+
+    override fun getContainingFile(): PsiFile? = _containingFile
 
     private fun PsiClass.hasSuper(
         baseClass: PsiClass,

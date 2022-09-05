@@ -16,13 +16,11 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
-import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.light.classes.symbol.SymbolFakeFile
 import org.jetbrains.kotlin.light.classes.symbol.SymbolLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.allowLightClassesOnEdt
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
@@ -38,7 +36,6 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
-import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -49,7 +46,7 @@ internal abstract class SymbolLightClassForClassOrObject(
 ) : SymbolLightClassBase(manager),
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
 
-    protected val isTopLevel: Boolean = classOrObjectSymbol.symbolKind == KtSymbolKind.TOP_LEVEL
+    override val isTopLevel: Boolean = classOrObjectSymbol.symbolKind == KtSymbolKind.TOP_LEVEL
 
     internal val isCompanionObject: Boolean
         get() = classOrObjectSymbol.classKind == KtClassKind.COMPANION_OBJECT
@@ -156,17 +153,6 @@ internal abstract class SymbolLightClassForClassOrObject(
 
     private val KtPropertySymbol.isConst: Boolean
         get() = (this as? KtKotlinPropertySymbol)?.isConst == true
-
-    private val _containingFile: PsiFile? by lazyPub {
-
-        val kotlinOrigin = kotlinOrigin ?: return@lazyPub null
-
-        val containingClass = isTopLevel.ifFalse { getOutermostClassOrObject(kotlinOrigin).toLightClass() } ?: this
-
-        SymbolFakeFile(kotlinOrigin, containingClass)
-    }
-
-    override fun getContainingFile(): PsiFile? = _containingFile
 
     override fun getNavigationElement(): PsiElement = kotlinOrigin ?: this
 
