@@ -129,8 +129,15 @@ private class SerializerClassPreLowering(
 }
 
 open class SerializationLoweringExtension @JvmOverloads constructor(
-    val metadataPlugin: SerializationDescriptorSerializerPlugin? = null
+    private val metadataPlugin: SerializationDescriptorSerializerPlugin? = null
 ) : IrGenerationExtension {
+
+    private var disableIntrinsics = false
+
+    constructor(metadataPlugin: SerializationDescriptorSerializerPlugin, disableIntrinsics: Boolean) : this(metadataPlugin) {
+        this.disableIntrinsics = disableIntrinsics
+    }
+
     override fun generate(
         moduleFragment: IrModuleFragment,
         pluginContext: IrPluginContext
@@ -142,7 +149,7 @@ open class SerializationLoweringExtension @JvmOverloads constructor(
     }
 
     override fun getPlatformIntrinsicExtension(): IrIntrinsicExtension? {
-        return object : JvmIrIntrinsicExtension {
+        return if (disableIntrinsics) null else object : JvmIrIntrinsicExtension {
             override fun getIntrinsic(symbol: IrFunctionSymbol): IntrinsicMethod? =
                 SerializationJvmIrIntrinsicSupport.intrinsicForMethod(symbol.owner)
 
