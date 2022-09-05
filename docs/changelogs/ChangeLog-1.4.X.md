@@ -1862,7 +1862,7 @@
 
 - [`KT-27362`](https://youtrack.jetbrains.com/issue/KT-27362) Anonymous classes representing function/property references contain rarely used methods
 - [`KT-35626`](https://youtrack.jetbrains.com/issue/KT-35626) NI: Performance problem with many type parameters
-- [`KT-36047`](https://youtrack.jetbrains.com/issue/KT-36047) Compiler produces if-chain instead of switch when subject captured as variable
+- [`KT-36047`](https://youtrack.jetbrains.com/issue/KT-36047) Compiler produces if-chain instead of switch when when subject captured as variable
 - [`KT-36638`](https://youtrack.jetbrains.com/issue/KT-36638) Use 'java/lang/StringBuilder.append (C)Ljava/lang/StringBuilder;' when appending single character in JVM_IR
 - [`KT-37389`](https://youtrack.jetbrains.com/issue/KT-37389) Avoid type approximation during generation constraints with EQUALITY kind
 - [`KT-37392`](https://youtrack.jetbrains.com/issue/KT-37392) Avoid substitution and type approximation for simple calls
