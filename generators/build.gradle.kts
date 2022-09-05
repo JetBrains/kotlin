@@ -77,6 +77,7 @@ dependencies {
     testImplementation(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":js:js.tests"))
+    testImplementation(project(":kotlin-gradle-compiler-types"))
     testApiJUnit5()
 
     if (Ide.IJ()) {
@@ -97,7 +98,11 @@ val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateTe
 val generateProtoBuf by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufKt", protobufSourceSet)
 val generateProtoBufCompare by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufCompare", protobufCompareSourceSet)
 
+val generateGradleCompilerTypes by generator("org.jetbrains.kotlin.generators.arguments.GenerateGradleCompilerTypesKt") {
+    description = "Generate Kotlin compiler arguments types Gradle representation"
+}
 val generateGradleOptions by generator("org.jetbrains.kotlin.generators.arguments.GenerateGradleOptionsKt") {
+    dependsOn(generateGradleCompilerTypes)
     description = "Generate Gradle plugin compiler options"
 }
 val generateKeywordStrings by generator("org.jetbrains.kotlin.generators.frontend.GenerateKeywordStrings")

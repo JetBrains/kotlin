@@ -32,14 +32,6 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
     val apiSrcDir = File("libraries/tools/kotlin-gradle-plugin-api/src/common/kotlin")
     val srcDir = File("libraries/tools/kotlin-gradle-plugin/src/common/kotlin")
 
-    // specific Gradle types from internal compiler types
-    generateKotlinVersion(apiSrcDir, withPrinterToFile)
-    generateJvmTarget(apiSrcDir, withPrinterToFile)
-    generateJsMainFunctionExecutionMode(apiSrcDir, withPrinterToFile)
-    generateJsModuleKind(apiSrcDir, withPrinterToFile)
-    generateJsSourceMapEmbedMode(apiSrcDir, withPrinterToFile)
-    generateJsDiagnosticMode(apiSrcDir, withPrinterToFile)
-
     // common interface
     val commonInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions")
     val commonOptions = gradleOptions<CommonToolArguments>()
