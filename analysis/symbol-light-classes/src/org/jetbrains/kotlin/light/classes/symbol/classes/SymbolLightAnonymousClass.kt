@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.light.classes.symbol.SymbolFakeFile
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
@@ -128,14 +127,6 @@ internal class SymbolLightAnonymousClass(
     override fun getStub(): KotlinClassOrObjectStub<out KtClassOrObject>? = kotlinOrigin?.stub
 
     override fun isEquivalentTo(another: PsiElement?): Boolean = equals(another) //TODO
-
-    //TODO Make containing file not null for symbol without psi
-    private val _containingFile: PsiFile? by lazyPub {
-        val kotlinOrigin = kotlinOrigin ?: return@lazyPub null
-        SymbolFakeFile(kotlinOrigin, this)
-    }
-
-    override fun getContainingFile(): PsiFile? = _containingFile
 
     override fun equals(other: Any?): Boolean =
         this === other ||
