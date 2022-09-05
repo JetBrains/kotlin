@@ -171,8 +171,6 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
 
         private val irBuiltIns = context.irBuiltIns
         private val symbols = context.ir.symbols
-        private val getContinuationSymbol = symbols.getContinuation
-        private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol
         private val startOffset = functionReference.startOffset
         private val endOffset = functionReference.endOffset
         private val referencedFunction = functionReference.symbol.owner
@@ -268,18 +266,8 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                     superTypes += suspendFunctionClass.typeWith(functionParameterAndReturnTypes)
                 } else {
                     functionClass = (if (isKFunction) symbols.kFunctionN(numberOfParameters) else symbols.functionN(numberOfParameters)).owner
+                    suspendFunctionClass = null
                     superTypes += functionClass.typeWith(functionParameterAndReturnTypes)
-                    val lastParameterType = unboundFunctionParameters.lastOrNull()?.type
-                    if (lastParameterType?.classifierOrNull != continuationClassSymbol)
-                        suspendFunctionClass = null
-                    else {
-                        lastParameterType as IrSimpleType
-                        // If the last parameter is Continuation<> inherit from SuspendFunction.
-                        suspendFunctionClass = symbols.suspendFunctionN(numberOfParameters - 1).owner
-                        val suspendFunctionClassTypeParameters = functionParameterTypes.dropLast(1) +
-                                (lastParameterType.arguments.single().typeOrNull ?: irBuiltIns.anyNType)
-                        superTypes += suspendFunctionClass.symbol.typeWith(suspendFunctionClassTypeParameters)
-                    }
                 }
 
                 if (functionClass != null)
@@ -440,7 +428,10 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
             return false
         }
 
-        private fun buildInvokeMethod(superFunction: IrSimpleFunction): IrSimpleFunction {
+        private fun buildInvokeMethod(superFunction: IrSimpleFunction) =
+                buildInvokeMethodImpl(context.mapping.functionWithContinuationsToSuspendFunctions[superFunction] ?: superFunction)
+
+        private fun buildInvokeMethodImpl(superFunction: IrSimpleFunction): IrSimpleFunction {
             return IrFunctionImpl(
                     startOffset, endOffset,
                     DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,

@@ -356,6 +356,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
     val interfaceVTableEntries: List<IrSimpleFunction> by lazy {
         require(irClass.isInterface)
         irClass.simpleFunctions()
+                .map { it.getLoweredVersion() }
                 .filter { f ->
                     f.isOverridable && f.bridgeTarget == null
                             && (f.isReal || f.overriddenSymbols.any { f.needBridgeTo(it.owner) })
@@ -503,8 +504,15 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         }
     }
 
+    /**
+     * Normally, function should be already replaced. But if the function come from LazyIr, it can be not replaced.
+     */
+    fun IrSimpleFunction.getLoweredVersion() = context.mapping.suspendFunctionsToFunctionWithContinuations[this] ?: this
+
     private val overridableOrOverridingMethods: List<IrSimpleFunction>
-        get() = irClass.simpleFunctions().filter { it.isOverridableOrOverrides && it.bridgeTarget == null }
+        get() = irClass.simpleFunctions()
+                .map {it.getLoweredVersion() }
+                .filter { it.isOverridableOrOverrides && it.bridgeTarget == null }
 
     private val IrFunction.uniqueName get() = computeFunctionName()
 }

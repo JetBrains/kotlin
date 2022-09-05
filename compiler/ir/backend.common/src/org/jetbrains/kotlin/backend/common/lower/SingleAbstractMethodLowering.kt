@@ -226,7 +226,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             body = context.createIrBuilder(symbol).irBlockBody {
                 +irReturn(
                     irCall(
-                        wrappedFunctionClass.functions.single { it.name == OperatorNameConventions.INVOKE }.symbol,
+                        getSuspendFunctionWithoutContinuation(wrappedFunctionClass.functions.single { it.name == OperatorNameConventions.INVOKE }).symbol,
                         originalSuperMethod.returnType
                     ).apply {
                         dispatchReceiver = irGetField(irGet(dispatchReceiverParameter!!), field)

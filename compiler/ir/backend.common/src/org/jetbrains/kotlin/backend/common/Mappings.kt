@@ -20,6 +20,7 @@ interface Mapping {
     val capturedConstructors: Delegate<IrConstructor, IrConstructor>
     val reflectedNameAccessor: Delegate<IrClass, IrSimpleFunction>
     val suspendFunctionsToFunctionWithContinuations: Delegate<IrSimpleFunction, IrSimpleFunction>
+    val functionWithContinuationsToSuspendFunctions: Delegate<IrSimpleFunction, IrSimpleFunction>
 
     abstract class Delegate<K : IrDeclaration, V> {
         abstract operator fun get(key: K): V?
@@ -77,6 +78,7 @@ open class DefaultMapping(delegateFactory: DelegateFactory = DefaultDelegateFact
     override val capturedConstructors: Mapping.Delegate<IrConstructor, IrConstructor> = delegateFactory.newDeclarationToDeclarationMapping()
     override val reflectedNameAccessor: Mapping.Delegate<IrClass, IrSimpleFunction> = delegateFactory.newDeclarationToDeclarationMapping()
     override val suspendFunctionsToFunctionWithContinuations: Mapping.Delegate<IrSimpleFunction, IrSimpleFunction> = delegateFactory.newDeclarationToDeclarationMapping()
+    override val functionWithContinuationsToSuspendFunctions: Mapping.Delegate<IrSimpleFunction, IrSimpleFunction> = delegateFactory.newDeclarationToDeclarationMapping()
 }
 
 fun <V : Any> KMutableProperty0<V?>.getOrPut(fn: () -> V) = this.get() ?: fn().also {

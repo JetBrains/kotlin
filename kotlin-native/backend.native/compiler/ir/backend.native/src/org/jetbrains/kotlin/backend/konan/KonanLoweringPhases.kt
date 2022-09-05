@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
@@ -383,8 +384,13 @@ internal val varargPhase = makeKonanFileLoweringPhase(
         prerequisite = setOf(functionReferencePhase, defaultParameterExtentPhase, interopPhase, functionsWithoutBoundCheck)
 )
 
-internal val coroutinesPhase = makeKonanFileLoweringPhase(
-        ::NativeSuspendFunctionsLowering,
+internal val coroutinesPhase = makeKonanFileOpPhase(
+        { context, irFile ->
+            NativeSuspendFunctionsLowering(context).lower(irFile)
+            AddContinuationToNonLocalSuspendFunctionsLowering(context).lower(irFile)
+            NativeAddContinuationToFunctionCallsLowering(context).lower(irFile)
+            AddFunctionSupertypeToSuspendFunctionLowering(context).lower(irFile)
+        },
         name = "Coroutines",
         description = "Coroutines lowering",
         prerequisite = setOf(localFunctionsPhase, finallyBlocksPhase, kotlinNothingValueExceptionPhase)

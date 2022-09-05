@@ -25,6 +25,3 @@ internal inline suspend fun getCoroutineContext(): CoroutineContext =
 @TypedIntrinsic(IntrinsicType.RETURN_IF_SUSPENDED)
 @PublishedApi
 internal external suspend fun <T> returnIfSuspended(@Suppress("UNUSED_PARAMETER") argument: Any?): T
-
-@TypedIntrinsic(IntrinsicType.COROUTINE_LAUNCHPAD)
-internal external fun coroutineLaunchpad(suspendFunctionCall: Any?, continuation: Continuation<*>): Any?
