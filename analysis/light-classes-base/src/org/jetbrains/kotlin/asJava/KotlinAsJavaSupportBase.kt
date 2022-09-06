@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 
 abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) : KotlinAsJavaSupport() {
+    @Suppress("MemberVisibilityCanBePrivate")
     fun createLightFacade(file: KtFile): Pair<KtLightClassForFacade?, ModificationTracker>? {
         if (!file.facadeIsPossible()) return null
 
@@ -128,6 +129,7 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
         }
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     fun createLightClass(classOrObject: KtClassOrObject): Pair<KtLightClass?, ModificationTracker>? {
         if (classOrObject.shouldNotBeVisibleAsLightClass()) return null
 
@@ -178,6 +180,7 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
         }
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     fun createLightScript(script: KtScript): Pair<KtLightClass?, ModificationTracker>? {
         val containingFile = script.containingFile
         if (containingFile is KtCodeFragment) {
