@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.utils.minSupportedGradleVersion
 
 interface TestVersions {
     object Gradle {
-        const val G_6_7 = "6.7.1"
         const val G_6_8 = "6.8.3"
         const val G_6_9 = "6.9.2"
         const val G_7_0 = "7.0.2"

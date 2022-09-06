@@ -138,9 +138,8 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
     }
 
     private val shouldUseFileTreeKaptFilter
-        get() = isGradleVersionAtLeast(7, 5) || !isConfigurationCacheAvailable(project.gradle) && isGradleVersionAtLeast(6, 8)
+        get() = isGradleVersionAtLeast(7, 5) || !isConfigurationCacheAvailable(project.gradle)
 
-    // Filtering through FileTree and PatternFilterable works faster, but adds empty directories which is the problem for Gradle 6.7
     private class FileTreeKaptInputsFilter(val spec: KaptFilterSpec) : CachingKaptInputsFilter() {
         override fun filtered(fileCollection: FileCollection): FileCollection {
             return fileCollection.asFileTree.matching { it.include { elem -> isSatisfiedBy(elem.file) } }
