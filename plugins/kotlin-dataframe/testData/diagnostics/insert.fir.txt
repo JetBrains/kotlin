@@ -214,6 +214,20 @@ FILE: __GENERATED DECLARATIONS__.kt
     local final class 98 {
     }
     local final class 99 {
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Person>|.age: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Person>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Person>|.test: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Person>|.test: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/99|
+
     }
 FILE: __GENERATED DECLARATIONS__.kt
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Person>|.age: R|kotlin/Int|

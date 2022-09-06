@@ -235,6 +235,8 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<kotlin/Any>|.direction: R|org/jetbrains/kotlinx/dataframe/DataColumn<Direction>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<Direction>|
 
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/99|
+
     }
 FILE: __GENERATED DECLARATIONS__.kt
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Convert1>|.direction: R|kotlin/String|

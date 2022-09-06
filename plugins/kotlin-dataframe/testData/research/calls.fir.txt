@@ -1,0 +1,9 @@
+FILE: calls.kt
+    public final fun function1(): R|kotlin/Unit| {
+    }
+    public final fun function2(): R|kotlin/Unit| {
+    }
+    public final fun hello(): R|kotlin/Unit| {
+        R|/function1|()
+        R|/function2|()
+    }

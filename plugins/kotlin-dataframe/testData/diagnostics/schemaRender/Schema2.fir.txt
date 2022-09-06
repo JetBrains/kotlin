@@ -230,6 +230,8 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/95>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/95|
+
     }
     local final class 96 {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/96>|.nestedGroup: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/95>|
@@ -237,6 +239,8 @@ FILE: __GENERATED DECLARATIONS__.kt
 
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/96>|.nestedGroup: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/95>|
             public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/95>|
+
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/96|
 
     }
     local final class 97 {
@@ -252,6 +256,8 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/97>|.returnType: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/97|
+
     }
     local final class 98 {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/98>|.name: R|kotlin/String|
@@ -265,6 +271,8 @@ FILE: __GENERATED DECLARATIONS__.kt
 
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/98>|.returnType: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/98|
 
     }
     local final class 99 {
@@ -291,5 +299,7 @@ FILE: __GENERATED DECLARATIONS__.kt
 
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<*>|.group: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/96>|
             public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/96>|
+
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/99|
 
     }

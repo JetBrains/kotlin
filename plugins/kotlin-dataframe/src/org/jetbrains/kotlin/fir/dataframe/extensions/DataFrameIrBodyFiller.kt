@@ -11,10 +11,17 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.classFqName
+import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -43,10 +50,40 @@ class DataFrameFileLowering(val context: IrPluginContext) : FileLoweringPass, Ir
     override fun visitClass(declaration: IrClass): IrStatement {
         val origin = declaration.origin
         return if (origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == FirDataFrameReceiverInjector.DataFramePluginKey) {
+            declaration.transformChildren(this, null)
             declaration
         } else {
             super.visitClass(declaration)
         }
+    }
+
+    override fun visitConstructor(declaration: IrConstructor): IrStatement {
+        val origin = declaration.origin
+        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == FirDataFrameExtensionsGenerator.DataFramePlugin)) return declaration
+        declaration.body = generateBodyForDefaultConstructor(declaration)
+        return declaration
+    }
+
+    private fun generateBodyForDefaultConstructor(declaration: IrConstructor): IrBody? {
+        val type = declaration.returnType as? IrSimpleType ?: return null
+        val irBuiltIns = context.irBuiltIns
+        val delegatingAnyCall = IrDelegatingConstructorCallImpl(
+            -1,
+            -1,
+            irBuiltIns.anyType,
+            irBuiltIns.anyClass.owner.primaryConstructor?.symbol ?: return null,
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 0
+        )
+
+        val initializerCall = IrInstanceInitializerCallImpl(
+            -1,
+            -1,
+            (declaration.parent as? IrClass)?.symbol ?: return null,
+            type
+        )
+
+        return context.irFactory.createBlockBody(-1, -1, listOf(delegatingAnyCall, initializerCall))
     }
 
     override fun visitProperty(declaration: IrProperty): IrStatement {
@@ -81,6 +118,20 @@ class DataFrameFileLowering(val context: IrPluginContext) : FileLoweringPass, Ir
         getter.apply {
             body = IrBlockBodyImpl(-1, -1, listOf(returnExpression))
         }
+
         return declaration
+    }
+
+    override fun visitErrorCallExpression(expression: IrErrorCallExpression): IrExpression {
+        val origin = (expression.type.classifierOrNull?.owner as? IrClass)?.origin ?: return expression
+        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == FirDataFrameReceiverInjector.DataFramePluginKey)) {
+            return expression
+        }
+        val classFqName = expression.type.classFqName ?: return expression
+        val constructor = context
+            .referenceConstructors(ClassId(classFqName.parent(), classFqName.shortName()))
+            .single()
+        val type = expression.type
+        return IrConstructorCallImpl(-1, -1, type, constructor, 0, 0, 0)
     }
 }

@@ -1,22 +1,45 @@
-FILE: injectAccessors.kt
-    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface Cars : R|kotlin/Any| {
-        public abstract val year: R|kotlin/Int|
-            public get(): R|kotlin/Int|
+FILE: test.kt
+    package org.jetbrains.kotlinx.dataframe
+
+    public final annotation class Gen : R|kotlin/Annotation| {
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/Gen| {
+            super<R|kotlin/Any|>()
+        }
 
     }
-    public final fun Name is evaluated to age(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|kotlin/Unit| {
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
-            ^ Int(2022).R|kotlin/Int.minus|(this@R|special/anonymous|.R|/year|)
-        }
-        )
-        lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|/Name is evaluated to age|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/99.age|
+    public abstract interface Cars : R|kotlin/Any| {
     }
-    public final fun ReturnType is evaluated to Int(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|kotlin/Unit| {
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
-            ^ Int(2022).R|kotlin/Int.minus|(this@R|special/anonymous|.R|/year|)
+    public final class PropertiesScope : R|kotlin/Any| {
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/PropertiesScope| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Cars>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
+                ^ (this@R|org/jetbrains/kotlinx/dataframe/PropertiesScope.age|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/AnyCol|>|(String(age)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
+            }
+
+    }
+    @R|org/jetbrains/kotlinx/dataframe/Gen|() public final class PropertiesScope1 : R|kotlin/Any| {
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/PropertiesScope1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Cars>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+    }
+    public final fun test(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Cars>|): R|kotlin/Unit| {
+        R|kotlin/with|<R|org/jetbrains/kotlinx/dataframe/PropertiesScope|, R|kotlin/Unit|>(R|org/jetbrains/kotlinx/dataframe/PropertiesScope.PropertiesScope|(), <L> = with@fun R|org/jetbrains/kotlinx/dataframe/PropertiesScope|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|special/anonymous|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/PropertiesScope.age|
         }
         )
-        lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|/ReturnType is evaluated to Int|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/98.age|
+    }
+    public final fun test1(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Cars>|): R|kotlin/Unit| {
+        R|kotlin/with|<R|org/jetbrains/kotlinx/dataframe/PropertiesScope1|, R|kotlin/Unit|>(R|org/jetbrains/kotlinx/dataframe/PropertiesScope1.PropertiesScope1|(), <L> = with@fun R|org/jetbrains/kotlinx/dataframe/PropertiesScope1|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|special/anonymous|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/PropertiesScope1.age|
+        }
+        )
     }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe
@@ -218,27 +241,6 @@ FILE: __GENERATED DECLARATIONS__.kt
     local final class 97 {
     }
     local final class 98 {
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Cars>|.age: R|kotlin/Int|
-            public get(): R|kotlin/Int|
-
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Cars>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/98|
-
     }
     local final class 99 {
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Cars>|.age: R|kotlin/Int|
-            public get(): R|kotlin/Int|
-
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Cars>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/99|
-
     }
-FILE: __GENERATED DECLARATIONS__.kt
-    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Cars>|.year: R|kotlin/Int|
-        public get(): R|kotlin/Int|
-    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Cars>|.year: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|

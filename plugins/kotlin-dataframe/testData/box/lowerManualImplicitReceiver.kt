@@ -7,7 +7,7 @@ interface Cars
 fun manual(df: DataFrame<Cars>) {
     //val df1 = df.add("age") { 2022 }
     class `99` {
-        val ColumnsContainer<Cars>.age get() = this["age"] as DataColumn<Int>
+        val ColumnsContainer<Cars>.age get() = this["age"] <!UNCHECKED_CAST!>as DataColumn<Int><!>
         val DataRow<Cars>.age get() = this["age"] as Int
     }
     with(`99`()) {

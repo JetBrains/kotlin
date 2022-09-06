@@ -11,11 +11,11 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.dataframe.Names
 import org.jetbrains.kotlin.fir.dataframe.projectOverDataColumnType
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
@@ -31,11 +31,9 @@ import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.dataframe.annotations.DataSchema
 
@@ -195,6 +193,35 @@ class FirDataFrameExtensionsGenerator(
         }.also { firPropertySymbol.bind(it) }
     }
 
+    override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
+        return listOf(buildConstructor(context.owner.classId).symbol)
+    }
+
+    fun buildConstructor(classId: ClassId): FirConstructor {
+        val lookupTag = ConeClassLikeLookupTagImpl(classId)
+        return buildPrimaryConstructor {
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
+            moduleData = session.moduleData
+            origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
+            returnTypeRef = buildResolvedTypeRef {
+                type = ConeClassLikeTypeImpl(
+                    lookupTag,
+                    emptyArray(),
+                    isNullable = false
+                )
+            }
+            status = FirResolvedDeclarationStatusImpl(
+                Visibilities.Public,
+                Modality.FINAL,
+                EffectiveVisibility.Public
+            )
+            symbol = FirConstructorSymbol(classId)
+        }.also {
+            it.containingClassForStaticMemberAttr = lookupTag
+        }
+    }
+
+
     override fun getTopLevelClassIds(): Set<ClassId> {
         return ids
     }
@@ -215,9 +242,12 @@ class FirDataFrameExtensionsGenerator(
     }
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
-        return state[classSymbol.classId]?.let {
-            it.properties.map { Name.identifier(it.name) }.toSet()
-        } ?: emptySet()
+        val names = mutableSetOf<Name>()
+        state[classSymbol.classId]?.let {
+            it.properties.mapTo(names) { Name.identifier(it.name) }
+            names.add(SpecialNames.INIT)
+        }
+        return names
     }
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {

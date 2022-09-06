@@ -249,6 +249,8 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<kotlin/Any>|.weight: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/99|
+
     }
 FILE: __GENERATED DECLARATIONS__.kt
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Convert3>|.age: R|kotlin/Number?|

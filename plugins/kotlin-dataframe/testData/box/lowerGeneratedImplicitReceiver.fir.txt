@@ -1,22 +1,12 @@
-FILE: injectAccessors.kt
-    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface Cars : R|kotlin/Any| {
-        public abstract val year: R|kotlin/Int|
-            public get(): R|kotlin/Int|
-
+FILE: lowerGeneratedImplicitReceiver.kt
+    public abstract interface Cars : R|kotlin/Any| {
     }
     public final fun Name is evaluated to age(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|kotlin/Unit| {
         lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
-            ^ Int(2022).R|kotlin/Int.minus|(this@R|special/anonymous|.R|/year|)
+            ^ Int(2022)
         }
         )
         lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|/Name is evaluated to age|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/99.age|
-    }
-    public final fun ReturnType is evaluated to Int(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|kotlin/Unit| {
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|Cars|>(String(age), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<Cars>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
-            ^ Int(2022).R|kotlin/Int.minus|(this@R|special/anonymous|.R|/year|)
-        }
-        )
-        lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|/ReturnType is evaluated to Int|, R|<local>/df1|).R|org/jetbrains/kotlinx/dataframe/98.age|
     }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe
@@ -218,14 +208,6 @@ FILE: __GENERATED DECLARATIONS__.kt
     local final class 97 {
     }
     local final class 98 {
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Cars>|.age: R|kotlin/Int|
-            public get(): R|kotlin/Int|
-
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Cars>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-
-        public constructor(): R|org/jetbrains/kotlinx/dataframe/98|
-
     }
     local final class 99 {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Cars>|.age: R|kotlin/Int|
@@ -237,8 +219,3 @@ FILE: __GENERATED DECLARATIONS__.kt
         public constructor(): R|org/jetbrains/kotlinx/dataframe/99|
 
     }
-FILE: __GENERATED DECLARATIONS__.kt
-    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Cars>|.year: R|kotlin/Int|
-        public get(): R|kotlin/Int|
-    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Cars>|.year: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
