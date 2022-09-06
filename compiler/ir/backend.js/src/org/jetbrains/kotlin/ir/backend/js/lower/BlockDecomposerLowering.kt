@@ -449,6 +449,8 @@ class BlockDecomposerTransformer(
 
         override fun visitExpression(expression: IrExpression) = expression.apply { transformChildrenVoid() }
 
+        override fun visitBlockBody(body: IrBlockBody) = body.transform(statementTransformer, null)
+
         override fun visitGetField(expression: IrGetField): IrExpression {
             expression.transformChildrenVoid(expressionTransformer)
 
