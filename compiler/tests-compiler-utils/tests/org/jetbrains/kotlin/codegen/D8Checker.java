@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.android.tools.r8.*;
 import com.android.tools.r8.origin.PathOrigin;
+import com.android.tools.r8.utils.ExceptionDiagnostic;
 import kotlin.Pair;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.test.KtAssert;

@@ -4518,6 +4518,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("arrayDowncastingContravariant.kt")
+        public void testArrayDowncastingContravariant() throws Exception {
+            runTest("compiler/testData/codegen/box/casts/arrayDowncastingContravariant.kt");
+        }
+
+        @Test
+        @TestMetadata("arrayDowncatingInvariant.kt")
+        public void testArrayDowncatingInvariant() throws Exception {
+            runTest("compiler/testData/codegen/box/casts/arrayDowncatingInvariant.kt");
+        }
+
+        @Test
+        @TestMetadata("arrayDownctingCovariant.kt")
+        public void testArrayDownctingCovariant() throws Exception {
+            runTest("compiler/testData/codegen/box/casts/arrayDownctingCovariant.kt");
+        }
+
+        @Test
         @TestMetadata("as.kt")
         public void testAs() throws Exception {
             runTest("compiler/testData/codegen/box/casts/as.kt");

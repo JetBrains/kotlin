@@ -1093,6 +1093,12 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("kt53465.kt")
+        public void testKt53465() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/checkcast/kt53465.kt");
+        }
+
+        @Test
         @TestMetadata("noCheckcastOnDelegatingDefaultImplsCall.kt")
         public void testNoCheckcastOnDelegatingDefaultImplsCall() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/checkcast/noCheckcastOnDelegatingDefaultImplsCall.kt");
