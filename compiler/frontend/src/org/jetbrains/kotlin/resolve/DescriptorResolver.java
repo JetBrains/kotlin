@@ -64,7 +64,6 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.error.ErrorTypeKind;
 import org.jetbrains.kotlin.types.error.ErrorUtils;
 import org.jetbrains.kotlin.types.expressions.*;
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.*;
@@ -620,8 +619,7 @@ public class DescriptorResolver {
             @NotNull TypeParameterDescriptor parameter,
             @NotNull KtTypeParameter typeParameter
     ) {
-        List<KotlinType> bounds = parameter.getUpperBounds();
-        if (TypeUtilsKt.isEmptyIntersectionTypeCompatible(bounds.toArray(new KotlinTypeMarker[0]))) {
+        if (KotlinBuiltIns.isNothing(TypeIntersector.getUpperBoundsAsType(parameter))) {
             trace.report(CONFLICTING_UPPER_BOUNDS.on(typeParameter, parameter));
         }
     }

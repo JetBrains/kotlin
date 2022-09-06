@@ -426,8 +426,6 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return withAttributes(attributes.remove(CompilerConeAttributes.Exact))
     }
 
-    override fun KotlinTypeMarker.canHaveSubtypes(typeChecker: AbstractTypeChecker): Boolean? = null
-
     override fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker {
         if (this is ErrorTypeConstructor) return createErrorType(reason)
         if (this is ConeClassLikeLookupTag) return createErrorType("Not found classifier: $classId")

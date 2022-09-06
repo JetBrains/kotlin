@@ -48,6 +48,8 @@ interface KotlinResolutionStatelessCallbacks {
     fun isBuilderInferenceCall(argument: KotlinCallArgument, parameter: ValueParameterDescriptor): Boolean
     fun isApplicableCallForBuilderInference(descriptor: CallableDescriptor, languageVersionSettings: LanguageVersionSettings): Boolean
 
+    fun isOldIntersectionIsEmpty(types: Collection<KotlinType>): Boolean
+
     fun createConstraintSystemForOverloadResolution(
         constraintInjector: ConstraintInjector, builtIns: KotlinBuiltIns
     ): SimpleConstraintSystem

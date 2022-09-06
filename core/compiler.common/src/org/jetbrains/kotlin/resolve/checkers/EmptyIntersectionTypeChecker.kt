@@ -11,11 +11,10 @@ import org.jetbrains.kotlin.types.isDefinitelyEmpty
 import org.jetbrains.kotlin.types.isPossiblyEmpty
 import org.jetbrains.kotlin.types.model.*
 
-object EmptyIntersectionTypeChecker {
+internal object EmptyIntersectionTypeChecker {
     fun computeEmptyIntersectionEmptiness(
         context: TypeSystemInferenceExtensionContext,
-        types: Collection<KotlinTypeMarker>,
-        compatibilityModeEnabled: Boolean = false
+        types: Collection<KotlinTypeMarker>
     ): EmptyIntersectionTypeInfo? = with(context) {
         if (types.isEmpty()) return null
 
@@ -34,11 +33,6 @@ object EmptyIntersectionTypeChecker {
                 val secondType = types[j]
 
                 if (!mayCauseEmptyIntersection(secondType)) continue
-
-                if (compatibilityModeEnabled) {
-                    val compatibleKind = computeEmptyIntersectionEmptinessCompatible(firstType, secondType)
-                    if (compatibleKind != null) return compatibleKind else continue
-                }
 
                 val secondSubstitutedType = secondType.eraseContainingTypeParameters()
 
@@ -291,31 +285,6 @@ object EmptyIntersectionTypeChecker {
     private fun TypeSystemInferenceExtensionContext.uncaptureIfNeeded(argument: TypeArgumentMarker): TypeArgumentMarker {
         val type = argument.getType()
         return if (type is CapturedTypeMarker) type.typeConstructorProjection() else argument
-    }
-
-    private fun TypeSystemInferenceExtensionContext.computeEmptyIntersectionEmptinessCompatible(
-        firstType: KotlinTypeMarker,
-        secondType: KotlinTypeMarker
-    ): EmptyIntersectionTypeInfo? {
-        @Suppress("NAME_SHADOWING")
-        val firstType = firstType.withNullability(false)
-
-        @Suppress("NAME_SHADOWING")
-        val secondType = secondType.withNullability(false)
-
-        val firstErasedType by lazy { firstType.eraseContainingTypeParameters() }
-        val secondErasedType by lazy { secondType.eraseContainingTypeParameters() }
-
-        if (AbstractTypeChecker.areRelatedBySubtyping(this, firstErasedType, secondErasedType))
-            return null
-
-        val canBothHaveSubtypes = firstType.withNullability(false).canHaveSubtypes(AbstractTypeChecker) == true
-                && secondType.withNullability(false).canHaveSubtypes(AbstractTypeChecker) == true
-
-        if (canBothHaveSubtypes)
-            return null
-
-        return EmptyIntersectionTypeInfo(EmptyIntersectionTypeKind.COMPATIBLE, firstErasedType, secondErasedType)
     }
 }
 

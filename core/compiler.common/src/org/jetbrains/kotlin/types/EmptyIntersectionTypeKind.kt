@@ -9,11 +9,7 @@ enum class EmptyIntersectionTypeKind(val description: String) {
     MULTIPLE_CLASSES("multiple incompatible classes"),
     INCOMPATIBLE_SUPERTYPES("incompatible supertypes"),
     INCOMPATIBLE_TYPE_ARGUMENTS("incompatible type arguments"),
-    SINGLE_FINAL_CLASS("final class and interface"),
-
-    // This kind corresponds to migrated logic from old TypeIntersector
-    // Now it's used for determining types compatibility for is/as/equality checks
-    COMPATIBLE("")
+    SINGLE_FINAL_CLASS("final class and interface")
 }
 
 fun EmptyIntersectionTypeKind.isDefinitelyEmpty(): Boolean =
