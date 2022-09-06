@@ -485,7 +485,7 @@ private object CocoapodsErrorHandlingUtil {
                |        
                |        To check CocoaPods version type 'pod --version' in the terminal
                |        
-               |        To install CocoaPods execute 'sudo gem install cocoapods'
+               |        To install CocoaPods follow the instruction: https://kotlinlang.org/docs/native-cocoapods.html
                |
             """.trimMargin()
             throw IllegalStateException(message)
