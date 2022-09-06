@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.descriptors
 
 import llvm.LLVMStoreSizeOfType
+import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
@@ -507,8 +508,10 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
     /**
      * Normally, function should be already replaced. But if the function come from LazyIr, it can be not replaced.
      */
-    fun IrSimpleFunction.getLoweredVersion() = context.mapping.suspendFunctionsToFunctionWithContinuations[this] ?: this
-
+    fun IrSimpleFunction.getLoweredVersion() = when {
+        isSuspend -> this.getOrCreateFunctionWithContinuationStub(context)
+        else -> this
+    }
     private val overridableOrOverridingMethods: List<IrSimpleFunction>
         get() = irClass.simpleFunctions()
                 .map {it.getLoweredVersion() }

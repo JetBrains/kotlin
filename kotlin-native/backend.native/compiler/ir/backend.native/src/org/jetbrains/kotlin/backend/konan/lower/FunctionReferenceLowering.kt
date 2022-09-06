@@ -481,9 +481,6 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                                                 if (parameter == referencedFunction.extensionReceiverParameter
                                                         && extensionReceiverParameter != null)
                                                     irGet(extensionReceiverParameter!!)
-                                                else if (function.isSuspend && unboundIndex == valueParameters.size)
-                                                // For suspend functions the last argument is continuation and it is implicit.
-                                                    irCall(getContinuationSymbol.owner, listOf(returnType))
                                                 else
                                                     irGet(valueParameters[unboundIndex++])
                                             }

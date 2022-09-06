@@ -180,7 +180,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.appStateTracking) ?: AppStateTracking.DISABLED
     }
 
-    val mimallocUseDefaultOptions by lazy {
+
+    val mimallocUseDefaultOptions: Boolean by lazy {
         configuration.get(BinaryOptions.mimallocUseDefaultOptions) ?: false
     }
 

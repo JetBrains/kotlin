@@ -193,8 +193,8 @@ private fun mustNotInline(context: Context, irFunction: IrFunction): Boolean {
 
 private fun inferFunctionAttributes(contextUtils: ContextUtils, irFunction: IrFunction): List<LlvmFunctionAttribute> =
         mutableListOf<LlvmFunctionAttribute>().apply {
-            // suspend function can return value in case of COROUTINE_SUSPENDED.
-            if (irFunction.returnType.isNothing() && !irFunction.isSuspend) {
+            if (irFunction.returnType.isNothing()) {
+                require(!irFunction.isSuspend) { "Suspend functions should be lowered out at this point"}
                 add(LlvmFunctionAttribute.NoReturn)
             }
             if (mustNotInline(contextUtils.context, irFunction)) {
