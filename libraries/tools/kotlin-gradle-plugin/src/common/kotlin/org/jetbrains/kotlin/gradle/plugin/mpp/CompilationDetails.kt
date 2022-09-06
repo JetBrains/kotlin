@@ -50,7 +50,8 @@ interface CompilationDetails<T : KotlinCommonOptions> {
 
     fun source(sourceSet: KotlinSourceSet)
 
-    val directlyIncludedKotlinSourceSets: Set<KotlinSourceSet>
+    val directlyIncludedKotlinSourceSets: ObservableSet<KotlinSourceSet>
+    val kotlinSourceSetsClosure: ObservableSet<KotlinSourceSet>
     val defaultSourceSetName: String
 
     @Suppress("UNCHECKED_CAST")
@@ -72,7 +73,7 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
     final override val target: KotlinTarget,
     final override val compilationPurpose: String,
     createKotlinOptions: DefaultCompilationDetails<*>.() -> T
-) : CompilationDetails<T>, KotlinCompilationData<T> {
+) : AbstractCompilationDetails<T>(), KotlinCompilationData<T> {
 
     override val kotlinOptions: T by lazy { createKotlinOptions() }
 
@@ -103,8 +104,6 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
             "compileClasspath"
         )
     )
-
-    override val directlyIncludedKotlinSourceSets: MutableSet<KotlinSourceSet> = mutableSetOf()
 
     override val defaultSourceSetName: String
         get() = lowerCamelCaseName(
@@ -263,12 +262,9 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
         }
     }
 
-
-    override fun source(sourceSet: KotlinSourceSet) {
-        if (directlyIncludedKotlinSourceSets.add(sourceSet)) {
-            sourceSet.internal.withDependsOnClosure.forAll { inWithDependsOnClosure ->
-                addExactSourceSetEagerly(inWithDependsOnClosure)
-            }
+    override fun whenSourceSetAdded(sourceSet: KotlinSourceSet) {
+        sourceSet.internal.withDependsOnClosure.forAll { inWithDependsOnClosure ->
+            addExactSourceSetEagerly(inWithDependsOnClosure)
         }
     }
 
@@ -280,7 +276,12 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
             addAsCommonSources
         ) { sourceSet.kotlin }
 
+
+    private val sourceSetsAddedEagerly = hashSetOf<KotlinSourceSet>()
+
     internal fun addExactSourceSetEagerly(sourceSet: KotlinSourceSet) {
+        if (!sourceSetsAddedEagerly.add(sourceSet)) return
+
         with(target.project) {
             //TODO possibly issue with forced instantiation
             addSourcesToCompileTask(
@@ -399,7 +400,7 @@ internal open class SharedNativeCompilationDetails(
 internal open class MetadataMappedCompilationDetails<T : KotlinCommonOptions>(
     override val target: KotlinMetadataTarget,
     final override val compilationData: AbstractKotlinFragmentMetadataCompilationData<T>
-) : CompilationDetails<T> {
+) : AbstractCompilationDetails<T>() {
     override val compileDependencyFilesHolder: GradleKpmDependencyFilesHolder =
         GradleKpmDependencyFilesHolder.ofMetadataCompilationDependencies(compilationData)
 
@@ -413,7 +414,7 @@ internal open class MetadataMappedCompilationDetails<T : KotlinCommonOptions>(
     override val associateCompilations: Set<CompilationDetails<*>>
         get() = emptySet()
 
-    override fun source(sourceSet: KotlinSourceSet) {
+    override fun whenSourceSetAdded(sourceSet: KotlinSourceSet) {
         throw UnsupportedOperationException("metadata compilations have predefined sources")
     }
 
@@ -422,9 +423,6 @@ internal open class MetadataMappedCompilationDetails<T : KotlinCommonOptions>(
             it.underlyingFragment == compilationData.fragment
         }
 
-    override val directlyIncludedKotlinSourceSets: MutableSet<KotlinSourceSet>
-        get() = Collections.unmodifiableSet(hashSetOf(underlyingSourceSet))
-
     override val defaultSourceSetName: String
         get() = underlyingSourceSet.name
 }
@@ -432,7 +430,7 @@ internal open class MetadataMappedCompilationDetails<T : KotlinCommonOptions>(
 internal open class VariantMappedCompilationDetails<T : KotlinCommonOptions>(
     open val variant: GradleKpmVariantInternal,
     override val target: KotlinTarget
-) : CompilationDetails<T> {
+) : AbstractCompilationDetails<T>() {
 
     @Suppress("UNCHECKED_CAST")
     override val compilationData: KotlinCompilationData<T>
@@ -441,7 +439,7 @@ internal open class VariantMappedCompilationDetails<T : KotlinCommonOptions>(
     override val defaultSourceSetName: String
         get() = variant.unambiguousNameInProject
 
-    override fun source(sourceSet: KotlinSourceSet) {
+    override fun whenSourceSetAdded(sourceSet: KotlinSourceSet) {
         compilation.defaultSourceSet.dependsOn(sourceSet)
     }
 
@@ -462,8 +460,6 @@ internal open class VariantMappedCompilationDetails<T : KotlinCommonOptions>(
     override val kotlinDependenciesHolder: HasKotlinDependencies
         get() = variant
 
-    override val directlyIncludedKotlinSourceSets: Set<KotlinSourceSet>
-        get() = compilation.defaultSourceSet.dependsOn
 }
 
 internal open class VariantMappedCompilationDetailsWithRuntime<T : KotlinCommonOptions>(

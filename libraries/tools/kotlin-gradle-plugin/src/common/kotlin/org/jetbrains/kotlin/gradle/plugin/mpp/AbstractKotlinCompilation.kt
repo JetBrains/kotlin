@@ -16,14 +16,14 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
-import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
 import org.jetbrains.kotlin.gradle.tasks.locateTask
+import org.jetbrains.kotlin.gradle.utils.ObservableSet
 import org.jetbrains.kotlin.project.model.LanguageSettings
 import java.util.*
 
 abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     internal open val compilationDetails: CompilationDetails<T>,
-) : KotlinCompilation<T>,
+) : InternalKotlinCompilation<T>,
     HasKotlinDependencies,
     KotlinCompilationData<T> {
 
@@ -62,12 +62,11 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
         get() = compilationDetails.compileDependencyFilesHolder.dependencyFiles
         set(value) { compilationDetails.compileDependencyFilesHolder.dependencyFiles = value }
 
-    final override val kotlinSourceSets: MutableSet<KotlinSourceSet> get() =
-        when (val details = compilationDetails) {
-            is DefaultCompilationDetails -> details.directlyIncludedKotlinSourceSets // mutable in that subtype
-            // TODO deprecate mutability of this set. We shouldn't allow mutating it directly anyway;
-            else -> details.directlyIncludedKotlinSourceSets.toMutableSet()
-        }
+    final override val kotlinSourceSets: ObservableSet<KotlinSourceSet>
+        get() = compilationDetails.directlyIncludedKotlinSourceSets
+
+    override val allKotlinSourceSets: ObservableSet<KotlinSourceSet>
+        get() = compilationDetails.kotlinSourceSetsClosure
 
     final override val defaultSourceSetName: String get() = compilationDetails.defaultSourceSetName
 
@@ -111,9 +110,6 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
 
     override val owner: KotlinTarget
         get() = target
-
-    override val allKotlinSourceSets: Set<KotlinSourceSet>
-        get() = compilationDetails.directlyIncludedKotlinSourceSets.withDependsOnClosure
 
     override val relatedConfigurationNames: List<String>
         get() = compilationDetails.kotlinDependenciesHolder.relatedConfigurationNames + compileDependencyConfigurationName
