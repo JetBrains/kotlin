@@ -23,12 +23,11 @@ import org.jetbrains.kotlin.psi.*
 
 abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) : KotlinAsJavaSupport() {
     fun createLightFacade(file: KtFile): Pair<KtLightClassForFacade?, ModificationTracker>? {
-        if (file.isScript()) return null
-        if (file.isCompiled && !file.name.endsWith(".class")) return null
+        if (!file.facadeIsPossible()) return null
 
         val module = file.findModule().takeIf { facadeIsApplicable(it, file) } ?: return null
         val facadeFqName = file.javaFileFacadeFqName
-        val facadeFiles = if (file.isJvmMultifileClassFile && !file.isCompiled) {
+        val facadeFiles = if (file.canHaveAdditionalFilesInFacade()) {
             findFilesForFacade(facadeFqName, module.contentSearchScope).filter(KtFile::isJvmMultifileClassFile)
         } else {
             listOf(file)
@@ -47,6 +46,18 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
             else -> error("Source and compiled files are mixed: $facadeFiles")
         }
     }
+
+    /**
+     * lightweight applicability check
+     */
+    private fun KtFile.facadeIsPossible(): Boolean = when {
+        isCompiled && !name.endsWith(".class") -> false
+        isScript() -> false
+        canHaveAdditionalFilesInFacade() -> true
+        else -> hasTopLevelCallables()
+    }
+
+    private fun KtFile.canHaveAdditionalFilesInFacade(): Boolean = !isCompiled && isJvmMultifileClassFile
 
     protected abstract fun KtFile.findModule(): TModule
     protected abstract fun facadeIsApplicable(module: TModule, file: KtFile): Boolean
@@ -88,11 +99,17 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
 
     override fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String> {
         return findFilesForFacadeByPackage(packageFqName, scope).mapNotNullTo(mutableSetOf()) { file ->
-            file.takeIf { facadeIsApplicable(it.findModule(), file) }?.javaFileFacadeFqName?.shortName()?.asString()
+            file.takeIf { it.facadeIsPossible() }
+                ?.takeIf { facadeIsApplicable(it.findModule(), file) }
+                ?.javaFileFacadeFqName
+                ?.shortName()
+                ?.asString()
         }.toSet()
     }
 
-    private fun Collection<KtFile>.toFacadeClasses(): List<KtLightClassForFacade> = groupBy {
+    private fun Collection<KtFile>.toFacadeClasses(): List<KtLightClassForFacade> = filter {
+        it.facadeIsPossible()
+    }.groupBy {
         FacadeKey(it.javaFileFacadeFqName, it.isJvmMultifileClassFile, it.findModule())
     }.mapNotNull { (key, files) ->
         files.firstOrNull { facadeIsApplicable(key.module, it) }?.let(::getLightFacade)
