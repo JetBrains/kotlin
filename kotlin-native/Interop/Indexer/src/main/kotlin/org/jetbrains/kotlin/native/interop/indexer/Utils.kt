@@ -654,10 +654,6 @@ internal fun getHeaderId(library: NativeLibrary, header: CXFile?): HeaderId {
 }
 
 class NativeLibraryHeaders<Header>(val ownHeaders: Set<Header>, val importedHeaders: Set<Header>)
-data class CachedNativeLibraryHeaders<Header>(
-        val nativeLibraryHeaders: NativeLibraryHeaders<Header>,
-        val translationUnitsCache: TranslationUnitsCache
-)
 
 internal fun getHeaders(
         library: NativeLibrary,
@@ -688,8 +684,11 @@ class TranslationUnitsCache : Disposable {
     val unitsByBinaryFile = mutableMapOf<String, CXTranslationUnit>()
     private val mainUnits = mutableListOf<CXTranslationUnit>()
 
-    // returns created unit, in case it was not in cache
-    // return null, in case unit is already in the cache
+    /**
+     * Returns:
+     * - created unit, in case it was not in cache
+     * - null, in case unit is already in the cache
+     */
     internal fun put(index: CXIndex, info: CXIdxImportedASTFileInfo): CXTranslationUnit? {
         val canonicalPath: String = info.file!!.canonicalPath
         if (unitsByBinaryFile.contains(canonicalPath)) {
@@ -701,8 +700,9 @@ class TranslationUnitsCache : Disposable {
         }
     }
 
-    // Should AST file contain declarations from nested headers, make both headers to refer to PCM file.
-    // This allows easy AST files filtering with `headerFilter` directive
+    /**
+     * Should AST file contain declarations from nested headers, this fun makes both headers to refer to PCM file.
+     */
     internal fun duplicateEntryForInclude(includer: String, includee: String) {
         unitsByHeaderFile[includer]?.let {
             unitsByHeaderFile[includee] = it
