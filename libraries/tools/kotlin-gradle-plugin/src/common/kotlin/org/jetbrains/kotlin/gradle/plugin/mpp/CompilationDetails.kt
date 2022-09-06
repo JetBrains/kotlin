@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.*
 import org.jetbrains.kotlin.gradle.plugin.sources.android.kotlinAndroidSourceSetLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
-import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
@@ -267,7 +267,7 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
     override fun source(sourceSet: KotlinSourceSet) {
         if (directlyIncludedKotlinSourceSets.add(sourceSet)) {
             target.project.whenEvaluated {
-                addExactSourceSetsEagerly(sourceSet.withDependsOnClosure)
+                addExactSourceSetsEagerly(sourceSet.internal.withDependsOnClosure)
             }
         }
     }
@@ -388,7 +388,7 @@ internal open class SharedNativeCompilationDetails(
             val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(project, defaultSourceSet).toMutableSet().apply {
                 // TODO: implement proper dependsOn/refines compiler args for Kotlin/Native and pass the dependsOn klibs separately;
                 //       But for now, those dependencies don't have any special semantics, so passing all them as friends works, too
-                addAll(defaultSourceSet.dependsOnClosure)
+                addAll(defaultSourceSet.internal.dependsOnClosure)
             }
             project.files(friendSourceSets.mapNotNull { project.getMetadataCompilationForSourceSet(it)?.output?.classesDirs })
         })

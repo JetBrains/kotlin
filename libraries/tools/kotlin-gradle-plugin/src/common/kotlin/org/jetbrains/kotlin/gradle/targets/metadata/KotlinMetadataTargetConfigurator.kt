@@ -263,7 +263,7 @@ class KotlinMetadataTargetConfigurator :
              * See also: [buildKotlinProjectStructureMetadata], where these dependencies must be included into the source set exported deps.
              */
             if (isSharedNativeCompilation) {
-                sourceSet.withDependsOnClosure.forEach { hierarchySourceSet ->
+                sourceSet.internal.withDependsOnClosure.forEach { hierarchySourceSet ->
                     apiElementsConfiguration.extendsFrom(
                         configurations.sourceSetDependencyConfigurationByScope(
                             hierarchySourceSet,
@@ -447,7 +447,7 @@ class KotlinMetadataTargetConfigurator :
         val sourceSet = compilation.defaultSourceSet
 
         val dependsOnCompilationOutputs = lazy {
-            sourceSet.withDependsOnClosure.mapNotNull { hierarchySourceSet ->
+            sourceSet.internal.withDependsOnClosure.mapNotNull { hierarchySourceSet ->
                 val dependencyCompilation = project.getMetadataCompilationForSourceSet(hierarchySourceSet)
                 dependencyCompilation?.output?.classesDirs.takeIf { hierarchySourceSet != sourceSet }
             }
@@ -574,7 +574,7 @@ internal fun isSharedNativeSourceSet(project: Project, sourceSet: KotlinSourceSe
 }
 
 internal fun dependsOnClosureWithInterCompilationDependencies(project: Project, sourceSet: KotlinSourceSet): Set<KotlinSourceSet> =
-    sourceSet.dependsOnClosure.toMutableSet().apply {
+    sourceSet.internal.dependsOnClosure.toMutableSet().apply {
         addAll(getVisibleSourceSetsFromAssociateCompilations(project, sourceSet))
     }
 

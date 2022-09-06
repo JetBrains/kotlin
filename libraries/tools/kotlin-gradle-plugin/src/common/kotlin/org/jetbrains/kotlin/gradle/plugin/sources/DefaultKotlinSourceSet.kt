@@ -222,12 +222,16 @@ internal fun KotlinSourceSet.disambiguateName(simpleName: String): String {
 internal fun createDefaultSourceDirectorySet(project: Project, name: String?): SourceDirectorySet =
     project.objects.sourceDirectorySet(name!!, name)
 
-@Deprecated("Use InternalKotlinSourceSet.dependsOnClosure instead")
+@Suppress("Unused") // Still part of public API
+@Deprecated("Use InternalKotlinSourceSet.dependsOnClosure instead. Will be removed in Kotlin 1.9")
 val KotlinSourceSet.dependsOnClosure: Set<KotlinSourceSet> get() = this.internal.dependsOnClosure
 
-@Deprecated("Use InternalKotlinSourceSet.withDependsOnClosure instead")
+@Suppress("Unused") // Still part of public API
+@Deprecated("Use InternalKotlinSourceSet.withDependsOnClosure instead. Will be removed in Kotlin 1.9")
 val KotlinSourceSet.withDependsOnClosure: Set<KotlinSourceSet> get() = this.internal.withDependsOnClosure
 
+@Suppress("Unused") // Still part of public API
+@Deprecated("Use InternalKotlinSourceSet.withDependsOnClosure instead. Will be removed in Kotlin 1.9")
 val Iterable<KotlinSourceSet>.dependsOnClosure: Set<KotlinSourceSet>
     get() = flatMap { it.internal.dependsOnClosure }.toSet() - this.toSet()
 

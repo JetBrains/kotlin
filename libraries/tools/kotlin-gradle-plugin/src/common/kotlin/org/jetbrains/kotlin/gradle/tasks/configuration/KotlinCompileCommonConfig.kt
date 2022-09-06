@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.AbstractKotlinFragmentMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinMetadataCompilationData
-import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import java.io.File
 
@@ -38,7 +38,7 @@ internal class KotlinCompileCommonConfig(
                 is KotlinCompilation<*> -> {
                     val defaultKotlinSourceSet: KotlinSourceSet = compilation.defaultSourceSet
                     val metadataTarget = compilation.owner as KotlinTarget
-                    defaultKotlinSourceSet.dependsOnClosure
+                    defaultKotlinSourceSet.internal.dependsOnClosure
                         .mapNotNull { sourceSet -> metadataTarget.compilations.findByName(sourceSet.name)?.output?.classesDirs }
                         .flatten()
                 }
