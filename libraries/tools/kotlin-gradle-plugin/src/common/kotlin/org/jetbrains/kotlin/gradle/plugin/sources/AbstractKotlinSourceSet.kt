@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources
 
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSet
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
@@ -15,6 +16,7 @@ abstract class AbstractKotlinSourceSet : InternalKotlinSourceSet {
     private val dependsOnImpl = MutableObservableSet<KotlinSourceSet>()
     private val dependsOnClosureImpl = MutableObservableSet<KotlinSourceSet>()
     private val withDependsOnClosureImpl = MutableObservableSet<KotlinSourceSet>(this)
+    private val compilationsImpl = MutableObservableSet<KotlinCompilation<*>>()
 
     final override val dependsOn: ObservableSet<KotlinSourceSet>
         get() = dependsOnImpl
@@ -24,6 +26,9 @@ abstract class AbstractKotlinSourceSet : InternalKotlinSourceSet {
 
     final override val withDependsOnClosure: ObservableSet<KotlinSourceSet>
         get() = withDependsOnClosureImpl
+
+    override val compilations: ObservableSet<KotlinCompilation<*>>
+        get() = compilationsImpl
 
     final override fun dependsOn(other: KotlinSourceSet) {
         if (other == this) return
@@ -46,5 +51,9 @@ abstract class AbstractKotlinSourceSet : InternalKotlinSourceSet {
     }
 
     protected open fun afterDependsOnAdded(other: KotlinSourceSet) = Unit
+
+    final override fun addCompilation(compilation: KotlinCompilation<*>) {
+        compilationsImpl.add(compilation)
+    }
 }
 

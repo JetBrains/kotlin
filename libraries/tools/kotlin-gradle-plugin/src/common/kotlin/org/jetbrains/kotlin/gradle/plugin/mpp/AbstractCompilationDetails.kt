@@ -32,6 +32,7 @@ abstract class AbstractCompilationDetails<T : KotlinCommonOptions> : Compilation
         directlyIncludedKotlinSourceSetsImpl.add(sourceSet)
         sourceSet.internal.withDependsOnClosure.forAll { withDependsOn ->
             kotlinSourceSetsClosureImpl.add(withDependsOn)
+            withDependsOn.internal.addCompilation(compilation)
         }
 
         whenSourceSetAdded(sourceSet)
