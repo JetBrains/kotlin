@@ -99,6 +99,7 @@ dependencies {
         functionalTestImplementation("com.github.gundy:semver4j:0.16.4:nodeps") {
             exclude(group = "*")
         }
+        functionalTestImplementation("org.reflections:reflections:0.10.2")
     }
 
     testCompileOnly(project(":compiler"))

@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.project.model.LanguageSettings
+import org.jetbrains.kotlin.tooling.core.closure
+import org.jetbrains.kotlin.tooling.core.withClosure
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -234,16 +236,10 @@ class SourceSetCompilationDsl {
     }
 }
 
-class MockKotlinSourceSet(private val name: String) : KotlinSourceSet {
+class MockKotlinSourceSet(private val name: String) : AbstractKotlinSourceSet() {
     override fun getName(): String = name
 
-    override val dependsOn: MutableSet<KotlinSourceSet> = mutableSetOf()
-
     override val requiresVisibilityOf: MutableSet<KotlinSourceSet> = mutableSetOf()
-
-    override fun dependsOn(other: KotlinSourceSet) {
-        dependsOn += other
-    }
 
     override fun requiresVisibilityOf(other: KotlinSourceSet) {
         requiresVisibilityOf += other

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.plugin.sources.AbstractKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.createDefaultSourceDirectorySet
 import javax.inject.Inject
 
@@ -22,7 +23,7 @@ abstract class FragmentMappedKotlinSourceSet @Inject constructor(
     private val sourceSetName: String,
     private val project: Project,
     internal val underlyingFragment: GradleKpmFragment
-) : KotlinSourceSet {
+) : AbstractKotlinSourceSet() {
     val displayName: String
         get() = sourceSetName
 
@@ -69,18 +70,13 @@ abstract class FragmentMappedKotlinSourceSet @Inject constructor(
     override fun dependencies(configure: Action<KotlinDependencyHandler>) =
         underlyingFragment.dependencies(configure)
 
-    override fun dependsOn(other: KotlinSourceSet) {
+    override fun afterDependsOnAdded(other: KotlinSourceSet) {
         if (other !is FragmentMappedKotlinSourceSet) {
             throw InvalidUserDataException("Could set up dependsOn relationship with an unknown source set $other")
         }
         val otherFragment = other.underlyingFragment
         underlyingFragment.refines(otherFragment)
     }
-
-    override val dependsOn: Set<KotlinSourceSet>
-        get() = project.kotlinExtension.sourceSets.filter {
-            it is FragmentMappedKotlinSourceSet && it.underlyingFragment in underlyingFragment.declaredRefinesDependencies
-        }.toSet()
 
     override fun toString(): String = "source set $name"
 
