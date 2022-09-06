@@ -56,7 +56,6 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
-import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.error.ErrorScope
@@ -551,9 +550,9 @@ class TypeResolver(
 
     private fun getScopeForTypeParameter(c: TypeResolutionContext, typeParameterDescriptor: TypeParameterDescriptor): MemberScope {
         return when {
-            c.checkBounds -> intersectWrappedTypes(typeParameterDescriptor.upperBounds).memberScope
+            c.checkBounds -> TypeIntersector.getUpperBoundsAsType(typeParameterDescriptor).memberScope
             else -> LazyScopeAdapter {
-                intersectWrappedTypes(typeParameterDescriptor.upperBounds).memberScope
+                TypeIntersector.getUpperBoundsAsType(typeParameterDescriptor).memberScope
             }
         }
     }
