@@ -1188,11 +1188,17 @@ fun buildNativeIndexImpl(index: NativeIndexImpl): IndexerResult {
 
 private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH {
     withIndex { index ->
+        val errors = mutableListOf<Diagnostic>()
         val translationUnit = nativeIndex.library.copyWithArgsForPCH().parse(
                 index,
-                options = CXTranslationUnit_DetailedPreprocessingRecord or CXTranslationUnit_ForSerialization
+                options = CXTranslationUnit_DetailedPreprocessingRecord or CXTranslationUnit_ForSerialization,
+                diagnosticHandler = { if (it.isError()) errors.add(it) }
         )
         try {
+            if (errors.isNotEmpty()) {
+                val errorMessage = errors.take(10).joinToString("\n") { it.format }
+                throw Error(errorMessage)
+            }
             translationUnit.ensureNoCompileErrors()
 
             val compilation = nativeIndex.library.withPrecompiledHeader(translationUnit)
