@@ -63,6 +63,10 @@ fun KonanTarget.supportsMimallocAllocator(): Boolean =
         is KonanTarget.ANDROID_X86, is KonanTarget.ANDROID_ARM32 -> false // aren't tested.
         is KonanTarget.LINUX_MIPS32, is KonanTarget.LINUX_MIPSEL32 -> false // need linking with libatomic.
         is KonanTarget.WASM32, is KonanTarget.ZEPHYR -> false // likely not supported
+        // Funny thing is we can neither access WATCHOS_DEVICE_ARM64, nor omit it explicitly due to the
+        // build's quirks. Workaround by using else clause.
+        // TODO: Add explicit WATCHOS_DEVICE_ARM64 after compiler update.
+        else -> false
     }
 
 fun KonanTarget.supportsLibBacktrace(): Boolean =
@@ -71,6 +75,7 @@ fun KonanTarget.supportsLibBacktrace(): Boolean =
                 (this.family == Family.LINUX && this.architecture !in listOf(Architecture.MIPS32, Architecture.MIPSEL32)) ||
                 this.family == Family.ANDROID
 
+// TODO: Add explicit WATCHOS_DEVICE_ARM64 after compiler update.
 fun KonanTarget.supportsCoreSymbolication(): Boolean =
         this in listOf(
                 KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64, KonanTarget.IOS_X64,
@@ -117,6 +122,7 @@ fun KonanTarget.supports64BitMulOverflow(): Boolean = when (this) {
     else -> true
 }
 
+// TODO: Add explicit WATCHOS_DEVICE_ARM64 after compiler update.
 fun KonanTarget.supportsIosCrashLog(): Boolean = when (this) {
     KonanTarget.IOS_ARM32 -> true
     KonanTarget.IOS_ARM64 -> true

@@ -21,6 +21,7 @@ excludedFunctions = acl_valid_link_np pfctlinput profil unwhiteout zopen getdire
                     getcontext makecontext setcontext swapcontext
 excludedFunctions.watchos_arm32 = longjmperror
 excludedFunctions.watchos_arm64 = longjmperror
+excludedFunctions.watchos_device_arm64 = longjmperror
 excludedFunctions.watchos_simulator_arm64 = longjmperror \
     openat_dprotected_np mkfifoat mknodat openat_authenticated_np
 excludedFunctions.watchos_x64 = openat_dprotected_np mkfifoat mknodat openat_authenticated_np
