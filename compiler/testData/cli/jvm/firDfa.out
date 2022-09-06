@@ -1,7 +1,4 @@
 warning: ATTENTION!
  This build uses experimental K2 compiler:
   -Xuse-k2
-compiler/testData/cli/jvm/firDfa.kt:3:10: warning: unnecessary non-null assertion (!!) on a non-null receiver of type kotlin/String
-        x!!.length
-         ^
 OK

@@ -257,7 +257,6 @@ enum class LanguageFeature(
     IgnoreNullabilityForErasedValueParameters(KOTLIN_1_8, kind = BUG_FIX),
     ForbidUsingExtensionPropertyTypeParameterInDelegate(KOTLIN_1_8, kind = BUG_FIX),
     SynchronizedSuspendError(KOTLIN_1_8),
-    EnableDfaWarningsInK2(KOTLIN_1_8, kind = OTHER), // KT-50965
     ReportNonVarargSpreadOnGenericCalls(KOTLIN_1_8, kind = BUG_FIX), // KT-48162
     RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_8, kind = BUG_FIX),
     RangeUntilOperator(KOTLIN_1_8), // KT-15613
@@ -284,6 +283,7 @@ enum class LanguageFeature(
     ModifierNonBuiltinSuspendFunError(KOTLIN_1_9),
     BreakContinueInInlineLambdas(KOTLIN_1_9, defaultState = State.ENABLED), // KT-1436
     EnumEntries(KOTLIN_1_9, sinceApiVersion = ApiVersion.KOTLIN_1_8, defaultState = State.DISABLED), // KT-48872
+    EnableDfaWarningsInK2(KOTLIN_1_9, kind = OTHER), // KT-50965
 
     // Disabled for indefinite time. See KT-48535 and related discussion
     ApproximateIntegerLiteralTypesInReceiverPosition(sinceVersion = null),
