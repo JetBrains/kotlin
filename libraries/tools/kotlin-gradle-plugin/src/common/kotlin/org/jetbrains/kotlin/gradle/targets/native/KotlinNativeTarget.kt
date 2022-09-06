@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isNativeShared
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.variantsContainingFragment
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.*
 import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
@@ -175,18 +176,14 @@ internal fun getHostSpecificFragments(
 )
 
 internal fun getHostSpecificSourceSets(project: Project): Set<KotlinSourceSet> {
-    val compilationsBySourceSet = CompilationSourceSetUtil.compilationsBySourceSets(project).mapValues { (_, compilations) ->
-        compilations.filter { it !is KotlinMetadataCompilation<*> }
-    }
-
     return getHostSpecificElements(
         project.kotlinExtension.sourceSets,
         isNativeShared = { sourceSet ->
-            val compilations = compilationsBySourceSet[sourceSet].orEmpty()
+            val compilations = sourceSet.internal.compilations
             compilations.isNotEmpty() && compilations.all { it.platformType == KotlinPlatformType.native }
         },
         getKonanTargets = { sourceSet ->
-            compilationsBySourceSet[sourceSet].orEmpty()
+            sourceSet.internal.compilations
                 .filterIsInstance<KotlinNativeCompilation>()
                 .mapTo(mutableSetOf()) { it.konanTarget }
         }

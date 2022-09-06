@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.allLeaves
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil.compilationsBySourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 
 internal fun Project.getCommonizerTarget(sourceSet: KotlinSourceSet): CommonizerTarget? {
-    val allCompilationLeafTargets = compilationsBySourceSets(this)[sourceSet].orEmpty()
+    val allCompilationLeafTargets = sourceSet.internal.compilations
         .filter { compilation -> compilation !is KotlinMetadataCompilation }
         .map { compilation -> getCommonizerTarget(compilation) ?: return null }
         .allLeaves()

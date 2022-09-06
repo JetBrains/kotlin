@@ -368,7 +368,7 @@ internal fun requestedDependencies(
             project.configurations.sourceSetDependencyConfigurationByScope(sourceSet, scope).incoming.dependencies
         }
 
-    val otherContributingSourceSets = dependsOnClosureWithInterCompilationDependencies(project, sourceSet)
+    val otherContributingSourceSets = dependsOnClosureWithInterCompilationDependencies(sourceSet)
     return listOf(sourceSet, *otherContributingSourceSets.toTypedArray()).flatMap(::collectScopedDependenciesFromSourceSet)
 }
 

@@ -384,7 +384,7 @@ internal open class SharedNativeCompilationDetails(
     override val friendArtifacts: FileCollection
         get() = super.friendArtifacts.plus(run {
             val project = target.project
-            val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(project, defaultSourceSet).toMutableSet().apply {
+            val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(defaultSourceSet).toMutableSet().apply {
                 // TODO: implement proper dependsOn/refines compiler args for Kotlin/Native and pass the dependsOn klibs separately;
                 //       But for now, those dependencies don't have any special semantics, so passing all them as friends works, too
                 addAll(defaultSourceSet.internal.dependsOnClosure)
@@ -564,7 +564,7 @@ internal class MetadataCompilationDetails(target: KotlinTarget, name: String) :
     override val friendArtifacts: FileCollection
         get() = super.friendArtifacts.plus(run {
             val project = target.project
-            val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(target.project, defaultSourceSet)
+            val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(defaultSourceSet)
             project.files(friendSourceSets.mapNotNull { target.compilations.findByName(it.name)?.output?.classesDirs })
         })
 }

@@ -131,7 +131,6 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
 
         val extension = project.multiplatformExtensionOrNull
             ?: project.kotlinExtension
-            ?: return emptyList()
 
         val targets = when (extension) {
             is KotlinMultiplatformExtension -> extension.targets.filter { it.name != KotlinMultiplatformPlugin.METADATA_TARGET_NAME }
@@ -219,7 +218,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
         if (addInferredSourceSetVisibilityAsExplicit) {
             project.kotlinExtension.sourceSets.forEach { sourceSet ->
                 val fragment = fragmentByName(sourceSet.name)
-                getVisibleSourceSetsFromAssociateCompilations(project, sourceSet).forEach { dependency ->
+                getVisibleSourceSetsFromAssociateCompilations(sourceSet).forEach { dependency ->
                     val dependencyFragment = fragmentByName(dependency.name)
                     fragment.declaredModuleDependencies.add(KpmModuleDependency(dependencyFragment.containingModule.moduleIdentifier))
                 }

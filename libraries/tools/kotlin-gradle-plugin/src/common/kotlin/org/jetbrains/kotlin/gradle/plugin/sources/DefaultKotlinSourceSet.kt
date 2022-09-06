@@ -148,8 +148,7 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
         return getDependenciesTransformation(scope)
     }
 
-    fun getAdditionalVisibleSourceSets(): List<KotlinSourceSet> =
-        getVisibleSourceSetsFromAssociateCompilations(project, this)
+    fun getAdditionalVisibleSourceSets(): List<KotlinSourceSet> = getVisibleSourceSetsFromAssociateCompilations(this)
 
     internal fun getDependenciesTransformation(scope: KotlinDependencyScope): Iterable<MetadataDependencyTransformation> {
         val metadataDependencyResolutionByModule =
