@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
- class LLFirBuiltinsSessionFactory(
+class LLFirBuiltinsSessionFactory(
     private val project: Project,
 ) {
     private val builtInTypes = BuiltinTypes() // TODO should be platform-specific

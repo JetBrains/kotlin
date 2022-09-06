@@ -152,9 +152,9 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
     project: Project,
     ktFiles: List<KtFile>,
 ): ProjectStructureProvider = buildProjectStructureProvider {
+    val platform = JvmPlatforms.defaultJvmPlatform
     addModule(
         buildKtSourceModule {
-            val platform = JvmPlatforms.defaultJvmPlatform
             val moduleName = compilerConfig.get(CommonConfigurationKeys.MODULE_NAME) ?: "<no module name provided>"
 
             val libraryRoots = compilerConfig.jvmModularRoots + compilerConfig.jvmClasspathRoots
@@ -215,4 +215,6 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
             )
         }
     )
+    this.platform = platform
+    this.project = project
 }
