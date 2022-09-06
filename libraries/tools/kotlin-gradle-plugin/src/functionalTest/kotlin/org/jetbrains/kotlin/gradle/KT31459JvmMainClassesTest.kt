@@ -5,9 +5,14 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.FileCollection
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.fail
 
 class KT31459JvmMainClassesTest {
 
@@ -27,15 +32,57 @@ class KT31459JvmMainClassesTest {
 
         assertEquals(
             setOf("compileKotlinJvm", "compileJava", "jvmProcessResources"),
-            task.allDependencies
+            task.directDependencies
         )
     }
 
     /**
-     * Returns names of all tasks that given task depends on
+     * This mechanism used by `kotlinx-atomicfu` gradle plugin. It replaces compilation classes to transformed classes dir
      */
-    private val Task.allDependencies: Set<String> get() = taskDependencies
-        .getDependencies(this)
+    @Test
+    fun `it should be possible to replace compilation output classes`() {
+
+        /**
+         * Code taken from `kotlinx-atomicfu` gradle plugin
+         */
+        fun Project.addClassesTransformationTask(target: KotlinTarget) {
+            val compilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+            val classesDirs = compilation.output.classesDirs
+
+            // make copy of original classes directory
+            val originalClassesDirs: FileCollection =
+                project.files(classesDirs.from.toTypedArray())
+            val transformedClassesDir = project.buildDir.resolve("classes/atomicfu/${target.name}/${compilation.name}")
+            val transformTask = project.tasks.create("transformTask") {
+                it.dependsOn(compilation.compileAllTaskName)
+                it.inputs.files(originalClassesDirs)
+                it.outputs.files(transformedClassesDir)
+            }
+            classesDirs.setFrom(transformedClassesDir)
+            classesDirs.builtBy(transformTask)
+        }
+
+        // Given MPP Project with JVM target
+        val project = buildProjectWithMPP {
+            kotlin {
+                val target = jvm {}
+
+                // And classes transformation task applied
+                addClassesTransformationTask(target)
+            }
+        }
+
+        project.evaluate()
+
+        val jvmMainClasses = project.tasks.getByName("jvmMainClasses")
+        jvmMainClasses.assertNoCircularTaskDependencies()
+    }
+
+    /**
+     * Returns names of all tasks that given task directly depends on
+     */
+    private val Task.directDependencies: Set<String> get() = taskDependencies
+        .getDependencies(null)
         .map { it.name }
         .toSet()
 }
