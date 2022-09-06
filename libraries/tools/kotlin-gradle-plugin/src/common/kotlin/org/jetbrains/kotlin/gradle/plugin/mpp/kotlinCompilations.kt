@@ -28,13 +28,6 @@ import org.jetbrains.kotlin.tooling.core.closure
 import java.util.*
 import java.util.concurrent.Callable
 
-internal fun KotlinCompilation<*>.composeName(prefix: String? = null, suffix: String? = null): String {
-    val compilationNamePart = compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }
-    val targetNamePart = target.disambiguationClassifier
-
-    return lowerCamelCaseName(prefix, targetNamePart, compilationNamePart, suffix)
-}
-
 internal fun KotlinCompilation<*>.isMain(): Boolean =
     name == KotlinCompilation.MAIN_COMPILATION_NAME
 
