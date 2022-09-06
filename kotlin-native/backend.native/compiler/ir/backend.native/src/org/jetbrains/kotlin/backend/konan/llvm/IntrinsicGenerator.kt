@@ -105,8 +105,6 @@ internal interface IntrinsicGeneratorEnvironment {
 
     val functionGenerationContext: FunctionGenerationContext
 
-    val continuation: LLVMValueRef
-
     val exceptionHandler: ExceptionHandler
 
     val stackLocalsManager: StackLocalsManager
@@ -156,10 +154,10 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     /**
      * Some intrinsics have to be processed before evaluation of their arguments.
      * So this method looks at [callSite] and if it is call to "special" intrinsic
-     * processes it. Otherwise it returns null.
+     * processes it. Otherwise, it returns null.
      */
+    @Suppress("UNUSED_PARAMETER")
     fun tryEvaluateSpecialCall(callSite: IrFunctionAccessExpression, resultSlot: LLVMValueRef?): LLVMValueRef? {
-        resultSlot.let{}
         val function = callSite.symbol.owner
         if (!function.isTypedIntrinsic) {
             return null
@@ -241,9 +239,9 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.INTEROP_NATIVE_PTR_PLUS_LONG -> emitNativePtrPlusLong(args)
                 IntrinsicType.INTEROP_GET_NATIVE_NULL_PTR -> emitGetNativeNullPtr()
                 IntrinsicType.IDENTITY -> emitIdentity(args)
-                IntrinsicType.GET_CONTINUATION -> emitGetContinuation()
                 IntrinsicType.INTEROP_MEMORY_COPY -> emitMemoryCopy(callSite, args)
                 IntrinsicType.IS_EXPERIMENTAL_MM -> emitIsExperimentalMM()
+                IntrinsicType.GET_CONTINUATION,
                 IntrinsicType.RETURN_IF_SUSPENDED,
                 IntrinsicType.INTEROP_BITS_TO_FLOAT,
                 IntrinsicType.INTEROP_BITS_TO_DOUBLE,
@@ -286,8 +284,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     private fun reportNonLoweredIntrinsic(intrinsicType: ConstantConstructorIntrinsicType): Nothing =
             context.reportCompilationError("Constant constructor intrinsic of type $intrinsicType should be handled by previous lowering phase")
 
-    private fun FunctionGenerationContext.emitGetContinuation(): LLVMValueRef =
-            environment.continuation
 
     private fun FunctionGenerationContext.emitIdentity(args: List<LLVMValueRef>): LLVMValueRef =
             args.single()

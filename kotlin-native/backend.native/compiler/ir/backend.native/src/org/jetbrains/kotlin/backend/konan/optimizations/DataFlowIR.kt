@@ -595,8 +595,8 @@ internal object DataFlowIR {
             }
             val name = "kfun:$containingDeclarationPart${it.computeFunctionName()}"
 
-            val returnsUnit = it is IrConstructor || (!it.isSuspend && it.returnType.isUnit())
-            val returnsNothing = !it.isSuspend && it.returnType.isNothing()
+            val returnsUnit = it is IrConstructor || it.returnType.isUnit()
+            val returnsNothing = it.returnType.isNothing()
             var attributes = 0
             if (returnsUnit)
                 attributes = attributes or FunctionAttributes.RETURNS_UNIT
@@ -648,14 +648,10 @@ internal object DataFlowIR {
             }
             functionMap[it] = symbol
 
-            symbol.parameters =
-                    (function.allParameters.map { it.type } + (if (function.isSuspend) listOf(continuationType) else emptyList()))
+            symbol.parameters = function.allParameters.map { it.type }
                             .map { mapTypeToFunctionParameter(it) }
                             .toTypedArray()
-            symbol.returnParameter = mapTypeToFunctionParameter(if (function.isSuspend)
-                                                               context.irBuiltIns.anyType
-                                                           else
-                                                               function.returnType)
+            symbol.returnParameter = mapTypeToFunctionParameter(function.returnType)
 
             return symbol
         }

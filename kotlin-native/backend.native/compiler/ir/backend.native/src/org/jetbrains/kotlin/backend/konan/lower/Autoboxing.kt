@@ -76,11 +76,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     }
 
     override fun IrExpression.useAsReturnValue(returnTarget: IrReturnTargetSymbol): IrExpression = when (returnTarget) {
-        is IrSimpleFunctionSymbol -> if (returnTarget.owner.isSuspend && returnTarget == currentFunction?.symbol) {
-            this.useAs(irBuiltIns.anyNType)
-        } else {
-            this.useAs(returnTarget.owner.returnType)
-        }
+        is IrSimpleFunctionSymbol -> this.useAs(returnTarget.owner.returnType)
         is IrConstructorSymbol -> this.useAs(irBuiltIns.unitType)
         is IrReturnableBlockSymbol -> this.useAs(returnTarget.owner.type)
         else -> error(returnTarget)
@@ -89,8 +85,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     override fun IrExpression.useAs(type: IrType): IrExpression {
         val actualType = when (this) {
             is IrCall -> {
-                if (this.symbol.owner.isSuspend) irBuiltIns.anyNType
-                else if (this.symbol == symbols.reinterpret) this.getTypeArgument(1)!!
+                if (this.symbol == symbols.reinterpret) this.getTypeArgument(1)!!
                 else this.callTarget.returnType
             }
             is IrGetField -> this.symbol.owner.type
