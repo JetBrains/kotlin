@@ -134,10 +134,10 @@ object FirErrors {
     val FLOAT_LITERAL_OUT_OF_RANGE by error0<PsiElement>()
     val WRONG_LONG_SUFFIX by error0<KtElement>(SourceElementPositioningStrategies.LONG_LITERAL_SUFFIX)
     val DIVISION_BY_ZERO by warning0<KtExpression>()
-    val VAL_OR_VAR_ON_LOOP_PARAMETER by warning1<KtParameter, KtKeywordToken>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
-    val VAL_OR_VAR_ON_FUN_PARAMETER by warning1<KtParameter, KtKeywordToken>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
-    val VAL_OR_VAR_ON_CATCH_PARAMETER by warning1<KtParameter, KtKeywordToken>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
-    val VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER by warning1<KtParameter, KtKeywordToken>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
+    val VAL_OR_VAR_ON_LOOP_PARAMETER by error1<KtParameter, KtKeywordToken>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
+    val VAL_OR_VAR_ON_FUN_PARAMETER by error1<KtParameter, KtKeywordToken>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
+    val VAL_OR_VAR_ON_CATCH_PARAMETER by error1<KtParameter, KtKeywordToken>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
+    val VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER by error1<KtParameter, KtKeywordToken>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
     val INVISIBLE_SETTER by error3<PsiElement, FirPropertySymbol, Visibility, CallableId>(SourceElementPositioningStrategies.ASSIGNMENT_LHS)
 
     // Unresolved

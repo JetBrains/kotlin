@@ -77,16 +77,16 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val FLOAT_LITERAL_OUT_OF_RANGE by error<PsiElement>()
         val WRONG_LONG_SUFFIX by error<KtElement>(PositioningStrategy.LONG_LITERAL_SUFFIX)
         val DIVISION_BY_ZERO by warning<KtExpression>()
-        val VAL_OR_VAR_ON_LOOP_PARAMETER by warning<KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE) {
+        val VAL_OR_VAR_ON_LOOP_PARAMETER by error<KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE) {
             parameter<KtKeywordToken>("valOrVar")
         }
-        val VAL_OR_VAR_ON_FUN_PARAMETER by warning<KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE) {
+        val VAL_OR_VAR_ON_FUN_PARAMETER by error<KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE) {
             parameter<KtKeywordToken>("valOrVar")
         }
-        val VAL_OR_VAR_ON_CATCH_PARAMETER by warning<KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE) {
+        val VAL_OR_VAR_ON_CATCH_PARAMETER by error<KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE) {
             parameter<KtKeywordToken>("valOrVar")
         }
-        val VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER by warning<KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE) {
+        val VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER by error<KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE) {
             parameter<KtKeywordToken>("valOrVar")
         }
         val INVISIBLE_SETTER by error<PsiElement>(PositioningStrategy.ASSIGNMENT_LHS) {
