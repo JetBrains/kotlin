@@ -15,33 +15,30 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.Names
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessorCopy
-import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyAccessorImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
-import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.annotated
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.toTypeProjection
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.classFqName
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -72,7 +69,7 @@ class TestGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
         val property = buildProperty {
             moduleData = session.moduleData
             origin = FirDeclarationOrigin.Plugin(TestKey)
-            attributes = FirDeclarationAttributes()
+            //attributes = FirDeclarationAttributes()
             status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
             returnTypeRef = buildResolvedTypeRef {
                 type = ConeClassLikeTypeImpl(
@@ -201,5 +198,34 @@ class TestFileLowering(val context: IrPluginContext) : FileLoweringPass, IrEleme
 
 
         return declaration
+    }
+
+
+    override fun visitErrorCallExpression(expression: IrErrorCallExpression): IrExpression {
+        val classFqName = expression.type.classFqName ?: return expression
+        if (classFqName != FqName("org.jetbrains.kotlinx.dataframe.PropertiesScope")) {
+            return expression
+        }
+        val constructor = context
+            .referenceConstructors(ClassId(classFqName.parent(), classFqName.shortName()))
+            .single()
+        val type = expression.type
+        return IrConstructorCallImpl(-1, -1, type, constructor, 0, 0, 0)
+    }
+}
+
+class TestInjector(session: FirSession) : FirExpressionResolutionExtension(session) {
+    override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
+        return if (functionCall.calleeReference.name == Name.identifier("injectAlgebra")) {
+            listOf(
+                ConeClassLikeTypeImpl(
+                    ConeClassLikeLookupTagImpl(ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("PropertiesScope"))),
+                    emptyArray(),
+                    isNullable = false
+                )
+            )
+        } else {
+            emptyList()
+        }
     }
 }

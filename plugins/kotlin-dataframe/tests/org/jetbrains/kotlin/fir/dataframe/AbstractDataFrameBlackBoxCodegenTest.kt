@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.dataframe.extensions.TestBodyFiller
 import org.jetbrains.kotlin.fir.dataframe.extensions.TestGenerator
+import org.jetbrains.kotlin.fir.dataframe.extensions.TestInjector
 import org.jetbrains.kotlin.fir.dataframe.services.commonFirWithPluginFrontendConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
@@ -59,6 +60,7 @@ open class AbstractDataFrameBlackBoxCodegenTest : AbstractKotlinCompilerWithTarg
     class FirDataFrameExtensionRegistrar : FirExtensionRegistrar() {
         override fun ExtensionRegistrarContext.configurePlugin() {
             +::TestGenerator
+            +::TestInjector
         }
     }
 }

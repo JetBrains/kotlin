@@ -158,13 +158,21 @@ class FirDataFrameExtensionsGenerator(
             moduleData = session.moduleData
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
-            this.returnTypeRef = returnTypeRef
-            receiverTypeRef = receiverType.toFirResolvedTypeRef()
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Public,
                 Modality.FINAL,
                 EffectiveVisibility.Public
             )
+            this.returnTypeRef = returnTypeRef
+            receiverTypeRef = receiverType.toFirResolvedTypeRef()
+            val classId = callableId.classId
+            if (classId != null) {
+                dispatchReceiverType = ConeClassLikeTypeImpl(
+                    ConeClassLikeLookupTagImpl(classId),
+                    emptyArray(),
+                    false
+                )
+            }
             val firPropertyAccessorSymbol = FirPropertyAccessorSymbol()
             getter = buildPropertyAccessor {
                 moduleData = session.moduleData

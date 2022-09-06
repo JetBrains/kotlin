@@ -32,6 +32,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
     }
 
     @Test
+    @TestMetadata("injectAlgebra.kt")
+    public void testInjectAlgebra() throws Exception {
+        runTest("plugins/kotlin-dataframe/testData/box/injectAlgebra.kt");
+    }
+
+    @Test
     @TestMetadata("lowerGeneratedImplicitReceiver.kt")
     public void testLowerGeneratedImplicitReceiver() throws Exception {
         runTest("plugins/kotlin-dataframe/testData/box/lowerGeneratedImplicitReceiver.kt");
