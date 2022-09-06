@@ -76,6 +76,18 @@ internal class MutableObservableSet<T>(vararg elements: T) : ObservableSet<T>, M
         return underlying.contains(element)
     }
 
+    override fun equals(other: Any?): Boolean {
+        return underlying == other
+    }
+
+    override fun hashCode(): Int {
+        return underlying.hashCode()
+    }
+
+    override fun toString(): String {
+        return underlying.toString()
+    }
+
     init {
         underlying.addAll(elements)
     }
