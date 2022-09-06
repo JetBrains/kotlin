@@ -124,7 +124,14 @@ public class StandaloneAnalysisAPISessionBuilder(
 
             registerService(KtModuleScopeProvider::class.java, KtModuleScopeProviderImpl())
             registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStaticAnnotationsResolverFactory(ktFiles))
-            registerService(KotlinDeclarationProviderFactory::class.java, KotlinStaticDeclarationProviderFactory(ktFiles))
+            registerService(
+                KotlinDeclarationProviderFactory::class.java,
+                KotlinStaticDeclarationProviderFactory(
+                    this,
+                    ktFiles,
+                    kotlinCoreProjectEnvironment.environment.jarFileSystem as CoreJarFileSystem
+                )
+            )
             registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(ktFiles))
 
             registerService(KtAnalysisSessionProvider::class.java, KtFirAnalysisSessionProvider(this))
