@@ -492,11 +492,21 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @AndroidGradlePluginTests
     @DisplayName("Toolchain should take into account kotlin options that are set via android extension")
-    @GradleTestVersions
-    @GradleTest
-    internal fun kotlinOptionsAndroidAndToolchain(gradleVersion: GradleVersion) {
-        project("android".fullProjectName, gradleVersion) {
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_42)
+    @GradleAndroidTest
+    internal fun kotlinOptionsAndroidAndToolchain(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            "android".fullProjectName,
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = providedJdk.location
+        ) {
             useToolchainExtension(11)
 
             //language=properties
@@ -507,12 +517,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            build(
-                "assembleDebug",
-                buildOptions = defaultBuildOptions.copy(
-                    androidVersion = TestVersions.AGP.AGP_42.version
-                )
-            )
+            build("assembleDebug")
         }
     }
 

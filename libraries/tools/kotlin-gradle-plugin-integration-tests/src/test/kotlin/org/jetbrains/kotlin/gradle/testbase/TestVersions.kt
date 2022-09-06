@@ -33,24 +33,32 @@ interface TestVersions {
             get() = System.getProperty("kotlinVersion") ?: error("Required to specify kotlinVersion system property for tests")
     }
 
-    enum class AGP(
+    object AGP {
+        const val AGP_36 = "3.6.4"
+        const val AGP_40 = "4.0.2"
+        const val AGP_41 = "4.1.3"
+        const val AGP_42 = "4.2.2"
+        const val AGP_70 = "7.0.4"
+        const val AGP_71 = "7.1.3"
+        const val AGP_72 = "7.2.1"
+
+        const val MIN_SUPPORTED = AGP_36 // KotlinAndroidPlugin.MINIMAL_SUPPORTED_AGP_VERSION
+        const val MAX_SUPPORTED = AGP_70 // Update once Gradle MAX_SUPPORTED version will be bumped to 7.2+
+    }
+
+    enum class AgpCompatibilityMatrix(
         val version: String,
         val minSupportedGradleVersion: GradleVersion,
         val maxSupportedGradleVersion: GradleVersion,
         val requiredJdkVersion: JavaVersion
     ) {
-        AGP_36("3.6.4", GradleVersion.version(Gradle.MIN_SUPPORTED), GradleVersion.version(Gradle.G_6_9), JavaVersion.VERSION_1_8),
-        AGP_40("4.0.2", GradleVersion.version(Gradle.MIN_SUPPORTED), GradleVersion.version(Gradle.G_6_9), JavaVersion.VERSION_1_8),
-        AGP_41("4.1.3", GradleVersion.version(Gradle.MIN_SUPPORTED), GradleVersion.version(Gradle.G_6_9), JavaVersion.VERSION_1_8),
-        AGP_42("4.2.2", GradleVersion.version(Gradle.MIN_SUPPORTED), GradleVersion.version(Gradle.G_6_9), JavaVersion.VERSION_1_8),
-        AGP_70("7.0.4", GradleVersion.version(Gradle.G_7_0), GradleVersion.version(Gradle.G_7_4), JavaVersion.VERSION_11),
-        AGP_71("7.1.3", GradleVersion.version(Gradle.G_7_2), GradleVersion.version(Gradle.G_7_4), JavaVersion.VERSION_11),
-        AGP_72("7.2.1", GradleVersion.version(Gradle.G_7_3), GradleVersion.version(Gradle.G_7_4), JavaVersion.VERSION_11),
+        AGP_36(AGP.AGP_36, GradleVersion.version(Gradle.MIN_SUPPORTED), GradleVersion.version(Gradle.G_6_9), JavaVersion.VERSION_1_8),
+        AGP_40(AGP.AGP_40, GradleVersion.version(Gradle.MIN_SUPPORTED), GradleVersion.version(Gradle.G_6_9), JavaVersion.VERSION_1_8),
+        AGP_41(AGP.AGP_41, GradleVersion.version(Gradle.MIN_SUPPORTED), GradleVersion.version(Gradle.G_6_9), JavaVersion.VERSION_1_8),
+        AGP_42(AGP.AGP_42, GradleVersion.version(Gradle.MIN_SUPPORTED), GradleVersion.version(Gradle.G_6_9), JavaVersion.VERSION_1_8),
+        AGP_70(AGP.AGP_70, GradleVersion.version(Gradle.G_7_0), GradleVersion.version(Gradle.G_7_4), JavaVersion.VERSION_11),
+        AGP_71(AGP.AGP_71, GradleVersion.version(Gradle.G_7_2), GradleVersion.version(Gradle.G_7_4), JavaVersion.VERSION_11),
+        AGP_72(AGP.AGP_72, GradleVersion.version(Gradle.G_7_3), GradleVersion.version(Gradle.G_7_4), JavaVersion.VERSION_11),
         ;
-
-        companion object {
-            const val MIN_SUPPORTED = "3.6.4" // AGP_36 - KotlinAndroidPlugin.MINIMAL_SUPPORTED_AGP_VERSION
-            const val MAX_SUPPORTED = "7.0.4" // AGP_70 - Update once Gradle MAX_SUPPORTED version will be bumped to 7.2+
-        }
     }
 }

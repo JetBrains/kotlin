@@ -110,7 +110,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 androidVersion = agpVersion,
-                warningMode = if (agpVersion == TestVersions.AGP.AGP_36.version) WarningMode.Summary else defaultBuildOptions.warningMode
+                warningMode = if (agpVersion == TestVersions.AGP.AGP_36) WarningMode.Summary else defaultBuildOptions.warningMode
             ),
             buildJdk = jdkVersion.location
         ) {
@@ -132,7 +132,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 androidVersion = agpVersion,
-                warningMode = if (agpVersion == TestVersions.AGP.AGP_36.version) WarningMode.Summary else defaultBuildOptions.warningMode
+                warningMode = if (agpVersion == TestVersions.AGP.AGP_36) WarningMode.Summary else defaultBuildOptions.warningMode
             ),
             buildJdk = jdkVersion.location
         ) {
@@ -298,7 +298,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 androidVersion = agpVersion,
-                warningMode = if (agpVersion == TestVersions.AGP.AGP_36.version) WarningMode.Summary else defaultBuildOptions.warningMode
+                warningMode = if (agpVersion == TestVersions.AGP.AGP_36) WarningMode.Summary else defaultBuildOptions.warningMode
             ),
             buildJdk = jdkVersion.location
         ) {
@@ -325,7 +325,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 androidVersion = agpVersion,
-                warningMode = if (agpVersion == TestVersions.AGP.AGP_36.version) WarningMode.Summary else defaultBuildOptions.warningMode
+                warningMode = if (agpVersion == TestVersions.AGP.AGP_36) WarningMode.Summary else defaultBuildOptions.warningMode
             ),
             buildJdk = jdkVersion.location
         ) {

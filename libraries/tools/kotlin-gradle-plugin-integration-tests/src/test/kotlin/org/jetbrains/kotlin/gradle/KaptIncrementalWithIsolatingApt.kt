@@ -284,14 +284,21 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
         }
     }
 
+    @AndroidGradlePluginTests
     @DisplayName("KT-34340: origins in classpath")
-    @GradleTest
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_42)
+    @GradleAndroidTest
     @DisabledOnOs(OS.WINDOWS, disabledReason = "https://youtrack.jetbrains.com/issue/KTI-405")
-    fun testIsolatingWithOriginsInClasspath(gradleVersion: GradleVersion) {
+    fun testIsolatingWithOriginsInClasspath(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk
+    ) {
         project(
             "kaptIncrementalWithParceler",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = TestVersions.AGP.AGP_42.version)
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = providedJdk.location
         ) {
             build("clean", ":mylibrary:assembleDebug")
 

@@ -156,17 +156,17 @@ class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
         context: ExtensionContext
     ): Stream<out Arguments> {
         val agpVersionsAnnotation = findAnnotation<AndroidTestVersions>(context)
-        val agpVersions = setOf(
+        val agpVersions = setOfNotNull(
             agpVersionsAnnotation.minVersion,
             *agpVersionsAnnotation.additionalVersions,
-            agpVersionsAnnotation.maxVersion
+            if (agpVersionsAnnotation.minVersion < agpVersionsAnnotation.maxVersion) agpVersionsAnnotation.maxVersion else null
         )
 
         val gradleVersions = super.provideArguments(context).map { it.get().first() as GradleVersion }.toList()
 
         return agpVersions
             .flatMap { version ->
-                val agpVersion = TestVersions.AGP.values().find { it.version == version }
+                val agpVersion = TestVersions.AgpCompatibilityMatrix.values().find { it.version == version }
                     ?: throw IllegalArgumentException("AGP version $version is not defined in TestVersions.AGP!")
 
                 val providedJdk = JdkVersions.ProvidedJdk(
