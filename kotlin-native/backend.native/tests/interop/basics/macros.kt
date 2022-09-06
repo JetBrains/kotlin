@@ -46,8 +46,20 @@ fun main(args: Array<String>) {
         assertEquals(43, counter.value)
     }
 
-    assertEquals(Double.NaN.toRawBits(), DEFAULT_DOUBLE_NAN.toRawBits())
-    assertEquals(Float.NaN.toRawBits(), DEFAULT_FLOAT_NAN.toRawBits())
-    assertEquals(0x7fc12345, OTHER_FLOAT_NAN.toRawBits())
-    assertEquals(0x7ffc0123456789abL, OTHER_DOUBLE_NAN.toRawBits())
+
+    /**
+     * Mips processors are using different notation for quite/signaling nans.
+     * In particular, same clang intrinsic __builtin_nan() return other bitpatterns on mips,
+     * to avoid values, which would be singaling on MIPS. So, tested values are incorrect in that case.
+     */
+    if (Platform.cpuArchitecture != CpuArchitecture.MIPS32 && Platform.cpuArchitecture != CpuArchitecture.MIPSEL32) {
+        val floatNanBase = Float.NaN.toRawBits()
+        assertEquals(floatNanBase, 0x7fc00000)
+        val doubleNanBase = Double.NaN.toRawBits()
+        assertEquals(doubleNanBase, 0x7ff8000000000000L)
+        assertEquals(floatNanBase, DEFAULT_FLOAT_NAN.toRawBits())
+        assertEquals(doubleNanBase, DEFAULT_DOUBLE_NAN.toRawBits())
+        assertEquals(floatNanBase or 0x12345, OTHER_FLOAT_NAN.toRawBits())
+        assertEquals(doubleNanBase or 0x123456789abL, OTHER_DOUBLE_NAN.toRawBits())
+    }
 }

@@ -79,5 +79,5 @@ void increment(int* counter);
 
 #define DEFAULT_DOUBLE_NAN __builtin_nan("")
 #define DEFAULT_FLOAT_NAN __builtin_nanf("")
-#define OTHER_DOUBLE_NAN __builtin_nan("0x7ffc0123456789ab")
-#define OTHER_FLOAT_NAN __builtin_nanf("0x7fc12345")
+#define OTHER_DOUBLE_NAN __builtin_nan("0x123456789ab")
+#define OTHER_FLOAT_NAN __builtin_nanf("0x12345")
