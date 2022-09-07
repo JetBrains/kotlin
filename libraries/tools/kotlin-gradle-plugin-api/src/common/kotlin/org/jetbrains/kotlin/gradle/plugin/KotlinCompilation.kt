@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Action
@@ -12,8 +14,10 @@ import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptionsDeprecated
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompileDeprecated
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import java.io.File
 
 interface KotlinCompilationOutput {
@@ -24,7 +28,9 @@ interface KotlinCompilationOutput {
     val allOutputs: FileCollection
 }
 
-interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes, HasKotlinDependencies {
+interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
+    HasAttributes,
+    HasKotlinDependencies {
     val target: KotlinTarget
 
     val compilationName: String
@@ -51,14 +57,45 @@ interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes,
 
     val compileKotlinTaskName: String
 
-    val compileKotlinTask: KotlinCompile<T>
+    val compilerOptions: HasCompilerOptions<*>
 
-    val compileKotlinTaskProvider: TaskProvider<out KotlinCompile<T>>
+    @Deprecated(
+        message = "Accessing task instance directly is deprecated",
+        replaceWith = ReplaceWith("compileTaskProvider")
+    )
+    val compileKotlinTask: KotlinCompileDeprecated<T>
 
+    @Deprecated(
+        message = "Replaced with compileTaskProvider",
+        replaceWith = ReplaceWith("compileTaskProvider")
+    )
+    val compileKotlinTaskProvider: TaskProvider<out KotlinCompileDeprecated<T>>
+
+    val compileTaskProvider: TaskProvider<out KotlinCompilationTask<*>>
+
+    @Deprecated(
+        message = "Replaced by compilerOptions",
+        replaceWith = ReplaceWith("compilerOptions.options")
+    )
     val kotlinOptions: T
 
-    fun kotlinOptions(configure: T.() -> Unit)
-    fun kotlinOptions(configure: Action<@UnsafeVariance T>) = kotlinOptions { configure.execute(this) }
+    @Deprecated(
+        message = "Replaced by compilerOptions.configure { }",
+        replaceWith = ReplaceWith("compilerOptions.configure(configure)")
+    )
+    fun kotlinOptions(configure: T.() -> Unit) {
+        @Suppress("DEPRECATION")
+        configure(kotlinOptions)
+    }
+
+    @Deprecated(
+        message = "Replaced by compilerOptions(Action)",
+        replaceWith = ReplaceWith("compilerOptions.configure(configure)")
+    )
+    fun kotlinOptions(configure: Action<@UnsafeVariance T>) {
+        @Suppress("DEPRECATION")
+        configure.execute(kotlinOptions)
+    }
 
     fun attributes(configure: AttributeContainer.() -> Unit) = attributes.configure()
     fun attributes(configure: Action<AttributeContainer>) = attributes { configure.execute(this) }
@@ -87,7 +124,7 @@ interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes,
         get() = target.disambiguationClassifier + name
 }
 
-interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptions> : KotlinCompilation<T> {
+interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptionsDeprecated> : KotlinCompilation<T> {
     val runtimeDependencyConfigurationName: String
 
     var runtimeDependencyFiles: FileCollection
@@ -96,9 +133,9 @@ interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptions> : KotlinComp
         get() = super.relatedConfigurationNames + runtimeDependencyConfigurationName
 }
 
-val <T : KotlinCommonOptions> KotlinCompilation<T>.runtimeDependencyConfigurationName: String?
+val <T : KotlinCommonOptionsDeprecated> KotlinCompilation<T>.runtimeDependencyConfigurationName: String?
     get() = (this as? KotlinCompilationToRunnableFiles<T>)?.runtimeDependencyConfigurationName
 
-interface KotlinCompilationWithResources<T : KotlinCommonOptions> : KotlinCompilation<T> {
+interface KotlinCompilationWithResources<T : KotlinCommonOptionsDeprecated> : KotlinCompilation<T> {
     val processResourcesTaskName: String
 }

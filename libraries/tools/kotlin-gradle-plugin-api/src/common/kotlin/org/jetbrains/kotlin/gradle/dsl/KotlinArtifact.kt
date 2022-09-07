@@ -22,7 +22,13 @@ interface KotlinNativeArtifact : KotlinArtifact {
     val modes: Set<NativeBuildType>
     val isStatic: Boolean
     val linkerOptions: List<String>
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        message = "Replaced by compilerOptionsConfigure",
+        replaceWith = ReplaceWith("compilerOptionsConfigure")
+    )
     val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit
+    val compilerOptionsConfigure: CompilerCommonToolOptions.() -> Unit
     val binaryOptions: Map<String, String>
 }
 
@@ -58,6 +64,7 @@ interface KotlinNativeArtifactConfig : KotlinArtifactConfig {
     fun modes(vararg modes: NativeBuildType)
     var isStatic: Boolean
     var linkerOptions: List<String>
+    @Suppress("DEPRECATION")
     fun kotlinOptions(fn: Action<KotlinCommonToolOptions>)
     fun binaryOption(name: String, value: String)
 }

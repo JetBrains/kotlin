@@ -3,17 +3,21 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptionsDeprecated
+import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
-interface KotlinCompilationData<T : KotlinCommonOptions> {
+interface KotlinCompilationData<T : KotlinCommonOptionsDeprecated> {
     val project: Project
     val owner: Any?
 
@@ -33,7 +37,13 @@ interface KotlinCompilationData<T : KotlinCommonOptions> {
     val moduleName: String
     val ownModuleName: String
 
+    @Deprecated(
+        message = "Replaced with compilerOptions.options",
+        replaceWith = ReplaceWith("compilerOptions.options")
+    )
     val kotlinOptions: T
+
+    val compilerOptions: HasCompilerOptions<*>
 
     val friendPaths: Iterable<FileCollection>
 }

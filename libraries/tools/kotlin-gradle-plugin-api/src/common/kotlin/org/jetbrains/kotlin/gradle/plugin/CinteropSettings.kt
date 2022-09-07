@@ -3,12 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.file.FileCollection
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptionsDeprecated
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 
 interface CInteropSettings : Named {
@@ -22,7 +24,7 @@ interface CInteropSettings : Named {
     }
 
     // TODO: Provide an interface for native compilations.
-    val compilation: KotlinCompilationData<out KotlinCommonOptions>
+    val compilation: KotlinCompilationData<out KotlinCommonOptionsDeprecated>
 
     val dependencyConfigurationName: String
     var dependencyFiles: FileCollection

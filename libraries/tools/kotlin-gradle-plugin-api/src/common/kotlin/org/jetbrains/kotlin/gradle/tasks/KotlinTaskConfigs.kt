@@ -15,8 +15,7 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.util.PatternFilterable
 import org.gradle.work.Incremental
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.CompilerPluginConfig
 
 interface KotlinCompileTool : PatternFilterable, Task {
@@ -77,11 +76,18 @@ interface BaseKotlinCompile : KotlinCompileTool {
     val pluginOptions: ListProperty<CompilerPluginConfig>
 }
 
-interface KotlinJvmCompile : BaseKotlinCompile, KotlinCompile<KotlinJvmOptions> {
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+interface KotlinJvmCompile : BaseKotlinCompile,
+    KotlinCompileDeprecated<KotlinJvmOptionsDeprecated>,
+    KotlinCompilationTask<CompilerJvmOptions> {
 
     // JVM specific
     @get:Internal("Takes part in compiler args.")
-    val parentKotlinOptions: Property<KotlinJvmOptions>
+    @Deprecated(
+        message = "Configure compilerOptions directly",
+        replaceWith = ReplaceWith("compilerOptions")
+    )
+    val parentKotlinOptions: Property<KotlinJvmOptionsDeprecated>
 }
 
 interface KaptGenerateStubs : KotlinJvmCompile {
