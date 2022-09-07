@@ -227,7 +227,8 @@ internal class LambdaMetafactoryArgumentsBuilder(
         getAllSuperclasses().any { it.fqNameWhenAvailable == javaIoSerializableFqn }
 
     private fun IrClass.requiresDelegationToDefaultImpls(): Boolean {
-        for (irMemberFun in functions) {
+        val functionsAndAccessors = functions + properties.mapNotNull { it.getter } + properties.mapNotNull { it.setter }
+        for (irMemberFun in functionsAndAccessors) {
             if (irMemberFun.modality == Modality.ABSTRACT)
                 continue
             val irImplFun =
