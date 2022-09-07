@@ -35,3 +35,14 @@ class ChildTestInterfaceImpl(): TestInterfaceImpl("Test"), AnotherExportedInterf
 fun processInterface(test: TestInterface): String {
     return "Owner ${test.getOwnerName()} has value '${test.value}'"
 }
+
+
+external interface OptionalFieldsInterface {
+    val required: Int
+    val notRequired: Int?
+}
+
+
+fun processOptionalInterface(a: OptionalFieldsInterface): String {
+    return "${a.required}${a.notRequired ?: "unknown"}"
+}
