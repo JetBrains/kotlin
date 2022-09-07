@@ -32,19 +32,15 @@ internal class MutableObservableSet<T>(vararg elements: T) : ObservableSet<T>, M
     }
 
     override fun addAll(elements: Collection<T>): Boolean {
-        val toAdd = elements.toSet() - underlying
-        return underlying.addAll(toAdd).also {
-            toAdd.forEach { added ->
-                whenObjectAddedActions.toList().forEach { action -> action(added) }
-                forAllActions.toList().forEach { action -> action(added) }
-            }
-        }
+        val elementsToAdd = elements.toSet() - underlying
+        elementsToAdd.forEach(this::add)
+        return elementsToAdd.isNotEmpty()
     }
 
     override fun add(element: T): Boolean {
         return underlying.add(element).also {
-            whenObjectAddedActions.toList().forEach { action -> action(element) }
-            forAllActions.toList().forEach { action -> action(element) }
+            whenObjectAddedActions.toTypedArray().forEach { action -> action(element) }
+            forAllActions.toTypedArray().forEach { action -> action(element) }
         }
     }
 
