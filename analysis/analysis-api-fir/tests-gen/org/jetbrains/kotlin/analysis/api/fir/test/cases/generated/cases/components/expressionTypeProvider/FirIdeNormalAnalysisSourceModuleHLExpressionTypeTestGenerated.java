@@ -143,6 +143,12 @@ public class FirIdeNormalAnalysisSourceModuleHLExpressionTypeTestGenerated exten
     }
 
     @Test
+    @TestMetadata("platformType.kt")
+    public void testPlatformType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/platformType.kt");
+    }
+
+    @Test
     @TestMetadata("plusAssign.kt")
     public void testPlusAssign() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/plusAssign.kt");

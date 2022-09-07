@@ -16,20 +16,20 @@ abstract class AbstractDeclarationReturnTypeTest : AbstractAnalysisApiSingleFile
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val actual = buildString {
             ktFile.accept(object : KtTreeVisitor<Int>() {
-                override fun visitDeclaration(dclaration: KtDeclaration, indent: Int): Void? {
-                    if (dclaration is KtTypeParameter) return null
+                override fun visitDeclaration(declaration: KtDeclaration, indent: Int): Void? {
+                    if (declaration is KtTypeParameter) return null
                     append(" ".repeat(indent))
-                    if (dclaration is KtClassLikeDeclaration) {
-                        appendLine(dclaration.getNameWithPositionString())
+                    if (declaration is KtClassLikeDeclaration) {
+                        appendLine(declaration.getNameWithPositionString())
                     } else {
-                        analyseForTest(dclaration) {
-                            val returnType = dclaration.getReturnKtType()
-                            append(dclaration.getNameWithPositionString())
+                        analyseForTest(declaration) {
+                            val returnType = declaration.getReturnKtType()
+                            append(declaration.getNameWithPositionString())
                             append(" : ")
                             appendLine(returnType.render())
                         }
                     }
-                    return super.visitDeclaration(dclaration, indent + 2)
+                    return super.visitDeclaration(declaration, indent + 2)
                 }
             }, 0)
         }
