@@ -172,7 +172,7 @@ class ConeOuterClassArgumentsRequired(
 }
 
 class ConeInstanceAccessBeforeSuperCall(val target: String) : ConeDiagnostic {
-    override val reason: String get() = "Cannot access ''${target}'' before superclass constructor has been called"
+    override val reason: String get() = "Cannot access ''${target}'' before the instance has been initialized"
 }
 
 class ConeUnsupportedCallableReferenceTarget(override val candidate: AbstractCandidate) : ConeDiagnosticWithSingleCandidate {

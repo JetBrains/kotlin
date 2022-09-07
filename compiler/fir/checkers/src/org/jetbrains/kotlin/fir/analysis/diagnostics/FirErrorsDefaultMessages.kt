@@ -664,7 +664,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             INSTANCE_ACCESS_BEFORE_SUPER_CALL,
-            "Cannot access ''{0}'' before superclass constructor has been called",
+            "Cannot access ''{0}'' before the instance has been initialized",
             TO_STRING
         )
         map.put(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS, "Cannot create an instance of an abstract class")
