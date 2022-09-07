@@ -19,19 +19,19 @@ abstract class AbstractCompilationDetails<T : KotlinCommonOptions> : Compilation
     final override val directlyIncludedKotlinSourceSets: ObservableSet<KotlinSourceSet>
         get() = directlyIncludedKotlinSourceSetsImpl
 
-    private val kotlinSourceSetsClosureImpl: MutableObservableSet<KotlinSourceSet> by lazy {
+    private val allKotlinSourceSetsImpl: MutableObservableSet<KotlinSourceSet> by lazy {
         MutableObservableSet<KotlinSourceSet>().also { set ->
             defaultSourceSet.internal.withDependsOnClosure.forAll(set::add)
         }
     }
 
-    final override val kotlinSourceSetsClosure: ObservableSet<KotlinSourceSet>
-        get() = kotlinSourceSetsClosureImpl
+    final override val allKotlinSourceSets: ObservableSet<KotlinSourceSet>
+        get() = allKotlinSourceSetsImpl
 
     final override fun source(sourceSet: KotlinSourceSet) {
         directlyIncludedKotlinSourceSetsImpl.add(sourceSet)
         sourceSet.internal.withDependsOnClosure.forAll { withDependsOn ->
-            kotlinSourceSetsClosureImpl.add(withDependsOn)
+            allKotlinSourceSetsImpl.add(withDependsOn)
             withDependsOn.internal.addCompilation(compilation)
         }
 

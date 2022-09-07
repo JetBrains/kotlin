@@ -66,7 +66,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
         get() = compilationDetails.directlyIncludedKotlinSourceSets
 
     override val allKotlinSourceSets: ObservableSet<KotlinSourceSet>
-        get() = compilationDetails.kotlinSourceSetsClosure
+        get() = compilationDetails.allKotlinSourceSets
 
     final override val defaultSourceSetName: String get() = compilationDetails.defaultSourceSetName
 
