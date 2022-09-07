@@ -20831,6 +20831,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("expectDataObject.kt")
+            public void testExpectDataObject() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/expectDataObject.kt");
+            }
+
+            @Test
             @TestMetadata("expectInterfaceApplicability.kt")
             public void testExpectInterfaceApplicability() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/expectInterfaceApplicability.kt");
