@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.tooling.core
 
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion.Maturity.*
 import org.junit.Test
 import kotlin.test.*
 
@@ -144,128 +145,34 @@ class KotlinToolingVersionTest {
 
     @Test
     fun maturityWithClassifierNumberAndBuildNumber() {
-        assertEquals(
-            KotlinToolingVersion.Maturity.STABLE,
-            KotlinToolingVersion("1.6.20").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.STABLE,
-            KotlinToolingVersion("1.6.20-999").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.STABLE,
-            KotlinToolingVersion("1.6.20-release-999").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.STABLE,
-            KotlinToolingVersion("1.6.20-rElEaSe-999").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.RC,
-            KotlinToolingVersion("1.6.20-rc2411-1901").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.RC,
-            KotlinToolingVersion("1.6.20-RC2411-1901").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.BETA,
-            KotlinToolingVersion("1.6.20-beta2411-1901").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.BETA,
-            KotlinToolingVersion("1.6.20-bEtA2411-1901").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.ALPHA,
-            KotlinToolingVersion("1.6.20-alpha2411-1901").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.ALPHA,
-            KotlinToolingVersion("1.6.20-aLpHa2411-1901").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.MILESTONE,
-            KotlinToolingVersion("1.6.20-m2411-1901").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.MILESTONE,
-            KotlinToolingVersion("1.6.20-M2411-1901").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.DEV,
-            KotlinToolingVersion("1.6.20-dev-2411").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.DEV,
-            KotlinToolingVersion("1.6.20-DeV").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.DEV,
-            KotlinToolingVersion("1.6.20-pub-2411").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.DEV,
-            KotlinToolingVersion("1.6.20-pUb").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.DEV,
-            KotlinToolingVersion("1.6.20-dev-google-pr").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.DEV,
-            KotlinToolingVersion("1.6.20-dev-google-pr-510").maturity
-        )
+        assertMaturity(STABLE, "1.6.20")
+        assertMaturity(STABLE, "1.6.20-999")
+        assertMaturity(STABLE, "1.6.20-release-999")
+        assertMaturity(STABLE, "1.6.20-rElEaSe-999")
+        assertMaturity(RC, "1.6.20-rc2411-1901")
+        assertMaturity(RC, "1.6.20-RC2411-1901")
+        assertMaturity(BETA, "1.6.20-beta2411-1901")
+        assertMaturity(BETA, "1.6.20-bEtA2411-1901")
+        assertMaturity(ALPHA, "1.6.20-alpha2411-1901")
+        assertMaturity(ALPHA, "1.6.20-aLpHa2411-1901")
+        assertMaturity(MILESTONE, "1.6.20-m2411-1901")
+        assertMaturity(MILESTONE, "1.6.20-M2411-1901")
+        assertMaturity(DEV, "1.6.20-dev-2411")
+        assertMaturity(DEV, "1.6.20-DeV")
+        assertMaturity(DEV, "1.6.20-pub-2411")
+        assertMaturity(DEV, "1.6.20-pUb")
+        assertMaturity(DEV, "1.6.20-dev-google-pr")
+        assertMaturity(DEV, "1.6.20-dev-google-pr-510")
     }
 
     @Test
     fun maturityWithAdditionalReleaseSuffix() {
-        assertEquals(
-            KotlinToolingVersion.Maturity.MILESTONE,
-            KotlinToolingVersion("1.6.20-M1-release").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.MILESTONE,
-            KotlinToolingVersion("1.6.20-M1-release-22").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.ALPHA,
-            KotlinToolingVersion("1.6.20-alpha-release").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.ALPHA,
-            KotlinToolingVersion("1.6.20-alpha-release39").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.BETA,
-            KotlinToolingVersion("1.6.20-beta2-release").maturity
-        )
-
-        assertEquals(
-            KotlinToolingVersion.Maturity.RC,
-            KotlinToolingVersion("1.6.20-rc1-release").maturity
-        )
+        assertMaturity(MILESTONE, "1.6.20-M1-release")
+        assertMaturity(MILESTONE, "1.6.20-M1-release-22")
+        assertMaturity(ALPHA, "1.6.20-alpha-release")
+        assertMaturity(ALPHA, "1.6.20-alpha-release39")
+        assertMaturity(BETA, "1.6.20-beta2-release")
+        assertMaturity(RC, "1.6.20-rc1-release")
     }
 
     @Test
@@ -388,5 +295,9 @@ class KotlinToolingVersionTest {
         assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("1.6.20.1") }
         assertNull(KotlinToolingVersionOrNull("x"))
         assertNull(KotlinToolingVersionOrNull("1.6.20.1"))
+    }
+
+    private fun assertMaturity(maturity: KotlinToolingVersion.Maturity?, version: String) {
+        assertEquals(maturity, KotlinToolingVersion(version).maturity)
     }
 }
