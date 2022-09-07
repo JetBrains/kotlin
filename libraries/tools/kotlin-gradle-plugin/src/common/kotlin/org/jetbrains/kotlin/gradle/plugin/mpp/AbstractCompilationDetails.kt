@@ -28,11 +28,19 @@ abstract class AbstractCompilationDetails<T : KotlinCommonOptions> : Compilation
     final override val allKotlinSourceSets: ObservableSet<KotlinSourceSet>
         get() = allKotlinSourceSetsImpl
 
+    /**
+     * All SourceSets that have been processed by [source] already.
+     * [directlyIncludedKotlinSourceSets] cannot be used in this case, because
+     * the [defaultSourceSet] will always be already included.
+     */
+    private val sourcedKotlinSourceSets = hashSetOf<KotlinSourceSet>()
+
     final override fun source(sourceSet: KotlinSourceSet) {
+        if (!sourcedKotlinSourceSets.add(sourceSet)) return
         directlyIncludedKotlinSourceSetsImpl.add(sourceSet)
-        sourceSet.internal.withDependsOnClosure.forAll { withDependsOn ->
-            allKotlinSourceSetsImpl.add(withDependsOn)
-            withDependsOn.internal.addCompilation(compilation)
+        sourceSet.internal.withDependsOnClosure.forAll { inDependsOnClosure ->
+            allKotlinSourceSetsImpl.add(inDependsOnClosure)
+            inDependsOnClosure.internal.addCompilation(compilation)
         }
 
         whenSourceSetAdded(sourceSet)
