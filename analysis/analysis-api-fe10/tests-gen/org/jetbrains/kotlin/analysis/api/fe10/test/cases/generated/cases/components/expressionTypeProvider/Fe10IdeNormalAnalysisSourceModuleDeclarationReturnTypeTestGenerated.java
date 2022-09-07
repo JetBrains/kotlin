@@ -77,6 +77,12 @@ public class Fe10IdeNormalAnalysisSourceModuleDeclarationReturnTypeTestGenerated
     }
 
     @Test
+    @TestMetadata("platformType.kt")
+    public void testPlatformType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/platformType.kt");
+    }
+
+    @Test
     @TestMetadata("propertyAccessor.kt")
     public void testPropertyAccessor() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/propertyAccessor.kt");
