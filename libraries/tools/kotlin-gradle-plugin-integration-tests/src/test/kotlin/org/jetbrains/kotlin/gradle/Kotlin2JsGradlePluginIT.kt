@@ -219,6 +219,34 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
         }
     }
 
+    @DisplayName("Remove unused dependency from klib")
+    @GradleTest
+    fun testJsIrIncrementalKlibRemoveUnusedDependency(gradleVersion: GradleVersion) {
+        project("kotlin-js-ir-ic-remove-unused-dep", gradleVersion) {
+            val appBuildGradleKts = subProject("app").buildGradleKts
+
+            val buildGradleKtsWithoutDependency = appBuildGradleKts.readText()
+            appBuildGradleKts.appendText(
+                """
+                |
+                |dependencies {
+                |    implementation(project(":lib"))
+                |}
+                |
+                """.trimMargin()
+            )
+
+            build("compileDevelopmentExecutableKotlinJs") {
+                assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
+            }
+
+            appBuildGradleKts.writeText(buildGradleKtsWithoutDependency)
+            build("compileDevelopmentExecutableKotlinJs") {
+                assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
+            }
+        }
+    }
+
     @DisplayName("falsify kotlin js compiler args")
     @GradleTest
     fun testFalsifyKotlinJsCompilerArgs(gradleVersion: GradleVersion) {

@@ -153,6 +153,10 @@ class IncrementalJsCompilerRunner(
         dirtyFiles.addByDirtySymbols(removedClassesChanges.dirtyLookupSymbols)
         dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNames)
         dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNamesForceRecompile)
+
+        if (dirtyFiles.isEmpty() && changedFiles.removed.isNotEmpty()) {
+            return CompilationMode.Rebuild(BuildAttribute.DEP_CHANGE_REMOVED_ENTRY)
+        }
         return CompilationMode.Incremental(dirtyFiles)
     }
 

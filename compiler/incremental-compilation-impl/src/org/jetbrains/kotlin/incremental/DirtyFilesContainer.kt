@@ -16,6 +16,8 @@ class DirtyFilesContainer(
 ) {
     private val myDirtyFiles = HashSet<File>()
 
+    fun isEmpty() = myDirtyFiles.isEmpty()
+
     fun toMutableLinkedSet(): LinkedHashSet<File> =
         LinkedHashSet(myDirtyFiles)
 
