@@ -14665,6 +14665,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/funInterface/irrelevantPrivateDeclarations.kt");
         }
 
+        @TestMetadata("kt41670.kt")
+        public void testKt41670() throws Exception {
+            runTest("compiler/testData/codegen/box/funInterface/kt41670.kt");
+        }
+
         @TestMetadata("kt44827_funInterface.kt")
         public void testKt44827_funInterface() throws Exception {
             runTest("compiler/testData/codegen/box/funInterface/kt44827_funInterface.kt");

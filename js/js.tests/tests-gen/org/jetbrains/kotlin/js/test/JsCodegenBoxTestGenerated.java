@@ -13586,6 +13586,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("kt41670.kt")
+        public void testKt41670() throws Exception {
+            runTest("compiler/testData/codegen/box/funInterface/kt41670.kt");
+        }
+
+        @Test
         @TestMetadata("kt45444_privateFunInterface.kt")
         public void testKt45444_privateFunInterface() throws Exception {
             runTest("compiler/testData/codegen/box/funInterface/kt45444_privateFunInterface.kt");
