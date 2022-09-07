@@ -282,7 +282,7 @@ enum class LanguageFeature(
     SkipStandaloneScriptsInSourceRoots(KOTLIN_1_9, kind = OTHER), // KT-52525
     ModifierNonBuiltinSuspendFunError(KOTLIN_1_9),
     BreakContinueInInlineLambdas(KOTLIN_1_9, defaultState = State.ENABLED), // KT-1436
-    EnumEntries(KOTLIN_1_9, sinceApiVersion = ApiVersion.KOTLIN_1_8, defaultState = State.DISABLED), // KT-48872
+    EnumEntries(KOTLIN_1_9, sinceApiVersion = ApiVersion.KOTLIN_1_8, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE), // KT-48872
     EnableDfaWarningsInK2(KOTLIN_1_9, kind = OTHER), // KT-50965
 
     // Disabled for indefinite time. See KT-48535 and related discussion
