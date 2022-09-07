@@ -10,7 +10,9 @@ interface ObservableSet<T> : Set<T> {
     fun forAll(action: (T) -> Unit)
 }
 
-internal class MutableObservableSet<T>(vararg elements: T) : ObservableSet<T>, MutableSet<T> {
+interface MutableObservableSet<T> : ObservableSet<T>, MutableSet<T>
+
+internal class MutableObservableSetImpl<T>(vararg elements: T) : MutableObservableSet<T> {
     private val underlying = mutableSetOf(*elements)
     private val whenObjectAddedActions = mutableListOf<(T) -> Unit>()
     private val forAllActions = mutableListOf<(T) -> Unit>()

@@ -7,7 +7,7 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.utils.MutableObservableSet
+import org.jetbrains.kotlin.gradle.utils.MutableObservableSetImpl
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -22,7 +22,7 @@ class ObservableSetTest {
 
     @Test
     fun `test - forAll`() {
-        val set = MutableObservableSet(1)
+        val set = MutableObservableSetImpl(1)
         val testListener1 = TestListener()
         val testListener2 = TestListener()
 
@@ -41,7 +41,7 @@ class ObservableSetTest {
 
     @Test
     fun `test - whenObjectAdded`() {
-        val set = MutableObservableSet(1)
+        val set = MutableObservableSetImpl(1)
         val testListener1 = TestListener()
         val testListener2 = TestListener()
 
