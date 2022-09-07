@@ -70,6 +70,7 @@ import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.extensions.*
 import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
+import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -82,6 +83,7 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.ModuleAnnotationsResolver
+import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension
 import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
@@ -614,6 +616,7 @@ class KotlinCoreEnvironment private constructor(
         }
 
         @JvmStatic
+        @OptIn(InternalNonStableExtensionPoints::class)
         @Suppress("MemberVisibilityCanPrivate") // made public for CLI Android Lint
         fun registerPluginExtensionPoints(project: MockProject) {
             ExpressionCodegenExtension.registerExtensionPoint(project)
@@ -639,6 +642,7 @@ class KotlinCoreEnvironment private constructor(
             DescriptorSerializerPlugin.registerExtensionPoint(project)
             FirExtensionRegistrarAdapter.registerExtensionPoint(project)
             TypeAttributeTranslatorExtension.registerExtensionPoint(project)
+            AssignResolutionAltererExtension.registerExtensionPoint(project)
         }
 
         internal fun registerExtensionsFromPlugins(project: MockProject, configuration: CompilerConfiguration) {
