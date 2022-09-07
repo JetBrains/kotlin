@@ -47,14 +47,13 @@ class AnalysisApiKtModuleProviderImpl(
     }
 
     override fun getModuleName(ktModule: KtModule): String = when (ktModule) {
+        is KtBuiltinsModule -> ktModule.moduleDescription
         is KtLibraryModule -> ktModule.libraryName
         is KtSdkModule -> ktModule.sdkName
         is KtLibrarySourceModule -> ktModule.libraryName
         is KtSourceModule -> ktModule.moduleName
         is KtNotUnderContentRootModule -> TODO()
-        is KtBuiltinsModule -> "Builtins for ${ktModule.platform}"
     }
-
 
     override fun getModuleStructure(): KtModuleProjectStructure = modulesStructure
 }

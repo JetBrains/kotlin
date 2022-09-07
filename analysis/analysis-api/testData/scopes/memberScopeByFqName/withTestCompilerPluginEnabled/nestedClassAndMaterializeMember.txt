@@ -51,7 +51,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Any
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KtLibraryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -78,7 +78,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): kotlin/Any
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KtLibraryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -105,7 +105,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): kotlin/Any
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KtLibraryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
