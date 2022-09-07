@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.providers.impl
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
@@ -14,13 +13,13 @@ import com.intellij.util.indexing.FileContent
 import com.intellij.util.indexing.FileContentImpl
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
+import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinDecompiledFileViewProvider
+import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
-import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
 public class KotlinStaticDeclarationIndex {
@@ -111,20 +110,22 @@ public class KotlinStaticDeclarationProviderFactory(
     private val psiManager = PsiManager.getInstance(project)
     private val builtInDecompiler = KotlinBuiltInDecompiler()
 
-    private fun loadBuiltIns() {
+    private fun loadBuiltIns(): Collection<KtDecompiledFile> {
         val classLoader = this::class.java.classLoader
-        StandardClassIds.builtInsPackages.forEach { builtInPackageFqName ->
-            val resourcePath = BuiltInSerializerProtocol.getBuiltInsFilePath(builtInPackageFqName)
-            classLoader.getResource(resourcePath)?.let { resourceUrl ->
-                // "file:///path/to/stdlib.jar!/builtin/package/.kotlin_builtins
-                //   -> ("path/to/stdlib.jar", "builtin/package/.kotlin_builtins")
-                URLUtil.splitJarUrl(resourceUrl.path)?.let {
-                    val jarPath = it.first
-                    val builtInFile = it.second
-                    val pathToQuery = jarPath + URLUtil.JAR_SEPARATOR + builtInFile
-                    jarFileSystem.findFileByPath(pathToQuery)?.let { vf ->
-                        val fileContent = FileContentImpl.createByFile(vf, project)
-                        createKtFileStub(fileContent)?.let { ktFileStub -> loadIndexFromFileStub(ktFileStub) }
+        return buildList {
+            StandardClassIds.builtInsPackages.forEach { builtInPackageFqName ->
+                val resourcePath = BuiltInSerializerProtocol.getBuiltInsFilePath(builtInPackageFqName)
+                classLoader.getResource(resourcePath)?.let { resourceUrl ->
+                    // "file:///path/to/stdlib.jar!/builtin/package/.kotlin_builtins
+                    //   -> ("path/to/stdlib.jar", "builtin/package/.kotlin_builtins")
+                    URLUtil.splitJarUrl(resourceUrl.path)?.let {
+                        val jarPath = it.first
+                        val builtInFile = it.second
+                        val pathToQuery = jarPath + URLUtil.JAR_SEPARATOR + builtInFile
+                        jarFileSystem.findFileByPath(pathToQuery)?.let { vf ->
+                            val fileContent = FileContentImpl.createByFile(vf, project)
+                            createKtFileStub(fileContent)?.let { file -> add(file) }
+                        }
                     }
                 }
             }
@@ -133,36 +134,13 @@ public class KotlinStaticDeclarationProviderFactory(
 
     private fun createKtFileStub(
         fileContent: FileContent,
-    ): KotlinFileStubImpl? {
-        val ktFileStub = builtInDecompiler.stubBuilder.buildFileStub(fileContent) as? KotlinFileStubImpl ?: return null
-        val fakeFile = object : KtFile(KtClassFileViewProvider(psiManager, fileContent.file), isCompiled = true) {
-            override fun getStub() = ktFileStub
-
-            override fun isPhysical() = false
-        }
-        ktFileStub.psi = fakeFile
-        return ktFileStub
-    }
-
-    private class KtClassFileViewProvider(
-        psiManager: PsiManager,
-        virtualFile: VirtualFile,
-    ) : SingleRootFileViewProvider(psiManager, virtualFile, true, KotlinLanguage.INSTANCE)
-
-    private fun loadIndexFromFileStub(
-        fileStubImpl: KotlinFileStubImpl,
-    ) {
-        addToFacadeFileMap(fileStubImpl.psi)
-        fileStubImpl.childrenStubs.forEach { stubElement ->
-            when (stubElement) {
-                is KotlinClassStubImpl ->
-                    addToClassMap(stubElement.psi)
-                is KotlinTypeAliasStubImpl ->
-                    addToTypeAliasMap(stubElement.psi)
-                is KotlinFunctionStubImpl ->
-                    addToFunctionMap(stubElement.psi)
-                is KotlinPropertyStubImpl ->
-                    addToPropertyMap(stubElement.psi)
+    ): KtDecompiledFile? {
+        val fileViewProvider =
+            builtInDecompiler.createFileViewProvider(fileContent.file, psiManager, physical = true) as? KotlinDecompiledFileViewProvider
+                ?: return null
+        return builtInDecompiler.readFile(fileContent.content, fileContent.file)?.let { fileWithMetadata ->
+            KtDecompiledFile(fileViewProvider) {
+                builtInDecompiler.buildDecompiledText(fileWithMetadata)
             }
         }
     }
@@ -239,11 +217,14 @@ public class KotlinStaticDeclarationProviderFactory(
     }
 
     init {
+        val recorder = KtDeclarationRecorder()
+
         // Indexing built-ins
-        loadBuiltIns()
+        loadBuiltIns().forEach {
+            it.accept(recorder)
+        }
 
         // Indexing user source files
-        val recorder = KtDeclarationRecorder()
         files.forEach {
             it.accept(recorder)
         }
