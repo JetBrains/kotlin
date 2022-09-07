@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.utils.ObservableSet
 
 internal val KotlinSourceSet.internal: InternalKotlinSourceSet
     get() = (this as? InternalKotlinSourceSet) ?: throw IllegalArgumentException(
-        "KotlinSourceSet $name does not implement ${InternalKotlinSourceSet::class.simpleName}"
+        "KotlinSourceSet $name (${this::class}) does not implement ${InternalKotlinSourceSet::class.simpleName}"
     )
 
 internal interface InternalKotlinSourceSet : KotlinSourceSet {
