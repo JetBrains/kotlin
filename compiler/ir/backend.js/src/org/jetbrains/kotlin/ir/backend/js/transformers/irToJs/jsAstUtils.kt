@@ -515,14 +515,23 @@ private inline fun <T : JsNode> T.addSourceInfoIfNeed(node: IrElement, context: 
 }
 
 private fun JsLocation.withEmbeddedSource(
+    @Suppress("UNUSED_PARAMETER")
     context: JsGenerationContext
-) = JsLocationWithEmbeddedSource(this, fileIdentity = context.currentFile) {
-    try {
-        InputStreamReader(FileInputStream(file), StandardCharsets.UTF_8)
-    } catch (e: IOException) {
-        // TODO: If the source file is not available at path (e. g. it's an stdlib file), use heuristics to find it.
-        // If all heuristics fail, use dumpKotlinLike() on freshly deserialized IrFile.
-        null
+): JsLocationWithEmbeddedSource {
+    // FIXME: fileIdentity is used to distinguish between different files with the same paths.
+    // For now we use the file's path to read its content, which makes fileIdentity useless.
+    // However, when we have a mechanism to reliably get the source code from an IrFile or IrFileEntry no matter what's stored
+    // in fileEntry.name (including the source code for external libraries or klibs with relative paths in them).
+    // Another issue is that JS AST serializer/deserializer ignores fileIdentity, which means that this will not work with incremental
+    // compilation.
+    return JsLocationWithEmbeddedSource(this, fileIdentity = null /*context.currentFile.fileEntry*/) {
+        try {
+            InputStreamReader(FileInputStream(file), StandardCharsets.UTF_8)
+        } catch (e: IOException) {
+            // TODO: If the source file is not available at path (e. g. it's an stdlib file), use heuristics to find it.
+            // If all heuristics fail, use dumpKotlinLike() on freshly deserialized IrFile.
+            null
+        }
     }
 }
 
