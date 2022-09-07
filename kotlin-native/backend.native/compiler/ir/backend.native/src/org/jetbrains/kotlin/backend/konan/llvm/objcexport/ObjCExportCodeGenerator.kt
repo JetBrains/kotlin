@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 import kotlinx.cinterop.toCValues
 import kotlinx.cinterop.toKString
 import llvm.*
+import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.OverriddenFunctionInfo
@@ -27,9 +28,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrVararg
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
@@ -302,6 +301,18 @@ internal class ObjCExportCodeGenerator(
         val namer: ObjCExportNamer,
         val mapper: ObjCExportMapper
 ) : ObjCExportCodeGeneratorBase(codegen) {
+
+    inline fun <reified T: IrFunction> T.getLowered(): T = when (this) {
+        is IrSimpleFunction -> when {
+            isSuspend -> this.getOrCreateFunctionWithContinuationStub(context) as T
+            else -> this
+        }
+        else -> this
+    }
+
+    val ObjCMethodSpec.BaseMethod<IrFunctionSymbol>.owner get() = symbol.owner.getLowered()
+    val ObjCMethodSpec.BaseMethod<IrConstructorSymbol>.owner get() = symbol.owner.getLowered()
+    val ObjCMethodSpec.BaseMethod<IrSimpleFunctionSymbol>.owner get() = symbol.owner.getLowered()
 
     val selectorsToDefine = mutableMapOf<String, MethodBridge>()
 
@@ -1178,13 +1189,13 @@ private fun ObjCExportCodeGenerator.generateTypeInfoArray(types: Set<IrClass>): 
             codegen.staticData.placeGlobalConstArray("", codegen.kTypeInfoPtr, typeInfos)
         }
 
-private fun effectiveThrowsClasses(method: IrFunction, symbols: KonanSymbols): List<IrClass> {
+private fun ObjCExportCodeGenerator.effectiveThrowsClasses(method: IrFunction, symbols: KonanSymbols): List<IrClass> {
     if (method is IrSimpleFunction && method.overriddenSymbols.isNotEmpty()) {
         return effectiveThrowsClasses(method.overriddenSymbols.first().owner, symbols)
     }
 
     val throwsAnnotation = method.annotations.findAnnotation(KonanFqNames.throws)
-            ?: return if (method.isSuspend) {
+            ?: return if (method is IrSimpleFunction && method.origin == IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION) {
                 listOf(symbols.cancellationException.owner)
             } else {
                 // Note: frontend ensures that all topmost overridden methods have (equal) @Throws annotations.
@@ -1223,7 +1234,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
         irFunction: IrFunction,
         baseMethod: ObjCMethodSpec.BaseMethod<IrSimpleFunctionSymbol>
 ): ConstPointer {
-    val baseIrFunction = baseMethod.symbol.owner
+    val baseIrFunction = baseMethod.owner
 
     val methodBridge = baseMethod.bridge
 
@@ -1288,7 +1299,14 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                     }
 
                 is MethodBridgeValueParameter.SuspendCompletion -> {
-                    val continuation = param(irFunction.allParametersCount) // The last argument.
+                    require(!irFunction.isSuspend) { "Suspend function should be lowered out at this point" }
+                    parameter!!
+                    val continuation = convertKotlin(
+                            { parameters[parameter]!! },
+                            actualType = parameter.type,
+                            expectedType = parameterToBase[parameter]!!.type,
+                            resultLifetime = Lifetime.ARGUMENT
+                    )
                     // TODO: consider placing interception into the converter to reduce code size.
                     val intercepted = callFromBridge(
                             context.ir.symbols.objCExportInterceptedContinuation.owner.llvmFunction,
@@ -1407,8 +1425,6 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
         val actualReturnType = irFunction.returnType
 
         val retVal = when {
-            baseIrFunction.isSuspend -> genKotlinBaseMethodResult(Lifetime.RETURN_VALUE, methodBridge.returnBridge)
-
             actualReturnType.isUnit() || actualReturnType.isNothing() -> {
                 genKotlinBaseMethodResult(Lifetime.ARGUMENT, methodBridge.returnBridge)
                 null
@@ -1525,7 +1541,7 @@ private fun ObjCExportCodeGenerator.createMethodVirtualAdapter(
 ): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
     val selector = baseMethod.selector
     val methodBridge = baseMethod.bridge
-    val irFunction = baseMethod.symbol.owner
+    val irFunction = baseMethod.owner
     val imp = generateObjCImp(irFunction, irFunction, methodBridge, isVirtual = true)
 
     return objCToKotlinMethodAdapter(selector, methodBridge, imp)
@@ -1539,7 +1555,7 @@ private fun ObjCExportCodeGenerator.createMethodAdapter(
 private fun ObjCExportCodeGenerator.createFinalMethodAdapter(
         baseMethod: ObjCMethodSpec.BaseMethod<IrSimpleFunctionSymbol>
 ): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
-    val irFunction = baseMethod.symbol.owner
+    val irFunction = baseMethod.owner
     require(irFunction.modality == Modality.FINAL)
     return createMethodAdapter(irFunction, baseMethod)
 }
@@ -1551,21 +1567,21 @@ private fun ObjCExportCodeGenerator.createMethodAdapter(
     val selectorName = request.base.selector
     val methodBridge = request.base.bridge
 
-    val imp = generateObjCImp(request.implementation, request.base.symbol.owner, methodBridge)
+    val imp = generateObjCImp(request.implementation, request.base.owner, methodBridge)
 
     objCToKotlinMethodAdapter(selectorName, methodBridge, imp)
 }
 
 private fun ObjCExportCodeGenerator.createConstructorAdapter(
         baseMethod: ObjCMethodSpec.BaseMethod<IrConstructorSymbol>
-): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter = createMethodAdapter(baseMethod.symbol.owner, baseMethod)
+): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter = createMethodAdapter(baseMethod.owner, baseMethod)
 
 private fun ObjCExportCodeGenerator.createArrayConstructorAdapter(
         baseMethod: ObjCMethodSpec.BaseMethod<IrConstructorSymbol>
 ): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
     val selectorName = baseMethod.selector
     val methodBridge = baseMethod.bridge
-    val irConstructor = baseMethod.symbol.owner
+    val irConstructor = baseMethod.owner
     val imp = generateObjCImpForArrayConstructor(irConstructor, methodBridge)
 
     return objCToKotlinMethodAdapter(selectorName, methodBridge, imp)
@@ -1666,7 +1682,7 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
 
     val virtualAdapters = type.kotlinMethods
             .filter {
-                val irFunction = it.baseMethod.symbol.owner
+                val irFunction = it.baseMethod.owner
                 irFunction.parentAsClass == irClass && irFunction.isOverridable
             }.map { createMethodVirtualAdapter(it.baseMethod) }
 
@@ -1755,9 +1771,9 @@ private fun ObjCExportCodeGenerator.createReverseAdapters(
 
     val methodsCoveredByInheritedAdapters = inheritedAdapters.flatMapTo(mutableSetOf()) { it.coveredMethods }
 
-    val allBaseMethodsByIr = type.kotlinMethods.map { it.baseMethod }.associateBy { it.symbol.owner }
+    val allBaseMethodsByIr = type.kotlinMethods.map { it.baseMethod }.associateBy { it.owner }
 
-    for (method in type.irClassSymbol.owner.simpleFunctions()) {
+    for (method in type.irClassSymbol.owner.simpleFunctions().map { it.getLowered() }) {
         val baseMethods = method.allOverriddenFunctions.mapNotNull { allBaseMethodsByIr[it] }
         if (baseMethods.isEmpty()) continue
 
@@ -1830,7 +1846,7 @@ private fun ObjCExportCodeGenerator.createDirectAdapters(
 
     fun ObjCClassForKotlinClass.getAllRequiredDirectAdapters() = this.kotlinMethods.map { method ->
         DirectAdapterRequest(
-                findImplementation(irClassSymbol.owner, method.baseMethod.symbol.owner, context),
+                findImplementation(irClassSymbol.owner, method.baseMethod.owner, context),
                 method.baseMethod
         )
     }
@@ -1841,9 +1857,9 @@ private fun ObjCExportCodeGenerator.createDirectAdapters(
     return requiredAdapters.distinctBy { it.base.selector }.map { createMethodAdapter(it) }
 }
 
-private fun findImplementation(irClass: IrClass, method: IrSimpleFunction, context: Context): IrSimpleFunction? {
+private fun ObjCExportCodeGenerator.findImplementation(irClass: IrClass, method: IrSimpleFunction, context: Context): IrSimpleFunction? {
     val override = irClass.simpleFunctions().singleOrNull {
-        method in it.allOverriddenFunctions
+        method in it.getLowered().allOverriddenFunctions
     } ?: error("no implementation for ${method.render()}\nin ${irClass.fqNameWhenAvailable}")
     return OverriddenFunctionInfo(override, method).getImplementation(context)
 }
