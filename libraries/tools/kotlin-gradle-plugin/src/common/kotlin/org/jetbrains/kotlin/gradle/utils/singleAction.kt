@@ -22,14 +22,17 @@ internal abstract class SingleAction {
     }
 }
 
+// Warning: if KGP is loaded multiple times by different classloaders, actions may be executed more than once
 internal object SingleActionPerBuild : SingleAction() {
     override fun selectKey(project: Project): Project = project.rootProject
 }
 
+// Warning: if KGP is loaded multiple times by different classloaders, actions may be executed more than once
 internal object SingleActionPerProject : SingleAction() {
     override fun selectKey(project: Project) = project
 }
 
+// Warning: if KGP is loaded multiple times by different classloaders, messages may be shown more than once
 internal object SingleWarningPerBuild {
     private const val ACTION_ID_SHOW_WARNING = "show-warning:"
 
