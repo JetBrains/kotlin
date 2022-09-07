@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.sources
 
+import org.jetbrains.kotlin.gradle.assertAllImplementationsAlsoImplement
 import org.jetbrains.kotlin.gradle.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.reflections
+import org.junit.jupiter.api.assertAll
 import kotlin.reflect.full.isSubclassOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -22,14 +24,7 @@ import kotlin.test.fail
 class InternalKotlinSourceSetTest {
     @Test
     fun `test - all implementations of KotlinSourceSet - implement InternalKotlinSourceSet`() {
-        val subtypesOfKotlinSourceSet = reflections.getSubTypesOf(KotlinSourceSet::class.java)
-        subtypesOfKotlinSourceSet
-            .filter { subtype -> !subtype.isInterface }
-            .forEach { implementation ->
-                if (!implementation.kotlin.isSubclassOf(InternalKotlinSourceSet::class)) {
-                    fail("$implementation does not implement ${InternalKotlinSourceSet::class}")
-                }
-            }
+        assertAllImplementationsAlsoImplement(KotlinSourceSet::class, InternalKotlinSourceSet::class)
     }
 
     @Test

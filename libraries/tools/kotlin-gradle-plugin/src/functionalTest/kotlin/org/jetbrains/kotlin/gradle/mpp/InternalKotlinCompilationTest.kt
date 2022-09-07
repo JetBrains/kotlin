@@ -7,23 +7,14 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
+import org.jetbrains.kotlin.gradle.assertAllImplementationsAlsoImplement
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
-import org.jetbrains.kotlin.gradle.reflections
 import org.junit.Test
-import kotlin.reflect.full.isSubclassOf
-import kotlin.test.fail
 
 class InternalKotlinSourceSetTest {
     @Test
     fun `test - all implementations of KotlinCompilation - implement InternalKotlinCompilation`() {
-        val subtypesOfKotlinSourceSet = reflections.getSubTypesOf(KotlinCompilation::class.java)
-        subtypesOfKotlinSourceSet
-            .filter { subtype -> !subtype.isInterface }
-            .forEach { implementation ->
-                if (!implementation.kotlin.isSubclassOf(InternalKotlinCompilation::class)) {
-                    fail("$implementation does not implement ${InternalKotlinCompilation::class}")
-                }
-            }
+        assertAllImplementationsAlsoImplement(KotlinCompilation::class, InternalKotlinCompilation::class)
     }
 }
