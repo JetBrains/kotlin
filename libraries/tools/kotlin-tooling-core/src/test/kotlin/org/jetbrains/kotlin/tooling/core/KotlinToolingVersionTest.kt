@@ -178,17 +178,26 @@ class KotlinToolingVersionTest {
     @Test
     fun maturityWithAdditionalReleaseSuffix() {
         assertMaturity(MILESTONE, "1.6.20-M1-release")
+        assertMaturity(null, "1.6.20-M1-release1")
         assertMaturity(MILESTONE, "1.6.20-M1-release-22")
+        assertMaturity(null, "1.6.20-M1-release-", "Forbid handling dash")
         assertMaturity(ALPHA, "1.6.20-alpha-release")
+        assertMaturity(ALPHA, "1.6.20-alpha-release1")
         assertMaturity(ALPHA, "1.6.20-alpha-release39")
+        assertMaturity(null, "1.6.20-alpha-release-", "Forbid handling dash")
         assertMaturity(BETA, "1.6.20-beta2-release")
+        assertMaturity(BETA, "1.6.20-beta2-release1")
+        assertMaturity(BETA, "1.6.20-beta2-release-1")
+        assertMaturity(null, "1.6.20-beta2-release-", "Forbid handling dash")
         assertMaturity(RC, "1.6.20-rc1-release")
+        assertMaturity(RC, "1.6.20-rc1-release1")
+        assertMaturity(RC, "1.6.20-rc1-release-1")
+        assertMaturity(null, "1.6.20-rc1-release-", "Forbid handling dash")
     }
 
     @Test
     fun invalidMilestoneVersion() {
-        val exception = assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("1.6.20-M") }
-        assertTrue("maturity" in exception.message.orEmpty().toLowerCase(), "Expected 'maturity' issue mentioned in error message")
+        assertMaturity(null, "1.6.20-M")
     }
 
     @Test
