@@ -107,13 +107,13 @@ public inline fun atanh(x: kotlin.Double): kotlin.Double
 @kotlin.internal.InlineOnly
 public inline fun atanh(x: kotlin.Float): kotlin.Float
 
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.8")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun cbrt(x: kotlin.Double): kotlin.Double
 
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.8")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun cbrt(x: kotlin.Float): kotlin.Float
 

@@ -395,8 +395,8 @@ public actual fun max(a: Double, b: Double): Double = when {
  *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
  */
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.8")
+@WasExperimental(ExperimentalStdlibApi::class)
 @GCUnsafeCall("Kotlin_math_cbrt")
 public external actual fun cbrt(x: Double): Double
 
@@ -962,8 +962,8 @@ public actual fun max(a: Float, b: Float): Float = when {
  *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
  */
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.8")
+@WasExperimental(ExperimentalStdlibApi::class)
 @GCUnsafeCall("Kotlin_math_cbrtf")
 public external actual fun cbrt(x: Float): Float
 
