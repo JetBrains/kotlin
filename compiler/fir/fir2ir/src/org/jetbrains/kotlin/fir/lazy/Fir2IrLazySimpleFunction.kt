@@ -50,7 +50,7 @@ class Fir2IrLazySimpleFunction(
 
     override var dispatchReceiverParameter: IrValueParameter? by lazyVar(lock) {
         val containingClass = parent as? IrClass
-        if (containingClass != null && shouldHaveDispatchReceiver(containingClass, fir)) {
+        if (containingClass != null && shouldHaveDispatchReceiver(containingClass)) {
             createThisReceiverParameter(thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class"))
         } else null
     }

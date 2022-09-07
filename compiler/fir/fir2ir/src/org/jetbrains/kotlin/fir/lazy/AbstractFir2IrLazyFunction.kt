@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -86,12 +87,14 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
         get() = null
         set(_) = error("We should never need to store metadata of external declarations.")
 
-    protected fun shouldHaveDispatchReceiver(
-        containingClass: IrClass,
-        staticOwner: FirCallableDeclaration
-    ): Boolean {
-        return !staticOwner.isStatic && !containingClass.isFacadeClass &&
-                (!containingClass.isObject || containingClass.isCompanion || !staticOwner.hasAnnotation(JVM_STATIC_CLASS_ID))
+    protected fun shouldHaveDispatchReceiver(containingClass: IrClass): Boolean {
+        return !fir.isStatic && !containingClass.isFacadeClass &&
+                (!containingClass.isObject || containingClass.isCompanion || !hasJvmStaticAnnotation())
+    }
+
+    private fun hasJvmStaticAnnotation(): Boolean {
+        return fir.hasAnnotation(JVM_STATIC_CLASS_ID) ||
+                (fir as? FirPropertyAccessor)?.propertySymbol?.fir?.hasAnnotation(JVM_STATIC_CLASS_ID) == true
     }
 
     protected fun createThisReceiverParameter(thisType: IrType): IrValueParameter {
