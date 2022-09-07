@@ -405,6 +405,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("nestedAnnotationConstExprArguments.kt")
+        public void testNestedAnnotationConstExprArguments() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/nestedAnnotationConstExprArguments.kt");
+        }
+
+        @Test
         @TestMetadata("nestedClass.kt")
         public void testNestedClass() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/nestedClass.kt");

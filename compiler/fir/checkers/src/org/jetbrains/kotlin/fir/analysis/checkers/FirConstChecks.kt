@@ -34,6 +34,9 @@ internal fun checkConstantArguments(
         ?.classKind
 
     when {
+        expression is FirNamedArgumentExpression -> {
+            checkConstantArguments(expression.expression, session)
+        }
         expression is FirTypeOperatorCall -> if (expression.operation == FirOperation.AS) return ConstantArgumentKind.NOT_CONST
         expression is FirWhenExpression -> {
             if (!expression.isProperlyExhaustive) {
