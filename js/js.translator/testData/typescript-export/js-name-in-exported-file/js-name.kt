@@ -12,7 +12,6 @@
 
 package foo
 
-
 @JsName("Object")
 external interface WeirdInterface {
     val constructor: dynamic
