@@ -183,65 +183,65 @@ class KotlinToolingVersionTest {
 
     @Test
     fun buildNumber() {
-        assertEquals(510, KotlinToolingVersion("1.6.20-510").buildNumber)
-        assertEquals(510, KotlinToolingVersion("1.6.20-release-510").buildNumber)
-        assertEquals(510, KotlinToolingVersion("1.6.20-rc1-510").buildNumber)
-        assertEquals(510, KotlinToolingVersion("1.6.20-beta1-510").buildNumber)
-        assertEquals(510, KotlinToolingVersion("1.6.20-alpha1-510").buildNumber)
-        assertEquals(510, KotlinToolingVersion("1.6.20-m1-510").buildNumber)
-        assertEquals(510, KotlinToolingVersion("1.6.20-m1-release-510").buildNumber)
-        assertEquals(510, KotlinToolingVersion("1.6.20-rc1-release-510").buildNumber)
-        assertEquals(510, KotlinToolingVersion("1.6.20-beta1-release-510").buildNumber)
-        assertEquals(510, KotlinToolingVersion("1.6.20-alpha1-release-510").buildNumber)
+        assertBuildNumber(510, "1.6.20-510")
+        assertBuildNumber(510, "1.6.20-release-510")
+        assertBuildNumber(510, "1.6.20-rc1-510")
+        assertBuildNumber(510, "1.6.20-beta1-510")
+        assertBuildNumber(510, "1.6.20-alpha1-510")
+        assertBuildNumber(510, "1.6.20-m1-510")
+        assertBuildNumber(510, "1.6.20-m1-release-510")
+        assertBuildNumber(510, "1.6.20-rc1-release-510")
+        assertBuildNumber(510, "1.6.20-beta1-release-510")
+        assertBuildNumber(510, "1.6.20-alpha1-release-510")
 
         /* dev */
-        assertEquals(510, KotlinToolingVersion("1.6.20-dev-510").buildNumber)
-        assertEquals(510, KotlinToolingVersion("1.6.20-pub-510").buildNumber)
-        assertEquals(510, KotlinToolingVersion("1.6.20-dev-myWildcard-510").buildNumber)
-        assertEquals(510, KotlinToolingVersion("1.6.20-pub-myWildcard-510").buildNumber)
-        assertEquals(510, KotlinToolingVersion("1.6.20-dev-myWildcard1-510").buildNumber)
-        assertEquals(510, KotlinToolingVersion("1.6.20-pub-myWildcard1-510").buildNumber)
-        assertNull(KotlinToolingVersion("1.6.20-dev-myWildcard510").buildNumber)
+        assertBuildNumber(510, "1.6.20-dev-510")
+        assertBuildNumber(510, "1.6.20-pub-510")
+        assertBuildNumber(510, "1.6.20-dev-myWildcard-510")
+        assertBuildNumber(510, "1.6.20-pub-myWildcard-510")
+        assertBuildNumber(510, "1.6.20-dev-myWildcard1-510")
+        assertBuildNumber(510, "1.6.20-pub-myWildcard1-510")
+        assertBuildNumber(null,"1.6.20-dev-myWildcard510")
 
         /* dev with - in wildcards */
-        assertEquals(510, KotlinToolingVersion("1.6.20-dev-google-pr-510").buildNumber)
-        assertEquals(510, KotlinToolingVersion("1.6.20-dev-google-pr-510").buildNumber)
-        assertEquals(510, KotlinToolingVersion("1.6.20-dev-google-pr210-510").buildNumber)
-        assertNull(KotlinToolingVersion("1.6.20-dev-google-pr").buildNumber)
-        assertNull(KotlinToolingVersion("1.6.20-dev-google-pr510").buildNumber)
+        assertBuildNumber(510, "1.6.20-dev-google-pr-510")
+        assertBuildNumber(510, "1.6.20-dev-google-pr-510")
+        assertBuildNumber(510, "1.6.20-dev-google-pr210-510")
+        assertBuildNumber(null, "1.6.20-dev-google-pr")
+        assertBuildNumber(null, "1.6.20-dev-google-pr510")
     }
 
     @Test
     fun classifierNumber() {
-        assertEquals(2, KotlinToolingVersion("1.6.20-rc2-510").classifierNumber)
-        assertEquals(2, KotlinToolingVersion("1.6.20-beta2-510").classifierNumber)
-        assertEquals(2, KotlinToolingVersion("1.6.20-alpha2-510").classifierNumber)
-        assertEquals(2, KotlinToolingVersion("1.6.20-m2-510").classifierNumber)
+        assertClassifierNumber(2, "1.6.20-rc2-510")
+        assertClassifierNumber(2, "1.6.20-beta2-510")
+        assertClassifierNumber(2, "1.6.20-alpha2-510")
+        assertClassifierNumber(2, "1.6.20-m2-510")
 
-        assertEquals(2, KotlinToolingVersion("1.6.20-rc2").classifierNumber)
-        assertEquals(2, KotlinToolingVersion("1.6.20-beta2").classifierNumber)
-        assertEquals(2, KotlinToolingVersion("1.6.20-alpha2").classifierNumber)
-        assertEquals(2, KotlinToolingVersion("1.6.20-m2").classifierNumber)
+        assertClassifierNumber(2, "1.6.20-rc2")
+        assertClassifierNumber(2, "1.6.20-beta2")
+        assertClassifierNumber(2, "1.6.20-alpha2")
+        assertClassifierNumber(2, "1.6.20-m2")
 
-        assertEquals(2, KotlinToolingVersion("1.6.20-rc2-release").classifierNumber)
-        assertEquals(2, KotlinToolingVersion("1.6.20-rc2-release-510").classifierNumber)
-        assertEquals(2, KotlinToolingVersion("1.6.20-beta2-release").classifierNumber)
-        assertEquals(2, KotlinToolingVersion("1.6.20-beta2-release-510").classifierNumber)
-        assertEquals(2, KotlinToolingVersion("1.6.20-alpha2").classifierNumber)
-        assertEquals(2, KotlinToolingVersion("1.6.20-alpha2-release").classifierNumber)
-        assertEquals(2, KotlinToolingVersion("1.6.20-alpha2-release-510").classifierNumber)
-        assertEquals(2, KotlinToolingVersion("1.6.20-m2").classifierNumber)
-        assertEquals(2, KotlinToolingVersion("1.6.20-m2-release").classifierNumber)
-        assertEquals(2, KotlinToolingVersion("1.6.20-m2-release-510").classifierNumber)
+        assertClassifierNumber(2, "1.6.20-rc2-release")
+        assertClassifierNumber(2, "1.6.20-rc2-release-510")
+        assertClassifierNumber(2, "1.6.20-beta2-release")
+        assertClassifierNumber(2, "1.6.20-beta2-release-510")
+        assertClassifierNumber(2, "1.6.20-alpha2")
+        assertClassifierNumber(2, "1.6.20-alpha2-release")
+        assertClassifierNumber(2, "1.6.20-alpha2-release-510")
+        assertClassifierNumber(2, "1.6.20-m2")
+        assertClassifierNumber(2, "1.6.20-m2-release")
+        assertClassifierNumber(2, "1.6.20-m2-release-510")
 
-        assertNull(KotlinToolingVersion("1.6.20-dev-510").classifierNumber)
-        assertNull(KotlinToolingVersion("1.6.20-pub-510").classifierNumber)
-        assertNull(KotlinToolingVersion("1.6.20-dev-myWildcard-510").classifierNumber)
-        assertNull(KotlinToolingVersion("1.6.20-pub-myWildcard-510").classifierNumber)
-        assertNull(KotlinToolingVersion("1.6.20-dev-myWildcard1-510").classifierNumber)
-        assertNull(KotlinToolingVersion("1.6.20-pub-myWildcard1-510").classifierNumber)
-        assertNull(KotlinToolingVersion("1.6.20-dev-myWildcard510").classifierNumber)
-        assertNull(KotlinToolingVersion("1.6.20-dev-google-pr510").classifierNumber)
+        assertClassifierNumber(null, "1.6.20-dev-510")
+        assertClassifierNumber(null, "1.6.20-pub-510")
+        assertClassifierNumber(null, "1.6.20-dev-myWildcard-510")
+        assertClassifierNumber(null, "1.6.20-pub-myWildcard-510")
+        assertClassifierNumber(null, "1.6.20-dev-myWildcard1-510")
+        assertClassifierNumber(null, "1.6.20-pub-myWildcard1-510")
+        assertClassifierNumber(null, "1.6.20-dev-myWildcard510")
+        assertClassifierNumber(null, "1.6.20-dev-google-pr510")
     }
 
     @Test
@@ -295,6 +295,14 @@ class KotlinToolingVersionTest {
         assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("1.6.20.1") }
         assertNull(KotlinToolingVersionOrNull("x"))
         assertNull(KotlinToolingVersionOrNull("1.6.20.1"))
+    }
+
+    private fun assertBuildNumber(buildNumber: Int?, version: String, message: String? = null) {
+        assertEquals(buildNumber, KotlinToolingVersion(version).buildNumber, message)
+    }
+
+    private fun assertClassifierNumber(classifierNumber: Int?, version: String, message: String? = null) {
+        assertEquals(classifierNumber, KotlinToolingVersion(version).classifierNumber, message)
     }
 
     private fun assertMaturity(maturity: KotlinToolingVersion.Maturity?, version: String) {
