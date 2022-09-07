@@ -919,6 +919,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      */
     @ExperimentalTime
     @Deprecated("Use inWholeNanoseconds property instead.", ReplaceWith("this.inWholeNanoseconds"))
+    @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.8")
     public fun toLongNanoseconds(): Long = inWholeNanoseconds
 
     /**
@@ -930,6 +931,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      */
     @ExperimentalTime
     @Deprecated("Use inWholeMilliseconds property instead.", ReplaceWith("this.inWholeMilliseconds"))
+    @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.8")
     public fun toLongMilliseconds(): Long = inWholeMilliseconds
 
     /**

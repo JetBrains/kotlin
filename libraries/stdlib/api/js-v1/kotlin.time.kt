@@ -307,10 +307,12 @@ public final inline class Duration : kotlin.Comparable<kotlin.time.Duration> {
 
     @kotlin.time.ExperimentalTime
     @kotlin.Deprecated(message = "Use inWholeMilliseconds property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.inWholeMilliseconds", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(errorSince = "1.8", warningSince = "1.5")
     public final fun toLongMilliseconds(): kotlin.Long
 
     @kotlin.time.ExperimentalTime
     @kotlin.Deprecated(message = "Use inWholeNanoseconds property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.inWholeNanoseconds", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(errorSince = "1.8", warningSince = "1.5")
     public final fun toLongNanoseconds(): kotlin.Long
 
     public open override fun toString(): kotlin.String
