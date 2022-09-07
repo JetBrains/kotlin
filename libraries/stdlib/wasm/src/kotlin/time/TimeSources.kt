@@ -7,6 +7,7 @@ package kotlin.time
 
 import kotlin.wasm.internal.ExternalInterfaceType
 import kotlin.time.TimeSource.Monotonic.ValueTimeMark
+import kotlin.time.Duration.Companion.milliseconds
 
 @JsFun("() => typeof globalThis !== 'undefined' && typeof globalThis.performance !== 'undefined' ? globalThis.performance : null")
 private external fun tryGetPerformance(): ExternalInterfaceType?
