@@ -794,36 +794,43 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /** The value of this duration expressed as a [Double] number of days. */
     @ExperimentalTime
     @Deprecated("Use inWholeDays property instead or convert toDouble(DAYS) if a double value is required.", ReplaceWith("toDouble(DurationUnit.DAYS)"))
+    @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.8")
     public val inDays: Double get() = toDouble(DurationUnit.DAYS)
 
     /** The value of this duration expressed as a [Double] number of hours. */
     @ExperimentalTime
     @Deprecated("Use inWholeHours property instead or convert toDouble(HOURS) if a double value is required.", ReplaceWith("toDouble(DurationUnit.HOURS)"))
+    @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.8")
     public val inHours: Double get() = toDouble(DurationUnit.HOURS)
 
     /** The value of this duration expressed as a [Double] number of minutes. */
     @ExperimentalTime
     @Deprecated("Use inWholeMinutes property instead or convert toDouble(MINUTES) if a double value is required.", ReplaceWith("toDouble(DurationUnit.MINUTES)"))
+    @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.8")
     public val inMinutes: Double get() = toDouble(DurationUnit.MINUTES)
 
     /** The value of this duration expressed as a [Double] number of seconds. */
     @ExperimentalTime
     @Deprecated("Use inWholeSeconds property instead or convert toDouble(SECONDS) if a double value is required.", ReplaceWith("toDouble(DurationUnit.SECONDS)"))
+    @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.8")
     public val inSeconds: Double get() = toDouble(DurationUnit.SECONDS)
 
     /** The value of this duration expressed as a [Double] number of milliseconds. */
     @ExperimentalTime
     @Deprecated("Use inWholeMilliseconds property instead or convert toDouble(MILLISECONDS) if a double value is required.", ReplaceWith("toDouble(DurationUnit.MILLISECONDS)"))
+    @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.8")
     public val inMilliseconds: Double get() = toDouble(DurationUnit.MILLISECONDS)
 
     /** The value of this duration expressed as a [Double] number of microseconds. */
     @ExperimentalTime
     @Deprecated("Use inWholeMicroseconds property instead or convert toDouble(MICROSECONDS) if a double value is required.", ReplaceWith("toDouble(DurationUnit.MICROSECONDS)"))
+    @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.8")
     public val inMicroseconds: Double get() = toDouble(DurationUnit.MICROSECONDS)
 
     /** The value of this duration expressed as a [Double] number of nanoseconds. */
     @ExperimentalTime
     @Deprecated("Use inWholeNanoseconds property instead or convert toDouble(NANOSECONDS) if a double value is required.", ReplaceWith("toDouble(DurationUnit.NANOSECONDS)"))
+    @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "1.8")
     public val inNanoseconds: Double get() = toDouble(DurationUnit.NANOSECONDS)
 
 
