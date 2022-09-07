@@ -163,6 +163,16 @@ class KotlinToolingVersionTest {
         assertMaturity(DEV, "1.6.20-pUb")
         assertMaturity(DEV, "1.6.20-dev-google-pr")
         assertMaturity(DEV, "1.6.20-dev-google-pr-510")
+        assertMaturity(DEV, "1.8.0-one-two-three-2022")
+        assertMaturity(DEV, "1.8.0-one-a1-b2-2022")
+        assertMaturity(DEV, "1.8.0-temporary-999")
+        assertMaturity(DEV, "1.8.0-snapshot-42", "Looks strange but snapshot is rather special to allow more usages")
+        assertMaturity(null, "1.8.0-dev-", "Forbid dash at the end")
+        assertMaturity(null, "1.8.0-t-1000", "Forbid too short first classifier")
+        assertMaturity(null, "1.8.0-no-1", "First classifier should be strictly longer than 2 letters")
+        assertMaturity(null, "1.8.0-dev----999", "Forbid many dashes in a row")
+        assertMaturity(null, "1.8.0-999-0", "Forbid fully digit classifier")
+        assertMaturity(null, "1.8.0-some-5-0", "Forbid fully digit second classifier")
     }
 
     @Test
@@ -201,6 +211,8 @@ class KotlinToolingVersionTest {
         assertBuildNumber(510, "1.6.20-pub-myWildcard-510")
         assertBuildNumber(510, "1.6.20-dev-myWildcard1-510")
         assertBuildNumber(510, "1.6.20-pub-myWildcard1-510")
+        assertBuildNumber(510, "1.6.20-some-510")
+        assertBuildNumber(510, "1.6.20-aaa-a2-a3-510")
         assertBuildNumber(null,"1.6.20-dev-myWildcard510")
 
         /* dev with - in wildcards */
@@ -305,7 +317,15 @@ class KotlinToolingVersionTest {
         assertEquals(classifierNumber, KotlinToolingVersion(version).classifierNumber, message)
     }
 
-    private fun assertMaturity(maturity: KotlinToolingVersion.Maturity?, version: String) {
-        assertEquals(maturity, KotlinToolingVersion(version).maturity)
+    private fun assertMaturity(maturity: KotlinToolingVersion.Maturity?, version: String, message: String? = null) {
+        if (maturity == null) {
+            val exception = assertFailsWith<IllegalArgumentException>(
+                "Parsing maturity is expected to be failed for `$version`${message?.let { ". $it" } ?: ""}") {
+                KotlinToolingVersion(version)
+            }
+            assertTrue("maturity" in exception.message.orEmpty().toLowerCase(), "Expected 'maturity' issue mentioned in error message")
+        } else {
+            assertEquals(maturity, KotlinToolingVersion(version).maturity, message)
+        }
     }
 }

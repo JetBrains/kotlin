@@ -49,12 +49,12 @@ class KotlinToolingVersion(
         val classifier = this.classifier?.toLowerCase(Locale.ROOT)
         when {
             classifier == null || classifier.matches(Regex("""(release-)?\d+""")) -> Maturity.STABLE
+            classifier == "snapshot" -> Maturity.SNAPSHOT
             classifier.matches(Regex("""(rc)(\d*)?(-release)?-?\d*""")) -> Maturity.RC
             classifier.matches(Regex("""beta(\d*)?(-release)?-?\d*""")) -> Maturity.BETA
             classifier.matches(Regex("""alpha(\d*)?(-release)?-?\d*""")) -> Maturity.ALPHA
             classifier.matches(Regex("""m\d+(-release)?(-\d*)?""")) -> Maturity.MILESTONE
-            classifier.matches(Regex("""(dev|pub)(-(\w|-)+)?-?\d*""")) -> Maturity.DEV
-            classifier == "snapshot" -> Maturity.SNAPSHOT
+            classifier.matches(Regex("""([a-zA-Z]{3,})(-[a-zA-Z]\w*)*(-\d+)?""")) -> Maturity.DEV
             else -> throw IllegalArgumentException("Can't infer maturity of KotlinVersion $this")
         }
     }
