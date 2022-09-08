@@ -6,6 +6,8 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":kotlin-value-container-assignment-compiler-plugin.common"))
+
     compileOnly(project(":compiler:fir:cones"))
     compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:fir:resolve"))

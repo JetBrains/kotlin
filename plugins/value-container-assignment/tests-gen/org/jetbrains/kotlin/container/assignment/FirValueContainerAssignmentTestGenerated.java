@@ -25,26 +25,32 @@ public class FirValueContainerAssignmentTestGenerated extends AbstractFirValueCo
     }
 
     @Test
-    @TestMetadata("incorrectUsageTest.fir.kt")
-    public void testIncorrectUsageTest() throws Exception {
-        runTest("plugins/value-container-assignment/testData/diagnostics/incorrectUsageTest.fir.kt");
+    @TestMetadata("incorrectUsage.fir.kt")
+    public void testIncorrectUsage() throws Exception {
+        runTest("plugins/value-container-assignment/testData/diagnostics/incorrectUsage.fir.kt");
     }
 
     @Test
-    @TestMetadata("localVariablesTest.fir.kt")
-    public void testLocalVariablesTest() throws Exception {
-        runTest("plugins/value-container-assignment/testData/diagnostics/localVariablesTest.fir.kt");
+    @TestMetadata("localVariables.fir.kt")
+    public void testLocalVariables() throws Exception {
+        runTest("plugins/value-container-assignment/testData/diagnostics/localVariables.fir.kt");
     }
 
     @Test
-    @TestMetadata("methodDeclarationTest.fir.kt")
-    public void testMethodDeclarationTest() throws Exception {
-        runTest("plugins/value-container-assignment/testData/diagnostics/methodDeclarationTest.fir.kt");
+    @TestMetadata("methodDeclaration.fir.kt")
+    public void testMethodDeclaration() throws Exception {
+        runTest("plugins/value-container-assignment/testData/diagnostics/methodDeclaration.fir.kt");
     }
 
     @Test
-    @TestMetadata("noAnnotationTest.fir.kt")
-    public void testNoAnnotationTest() throws Exception {
-        runTest("plugins/value-container-assignment/testData/diagnostics/noAnnotationTest.fir.kt");
+    @TestMetadata("noAnnotation.fir.kt")
+    public void testNoAnnotation() throws Exception {
+        runTest("plugins/value-container-assignment/testData/diagnostics/noAnnotation.fir.kt");
+    }
+
+    @Test
+    @TestMetadata("otherOperators.fir.kt")
+    public void testOtherOperators() throws Exception {
+        runTest("plugins/value-container-assignment/testData/diagnostics/otherOperators.fir.kt");
     }
 }

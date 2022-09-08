@@ -26,20 +26,26 @@ public class IrBlackBoxCodegenTestForValueContainerAssignmentGenerated extends A
     }
 
     @Test
-    @TestMetadata("annotationTest.kt")
-    public void testAnnotationTest() throws Exception {
-        runTest("plugins/value-container-assignment/testData/codegen/annotationTest.kt");
+    @TestMetadata("annotation.kt")
+    public void testAnnotation() throws Exception {
+        runTest("plugins/value-container-assignment/testData/codegen/annotation.kt");
     }
 
     @Test
-    @TestMetadata("supportedUsageTest.kt")
-    public void testSupportedUsageTest() throws Exception {
-        runTest("plugins/value-container-assignment/testData/codegen/supportedUsageTest.kt");
+    @TestMetadata("otherOperators.kt")
+    public void testOtherOperators() throws Exception {
+        runTest("plugins/value-container-assignment/testData/codegen/otherOperators.kt");
     }
 
     @Test
-    @TestMetadata("varBehaviourTest.kt")
-    public void testVarBehaviourTest() throws Exception {
-        runTest("plugins/value-container-assignment/testData/codegen/varBehaviourTest.kt");
+    @TestMetadata("supportedUsage.kt")
+    public void testSupportedUsage() throws Exception {
+        runTest("plugins/value-container-assignment/testData/codegen/supportedUsage.kt");
+    }
+
+    @Test
+    @TestMetadata("varBehaviour.kt")
+    public void testVarBehaviour() throws Exception {
+        runTest("plugins/value-container-assignment/testData/codegen/varBehaviour.kt");
     }
 }

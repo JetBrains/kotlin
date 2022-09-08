@@ -1,6 +1,6 @@
 package
 
-public fun test(): kotlin.Unit
+public fun `should not effect error reporting for other operators`(): kotlin.Unit
 
 @ValueContainer public final data class StringProperty {
     public constructor StringProperty(/*0*/ v: kotlin.String)
@@ -31,4 +31,3 @@ public final annotation class ValueContainer : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-

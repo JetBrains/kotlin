@@ -1,6 +1,3 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE, -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
-// !RENDER_DIAGNOSTICS_FULL_TEXT
-
 data class StringProperty(var v: String) {
     fun assign(v: String) {
         this.v = v
@@ -15,8 +12,7 @@ fun StringProperty.assign(v: Int) = this.assign("OK")
 
 data class Task(val input: StringProperty)
 
-fun test() {
-    // Should not work with assignment
+fun `should not work with assignment when there is no annotation on a type`() {
     val task = Task(StringProperty("Fail"))
     <!VAL_REASSIGNMENT!>task.input<!> = <!TYPE_MISMATCH!>"OK"<!>
     <!VAL_REASSIGNMENT!>task.input<!> = StringProperty("OK")

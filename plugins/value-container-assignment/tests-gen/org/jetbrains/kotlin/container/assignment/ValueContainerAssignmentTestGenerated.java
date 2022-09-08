@@ -25,26 +25,32 @@ public class ValueContainerAssignmentTestGenerated extends AbstractValueContaine
     }
 
     @Test
-    @TestMetadata("incorrectUsageTest.kt")
-    public void testIncorrectUsageTest() throws Exception {
-        runTest("plugins/value-container-assignment/testData/diagnostics/incorrectUsageTest.kt");
+    @TestMetadata("incorrectUsage.kt")
+    public void testIncorrectUsage() throws Exception {
+        runTest("plugins/value-container-assignment/testData/diagnostics/incorrectUsage.kt");
     }
 
     @Test
-    @TestMetadata("localVariablesTest.kt")
-    public void testLocalVariablesTest() throws Exception {
-        runTest("plugins/value-container-assignment/testData/diagnostics/localVariablesTest.kt");
+    @TestMetadata("localVariables.kt")
+    public void testLocalVariables() throws Exception {
+        runTest("plugins/value-container-assignment/testData/diagnostics/localVariables.kt");
     }
 
     @Test
-    @TestMetadata("methodDeclarationTest.kt")
-    public void testMethodDeclarationTest() throws Exception {
-        runTest("plugins/value-container-assignment/testData/diagnostics/methodDeclarationTest.kt");
+    @TestMetadata("methodDeclaration.kt")
+    public void testMethodDeclaration() throws Exception {
+        runTest("plugins/value-container-assignment/testData/diagnostics/methodDeclaration.kt");
     }
 
     @Test
-    @TestMetadata("noAnnotationTest.kt")
-    public void testNoAnnotationTest() throws Exception {
-        runTest("plugins/value-container-assignment/testData/diagnostics/noAnnotationTest.kt");
+    @TestMetadata("noAnnotation.kt")
+    public void testNoAnnotation() throws Exception {
+        runTest("plugins/value-container-assignment/testData/diagnostics/noAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("otherOperators.kt")
+    public void testOtherOperators() throws Exception {
+        runTest("plugins/value-container-assignment/testData/diagnostics/otherOperators.kt");
     }
 }

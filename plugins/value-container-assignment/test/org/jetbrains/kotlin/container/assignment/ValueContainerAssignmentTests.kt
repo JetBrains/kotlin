@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest
 import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTest
@@ -27,6 +28,7 @@ abstract class AbstractValueContainerAssignmentTest : AbstractDiagnosticTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configurePlugin()
+        builder.configureDiagnostics()
     }
 }
 
@@ -34,6 +36,7 @@ abstract class AbstractFirValueContainerAssignmentTest : AbstractFirDiagnosticTe
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configurePlugin()
+        builder.configureDiagnostics()
     }
 }
 
@@ -55,6 +58,12 @@ open class AbstractFirBlackBoxCodegenTestForValueContainerAssignment : AbstractF
 
 fun TestConfigurationBuilder.configurePlugin() {
     useConfigurators(::ValueContainerAssignmentEnvironmentConfigurator)
+}
+
+fun TestConfigurationBuilder.configureDiagnostics() {
+    defaultDirectives {
+        +RENDER_DIAGNOSTICS_FULL_TEXT
+    }
 }
 
 class ValueContainerAssignmentEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {

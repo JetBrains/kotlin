@@ -1,13 +1,13 @@
 package
 
-public fun test(): kotlin.Unit
-public fun StringProperty.assign(/*0*/ v: kotlin.Int): kotlin.String
+public fun `should report error if type doesn't match`(): kotlin.Unit
+public fun `should report error if type doesn't match with apply`(): kotlin.Unit
 
 @ValueContainer public final data class StringProperty {
     public constructor StringProperty(/*0*/ v: kotlin.String)
     public final var v: kotlin.String
-    public final fun assign(/*0*/ v: StringProperty): kotlin.String
-    public final fun assign(/*0*/ v: kotlin.String): kotlin.String
+    public final fun assign(/*0*/ v: StringProperty): kotlin.Unit
+    public final fun assign(/*0*/ v: kotlin.String): kotlin.Unit
     public final operator /*synthesized*/ fun component1(): kotlin.String
     public final /*synthesized*/ fun copy(/*0*/ v: kotlin.String = ...): StringProperty
     public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

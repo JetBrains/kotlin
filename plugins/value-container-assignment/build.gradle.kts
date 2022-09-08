@@ -17,11 +17,7 @@ dependencies {
     testCompileOnly(project(":kotlin-compiler"))
     testImplementation(project(":kotlin-scripting-jvm-host-unshaded"))
 
-    testApiJUnit5(vintageEngine = true)
-
     testApi(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
 
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(commonDependency("junit:junit"))
@@ -30,7 +26,6 @@ dependencies {
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
-
 
     testApi(intellijCore())
 }

@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.container.assignment
 
 import org.jetbrains.kotlin.cfg.getElementParentDeclaration
+import org.jetbrains.kotlin.container.assignment.ValueContainerAssignmentPluginNames.ASSIGN_METHOD
 import org.jetbrains.kotlin.container.assignment.diagnostics.ErrorsValueContainerAssignment.CALL_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT
 import org.jetbrains.kotlin.container.assignment.diagnostics.ErrorsValueContainerAssignment.NO_APPLICABLE_ASSIGN_METHOD
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtModifierListOwner
@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver.Companion.create
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import java.util.*
 
 class CliValueContainerAssignResolutionAltererExtension(
@@ -43,10 +43,6 @@ class CliValueContainerAssignResolutionAltererExtension(
 
 @OptIn(InternalNonStableExtensionPoints::class)
 abstract class AbstractValueContainerAssignResolutionAltererExtension : AssignResolutionAltererExtension {
-
-    companion object {
-        val ASSIGN_METHOD = Name.identifier("assign")
-    }
 
     override fun needOverloadAssign(expression: KtBinaryExpression, leftType: KotlinType?, bindingContext: BindingContext): Boolean {
         return expression.isValPropertyAssignment(bindingContext) && leftType.hasSpecialAnnotation(expression)
@@ -80,15 +76,13 @@ abstract class AbstractValueContainerAssignResolutionAltererExtension : AssignRe
             components.callResolver.resolveMethodCall(temporaryContext, receiver, expression)
         val methodReturnType: KotlinType? = OverloadResolutionResultsUtil.getResultingType(methodDescriptors, context)
 
-        if (methodDescriptors.isSuccess) {
-            methodReturnType?.let {
-                temporaryForAssignmentOperation.commit()
-                return if (!KotlinTypeChecker.DEFAULT.equalTypes(components.builtIns.unitType, methodReturnType)) {
-                    context.trace.report(CALL_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT.on(operationSign))
-                    null
-                } else {
-                    leftInfo.replaceType(methodReturnType)
-                }
+        if (methodDescriptors.isSuccess && methodReturnType != null) {
+            temporaryForAssignmentOperation.commit()
+            return if (methodReturnType.isUnit()) {
+                leftInfo.replaceType(methodReturnType)
+            } else {
+                context.trace.report(CALL_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT.on(operationSign))
+                null
             }
         }
         context.trace.report(NO_APPLICABLE_ASSIGN_METHOD.on(operationSign))

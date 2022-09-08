@@ -52,6 +52,7 @@ fun updateCompilerXml() {
         "libraries/tools/kotlin-prepush-hook",
         "libraries/tools/kotlin-project-model",
         "libraries/tools/kotlin-sam-with-receiver",
+        "libraries/tools/kotlin-value-container-assignment",
         "libraries/tools/kotlin-script-util",
         "libraries/tools/kotlin-serialization",
         "libraries/tools/kotlin-serialization-unshaded",
@@ -222,7 +223,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                     inheritOutputDirs = true
                 }
             }
-            
+
             if (this != rootProject) {
                 evaluationDependsOn(path)
             }
@@ -417,7 +418,7 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.kotlinc() {
         directory("license") {
             directoryContent("$rootDir/license")
         }
-        
+
         file("$rootDir/bootstrap/build.txt")
     }
 }
@@ -519,7 +520,7 @@ fun RecursiveArtifact.sourceJarsFromConfiguration(configuration: Configuration, 
         .resolvedArtifacts
 
     jarsFromExternalModules(resolvedArtifacts, renamer)
-    
+
     resolvedArtifacts
         .map { it.id.componentIdentifier }
         .filterIsInstance<ProjectComponentIdentifier>()

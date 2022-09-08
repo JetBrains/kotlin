@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.container.assignment.k2.diagnostics
 
-import org.jetbrains.kotlin.container.assignment.k2.FirValueContainerAssignmentAltererExtension.Companion.ASSIGN_METHOD
+import org.jetbrains.kotlin.container.assignment.ValueContainerAssignmentPluginNames.ASSIGN_METHOD
 import org.jetbrains.kotlin.container.assignment.k2.annotationMatchingService
 import org.jetbrains.kotlin.container.assignment.k2.diagnostics.FirErrorsValueContainerAssignment.DECLARATION_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter

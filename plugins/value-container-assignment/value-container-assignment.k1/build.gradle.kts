@@ -6,6 +6,8 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":kotlin-value-container-assignment-compiler-plugin.common"))
+
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(intellijCore())

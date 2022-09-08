@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.container.assignment.diagnostics
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.container.assignment.AbstractValueContainerAssignResolutionAltererExtension.Companion.ASSIGN_METHOD
+import org.jetbrains.kotlin.container.assignment.ValueContainerAssignmentPluginNames.ASSIGN_METHOD
 import org.jetbrains.kotlin.container.assignment.diagnostics.ErrorsValueContainerAssignment.DECLARATION_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor

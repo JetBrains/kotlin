@@ -1,6 +1,6 @@
 package
 
-public fun test(): kotlin.Unit
+public fun `should not work with assignment when there is no annotation on a type`(): kotlin.Unit
 public fun StringProperty.assign(/*0*/ v: kotlin.Int): kotlin.Unit
 
 public final data class StringProperty {
@@ -25,3 +25,4 @@ public final data class Task {
     public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 }
+

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.container.assignment.k2
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.container.assignment.ValueContainerAssignmentPluginNames.ASSIGN_METHOD
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.*
@@ -14,37 +15,39 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpressio
 import org.jetbrains.kotlin.fir.extensions.FirAssignExpressionAltererExtension
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolvedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirValueContainerAssignmentAltererExtension(
     session: FirSession
 ) : FirAssignExpressionAltererExtension(session) {
 
-    companion object {
-        val ASSIGN_METHOD = Name.identifier("assign")
-    }
-
     override fun transformVariableAssignment(variableAssignment: FirVariableAssignment): FirStatement? {
-        return if (variableAssignment.supportsTransformVariableAssignment()) {
+        return runIf(variableAssignment.supportsTransformVariableAssignment()) {
             buildFunctionCall(variableAssignment)
-        } else {
-            null
         }
     }
 
     private fun FirVariableAssignment.supportsTransformVariableAssignment(): Boolean {
-        val leftSymbol = lValue.resolvedSymbol as? FirPropertySymbol
-        return leftSymbol != null && leftSymbol.isVal && !leftSymbol.isLocal && leftSymbol.hasSpecialAnnotation()
+        return when (val lSymbol = lValue.resolvedSymbol as? FirVariableSymbol<*>) {
+            is FirPropertySymbol -> lSymbol.isVal && !lSymbol.isLocal && lSymbol.hasSpecialAnnotation()
+            is FirBackingFieldSymbol -> lSymbol.isVal && lSymbol.hasSpecialAnnotation()
+            is FirFieldSymbol -> lSymbol.isVal && lSymbol.hasSpecialAnnotation()
+            else -> false
+        }
     }
 
-    private fun FirPropertySymbol.hasSpecialAnnotation(): Boolean =
-        session.annotationMatchingService.isAnnotated(resolvedReturnType.toRegularClassSymbol(session))
+    private fun FirVariableSymbol<*>.hasSpecialAnnotation(): Boolean =
+        session.annotationMatchingService.isAnnotated(resolvedReturnType.upperBoundIfFlexible().toRegularClassSymbol(session))
 
     private fun buildFunctionCall(variableAssignment: FirVariableAssignment): FirFunctionCall {
         val leftArgument = variableAssignment.lValue
-        val leftSymbol = leftArgument.resolvedSymbol as FirPropertySymbol
+        val leftSymbol = leftArgument.resolvedSymbol as FirVariableSymbol<*>
         val leftResolvedType = leftSymbol.resolvedReturnTypeRef
         val rightArgument = variableAssignment.rValue
         return buildFunctionCall {

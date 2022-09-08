@@ -1,6 +1,10 @@
 package
 
-public fun test(): kotlin.Unit
+public fun `should not work with local val for different type`(): kotlin.Unit
+public fun `should not work with local val for same type`(): kotlin.Unit
+public fun `should not work with local var for different type`(): kotlin.Unit
+public fun `should not work with method parameters`(): kotlin.Unit
+public fun `should work with local var for same type`(): kotlin.Unit
 
 @ValueContainer public final data class StringProperty {
     public constructor StringProperty(/*0*/ v: kotlin.String)
