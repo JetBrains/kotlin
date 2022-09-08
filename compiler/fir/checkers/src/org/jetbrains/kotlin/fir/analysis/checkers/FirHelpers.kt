@@ -32,11 +32,8 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
-import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -176,6 +173,23 @@ fun FirNamedFunctionSymbol.overriddenFunctions(
     }
 
     return overriddenFunctions
+}
+
+fun FirClass.collectSupertypesWithDelegates(): Map<FirTypeRef, FirField?> {
+    // We don't care about the same cone type being represented
+    // by multiple type refs since this is an error anyway.
+    val superConesToSuperTypeRefs = superTypeRefs.groupingBy { it.coneType }.reduce { _, accumulator, _ -> accumulator }
+    val superTypeRefsToDelegate = superTypeRefs.keysToMap<FirTypeRef, FirField?> { null }.toMutableMap()
+
+    for (it in declarations) {
+        if (it is FirField && it.name.asString().startsWith("<$\$delegate_")) {
+            val type = it.returnTypeRef.coneType as? ConeClassLikeType ?: continue
+            val correspondingTypeRef = superConesToSuperTypeRefs[type] ?: continue
+            superTypeRefsToDelegate[correspondingTypeRef] = it
+        }
+    }
+
+    return superTypeRefsToDelegate
 }
 
 /**
