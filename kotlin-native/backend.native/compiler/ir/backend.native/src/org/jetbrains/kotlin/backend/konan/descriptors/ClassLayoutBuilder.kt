@@ -407,7 +407,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
      */
     val fields: List<FieldInfo>
         get() = fieldsInternal.map { fieldInfo ->
-            val mappedField = fieldInfo.irField?.let { context.mapping.lateInitFieldToNullableField[it] } ?: fieldInfo.irField
+            val mappedField = fieldInfo.irField?.let { context.mapping.lateInitFieldToNullableField[it] ?: it }
             if (mappedField == fieldInfo.irField)
                 fieldInfo
             else
