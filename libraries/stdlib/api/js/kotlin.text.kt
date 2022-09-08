@@ -41,6 +41,10 @@ public fun kotlin.text.StringBuilder.append(vararg value: kotlin.Any?): kotlin.t
 
 public fun kotlin.text.StringBuilder.append(vararg value: kotlin.String?): kotlin.text.StringBuilder
 
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use appendRange instead.", replaceWith = kotlin.ReplaceWith(expression = "this.appendRange(str, offset, offset + len)", imports = {}))
+@kotlin.internal.InlineOnly
+public inline fun kotlin.text.StringBuilder.append(str: kotlin.CharArray, offset: kotlin.Int, len: kotlin.Int): kotlin.text.StringBuilder
+
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.internal.InlineOnly
 public inline fun kotlin.text.Appendable.appendLine(): kotlin.text.Appendable
