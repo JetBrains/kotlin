@@ -157,6 +157,9 @@ internal val FirClassSymbol<*>.isInternalSerializable: Boolean
         return hasSerializableAnnotationWithoutArgs
     }
 
+internal val FirClassSymbol<*>.isAbstractOrSealedSerializableClass: Boolean
+    get() = isInternalSerializable && (rawStatus.modality == Modality.ABSTRACT || rawStatus.modality == Modality.SEALED)
+
 internal val FirClassSymbol<*>.isInternallySerializableEnum: Boolean
     get() = classKind.isEnumClass && hasSerializableAnnotationWithoutArgs
 

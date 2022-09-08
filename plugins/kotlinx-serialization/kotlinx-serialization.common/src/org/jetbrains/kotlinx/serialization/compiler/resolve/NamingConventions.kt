@@ -83,6 +83,8 @@ object SerialEntityNames {
     val GENERATED_SERIALIZER_CLASS = Name.identifier("GeneratedSerializer")
     val GENERATED_SERIALIZER_FQ = SerializationPackages.internalPackageFqName.child(GENERATED_SERIALIZER_CLASS)
 
+    val SERIALIZER_FACTORY_INTERFACE_NAME = Name.identifier("SerializerFactory")
+
     const val ENCODER_CLASS = "Encoder"
     const val STRUCTURE_ENCODER_CLASS = "CompositeEncoder"
     const val DECODER_CLASS = "Decoder"

@@ -32,7 +32,10 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIALIZER_FACTORY_INTERFACE_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
 
 val generatedSerializerClassId = ClassId(SerializationPackages.internalPackageFqName, SerialEntityNames.GENERATED_SERIALIZER_CLASS)
@@ -321,11 +324,25 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             name = SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
             symbol = FirRegularClassSymbol(classId)
             superTypeRefs += session.builtinTypes.anyType
+            if (owner.companionNeedsSerializerFactory()) {
+                val serializerFactoryClassId = ClassId(SerializationPackages.internalPackageFqName, SERIALIZER_FACTORY_INTERFACE_NAME)
+                superTypeRefs += serializerFactoryClassId.constructClassLikeType(emptyArray(), false).toFirResolvedTypeRef()
+            }
         }
         return regularClass.symbol
     }
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(FirSerializationPredicates.annotatedWithSerializable)
+    }
+
+    private fun FirClassSymbol<*>.companionNeedsSerializerFactory(): Boolean {
+        if (!(moduleData.platform.isNative() || moduleData.platform.isJs())) return false
+        if (isSerializableObject) return true
+        if (isSerializableEnum) return true
+        if (isAbstractOrSealedSerializableClass) return true
+        if (isSealedSerializableInterface) return true
+        if (typeParameterSymbols.isEmpty()) return false
+        return true
     }
 }

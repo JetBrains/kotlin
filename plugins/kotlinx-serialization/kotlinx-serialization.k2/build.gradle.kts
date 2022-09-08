@@ -10,6 +10,8 @@ dependencies {
     compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:fir:resolve"))
     compileOnly(project(":compiler:fir:entrypoint"))
+    compileOnly(project(":js:js.config"))
+    compileOnly(project(":compiler:cli-common"))
 
     implementation(project(":kotlinx-serialization-compiler-plugin.common"))
 
