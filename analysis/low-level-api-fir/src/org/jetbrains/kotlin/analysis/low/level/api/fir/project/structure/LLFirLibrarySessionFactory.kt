@@ -35,14 +35,18 @@ internal class LLFirLibrarySessionFactory(
 ) {
 
     fun getLibrarySession(ktBinaryModule: KtBinaryModule, sessionsCache: MutableMap<KtModule, LLFirSession>): LLFirLibrarySession {
-        return sessionsCache.getOrPut(ktBinaryModule) { createModuleLibrariesSession(ktBinaryModule) } as LLFirLibrarySession
+        return sessionsCache.getOrPut(ktBinaryModule) {
+            createModuleLibrariesSession(ktBinaryModule, sessionsCache)
+        } as LLFirLibrarySession
     }
 
     private fun createModuleLibrariesSession(
         ktLibraryModule: KtBinaryModule,
+        sessionsCache: MutableMap<KtModule, LLFirSession>,
     ): LLFirLibrarySession {
         val platform = ktLibraryModule.platform
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
+        sessionsCache.putIfAbsent(builtinsSession.ktModule, builtinsSession)
         return LLFirLibrarySession(ktLibraryModule, project, builtinsSession.builtinTypes).apply session@{
             val moduleData = LLFirModuleData(ktLibraryModule).apply { bindSession(this@session) }
             registerModuleData(moduleData)
