@@ -14,7 +14,6 @@ import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptionsDeprecated
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompileDeprecated
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
