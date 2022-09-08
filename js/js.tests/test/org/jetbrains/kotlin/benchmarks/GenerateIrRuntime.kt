@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.build.report.DoNothingBuildReporter
@@ -462,13 +463,14 @@ class GenerateIrRuntime {
     }
 
     private fun doPsi2Ir(files: List<KtFile>, analysisResult: AnalysisResult): IrModuleFragment {
-        val psi2Ir = Psi2IrTranslator(languageVersionSettings, Psi2IrConfiguration())
+        val messageLogger = IrMessageLogger.None
+        val psi2Ir = Psi2IrTranslator(languageVersionSettings, Psi2IrConfiguration(), messageLogger::checkNoUnboundSymbols)
         val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl)
         val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
 
         val irLinker = JsIrLinker(
             psi2IrContext.moduleDescriptor,
-            IrMessageLogger.None,
+            messageLogger,
             psi2IrContext.irBuiltIns,
             psi2IrContext.symbolTable,
             null
@@ -476,7 +478,7 @@ class GenerateIrRuntime {
 
         val irProviders = listOf(irLinker)
 
-        val psi2IrTranslator = Psi2IrTranslator(languageVersionSettings, psi2IrContext.configuration)
+        val psi2IrTranslator = Psi2IrTranslator(languageVersionSettings, psi2IrContext.configuration, messageLogger::checkNoUnboundSymbols)
         return psi2IrTranslator.generateModuleFragment(psi2IrContext, files, irProviders, emptyList(), null)
     }
 

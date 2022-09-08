@@ -26,7 +26,7 @@ fun interface CacheExecutor {
     fun execute(
         mainModule: IrModuleFragment,
         allModules: Collection<IrModuleFragment>,
-        deserializer: JsIrLinker,
+        irLinker: JsIrLinker,
         configuration: CompilerConfiguration,
         dirtyFiles: Collection<IrFile>,
         exportedDeclarations: Set<FqName>,
@@ -87,7 +87,7 @@ class CacheUpdater(
         val allResolvedDependencies = jsResolveLibraries(
             allModules,
             compilerConfiguration[JSConfigurationKeys.REPOSITORIES] ?: emptyList(),
-            compilerConfiguration[IrMessageLogger.IR_MESSAGE_LOGGER].toResolverLogger()
+            compilerConfiguration.resolverLogger
         )
 
         return allResolvedDependencies.getFullList().associateBy { KotlinLibraryFile(it) }
@@ -568,7 +568,7 @@ class CacheUpdater(
         val rebuiltFragments = executor.execute(
             mainModule = loadedIr.loadedFragments[mainLibraryFile] ?: notFoundIcError("main lib loaded fragment", mainLibraryFile),
             allModules = loadedIr.loadedFragments.values,
-            deserializer = loadedIr.linker,
+            irLinker = loadedIr.linker,
             configuration = compilerConfiguration,
             dirtyFiles = loadedIr.loadedFragments.flatMap { (libFile, libFragment) ->
                 dirtyFileExports[libFile]?.let { libDirtyFiles ->
@@ -617,7 +617,7 @@ fun rebuildCacheForDirtyFiles(
     return currentIrModule to buildCacheForModuleFiles(
         mainModule = currentIrModule,
         allModules = irModules.values,
-        deserializer = jsIrLinker,
+        irLinker = jsIrLinker,
         configuration = configuration,
         dirtyFiles = dirtyIrFiles,
         exportedDeclarations = exportedDeclarations,
@@ -628,7 +628,7 @@ fun rebuildCacheForDirtyFiles(
 fun buildCacheForModuleFiles(
     mainModule: IrModuleFragment,
     allModules: Collection<IrModuleFragment>,
-    deserializer: JsIrLinker,
+    irLinker: JsIrLinker,
     configuration: CompilerConfiguration,
     dirtyFiles: Collection<IrFile>,
     exportedDeclarations: Set<FqName>,
@@ -639,7 +639,7 @@ fun buildCacheForModuleFiles(
         allModules = allModules,
         filesToLower = dirtyFiles,
         configuration = configuration,
-        deserializer = deserializer,
+        irLinker = irLinker,
         mainArguments = mainArguments,
         exportedDeclarations = exportedDeclarations,
     )

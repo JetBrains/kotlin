@@ -51,7 +51,7 @@ abstract class KotlinIrLinker(
 
     private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
-    protected open val unlinkedDeclarationsSupport: UnlinkedDeclarationsSupport get() = UnlinkedDeclarationsSupport.DISABLED
+    open val unlinkedDeclarationsSupport: UnlinkedDeclarationsSupport get() = UnlinkedDeclarationsSupport.DISABLED
     protected open val userVisibleIrModulesSupport: UserVisibleIrModulesSupport get() = UserVisibleIrModulesSupport.DEFAULT
 
     fun deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(
@@ -75,7 +75,7 @@ abstract class KotlinIrLinker(
             if (unlinkedDeclarationsSupport.allowUnboundSymbols)
                 referenceDeserializedSymbol(symbolTable, null, symbolKind, idSignature)
             else
-                throw SignatureIdNotFoundInModuleWithDependencies(
+                SignatureIdNotFoundInModuleWithDependencies(
                     idSignature = idSignature,
                     problemModuleDeserializer = moduleDeserializer,
                     allModuleDeserializers = deserializersForModules.values,
@@ -86,7 +86,7 @@ abstract class KotlinIrLinker(
 
     fun resolveModuleDeserializer(module: ModuleDescriptor, idSignature: IdSignature?): IrModuleDeserializer {
         return deserializersForModules[module.name.asString()]
-            ?: throw NoDeserializerForModule(module.name, idSignature).raiseIssue(messageLogger)
+            ?: NoDeserializerForModule(module.name, idSignature).raiseIssue(messageLogger)
     }
 
     protected abstract fun createModuleDeserializer(
@@ -165,7 +165,7 @@ abstract class KotlinIrLinker(
                     ?: return null
             } catch (e: IrSymbolTypeMismatchException) {
                 if (!unlinkedDeclarationsSupport.allowUnboundSymbols) {
-                    throw SymbolTypeMismatch(e, deserializersForModules.values, userVisibleIrModulesSupport).raiseIssue(messageLogger)
+                    SymbolTypeMismatch(e, deserializersForModules.values, userVisibleIrModulesSupport).raiseIssue(messageLogger)
                 }
             }
         }

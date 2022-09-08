@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaserState
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
-import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 fun compileWithIC(
     mainModule: IrModuleFragment,
     configuration: CompilerConfiguration,
-    deserializer: JsIrLinker,
+    irLinker: JsIrLinker,
     allModules: Collection<IrModuleFragment>,
     filesToLower: Collection<IrFile>,
     mainArguments: List<String>? = null,
@@ -63,11 +63,11 @@ fun compileWithIC(
     )
 
     // Load declarations referenced during `context` initialization
-    val irProviders = listOf(deserializer)
+    val irProviders = listOf(irLinker)
     ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
 
-    deserializer.postProcess()
-    symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
+    irLinker.postProcess()
+    irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
 
     allModules.forEach {
         collectNativeImplementations(context, it)

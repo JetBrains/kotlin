@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 
 interface IrMessageLogger {
@@ -26,3 +27,6 @@ interface IrMessageLogger {
         val IR_MESSAGE_LOGGER = CompilerConfigurationKey<IrMessageLogger>("ir message logger")
     }
 }
+
+val CompilerConfiguration.irMessageLogger: IrMessageLogger
+    get() = this[IrMessageLogger.IR_MESSAGE_LOGGER] ?: IrMessageLogger.None

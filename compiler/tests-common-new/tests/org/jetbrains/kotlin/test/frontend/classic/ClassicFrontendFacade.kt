@@ -34,11 +34,7 @@ import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.ir.backend.js.JsFactories
-import org.jetbrains.kotlin.ir.backend.js.TopDownAnalyzerFacadeForJSIR
-import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
-import org.jetbrains.kotlin.ir.backend.js.toResolverLogger
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.unresolvedDependencies
@@ -258,7 +254,7 @@ class ClassicFrontendFacade(
         val resolvedLibraries = jsResolveLibraries(
             names,
             configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList(),
-            configuration[IrMessageLogger.IR_MESSAGE_LOGGER].toResolverLogger()
+            configuration.resolverLogger
         ).getFullResolvedList()
 
         var builtInsModule: KotlinBuiltIns? = null

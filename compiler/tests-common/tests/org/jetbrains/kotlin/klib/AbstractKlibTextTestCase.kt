@@ -11,6 +11,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataIncrementalSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
@@ -257,12 +258,21 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
         return md
     }
 
-    private fun generateIrModule(stdlib: KotlinLibrary, ignoreErrors: Boolean, expectActualSymbols: MutableMap<DeclarationDescriptor, IrSymbol>): Pair<IrModuleFragment, BindingContext> {
+    private fun generateIrModule(
+        stdlib: KotlinLibrary,
+        ignoreErrors: Boolean,
+        expectActualSymbols: MutableMap<DeclarationDescriptor, IrSymbol>
+    ): Pair<IrModuleFragment, BindingContext> {
         val stdlibDescriptor = getModuleDescriptor(stdlib)
 
         val ktFiles = myFiles.psiFiles
 
-        val psi2Ir = Psi2IrTranslator(myEnvironment.configuration.languageVersionSettings, Psi2IrConfiguration(ignoreErrors))
+        val messageLogger = IrMessageLogger.None
+        val psi2Ir = Psi2IrTranslator(
+            myEnvironment.configuration.languageVersionSettings,
+            Psi2IrConfiguration(ignoreErrors),
+            myEnvironment.configuration::checkNoUnboundSymbols
+        )
         val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(
             ktFiles, myEnvironment.project, myEnvironment.configuration,
             moduleDescriptors = listOf(stdlibDescriptor),
@@ -280,7 +290,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
         val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl, NameProvider.DEFAULT)
         val context = psi2Ir.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
         val irBuiltIns = context.irBuiltIns
-        val irLinker = JsIrLinker(moduleDescriptor, IrMessageLogger.None, irBuiltIns, symbolTable, null)
+        val irLinker = JsIrLinker(moduleDescriptor, messageLogger, irBuiltIns, symbolTable, null)
         irLinker.deserializeIrModuleHeader(stdlibDescriptor, stdlib)
 
         return psi2Ir.generateModuleFragment(context, ktFiles, listOf(irLinker), emptyList(), expectActualSymbols) to bindingContext

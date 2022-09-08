@@ -1177,10 +1177,3 @@ val SymbolTable.allUnbound: Set<IrSymbol>
         addUnbound(unboundTypeAliases)
         addUnbound(unboundTypeParameters)
     }
-
-fun SymbolTable.noUnboundLeft(message: String) {
-    val unbound = this.allUnbound
-    assert(unbound.isEmpty()) {
-        message + "\n" + unbound.joinToString("\n")
-    }
-}

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.scripting.js
 
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -67,7 +68,11 @@ class JsCoreScriptingCompiler(
 
         val files = listOf(snippetKtFile)
         val (bindingContext, module) = analysisResult
-        val psi2ir = Psi2IrTranslator(environment.configuration.languageVersionSettings, Psi2IrConfiguration())
+        val psi2ir = Psi2IrTranslator(
+            environment.configuration.languageVersionSettings,
+            Psi2IrConfiguration(),
+            environment.configuration::checkNoUnboundSymbols
+        )
 
         val generatorExtensions =
             if (replCompilerState == null) GeneratorExtensions()

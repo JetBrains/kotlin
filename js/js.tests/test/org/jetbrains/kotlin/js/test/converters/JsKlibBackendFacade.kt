@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.util.irMessageLogger
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
@@ -56,7 +56,7 @@ class JsKlibBackendFacade(
                 configuration[CommonConfigurationKeys.MODULE_NAME]!!,
                 project,
                 configuration,
-                configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
+                configuration.irMessageLogger,
                 inputArtifact.bindingContext,
                 inputArtifact.sourceFiles,
                 klibPath = outputFile,
@@ -76,7 +76,7 @@ class JsKlibBackendFacade(
         val lib = jsResolveLibraries(
             dependencies.map { testServices.jsLibraryProvider.getPathByDescriptor(it) } + listOf(outputFile),
             configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList(),
-            configuration[IrMessageLogger.IR_MESSAGE_LOGGER].toResolverLogger()
+            configuration.resolverLogger
         ).getFullResolvedList().last().library
 
         val moduleDescriptor = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(

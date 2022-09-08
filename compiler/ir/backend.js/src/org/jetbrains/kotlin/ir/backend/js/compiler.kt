@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
@@ -21,9 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
@@ -95,7 +94,7 @@ fun compileIr(
     moduleToName: Map<IrModuleFragment, String>,
     irBuiltIns: IrBuiltIns,
     symbolTable: SymbolTable,
-    deserializer: JsIrLinker,
+    irLinker: JsIrLinker,
     phaseConfig: PhaseConfig,
     exportedDeclarations: Set<FqName>,
     dceRuntimeDiagnostic: RuntimeDiagnostic?,
@@ -114,8 +113,6 @@ fun compileIr(
         is MainModule.Klib -> dependencyModules
     }
 
-    val allowUnboundSymbols = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
-
     val context = JsIrBackendContext(
         moduleDescriptor,
         irBuiltIns,
@@ -133,13 +130,11 @@ fun compileIr(
     )
 
     // Load declarations referenced during `context` initialization
-    val irProviders = listOf(deserializer)
+    val irProviders = listOf(irLinker)
     ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
 
-    deserializer.postProcess()
-    if (!allowUnboundSymbols) {
-        symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
-    }
+    irLinker.postProcess()
+    irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
 
     allModules.forEach { module ->
         collectNativeImplementations(context, module)

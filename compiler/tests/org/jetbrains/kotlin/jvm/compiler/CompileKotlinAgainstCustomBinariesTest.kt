@@ -692,12 +692,12 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     fun testUnreachableExtensionVarPropertyDeclaration() {
         val (output, exitCode) = compileKotlin("source.kt", tmpdir, expectedFileName = null)
-        assertEquals("Output:\n$output", ExitCode.INTERNAL_ERROR, exitCode)
+        assertEquals("Output:\n$output", ExitCode.COMPILATION_ERROR, exitCode)
     }
 
     fun testUnreachableExtensionValPropertyDeclaration() {
         val (output, exitCode) = compileKotlin("source.kt", tmpdir, expectedFileName = null)
-        assertEquals("Output:\n$output", ExitCode.INTERNAL_ERROR, exitCode)
+        assertEquals("Output:\n$output", ExitCode.COMPILATION_ERROR, exitCode)
     }
 
     fun testAnonymousObjectTypeMetadata() {

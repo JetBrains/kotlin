@@ -26,8 +26,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
-import org.jetbrains.kotlin.ir.backend.js.toResolverLogger
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.backend.js.resolverLogger
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
@@ -262,7 +261,7 @@ fun resolveJsLibraries(
 ): List<KotlinResolvedLibrary> {
     val paths = getAllJsDependenciesPaths(module, testServices)
     val repositories = configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList()
-    val logger = configuration[IrMessageLogger.IR_MESSAGE_LOGGER].toResolverLogger()
+    val logger = configuration.resolverLogger
     return jsResolveLibraries(paths, repositories, logger).getFullResolvedList()
 }
 

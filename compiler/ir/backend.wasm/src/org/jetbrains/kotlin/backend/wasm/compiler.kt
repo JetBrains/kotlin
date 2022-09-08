@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
-import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
@@ -35,7 +35,7 @@ fun compileToLoweredIr(
 ): Pair<List<IrModuleFragment>, WasmBackendContext> {
     val mainModule = depsDescriptors.mainModule
     val configuration = depsDescriptors.compilerConfiguration
-    val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) = loadIr(
+    val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, irLinker) = loadIr(
         depsDescriptors,
         irFactory,
         verifySignatures = false,
@@ -52,15 +52,15 @@ fun compileToLoweredIr(
 
     // Load declarations referenced during `context` initialization
     allModules.forEach {
-        ExternalDependenciesGenerator(symbolTable, listOf(deserializer)).generateUnboundSymbolsAsDependencies()
+        ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
     }
 
     // Create stubs
-    ExternalDependenciesGenerator(symbolTable, listOf(deserializer)).generateUnboundSymbolsAsDependencies()
+    ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
     allModules.forEach { it.patchDeclarationParents() }
 
-    deserializer.postProcess()
-    symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
+    irLinker.postProcess()
+    irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
 
     for (module in allModules)
         for (file in module.files)

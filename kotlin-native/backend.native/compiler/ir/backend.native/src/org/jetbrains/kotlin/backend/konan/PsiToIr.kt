@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
 import org.jetbrains.kotlin.backend.konan.descriptors.isForwardDeclarationModule
@@ -52,7 +53,11 @@ internal fun Context.psiToIr(
 
     val allowUnboundSymbols = config.configuration[KonanConfigKeys.PARTIAL_LINKAGE] ?: false
 
-    val translator = Psi2IrTranslator(config.configuration.languageVersionSettings, Psi2IrConfiguration(ignoreErrors = false, allowUnboundSymbols = allowUnboundSymbols))
+    val translator = Psi2IrTranslator(
+            config.configuration.languageVersionSettings,
+            Psi2IrConfiguration(ignoreErrors = false, allowUnboundSymbols = allowUnboundSymbols),
+            messageLogger::checkNoUnboundSymbols
+    )
     val generatorContext = translator.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
 
     val pluginExtensions = IrGenerationExtension.getInstances(config.project)
@@ -211,7 +216,7 @@ internal fun Context.psiToIr(
     // Enable lazy IR genration for newly-created symbols inside BE
     stubGenerator.unboundSymbolGeneration = true
 
-    symbolTable.noUnboundLeft("Unbound symbols left after linker")
+    messageLogger.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
 
     mainModule.acceptVoid(ManglerChecker(KonanManglerIr, Ir2DescriptorManglerAdapter(KonanManglerDesc)))
 

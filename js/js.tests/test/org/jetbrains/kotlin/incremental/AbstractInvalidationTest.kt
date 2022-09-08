@@ -213,7 +213,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         fun executorWithBoxExport(
             currentModule: IrModuleFragment,
             allModules: Collection<IrModuleFragment>,
-            deserializer: JsIrLinker,
+            irLinker: JsIrLinker,
             configuration: CompilerConfiguration,
             dirtyFiles: Collection<IrFile>,
             exportedDeclarations: Set<FqName>,
@@ -222,7 +222,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             return buildCacheForModuleFiles(
                 mainModule = currentModule,
                 allModules = allModules,
-                deserializer = deserializer,
+                irLinker = irLinker,
                 configuration = configuration,
                 dirtyFiles = dirtyFiles,
                 exportedDeclarations = exportedDeclarations + FqName(BOX_FUNCTION_NAME),
