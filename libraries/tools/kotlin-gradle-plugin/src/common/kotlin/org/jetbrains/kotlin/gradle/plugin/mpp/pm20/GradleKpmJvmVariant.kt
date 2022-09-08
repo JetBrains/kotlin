@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.artifacts.Configuration
+import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
@@ -41,8 +42,19 @@ abstract class GradleKpmJvmVariant @Inject constructor(
 class GradleKpmJvmVariantCompilationData(val variant: GradleKpmJvmVariant) : GradleKpmVariantCompilationDataInternal<KotlinJvmOptions> {
     override val owner: GradleKpmJvmVariant get() = variant
 
+    override val compilerOptions: HasCompilerOptions<CompilerJvmOptions> =
+        object : HasCompilerOptions<CompilerJvmOptions> {
+            override val options: CompilerJvmOptions =
+                variant.project.objects.newInstance(CompilerJvmOptionsDefault::class.java)
+        }
+
     // TODO pull out to the variant
-    override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsImpl()
+    @Suppress("DEPRECATION")
+    @Deprecated("Replaced with compilerOptions.options", replaceWith = ReplaceWith("compilerOptions.options"))
+    override val kotlinOptions: KotlinJvmOptions = object : KotlinJvmOptions {
+        override val options: CompilerJvmOptions
+            get() = compilerOptions.options
+    }
 }
 
 internal fun GradleKpmVariant.ownModuleName(): String {
@@ -62,6 +74,7 @@ internal class KotlinMappedJvmCompilationFactory(
 
         return target.project.objects.newInstance(
             KotlinJvmCompilation::class.java,
+            @Suppress("DEPRECATION")
             VariantMappedCompilationDetailsWithRuntime<KotlinJvmOptions>(
                 variant, target, getOrCreateDefaultSourceSet(name) as FragmentMappedKotlinSourceSet
             )
