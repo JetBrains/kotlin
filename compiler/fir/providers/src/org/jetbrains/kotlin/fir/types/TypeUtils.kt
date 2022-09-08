@@ -15,16 +15,17 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeRecursiveTypeParameterDuringErasureError
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -813,3 +814,27 @@ fun FirDeclaration.getContainingClassSymbol(session: FirSession): FirClassLikeSy
 
 @OptIn(SymbolInternals::class)
 fun FirBasedSymbol<*>.getContainingClassSymbol(session: FirSession): FirClassLikeSymbol<*>? = fir.getContainingClassSymbol(session)
+
+fun FirProperty.getDirectBases(session: FirSession, scopeSession: ScopeSession): List<FirPropertySymbol> {
+    val classSymbol = getContainingClassSymbol(session) as? FirClassSymbol ?: return emptyList()
+    val scope = classSymbol.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+
+    scope.processPropertiesByName(symbol.name) { }
+    return scope.getDirectOverriddenProperties(symbol, true)
+}
+
+fun FirSimpleFunction.getDirectBases(session: FirSession, scopeSession: ScopeSession): List<FirNamedFunctionSymbol> {
+    val classSymbol = getContainingClassSymbol(session) as? FirClassSymbol ?: return emptyList()
+    val scope = classSymbol.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+
+    scope.processFunctionsByName(symbol.name) { }
+    return scope.getDirectOverriddenFunctions(symbol, true)
+}
+
+fun FirCallableDeclaration.getDirectBases(session: FirSession, scopeSession: ScopeSession): List<FirCallableSymbol<out FirCallableDeclaration>> {
+    return when (this) {
+        is FirProperty -> getDirectBases(session, scopeSession)
+        is FirSimpleFunction -> getDirectBases(session, scopeSession)
+        else -> emptyList()
+    }
+}
