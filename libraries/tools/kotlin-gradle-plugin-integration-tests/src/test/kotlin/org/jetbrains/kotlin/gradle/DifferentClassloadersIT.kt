@@ -38,23 +38,35 @@ class DifferentClassloadersIT : KGPBaseTest() {
             buildAndFail("publish", "-PmppProjectDependency=true") {
                 assertOutputContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
             }
+
+            // check that the message is also printed on subsequent builds
+            buildAndFail("publish", "-PmppProjectDependency=true") {
+                assertOutputContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
+            }
         }
     }
 
-    @DisplayName("KT-50598: Different classloaders message is only displayed on the first build")
+    @DisplayName("KT-50598: Different classloaders message can be disabled")
     @GradleTest
-    fun differentClassloadersOnlyFirstBuild(gradleVersion: GradleVersion) {
+    fun differentClassloadersWarningCanBeDisabled(gradleVersion: GradleVersion) {
         project("differentClassloaders", gradleVersion) {
             setupDifferentClassloadersProject()
 
-            build("-PmppProjectDependency=true") {
-                assertOutputContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
+            fun checkThatWarningIsShown() {
+                build("-PmppProjectDependency=true") {
+                    assertOutputContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
 
-                val specificProjectsReported = Regex("$MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING((?:'.*'(?:, )?)+)")
-                    .find(output)!!.groupValues[1].split(", ").map { it.removeSurrounding("'") }.toSet()
+                    val specificProjectsReported = Regex("$MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING((?:'.*'(?:, )?)+)")
+                        .find(output)!!.groupValues[1].split(", ").map { it.removeSurrounding("'") }.toSet()
 
-                assertEquals(setOf(":mpp-lib", ":jvm-app", ":js-app"), specificProjectsReported)
+                    assertEquals(setOf(":mpp-lib", ":jvm-app", ":js-app"), specificProjectsReported)
+                }
             }
+
+            checkThatWarningIsShown()
+
+            // check that the message is also printed on subsequent builds
+            checkThatWarningIsShown()
 
             // Test the flag that turns off the warnings
             build("-PmppProjectDependency=true", "-Pkotlin.pluginLoadedInMultipleProjects.ignore=true") {
