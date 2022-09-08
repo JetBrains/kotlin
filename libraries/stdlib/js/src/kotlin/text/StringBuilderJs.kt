@@ -112,9 +112,6 @@ public actual class StringBuilder actual constructor(content: String) : Appendab
         return this
     }
 
-    @Deprecated("Provided for binary compatibility.", level = DeprecationLevel.HIDDEN)
-    fun append(value: String): StringBuilder = append(value)
-
     /**
      * Appends the specified string [value] to this string builder and returns this instance.
      *
@@ -276,9 +273,6 @@ public actual class StringBuilder actual constructor(content: String) : Appendab
         string = string.substring(0, index) + value.toString() + string.substring(index)
         return this
     }
-
-    @Deprecated("Provided for binary compatibility.", level = DeprecationLevel.HIDDEN)
-    fun insert(index: Int, value: String): StringBuilder = insert(index, value)
 
     /**
      * Inserts the string [value] into this string builder at the specified [index] and returns this instance.
