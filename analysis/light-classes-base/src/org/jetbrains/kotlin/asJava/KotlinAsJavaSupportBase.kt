@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.*
 
 abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) : KotlinAsJavaSupport() {
     @Suppress("MemberVisibilityCanBePrivate")
-    fun createLightFacade(file: KtFile): Pair<KtLightClassForFacade?, ModificationTracker>? {
+    fun createLightFacade(file: KtFile): LightClassCachedValue<KtLightClassForFacade>? {
         if (!file.facadeIsPossible()) return null
 
         val module = file.findModule().takeIf { facadeIsApplicable(it, file) } ?: return null
@@ -37,11 +37,11 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
         return when {
             facadeFiles.none(KtFile::hasTopLevelCallables) -> null
             facadeFiles.none(KtFile::isCompiled) -> {
-                createInstanceOfLightFacade(facadeFqName, facadeFiles) to outOfBlockModificationTracker(file)
+                LightClassCachedValue(createInstanceOfLightFacade(facadeFqName, facadeFiles), outOfBlockModificationTracker(file))
             }
 
             facadeFiles.all(KtFile::isCompiled) -> {
-                createInstanceOfDecompiledLightFacade(facadeFqName, facadeFiles) to librariesTracker(file)
+                LightClassCachedValue(createInstanceOfDecompiledLightFacade(facadeFqName, facadeFiles), librariesTracker(file))
             }
 
             else -> error("Source and compiled files are mixed: $facadeFiles")
@@ -79,8 +79,7 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
 
     override fun getLightFacade(file: KtFile): KtLightClassForFacade? = ifValid(file) {
         CachedValuesManager.getCachedValue(file) {
-            val (facade, tracker) = createLightFacade(file) ?: (null to projectWideOutOfBlockModificationTracker())
-            CachedValueProvider.Result.createSingleDependency(facade, tracker)
+            cachedValueResult(createLightFacade(file))
         }
     }
 
@@ -128,17 +127,17 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
-    fun createLightClass(classOrObject: KtClassOrObject): Pair<KtLightClass?, ModificationTracker>? {
+    fun createLightClass(classOrObject: KtClassOrObject): LightClassCachedValue<KtLightClass>? {
         if (classOrObject.shouldNotBeVisibleAsLightClass()) return null
 
         val containingFile = classOrObject.containingKtFile
         when (declarationLocation(containingFile)) {
             DeclarationLocation.ProjectSources -> {
-                return createInstanceOfLightClass(classOrObject) to outOfBlockModificationTracker(classOrObject)
+                return LightClassCachedValue(createInstanceOfLightClass(classOrObject), outOfBlockModificationTracker(classOrObject))
             }
 
             DeclarationLocation.LibraryClasses -> {
-                return createInstanceOfDecompiledLightClass(classOrObject) to librariesTracker(classOrObject)
+                return LightClassCachedValue(createInstanceOfDecompiledLightClass(classOrObject), librariesTracker(classOrObject))
             }
 
             DeclarationLocation.LibrarySources -> {
@@ -150,14 +149,14 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
                     guardedRun { getLightClass(it) }
                 }
 
-                return value to librariesTracker(classOrObject)
+                return LightClassCachedValue(value, librariesTracker(classOrObject))
             }
 
             null -> Unit
         }
 
         if (containingFile.analysisContext != null || containingFile.originalFile.virtualFile != null) {
-            return createInstanceOfLightClass(classOrObject) to outOfBlockModificationTracker(classOrObject)
+            return LightClassCachedValue(createInstanceOfLightClass(classOrObject), outOfBlockModificationTracker(classOrObject))
         }
 
         return null
@@ -173,29 +172,33 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
 
     override fun getLightClass(classOrObject: KtClassOrObject): KtLightClass? = ifValid(classOrObject) {
         CachedValuesManager.getCachedValue(classOrObject) {
-            val (clazz, tracker) = createLightClass(classOrObject) ?: (null to projectWideOutOfBlockModificationTracker())
-            CachedValueProvider.Result.createSingleDependency(clazz, tracker)
+            cachedValueResult(createLightClass(classOrObject))
         }
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
-    fun createLightScript(script: KtScript): Pair<KtLightClass?, ModificationTracker>? {
+    fun createLightScript(script: KtScript): LightClassCachedValue<KtLightClass>? {
         val containingFile = script.containingFile
         if (containingFile is KtCodeFragment) {
             // Avoid building light classes for code fragments
             return null
         }
 
-        return createInstanceOfLightScript(script) to projectWideOutOfBlockModificationTracker()
+        return LightClassCachedValue(createInstanceOfLightScript(script), projectWideOutOfBlockModificationTracker())
     }
 
     protected abstract fun createInstanceOfLightScript(script: KtScript): KtLightClass?
 
     override fun getLightClassForScript(script: KtScript): KtLightClass? = ifValid(script) {
         CachedValuesManager.getCachedValue(script) {
-            val (lightScript, tracker) = createLightScript(script) ?: (null to projectWideOutOfBlockModificationTracker())
-            CachedValueProvider.Result.createSingleDependency(lightScript, tracker)
+            cachedValueResult(createLightScript(script))
         }
+    }
+
+    private fun <T : KtLightClass> cachedValueResult(lightClassCachedValue: LightClassCachedValue<T>?): CachedValueProvider.Result<T> {
+        val value = lightClassCachedValue?.value
+        val tracker = lightClassCachedValue?.tracker ?: projectWideOutOfBlockModificationTracker()
+        return CachedValueProvider.Result.createSingleDependency(value, tracker)
     }
 }
 
@@ -203,3 +206,5 @@ private inline fun <T : PsiElement, V> ifValid(element: T, action: () -> V?): V?
     if (!element.isValid) return null
     return action()
 }
+
+class LightClassCachedValue<T : KtLightClass>(val value: T?, val tracker: ModificationTracker)
