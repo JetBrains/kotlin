@@ -84,7 +84,7 @@ internal abstract class LLFirResolvableResolveSession(
         }
 
         val ktModule = ktDeclaration.getKtModule(project)
-        val firSession = sessionProvider.getSession(ktModule) as LLFirLibrarySession
+        val firSession = sessionProvider.getSession(ktModule)
         val searcher = FirDeclarationForCompiledElementSearcher(firSession.symbolProvider)
         val firDeclaration = searcher.findNonLocalDeclaration(ktDeclaration)
         return firDeclaration.symbol
