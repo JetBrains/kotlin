@@ -10,6 +10,7 @@ import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeCompilationData
@@ -22,6 +23,7 @@ import java.util.concurrent.Callable
 import javax.inject.Inject
 
 internal class NativeCompileOptions(private val languageSettings: LanguageSettingsBuilder) : KotlinCommonOptions {
+    override val options: CompilerCommonOptions get() = TODO("TBA support")
 
     override var apiVersion: String?
         get() = languageSettings.apiVersion

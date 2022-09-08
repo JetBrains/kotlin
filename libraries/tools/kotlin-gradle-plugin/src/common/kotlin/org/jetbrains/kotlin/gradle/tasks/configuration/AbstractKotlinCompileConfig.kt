@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithClosure
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
-import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinOptions
+import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToCompilerOptions
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.report.BuildReportsService
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
@@ -41,8 +41,8 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
         configureTaskProvider { taskProvider ->
             project.runOnceAfterEvaluated("apply properties and language settings to ${taskProvider.name}") {
                 taskProvider.configure {
-                    applyLanguageSettingsToKotlinOptions(
-                        languageSettings.get(), (it as org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>).kotlinOptions
+                    applyLanguageSettingsToCompilerOptions(
+                        languageSettings.get(), (it as org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>).compilerOptions
                     )
                 }
             }

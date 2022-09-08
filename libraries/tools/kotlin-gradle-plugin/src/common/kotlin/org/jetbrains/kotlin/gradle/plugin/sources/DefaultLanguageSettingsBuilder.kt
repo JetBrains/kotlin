@@ -11,7 +11,8 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
@@ -99,12 +100,12 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
         get() = freeCompilerArgsProvider?.get().orEmpty()
 }
 
-internal fun applyLanguageSettingsToKotlinOptions(
+internal fun applyLanguageSettingsToCompilerOptions(
     languageSettingsBuilder: LanguageSettings,
-    kotlinOptions: KotlinCommonOptions
-) = with(kotlinOptions) {
-    languageVersion = languageVersion ?: languageSettingsBuilder.languageVersion
-    apiVersion = apiVersion ?: languageSettingsBuilder.apiVersion
+    compilerOptions: CompilerCommonOptions
+) = with(compilerOptions) {
+    languageVersion.convention(languageSettingsBuilder.languageVersion?.let { KotlinVersion.fromVersion(it) })
+    apiVersion.convention(languageSettingsBuilder.apiVersion?.let { KotlinVersion.fromVersion(it) })
     
     val freeArgs = mutableListOf<String>().apply {
         if (languageSettingsBuilder.progressiveMode) {
@@ -124,12 +125,12 @@ internal fun applyLanguageSettingsToKotlinOptions(
         }
     }
 
-    freeCompilerArgs = freeCompilerArgs + freeArgs
+    freeCompilerArgs.addAll(freeArgs)
 
     KotlinBuildStatsService.getInstance()?.apply {
         report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, languageSettingsBuilder.progressiveMode)
-        apiVersion?.also { v -> report(StringMetrics.KOTLIN_API_VERSION, v) }
-        languageVersion?.also { v -> report(StringMetrics.KOTLIN_LANGUAGE_VERSION, v) }
+        apiVersion.orNull?.also { v -> report(StringMetrics.KOTLIN_API_VERSION, v.version) }
+        languageVersion.orNull?.also { v -> report(StringMetrics.KOTLIN_LANGUAGE_VERSION, v.version) }
     }
 }
 
