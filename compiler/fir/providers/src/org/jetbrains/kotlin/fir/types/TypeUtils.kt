@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
@@ -25,6 +26,8 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -34,6 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible as coneLowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible as coneUpperBoundIfFlexible
 
@@ -799,3 +803,13 @@ private fun ConeKotlinType.eraseAsUpperBound(
                 .makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
         else -> error("unexpected Java type parameter upper bound kind: $this")
     }
+
+/**
+ * Returns the ClassLikeDeclaration where the Fir object has been defined
+ * or null if no proper declaration has been found.
+ */
+fun FirDeclaration.getContainingClassSymbol(session: FirSession): FirClassLikeSymbol<*>? =
+    this.safeAs<FirCallableDeclaration>()?.containingClass()?.toSymbol(session)
+
+@OptIn(SymbolInternals::class)
+fun FirBasedSymbol<*>.getContainingClassSymbol(session: FirSession): FirClassLikeSymbol<*>? = fir.getContainingClassSymbol(session)

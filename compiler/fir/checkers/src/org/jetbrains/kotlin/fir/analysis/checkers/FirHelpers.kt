@@ -109,16 +109,6 @@ fun FirTypeRef.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol?
     return coneType.toRegularClassSymbol(session)
 }
 
-/**
- * Returns the ClassLikeDeclaration where the Fir object has been defined
- * or null if no proper declaration has been found.
- */
-fun FirDeclaration.getContainingClassSymbol(session: FirSession): FirClassLikeSymbol<*>? =
-    this.safeAs<FirCallableDeclaration>()?.containingClass()?.toSymbol(session)
-
-@OptIn(SymbolInternals::class)
-fun FirBasedSymbol<*>.getContainingClassSymbol(session: FirSession): FirClassLikeSymbol<*>? = fir.getContainingClassSymbol(session)
-
 fun FirClassLikeSymbol<*>.outerClassSymbol(context: CheckerContext): FirClassLikeSymbol<*>? {
     if (this !is FirClassSymbol<*>) return null
     val outerClassId = classId.outerClassId ?: return null
