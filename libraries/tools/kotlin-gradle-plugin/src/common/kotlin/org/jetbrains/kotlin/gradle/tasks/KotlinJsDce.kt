@@ -45,6 +45,7 @@ abstract class KotlinJsDce @Inject constructor(
 
     init {
         cacheOnlyIfEnabledForKotlin()
+        outputs.cacheIf { !isDevMode }
 
         include("js".fileExtensionCasePermutations().map { "**/*.$it" })
     }
