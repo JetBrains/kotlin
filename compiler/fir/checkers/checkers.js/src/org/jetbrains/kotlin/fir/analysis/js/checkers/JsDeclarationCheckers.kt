@@ -25,4 +25,9 @@ object JsDeclarationCheckers : DeclarationCheckers() {
             FirJsMultipleInheritanceChecker,
             FirJsDynamicDeclarationChecker,
         )
+
+    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
+        get() = setOf(
+            FirJsInheritanceChecker,
+        )
 }
