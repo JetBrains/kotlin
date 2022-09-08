@@ -62,3 +62,10 @@ inline val FirDeclaration.isJavaOrEnhancement: Boolean
 inline val FirBasedSymbol<*>.isJavaOrEnhancement: Boolean
     get() = origin is FirDeclarationOrigin.Java || origin == FirDeclarationOrigin.Enhancement
 
+val FirDeclaration.name
+    get() = when (this) {
+        is FirVariable -> name
+        is FirSimpleFunction -> name
+        is FirRegularClass -> name
+        else -> null
+    }
