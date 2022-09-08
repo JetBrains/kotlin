@@ -199,7 +199,7 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
     }
 }
 
-private fun <T : PsiElement, V> ifValid(element: T, action: () -> V?): V? {
+private inline fun <T : PsiElement, V> ifValid(element: T, action: () -> V?): V? {
     if (!element.isValid) return null
     return action()
 }
