@@ -307,6 +307,8 @@ object KonanFakeOverrideClassFilter : FakeOverrideClassFilter {
     }
 }
 
+internal data class DeserializedInlineFunction(val firstAccess: Boolean, val function: InlineFunctionOriginInfo)
+
 internal class KonanIrLinker(
         private val currentModule: ModuleDescriptor,
         override val translationPluginContext: TranslationPluginContext?,
@@ -643,11 +645,11 @@ internal class KonanIrLinker(
 
         private val deserializedInlineFunctions = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
 
-        fun deserializeInlineFunction(function: IrFunction): Pair<Boolean, InlineFunctionOriginInfo> {
-            deserializedInlineFunctions[function]?.let { return false to it }
+        fun deserializeInlineFunction(function: IrFunction): DeserializedInlineFunction {
+            deserializedInlineFunctions[function]?.let { return DeserializedInlineFunction(firstAccess = false, it) }
             val result = deserializeInlineFunctionInternal(function)
             deserializedInlineFunctions[function] = result
-            return true to result
+            return DeserializedInlineFunction(firstAccess = true, result)
         }
 
         private fun deserializeInlineFunctionInternal(function: IrFunction): InlineFunctionOriginInfo {
