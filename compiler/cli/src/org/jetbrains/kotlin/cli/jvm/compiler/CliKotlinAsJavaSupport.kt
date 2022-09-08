@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.util.SmartList
@@ -39,6 +41,10 @@ class CliKotlinAsJavaSupport(project: Project, private val traceHolder: CliTrace
     override fun KtFile.findModule(): KtFile = this
 
     override fun createInstanceOfDecompiledLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade? {
+        error("Should not be called")
+    }
+
+    override fun librariesTracker(element: PsiElement): ModificationTracker {
         error("Should not be called")
     }
 

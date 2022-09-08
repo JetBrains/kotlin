@@ -75,9 +75,7 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
         return projectWideOutOfBlockModificationTracker()
     }
 
-    protected open fun librariesTracker(element: PsiElement): ModificationTracker {
-        return projectWideOutOfBlockModificationTracker()
-    }
+    protected abstract fun librariesTracker(element: PsiElement): ModificationTracker
 
     override fun getLightFacade(file: KtFile): KtLightClassForFacade? = ifValid(file) {
         CachedValuesManager.getCachedValue(file) {
