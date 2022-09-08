@@ -12465,6 +12465,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("inheritFromAnotherModule.kt")
+            public void testInheritFromAnotherModule() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/multiModule/inheritFromAnotherModule.kt");
+            }
+
+            @Test
             @TestMetadata("inlineCrossModule.kt")
             public void testInlineCrossModule() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/multiModule/inlineCrossModule.kt");
