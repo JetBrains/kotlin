@@ -26,7 +26,6 @@ object StandardClassIds {
         BASE_REFLECT_PACKAGE,
         BASE_INTERNAL_PACKAGE,
         BASE_COROUTINES_PACKAGE,
-        BASE_ENUMS_PACKAGE
     )
 
     val Nothing = "Nothing".baseId()
