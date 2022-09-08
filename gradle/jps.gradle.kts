@@ -67,6 +67,7 @@ fun updateCompilerXml() {
         "native/commonizer-api",
         "libraries/examples",
         "libraries/tools/kotlin-gradle-plugin-idea-proto",
+        "libraries/tools/kotlin-project-model-tests-generator",
     )
 
     val d = '$'
