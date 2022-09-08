@@ -51,11 +51,11 @@ internal class CacheLlvmModuleSpecification(
 
     override fun containsLibrary(library: KotlinLibrary): Boolean = library == libraryToCache.klib
 
-    @Suppress("IncorrectFormatting")
     override fun containsDeclaration(declaration: IrDeclaration): Boolean {
-        return (context.shouldDefineFunctionClasses && declaration.getPackageFragment().packageFragmentDescriptor is FunctionInterfacePackageFragment)
-                || (super.containsDeclaration(declaration)
-                    && (libraryToCache.strategy as? CacheDeserializationStrategy.SingleFile)
-                        ?.filePath.let { it == null || it == declaration.fileOrNull?.path })
+        if (context.shouldDefineFunctionClasses && declaration.getPackageFragment().isFunctionInterfaceFile)
+            return true
+        if (!super.containsDeclaration(declaration)) return false
+        return (libraryToCache.strategy as? CacheDeserializationStrategy.SingleFile)
+                ?.filePath.let { it == null || it == declaration.fileOrNull?.path }
     }
 }

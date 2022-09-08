@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal object DECLARATION_ORIGIN_FUNCTION_CLASS : IrDeclarationOriginImpl("DECLARATION_ORIGIN_FUNCTION_CLASS")
 
-val IrFile.isFunctionInterfaceFile get() = packageFragmentDescriptor is FunctionInterfacePackageFragment
+val IrPackageFragment.isFunctionInterfaceFile get() = packageFragmentDescriptor is FunctionInterfacePackageFragment
 
 abstract class KonanIrAbstractDescriptorBasedFunctionFactory : IrProvider, IrAbstractDescriptorBasedFunctionFactory()
 
