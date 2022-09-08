@@ -78,11 +78,14 @@ open class HostManager(
         TVOS_SIMULATOR_ARM64,
     )
 
+    //private val linux = setOf(LINUX_X64, LINUX_ARM64, LINUX_ARM32_HFP)
+    private val linux = emptySet<KonanTarget>()
+
     private val enabledRegularByHost: Map<KonanTarget, Set<KonanTarget>> = mapOf(
         LINUX_X64 to commonTargets,
-        MINGW_X64 to commonTargets,
-        MACOS_X64 to commonTargets + appleTargets,
-        MACOS_ARM64 to commonTargets + appleTargets
+        MINGW_X64 to commonTargets - linux,
+        MACOS_X64 to commonTargets + appleTargets - linux,
+        MACOS_ARM64 to commonTargets + appleTargets - linux,
     )
 
     private val enabledExperimentalByHost: Map<KonanTarget, Set<KonanTarget>> = mapOf(

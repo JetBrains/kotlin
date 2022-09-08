@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
@@ -394,6 +395,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
      */
     val jsCompiler: KotlinJsCompilerType
         get() = this.property(jsCompilerProperty)?.let { KotlinJsCompilerType.byArgumentOrNull(it) } ?: KotlinJsCompilerType.LEGACY
+
+    val granularMetadataTransformation2: Boolean
+        get() = booleanProperty("kotlin.experimental.granularMetadataTransformation") ?: true
 
     /**
      * Use Webpack 4 for compatibility

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.metadata
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ComponentIdentifier
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Category.CATEGORY_ATTRIBUTE
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
@@ -20,6 +21,7 @@ import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.granularMetadata.TransformKotlinGranularMetadata3TCSRegistrator
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.plugin.sources.*
@@ -29,6 +31,7 @@ import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
+import java.io.File
 import java.util.concurrent.Callable
 
 internal const val COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME = "commonMainMetadataElements"
@@ -338,19 +341,39 @@ class KotlinMetadataTargetConfigurator :
         val project = compilation.target.project
         val sourceSet = compilation.defaultSourceSet
 
-        project.registerTask<TransformKotlinGranularMetadata>(
-            transformGranularMetadataTaskName(compilation.name),
-            listOf(sourceSet)
-        ) { }
+//        project.registerTask<TransformKotlinGranularMetadata>(
+//            transformGranularMetadataTaskName(compilation.name),
+//            listOf(sourceSet)
+//        ) { }
 
-        compilation.compileDependencyFiles += createMetadataDependencyTransformationClasspath(
-            project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME),
-            compilation
-        )
+        if (PropertiesProvider(project).granularMetadataTransformation2) {
+            val registry = TransformKotlinGranularMetadata3TCSRegistrator(project)
+            val configuration = registry.registerConfigurations(compilation.target as KotlinMetadataTarget, sourceSet)
+            val task = registry.registerForSourceSet(sourceSet)
+
+            val artifacts = configuration.incoming.artifacts
+
+            fun List<File>.cp(prefix: String) = also {
+                println("CLASSPATH_$prefix: $this")
+            }
+            compilation.compileDependencyFiles += project.files(sourceSet.dependsOnClassesDirs(project))
+            compilation.compileDependencyFiles += project.files({ artifacts.filterNot { it.isMpp }.map { it.file }.cp("2") })
+            compilation.compileDependencyFiles += project.files({ task.map { it.transformedClasspath.cp("3") } }).builtBy(task)
+        } else {
+            compilation.compileDependencyFiles += createMetadataDependencyTransformationClasspath(
+                project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME),
+                compilation
+            )
+        }
 
         if (compilation is KotlinSharedNativeCompilation && sourceSet is DefaultKotlinSourceSet) {
             compilation.compileDependencyFiles += project.createCInteropMetadataDependencyClasspath(sourceSet)
         }
+    }
+
+    private val ResolvedArtifactResult.isMpp: Boolean get() {
+        val attributes = variant.attributes
+        return attributes.keySet().any { it.name == KotlinPlatformType.attribute.name }
     }
 
     private fun setupDependencyTransformationForSourceSet(
@@ -442,6 +465,7 @@ class KotlinMetadataTargetConfigurator :
 
         val sourceSet = compilation.defaultSourceSet
 
+        // TODO: replace with [dependsOnClassesDirs]
         val dependsOnCompilationOutputs = lazy {
             sourceSet.internal.withDependsOnClosure.mapNotNull { hierarchySourceSet ->
                 val dependencyCompilation = project.getMetadataCompilationForSourceSet(hierarchySourceSet)
@@ -463,6 +487,13 @@ class KotlinMetadataTargetConfigurator :
             resolvedMetadataFilesProviders
         )
     }
+
+    private fun KotlinSourceSet.dependsOnClassesDirs(project: Project): FileCollection = project.files({
+            dependsOnClosure.mapNotNull { hierarchySourceSet ->
+                val compilation = project.getMetadataCompilationForSourceSet(hierarchySourceSet) ?: return@mapNotNull null
+                compilation.output.classesDirs.also { println("CLASSPATH1: ${it.files}") }
+            }
+        })
 
     private fun createCommonMainElementsConfiguration(target: KotlinMetadataTarget) {
         val project = target.project

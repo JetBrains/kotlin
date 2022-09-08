@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
@@ -44,4 +45,8 @@ internal fun Configuration.addGradlePluginMetadataAttributes(
             )
         }
     }
+}
+
+internal fun ConfigurationContainer.maybeCreate(name: String, configure: Configuration.() -> Unit): Configuration {
+    return findByName(name) ?: maybeCreate(name).apply(configure)
 }

@@ -39,7 +39,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class NewMultiplatformIT : BaseGradleIT() {
-    private val gradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
+    private val gradleVersion = GradleVersionRequired.AtLeast(TestVersions.Gradle.G_6_8)
 
     private val nativeHostTargetName = MPPNativeTargets.current
     private val unsupportedNativeTargets = MPPNativeTargets.unsupported

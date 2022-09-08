@@ -62,16 +62,21 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @MppGradlePluginTests
     @DisplayName("works with MPP publishing")
+    //@GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_4)
     @GradleTest
     fun testMppWithMavenPublish(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
-            // KT-49933: Support Gradle Configuration caching with HMPP
-            val publishedTargets = listOf(/*"kotlinMultiplatform",*/ "jvm6", "nodeJs", "linux64", "mingw64", "mingw86")
+            val gradleAtLeast_7_4 = gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_7_4)
+            val publishedTargets = listOfNotNull(
+                "kotlinMultiplatform".takeIf { gradleAtLeast_7_4 },
+                "jvm6", "nodeJs", "linux64", "mingw64", "mingw86"
+            )
 
             testConfigurationCacheOf(
                 ":buildKotlinToolingMetadata", // Remove it when KT-49933 is fixed and `kotlinMultiplatform` publication works
                 *(publishedTargets.map { ":publish${it.replaceFirstChar { it.uppercaseChar() }}PublicationToMavenRepository" }.toTypedArray()),
-                checkUpToDateOnRebuild = false
+                checkUpToDateOnRebuild = false,
+                checkConfigurationCacheFileReport = false
             )
         }
     }
@@ -89,7 +94,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             // These tasks currently don't support Configuration Cache and marked as [Task::notCompatibleWithConfigurationCache]
             val configCacheIncompatibleTaskTypes = listOf(
                 "CInteropMetadataDependencyTransformationTask",
-                "TransformKotlinGranularMetadata"
+                //"TransformKotlinGranularMetadata"
             )
 
             build("build", buildOptions = buildOptions) {
