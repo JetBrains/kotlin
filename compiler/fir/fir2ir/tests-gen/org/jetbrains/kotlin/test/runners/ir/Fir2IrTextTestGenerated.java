@@ -1251,12 +1251,6 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
-        @TestMetadata("breakContinueInNoInlineLambda.kt")
-        public void testBreakContinueInNoInlineLambda() throws Exception {
-            runTest("compiler/testData/ir/irText/expressions/breakContinueInNoInlineLambda.kt");
-        }
-
-        @Test
         @TestMetadata("breakContinueInWhen.kt")
         public void testBreakContinueInWhen() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/breakContinueInWhen.kt");

@@ -1251,12 +1251,6 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
-        @TestMetadata("breakContinueInNoInlineLambda.kt")
-        public void testBreakContinueInNoInlineLambda() throws Exception {
-            runTest("compiler/testData/ir/irText/expressions/breakContinueInNoInlineLambda.kt");
-        }
-
-        @Test
         @TestMetadata("breakContinueInWhen.kt")
         public void testBreakContinueInWhen() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/breakContinueInWhen.kt");

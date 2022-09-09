@@ -6291,6 +6291,18 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("breakContinueInCrossInlineLambda.kt")
+            public void testBreakContinueInCrossInlineLambda() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/breakContinueInCrossInlineLambda.kt");
+            }
+
+            @Test
+            @TestMetadata("breakContinueInNoInlineLambda.kt")
+            public void testBreakContinueInNoInlineLambda() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/breakContinueInNoInlineLambda.kt");
+            }
+
+            @Test
             @TestMetadata("breakToLabel.kt")
             public void testBreakToLabel() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlStructures/breakToLabel.kt");

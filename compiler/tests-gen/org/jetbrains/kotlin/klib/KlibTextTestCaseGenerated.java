@@ -922,6 +922,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/badBreakContinue.kt");
         }
 
+        @TestMetadata("badInlinedBreakContinue.kt")
+        public void testBadInlinedBreakContinue() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/badInlinedBreakContinue.kt");
+        }
+
         @TestMetadata("bangbang.kt")
         public void testBangbang() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/bangbang.kt");

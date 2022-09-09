@@ -67,7 +67,9 @@ object FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker : FirLoopJumpChecker
                     val symbol = if (allowInlined) element.calleeReference.resolvedSymbol as? FirFunctionSymbol else null
                     element.arguments.forEachIndexed { i, argument ->
                         val expressionToCheck =
-                            if (symbol?.resolvedStatus?.isInline == true && !symbol.valueParameterSymbols[i].isNoinline) argument.tryInline() else argument
+                            if (symbol?.resolvedStatus?.isInline == true
+                                && !symbol.valueParameterSymbols[i].run { isNoinline || isCrossinline }
+                            ) argument.tryInline() else argument
                         if (findPathAndCheck(expressionToCheck)) {
                             return true
                         }

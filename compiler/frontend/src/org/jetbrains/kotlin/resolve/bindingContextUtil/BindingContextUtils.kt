@@ -197,7 +197,7 @@ fun isInlineableFunctionLiteral(expression: KtExpression, context: BindingContex
         val parameter = resolvedCall.valueArguments.entries.find { (_, valueArgument) ->
             valueArgument.arguments.any { it.asElement() == argument }
         }?.key ?: return false
-        return !parameter.isNoinline
+        return !parameter.isNoinline && !parameter.isCrossinline
     }
 
     return false
