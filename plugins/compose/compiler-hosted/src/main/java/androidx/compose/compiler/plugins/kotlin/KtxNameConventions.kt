@@ -19,4 +19,5 @@ object KtxNameConventions {
     val TRACE_EVENT_START = "traceEventStart"
     val TRACE_EVENT_END = "traceEventEnd"
     val SOURCEINFORMATIONMARKEREND = "sourceInformationMarkerEnd"
+    val UPDATE_CHANGED_FLAGS = "updateChangedFlags"
 }

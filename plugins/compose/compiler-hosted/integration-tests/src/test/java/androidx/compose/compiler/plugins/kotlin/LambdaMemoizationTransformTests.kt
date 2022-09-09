@@ -137,7 +137,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Example(%composer, %changed or 0b0001)
+                Example(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """,
@@ -338,7 +338,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                SimpleAnimatedContentSample(%composer, %changed or 0b0001)
+                SimpleAnimatedContentSample(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """,
@@ -391,7 +391,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                A(%composer, %changed or 0b0001)
+                A(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """,
@@ -480,7 +480,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                A(%composer, %changed or 0b0001)
+                A(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             internal object ComposableSingletons%TestKt {
@@ -546,7 +546,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                A(%composer, %changed or 0b0001)
+                A(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             internal object ComposableSingletons%TestKt {
@@ -642,7 +642,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Example(x, %composer, %changed or 0b0001)
+                Example(x, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """,
@@ -708,7 +708,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(enabled, content, %composer, %changed or 0b0001, %default)
+                Test(enabled, content, %composer, updateChangedFlags(%changed or 0b0001), %default)
               }
             }
         """,
@@ -768,7 +768,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(enabled, %composer, %changed or 0b0001)
+                Test(enabled, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """,
@@ -819,7 +819,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                TestLambda(content, %composer, %changed or 0b0001)
+                TestLambda(content, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -840,7 +840,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, %changed or 0b0001)
+                Test(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
     """
@@ -885,7 +885,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
             %composer.skipToGroupEnd()
           }
           %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-            TestLambda(content, %composer, %changed or 0b0001)
+            TestLambda(content, %composer, updateChangedFlags(%changed or 0b0001))
           }
         }
         @Composable
@@ -912,7 +912,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
             %composer.skipToGroupEnd()
           }
           %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-            Test(a, %composer, %changed or 0b0001)
+            Test(a, %composer, updateChangedFlags(%changed or 0b0001))
           }
         }
         """
@@ -977,7 +977,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, %changed or 0b0001)
+                Test(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """,
@@ -1054,7 +1054,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(s, %composer, %changed or 0b0001)
+                Test(s, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """,
