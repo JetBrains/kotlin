@@ -539,8 +539,8 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
 
         disable(localEscapeAnalysisPhase)
 
-        disableIf(singleCompilation, config.produceBatchedPerFileCache)
-        disableUnless(umbrellaCompilation, config.produceBatchedPerFileCache)
+        disableIf(singleCompilation, config.producePerFileCache)
+        disableUnless(umbrellaCompilation, config.producePerFileCache)
 
         // Don't serialize anything to a final executable.
         disableUnless(serializerPhase, config.produce == CompilerOutputKind.LIBRARY)

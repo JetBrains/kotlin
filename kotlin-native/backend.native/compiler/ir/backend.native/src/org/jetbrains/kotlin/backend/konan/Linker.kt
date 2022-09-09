@@ -35,7 +35,6 @@ internal fun determineLinkerOutput(context: Context): LinkerOutputKind =
         }
 
 internal class CacheStorage(val context: Context) {
-    private val isPreliminaryCache = context.config.produce == CompilerOutputKind.PRELIMINARY_CACHE
     private val outputFiles = context.generationState.outputFiles
 
     fun renameOutput() {
@@ -48,12 +47,9 @@ internal class CacheStorage(val context: Context) {
 
     fun saveAdditionalCacheInfo() {
         outputFiles.prepareTempDirectories()
-        if (!isPreliminaryCache)
-            saveCacheBitcodeDependencies()
-        if (isPreliminaryCache || !context.config.producePerFileCache || context.config.produceBatchedPerFileCache) {
-            saveInlineFunctionBodies()
-            saveClassFields()
-        }
+        saveCacheBitcodeDependencies()
+        saveInlineFunctionBodies()
+        saveClassFields()
     }
 
     private fun saveCacheBitcodeDependencies() {

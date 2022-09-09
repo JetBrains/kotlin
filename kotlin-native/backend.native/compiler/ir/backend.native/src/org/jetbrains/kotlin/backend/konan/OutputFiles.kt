@@ -17,7 +17,7 @@ import kotlin.random.Random
 /**
  * Creates and stores terminal compiler outputs.
  */
-class OutputFiles(val outputName: String, target: KonanTarget, val produce: CompilerOutputKind, val producePerFileCache: Boolean) {
+class OutputFiles(val outputName: String, target: KonanTarget, val produce: CompilerOutputKind) {
 
     private val prefix = produce.prefix(target)
     private val suffix = produce.suffix(target)
@@ -42,26 +42,13 @@ class OutputFiles(val outputName: String, target: KonanTarget, val produce: Comp
 
     val mainFile = File(mainFileName)
 
-    private val pathToPerFileCache =
-            if (producePerFileCache)
-                outputName.substring(0, outputName.lastIndexOf(File.separatorChar) /* skip [PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME]*/)
-            else null
+    val perFileCacheFileName = File(outputName).absoluteFile.name
 
-    val perFileCacheFileName = File(pathToPerFileCache ?: outputName).absoluteFile.name
+    val cacheFileName = File((outputName).fullOutputName()).absoluteFile.name
 
-    val cacheFileName = File((pathToPerFileCache ?: outputName).fullOutputName()).absoluteFile.name
+    private fun File.cacheBinaryPart() = this.child(CachedLibraries.PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME)
 
-    private fun File.cacheBinaryPart() =
-            if (producePerFileCache)
-                this
-            else
-                this.child(CachedLibraries.PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME)
-
-    private fun File.cacheIrPart() =
-            if (producePerFileCache)
-                this
-            else
-                this.child(CachedLibraries.PER_FILE_CACHE_IR_LEVEL_DIR_NAME)
+    private fun File.cacheIrPart() = this.child(CachedLibraries.PER_FILE_CACHE_IR_LEVEL_DIR_NAME)
 
     val dynamicCacheInstallName = File(outputName).cacheBinaryPart().child(cacheFileName).absolutePath
 
