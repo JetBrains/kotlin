@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.analysis.decompiled.light.classes.origin
 
 
@@ -29,7 +34,6 @@ interface LightMemberOriginForCompiledElement<T : PsiMember> : LightMemberOrigin
 
     override fun isValid(): Boolean = member.isValid
 }
-
 
 data class LightMemberOriginForCompiledField(val psiField: PsiField, val file: KtClsFile) : LightMemberOriginForCompiledElement<PsiField> {
     override val member: PsiField
