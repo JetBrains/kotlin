@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaType
-import org.jetbrains.kotlin.lombok.config.LombokConfig
 import org.jetbrains.kotlin.lombok.k2.*
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Builder
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Singular
@@ -189,7 +188,7 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
 
         when (typeName) {
             in LombokNames.SUPPORTED_COLLECTIONS -> {
-                val parameterType = javaClassifierType.parameterType(0, singular.allowNull) ?: return
+                val parameterType = javaClassifierType.parameterType(0) ?: return
                 valueParameters = listOf(
                     ConeLombokValueParameter(nameInSingularForm, parameterType.toRef())
                 )
@@ -199,24 +198,28 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
                     else -> JavaClasses.Collection
                 }
 
-                addMultipleParameterType = DummyJavaClassType(baseType, typeArguments = listOf(parameterType)).toRef()
+                addMultipleParameterType = DummyJavaClassType(baseType, typeArguments = listOf(parameterType))
+                    .withProperNullability(singular.allowNull)
+                    .toRef()
             }
 
             in LombokNames.SUPPORTED_MAPS -> {
-                val keyType = javaClassifierType.parameterType(0, singular.allowNull) ?: return
-                val valueType = javaClassifierType.parameterType(1, singular.allowNull) ?: return
+                val keyType = javaClassifierType.parameterType(0) ?: return
+                val valueType = javaClassifierType.parameterType(1) ?: return
                 valueParameters = listOf(
                     ConeLombokValueParameter(Name.identifier("key"), keyType.toRef()),
                     ConeLombokValueParameter(Name.identifier("value"), valueType.toRef()),
                 )
 
-                addMultipleParameterType = DummyJavaClassType(JavaClasses.Map, typeArguments = listOf(keyType, valueType)).toRef()
+                addMultipleParameterType = DummyJavaClassType(JavaClasses.Map, typeArguments = listOf(keyType, valueType))
+                    .withProperNullability(singular.allowNull)
+                    .toRef()
             }
 
             in LombokNames.SUPPORTED_TABLES -> {
-                val rowKeyType = javaClassifierType.parameterType(0, singular.allowNull) ?: return
-                val columnKeyType = javaClassifierType.parameterType(1, singular.allowNull) ?: return
-                val valueType = javaClassifierType.parameterType(2, singular.allowNull) ?: return
+                val rowKeyType = javaClassifierType.parameterType(0) ?: return
+                val columnKeyType = javaClassifierType.parameterType(1) ?: return
+                val valueType = javaClassifierType.parameterType(2) ?: return
 
                 valueParameters = listOf(
                     ConeLombokValueParameter(Name.identifier("rowKey"), rowKeyType.toRef()),
@@ -227,7 +230,7 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
                 addMultipleParameterType = DummyJavaClassType(
                     JavaClasses.Table,
                     typeArguments = listOf(rowKeyType, columnKeyType, valueType)
-                ).toRef()
+                ).withProperNullability(singular.allowNull).toRef()
             }
 
             else -> return
@@ -273,9 +276,12 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
     private val String.singularForm: String?
         get() = StringUtil.unpluralize(this)
 
-    private fun JavaClassifierType.parameterType(index: Int, allowNull: Boolean): JavaType? {
-        val type = typeArguments.getOrNull(index) ?: return null
-        return if (allowNull) type.makeNullable() else type.makeNotNullable()
+    private fun JavaClassifierType.parameterType(index: Int): JavaType? {
+        return typeArguments.getOrNull(index)
+    }
+
+    private fun JavaType.withProperNullability(allowNull: Boolean): JavaType {
+        return if (allowNull) makeNullable() else makeNotNullable()
     }
 }
 

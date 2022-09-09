@@ -152,7 +152,7 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
 
         when (typeName) {
             in LombokNames.SUPPORTED_COLLECTIONS -> {
-                val parameterType = field.parameterType(0, singular.allowNull) ?: return
+                val parameterType = field.parameterType(0) ?: return
                 valueParameters = listOf(
                     LombokValueParameter(nameInSingularForm, parameterType)
                 )
@@ -163,28 +163,27 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
                     else -> builtIns.collection.defaultType
                 }
 
-                addMultipleParameterType = baseType.replace(
-                    newArguments = listOf(TypeProjectionImpl(parameterType))
-                )
+                addMultipleParameterType = baseType.withProperNullability(singular.allowNull)
+                    .replace(newArguments = listOf(TypeProjectionImpl(parameterType)),)
             }
 
             in LombokNames.SUPPORTED_MAPS -> {
-                val keyType = field.parameterType(0, singular.allowNull) ?: return
-                val valueType = field.parameterType(1, singular.allowNull) ?: return
+                val keyType = field.parameterType(0) ?: return
+                val valueType = field.parameterType(1) ?: return
                 valueParameters = listOf(
                     LombokValueParameter(Name.identifier("key"), keyType),
                     LombokValueParameter(Name.identifier("value"), valueType),
                 )
 
-                addMultipleParameterType = field.module.builtIns.map.defaultType.replace(
-                    newArguments = listOf(TypeProjectionImpl(keyType), TypeProjectionImpl(valueType))
-                )
+                addMultipleParameterType = field.module.builtIns.map.defaultType
+                    .withProperNullability(singular.allowNull)
+                    .replace(newArguments = listOf(TypeProjectionImpl(keyType), TypeProjectionImpl(valueType)))
             }
 
             in LombokNames.SUPPORTED_TABLES -> {
-                val rowKeyType = field.parameterType(0, singular.allowNull) ?: return
-                val columnKeyType = field.parameterType(1, singular.allowNull) ?: return
-                val valueType = field.parameterType(2, singular.allowNull) ?: return
+                val rowKeyType = field.parameterType(0) ?: return
+                val columnKeyType = field.parameterType(1) ?: return
+                val valueType = field.parameterType(2) ?: return
 
                 val tableDescriptor = field.module.resolveClassByFqName(LombokNames.TABLE, NoLookupLocation.FROM_SYNTHETIC_SCOPE) ?: return
 
@@ -194,13 +193,15 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
                     LombokValueParameter(Name.identifier("value"), valueType),
                 )
 
-                addMultipleParameterType = tableDescriptor.defaultType.replace(
-                    newArguments = listOf(
-                        TypeProjectionImpl(rowKeyType),
-                        TypeProjectionImpl(columnKeyType),
-                        TypeProjectionImpl(valueType),
+                addMultipleParameterType = tableDescriptor.defaultType
+                    .withProperNullability(singular.allowNull)
+                    .replace(
+                        newArguments = listOf(
+                            TypeProjectionImpl(rowKeyType),
+                            TypeProjectionImpl(columnKeyType),
+                            TypeProjectionImpl(valueType),
+                        )
                     )
-                )
             }
 
             else -> return
@@ -242,15 +243,18 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
 
     private class BuilderData(val builder: Builder, val constructingClass: ClassDescriptor)
 
-    private fun PropertyDescriptor.parameterType(index: Int, allowNull: Boolean): KotlinType? {
+    private fun PropertyDescriptor.parameterType(index: Int): KotlinType? {
         val type = returnType?.arguments?.getOrNull(index)?.type ?: return null
-        val typeWithProperNullability =  if (allowNull) type.makeNullable() else type.makeNotNullable()
-        return typeWithProperNullability.replaceAnnotations(
+        return type.replaceAnnotations(
             CompositeAnnotations(
-                typeWithProperNullability.annotations,
+                type.annotations,
                 ENHANCED_NULLABILITY_ANNOTATIONS
             )
         )
+    }
+
+    private fun KotlinType.withProperNullability(allowNull: Boolean): KotlinType {
+        return if (allowNull) makeNullable() else makeNotNullable()
     }
 
     private fun Name.toMethodName(builder: Builder): Name {
