@@ -21,6 +21,7 @@ import lombok.Singular;
 @Data
 public class Other {
     @Singular("singleSome") private java.util.List<Integer> some;
+    @Singular private java.lang.Iterable<String> names;
 }
 
 // FILE: test.kt
@@ -35,16 +36,24 @@ fun box(): String {
 
     val user = userBuilder.build()
 
-    val outer = Other.builder()
+    val other = Other.builder()
         .withSingleSome(1)
         .withSome(listOf(2, 3))
+        .withName("John")
+        .withNames(setOf("Peter"))
         .build()
 
     val expectedNumbers = mapOf("1" to 1, "2" to 2, "3" to 3)
     val expectedStatuses = listOf("hello", "world", "!")
     val expectedSome = listOf(1, 2, 3)
+    val expectedNames = listOf("John", "Peter")
 
-    return if (user.numbers == expectedNumbers && user.statuses == expectedStatuses && outer.some == expectedSome) {
+    return if (
+        user.numbers == expectedNumbers &&
+        user.statuses == expectedStatuses &&
+        other.some == expectedSome &&
+        other.names == expectedNames
+    ) {
         "OK"
     } else {
         "Error: $user"

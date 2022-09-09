@@ -56,7 +56,7 @@ object LombokNames {
     ).map { FqName(it) }.toSet()
 
     private val SUPPORTED_JAVA_COLLECTIONS = setOf(
-        "java.util.Iterable",
+        "java.lang.Iterable",
         "java.util.Collection",
         "java.util.List",
         "java.util.Set",
