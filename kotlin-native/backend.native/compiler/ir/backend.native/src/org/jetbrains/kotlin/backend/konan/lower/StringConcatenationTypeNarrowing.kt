@@ -69,7 +69,7 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
                     buildConcatenationCall(plusImplFunction, dispatchReceiver!!, buildNullableArgToString(getValueArgument(0)!!))
 
                 context.irBuiltIns.extensionStringPlus ->
-                    buildConcatenationCall(plusImplFunction, buildNullableArgToString(extensionReceiver!!), buildNullableArgToString(getValueArgument(0)!!))
+                    buildConcatenationCall(plusImplFunction, buildNullableArgToString(extensionReceiver!!), buildNullableArgToString(getValueArgument(1)!!))
 
                 else -> expression
             }

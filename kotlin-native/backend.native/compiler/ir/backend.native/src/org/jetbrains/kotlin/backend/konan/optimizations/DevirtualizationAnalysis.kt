@@ -1360,20 +1360,11 @@ internal object DevirtualizationAnalysis {
         }
 
         fun IrCallImpl.putArgument(index: Int, value: IrExpression) {
-            var receiversCount = 0
             val callee = symbol.owner
-            if (callee.dispatchReceiverParameter != null)
-                ++receiversCount
-            if (callee.extensionReceiverParameter != null)
-                ++receiversCount
-            if (index >= receiversCount)
-                putValueArgument(index - receiversCount, value)
-            else {
-                if (callee.dispatchReceiverParameter != null && index == 0)
-                    dispatchReceiver = value
-                else
-                    extensionReceiver = value
-            }
+            if (callee.dispatchReceiverParameter != null && index == 0)
+                dispatchReceiver = value
+            else
+                putValueArgument(index - (callee.dispatchReceiverParameter != null).toInt(), value)
         }
 
         fun IrBuilderWithScope.irDevirtualizedCall(callSite: IrCall,

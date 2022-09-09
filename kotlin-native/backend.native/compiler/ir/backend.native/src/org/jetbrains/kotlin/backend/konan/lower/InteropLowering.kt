@@ -599,6 +599,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
                     .map { index -> expression.getValueArgument(index) }
 
             return builder.at(expression).run {
+                // ??
                 val classPtr = getRawPtr(expression.extensionReceiver!!)
                 callAllocAndInit(classPtr, initMethodInfo, arguments, expression, callee)
             }

@@ -112,7 +112,6 @@ fun translateCall(
     }
 
     val jsDispatchReceiver = expression.dispatchReceiver?.accept(transformer, context)
-    val jsExtensionReceiver = expression.extensionReceiver?.accept(transformer, context)
     val arguments = translateCallArguments(expression, context, transformer)
 
     // Transform external and interface's property accessor call
@@ -142,7 +141,7 @@ fun translateCall(
     }
 
     if (isFunctionTypeInvoke(jsDispatchReceiver, expression) || expression.symbol.owner.isJsNativeInvoke()) {
-        return JsInvocation(jsDispatchReceiver ?: jsExtensionReceiver!!, arguments)
+        return JsInvocation(jsDispatchReceiver!!, arguments)
     }
 
     expression.superQualifierSymbol?.let { superQualifier ->
@@ -184,7 +183,7 @@ fun translateCall(
         val argumentsAsSingleArray = argumentsWithVarargAsSingleArray(
             expression,
             context,
-            jsExtensionReceiver,
+            additionalReceiver = null,
             arguments,
             varargParameterIndex
         )
@@ -241,7 +240,7 @@ fun translateCall(
             }
         }
     } else {
-        JsInvocation(ref, listOfNotNull(jsExtensionReceiver) + arguments)
+        JsInvocation(ref, arguments)
     }
 }
 

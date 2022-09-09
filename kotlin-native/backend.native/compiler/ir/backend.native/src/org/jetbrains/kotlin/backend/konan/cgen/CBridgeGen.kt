@@ -123,6 +123,7 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
 
     if (isInvoke) {
         require(expression.dispatchReceiver == null) { renderCompilerError(expression) }
+        // ??
         targetPtrParameter = callBuilder.passThroughBridge(
                 expression.extensionReceiver!!,
                 symbols.interopCPointer.starProjectedType,
