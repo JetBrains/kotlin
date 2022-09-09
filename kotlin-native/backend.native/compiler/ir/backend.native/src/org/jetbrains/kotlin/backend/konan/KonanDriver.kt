@@ -38,28 +38,12 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
                 }
             }
         }
-
-        if (fileNames == null) {
-            KonanConfig(project, configuration).runTopLevelPhases()
-        } else {
+        if (fileNames != null) {
             configuration.put(KonanConfigKeys.MAKE_PER_FILE_CACHE, true)
-            if (configuration.get(KonanConfigKeys.BATCHED_PER_FILE_CACHE_BUILD) == false) {
-                fileNames.forEach { buildFileCache(it, CompilerOutputKind.PRELIMINARY_CACHE) }
-                fileNames.forEach { buildFileCache(it, configuration.get(KonanConfigKeys.PRODUCE)!!) }
-            } else {
-                configuration.put(KonanConfigKeys.FILES_TO_CACHE, fileNames)
-                KonanConfig(project, configuration).runTopLevelPhases()
-            }
+            configuration.put(KonanConfigKeys.FILES_TO_CACHE, fileNames)
         }
-    }
 
-    private fun buildFileCache(fileName: String, cacheKind: CompilerOutputKind) {
-        val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)!!
-        val subConfiguration = configuration.copy()
-        subConfiguration.put(KonanConfigKeys.PRODUCE, cacheKind)
-        subConfiguration.put(KonanConfigKeys.FILES_TO_CACHE, listOf(fileName))
-        subConfiguration.put(CLIConfigurationKeys.PHASE_CONFIG, phaseConfig.toBuilder().build())
-        KonanConfig(project, subConfiguration).runTopLevelPhases()
+        KonanConfig(project, configuration).runTopLevelPhases()
     }
 
     private fun KonanConfig.runTopLevelPhases() {
