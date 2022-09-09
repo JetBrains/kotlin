@@ -589,7 +589,6 @@ open class DeepCopyIrTreeWithSymbols(
     private fun <T : IrFunctionAccessExpression> T.transformReceiverArguments(original: T): T =
         apply {
             dispatchReceiver = original.dispatchReceiver?.transform()
-            putExtensionReceiverAsArgumentIfNotNull(original.extensionReceiver?.transform())
         }
 
     private fun <T : IrFunctionAccessExpression> T.transformValueArguments(original: T) {
