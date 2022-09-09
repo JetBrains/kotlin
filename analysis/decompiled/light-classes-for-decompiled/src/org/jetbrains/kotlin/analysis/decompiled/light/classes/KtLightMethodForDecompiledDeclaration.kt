@@ -103,6 +103,12 @@ class KtLightMethodForDecompiledDeclaration(
     override fun isValid(): Boolean = parent.isValid
 
     override fun getOriginalElement() = funDelegate
+
+    override fun isEquivalentTo(another: PsiElement?): Boolean {
+        return this == another ||
+                another is KtLightMethodForDecompiledDeclaration && funDelegate.isEquivalentTo(another.funDelegate) ||
+                funDelegate.isEquivalentTo(another)
+    }
 }
 
 private fun KtLightMethod.checkIsMangled(): Boolean {

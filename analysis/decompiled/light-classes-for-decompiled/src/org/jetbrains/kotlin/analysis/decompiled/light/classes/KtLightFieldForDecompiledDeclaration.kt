@@ -71,4 +71,10 @@ open class KtLightFieldForDecompiledDeclaration(
     override fun toString(): String = "${this.javaClass.simpleName} of $fldParent"
 
     override fun isValid(): Boolean = parent.isValid
+
+    override fun isEquivalentTo(another: PsiElement?): Boolean {
+        return this == another ||
+                another is KtLightFieldForDecompiledDeclaration && fldDelegate.isEquivalentTo(another.fldDelegate) ||
+                fldDelegate.isEquivalentTo(another)
+    }
 }
