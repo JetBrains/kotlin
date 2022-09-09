@@ -33963,6 +33963,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("notOverridingInternal.kt")
+            public void testNotOverridingInternal() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/notOverridingInternal.kt");
+            }
+
+            @Test
+            @TestMetadata("notOverridingPackagePrivate.kt")
+            public void testNotOverridingPackagePrivate() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/notOverridingPackagePrivate.kt");
+            }
+
+            @Test
             @TestMetadata("overrideOfMemberInPackagePrivateClass.kt")
             public void testOverrideOfMemberInPackagePrivateClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/overrideOfMemberInPackagePrivateClass.kt");

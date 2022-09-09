@@ -62,6 +62,15 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         ): Boolean {
             return true
         }
+
+        override fun platformOverrideVisibilityCheck(
+            session: FirSession,
+            candidateInDerivedClass: FirBasedSymbol<*>,
+            symbolInBaseClass: FirBasedSymbol<*>,
+            visibilityInBaseClass: Visibility,
+        ): Boolean {
+            return true
+        }
     }
 
     fun isVisible(
@@ -105,6 +114,24 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                 supertypeSupplier
             )
         }
+    }
+
+    fun isVisibleForOverriding(
+        session: FirSession,
+        candidateInDerivedClass: FirMemberDeclaration,
+        candidateInBaseClass: FirMemberDeclaration
+    ): Boolean = when (candidateInBaseClass.visibility) {
+        Visibilities.Internal -> {
+            candidateInBaseClass.moduleData == candidateInDerivedClass.moduleData ||
+                    (candidateInDerivedClass.moduleData == session.moduleData &&
+                            session.moduleVisibilityChecker?.isInFriendModule(candidateInBaseClass) == true)
+        }
+
+        Visibilities.Private, Visibilities.PrivateToThis -> false
+        Visibilities.Protected -> true
+        else -> platformOverrideVisibilityCheck(
+            session, candidateInDerivedClass.symbol, candidateInBaseClass.symbol, candidateInBaseClass.visibility
+        )
     }
 
     private fun FirMemberDeclaration.containingNonLocalClass(
@@ -224,6 +251,13 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         session: FirSession,
         isCallToPropertySetter: Boolean,
         supertypeSupplier: SupertypeSupplier
+    ): Boolean
+
+    protected abstract fun platformOverrideVisibilityCheck(
+        session: FirSession,
+        candidateInDerivedClass: FirBasedSymbol<*>,
+        symbolInBaseClass: FirBasedSymbol<*>,
+        visibilityInBaseClass: Visibility,
     ): Boolean
 
     private fun canSeePrivateMemberOf(
@@ -357,7 +391,9 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             stubTypesEqualToAnything = false
         )
         if (AbstractTypeChecker.isSubtypeOf(
-                typeCheckerState, dispatchReceiverType.fullyExpandedType(session), containingUseSiteClass.symbol.constructStarProjectedType()
+                typeCheckerState,
+                dispatchReceiverType.fullyExpandedType(session),
+                containingUseSiteClass.symbol.constructStarProjectedType()
             )
         ) {
             return true
