@@ -344,7 +344,7 @@ internal open class GradleCompilerRunner(
                         )
                         val jarTask = project.tasks.findByName(target.artifactsTaskName) as? AbstractArchiveTask ?: continue
                         jarToModule[jarTask.archivePathCompatible.canonicalFile] = module
-                        if (target is KotlinWithJavaTarget<*>) {
+                        if (target is KotlinWithJavaTarget<*, *>) {
                             val jar = project.tasks.getByName(target.artifactsTaskName) as Jar
                             jarToClassListFile[jar.archivePathCompatible.canonicalFile] = target.defaultArtifactClassesListFile.get()
                             //configure abiSnapshot mapping for jars

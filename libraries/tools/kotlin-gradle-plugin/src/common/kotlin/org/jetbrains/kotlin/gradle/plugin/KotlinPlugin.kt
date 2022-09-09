@@ -92,7 +92,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     protected val javaSourceSet: SourceSet?
         get() {
             val compilation = kotlinCompilation
-            return (compilation as? KotlinWithJavaCompilation<*>)?.javaSourceSet
+            return (compilation as? KotlinWithJavaCompilation<*, *>)?.javaSourceSet
                 ?: kotlinCompilation.owner.let {
                     if (it is KotlinJvmTarget && it.withJavaEnabled && compilation is KotlinJvmCompilation)
                         project.gradle.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
@@ -112,7 +112,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
         addKotlinDirectoriesToJavaSourceSet()
         doTargetSpecificProcessing()
 
-        if (kotlinCompilation is KotlinWithJavaCompilation<*>) {
+        if (kotlinCompilation is KotlinWithJavaCompilation<*, *>) {
             createAdditionalClassesTaskForIdeRunner()
         }
     }
@@ -238,7 +238,7 @@ internal class Kotlin2JsSourceSetProcessor(
             it.dependsOn(kotlinTask)
         }
 
-        if (kotlinCompilation is KotlinWithJavaCompilation<*>) {
+        if (kotlinCompilation is KotlinWithJavaCompilation<*, *>) {
             kotlinCompilation.javaSourceSet.clearJavaSrcDirs()
         }
 
@@ -471,7 +471,7 @@ internal abstract class AbstractKotlinPlugin(
         }
 
         fun configureTarget(
-            target: KotlinWithJavaTarget<*>,
+            target: KotlinWithJavaTarget<*, *>,
             buildSourceSetProcessor: (AbstractKotlinCompilation<*>) -> KotlinSourceSetProcessor<*>
         ) {
             setUpJavaSourceSets(target)
@@ -501,7 +501,7 @@ internal abstract class AbstractKotlinPlugin(
             javaSourceSets.all { javaSourceSet ->
                 val kotlinCompilation =
                     compilationsUnderConstruction[javaSourceSet.name] ?: kotlinTarget.compilations.maybeCreate(javaSourceSet.name)
-                (kotlinCompilation as? KotlinWithJavaCompilation<*>)?.javaSourceSet = javaSourceSet
+                (kotlinCompilation as? KotlinWithJavaCompilation<*, *>)?.javaSourceSet = javaSourceSet
 
                 if (duplicateJavaSourceSetsAsKotlinSourceSets) {
                     val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinCompilation.name)
@@ -520,7 +520,7 @@ internal abstract class AbstractKotlinPlugin(
             kotlinTarget.compilations.all { kotlinCompilation ->
                 val sourceSetName = kotlinCompilation.name
                 compilationsUnderConstruction[sourceSetName] = kotlinCompilation
-                (kotlinCompilation as? KotlinWithJavaCompilation<*>)?.javaSourceSet = javaSourceSets.maybeCreate(sourceSetName)
+                (kotlinCompilation as? KotlinWithJavaCompilation<*, *>)?.javaSourceSet = javaSourceSets.maybeCreate(sourceSetName)
 
                 // Another Kotlin source set following the other convention, named according to the compilation, not the Java source set:
                 val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinCompilation.defaultSourceSetName)
@@ -545,7 +545,7 @@ internal abstract class AbstractKotlinPlugin(
         }
 
         private fun configureAttributes(
-            kotlinTarget: KotlinWithJavaTarget<*>
+            kotlinTarget: KotlinWithJavaTarget<*, *>
         ) {
             val project = kotlinTarget.project
 
@@ -571,7 +571,7 @@ internal abstract class AbstractKotlinPlugin(
         }
 
         private fun configureSourceSetDefaults(
-            kotlinTarget: KotlinWithJavaTarget<*>,
+            kotlinTarget: KotlinWithJavaTarget<*, *>,
             buildSourceSetProcessor: (AbstractKotlinCompilation<*>) -> KotlinSourceSetProcessor<*>
         ) {
             kotlinTarget.compilations.all { compilation ->
@@ -600,8 +600,18 @@ internal open class KotlinPlugin(
             project,
             KotlinPlatformType.jvm,
             targetName,
-            { KotlinJvmOptionsImpl() }
-        ) as KotlinWithJavaTarget<KotlinJvmOptions>)
+            {
+                object : HasCompilerOptions<CompilerJvmOptions> {
+                    override val options: CompilerJvmOptions =
+                        project.objects.newInstance(CompilerJvmOptionsDefault::class.java)
+                }
+            },
+            { compilerOptions: CompilerJvmOptions ->
+                object : KotlinJvmOptions {
+                    override val options: CompilerJvmOptions get() = compilerOptions
+                }
+            }
+        ) as KotlinWithJavaTarget<KotlinJvmOptions, CompilerJvmOptions>)
             .apply {
                 disambiguationClassifier = null // don't add anything to the task names
             }
@@ -642,8 +652,19 @@ internal open class KotlinCommonPlugin(
             project,
             KotlinPlatformType.common,
             targetName,
-            { KotlinMultiplatformCommonOptionsImpl() }
-        ) as KotlinWithJavaTarget<KotlinMultiplatformCommonOptions>
+            {
+                object : HasCompilerOptions<CompilerMultiplatformCommonOptions> {
+                    override val options: CompilerMultiplatformCommonOptions =
+                        project.objects.newInstance(CompilerMultiplatformCommonOptionsDefault::class.java)
+                }
+            },
+            { compilerOptions: CompilerMultiplatformCommonOptions ->
+                object : KotlinMultiplatformCommonOptions {
+                    override val options: CompilerMultiplatformCommonOptions
+                        get() = compilerOptions
+                }
+            }
+        ) as KotlinWithJavaTarget<KotlinMultiplatformCommonOptions, CompilerMultiplatformCommonOptions>
         (project.kotlinExtension as KotlinCommonProjectExtension).target = target
 
         super.apply(project)
@@ -675,8 +696,19 @@ internal open class Kotlin2JsPlugin(
             project,
             KotlinPlatformType.js,
             targetName,
-            { KotlinJsOptionsImpl() }
-        ) as KotlinWithJavaTarget<KotlinJsOptions>
+            {
+                object : HasCompilerOptions<CompilerJsOptions> {
+                    override val options: CompilerJsOptions =
+                        project.objects.newInstance(CompilerJsOptionsDefault::class.java)
+                }
+            },
+            { compilerOptions: CompilerJsOptions ->
+                object : KotlinJsOptions {
+                    override val options: CompilerJsOptions
+                        get() = compilerOptions
+                }
+            }
+        ) as KotlinWithJavaTarget<KotlinJsOptions, CompilerJsOptions>
 
         (project.kotlinExtension as Kotlin2JsProjectExtension).setTarget(target)
         super.apply(project)

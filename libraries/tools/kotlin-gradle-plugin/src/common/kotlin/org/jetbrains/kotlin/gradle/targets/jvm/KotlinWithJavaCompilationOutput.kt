@@ -13,7 +13,7 @@ import java.io.File
 import java.util.concurrent.Callable
 
 class KotlinWithJavaCompilationOutput(
-    internal val compilation: KotlinWithJavaCompilation<*>
+    internal val compilation: KotlinWithJavaCompilation<*, *>
 ) : KotlinCompilationOutput, Callable<FileCollection> {
 
     private val javaSourceSetOutput

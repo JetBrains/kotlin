@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
-import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToCompilerOptions
 import org.jetbrains.kotlin.gradle.targets.metadata.ResolvedMetadataFilesProvider
 import org.jetbrains.kotlin.gradle.targets.metadata.createMetadataDependencyTransformationClasspath
+import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.newProperty
@@ -177,17 +177,10 @@ internal open class KotlinNativeFragmentMetadataCompilationDataImpl(
     override val isActive: Boolean
         get() = fragment.isNativeShared() && fragment.containingVariants.count() > 1
 
-    override val compilerOptions: HasCompilerOptions<CompilerCommonOptions> =
-        object : HasCompilerOptions<CompilerCommonOptions> {
-            override val options: CompilerCommonOptions =
-                project.objects.newInstance(CompilerCommonOptionsDefault::class.java)
-                    .apply {
-                        useK2.finalizeValue()
-                        project.runOnceAfterEvaluated("apply Kotlin native properties from language settings") {
-                            applyLanguageSettingsToCompilerOptions(languageSettings, this)
-                        }
-                    }
-        }
+    override val compilerOptions: HasCompilerOptions<CompilerCommonOptions> = NativeCompilerOptions(
+        project,
+        languageSettings
+    )
 
     @Suppress("DEPRECATION")
     @Deprecated("Replaced with compilerOptions.options", replaceWith = ReplaceWith("compilerOptions.options"))

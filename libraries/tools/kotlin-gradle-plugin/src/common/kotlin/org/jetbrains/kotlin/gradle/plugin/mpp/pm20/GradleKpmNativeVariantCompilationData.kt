@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.runOnceAfterEvaluated
-import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToCompilerOptions
+import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal class GradleKpmNativeVariantCompilationData(
@@ -29,17 +27,10 @@ internal class GradleKpmNativeVariantCompilationData(
     override val owner: GradleKpmNativeVariant
         get() = variant
 
-    override val compilerOptions: HasCompilerOptions<CompilerCommonOptions> =
-        object : HasCompilerOptions<CompilerCommonOptions> {
-            override val options: CompilerCommonOptions =
-                project.objects.newInstance(CompilerCommonOptionsDefault::class.java)
-                    .apply {
-                        useK2.finalizeValue()
-                        project.runOnceAfterEvaluated("apply Kotlin native properties from language settings") {
-                            applyLanguageSettingsToCompilerOptions(variant.languageSettings, this)
-                        }
-                    }
-        }
+    override val compilerOptions: HasCompilerOptions<CompilerCommonOptions> = NativeCompilerOptions(
+        project,
+        variant.languageSettings
+    )
 
     @Suppress("DEPRECATION")
     @Deprecated("Replaced with compilerOptions.options", replaceWith = ReplaceWith("compilerOptions.options"))

@@ -85,7 +85,7 @@ private fun KotlinTarget.excludeStdlibAndKotlinTestCommonFromPlatformCompilation
             (it as? KotlinCompilationToRunnableFiles<*>)?.runtimeDependencyConfigurationName,
 
             // Additional configurations for (old) jvmWithJava-preset. Remove it when we drop it completely
-            (it as? KotlinWithJavaCompilation<*>)?.apiConfigurationName
+            (it as? KotlinWithJavaCompilation<*, *>)?.apiConfigurationName
         ).forEach { configurationName ->
             project.configurations.getByName(configurationName).apply {
                 exclude(mapOf("group" to "org.jetbrains.kotlin", "module" to "kotlin-stdlib-common"))

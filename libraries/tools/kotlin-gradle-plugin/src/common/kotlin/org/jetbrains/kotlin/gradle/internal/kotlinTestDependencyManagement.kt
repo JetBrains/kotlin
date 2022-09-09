@@ -159,7 +159,7 @@ private fun KotlinCompilation<*>.kotlinTestCapabilityForJvmSourceSet(
             .matching { it is KotlinTaskTestRun<*, *> }
             .mapNotNull { (it as KotlinTaskTestRun<*, *>).executionTask }
 
-        compilationTarget is KotlinWithJavaTarget<*> &&
+        compilationTarget is KotlinWithJavaTarget<*, *> &&
                 name == KotlinCompilation.TEST_COMPILATION_NAME ->
             listOfNotNull(tasks.locateTask(compilationTarget.testTaskName))
 

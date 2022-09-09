@@ -312,7 +312,7 @@ class KotlinMetadataTargetConfigurator :
         return compilationFactory.create(compilationName).apply {
             target.compilations.add(this@apply)
 
-            (compilationDetails as DefaultCompilationDetails<*>).addExactSourceSetEagerly(sourceSet)
+            (compilationDetails as DefaultCompilationDetails<*, *>).addExactSourceSetEagerly(sourceSet)
 
             configureMetadataDependenciesForCompilation(this@apply)
 

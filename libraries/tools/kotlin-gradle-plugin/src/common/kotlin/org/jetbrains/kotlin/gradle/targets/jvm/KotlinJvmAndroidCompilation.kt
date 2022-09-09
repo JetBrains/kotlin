@@ -11,8 +11,10 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
+import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.plugin.getJavaTaskProvider
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import javax.inject.Inject
 
 abstract class KotlinJvmAndroidCompilation @Inject constructor(
@@ -24,12 +26,19 @@ abstract class KotlinJvmAndroidCompilation @Inject constructor(
     internal val testedVariantArtifacts: Property<FileCollection> =
         compilationDetails.target.project.objects.property(FileCollection::class.java)
 
+    @Suppress("DEPRECATION")
+    @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
     override val compileKotlinTask: org.jetbrains.kotlin.gradle.tasks.KotlinCompile
         get() = super.compileKotlinTask as org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST", "DEPRECATION")
+    @Deprecated("Replaced with compileTaskProvider", replaceWith = ReplaceWith("compileTaskProvider"))
     override val compileKotlinTaskProvider: TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
         get() = super.compileKotlinTaskProvider as TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
+
+    @Suppress("UNCHECKED_CAST")
+    override val compileTaskProvider: TaskProvider<out KotlinCompilationTask<CompilerJvmOptions>>
+        get() = super.compileTaskProvider as TaskProvider<KotlinCompilationTask<CompilerJvmOptions>>
 
     val compileJavaTaskProvider: TaskProvider<out JavaCompile>
         get() = androidVariant.getJavaTaskProvider()

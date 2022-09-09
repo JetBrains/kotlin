@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
 import org.jetbrains.kotlin.project.model.LanguageSettings
@@ -48,6 +49,12 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     final override val platformType: KotlinPlatformType get() = compilationData.platformType
     final override val output: KotlinCompilationOutput get() = compilationData.output
     final override val compileKotlinTaskName: String get() = compilationData.compileKotlinTaskName
+
+    override val compilerOptions: HasCompilerOptions<*>
+        get() = compilationData.compilerOptions
+
+    @Suppress("DEPRECATION")
+    @Deprecated("Replaced by compilerOptions", replaceWith = ReplaceWith("compilerOptions.options"))
     final override val kotlinOptions: T get() = compilationData.kotlinOptions
     final override val kotlinSourceDirectoriesByFragmentName get() = compilationData.kotlinSourceDirectoriesByFragmentName
     //endregion
@@ -73,16 +80,23 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
 
     final override val compilationName: String get() = compilationDetails.compilationData.compilationPurpose
 
+    @Suppress("DEPRECATION")
+    @Deprecated("Replaced by compilerOptions.configure { }", replaceWith = ReplaceWith("compilerOptions.configure(configure)"))
     override fun kotlinOptions(configure: T.() -> Unit) =
         configure(kotlinOptions)
 
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("DEPRECATION")
+    @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
     override val compileKotlinTask: KotlinCompile<T>
         get() = compileKotlinTaskProvider.get()
 
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("DEPRECATION")
+    @Deprecated("Replaced with compileTaskProvider", replaceWith = ReplaceWith("compileTaskProvider"))
     override val compileKotlinTaskProvider: TaskProvider<out KotlinCompile<T>>
         get() = target.project.locateTask(compileKotlinTaskName) ?: throw GradleException("Couldn't locate  task $compileKotlinTaskName")
+
+    override val compileTaskProvider: TaskProvider<out KotlinCompilationTask<*>>
+        get() = target.project.locateTask(compileKotlinTaskName) ?: throw GradleException("Couldn't locate task $compileKotlinTaskName")
 
     private val attributeContainer by lazy { HierarchyAttributeContainer(target.attributes) }
 

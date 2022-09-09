@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
+import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
@@ -17,11 +18,11 @@ import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 
 class KotlinJvmWithJavaTargetPreset(
     private val project: Project
-) : KotlinTargetPreset<KotlinWithJavaTarget<KotlinJvmOptions>> {
+) : KotlinTargetPreset<KotlinWithJavaTarget<KotlinJvmOptions, CompilerJvmOptions>> {
 
     override fun getName(): String = PRESET_NAME
 
-    override fun createTarget(name: String): KotlinWithJavaTarget<KotlinJvmOptions> {
+    override fun createTarget(name: String): KotlinWithJavaTarget<KotlinJvmOptions, CompilerJvmOptions> {
         SingleWarningPerBuild.show(
             project,
             DEPRECATION_WARNING
@@ -29,14 +30,25 @@ class KotlinJvmWithJavaTargetPreset(
 
         project.plugins.apply(JavaPlugin::class.java)
 
-        @Suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST", "DEPRECATION")
         val target = (project.objects.newInstance(
             KotlinWithJavaTarget::class.java,
             project,
             KotlinPlatformType.jvm,
             name,
-            { KotlinJvmOptionsImpl() }
-        ) as KotlinWithJavaTarget<KotlinJvmOptions>)
+            {
+                object : HasCompilerOptions<CompilerJvmOptions> {
+                    override val options: CompilerJvmOptions =
+                        project.objects.newInstance(CompilerJvmOptionsDefault::class.java)
+                }
+            },
+            { compilerOptions: CompilerJvmOptions ->
+                object : KotlinJvmOptions {
+                    override val options: CompilerJvmOptions
+                        get() = compilerOptions
+                }
+            }
+        ) as KotlinWithJavaTarget<KotlinJvmOptions, CompilerJvmOptions>)
             .apply {
                 disambiguationClassifier = name
                 preset = this@KotlinJvmWithJavaTargetPreset

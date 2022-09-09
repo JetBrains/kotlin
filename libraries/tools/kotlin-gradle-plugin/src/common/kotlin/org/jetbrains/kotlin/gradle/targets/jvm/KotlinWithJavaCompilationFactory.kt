@@ -6,24 +6,31 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 
-class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions>(
-    override val target: KotlinWithJavaTarget<KotlinOptionsType>,
-    val kotlinOptionsFactory: () -> KotlinOptionsType
-) : KotlinCompilationFactory<KotlinWithJavaCompilation<KotlinOptionsType>> {
+class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, CO : CompilerCommonOptions>(
+    override val target: KotlinWithJavaTarget<KotlinOptionsType, CO>,
+    val compilerOptionsFactory: () -> HasCompilerOptions<CO>,
+    val kotlinOptionsFactory: (CO) -> KotlinOptionsType
+) : KotlinCompilationFactory<KotlinWithJavaCompilation<KotlinOptionsType, CO>> {
 
-    override val itemClass: Class<KotlinWithJavaCompilation<KotlinOptionsType>>
+    override val itemClass: Class<KotlinWithJavaCompilation<KotlinOptionsType, CO>>
         @Suppress("UNCHECKED_CAST")
-        get() = KotlinWithJavaCompilation::class.java as Class<KotlinWithJavaCompilation<KotlinOptionsType>>
+        get() = KotlinWithJavaCompilation::class.java as Class<KotlinWithJavaCompilation<KotlinOptionsType, CO>>
 
     @Suppress("UNCHECKED_CAST")
-    override fun create(name: String): KotlinWithJavaCompilation<KotlinOptionsType> =
-        project.objects.newInstance(
+    override fun create(name: String): KotlinWithJavaCompilation<KotlinOptionsType, CO> {
+        val compilerOptions = compilerOptionsFactory()
+        val kotlinOptions = kotlinOptionsFactory(compilerOptions.options)
+        return project.objects.newInstance(
             KotlinWithJavaCompilation::class.java,
             target,
             name,
             getOrCreateDefaultSourceSet(name),
-            kotlinOptionsFactory()
-        ) as KotlinWithJavaCompilation<KotlinOptionsType>
+            compilerOptions,
+            kotlinOptions
+        ) as KotlinWithJavaCompilation<KotlinOptionsType, CO>
+    }
 }

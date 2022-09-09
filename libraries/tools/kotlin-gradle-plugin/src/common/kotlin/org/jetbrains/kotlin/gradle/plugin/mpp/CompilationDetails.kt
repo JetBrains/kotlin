@@ -485,8 +485,9 @@ internal class WithJavaCompilationDetails<T : KotlinCommonOptions, CO : Compiler
     createCompilerOptions: DefaultCompilationDetails<T, CO>.() -> HasCompilerOptions<CO>,
     createKotlinOptions: DefaultCompilationDetails<T, CO>.() -> T
 ) : DefaultCompilationDetailsWithRuntime<T, CO>(target, compilationPurpose, defaultSourceSet, createCompilerOptions, createKotlinOptions) {
-    override val compilation: KotlinWithJavaCompilation<T>
-        get() = super.compilation as KotlinWithJavaCompilation<T>
+    @Suppress("UNCHECKED_CAST")
+    override val compilation: KotlinWithJavaCompilation<T, CO>
+        get() = super.compilation as KotlinWithJavaCompilation<T, CO>
 
     val javaSourceSet: SourceSet
         get() = compilation.javaSourceSet
