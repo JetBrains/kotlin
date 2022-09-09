@@ -231,7 +231,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND, "Non-reified type parameters with recursive bounds are not supported yet: {0}", STRING);
 
         MAP.put(JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE, "Java SAM interface constructor references are prohibited");
-        MAP.put(ENUM_DECLARING_CLASS_DEPRECATED, "Enum.declaringClass is deprecated, use declaringJavaClass instead");
+        MAP.put(ENUM_DECLARING_CLASS_DEPRECATED, "Enum.declaringClass is deprecated, use declaringJavaClass instead or cast receiver to java.lang.Enum explicitly");
     }
 
     @NotNull
