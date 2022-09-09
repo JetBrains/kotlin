@@ -174,7 +174,7 @@ object FirOverrideChecker : FirClassChecker() {
             )
         }
         if (!hasVisibleBase) {
-            //NB: Old FE reports this in an attempt to override private member,
+            //NB: Old FE reports this in an attempt to override private/internal/package-private member,
             //while the new FE doesn't treat super's private members as overridable, so you won't get them here
             //instead you will get NOTHING_TO_OVERRIDE, which seems acceptable
             reporter.reportOn(source, FirErrors.CANNOT_OVERRIDE_INVISIBLE_MEMBER, this, overriddenSymbols.first(), context)

@@ -26,8 +26,8 @@ import base.*
 
 // TESTCASE NUMBER: 1
 
-class Case1 : BaseJava() {
-    <!CANNOT_OVERRIDE_INVISIBLE_MEMBER!>override<!> fun foo(b: Boolean?) {}
+<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR!>class Case1<!> : BaseJava() {
+    <!NOTHING_TO_OVERRIDE!>override<!> fun foo(b: Boolean?) {}
 }
 
 fun case1() {
@@ -40,8 +40,8 @@ fun case1() {
 */
 abstract class AbstractClassCase2 : BaseJava() {}
 
-class Case2: AbstractClassCase2() {
-    <!CANNOT_OVERRIDE_INVISIBLE_MEMBER!>override<!> fun foo(b: Boolean?) {}
+<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR!>class Case2<!>: AbstractClassCase2() {
+    <!NOTHING_TO_OVERRIDE!>override<!> fun foo(b: Boolean?) {}
 }
 
 fun case2() {

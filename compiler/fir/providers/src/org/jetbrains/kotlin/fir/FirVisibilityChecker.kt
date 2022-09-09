@@ -62,6 +62,15 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         ): Boolean {
             return true
         }
+
+        override fun platformOverrideVisibilityCheck(
+            session: FirSession,
+            overrideCandidate: FirBasedSymbol<*>,
+            baseSymbol: FirBasedSymbol<*>,
+            baseDeclarationVisibility: Visibility,
+        ): Boolean {
+            return true
+        }
     }
 
     fun isVisible(
@@ -105,6 +114,20 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                 supertypeSupplier
             )
         }
+    }
+
+    fun isVisibleForOverriding(
+        session: FirSession,
+        overrideCandidate: FirMemberDeclaration,
+        baseDeclaration: FirMemberDeclaration
+    ): Boolean = when (baseDeclaration.visibility) {
+        Visibilities.Internal ->
+            baseDeclaration.moduleData == overrideCandidate.moduleData ||
+                    (overrideCandidate.moduleData == session.moduleData &&
+                            session.moduleVisibilityChecker?.isInFriendModule(baseDeclaration) == true)
+        Visibilities.Private, Visibilities.PrivateToThis -> false
+        Visibilities.Protected -> true
+        else -> platformOverrideVisibilityCheck(session, overrideCandidate.symbol, baseDeclaration.symbol, baseDeclaration.visibility)
     }
 
     private fun FirMemberDeclaration.containingNonLocalClass(
@@ -224,6 +247,13 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         session: FirSession,
         isCallToPropertySetter: Boolean,
         supertypeSupplier: SupertypeSupplier
+    ): Boolean
+
+    protected abstract fun platformOverrideVisibilityCheck(
+        session: FirSession,
+        overrideCandidate: FirBasedSymbol<*>,
+        baseSymbol: FirBasedSymbol<*>,
+        baseDeclarationVisibility: Visibility,
     ): Boolean
 
     private fun canSeePrivateMemberOf(
@@ -357,7 +387,9 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             stubTypesEqualToAnything = false
         )
         if (AbstractTypeChecker.isSubtypeOf(
-                typeCheckerState, dispatchReceiverType.fullyExpandedType(session), containingUseSiteClass.symbol.constructStarProjectedType()
+                typeCheckerState,
+                dispatchReceiverType.fullyExpandedType(session),
+                containingUseSiteClass.symbol.constructStarProjectedType()
             )
         ) {
             return true
