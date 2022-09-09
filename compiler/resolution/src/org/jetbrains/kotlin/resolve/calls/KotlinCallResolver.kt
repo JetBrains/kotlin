@@ -244,8 +244,9 @@ class KotlinCallResolver(
                 }
             }
             if (callComponents.languageVersionSettings.supportsFeature(LanguageFeature.OverloadResolutionByLambdaReturnType) &&
-                candidates.all { resolutionCallbacks.inferenceSession.shouldRunCompletion(it) } &&
-                kotlinCall.callKind != KotlinCallKind.CALLABLE_REFERENCE
+                kotlinCall.callKind != KotlinCallKind.CALLABLE_REFERENCE &&
+                candidates.all { it.isSuccessful } &&
+                candidates.all { resolutionCallbacks.inferenceSession.shouldRunCompletion(it) }
             ) {
                 val candidatesWithAnnotation = candidates.filter {
                     it.resolvedCall.candidateDescriptor.annotations.hasAnnotation(OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_FQ_NAME)
