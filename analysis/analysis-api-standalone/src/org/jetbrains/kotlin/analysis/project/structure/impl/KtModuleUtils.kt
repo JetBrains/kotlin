@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.project.structure.impl
 
 import com.google.common.io.Files.getFileExtension
-import com.google.common.io.Files.getNameWithoutExtension
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
@@ -158,33 +157,15 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
             val moduleName = compilerConfig.get(CommonConfigurationKeys.MODULE_NAME) ?: "<no module name provided>"
 
             val libraryRoots = compilerConfig.jvmModularRoots + compilerConfig.jvmClasspathRoots
-            val (directories, jars) = libraryRoots.partition { it.isDirectory }
-            directories.forEach {
-                // E.g., project/app/build/intermediates/javac/debug/classes
-                val root = it.toPath()
-                addRegularDependency(
-                    buildKtLibraryModule {
-                        contentScope = ProjectScope.getLibrariesScope(project)
-                        this.platform = platform
-                        this.project = project
-                        binaryRoots = listOf(root)
-                        libraryName = "$moduleName-${root.toString().replace("/", "-")}"
-                    }
-                )
-            }
-            jars.forEach {
-                // E.g., project/libs/libA/a.jar
-                val root = it.toPath()
-                addRegularDependency(
-                    buildKtLibraryModule {
-                        contentScope = ProjectScope.getLibrariesScope(project)
-                        this.platform = platform
-                        this.project = project
-                        binaryRoots = listOf(root)
-                        libraryName = getNameWithoutExtension(root.toString())
-                    }
-                )
-            }
+            addRegularDependency(
+                buildKtLibraryModule {
+                    contentScope = ProjectScope.getLibrariesScope(project)
+                    this.platform = platform
+                    this.project = project
+                    binaryRoots = libraryRoots.map { it.toPath() }
+                    libraryName = "Library for $moduleName"
+                }
+            )
             compilerConfig.get(JVMConfigurationKeys.JDK_HOME)?.let { jdkHome ->
                 val vfm = VirtualFileManager.getInstance()
                 val jdkHomePath = jdkHome.toPath()
