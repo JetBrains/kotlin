@@ -10,7 +10,7 @@ import kotlin.test.*
 // CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
 // CHECK-NOT: Foo#toString(){}kotlin.String"
 // CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
-// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String)
+// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 // CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
 
 // CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
@@ -27,7 +27,7 @@ fun maybeAnyMaybeAny(maybeAny1: Any?, maybeAny2: Any?): String {
 // CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
 // CHECK-NOT: Foo#toString(){}kotlin.String"
 // CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
-// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String)
+// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 // CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 // CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
 
@@ -42,8 +42,8 @@ fun maybeAnyMaybeString(maybeAny1: Any?, maybeString2: String?): String {
 // CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
 // CHECK-NOT: Foo#toString(){}kotlin.String"
 // CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
-// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String)
-// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String)
+// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 // CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
 
 // CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
@@ -59,7 +59,7 @@ data class Foo(val bar: Int)
 // CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
 // CHECK-NOT: Foo#toString(){}kotlin.String"
 // CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
-// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String)
+// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 // CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
 // CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
 // CHECK-NOT: Foo#toString(){}kotlin.String
@@ -76,7 +76,7 @@ fun maybeAnyFoo(maybeAny: Any?, foo: Foo): String {
 // CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
 // CHECK-NOT: Foo#toString(){}kotlin.String"
 // CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
-// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String)
+// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 // CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
 // CHECK-NOT: Foo#toString(){}kotlin.String"
 // CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
