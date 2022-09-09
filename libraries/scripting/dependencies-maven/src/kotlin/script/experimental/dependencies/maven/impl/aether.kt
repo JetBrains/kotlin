@@ -39,9 +39,22 @@ import org.eclipse.aether.util.repository.AuthenticationBuilder
 import org.eclipse.aether.util.repository.DefaultMirrorSelector
 import org.eclipse.aether.util.repository.DefaultProxySelector
 import java.io.File
-import java.util.*
+import kotlin.script.experimental.api.ResultWithDiagnostics
+import kotlin.script.experimental.api.ScriptDiagnostic
+import kotlin.script.experimental.api.asSuccess
 
 val mavenCentral: RemoteRepository = RemoteRepository.Builder("maven central", "default", "https://repo.maven.apache.org/maven2/").build()
+
+internal enum class ResolutionKind {
+    NON_TRANSITIVE,
+    TRANSITIVE,
+
+    // Partial resolution is successful in case if dependency tree was built,
+    // but may return non-complete list of dependencies - i.e. while requesting sources, some libraries may lack sources artifacts.
+    // Resolution errors will be attached as reports.
+    // Also, might be slightly slower than usual transitive resolution.
+    TRANSITIVE_PARTIAL
+}
 
 internal class AetherResolveSession(
     localRepoDirectory: File? = null,
@@ -133,22 +146,63 @@ internal class AetherResolveSession(
     fun resolve(
         root: Artifact,
         scope: String,
-        transitive: Boolean,
+        kind: ResolutionKind,
         filter: DependencyFilter?,
         classifier: String? = null,
         extension: String? = null,
-    ): List<Artifact> {
-        return if (transitive) resolveDependencies(root, scope, filter, classifier, extension)
-        else resolveArtifact(root)
+    ): ResultWithDiagnostics<List<File>> {
+        if (kind == ResolutionKind.NON_TRANSITIVE) return resolveArtifact(root).asSuccess()
+
+        val requests = resolveTree(root, scope, filter, classifier, extension)
+
+        @Suppress("KotlinConstantConditions")
+        return when (kind) {
+            ResolutionKind.TRANSITIVE -> resolveDependencies(requests) {
+                repositorySystem.resolveArtifacts(
+                    repositorySystemSession,
+                    requests
+                ).toFiles().asSuccess()
+            }
+
+            ResolutionKind.TRANSITIVE_PARTIAL -> resolveDependencies(requests) {
+                val reports = mutableListOf<ScriptDiagnostic>()
+                val results = mutableListOf<File>()
+                for (req in requests) {
+                    try {
+                        results.add(
+                            repositorySystem.resolveArtifact(
+                                repositorySystemSession,
+                                req
+                            ).artifact.file
+                        )
+                    } catch (e: ArtifactResolutionException) {
+                        reports.add(
+                            ScriptDiagnostic(
+                                ScriptDiagnostic.unspecifiedError,
+                                e.message.orEmpty(),
+                                ScriptDiagnostic.Severity.WARNING,
+                                exception = e
+                            )
+                        )
+                    }
+                }
+
+                ResultWithDiagnostics.Success(results, reports)
+            }
+
+            ResolutionKind.NON_TRANSITIVE -> {
+                error("This statement is not reachable")
+            }
+        }
     }
 
-    private fun resolveDependencies(
+    private fun resolveTree(
         root: Artifact,
         scope: String,
         filter: DependencyFilter?,
         classifier: String?,
         extension: String?,
-    ): List<Artifact> {
+    ): Collection<ArtifactRequest> {
         return fetch(
             request(Dependency(root, scope)),
             { req ->
@@ -163,8 +217,7 @@ internal class AetherResolveSession(
                     )
                 )
 
-                val requests = requestsBuilder.requests
-                repositorySystem.resolveArtifacts(repositorySystemSession, requests)
+                requestsBuilder.requests
             },
             { req, ex ->
                 DependencyCollectionException(
@@ -176,7 +229,25 @@ internal class AetherResolveSession(
         )
     }
 
-    private fun resolveArtifact(artifact: Artifact): List<Artifact> {
+    private fun Collection<ArtifactResult>.toFiles() = map { it.artifact.file }
+
+    private fun resolveDependencies(
+        requests: Collection<ArtifactRequest>,
+        resolveAction: (Collection<ArtifactRequest>) -> ResultWithDiagnostics<List<File>>
+    ): ResultWithDiagnostics<List<File>> {
+        return fetch(
+            requests,
+            resolveAction
+        ) { _, ex ->
+            DependencyCollectionException(
+                null,
+                ex.message,
+                ex
+            )
+        }
+    }
+
+    private fun resolveArtifact(artifact: Artifact): List<File> {
         val request = ArtifactRequest()
         request.artifact = artifact
         for (repo in remotes) {
@@ -187,7 +258,7 @@ internal class AetherResolveSession(
             request,
             { req -> listOf(repositorySystem.resolveArtifact(repositorySystemSession, req)) },
             { req, ex -> ArtifactResolutionException(listOf(ArtifactResult(req)), ex.message, IllegalArgumentException(ex)) }
-        )
+        ).toFiles()
     }
 
     private fun request(root: Dependency): CollectRequest {
@@ -199,25 +270,19 @@ internal class AetherResolveSession(
         return request
     }
 
-    private fun <RequestT> fetch(
+    private fun <RequestT, ResultT> fetch(
         request: RequestT,
-        fetchBody: (RequestT) -> Collection<ArtifactResult>,
+        fetchBody: (RequestT) -> ResultT,
         wrapException: (RequestT, Exception) -> Exception
-    ): List<Artifact> {
-        val deps: MutableList<Artifact> = LinkedList()
-        try {
-            var results: Collection<ArtifactResult>
+    ): ResultT {
+        return try {
             synchronized(this) {
-                results = fetchBody(request)
-            }
-            for (res in results) {
-                deps.add(res.artifact)
+                fetchBody(request)
             }
             // @checkstyle IllegalCatch (1 line)
         } catch (ex: Exception) {
             throw wrapException(request, ex)
         }
-        return deps
     }
 
     private fun getMirrorSelector(): DefaultMirrorSelector {

@@ -183,6 +183,24 @@ class MavenResolverTest : ResolversTestBase() {
         )
     }
 
+    @Ignore("ignored because spark is a very heavy dependency")
+    fun ignore_testPartialResolution() {
+        val resolver = MavenDependenciesResolver()
+        val options = buildOptions(
+            DependenciesResolverOptionsName.PARTIAL_RESOLUTION to "true",
+            DependenciesResolverOptionsName.CLASSIFIER to "sources",
+            DependenciesResolverOptionsName.EXTENSION to "jar",
+        )
+
+        val result = runBlocking {
+            resolver.resolve("org.jetbrains.kotlinx.spark:kotlin-spark-api_3.3.0_2.13:1.2.1", options)
+        }
+
+        result as ResultWithDiagnostics.Success
+        assertTrue(result.reports.isNotEmpty())
+        assertTrue(result.value.isNotEmpty())
+    }
+
     // Ignored - tests with custom repos often break the CI due to the caching issues
     // TODO: find a way to enable it back
     @Ignore
