@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android
 
+import com.android.build.gradle.api.BaseVariant
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.AndroidCompilationDetails
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 
 internal interface KotlinAndroidSourceSetNaming {
 
@@ -24,5 +25,5 @@ internal interface KotlinAndroidSourceSetNaming {
      * Returns `null`, if this naming schema does not know about it. In this case, the
      * 'default' defaultSourceSetName will be constructed by the compilation.
      */
-    fun defaultKotlinSourceSetName(compilation: AndroidCompilationDetails): String? = null
+    fun defaultKotlinSourceSetName(target: KotlinAndroidTarget, variant: BaseVariant): String? = null
 }

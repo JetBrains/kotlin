@@ -21,8 +21,7 @@ import java.io.File
 import java.util.concurrent.Callable
 import javax.inject.Inject
 
-internal class NativeCompileOptions(languageSettingsProvider: () -> LanguageSettingsBuilder) : KotlinCommonOptions {
-    private val languageSettings: LanguageSettingsBuilder by lazy(languageSettingsProvider)
+internal class NativeCompileOptions(private val languageSettings: LanguageSettingsBuilder) : KotlinCommonOptions {
 
     override var apiVersion: String?
         get() = languageSettings.apiVersion

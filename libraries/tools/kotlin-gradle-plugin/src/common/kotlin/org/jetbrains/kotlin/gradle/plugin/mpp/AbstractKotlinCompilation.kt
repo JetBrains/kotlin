@@ -13,7 +13,6 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.tasks.locateTask
@@ -60,7 +59,9 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
 
     final override var compileDependencyFiles: FileCollection
         get() = compilationDetails.compileDependencyFilesHolder.dependencyFiles
-        set(value) { compilationDetails.compileDependencyFilesHolder.dependencyFiles = value }
+        set(value) {
+            compilationDetails.compileDependencyFilesHolder.dependencyFiles = value
+        }
 
     final override val kotlinSourceSets: ObservableSet<KotlinSourceSet>
         get() = compilationDetails.directlyIncludedKotlinSourceSets
@@ -68,7 +69,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     override val allKotlinSourceSets: ObservableSet<KotlinSourceSet>
         get() = compilationDetails.allKotlinSourceSets
 
-    final override val defaultSourceSetName: String get() = compilationDetails.defaultSourceSetName
+    override val defaultSourceSet: KotlinSourceSet get() = compilationDetails.defaultSourceSet
 
     final override val compilationName: String get() = compilationDetails.compilationData.compilationPurpose
 
@@ -86,9 +87,6 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     private val attributeContainer by lazy { HierarchyAttributeContainer(target.attributes) }
 
     override fun getAttributes(): AttributeContainer = attributeContainer
-
-    override val defaultSourceSet: KotlinSourceSet
-        get() = target.project.kotlinExtension.sourceSets.getByName(defaultSourceSetName)
 
     override fun defaultSourceSet(configure: KotlinSourceSet.() -> Unit) = defaultSourceSet.configure()
 

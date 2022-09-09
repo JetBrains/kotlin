@@ -44,7 +44,7 @@ abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions> @In
         @Suppress("UNCHECKED_CAST")
         project.container(
             KotlinWithJavaCompilation::class.java as Class<KotlinWithJavaCompilation<KotlinOptionsType>>,
-            KotlinWithJavaCompilationFactory(project, this, kotlinOptionsFactory)
+            KotlinWithJavaCompilationFactory(this, kotlinOptionsFactory)
         )
 
     private val layout = project.layout

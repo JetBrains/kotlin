@@ -8,21 +8,20 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.utils.MutableObservableSet
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSetImpl
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
 
-abstract class AbstractCompilationDetails<T : KotlinCommonOptions> : CompilationDetails<T> {
-    private val directlyIncludedKotlinSourceSetsImpl: MutableObservableSetImpl<KotlinSourceSet> by lazy {
-        MutableObservableSetImpl(defaultSourceSet)
-    }
+abstract class AbstractCompilationDetails<T : KotlinCommonOptions>(
+    final override val defaultSourceSet: KotlinSourceSet
+) : CompilationDetails<T> {
+    private val directlyIncludedKotlinSourceSetsImpl: MutableObservableSet<KotlinSourceSet> = MutableObservableSetImpl(defaultSourceSet)
 
     final override val directlyIncludedKotlinSourceSets: ObservableSet<KotlinSourceSet>
         get() = directlyIncludedKotlinSourceSetsImpl
 
-    private val allKotlinSourceSetsImpl: MutableObservableSetImpl<KotlinSourceSet> by lazy {
-        MutableObservableSetImpl<KotlinSourceSet>().also { set ->
-            defaultSourceSet.internal.withDependsOnClosure.forAll(set::add)
-        }
+    private val allKotlinSourceSetsImpl: MutableObservableSet<KotlinSourceSet> = MutableObservableSetImpl<KotlinSourceSet>().also { set ->
+        defaultSourceSet.internal.withDependsOnClosure.forAll(set::add)
     }
 
     final override val allKotlinSourceSets: ObservableSet<KotlinSourceSet>

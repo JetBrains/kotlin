@@ -29,10 +29,8 @@ abstract class KotlinAndroidTarget @Inject constructor(
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.androidJvm
 
-    internal val compilationFactory = KotlinJvmAndroidCompilationFactory(project, this)
-
     override val compilations: NamedDomainObjectContainer<out KotlinJvmAndroidCompilation> =
-        project.container(compilationFactory.itemClass, compilationFactory)
+        project.container(KotlinJvmAndroidCompilation::class.java)
 
     /** Names of the Android library variants that should be published from the target's project within the default publications which are
      * set up if the `maven-publish` Gradle plugin is applied.

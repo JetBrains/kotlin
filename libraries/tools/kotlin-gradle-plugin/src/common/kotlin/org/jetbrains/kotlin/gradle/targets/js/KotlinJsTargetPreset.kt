@@ -96,7 +96,7 @@ open class KotlinJsTargetPreset(
     }
 
     override fun createCompilationFactory(forTarget: KotlinJsTarget): KotlinJsCompilationFactory {
-        return KotlinJsCompilationFactory(project, forTarget, irPreset?.let { forTarget.irTarget })
+        return KotlinJsCompilationFactory(forTarget)
     }
 
     companion object {

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
+import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 abstract class GradleKpmNativeVariantInternal(
@@ -57,7 +57,9 @@ internal class KotlinMappedNativeCompilationFactory(
         return target.project.objects.newInstance(
             KotlinNativeCompilation::class.java,
             target.konanTarget,
-            VariantMappedCompilationDetails<KotlinCommonOptions>(variant, target)
+            VariantMappedCompilationDetails<KotlinCommonOptions>(
+                variant, target, getOrCreateDefaultSourceSet(name) as FragmentMappedKotlinSourceSet
+            )
         )
     }
 }

@@ -12,21 +12,17 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.getJavaTaskProvider
-import org.jetbrains.kotlin.gradle.plugin.getTestedVariantData
 import javax.inject.Inject
 
 abstract class KotlinJvmAndroidCompilation @Inject constructor(
-    compilationDetails: AndroidCompilationDetails
+    final override val compilationDetails: AndroidCompilationDetails
 ) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilationDetails) {
 
-    lateinit var androidVariant: BaseVariant
-        internal set
+    val androidVariant: BaseVariant = compilationDetails.androidVariant
 
-    @Suppress("UnstableApiUsage")
-    internal val testedVariantArtifacts: Property<FileCollection> = target.project.objects.property(FileCollection::class.java)
+    internal val testedVariantArtifacts: Property<FileCollection> =
+        compilationDetails.target.project.objects.property(FileCollection::class.java)
 
     override val compileKotlinTask: org.jetbrains.kotlin.gradle.tasks.KotlinCompile
         get() = super.compileKotlinTask as org.jetbrains.kotlin.gradle.tasks.KotlinCompile

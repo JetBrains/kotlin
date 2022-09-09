@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 open class KotlinJvmCompilationFactory(
-    val target: KotlinJvmTarget
+    override val target: KotlinJvmTarget
 ) : KotlinCompilationFactory<KotlinJvmCompilation> {
     override val itemClass: Class<KotlinJvmCompilation>
         get() = KotlinJvmCompilation::class.java
@@ -18,6 +18,8 @@ open class KotlinJvmCompilationFactory(
     override fun create(name: String): KotlinJvmCompilation =
         target.project.objects.newInstance(
             KotlinJvmCompilation::class.java,
-            DefaultCompilationDetailsWithRuntime(target, name) { KotlinJvmOptionsImpl() }
+            DefaultCompilationDetailsWithRuntime(
+                target, name, getOrCreateDefaultSourceSet(name), KotlinJvmOptionsImpl()
+            )
         )
 }

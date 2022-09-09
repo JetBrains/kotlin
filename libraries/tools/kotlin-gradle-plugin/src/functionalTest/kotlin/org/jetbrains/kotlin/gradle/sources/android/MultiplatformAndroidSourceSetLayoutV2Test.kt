@@ -14,7 +14,6 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.forEachVariant
-import org.jetbrains.kotlin.gradle.plugin.mpp.AndroidCompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.sources.android.*
 import org.jetbrains.kotlin.gradle.setMultiplatformAndroidSourceSetLayoutVersion
 import org.jetbrains.kotlin.gradle.utils.androidExtension
@@ -271,11 +270,12 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
         project.evaluate()
 
         kotlin.android().compilations.all { compilation ->
-            val compilationDetails = compilation.compilationDetails as AndroidCompilationDetails
-            val defaultKotlinSourceSetName = multiplatformAndroidSourceSetLayoutV2.naming.defaultKotlinSourceSetName(compilationDetails)
+            val defaultKotlinSourceSetName = multiplatformAndroidSourceSetLayoutV2.naming
+                .defaultKotlinSourceSetName(kotlin.android(), compilation.androidVariant)
+
             assertNotNull(
                 defaultKotlinSourceSetName,
-                "Expected non-null 'defaultKotlinSourceSetName' for compilation ${compilationDetails.compilation.name}"
+                "Expected non-null 'defaultKotlinSourceSetName' for compilation ${compilation.name}"
             )
 
             val kotlinSourceSet = kotlin.sourceSets.getByName(defaultKotlinSourceSetName)

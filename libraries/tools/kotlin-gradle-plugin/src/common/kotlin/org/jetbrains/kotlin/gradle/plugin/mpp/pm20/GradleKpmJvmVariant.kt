@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.filterModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
+import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import javax.inject.Inject
 
@@ -62,7 +62,9 @@ internal class KotlinMappedJvmCompilationFactory(
 
         return target.project.objects.newInstance(
             KotlinJvmCompilation::class.java,
-            VariantMappedCompilationDetailsWithRuntime<KotlinJvmOptions>(variant, target)
+            VariantMappedCompilationDetailsWithRuntime<KotlinJvmOptions>(
+                variant, target, getOrCreateDefaultSourceSet(name) as FragmentMappedKotlinSourceSet
+            )
         )
     }
 }

@@ -10,9 +10,13 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptionsImpl
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
@@ -78,7 +82,7 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
         project.provider { project.buildDir.resolve("processedResources/${fragment.disambiguateName("metadata")}") }
     )
 
-    override val languageSettings: LanguageSettingsBuilder = fragment.languageSettings
+    final override val languageSettings: LanguageSettingsBuilder = fragment.languageSettings
 
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.common
@@ -118,7 +122,8 @@ internal open class KotlinCommonFragmentMetadataCompilationDataImpl(
     module,
     compileAllTask,
     metadataCompilationRegistry,
-    resolvedMetadataFiles), KotlinCommonFragmentMetadataCompilationData {
+    resolvedMetadataFiles
+), KotlinCommonFragmentMetadataCompilationData {
 
     override val isActive: Boolean
         get() = !fragment.isNativeShared() &&
@@ -164,7 +169,7 @@ internal open class KotlinNativeFragmentMetadataCompilationDataImpl(
     override val isActive: Boolean
         get() = fragment.isNativeShared() && fragment.containingVariants.count() > 1
 
-    override val kotlinOptions: NativeCompileOptions = NativeCompileOptions { languageSettings }
+    override val kotlinOptions: NativeCompileOptions = NativeCompileOptions(languageSettings)
 
     override val konanTarget: KonanTarget
         get() {

@@ -9,36 +9,42 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 open class KotlinNativeCompilationFactory(
-    val target: KotlinNativeTarget
+    override val target: KotlinNativeTarget
 ) : KotlinCompilationFactory<KotlinNativeCompilation> {
 
     override val itemClass: Class<KotlinNativeCompilation>
         get() = KotlinNativeCompilation::class.java
 
-    override fun create(name: String): KotlinNativeCompilation =
-    // TODO: Validate compilation free args using the [CompilationFreeArgsValidator]
-    //       when the compilation and the link args are separated (see KT-33717).
-    // Note: such validation should be done in the whenEvaluate block because
+    override fun create(name: String): KotlinNativeCompilation {
+        // TODO: Validate compilation free args using the [CompilationFreeArgsValidator]
+        //       when the compilation and the link args are separated (see KT-33717).
+        // Note: such validation should be done in the whenEvaluate block because
         // a user can change args during project configuration.
 
-        target.project.objects.newInstance(
+        val defaultSourceSet = getOrCreateDefaultSourceSet(name)
+        return target.project.objects.newInstance(
             KotlinNativeCompilation::class.java,
             target.konanTarget,
-            NativeCompilationDetails(target, name) { NativeCompileOptions { defaultSourceSet.languageSettings } }
+            NativeCompilationDetails(
+                target, name, defaultSourceSet, NativeCompileOptions(defaultSourceSet.languageSettings)
+            )
         )
+    }
 }
 
 class KotlinSharedNativeCompilationFactory(
-    val target: KotlinMetadataTarget,
+    override val target: KotlinMetadataTarget,
     val konanTargets: List<KonanTarget>
-): KotlinCompilationFactory<KotlinSharedNativeCompilation> {
+) : KotlinCompilationFactory<KotlinSharedNativeCompilation> {
     override val itemClass: Class<KotlinSharedNativeCompilation>
         get() = KotlinSharedNativeCompilation::class.java
 
-    override fun create(name: String): KotlinSharedNativeCompilation =
-        target.project.objects.newInstance(
+    override fun create(name: String): KotlinSharedNativeCompilation {
+        val defaultSourceSet = getOrCreateDefaultSourceSet(name)
+        return target.project.objects.newInstance(
             KotlinSharedNativeCompilation::class.java,
             konanTargets,
-            SharedNativeCompilationDetails(target, name) { NativeCompileOptions { defaultSourceSet.languageSettings } }
+            SharedNativeCompilationDetails(target, name, defaultSourceSet, NativeCompileOptions(defaultSourceSet.languageSettings))
         )
+    }
 }

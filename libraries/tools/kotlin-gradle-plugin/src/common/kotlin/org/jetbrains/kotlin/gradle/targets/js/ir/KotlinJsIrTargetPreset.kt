@@ -80,7 +80,7 @@ open class KotlinJsIrTargetPreset(
     public override fun createCompilationFactory(
         forTarget: KotlinJsIrTarget
     ): KotlinCompilationFactory<KotlinJsIrCompilation> =
-        KotlinJsIrCompilationFactory(project, forTarget)
+        KotlinJsIrCompilationFactory(forTarget)
 
     companion object {
         val JS_PRESET_NAME = lowerCamelCaseName(

@@ -33,7 +33,8 @@ interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes,
 
     val allKotlinSourceSets: Set<KotlinSourceSet>
 
-    val defaultSourceSetName: String
+    @Deprecated("Use defaultSourceSet.name instead", ReplaceWith("defaultSourceSet.name"))
+    val defaultSourceSetName: String get() = defaultSourceSet.name
 
     val defaultSourceSet: KotlinSourceSet
 

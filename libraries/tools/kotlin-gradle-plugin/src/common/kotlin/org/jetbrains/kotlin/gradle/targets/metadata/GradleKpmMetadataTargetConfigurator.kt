@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.gradle.targets.metadata
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataMappedCompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmAwareTargetConfigurator
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.metadataCompilationRegistryByModuleId
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.unambiguousNameInProject
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
 
@@ -45,7 +43,8 @@ internal class GradleKpmMetadataTargetConfigurator(private val metadataTargetCon
                 val compilationData = metadataCompilations.getForFragmentOrNull(fragment) ?: return@forEach
                 if (!compilationData.isActive) return@forEach
 
-                val compilationDetails = MetadataMappedCompilationDetails(target, compilationData)
+                val defaultSourceSet = target.project.kotlinExtension.sourceSets.maybeCreate(fragment.unambiguousNameInProject)
+                val compilationDetails = MetadataMappedCompilationDetails(target, defaultSourceSet, compilationData)
 
                 val isNative = compilationData is KotlinNativeFragmentMetadataCompilationData
 
@@ -60,6 +59,7 @@ internal class GradleKpmMetadataTargetConfigurator(private val metadataTargetCon
                             compilationDetails as CompilationDetails<KotlinCommonOptions>
                         )
                     }
+
                     else -> target.project.objects
                         .newInstance(
                             KotlinCommonCompilation::class.java,

@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android
 
+import com.android.build.gradle.api.BaseVariant
 import org.gradle.api.logging.Logging
-import org.jetbrains.kotlin.gradle.plugin.mpp.AndroidCompilationDetails
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 internal object MultiplatformLayoutV2KotlinAndroidSourceSetNaming : KotlinAndroidSourceSetNaming {
@@ -28,20 +29,20 @@ internal object MultiplatformLayoutV2KotlinAndroidSourceSetNaming : KotlinAndroi
         return lowerCamelCaseName(disambiguationClassifier, replaceAndroidBaseSourceSetName(androidSourceSetName, knownType))
     }
 
-    override fun defaultKotlinSourceSetName(compilation: AndroidCompilationDetails): String? {
+    override fun defaultKotlinSourceSetName(target: KotlinAndroidTarget, variant: BaseVariant): String? {
         val kotlinSourceSetName: String? = run {
-            val baseSourceSetName = compilation.androidVariant.type.androidBaseSourceSetName ?: return@run null
+            val baseSourceSetName = variant.type.androidBaseSourceSetName ?: return@run null
             val androidSourceSetName = lowerCamelCaseName(
                 baseSourceSetName.takeIf { it != AndroidBaseSourceSetName.Main }?.name,
-                compilation.androidVariant.flavorName,
-                compilation.androidVariant.buildType.name
+                variant.flavorName,
+                variant.buildType.name
             )
-            val androidSourceSet = compilation.androidVariant.sourceSets.find { it.name == androidSourceSetName } ?: return@run null
-            compilation.project.findKotlinSourceSet(androidSourceSet)?.name
+            val androidSourceSet = variant.sourceSets.find { it.name == androidSourceSetName } ?: return@run null
+            target.project.findKotlinSourceSet(androidSourceSet)?.name
         }
 
         if (kotlinSourceSetName == null) {
-            logger.warn("Can't determine 'defaultKotlinSourceSet' for android compilation: ${compilation.androidVariant.name}")
+            logger.warn("Can't determine 'defaultKotlinSourceSet' for android compilation: ${variant.name}")
         }
         return kotlinSourceSetName
     }

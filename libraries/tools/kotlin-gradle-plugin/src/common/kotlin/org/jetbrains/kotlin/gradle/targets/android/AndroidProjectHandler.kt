@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSets.applyKotlinAndroidSourceSetLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.android.findKotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -74,14 +75,13 @@ internal class AndroidProjectHandler(
                                                     androidPluginIds.joinToString("\n\t") { "* $it" })
 
         project.forEachVariant { variant ->
+            val compilationFactory = KotlinJvmAndroidCompilationFactory(kotlinAndroidTarget, variant)
             val variantName = getVariantName(variant)
 
             // Create the compilation and configure it first, then add to the compilations container. As this code is executed
             // in afterEvaluate, a user's build script might have already attached item handlers to the compilations container, and those
             // handlers might break when fired on a compilation that is not yet properly configured (e.g. KT-29964):
-            kotlinAndroidTarget.compilationFactory.create(variantName).let { compilation ->
-                compilation.androidVariant = variant
-
+            compilationFactory.create(variantName).let { compilation ->
                 setUpDependencyResolution(variant, compilation)
 
                 preprocessVariant(variant, compilation, project, kotlinOptions, kotlinConfigurationTools.kotlinTasksProvider)

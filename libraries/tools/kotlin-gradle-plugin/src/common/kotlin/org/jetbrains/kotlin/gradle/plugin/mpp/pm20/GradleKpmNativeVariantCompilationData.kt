@@ -25,5 +25,5 @@ internal class GradleKpmNativeVariantCompilationData(
     override val owner: GradleKpmNativeVariant
         get() = variant
 
-    override val kotlinOptions: KotlinCommonOptions = NativeCompileOptions { variant.languageSettings }
+    override val kotlinOptions: KotlinCommonOptions = NativeCompileOptions(variant.languageSettings)
 }
