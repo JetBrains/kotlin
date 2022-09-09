@@ -52,10 +52,13 @@ fun <T : JsNode> IrWhen.toJsNode(
     }
 
 fun jsElementAccess(name: String, receiver: JsExpression?): JsExpression =
-    if (receiver == null || name.isValidES5Identifier()) {
-        JsNameRef(JsName(name, false), receiver)
+    jsElementAccess(JsName(name, false), receiver)
+
+fun jsElementAccess(name: JsName, receiver: JsExpression?): JsExpression =
+    if (receiver == null || name.ident.isValidES5Identifier()) {
+        JsNameRef(name, receiver)
     } else {
-        JsArrayAccess(receiver, JsStringLiteral(name))
+        JsArrayAccess(receiver, JsStringLiteral(name.ident))
     }
 
 fun jsAssignment(left: JsExpression, right: JsExpression) = JsBinaryOperation(JsBinaryOperator.ASG, left, right)

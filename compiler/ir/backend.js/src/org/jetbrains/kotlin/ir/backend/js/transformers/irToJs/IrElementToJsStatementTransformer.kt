@@ -101,7 +101,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     override fun visitSetField(expression: IrSetField, context: JsGenerationContext): JsStatement {
         val fieldName = context.getNameForField(expression.symbol.owner)
         val expressionTransformer = IrElementToJsExpressionTransformer()
-        val dest = JsNameRef(fieldName, expression.receiver?.accept(expressionTransformer, context))
+        val dest = jsElementAccess(fieldName, expression.receiver?.accept(expressionTransformer, context))
         return expression.value.maybeOptimizeIntoSwitch(context) { jsAssignment(dest, it).withSource(expression, context).makeStmt() }
     }
 

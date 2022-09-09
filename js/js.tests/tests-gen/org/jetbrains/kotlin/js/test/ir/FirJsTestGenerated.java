@@ -2585,6 +2585,12 @@ public class FirJsTestGenerated extends AbstractFirJsTest {
         }
 
         @Test
+        @TestMetadata("exportClassPropertiesInDifferentCombinations.kt")
+        public void testExportClassPropertiesInDifferentCombinations() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportClassPropertiesInDifferentCombinations.kt");
+        }
+
+        @Test
         @TestMetadata("exportClassWithInternal.kt")
         public void testExportClassWithInternal() throws Exception {
             runTest("js/js.translator/testData/box/export/exportClassWithInternal.kt");

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.isSimpleProperty
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.utils.DFS
@@ -117,7 +118,7 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext, private val mi
                             declaration is IrFunction && declaration.dispatchReceiverParameter != null -> {
                                 val property = (declaration as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
                                 if (property?.isExported(context) == true || property?.isEffectivelyExternal() == true) {
-                                    context.minimizedNameGenerator.reserveName(property.name.asString())
+                                    context.minimizedNameGenerator.reserveName(property.getJsNameOrKotlinName().identifier)
                                 }
                                 if (declaration.hasStableJsName(context)) {
                                     val signature = jsFunctionSignature(declaration, context)
@@ -126,7 +127,7 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext, private val mi
                             }
                             declaration is IrProperty -> {
                                 if (declaration.isExported(context)) {
-                                    context.minimizedNameGenerator.reserveName(declaration.name.asString())
+                                    context.minimizedNameGenerator.reserveName(declaration.getJsNameOrKotlinName().identifier)
                                 }
                             }
                         }
@@ -138,12 +139,22 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext, private val mi
                 it.declarations.forEach {
                     when {
                         it is IrField -> {
-                            val safeName = if (minimizedMemberNames) {
-                                context.minimizedNameGenerator.generateNextName()
-                            } else it.safeName()
-                            val suffix = nameCnt.getOrDefault(safeName, 0) + 1
-                            nameCnt[safeName] = suffix
-                            result[it] = safeName + "_$suffix"
+                            val correspondingProperty = it.correspondingPropertySymbol?.owner
+                            val hasStableName = correspondingProperty != null &&
+                                    correspondingProperty.visibility.isPublicAPI &&
+                                    (correspondingProperty.isExported(context) || correspondingProperty.getJsName() != null) &&
+                                    correspondingProperty.isSimpleProperty
+                            val safeName = when {
+                               hasStableName -> (correspondingProperty ?: it).getJsNameOrKotlinName().identifier
+                               minimizedMemberNames -> context.minimizedNameGenerator.generateNextName()
+                               else -> it.safeName()
+                            }
+                            val resultName = if (!hasStableName) {
+                                val suffix = nameCnt.getOrDefault(safeName, 0) + 1
+                                nameCnt[safeName] = suffix
+                                safeName + "_$suffix"
+                            } else safeName
+                            result[it] = resultName
                         }
                         it is IrFunction && it.dispatchReceiverParameter != null -> {
                             nameCnt[jsFunctionSignature(it, context)] = 1 // avoid clashes with member functions

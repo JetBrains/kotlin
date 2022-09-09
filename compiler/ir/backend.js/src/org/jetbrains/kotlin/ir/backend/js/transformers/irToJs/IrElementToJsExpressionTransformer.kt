@@ -115,7 +115,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             return expression.receiver!!.accept(this, context).withSource(expression, context)
         }
         val fieldName = context.getNameForField(field)
-        return JsNameRef(fieldName, expression.receiver?.accept(this, context)).withSource(expression, context)
+        return jsElementAccess(fieldName, expression.receiver?.accept(this, context)).withSource(expression, context)
     }
 
     override fun visitGetValue(expression: IrGetValue, context: JsGenerationContext): JsExpression {
