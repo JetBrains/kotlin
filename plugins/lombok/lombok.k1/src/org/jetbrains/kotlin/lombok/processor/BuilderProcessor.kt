@@ -9,6 +9,7 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.descriptors.SyntheticJavaClassDescriptor
@@ -146,26 +147,28 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
         val nameInSingularForm = (singular.singularName ?: field.name.identifier.singularForm)?.let(Name::identifier) ?: return
         val typeName = field.type.constructor.declarationDescriptor?.fqNameSafe?.asString() ?: return
 
-        val useGuava = config.useGuava
-        val supportedCollections = LombokNames.getSupportedCollectionsForSingular(useGuava)
-        val supportedMaps = LombokNames.getSupportedMapsForSingular(useGuava)
-
         val addMultipleParameterType: KotlinType
         val valueParameters: List<LombokValueParameter>
 
         when (typeName) {
-            in supportedCollections -> {
+            in LombokNames.SUPPORTED_COLLECTIONS -> {
                 val parameterType = field.parameterType(0, singular.allowNull) ?: return
                 valueParameters = listOf(
                     LombokValueParameter(nameInSingularForm, parameterType)
                 )
 
-                addMultipleParameterType = field.module.builtIns.collection.defaultType.replace(
+                val builtIns = field.module.builtIns
+                val baseType = when (typeName) {
+                    in LombokNames.SUPPORTED_GUAVA_COLLECTIONS -> builtIns.iterable.defaultType
+                    else -> builtIns.collection.defaultType
+                }
+
+                addMultipleParameterType = baseType.replace(
                     newArguments = listOf(TypeProjectionImpl(parameterType))
                 )
             }
 
-            in supportedMaps -> {
+            in LombokNames.SUPPORTED_MAPS -> {
                 val keyType = field.parameterType(0, singular.allowNull) ?: return
                 val valueType = field.parameterType(1, singular.allowNull) ?: return
                 valueParameters = listOf(
@@ -175,6 +178,28 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
 
                 addMultipleParameterType = field.module.builtIns.map.defaultType.replace(
                     newArguments = listOf(TypeProjectionImpl(keyType), TypeProjectionImpl(valueType))
+                )
+            }
+
+            in LombokNames.SUPPORTED_TABLES -> {
+                val rowKeyType = field.parameterType(0, singular.allowNull) ?: return
+                val columnKeyType = field.parameterType(1, singular.allowNull) ?: return
+                val valueType = field.parameterType(2, singular.allowNull) ?: return
+
+                val tableDescriptor = field.module.resolveClassByFqName(LombokNames.TABLE, NoLookupLocation.FROM_SYNTHETIC_SCOPE) ?: return
+
+                valueParameters = listOf(
+                    LombokValueParameter(Name.identifier("rowKey"), rowKeyType),
+                    LombokValueParameter(Name.identifier("columnKey"), columnKeyType),
+                    LombokValueParameter(Name.identifier("value"), valueType),
+                )
+
+                addMultipleParameterType = tableDescriptor.defaultType.replace(
+                    newArguments = listOf(
+                        TypeProjectionImpl(rowKeyType),
+                        TypeProjectionImpl(columnKeyType),
+                        TypeProjectionImpl(valueType),
+                    )
                 )
             }
 
@@ -216,9 +241,6 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
         get() = StringUtil.unpluralize(this)
 
     private class BuilderData(val builder: Builder, val constructingClass: ClassDescriptor)
-
-    private val LombokConfig.useGuava: Boolean
-        get() = getBoolean("lombok.singular.useGuava") ?: false
 
     private fun PropertyDescriptor.parameterType(index: Int, allowNull: Boolean): KotlinType? {
         val type = returnType?.arguments?.getOrNull(index)?.type ?: return null

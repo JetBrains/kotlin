@@ -38,7 +38,7 @@ dependencies {
 
     testApi(commonDependency("junit:junit"))
 
-
+    testRuntimeOnly(commonDependency("com.google.guava:guava"))
     testRuntimeOnly(toolsJar())
 }
 
@@ -54,6 +54,16 @@ sourceSets {
 
 projectTest(parallel = true) {
     workingDir = rootDir
+    
+    doFirst {
+        project.configurations
+            .testRuntimeClasspath.get()
+            .files
+            .find { "guava" in it.name }
+            ?.absolutePath
+            ?.let { systemProperty("org.jetbrains.kotlin.test.guava-location", it) }
+
+    }
 }
 
 runtimeJar()

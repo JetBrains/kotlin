@@ -111,7 +111,7 @@ object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPa
     const val KOTLIN_SCRIPT_RUNTIME_PROP = "org.jetbrains.kotlin.test.kotlin-script-runtime"
     const val KOTLIN_ANNOTATIONS_JVM_PROP = "org.jetbrains.kotlin.test.kotlin-annotations-jvm"
 
-    private fun getFile(propertyName: String): File {
+    fun getFile(propertyName: String): File {
         return System.getProperty(propertyName)
             ?.let(::File)
             ?.takeIf { it.exists() }

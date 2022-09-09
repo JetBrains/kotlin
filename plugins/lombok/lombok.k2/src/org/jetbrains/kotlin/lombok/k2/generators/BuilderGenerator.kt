@@ -184,24 +184,25 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
 
         val nameInSingularForm = (singular.singularName ?: field.name.identifier.singularForm)?.let(Name::identifier) ?: return
 
-        val useGuava = lombokService.config.useGuava
-        val supportedCollections = LombokNames.getSupportedCollectionsForSingular(useGuava)
-        val supportedMaps = LombokNames.getSupportedMapsForSingular(useGuava)
-
         val addMultipleParameterType: FirTypeRef
         val valueParameters: List<ConeLombokValueParameter>
 
         when (typeName) {
-            in supportedCollections -> {
+            in LombokNames.SUPPORTED_COLLECTIONS -> {
                 val parameterType = javaClassifierType.parameterType(0, singular.allowNull) ?: return
                 valueParameters = listOf(
                     ConeLombokValueParameter(nameInSingularForm, parameterType.toRef())
                 )
 
-                addMultipleParameterType = DummyJavaClassType(JavaClasses.Collection, typeArguments = listOf(parameterType)).toRef()
+                val baseType = when (typeName) {
+                    in LombokNames.SUPPORTED_GUAVA_COLLECTIONS -> JavaClasses.Iterable
+                    else -> JavaClasses.Collection
+                }
+
+                addMultipleParameterType = DummyJavaClassType(baseType, typeArguments = listOf(parameterType)).toRef()
             }
 
-            in supportedMaps -> {
+            in LombokNames.SUPPORTED_MAPS -> {
                 val keyType = javaClassifierType.parameterType(0, singular.allowNull) ?: return
                 val valueType = javaClassifierType.parameterType(1, singular.allowNull) ?: return
                 valueParameters = listOf(
@@ -210,6 +211,23 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
                 )
 
                 addMultipleParameterType = DummyJavaClassType(JavaClasses.Map, typeArguments = listOf(keyType, valueType)).toRef()
+            }
+
+            in LombokNames.SUPPORTED_TABLES -> {
+                val rowKeyType = javaClassifierType.parameterType(0, singular.allowNull) ?: return
+                val columnKeyType = javaClassifierType.parameterType(1, singular.allowNull) ?: return
+                val valueType = javaClassifierType.parameterType(2, singular.allowNull) ?: return
+
+                valueParameters = listOf(
+                    ConeLombokValueParameter(Name.identifier("rowKey"), rowKeyType.toRef()),
+                    ConeLombokValueParameter(Name.identifier("columnKey"), columnKeyType.toRef()),
+                    ConeLombokValueParameter(Name.identifier("value"), valueType.toRef()),
+                )
+
+                addMultipleParameterType = DummyJavaClassType(
+                    JavaClasses.Table,
+                    typeArguments = listOf(rowKeyType, columnKeyType, valueType)
+                ).toRef()
             }
 
             else -> return
@@ -254,9 +272,6 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
 
     private val String.singularForm: String?
         get() = StringUtil.unpluralize(this)
-
-    private val LombokConfig.useGuava: Boolean
-        get() = getBoolean("lombok.singular.useGuava") ?: false
 
     private fun JavaClassifierType.parameterType(index: Int, allowNull: Boolean): JavaType? {
         val type = typeArguments.getOrNull(index) ?: return null
