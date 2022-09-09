@@ -17,20 +17,17 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.artifacts.ArtifactAttributes
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaBasePlugin
-import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.internal.reorderPluginClasspathDependencies
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
@@ -39,7 +36,6 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.util.concurrent.Callable
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.memberProperties
@@ -102,13 +98,9 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
     }
 
     override fun configureSourceSet(target: KotlinTargetType) {
-        val project = target.project
-
         target.compilations.all { compilation ->
             if (createDefaultSourceSets) {
-                project.kotlinExtension.sourceSets.maybeCreate(compilation.defaultSourceSetName).also { sourceSet ->
-                    compilation.source(sourceSet) // also adds dependencies, requires the configurations for target and source set to exist at this point
-                }
+                compilation.source(compilation.defaultSourceSet) // also adds dependencies, requires the configurations for target and source set to exist at this point
             }
         }
     }

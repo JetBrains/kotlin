@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.fileExtensionCasePermutations
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.tooling.core.closure
-import java.util.*
 import java.util.concurrent.Callable
 
 internal fun KotlinCompilation<*>.isMain(): Boolean =
@@ -20,14 +18,6 @@ internal fun KotlinCompilation<*>.isMain(): Boolean =
 
 internal fun KotlinCompilation<*>.isTest(): Boolean =
     name == KotlinCompilation.TEST_COMPILATION_NAME
-
-/**
- * see https://youtrack.jetbrains.com/issue/KT-45412
- * Some implementations of [KotlinCompilation] are not including their [KotlinCompilation.defaultSourceSet] into [kotlinSourceSet]s
- * This helper function might disappear in the future, once the behaviour of those [KotlinCompilation] implementations is streamlined.
- * @return [KotlinCompilation.kotlinSourceSets] + [KotlinCompilation.defaultSourceSet]
- */
-internal val KotlinCompilation<*>.kotlinSourceSetsIncludingDefault: Set<KotlinSourceSet> get() = kotlinSourceSets + defaultSourceSet
 
 internal fun addCommonSourcesToKotlinCompileTask(
     project: Project,

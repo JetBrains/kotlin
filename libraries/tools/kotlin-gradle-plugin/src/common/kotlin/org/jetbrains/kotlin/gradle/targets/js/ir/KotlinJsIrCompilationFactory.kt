@@ -7,18 +7,16 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.JsIrCompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.getOrCreateDefaultSourceSet
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 class KotlinJsIrCompilationFactory(
-    override val target: KotlinOnlyTarget<KotlinJsIrCompilation>
+    override val target: KotlinJsIrTarget
 ) : KotlinCompilationFactory<KotlinJsIrCompilation> {
     override val itemClass: Class<KotlinJsIrCompilation>
         get() = KotlinJsIrCompilation::class.java
 
     override fun defaultSourceSetName(compilationName: String): String {
-        val target = target as KotlinJsIrTarget
         return lowerCamelCaseName(
             if (target.mixedMode)
                 target.disambiguationClassifierInPlatform

@@ -375,5 +375,5 @@ internal fun requestedDependencies(
 private val KotlinMultiplatformExtension.platformCompilationSourceSets: Set<KotlinSourceSet>
     get() = targets.filterNot { it is KotlinMetadataTarget }
         .flatMap { target -> target.compilations }
-        .flatMap { it.kotlinSourceSetsIncludingDefault }
+        .flatMap { it.kotlinSourceSets }
         .toSet()
