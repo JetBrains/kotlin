@@ -42,22 +42,22 @@ internal fun makeKonanFileLoweringPhase(
         lowering: (MiddleEndContext) -> FileLoweringPass,
         name: String,
         description: String,
-        prerequisite: Set<NamedCompilerPhase<MiddleEndContext, *>> = emptySet()
+        prerequisite: Set<SameTypeNamedCompilerPhase<MiddleEndContext, *>> = emptySet()
 ) = makeIrFilePhase(lowering, name, description, prerequisite, actions = filePhaseActions)
 
 internal fun <Context : BackendPhaseContext> makeKonanModuleLoweringPhase(
         lowering: (Context) -> FileLoweringPass,
         name: String,
         description: String,
-        prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet()
+        prerequisite: Set<SameTypeNamedCompilerPhase<Context, *>> = emptySet()
 ) = makeIrModulePhase(lowering, name, description, prerequisite, actions = modulePhaseActions)
 
 internal fun makeKonanFileOpPhase(
         op: (MiddleEndContext, IrFile) -> Unit,
         name: String,
         description: String,
-        prerequisite: Set<NamedCompilerPhase<MiddleEndContext, *>> = emptySet()
-) = NamedCompilerPhase(
+        prerequisite: Set<SameTypeNamedCompilerPhase<MiddleEndContext, *>> = emptySet()
+) = SameTypeNamedCompilerPhase(
         name, description, prerequisite, nlevels = 0,
         lower = object : SameTypeCompilerPhase<MiddleEndContext, IrFile> {
             override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrFile>, context: MiddleEndContext, input: IrFile): IrFile {
@@ -72,8 +72,8 @@ internal fun <Context : KonanBackendContext> makeKonanModuleOpPhase(
         op: (Context, IrModuleFragment) -> Unit,
         name: String,
         description: String,
-        prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet()
-) = NamedCompilerPhase<Context, IrModuleFragment>(
+        prerequisite: Set<SameTypeNamedCompilerPhase<Context, *>> = emptySet()
+) = SameTypeNamedCompilerPhase<Context, IrModuleFragment>(
         name, description, prerequisite, nlevels = 0,
         lower = object : SameTypeCompilerPhase<Context, IrModuleFragment> {
             override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {

@@ -27,8 +27,8 @@ private fun makeWasmModulePhase(
     lowering: (WasmBackendContext) -> FileLoweringPass,
     name: String,
     description: String,
-    prerequisite: Set<NamedCompilerPhase<WasmBackendContext, *>> = emptySet()
-): NamedCompilerPhase<WasmBackendContext, Iterable<IrModuleFragment>> =
+    prerequisite: Set<SameTypeNamedCompilerPhase<WasmBackendContext, *>> = emptySet()
+): SameTypeNamedCompilerPhase<WasmBackendContext, Iterable<IrModuleFragment>> =
     makeCustomWasmModulePhase(
         op = { context, modules -> lowering(context).lower(modules) },
         name = name,
@@ -40,9 +40,9 @@ private fun makeCustomWasmModulePhase(
     op: (WasmBackendContext, IrModuleFragment) -> Unit,
     description: String,
     name: String,
-    prerequisite: Set<NamedCompilerPhase<WasmBackendContext, *>> = emptySet()
-): NamedCompilerPhase<WasmBackendContext, Iterable<IrModuleFragment>> =
-    NamedCompilerPhase(
+    prerequisite: Set<SameTypeNamedCompilerPhase<WasmBackendContext, *>> = emptySet()
+): SameTypeNamedCompilerPhase<WasmBackendContext, Iterable<IrModuleFragment>> =
+    SameTypeNamedCompilerPhase(
         name = name,
         description = description,
         prerequisite = prerequisite,
@@ -556,7 +556,7 @@ private val unitToVoidLowering = makeWasmModulePhase(
     description = "Replace some Unit's with Void's"
 )
 
-val wasmPhases = NamedCompilerPhase(
+val wasmPhases = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
     lower = validateIrBeforeLowering then

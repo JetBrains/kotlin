@@ -68,7 +68,7 @@ class PhaseConfig(
 
     private val enabledMut = initiallyEnabled.toMutableSet()
 
-    val enabled: Set<AnyNamedPhase> get() = enabledMut
+    val enabled: Set<CompilerPhaseWithName<*, *, *>> get() = enabledMut
 
     fun known(name: String): String {
         if (phases[name] == null) {

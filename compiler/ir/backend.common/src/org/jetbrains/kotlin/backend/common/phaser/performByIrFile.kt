@@ -32,8 +32,8 @@ fun <Context : CommonBackendContext> performByIrFile(
     description: String = "Perform phases by IrFile",
     copyBeforeLowering: Boolean = true,
     lower: List<CompilerPhase<Context, IrFile, IrFile>>,
-): NamedCompilerPhase<Context, IrModuleFragment> =
-    NamedCompilerPhase(
+): SameTypeNamedCompilerPhase<Context, IrModuleFragment> =
+    SameTypeNamedCompilerPhase(
         name, description, emptySet(), PerformByIrFilePhase(lower, copyBeforeLowering), emptySet(), emptySet(), emptySet(),
         setOf(defaultDumper), nlevels = 1,
     )
@@ -134,7 +134,7 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
         return input
     }
 
-    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *>>> =
+    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, SameTypeNamedCompilerPhase<Context, *>>> =
         lower.flatMap { it.getNamedSubphases(startDepth) }
 }
 

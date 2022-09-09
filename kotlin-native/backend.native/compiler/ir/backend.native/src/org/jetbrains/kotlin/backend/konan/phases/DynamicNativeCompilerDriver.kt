@@ -9,7 +9,7 @@ import kotlinx.cinterop.usingJvmCInteropCallbacks
 import llvm.LLVMContextCreate
 import llvm.LLVMCreateDIBuilder
 import llvm.LLVMModuleCreateWithNameInContext
-import org.jetbrains.kotlin.backend.common.phaser.NamedCompilerPhase
+import org.jetbrains.kotlin.backend.common.phaser.SameTypeNamedCompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.backend.konan.*
@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.backend.konan.llvm.DebugInfo
 import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.backend.konan.llvm.llvmContext
 import org.jetbrains.kotlin.backend.konan.llvm.tryDisposeLLVMContext
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleFragmentImpl
+import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
@@ -26,7 +28,9 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.path
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
@@ -42,10 +46,10 @@ class DynamicNativeCompilerDriver(
             ?: MessageCollector.NONE
 
     // It should be a proper (Input, Context, Phases) -> Output pure function, but NamedCompilerPhase is a bit tricky to refactor.
-    private fun <Context : PhaseContext, Data> runTopLevelPhase(context: Context, phase: NamedCompilerPhase<Context, Data>, input: Data) =
+    private fun <Context : PhaseContext, Data> runTopLevelPhase(context: Context, phase: SameTypeNamedCompilerPhase<Context, Data>, input: Data) =
             phase.invokeToplevel(createPhaseConfig(phase, arguments, messageCollector), context, input)
 
-    private fun <Context : PhaseContext> runTopLevelPhaseUnit(context: Context, phase: NamedCompilerPhase<Context, Unit>) =
+    private fun <Context : PhaseContext> runTopLevelPhaseUnit(context: Context, phase: SameTypeNamedCompilerPhase<Context, Unit>) =
             runTopLevelPhase(context, phase, Unit)
 
     companion object {
@@ -95,7 +99,7 @@ class DynamicNativeCompilerDriver(
         val serializerPhase = Phases.buildSerializerPhase()
         val produceKlibPhase = Phases.buildProduceKlibPhase()
 
-        val irGen = NamedCompilerPhase(
+        val irGen = SameTypeNamedCompilerPhase(
                 "IRGen",
                 "IR generation",
                 nlevels = 1,
@@ -104,7 +108,7 @@ class DynamicNativeCompilerDriver(
                         destroySymbolTablePhase
         )
 
-        val generateKlib = NamedCompilerPhase(
+        val generateKlib = SameTypeNamedCompilerPhase(
                 "GenerateKlib",
                 "Library serialization",
                 nlevels = 1,
@@ -147,7 +151,7 @@ class DynamicNativeCompilerDriver(
         val psiToIrPhase = Phases.buildTranslatePsiToIrPhase(isProducingLibrary = false, createSymbolTablePhase)
         val destroySymbolTablePhase = Phases.buildDestroySymbolTablePhase(createSymbolTablePhase)
 
-        val irGen = NamedCompilerPhase(
+        val irGen = SameTypeNamedCompilerPhase(
                 "IRGen",
                 "IR generation",
                 nlevels = 1,
@@ -162,7 +166,7 @@ class DynamicNativeCompilerDriver(
         val copyDefaultValuesToActualPhase = Phases.buildCopyDefaultValuesToActualPhase()
         val buildFunctionsWithoutBoundCheck = Phases.buildFunctionsWithoutBoundCheck()
         val entryPointPhase = Phases.buildEntryPointPhase()
-        val irProcessing = NamedCompilerPhase<MiddleEndContext, Unit>(
+        val irProcessing = SameTypeNamedCompilerPhase<MiddleEndContext, Unit>(
                 "IRProcessing",
                 "Process linked IR",
                 nlevels = 1,
@@ -308,7 +312,7 @@ class DynamicNativeCompilerDriver(
         val psiToIrPhase = Phases.buildTranslatePsiToIrPhase(isProducingLibrary = false, createSymbolTablePhase)
         val destroySymbolTablePhase = Phases.buildDestroySymbolTablePhase(createSymbolTablePhase)
 
-        val irGen = NamedCompilerPhase(
+        val irGen = SameTypeNamedCompilerPhase(
                 "IRGen",
                 "IR generation",
                 nlevels = 1,
@@ -323,7 +327,7 @@ class DynamicNativeCompilerDriver(
         val specialBackendChecksPhase = Phases.buildSpecialBackendChecksPhase()
         val copyDefaultValuesToActualPhase = Phases.buildCopyDefaultValuesToActualPhase()
         val buildFunctionsWithoutBoundCheck = Phases.buildFunctionsWithoutBoundCheck()
-        val irProcessing = NamedCompilerPhase<MiddleEndContext, Unit>(
+        val irProcessing = SameTypeNamedCompilerPhase<MiddleEndContext, Unit>(
                 "IRProcessing",
                 "Process linked IR",
                 nlevels = 1,
@@ -453,7 +457,7 @@ class DynamicNativeCompilerDriver(
         val objcExportCodeSpecPhase = Phases.buildObjCCodeSpecPhase(createSymbolTablePhase)
 
         val buildAdditionalCacheInfoPhase = Phases.buildBuildAdditionalCacheInfoPhase(psiToIrPhase)
-        val irGen = NamedCompilerPhase(
+        val irGen = SameTypeNamedCompilerPhase(
                 "IRGen",
                 "IR generation",
                 nlevels = 1,
@@ -470,7 +474,7 @@ class DynamicNativeCompilerDriver(
         val specialBackendChecksPhase = Phases.buildSpecialBackendChecksPhase()
         val copyDefaultValuesToActualPhase = Phases.buildCopyDefaultValuesToActualPhase()
         val buildFunctionsWithoutBoundCheck = Phases.buildFunctionsWithoutBoundCheck()
-        val irProcessing = NamedCompilerPhase(
+        val irProcessing = SameTypeNamedCompilerPhase(
                 "IRProcessing",
                 "Process linked IR",
                 nlevels = 1,
@@ -616,7 +620,7 @@ class DynamicNativeCompilerDriver(
         val objcExportCodeSpecPhase = Phases.buildObjCCodeSpecPhase(createSymbolTablePhase)
 
         val buildAdditionalCacheInfoPhase = Phases.buildBuildAdditionalCacheInfoPhase(psiToIrPhase)
-        val irGen = NamedCompilerPhase(
+        val irGen = SameTypeNamedCompilerPhase(
                 "IRGen",
                 "IR generation",
                 nlevels = 1,
@@ -633,7 +637,7 @@ class DynamicNativeCompilerDriver(
         val specialBackendChecksPhase = Phases.buildSpecialBackendChecksPhase()
         val copyDefaultValuesToActualPhase = Phases.buildCopyDefaultValuesToActualPhase()
         val buildFunctionsWithoutBoundCheck = Phases.buildFunctionsWithoutBoundCheck()
-        val irProcessing = NamedCompilerPhase(
+        val irProcessing = SameTypeNamedCompilerPhase(
                 "IRProcessing",
                 "Process linked IR",
                 nlevels = 1,

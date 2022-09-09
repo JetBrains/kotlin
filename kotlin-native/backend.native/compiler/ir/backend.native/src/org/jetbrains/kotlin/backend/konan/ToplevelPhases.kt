@@ -244,7 +244,7 @@ internal val finalizeCachePhase = konanUnitPhase<CacheAwareContext>(
         description = "Finalize cache (rename temp to the final dist)"
 )
 
-internal val allLoweringsPhase = NamedCompilerPhase<MiddleEndContext, IrModuleFragment>(
+internal val allLoweringsPhase = SameTypeNamedCompilerPhase<MiddleEndContext, IrModuleFragment>(
         name = "IrLowering",
         description = "IR Lowering",
         // TODO: The lowerings before inlinePhase should be aligned with [NativeInlineFunctionResolver.kt]
@@ -309,7 +309,7 @@ internal val allLoweringsPhase = NamedCompilerPhase<MiddleEndContext, IrModuleFr
         actions = setOf(defaultDumper, ::moduleValidationCallback),
 )
 
-internal val dependenciesLowerPhase = NamedCompilerPhase<Context, IrModuleFragment>(
+internal val dependenciesLowerPhase = SameTypeNamedCompilerPhase<Context, IrModuleFragment>(
         name = "LowerLibIR",
         description = "Lower library's IR",
         prerequisite = emptySet(),
@@ -391,7 +391,7 @@ internal val entryPointPhase = makeCustomPhase<MiddleEndContext, IrModuleFragmen
         }
 )
 
-internal val bitcodePhase = NamedCompilerPhase<Context, IrModuleFragment>(
+internal val bitcodePhase = SameTypeNamedCompilerPhase<Context, IrModuleFragment>(
         name = "Bitcode",
         description = "LLVM Bitcode generation",
         lower = contextLLVMSetupPhase then
@@ -415,7 +415,7 @@ internal val bitcodePhase = NamedCompilerPhase<Context, IrModuleFragment>(
                 finalizeDebugInfoPhase
 )
 
-internal val bitcodePostprocessingPhase = NamedCompilerPhase<LlvmCodegenContext, IrModuleFragment>(
+internal val bitcodePostprocessingPhase = SameTypeNamedCompilerPhase<LlvmCodegenContext, IrModuleFragment>(
         name = "BitcodePostprocessing",
         description = "Optimize and rewrite bitcode",
         lower = //checkExternalCallsPhase then

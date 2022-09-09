@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.NamedCompilerPhase
+import org.jetbrains.kotlin.backend.common.phaser.SameTypeNamedCompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.phaser.performByIrFile
 import org.jetbrains.kotlin.backend.common.phaser.then
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.render
 
-private fun codegenPhase(generateMultifileFacade: Boolean): NamedCompilerPhase<JvmBackendContext, IrModuleFragment> {
+private fun codegenPhase(generateMultifileFacade: Boolean): SameTypeNamedCompilerPhase<JvmBackendContext, IrModuleFragment> {
     val suffix = if (generateMultifileFacade) "MultifileFacades" else "Regular"
     val descriptionSuffix = if (generateMultifileFacade) ", multifile facades" else ", regular files"
     return performByIrFile(
@@ -50,7 +50,7 @@ private class FileCodegen(private val context: JvmBackendContext, private val ge
 // Generate multifile facades first, to compute and store JVM signatures of const properties which are later used
 // when serializing metadata in the multifile parts.
 // TODO: consider dividing codegen itself into separate phases (bytecode generation, metadata serialization) to avoid this
-internal val jvmCodegenPhases = NamedCompilerPhase(
+internal val jvmCodegenPhases = SameTypeNamedCompilerPhase(
     name = "Codegen",
     description = "Code generation",
     nlevels = 1,
@@ -60,5 +60,5 @@ internal val jvmCodegenPhases = NamedCompilerPhase(
 
 // This property is needed to avoid dependencies from "leaf" modules (cli, tests-common-new) on backend.jvm:lower.
 // It's used to create PhaseConfig and is the only thing needed from lowerings in the leaf modules.
-val jvmPhases: NamedCompilerPhase<JvmBackendContext, IrModuleFragment>
+val jvmPhases: SameTypeNamedCompilerPhase<JvmBackendContext, IrModuleFragment>
     get() = jvmLoweringPhases

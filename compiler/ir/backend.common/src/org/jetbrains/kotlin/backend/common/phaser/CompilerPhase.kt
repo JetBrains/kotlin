@@ -30,11 +30,17 @@ inline fun <R, D> PhaserState<D>.downlevel(nlevels: Int, block: () -> R): R {
 interface CompilerPhase<in Context : LoggingContext, Input, Output> {
     fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output
 
-    fun getNamedSubphases(startDepth: Int = 0): List<Pair<Int, NamedCompilerPhase<Context, *>>> = emptyList()
+    fun getNamedSubphases(startDepth: Int = 0): List<Pair<Int, CompilerPhaseWithName<Context, *, *>>> = emptyList()
 
     // In phase trees, `stickyPostconditions` is inherited along the right edge to be used in `then`.
     val stickyPostconditions: Set<Checker<Output>> get() = emptySet()
 }
+
+interface CompilerPhaseWithName<in Context : LoggingContext, Input, Output> : CompilerPhase<Context, Input, Output> {
+    val name: String
+}
+
+
 
 fun <Context : LoggingContext, Input, Output> CompilerPhase<Context, Input, Output>.invokeToplevel(
     phaseConfig: PhaseConfig,
@@ -47,7 +53,7 @@ interface SameTypeCompilerPhase<in Context : LoggingContext, Data> : CompilerPha
 // A failing checker should just throw an exception.
 typealias Checker<Data> = (Data) -> Unit
 
-typealias AnyNamedPhase = NamedCompilerPhase<*, *>
+typealias AnyNamedPhase = CompilerPhaseWithName<*, *, *>
 
 enum class BeforeOrAfter { BEFORE, AFTER }
 
@@ -66,17 +72,98 @@ infix operator fun <Data, Context> Action<Data, Context>.plus(other: Action<Data
         other(phaseState, data, context)
     }
 
-class NamedCompilerPhase<in Context : LoggingContext, Data>(
-    val name: String,
+class NamedCompilerPhase<in Context : LoggingContext, Input, Output>(
+    override val name: String,
     val description: String,
-    val prerequisite: Set<NamedCompilerPhase<*, *>> = emptySet(),
+    val prerequisite: Set<SameTypeNamedCompilerPhase<*, *>> = emptySet(),
+    private val lower: CompilerPhase<Context, Input, Output>,
+    val preconditions: Set<Checker<Input>> = emptySet(),
+    val postconditions: Set<Checker<Output>> = emptySet(),
+    override val stickyPostconditions: Set<Checker<Output>> = emptySet(),
+    private val preactions: Set<Action<Input, Context>> = emptySet(),
+    private val postaction: Set<Action<Output, Context>> = emptySet(),
+    private val nlevels: Int = 0,
+    private val outputIfNotEnabled: (Context, Input) -> Output
+) : CompilerPhaseWithName<Context, Input, Output> {
+    override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output {
+        if (this !in phaseConfig.enabled) {
+            return outputIfNotEnabled(context, input)
+        }
+
+        assert(phaserState.alreadyDone.containsAll(prerequisite)) {
+            "Lowering $name: phases ${(prerequisite - phaserState.alreadyDone).map { it.name }} are required, but not satisfied"
+        }
+
+        context.inVerbosePhase = this in phaseConfig.verbose
+
+        runBefore(phaseConfig, phaserState, context, input)
+        val output = if (phaseConfig.needProfiling) {
+            runAndProfile(phaseConfig, phaserState, context, input)
+        } else {
+            phaserState.downlevel(nlevels) {
+                lower.invoke(phaseConfig, phaserState, context, input)
+            }
+        }
+        runAfter(phaseConfig, phaserState.changeType(), context, output)
+
+        phaserState.alreadyDone.add(this)
+        phaserState.phaseCount++
+
+        return output
+    }
+
+    private fun runBefore(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input) {
+        val state = ActionState(phaseConfig, this, phaserState.phaseCount, BeforeOrAfter.BEFORE)
+        for (action in preactions) action(state, input, context)
+
+        if (phaseConfig.checkConditions) {
+            for (pre in preconditions) pre(input)
+        }
+    }
+
+    private fun runAfter(phaseConfig: PhaseConfig, phaserState: PhaserState<Output>, context: Context, output: Output) {
+        val state = ActionState(phaseConfig, this, phaserState.phaseCount, BeforeOrAfter.AFTER)
+        for (action in postaction) action(state, output, context)
+
+        if (phaseConfig.checkConditions) {
+            for (post in postconditions) post(output)
+            for (post in stickyPostconditions) post(output)
+            if (phaseConfig.checkStickyConditions) {
+                for (post in phaserState.stickyPostconditions) post(output)
+            }
+        }
+    }
+
+    private fun runAndProfile(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, source: Input): Output {
+        var result: Output? = null
+        val msec = measureTimeMillis {
+            result = phaserState.downlevel(nlevels) {
+                lower.invoke(phaseConfig, phaserState, context, source)
+            }
+        }
+
+        // TODO: use a proper logger
+        println("${"\t".repeat(phaserState.depth)}$description: $msec msec")
+        return result!!
+    }
+
+    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, CompilerPhaseWithName<Context, *, *>>> =
+        listOf(startDepth to this) + lower.getNamedSubphases(startDepth + nlevels)
+
+    override fun toString() = "Compiler Phase @$name"
+}
+
+class SameTypeNamedCompilerPhase<in Context : LoggingContext, Data>(
+    override val name: String,
+    val description: String,
+    val prerequisite: Set<SameTypeNamedCompilerPhase<*, *>> = emptySet(),
     private val lower: CompilerPhase<Context, Data, Data>,
     val preconditions: Set<Checker<Data>> = emptySet(),
     val postconditions: Set<Checker<Data>> = emptySet(),
     override val stickyPostconditions: Set<Checker<Data>> = emptySet(),
     private val actions: Set<Action<Data, Context>> = emptySet(),
     private val nlevels: Int = 0
-) : SameTypeCompilerPhase<Context, Data> {
+) : SameTypeCompilerPhase<Context, Data>, CompilerPhaseWithName<Context, Data, Data> {
 
     var time: Long = 0
 
@@ -143,7 +230,7 @@ class NamedCompilerPhase<in Context : LoggingContext, Data>(
         return result!!
     }
 
-    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *>>> =
+    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, CompilerPhaseWithName<Context, *, *>>> =
         listOf(startDepth to this) + lower.getNamedSubphases(startDepth + nlevels)
 
     override fun toString() = "Compiler Phase @$name"

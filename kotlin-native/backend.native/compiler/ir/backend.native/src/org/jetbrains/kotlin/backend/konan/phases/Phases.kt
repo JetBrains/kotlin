@@ -38,9 +38,9 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 internal object Phases {
-    fun buildFrontendPhase(): NamedCompilerPhase<FrontendContext, Boolean> {
+    fun buildFrontendPhase(): SameTypeNamedCompilerPhase<FrontendContext, Boolean> {
         // We don't need boolean input, but phasing machinery is too complex, so keep this hack for now.
-        val frontendPhase = NamedCompilerPhase<FrontendContext, Boolean>(
+        val frontendPhase = SameTypeNamedCompilerPhase<FrontendContext, Boolean>(
                 name = "FrontEnd",
                 description = "Frontend",
                 lower = object : SameTypeCompilerPhase<FrontendContext, Boolean> {
@@ -57,7 +57,7 @@ internal object Phases {
         return frontendPhase
     }
 
-    fun buildSerializerPhase(): NamedCompilerPhase<KlibProducingContext, Unit> = namedUnitPhase(
+    fun buildSerializerPhase(): SameTypeNamedCompilerPhase<KlibProducingContext, Unit> = namedUnitPhase(
             lower = myLower { context, _ ->
                 val config = context.config
                 val expectActualLinker = config.configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) ?: false
@@ -88,7 +88,7 @@ internal object Phases {
             prerequisite = setOf()
     )
 
-    fun buildCreateSymbolTablePhase(): NamedCompilerPhase<PsiToIrContext, Unit> = myLower2(
+    fun buildCreateSymbolTablePhase(): SameTypeNamedCompilerPhase<PsiToIrContext, Unit> = myLower2(
             op = { context, _ ->
                 context.symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
             },
@@ -97,7 +97,7 @@ internal object Phases {
             prerequisite = emptySet()
     )
 
-    fun buildDestroySymbolTablePhase(createSymbolTablePhase: NamedCompilerPhase<PsiToIrContext, Unit>): NamedCompilerPhase<PsiToIrContext, Unit> = myLower2(
+    fun buildDestroySymbolTablePhase(createSymbolTablePhase: SameTypeNamedCompilerPhase<PsiToIrContext, Unit>): SameTypeNamedCompilerPhase<PsiToIrContext, Unit> = myLower2(
             op = { context, _ ->
                 context.symbolTable = null // TODO: invalidate symbolTable itself.
             },
@@ -108,8 +108,8 @@ internal object Phases {
 
     fun buildTranslatePsiToIrPhase(
             isProducingLibrary: Boolean,
-            createSymbolTablePhase: NamedCompilerPhase<PsiToIrContext, Unit>,
-    ): NamedCompilerPhase<PsiToIrContext, Unit> = myLower2(
+            createSymbolTablePhase: SameTypeNamedCompilerPhase<PsiToIrContext, Unit>,
+    ): SameTypeNamedCompilerPhase<PsiToIrContext, Unit> = myLower2(
             op = { context, _ ->
                 psiToIr(context,
                         context.config,
@@ -122,7 +122,7 @@ internal object Phases {
             prerequisite = setOf(createSymbolTablePhase)
     )
 
-    fun buildBuildAdditionalCacheInfoPhase(psiToIrPhase: NamedCompilerPhase<PsiToIrContext, Unit>): NamedCompilerPhase<MiddleEndContext, Unit> = myLower2(
+    fun buildBuildAdditionalCacheInfoPhase(psiToIrPhase: SameTypeNamedCompilerPhase<PsiToIrContext, Unit>): SameTypeNamedCompilerPhase<MiddleEndContext, Unit> = myLower2(
             op = { ctx, _ ->
                 ctx.irModules.values.single().let { module ->
                     val moduleDeserializer = ctx.irLinker.moduleDeserializers[module.descriptor]
@@ -148,7 +148,7 @@ internal object Phases {
 //            }
 //    )
 
-    fun buildSaveAdditionalCacheInfoPhase(): NamedCompilerPhase<CacheAwareContext, Unit> = myLower2(
+    fun buildSaveAdditionalCacheInfoPhase(): SameTypeNamedCompilerPhase<CacheAwareContext, Unit> = myLower2(
             op = { ctx, _ ->
                 CacheStorage(ctx.config, ctx.llvmImports, ctx.inlineFunctionBodies, ctx.classFields).saveAdditionalCacheInfo()
             },
@@ -156,7 +156,7 @@ internal object Phases {
             description = "Save additional cache info (inline functions bodies and fields of classes)"
     )
 
-    fun buildProduceKlibPhase(): NamedCompilerPhase<KlibProducingContext, Unit> = namedUnitPhase(
+    fun buildProduceKlibPhase(): SameTypeNamedCompilerPhase<KlibProducingContext, Unit> = namedUnitPhase(
             name = "ProduceOutput",
             description = "Produce output",
             lower = myLower { context, _ ->
@@ -166,7 +166,7 @@ internal object Phases {
     )
 
     // Nullable return type allows to pass null as input. Again, proper phase system should help.
-    fun buildObjCExportPhase(): NamedCompilerPhase<FrontendContext, ObjCExport?> = myLower2(
+    fun buildObjCExportPhase(): SameTypeNamedCompilerPhase<FrontendContext, ObjCExport?> = myLower2(
             op = { context, _ ->
                 ObjCExport(context, context.config)
             },
@@ -174,7 +174,7 @@ internal object Phases {
             description = "Objective-C header generation",
     )
 
-    fun buildObjCCodeSpecPhase(createSymbolTablePhase: NamedCompilerPhase<PsiToIrContext, Unit>): NamedCompilerPhase<ObjCExportContext, Unit> = myLower2(
+    fun buildObjCCodeSpecPhase(createSymbolTablePhase: SameTypeNamedCompilerPhase<PsiToIrContext, Unit>): SameTypeNamedCompilerPhase<ObjCExportContext, Unit> = myLower2(
             op = { context, _ ->
                 context.objCExport?.buildCodeSpec(context.symbolTable!!)
             },
@@ -189,25 +189,25 @@ internal object Phases {
             description = "Finalize cache (rename temp to the final dist)"
     )
 
-    fun buildProduceFrameworkInterfacePhase(): NamedCompilerPhase<ObjCExportContext, Unit> = myLower2(
+    fun buildProduceFrameworkInterfacePhase(): SameTypeNamedCompilerPhase<ObjCExportContext, Unit> = myLower2(
             op = { ctx, _ -> produceFrameworkInterface(ctx.objCExport) },
             name = "ProduceFrameworkInterface",
             description = "Create Apple Framework without binary"
     )
 
-    fun buildSpecialBackendChecksPhase(): NamedCompilerPhase<MiddleEndContext, Unit> = myLower2(
+    fun buildSpecialBackendChecksPhase(): SameTypeNamedCompilerPhase<MiddleEndContext, Unit> = myLower2(
             op = { ctx, _ -> ctx.irModule!!.files.forEach { SpecialBackendChecksTraversal(ctx).lower(it) } },
             name = "SpecialBackendChecks",
             description = "Special backend checks"
     )
 
-    fun buildCopyDefaultValuesToActualPhase(): NamedCompilerPhase<MiddleEndContext, Unit> = myLower2(
+    fun buildCopyDefaultValuesToActualPhase(): SameTypeNamedCompilerPhase<MiddleEndContext, Unit> = myLower2(
             op = { ctx, _ -> ExpectToActualDefaultValueCopier(ctx.irModule!!).process() },
             name = "CopyDefaultValuesToActual",
             description = "Copy default values from expect to actual declarations"
     )
 
-    fun buildWriteLlvmModule(outputFileName: String? = null): NamedCompilerPhase<LlvmCodegenContext, Unit> = myLower2(
+    fun buildWriteLlvmModule(outputFileName: String? = null): SameTypeNamedCompilerPhase<LlvmCodegenContext, Unit> = myLower2(
             name = "WriteLlvm",
             description = "Write LLVM module to file",
             op = { context, _ ->
@@ -220,7 +220,7 @@ internal object Phases {
             }
     )
 
-    fun buildEntryPointPhase(): NamedCompilerPhase<MiddleEndContext, Unit> = myLower2(
+    fun buildEntryPointPhase(): SameTypeNamedCompilerPhase<MiddleEndContext, Unit> = myLower2(
             name = "addEntryPoint",
             description = "Add entry point for program",
             prerequisite = emptySet(),
@@ -240,7 +240,7 @@ internal object Phases {
             }
     )
 
-    fun getBuildDFGPhase(): NamedCompilerPhase<LtoContext, IrModuleFragment> = makeKonanModuleOpPhase<LtoContext>(
+    fun getBuildDFGPhase(): SameTypeNamedCompilerPhase<LtoContext, IrModuleFragment> = makeKonanModuleOpPhase<LtoContext>(
             name = "BuildDFG",
             description = "Data flow graph building",
             op = { context, irModule ->
@@ -248,7 +248,7 @@ internal object Phases {
             }
     )
 
-    fun getDevirtualizationAnalysisPhase(dfgPhase: NamedCompilerPhase<LtoContext, IrModuleFragment>): NamedCompilerPhase<LtoContext, IrModuleFragment> = makeKonanModuleOpPhase<LtoContext>(
+    fun getDevirtualizationAnalysisPhase(dfgPhase: SameTypeNamedCompilerPhase<LtoContext, IrModuleFragment>): SameTypeNamedCompilerPhase<LtoContext, IrModuleFragment> = makeKonanModuleOpPhase<LtoContext>(
             name = "DevirtualizationAnalysis",
             description = "Devirtualization analysis",
             prerequisite = setOf(dfgPhase),
@@ -259,7 +259,7 @@ internal object Phases {
             }
     )
 
-    fun getRemoveRedundantCallsToFileInitializersPhase(devirtualizationAnalysisPhase: NamedCompilerPhase<LtoContext, IrModuleFragment>) = makeKonanModuleOpPhase(
+    fun getRemoveRedundantCallsToFileInitializersPhase(devirtualizationAnalysisPhase: SameTypeNamedCompilerPhase<LtoContext, IrModuleFragment>) = makeKonanModuleOpPhase(
             name = "RemoveRedundantCallsToFileInitializersPhase",
             description = "Redundant file initializers calls removal",
             prerequisite = setOf(devirtualizationAnalysisPhase),
@@ -283,8 +283,8 @@ internal object Phases {
     )
 
     fun buildEscapeAnalysisPhase(
-            dfgPhase: NamedCompilerPhase<LtoContext, IrModuleFragment>,
-            devirtualizationAnalysisPhase: NamedCompilerPhase<LtoContext, IrModuleFragment>,
+            dfgPhase: SameTypeNamedCompilerPhase<LtoContext, IrModuleFragment>,
+            devirtualizationAnalysisPhase: SameTypeNamedCompilerPhase<LtoContext, IrModuleFragment>,
     ) = makeKonanModuleOpPhase<LtoContext>(
             name = "EscapeAnalysis",
             description = "Escape analysis",
@@ -317,7 +317,7 @@ internal object Phases {
             }
     )
 
-    fun buildFunctionsWithoutBoundCheck(): NamedCompilerPhase<MiddleEndContext, Unit> = myLower2(
+    fun buildFunctionsWithoutBoundCheck(): SameTypeNamedCompilerPhase<MiddleEndContext, Unit> = myLower2(
             name = "FunctionsWithoutBoundCheckGenerator",
             description = "Functions without bounds check generation",
             op = { context, _ ->
@@ -340,10 +340,10 @@ internal object Phases {
             prerequisite = setOf() // setOf(functionsWithoutBoundCheck)
     )
 
-    fun buildAllLoweringsPhase(): NamedCompilerPhase<MiddleEndContext, IrModuleFragment> {
+    fun buildAllLoweringsPhase(): SameTypeNamedCompilerPhase<MiddleEndContext, IrModuleFragment> {
         val removeExpectDeclarationsPhase = buildRemoveExpectDeclarationsPhase()
 //        val forLoopsLowering = buildForLoopsLowering()
-        return NamedCompilerPhase(
+        return SameTypeNamedCompilerPhase(
                 name = "IrLowering",
                 description = "IR Lowering",
                 // TODO: The lowerings before inlinePhase should be aligned with [NativeInlineFunctionResolver.kt]
@@ -441,9 +441,9 @@ internal object Phases {
             op: (C, Data) -> Data,
             description: String,
             name: String,
-            prerequisite: Set<NamedCompilerPhase<*, *>> = emptySet()
-    ): NamedCompilerPhase<C, Data> =
-            NamedCompilerPhase(
+            prerequisite: Set<SameTypeNamedCompilerPhase<*, *>> = emptySet()
+    ): SameTypeNamedCompilerPhase<C, Data> =
+            SameTypeNamedCompilerPhase(
                     name = name,
                     description = description,
                     prerequisite = prerequisite,
@@ -460,7 +460,7 @@ internal object Phases {
                     actions = setOf()
             )
 
-    fun getDcePhase(devirtualizationAnalysisPhase: NamedCompilerPhase<LtoContext, IrModuleFragment>) = makeKonanModuleOpPhase<LtoContext>(
+    fun getDcePhase(devirtualizationAnalysisPhase: SameTypeNamedCompilerPhase<LtoContext, IrModuleFragment>) = makeKonanModuleOpPhase<LtoContext>(
             name = "DCEPhase",
             description = "Dead code elimination",
             prerequisite = setOf(devirtualizationAnalysisPhase),
@@ -547,8 +547,8 @@ internal object Phases {
     )
 
     fun getDevirtualizationPhase(
-            dfgPhase: NamedCompilerPhase<LtoContext, IrModuleFragment>,
-            devirtualizationAnalysisPhase: NamedCompilerPhase<LtoContext, IrModuleFragment>,
+            dfgPhase: SameTypeNamedCompilerPhase<LtoContext, IrModuleFragment>,
+            devirtualizationAnalysisPhase: SameTypeNamedCompilerPhase<LtoContext, IrModuleFragment>,
     ) = makeKonanModuleOpPhase<LtoContext>(
             name = "Devirtualization",
             description = "Devirtualization",
@@ -570,7 +570,7 @@ internal object Phases {
             description = "Property accessor inline lowering"
     )
 
-    fun getInlineClassPropertyAccessorsPhase(): NamedCompilerPhase<KonanBackendContext, IrModuleFragment> = makeKonanModuleOpPhase<KonanBackendContext>(
+    fun getInlineClassPropertyAccessorsPhase(): SameTypeNamedCompilerPhase<KonanBackendContext, IrModuleFragment> = makeKonanModuleOpPhase<KonanBackendContext>(
             name = "InlineClassPropertyAccessorsLowering",
             description = "Inline class property accessors",
             op = { context, irModule -> irModule.files.forEach { InlineClassPropertyAccessorsLowering(context).lower(it) } }
@@ -589,7 +589,7 @@ internal object Phases {
             op = { context, irModule -> GlobalHierarchyAnalysis(context, irModule).run() }
     )
 
-    fun buildCreateLLVMDeclarationsPhase(declaration: IrElement): NamedCompilerPhase<BitcodegenContext, Unit> = myLower2<BitcodegenContext, Unit>(
+    fun buildCreateLLVMDeclarationsPhase(declaration: IrElement): SameTypeNamedCompilerPhase<BitcodegenContext, Unit> = myLower2<BitcodegenContext, Unit>(
             name = "CreateLLVMDeclarations",
             description = "Map IR declarations to LLVM",
 //        prerequisite = setOf(contextLLVMSetupPhase),
@@ -651,14 +651,14 @@ internal object Phases {
             }
     )
 
-    fun buildBitcodePhases(irElement: IrElement, needSetup: Boolean): NamedCompilerPhase<BitcodegenContext, Unit> {
+    fun buildBitcodePhases(irElement: IrElement, needSetup: Boolean): SameTypeNamedCompilerPhase<BitcodegenContext, Unit> {
         val contextLLVMSetupPhase = buildContextLLVMSetupPhase(needSetup)
         val createLLVMDeclarationsPhase = buildCreateLLVMDeclarationsPhase(irElement)
         val RTTIPhase = buildRTTIPhase(irElement)
         val generateDebugInfoHeaderPhase = buildGenerateDebugInfoHeaderPhase()
         val codegenPhase = buildCodegenPhase(irElement)
         val finalizeDebugInfoPhase = buildFinalizeDebugInfoPhase()
-        val bitcodegenPhase = NamedCompilerPhase<BitcodegenContext, Unit>(
+        val bitcodegenPhase = SameTypeNamedCompilerPhase<BitcodegenContext, Unit>(
                 name = "BitcodeGen",
                 description = "Generation of LLVM module",
                 nlevels = 1,
@@ -705,7 +705,7 @@ internal object Phases {
             }
     )
 
-    fun buildLtoAndMiscPhases(config: KonanConfig): NamedCompilerPhase<LtoContext, IrModuleFragment> {
+    fun buildLtoAndMiscPhases(config: KonanConfig): SameTypeNamedCompilerPhase<LtoContext, IrModuleFragment> {
         // TODO: Ugly and hard to manage. Use `disable` mechanism instead.
         val dfgPhase = optionalPhase(config.optimizationsEnabled) { Phases.getBuildDFGPhase() }
         val devirtualizationAnalysisPhase = optionalPhase(config.optimizationsEnabled) { Phases.getDevirtualizationAnalysisPhase(dfgPhase) }
@@ -717,7 +717,7 @@ internal object Phases {
         val propertyAccessorInlinePhase = optionalPhase(config.optimizationsEnabled) { Phases.getPropertyAccessorInlinePhase() }
         val inlineClassPropertyAccessorsPhase = optionalPhase(config.optimizationsEnabled) { Phases.getInlineClassPropertyAccessorsPhase() }
         val unboxInlinePhase = optionalPhase(config.optimizationsEnabled) { Phases.getUnboxInlinePhase() }
-        val ltoAndMiscPhases = NamedCompilerPhase<LtoContext, IrModuleFragment>(
+        val ltoAndMiscPhases = SameTypeNamedCompilerPhase<LtoContext, IrModuleFragment>(
                 name = "BitcodeGen",
                 description = "Generation of LLVM module",
                 nlevels = 1,
@@ -737,7 +737,7 @@ internal object Phases {
         return ltoAndMiscPhases
     }
 
-    fun buildLlvmCodegenPhase() = NamedCompilerPhase<LlvmCodegenContext, IrModuleFragment>(
+    fun buildLlvmCodegenPhase() = SameTypeNamedCompilerPhase<LlvmCodegenContext, IrModuleFragment>(
             name = "LlvmCodegen",
             description = "Generation of bitcode file",
             nlevels = 1,
@@ -747,10 +747,10 @@ internal object Phases {
                     bitcodePostprocessingPhase
     )
 
-    private inline fun <Context : CommonBackendContext, Input> optionalPhase(phaseOrNull: () -> NamedCompilerPhase<Context, Input>?) =
+    private inline fun <Context : CommonBackendContext, Input> optionalPhase(phaseOrNull: () -> SameTypeNamedCompilerPhase<Context, Input>?) =
             phaseOrNull() ?: sinkId()
 
-    private inline fun <Context : CommonBackendContext, Input> optionalPhase(cond: Boolean, phase: () -> NamedCompilerPhase<Context, Input>): NamedCompilerPhase<Context, Input> =
+    private inline fun <Context : CommonBackendContext, Input> optionalPhase(cond: Boolean, phase: () -> SameTypeNamedCompilerPhase<Context, Input>): SameTypeNamedCompilerPhase<Context, Input> =
             if (cond) {
                 phase()
             } else {
@@ -765,7 +765,7 @@ internal object Phases {
 
     private fun <Context : CommonBackendContext, Input> sinkId() = sink<Context, Input, Input> { it }
 
-    private fun <Context : CommonBackendContext, Input> stealIdentity(phase: NamedCompilerPhase<Context, Input>): NamedCompilerPhase<Context, Input> {
-        return NamedCompilerPhase(phase.name, phase.description, lower = sinkId())
+    private fun <Context : CommonBackendContext, Input> stealIdentity(phase: SameTypeNamedCompilerPhase<Context, Input>): SameTypeNamedCompilerPhase<Context, Input> {
+        return SameTypeNamedCompilerPhase(phase.name, phase.description, lower = sinkId())
     }
 }
