@@ -41,7 +41,8 @@ internal class CacheStorage(val context: Context) {
         val outputFiles = context.config.outputFiles
         // For caches the output file is a directory. It might be created by someone else,
         // we have to delete it in order for the next renaming operation to succeed.
-        outputFiles.mainFile.delete()
+        // TODO: what if the directory is not empty?
+        java.io.File(outputFiles.mainFileName).delete()
         if (!outputFiles.tempCacheDirectory!!.renameTo(outputFiles.mainFile))
             outputFiles.tempCacheDirectory.deleteRecursively()
     }
