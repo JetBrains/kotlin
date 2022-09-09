@@ -127,8 +127,8 @@ fun PsiElement.getNonLocalContainingInBodyDeclarationWith(): KtNamedDeclaration?
         when (declaration) {
             is KtNamedFunction -> declaration.bodyExpression?.isAncestor(this) == true
             is KtProperty -> declaration.initializer?.isAncestor(this) == true ||
-                    declaration.getter?.isAncestor(this) == true ||
-                    declaration.setter?.isAncestor(this) == true
+                    declaration.getter?.bodyExpression?.isAncestor(this) == true ||
+                    declaration.setter?.bodyExpression?.isAncestor(this) == true
             else -> false
         }
     }
