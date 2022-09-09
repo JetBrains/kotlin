@@ -207,7 +207,7 @@ fun IrBuilderWithScope.irCall(
     callee: IrFunctionSymbol,
     type: IrType,
     typeArguments: List<IrType>
-): IrMemberAccessExpression<*> =
+): IrFunctionAccessExpression =
     irCall(callee, type).apply {
         typeArguments.forEachIndexed { index, irType ->
             this.putTypeArgument(index, irType)
