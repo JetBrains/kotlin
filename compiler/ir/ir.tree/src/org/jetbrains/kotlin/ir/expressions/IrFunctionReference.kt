@@ -18,7 +18,7 @@ abstract class IrFunctionReference : IrCallableReference<IrFunctionSymbol>() {
     abstract var hasExtensionReceiver: Boolean
     abstract var contextReceiversCount: Int
 
-    val receiversPrefixSize: Int
+    override val receiversPrefixSize: Int
         get() = contextReceiversCount + (if (hasExtensionReceiver) 1 else 0)
 
     override var extensionReceiver: IrExpression?

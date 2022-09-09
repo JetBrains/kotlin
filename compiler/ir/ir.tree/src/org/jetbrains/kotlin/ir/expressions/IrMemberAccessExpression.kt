@@ -38,6 +38,8 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
     protected abstract val argumentsByParameterIndex: Array<IrExpression?>
     open val valueArgumentsCount: Int get() = argumentsByParameterIndex.size
 
+    abstract val receiversPrefixSize: Int
+
     fun getValueArgument(index: Int): IrExpression? {
         if (index >= valueArgumentsCount) {
             throw AssertionError("$this: No such value argument slot: $index")

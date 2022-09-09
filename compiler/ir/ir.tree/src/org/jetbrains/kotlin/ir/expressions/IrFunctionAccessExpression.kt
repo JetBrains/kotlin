@@ -29,7 +29,7 @@ abstract class IrFunctionAccessExpression : IrMemberAccessExpression<IrFunctionS
             putValueArgument(contextReceiversCount, value)
         }
 
-    val receiversPrefixSize: Int
+    override val receiversPrefixSize: Int
         get() = contextReceiversCount + (if (hasExtensionReceiver) 1 else 0)
 
     fun putExtensionReceiverAsArgument(expression: IrExpression) {
