@@ -23,7 +23,10 @@ object EnumDeclaringClassDeprecationChecker : CallChecker {
         if (resultingDescriptor !is PropertyDescriptor || resultingDescriptor.kind != CallableMemberDescriptor.Kind.SYNTHESIZED) return
         val extensionReceiver = resultingDescriptor.extensionReceiverParameter?.value as? ExtensionReceiver ?: return
         if (resultingDescriptor.name.asString() != "declaringClass") return
-        if (extensionReceiver.type.constructor.declarationDescriptor.classId != StandardClassIds.Enum) return
+        val extensionReceiverConstructor = extensionReceiver.type.constructor
+        if (extensionReceiverConstructor.declarationDescriptor.classId != StandardClassIds.Enum &&
+            extensionReceiverConstructor.supertypes.none { it.constructor.declarationDescriptor.classId == StandardClassIds.Enum }
+        ) return
         context.trace.report(ErrorsJvm.ENUM_DECLARING_CLASS_DEPRECATED.on(context.languageVersionSettings, reportOn))
     }
 }
