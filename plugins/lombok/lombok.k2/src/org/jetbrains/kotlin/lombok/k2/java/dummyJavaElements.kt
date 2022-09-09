@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 object JavaClasses {
+    val Object = DummyJavaClass("Object", javaLangName("Object"), numberOfTypeParameters = 0)
     val Iterable = DummyJavaClass("Iterable", javaLangName("Iterable"), numberOfTypeParameters = 1)
     val Collection = DummyJavaClass("Collection", javaUtilName("Collection"), numberOfTypeParameters = 1)
     val Map = DummyJavaClass("Map", javaUtilName("Map"), numberOfTypeParameters = 2)

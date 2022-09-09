@@ -62,6 +62,12 @@ public class FirBlackBoxCodegenTestForLombokGenerated extends AbstractFirBlackBo
     }
 
     @Test
+    @TestMetadata("builderRawSingular.kt")
+    public void testBuilderRawSingular() throws Exception {
+        runTest("plugins/lombok/testData/box/builderRawSingular.kt");
+    }
+
+    @Test
     @TestMetadata("builderSingular.kt")
     public void testBuilderSingular() throws Exception {
         runTest("plugins/lombok/testData/box/builderSingular.kt");

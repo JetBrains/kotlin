@@ -186,9 +186,11 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
         val addMultipleParameterType: FirTypeRef
         val valueParameters: List<ConeLombokValueParameter>
 
+        val fallbackParameterType = DummyJavaClassType.ObjectType.takeIf { javaClassifierType.isRaw }
+
         when (typeName) {
             in LombokNames.SUPPORTED_COLLECTIONS -> {
-                val parameterType = javaClassifierType.parameterType(0) ?: return
+                val parameterType = javaClassifierType.parameterType(0) ?: fallbackParameterType ?: return
                 valueParameters = listOf(
                     ConeLombokValueParameter(nameInSingularForm, parameterType.toRef())
                 )
@@ -204,8 +206,8 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
             }
 
             in LombokNames.SUPPORTED_MAPS -> {
-                val keyType = javaClassifierType.parameterType(0) ?: return
-                val valueType = javaClassifierType.parameterType(1) ?: return
+                val keyType = javaClassifierType.parameterType(0) ?: fallbackParameterType ?: return
+                val valueType = javaClassifierType.parameterType(1) ?: fallbackParameterType ?: return
                 valueParameters = listOf(
                     ConeLombokValueParameter(Name.identifier("key"), keyType.toRef()),
                     ConeLombokValueParameter(Name.identifier("value"), valueType.toRef()),
@@ -217,9 +219,9 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
             }
 
             in LombokNames.SUPPORTED_TABLES -> {
-                val rowKeyType = javaClassifierType.parameterType(0) ?: return
-                val columnKeyType = javaClassifierType.parameterType(1) ?: return
-                val valueType = javaClassifierType.parameterType(2) ?: return
+                val rowKeyType = javaClassifierType.parameterType(0) ?: fallbackParameterType ?: return
+                val columnKeyType = javaClassifierType.parameterType(1) ?: fallbackParameterType ?: return
+                val valueType = javaClassifierType.parameterType(2) ?: fallbackParameterType ?: return
 
                 valueParameters = listOf(
                     ConeLombokValueParameter(Name.identifier("rowKey"), rowKeyType.toRef()),
