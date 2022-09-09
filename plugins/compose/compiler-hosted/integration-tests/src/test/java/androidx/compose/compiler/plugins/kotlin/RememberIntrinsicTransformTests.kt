@@ -179,7 +179,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                test1(x, %composer, %changed or 0b0001)
+                test1(x, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -196,7 +196,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 traceEventEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                test2(x, %composer, %changed or 0b0001)
+                test2(x, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -221,7 +221,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                test3(x, %composer, %changed or 0b0001)
+                test3(x, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -375,7 +375,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, %changed or 0b0001)
+                Test(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -416,7 +416,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, %changed or 0b0001)
+                Test(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -453,7 +453,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, %changed or 0b0001)
+                Test(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -495,7 +495,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, %changed or 0b0001)
+                Test(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -535,7 +535,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, %changed or 0b0001)
+                Test(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -574,7 +574,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, %changed or 0b0001)
+                Test(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -621,7 +621,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(condition, %composer, %changed or 0b0001)
+                Test(condition, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -668,7 +668,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(condition, %composer, %changed or 0b0001)
+                Test(condition, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -710,7 +710,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 traceEventEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(items, %composer, %changed or 0b0001)
+                Test(items, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -755,7 +755,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 traceEventEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(items, %composer, %changed or 0b0001)
+                Test(items, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -789,7 +789,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 traceEventEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(items, %composer, %changed or 0b0001)
+                Test(items, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -839,7 +839,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(a, b, c, d, %composer, %changed or 0b0001)
+                Test(a, b, c, d, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -872,7 +872,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 traceEventEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(items, %composer, %changed or 0b0001)
+                Test(items, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -915,7 +915,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(inlineInt, %composer, %changed or 0b0001)
+                Test(inlineInt, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -964,7 +964,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, %changed or 0b0001)
+                Test(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -1007,7 +1007,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(a, %composer, %changed or 0b0001)
+                Test(a, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -1082,7 +1082,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(a, %composer, %changed or 0b0001)
+                Test(a, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -1120,7 +1120,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(a, %composer, %changed or 0b0001)
+                Test(a, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -1161,7 +1161,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(a, %composer, %changed or 0b0001)
+                Test(a, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -1198,7 +1198,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(a, %composer, %changed or 0b0001)
+                Test(a, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -1250,7 +1250,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(a, %composer, %changed or 0b0001, %default)
+                Test(a, %composer, updateChangedFlags(%changed or 0b0001), %default)
               }
             }
         """

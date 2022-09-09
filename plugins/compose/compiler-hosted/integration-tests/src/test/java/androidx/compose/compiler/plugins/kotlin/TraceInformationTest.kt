@@ -58,7 +58,7 @@ class TraceInformationTest : ComposeIrTransformTest() {
                 }
                 val tmp0_rcvr = <this>
                 %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                  tmp0_rcvr.B(x, %composer, %changed or 0b0001)
+                  tmp0_rcvr.B(x, %composer, updateChangedFlags(%changed or 0b0001))
                 }
               }
               static val %stable: Int = 0
@@ -79,7 +79,7 @@ class TraceInformationTest : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                C(%composer, %changed or 0b0001)
+                C(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """,
@@ -137,7 +137,7 @@ class TraceInformationTest : ComposeIrTransformTest() {
                         traceEventEnd()
                       }
                       %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                        Test(condition, %composer, %changed or 0b0001)
+                        Test(condition, %composer, updateChangedFlags(%changed or 0b0001))
                       }
                       return
                     }
@@ -155,7 +155,7 @@ class TraceInformationTest : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(condition, %composer, %changed or 0b0001)
+                Test(condition, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """,

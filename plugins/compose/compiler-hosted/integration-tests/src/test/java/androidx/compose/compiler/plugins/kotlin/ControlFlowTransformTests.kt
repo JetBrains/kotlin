@@ -1414,7 +1414,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                     traceEventEnd()
                   }
                   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                    Example(items, %composer, %changed or 0b0001)
+                    Example(items, %composer, updateChangedFlags(%changed or 0b0001))
                   }
                   return
                 } else {
@@ -1429,7 +1429,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 traceEventEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Example(items, %composer, %changed or 0b0001)
+                Example(items, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -2773,7 +2773,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Example(x, %composer, %changed or 0b0001)
+                Example(x, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -2820,7 +2820,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Example(x, %composer, %changed or 0b0001)
+                Example(x, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -2928,7 +2928,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, %changed or 0b0001)
+                Test(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             internal object ComposableSingletons%TestKt {
@@ -2986,7 +2986,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, %changed or 0b0001)
+                Test(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -3024,7 +3024,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, %changed or 0b0001)
+                Test(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             internal object ComposableSingletons%TestKt {
@@ -3098,7 +3098,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(value, %composer, %changed or 0b0001)
+                Test(value, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -3285,7 +3285,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test01(p0, p1, p2, p3, %composer, %changed or 0b0001)
+                Test01(p0, p1, p2, p3, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -3320,7 +3320,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test02(p0, p1, p3, p2, %composer, %changed or 0b0001)
+                Test02(p0, p1, p3, p2, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -3355,7 +3355,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test03(p0, p2, p1, p3, %composer, %changed or 0b0001)
+                Test03(p0, p2, p1, p3, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -3390,7 +3390,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test04(p0, p2, p3, p1, %composer, %changed or 0b0001)
+                Test04(p0, p2, p3, p1, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -3425,7 +3425,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test05(p0, p3, p1, p2, %composer, %changed or 0b0001)
+                Test05(p0, p3, p1, p2, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -3460,7 +3460,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test06(p0, p3, p2, p1, %composer, %changed or 0b0001)
+                Test06(p0, p3, p2, p1, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -3495,7 +3495,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test07(p1, p0, p2, p3, %composer, %changed or 0b0001)
+                Test07(p1, p0, p2, p3, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -3530,7 +3530,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test08(p1, p0, p3, p2, %composer, %changed or 0b0001)
+                Test08(p1, p0, p3, p2, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -3565,7 +3565,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test09(p1, p2, p0, p3, %composer, %changed or 0b0001)
+                Test09(p1, p2, p0, p3, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -3600,7 +3600,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test00(p1, p2, p3, p0, %composer, %changed or 0b0001)
+                Test00(p1, p2, p3, p0, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -3635,7 +3635,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test11(p1, p3, p0, p2, %composer, %changed or 0b0001)
+                Test11(p1, p3, p0, p2, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -3670,7 +3670,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test12(p1, p3, p2, p0, %composer, %changed or 0b0001)
+                Test12(p1, p3, p2, p0, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -3705,7 +3705,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test13(p2, p0, p1, p3, %composer, %changed or 0b0001)
+                Test13(p2, p0, p1, p3, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -3740,7 +3740,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test14(p2, p0, p3, p1, %composer, %changed or 0b0001)
+                Test14(p2, p0, p3, p1, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -3775,7 +3775,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test15(p2, p1, p0, p3, %composer, %changed or 0b0001)
+                Test15(p2, p1, p0, p3, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -3810,7 +3810,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test16(p2, p1, p3, p0, %composer, %changed or 0b0001)
+                Test16(p2, p1, p3, p0, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -3845,7 +3845,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test17(p2, p3, p0, p1, %composer, %changed or 0b0001)
+                Test17(p2, p3, p0, p1, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -3880,7 +3880,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test18(p2, p3, p1, p0, %composer, %changed or 0b0001)
+                Test18(p2, p3, p1, p0, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -3915,7 +3915,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test19(p3, p0, p1, p2, %composer, %changed or 0b0001)
+                Test19(p3, p0, p1, p2, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -3950,7 +3950,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test20(p3, p0, p2, p1, %composer, %changed or 0b0001)
+                Test20(p3, p0, p2, p1, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -3985,7 +3985,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test21(p3, p1, p0, p2, %composer, %changed or 0b0001)
+                Test21(p3, p1, p0, p2, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -4020,7 +4020,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test22(p3, p1, p2, p0, %composer, %changed or 0b0001)
+                Test22(p3, p1, p2, p0, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -4055,7 +4055,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test23(p3, p2, p0, p1, %composer, %changed or 0b0001)
+                Test23(p3, p2, p0, p1, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -4090,7 +4090,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test24(p3, p2, p1, p0, %composer, %changed or 0b0001)
+                Test24(p3, p2, p1, p0, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -4135,7 +4135,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(value, %composer, %changed or 0b0001)
+                Test(value, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """,
@@ -4180,7 +4180,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, %changed or 0b0001)
+                Test(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """,
@@ -4305,7 +4305,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, %changed or 0b0001)
+                Test(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             internal object ComposableSingletons%TestKt {
@@ -4426,7 +4426,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, %changed or 0b0001)
+                Test(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """,
@@ -4554,7 +4554,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, %changed or 0b0001)
+                Test(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """,
@@ -4656,7 +4656,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                AttemptedToRealizeGroupTwice(%composer, %changed or 0b0001)
+                AttemptedToRealizeGroupTwice(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """,
@@ -4739,7 +4739,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(start, end, %composer, %changed or 0b0001)
+                Test(start, end, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -4839,7 +4839,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                ArrayConstructorTest(n, %composer, %changed or 0b0001)
+                ArrayConstructorTest(n, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
