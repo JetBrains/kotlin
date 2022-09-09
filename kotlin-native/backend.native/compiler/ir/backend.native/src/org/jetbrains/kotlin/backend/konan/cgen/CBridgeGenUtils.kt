@@ -205,9 +205,6 @@ internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, priv
             if (function.dispatchReceiverParameter != null) {
                 dispatchReceiver = arguments.removeAt(0)
             }
-            if (function.extensionReceiverParameter != null) {
-                extensionReceiver = arguments.removeAt(0)
-            }
             assert(arguments.size == function.valueParameters.size)
             arguments.forEachIndexed { index, it -> putValueArgument(index, it) }
 

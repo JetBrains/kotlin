@@ -72,10 +72,7 @@ internal class BridgesSupport(mapping: NativeMapping, val irBuiltIns: IrBuiltIns
             dispatchReceiverParameter = function.dispatchReceiverParameter?.let {
                 it.copyTo(bridge, type = bridgeDirections.dispatchReceiverDirection.type() ?: it.type)
             }
-            extensionReceiverParameter = function.extensionReceiverParameter?.let {
-                it.copyTo(bridge, type = bridgeDirections.extensionReceiverDirection.type() ?: it.type)
-            }
-            valueParameters = function.valueParameters.map {
+            allValueParameters = function.valueParameters.map {
                 it.copyTo(bridge, type = bridgeDirections.parameterDirectionAt(it.index).type() ?: it.type)
             }
 
@@ -298,15 +295,10 @@ private fun Context.buildBridge(startOffset: Int, endOffset: Int,
                 endOffset,
                 targetSymbol.owner.returnType,
                 targetSymbol,
-                typeArgumentsCount = targetSymbol.owner.typeParameters.size,
-                valueArgumentsCount = targetSymbol.owner.valueParameters.size,
                 superQualifierSymbol = superQualifierSymbol /* Call non-virtually */
         ).apply {
             bridge.dispatchReceiverParameter?.let {
                 dispatchReceiver = irGet(it)
-            }
-            bridge.extensionReceiverParameter?.let {
-                extensionReceiver = irGet(it)
             }
             bridge.valueParameters.forEachIndexed { index, parameter ->
                 this.putValueArgument(index, irGet(parameter))

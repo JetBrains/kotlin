@@ -464,9 +464,7 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
 
                 this.createDispatchReceiverParameter()
 
-                extensionReceiverParameter = superFunction.extensionReceiverParameter?.copyTo(function)
-
-                valueParameters += superFunction.valueParameters.mapIndexed { index, parameter ->
+                allValueParameters += superFunction.valueParameters.mapIndexed { index, parameter ->
                     parameter.copyTo(function, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, index,
                             type = functionParameterTypes[index])
                 }
@@ -487,10 +485,7 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                                                         argumentToPropertiesMap[parameter]!!
                                                 )
                                             else {
-                                                if (parameter == referencedFunction.extensionReceiverParameter
-                                                        && extensionReceiverParameter != null)
-                                                    irGet(extensionReceiverParameter!!)
-                                                else if (function.isSuspend && unboundIndex == valueParameters.size)
+                                                if (function.isSuspend && unboundIndex == valueParameters.size)
                                                 // For suspend functions the last argument is continuation and it is implicit.
                                                     irCall(getContinuationSymbol.owner, listOf(returnType))
                                                 else
@@ -498,7 +493,6 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                                             }
                                     when (parameter) {
                                         referencedFunction.dispatchReceiverParameter -> dispatchReceiver = argument
-                                        referencedFunction.extensionReceiverParameter -> extensionReceiver = argument
                                         else -> putValueArgument(parameter.index, argument)
                                     }
                                 }

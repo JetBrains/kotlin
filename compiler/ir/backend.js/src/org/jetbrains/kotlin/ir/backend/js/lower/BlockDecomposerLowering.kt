@@ -583,7 +583,7 @@ class BlockDecomposerTransformer(
         override fun visitMemberAccess(expression: IrMemberAccessExpression<*>): IrExpression {
             expression.transformChildrenVoid(expressionTransformer)
 
-            val oldArguments = mutableListOf(expression.dispatchReceiver, expression.extensionReceiver)
+            val oldArguments = mutableListOf(expression.dispatchReceiver)
             for (i in 0 until expression.valueArgumentsCount) oldArguments += expression.getValueArgument(i)
             val compositeCount = oldArguments.count { it is IrComposite }
 

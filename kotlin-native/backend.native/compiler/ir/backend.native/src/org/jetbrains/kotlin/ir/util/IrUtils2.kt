@@ -171,13 +171,6 @@ fun IrFunctionAccessExpression.addArguments(args: Map<IrValueParameter, IrExpres
         }
     }
 
-    symbol.owner.extensionReceiverParameter?.let {
-        val arg = getArg(it)
-        if (arg != null) {
-            this.extensionReceiver = arg
-        }
-    }
-
     symbol.owner.valueParameters.forEach {
         val arg = getArg(it)
         if (arg != null) {
@@ -285,10 +278,6 @@ fun IrMemberAccessExpression<*>.getArgumentsWithIr(): List<Pair<IrValueParameter
 
     dispatchReceiver?.let {
         res += (irFunction.dispatchReceiverParameter!! to it)
-    }
-
-    extensionReceiver?.let {
-        res += (irFunction.extensionReceiverParameter!! to it)
     }
 
     irFunction.valueParameters.forEachIndexed { index, it ->

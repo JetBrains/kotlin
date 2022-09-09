@@ -212,7 +212,6 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
                     null
                 else when (parameter) {
                     parent.dispatchReceiverParameter -> parent.findActualForExpected().dispatchReceiverParameter!!
-                    parent.extensionReceiverParameter -> parent.findActualForExpected().extensionReceiverParameter!!
                     else -> {
                         assert(parent.valueParameters[parameter.index] == parameter)
                         parent.findActualForExpected().valueParameters[parameter.index]

@@ -339,8 +339,11 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
             newFunction.parent = this
             newFunction.overriddenSymbols = descriptor.overriddenDescriptors.mapNotNull { symbolTable.referenceSimpleFunction(it.original) }
             newFunction.dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.let { newFunction.createValueParameter(it) }
-            newFunction.extensionReceiverParameter = descriptor.extensionReceiverParameter?.let { newFunction.createValueParameter(it) }
-            newFunction.valueParameters = descriptor.valueParameters.map { newFunction.createValueParameter(it) }
+            newFunction.allValueParameters =
+                    buildList {
+                        descriptor.extensionReceiverParameter?.let { add(newFunction.createValueParameter(it)) }
+                        descriptor.valueParameters.mapTo(this) { newFunction.createValueParameter(it) }
+                    }
             newFunction.correspondingPropertySymbol = property
 
             return newFunction

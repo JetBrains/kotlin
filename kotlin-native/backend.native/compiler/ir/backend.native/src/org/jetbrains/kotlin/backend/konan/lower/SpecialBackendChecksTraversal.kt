@@ -700,10 +700,6 @@ private fun BackendChecker.checkCanGenerateCFunction(
         isObjCMethod: Boolean,
         location: IrElement
 ) {
-    signature.extensionReceiverParameter?.let {
-        checkParameter(it, function.extensionReceiverParameter!!, isObjCMethod, location)
-    }
-
     signature.valueParameters.forEach {
         checkParameter(it, function.valueParameters[it.index], isObjCMethod, location)
     }
