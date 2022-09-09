@@ -165,6 +165,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionDefaultParams/");
     }
 
+    @TestMetadata("inlineFunctionWithObject")
+    public void testInlineFunctionWithObject() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionWithObject/");
+    }
+
     @TestMetadata("jsCode")
     public void testJsCode() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/jsCode/");
