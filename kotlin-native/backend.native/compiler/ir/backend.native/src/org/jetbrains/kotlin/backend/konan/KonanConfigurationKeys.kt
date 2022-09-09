@@ -48,8 +48,6 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create<List<String>>("which files should be compiled to cache")
         val MAKE_PER_FILE_CACHE: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create<Boolean>("make per-file cache")
-        val BATCHED_PER_FILE_CACHE_BUILD: CompilerConfigurationKey<Boolean>
-                = CompilerConfigurationKey.create<Boolean>("build per-file caches in batches")
         val FRAMEWORK_IMPORT_HEADERS: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create<List<String>>("headers imported to framework header")
         val FRIEND_MODULES: CompilerConfigurationKey<List<String>>

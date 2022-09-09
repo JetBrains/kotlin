@@ -31,9 +31,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 val KonanConfig.isFinalBinary: Boolean get() = when (this.produce) {
     CompilerOutputKind.PROGRAM, CompilerOutputKind.DYNAMIC,
     CompilerOutputKind.STATIC -> true
-    CompilerOutputKind.DYNAMIC_CACHE, CompilerOutputKind.STATIC_CACHE, CompilerOutputKind.PRELIMINARY_CACHE,
+    CompilerOutputKind.DYNAMIC_CACHE, CompilerOutputKind.STATIC_CACHE,
     CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE -> false
     CompilerOutputKind.FRAMEWORK -> !omitFrameworkBinary
+    else -> error("not supported: ${this.produce}")
 }
 
 val CompilerOutputKind.isNativeLibrary: Boolean
@@ -62,16 +63,16 @@ val KonanConfig.involvesLinkStage: Boolean
         CompilerOutputKind.PROGRAM, CompilerOutputKind.DYNAMIC,
         CompilerOutputKind.DYNAMIC_CACHE, CompilerOutputKind.STATIC_CACHE,
         CompilerOutputKind.STATIC -> true
-        CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE, CompilerOutputKind.PRELIMINARY_CACHE -> false
+        CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE -> false
         CompilerOutputKind.FRAMEWORK -> !omitFrameworkBinary
+        else -> error("not supported: ${this.produce}")
     }
 
 val CompilerOutputKind.isCache: Boolean
     get() = this == CompilerOutputKind.STATIC_CACHE || this == CompilerOutputKind.DYNAMIC_CACHE
-            || this == CompilerOutputKind.PRELIMINARY_CACHE
 
 val KonanConfig.involvesCodegen: Boolean
-    get() = produce != CompilerOutputKind.LIBRARY && produce != CompilerOutputKind.PRELIMINARY_CACHE && !omitFrameworkBinary
+    get() = produce != CompilerOutputKind.LIBRARY && !omitFrameworkBinary
 
 internal fun llvmIrDumpCallback(state: ActionState, module: IrModuleFragment, context: Context) {
     module.let{}
@@ -274,7 +275,7 @@ internal fun produceOutput(context: Context) {
             context.bitcodeFileName = output
             LLVMWriteBitcodeToFile(context.generationState.llvm.module, output)
         }
-        CompilerOutputKind.PRELIMINARY_CACHE -> {}
+        else -> error("not supported: $produce")
     }
 }
 

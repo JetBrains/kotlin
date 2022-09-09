@@ -45,7 +45,7 @@ internal class NativeInlineFunctionResolver(override val context: Context) : Def
 
         val packageFragment = function.getPackageFragment()
         val (possiblyLoweredFunction, shouldLower) = if (packageFragment !is IrExternalPackageFragment) {
-            context.inlineFunctionsSupport.getNonLoweredInlineFunction(function, copy = context.config.produceBatchedPerFileCache).also {
+            context.inlineFunctionsSupport.getNonLoweredInlineFunction(function, copy = context.config.producePerFileCache).also {
                 context.generationState.loweredInlineFunctions[function] =
                         InlineFunctionOriginInfo(it, packageFragment as IrFile, function.startOffset, function.endOffset)
             } to true

@@ -30,9 +30,8 @@ internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: 
 internal class NativeGenerationState(private val context: Context) {
     private val config = context.config
 
-    private val explicitlyProducePerFileCache = config.producePerFileCache && !config.produceBatchedPerFileCache
-    private val outputPath = config.cacheSupport.tryGetImplicitOutput(explicitlyProducePerFileCache) ?: config.outputPath
-    val outputFiles = OutputFiles(outputPath, config.target, config.produce, explicitlyProducePerFileCache)
+    private val outputPath = config.cacheSupport.tryGetImplicitOutput() ?: config.outputPath
+    val outputFiles = OutputFiles(outputPath, config.target, config.produce)
     val tempFiles = run {
         val pathToTempDir = config.configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR)?.let {
             val singleFileStrategy = config.cacheSupport.libraryToCache?.strategy as? CacheDeserializationStrategy.SingleFile

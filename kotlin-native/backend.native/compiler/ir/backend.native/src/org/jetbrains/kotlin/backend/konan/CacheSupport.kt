@@ -72,7 +72,7 @@ class CacheSupport(
                         ?: configuration.reportCompilationError("cache directory $it is not found or not a directory")
             }
 
-    internal fun tryGetImplicitOutput(explicitlyProducePerFileCache: Boolean): String? {
+    internal fun tryGetImplicitOutput(): String? {
         val libraryToCache = libraryToCache ?: return null
         // Put the resulting library in the first cache directory.
         val cacheDirectory = implicitCacheDirectories.firstOrNull() ?: return null
@@ -86,14 +86,8 @@ class CacheSupport(
         val singleFilePath = singleFileStrategy?.filePath
                 ?: return baseLibraryCacheDirectory.absolutePath
 
-        val fqName = singleFileStrategy.fqName
-        val fileCacheDirectory = baseLibraryCacheDirectory.child(cacheFileId(fqName, singleFilePath))
-        if (!explicitlyProducePerFileCache)
-            return fileCacheDirectory.absolutePath
-        val contentDirName = if (produce == CompilerOutputKind.PRELIMINARY_CACHE)
-            CachedLibraries.PER_FILE_CACHE_IR_LEVEL_DIR_NAME
-        else CachedLibraries.PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME
-        return fileCacheDirectory.child(contentDirName).absolutePath
+        val fileCacheDirectory = baseLibraryCacheDirectory.child(cacheFileId(singleFileStrategy.fqName, singleFilePath))
+        return fileCacheDirectory.absolutePath
     }
 
     internal val cachedLibraries: CachedLibraries = run {
@@ -148,10 +142,7 @@ class CacheSupport(
                     val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(libraryToAddToCache, index))
                     fileReader.deserializeFqName(fileProtos[index].fqNameList)
                 }
-                if (configuration.get(KonanConfigKeys.BATCHED_PER_FILE_CACHE_BUILD) == false)
-                    CacheDeserializationStrategy.SingleFile(filesToCache.single(), fqNames.single())
-                else
-                    CacheDeserializationStrategy.MultipleFiles(filesToCache, fqNames)
+                CacheDeserializationStrategy.MultipleFiles(filesToCache, fqNames)
             }
             PartialCacheInfo(libraryToAddToCache, strategy)
         }

@@ -17,14 +17,12 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.MetaVersion
-import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import org.jetbrains.kotlin.konan.util.visibleName
-import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -409,17 +407,13 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         get() = cacheSupport.libraryToCache
 
     internal val producePerFileCache
-        get() = libraryToCache?.strategy is CacheDeserializationStrategy.SingleFile
-
-    internal val produceBatchedPerFileCache
         get() = configuration.get(KonanConfigKeys.MAKE_PER_FILE_CACHE) == true
-                && configuration.get(KonanConfigKeys.BATCHED_PER_FILE_CACHE_BUILD) != false
 
     val outputPath get() = configuration.get(KonanConfigKeys.OUTPUT)?.removeSuffixIfPresent(produce.suffix(target)) ?: produce.visibleName
 
     private val implicitModuleName: String
         get() = cacheSupport.libraryToCache?.let {
-            if (configuration.get(KonanConfigKeys.MAKE_PER_FILE_CACHE) == true)
+            if (producePerFileCache)
                 CachedLibraries.getPerFileCachedLibraryName(it.klib)
             else
                 CachedLibraries.getCachedLibraryName(it.klib)
