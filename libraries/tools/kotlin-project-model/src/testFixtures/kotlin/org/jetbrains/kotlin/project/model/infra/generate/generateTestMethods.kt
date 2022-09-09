@@ -20,8 +20,7 @@ fun generateKpmTestCases(
     for (testGroup in suite.testGroups) {
         for (testClass in testGroup.testClasses) {
             val (changed, testSourceFilePath) = NewTestGeneratorImpl(
-                listOf(KpmCoreCaseTestMethodGenerator),
-                generatorName = "GenerateKpmTests.kt"
+                listOf(KpmCoreCaseTestMethodGenerator)
             ).generateAndSave(testClass, dryRun)
             if (changed) {
                 InconsistencyChecker.inconsistencyChecker(dryRun).add(testSourceFilePath)

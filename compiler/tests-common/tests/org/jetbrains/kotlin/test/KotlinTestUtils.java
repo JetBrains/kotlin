@@ -69,8 +69,6 @@ import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isIgnoredTarget;
 public class KotlinTestUtils {
     public static String TEST_MODULE_NAME = "test-module";
 
-    public static final String TEST_GENERATOR_NAME = "org.jetbrains.kotlin.generators.tests.TestsPackage";
-
     private static final boolean RUN_IGNORED_TESTS_AS_REGULAR =
             Boolean.getBoolean("org.jetbrains.kotlin.run.ignored.tests.as.regular");
 

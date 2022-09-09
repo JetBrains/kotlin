@@ -98,13 +98,4 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             )
         }
     }
-    testGroup(testsRoot = "compiler/fir/analysis-tests/tests-gen", testDataRoot = GeneralConfiguration.SPEC_TESTDATA_PATH) {
-        testClass<AbstractFirDiagnosticTestSpec> {
-            model(
-                "diagnostics",
-                excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
-                excludedPattern = excludedFirTestdataPattern
-            )
-        }
-    }
 }
