@@ -135,7 +135,7 @@ internal object FirAnnotationValueConverter {
                 }
             }
             is FirGetClassCall -> {
-                val symbol = (argument as FirResolvedQualifier).symbol
+                val symbol = (argument as? FirResolvedQualifier)?.symbol
                 when {
                     symbol == null -> KtKClassAnnotationValue.KtErrorClassAnnotationValue(sourcePsi)
                     symbol.classId.isLocal -> KtKClassAnnotationValue.KtLocalKClassAnnotationValue(
