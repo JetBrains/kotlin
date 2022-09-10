@@ -32,6 +32,11 @@ internal class WasmUsefulDeclarationProcessor(
             else -> Unit
         }
 
+        override fun visitVariable(declaration: IrVariable, data: IrDeclaration) {
+            declaration.type.enqueueType(data, "local variable type")
+            super.visitVariable(declaration, data)
+        }
+
         private fun tryToProcessIntrinsicCall(from: IrDeclaration, call: IrCall): Boolean = when (call.symbol) {
             context.wasmSymbols.unboxIntrinsic -> {
                 val fromType = call.getTypeArgument(0)
