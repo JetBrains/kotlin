@@ -29,7 +29,12 @@ class KotlinDeclarationInCompiledFileSearcherFE10Impl : KotlinDeclarationInCompi
             findByStub(file, relativeClassName, member, memberName)?.let { return it }
         }
 
-        return file.getDeclaration(BySignatureIndexer, key)
+        val declaration = file.getDeclaration(BySignatureIndexer, key) ?: return null
+        return if (member is PsiMethod && member.isConstructor && declaration is KtClassOrObject) {
+            declaration.primaryConstructor ?: declaration
+        } else {
+            declaration
+        }
     }
 }
 
