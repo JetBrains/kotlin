@@ -57,10 +57,14 @@ object DecompiledLightClassesFactory {
                 innerClass != null,
                 { "Could not find corresponding inner/nested class " + relativeFqName + " in class " + decompiledClassOrObject.fqName + "\nFile: " + decompiledClassOrObject.containingKtFile.virtualFile.name },
                 {
-                    it.withAttachment("decompiledClassOrObject", decompiledClassOrObject.text)
-                    it.withAttachment("fileClass", decompiledClassOrObject.containingFile::class)
-                    it.withAttachment("file", decompiledClassOrObject.containingFile.text)
-                    it.withAttachment("root", rootLightClassForDecompiledFile.text)
+                    it.withAttachment("decompiledClassOrObject.txt", decompiledClassOrObject.text)
+                    it.withAttachment("fileClass.txt", decompiledClassOrObject.containingFile::class)
+                    it.withAttachment("file.txt", decompiledClassOrObject.containingFile.text)
+                    it.withAttachment("root.txt", rootLightClassForDecompiledFile.text)
+                    it.withAttachment("currentName.txt", current.name)
+                    it.withAttachment("current.txt", current.text)
+                    it.withAttachment("innerClasses.txt", current.innerClasses.map { psiClass -> psiClass.name })
+                    it.withAttachment("innerName.txt", name.asString())
                 },
             )
 
