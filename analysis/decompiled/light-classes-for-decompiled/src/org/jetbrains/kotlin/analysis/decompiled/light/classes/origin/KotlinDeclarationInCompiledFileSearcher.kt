@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.load.kotlin.MemberSignature
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.allConstructors
 import org.jetbrains.kotlin.type.MapPsiToAsmDesc
 
@@ -54,16 +55,19 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
             }
         } ?: return null
 
-        return if (member is PsiMethod && member.isConstructor) {
-            container.takeIf { it.name == memberName }?.allConstructors?.singleOrNull()
-        } else {
-            val declarations = container.declarations
-            val names: Collection<String> = if (member is PsiMethod)
-                member.syntheticAccessors.map(Name::asString) + memberName
-            else
-                listOf(memberName)
+        if (member is PsiMethod && member.isConstructor) {
+            return container.takeIf { it.name == memberName }?.allConstructors?.singleOrNull()
+        }
 
-            declarations.singleOrNull { declaration -> declaration.name in names }
+        val declarations = container.declarations
+        return when (member) {
+            is PsiMethod -> {
+                val names = member.syntheticAccessors.map(Name::asString) + memberName
+                declarations.singleOrNull { it.name in names }
+            }
+
+            is PsiField -> declarations.singleOrNull { it !is KtNamedFunction && it.name == memberName }
+            else -> declarations.singleOrNull { it.name == memberName }
         }
     }
 
