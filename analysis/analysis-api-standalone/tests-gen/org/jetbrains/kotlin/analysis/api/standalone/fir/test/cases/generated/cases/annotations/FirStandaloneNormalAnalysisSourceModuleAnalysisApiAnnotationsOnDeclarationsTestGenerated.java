@@ -80,6 +80,12 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiAnnotationsOnDecl
         }
 
         @Test
+        @TestMetadata("onFunction_unresolvedClassReference.kt")
+        public void testOnFunction_unresolvedClassReference() throws Exception {
+            runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/onFunction_unresolvedClassReference.kt");
+        }
+
+        @Test
         @TestMetadata("onProperty.kt")
         public void testOnProperty() throws Exception {
             runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/onProperty.kt");
