@@ -13,10 +13,8 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.load.kotlin.MemberSignature
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
-import org.jetbrains.kotlin.type.MapPsiToAsmDesc
 
 interface LightMemberOriginForCompiledElement<T : PsiMember> : LightMemberOrigin {
     val member: T
@@ -49,9 +47,7 @@ data class LightMemberOriginForCompiledField(val psiField: PsiField, val file: K
     }
 
     override val originalElement: KtDeclaration? by lazyPub {
-        val desc = MapPsiToAsmDesc.typeDesc(psiField.type)
-        val signature = MemberSignature.fromFieldNameAndDesc(psiField.name, desc)
-        KotlinDeclarationInCompiledFileSearcher.getInstance().findDeclarationInCompiledFile(file, psiField, signature)
+        KotlinDeclarationInCompiledFileSearcher.getInstance().findDeclarationInCompiledFile(file, psiField)
     }
 }
 
@@ -71,9 +67,6 @@ data class LightMemberOriginForCompiledMethod(val psiMethod: PsiMethod, val file
     }
 
     override val originalElement: KtDeclaration? by lazyPub {
-        val desc = MapPsiToAsmDesc.methodDesc(psiMethod)
-        val name = if (psiMethod.isConstructor) "<init>" else psiMethod.name
-        val signature = MemberSignature.fromMethodNameAndDesc(name, desc)
-        KotlinDeclarationInCompiledFileSearcher.getInstance().findDeclarationInCompiledFile(file, psiMethod, signature)
+        KotlinDeclarationInCompiledFileSearcher.getInstance().findDeclarationInCompiledFile(file, psiMethod)
     }
 }
