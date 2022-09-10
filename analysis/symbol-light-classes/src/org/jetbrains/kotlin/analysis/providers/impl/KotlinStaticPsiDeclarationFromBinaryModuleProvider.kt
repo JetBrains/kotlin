@@ -12,6 +12,7 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.compiled.ClsClassImpl
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProvider
@@ -109,11 +110,15 @@ class KotlinStaticPsiDeclarationProviderFactory(
     private val binaryModules: Collection<KtBinaryModule>,
     private val jarFileSystem: CoreJarFileSystem,
 ) : KotlinPsiDeclarationProviderFactory() {
+    private val cache = ContainerUtil.createConcurrentWeakMap<GlobalSearchScope, PackagePartProvider>()
+
     override fun createPsiDeclarationProvider(searchScope: GlobalSearchScope): KotlinPsiDeclarationProvider {
         return KotlinStaticPsiDeclarationFromBinaryModuleProvider(
             project,
             searchScope,
-            createPackagePartProvider.invoke(searchScope),
+            cache.getOrPut(searchScope) {
+                createPackagePartProvider.invoke(searchScope)
+            },
             binaryModules,
             jarFileSystem,
         )
