@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -442,13 +443,14 @@ class DeclarationGenerator(
     }
 }
 
-
 fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) = when (type) {
     WasmI32 -> g.buildConstI32(0)
     WasmI64 -> g.buildConstI64(0)
     WasmF32 -> g.buildConstF32(0f)
     WasmF64 -> g.buildConstF64(0.0)
     is WasmRefNullType -> g.buildRefNull(type.heapType)
+    is WasmRefNullNoneType -> g.buildRefNull(WasmHeapType.Simple.NullNone)
+    is WasmRefNullExternrefType -> g.buildRefNull(WasmHeapType.Simple.NullNoExtern)
     is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Any)
     is WasmExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern)
     WasmUnreachableType -> error("Unreachable type can't be initialized")
@@ -466,7 +468,10 @@ fun IrFunction.isExported(): Boolean =
 
 fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder, context: WasmBaseCodegenContext) {
     when (val kind = expression.kind) {
-        is IrConstKind.Null -> generateDefaultInitializerForType(context.transformType(expression.type), body)
+        is IrConstKind.Null -> {
+            val bottomType = if (expression.type.getClass()?.isExternal == true) WasmRefNullExternrefType else WasmRefNullNoneType
+            body.buildInstr(WasmOp.REF_NULL, WasmImmediate.HeapType(bottomType))
+        }
         is IrConstKind.Boolean -> body.buildConstI32(if (kind.valueOf(expression)) 1 else 0)
         is IrConstKind.Byte -> body.buildConstI32(kind.valueOf(expression).toInt())
         is IrConstKind.Short -> body.buildConstI32(kind.valueOf(expression).toInt())
