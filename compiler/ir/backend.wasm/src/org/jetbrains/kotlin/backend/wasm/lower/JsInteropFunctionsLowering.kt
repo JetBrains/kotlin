@@ -259,7 +259,8 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             return null
 
         when (this) {
-            builtIns.stringType -> return FunctionBasedAdapter(adapters.jsToKotlinStringAdapter.owner)
+            builtIns.stringType -> return CheckNotNullAndAdapter(FunctionBasedAdapter(adapters.jsToKotlinStringAdapter.owner))
+            builtIns.stringType.makeNullable() -> return NullOrAdapter(FunctionBasedAdapter(adapters.jsToKotlinStringAdapter.owner))
             builtIns.anyType -> return FunctionBasedAdapter(adapters.jsToKotlinAnyAdapter.owner)
             builtIns.byteType -> return FunctionBasedAdapter(adapters.jsToKotlinByteAdapter.owner)
             builtIns.shortType -> return FunctionBasedAdapter(adapters.jsToKotlinShortAdapter.owner)
@@ -597,8 +598,28 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         override val toType: IrType = adapter.toType.makeNullable()
         override fun adapt(expression: IrExpression, builder: IrBuilderWithScope): IrExpression {
             return builder.irComposite {
-                val tmp = irTemporary(adapter.adapt(expression, builder))
-                +irIfNull(toType, irGet(tmp), irNull(toType), irImplicitCast(irGet(tmp), toType))
+                val tmp = irTemporary(expression)
+                +irIfNull(toType, irGet(tmp), irNull(toType), irImplicitCast(adapter.adapt(irGet(tmp), builder), toType))
+            }
+        }
+    }
+
+    /**
+     * Effectively `adapter(value!!)`
+     */
+    inner class CheckNotNullAndAdapter(
+        val adapter: InteropTypeAdapter
+    ) : InteropTypeAdapter {
+        override val fromType: IrType = adapter.fromType.makeNullable()
+        override val toType: IrType = adapter.toType.makeNotNull()
+        override fun adapt(expression: IrExpression, builder: IrBuilderWithScope): IrExpression {
+            return builder.irComposite {
+                val tmp = irTemporary(expression)
+                +irCall(context.irBuiltIns.checkNotNullSymbol).also {
+                    it.putValueArgument(0, irGet(tmp))
+                    it.putTypeArgument(0, fromType)
+                }
+                +adapter.adapt(irGet(tmp), builder)
             }
         }
     }
