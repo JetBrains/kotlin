@@ -589,8 +589,14 @@ class BodyGenerator(
         // NOTHING -> TYPE -> TRUE
         if (actualType.isNothing()) return
 
-        // NOTHING? -> TYPE? -> TRUE
-        if (actualType.isNullableNothing() && expectedType.isNullable()) return
+        // NOTHING? -> TYPE? -> (NOTHING?)NULL
+        if (actualType.isNullableNothing() && expectedType.isNullable()) {
+            if (expectedType.getClass()?.isExternal == true) {
+                body.buildDrop()
+                body.buildRefNull(WasmHeapType.Simple.NullNoExtern)
+            }
+            return
+        }
 
         val expectedClassErased = expectedType.getRuntimeClass(irBuiltIns)
 
