@@ -63,7 +63,13 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
         return fakeFile.classes.single() as ClsClassImpl
     }
 
-    override fun getClassesByClassId(classId: ClassId): Collection<ClsClassImpl> {
+    override fun getClassesByClassId(classId: ClassId): Collection<PsiClass> {
+        classId.parentClassId?.let { parentClassId ->
+            val innerClassName = classId.relativeClassName.asString().split(".").last()
+            return getClassesByClassId(parentClassId).mapNotNull { parentClsClass ->
+                parentClsClass.innerClasses.find { it.name == innerClassName }
+            }
+        }
         return clsClassImplsByFqName(classId.asSingleFqName(), isPackageName = false)
     }
 
