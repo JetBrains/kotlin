@@ -480,9 +480,6 @@ public actual inline fun max(a: Double, b: Double): Double = nativeMath.max(a, b
 public actual inline fun cbrt(x: Double): Double = nativeMath.cbrt(x)
 
 
-// extensions
-
-
 /**
  * Raises this value to the power [x].
  *
