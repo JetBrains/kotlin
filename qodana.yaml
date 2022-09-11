@@ -1,0 +1,8 @@
+version: "1.0"
+linter: jetbrains/qodana-jvm-community:2022.2
+profile:
+  name: qodana.recommended
+exclude:
+  - name: All
+    paths:
+      - sample
