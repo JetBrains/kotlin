@@ -83,6 +83,16 @@ internal fun <PropType : Any?, T : ListProperty<PropType>> T.chainedFinalizeValu
         finalizeValueOnRead()
     }
 
+internal fun <PropType : Any?, T: Property<PropType>> T.chainedFinalizeValue(): T =
+    apply {
+        finalizeValue()
+    }
+
+internal fun <PropType : Any?, T: Property<PropType>> T.chainedDisallowChanges(): T =
+    apply {
+        disallowChanges()
+    }
+
 // Before 5.0 fileProperty is created via ProjectLayout
 // https://docs.gradle.org/current/javadoc/org/gradle/api/model/ObjectFactory.html#fileProperty--
 internal fun Project.newFileProperty(initialize: (() -> File)? = null): RegularFileProperty {

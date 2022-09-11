@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.tasks.configuration
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.internal.transforms.ClasspathEntrySnapshotTransform
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
@@ -40,7 +40,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 task.incremental = propertiesProvider.incrementalJvm ?: true
 
                 if (propertiesProvider.useK2 == true) {
-                    task.kotlinOptions.useK2 = true
+                    task.compilerOptions.useK2.value(true)
                 }
                 task.usePreciseJavaTracking = propertiesProvider.usePreciseJavaTracking ?: true
                 task.jvmTargetValidationMode.set(propertiesProvider.jvmTargetValidationMode)
@@ -60,12 +60,11 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         }
     }
 
-    @Suppress("ConvertSecondaryConstructorToPrimary")
     constructor(compilation: KotlinCompilationData<*>) : super(compilation) {
         val javaTaskProvider = when (compilation) {
             is KotlinJvmCompilation -> compilation.compileJavaTaskProvider
             is KotlinJvmAndroidCompilation -> compilation.compileJavaTaskProvider
-            is KotlinWithJavaCompilation<*> -> compilation.compileJavaTaskProvider
+            is KotlinWithJavaCompilation<*, *> -> compilation.compileJavaTaskProvider
             else -> null
         }
 
@@ -76,10 +75,9 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                     task.associatedJavaCompileTaskSources.from(javaTaskProvider.map { it.source })
                     task.associatedJavaCompileTaskName.value(javaTaskProvider.name)
                 }
-                task.ownModuleName.value(providers.provider {
-                    (compilation.kotlinOptions as? KotlinJvmOptions)?.moduleName ?: task.parentKotlinOptions.orNull?.moduleName
-                    ?: compilation.ownModuleName
-                })
+                task.ownModuleName.value(
+                    (compilation.compilerOptions.options as CompilerJvmOptions).moduleName.convention(compilation.ownModuleName)
+                )
             }
         }
     }

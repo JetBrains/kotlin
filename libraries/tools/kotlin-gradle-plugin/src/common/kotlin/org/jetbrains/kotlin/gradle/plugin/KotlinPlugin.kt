@@ -173,7 +173,12 @@ internal class Kotlin2JvmSourceSetProcessor(
     override fun doRegisterTask(project: Project, taskName: String): TaskProvider<out KotlinCompile> {
         val configAction = KotlinCompileConfig(kotlinCompilation)
         applyStandardTaskConfiguration(configAction)
-        return tasksProvider.registerKotlinJVMTask(project, taskName, kotlinCompilation.kotlinOptions, configAction)
+        return tasksProvider.registerKotlinJVMTask(
+            project,
+            taskName,
+            kotlinCompilation.compilerOptions.options as CompilerJvmOptions,
+            configAction
+        )
     }
 
     override fun doTargetSpecificProcessing() {

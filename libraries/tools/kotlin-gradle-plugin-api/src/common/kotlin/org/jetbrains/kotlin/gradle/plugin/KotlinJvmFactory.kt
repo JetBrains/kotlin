@@ -25,7 +25,11 @@ interface KotlinJvmFactory {
     /** Instance of DSL object that should be used to configure Kotlin compilation pipeline. */
     val kotlinExtension: KotlinTopLevelExtensionConfig
 
-    /** Creates instance of DSL object that should be used to configure JVM/android specific compilation. */
+    /**
+     * Creates instance of DSL object that should be used to configure JVM/android specific compilation.
+     *
+     * Note: [CompilerJvmOptions] instance inside [KotlinJvmOptions] is not the same as returned by [createCompilerJvmOptions]
+     */
     @Deprecated(
         message = "Replaced by compilerJvmOptions",
         replaceWith = ReplaceWith("createCompilerJvmOptions()")

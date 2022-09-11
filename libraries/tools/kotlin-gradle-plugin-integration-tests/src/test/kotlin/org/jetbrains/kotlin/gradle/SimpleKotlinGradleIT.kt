@@ -78,7 +78,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     fun testJvmTarget(gradleVersion: GradleVersion) {
         project("jvmTarget", gradleVersion) {
             buildAndFail("build") {
-                assertOutputContains("Unknown JVM target version: 1.7")
+                assertOutputContains("Unknown Kotlin JVM target: 1.7")
             }
         }
     }

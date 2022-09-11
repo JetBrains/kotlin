@@ -25,8 +25,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
@@ -45,6 +44,7 @@ import org.jetbrains.kotlin.gradle.tooling.includeKotlinToolingMetadataInApk
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.androidPluginIds
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -62,8 +62,12 @@ internal class AndroidProjectHandler(
 
         applyKotlinAndroidSourceSetLayout(kotlinAndroidTarget)
 
-        val kotlinOptions = KotlinJvmOptionsImpl()
-        kotlinOptions.noJdk = true
+        val androidExtensionCompilerOptions = project.objects.newInstance<CompilerJvmOptionsDefault>()
+        androidExtensionCompilerOptions.noJdk.value(true).finalizeValueOnRead()
+        @Suppress("DEPRECATION") val kotlinOptions = object : KotlinJvmOptions {
+            override val options: CompilerJvmOptions
+                get() = androidExtensionCompilerOptions
+        }
         ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
 
         val plugin = androidPluginIds
@@ -83,8 +87,12 @@ internal class AndroidProjectHandler(
             // handlers might break when fired on a compilation that is not yet properly configured (e.g. KT-29964):
             compilationFactory.create(variantName).let { compilation ->
                 setUpDependencyResolution(variant, compilation)
+                project.wireExtensionOptionsToCompilation(
+                    androidExtensionCompilerOptions,
+                    compilation.compilerOptions.options as CompilerJvmOptions
+                )
 
-                preprocessVariant(variant, compilation, project, kotlinOptions, kotlinConfigurationTools.kotlinTasksProvider)
+                preprocessVariant(variant, compilation, project, kotlinConfigurationTools.kotlinTasksProvider)
 
                 @Suppress("UNCHECKED_CAST")
                 (kotlinAndroidTarget.compilations as NamedDomainObjectCollection<in KotlinJvmAndroidCompilation>).add(compilation)
@@ -108,6 +116,38 @@ internal class AndroidProjectHandler(
         project.includeKotlinToolingMetadataInApk()
 
         addAndroidUnitTestTasksAsDependenciesToAllTest(project)
+    }
+
+    private fun Project.wireExtensionOptionsToCompilation(
+        extensionCompilerOptions: CompilerJvmOptions,
+        compilationCompilerOptions: CompilerJvmOptions
+    ) {
+        // CompilerCommonToolOptions
+        compilationCompilerOptions.allWarningsAsErrors.convention(extensionCompilerOptions.allWarningsAsErrors)
+        compilationCompilerOptions.suppressWarnings.convention(extensionCompilerOptions.suppressWarnings)
+        compilationCompilerOptions.verbose.convention(extensionCompilerOptions.verbose)
+        compilationCompilerOptions.freeCompilerArgs.addAll(extensionCompilerOptions.freeCompilerArgs)
+
+        // CompilerCommonOptions
+        compilationCompilerOptions.apiVersion.convention(extensionCompilerOptions.apiVersion)
+        compilationCompilerOptions.languageVersion.convention(extensionCompilerOptions.languageVersion)
+        compilationCompilerOptions.useK2.convention(extensionCompilerOptions.useK2)
+
+        // CompilerJvmOptions
+        compilationCompilerOptions.javaParameters.convention(extensionCompilerOptions.javaParameters)
+        compilationCompilerOptions.noJdk.value(extensionCompilerOptions.noJdk).finalizeValue()
+
+        // Special handling of jvmTarget to correctly override convention set by DefaultJavaToolchainSetter
+        // plus for 'moduleName' which could be overriden either by compilation or by task itself
+        // TODO: fix it once proper extension DSL will be available
+        afterEvaluate {
+            if (extensionCompilerOptions.jvmTarget.isPresent) {
+                compilationCompilerOptions.jvmTarget.set(extensionCompilerOptions.jvmTarget)
+            }
+            if (extensionCompilerOptions.moduleName.isPresent) {
+                compilationCompilerOptions.moduleName.set(extensionCompilerOptions.moduleName)
+            }
+        }
     }
 
     /**
@@ -178,7 +218,6 @@ internal class AndroidProjectHandler(
         variantData: BaseVariant,
         compilation: KotlinJvmAndroidCompilation,
         project: Project,
-        rootKotlinOptions: KotlinJvmOptionsImpl,
         tasksProvider: KotlinTasksProvider
     ) {
         // This function is called before the variantData is completely filled by the Android plugin.
@@ -190,13 +229,17 @@ internal class AndroidProjectHandler(
 
         val configAction = KotlinCompileConfig(compilation)
         configAction.configureTask { task ->
-            task.parentKotlinOptions.value(rootKotlinOptions).disallowChanges()
             task.useModuleDetection.value(true).disallowChanges()
             // store kotlin classes in separate directory. They will serve as class-path to java compiler
             task.destinationDirectory.set(project.layout.buildDirectory.dir("tmp/kotlin-classes/$variantDataName"))
             task.description = "Compiles the $variantDataName kotlin."
         }
-        tasksProvider.registerKotlinJVMTask(project, compilation.compileKotlinTaskName, compilation.kotlinOptions, configAction)
+        tasksProvider.registerKotlinJVMTask(
+            project,
+            compilation.compileKotlinTaskName,
+            compilation.compilerOptions.options as CompilerJvmOptions,
+            configAction
+        )
 
         // Register the source only after the task is created, because the task is required for that:
         compilation.source(defaultSourceSet)

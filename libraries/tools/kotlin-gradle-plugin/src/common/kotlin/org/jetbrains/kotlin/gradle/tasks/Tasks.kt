@@ -78,7 +78,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
     objectFactory: ObjectFactory
 ) : DefaultTask(),
     KotlinCompileTool,
-    CompilerArgumentAwareWithInput<T>,
+    CompilerArgumentAware<T>,
     TaskWithLocalState {
 
     private val patternFilterable = PatternSet()
@@ -512,10 +512,7 @@ class KotlinJvmCompilerArgumentsProvider
     val friendPaths: FileCollection = taskProvider.friendPaths
     val compileClasspath: Iterable<File> = taskProvider.libraries
     val destinationDir: File = taskProvider.destinationDirectory.get().asFile
-    internal val kotlinOptions: List<KotlinJvmOptionsImpl> = listOfNotNull(
-        taskProvider.parentKotlinOptions.orNull as? KotlinJvmOptionsImpl,
-        taskProvider.kotlinOptions as KotlinJvmOptionsImpl
-    )
+    internal val compilerOptions: CompilerJvmOptions = taskProvider.compilerOptions
 }
 
 internal inline val <reified T : Task> T.thisTaskProvider: TaskProvider<out T>
@@ -523,12 +520,31 @@ internal inline val <reified T : Task> T.thisTaskProvider: TaskProvider<out T>
 
 @CacheableTask
 abstract class KotlinCompile @Inject constructor(
-    override val kotlinOptions: KotlinJvmOptions,
+    override val compilerOptions: CompilerJvmOptions,
     workerExecutor: WorkerExecutor,
-    private val objectFactory: ObjectFactory
+    objectFactory: ObjectFactory
 ) : AbstractKotlinCompile<K2JVMCompilerArguments>(objectFactory, workerExecutor),
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") KotlinJvmCompileDsl,
+    KotlinCompilationTask<CompilerJvmOptions>,
     UsesKotlinJavaToolchain {
+
+    init {
+        compilerOptions.moduleName.convention(moduleName)
+        compilerOptions.verbose.convention(logger.isDebugEnabled)
+    }
+
+    @Suppress("DEPRECATION")
+    @Deprecated("Replaced by compilerOptions input", replaceWith = ReplaceWith("compilerOptions"))
+    final override val kotlinOptions: KotlinJvmOptions = object : KotlinJvmOptions {
+        override val options: CompilerJvmOptions
+            get() = compilerOptions
+    }
+
+    @Suppress("DEPRECATION")
+    @Deprecated("Configure compilerOptions directly", replaceWith = ReplaceWith("compilerOptions"))
+    override val parentKotlinOptions: Property<KotlinJvmOptions> = objectFactory
+        .property(kotlinOptions)
+        .chainedDisallowChanges()
 
     /** A package prefix that is used for locating Java sources in a directory structure with non-full-depth packages.
      *

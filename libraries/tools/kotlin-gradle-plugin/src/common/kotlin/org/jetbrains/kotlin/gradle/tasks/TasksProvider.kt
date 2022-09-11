@@ -22,6 +22,7 @@ import org.gradle.api.UnknownTaskException
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.tasks.configuration.*
@@ -98,9 +99,12 @@ internal inline fun <reified T : Task> Project.locateOrRegisterTask(
 
 internal open class KotlinTasksProvider {
     open fun registerKotlinJVMTask(
-        project: Project, taskName: String, kotlinOptions: KotlinCommonOptions, configuration: KotlinCompileConfig
+        project: Project,
+        taskName: String,
+        compilerOptions: CompilerJvmOptions,
+        configuration: KotlinCompileConfig
     ): TaskProvider<out KotlinCompile> {
-        return project.registerTask(taskName, KotlinCompile::class.java, constructorArgs = listOf(kotlinOptions)).also {
+        return project.registerTask(taskName, KotlinCompile::class.java, constructorArgs = listOf(compilerOptions)).also {
             configuration.execute(it)
         }
     }
