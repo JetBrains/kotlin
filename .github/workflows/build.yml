@@ -11,12 +11,35 @@ env:
   GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false -Dkotlin.incremental=false"
 
 jobs:
-  validation:
-    name: "Validation"
+  build:
+    name: "Build"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: gradle/wrapper-validation-action@v1
+
+      - name: Configure JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 11
+
+      - name: Build Project
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
+
+      - name: Build Sample
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
+          build-root-directory: sample
+
+      - name: Publish Test Report
+        if: success() || failure()
+        uses: mikepenz/action-junit-report@v3
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
 
   lint:
     name: "Lint"
@@ -42,32 +65,3 @@ jobs:
       - uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: ${{ runner.temp }}/qodana/results/qodana.sarif.json
-
-  build:
-    name: "Build"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Configure JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: 11
-
-      - name: Build Project
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: build
-
-      - name: Build Sample
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: build
-          build-root-directory: sample
-
-      - name: Publish Test Report
-        if: success() || failure()
-        uses: mikepenz/action-junit-report@v3
-        with:
-          report_paths: '**/build/test-results/test/TEST-*.xml'
