@@ -64,7 +64,6 @@ interface KotlinTargetConfigurator<KotlinTargetType : KotlinTarget> {
 }
 
 abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>(
-    internal val createDefaultSourceSets: Boolean,
     internal val createTestCompilation: Boolean
 ) : KotlinTargetConfigurator<KotlinTargetType> {
 
@@ -99,9 +98,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
     override fun configureSourceSet(target: KotlinTargetType) {
         target.compilations.all { compilation ->
-            if (createDefaultSourceSets) {
-                compilation.source(compilation.defaultSourceSet) // also adds dependencies, requires the configurations for target and source set to exist at this point
-            }
+            compilation.source(compilation.defaultSourceSet) // also adds dependencies, requires the configurations for target and source set to exist at this point
         }
     }
 
@@ -142,9 +139,9 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             it.group = LifecycleBasePlugin.BUILD_GROUP
             it.description = "Assembles outputs for compilation '${compilation.name}' of target '${compilation.target.name}'"
             it.inputs.files({
-                // the task may not be registered at this point, reference it lazily
-                compilation.compileKotlinTaskProvider.map { it.outputs.files }
-            })
+                                // the task may not be registered at this point, reference it lazily
+                                compilation.compileKotlinTaskProvider.map { it.outputs.files }
+                            })
 
             if (compilation is KotlinJvmCompilation && compilation.target.withJavaEnabled) {
                 it.inputs.files({ compilation.compileJavaTaskProvider?.map { it.outputs.files } })
@@ -382,12 +379,8 @@ internal val KotlinTarget.testTaskName: String
     get() = lowerCamelCaseName(targetName, AbstractKotlinTargetConfigurator.testTaskNameSuffix)
 
 abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompilation<*>, KotlinTargetType : KotlinOnlyTarget<KotlinCompilationType>>(
-    createDefaultSourceSets: Boolean,
     createTestCompilation: Boolean
-) : AbstractKotlinTargetConfigurator<KotlinTargetType>(
-    createDefaultSourceSets,
-    createTestCompilation
-) {
+) : AbstractKotlinTargetConfigurator<KotlinTargetType>(createTestCompilation) {
     open val archiveType: String = ArtifactTypeDefinition.JAR_TYPE
 
     internal abstract fun buildCompilationProcessor(compilation: KotlinCompilationType): KotlinCompilationProcessor<*>

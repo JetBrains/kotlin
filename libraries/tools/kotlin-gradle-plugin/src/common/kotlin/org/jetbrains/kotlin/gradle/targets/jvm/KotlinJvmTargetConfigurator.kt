@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 
 open class KotlinJvmTargetConfigurator :
-    KotlinOnlyTargetConfigurator<KotlinJvmCompilation, KotlinJvmTarget>(true, true),
+    KotlinOnlyTargetConfigurator<KotlinJvmCompilation, KotlinJvmTarget>(true),
     KotlinTargetWithTestsConfigurator<KotlinJvmTestRun, KotlinJvmTarget> {
 
     override fun configurePlatformSpecificModel(target: KotlinJvmTarget) {

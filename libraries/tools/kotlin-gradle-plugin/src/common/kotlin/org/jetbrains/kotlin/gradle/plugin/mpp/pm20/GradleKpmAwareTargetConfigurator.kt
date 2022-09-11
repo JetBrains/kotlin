@@ -13,7 +13,7 @@ import java.util.concurrent.Callable
 
 internal open class GradleKpmAwareTargetConfigurator<T : KotlinTarget>(
     private val legacyModelTargetConfigurator: AbstractKotlinTargetConfigurator<T>,
-) : AbstractKotlinTargetConfigurator<T>(true, legacyModelTargetConfigurator.createDefaultSourceSets),
+) : AbstractKotlinTargetConfigurator<T>(true),
     KotlinTargetConfigurator<T> by legacyModelTargetConfigurator {
     // NB: this override enforces calls to other overridden functions; without it, the delegate would call its own ones
     override fun configureTarget(target: T) {

@@ -9,7 +9,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Task
 import org.gradle.api.attributes.Usage
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.gradle.testing.testTaskName
 import java.util.concurrent.Callable
 
 open class KotlinJsTargetConfigurator :
-    KotlinOnlyTargetConfigurator<KotlinJsCompilation, KotlinJsTarget>(true, true),
+    KotlinOnlyTargetConfigurator<KotlinJsCompilation, KotlinJsTarget>(true),
     KotlinTargetWithTestsConfigurator<KotlinJsReportAggregatingTestRun, KotlinJsTarget> {
 
     override val testRunClass: Class<KotlinJsReportAggregatingTestRun> get() = KotlinJsReportAggregatingTestRun::class.java
@@ -64,11 +63,7 @@ open class KotlinJsTargetConfigurator :
         target.compilations.all { compilation ->
             defineConfigurationsForCompilation(compilation)
 
-            if (createDefaultSourceSets) {
-                project.kotlinExtension.sourceSets.maybeCreate(compilation.defaultSourceSetName).also { sourceSet ->
-                    compilation.source(sourceSet) // also adds dependencies, requires the configurations for target and source set to exist at this point
-                }
-            }
+            compilation.source(compilation.defaultSourceSet)
 
             configureResourceProcessing(compilation, project.files(Callable { compilation.allKotlinSourceSets.map { it.resources } }))
 
