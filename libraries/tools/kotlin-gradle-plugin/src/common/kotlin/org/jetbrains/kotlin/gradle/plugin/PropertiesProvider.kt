@@ -123,7 +123,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty("kotlin.incremental.js.klib")
 
     val incrementalJsIr: Boolean
-        get() = booleanProperty("kotlin.incremental.js.ir") ?: false
+        get() = booleanProperty("kotlin.incremental.js.ir") ?: true
 
     val jsIrOutputGranularity: KotlinJsIrOutputGranularity
         get() = this.property("kotlin.js.ir.output.granularity")?.let { KotlinJsIrOutputGranularity.byArgument(it) }
