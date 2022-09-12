@@ -1,4 +1,4 @@
-depends = CoreFoundation CoreGraphics CoreVideo darwin posix
+depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics CoreVideo darwin posix
 language = Objective-C
 package = platform.Accelerate
 modules = Accelerate
