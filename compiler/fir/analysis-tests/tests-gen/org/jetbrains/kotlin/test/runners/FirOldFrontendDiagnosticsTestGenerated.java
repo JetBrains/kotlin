@@ -16980,6 +16980,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("hideNullableLocalTypeInPublicPosition.kt")
+                public void testHideNullableLocalTypeInPublicPosition() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/substitutions/hideNullableLocalTypeInPublicPosition.kt");
+                }
+
+                @Test
                 @TestMetadata("kt32189returnTypeWithTypealiasSubtitution.kt")
                 public void testKt32189returnTypeWithTypealiasSubtitution() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/substitutions/kt32189returnTypeWithTypealiasSubtitution.kt");
