@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
+import org.jetbrains.kotlin.resolve.calls.tasks.OldResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.util.*
 import org.jetbrains.kotlin.resolve.checkers.PassingProgressionAsCollectionCallChecker
@@ -169,6 +170,38 @@ class PSICallResolver(
         )
 
         return convertToOverloadResolutionResults<D>(context, result, tracingStrategy).also {
+            clearCacheForApproximationResults()
+        }
+    }
+
+    // actually, `D` is at least FunctionDescriptor, but right now because of CallResolver it isn't possible change upper bound for `D`
+    fun <D : CallableDescriptor> runResolutionAndInferenceForGivenOldCandidates(
+        context: BasicCallResolutionContext,
+        resolutionCandidates: Collection<OldResolutionCandidate<D>>,
+        tracingStrategy: TracingStrategy
+    ): OverloadResolutionResults<D> {
+        val dispatchReceiver = resolutionCandidates.firstNotNullOfOrNull { it.dispatchReceiver }
+
+        val isSpecialFunction = resolutionCandidates.any { it.descriptor.name in SPECIAL_FUNCTION_NAMES }
+        val kotlinCall = toKotlinCall(
+            context, KotlinCallKind.FUNCTION, context.call, givenCandidatesName, tracingStrategy, isSpecialFunction, dispatchReceiver
+        )
+        val scopeTower = ASTScopeTower(context)
+        val resolutionCallbacks = createResolutionCallbacks(context)
+
+        val givenCandidates = resolutionCandidates.map {
+            GivenCandidate(
+                it.descriptor as FunctionDescriptor,
+                it.dispatchReceiver?.let { context.transformToReceiverWithSmartCastInfo(it) },
+                it.knownTypeParametersResultingSubstitutor
+            )
+        }
+
+        val result = kotlinCallResolver.resolveAndCompleteGivenCandidates(
+            scopeTower, resolutionCallbacks, kotlinCall, calculateExpectedType(context), givenCandidates, context.collectAllCandidates
+        )
+        val overloadResolutionResults = convertToOverloadResolutionResults<D>(context, result, tracingStrategy)
+        return overloadResolutionResults.also {
             clearCacheForApproximationResults()
         }
     }

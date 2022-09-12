@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.util.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
+import org.jetbrains.kotlin.resolve.calls.tasks.OldResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
@@ -48,6 +49,17 @@ import static org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.UNKNOW
 
 public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableResolvedCall<D> {
     private static final Logger LOG = Logger.getInstance(ResolvedCallImpl.class);
+
+    @NotNull
+    public static <D extends CallableDescriptor> ResolvedCallImpl<D> create(
+            @NotNull OldResolutionCandidate<D> candidate,
+            @NotNull DelegatingBindingTrace trace,
+            @NotNull TracingStrategy tracing,
+            @NotNull MutableDataFlowInfoForArguments dataFlowInfoForArguments
+    ) {
+        return new ResolvedCallImpl<>(candidate, trace, tracing, dataFlowInfoForArguments);
+    }
+
     private final Call call;
     private final D candidateDescriptor;
     private D resultingDescriptor; // Probably substituted
@@ -72,6 +84,27 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     private boolean completed = false;
     private KotlinType smartCastDispatchReceiverType = null;
     private Queue<Function0<Unit>> remainingTasks = null;
+
+    private ResolvedCallImpl(
+            @NotNull OldResolutionCandidate<D> candidate,
+            @NotNull DelegatingBindingTrace trace,
+            @NotNull TracingStrategy tracing,
+            @NotNull MutableDataFlowInfoForArguments dataFlowInfoForArguments
+    ) {
+        this.call = candidate.getCall();
+        this.candidateDescriptor = candidate.getDescriptor();
+        this.dispatchReceiver = candidate.getDispatchReceiver();
+        this.extensionReceiver = null; // ResolutionCandidate can have only dispatch receiver
+        this.explicitReceiverKind = candidate.getExplicitReceiverKind();
+        this.knownTypeParametersSubstitutor = candidate.getKnownTypeParametersResultingSubstitutor();
+        this.trace = trace;
+        this.tracing = tracing;
+        this.dataFlowInfoForArguments = dataFlowInfoForArguments;
+        this.typeArguments = createTypeArgumentsMap(candidateDescriptor);
+        this.valueArguments = createValueArgumentsMap(candidateDescriptor);
+        this.argumentToParameterMap = createArgumentsToParameterMap(candidateDescriptor);
+    }
+
     public ResolvedCallImpl(
             @NotNull Call call,
             @NotNull D candidateDescriptor,

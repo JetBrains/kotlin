@@ -189,7 +189,7 @@ public class CallResolver {
             @NotNull NewResolutionOldInference.ResolutionKind kind
     ) {
         return callResolvePerfCounter.<OverloadResolutionResults<D>>time(() -> {
-            ResolutionTask<D> resolutionTask = new ResolutionTask<>(kind, name);
+            ResolutionTask<D> resolutionTask = new ResolutionTask<>(kind, name, null);
             return doResolveCallOrGetCachedResults(context, resolutionTask, tracing);
         });
     }
@@ -574,14 +574,20 @@ public class CallResolver {
 
         @Nullable
         final Name name;
+
+        @Nullable
+        final Collection<OldResolutionCandidate<D>> givenCandidates;
+
         @NotNull
         final NewResolutionOldInference.ResolutionKind resolutionKind;
 
         private ResolutionTask(
                 @NotNull NewResolutionOldInference.ResolutionKind kind,
-                @Nullable Name name
+                @Nullable Name name,
+                @Nullable Collection<OldResolutionCandidate<D>> candidates
         ) {
             this.name = name;
+            givenCandidates = candidates;
             resolutionKind = kind;
         }
     }
