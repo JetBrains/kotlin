@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForDebugging
-import org.jetbrains.kotlin.fir.renderer.FirPrinter
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
+import org.jetbrains.kotlin.renderer.replacePrefixesInTypeRepresentations
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -342,33 +342,8 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             builder.append(projectionBuilder.toString().removeCurrentFilePackage())
         }
 
-        // TODO rewrite or extract in common utils
-        private fun replacePrefixes(
-            lowerRendered: String,
-            lowerPrefix: String,
-            upperRendered: String,
-            upperPrefix: String,
-            foldedPrefix: String
-        ): String? {
-            if (lowerRendered.startsWith(lowerPrefix) && upperRendered.startsWith(upperPrefix)) {
-                val lowerWithoutPrefix = lowerRendered.substring(lowerPrefix.length)
-                val upperWithoutPrefix = upperRendered.substring(upperPrefix.length)
-                val flexibleCollectionName = foldedPrefix + lowerWithoutPrefix
-
-                if (lowerWithoutPrefix == upperWithoutPrefix) return flexibleCollectionName
-
-                if (differsOnlyInNullability(lowerWithoutPrefix, upperWithoutPrefix)) {
-                    return "$flexibleCollectionName!"
-                }
-            }
-            return null
-        }
-
-        private fun differsOnlyInNullability(lower: String, upper: String) =
-            lower == upper.replace("?", "") || upper.endsWith("?") && ("$lower?") == upper || "($lower)?" == upper
-
         private fun tryToSquashFlexibleType(lowerRendered: String, upperRendered: String): String? {
-            val simpleCollection = replacePrefixes(
+            val simpleCollection = replacePrefixesInTypeRepresentations(
                 lowerRendered,
                 "kotlin/collections/Mutable",
                 upperRendered,
@@ -377,7 +352,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             )
             if (simpleCollection != null) return simpleCollection
 
-            val mutableEntry = replacePrefixes(
+            val mutableEntry = replacePrefixesInTypeRepresentations(
                 lowerRendered,
                 "kotlin/collections/MutableMap.MutableEntry",
                 upperRendered,
@@ -386,7 +361,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             )
             if (mutableEntry != null) return mutableEntry
 
-            val array = replacePrefixes(
+            val array = replacePrefixesInTypeRepresentations(
                 lowerRendered,
                 "kotlin/Array<",
                 upperRendered,
