@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -186,3 +183,12 @@ val FirAnnotation.resolved: Boolean
         if (this !is FirAnnotationCall) return true
         return calleeReference is FirResolvedNamedReference || calleeReference is FirErrorNamedReference
     }
+
+fun FirBasedSymbol<*>.hasAnnotationOrInsideAnnotatedClass(classId: ClassId, session: FirSession): Boolean {
+    if (hasAnnotation(classId)) return true
+    val container = getContainingClassSymbol(session) ?: return false
+    return container.hasAnnotationOrInsideAnnotatedClass(classId, session)
+}
+
+fun FirDeclaration.hasAnnotationOrInsideAnnotatedClass(classId: ClassId, session: FirSession) =
+    symbol.hasAnnotationOrInsideAnnotatedClass(classId, session)

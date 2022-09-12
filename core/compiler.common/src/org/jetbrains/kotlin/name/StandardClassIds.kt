@@ -161,6 +161,12 @@ object StandardClassIds {
         val JsModule = "JsModule".jsId()
         val JsNonModule = "JsNonModule".jsId()
 
+        val JsNative = "native".jsId()
+        val JsLibrary = "library".jsId()
+        val JsNativeInvoke = "nativeInvoke".jsId()
+        val JsNativeGetter = "nativeGetter".jsId()
+        val JsNativeSetter = "nativeSetter".jsId()
+
         val RawTypeAnnotation = "RawType".internalIrId()
         val FlexibleNullability = "FlexibleNullability".internalIrId()
         val EnhancedNullability = "EnhancedNullability".jvmInternalId()
@@ -204,6 +210,9 @@ object StandardClassIds {
         val clone = "clone".callableId(Cloneable)
 
         val not = "not".callableId(Boolean)
+
+        val JsDefinedExternally = "definedExternally".callableId(BASE_JS_PACKAGE)
+        val JsNoImpl = "noImpl".callableId(BASE_JS_PACKAGE)
     }
 }
 
