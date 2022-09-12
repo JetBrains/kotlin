@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.util.buildNotFixedVariablesToPossibleResultType
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 enum class ResolveArgumentsMode {
     RESOLVE_FUNCTION_ARGUMENTS,
@@ -284,30 +283,29 @@ fun isArrayOrArrayLiteral(argument: ValueArgument, trace: BindingTrace): Boolean
     return KotlinBuiltIns.isArrayOrPrimitiveArray(type)
 }
 
-private fun computeConstructorDispatchReceiver(
+private fun computeConstructorDescriptorsToResolveAndReceiver(
+    constructors: Collection<ConstructorDescriptor>,
     containingClass: ClassDescriptor,
     scope: LexicalScope,
-    substitutor: TypeSubstitutor?
-): ReceiverValue? {
-    return runIf(containingClass.isInner) {
+    substitutor: TypeSubstitutor?,
+    syntheticScopes: SyntheticScopes
+): Pair<Collection<ConstructorDescriptor>, ReceiverValue?>? {
+    val dispatchReceiver: ReceiverValue? = if (containingClass.isInner) {
         val outerClassType = (containingClass.containingDeclaration as? ClassDescriptor)?.defaultType ?: return null
         val substitutedOuterClassType = substitutor?.substitute(outerClassType, Variance.INVARIANT) ?: outerClassType
-        scope.getImplicitReceiversHierarchy().firstOrNull {
+        val receiver = scope.getImplicitReceiversHierarchy().firstOrNull {
             KotlinTypeChecker.DEFAULT.isSubtypeOf(it.type, substitutedOuterClassType)
-        }?.value
-    }
-}
+        } ?: return null
 
-private fun computeConstructorDescriptorsToResolve(
-    containingClass: ClassDescriptor,
-    typeAliasDescriptorIfAny: TypeAliasDescriptor?,
-    syntheticScopes: SyntheticScopes
-): Collection<ConstructorDescriptor> {
-    val simpleConstructors =
-        typeAliasDescriptorIfAny?.constructors?.mapNotNull(TypeAliasConstructorDescriptor::withDispatchReceiver)
-            ?: containingClass.constructors
-    val syntheticConstructors = simpleConstructors.flatMap { syntheticScopes.collectSyntheticConstructors(it) }
-    return simpleConstructors + syntheticConstructors
+        receiver.value
+    } else {
+        null
+    }
+
+    val syntheticConstructors = constructors.flatMap { syntheticScopes.collectSyntheticConstructors(it) }
+
+    return constructors + syntheticConstructors to dispatchReceiver
+
 }
 
 fun resolveConstructorCallWithGivenDescriptors(
@@ -322,20 +320,25 @@ fun resolveConstructorCallWithGivenDescriptors(
 
     @Suppress("NAME_SHADOWING")
     val constructorType = constructorType.unwrap()
-    val constructorTypeAbbreviation = (constructorType as? AbbreviatedType)?.abbreviation
-    val knownSubstitutor = runIf(useKnownTypeSubstitutor) {
-        TypeSubstitutor.create(constructorTypeAbbreviation ?: constructorType)
-    }
-    val typeAliasDescriptor = constructorTypeAbbreviation?.constructor?.declarationDescriptor as? TypeAliasDescriptor
+    val knownSubstitutor = if (useKnownTypeSubstitutor) {
+        TypeSubstitutor.create((constructorType as? AbbreviatedType)?.abbreviation ?: constructorType)
+    } else null
+    val typeAliasDescriptor = if (constructorType is AbbreviatedType) {
+        constructorType.abbreviation.constructor.declarationDescriptor as? TypeAliasDescriptor
+    } else null
 
-    val receiver = computeConstructorDispatchReceiver(containingClass, context.scope, knownSubstitutor)
-    val allConstructors = runIf(!containingClass.isInner || receiver != null) {
-        computeConstructorDescriptorsToResolve(containingClass, typeAliasDescriptor, syntheticScopes)
-    }.orEmpty()
+    val (constructors, receiver) = computeConstructorDescriptorsToResolveAndReceiver(
+        constructors = typeAliasDescriptor?.constructors?.mapNotNull(TypeAliasConstructorDescriptor::withDispatchReceiver)
+            ?: containingClass.constructors,
+        containingClass,
+        context.scope,
+        knownSubstitutor,
+        syntheticScopes
+    ) ?: (emptyList<ConstructorDescriptor>() to null)
 
     val resolutionResults = PSICallResolver.runResolutionAndInferenceForGivenDescriptors<ConstructorDescriptor>(
         context,
-        allConstructors,
+        constructors,
         tracingStrategy,
         KotlinCallKind.FUNCTION,
         knownSubstitutor,
