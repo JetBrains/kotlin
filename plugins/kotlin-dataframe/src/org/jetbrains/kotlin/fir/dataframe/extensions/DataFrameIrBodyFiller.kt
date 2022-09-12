@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -74,7 +75,7 @@ class DataFrameFileLowering(val context: IrPluginContext) : FileLoweringPass, Ir
             irBuiltIns.anyClass.owner.primaryConstructor?.symbol ?: return null,
             typeArgumentsCount = 0,
             valueArgumentsCount = 0
-        )
+        ).copyAttributes(declaration.parentAsClass)
 
         val initializerCall = IrInstanceInitializerCallImpl(
             -1,

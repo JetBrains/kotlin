@@ -3,10 +3,9 @@
 package org.jetbrains.kotlin.fir.dataframe;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -50,6 +49,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
     @TestMetadata("OuterClass.kt")
     public void testOuterClass() throws Exception {
         runTest("testData/box/OuterClass.kt");
+    }
+
+    @Test
+    @TestMetadata("simple.kt")
+    public void testSimple() throws Exception {
+        runTest("testData/box/simple.kt");
     }
 
     @Test
