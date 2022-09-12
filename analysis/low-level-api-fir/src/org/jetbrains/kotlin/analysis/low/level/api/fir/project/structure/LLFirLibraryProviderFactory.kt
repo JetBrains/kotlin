@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.createPackagePartProviderForLibrary
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirJavaFacadeForBinaries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
+import org.jetbrains.kotlin.analysis.providers.createPackagePartProvider
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
@@ -31,7 +31,7 @@ internal object LLFirLibraryProviderFactory {
     ): List<FirSymbolProvider> {
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
         val scope = module.contentScope
-        val packagePartProvider = project.createPackagePartProviderForLibrary(scope)
+        val packagePartProvider = project.createPackagePartProvider(scope)
         return buildList {
             add(
                 JvmClassFileBasedSymbolProvider(
@@ -56,7 +56,7 @@ internal object LLFirLibraryProviderFactory {
         scope: GlobalSearchScope,
     ): List<FirSymbolProvider> {
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
-        val packagePartProvider = project.createPackagePartProviderForLibrary(scope)
+        val packagePartProvider = project.createPackagePartProvider(scope)
         return buildList {
             add(
                 JvmClassFileBasedSymbolProvider(
