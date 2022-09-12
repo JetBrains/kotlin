@@ -9,7 +9,6 @@ import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticModuleProvider
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
@@ -29,14 +28,12 @@ object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
             (projectStructureProvider as? KtStaticModuleProvider)?.projectStructure?.allKtModules()?.filterIsInstance<KtBinaryModule>()
                 ?: emptyList()
         val projectEnvironment = testServices.environmentManager.getProjectEnvironment()
-        val binaryRoots = StandaloneProjectFactory.getAllBinaryRoots(binaryModules, projectEnvironment)
         project.apply {
             registerService(ClsJavaStubByVirtualFileCache::class.java, ClsJavaStubByVirtualFileCache())
             registerService(
                 KotlinPsiDeclarationProviderFactory::class.java,
                 KotlinStaticPsiDeclarationProviderFactory(
                     this,
-                    StandaloneProjectFactory.createPackagePartsProvider(project, binaryRoots),
                     binaryModules,
                     projectEnvironment.environment.jarFileSystem as CoreJarFileSystem
                 )
