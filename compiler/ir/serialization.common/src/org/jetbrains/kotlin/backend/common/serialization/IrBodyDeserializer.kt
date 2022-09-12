@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.toInt
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch as ProtoBranch
@@ -163,7 +164,7 @@ class IrBodyDeserializer(
         proto.valueArgumentList.mapIndexed { i, arg ->
             if (arg.hasExpression()) {
                 val expr = deserializeExpression(arg.expression)
-                access.putValueArgument(i, expr)
+                access.putValueArgument(i + proto.hasExtensionReceiver().toInt(), expr)
             }
         }
 
@@ -268,9 +269,10 @@ class IrBodyDeserializer(
             IrCallImpl(
                 start, end, type,
                 symbol, proto.memberAccess.typeArgumentCount,
-                proto.memberAccess.valueArgumentList.size,
+                proto.memberAccess.valueArgumentList.size + proto.memberAccess.hasExtensionReceiver().toInt(),
                 origin,
-                superSymbol
+                superSymbol,
+                hasExtensionReceiver = proto.memberAccess.hasExtensionReceiver(),
             )
         deserializeMemberAccessCommon(call, proto.memberAccess)
         return call
@@ -380,7 +382,7 @@ class IrBodyDeserializer(
             type,
             symbol,
             proto.memberAccess.typeArgumentCount,
-            proto.memberAccess.valueArgumentCount,
+            proto.memberAccess.valueArgumentCount + proto.memberAccess.hasExtensionReceiver().toInt(),
             reflectionTarget,
             origin
         )
