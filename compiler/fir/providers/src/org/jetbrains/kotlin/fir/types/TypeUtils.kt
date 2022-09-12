@@ -383,11 +383,8 @@ private fun FirTypeRef.hideLocalTypeIfNeeded(
 ): FirTypeRef {
     if (!shouldHideLocalType(containingCallableVisibility, isInlineFunction)) return this
 
-    val firClass =
-        (((this as? FirResolvedTypeRef)
-            ?.type as? ConeClassLikeType)
-            ?.lookupTag as? ConeClassLookupTagWithFixedSymbol)
-            ?.symbol?.fir
+    val coneType = coneTypeSafe<ConeClassLikeType>() ?: return this
+    val firClass = (coneType.lookupTag as? ConeClassLookupTagWithFixedSymbol)?.symbol?.fir
     if (firClass !is FirAnonymousObject) {
         // NB: local classes are acceptable here, but reported by EXPOSED_* checkers as errors
         return this
@@ -402,6 +399,7 @@ private fun FirTypeRef.hideLocalTypeIfNeeded(
         var result = superType
         val resultTypeArguments = result.type.typeArguments
 
+        result = result.withReplacedConeType(result.type.withNullability(coneType.nullability, session.typeContext))
         if (resultTypeArguments.isNotEmpty() && resultTypeArguments.size == coneType.typeArguments.size) {
             val substitution = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
             for (index in resultTypeArguments.indices) {
@@ -410,9 +408,7 @@ private fun FirTypeRef.hideLocalTypeIfNeeded(
                 val symbol = (key as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol ?: continue
                 substitution[symbol] = value.type!!
             }
-
-            val substituted = ConeSubstitutorByMap(substitution, session).substituteOrSelf(result.type)
-            result = substituted.toFirResolvedTypeRef(superType.source, superType.delegatedTypeRef)
+            result = result.withReplacedConeType(ConeSubstitutorByMap(substitution, session).substituteOrSelf(result.type))
         }
 
         return if (newKind is KtFakeSourceElementKind) result.copyWithNewSourceKind(newKind) else result
