@@ -171,7 +171,7 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
             libraries = libraries.klibs(),
             friendModules = emptyList(), //FriendModules aren't needed here because it's no test artifact
             enableEndorsedLibs = enableEndorsedLibs,
-            kotlinOptions = kotlinOptions,
+            toolOptions = kotlinOptions,
             compilerPlugins = emptyList(),//CompilerPlugins aren't needed here because it's no compilation but linking
             processTests = processTests,
             entryPoint = entryPoint,

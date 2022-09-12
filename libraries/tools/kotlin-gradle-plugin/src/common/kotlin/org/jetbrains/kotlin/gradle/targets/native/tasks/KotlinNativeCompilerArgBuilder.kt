@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks
 
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
+import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.CompilerCommonToolOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -34,7 +35,7 @@ internal fun buildKotlinNativeKlibCompilerArgs(
 
     languageSettings: LanguageSettings,
     enableEndorsedLibs: Boolean,
-    kotlinOptions: KotlinCommonToolOptions,
+    compilerOptions: CompilerCommonOptions,
     compilerPlugins: List<CompilerPluginData>,
 
     moduleName: String,
@@ -62,7 +63,7 @@ internal fun buildKotlinNativeKlibCompilerArgs(
         addArg("-friend-modules", friends.joinToString(File.pathSeparator) { it.absolutePath })
     }
 
-    addAll(buildKotlinNativeCommonArgs(languageSettings, enableEndorsedLibs, kotlinOptions, compilerPlugins))
+    addAll(buildKotlinNativeCompileCommonArgs(enableEndorsedLibs, languageSettings, compilerOptions, compilerPlugins))
 
     addAll(source.map { it.absolutePath })
     if (!commonSourcesTree.isEmpty) {
@@ -80,7 +81,7 @@ internal fun buildKotlinNativeBinaryLinkerArgs(
     friendModules: List<File>,
 
     enableEndorsedLibs: Boolean,
-    kotlinOptions: KotlinCommonToolOptions,
+    toolOptions: CompilerCommonToolOptions,
     compilerPlugins: List<CompilerPluginData>,
 
     processTests: Boolean,
@@ -107,7 +108,7 @@ internal fun buildKotlinNativeBinaryLinkerArgs(
     binaryOptions.forEach { (name, value) -> add("-Xbinary=$name=$value") }
     addKey("-Xstatic-framework", isStaticFramework)
 
-    addAll(buildKotlinNativeCommonArgs(null, enableEndorsedLibs, kotlinOptions, compilerPlugins))
+    addAll(buildKotlinNativeCommonArgs(enableEndorsedLibs, toolOptions, compilerPlugins))
 
     exportLibraries.forEach { add("-Xexport-library=${it.absolutePath}") }
     includeLibraries.forEach { add("-Xinclude=${it.absolutePath}") }
@@ -134,10 +135,10 @@ private fun buildKotlinNativeMainArgs(
     libraries.forEach { addArg("-l", it.absolutePath) }
 }
 
-internal fun buildKotlinNativeCommonArgs(
-    languageSettings: LanguageSettings?, //null for linking
+internal fun buildKotlinNativeCompileCommonArgs(
     enableEndorsedLibs: Boolean,
-    kotlinOptions: KotlinCommonToolOptions,
+    languageSettings: LanguageSettings,
+    compilerOptions: CompilerCommonOptions,
     compilerPlugins: List<CompilerPluginData>
 ): List<String> = mutableListOf<String>().apply {
     add("-Xmulti-platform")
@@ -148,19 +149,39 @@ internal fun buildKotlinNativeCommonArgs(
         addArgs("-P", plugin.options.arguments)
     }
 
-    languageSettings?.run {
-        addArgIfNotNull("-language-version", languageVersion)
-        addArgIfNotNull("-api-version", apiVersion)
+    languageSettings.run {
         addKey("-progressive", progressiveMode)
         enabledLanguageFeatures.forEach { add("-XXLanguage:+$it") }
         optInAnnotationsInUse.forEach { add("-opt-in=$it") }
     }
 
-    addKey("-Werror", kotlinOptions.allWarningsAsErrors)
-    addKey("-nowarn", kotlinOptions.suppressWarnings)
-    addKey("-verbose", kotlinOptions.verbose)
+    addArgIfNotNull("-language-version", compilerOptions.languageVersion.orNull?.version)
+    addArgIfNotNull("-api-version", compilerOptions.apiVersion.orNull?.version)
+    addKey("-Werror", compilerOptions.allWarningsAsErrors.get())
+    addKey("-nowarn", compilerOptions.suppressWarnings.get())
+    addKey("-verbose", compilerOptions.verbose.get())
 
-    addAll(kotlinOptions.freeCompilerArgs)
+    addAll(compilerOptions.freeCompilerArgs.get())
+}
+
+internal fun buildKotlinNativeCommonArgs(
+    enableEndorsedLibs: Boolean,
+    toolOptions: CompilerCommonToolOptions,
+    compilerPlugins: List<CompilerPluginData>
+): List<String> = mutableListOf<String>().apply {
+    add("-Xmulti-platform")
+    addKey("-no-endorsed-libs", !enableEndorsedLibs)
+
+    compilerPlugins.forEach { plugin ->
+        plugin.files.map { it.canonicalPath }.sorted().forEach { add("-Xplugin=$it") }
+        addArgs("-P", plugin.options.arguments)
+    }
+
+    addKey("-Werror", toolOptions.allWarningsAsErrors.get())
+    addKey("-nowarn", toolOptions.suppressWarnings.get())
+    addKey("-verbose", toolOptions.verbose.get())
+
+    addAll(toolOptions.freeCompilerArgs.get())
 }
 
 private fun MutableList<String>.addArg(parameter: String, value: String) {
