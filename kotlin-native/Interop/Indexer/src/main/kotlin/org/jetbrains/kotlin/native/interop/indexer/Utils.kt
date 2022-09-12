@@ -680,9 +680,9 @@ internal fun getHeaders(
 }
 
 class TranslationUnitsCache : Disposable {
-    val unitsByHeaderFile = mutableMapOf<String, CXTranslationUnit>()
-    val unitsByBinaryFile = mutableMapOf<String, CXTranslationUnit>()
-    private val mainUnits = mutableListOf<CXTranslationUnit>()
+    val unitsByHeaderFile = SetMultiMap<String, CXTranslationUnit>()
+    val unitByBinaryFile = mutableMapOf<String, CXTranslationUnit>()
+    private val mainUnits = mutableSetOf<CXTranslationUnit>()
 
     /**
      * Returns:
@@ -691,11 +691,11 @@ class TranslationUnitsCache : Disposable {
      */
     internal fun put(index: CXIndex, info: CXIdxImportedASTFileInfo): CXTranslationUnit? {
         val canonicalPath: String = info.file!!.canonicalPath
-        if (unitsByBinaryFile.contains(canonicalPath)) {
+        if (unitByBinaryFile.contains(canonicalPath)) {
             return null
         }
         return clang_createTranslationUnit(index, canonicalPath)!!.also { unit ->
-            unitsByBinaryFile[canonicalPath] = unit
+            unitByBinaryFile[canonicalPath] = unit
             processTopHeaderHeaders(unit, info)
         }
     }
@@ -704,8 +704,8 @@ class TranslationUnitsCache : Disposable {
      * Should AST file contain declarations from nested headers, this fun makes both headers to refer to PCM file.
      */
     internal fun duplicateEntryForInclude(includer: String, includee: String) {
-        unitsByHeaderFile[includer]?.let {
-            unitsByHeaderFile[includee] = it
+        unitsByHeaderFile.get(includer)?.let {
+            unitsByHeaderFile.putAll(includee, it)
         }
     }
 
@@ -713,7 +713,7 @@ class TranslationUnitsCache : Disposable {
         val numTopLevelHeaders = clang_Module_getNumTopLevelHeaders(unit, info.module)
         (0 until numTopLevelHeaders).map {
             val topLevelHeader: String = clang_Module_getTopLevelHeader(unit, info.module, it)!!.canonicalPath
-            unitsByHeaderFile[topLevelHeader] = unit
+            unitsByHeaderFile.put(topLevelHeader, unit)
         }
     }
 
@@ -721,13 +721,13 @@ class TranslationUnitsCache : Disposable {
         mainUnits.add(mainUnit)
     }
 
-    // gets main translation unit and those, which include one/some of own headers
-    internal fun filter(ownHeadersCanonicalPaths: Set<String>): List<CXTranslationUnit> {
-        return mainUnits + unitsByHeaderFile.filter { ownHeadersCanonicalPaths.contains(it.key) }.values
+    // gets main translation unit and those units, which include any own header
+    internal fun filter(ownHeadersCanonicalPaths: Set<String>): Set<CXTranslationUnit> {
+        return mainUnits + unitsByHeaderFile.entries().filter { ownHeadersCanonicalPaths.contains(it.key) }.flatMap { it.value }
     }
 
     override fun dispose() {
-        unitsByBinaryFile.values.forEach { clang_disposeTranslationUnit(it) }
+        unitByBinaryFile.values.forEach { clang_disposeTranslationUnit(it) }
     }
 }
 
@@ -740,7 +740,7 @@ private fun filterHeadersByName(
         allHeaders: MutableSet<CXFile?>,
         translationUnitsCache: TranslationUnitsCache
 ) {
-    val topLevelFiles = mutableListOf<CXFile>()
+    val topLevelFiles = mutableSetOf<CXFile>()
     var mainFile: CXFile? = null
 
     // The *name* of the header here is the path relative to the include path element., e.g. `curl/curl.h`.
@@ -991,4 +991,51 @@ internal inline fun <T : Disposable, R> T.use(block: (T) -> R): R = try {
     block(this)
 } finally {
     this.dispose()
+}
+
+class SetMultiMap<K, V> {
+    private val map: MutableMap<K, MutableCollection<V>> = hashMapOf()
+
+    fun get(key: K): MutableCollection<V>? = map[key]
+
+    fun put(key: K, value: V) {
+        if (map[key] == null) map[key] = mutableSetOf()
+        map[key]!!.add(value)
+    }
+
+    fun putAll(key: K, value: Iterable<V>) {
+        if (map[key] == null) map[key] = mutableSetOf()
+        map[key]!!.addAll(value)
+    }
+
+    fun putIfAbsent(key: K, value: V) {
+        if (map[key] == null) map[key] = mutableSetOf()
+        if (!map[key]!!.contains(value)) map[key]!!.add(value)
+    }
+
+    fun remove(key: K, value: V): Boolean {
+        return if (map[key] != null) map[key]!!.remove(value) else false
+    }
+
+    fun containsKey(key: K?): Boolean = map.containsKey(key)
+
+    fun remove(key: K) {
+        map.remove(key)
+    }
+
+    fun values(): MutableCollection<MutableCollection<V>> {
+        return map.values
+    }
+
+    fun entries(): MutableSet<MutableMap.MutableEntry<K, MutableCollection<V>>> {
+        return map.entries
+    }
+
+    fun size(): Int {
+        var size = 0
+        for (value in map.values) size += value.size
+        return size
+    }
+
+    fun entrySet(): Set<Map.Entry<K, Collection<V>?>> = map.entries
 }
