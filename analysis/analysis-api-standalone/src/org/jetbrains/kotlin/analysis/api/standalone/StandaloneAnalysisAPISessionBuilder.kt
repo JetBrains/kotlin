@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.PackagePartProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySessionFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
@@ -141,7 +140,7 @@ public class StandaloneAnalysisAPISessionBuilder(
             registerService(
                 PackagePartProviderFactory::class.java,
                 object : PackagePartProviderFactory() {
-                    override fun createPackagePartProviderForLibrary(scope: GlobalSearchScope): PackagePartProvider {
+                    override fun createPackagePartProvider(scope: GlobalSearchScope): PackagePartProvider {
                         return packagePartProvider(scope)
                     }
                 }
