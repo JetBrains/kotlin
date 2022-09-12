@@ -165,11 +165,7 @@ internal fun configureProjectEnvironment(
     )
     project.picoContainer.registerComponentInstance(
         PackagePartProviderFactory::class.qualifiedName,
-        object : PackagePartProviderFactory() {
-            override fun createPackagePartProvider(scope: GlobalSearchScope): PackagePartProvider {
-                return packagePartProvider(scope)
-            }
-        }
+        KotlinStaticPackagePartProviderFactory(packagePartProvider)
     )
 }
 
