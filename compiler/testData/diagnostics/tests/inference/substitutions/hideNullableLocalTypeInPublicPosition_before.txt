@@ -1,6 +1,6 @@
 package
 
-public fun bar(/*0*/ condition: kotlin.Boolean): I?
+public fun bar(/*0*/ condition: kotlin.Boolean): I
 public fun main(): kotlin.Unit
 
 public interface I {

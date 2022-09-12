@@ -1,11 +1,9 @@
 // ISSUE: KT-30054
-// FIR_IDENTICAL
-// !LANGUAGE: +KeepNullabilityWhenApproximatingLocalType
 interface I {
     fun foo(): String
 }
 
-fun bar(condition: Boolean) /*: I? */ =
+<!APPROXIMATED_LOCAL_TYPE_WILL_BECOME_NULLABLE!>fun bar(condition: Boolean)<!> /*: I? */ =
     if (condition)
         object : I {
             override fun foo() = "should check for null first"
@@ -15,6 +13,6 @@ fun bar(condition: Boolean) /*: I? */ =
 
 fun main() {
     bar(false).<!UNRESOLVED_REFERENCE!>baz<!>()
-    bar(false)<!UNSAFE_CALL!>.<!>foo()
-    bar(false)?.foo()
+    bar(false).foo()
+    bar(false)<!UNNECESSARY_SAFE_CALL!>?.<!>foo()
 }
