@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.dataframe.extensions.TestBodyFiller
 import org.jetbrains.kotlin.fir.dataframe.extensions.TestGenerator
 import org.jetbrains.kotlin.fir.dataframe.extensions.TestInjector
+import org.jetbrains.kotlin.fir.dataframe.services.BaseTestRunner
 import org.jetbrains.kotlin.fir.dataframe.services.commonFirWithPluginFrontendConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
@@ -26,10 +27,14 @@ import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.runners.RunnerWithTargetBackendForTestGeneratorMarker
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
-open class AbstractDataFrameBlackBoxCodegenTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
+open class AbstractDataFrameBlackBoxCodegenTest : BaseTestRunner(), RunnerWithTargetBackendForTestGeneratorMarker {
+    override val targetBackend: TargetBackend
+        get() = TargetBackend.JVM_IR
+
     override fun TestConfigurationBuilder.configuration() {
         commonFirWithPluginFrontendConfiguration()
         useConfigurators(::TestExtensionRegistrarConfigurator)
