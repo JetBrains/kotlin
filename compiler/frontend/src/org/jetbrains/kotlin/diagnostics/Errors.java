@@ -619,6 +619,8 @@ public interface Errors {
 
     DiagnosticFactory1<KtDeclaration, Collection<KotlinType>> AMBIGUOUS_ANONYMOUS_TYPE_INFERRED =
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory1<KtDeclaration, KotlinType> APPROXIMATED_LOCAL_TYPE_WILL_BECOME_NULLABLE =
+            DiagnosticFactory1.create(WARNING, DECLARATION_SIGNATURE);
 
     DiagnosticFactory1<KtNamedDeclaration, TypeParameterDescriptor>
             KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE = DiagnosticFactory1.create(ERROR, PositioningStrategies.DECLARATION_NAME);

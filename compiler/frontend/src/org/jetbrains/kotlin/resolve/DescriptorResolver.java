@@ -1094,6 +1094,11 @@ public class DescriptorResolver {
                     substitutedSuperType = approximatingSuperType;
                 }
 
+                if (languageVersionSettings.supportsFeature(LanguageFeature.KeepNullabilityWhenApproximatingLocalType)) {
+                    return TypeUtils.makeNullableIfNeeded(substitutedSuperType, type.isMarkedNullable());
+                } else if (type.isMarkedNullable()) {
+                    trace.report(APPROXIMATED_LOCAL_TYPE_WILL_BECOME_NULLABLE.on(declaration, substitutedSuperType));
+                }
                 return substitutedSuperType;
             }
             else {
