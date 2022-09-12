@@ -228,7 +228,7 @@ public class DefaultErrorMessages {
         });
 
         MAP.put(VARARG_OUTSIDE_PARENTHESES, "Passing value as a vararg is only allowed inside a parenthesized argument list");
-        MAP.put(NON_VARARG_SPREAD, "The spread operator (*foo) may only be applied in a vararg position");
+        MAP.put(NON_VARARG_SPREAD, "The spread operator (*foo) may only be applied in a vararg position. See https://youtrack.jetbrains.com/issue/KT-48162 for more details.");
         MAP.put(SPREAD_OF_NULLABLE, "The spread operator (*foo) may not be applied to an argument of nullable type");
         MAP.put(SPREAD_OF_LAMBDA_OR_CALLABLE_REFERENCE, "The spread operator (*foo) cannot be applied to lambda argument or callable reference");
 
