@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClass
-import org.jetbrains.kotlin.fir.copyWithNewSourceKind
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeRecursiveTypeParameterDuringErasureError
@@ -22,7 +20,6 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -805,12 +802,11 @@ private fun ConeKotlinType.eraseAsUpperBound(
         else -> error("unexpected Java type parameter upper bound kind: $this")
     }
 
-/**
- * Returns the ClassLikeDeclaration where the Fir object has been defined
- * or null if no proper declaration has been found.
- */
-fun FirDeclaration.getContainingClassSymbol(session: FirSession): FirClassLikeSymbol<*>? =
-    this.safeAs<FirCallableDeclaration>()?.containingClass()?.toSymbol(session)
+fun FirDeclaration.getContainingClassSymbol(session: FirSession): FirClassLikeSymbol<*>? = when (this) {
+    is FirCallableDeclaration -> containingClass()?.toSymbol(session)
+    is FirClassLikeDeclaration -> symbol.getContainingClassLookupTag()?.toSymbol(session)
+    else -> null
+}
 
 @OptIn(SymbolInternals::class)
 fun FirBasedSymbol<*>.getContainingClassSymbol(session: FirSession): FirClassLikeSymbol<*>? = fir.getContainingClassSymbol(session)

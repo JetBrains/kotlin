@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -16,6 +17,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JsLibrary
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JsNative
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JsNativeGetter
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JsNativeInvoke
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JsNativeSetter
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun FirClassLikeDeclaration.getContainingDeclaration(session: FirSession): FirClassLikeDeclaration? {
@@ -111,4 +117,40 @@ fun FirDeclaration.isEffectivelyExternal(session: FirSession): Boolean {
     }
 
     return getContainingClassSymbol(session)?.fir?.isEffectivelyExternal(session) == true
+}
+
+fun FirDeclaration.isNativeObject(session: FirSession): Boolean {
+    if (hasAnnotationOrInsideAnnotatedClass(JsNative, session) || isEffectivelyExternal(session)) {
+        return true
+    }
+
+    if (this is FirPropertyAccessor) {
+        val property = propertySymbol?.fir ?: error("Should've had a property")
+        return property.hasAnnotationOrInsideAnnotatedClass(JsNative, session)
+    }
+
+    return if (this is FirAnonymousInitializer) {
+        getContainingClassSymbol(session)?.fir?.isNativeObject(session) == true
+    } else {
+        false
+    }
+}
+
+fun FirDeclaration.isEffectivelyExternalMember(session: FirSession): Boolean {
+    return this is FirMemberDeclaration && isEffectivelyExternal(session)
+}
+
+val PREDEFINED_ANNOTATIONS = setOf(JsLibrary, JsNative, JsNativeInvoke, JsNativeGetter, JsNativeSetter)
+
+fun FirDeclaration.isPredefinedObject(session: FirSession): Boolean {
+    if (this is FirMemberDeclaration && (isExpect)) return true
+    if (isEffectivelyExternalMember(session)) return true
+
+    for (annotation in PREDEFINED_ANNOTATIONS) {
+        if (hasAnnotationOrInsideAnnotatedClass(annotation, session)) {
+            return true
+        }
+    }
+
+    return false
 }

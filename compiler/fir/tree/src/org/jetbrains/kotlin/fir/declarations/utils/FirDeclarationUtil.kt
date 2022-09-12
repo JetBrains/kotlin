@@ -69,3 +69,12 @@ val FirDeclaration.name
         is FirRegularClass -> name
         else -> null
     }
+
+val FirDeclaration.isPubliclyAccessibleMember
+    get() = this is FirMemberDeclaration
+            && this !is FirValueParameter
+            && this !is FirAnonymousFunction
+            && this !is FirAnonymousObject
+
+val FirDeclaration.isPubliclyAccessible
+    get() = this is FirFile || isPubliclyAccessibleMember
