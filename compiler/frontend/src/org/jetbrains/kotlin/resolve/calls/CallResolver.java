@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
-import org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInferenceKt;
 import org.jetbrains.kotlin.resolve.calls.util.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.util.ResolveArgumentsMode;
 import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
@@ -288,21 +287,12 @@ public class CallResolver {
             @NotNull Collection<FunctionDescriptor> functionDescriptors
     ) {
         BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
+        List<OldResolutionCandidate<FunctionDescriptor>> resolutionCandidates = CollectionsKt.map(functionDescriptors, descriptor ->
+                OldResolutionCandidate.create(
+                        call, descriptor, receiver, ExplicitReceiverKind.DISPATCH_RECEIVER, null));
 
-        OverloadResolutionResults<FunctionDescriptor> resolutionResults = PSICallResolver.runResolutionAndInferenceForGivenDescriptors(
-                callResolutionContext,
-                functionDescriptors,
-                TracingStrategyImpl.create(expression, call),
-                null,
-                NewResolutionOldInferenceKt.transformToReceiverWithSmartCastInfo(context, receiver)
-        );
-
-        if (resolutionResults.isSingleResult()) {
-            context.trace.record(BindingContext.RESOLVED_CALL, call, resolutionResults.getResultingCall());
-            context.trace.record(BindingContext.CALL, call.getCalleeExpression(), call);
-        }
-
-        return resolutionResults;
+        return computeTasksFromCandidatesAndResolvedCall(
+                callResolutionContext, resolutionCandidates, TracingStrategyImpl.create(expression, call));
     }
 
     @NotNull
