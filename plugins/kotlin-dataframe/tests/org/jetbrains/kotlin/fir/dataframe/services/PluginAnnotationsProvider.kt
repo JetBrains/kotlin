@@ -21,7 +21,7 @@ class DataFramePluginAnnotationsProvider(testServices: TestServices) : Environme
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val jar = File(ANNOTATIONS_JAR)
-        testServices.assertions.assertTrue(jar.exists()) { "Jar with annotations does not exist. Please run :plugins:kotlin-dataframe:plugin-annotations:jar" }
+//        testServices.assertions.assertTrue(jar.exists()) { "Jar with annotations does not exist. Please run :plugins:kotlin-dataframe:plugin-annotations:jar" }
 //        configuration.addJvmClasspathRoots(jar)
         configuration.addJvmClasspathRoots(classpathFromClassloader(javaClass.classLoader) ?: error("no classpath"))
     }
