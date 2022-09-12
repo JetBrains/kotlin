@@ -744,7 +744,7 @@ private fun filterHeadersByName(
     var mainFile: CXFile? = null
 
     // The *name* of the header here is the path relative to the include path element., e.g. `curl/curl.h`.
-    val headerToName = mutableMapOf<CXFile, String>()
+    val headerToName = mutableMapOf<String, String>()
 
     lateinit var indexer: Indexer
     indexer = object : Indexer {
@@ -773,11 +773,12 @@ private fun filterHeadersByName(
             } else {
                 // If it is included with `#include "$name"`, then `name` can also be the path relative to the includer.
                 val includerFile = includeLocation.getContainingFile()!!
-                val includerName = headerToName[includerFile] ?: ""
+                val includerName = headerToName[includerFile.canonicalPath] ?: ""
                 val includerPath = includerFile.path
                 translationUnitsCache.duplicateEntryForInclude(includerFile.canonicalPath, file.canonicalPath)
 
-                if (clang_getFile(translationUnit, Paths.get(includerPath).resolveSibling(name).toString()) == file) {
+                val resolvedSibling = Paths.get(includerPath).resolveSibling(name).toString()
+                if (clang_getFile(translationUnit, resolvedSibling)?.canonicalPath == file.canonicalPath) {
                     // included file is accessible from the includer by `name` used as relative path, so
                     // `name` seems to be relative to the includer:
                     Paths.get(includerName).resolveSibling(name).normalize().toString()
@@ -786,7 +787,14 @@ private fun filterHeadersByName(
                 }
             }
 
-            headerToName[file] = headerName
+            if (includeLocation.getContainingFile() != null) {
+                // headerToName is stored only for known containing file of include location, which does not happen inside imported AST file.
+                // Right before AST import, `ppIncludedFile` receives included source file in `info.file`, and another source as include location in `info.hashLoc`
+                // Inside AST import, `ppIncludedFile` is called again for the same included source file,
+                //   though include location is not a source, but `.m` file, and its `getContainingFile()` is null
+                // So include location makes sense only the first
+                headerToName[file.canonicalPath] = headerName
+            }
             if (!filter.policy.excludeUnused(headerName)) {
                 ownHeaders.add(file)
             }
