@@ -1,4 +1,4 @@
-depends = CFNetwork CoreFoundation Foundation IOSurface Metal Security darwin posix
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Foundation IOSurface Metal Security darwin posix
 language = Objective-C
 package = platform.MLCompute
 
