@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -96,13 +97,16 @@ fun Throwable.wrapWithCompilationException(
     message: String,
     file: IrFile,
     element: IrElement?
-): CompilationException {
-    return CompilationException(
-        "$message: ${this::class.qualifiedName}: ${this.message}",
-        file,
-        element,
-        cause = this
-    ).apply {
-        stackTrace = this@wrapWithCompilationException.stackTrace
-    }
+): RuntimeException {
+    return if (this is ProcessCanceledException)
+        this
+    else
+        CompilationException(
+            "$message: ${this::class.qualifiedName}: ${this.message}",
+            file,
+            element,
+            cause = this
+        ).apply {
+            stackTrace = this@wrapWithCompilationException.stackTrace
+        }
 }

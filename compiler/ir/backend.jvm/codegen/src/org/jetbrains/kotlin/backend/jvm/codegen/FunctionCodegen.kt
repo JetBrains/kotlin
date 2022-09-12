@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -42,6 +43,8 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
     ): SMAPAndMethodNode =
         try {
             doGenerate(reifiedTypeParameters)
+        } catch (e: ProcessCanceledException) {
+            throw e
         } catch (e: Throwable) {
             throw RuntimeException("Exception while generating code for:\n${irFunction.dump()}", e)
         }
