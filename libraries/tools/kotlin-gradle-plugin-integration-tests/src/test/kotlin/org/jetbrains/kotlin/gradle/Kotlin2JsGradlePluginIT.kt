@@ -194,14 +194,14 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
                             .forEach {
                                 val text = it.readText()
                                 // cache keeps the js code of compiled module, this substring from that js code
-                                if (text.contains("kotlin_js_ir_ic_multiple_artifacts_lib ")) {
+                                if (text.contains("root['kotlin-js-ir-ic-multiple-artifacts-lib']")) {
                                     if (lib) {
                                         error("lib should be only once in cache")
                                     }
                                     lib = true
                                 }
                                 // cache keeps the js code of compiled module, this substring from that js code
-                                if (text.contains("kotlin_js_ir_ic_multiple_artifacts_lib_other ")) {
+                                if (text.contains("root['kotlin-js-ir-ic-multiple-artifacts-lib-other']")) {
                                     if (libOther) {
                                         error("libOther should be only once in cache")
                                     }

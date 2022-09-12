@@ -84,6 +84,7 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
 
     fun buildModuleArtifactAndCommitCache(
         moduleName: String,
+        externalModuleName: String?,
         rebuiltFileFragments: Map<KotlinSourceFile, JsIrFragmentAndBinaryAst>,
         signatureToIndexMapping: Map<KotlinSourceFile, Map<IdSignature, Int>>
     ): ModuleArtifact {
@@ -98,7 +99,7 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
             SrcFileArtifact(srcFile.path, rebuiltFileFragment?.fragment, binaryAstFile)
         }
 
-        return ModuleArtifact(moduleName, fileArtifacts, cacheDir, forceRebuildJs)
+        return ModuleArtifact(moduleName, fileArtifacts, cacheDir, forceRebuildJs, externalModuleName)
     }
 
     data class ModifiedFiles(
