@@ -98,7 +98,7 @@ private fun CInteropMetadataDependencyTransformationTask.onlyIfSourceSetIsShared
 }
 
 internal open class CInteropMetadataDependencyTransformationTask @Inject constructor(
-    @get:Internal val sourceSet: DefaultKotlinSourceSet,
+    @Transient @get:Internal val sourceSet: DefaultKotlinSourceSet,
     @get:OutputDirectory val outputDirectory: File
 ) : DefaultTask() {
 

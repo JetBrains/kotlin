@@ -95,7 +95,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             build("build", buildOptions = buildOptions) {
                 // Reduce the problem numbers when a Task become compatible with GCC.
                 // When all tasks support GCC, replace these assertions with `testConfigurationCacheOf`
-                assertOutputContains("16 problems were found storing the configuration cache, 6 of which seem unique.")
+                assertOutputContains("4 problems were found storing the configuration cache, 2 of which seem unique.")
                 configCacheIncompatibleTaskTypes.forEach { taskType ->
                     assertOutputContains(
                         """Task `\S+` of type `[\w.]+$taskType`: .+(at execution time is unsupported)|(not supported with the configuration cache)"""
