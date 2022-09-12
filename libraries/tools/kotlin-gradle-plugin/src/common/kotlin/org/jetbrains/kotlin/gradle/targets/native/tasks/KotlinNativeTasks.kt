@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeFragmentMetadataCompilationData
@@ -90,15 +91,6 @@ internal fun MutableList<String>.addFileArgs(parameter: String, values: FileColl
     }
 }
 
-internal fun MutableList<String>.addFileArgs(parameter: String, values: Collection<FileCollection>) {
-    values.forEach {
-        addFileArgs(parameter, it)
-    }
-}
-
-private fun File.providedByCompiler(project: Project): Boolean =
-    toPath().startsWith(project.file(project.konanHome).resolve("klib").toPath())
-
 // We need to filter out interop duplicates because we create copy of them for IDE.
 // TODO: Remove this after interop rework.
 internal fun FileCollection.filterOutPublishableInteropLibs(project: Project): FileCollection =
@@ -140,7 +132,7 @@ abstract class AbstractKotlinNativeCompile<
         >
 @Inject constructor(
     private val objectFactory: ObjectFactory
-): AbstractKotlinCompileTool<M>(objectFactory) {
+) : AbstractKotlinCompileTool<M>(objectFactory) {
 
     @get:Inject
     protected abstract val projectLayout: ProjectLayout
@@ -183,11 +175,26 @@ abstract class AbstractKotlinNativeCompile<
     val target: String by project.provider { compilation.konanTarget.name }
 
     // region Compiler options.
+    @Deprecated(
+        message = "AbstractKotlinNativeCompile will not provide access to kotlinOptions." +
+                " Implementations should provide access to compilerOptions",
+    )
     @get:Internal
     abstract val kotlinOptions: T
+
+    @Deprecated(
+        message = "AbstractKotlinNativeCompile will not provide access to kotlinOptions()." +
+                " Implementations should provide access to compilerOptions()",
+    )
     abstract fun kotlinOptions(fn: T.() -> Unit)
+
+    @Deprecated(
+        message = "AbstractKotlinNativeCompile will not provide access to kotlinOptions()." +
+                " Implementations should provide access to compilerOptions()",
+    )
     abstract fun kotlinOptions(fn: Closure<*>)
 
+    @Deprecated("Use implementations compilerOptions to get/set freeCompilerArgs")
     @get:Input
     abstract val additionalCompilerOptions: Provider<Collection<String>>
 
@@ -264,25 +271,7 @@ abstract class AbstractKotlinNativeCompile<
     }
 
     // Args used by both the compiler and IDEA.
-    private fun buildCommonArgs(defaultsOnly: Boolean = false): List<String> {
-        val plugins = listOfNotNull(
-            compilerPluginClasspath?.let { CompilerPluginData(it, compilerPluginOptions) },
-            kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) }
-        )
-        val opts = object : KotlinCommonToolOptions {
-            override var allWarningsAsErrors = kotlinOptions.allWarningsAsErrors
-            override var suppressWarnings = kotlinOptions.suppressWarnings
-            override var verbose = kotlinOptions.verbose
-            override var freeCompilerArgs = if (defaultsOnly) emptyList() else additionalCompilerOptions.get().toList()
-        }
-
-        return buildKotlinNativeCommonArgs(
-            languageSettings,
-            enableEndorsedLibs,
-            opts,
-            plugins
-        )
-    }
+    abstract fun buildCommonArgs(defaultsOnly: Boolean = false): List<String>
 
     @get:Input
     @get:Optional
@@ -315,7 +304,8 @@ constructor(
     private val providerFactory: ProviderFactory,
     private val execOperations: ExecOperations
 ) : AbstractKotlinNativeCompile<KotlinCommonOptions, KotlinNativeCompilationData<*>, StubK2NativeCompilerArguments>(objectFactory),
-    KotlinCompile<KotlinCommonOptions> {
+    KotlinCompile<KotlinCommonOptions>,
+    KotlinCompilationTask<CompilerCommonOptions> {
 
     @get:Input
     override val outputKind = LIBRARY
@@ -354,20 +344,23 @@ constructor(
     @get:Internal // these sources are normally a subset of `source` ones which are already tracked
     val commonSources: ConfigurableFileCollection = project.files()
 
-//    private val commonSources: FileCollection by lazy {
-//        // Already taken into account in getSources method.
-//        project.files(compilation.map { it.commonSources }).asFileTree
-//    }
-
     private val commonSourcesTree: FileTree
         get() = commonSources.asFileTree
 
     // endregion.
 
     // region Language settings imported from a SourceSet.
+    @Deprecated(
+        message = "Replaced with compilerOptions.languageVersion",
+        replaceWith = ReplaceWith("compilerOptions.languageVersion")
+    )
     val languageVersion: String?
         @Optional @Input get() = languageSettings.languageVersion
 
+    @Deprecated(
+        message = "Replaced with compilerOptions.apiVersion",
+        replaceWith = ReplaceWith("compilerOptions.apiVersion")
+    )
     val apiVersion: String?
         @Optional @Input get() = languageSettings.apiVersion
 
@@ -379,26 +372,50 @@ constructor(
     // endregion.
 
     // region Kotlin options.
-    override val kotlinOptions: KotlinCommonOptions by providerFactory.provider {
-        compilation.kotlinOptions
+    override val compilerOptions: CompilerCommonOptions  = compilation.compilerOptions.options
+
+    @Deprecated(
+        message = "Replaced with compilerOptions",
+        replaceWith = ReplaceWith("compilerOptions")
+    )
+    @Suppress("DEPRECATION")
+    override val kotlinOptions: KotlinCommonOptions = object : KotlinCommonOptions {
+        override val options: CompilerCommonOptions
+            get() = compilerOptions
     }
 
-    @get:Input
-    override val additionalCompilerOptions: Provider<Collection<String>> = providerFactory.provider {
-        kotlinOptions.freeCompilerArgs + ((languageSettings as? DefaultLanguageSettingsBuilder)?.freeCompilerArgs ?: emptyList())
-    }
-
-    private val runnerSettings = KotlinNativeCompilerRunner.Settings.fromProject(project)
-    private val isAllowCommonizer: Boolean by lazy { project.isAllowCommonizer() }
-
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        message = "Replaced with compilerOptions()",
+        replaceWith = ReplaceWith("compilerOptions(fn)")
+    )
     override fun kotlinOptions(fn: KotlinCommonOptions.() -> Unit) {
         kotlinOptions.fn()
     }
 
+    @Deprecated(
+        message = "Replaced with compilerOptions()",
+        replaceWith = ReplaceWith("compilerOptions(fn)")
+    )
     override fun kotlinOptions(fn: Closure<*>) {
+        @Suppress("DEPRECATION")
         fn.delegate = kotlinOptions
         fn.call()
     }
+
+    @Deprecated(
+        message = "Replaced with compilerOptions.freeCompilerArgs",
+        replaceWith = ReplaceWith("compilerOptions.freeCompilerArgs")
+    )
+    @get:Input
+    override val additionalCompilerOptions: Provider<Collection<String>> get() = compilerOptions
+        .freeCompilerArgs
+        .map {
+            it + (languageSettings as DefaultLanguageSettingsBuilder).freeCompilerArgs
+        }
+
+    private val runnerSettings = KotlinNativeCompilerRunner.Settings.fromProject(project)
+    private val isAllowCommonizer: Boolean by lazy { project.isAllowCommonizer() }
     // endregion.
 
     override fun createCompilerArgs(): StubK2NativeCompilerArguments = StubK2NativeCompilerArguments()
@@ -408,6 +425,20 @@ constructor(
         defaultsOnly: Boolean,
         ignoreClasspathResolutionErrors: Boolean
     ) = Unit
+
+    override fun buildCommonArgs(defaultsOnly: Boolean): List<String> {
+        val plugins = listOfNotNull(
+            compilerPluginClasspath?.let { CompilerPluginData(it, compilerPluginOptions) },
+            kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) }
+        )
+
+        return buildKotlinNativeCompileCommonArgs(
+            enableEndorsedLibs,
+            languageSettings,
+            compilerOptions,
+            plugins
+        )
+    }
 
     @TaskAction
     fun compile() {
@@ -428,13 +459,6 @@ constructor(
             )
         }
 
-        val localKotlinOptions = object : KotlinCommonToolOptions {
-            override var allWarningsAsErrors = kotlinOptions.allWarningsAsErrors
-            override var suppressWarnings = kotlinOptions.suppressWarnings
-            override var verbose = kotlinOptions.verbose
-            override var freeCompilerArgs = additionalCompilerOptions.get().toList()
-        }
-
         val plugins = listOfNotNull(
             compilerPluginClasspath?.let { CompilerPluginData(it, compilerPluginOptions) },
             kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) }
@@ -448,7 +472,7 @@ constructor(
             libraries.files.filterKlibsPassedToCompiler(),
             languageSettings,
             enableEndorsedLibs,
-            localKotlinOptions,
+            compilerOptions,
             plugins,
             moduleName,
             shortModuleName,
