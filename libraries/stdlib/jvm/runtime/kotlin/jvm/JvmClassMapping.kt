@@ -114,5 +114,5 @@ public val <T : Annotation> T.annotationClass: KClass<out T>
  */
 @SinceKotlin("1.7")
 @InlineOnly
-public inline val <E : Enum<E>> E.declaringJavaClass: Class<E>
+public inline val <E : Enum<E>> Enum<E>.declaringJavaClass: Class<E>
     get() = (this as java.lang.Enum<E>).declaringClass
