@@ -147,8 +147,7 @@ class PSICallResolver(
     fun <D : CallableDescriptor> runResolutionAndInferenceForGivenDescriptors(
         context: BasicCallResolutionContext,
         descriptors: Collection<CallableDescriptor>,
-        tracingStrategy: TracingStrategy,
-        substitutor: TypeSubstitutor? = null
+        tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
         val isSpecialFunction = descriptors.any { it.name in SPECIAL_FUNCTION_NAMES }
         val kotlinCall = toKotlinCall(
@@ -160,7 +159,7 @@ class PSICallResolver(
             GivenCandidate(
                 it,
                 dispatchReceiver = null,
-                knownTypeParametersResultingSubstitutor = substitutor
+                knownTypeParametersResultingSubstitutor = null
             )
         }
 

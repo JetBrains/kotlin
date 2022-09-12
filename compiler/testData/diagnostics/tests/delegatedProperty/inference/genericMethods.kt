@@ -3,7 +3,7 @@
 import kotlin.reflect.KProperty
 
 var a: Int by A()
-var a1 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>A()<!>
+var a1 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>A()<!>
 
 var b: Int by B()
 

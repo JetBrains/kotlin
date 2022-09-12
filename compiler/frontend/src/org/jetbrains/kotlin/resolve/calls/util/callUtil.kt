@@ -149,7 +149,7 @@ fun KtElement.getCall(context: BindingContext): Call? {
         else -> element.getCalleeExpressionIfAny()
     }
     if (reference != null) {
-        return context[CALL, reference] ?: context[CALL, element]
+        return context[CALL, reference]
     }
     return context[CALL, element]
 }

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
@@ -46,7 +45,6 @@ import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.KotlinTypeKt;
-import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingVisitorDispatcher;
@@ -293,23 +291,17 @@ public class CallResolver {
     }
 
     @NotNull
-    public <D extends CallableDescriptor> OverloadResolutionResults<D> resolveCallWithGivenDescriptor(
+    public OverloadResolutionResults<ReceiverParameterDescriptor> resolveThisOrSuperCallWithGivenDescriptor(
             @NotNull ExpressionTypingContext context,
             @NotNull Call call,
-            @NotNull D descriptor,
-            @NotNull TracingStrategy tracingStrategy,
-            @Nullable TypeSubstitutor substitutor,
-            @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
+            @NotNull ReceiverParameterDescriptor descriptor
     ) {
-        BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(
-                context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS, dataFlowInfoForArguments
-        );
+        BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
 
         return PSICallResolver.runResolutionAndInferenceForGivenDescriptors(
                 callResolutionContext,
                 Collections.singletonList(descriptor),
-                tracingStrategy,
-                substitutor
+                TracingStrategy.EMPTY
         );
     }
 
@@ -586,6 +578,27 @@ public class CallResolver {
         }
 
         return false;
+    }
+
+    public OverloadResolutionResults<FunctionDescriptor> resolveCallWithKnownCandidate(
+            @NotNull Call call,
+            @NotNull TracingStrategy tracing,
+            @NotNull ResolutionContext<?> context,
+            @NotNull OldResolutionCandidate<FunctionDescriptor> candidate,
+            @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
+    ) {
+        return callResolvePerfCounter.<OverloadResolutionResults<FunctionDescriptor>>time(() -> {
+            BasicCallResolutionContext basicCallResolutionContext =
+                    BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS, dataFlowInfoForArguments);
+
+            Set<OldResolutionCandidate<FunctionDescriptor>> candidates = Collections.singleton(candidate);
+
+            ResolutionTask<FunctionDescriptor> resolutionTask = new ResolutionTask<>(
+                    new NewResolutionOldInference.ResolutionKind.GivenCandidates(), null, candidates
+            );
+
+            return doResolveCallOrGetCachedResults(basicCallResolutionContext, resolutionTask, tracing);
+        });
     }
 
     private <D extends CallableDescriptor> OverloadResolutionResults<D> doResolveCallOrGetCachedResults(

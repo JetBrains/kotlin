@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
+import org.jetbrains.kotlin.resolve.calls.tasks.OldResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.descriptorUtil.AnnotationsForResolveUtilsKt;
@@ -161,17 +162,12 @@ public class ControlStructureTypingUtils {
     ) {
         TracingStrategy tracing = createTracingForSpecialConstruction(call, construct.getName(), context);
         TypeSubstitutor knownTypeParameterSubstitutor = createKnownTypeParameterSubstitutorForSpecialCall(construct, function, context.expectedType, context.languageVersionSettings);
-        OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithGivenDescriptor(
-                context, call, function, tracing, knownTypeParameterSubstitutor, dataFlowInfoForArguments
-        );
+        OldResolutionCandidate<FunctionDescriptor> resolutionCandidate =
+                OldResolutionCandidate.create(call, function, knownTypeParameterSubstitutor);
+        OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithKnownCandidate(
+                call, tracing, context, resolutionCandidate, dataFlowInfoForArguments);
         assert results.isSingleResult() : "Not single result after resolving one known candidate";
-
-        ResolvedCall<FunctionDescriptor> resolvedCall = results.getResultingCall();
-
-        context.trace.record(RESOLVED_CALL, call, resolvedCall);
-        context.trace.record(CALL, call.getCallElement(), call);
-
-        return resolvedCall;
+        return results.getResultingCall();
     }
 
     private static @Nullable TypeSubstitutor createKnownTypeParameterSubstitutorForSpecialCall(
