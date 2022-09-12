@@ -6008,6 +6008,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("argumentTypeMismatch.kt")
+            public void testArgumentTypeMismatch() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/argumentTypeMismatch.kt");
+            }
+
+            @Test
             @TestMetadata("capturedTypeInEquality.kt")
             public void testCapturedTypeInEquality() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/capturedTypeInEquality.kt");
