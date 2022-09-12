@@ -160,12 +160,13 @@ fun getCompilerFlagsForVfsOverlay(headerFilterPrefix: Array<String>, def: DefFil
     val filteredIncludeDirs = headerFilterPrefix .map { Paths.get(it) }
     if (filteredIncludeDirs.isNotEmpty()) {
         val headerFilterGlobs = def.config.headerFilter
+        val excludeFilterGlobs = def.config.excludeFilter
         if (headerFilterGlobs.isEmpty()) {
             error("'$HEADER_FILTER_ADDITIONAL_SEARCH_PREFIX' option requires " +
                     "'headerFilter' to be specified in .def file")
         }
 
-        relativeToRoot += findFilesByGlobs(roots = filteredIncludeDirs, globs = headerFilterGlobs)
+        relativeToRoot += findFilesByGlobs(roots = filteredIncludeDirs, includeGlobs = headerFilterGlobs, excludeGlobs = excludeFilterGlobs)
     }
 
     if (relativeToRoot.isEmpty()) {
@@ -183,10 +184,11 @@ fun getCompilerFlagsForVfsOverlay(headerFilterPrefix: Array<String>, def: DefFil
     return listOf("-I${virtualRoot.toAbsolutePath()}", "-ivfsoverlay", vfsOverlayFile.toAbsolutePath().toString())
 }
 
-private fun findFilesByGlobs(roots: List<Path>, globs: List<String>): Map<Path, Path> {
+private fun findFilesByGlobs(roots: List<Path>, includeGlobs: List<String>, excludeGlobs: List<String>): Map<Path, Path> {
     val relativeToRoot = mutableMapOf<Path, Path>()
 
-    val pathMatchers = globs.map { FileSystems.getDefault().getPathMatcher("glob:$it") }
+    val pathMatchers = includeGlobs.map { FileSystems.getDefault().getPathMatcher("glob:$it") }
+    val excludePathMatchers = excludeGlobs.map { FileSystems.getDefault().getPathMatcher("glob:$it") }
 
     roots.reversed()
             .filter { path ->
@@ -199,7 +201,10 @@ private fun findFilesByGlobs(roots: List<Path>, globs: List<String>): Map<Path, 
                 // TODO: don't scan the entire tree, skip subdirectories according to globs.
                 Files.walk(root, FileVisitOption.FOLLOW_LINKS).forEach { path ->
                     val relativePath = root.relativize(path)
-                    if (!Files.isDirectory(path) && pathMatchers.any { it.matches(relativePath) }) {
+                    val shouldInclude = !Files.isDirectory(path)
+                            && excludePathMatchers.all { !it.matches(relativePath) }
+                            && pathMatchers.any { it.matches(relativePath) }
+                    if (shouldInclude) {
                         relativeToRoot[relativePath] = root
                     }
                 }
@@ -504,7 +509,8 @@ internal fun buildNativeLibrary(
         val excludeDependentModules = def.config.excludeDependentModules
 
         val headerFilterGlobs = def.config.headerFilter
-        val headerInclusionPolicy = HeaderInclusionPolicyImpl(headerFilterGlobs)
+        val excludeFilterGlobs = def.config.excludeFilter
+        val headerInclusionPolicy = HeaderInclusionPolicyImpl(headerFilterGlobs, excludeFilterGlobs)
 
         headerFilter = NativeLibraryHeaderFilter.NameBased(headerInclusionPolicy, excludeDependentModules)
         includes = headerFiles

@@ -86,8 +86,18 @@ class DefFile(val file:File?, val config:DefFileConfig, val manifestAddendProper
             properties.getProperty("package")
         }
 
+        /**
+         * Header inclusion globs.
+         */
         val headerFilter by lazy {
             properties.getSpaceSeparated("headerFilter")
+        }
+
+        /**
+         * Header exclusion globs. Have higher priority than [headerFilter].
+         */
+        val excludeFilter by lazy {
+            properties.getSpaceSeparated("excludeFilter")
         }
 
         val strictEnums by lazy {
