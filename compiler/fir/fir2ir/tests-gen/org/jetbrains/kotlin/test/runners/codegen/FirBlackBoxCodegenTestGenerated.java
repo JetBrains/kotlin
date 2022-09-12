@@ -18074,6 +18074,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("linkViaSignatures.kt")
+        public void testLinkViaSignatures() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/linkViaSignatures.kt");
+        }
+
+        @Test
         @TestMetadata("LookupTags.kt")
         public void testLookupTags() throws Exception {
             runTest("compiler/testData/codegen/box/fir/LookupTags.kt");

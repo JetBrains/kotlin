@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.pipeline
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 
@@ -26,19 +28,32 @@ fun FirSession.convertToIr(
     scopeSession: ScopeSession,
     firFiles: List<FirFile>,
     fir2IrExtensions: Fir2IrExtensions,
-    irGeneratorExtensions: Collection<IrGenerationExtension>
+    irGeneratorExtensions: Collection<IrGenerationExtension>,
+    linkViaSignatures: Boolean
 ): Fir2IrResult {
     val commonFirFiles = moduleData.dependsOnDependencies
         .map { it.session }
         .filter { it.kind == FirSession.Kind.Source }
         .flatMap { (it.firProvider as FirProviderImpl).getAllFirFiles() }
 
-    return Fir2IrConverter.createModuleFragmentWithoutSignatures(
-        this, scopeSession, firFiles + commonFirFiles,
-        languageVersionSettings, fir2IrExtensions,
-        FirJvmKotlinMangler(this),
-        JvmIrMangler, IrFactoryImpl, FirJvmVisibilityConverter,
-        Fir2IrJvmSpecialAnnotationSymbolProvider(),
-        irGeneratorExtensions
-    )
+    if (linkViaSignatures) {
+        val signaturer = JvmIdSignatureDescriptor(mangler = JvmDescriptorMangler(mainDetector = null))
+        return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
+            this, scopeSession, firFiles + commonFirFiles,
+            languageVersionSettings, signaturer, fir2IrExtensions,
+            FirJvmKotlinMangler(this),
+            JvmIrMangler, IrFactoryImpl, FirJvmVisibilityConverter,
+            Fir2IrJvmSpecialAnnotationSymbolProvider(),
+            irGeneratorExtensions, true
+        )
+    } else {
+        return Fir2IrConverter.createModuleFragmentWithoutSignatures(
+            this, scopeSession, firFiles + commonFirFiles,
+            languageVersionSettings, fir2IrExtensions,
+            FirJvmKotlinMangler(this),
+            JvmIrMangler, IrFactoryImpl, FirJvmVisibilityConverter,
+            Fir2IrJvmSpecialAnnotationSymbolProvider(),
+            irGeneratorExtensions
+        )
+    }
 }

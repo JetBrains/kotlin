@@ -192,10 +192,13 @@ fun convertAnalyzedFirToIr(
 
     // fir2ir
     val irGenerationExtensions =
-        (environment.projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let { IrGenerationExtension.getInstances(it) }
+        (environment.projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let {
+            IrGenerationExtension.getInstances(it)
+        } ?: emptyList()
+    val linkViaSignatures = input.configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
     val (irModuleFragment, components) =
         analysisResults.session.convertToIr(
-            analysisResults.scopeSession, analysisResults.fir, extensions, irGenerationExtensions ?: emptyList()
+            analysisResults.scopeSession, analysisResults.fir, extensions, irGenerationExtensions, linkViaSignatures
         )
 
     return ModuleCompilerIrBackendInput(
