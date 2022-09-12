@@ -87,13 +87,6 @@ fun KotlinSourceFileMap<Set<IdSignature>>.flatSignatures(): Set<IdSignature> {
     return allSignatures
 }
 
-fun KotlinSourceFileMutableMap<MutableSet<IdSignature>>.addSignature(
-    lib: KotlinLibraryFile, src: KotlinSourceFile, signature: IdSignature
-) = when (val signatures = this[lib, src]) {
-    null -> this[lib, src] = mutableSetOf(signature)
-    else -> signatures += signature
-}
-
 abstract class KotlinSourceFileExports {
     abstract val inverseDependencies: KotlinSourceFileMap<Set<IdSignature>>
 
