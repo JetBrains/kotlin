@@ -14,11 +14,15 @@ import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
+import org.jetbrains.kotlin.gradle.dsl.CompilerCommonToolOptions
+import org.jetbrains.kotlin.gradle.dsl.CompilerCommonToolOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.targets.native.tasks.buildKotlinNativeBinaryLinkerArgs
+import org.jetbrains.kotlin.gradle.tasks.KotlinToolTask
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
@@ -31,7 +35,8 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
     private val objectFactory: ObjectFactory,
     private val execOperations: ExecOperations,
     private val projectLayout: ProjectLayout
-) : DefaultTask() {
+) : DefaultTask(),
+    KotlinToolTask<CompilerCommonToolOptions> {
 
     @get:Input
     var baseName: String = project.name
@@ -112,37 +117,72 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
 
     private val nativeBinaryOptions = PropertiesProvider(project).nativeBinaryOptions
 
+    override val toolOptions: CompilerCommonToolOptions = objectFactory
+        .newInstance<CompilerCommonToolOptionsDefault>()
+        .apply {
+            freeCompilerArgs.addAll(PropertiesProvider(project).nativeLinkArgs)
+        }
+
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        message = "Replaced with toolOptions",
+        replaceWith = ReplaceWith("toolOptions")
+    )
     @get:Internal
     val kotlinOptions = object : KotlinCommonToolOptions {
-        override var allWarningsAsErrors: Boolean = false
-        override var suppressWarnings: Boolean = false
-        override var verbose: Boolean = false
-        override var freeCompilerArgs: List<String> = PropertiesProvider(project).nativeLinkArgs
+        override val options: CompilerCommonToolOptions
+            get() = toolOptions
     }
 
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        message = "Replaced with toolOptions()",
+        replaceWith = ReplaceWith("toolOptions(fn)")
+    )
     fun kotlinOptions(fn: KotlinCommonToolOptions.() -> Unit) {
         kotlinOptions.fn()
     }
 
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        message = "Replaced with toolOptions()",
+        replaceWith = ReplaceWith("toolOptions(fn)")
+    )
     fun kotlinOptions(fn: Action<KotlinCommonToolOptions>) {
         fn.execute(kotlinOptions)
     }
 
-    @get:Input
+    @Deprecated(
+        message = "Replaced with toolOptions.allWarningsAsErrors",
+        replaceWith = ReplaceWith("toolOptions.allWarningsAsErrors")
+    )
+    @get:Internal
     val allWarningsAsErrors: Boolean
-        get() = kotlinOptions.allWarningsAsErrors
+        get() = toolOptions.allWarningsAsErrors.get()
 
-    @get:Input
+    @Deprecated(
+        message = "Replaced with toolOptions.suppressWarnings",
+        replaceWith = ReplaceWith("toolOptions.suppressWarnings")
+    )
+    @get:Internal
     val suppressWarnings: Boolean
-        get() = kotlinOptions.suppressWarnings
+        get() = toolOptions.suppressWarnings.get()
 
-    @get:Input
+    @Deprecated(
+        message = "Replaced with toolOptions.verbose",
+        replaceWith = ReplaceWith("toolOptions.verbose")
+    )
+    @get:Internal
     val verbose: Boolean
-        get() = kotlinOptions.verbose
+        get() = toolOptions.verbose.get()
 
-    @get:Input
+    @Deprecated(
+        message = "Replaced with toolOptions.freeCompilerArgs",
+        replaceWith = ReplaceWith("toolOptions.freeCompilerArgs")
+    )
+    @get:Internal
     val freeCompilerArgs: List<String>
-        get() = kotlinOptions.freeCompilerArgs
+        get() = toolOptions.freeCompilerArgs.get()
 
     @get:Internal
     val outputFile: File
@@ -171,7 +211,7 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
             libraries = libraries.klibs(),
             friendModules = emptyList(), //FriendModules aren't needed here because it's no test artifact
             enableEndorsedLibs = enableEndorsedLibs,
-            toolOptions = kotlinOptions,
+            toolOptions = toolOptions,
             compilerPlugins = emptyList(),//CompilerPlugins aren't needed here because it's no compilation but linking
             processTests = processTests,
             entryPoint = entryPoint,
