@@ -1,4 +1,4 @@
-depends = CFNetwork CoreFoundation CoreGraphics CoreLocation Foundation Security UserNotifications darwin posix
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreLocation Foundation Security UserNotifications darwin posix
 language = Objective-C
 package = platform.Intents
 modules = Intents
