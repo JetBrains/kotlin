@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NA
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmAwareTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
@@ -52,6 +54,10 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
     // region Task creation.
     private fun Project.createLinkTask(binary: NativeBinary) {
+        // workaround for too late compilation compilerOptions creation
+        // which leads to not able run project.afterEvaluate because of wrong context
+        // this afterEvaluate comes from NativeCompilerOptions
+        val compilationCompilerOptions = binary.compilation.compilerOptions
         val result = registerTask<KotlinNativeLink>(
             binary.linkTaskName, listOf(binary)
         ) {
@@ -62,6 +68,21 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             val konanPropertiesBuildService = KonanPropertiesBuildService.registerIfAbsent(project.gradle)
             it.konanPropertiesService.set(konanPropertiesBuildService)
             it.usesService(konanPropertiesBuildService)
+            it.toolOptions.freeCompilerArgs.convention(
+                compilationCompilerOptions.options.freeCompilerArgs
+            )
+        }
+
+        runOnceAfterEvaluated("Sync language settings for NativeLinkTask") {
+            result.configure {
+                // We propagate compilation free args to the link task for now (see KT-33717).
+                val defaultLanguageSettings = binary.compilation.languageSettings as? DefaultLanguageSettingsBuilder
+                if (defaultLanguageSettings != null) {
+                    it.toolOptions.freeCompilerArgs.addAll(
+                        defaultLanguageSettings.freeCompilerArgs
+                    )
+                }
+            }
         }
 
 

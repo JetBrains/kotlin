@@ -12,17 +12,14 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.*
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentSelector
-import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFile
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
@@ -32,15 +29,11 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCInteropRunner.Companion.run
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeFragmentMetadataCompilationData
@@ -108,7 +101,7 @@ private fun File.providedByCompiler(project: Project): Boolean =
 
 // We need to filter out interop duplicates because we create copy of them for IDE.
 // TODO: Remove this after interop rework.
-private fun FileCollection.filterOutPublishableInteropLibs(project: Project): FileCollection =
+internal fun FileCollection.filterOutPublishableInteropLibs(project: Project): FileCollection =
     filterOutPublishableInteropLibs(project.buildLibDirectories())
 
 private fun Project.buildLibDirectories(): List<Path> =
@@ -660,7 +653,7 @@ internal class CacheBuilder(
         val gradleUserHomeDir: File,
         val binary: NativeBinary,
         val konanTarget: KonanTarget,
-        val kotlinOptions: KotlinCommonToolOptions,
+        val toolOptions: CompilerCommonToolOptions,
         val externalDependenciesArgs: List<String>
     ) {
         val rootCacheDirectory get() = getRootCacheDirectory(
@@ -675,7 +668,7 @@ internal class CacheBuilder(
                 project: Project,
                 binary: NativeBinary,
                 konanTarget: KonanTarget,
-                kotlinOptions: KotlinCommonToolOptions,
+                toolOptions: CompilerCommonToolOptions,
                 externalDependenciesArgs: List<String>
             ): Settings {
                 val konanCacheKind = project.getKonanCacheKind(konanTarget)
@@ -684,7 +677,7 @@ internal class CacheBuilder(
                     konanCacheKind = konanCacheKind,
                     libraries = binary.compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project),
                     gradleUserHomeDir = project.gradle.gradleUserHomeDir,
-                    binary, konanTarget, kotlinOptions, externalDependenciesArgs
+                    binary, konanTarget, toolOptions, externalDependenciesArgs
                 )
             }
         }
@@ -722,7 +715,7 @@ internal class CacheBuilder(
         get() = settings.rootCacheDirectory
 
     private val partialLinkage: Boolean
-        get() = PARTIAL_LINKAGE in settings.kotlinOptions.freeCompilerArgs
+        get() = PARTIAL_LINKAGE in settings.toolOptions.freeCompilerArgs.get()
 
     private fun getCacheDirectory(
         resolvedDependencyGraph: ResolvedDependencyGraph,

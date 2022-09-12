@@ -10,27 +10,32 @@ import groovy.lang.Closure
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
 import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
+import org.jetbrains.kotlin.gradle.dsl.CompilerCommonToolOptions
+import org.jetbrains.kotlin.gradle.dsl.CompilerCommonToolOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
 import org.jetbrains.kotlin.gradle.targets.native.tasks.buildKotlinNativeBinaryLinkerArgs
-import org.jetbrains.kotlin.gradle.utils.ResolvedDependencyGraph
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.project.model.LanguageSettings
+import java.io.File
 import javax.inject.Inject
 
 /**
@@ -43,88 +48,131 @@ constructor(
     @Internal
     val binary: NativeBinary,
     private val objectFactory: ObjectFactory,
-    private val providerFactory: ProviderFactory,
     private val execOperations: ExecOperations
-) : AbstractKotlinNativeCompile<KotlinCommonToolOptions, KotlinNativeCompilation, StubK2NativeCompilerArguments>(objectFactory) {
+) : AbstractKotlinCompileTool<StubK2NativeCompilerArguments>(objectFactory),
+    KotlinToolTask<CompilerCommonToolOptions> {
+    @Deprecated("Visibility will be lifted to private in the future releases")
     @get:Internal
-    final override val compilation: KotlinNativeCompilation
+    val compilation: KotlinNativeCompilation
         get() = binary.compilation
 
     private val runnerSettings = KotlinNativeCompilerRunner.Settings.fromProject(project)
 
+    final override val toolOptions: CompilerCommonToolOptions = objectFactory
+        .newInstance<CompilerCommonToolOptionsDefault>()
+        .apply {
+            freeCompilerArgs.addAll(PropertiesProvider(project).nativeLinkArgs)
+        }
+
     init {
-        dependsOn(project.provider { compilation.compileKotlinTaskProvider })
+        @Suppress("DEPRECATION")
+        this.dependsOn(compilation.compileTaskProvider)
         // Frameworks actively uses symlinks.
         // Gradle build cache transforms symlinks into regular files https://guides.gradle.org/using-build-cache/#symbolic_links
         outputs.cacheIf { outputKind != CompilerOutputKind.FRAMEWORK }
 
-        this.setSource(compilation.compileKotlinTask.outputFile)
+        @Suppress("DEPRECATION")
+        this.setSource(compilation.compileTaskProvider.map { it.outputFile })
         includes.clear() // we need to include non '.kt' or '.kts' files
         disallowSourceChanges()
     }
 
     override val destinationDirectory: DirectoryProperty = binary.outputDirectoryProperty
 
-    override val outputKind: CompilerOutputKind
-        @Input get() = binary.outputKind.compilerOutputKind
-
-    override val optimized: Boolean
-        @Input get() = binary.optimized
-
-    override val debuggable: Boolean
-        @Input get() = binary.debuggable
-
-    override val baseName: String
-        @Input get() = binary.baseName
+    @get:Classpath
+    override val libraries: ConfigurableFileCollection = objectFactory.fileCollection().from(
+        {
+            // Avoid resolving these dependencies during task graph construction when we can't build the target:
+            @Suppress("DEPRECATION")
+            if (konanTarget.enabledOnCurrentHost)
+                objectFactory.fileCollection().from(
+                    compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project)
+                )
+            else objectFactory.fileCollection()
+        }
+    )
 
     @get:Input
-    protected val konanCacheKind: NativeCacheKind by lazy {
+    val outputKind: CompilerOutputKind get() = binary.outputKind.compilerOutputKind
+
+    @get:Input
+    val optimized: Boolean get() = binary.optimized
+
+    @get:Input
+    val debuggable: Boolean get() = binary.debuggable
+
+    @get:Input
+    val baseName: String get() = binary.baseName
+
+    @Suppress("DEPRECATION")
+    private val konanTarget = compilation.konanTarget
+
+    @Suppress("DEPRECATION")
+    @Deprecated("Use toolOptions to configure the task")
+    @get:Internal
+    val languageSettings: LanguageSettings = compilation.languageSettings
+
+    @Suppress("unused")
+    @get:Input
+    protected val konanCacheKind: Provider<NativeCacheKind> = objectFactory.providerWithLazyConvention {
         project.getKonanCacheKind(konanTarget)
     }
 
-    inner class NativeLinkOptions : KotlinCommonToolOptions {
-        override var allWarningsAsErrors: Boolean = false
-        override var suppressWarnings: Boolean = false
-        override var verbose: Boolean = false
-        override var freeCompilerArgs: List<String> = listOf()
-    }
-
-    private val nativeLinkArgs = PropertiesProvider(project).nativeLinkArgs
-
-    // We propagate compilation free args to the link task for now (see KT-33717).
     @get:Input
-    override val additionalCompilerOptions: Provider<Collection<String>> = providerFactory.provider {
-        kotlinOptions.freeCompilerArgs +
-                compilation.kotlinOptions.freeCompilerArgs +
-                ((languageSettings as? DefaultLanguageSettingsBuilder)?.freeCompilerArgs ?: emptyList()) +
-                nativeLinkArgs
+    internal val useEmbeddableCompilerJar: Boolean
+        get() = project.nativeUseEmbeddableCompilerJar
+
+    @Suppress("unused", "UNCHECKED_CAST")
+    @Deprecated(
+        "Use toolOptions.freeCompilerArgs",
+        replaceWith = ReplaceWith("toolOptions.freeCompilerArgs")
+    )
+    @get:Internal
+    val additionalCompilerOptions: Provider<Collection<String>> = toolOptions.freeCompilerArgs as Provider<Collection<String>>
+
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        message = "Replaced with toolOptions",
+        replaceWith = ReplaceWith("toolOptions")
+    )
+    @get:Internal
+    val kotlinOptions: KotlinCommonToolOptions = object : KotlinCommonToolOptions {
+        override val options: CompilerCommonToolOptions
+            get() = toolOptions
     }
 
-    override val kotlinOptions: KotlinCommonToolOptions = NativeLinkOptions()
-
-    override fun kotlinOptions(fn: KotlinCommonToolOptions.() -> Unit) {
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        message = "Replaced with toolOptions()",
+        replaceWith = ReplaceWith("toolOptions(fn)")
+    )
+    fun kotlinOptions(fn: KotlinCommonToolOptions.() -> Unit) {
         kotlinOptions.fn()
     }
 
-    override fun kotlinOptions(fn: Closure<*>) {
+    @Deprecated(
+        message = "Replaced with toolOptions()",
+        replaceWith = ReplaceWith("toolOptions(fn)")
+    )
+    fun kotlinOptions(fn: Closure<*>) {
+        @Suppress("DEPRECATION")
         fn.delegate = kotlinOptions
         fn.call()
     }
 
     // Binary-specific options.
-    val entryPoint: String?
-        @Input
-        @Optional
-        get() = (binary as? Executable)?.entryPoint
+    @get:Input
+    @get:Optional
+    val entryPoint: String? get() = (binary as? Executable)?.entryPoint
 
-    val linkerOpts: List<String>
-        @Input get() = binary.linkerOpts
+    @get:Input
+    val linkerOpts: List<String> get() = binary.linkerOpts
 
     @get:Input
     val binaryOptions: Map<String, String> by lazy { PropertiesProvider(project).nativeBinaryOptions + binary.binaryOptions }
 
-    val processTests: Boolean
-        @Input get() = binary is TestExecutable
+    @get:Input
+    val processTests: Boolean get() = binary is TestExecutable
 
     @get:Classpath
     val exportLibraries: FileCollection get() = exportLibrariesResolvedGraph?.files ?: objectFactory.fileCollection()
@@ -146,18 +194,10 @@ constructor(
     @get:Internal
     val apiFiles = project.files(project.configurations.getByName(compilation.apiConfigurationName)).filterKlibsPassedToCompiler()
 
-    private val localKotlinOptions get() =
-        object : KotlinCommonToolOptions {
-            override var allWarningsAsErrors = kotlinOptions.allWarningsAsErrors
-            override var suppressWarnings = kotlinOptions.suppressWarnings
-            override var verbose = kotlinOptions.verbose
-            override var freeCompilerArgs = additionalCompilerOptions.get().toList()
-        }
-
     private val externalDependenciesArgs by lazy { ExternalDependenciesBuilder(project, compilation).buildCompilerArgs() }
 
     private val cacheBuilderSettings by lazy {
-        CacheBuilder.Settings.createWithProject(project, binary, konanTarget, localKotlinOptions, externalDependenciesArgs)
+        CacheBuilder.Settings.createWithProject(project, binary, konanTarget, toolOptions, externalDependenciesArgs)
     }
 
     override fun createCompilerArgs(): StubK2NativeCompilerArguments = StubK2NativeCompilerArguments()
@@ -205,9 +245,51 @@ constructor(
     @get:Internal
     internal abstract val konanPropertiesService: Property<KonanPropertiesBuildService>
 
+    @Suppress("DEPRECATION")
+    @get:Classpath
+    protected val friendModule: FileCollection = objectFactory.fileCollection().from({ compilation.friendPaths })
+
+    @Suppress("DEPRECATION")
     private val resolvedDependencyGraph = ResolvedDependencyGraph(
         project.configurations.getByName(compilation.compileDependencyConfigurationName)
     )
+
+    @get:Internal
+    open val outputFile: Provider<File>
+        get() = destinationDirectory.flatMap {
+            val prefix = outputKind.prefix(konanTarget)
+            val suffix = outputKind.suffix(konanTarget)
+            val filename = "$prefix${baseName}$suffix".let {
+                when {
+                    outputKind == CompilerOutputKind.FRAMEWORK ->
+                        it.asValidFrameworkName()
+                    outputKind in listOf(CompilerOutputKind.STATIC, CompilerOutputKind.DYNAMIC) ||
+                            outputKind == CompilerOutputKind.PROGRAM && konanTarget == KonanTarget.WASM32 ->
+                        it.replace('-', '_')
+                    else -> it
+                }
+            }
+
+            objectFactory.property(it.file(filename).asFile)
+        }
+
+    @Suppress("DEPRECATION")
+    @get:Input
+    val enableEndorsedLibs: Boolean get() = compilation.enableEndorsedLibs
+
+    @Internal
+    val compilerPluginOptions = CompilerPluginOptions()
+
+    @Optional
+    @Classpath
+    open var compilerPluginClasspath: FileCollection? = null
+
+    /**
+     * Plugin Data provided by [KpmCompilerPlugin]
+     */
+    @get:Optional
+    @get:Nested
+    var kotlinPluginData: Provider<KotlinCompilerPluginData>? = null
 
     @TaskAction
     fun compile() {
@@ -237,7 +319,7 @@ constructor(
             libraries.files.filterKlibsPassedToCompiler(),
             friendModule.files.toList(),
             enableEndorsedLibs,
-            localKotlinOptions,
+            toolOptions,
             plugins,
             processTests,
             entryPoint,
