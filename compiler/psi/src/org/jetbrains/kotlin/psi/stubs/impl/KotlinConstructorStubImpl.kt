@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtConstructorElementType
 class KotlinConstructorStubImpl<T : KtConstructor<T>>(
     parent: StubElement<out PsiElement>?,
     elementType: KtConstructorElementType<T>,
-    private val nameRef: StringRef?,
+    private val containingClassName: StringRef?,
     private val hasBlockBody: Boolean,
     private val hasBody: Boolean,
 ) : KotlinStubBaseImpl<T>(parent, elementType), KotlinConstructorStub<T> {
     override fun getFqName() = null
-    override fun getName() = StringRef.toString(nameRef)
+    override fun getName() = StringRef.toString(containingClassName)
     override fun isTopLevel() = false
     override fun isExtension() = false
     override fun hasBlockBody() = hasBlockBody

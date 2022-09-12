@@ -54,9 +54,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
     override fun getEqualsToken() = null
 
     override fun hasBlockBody(): Boolean {
-        if (stub != null) {
-            return stub!!.hasBlockBody()
-        }
+        stub?.let { return it.hasBlockBody() }
         return bodyExpression != null
     }
 

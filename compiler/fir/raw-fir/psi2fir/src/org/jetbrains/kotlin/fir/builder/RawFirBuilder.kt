@@ -275,6 +275,7 @@ open class RawFirBuilder(
                         ownerTypeParameters
                     )
                 }
+
                 is KtEnumEntry -> {
                     val primaryConstructor = owner.primaryConstructor
                     val ownerClassHasDefaultConstructor =
@@ -283,6 +284,7 @@ open class RawFirBuilder(
                         }
                     toFirEnumEntry(delegatedSelfType, ownerClassHasDefaultConstructor)
                 }
+
                 is KtProperty -> {
                     convertProperty(
                         this@toFirDeclaration,
@@ -290,6 +292,7 @@ open class RawFirBuilder(
                         ownerClassBuilder.ownerRegularClassTypeParametersCount
                     )
                 }
+
                 else -> convert()
             }
         }
@@ -298,8 +301,10 @@ open class RawFirBuilder(
             when (this) {
                 is KtBlockExpression ->
                     accept(this@Visitor, Unit) as FirBlock
+
                 null ->
                     buildEmptyExpressionBlock()
+
                 else -> {
                     var firBlock: FirBlock? = null
                     if (this is KtAnnotatedExpression) {
@@ -317,10 +322,12 @@ open class RawFirBuilder(
             when {
                 !hasBody() ->
                     null to null
+
                 mode == BodyBuildingMode.LAZY_BODIES -> {
                     val block = buildLazyBlock()
                     block to null
                 }
+
                 hasBlockBody() -> {
                     val block = bodyBlockExpression?.accept(this@Visitor, Unit) as? FirBlock
                     if (hasContractEffectList()) {
@@ -329,6 +336,7 @@ open class RawFirBuilder(
                         block.extractContractDescriptionIfPossible()
                     }
                 }
+
                 else -> {
                     val result = { bodyExpression }.toFirExpression("Function has no body (but should)")
                     FirSingleExpressionBlock(result.toReturn(baseSource = result.source)) to null
@@ -360,10 +368,12 @@ open class RawFirBuilder(
                     this.isSpread = isSpread
                     this.name = name
                 }
+
                 isSpread -> buildSpreadArgumentExpression {
                     source = (this@toFirExpression as? PsiElement)?.toFirSourceElement()
                     this.expression = firExpression
                 }
+
                 else -> firExpression
             }
         }
@@ -435,6 +445,7 @@ open class RawFirBuilder(
                         this@RawFirBuilder.context.firFunctionTargets.removeLast()
                     }
                 }
+
                 isGetter || property.isVar -> {
                     // Default getter for val/var properties, and default setter for var properties.
                     val propertySource =
@@ -459,6 +470,7 @@ open class RawFirBuilder(
                             it.initContainingClassAttr()
                         }
                 }
+
                 else -> {
                     // No default setter for val properties.
                     null
@@ -525,6 +537,34 @@ open class RawFirBuilder(
             }
         }
 
+        private inline fun <T> buildOrLazy(build: () -> T, lazy: () -> T): T {
+            return when (mode) {
+                BodyBuildingMode.NORMAL -> build()
+                BodyBuildingMode.LAZY_BODIES -> lazy()
+            }
+        }
+
+        private inline fun buildOrLazyExpression(buildExpression: () -> FirExpression): FirExpression {
+            return buildOrLazy(buildExpression, ::buildLazyExpression)
+        }
+
+        private inline fun buildOrLazyBlock(buildBlock: () -> FirBlock): FirBlock {
+            return buildOrLazy(buildBlock, ::buildLazyBlock)
+        }
+
+        private inline fun buildOrLazyDelegatedConstructorCall(
+            isThis: Boolean,
+            constructedTypeRef: () -> FirTypeRef,
+            buildCall: () -> FirDelegatedConstructorCall
+        ): FirDelegatedConstructorCall {
+            return buildOrLazy(buildCall, {
+                buildLazyDelegatedConstructorCall {
+                    this.isThis = isThis
+                    this.constructedTypeRef = constructedTypeRef()
+                }
+            })
+        }
+
         private fun KtParameter.toFirValueParameter(
             defaultTypeRef: FirTypeRef?,
             valueParameterDeclaration: ValueParameterDeclaration,
@@ -544,11 +584,8 @@ open class RawFirBuilder(
                 this.name = name
                 symbol = FirValueParameterSymbol(name)
                 defaultValue = if (hasDefaultValue()) {
-                    when (mode) {
-                        BodyBuildingMode.NORMAL -> {
-                            { this@toFirValueParameter.defaultValue }.toFirExpression("Should have default value")
-                        }
-                        BodyBuildingMode.LAZY_BODIES -> buildLazyExpression()
+                    buildOrLazyExpression {
+                        { this@toFirValueParameter.defaultValue }.toFirExpression("Should have default value")
                     }
                 } else null
                 isCrossinline = hasModifier(CROSSINLINE_KEYWORD)
@@ -770,15 +807,13 @@ open class RawFirBuilder(
             val argumentList = buildArgumentList {
                 source = valueArgumentList?.toFirSourceElement()
                 for (argument in valueArguments) {
-                    val argumentExpression = when (mode) {
-                        BodyBuildingMode.LAZY_BODIES -> buildLazyExpression()
-                        BodyBuildingMode.NORMAL -> argument.toFirExpression()
-                    }
+                    val argumentExpression = buildOrLazyExpression { argument.toFirExpression() }
                     arguments += when (argument) {
                         is KtLambdaArgument -> buildLambdaArgumentExpression {
                             source = argument.toFirSourceElement()
                             expression = argumentExpression
                         }
+
                         else -> argumentExpression
                     }
                 }
@@ -802,11 +837,13 @@ open class RawFirBuilder(
                     is KtSuperTypeEntry -> {
                         container.superTypeRefs += superTypeListEntry.typeReference.toFirOrErrorType()
                     }
+
                     is KtSuperTypeCallEntry -> {
                         delegatedSuperTypeRef = superTypeListEntry.calleeExpression.typeReference.toFirOrErrorType()
                         container.superTypeRefs += delegatedSuperTypeRef!!
                         superTypeCallEntry = superTypeListEntry
                     }
+
                     is KtDelegatedSuperTypeEntry -> {
                         val type = superTypeListEntry.typeReference.toFirOrErrorType()
                         val delegateExpression = { superTypeListEntry.delegateExpression }.toFirExpression("Should have delegate")
@@ -847,6 +884,7 @@ open class RawFirBuilder(
                     }
                     container.superTypeRefs += delegatedSuperTypeRef!!
                 }
+
                 this is KtClass && classKind == ClassKind.ANNOTATION_CLASS -> {
                     container.superTypeRefs += implicitAnnotationType
                     delegatedSuperTypeRef = implicitAnyType
@@ -900,35 +938,22 @@ open class RawFirBuilder(
                 ?: owner.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
             val firDelegatedCall =
                 if (containingClassIsExpectClass) null else {
-                    if (this == null && owner !is KtEnumEntry) {
+                    buildOrLazyDelegatedConstructorCall(
+                        isThis = false,
+                        constructedTypeRef = {
+                            delegatedSuperTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
+                        }) {
                         buildDelegatedConstructorCall {
-                            source = constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                            source = constructorCall ?: constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
                             constructedTypeRef = delegatedSuperTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
                             isThis = false
                             calleeReference = buildExplicitSuperReference {
                                 source =
-                                    this@buildDelegatedConstructorCall.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                                    superTypeCallEntry?.calleeExpression?.toFirSourceElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                                        ?: this@buildDelegatedConstructorCall.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
                                 superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
                             }
-                        }
-                    } else when (mode) {
-                        BodyBuildingMode.NORMAL -> {
-                            buildDelegatedConstructorCall {
-                                source = constructorCall ?: constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
-                                constructedTypeRef = delegatedSuperTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
-                                isThis = false
-                                calleeReference = buildExplicitSuperReference {
-                                    source =
-                                        superTypeCallEntry?.calleeExpression?.toFirSourceElement(KtFakeSourceElementKind.DelegatingConstructorCall)
-                                            ?: this@buildDelegatedConstructorCall.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
-                                    superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
-                                }
-                                superTypeCallEntry?.extractArgumentsTo(this)
-                            }
-                        }
-                        BodyBuildingMode.LAZY_BODIES -> buildLazyDelegatedConstructorCall {
-                            isThis = false
-                            constructedTypeRef = delegatedSuperTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
+                            superTypeCallEntry?.extractArgumentsTo(this)
                         }
                     }
                 }
@@ -1116,6 +1141,7 @@ open class RawFirBuilder(
                         classOrObject.isAnnotation() -> ClassKind.ANNOTATION_CLASS
                         else -> ClassKind.CLASS
                     }
+
                     else -> throw AssertionError("Unexpected class or object: ${classOrObject.text}")
                 }
                 val status = FirDeclarationStatusImpl(
@@ -1421,6 +1447,7 @@ open class RawFirBuilder(
                     getExpressions()
                         .mapTo(destination) { it.accept(this@Visitor, Unit) as FirExpression }
                 }
+
                 BodyBuildingMode.LAZY_BODIES -> {
                     for (_i in 0 until getExpressionsCount()) {
                         destination.add(buildLazyExpression())
@@ -1546,12 +1573,8 @@ open class RawFirBuilder(
                 }
                 dispatchReceiverType = owner.obtainDispatchReceiverForConstructor()
                 symbol = FirConstructorSymbol(callableIdForClassConstructor())
-                delegatedConstructor = when (mode) {
-                    BodyBuildingMode.NORMAL -> getDelegationCall().convert(delegatedSuperTypeRef, delegatedSelfTypeRef)
-                    BodyBuildingMode.LAZY_BODIES -> buildLazyDelegatedConstructorCall {
-                        isThis = true
-                        constructedTypeRef = delegatedSelfTypeRef
-                    }
+                delegatedConstructor = buildOrLazyDelegatedConstructorCall(isThis = true, constructedTypeRef = { delegatedSelfTypeRef }) {
+                    getDelegationCall().convert(delegatedSuperTypeRef, delegatedSelfTypeRef)
                 }
                 this@RawFirBuilder.context.firFunctionTargets += target
                 extractAnnotationsTo(this)
@@ -1708,10 +1731,8 @@ open class RawFirBuilder(
                         }
 
                         if (hasDelegate()) {
-                            fun extractDelegateExpression() = when (mode) {
-                                BodyBuildingMode.NORMAL -> this@toFirProperty.delegate?.expression.toFirExpression("Should have delegate")
-                                BodyBuildingMode.LAZY_BODIES -> buildLazyExpression()
-                            }
+                            fun extractDelegateExpression() =
+                                buildOrLazyExpression { this@toFirProperty.delegate?.expression.toFirExpression("Should have delegate") }
 
                             val delegateBuilder = FirWrappedDelegateExpressionBuilder().apply {
                                 val delegateExpression = extractDelegateExpression()
@@ -1751,12 +1772,7 @@ open class RawFirBuilder(
                 source = initializer.toFirSourceElement()
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
-                body =
-                    when (mode) {
-                        BodyBuildingMode.NORMAL -> initializer.body.toFirBlock()
-                        BodyBuildingMode.LAZY_BODIES -> buildLazyBlock()
-                    }
-
+                body = buildOrLazyBlock { initializer.body.toFirBlock() }
             }
         }
 
@@ -1799,6 +1815,7 @@ open class RawFirBuilder(
                         allModifierLists += getAllModifierLists()
                         this.innerType.unwrapNullable()
                     }
+
                     else -> this
                 }
 
@@ -1807,6 +1824,7 @@ open class RawFirBuilder(
                     this.source = source
                     isMarkedNullable = isNullable
                 }
+
                 is KtUserType -> {
                     var referenceExpression = unwrappedElement.referenceExpression
                     if (referenceExpression != null) {
@@ -1838,6 +1856,7 @@ open class RawFirBuilder(
                         }
                     }
                 }
+
                 is KtFunctionType -> {
                     FirFunctionTypeRefBuilder().apply {
                         this.source = source
@@ -1857,16 +1876,19 @@ open class RawFirBuilder(
                         )
                     }
                 }
+
                 is KtIntersectionType -> FirIntersectionTypeRefBuilder().apply {
                     this.source = source
                     isMarkedNullable = isNullable
                     leftType = unwrappedElement.getLeftTypeRef().toFirOrErrorType()
                     rightType = unwrappedElement.getRightTypeRef().toFirOrErrorType()
                 }
+
                 null -> FirErrorTypeRefBuilder().apply {
                     this.source = source
                     diagnostic = ConeSimpleDiagnostic("Unwrapped type is null", DiagnosticKind.Syntax)
                 }
+
                 else -> throw AssertionError("Unexpected type element: ${unwrappedElement.text}")
             }
 
@@ -2061,6 +2083,7 @@ open class RawFirBuilder(
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     }
                 }
+
                 else -> null
             }
             val hasSubject = subjectExpression != null
@@ -2265,12 +2288,15 @@ open class RawFirBuilder(
             when (operationToken) {
                 ELVIS ->
                     return leftArgument.generateNotNullOrOther(rightArgument, source)
+
                 ANDAND, OROR ->
                     return leftArgument.generateLazyLogicalOperation(rightArgument, operationToken == ANDAND, source)
+
                 in OperatorConventions.IN_OPERATIONS ->
                     return rightArgument.generateContainsOperation(
                         leftArgument, operationToken == NOT_IN, source, expression.operationReference.toFirSourceElement(),
                     )
+
                 in OperatorConventions.COMPARISON_OPERATIONS ->
                     return leftArgument.generateComparisonExpression(
                         rightArgument, operationToken, source, expression.operationReference.toFirSourceElement(),
@@ -2340,6 +2366,7 @@ open class RawFirBuilder(
                         argumentList = buildUnaryArgumentList(argument.toFirExpression("No operand"))
                     }
                 }
+
                 conventionCallName != null -> {
                     if (operationToken in OperatorConventions.INCREMENT_OPERATIONS) {
                         return generateIncrementOrDecrementBlock(
@@ -2363,6 +2390,7 @@ open class RawFirBuilder(
                         origin = FirFunctionCallOrigin.Operator
                     }
                 }
+
                 else -> throw IllegalStateException("Unexpected expression: ${expression.text}")
             }
         }
