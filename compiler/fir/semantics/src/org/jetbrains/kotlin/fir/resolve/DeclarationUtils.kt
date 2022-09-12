@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -93,4 +94,21 @@ fun FirSimpleFunction.isEquals(): Boolean {
     if (valueParameters.size != 1) return false
     val parameter = valueParameters.first()
     return parameter.returnTypeRef.isNullableAny
+}
+
+fun FirDeclaration.isEffectivelyExternal(session: FirSession): Boolean {
+    if (this is FirMemberDeclaration && isExternal) return true
+
+    if (this is FirPropertyAccessor) {
+        val property = propertySymbol?.fir ?: error("Should've had a property")
+        if (property.isEffectivelyExternal(session)) return true
+    }
+
+    if (this is FirProperty) {
+        if (getter?.isExternal == true && (!isVar || setter?.isExternal == true)) {
+            return true
+        }
+    }
+
+    return getContainingClassSymbol(session)?.fir?.isEffectivelyExternal(session) == true
 }

@@ -1,4 +1,3 @@
-// FIR_IGNORE
 // FIR_IDENTICAL
 abstract class <!IMPLEMENTING_FUNCTION_INTERFACE!>A<!> : () -> Unit
 

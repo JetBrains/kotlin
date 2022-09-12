@@ -676,3 +676,7 @@ fun getActualTargetList(annotated: FirDeclaration): AnnotationTargetList {
 }
 
 private typealias TargetLists = AnnotationTargetLists
+
+fun FirCallableDeclaration.getDirectBases(context: CheckerContext) = getDirectBases(context.session, context.sessionHolder.scopeSession)
+
+fun FirDeclaration.isEffectivelyExternal(context: CheckerContext) = isEffectivelyExternal(context.session)
