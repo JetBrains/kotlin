@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtu
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProviderFactory
+import org.jetbrains.kotlin.analysis.providers.createPackagePartProvider
 import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.CallableId
@@ -105,7 +106,6 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
 //  We need a session or facade that maintains such information
 class KotlinStaticPsiDeclarationProviderFactory(
     private val project: Project,
-    private val createPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
     private val binaryModules: Collection<KtBinaryModule>,
     private val jarFileSystem: CoreJarFileSystem,
 ) : KotlinPsiDeclarationProviderFactory() {
@@ -113,7 +113,7 @@ class KotlinStaticPsiDeclarationProviderFactory(
         return KotlinStaticPsiDeclarationFromBinaryModuleProvider(
             project,
             searchScope,
-            createPackagePartProvider.invoke(searchScope),
+            project.createPackagePartProvider(searchScope),
             binaryModules,
             jarFileSystem,
         )
