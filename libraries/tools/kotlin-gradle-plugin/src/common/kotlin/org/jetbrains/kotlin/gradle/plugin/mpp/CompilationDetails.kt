@@ -397,6 +397,11 @@ internal open class MetadataMappedCompilationDetails<T : KotlinCommonOptions>(
     defaultSourceSet: KotlinSourceSet,
     final override val compilationData: AbstractKotlinFragmentMetadataCompilationData<T>
 ) : AbstractCompilationDetails<T>(defaultSourceSet) {
+
+    @Suppress("UNCHECKED_CAST")
+    override val compilation: KotlinCompilation<T>
+        get() = target.compilations.getByName(defaultSourceSet.name) as KotlinCompilation<T>
+
     override val compileDependencyFilesHolder: GradleKpmDependencyFilesHolder =
         GradleKpmDependencyFilesHolder.ofMetadataCompilationDependencies(compilationData)
 
@@ -411,7 +416,8 @@ internal open class MetadataMappedCompilationDetails<T : KotlinCommonOptions>(
         get() = emptySet()
 
     override fun whenSourceSetAdded(sourceSet: KotlinSourceSet) {
-        throw UnsupportedOperationException("metadata compilations have predefined sources")
+        if (sourceSet != defaultSourceSet)
+            throw UnsupportedOperationException("metadata compilations have predefined sources")
     }
 }
 
