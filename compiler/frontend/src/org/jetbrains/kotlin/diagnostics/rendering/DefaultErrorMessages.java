@@ -1069,6 +1069,8 @@ public class DefaultErrorMessages {
         MAP.put(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED, "Right-hand side has anonymous type. Please specify type explicitly", TO_STRING);
         MAP.put(APPROXIMATED_LOCAL_TYPE_WILL_BECOME_NULLABLE,
                 "Declaration return type inferred as ''{0}'' instead of ''{0}?''. This will be fixed in Kotlin 1.9. Please specify the type explicitly to avoid future errors or unexpected changes in behavior. See https://youtrack.jetbrains.com/issue/KT-53982 for details.", TO_STRING);
+        MAP.put(APPROXIMATED_LOCAL_TYPE_WILL_BECOME_FLEXIBLE,
+                "Declaration return type inferred as ''{0}'' but it may be nullable. This will be fixed in Kotlin 1.9. Please specify the type explicitly to avoid unexpected changes in behavior. See https://youtrack.jetbrains.com/issue/KT-53982 for details.", TO_STRING);
         MAP.put(KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE,
                 "Declaration has an inconsistent return type. Please add upper bound Any for type parameter ''{0}'' or specify return type explicitly", NAME);
 
