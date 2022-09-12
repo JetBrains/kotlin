@@ -116,7 +116,7 @@ abstract class DocumentableReplacerTransformer(val context: DokkaContext) :
         )).let { AnyWithChanges(it, wasChanged) }
     }
 
-    protected fun processFunction(dFunction: DFunction): AnyWithChanges<DFunction> {
+    protected open fun processFunction(dFunction: DFunction): AnyWithChanges<DFunction> {
         val type = processBound(dFunction.type)
         val parameters = dFunction.parameters.map { processParameter(it) }
         val receiver = dFunction.receiver?.let { processParameter(it) }
