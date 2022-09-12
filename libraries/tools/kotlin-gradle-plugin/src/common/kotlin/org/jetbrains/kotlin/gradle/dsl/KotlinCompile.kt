@@ -33,16 +33,31 @@ interface KotlinJvmCompile : KotlinJvmCompileApi
 interface KotlinCommonCompile : KotlinCompile<KotlinMultiplatformCommonOptions>
 
 interface KotlinJsDce : Task {
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        message = "Replaced with toolOptions",
+        replaceWith = ReplaceWith("toolOptions")
+    )
     @get:Internal
     val dceOptions: KotlinJsDceOptions
 
     @get:Input
     val keep: MutableList<String>
 
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        message = "Replaced with toolOptions()",
+        replaceWith = ReplaceWith("toolOptions(fn)")
+    )
     fun dceOptions(fn: KotlinJsDceOptions.() -> Unit) {
         dceOptions.fn()
     }
 
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        message = "Replaced with toolOptions()",
+        replaceWith = ReplaceWith("toolOptions(fn)")
+    )
     fun dceOptions(fn: Closure<*>) {
         fn.delegate = dceOptions
         fn.call()

@@ -28,12 +28,14 @@ import org.jetbrains.kotlin.cli.common.arguments.DevModeOverwritingStrategies
 import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments
 import org.jetbrains.kotlin.cli.js.dce.K2JSDce
 import org.jetbrains.kotlin.compilerRunner.runToolInSeparateProcess
+import org.jetbrains.kotlin.gradle.dsl.CompilerJsDceOptions
+import org.jetbrains.kotlin.gradle.dsl.CompilerJsDceOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceOptionsImpl
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.utils.canonicalPathWithoutExtension
 import org.jetbrains.kotlin.gradle.utils.fileExtensionCasePermutations
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.File
 import javax.inject.Inject
 
@@ -41,6 +43,7 @@ import javax.inject.Inject
 abstract class KotlinJsDce @Inject constructor(
     objectFactory: ObjectFactory
 ) : AbstractKotlinCompileTool<K2JSDceArguments>(objectFactory),
+    KotlinToolTask<CompilerJsDceOptions>,
     KotlinJsDce {
 
     init {
@@ -50,22 +53,26 @@ abstract class KotlinJsDce @Inject constructor(
         include("js".fileExtensionCasePermutations().map { "**/*.$it" })
     }
 
+    override val toolOptions: CompilerJsDceOptions = objectFactory.newInstance<CompilerJsDceOptionsDefault>()
+
     override fun createCompilerArgs(): K2JSDceArguments = K2JSDceArguments()
 
     override fun setupCompilerArgs(args: K2JSDceArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        dceOptionsImpl.updateArguments(args)
+        (toolOptions as CompilerJsDceOptionsDefault).fillCompilerArguments(args)
         args.declarationsToKeep = keep.toTypedArray()
     }
-
-    private val dceOptionsImpl = KotlinJsDceOptionsImpl()
 
     // DCE can be broken in case of non-kotlin js files or modules
     @Internal
     var kotlinFilesOnly: Boolean = false
 
+    @Deprecated("Replaced with toolOptions", replaceWith = ReplaceWith("toolOptions"))
+    @Suppress("DEPRECATION")
     @get:Internal
-    override val dceOptions: KotlinJsDceOptions
-        get() = dceOptionsImpl
+    override val dceOptions: KotlinJsDceOptions = object : KotlinJsDceOptions {
+        override val options: CompilerJsDceOptions
+            get() = toolOptions
+    }
 
     @get:Input
     override val keep: MutableList<String> = mutableListOf()
@@ -93,11 +100,11 @@ abstract class KotlinJsDce @Inject constructor(
     private val buildDir = project.layout.buildDirectory
 
     private val isDevMode
-        get() = dceOptions.devMode || "-dev-mode" in dceOptions.freeCompilerArgs
+        get() = toolOptions.devMode.get() || toolOptions.freeCompilerArgs.get().contains("-dev-mode")
 
     private val isExplicitDevModeAllStrategy
-        get() = strategyAllArg in dceOptions.freeCompilerArgs ||
-                strategyOlderArg !in dceOptions.freeCompilerArgs &&
+        get() = strategyAllArg in toolOptions.freeCompilerArgs.get() ||
+                strategyOlderArg !in toolOptions.freeCompilerArgs.get() &&
                 System.getProperty("kotlin.js.dce.devmode.overwriting.strategy") == DevModeOverwritingStrategies.ALL
 
     @TaskAction
