@@ -459,7 +459,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 outputs.write(outputDir, outputName)
 
                 if (arguments.generateDts) {
-                    val dtsFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "d.ts")!!
+                    val dtsFile = outputDir.resolve("$outputName.d.ts")
                     dtsFile.writeText(tsDefinitions)
                 }
             } catch (e: CompilationException) {
