@@ -335,7 +335,12 @@ internal class KotlinCommonSourceSetProcessor(
     override fun doRegisterTask(project: Project, taskName: String): TaskProvider<out KotlinCompileCommon> {
         val configAction = KotlinCompileCommonConfig(kotlinCompilation)
         applyStandardTaskConfiguration(configAction)
-        return tasksProvider.registerKotlinCommonTask(project, taskName, kotlinCompilation.kotlinOptions, configAction)
+        return tasksProvider.registerKotlinCommonTask(
+            project,
+            taskName,
+            kotlinCompilation.compilerOptions.options as CompilerMultiplatformCommonOptions,
+            configAction
+        )
     }
 }
 

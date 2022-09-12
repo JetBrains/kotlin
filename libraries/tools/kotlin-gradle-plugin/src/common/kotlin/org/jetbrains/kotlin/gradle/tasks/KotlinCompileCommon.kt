@@ -33,17 +33,29 @@ import javax.inject.Inject
 
 @CacheableTask
 abstract class KotlinCompileCommon @Inject constructor(
-    override val kotlinOptions: KotlinMultiplatformCommonOptions,
+    override val compilerOptions: CompilerMultiplatformCommonOptions,
     workerExecutor: WorkerExecutor,
     objectFactory: ObjectFactory
 ) : AbstractKotlinCompile<K2MetadataCompilerArguments>(objectFactory, workerExecutor),
+    KotlinCompilationTask<CompilerMultiplatformCommonOptions>,
     KotlinCommonCompile {
+
+    init {
+        compilerOptions.verbose.convention(logger.isDebugEnabled)
+    }
+
+    @Suppress("DEPRECATION")
+    @Deprecated("Replaced by compilerOptions input", replaceWith = ReplaceWith("compilerOptions"))
+    override val kotlinOptions: KotlinMultiplatformCommonOptions = object : KotlinMultiplatformCommonOptions {
+        override val options: CompilerMultiplatformCommonOptions
+            get() = compilerOptions
+    }
 
     override fun createCompilerArgs(): K2MetadataCompilerArguments =
         K2MetadataCompilerArguments()
 
     override fun setupCompilerArgs(args: K2MetadataCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        args.apply { fillDefaultValues() }
+        (compilerOptions as CompilerMultiplatformCommonOptionsDefault).fillDefaultValues(args)
         super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
         args.moduleName = this@KotlinCompileCommon.moduleName.get()
@@ -64,7 +76,7 @@ abstract class KotlinCompileCommon @Inject constructor(
             refinesPaths = refinesMetadataPaths.map { it.absolutePath }.toTypedArray()
         }
 
-        (kotlinOptions as KotlinMultiplatformCommonOptionsImpl).updateArguments(args)
+        (compilerOptions as CompilerMultiplatformCommonOptionsDefault).fillCompilerArguments(args)
     }
 
     @get:PathSensitive(PathSensitivity.RELATIVE)

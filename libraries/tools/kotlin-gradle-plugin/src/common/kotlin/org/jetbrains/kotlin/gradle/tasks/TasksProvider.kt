@@ -24,7 +24,7 @@ import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.CompilerJsOptions
 import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.CompilerMultiplatformCommonOptions
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.tasks.configuration.*
 
@@ -134,12 +134,15 @@ internal open class KotlinTasksProvider {
     }
 
     fun registerKotlinCommonTask(
-        project: Project, taskName: String, kotlinOptions: KotlinCommonOptions, configuration: KotlinCompileCommonConfig
+        project: Project,
+        taskName: String,
+        compilerOptions: CompilerMultiplatformCommonOptions,
+        configuration: KotlinCompileCommonConfig
     ): TaskProvider<out KotlinCompileCommon> {
         return project.registerTask(
             taskName,
             KotlinCompileCommon::class.java,
-            constructorArgs = listOf(kotlinOptions)
+            constructorArgs = listOf(compilerOptions)
         ).also {
             configuration.execute(it)
         }
