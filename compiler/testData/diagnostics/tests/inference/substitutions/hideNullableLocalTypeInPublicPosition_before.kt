@@ -1,4 +1,5 @@
 // ISSUE: KT-30054
+// !LANGUAGE: -KeepNullabilityWhenApproximatingLocalType
 interface I {
     fun foo(): String
 }
