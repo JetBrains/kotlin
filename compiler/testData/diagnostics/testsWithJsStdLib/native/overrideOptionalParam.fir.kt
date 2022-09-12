@@ -8,7 +8,7 @@ class B : A() {
 
 class BB : A()
 
-external class C : A {
+external class C : <!EXTERNAL_DELEGATED_CONSTRUCTOR_CALL!>A<!> {
     override fun f(x: Int)
 }
 
@@ -39,7 +39,7 @@ class F : D(), I {
     <!OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS!>override fun f(x: Int)<!> {}
 }
 
-external class G : D, I {
+external class G : <!EXTERNAL_DELEGATED_CONSTRUCTOR_CALL!>D<!>, I {
     override fun f(x: Int)
 }
 
@@ -55,6 +55,6 @@ class <!OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE!>Y<!> : X(), I
 
 class <!OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE!>YY<!> : A(), II
 
-external class YE: XE, I
+external class YE: <!EXTERNAL_DELEGATED_CONSTRUCTOR_CALL!>XE<!>, I
 
 class Z : X(), J

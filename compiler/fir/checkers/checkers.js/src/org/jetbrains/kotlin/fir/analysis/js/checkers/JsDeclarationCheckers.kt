@@ -30,5 +30,6 @@ object JsDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirJsInheritanceChecker,
             FirJsRuntimeAnnotationChecker,
+            FirJsExternalChecker,
         )
 }

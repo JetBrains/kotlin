@@ -681,3 +681,5 @@ fun FirDeclaration.isNativeObject(context: CheckerContext) = isNativeObject(cont
 fun FirDeclaration.isPredefinedObject(context: CheckerContext) = isPredefinedObject(context.session)
 
 val CheckerContext.closestPubliclyAccessibleContainer get() = containingDeclarations.takeWhile { it.isPubliclyAccessible }.lastOrNull()
+
+val CheckerContext.isTopLevel get() = containingDeclarations.lastOrNull() is FirFile

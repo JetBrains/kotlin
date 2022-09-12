@@ -70,6 +70,13 @@ val FirDeclaration.name
         else -> null
     }
 
+val FirDeclaration.singleFqName
+    get() = when (this) {
+        is FirCallableDeclaration -> symbol.callableId.asSingleFqName()
+        is FirClassLikeDeclaration -> symbol.classId.asSingleFqName()
+        else -> error("This declaration has no FqName")
+    }
+
 val FirDeclaration.isPubliclyAccessibleMember
     get() = this is FirMemberDeclaration
             && this !is FirValueParameter
@@ -78,3 +85,6 @@ val FirDeclaration.isPubliclyAccessibleMember
 
 val FirDeclaration.isPubliclyAccessible
     get() = this is FirFile || isPubliclyAccessibleMember
+
+val FirDeclaration.isExtension
+    get() = this is FirCallableDeclaration && receiverTypeRef != null
