@@ -16,8 +16,16 @@ rootProject.name = "kotlin-dataframe"
 //    }
 //}
 //
-//includeBuild("../../bridge-generator") {
-//    dependencySubstitution {
-//        substitute(module("org.jetbrains.kotlinx.dataframe:bridge-generator")).using(project(":"))
-//    }
-//}
+includeBuild("../../bridge-generator") {
+    dependencySubstitution {
+        substitute(module("org.jetbrains.kotlinx.dataframe:bridge-generator")).using(project(":"))
+    }
+}
+
+//include("plugin-annotations")
+
+includeBuild("../../") {
+    dependencySubstitution {
+        substitute(module("org.jetbrains.kotlinx:dataframe")).using(project(":"))
+    }
+}

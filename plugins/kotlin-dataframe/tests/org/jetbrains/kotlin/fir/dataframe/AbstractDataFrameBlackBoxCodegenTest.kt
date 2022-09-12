@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
 open class AbstractDataFrameBlackBoxCodegenTest : BaseTestRunner(), RunnerWithTargetBackendForTestGeneratorMarker {
+
     override val targetBackend: TargetBackend
         get() = TargetBackend.JVM_IR
-
     override fun TestConfigurationBuilder.configuration() {
         commonFirWithPluginFrontendConfiguration()
         useConfigurators(::TestExtensionRegistrarConfigurator)

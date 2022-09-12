@@ -24,7 +24,7 @@ import org.jetbrains.kotlinx.dataframe.annotations.Interpreter
 
 internal fun FirFunctionCall.loadInterpreter(session: FirSession): Interpreter<*>? {
     val symbol =
-        (calleeReference as FirResolvedNamedReference).resolvedSymbol as FirCallableSymbol
+        (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirCallableSymbol ?: return null
     val argName = Name.identifier("interpreter")
     return symbol.annotations
         .find { it.fqName(session)?.equals(INTERPRETABLE_FQNAME) ?: false }

@@ -3,8 +3,8 @@
 package org.jetbrains.kotlin.fir.dataframe;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +25,12 @@ public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosti
     @Test
     public void testAllFilesPresentInDiagnostics() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("dummy.kt")
+    public void testDummy() throws Exception {
+        runTest("testData/diagnostics/dummy.kt");
     }
 
     @Test
@@ -55,6 +61,12 @@ public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosti
     @TestMetadata("OuterClass.kt")
     public void testOuterClass() throws Exception {
         runTest("testData/diagnostics/OuterClass.kt");
+    }
+
+    @Test
+    @TestMetadata("simple.kt")
+    public void testSimple() throws Exception {
+        runTest("testData/diagnostics/simple.kt");
     }
 
     @Nested
