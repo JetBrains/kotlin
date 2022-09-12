@@ -43,7 +43,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         private const val BOX_FUNCTION_NAME = "box"
         private const val STDLIB_ALIAS = "stdlib"
 
-        private val STDLIB_MODULE_NAME = "kotlin".safeModuleName
+        private val STDLIB_MODULE_NAME = "kotlin-kotlin-stdlib-js-ir"
         private val STDLIB_KLIB = File(System.getProperty("kotlin.js.stdlib.klib.path") ?: error("Please set stdlib path")).canonicalPath
 
         private val KT_FILE_IGNORE_PATTERN = Regex("^.*\\..+\\.kt$")
@@ -175,9 +175,8 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         }
 
         private fun verifyJsExecutableProducerBuildModules(stepId: Int, gotRebuilt: Set<String>, expectedRebuilt: List<String>) {
-            val expected = expectedRebuilt.map { it.safeModuleName }
             val got = gotRebuilt.filter { it != STDLIB_MODULE_NAME }
-            JUnit4Assertions.assertSameElements(got, expected) {
+            JUnit4Assertions.assertSameElements(got, expectedRebuilt) {
                 "Mismatched rebuilt modules at step $stepId"
             }
         }
@@ -249,8 +248,9 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                 val icCaches = cacheUpdater.actualizeCaches()
                 verifyCacheUpdateStats(projStep.id, cacheUpdater.getDirtyFileStats(), testInfo)
 
+                val mainModuleName = icCaches.last().moduleExternalName
                 val jsExecutableProducer = JsExecutableProducer(
-                    mainModuleName = testInfo.last().moduleName,
+                    mainModuleName = mainModuleName,
                     moduleKind = configuration[JSConfigurationKeys.MODULE_KIND]!!,
                     sourceMapsInfo = SourceMapsInfo.from(configuration),
                     caches = icCaches,
@@ -260,7 +260,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                 val rebuiltModules = mutableSetOf<String>()
                 val jsOutput = jsExecutableProducer.buildExecutable(multiModule = true, outJsProgram = true) { rebuiltModules += it }
                 verifyJsExecutableProducerBuildModules(projStep.id, rebuiltModules, projStep.dirtyJS)
-                verifyJsCode(projStep.id, testInfo.last().moduleName, jsOutput)
+                verifyJsCode(projStep.id, mainModuleName, jsOutput)
             }
         }
     }

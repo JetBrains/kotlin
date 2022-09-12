@@ -43,7 +43,7 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
         }
         CachedModuleInfo(
             artifact = this@fetchModuleInfo,
-            jsIrHeader = JsIrModuleHeader(moduleSafeName, moduleSafeName, definitions, nameBindings, hasJsExports, null),
+            jsIrHeader = JsIrModuleHeader(moduleSafeName, moduleExternalName, definitions, nameBindings, hasJsExports, null),
             crossModuleReferencesHash = crossModuleReferencesHash
         )
     }

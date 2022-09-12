@@ -79,6 +79,9 @@ val KotlinLibrary.isBuiltIns: Boolean
         .propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true)
         .isEmpty()
 
+val KotlinLibrary.jsOutputName: String?
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_JS_OUTPUT_NAME)
+
 private val CompilerConfiguration.metadataVersion
     get() = get(CommonConfigurationKeys.METADATA_VERSION) as? KlibMetadataVersion ?: KlibMetadataVersion.INSTANCE
 
@@ -869,8 +872,6 @@ private fun KlibMetadataIncrementalSerializer(configuration: CompilerConfigurati
 
 private fun Map<IrModuleFragment, KotlinLibrary>.getUniqueNameForEachFragment(): Map<IrModuleFragment, String> {
     return this.entries.mapNotNull { (moduleFragment, klib) ->
-        klib.manifestProperties.getProperty(KLIB_PROPERTY_JS_OUTPUT_NAME)?.let {
-            moduleFragment to it
-        }
+        klib.jsOutputName?.let { moduleFragment to it }
     }.toMap()
 }

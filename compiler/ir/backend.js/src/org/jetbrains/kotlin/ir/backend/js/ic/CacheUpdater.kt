@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrFragmentAndBinaryAst
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
@@ -514,6 +515,7 @@ class CacheUpdater(
                 }
                 artifacts += incrementalCache.buildModuleArtifactAndCommitCache(
                     moduleName = libFragment.name.asString(),
+                    externalModuleName = lib.jsOutputName,
                     rebuiltFileFragments = libRebuiltFiles,
                     signatureToIndexMapping = signatureToIndexMapping
                 )
