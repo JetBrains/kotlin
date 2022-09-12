@@ -13,11 +13,9 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.asJava.syntheticAccessors
 import org.jetbrains.kotlin.load.kotlin.MemberSignature
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.allConstructors
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.type.MapPsiToAsmDesc
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 abstract class KotlinDeclarationInCompiledFileSearcher {
     abstract fun findDeclarationInCompiledFile(file: KtClsFile, member: PsiMember, signature: MemberSignature): KtDeclaration?
@@ -46,23 +44,23 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
         member: PsiMember,
         memberName: String,
     ): KtDeclaration? {
-        val topClassOrObject = file.declarations.singleOrNull() as? KtClassOrObject
-        val container: KtClassOrObject = if (relativeClassName.isEmpty())
-            topClassOrObject
+        val classOrFile: KtDeclarationContainer = file.declarations.singleOrNull() as? KtClassOrObject ?: file
+        val container: KtDeclarationContainer = if (relativeClassName.isEmpty())
+            classOrFile
         else {
-            relativeClassName.fold(topClassOrObject) { classOrObject, name ->
-                classOrObject?.declarations?.singleOrNull { it.name == name.asString() } as? KtClassOrObject
+            relativeClassName.fold(classOrFile) { declaration: KtDeclarationContainer?, name: Name ->
+                declaration?.declarations?.singleOrNull() { it is KtClassOrObject && it.name == name.asString() } as? KtClassOrObject
             }
         } ?: return null
 
         if (member is PsiMethod && member.isConstructor) {
-            return container.takeIf { it.name == memberName }?.allConstructors?.singleOrNull()
+            return container.safeAs<KtClassOrObject>()?.takeIf { it.name == memberName }?.allConstructors?.singleOrNull()
         }
 
         val declarations = container.declarations
         return when (member) {
             is PsiMethod -> {
-                val names = member.syntheticAccessors.map(Name::asString) + memberName
+                val names = member.syntheticAccessors(withoutOverrideCheck = true).map(Name::asString) + memberName
                 declarations.singleOrNull { it.name in names }
             }
 
