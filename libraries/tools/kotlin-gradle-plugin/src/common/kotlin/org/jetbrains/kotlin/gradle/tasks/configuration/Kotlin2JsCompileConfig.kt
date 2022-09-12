@@ -29,7 +29,7 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
 
             task.outputFileProperty.value(task.project.provider {
                 val extensionName = if (compilation.platformType == KotlinPlatformType.wasm) ".mjs" else ".js"
-                task.kotlinOptions.outputFile?.let(::File)
+                task.compilerOptions.outputFile.orNull?.let(::File)
                     ?: task.destinationDirectory.locationOnly.get().asFile.resolve("${compilation.ownModuleName}$extensionName")
             }).disallowChanges()
 

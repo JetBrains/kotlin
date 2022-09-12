@@ -16,8 +16,7 @@ import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptionsImpl
+import org.jetbrains.kotlin.gradle.dsl.CompilerJsOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
@@ -41,7 +40,7 @@ abstract class KotlinJsIrLink @Inject constructor(
     workerExecutor: WorkerExecutor,
     private val projectLayout: ProjectLayout
 ) : Kotlin2JsCompile(
-    KotlinJsOptionsImpl(),
+    objectFactory.newInstance(CompilerJsOptionsDefault::class.java),
     objectFactory,
     workerExecutor
 ) {
@@ -105,7 +104,7 @@ abstract class KotlinJsIrLink @Inject constructor(
         .apply {
             set(
                 destinationDirectory.map { dir ->
-                    if (kotlinOptions.outputFile != null) {
+                    if (compilerOptions.outputFile.orNull != null) {
                         projectLayout.dir(outputFileProperty.map { it.parentFile }).get()
                     } else {
                         dir
@@ -163,52 +162,44 @@ abstract class KotlinJsIrLink @Inject constructor(
             .filterNot { it.isEmpty() }
     }
 
-    override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
+    override fun setupCompilerArgs(
+        args: K2JSCompilerArguments,
+        defaultsOnly: Boolean,
+        ignoreClasspathResolutionErrors: Boolean
+    ) {
         when (mode) {
             PRODUCTION -> {
-                kotlinOptions.configureOptions(ENABLE_DCE, GENERATE_D_TS, MINIMIZED_MEMBER_NAMES)
+                args.configureOptions(ENABLE_DCE, GENERATE_D_TS, MINIMIZED_MEMBER_NAMES)
             }
 
             DEVELOPMENT -> {
-                kotlinOptions.configureOptions(GENERATE_D_TS)
+                args.configureOptions(GENERATE_D_TS)
             }
         }
-        val alreadyDefinedOutputMode = kotlinOptions.freeCompilerArgs
+        val alreadyDefinedOutputMode = compilerOptions.freeCompilerArgs.get()
             .any { it.startsWith(PER_MODULE) }
         if (!alreadyDefinedOutputMode) {
-            kotlinOptions.freeCompilerArgs += outputGranularity.toCompilerArgument()
+            args.freeArgs += outputGranularity.toCompilerArgument()
         }
         super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
     }
 
-    private fun KotlinJsOptions.configureOptions(vararg additionalCompilerArgs: String) {
-        freeCompilerArgs += (additionalCompilerArgs.toList() + PRODUCE_JS + "$ENTRY_IR_MODULE=${entryModule.get().asFile.canonicalPath}")
-            .mapNotNull { arg ->
-                if (kotlinOptions.freeCompilerArgs
-                        .any { it.startsWith(arg) }
-                ) null else arg
-            }
+    private fun K2JSCompilerArguments.configureOptions(vararg additionalCompilerArgs: String) {
+        freeArgs = freeArgs + (
+                additionalCompilerArgs
+                    .mapNotNull { arg ->
+                        if (compilerOptions.freeCompilerArgs.get().any { it.startsWith(arg) }) {
+                            null
+                        } else {
+                            arg
+                        }
+                    } +
+                        PRODUCE_JS +
+                        "$ENTRY_IR_MODULE=${entryModule.get().asFile.canonicalPath}"
+                )
 
         if (platformType == KotlinPlatformType.wasm) {
-            freeCompilerArgs += WASM_BACKEND
+            freeArgs = freeArgs + WASM_BACKEND
         }
     }
-
-    @get:Input
-    override val filteredArgumentsMap: Map<String, String>
-        get() {
-            val superFiltered = super.filteredArgumentsMap
-            return superFiltered.mapValues { (key, value) ->
-                if (key != K2JSCompilerArguments::freeArgs.name) {
-                    value
-                } else {
-                    value
-                        .removePrefix("[")
-                        .removeSuffix("]")
-                        .split(", ")
-                        .filter { !it.contains(ENTRY_IR_MODULE) }
-                        .joinToString()
-                }
-            }
-        }
 }

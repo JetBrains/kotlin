@@ -904,14 +904,16 @@ abstract class KotlinCompile @Inject constructor(
 
 @CacheableTask
 abstract class Kotlin2JsCompile @Inject constructor(
-    override val kotlinOptions: KotlinJsOptions,
+    override val compilerOptions: CompilerJsOptions,
     objectFactory: ObjectFactory,
     workerExecutor: WorkerExecutor
 ) : AbstractKotlinCompile<K2JSCompilerArguments>(objectFactory, workerExecutor),
+    KotlinCompilationTask<CompilerJsOptions>,
     KotlinJsCompile {
 
     init {
         incremental = true
+        compilerOptions.verbose.convention(logger.isDebugEnabled)
     }
 
     internal abstract class LibraryFilterCachingService : BuildService<BuildServiceParameters.None>, AutoCloseable {
@@ -926,6 +928,13 @@ abstract class Kotlin2JsCompile @Inject constructor(
         override fun close() {
             cache.clear()
         }
+    }
+
+    @Suppress("DEPRECATION")
+    @Deprecated("Replaced by compilerOptions input", replaceWith = ReplaceWith("compilerOptions"))
+    override val kotlinOptions: KotlinJsOptions = object : KotlinJsOptions {
+        override val options: CompilerJsOptions
+            get() = compilerOptions
     }
 
     @get:Input
@@ -968,7 +977,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         K2JSCompilerArguments()
 
     override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        args.apply { fillDefaultValues() }
+        (compilerOptions as CompilerJsOptionsDefault).fillDefaultValues(args)
         super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
         try {
@@ -982,7 +991,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
         if (defaultsOnly) return
 
-        (kotlinOptions as KotlinJsOptionsImpl).updateArguments(args)
+        (compilerOptions as CompilerJsOptionsDefault).fillCompilerArguments(args)
     }
 
     @get:InputFiles
@@ -1001,14 +1010,10 @@ abstract class Kotlin2JsCompile @Inject constructor(
             it.exists() && !it.name.endsWith(".jar") && libraryFilter(it)
         }
 
-    @Suppress("unused")
-    @get:InputFiles
-    @get:IgnoreEmptyDirectories
-    @get:Optional
-    @get:NormalizeLineEndings
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    internal val sourceMapBaseDirs: FileCollection?
-        get() = (kotlinOptions as KotlinJsOptionsImpl).sourceMapBaseDirs
+    @get:Internal
+    internal val sourceMapBaseDir: Property<Directory> = objectFactory
+        .directoryProperty()
+        .value(project.layout.projectDirectory)
 
     private fun isHybridKotlinJsLibrary(file: File): Boolean =
         JsLibraryUtils.isKotlinJavascriptLibrary(file) && isKotlinLibrary(file)
@@ -1066,9 +1071,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
             libraryCache.get().getOrCompute(file.asLibraryFilterCacheKey, libraryFilterBody)
         }
 
-    @get:Internal
-    internal val absolutePathProvider = project.projectDir.absolutePath
-
     override val incrementalProps: List<FileCollection>
         get() = super.incrementalProps + listOf(friendDependencies)
 
@@ -1102,8 +1104,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
         args.friendModules = friendDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }
 
-        if (args.sourceMapBaseDirs == null && !args.sourceMapPrefix.isNullOrEmpty()) {
-            args.sourceMapBaseDirs = absolutePathProvider
+        if (!args.sourceMapPrefix.isNullOrEmpty()) {
+            args.sourceMapBaseDirs = sourceMapBaseDir.get().asFile.absolutePath
         }
 
         args.legacyDeprecatedNoWarn = jsLegacyNoWarn.get()

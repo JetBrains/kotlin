@@ -235,7 +235,12 @@ internal class Kotlin2JsSourceSetProcessor(
     override fun doRegisterTask(project: Project, taskName: String): TaskProvider<out Kotlin2JsCompile> {
         val configAction = Kotlin2JsCompileConfig(kotlinCompilation)
         applyStandardTaskConfiguration(configAction)
-        return tasksProvider.registerKotlinJSTask(project, taskName, kotlinCompilation.kotlinOptions, configAction)
+        return tasksProvider.registerKotlinJSTask(
+            project,
+            taskName,
+            kotlinCompilation.compilerOptions.options as CompilerJsOptions,
+            configAction
+        )
     }
 
     override fun doTargetSpecificProcessing() {
@@ -282,9 +287,11 @@ internal class Kotlin2JsSourceSetProcessor(
                 }
             }
 
-            val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
-            if (kotlinCompilation is KotlinCompilation<*>) { // FIXME support compiler plugins with PM20
-                subpluginEnvironment.addSubpluginOptions(project, kotlinCompilation)
+            project.whenEvaluated {
+                val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
+                if (kotlinCompilation is KotlinCompilation<*>) { // FIXME support compiler plugins with PM20
+                    subpluginEnvironment.addSubpluginOptions(project, kotlinCompilation)
+                }
             }
         }
     }
@@ -300,7 +307,12 @@ internal class KotlinJsIrSourceSetProcessor(
     override fun doRegisterTask(project: Project, taskName: String): TaskProvider<out Kotlin2JsCompile> {
         val configAction = Kotlin2JsCompileConfig(kotlinCompilation)
         applyStandardTaskConfiguration(configAction)
-        return tasksProvider.registerKotlinJSTask(project, taskName, kotlinCompilation.kotlinOptions, configAction)
+        return tasksProvider.registerKotlinJSTask(
+            project,
+            taskName,
+            kotlinCompilation.compilerOptions.options as CompilerJsOptions,
+            configAction
+        )
     }
 
     override fun doTargetSpecificProcessing() {

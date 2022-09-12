@@ -22,6 +22,7 @@ import org.gradle.api.UnknownTaskException
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.dsl.CompilerJsOptions
 import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
@@ -110,12 +111,15 @@ internal open class KotlinTasksProvider {
     }
 
     fun registerKotlinJSTask(
-        project: Project, taskName: String, kotlinOptions: KotlinCommonOptions, configuration: Kotlin2JsCompileConfig
+        project: Project,
+        taskName: String,
+        compilerOptions: CompilerJsOptions,
+        configuration: Kotlin2JsCompileConfig
     ): TaskProvider<out Kotlin2JsCompile> {
         return project.registerTask(
             taskName,
             Kotlin2JsCompile::class.java,
-            constructorArgs = listOf(kotlinOptions)
+            constructorArgs = listOf(compilerOptions)
         ).also {
             configuration.execute(it)
         }
