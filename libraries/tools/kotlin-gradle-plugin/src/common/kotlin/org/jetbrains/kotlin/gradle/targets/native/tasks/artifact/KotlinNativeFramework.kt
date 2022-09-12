@@ -11,10 +11,7 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeArtifact
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeFramework
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeFrameworkConfig
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
@@ -47,6 +44,7 @@ abstract class KotlinNativeFrameworkConfigImpl @Inject constructor(artifactName:
             isStatic = isStatic,
             linkerOptions = linkerOptions,
             kotlinOptionsFn = kotlinOptionsFn,
+            toolOptionsConfigure = toolOptionsConfigure,
             binaryOptions = binaryOptions,
             target = target,
             embedBitcode = embedBitcode,
@@ -61,7 +59,10 @@ class KotlinNativeFrameworkImpl(
     override val modes: Set<NativeBuildType>,
     override val isStatic: Boolean,
     override val linkerOptions: List<String>,
+    @Suppress("DEPRECATION")
+    @Deprecated("Replaced by compilerOptionsConfigure", replaceWith = ReplaceWith("compilerOptionsConfigure"))
     override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
+    override val toolOptionsConfigure: CompilerCommonToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
     override val target: KonanTarget,
     override val embedBitcode: BitcodeEmbeddingMode?,

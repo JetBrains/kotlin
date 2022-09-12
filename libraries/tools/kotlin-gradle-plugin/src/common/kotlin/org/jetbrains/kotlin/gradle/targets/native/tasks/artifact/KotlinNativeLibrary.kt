@@ -10,6 +10,7 @@ import org.gradle.api.Task
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.dsl.CompilerCommonToolOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeLibrary
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeLibraryConfig
@@ -44,6 +45,7 @@ abstract class KotlinNativeLibraryConfigImpl @Inject constructor(artifactName: S
             isStatic = isStatic,
             linkerOptions = linkerOptions,
             kotlinOptionsFn = kotlinOptionsFn,
+            toolOptionsConfigure = toolOptionsConfigure,
             binaryOptions = binaryOptions,
             target = target,
             extensions = extensions
@@ -57,7 +59,10 @@ class KotlinNativeLibraryImpl(
     override val modes: Set<NativeBuildType>,
     override val isStatic: Boolean,
     override val linkerOptions: List<String>,
+    @Suppress("DEPRECATION")
+    @Deprecated("Replaced by compilerOptionsConfigure", replaceWith = ReplaceWith("compilerOptionsConfigure"))
     override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
+    override val toolOptionsConfigure: CompilerCommonToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
     override val target: KonanTarget,
     extensions: ExtensionAware
@@ -90,7 +95,9 @@ class KotlinNativeLibraryImpl(
                 task.binaryOptions = binaryOptions
                 task.librariesConfiguration = librariesConfigurationName
                 task.exportLibrariesConfiguration = exportConfigurationName
+                @Suppress("DEPRECATION")
                 task.kotlinOptions(kotlinOptionsFn)
+                task.toolOptions(toolOptionsConfigure)
             }
             resultTask.dependsOn(targetTask)
         }
