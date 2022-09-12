@@ -141,11 +141,7 @@ public class StandaloneAnalysisAPISessionBuilder(
             RegisterComponentService.registerLLFirResolveSessionService(this)
             registerService(
                 PackagePartProviderFactory::class.java,
-                object : PackagePartProviderFactory() {
-                    override fun createPackagePartProvider(scope: GlobalSearchScope): PackagePartProvider {
-                        return packagePartProvider(scope)
-                    }
-                }
+                KotlinStaticPackagePartProviderFactory(packagePartProvider)
             )
 
             registerService(ClsJavaStubByVirtualFileCache::class.java, ClsJavaStubByVirtualFileCache())
@@ -159,16 +155,13 @@ public class StandaloneAnalysisAPISessionBuilder(
         PsiElementFinder.EP.getPoint(project).registerExtension(PsiElementFinderImpl(project))
     }
 
-    private fun registerPsiDeclarationFromBinaryModuleProvider(
-        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-    ) {
+    private fun registerPsiDeclarationFromBinaryModuleProvider() {
         val ktModuleProviderImpl = projectStructureProvider as KtModuleProviderImpl
         kotlinCoreProjectEnvironment.project.apply {
             registerService(
                 KotlinPsiDeclarationProviderFactory::class.java,
                 KotlinStaticPsiDeclarationProviderFactory(
                     this,
-                    packagePartProvider,
                     ktModuleProviderImpl.binaryModules,
                     kotlinCoreProjectEnvironment.environment.jarFileSystem as CoreJarFileSystem
                 )
@@ -216,7 +209,7 @@ public class StandaloneAnalysisAPISessionBuilder(
             createPackagePartProvider,
         )
         if (withPsiDeclarationFromBinaryModuleProvider) {
-            registerPsiDeclarationFromBinaryModuleProvider(createPackagePartProvider)
+            registerPsiDeclarationFromBinaryModuleProvider()
         }
 
         return StandaloneAnalysisAPISession(
