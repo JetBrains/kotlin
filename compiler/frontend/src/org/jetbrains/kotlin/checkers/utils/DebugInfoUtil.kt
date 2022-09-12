@@ -16,14 +16,12 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.types.error.ErrorUtils
-import org.jetbrains.kotlin.types.expressions.BasicExpressionTypingVisitor
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import java.util.HashMap
 
@@ -174,12 +172,7 @@ object DebugInfoUtil {
                 }
                 if (resolved && markedWithError) {
                     if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(factory)) {
-                        // This check is to avoid reporting UnresolvedWithTarget on hidden setters
-                        if (expression !is KtSimpleNameExpression ||
-                            !BasicExpressionTypingVisitor.isLValue(expression, expression.getStrictParentOfType<KtBinaryExpression>())
-                        ) {
-                            debugInfoReporter.reportUnresolvedWithTarget(expression, target!!)
-                        }
+                        debugInfoReporter.reportUnresolvedWithTarget(expression, target!!)
                     }
                 } else if (!resolved && !markedWithError) {
                     debugInfoReporter.reportMissingUnresolved(expression)
