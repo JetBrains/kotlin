@@ -35,7 +35,8 @@ class KotlinProjectStructureMetadataSerializationTest {
         ),
         sourceSetCInteropMetadataDirectory = mapOf("sourceSetB" to "xx/cinterop/", "sourceSetC" to "cinterops/C"),
         hostSpecificSourceSets = setOf("sourceSetC"),
-        isPublishedAsRoot = true
+        isPublishedAsRoot = true,
+        sourceSetNames = setOf("sourceSetA", "sourceSetB", "sourceSetC"),
     )
 
     @Test
@@ -64,6 +65,10 @@ class KotlinProjectStructureMetadataSerializationTest {
         We expect no 'cinterop metadata' in artifacts with older format versions
         */
         assertEquals(emptyMap(), deserialized.sourceSetCInteropMetadataDirectory)
+        assertEquals(
+            setOf("commonMain", "concurrentMain", "nativeDarwinMain", "nativeMain", "nativeOtherMain"),
+            deserialized.sourceSetNames
+        )
     }
 
 }
