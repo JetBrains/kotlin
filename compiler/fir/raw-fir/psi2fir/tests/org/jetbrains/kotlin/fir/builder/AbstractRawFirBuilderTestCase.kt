@@ -56,8 +56,10 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         return when (fileType) {
             KtNodeTypes.EXPRESSION_CODE_FRAGMENT ->
                 psiFactory.createExpressionCodeFragment(loadFile(filePath), null)
+
             KtNodeTypes.BLOCK_CODE_FRAGMENT ->
                 psiFactory.createBlockCodeFragment(loadFile(filePath), null)
+
             else ->
                 createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), loadFile(filePath))
         }
@@ -83,8 +85,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         return RawFirBuilder(
             session,
             StubFirScopeProvider,
-            psiMode = PsiHandlingMode.IDE,
-            bodyBuildingMode = bodyBuildingMode
+            bodyBuildingMode = bodyBuildingMode,
         ).buildFirFile(this)
     }
 

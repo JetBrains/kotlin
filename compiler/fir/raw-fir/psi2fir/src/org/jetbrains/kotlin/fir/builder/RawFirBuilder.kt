@@ -52,13 +52,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 open class RawFirBuilder(
     session: FirSession,
     val baseScopeProvider: FirScopeProvider,
-    private val psiMode: PsiHandlingMode,
     bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL
 ) : BaseFirBuilder<PsiElement>(session) {
-
-    @Deprecated("Please replace with primary constructor call")
-    constructor(session: FirSession, baseScopeProvider: FirScopeProvider, mode: BodyBuildingMode = BodyBuildingMode.NORMAL) :
-            this(session, baseScopeProvider, psiMode = PsiHandlingMode.IDE, bodyBuildingMode = mode)
 
     protected open fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) = runOnStabs { target.bind(function) }
 
@@ -996,9 +991,9 @@ open class RawFirBuilder(
             if (hasModifier(INNER_KEYWORD)) dispatchReceiverForInnerClassConstructor() else null
 
         override fun visitKtFile(file: KtFile, data: Unit): FirElement {
-            context.packageFqName = when (psiMode) {
-                PsiHandlingMode.COMPILER -> file.packageFqNameByTree
-                PsiHandlingMode.IDE -> file.packageFqName
+            context.packageFqName = when (mode) {
+                BodyBuildingMode.NORMAL -> file.packageFqNameByTree
+                BodyBuildingMode.LAZY_BODIES -> file.packageFqName
             }
             return buildFile {
                 source = file.toFirSourceElement()
@@ -2664,16 +2659,4 @@ enum class BodyBuildingMode {
         fun lazyBodies(lazyBodies: Boolean): BodyBuildingMode =
             if (lazyBodies) LAZY_BODIES else NORMAL
     }
-}
-
-enum class PsiHandlingMode {
-    /**
-     * Do not build any stubs while handling PSI
-     */
-    COMPILER,
-
-    /**
-     * Build stubs if possible while handling PSI
-     */
-    IDE;
 }

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
-import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -111,6 +110,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
                 }
                 if (isMarkedNullable) "$renderedQualifier?" else renderedQualifier
             }
+
             is FirFunctionTypeRef -> {
                 val classId = if (isSuspend) {
                     StandardNames.getSuspendFunctionClassId(parametersCount)
@@ -180,8 +180,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
         return RawFirBuilder(
             createEmptySession(),
             DummyScopeProvider,
-            psiMode = PsiHandlingMode.IDE,
-            bodyBuildingMode = BodyBuildingMode.NORMAL
+            bodyBuildingMode = BodyBuildingMode.NORMAL,
         ).buildTypeReference(this)
     }
 
@@ -193,6 +192,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
                     append(typeArguments.joinToString(prefix = "<", postfix = ">", separator = ", ") { it.renderTypeAsKotlinType() })
                 }
             }
+
             is ConeTypeVariableType -> lookupTag.name.asString()
             is ConeLookupTagBasedType -> lookupTag.name.asString()
             is ConeFlexibleType -> {
