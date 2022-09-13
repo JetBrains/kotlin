@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.assignment.plugin
 
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
@@ -46,6 +48,13 @@ class AssignmentCommandLineProcessor : CommandLineProcessor {
 class AssignmentComponentRegistrar : CompilerPluginRegistrar() {
     @OptIn(InternalNonStableExtensionPoints::class)
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
+        configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            ?.report(
+                CompilerMessageSeverity.WARNING,
+                "Lombok Kotlin compiler plugin is an experimental feature." +
+                        " See: https://kotlinlang.org/docs/components-stability.html."
+            )
+
         val annotations = configuration.getList(ANNOTATION)
         if (annotations.isNotEmpty()) {
             AssignResolutionAltererExtension.Companion.registerExtension(CliAssignPluginResolutionAltererExtension(annotations))
