@@ -42,23 +42,23 @@ class OptInMarkerDeclarationAnnotationChecker(private val module: ModuleDescript
         for (entry in entries) {
             val annotation = trace.bindingContext.get(BindingContext.ANNOTATION, entry) ?: continue
             when (annotation.fqName) {
-                in OptInNames.OPT_IN_FQ_NAMES -> {
+                OptInNames.OPT_IN_FQ_NAME -> {
                     val annotationClasses =
-                        annotation.allValueArguments[OptInNames.USE_EXPERIMENTAL_ANNOTATION_CLASS]
+                        annotation.allValueArguments[OptInNames.OPT_IN_ANNOTATION_CLASS]
                             .safeAs<ArrayValue>()?.value.orEmpty()
                     checkOptInUsage(annotationClasses, trace, entry)
                 }
                 OptInNames.SUBCLASS_OPT_IN_REQUIRED_FQ_NAME -> {
                     val annotationClass =
-                        annotation.allValueArguments[OptInNames.USE_EXPERIMENTAL_ANNOTATION_CLASS]
+                        annotation.allValueArguments[OptInNames.OPT_IN_ANNOTATION_CLASS]
                     checkSubclassOptInUsage(annotated, listOfNotNull(annotationClass), trace, entry)
                 }
-                in OptInNames.REQUIRES_OPT_IN_FQ_NAMES -> {
+                OptInNames.REQUIRES_OPT_IN_FQ_NAME -> {
                     hasOptIn = true
                 }
             }
             val annotationClass = annotation.annotationClass ?: continue
-            if (annotationClass.annotations.any { it.fqName in OptInNames.REQUIRES_OPT_IN_FQ_NAMES }) {
+            if (annotationClass.annotations.any { it.fqName == OptInNames.REQUIRES_OPT_IN_FQ_NAME }) {
                 val applicableTargets = AnnotationChecker.applicableTargetSet(annotationClass)
                 val possibleTargets = applicableTargets.intersect(actualTargets)
                 val annotationUseSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()

@@ -97,7 +97,7 @@ object FirOptInUsageBaseChecker {
             )
             if (fromSupertype) {
                 if (annotationType.lookupTag.classId == OptInNames.SUBCLASS_OPT_IN_REQUIRED_CLASS_ID) {
-                    val annotationClass = annotation.findArgumentByName(OptInNames.USE_EXPERIMENTAL_ANNOTATION_CLASS) ?: continue
+                    val annotationClass = annotation.findArgumentByName(OptInNames.OPT_IN_ANNOTATION_CLASS) ?: continue
                     result.addIfNotNull(
                         annotationClass.extractClassFromArgument()?.loadExperimentalityForMarkerAnnotation()?.copy(fromSupertype = true)
                     )
@@ -320,7 +320,7 @@ object FirOptInUsageBaseChecker {
             if (coneType?.lookupTag?.classId != OptInNames.OPT_IN_CLASS_ID) {
                 continue
             }
-            val annotationClasses = annotation.findArgumentByName(OptInNames.USE_EXPERIMENTAL_ANNOTATION_CLASS) ?: continue
+            val annotationClasses = annotation.findArgumentByName(OptInNames.OPT_IN_ANNOTATION_CLASS) ?: continue
             if (annotationClasses.extractClassesFromArgument().any { it.classId == annotationClassId }) {
                 return true
             }
@@ -334,7 +334,7 @@ object FirOptInUsageBaseChecker {
             if (coneType?.lookupTag?.classId != OptInNames.SUBCLASS_OPT_IN_REQUIRED_CLASS_ID) {
                 continue
             }
-            val annotationClass = annotation.findArgumentByName(OptInNames.USE_EXPERIMENTAL_ANNOTATION_CLASS) ?: continue
+            val annotationClass = annotation.findArgumentByName(OptInNames.OPT_IN_ANNOTATION_CLASS) ?: continue
             if (annotationClass.extractClassFromArgument()?.classId == annotationClassId) {
                 return true
             }

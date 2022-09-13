@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
-import org.jetbrains.kotlin.resolve.checkers.OptInNames.USE_EXPERIMENTAL_ANNOTATION_CLASS
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.OPT_IN_ANNOTATION_CLASS
 
 object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
     override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -45,7 +45,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
                 if (arguments.isEmpty()) {
                     reporter.reportOn(expression.source, FirErrors.OPT_IN_WITHOUT_ARGUMENTS, context)
                 } else {
-                    val annotationClasses = expression.findArgumentByName(USE_EXPERIMENTAL_ANNOTATION_CLASS)
+                    val annotationClasses = expression.findArgumentByName(OPT_IN_ANNOTATION_CLASS)
                     for (classSymbol in annotationClasses?.extractClassesFromArgument().orEmpty()) {
                         checkOptInArgumentIsMarker(classSymbol, expression.source, reporter, context)
                     }
@@ -73,7 +73,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
                     return
                 }
             }
-            val classSymbol = expression.findArgumentByName(USE_EXPERIMENTAL_ANNOTATION_CLASS)?.extractClassFromArgument() ?: return
+            val classSymbol = expression.findArgumentByName(OPT_IN_ANNOTATION_CLASS)?.extractClassFromArgument() ?: return
             checkOptInArgumentIsMarker(classSymbol, expression.source, reporter, context)
         }
     }
