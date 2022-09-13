@@ -28,7 +28,7 @@ internal class KtFirInheritorsProvider(
         val inheritorClassIds = classSymbol.firSymbol.fir.getSealedClassInheritors(analysisSession.useSiteSession)
 
         return with(analysisSession) {
-            inheritorClassIds.mapNotNull { it.getCorrespondingToplevelClassOrObjectSymbol() as? KtNamedClassOrObjectSymbol }
+            inheritorClassIds.mapNotNull { getClassOrObjectSymbolByClassId(it) as? KtNamedClassOrObjectSymbol }
         }
     }
 
