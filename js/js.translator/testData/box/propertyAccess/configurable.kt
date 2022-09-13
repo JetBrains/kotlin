@@ -1,5 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1345
 // KJS_WITH_FULL_RUNTIME
+// IGNORE_BACKEND_K2: JS_IR
 package foo
 
 external interface EP {
