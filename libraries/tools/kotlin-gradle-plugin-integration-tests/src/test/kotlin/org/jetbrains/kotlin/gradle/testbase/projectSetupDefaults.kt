@@ -86,6 +86,7 @@ internal val DEFAULT_KOTLIN_SETTINGS_FILE =
             id("org.jetbrains.kotlin.plugin.lombok") version kotlin_version
             id("org.jetbrains.kotlin.plugin.sam.with.receiver") version kotlin_version
             id("org.jetbrains.kotlin.plugin.serialization") version kotlin_version
+            id("org.jetbrains.kotlin.plugin.value.container.assignment") version kotlin_version
             id("org.jetbrains.kotlin.test.fixes.android") version test_fixes_version
             id("org.jetbrains.kotlin.gradle-subplugin-example") version kotlin_version
             id("org.jetbrains.kotlin.plugin.atomicfu") version kotlin_version
