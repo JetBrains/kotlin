@@ -17,9 +17,7 @@ public inline fun measureTimeMillis(block: () -> Unit): Long {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
-    val start = System.currentTimeMillis()
-    block()
-    return System.currentTimeMillis() - start
+    return measureNanoTime(block) / 1_000_000L
 }
 
 /**
