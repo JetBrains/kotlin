@@ -30,7 +30,7 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
             "./libraries/stdlib/src/kotlin/collections/Sequence.kt",
         )
         private val ANNOTATIONS_PATHS = arrayOf(
-            "./libraries/stdlib/src/kotlin/annotations/Experimental.kt",
+            "./libraries/stdlib/src/kotlin/annotations/WasExperimental.kt",
             "./libraries/stdlib/src/kotlin/annotations/ExperimentalStdlibApi.kt",
             "./libraries/stdlib/src/kotlin/annotations/OptIn.kt",
             "./libraries/stdlib/src/kotlin/internal/Annotations.kt",

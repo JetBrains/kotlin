@@ -49,17 +49,6 @@ public final class kotlin/ExceptionsKt {
 	public static final fun stackTraceToString (Ljava/lang/Throwable;)Ljava/lang/String;
 }
 
-public abstract interface annotation class kotlin/Experimental : java/lang/annotation/Annotation {
-	public abstract fun level ()Lkotlin/Experimental$Level;
-}
-
-public final class kotlin/Experimental$Level : java/lang/Enum {
-	public static final field ERROR Lkotlin/Experimental$Level;
-	public static final field WARNING Lkotlin/Experimental$Level;
-	public static fun valueOf (Ljava/lang/String;)Lkotlin/Experimental$Level;
-	public static fun values ()[Lkotlin/Experimental$Level;
-}
-
 public abstract interface annotation class kotlin/ExperimentalMultiplatform : java/lang/annotation/Annotation {
 }
 
@@ -534,10 +523,6 @@ public final class kotlin/UnsignedKt {
 	public static final fun ulongDivide-eb3DHEI (JJ)J
 	public static final fun ulongRemainder-eb3DHEI (JJ)J
 	public static final fun ulongToDouble (J)D
-}
-
-public abstract interface annotation class kotlin/UseExperimental : java/lang/annotation/Annotation {
-	public abstract fun markerClass ()[Ljava/lang/Class;
 }
 
 public final class kotlin/_Assertions {
