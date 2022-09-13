@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
-import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
@@ -29,7 +28,7 @@ internal abstract class RawFirNonLocalBuilder<Output>(
     baseScopeProvider: FirScopeProvider,
     protected val originalDeclaration: FirTypeParameterRefsOwner?,
 ) :
-    RawFirBuilder(session, baseScopeProvider, psiMode = PsiHandlingMode.IDE, bodyBuildingMode = BodyBuildingMode.NORMAL) {
+    RawFirBuilder(session, baseScopeProvider, bodyBuildingMode = BodyBuildingMode.NORMAL) {
     override fun addCapturedTypeParameters(
         status: Boolean,
         declarationSource: KtSourceElement?,

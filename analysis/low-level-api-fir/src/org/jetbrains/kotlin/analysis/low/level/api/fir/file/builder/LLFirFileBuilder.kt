@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
-import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
@@ -26,8 +25,7 @@ internal class LLFirFileBuilder(
         RawFirBuilder(
             moduleComponents.session,
             moduleComponents.scopeProvider,
-            psiMode = PsiHandlingMode.IDE,
-            bodyBuildingMode = BodyBuildingMode.LAZY_BODIES
+            bodyBuildingMode = BodyBuildingMode.LAZY_BODIES,
         ).buildFirFile(ktFile)
     }
 }
