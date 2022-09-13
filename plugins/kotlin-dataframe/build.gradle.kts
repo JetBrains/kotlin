@@ -2,6 +2,7 @@ plugins {
     id("java")
     kotlin("jvm") version "1.8.0-dev-2843"
     kotlin("libs.publisher") version "0.0.60-dev-30"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "org.jetbrains.kotlinx.dataframe"
@@ -101,7 +102,7 @@ kotlinPublications {
     fairDokkaJars.set(false)
     publication {
         publicationName.set("api")
-        artifactId.set("compiler-plugin")
+        artifactId.set("compiler-plugin-all")
         description.set("Data processing in Kotlin")
         packageName.set(artifactId)
     }
