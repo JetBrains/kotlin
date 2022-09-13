@@ -36,13 +36,15 @@ class SpinLock;
 template <>
 class SpinLock<MutexThreadStateHandling::kIgnore> : private Pinned {
 public:
-    void lock() noexcept {
+    // No need to check for external calls, because we explicitly ignore thread state.
+    NO_EXTERNAL_CALLS_CHECK void lock() noexcept {
         while(flag_.test_and_set(std::memory_order_acquire)) {
             std::this_thread::yield();
         }
     }
 
-    void unlock() noexcept {
+    // No need to check for external calls, because we explicitly ignore thread state.
+    NO_EXTERNAL_CALLS_CHECK void unlock() noexcept {
         flag_.clear(std::memory_order_release);
     }
 
