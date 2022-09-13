@@ -271,7 +271,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         val cacheDirectories = configureLibraries(arguments.cacheDirectories)
 
-        val icCaches = if (cacheDirectories.isNotEmpty()) {
+        // TODO: Use JS IR IC infrastructure for WASM?
+        val icCaches = if (!arguments.wasm && cacheDirectories.isNotEmpty()) {
             messageCollector.report(INFO, "")
             messageCollector.report(INFO, "Building cache:")
             messageCollector.report(INFO, "to: ${outputFilePath}")
