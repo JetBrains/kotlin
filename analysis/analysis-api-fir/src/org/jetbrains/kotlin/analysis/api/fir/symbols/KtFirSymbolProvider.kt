@@ -37,9 +37,7 @@ internal class KtFirSymbolProvider(
 
             psi.isLoopParameter -> {
                 firSymbolBuilder.variableLikeBuilder.buildLocalVariableSymbol(
-                    psi.resolveToFirSymbolOfType<FirPropertySymbol>(
-                        firResolveSession
-                    )
+                    psi.resolveToFirSymbolOfType<FirPropertySymbol>(firResolveSession)
                 )
             }
 
@@ -75,17 +73,13 @@ internal class KtFirSymbolProvider(
 
     override fun getConstructorSymbol(psi: KtConstructor<*>): KtConstructorSymbol {
         return firSymbolBuilder.functionLikeBuilder.buildConstructorSymbol(
-            psi.resolveToFirSymbolOfType<FirConstructorSymbol>(
-                firResolveSession
-            )
+            psi.resolveToFirSymbolOfType<FirConstructorSymbol>(firResolveSession)
         )
     }
 
     override fun getTypeParameterSymbol(psi: KtTypeParameter): KtTypeParameterSymbol {
         return firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(
-            psi.resolveToFirSymbolOfType<FirTypeParameterSymbol>(
-                firResolveSession
-            )
+            psi.resolveToFirSymbolOfType<FirTypeParameterSymbol>(firResolveSession)
         )
     }
 
@@ -147,7 +141,6 @@ internal class KtFirSymbolProvider(
         return firSymbolBuilder.callableBuilder.buildPropertyAccessorSymbol(
             psi.resolveToFirSymbolOfType<FirPropertyAccessorSymbol>(firResolveSession)
         )
-
     }
 
     override fun getClassInitializerSymbol(psi: KtClassInitializer): KtClassInitializerSymbol {
@@ -176,9 +169,7 @@ internal class KtFirSymbolProvider(
 
     override fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KtLocalVariableSymbol {
         return firSymbolBuilder.variableLikeBuilder.buildLocalVariableSymbol(
-            psi.resolveToFirSymbolOfType<FirPropertySymbol>(
-                firResolveSession
-            )
+            psi.resolveToFirSymbolOfType<FirPropertySymbol>(firResolveSession)
         )
     }
 }
