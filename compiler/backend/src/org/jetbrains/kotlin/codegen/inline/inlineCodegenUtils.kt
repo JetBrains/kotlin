@@ -229,7 +229,7 @@ internal fun isAnonymousClass(internalName: String) =
 fun wrapWithMaxLocalCalc(methodNode: MethodNode) =
     MaxStackFrameSizeAndLocalsCalculator(Opcodes.API_VERSION, methodNode.access, methodNode.desc, methodNode)
 
-fun newMethodNodeWithCorrectStackSize(block: (InstructionAdapter) -> Unit): MethodNode {
+inline fun newMethodNodeWithCorrectStackSize(block: (InstructionAdapter) -> Unit): MethodNode {
     val newMethodNode = MethodNode(Opcodes.API_VERSION, "fake", "()V", null, null)
     val mv = wrapWithMaxLocalCalc(newMethodNode)
     block(InstructionAdapter(mv))

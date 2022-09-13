@@ -66,7 +66,12 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         fun reportSuspendTypeUnsupported()
         fun reportNonReifiedTypeParameterWithRecursiveBoundUnsupported(typeParameterName: Name)
 
-        fun rewritePluginDefinedOperationMarker(v: InstructionAdapter, stubConstNull: AbstractInsnNode, instructions: InsnList, type: KT): Boolean =
+        fun rewritePluginDefinedOperationMarker(
+            v: InstructionAdapter,
+            reifiedInsn: AbstractInsnNode,
+            instructions: InsnList,
+            type: KT
+        ): Boolean =
             false
     }
 
@@ -170,16 +175,19 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
 
             val kotlinType = intrinsicsSupport.toKotlinType(type)
 
-            if (when (operationKind) {
-                    OperationKind.NEW_ARRAY -> processNewArray(insn, asmType)
-                    OperationKind.AS -> processAs(insn, instructions, kotlinType, asmType, safe = false)
-                    OperationKind.SAFE_AS -> processAs(insn, instructions, kotlinType, asmType, safe = true)
-                    OperationKind.IS -> processIs(insn, instructions, kotlinType, asmType)
-                    OperationKind.JAVA_CLASS -> processJavaClass(insn, asmType)
-                    OperationKind.ENUM_REIFIED -> processSpecialEnumFunction(insn, instructions, asmType)
-                    OperationKind.TYPE_OF -> processTypeOfOrPlugin(insn, instructions, type)
-                }
-            ) {
+            var processed = if (isPluginNext(insn)) processPlugin(insn, instructions, type) else false
+
+            if (!processed) processed = when (operationKind) {
+                OperationKind.NEW_ARRAY -> processNewArray(insn, asmType)
+                OperationKind.AS -> processAs(insn, instructions, kotlinType, asmType, safe = false)
+                OperationKind.SAFE_AS -> processAs(insn, instructions, kotlinType, asmType, safe = true)
+                OperationKind.IS -> processIs(insn, instructions, kotlinType, asmType)
+                OperationKind.JAVA_CLASS -> processJavaClass(insn, asmType)
+                OperationKind.ENUM_REIFIED -> processSpecialEnumFunction(insn, instructions, asmType)
+                OperationKind.TYPE_OF -> processTypeOfOrPlugin(insn, instructions, type)
+            }
+
+            if (processed) {
                 instructions.remove(insn.previous.previous!!) // PUSH operation ID
                 instructions.remove(insn.previous!!) // PUSH type parameter
                 instructions.remove(insn) // INVOKESTATIC marker method
@@ -267,15 +275,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         type: KT
     ) = rewriteNextTypeInsn(insn, Opcodes.ACONST_NULL) { stubConstNull: AbstractInsnNode ->
         val newMethodNode = newMethodNodeWithCorrectStackSize {
-            if (!isPluginNext(stubConstNull) || !intrinsicsSupport.rewritePluginDefinedOperationMarker(
-                    it,
-                    stubConstNull,
-                    instructions,
-                    type,
-                )
-            ) {
-                typeSystem.generateTypeOf(it, type, intrinsicsSupport)
-            }
+            typeSystem.generateTypeOf(it, type, intrinsicsSupport)
         }
 
         instructions.insert(insn, newMethodNode.instructions)
@@ -285,13 +285,36 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         return true
     }
 
+    private fun processPlugin(insn: MethodInsnNode, instructions: InsnList, type: KT): Boolean {
+        val reifiedInsn = insn.next ?: return false
+        val newMethodNode = newMethodNodeWithCorrectStackSize {
+            if (!intrinsicsSupport.rewritePluginDefinedOperationMarker(
+                    it,
+                    reifiedInsn,
+                    instructions,
+                    type,
+                )
+            ) return false
+        }
+
+        instructions.insert(insn, newMethodNode.instructions)
+
+        maxStackSize = max(maxStackSize, newMethodNode.maxStack)
+        return true
+    }
+
+    /** insn: INVOKESTATIC reifiedOperationMarker
+     *  insn.next: operation to be reified
+     *  insn.next.next: ldc(pluginMarker)
+     *  insn.next.next.next: INVOKESTATIC voidMagicApiCall
+     */
     private fun isPluginNext(insn: AbstractInsnNode): Boolean {
-        val magicInsn = insn.next?.next ?: return false
+        val magicInsn = insn.next?.next?.next ?: return false
         return magicInsn is MethodInsnNode && magicInsn.opcode == Opcodes.INVOKESTATIC
                 && magicInsn.owner == pluginIntrinsicsMarkerOwner
                 && magicInsn.name == pluginIntrinsicsMarkerMethod
                 && magicInsn.desc == pluginIntrinsicsMarkerSignature
-                && insn.next is LdcInsnNode
+                && magicInsn.previous is LdcInsnNode
     }
 
     private inline fun rewriteNextTypeInsn(
