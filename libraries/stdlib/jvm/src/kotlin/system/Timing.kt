@@ -17,7 +17,7 @@ public inline fun measureTimeMillis(block: () -> Unit): Long {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
-    return measureNanoTime(block) / 1_000_000L
+    return (measureNanoTime(block) + 500_000L) / 1_000_000L
 }
 
 /**
