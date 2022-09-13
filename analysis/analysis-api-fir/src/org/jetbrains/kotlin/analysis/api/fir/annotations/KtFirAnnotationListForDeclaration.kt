@@ -29,7 +29,7 @@ internal class KtFirAnnotationListForDeclaration private constructor(
         }
 
 
-    override fun containsAnnotation(classId: ClassId): Boolean = withValidityAssertion {
+    override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
         firSymbol.resolvedAnnotationClassIds.contains(classId)
     }
 

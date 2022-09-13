@@ -23,12 +23,12 @@ public val KtAnnotated.annotations: List<KtAnnotationApplication>
     get() = annotationsList.annotations
 
 /**
- * Checks if entity contains annotation with specified [classId].
+ * Checks if entity has annotation with specified [classId].
  *
- * @see [KtAnnotationsList.containsAnnotation]
+ * @see [KtAnnotationsList.hasAnnotation]
  */
-public fun KtAnnotated.containsAnnotation(classId: ClassId): Boolean =
-    annotationsList.containsAnnotation(classId)
+public fun KtAnnotated.hasAnnotation(classId: ClassId): Boolean =
+    annotationsList.hasAnnotation(classId)
 
 /**
  * A list of annotations applied with specified [classId].

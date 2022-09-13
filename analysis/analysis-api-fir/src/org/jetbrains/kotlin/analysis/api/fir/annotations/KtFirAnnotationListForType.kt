@@ -25,7 +25,7 @@ internal class KtFirAnnotationListForType private constructor(
         get() = withValidityAssertion { coneType.customAnnotations.map { it.toKtAnnotationApplication(useSiteSession) } }
 
 
-    override fun containsAnnotation(classId: ClassId): Boolean = withValidityAssertion {
+    override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
         coneType.customAnnotations.any { it.fullyExpandedClassId(useSiteSession) == classId }
     }
 
