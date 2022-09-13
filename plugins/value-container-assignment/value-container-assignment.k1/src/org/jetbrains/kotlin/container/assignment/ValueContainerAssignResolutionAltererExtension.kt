@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtModifierListOwner
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.calls.CallResolver
@@ -33,6 +30,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
 
 class CliValueContainerAssignResolutionAltererExtension(
@@ -66,7 +64,10 @@ abstract class AbstractValueContainerAssignResolutionAltererExtension : AssignRe
         components: ExpressionTypingComponents,
         scope: LexicalWritableScope
     ): KotlinTypeInfo? {
-        val leftType: KotlinType = leftInfo.type!!
+        var leftType: KotlinType = leftInfo.type!!
+        if (leftOperand is KtSafeQualifiedExpression) {
+            leftType = leftType.makeNotNullable()
+        }
         val receiver = create(left, leftType, context.trace.bindingContext)
         val operationSign: KtSimpleNameExpression = expression.operationReference
         val temporaryForAssignmentOperation: TemporaryTraceAndCache =

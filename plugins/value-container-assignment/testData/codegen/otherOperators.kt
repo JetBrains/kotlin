@@ -56,6 +56,9 @@ fun box(): String {
     task.input = "OK"
     if (task.input.get() != "OK") return task.input.get()
 
+    task?.input = "OK"
+    if (task.input.get() != "OK") return task.input.get()
+
     result = "Fail"
     task.input += "OK"
     if (result != "OK") return result
