@@ -21,22 +21,6 @@ fun `should not effect error reporting for other operators`() {
     task.input <!UNRESOLVED_REFERENCE!>+=<!> StringProperty("Fail")
     nullTask?.input <!UNRESOLVED_REFERENCE!>+=<!> StringProperty("Fail")
 
-    // a.b -= c
-    task.input <!UNRESOLVED_REFERENCE!>-=<!> StringProperty("Fail")
-    nullTask?.input <!UNRESOLVED_REFERENCE!>-=<!> StringProperty("Fail")
-
-    // a.b *= c
-    task.input <!UNRESOLVED_REFERENCE!>*=<!> StringProperty("Fail")
-    nullTask?.input <!UNRESOLVED_REFERENCE!>*=<!> StringProperty("Fail")
-
-    // a.b /= c
-    task.input <!UNRESOLVED_REFERENCE!>/=<!> StringProperty("Fail")
-    nullTask?.input <!UNRESOLVED_REFERENCE!>/=<!> StringProperty("Fail")
-
-    // a.b %= c
-    task.input <!UNRESOLVED_REFERENCE!>%=<!> StringProperty("Fail")
-    nullTask?.input <!UNRESOLVED_REFERENCE!>%=<!> StringProperty("Fail")
-
     // a.b <= c
     task.input <!UNRESOLVED_REFERENCE!><=<!> StringProperty("Fail")
     nullTask?.input <!UNRESOLVED_REFERENCE!><=<!> StringProperty("Fail")

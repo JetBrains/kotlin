@@ -22,30 +22,6 @@ operator fun StringProperty.plusAssign(v: String) {
 operator fun StringProperty.plusAssign(v: StringProperty) {
     result = v.get()
 }
-operator fun StringProperty.minusAssign(v: String) {
-    result = v
-}
-operator fun StringProperty.minusAssign(v: StringProperty) {
-    result = v.get()
-}
-operator fun StringProperty.timesAssign(v: String) {
-    result = v
-}
-operator fun StringProperty.timesAssign(v: StringProperty) {
-    result = v.get()
-}
-operator fun StringProperty.divAssign(v: String) {
-    result = v
-}
-operator fun StringProperty.divAssign(v: StringProperty) {
-    result = v.get()
-}
-operator fun StringProperty.remAssign(v: String) {
-    result = v
-}
-operator fun StringProperty.remAssign(v: StringProperty) {
-    result = v.get()
-}
 operator fun StringProperty.set(i: Int, v: String) {
     result = v
 }
@@ -85,34 +61,6 @@ fun box(): String {
     if (result != "OK") return result
     result = "Fail"
     task.input += StringProperty("OK")
-    if (result != "OK") return result
-
-    result = "Fail"
-    task.input -= "OK"
-    if (result != "OK") return result
-    result = "Fail"
-    task.input -= StringProperty("OK")
-    if (result != "OK") return result
-
-    result = "Fail"
-    task.input *= "OK"
-    if (result != "OK") return result
-    result = "Fail"
-    task.input *= StringProperty("OK")
-    if (result != "OK") return result
-
-    result = "Fail"
-    task.input /= "OK"
-    if (result != "OK") return result
-    result = "Fail"
-    task.input /= StringProperty("OK")
-    if (result != "OK") return result
-
-    result = "Fail"
-    task.input %= "OK"
-    if (result != "OK") return result
-    result = "Fail"
-    task.input %= StringProperty("OK")
     if (result != "OK") return result
 
     result = "Fail"
