@@ -58,6 +58,31 @@ tasks {
             allWarningsAsErrors = true
         }
     }
+
+    // Copy-pasted from Indexer.
+    withType<Test>().configureEach {
+        val projectsWithNativeLibs = listOf(
+                project(":kotlin-native:Interop:Indexer"),
+                project(":kotlin-native:Interop:Runtime")
+        )
+        dependsOn(projectsWithNativeLibs.map { "${it.path}:nativelibs" })
+        systemProperty("java.library.path", projectsWithNativeLibs.joinToString(File.pathSeparator) {
+            File(it.buildDir, "nativelibs").absolutePath
+        })
+        val llvmDir = project.findProperty("llvmDir")
+        val libclangPath = "$llvmDir/" + if (org.jetbrains.kotlin.konan.target.HostManager.hostIsMingw) {
+            "bin/libclang.dll"
+        } else {
+            "lib/${System.mapLibraryName("clang")}"
+        }
+        systemProperty("kotlin.native.llvm.libclang", libclangPath)
+        systemProperty("kotlin.native.interop.indexer.temp", File(buildDir, "testTemp"))
+
+        // Set the konan.home property because we run the cinterop tool not from a distribution jar
+        // so it will not be able to determine this path by itself.
+        systemProperty("konan.home", project.project(":kotlin-native").projectDir)
+        environment["LIBCLANG_DISABLE_CRASH_RECOVERY"] = "1"
+    }
 }
 
 sourceSets {
