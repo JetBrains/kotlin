@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    kotlin("jvm") version "1.8.0-dev-446"
+    kotlin("jvm") version "1.8.0-dev-2843"
     kotlin("libs.publisher") version "0.0.60-dev-30"
 }
 
@@ -37,9 +37,9 @@ dependencies {
     testRuntimeOnly("org.jetbrains.kotlin:kotlin-annotations-jvm:$kotlinVersion")
 
     constraints {
-        implementation(kotlin("compiler-embeddable", version = "1.8.0-dev-446"))
-        testImplementation(kotlin("compiler-embeddable", version = "1.8.0-dev-446"))
-        runtimeOnly(kotlin("compiler-embeddable", version = "1.8.0-dev-446"))
+        implementation(kotlin("compiler-embeddable", version = "1.8.0-dev-2843"))
+        testImplementation(kotlin("compiler-embeddable", version = "1.8.0-dev-2843"))
+        runtimeOnly(kotlin("compiler-embeddable", version = "1.8.0-dev-2843"))
     }
 
     implementation("org.jetbrains.kotlinx:dataframe:0.9.0-dev")
