@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompositeMetadataJar
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
@@ -271,7 +270,6 @@ class TransformKotlinGranularMetadata3TCSRegistrator(
     //private val metadataService = GranularMetadataTransformationService.registerIfAbsent(project)
 
     private val hostSpecificSourceSets by lazy { getHostSpecificSourceSets(project) }
-    private val compilationsBySourceSets by lazy { CompilationSourceSetUtil.compilationsBySourceSets(project) }
 
     fun configurationName(sourceSet: KotlinSourceSet) = sourceSet.name + "TransformKotlinGranularMetadata3"
 
