@@ -16974,9 +16974,33 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("hideFlexibleLocalTypeInPublicPosition.kt")
+                public void testHideFlexibleLocalTypeInPublicPosition() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/substitutions/hideFlexibleLocalTypeInPublicPosition.kt");
+                }
+
+                @Test
+                @TestMetadata("hideFlexibleLocalTypeInPublicPosition_before.kt")
+                public void testHideFlexibleLocalTypeInPublicPosition_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/substitutions/hideFlexibleLocalTypeInPublicPosition_before.kt");
+                }
+
+                @Test
                 @TestMetadata("hideLocalTypeForReturnTypeOfSingleExpressionFunction.kt")
                 public void testHideLocalTypeForReturnTypeOfSingleExpressionFunction() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/substitutions/hideLocalTypeForReturnTypeOfSingleExpressionFunction.kt");
+                }
+
+                @Test
+                @TestMetadata("hideNullableLocalTypeInPublicPosition.kt")
+                public void testHideNullableLocalTypeInPublicPosition() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/substitutions/hideNullableLocalTypeInPublicPosition.kt");
+                }
+
+                @Test
+                @TestMetadata("hideNullableLocalTypeInPublicPosition_before.kt")
+                public void testHideNullableLocalTypeInPublicPosition_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/substitutions/hideNullableLocalTypeInPublicPosition_before.kt");
                 }
 
                 @Test
