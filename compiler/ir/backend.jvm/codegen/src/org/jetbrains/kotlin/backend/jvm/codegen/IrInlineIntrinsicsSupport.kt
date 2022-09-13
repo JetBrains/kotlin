@@ -127,7 +127,7 @@ class IrInlineIntrinsicsSupport(
             .report(JvmBackendErrors.TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND, typeParameterName.asString())
     }
 
-    override fun rewritePluginDefinedOperationMarker(v: InstructionAdapter, stubConstNull: AbstractInsnNode, instructions: InsnList, type: IrType): Boolean {
-        return pluginExtensions.any { it.rewritePluginDefinedOperationMarker(v, stubConstNull, instructions, type) }
+    override fun rewritePluginDefinedOperationMarker(v: InstructionAdapter, reifiedInsn: AbstractInsnNode, instructions: InsnList, type: IrType): Boolean {
+        return pluginExtensions.any { it.rewritePluginDefinedOperationMarker(v, reifiedInsn, instructions, type) }
     }
 }

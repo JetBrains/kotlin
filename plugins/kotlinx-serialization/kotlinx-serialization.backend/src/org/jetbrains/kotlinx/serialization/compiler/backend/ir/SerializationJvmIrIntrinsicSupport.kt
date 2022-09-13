@@ -181,28 +181,29 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
      * 4: swap // if withModule
      * 5: invokestatic(kotlinx.serialization.serializer(module?, kType)
      *
-     * We need to remove instructions from 1 to 5
-     * Instructions 0, -1 -2 and -3 would be removed by inliner.
+     * We need to remove instructions from 0 to 5
+     * Instructions -1, -2 and -3 would be removed by inliner.
      */
     override fun rewritePluginDefinedOperationMarker(
         v: InstructionAdapter,
-        stubConstNull: AbstractInsnNode,
+        reifiedInsn: AbstractInsnNode,
         instructions: InsnList,
         type: IrType
     ): Boolean {
-        val operationTypeStr = (stubConstNull.next as LdcInsnNode).cst as String
+        val operationTypeStr = (reifiedInsn.next as LdcInsnNode).cst as String
         if (!operationTypeStr.startsWith(magicMarkerStringPrefix)) return false
         val operationType = if (operationTypeStr.endsWith("withModule")) {
-            val aload = stubConstNull.next.next.next as VarInsnNode
+            val aload = reifiedInsn.next.next.next as VarInsnNode
             val storedVar = aload.`var`
             instructions.remove(aload.next)
             instructions.remove(aload)
             IntrinsicType.WithModule(storedVar)
         } else IntrinsicType.Simple
         // Remove other instructions
-        instructions.remove(stubConstNull.next.next.next)
-        instructions.remove(stubConstNull.next.next)
-        instructions.remove(stubConstNull.next)
+        instructions.remove(reifiedInsn.next.next.next)
+        instructions.remove(reifiedInsn.next.next)
+        instructions.remove(reifiedInsn.next)
+        instructions.remove(reifiedInsn)
         // generate serializer
         generateSerializerForType(type, v, operationType)
         return true
