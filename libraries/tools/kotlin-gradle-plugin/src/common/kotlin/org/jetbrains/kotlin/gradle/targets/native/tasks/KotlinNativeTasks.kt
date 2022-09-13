@@ -1050,6 +1050,7 @@ internal class CacheBuilder(
             getAllDependencies(dependency)
                 .flatMap { dependencyArtifacts(it) }
                 .map { it.file }
+                .distinct()
                 .filterKlibsPassedToCompiler()
                 .forEach {
                     args += "-l"
