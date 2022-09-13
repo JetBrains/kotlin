@@ -1,7 +1,7 @@
 annotation class ValueContainer
 
 @ValueContainer
-data class StringProperty(var v: String) {
+class StringProperty(var v: String) {
     fun assign(v: String) {
         this.v = v
     }

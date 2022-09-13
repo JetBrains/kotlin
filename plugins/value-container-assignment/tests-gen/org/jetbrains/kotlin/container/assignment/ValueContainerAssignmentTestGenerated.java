@@ -6,9 +6,8 @@
 package org.jetbrains.kotlin.container.assignment;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -52,5 +51,11 @@ public class ValueContainerAssignmentTestGenerated extends AbstractValueContaine
     @TestMetadata("otherOperators.kt")
     public void testOtherOperators() throws Exception {
         runTest("plugins/value-container-assignment/testData/diagnostics/otherOperators.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignPrecedence.kt")
+    public void testPlusAssignPrecedence() throws Exception {
+        runTest("plugins/value-container-assignment/testData/diagnostics/plusAssignPrecedence.kt");
     }
 }

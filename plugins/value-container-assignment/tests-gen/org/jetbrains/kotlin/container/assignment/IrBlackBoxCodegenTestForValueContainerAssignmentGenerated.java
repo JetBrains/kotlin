@@ -38,6 +38,12 @@ public class IrBlackBoxCodegenTestForValueContainerAssignmentGenerated extends A
     }
 
     @Test
+    @TestMetadata("plusAssignPrecedence.kt")
+    public void testPlusAssignPrecedence() throws Exception {
+        runTest("plugins/value-container-assignment/testData/codegen/plusAssignPrecedence.kt");
+    }
+
+    @Test
     @TestMetadata("supportedUsage.kt")
     public void testSupportedUsage() throws Exception {
         runTest("plugins/value-container-assignment/testData/codegen/supportedUsage.kt");
