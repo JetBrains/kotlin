@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkage
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedIrElementRenderer.appendDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedIrElementRenderer.renderError
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UsedClassifierSymbolStatus.Companion.isUnlinked
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -303,7 +304,11 @@ internal class UnlinkedDeclarationsProcessor(
             declaration.transformChildrenVoid()
 
             fun <S : IrSymbol> IrOverridableDeclaration<S>.filterOverriddenSymbols() {
-                overriddenSymbols = overriddenSymbols.filter { it.isBound }
+                overriddenSymbols = overriddenSymbols.filter { symbol ->
+                    symbol.isBound
+                            // Handle the case when the overridden declaration became private.
+                            && (symbol.owner as? IrDeclarationWithVisibility)?.visibility != DescriptorVisibilities.PRIVATE
+                }
             }
 
             for (member in declaration.declarations) {
