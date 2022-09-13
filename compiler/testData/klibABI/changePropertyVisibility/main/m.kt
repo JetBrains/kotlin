@@ -48,4 +48,28 @@ fun box() = abiTest {
     expectSuccess("ContainerImpl.protectedToPrivateOverriddenProperty2") { c.protectedToPrivateOverriddenProperty2Access() }
     expectSuccess("ContainerImpl.protectedToPrivateOverriddenProperty3") { c.protectedToPrivateOverriddenProperty3Access() }
     expectSuccess("ContainerImpl.protectedToPrivateOverriddenProperty4") { c.protectedToPrivateOverriddenProperty4Access() }
+    expectSuccess("ContainerImpl.newPublicProperty1") { c.newPublicProperty1 }
+    expectSuccess("ContainerImpl.newPublicProperty2") { c.newPublicProperty2 }
+    expectSuccess("ContainerImpl.newPublicProperty3") { c.newPublicProperty3 }
+    expectSuccess("ContainerImpl.newPublicProperty4") { c.newPublicProperty4 }
+    expectSuccess("ContainerImpl.newProtectedProperty1") { c.newProtectedProperty1Access() }
+    expectSuccess("ContainerImpl.newProtectedProperty2") { c.newProtectedProperty2Access() }
+    expectSuccess("ContainerImpl.newProtectedProperty3") { c.newProtectedProperty3Access() }
+    expectSuccess("ContainerImpl.newProtectedProperty4") { c.newProtectedProperty4Access() }
+    expectSuccess("ContainerImpl.newOpenProtectedProperty1") { c.newOpenProtectedProperty1Access() }
+    expectSuccess("ContainerImpl.newOpenProtectedProperty2") { c.newOpenProtectedProperty2Access() }
+    expectSuccess("ContainerImpl.newOpenProtectedProperty3") { c.newOpenProtectedProperty3Access() }
+    expectSuccess("ContainerImpl.newOpenProtectedProperty4") { c.newOpenProtectedProperty4Access() }
+    expectSuccess("ContainerImpl.newInternalProperty1") { c.newInternalProperty1Access() }
+    expectSuccess("ContainerImpl.newInternalProperty2") { c.newInternalProperty2Access() }
+    expectSuccess("ContainerImpl.newInternalProperty3") { c.newInternalProperty3Access() }
+    expectSuccess("ContainerImpl.newInternalProperty4") { c.newInternalProperty4Access() }
+    expectSuccess("ContainerImpl.newOpenInternalProperty1") { c.newOpenInternalProperty1Access() }
+    expectSuccess("ContainerImpl.newOpenInternalProperty2") { c.newOpenInternalProperty2Access() }
+    expectSuccess("ContainerImpl.newOpenInternalProperty3") { c.newOpenInternalProperty3Access() }
+    expectSuccess("ContainerImpl.newOpenInternalProperty4") { c.newOpenInternalProperty4Access() }
+    expectSuccess("ContainerImpl.newPrivateProperty1") { c.newPrivateProperty1Access() }
+    expectSuccess("ContainerImpl.newPrivateProperty2") { c.newPrivateProperty2Access() }
+    expectSuccess("ContainerImpl.newPrivateProperty3") { c.newPrivateProperty3Access() }
+    expectSuccess("ContainerImpl.newPrivateProperty4") { c.newPrivateProperty4Access() }
 }

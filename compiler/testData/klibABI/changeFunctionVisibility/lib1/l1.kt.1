@@ -17,4 +17,12 @@ open class Container {
     public open fun protectedToPublicOverriddenFunction() = "Container.protectedToPublicOverriddenFunction.v2"
     internal open fun protectedToInternalOverriddenFunction() = "Container.protectedToInternalOverriddenFunction.v2"
     private /*open*/ fun protectedToPrivateOverriddenFunction() = "Container.protectedToPrivateOverriddenFunction.v2"
+
+    public fun newPublicFunction() = "Container.newPublicFunction.v2"
+    public open fun newOpenPublicFunction() = "Container.newOpenPublicFunction.v2"
+    protected fun newProtectedFunction() = "Container.newProtectedFunction.v2"
+    protected open fun newOpenProtectedFunction() = "Container.newOpenProtectedFunction.v2"
+    internal fun newInternalFunction() = "Container.newInternalFunction.v2"
+    internal open fun newOpenInternalFunction() = "Container.newOpenInternalFunction.v2"
+    private fun newPrivateFunction() = "Container.newPrivateFunction.v2"
 }

@@ -22,4 +22,21 @@ class ContainerImpl : Container() {
     fun protectedToPublicOverriddenFunctionAccess() = protectedToPublicOverriddenFunction()
     fun protectedToInternalOverriddenFunctionAccess() = protectedToInternalOverriddenFunction()
     fun protectedToPrivateOverriddenFunctionAccess() = protectedToPrivateOverriddenFunction()
+
+    // Functions that accedentally start to override/conflict with functions added to Container since version v2:
+    public fun newPublicFunction() = "ContainerImpl.newPublicFunction"
+    public fun newOpenPublicFunction() = "ContainerImpl.newOpenPublicFunction"
+    protected fun newProtectedFunction() = "ContainerImpl.newProtectedFunction"
+    protected fun newOpenProtectedFunction() = "ContainerImpl.newOpenProtectedFunction"
+    internal fun newInternalFunction() = "ContainerImpl.newInternalFunction"
+    internal fun newOpenInternalFunction() = "ContainerImpl.newOpenInternalFunction"
+    private fun newPrivateFunction() = "ContainerImpl.newPrivateFunction"
+
+    // As far as protected/private members can't be accessed outside of the class hierarchy, and internal can't be accessed
+    // outside of module, we need special accessors.
+    fun newProtectedFunctionAccess() = newProtectedFunction()
+    fun newOpenProtectedFunctionAccess() = newOpenProtectedFunction()
+    fun newInternalFunctionAccess() = newInternalFunction()
+    fun newOpenInternalFunctionAccess() = newOpenInternalFunction()
+    fun newPrivateFunctionAccess() = newPrivateFunction()
 }

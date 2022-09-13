@@ -19,4 +19,11 @@ fun box() = abiTest {
     expectSuccess("ContainerImpl.protectedToPublicOverriddenFunction") { c.protectedToPublicOverriddenFunctionAccess() }
     expectSuccess("ContainerImpl.protectedToInternalOverriddenFunction") { c.protectedToInternalOverriddenFunctionAccess() }
     expectSuccess("ContainerImpl.protectedToPrivateOverriddenFunction") { c.protectedToPrivateOverriddenFunctionAccess() }
+    expectSuccess("ContainerImpl.newPublicFunction") { c.newPublicFunction() }
+    expectSuccess("ContainerImpl.newOpenPublicFunction") { c.newOpenPublicFunction() }
+    expectSuccess("ContainerImpl.newProtectedFunction") { c.newProtectedFunctionAccess() }
+    expectSuccess("ContainerImpl.newOpenProtectedFunction") { c.newOpenProtectedFunctionAccess() }
+    expectSuccess("ContainerImpl.newInternalFunction") { c.newInternalFunctionAccess() }
+    expectSuccess("ContainerImpl.newOpenInternalFunction") { c.newOpenInternalFunctionAccess() }
+    expectSuccess("ContainerImpl.newPrivateFunction") { c.newPrivateFunctionAccess() }
 }
