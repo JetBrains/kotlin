@@ -19,6 +19,9 @@ FILE: Convert1.kt
         public final static fun valueOf(value: R|kotlin/String|): R|Direction| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+            public get(): R|kotlin/enums/EnumEntries<Direction>|
+
     }
     public final fun convert1(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Convert1>|): R|kotlin/Unit| {
         lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<kotlin/Int>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|Convert1|>(vararg(String(direction))).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/Convert.to: R|org/jetbrains/kotlinx/dataframe/DataFrame<Convert1>|>|<R|Direction|>().R|org/jetbrains/kotlinx/dataframe/api/cast|<R|kotlin/Int|>()
