@@ -570,6 +570,7 @@ class HierarchicalMppIT : KGPBaseTest() {
             sourceSetCInteropMetadataDirectory = mapOf(),
             hostSpecificSourceSets = emptySet(),
             sourceSetBinaryLayout = sourceSetModuleDependencies.mapValues { SourceSetMetadataLayout.KLIB },
+            sourceSetNames = setOf("commonMain", "jvmAndJsMain", "linuxAndJsMain"),
             isPublishedAsRoot = true
         )
     }
