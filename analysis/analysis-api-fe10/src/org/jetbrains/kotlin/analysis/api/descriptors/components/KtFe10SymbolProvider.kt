@@ -120,7 +120,7 @@ internal class KtFe10SymbolProvider(
         return descriptor.toKtClassSymbol(analysisContext)
     }
 
-    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KtSymbol> {
+    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KtCallableSymbol> {
         val packageViewDescriptor = analysisContext.resolveSession.moduleDescriptor.getPackage(packageFqName)
         return packageViewDescriptor.memberScope.getContributedDescriptors(DescriptorKindFilter.ALL, nameFilter = { it == name })
             .asSequence()

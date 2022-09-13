@@ -473,7 +473,7 @@ internal fun KtClassOrObject.checkIsInheritor(superClassOrigin: KtClassOrObject,
         is KtEnumEntry -> {
             val enumEntrySymbol = this.getEnumEntrySymbol()
             val classId = enumEntrySymbol.containingEnumClassIdIfNonLocal ?: return false
-            val enumClassSymbol = classId.getCorrespondingToplevelClassOrObjectSymbol() ?: return false
+            val enumClassSymbol = getClassOrObjectSymbolByClassId(classId) ?: return false
             if (enumClassSymbol == superClassSymbol) return true
             return if (checkDeep) {
                 enumClassSymbol.isSubClassOf(superClassSymbol)

@@ -39,7 +39,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
             val classId = symbol.callableIdIfNonLocal?.classId
             if (classId != null) {
                 with(analysisSession) {
-                    return classId.getCorrespondingToplevelClassOrObjectSymbol()
+                    return getClassOrObjectSymbolByClassId(classId)
                 }
             }
         }
@@ -160,7 +160,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
             }
             else -> error("We should not have a ${symbol::class} from a library")
         } ?: error("outerClassId should not be null for member declaration")
-        val containingClass = containingClassId.getCorrespondingToplevelClassOrObjectSymbol()
+        val containingClass = getClassOrObjectSymbolByClassId(containingClassId)
         return containingClass ?: error("Class by class id should exists")
     }
 }

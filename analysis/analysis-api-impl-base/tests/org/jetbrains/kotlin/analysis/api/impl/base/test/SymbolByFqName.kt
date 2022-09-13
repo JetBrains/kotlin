@@ -45,7 +45,7 @@ sealed class SymbolData {
 
     data class ClassData(val classId: ClassId) : SymbolData() {
         override fun KtAnalysisSession.toSymbols(): List<KtSymbol> {
-            val symbol = classId.getCorrespondingToplevelClassOrObjectSymbol() ?: error("Class $classId is not found")
+            val symbol = getClassOrObjectSymbolByClassId(classId) ?: error("Class $classId is not found")
             return listOf(symbol)
         }
     }
@@ -54,10 +54,10 @@ sealed class SymbolData {
         override fun KtAnalysisSession.toSymbols(): List<KtSymbol> {
             val classId = callableId.classId
             val symbols = if (classId == null) {
-                callableId.packageName.getContainingCallableSymbolsWithName(callableId.callableName).toList()
+                getTopLevelCallableSymbols(callableId.packageName, callableId.callableName).toList()
             } else {
                 val classSymbol =
-                    classId.getCorrespondingToplevelClassOrObjectSymbol()
+                    getClassOrObjectSymbolByClassId(classId)
                         ?: error("Class $classId is not found")
                 classSymbol.getDeclaredMemberScope().getCallableSymbols()
                     .filter { (it as? KtNamedSymbol)?.name == callableId.callableName }

@@ -55,7 +55,7 @@ public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
 
     public abstract fun getClassOrObjectSymbolByClassId(classId: ClassId): KtClassOrObjectSymbol?
 
-    public abstract fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KtSymbol>
+    public abstract fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KtCallableSymbol>
 
     @Suppress("PropertyName")
     public abstract val ROOT_PACKAGE_SYMBOL: KtPackageSymbol
@@ -138,11 +138,17 @@ public interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
     /**
      * @return symbol with specified [this@getClassOrObjectSymbolByClassId] or `null` in case such symbol is not found
      */
-    public fun ClassId.getCorrespondingToplevelClassOrObjectSymbol(): KtClassOrObjectSymbol? =
-        withValidityAssertion { analysisSession.symbolProvider.getClassOrObjectSymbolByClassId(this) }
+    public fun getClassOrObjectSymbolByClassId(classId: ClassId): KtClassOrObjectSymbol? =
+        withValidityAssertion { analysisSession.symbolProvider.getClassOrObjectSymbolByClassId(classId) }
 
-    public fun FqName.getContainingCallableSymbolsWithName(name: Name): Sequence<KtSymbol> =
-        withValidityAssertion { analysisSession.symbolProvider.getTopLevelCallableSymbols(this, name) }
+    /**
+     * @return list of top-level functions and properties which are visible from current use-site module
+     *
+     * @param packageFqName package name in which callable symbols should be declared
+     * @param name callable symbol name
+     */
+    public fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KtCallableSymbol> =
+        withValidityAssertion { analysisSession.symbolProvider.getTopLevelCallableSymbols(packageFqName, name) }
 
     /**
      * @return symbol corresponding to the local variable introduced by individual destructuring declaration entries.
