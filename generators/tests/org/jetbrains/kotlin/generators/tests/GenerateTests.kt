@@ -215,7 +215,6 @@ fun main(args: Array<String>) {
     }
 
     generateTestGroupSuiteWithJUnit5 {
-        val firTestdataPattern = "^(.+)\\.fir\\.kts?\$"
         val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
 
         testGroup("plugins/parcelize/parcelize-compiler/tests-gen", "plugins/parcelize/parcelize-compiler/testData") {
@@ -384,7 +383,7 @@ fun main(args: Array<String>) {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
             testClass<AbstractFirValueContainerAssignmentTest> {
-                model("diagnostics", pattern = firTestdataPattern)
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
             testClass<AbstractIrBlackBoxCodegenTestForValueContainerAssignment> {
                 model("codegen", excludedPattern = excludedFirTestdataPattern)

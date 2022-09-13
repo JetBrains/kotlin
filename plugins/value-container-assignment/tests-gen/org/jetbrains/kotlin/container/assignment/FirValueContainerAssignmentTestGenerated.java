@@ -21,36 +21,36 @@ import java.util.regex.Pattern;
 public class FirValueContainerAssignmentTestGenerated extends AbstractFirValueContainerAssignmentTest {
     @Test
     public void testAllFilesPresentInDiagnostics() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/value-container-assignment/testData/diagnostics"), Pattern.compile("^(.+)\\.fir\\.kts?$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/value-container-assignment/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
     @Test
-    @TestMetadata("incorrectUsage.fir.kt")
+    @TestMetadata("incorrectUsage.kt")
     public void testIncorrectUsage() throws Exception {
-        runTest("plugins/value-container-assignment/testData/diagnostics/incorrectUsage.fir.kt");
+        runTest("plugins/value-container-assignment/testData/diagnostics/incorrectUsage.kt");
     }
 
     @Test
-    @TestMetadata("localVariables.fir.kt")
+    @TestMetadata("localVariables.kt")
     public void testLocalVariables() throws Exception {
-        runTest("plugins/value-container-assignment/testData/diagnostics/localVariables.fir.kt");
+        runTest("plugins/value-container-assignment/testData/diagnostics/localVariables.kt");
     }
 
     @Test
-    @TestMetadata("methodDeclaration.fir.kt")
+    @TestMetadata("methodDeclaration.kt")
     public void testMethodDeclaration() throws Exception {
-        runTest("plugins/value-container-assignment/testData/diagnostics/methodDeclaration.fir.kt");
+        runTest("plugins/value-container-assignment/testData/diagnostics/methodDeclaration.kt");
     }
 
     @Test
-    @TestMetadata("noAnnotation.fir.kt")
+    @TestMetadata("noAnnotation.kt")
     public void testNoAnnotation() throws Exception {
-        runTest("plugins/value-container-assignment/testData/diagnostics/noAnnotation.fir.kt");
+        runTest("plugins/value-container-assignment/testData/diagnostics/noAnnotation.kt");
     }
 
     @Test
-    @TestMetadata("otherOperators.fir.kt")
+    @TestMetadata("otherOperators.kt")
     public void testOtherOperators() throws Exception {
-        runTest("plugins/value-container-assignment/testData/diagnostics/otherOperators.fir.kt");
+        runTest("plugins/value-container-assignment/testData/diagnostics/otherOperators.kt");
     }
 }

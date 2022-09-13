@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest
 import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
+import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
@@ -37,6 +38,7 @@ abstract class AbstractFirValueContainerAssignmentTest : AbstractFirDiagnosticTe
         super.configure(builder)
         builder.configurePlugin()
         builder.configureDiagnostics()
+        builder.configurationForClassicAndFirTestsAlongside()
     }
 }
 
