@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
+import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import java.io.File
 
 internal class GradleCompilerEnvironment(
     val compilerClasspath: Iterable<File>,
-    messageCollector: GradlePrintingMessageCollector,
+    messageCollector: GradleErrorMessageCollector,
     outputItemsCollector: OutputItemsCollector,
     val outputFiles: List<File>,
     val reportingSettings: ReportingSettings,

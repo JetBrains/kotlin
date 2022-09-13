@@ -195,7 +195,7 @@ open class IncrementalJvmCompilerRunner(
         classpathAbiSnapshots: Map<String, AbiSnapshot>
     ): CompilationMode {
         return try {
-            calculateSourcesToCompileImpl(caches, changedFiles, args, classpathAbiSnapshots, withAbiSnapshot)
+            calculateSourcesToCompileImpl(caches, changedFiles, args, messageCollector, classpathAbiSnapshots, withAbiSnapshot)
         } finally {
             psiFileProvider.messageCollector.flush(messageCollector)
             psiFileProvider.messageCollector.clear()
@@ -238,6 +238,7 @@ open class IncrementalJvmCompilerRunner(
         caches: IncrementalJvmCachesManager,
         changedFiles: ChangedFiles.Known,
         args: K2JVMCompilerArguments,
+        messageCollector: MessageCollector,
         abiSnapshots: Map<String, AbiSnapshot>,
         withAbiSnapshot: Boolean
     ): CompilationMode {
@@ -273,7 +274,10 @@ open class IncrementalJvmCompilerRunner(
                     // workingDir as workingDir is an @OutputDirectory, so the files must be present in an incremental build.)
                     return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
                 }
-                val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
+                if (!lastBuildInfoFile.exists()) {
+                    return CompilationMode.Rebuild(BuildAttribute.NO_LAST_BUILD_INFO)
+                }
+                val lastBuildInfo = BuildInfo.read(lastBuildInfoFile, messageCollector) ?: return CompilationMode.Rebuild(BuildAttribute.INVALID_LAST_BUILD_INFO)
                 reporter.debug { "Last Kotlin Build info -- $lastBuildInfo" }
                 val scopes = caches.lookupCache.lookupSymbols.map { it.scope.ifBlank { it.name } }.distinct()
 

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
+import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinMultiplatformCommonOptionsCompat
 import java.io.File
@@ -109,11 +110,12 @@ abstract class KotlinCompileCommon @Inject constructor(
         inputChanges: InputChanges,
         taskOutputsBackup: TaskOutputsBackup?
     ) {
-        val messageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
+        val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
+        val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector)
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()
         val environment = GradleCompilerEnvironment(
-            defaultCompilerClasspath, messageCollector, outputItemCollector,
+            defaultCompilerClasspath, gradleMessageCollector, outputItemCollector,
             reportingSettings = reportingSettings(),
             outputFiles = allOutputFiles()
         )
@@ -123,5 +125,6 @@ abstract class KotlinCompileCommon @Inject constructor(
             args,
             environment
         )
+        compilerRunner.errorsFile?.also { gradleMessageCollector.flush(it) }
     }
 }

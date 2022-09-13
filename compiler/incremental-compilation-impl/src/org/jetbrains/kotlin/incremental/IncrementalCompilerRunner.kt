@@ -18,15 +18,12 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
-import org.jetbrains.kotlin.build.report.BuildReporter
-import org.jetbrains.kotlin.build.report.debug
-import org.jetbrains.kotlin.build.report.info
+import org.jetbrains.kotlin.build.report.*
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute.*
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
-import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -39,6 +36,7 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.incremental.util.BufferingMessageCollector
+import org.jetbrains.kotlin.incremental.util.reportException
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
@@ -100,6 +98,7 @@ abstract class IncrementalCompilerRunner<
                 )
             }
             is ICResult.Failed -> {
+                messageCollector.reportException(result.cause)
                 reporter.warn {
                     // The indentation after the first line is intentional (so that this message is distinct from next message)
                     """

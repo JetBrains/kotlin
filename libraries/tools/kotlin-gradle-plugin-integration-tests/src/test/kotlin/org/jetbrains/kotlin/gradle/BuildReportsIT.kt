@@ -12,6 +12,10 @@ import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.io.ObjectInputStream
+import kotlin.io.path.exists
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
+import kotlin.io.path.notExists
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -140,4 +144,22 @@ class BuildReportsIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Error file is created")
+    @GradleTest
+    fun testErrorsFileSmokeTest(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            build("compileKotlin") {
+                assertTrue { projectPath.resolve(".gradle/build_errors").listDirectoryEntries().isEmpty() }
+            }
+            val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
+            kotlinFile.modify { it.replace("ArrayList","skjfghsjk") }
+            buildAndFail("compileKotlin") {
+                val buildErrorDir = projectPath.resolve(".gradle/build_errors").toFile()
+                val files = buildErrorDir.listFiles()
+                assertTrue { files?.first()?.exists() ?: false }
+            }
+        }
+    }
+
 }

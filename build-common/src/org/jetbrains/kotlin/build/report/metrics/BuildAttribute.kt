@@ -18,6 +18,8 @@ enum class BuildAttributeKind : Serializable {
 enum class BuildAttribute(val kind: BuildAttributeKind, val readableString: String) : Serializable {
     NO_BUILD_HISTORY(BuildAttributeKind.REBUILD_REASON, "Build history file not found"),
     NO_ABI_SNAPSHOT(BuildAttributeKind.REBUILD_REASON, "ABI snapshot not found"),
+    NO_LAST_BUILD_INFO(BuildAttributeKind.REBUILD_REASON, "Last build info not found"),
+    INVALID_LAST_BUILD_INFO(BuildAttributeKind.REBUILD_REASON, "Last build info corrupted"),
     CLASSPATH_SNAPSHOT_NOT_FOUND(BuildAttributeKind.REBUILD_REASON, "Classpath snapshot not found"),
     IC_FAILED_TO_GET_CHANGED_FILES(BuildAttributeKind.REBUILD_REASON, "Failed to get changed files"),
     IC_FAILED_TO_COMPUTE_FILES_TO_RECOMPILE(BuildAttributeKind.REBUILD_REASON, "Failed to compute files to recompile"),

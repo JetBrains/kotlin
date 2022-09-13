@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.gradle.incremental.*
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
+import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
@@ -232,6 +233,12 @@ abstract class GradleCompileTaskProvider @Inject constructor(
             }
         }
     )
+
+    @get:Internal
+    val errorsFile: Provider<File?> = objectFactory
+        .property(
+            gradle.rootProject.rootDir.resolve(".gradle/build_errors/").also { it.mkdirs() }
+                .resolve("errors-${System.currentTimeMillis()}.log"))
 }
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constructor(
@@ -723,7 +730,8 @@ abstract class KotlinCompile @Inject constructor(
         validateKotlinAndJavaHasSameTargetCompatibility(args, kotlinSources)
 
         val scriptSources = scriptSources.asFileTree.files
-        val messageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
+        val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors,)
+        val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector)
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()
 
@@ -742,7 +750,7 @@ abstract class KotlinCompile @Inject constructor(
 
         @Suppress("ConvertArgumentToSet", "DEPRECATION")
         val environment = GradleCompilerEnvironment(
-            defaultCompilerClasspath, messageCollector, outputItemCollector,
+            defaultCompilerClasspath, gradleMessageCollector, outputItemCollector,
             // In the incremental compiler, outputFiles will be cleaned on rebuild. However, because classpathSnapshotDir is not included in
             // TaskOutputsBackup, we don't want classpathSnapshotDir to be cleaned immediately on rebuild, and therefore we exclude it from
             // outputFiles here. (See TaskOutputsBackup's kdoc for more info.)
@@ -765,6 +773,7 @@ abstract class KotlinCompile @Inject constructor(
             defaultKotlinJavaToolchain.get().providedJvm.get().javaHome,
             taskOutputsBackup
         )
+        compilerRunner.errorsFile?.also { gradleMessageCollector.flush(it) }
     }
 
     private fun validateKotlinAndJavaHasSameTargetCompatibility(
@@ -1152,7 +1161,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
         logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
 
-        val messageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
+        val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
+        val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector)
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()
 
@@ -1167,7 +1177,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         } else null
 
         val environment = GradleCompilerEnvironment(
-            defaultCompilerClasspath, messageCollector, outputItemCollector,
+            defaultCompilerClasspath, gradleMessageCollector, outputItemCollector,
             outputFiles = allOutputFiles(),
             reportingSettings = reportingSettings(),
             incrementalCompilationEnvironment = icEnv
@@ -1180,6 +1190,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
             environment,
             taskOutputsBackup
         )
+        compilerRunner.errorsFile?.also { gradleMessageCollector.flush(it) }
+
     }
 
     private val projectRootDir = project.rootDir

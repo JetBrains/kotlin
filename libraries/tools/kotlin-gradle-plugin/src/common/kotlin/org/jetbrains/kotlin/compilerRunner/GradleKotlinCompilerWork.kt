@@ -65,6 +65,7 @@ internal class GradleKotlinCompilerWorkArguments(
     val kotlinScriptExtensions: Array<String>,
     val allWarningsAsErrors: Boolean,
     val compilerExecutionSettings: CompilerExecutionSettings,
+    val errorsFile: File?,
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 1
@@ -100,6 +101,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private val metrics = if (reportingSettings.buildReportOutputs.isNotEmpty()) BuildMetricsReporterImpl() else DoNothingBuildMetricsReporter
     private var icLogLines: List<String> = emptyList()
     private val compilerExecutionSettings = config.compilerExecutionSettings
+    private val errorsFile = config.errorsFile
 
     private val log: KotlinLogger =
         TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it).apply { debug("Using '$taskPath' logger") } }
@@ -119,11 +121,13 @@ internal class GradleKotlinCompilerWork @Inject constructor(
 
     override fun run() {
         try {
-            val messageCollector = GradlePrintingMessageCollector(log, allWarningsAsErrors)
-            val (exitCode, executionStrategy) = compileWithDaemonOrFallbackImpl(messageCollector)
+            val gradlePrintingMessageCollector = GradlePrintingMessageCollector(log, allWarningsAsErrors)
+            val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector)
+            val (exitCode, executionStrategy) = compileWithDaemonOrFallbackImpl(gradleMessageCollector)
             if (incrementalCompilationEnvironment?.disableMultiModuleIC == true) {
                 incrementalCompilationEnvironment.multiModuleICSettings.buildHistoryFile.delete()
             }
+            errorsFile?.also { gradleMessageCollector.flush(it) }
 
             throwExceptionIfCompilationFailed(exitCode, executionStrategy)
         } finally {
