@@ -40,6 +40,11 @@ dependencies {
             requireCapability("org.jetbrains.kotlin:kotlin-sam-with-receiver-common")
         }
     }
+    testImplementation(project(":kotlin-value-container-assignment")) {
+        capabilities {
+            requireCapability("org.jetbrains.kotlin:kotlin-value-container-assignment-common")
+        }
+    }
     testImplementation(project(":atomicfu")) {
         capabilities {
             requireCapability("org.jetbrains.kotlin:atomicfu-common")

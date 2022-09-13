@@ -123,6 +123,14 @@ class SubpuginsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("value-container-assignment works")
+    @GradleTest
+    fun testValueContainerAssignmentSimple(gradleVersion: GradleVersion) {
+        project("valueContainerAssignmentSimple", gradleVersion) {
+            build("assemble")
+        }
+    }
+
     @DisplayName("Allopen plugin works when classpath dependency is not declared in current or root project ")
     @GradleTest
     fun testAllOpenFromNestedBuildscript(gradleVersion: GradleVersion) {

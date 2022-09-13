@@ -1,0 +1,17 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+    id "org.jetbrains.kotlin.plugin.value.container.assignment"
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+sourceSets {
+    main.kotlin.srcDir 'src'
+}
+
+valueContainerAssignment {
+    annotation("lib.ValueContainer")
+}

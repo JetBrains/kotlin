@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.model.ValueContainerAssignment
 class ValueContainerAssignmentModelBuilder : ToolingModelBuilder {
 
     override fun canBuild(modelName: String): Boolean {
-        return modelName == ValueContainerAssignment::class.java.name
+        return modelName.equals(ValueContainerAssignment::class.java.name)
     }
 
     override fun buildAll(modelName: String, project: Project): Any {

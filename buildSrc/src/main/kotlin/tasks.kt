@@ -61,6 +61,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-stdlib-wasm",
     ":examples:annotation-processor-example",
     ":kotlin-sam-with-receiver",
+    ":kotlin-value-container-assignment",
     ":kotlin-script-runtime",
     ":kotlin-scripting-common",
     ":kotlin-scripting-jvm",
