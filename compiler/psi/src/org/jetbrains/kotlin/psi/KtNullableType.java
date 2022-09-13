@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
+import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +56,7 @@ public class KtNullableType extends KtElementImplStub<KotlinPlaceHolderStub<KtNu
     @Nullable
     @IfNotParsed
     public KtTypeElement getInnerType() {
-        return KtStubbedPsiUtil.getStubOrPsiChild(this, KtStubElementTypes.TYPE_ELEMENT_TYPES, KtTypeElement.ARRAY_FACTORY);
+        return KtStubbedPsiUtil.getStubOrPsiChild(this, KtTokenSets.TYPE_ELEMENT_TYPES, KtTypeElement.ARRAY_FACTORY);
     }
 
     @Nullable

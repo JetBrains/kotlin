@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 
 open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
     PsiFileBase(viewProvider, KotlinLanguage.INSTANCE),
@@ -273,6 +274,6 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
     }
 
     companion object {
-        val FILE_DECLARATION_TYPES = TokenSet.orSet(KtStubElementTypes.DECLARATION_TYPES, TokenSet.create(KtStubElementTypes.SCRIPT))
+        val FILE_DECLARATION_TYPES = TokenSet.orSet(KtTokenSets.DECLARATION_TYPES, TokenSet.create(KtStubElementTypes.SCRIPT))
     }
 }

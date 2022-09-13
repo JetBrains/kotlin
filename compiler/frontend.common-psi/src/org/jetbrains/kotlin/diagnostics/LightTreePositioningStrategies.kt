@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 object LightTreePositioningStrategies {
@@ -596,7 +597,7 @@ object LightTreePositioningStrategies {
                 return super.mark(node, startOffset, endOffset, tree)
             }
             if (node.tokenType == KtNodeTypes.TYPE_REFERENCE) {
-                val typeElement = tree.findChildByType(node, KtStubElementTypes.TYPE_ELEMENT_TYPES)
+                val typeElement = tree.findChildByType(node, KtTokenSets.TYPE_ELEMENT_TYPES)
                 if (typeElement != null) {
                     val referencedTypeExpression = tree.referencedTypeExpression(typeElement)
                     if (referencedTypeExpression != null) {
@@ -612,7 +613,7 @@ object LightTreePositioningStrategies {
         return when (node.tokenType) {
             KtNodeTypes.USER_TYPE -> findChildByType(node, KtNodeTypes.REFERENCE_EXPRESSION)
                 ?: findChildByType(node, KtNodeTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION)
-            KtNodeTypes.NULLABLE_TYPE -> findChildByType(node, KtStubElementTypes.TYPE_ELEMENT_TYPES)
+            KtNodeTypes.NULLABLE_TYPE -> findChildByType(node, KtTokenSets.TYPE_ELEMENT_TYPES)
                 ?.let { referencedTypeExpression(it) }
             else -> null
         }
@@ -687,7 +688,7 @@ object LightTreePositioningStrategies {
                     return markElement(nodeToMark, startOffset, endOffset, tree, node)
                 }
                 node.tokenType == KtNodeTypes.IMPORT_DIRECTIVE -> {
-                    val nodeToMark = tree.findChildByType(node, KtStubElementTypes.INSIDE_DIRECTIVE_EXPRESSIONS) ?: node
+                    val nodeToMark = tree.findChildByType(node, KtTokenSets.INSIDE_DIRECTIVE_EXPRESSIONS) ?: node
                     return markElement(nodeToMark, startOffset, endOffset, tree, node)
                 }
                 node.tokenType != KtNodeTypes.DOT_QUALIFIED_EXPRESSION &&
