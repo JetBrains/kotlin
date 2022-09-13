@@ -1449,7 +1449,7 @@ open class RawFirBuilder(
                 }
 
                 BodyBuildingMode.LAZY_BODIES -> {
-                    for (_i in 0 until getExpressionsCount()) {
+                    for (i in 0 until getExpressionsCount()) {
                         destination.add(buildLazyExpression())
                     }
                 }
