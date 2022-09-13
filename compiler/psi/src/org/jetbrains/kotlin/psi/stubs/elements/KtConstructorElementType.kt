@@ -49,6 +49,5 @@ abstract class KtConstructorElementType<T : KtConstructor<T>>(
     }
 
     override fun indexStub(stub: KotlinConstructorStub<T>, sink: IndexSink) {
-        getInstance().indexConstructor(stub, sink)
     }
 }
