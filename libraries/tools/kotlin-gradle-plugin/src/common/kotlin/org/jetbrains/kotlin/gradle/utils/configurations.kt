@@ -78,6 +78,11 @@ private constructor(
         null
     }
 
+    fun moduleArtifacts(dependency: ResolvedDependencyResult): List<ResolvedArtifactResult> {
+        val componentId = dependency.resolvedVariant.owner
+        return artifactsByComponentId[componentId] ?: emptyList()
+    }
+
     /**
      * [ResolvedVariantResult.getExternalVariant] is available in Gradle API since 6.8
      * For lower gradle versions this variant can be calculated Heuristically

@@ -984,7 +984,7 @@ internal class CacheBuilder(
             .filterIsInstance<ResolvedDependencyResult>()
             .forEach { ensureDependencyPrecached(it, visitedDependencies) }
 
-        val artifactsToAddToCache = dependencyArtifacts(dependency).filter { needCache(it.file.absolutePath) }
+        val artifactsToAddToCache = moduleArtifacts(dependency).filter { needCache(it.file.absolutePath) }
 
         if (artifactsToAddToCache.isEmpty()) return
 
