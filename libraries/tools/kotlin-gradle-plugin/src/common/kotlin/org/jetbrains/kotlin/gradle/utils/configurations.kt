@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ArtifactCollection
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ResolveException
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
@@ -69,6 +70,12 @@ private constructor(
 
         val componentId = dependency.resolvedVariant.findNonExternalVariant().owner
         return artifactsByComponentId[componentId] ?: emptyList()
+    }
+
+    fun dependencyArtifactsOrNull(dependency: ResolvedDependencyResult): List<ResolvedArtifactResult>? = try {
+        dependencyArtifacts(dependency)
+    } catch (_: ResolveException) {
+        null
     }
 
     /**

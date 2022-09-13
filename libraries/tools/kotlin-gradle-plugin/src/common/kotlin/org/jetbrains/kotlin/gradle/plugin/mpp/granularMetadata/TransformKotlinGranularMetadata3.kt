@@ -21,7 +21,6 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputDirectories
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -41,7 +40,6 @@ import org.jetbrains.kotlin.gradle.utils.ResolvedDependencyGraph
 import org.jetbrains.kotlin.gradle.utils.allResolvedDependencies
 import org.jetbrains.kotlin.gradle.utils.maybeCreate
 import org.jetbrains.kotlin.gradle.utils.withType
-import org.jetbrains.kotlin.util.prefixIfNot
 import java.io.File
 import javax.inject.Inject
 
@@ -168,9 +166,11 @@ abstract class TransformKotlinGranularMetadata3
 
         val graph = settings.resolvedHostSpecificDependencies?.first()?.get() ?: return emptyMap()
         val dependency = graph.allResolvedDependencies.find { it.selected.id == componentId } ?: error("Dependency by $componentId not found")
-        val artifact = graph.dependencyArtifacts(dependency)
 
-        return psm.hostSpecificSourceSets.associateWith { artifact.single().file }
+        val artifacts = graph.dependencyArtifactsOrNull(dependency) ?: return emptyMap()
+        val artifactFile = artifacts.singleOrNull()?.file ?: return emptyMap()
+
+        return psm.hostSpecificSourceSets.associateWith { artifactFile }
     }
 
     private fun ResolvedDependencyResult.requestedModuleId(): ModuleIdentifier? {
@@ -191,7 +191,11 @@ abstract class TransformKotlinGranularMetadata3
     private fun psmFrom(artifact: ResolvedArtifactResult) = psmExtractor.extract(artifact)
 
     private fun inferVisibleSourceSets(psm: KotlinProjectStructureMetadata, variants: Set<String>): Set<String> {
-        return variants.map { psm.sourceSetNamesByVariantName[it]!! }.reduce { acc, strings -> acc.intersect(strings) }
+        return variants
+            .map { psm.sourceSetNamesByVariantName[it]!! }
+            .takeIf { it.isNotEmpty() }
+            ?.reduce { visibleSourceSets, platformSourceSets -> visibleSourceSets intersect platformSourceSets }
+            ?: emptySet()
     }
 
     private fun extractSourceSetsMetadata(

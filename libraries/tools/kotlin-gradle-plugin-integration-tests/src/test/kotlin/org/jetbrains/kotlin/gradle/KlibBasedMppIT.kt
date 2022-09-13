@@ -89,6 +89,10 @@ class KlibBasedMppIT : BaseGradleIT() {
 
         // The consumer should correctly receive the klibs of the host-specific source sets
 
+        build(":transformKotlinGranularMetadata3embeddedMain") {
+            assertSuccessful()
+        }
+
         checkTaskCompileClasspath(
             "compile${hostSpecificSourceSet.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}KotlinMetadata",
             listOf(

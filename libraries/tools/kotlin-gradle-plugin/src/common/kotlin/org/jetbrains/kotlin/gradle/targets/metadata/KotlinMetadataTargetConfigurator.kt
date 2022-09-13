@@ -341,10 +341,10 @@ class KotlinMetadataTargetConfigurator :
         val project = compilation.target.project
         val sourceSet = compilation.defaultSourceSet
 
-//        project.registerTask<TransformKotlinGranularMetadata>(
-//            transformGranularMetadataTaskName(compilation.name),
-//            listOf(sourceSet)
-//        ) { }
+        project.registerTask<TransformKotlinGranularMetadata>(
+            transformGranularMetadataTaskName(compilation.name),
+            listOf(sourceSet)
+        ) { }
 
         if (PropertiesProvider(project).granularMetadataTransformation2) {
             val registry = TransformKotlinGranularMetadata3TCSRegistrator(project)
