@@ -37,7 +37,7 @@ internal class KtFe10AnnotationsList private constructor(
             }
         }
 
-    override fun containsAnnotation(classId: ClassId): Boolean = withValidityAssertion {
+    override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
         return fe10Annotations.hasAnnotation(classId.asSingleFqName())
     }
 
