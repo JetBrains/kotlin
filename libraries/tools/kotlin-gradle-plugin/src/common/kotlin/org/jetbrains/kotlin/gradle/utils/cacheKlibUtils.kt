@@ -72,7 +72,7 @@ internal fun getDependenciesCacheDirectories(
 ): List<File>? {
     return getAllDependencies(dependency)
         .flatMap { childDependency ->
-            resolvedDependencyGraph.dependencyArtifacts(childDependency).map {
+            resolvedDependencyGraph.moduleArtifacts(childDependency).map {
                 if (libraryFilter(it)) {
                     val cacheDirectory = getCacheDirectory(
                         rootCacheDirectory = rootCacheDirectory,
