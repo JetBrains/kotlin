@@ -2,7 +2,7 @@ depends =
 package = platform.posix
 headers = alloca.h ar.h assert.h complex.h ctype.h dirent.h dlfcn.h err.h errno.h fcntl.h \
     fenv.h float.h fnmatch.h fts.h ftw.h getopt.h grp.h inttypes.h libgen.h limits.h \
-    locale.h math.h memory.h netdb.h paths.h poll.h \
+    locale.h math.h memory.h netdb.h paths.h poll.h ptrauth.h \
     pthread.h pwd.h regex.h resolv.h sched.h search.h semaphore.h setjmp.h sgtty.h signal.h \
     stdatomic.h stdint.h stdio.h stdlib.h string.h strings.h syslog.h termios.h \
     time.h ucontext.h unistd.h utime.h utmp.h wchar.h wctype.h xlocale.h \
