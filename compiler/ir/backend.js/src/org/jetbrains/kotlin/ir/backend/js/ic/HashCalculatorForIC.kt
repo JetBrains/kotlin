@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleReferences
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
@@ -75,6 +74,8 @@ internal fun CompilerConfiguration.configHashForIC() = HashCalculatorForIC().app
         update(key.toString())
         update(getBoolean(key).toString())
     }
+
+    update(languageVersionSettings.toString())
 }.finalize()
 
 internal fun IrElement.irElementHashForIC() = HashCalculatorForIC().also {

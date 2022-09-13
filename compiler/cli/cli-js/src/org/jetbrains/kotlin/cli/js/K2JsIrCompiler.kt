@@ -303,10 +303,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             messageCollector.report(INFO, "IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
 
             for ((libFile, srcFiles) in cacheUpdater.getDirtyFileStats()) {
-                val isCleanBuild = srcFiles.values.all { it.contains(DirtyFileState.ADDED_FILE) }
-                val msg = if (isCleanBuild) "fully rebuilt" else "partially rebuilt"
+                val (msg, showFiles) = when {
+                    srcFiles.values.all { it.contains(DirtyFileState.ADDED_FILE) } -> "fully rebuilt due to clean build" to false
+                    srcFiles.values.all { it.contains(DirtyFileState.MODIFIED_CONFIG) } -> "fully rebuilt due to config modification" to false
+                    else -> "partially rebuilt" to true
+                }
                 messageCollector.report(INFO, "module [${File(libFile.path).name}] was $msg")
-                if (!isCleanBuild) {
+                if (showFiles) {
                     for ((srcFile, stat) in srcFiles) {
                         val statStr = stat.joinToString { it.str }
                         messageCollector.report(INFO, "  file [${File(srcFile.path).name}]: ($statStr)")
