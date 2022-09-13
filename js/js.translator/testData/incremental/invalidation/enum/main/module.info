@@ -1,0 +1,15 @@
+STEP 0:
+    modifications:
+        U : testEnumEntries.0.kt -> testEnumEntries.kt
+    dependencies: lib1
+    added file: m.kt, testEnumEntries.kt, testEnumValues.kt
+STEP 1:
+    dependencies: lib1
+STEP 2:
+    dependencies: lib1
+    modified config: m.kt, testEnumEntries.kt, testEnumValues.kt
+STEP 3:
+    modifications:
+        U : testEnumEntries.3.kt -> testEnumEntries.kt
+    dependencies: lib1
+    modified ir: testEnumEntries.kt

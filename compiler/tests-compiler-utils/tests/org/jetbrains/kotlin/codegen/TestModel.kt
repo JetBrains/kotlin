@@ -11,7 +11,7 @@ import java.util.regex.Pattern
 
 class ProjectInfo(val name: String, val modules: List<String>, val steps: List<ProjectBuildStep>, val muted: Boolean) {
 
-    class ProjectBuildStep(val id: Int, val order: List<String>, val dirtyJS: List<String>)
+    class ProjectBuildStep(val id: Int, val order: List<String>, val dirtyJS: List<String>, val language: List<String>)
 }
 
 class ModuleInfo(val moduleName: String) {
@@ -98,6 +98,7 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
     private fun parseSteps(firstId: Int, lastId: Int): List<ProjectInfo.ProjectBuildStep> {
         val order = mutableListOf<String>()
         val dirtyJS = mutableListOf<String>()
+        val language = mutableListOf<String>()
 
         loop { line ->
             val splitIndex = line.indexOf(':')
@@ -120,13 +121,16 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
                 "dirty js" -> {
                     dirtyJS += splitted[1].splitAndTrim()
                 }
+                "language" -> {
+                    language += splitted[1].splitAndTrim()
+                }
                 else -> println(diagnosticMessage("Unknown op $op", line))
             }
 
             false
         }
 
-        return (firstId..lastId).map { ProjectInfo.ProjectBuildStep(it, order, dirtyJS) }
+        return (firstId..lastId).map { ProjectInfo.ProjectBuildStep(it, order, dirtyJS, language) }
     }
 
     override fun parse(entryName: String): ProjectInfo {

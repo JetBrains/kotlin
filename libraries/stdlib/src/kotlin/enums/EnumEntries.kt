@@ -71,11 +71,15 @@ internal fun <E : Enum<E>> enumEntries(entries: Array<E>): EnumEntries<E> = Enum
  */
 @SinceKotlin("1.8")
 @ExperimentalStdlibApi
-private class EnumEntriesList<E : Enum<E>>(private val entriesProvider: () -> Array<E>) : EnumEntries<E>, AbstractList<E>(), Serializable {
+private class EnumEntriesList<T : Enum<T>>(private val entriesProvider: () -> Array<T>) : EnumEntries<T>, AbstractList<T>(), Serializable {
+// WA for JS IR bug:
+//  class type parameter MUST be different form E (AbstractList<E> type parameter),
+//  otherwise the bridge names for contains() and indexOf() will be clashed with the original method names,
+//  and produced JS code will not contain type checks and will not work correctly.
 
     @Volatile // Volatile is required for safe publication of the array. It doesn't incur any real-world penalties
-    private var _entries: Array<E>? = null
-    private val entries: Array<E>
+    private var _entries: Array<T>? = null
+    private val entries: Array<T>
         get() {
             var e = _entries
             if (e != null) return e
@@ -87,7 +91,7 @@ private class EnumEntriesList<E : Enum<E>>(private val entriesProvider: () -> Ar
     override val size: Int
         get() = entries.size
 
-    override fun get(index: Int): E {
+    override fun get(index: Int): T {
         val entries = entries
         checkElementIndex(index, entries.size)
         return entries[index]
@@ -96,7 +100,7 @@ private class EnumEntriesList<E : Enum<E>>(private val entriesProvider: () -> Ar
     // By definition, EnumEntries contains **all** enums in declaration order,
     // thus we are able to short-circuit the implementation here
 
-    override fun contains(element: E): Boolean {
+    override fun contains(element: T): Boolean {
         @Suppress("SENSELESS_COMPARISON")
         if (element === null) return false // WA for JS IR bug
         // Check identity due to UnsafeVariance
@@ -104,7 +108,7 @@ private class EnumEntriesList<E : Enum<E>>(private val entriesProvider: () -> Ar
         return target === element
     }
 
-    override fun indexOf(element: E): Int {
+    override fun indexOf(element: T): Int {
         @Suppress("SENSELESS_COMPARISON")
         if (element === null) return -1 // WA for JS IR bug
         // Check identity due to UnsafeVariance
@@ -113,7 +117,7 @@ private class EnumEntriesList<E : Enum<E>>(private val entriesProvider: () -> Ar
         return if (target === element) ordinal else -1
     }
 
-    override fun lastIndexOf(element: E): Int = indexOf(element)
+    override fun lastIndexOf(element: T): Int = indexOf(element)
 
     @Suppress("unused") // Used for Java serialization
     private fun writeReplace(): Any {
