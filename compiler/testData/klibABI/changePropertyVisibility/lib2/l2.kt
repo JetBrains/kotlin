@@ -55,4 +55,57 @@ class ContainerImpl : Container() {
     fun protectedToPrivateOverriddenProperty2Access() = protectedToPrivateOverriddenProperty2
     fun protectedToPrivateOverriddenProperty3Access() = protectedToPrivateOverriddenProperty3
     fun protectedToPrivateOverriddenProperty4Access() = protectedToPrivateOverriddenProperty4
+
+    // Properties that accedentally start to override/conflict with properties added to Container since version v2:
+    public val newPublicProperty1 = "ContainerImpl.newPublicProperty1"
+    public val newPublicProperty2 get() = "ContainerImpl.newPublicProperty2"
+    public val newPublicProperty3 get() = "ContainerImpl.newPublicProperty3"
+    public val newPublicProperty4 = "ContainerImpl.newPublicProperty4"
+    public open val newOpenPublicProperty1 = "ContainerImpl.newOpenPublicProperty1"
+    public open val newOpenPublicProperty2 get() = "ContainerImpl.newOpenPublicProperty2"
+    public open val newOpenPublicProperty3 get() = "ContainerImpl.newOpenPublicProperty3"
+    public open val newOpenPublicProperty4 = "ContainerImpl.newOpenPublicProperty4"
+    protected val newProtectedProperty1 = "ContainerImpl.newProtectedProperty1"
+    protected val newProtectedProperty2 get() = "ContainerImpl.newProtectedProperty2"
+    protected val newProtectedProperty3 get() = "ContainerImpl.newProtectedProperty3"
+    protected val newProtectedProperty4 = "ContainerImpl.newProtectedProperty4"
+    protected open val newOpenProtectedProperty1 = "ContainerImpl.newOpenProtectedProperty1"
+    protected open val newOpenProtectedProperty2 get() = "ContainerImpl.newOpenProtectedProperty2"
+    protected open val newOpenProtectedProperty3 get() = "ContainerImpl.newOpenProtectedProperty3"
+    protected open val newOpenProtectedProperty4 = "ContainerImpl.newOpenProtectedProperty4"
+    internal val newInternalProperty1 = "ContainerImpl.newInternalProperty1"
+    internal val newInternalProperty2 get() = "ContainerImpl.newInternalProperty2"
+    internal val newInternalProperty3 get() = "ContainerImpl.newInternalProperty3"
+    internal val newInternalProperty4 = "ContainerImpl.newInternalProperty4"
+    internal open val newOpenInternalProperty1 = "ContainerImpl.newOpenInternalProperty1"
+    internal open val newOpenInternalProperty2 get() = "ContainerImpl.newOpenInternalProperty2"
+    internal open val newOpenInternalProperty3 get() = "ContainerImpl.newOpenInternalProperty3"
+    internal open val newOpenInternalProperty4 = "ContainerImpl.newOpenInternalProperty4"
+    private val newPrivateProperty1 = "ContainerImpl.newPrivateProperty1"
+    private val newPrivateProperty2 get() = "ContainerImpl.newPrivateProperty2"
+    private val newPrivateProperty3 get() = "ContainerImpl.newPrivateProperty3"
+    private val newPrivateProperty4 = "ContainerImpl.newPrivateProperty4"
+
+    // As far as protected/private members can't be accessed outside of the class hierarchy, and internal can't be accessed
+    // outside of module, we need special accessors.
+    fun newProtectedProperty1Access() = newProtectedProperty1
+    fun newProtectedProperty2Access() = newProtectedProperty2
+    fun newProtectedProperty3Access() = newProtectedProperty3
+    fun newProtectedProperty4Access() = newProtectedProperty4
+    fun newOpenProtectedProperty1Access() = newOpenProtectedProperty1
+    fun newOpenProtectedProperty2Access() = newOpenProtectedProperty2
+    fun newOpenProtectedProperty3Access() = newOpenProtectedProperty3
+    fun newOpenProtectedProperty4Access() = newOpenProtectedProperty4
+    fun newInternalProperty1Access() = newInternalProperty1
+    fun newInternalProperty2Access() = newInternalProperty2
+    fun newInternalProperty3Access() = newInternalProperty3
+    fun newInternalProperty4Access() = newInternalProperty4
+    fun newOpenInternalProperty1Access() = newOpenInternalProperty1
+    fun newOpenInternalProperty2Access() = newOpenInternalProperty2
+    fun newOpenInternalProperty3Access() = newOpenInternalProperty3
+    fun newOpenInternalProperty4Access() = newOpenInternalProperty4
+    fun newPrivateProperty1Access() = newPrivateProperty1
+    fun newPrivateProperty2Access() = newPrivateProperty2
+    fun newPrivateProperty3Access() = newPrivateProperty3
+    fun newPrivateProperty4Access() = newPrivateProperty4
 }
