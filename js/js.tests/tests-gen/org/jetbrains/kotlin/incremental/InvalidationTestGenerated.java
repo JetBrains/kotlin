@@ -75,6 +75,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/eagerInitialization/");
     }
 
+    @TestMetadata("enum")
+    public void testEnum() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/enum/");
+    }
+
     @TestMetadata("exportsThroughInlineFunction")
     public void testExportsThroughInlineFunction() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/exportsThroughInlineFunction/");
