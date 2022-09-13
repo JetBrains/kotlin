@@ -56,6 +56,18 @@ public class IrCodegenWasmJsInteropJsTestGenerated extends AbstractIrCodegenWasm
     }
 
     @Test
+    @TestMetadata("jsToKotlinAdapters.kt")
+    public void testJsToKotlinAdapters() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/jsToKotlinAdapters.kt");
+    }
+
+    @Test
+    @TestMetadata("kotlinToJsAdapters.kt")
+    public void testKotlinToJsAdapters() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/kotlinToJsAdapters.kt");
+    }
+
+    @Test
     @TestMetadata("longStrings.kt")
     public void testLongStrings() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/longStrings.kt");

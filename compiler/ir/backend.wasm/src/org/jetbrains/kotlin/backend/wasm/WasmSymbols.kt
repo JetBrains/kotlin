@@ -271,13 +271,29 @@ class WasmSymbols(
 
     inner class JsInteropAdapters {
         val kotlinToJsStringAdapter = getInternalFunction("kotlinToJsStringAdapter")
-        val kotlinToJsBooleanAdapter = getInternalFunction("kotlinToJsBooleanAdapter")
         val kotlinToJsAnyAdapter = getInternalFunction("kotlinToJsAnyAdapter")
-        val jsToKotlinAnyAdapter = getInternalFunction("jsToKotlinAnyAdapter")
+
         val jsToKotlinStringAdapter = getInternalFunction("jsToKotlinStringAdapter")
+        val jsToKotlinAnyAdapter = getInternalFunction("jsToKotlinAnyAdapter")
+
         val jsToKotlinByteAdapter = getInternalFunction("jsToKotlinByteAdapter")
         val jsToKotlinShortAdapter = getInternalFunction("jsToKotlinShortAdapter")
         val jsToKotlinCharAdapter = getInternalFunction("jsToKotlinCharAdapter")
+
+        val externRefToKotlinIntAdapter = getInternalFunction("externRefToKotlinIntAdapter")
+        val externRefToKotlinBooleanAdapter = getInternalFunction("externRefToKotlinBooleanAdapter")
+        val externRefToKotlinLongAdapter = getInternalFunction("externRefToKotlinLongAdapter")
+        val externRefToKotlinFloatAdapter = getInternalFunction("externRefToKotlinFloatAdapter")
+        val externRefToKotlinDoubleAdapter = getInternalFunction("externRefToKotlinDoubleAdapter")
+
+        val kotlinIntToExternRefAdapter = getInternalFunction("kotlinIntToExternRefAdapter")
+        val kotlinBooleanToExternRefAdapter = getInternalFunction("kotlinBooleanToExternRefAdapter")
+        val kotlinLongToExternRefAdapter = getInternalFunction("kotlinLongToExternRefAdapter")
+        val kotlinFloatToExternRefAdapter = getInternalFunction("kotlinFloatToExternRefAdapter")
+        val kotlinDoubleToExternRefAdapter = getInternalFunction("kotlinDoubleToExternRefAdapter")
+        val kotlinByteToExternRefAdapter = getInternalFunction("kotlinByteToExternRefAdapter")
+        val kotlinShortToExternRefAdapter = getInternalFunction("kotlinShortToExternRefAdapter")
+        val kotlinCharToExternRefAdapter = getInternalFunction("kotlinCharToExternRefAdapter")
     }
 
     val jsInteropAdapters = JsInteropAdapters()

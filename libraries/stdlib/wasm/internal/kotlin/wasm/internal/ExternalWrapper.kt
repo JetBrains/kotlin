@@ -81,6 +81,36 @@ private external fun externrefHashCode(ref: ExternalInterfaceType): Int
 @JsFun("ref => String(ref)")
 private external fun externrefToString(ref: ExternalInterfaceType): String
 
+@JsFun("ref => Number(ref)")
+private external fun externrefToInt(ref: ExternalInterfaceType): Int
+
+@JsFun("ref => Number(ref)")
+private external fun externrefToLong(ref: ExternalInterfaceType): Long
+
+@JsFun("ref => Boolean(ref)")
+private external fun externrefToBoolean(ref: ExternalInterfaceType): Boolean
+
+@JsFun("ref => Number(ref)")
+private external fun externrefToFloat(ref: ExternalInterfaceType): Float
+
+@JsFun("ref => Number(ref)")
+private external fun externrefToDouble(ref: ExternalInterfaceType): Double
+
+@JsFun("x => x")
+private external fun intToExternref(x: Int): ExternalInterfaceType
+
+@JsFun("x => x")
+private external fun longToExternref(x: Long): ExternalInterfaceType
+
+@JsFun("x => x")
+private external fun booleanToExternref(x: Boolean): ExternalInterfaceType
+
+@JsFun("x => x")
+private external fun floatToExternref(x: Float): ExternalInterfaceType
+
+@JsFun("x => x")
+private external fun doubleToExternref(x: Double): ExternalInterfaceType
+
 @JsFun("(lhs, rhs) => lhs === rhs")
 private external fun externrefEquals(lhs: ExternalInterfaceType, rhs: ExternalInterfaceType): Boolean
 
@@ -222,9 +252,6 @@ internal external fun jsTrue(): ExternalInterfaceType
 @JsFun("() => false")
 internal external fun jsFalse(): ExternalInterfaceType
 
-internal fun kotlinToJsBooleanAdapter(x: Boolean): ExternalInterfaceType =
-    if (x) jsTrue() else jsFalse()
-
 internal fun kotlinToJsAnyAdapter(x: Any): ExternalInterfaceType =
     anyToExternRef(x)
 
@@ -234,3 +261,43 @@ internal fun jsToKotlinAnyAdapter(x: ExternalInterfaceType): Any? =
 internal fun jsToKotlinByteAdapter(x: Int): Byte = x.toByte()
 internal fun jsToKotlinShortAdapter(x: Int): Short = x.toShort()
 internal fun jsToKotlinCharAdapter(x: Int): Char = x.toChar()
+
+internal fun externRefToKotlinIntAdapter(x: ExternalInterfaceType): Int =
+    externrefToInt(x)
+
+internal fun externRefToKotlinBooleanAdapter(x: ExternalInterfaceType): Boolean =
+    externrefToBoolean(x)
+
+internal fun externRefToKotlinLongAdapter(x: ExternalInterfaceType): Long =
+    externrefToLong(x)
+
+internal fun externRefToKotlinFloatAdapter(x: ExternalInterfaceType): Float =
+    externrefToFloat(x)
+
+internal fun externRefToKotlinDoubleAdapter(x: ExternalInterfaceType): Double =
+    externrefToDouble(x)
+
+
+internal fun kotlinIntToExternRefAdapter(x: Int): ExternalInterfaceType =
+    intToExternref(x)
+
+internal fun kotlinBooleanToExternRefAdapter(x: Boolean): ExternalInterfaceType =
+    if (x) jsTrue() else jsFalse()
+
+internal fun kotlinLongToExternRefAdapter(x: Long): ExternalInterfaceType =
+    longToExternref(x)
+
+internal fun kotlinFloatToExternRefAdapter(x: Float): ExternalInterfaceType =
+    floatToExternref(x)
+
+internal fun kotlinDoubleToExternRefAdapter(x: Double): ExternalInterfaceType =
+    doubleToExternref(x)
+
+internal fun kotlinByteToExternRefAdapter(x: Byte): ExternalInterfaceType =
+    intToExternref(x.toInt())
+
+internal fun kotlinShortToExternRefAdapter(x: Short): ExternalInterfaceType =
+    intToExternref(x.toInt())
+
+internal fun kotlinCharToExternRefAdapter(x: Char): ExternalInterfaceType =
+    intToExternref(x.toInt())
