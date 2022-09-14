@@ -29,15 +29,15 @@ object FirUpperBoundViolatedExpressionChecker : FirQualifiedAccessExpressionChec
         // declarations with their declared bounds.
         // it may be the called function declaration
         // or the class declaration
-        val calleReference = expression.calleeReference
+        val calleeReference = expression.calleeReference
         var calleeSymbol: FirCallableSymbol<*>? = null
-        if (calleReference is FirResolvedNamedReference) {
-            calleeSymbol = calleReference.toResolvedCallableSymbol()
-        } else if (calleReference is FirErrorNamedReference) {
-            if (calleReference.diagnostic is ConeInapplicableWrongReceiver) {
+        if (calleeReference is FirResolvedNamedReference) {
+            calleeSymbol = calleeReference.toResolvedCallableSymbol()
+        } else if (calleeReference is FirErrorNamedReference) {
+            if (calleeReference.diagnostic is ConeInapplicableWrongReceiver) {
                 return
             }
-            calleeSymbol = calleReference.candidateSymbol as? FirCallableSymbol<*>
+            calleeSymbol = calleeReference.candidateSymbol as? FirCallableSymbol<*>
         }
 
         val typeArguments: List<TypeArgumentWithSourceInfo>
