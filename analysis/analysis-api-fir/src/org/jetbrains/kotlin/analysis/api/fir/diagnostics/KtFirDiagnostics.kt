@@ -722,6 +722,35 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RuntimeAnnotationOnExternalDeclaration::class
     }
 
+    abstract class NativeAnnotationsAllowedOnlyOnMemberOrExtensionFun : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = NativeAnnotationsAllowedOnlyOnMemberOrExtensionFun::class
+        abstract val type: KtType
+    }
+
+    abstract class NativeIndexerKeyShouldBeStringOrNumber : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = NativeIndexerKeyShouldBeStringOrNumber::class
+        abstract val kind: String
+    }
+
+    abstract class NativeIndexerWrongParameterCount : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = NativeIndexerWrongParameterCount::class
+        abstract val parametersCount: Int
+        abstract val kind: String
+    }
+
+    abstract class NativeIndexerCanNotHaveDefaultArguments : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = NativeIndexerCanNotHaveDefaultArguments::class
+        abstract val kind: String
+    }
+
+    abstract class NativeGetterReturnTypeShouldBeNullable : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = NativeGetterReturnTypeShouldBeNullable::class
+    }
+
+    abstract class NativeSetterWrongReturnType : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = NativeSetterWrongReturnType::class
+    }
+
     abstract class OptInUsage : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = OptInUsage::class
         abstract val optInMarkerFqName: FqName
