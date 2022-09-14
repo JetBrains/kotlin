@@ -19,14 +19,14 @@ public fun <T : Any> Optional<T>.getOrNull(): T? = orElse(null)
  */
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
-public fun <R, T : R & Any> Optional<T>.getOrDefault(defaultValue: R): R = if (isPresent) get() else defaultValue
+public fun <T> Optional<out T & Any>.getOrDefault(defaultValue: T): T = if (isPresent) get() else defaultValue
 
 /**
  * Returns this [Optional]'s value if [present][Optional.isPresent], or otherwise the result of the [defaultValue] function.
  */
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
-public inline fun <R, T : R & Any> Optional<T>.getOrElse(defaultValue: () -> R): R =
+public inline fun <T> Optional<out T & Any>.getOrElse(defaultValue: () -> T): T =
     if (isPresent) get() else defaultValue()
 
 /**
