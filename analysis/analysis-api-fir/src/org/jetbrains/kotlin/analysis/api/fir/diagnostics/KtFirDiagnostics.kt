@@ -689,6 +689,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = WrongExtensionFunctionTypeWarning::class
     }
 
+    abstract class WrongJsQualifier : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = WrongJsQualifier::class
+    }
+
     abstract class AnnotationInWhereClauseError : KtFirDiagnostic<KtAnnotationEntry>() {
         override val diagnosticClass get() = AnnotationInWhereClauseError::class
     }

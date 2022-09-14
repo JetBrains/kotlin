@@ -15,6 +15,7 @@ dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":core:compiler.common"))
     compileOnly(project(":core:compiler.common.jvm"))
+    compileOnly(project(":core:compiler.common.js"))
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:analysis-api-providers"))
     implementation(project(":analysis:kt-references"))

@@ -956,6 +956,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJsErrors.WRONG_JS_QUALIFIER) { firDiagnostic ->
+        WrongJsQualifierImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.ANNOTATION_IN_WHERE_CLAUSE_ERROR) { firDiagnostic ->
         AnnotationInWhereClauseErrorImpl(
             firDiagnostic as KtPsiDiagnostic,
