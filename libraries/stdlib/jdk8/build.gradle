@@ -53,6 +53,9 @@ jar {
     from sourceSets.java9.output
 }
 
+sourcesJar {
+    from sourceSets.java9.allSource
+}
 
 artifacts {
     archives sourcesJar
