@@ -28,6 +28,9 @@ object FirJsErrors {
     // Supertypes
     val WRONG_MULTIPLE_INHERITANCE by error1<KtElement, FirCallableSymbol<*>>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
 
+    // Dynamics
+    val DELEGATION_BY_DYNAMIC by error0<KtElement>()
+
     // Debug Info
     val DYNAMIC by info0<KtElement>()
 
