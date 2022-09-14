@@ -7,12 +7,12 @@ public final class test/SomeClass$Creator : java/lang/Object, android/os/Parcela
           LDC (in)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
         LABEL (L1)
-          NEW
+          NEW (test/SomeClass)
           DUP
           ALOAD (1)
           INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
           IFEQ (L2)
-          NEW
+          NEW (test/SomeClass)
           DUP
           INVOKESPECIAL (test/SomeClass, <init>, ()V)
           GOTO (L3)

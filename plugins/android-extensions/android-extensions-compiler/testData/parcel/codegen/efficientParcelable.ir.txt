@@ -7,7 +7,7 @@ public final class test/Bar$Creator : java/lang/Object, android/os/Parcelable$Cr
           LDC (parcel)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
         LABEL (L1)
-          NEW
+          NEW (test/Bar)
           DUP
           ALOAD (1)
           INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
@@ -19,7 +19,7 @@ public final class test/Bar$Creator : java/lang/Object, android/os/Parcelable$Cr
           ALOAD (1)
           INVOKEINTERFACE (android/os/Parcelable$Creator, createFromParcel, (Landroid/os/Parcel;)Ljava/lang/Object;)
         LABEL (L3)
-          CHECKCAST
+          CHECKCAST (test/Foo)
           INVOKESPECIAL (test/Bar, <init>, (Ltest/Foo;)V)
           ARETURN
         LABEL (L4)
@@ -45,10 +45,10 @@ public final class test/Bar : java/lang/Object, android/os/Parcelable {
     private final test.Foo foo
 
     static void <clinit>() {
-          NEW
+          NEW (test/Bar$Creator)
           DUP
           INVOKESPECIAL (test/Bar$Creator, <init>, ()V)
-          CHECKCAST
+          CHECKCAST (android/os/Parcelable$Creator)
           PUTSTATIC (test/Bar, CREATOR, Landroid/os/Parcelable$Creator;)
           RETURN
     }
@@ -95,12 +95,12 @@ public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Cr
           ALOAD (1)
           LDC (parcel)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          NEW
+          NEW (test/Foo)
           DUP
           GETSTATIC (test/Bar, CREATOR, Landroid/os/Parcelable$Creator;)
           ALOAD (1)
           INVOKEINTERFACE (android/os/Parcelable$Creator, createFromParcel, (Landroid/os/Parcel;)Ljava/lang/Object;)
-          CHECKCAST
+          CHECKCAST (test/Bar)
           INVOKESPECIAL (test/Foo, <init>, (Ltest/Bar;)V)
           ARETURN
         LABEL (L1)
@@ -126,10 +126,10 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
     private final test.Bar bar
 
     static void <clinit>() {
-          NEW
+          NEW (test/Foo$Creator)
           DUP
           INVOKESPECIAL (test/Foo$Creator, <init>, ()V)
-          CHECKCAST
+          CHECKCAST (android/os/Parcelable$Creator)
           PUTSTATIC (test/Foo, CREATOR, Landroid/os/Parcelable$Creator;)
           RETURN
     }

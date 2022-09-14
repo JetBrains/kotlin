@@ -11,7 +11,7 @@ final class User$Companion : java/lang/Object, kotlinx/android/parcel/Parceler {
         LABEL (L0)
         LINENUMBER (19)
           ILOAD (1)
-          ANEWARRAY
+          ANEWARRAY (User)
           ARETURN
         LABEL (L1)
     }
