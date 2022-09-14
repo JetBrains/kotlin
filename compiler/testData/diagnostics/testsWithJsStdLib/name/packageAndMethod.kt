@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 // FILE: foo.kt
 
 package foo

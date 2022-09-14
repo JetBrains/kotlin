@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 open external class A {
     open fun f(x: Int = definedExternally)
 }

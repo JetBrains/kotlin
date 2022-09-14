@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 external open class A {
     open fun f(x: Int): Unit
 
