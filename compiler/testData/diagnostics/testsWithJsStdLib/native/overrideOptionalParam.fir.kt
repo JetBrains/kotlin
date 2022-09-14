@@ -44,7 +44,7 @@ external class G : D, I {
 }
 
 open class X {
-    fun f(<!UNUSED_PARAMETER!>x<!>: Int) {}
+    fun f(x: Int) {}
 }
 
 open external class XE {
