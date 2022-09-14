@@ -34,5 +34,6 @@ object JsDeclarationCheckers : DeclarationCheckers() {
             FirJsInheritanceChecker,
             FirJsRuntimeAnnotationChecker,
             FirJsExternalChecker,
+            FirJsExternalFileChecker,
         )
 }
