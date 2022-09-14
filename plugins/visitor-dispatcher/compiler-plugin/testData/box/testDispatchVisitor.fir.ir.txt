@@ -1,0 +1,706 @@
+FILE fqName:<root> fileName:/testDispatchVisitor.kt
+  CLASS ENUM_CLASS name:ExprId modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.ExprId>]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ExprId
+    CONSTRUCTOR visibility:private <> () returnType:<root>.ExprId [primary]
+      BLOCK_BODY
+        ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
+          <E>: <root>.ExprId
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:ExprId modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.ExprId>]'
+    ENUM_ENTRY name:BinOp
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.ExprId'
+    ENUM_ENTRY name:Number
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.ExprId'
+    ENUM_ENTRY name:String
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.ExprId'
+    ENUM_ENTRY name:UnOp
+      init: EXPRESSION_BODY
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.ExprId'
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.ExprId>
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.ExprId
+      VALUE_PARAMETER name:value index:0 type:kotlin.String
+      SYNTHETIC_BODY kind=ENUM_VALUEOF
+    FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
+      overridden:
+        protected final fun clone (): kotlin.Any declared in kotlin.Enum
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
+    FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>, other:<root>.ExprId) returnType:kotlin.Int [fake_override,operator]
+      overridden:
+        public final fun compareTo (other: E of kotlin.Enum): kotlin.Int [operator] declared in kotlin.Enum
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
+      VALUE_PARAMETER name:other index:0 type:<root>.ExprId
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public final fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Enum
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Int [fake_override]
+      overridden:
+        public final fun hashCode (): kotlin.Int declared in kotlin.Enum
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Enum
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
+    PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+      annotations:
+        IntrinsicConstEvaluation
+      overridden:
+        public final name: kotlin.String [val]
+      FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.String [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-name> (): kotlin.String declared in kotlin.Enum
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
+    PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final ordinal: kotlin.Int [val]
+      FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Int [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
+    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.ExprId?>? [fake_override]
+      overridden:
+        public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] E of kotlin.Enum?>? declared in kotlin.Enum
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
+  CLASS INTERFACE name:FirElement modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    annotations:
+      WithAbstractKind
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirElement
+    FUN GENERATED[AddAbstractGetKindFunctionExtensionKey] name:getKind visibility:public modality:ABSTRACT <> ($this:<root>.FirElement) returnType:<root>.ExprId
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirElement
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:FirLiteral modality:ABSTRACT visibility:public superTypes:[<root>.FirElement]
+    annotations:
+      WithAbstractKind
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirLiteral
+    CONSTRUCTOR visibility:public <> () returnType:<root>.FirLiteral [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirLiteral modality:ABSTRACT visibility:public superTypes:[<root>.FirElement]'
+    FUN GENERATED[AddAbstractGetKindFunctionExtensionKey] name:getKind visibility:public modality:ABSTRACT <> ($this:<root>.FirLiteral) returnType:<root>.ExprId
+      overridden:
+        public abstract fun getKind (): <root>.ExprId declared in <root>.FirElement
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirLiteral
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.FirElement
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.FirElement
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.FirElement
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:FirNumber modality:FINAL visibility:public superTypes:[<root>.FirLiteral]
+    annotations:
+      WithKind(kind = 'Number')
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirNumber
+    CONSTRUCTOR visibility:public <> () returnType:<root>.FirNumber [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.FirLiteral'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirNumber modality:FINAL visibility:public superTypes:[<root>.FirLiteral]'
+    FUN GENERATED[AddGetKindFunctionExtensionKey] name:getKind visibility:public modality:FINAL <> ($this:<root>.FirNumber) returnType:<root>.ExprId
+      overridden:
+        public abstract fun getKind (): <root>.ExprId declared in <root>.FirLiteral
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirNumber
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun getKind (): <root>.ExprId declared in <root>.FirNumber'
+          GET_ENUM 'ENUM_ENTRY name:Number' type=<root>.ExprId
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.FirLiteral
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.FirLiteral
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.FirLiteral
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:FirString modality:FINAL visibility:public superTypes:[<root>.FirLiteral]
+    annotations:
+      WithKind(kind = 'String')
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirString
+    CONSTRUCTOR visibility:public <> () returnType:<root>.FirString [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.FirLiteral'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirString modality:FINAL visibility:public superTypes:[<root>.FirLiteral]'
+    FUN GENERATED[AddGetKindFunctionExtensionKey] name:getKind visibility:public modality:FINAL <> ($this:<root>.FirString) returnType:<root>.ExprId
+      overridden:
+        public abstract fun getKind (): <root>.ExprId declared in <root>.FirLiteral
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirString
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun getKind (): <root>.ExprId declared in <root>.FirString'
+          GET_ENUM 'ENUM_ENTRY name:String' type=<root>.ExprId
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.FirLiteral
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.FirLiteral
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.FirLiteral
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:FirOp modality:ABSTRACT visibility:public superTypes:[<root>.FirElement]
+    annotations:
+      WithAbstractKind
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirOp
+    CONSTRUCTOR visibility:public <> () returnType:<root>.FirOp [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirOp modality:ABSTRACT visibility:public superTypes:[<root>.FirElement]'
+    FUN GENERATED[AddAbstractGetKindFunctionExtensionKey] name:getKind visibility:public modality:ABSTRACT <> ($this:<root>.FirOp) returnType:<root>.ExprId
+      overridden:
+        public abstract fun getKind (): <root>.ExprId declared in <root>.FirElement
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirOp
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.FirElement
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.FirElement
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.FirElement
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:FirBinOp modality:FINAL visibility:public superTypes:[<root>.FirOp]
+    annotations:
+      WithKind(kind = 'BinOp')
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirBinOp
+    CONSTRUCTOR visibility:public <> (l:<root>.FirElement, r:<root>.FirElement) returnType:<root>.FirBinOp [primary]
+      VALUE_PARAMETER name:l index:0 type:<root>.FirElement
+      VALUE_PARAMETER name:r index:1 type:<root>.FirElement
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.FirOp'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirBinOp modality:FINAL visibility:public superTypes:[<root>.FirOp]'
+    PROPERTY name:l visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:l type:<root>.FirElement visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'l: <root>.FirElement declared in <root>.FirBinOp.<init>' type=<root>.FirElement origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-l> visibility:public modality:FINAL <> ($this:<root>.FirBinOp) returnType:<root>.FirElement
+        correspondingProperty: PROPERTY name:l visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.FirBinOp
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-l> (): <root>.FirElement declared in <root>.FirBinOp'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:l type:<root>.FirElement visibility:private [final]' type=<root>.FirElement origin=null
+              receiver: GET_VAR '<this>: <root>.FirBinOp declared in <root>.FirBinOp.<get-l>' type=<root>.FirBinOp origin=null
+    PROPERTY name:r visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:r type:<root>.FirElement visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'r: <root>.FirElement declared in <root>.FirBinOp.<init>' type=<root>.FirElement origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-r> visibility:public modality:FINAL <> ($this:<root>.FirBinOp) returnType:<root>.FirElement
+        correspondingProperty: PROPERTY name:r visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.FirBinOp
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-r> (): <root>.FirElement declared in <root>.FirBinOp'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:r type:<root>.FirElement visibility:private [final]' type=<root>.FirElement origin=null
+              receiver: GET_VAR '<this>: <root>.FirBinOp declared in <root>.FirBinOp.<get-r>' type=<root>.FirBinOp origin=null
+    FUN GENERATED[AddGetKindFunctionExtensionKey] name:getKind visibility:public modality:FINAL <> ($this:<root>.FirBinOp) returnType:<root>.ExprId
+      overridden:
+        public abstract fun getKind (): <root>.ExprId declared in <root>.FirOp
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirBinOp
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun getKind (): <root>.ExprId declared in <root>.FirBinOp'
+          GET_ENUM 'ENUM_ENTRY name:BinOp' type=<root>.ExprId
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.FirOp
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.FirOp
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.FirOp
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:FirUnOp modality:FINAL visibility:public superTypes:[<root>.FirOp]
+    annotations:
+      WithKind(kind = 'UnOp')
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirUnOp
+    CONSTRUCTOR visibility:public <> (e:<root>.FirElement) returnType:<root>.FirUnOp [primary]
+      VALUE_PARAMETER name:e index:0 type:<root>.FirElement
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.FirOp'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirUnOp modality:FINAL visibility:public superTypes:[<root>.FirOp]'
+    PROPERTY name:e visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:e type:<root>.FirElement visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'e: <root>.FirElement declared in <root>.FirUnOp.<init>' type=<root>.FirElement origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-e> visibility:public modality:FINAL <> ($this:<root>.FirUnOp) returnType:<root>.FirElement
+        correspondingProperty: PROPERTY name:e visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.FirUnOp
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-e> (): <root>.FirElement declared in <root>.FirUnOp'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:e type:<root>.FirElement visibility:private [final]' type=<root>.FirElement origin=null
+              receiver: GET_VAR '<this>: <root>.FirUnOp declared in <root>.FirUnOp.<get-e>' type=<root>.FirUnOp origin=null
+    FUN GENERATED[AddGetKindFunctionExtensionKey] name:getKind visibility:public modality:FINAL <> ($this:<root>.FirUnOp) returnType:<root>.ExprId
+      overridden:
+        public abstract fun getKind (): <root>.ExprId declared in <root>.FirOp
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirUnOp
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun getKind (): <root>.ExprId declared in <root>.FirUnOp'
+          GET_ENUM 'ENUM_ENTRY name:UnOp' type=<root>.ExprId
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.FirOp
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.FirOp
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.FirOp
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:FirVisitorVoid modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    annotations:
+      DispatchedVisitor
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirVisitorVoid
+    CONSTRUCTOR visibility:public <> () returnType:<root>.FirVisitorVoid [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirVisitorVoid modality:ABSTRACT visibility:public superTypes:[kotlin.Any]'
+    FUN name:visitElement visibility:public modality:ABSTRACT <> ($this:<root>.FirVisitorVoid, element:<root>.FirElement) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirVisitorVoid
+      VALUE_PARAMETER name:element index:0 type:<root>.FirElement
+    FUN name:visitLiteral visibility:public modality:OPEN <> ($this:<root>.FirVisitorVoid, literal:<root>.FirLiteral) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirVisitorVoid
+      VALUE_PARAMETER name:literal index:0 type:<root>.FirLiteral
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun visitLiteral (literal: <root>.FirLiteral): kotlin.Unit declared in <root>.FirVisitorVoid'
+          CALL 'public abstract fun visitElement (element: <root>.FirElement): kotlin.Unit declared in <root>.FirVisitorVoid' type=kotlin.Unit origin=null
+            $this: GET_VAR '<this>: <root>.FirVisitorVoid declared in <root>.FirVisitorVoid.visitLiteral' type=<root>.FirVisitorVoid origin=null
+            element: GET_VAR 'literal: <root>.FirLiteral declared in <root>.FirVisitorVoid.visitLiteral' type=<root>.FirLiteral origin=null
+    FUN name:visitOp visibility:public modality:OPEN <> ($this:<root>.FirVisitorVoid, op:<root>.FirOp) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirVisitorVoid
+      VALUE_PARAMETER name:op index:0 type:<root>.FirOp
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun visitOp (op: <root>.FirOp): kotlin.Unit declared in <root>.FirVisitorVoid'
+          CALL 'public abstract fun visitElement (element: <root>.FirElement): kotlin.Unit declared in <root>.FirVisitorVoid' type=kotlin.Unit origin=null
+            $this: GET_VAR '<this>: <root>.FirVisitorVoid declared in <root>.FirVisitorVoid.visitOp' type=<root>.FirVisitorVoid origin=null
+            element: GET_VAR 'op: <root>.FirOp declared in <root>.FirVisitorVoid.visitOp' type=<root>.FirOp origin=null
+    FUN name:visitBinOp visibility:public modality:OPEN <> ($this:<root>.FirVisitorVoid, binOp:<root>.FirBinOp) returnType:kotlin.Unit
+      annotations:
+        Dispatched
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirVisitorVoid
+      VALUE_PARAMETER name:binOp index:0 type:<root>.FirBinOp
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun visitBinOp (binOp: <root>.FirBinOp): kotlin.Unit declared in <root>.FirVisitorVoid'
+          CALL 'public abstract fun visitElement (element: <root>.FirElement): kotlin.Unit declared in <root>.FirVisitorVoid' type=kotlin.Unit origin=null
+            $this: GET_VAR '<this>: <root>.FirVisitorVoid declared in <root>.FirVisitorVoid.visitBinOp' type=<root>.FirVisitorVoid origin=null
+            element: GET_VAR 'binOp: <root>.FirBinOp declared in <root>.FirVisitorVoid.visitBinOp' type=<root>.FirBinOp origin=null
+    FUN name:visitUnOp visibility:public modality:OPEN <> ($this:<root>.FirVisitorVoid, unOp:<root>.FirUnOp) returnType:kotlin.Unit
+      annotations:
+        Dispatched
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirVisitorVoid
+      VALUE_PARAMETER name:unOp index:0 type:<root>.FirUnOp
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun visitUnOp (unOp: <root>.FirUnOp): kotlin.Unit declared in <root>.FirVisitorVoid'
+          CALL 'public abstract fun visitElement (element: <root>.FirElement): kotlin.Unit declared in <root>.FirVisitorVoid' type=kotlin.Unit origin=null
+            $this: GET_VAR '<this>: <root>.FirVisitorVoid declared in <root>.FirVisitorVoid.visitUnOp' type=<root>.FirVisitorVoid origin=null
+            element: GET_VAR 'unOp: <root>.FirUnOp declared in <root>.FirVisitorVoid.visitUnOp' type=<root>.FirUnOp origin=null
+    FUN name:visitNumber visibility:public modality:OPEN <> ($this:<root>.FirVisitorVoid, number:<root>.FirNumber) returnType:kotlin.Unit
+      annotations:
+        Dispatched
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirVisitorVoid
+      VALUE_PARAMETER name:number index:0 type:<root>.FirNumber
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun visitNumber (number: <root>.FirNumber): kotlin.Unit declared in <root>.FirVisitorVoid'
+          CALL 'public abstract fun visitElement (element: <root>.FirElement): kotlin.Unit declared in <root>.FirVisitorVoid' type=kotlin.Unit origin=null
+            $this: GET_VAR '<this>: <root>.FirVisitorVoid declared in <root>.FirVisitorVoid.visitNumber' type=<root>.FirVisitorVoid origin=null
+            element: GET_VAR 'number: <root>.FirNumber declared in <root>.FirVisitorVoid.visitNumber' type=<root>.FirNumber origin=null
+    FUN name:visitString visibility:public modality:OPEN <> ($this:<root>.FirVisitorVoid, string:<root>.FirString) returnType:kotlin.Unit
+      annotations:
+        Dispatched
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirVisitorVoid
+      VALUE_PARAMETER name:string index:0 type:<root>.FirString
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun visitString (string: <root>.FirString): kotlin.Unit declared in <root>.FirVisitorVoid'
+          CALL 'public abstract fun visitElement (element: <root>.FirElement): kotlin.Unit declared in <root>.FirVisitorVoid' type=kotlin.Unit origin=null
+            $this: GET_VAR '<this>: <root>.FirVisitorVoid declared in <root>.FirVisitorVoid.visitString' type=<root>.FirVisitorVoid origin=null
+            element: GET_VAR 'string: <root>.FirString declared in <root>.FirVisitorVoid.visitString' type=<root>.FirString origin=null
+    FUN GENERATED[DispatchAbstractFunctionKey] name:dispatch visibility:public modality:ABSTRACT <> ($this:<root>.FirVisitorVoid, expr:<root>.FirElement) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirVisitorVoid
+      VALUE_PARAMETER GENERATED[DispatchAbstractFunctionKey] name:expr index:0 type:<root>.FirElement
+      BLOCK_BODY
+    FUN GENERATED[DispatchAbstractFunctionKey] name:dispatch visibility:public modality:ABSTRACT <> ($this:<root>.FirVisitorVoid, expr:<root>.FirLiteral) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirVisitorVoid
+      VALUE_PARAMETER GENERATED[DispatchAbstractFunctionKey] name:expr index:0 type:<root>.FirLiteral
+      BLOCK_BODY
+    FUN GENERATED[DispatchAbstractFunctionKey] name:dispatch visibility:public modality:ABSTRACT <> ($this:<root>.FirVisitorVoid, expr:<root>.FirOp) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirVisitorVoid
+      VALUE_PARAMETER GENERATED[DispatchAbstractFunctionKey] name:expr index:0 type:<root>.FirOp
+      BLOCK_BODY
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:FirDefaultVisitorVoid modality:ABSTRACT visibility:public superTypes:[<root>.FirVisitorVoid]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirDefaultVisitorVoid
+    CONSTRUCTOR visibility:public <> () returnType:<root>.FirDefaultVisitorVoid [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.FirVisitorVoid'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirDefaultVisitorVoid modality:ABSTRACT visibility:public superTypes:[<root>.FirVisitorVoid]'
+    FUN name:visitBinOp visibility:public modality:OPEN <> ($this:<root>.FirDefaultVisitorVoid, binOp:<root>.FirBinOp) returnType:kotlin.Unit
+      overridden:
+        public open fun visitBinOp (binOp: <root>.FirBinOp): kotlin.Unit declared in <root>.FirVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirDefaultVisitorVoid
+      VALUE_PARAMETER name:binOp index:0 type:<root>.FirBinOp
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun visitBinOp (binOp: <root>.FirBinOp): kotlin.Unit declared in <root>.FirDefaultVisitorVoid'
+          CALL 'public open fun visitOp (op: <root>.FirOp): kotlin.Unit [fake_override] declared in <root>.FirDefaultVisitorVoid' type=kotlin.Unit origin=null
+            $this: GET_VAR '<this>: <root>.FirDefaultVisitorVoid declared in <root>.FirDefaultVisitorVoid.visitBinOp' type=<root>.FirDefaultVisitorVoid origin=null
+            op: GET_VAR 'binOp: <root>.FirBinOp declared in <root>.FirDefaultVisitorVoid.visitBinOp' type=<root>.FirBinOp origin=null
+    FUN name:visitUnOp visibility:public modality:OPEN <> ($this:<root>.FirDefaultVisitorVoid, unOp:<root>.FirUnOp) returnType:kotlin.Unit
+      overridden:
+        public open fun visitUnOp (unOp: <root>.FirUnOp): kotlin.Unit declared in <root>.FirVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirDefaultVisitorVoid
+      VALUE_PARAMETER name:unOp index:0 type:<root>.FirUnOp
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun visitUnOp (unOp: <root>.FirUnOp): kotlin.Unit declared in <root>.FirDefaultVisitorVoid'
+          CALL 'public open fun visitOp (op: <root>.FirOp): kotlin.Unit [fake_override] declared in <root>.FirDefaultVisitorVoid' type=kotlin.Unit origin=null
+            $this: GET_VAR '<this>: <root>.FirDefaultVisitorVoid declared in <root>.FirDefaultVisitorVoid.visitUnOp' type=<root>.FirDefaultVisitorVoid origin=null
+            op: GET_VAR 'unOp: <root>.FirUnOp declared in <root>.FirDefaultVisitorVoid.visitUnOp' type=<root>.FirUnOp origin=null
+    FUN FAKE_OVERRIDE name:visitLiteral visibility:public modality:OPEN <> ($this:<root>.FirVisitorVoid, literal:<root>.FirLiteral) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun visitLiteral (literal: <root>.FirLiteral): kotlin.Unit declared in <root>.FirVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirVisitorVoid
+      VALUE_PARAMETER name:literal index:0 type:<root>.FirLiteral
+    FUN FAKE_OVERRIDE name:visitString visibility:public modality:OPEN <> ($this:<root>.FirVisitorVoid, string:<root>.FirString) returnType:kotlin.Unit [fake_override]
+      annotations:
+        Dispatched
+      overridden:
+        public open fun visitString (string: <root>.FirString): kotlin.Unit declared in <root>.FirVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirVisitorVoid
+      VALUE_PARAMETER name:string index:0 type:<root>.FirString
+    FUN FAKE_OVERRIDE name:visitElement visibility:public modality:ABSTRACT <> ($this:<root>.FirVisitorVoid, element:<root>.FirElement) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public abstract fun visitElement (element: <root>.FirElement): kotlin.Unit declared in <root>.FirVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirVisitorVoid
+      VALUE_PARAMETER name:element index:0 type:<root>.FirElement
+    FUN FAKE_OVERRIDE name:visitOp visibility:public modality:OPEN <> ($this:<root>.FirVisitorVoid, op:<root>.FirOp) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun visitOp (op: <root>.FirOp): kotlin.Unit declared in <root>.FirVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirVisitorVoid
+      VALUE_PARAMETER name:op index:0 type:<root>.FirOp
+    FUN FAKE_OVERRIDE name:dispatch visibility:public modality:ABSTRACT <> ($this:<root>.FirVisitorVoid, expr:<root>.FirElement) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public abstract fun dispatch (expr: <root>.FirElement): kotlin.Unit declared in <root>.FirVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirVisitorVoid
+      VALUE_PARAMETER name:expr index:0 type:<root>.FirElement
+    FUN FAKE_OVERRIDE name:dispatch visibility:public modality:ABSTRACT <> ($this:<root>.FirVisitorVoid, expr:<root>.FirLiteral) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public abstract fun dispatch (expr: <root>.FirLiteral): kotlin.Unit declared in <root>.FirVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirVisitorVoid
+      VALUE_PARAMETER name:expr index:0 type:<root>.FirLiteral
+    FUN FAKE_OVERRIDE name:dispatch visibility:public modality:ABSTRACT <> ($this:<root>.FirVisitorVoid, expr:<root>.FirOp) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public abstract fun dispatch (expr: <root>.FirOp): kotlin.Unit declared in <root>.FirVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirVisitorVoid
+      VALUE_PARAMETER name:expr index:0 type:<root>.FirOp
+    FUN FAKE_OVERRIDE name:visitNumber visibility:public modality:OPEN <> ($this:<root>.FirVisitorVoid, number:<root>.FirNumber) returnType:kotlin.Unit [fake_override]
+      annotations:
+        Dispatched
+      overridden:
+        public open fun visitNumber (number: <root>.FirNumber): kotlin.Unit declared in <root>.FirVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirVisitorVoid
+      VALUE_PARAMETER name:number index:0 type:<root>.FirNumber
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.FirVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.FirVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.FirVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  PROPERTY name:result visibility:public modality:FINAL [var]
+    FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [static]
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value=""
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> visibility:public modality:FINAL <> () returnType:kotlin.String
+      correspondingProperty: PROPERTY name:result visibility:public modality:FINAL [var]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-result> (): kotlin.String declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [static]' type=kotlin.String origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-result> visibility:public modality:FINAL <> (<set-?>:kotlin.String) returnType:kotlin.Unit
+      correspondingProperty: PROPERTY name:result visibility:public modality:FINAL [var]
+      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
+      BLOCK_BODY
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [static]' type=kotlin.Unit origin=null
+          value: GET_VAR '<set-?>: kotlin.String declared in <root>.<set-result>' type=kotlin.String origin=null
+  CLASS CLASS name:MyCustomVisitor modality:FINAL visibility:public superTypes:[<root>.FirDefaultVisitorVoid]
+    annotations:
+      GenerateDispatchFunction
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyCustomVisitor
+    CONSTRUCTOR visibility:public <> () returnType:<root>.MyCustomVisitor [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.FirDefaultVisitorVoid'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyCustomVisitor modality:FINAL visibility:public superTypes:[<root>.FirDefaultVisitorVoid]'
+    FUN name:visitElement visibility:public modality:FINAL <> ($this:<root>.MyCustomVisitor, element:<root>.FirElement) returnType:kotlin.Unit
+      overridden:
+        public abstract fun visitElement (element: <root>.FirElement): kotlin.Unit [fake_override] declared in <root>.FirDefaultVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyCustomVisitor
+      VALUE_PARAMETER name:element index:0 type:<root>.FirElement
+      BLOCK_BODY
+    FUN name:visitOp visibility:public modality:FINAL <> ($this:<root>.MyCustomVisitor, op:<root>.FirOp) returnType:kotlin.Unit
+      overridden:
+        public open fun visitOp (op: <root>.FirOp): kotlin.Unit [fake_override] declared in <root>.FirDefaultVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyCustomVisitor
+      VALUE_PARAMETER name:op index:0 type:<root>.FirOp
+      BLOCK_BODY
+        BLOCK type=kotlin.Unit origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.FirOp [val]
+            GET_VAR 'op: <root>.FirOp declared in <root>.MyCustomVisitor.visitOp' type=<root>.FirOp origin=null
+          WHEN type=kotlin.Unit origin=WHEN
+            BRANCH
+              if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.FirBinOp
+                GET_VAR 'val tmp_0: <root>.FirOp [val] declared in <root>.MyCustomVisitor.visitOp' type=<root>.FirOp origin=null
+              then: BLOCK type=kotlin.Unit origin=null
+                CALL 'public final fun <set-result> (<set-?>: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+                  <set-?>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=null
+                    $this: CALL 'public final fun <get-result> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
+                    other: CONST String type=kotlin.String value="BinOp"
+                CALL 'public final fun dispatch (expr: <root>.FirElement): kotlin.Unit declared in <root>.MyCustomVisitor' type=kotlin.Unit origin=null
+                  $this: GET_VAR '<this>: <root>.MyCustomVisitor declared in <root>.MyCustomVisitor.visitOp' type=<root>.MyCustomVisitor origin=null
+                  expr: CALL 'public final fun <get-l> (): <root>.FirElement declared in <root>.FirBinOp' type=<root>.FirElement origin=GET_PROPERTY
+                    $this: TYPE_OP type=<root>.FirBinOp origin=IMPLICIT_CAST typeOperand=<root>.FirBinOp
+                      GET_VAR 'op: <root>.FirOp declared in <root>.MyCustomVisitor.visitOp' type=<root>.FirOp origin=null
+                CALL 'public final fun dispatch (expr: <root>.FirElement): kotlin.Unit declared in <root>.MyCustomVisitor' type=kotlin.Unit origin=null
+                  $this: GET_VAR '<this>: <root>.MyCustomVisitor declared in <root>.MyCustomVisitor.visitOp' type=<root>.MyCustomVisitor origin=null
+                  expr: CALL 'public final fun <get-r> (): <root>.FirElement declared in <root>.FirBinOp' type=<root>.FirElement origin=GET_PROPERTY
+                    $this: TYPE_OP type=<root>.FirBinOp origin=IMPLICIT_CAST typeOperand=<root>.FirBinOp
+                      GET_VAR 'op: <root>.FirOp declared in <root>.MyCustomVisitor.visitOp' type=<root>.FirOp origin=null
+            BRANCH
+              if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.FirUnOp
+                GET_VAR 'val tmp_0: <root>.FirOp [val] declared in <root>.MyCustomVisitor.visitOp' type=<root>.FirOp origin=null
+              then: BLOCK type=kotlin.Unit origin=null
+                CALL 'public final fun <set-result> (<set-?>: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+                  <set-?>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=null
+                    $this: CALL 'public final fun <get-result> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
+                    other: CONST String type=kotlin.String value="UnOp"
+                CALL 'public final fun dispatch (expr: <root>.FirElement): kotlin.Unit declared in <root>.MyCustomVisitor' type=kotlin.Unit origin=null
+                  $this: GET_VAR '<this>: <root>.MyCustomVisitor declared in <root>.MyCustomVisitor.visitOp' type=<root>.MyCustomVisitor origin=null
+                  expr: CALL 'public final fun <get-e> (): <root>.FirElement declared in <root>.FirUnOp' type=<root>.FirElement origin=GET_PROPERTY
+                    $this: TYPE_OP type=<root>.FirUnOp origin=IMPLICIT_CAST typeOperand=<root>.FirUnOp
+                      GET_VAR 'op: <root>.FirOp declared in <root>.MyCustomVisitor.visitOp' type=<root>.FirOp origin=null
+    FUN name:visitString visibility:public modality:FINAL <> ($this:<root>.MyCustomVisitor, string:<root>.FirString) returnType:kotlin.Unit
+      overridden:
+        public open fun visitString (string: <root>.FirString): kotlin.Unit [fake_override] declared in <root>.FirDefaultVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyCustomVisitor
+      VALUE_PARAMETER name:string index:0 type:<root>.FirString
+      BLOCK_BODY
+        CALL 'public final fun <set-result> (<set-?>: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+          <set-?>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=null
+            $this: CALL 'public final fun <get-result> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
+            other: CONST String type=kotlin.String value="String"
+    FUN name:visitNumber visibility:public modality:FINAL <> ($this:<root>.MyCustomVisitor, number:<root>.FirNumber) returnType:kotlin.Unit
+      overridden:
+        public open fun visitNumber (number: <root>.FirNumber): kotlin.Unit [fake_override] declared in <root>.FirDefaultVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyCustomVisitor
+      VALUE_PARAMETER name:number index:0 type:<root>.FirNumber
+      BLOCK_BODY
+        CALL 'public final fun <set-result> (<set-?>: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+          <set-?>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=null
+            $this: CALL 'public final fun <get-result> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
+            other: CONST String type=kotlin.String value="Number"
+    FUN GENERATED[DispatchFunctionKey] name:dispatch visibility:public modality:FINAL <> ($this:<root>.MyCustomVisitor, expr:<root>.FirElement) returnType:kotlin.Unit
+      overridden:
+        public abstract fun dispatch (expr: <root>.FirElement): kotlin.Unit [fake_override] declared in <root>.FirDefaultVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyCustomVisitor
+      VALUE_PARAMETER GENERATED[DispatchFunctionKey] name:expr index:0 type:<root>.FirElement
+      BLOCK_BODY
+        VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.ExprId [val]
+          CALL 'public abstract fun getKind (): <root>.ExprId declared in <root>.FirElement' type=<root>.ExprId origin=null
+            $this: GET_VAR 'expr: <root>.FirElement declared in <root>.MyCustomVisitor.dispatch' type=<root>.FirElement origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'val tmp_1: <root>.ExprId [val] declared in <root>.MyCustomVisitor.dispatch' type=<root>.ExprId origin=null
+              arg1: GET_ENUM 'ENUM_ENTRY name:String' type=<root>.ExprId
+            then: BLOCK type=kotlin.Unit origin=null
+              CALL 'public final fun visitString (string: <root>.FirString): kotlin.Unit declared in <root>.MyCustomVisitor' type=kotlin.Unit origin=null
+                $this: GET_VAR '<this>: <root>.MyCustomVisitor declared in <root>.MyCustomVisitor.dispatch' type=<root>.MyCustomVisitor origin=null
+                string: TYPE_OP type=<root>.FirString origin=CAST typeOperand=<root>.FirString
+                  GET_VAR 'expr: <root>.FirElement declared in <root>.MyCustomVisitor.dispatch' type=<root>.FirElement origin=null
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'val tmp_1: <root>.ExprId [val] declared in <root>.MyCustomVisitor.dispatch' type=<root>.ExprId origin=null
+              arg1: GET_ENUM 'ENUM_ENTRY name:Number' type=<root>.ExprId
+            then: BLOCK type=kotlin.Unit origin=null
+              CALL 'public final fun visitNumber (number: <root>.FirNumber): kotlin.Unit declared in <root>.MyCustomVisitor' type=kotlin.Unit origin=null
+                $this: GET_VAR '<this>: <root>.MyCustomVisitor declared in <root>.MyCustomVisitor.dispatch' type=<root>.MyCustomVisitor origin=null
+                number: TYPE_OP type=<root>.FirNumber origin=CAST typeOperand=<root>.FirNumber
+                  GET_VAR 'expr: <root>.FirElement declared in <root>.MyCustomVisitor.dispatch' type=<root>.FirElement origin=null
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'val tmp_1: <root>.ExprId [val] declared in <root>.MyCustomVisitor.dispatch' type=<root>.ExprId origin=null
+              arg1: GET_ENUM 'ENUM_ENTRY name:BinOp' type=<root>.ExprId
+            then: BLOCK type=kotlin.Unit origin=null
+              CALL 'public open fun visitBinOp (binOp: <root>.FirBinOp): kotlin.Unit declared in <root>.FirDefaultVisitorVoid' type=kotlin.Unit origin=null
+                $this: GET_VAR '<this>: <root>.MyCustomVisitor declared in <root>.MyCustomVisitor.dispatch' type=<root>.MyCustomVisitor origin=null
+                binOp: TYPE_OP type=<root>.FirBinOp origin=CAST typeOperand=<root>.FirBinOp
+                  GET_VAR 'expr: <root>.FirElement declared in <root>.MyCustomVisitor.dispatch' type=<root>.FirElement origin=null
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'val tmp_1: <root>.ExprId [val] declared in <root>.MyCustomVisitor.dispatch' type=<root>.ExprId origin=null
+              arg1: GET_ENUM 'ENUM_ENTRY name:UnOp' type=<root>.ExprId
+            then: BLOCK type=kotlin.Unit origin=null
+              CALL 'public open fun visitUnOp (unOp: <root>.FirUnOp): kotlin.Unit declared in <root>.FirDefaultVisitorVoid' type=kotlin.Unit origin=null
+                $this: GET_VAR '<this>: <root>.MyCustomVisitor declared in <root>.MyCustomVisitor.dispatch' type=<root>.MyCustomVisitor origin=null
+                unOp: TYPE_OP type=<root>.FirUnOp origin=CAST typeOperand=<root>.FirUnOp
+                  GET_VAR 'expr: <root>.FirElement declared in <root>.MyCustomVisitor.dispatch' type=<root>.FirElement origin=null
+    FUN GENERATED[DispatchFunctionKey] name:dispatch visibility:public modality:FINAL <> ($this:<root>.MyCustomVisitor, expr:<root>.FirLiteral) returnType:kotlin.Unit
+      overridden:
+        public abstract fun dispatch (expr: <root>.FirLiteral): kotlin.Unit [fake_override] declared in <root>.FirDefaultVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyCustomVisitor
+      VALUE_PARAMETER GENERATED[DispatchFunctionKey] name:expr index:0 type:<root>.FirLiteral
+      BLOCK_BODY
+        VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.ExprId [val]
+          CALL 'public abstract fun getKind (): <root>.ExprId declared in <root>.FirLiteral' type=<root>.ExprId origin=null
+            $this: GET_VAR 'expr: <root>.FirLiteral declared in <root>.MyCustomVisitor.dispatch' type=<root>.FirLiteral origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'val tmp_2: <root>.ExprId [val] declared in <root>.MyCustomVisitor.dispatch' type=<root>.ExprId origin=null
+              arg1: GET_ENUM 'ENUM_ENTRY name:String' type=<root>.ExprId
+            then: BLOCK type=kotlin.Unit origin=null
+              CALL 'public final fun visitString (string: <root>.FirString): kotlin.Unit declared in <root>.MyCustomVisitor' type=kotlin.Unit origin=null
+                $this: GET_VAR '<this>: <root>.MyCustomVisitor declared in <root>.MyCustomVisitor.dispatch' type=<root>.MyCustomVisitor origin=null
+                string: TYPE_OP type=<root>.FirString origin=CAST typeOperand=<root>.FirString
+                  GET_VAR 'expr: <root>.FirLiteral declared in <root>.MyCustomVisitor.dispatch' type=<root>.FirLiteral origin=null
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'val tmp_2: <root>.ExprId [val] declared in <root>.MyCustomVisitor.dispatch' type=<root>.ExprId origin=null
+              arg1: GET_ENUM 'ENUM_ENTRY name:Number' type=<root>.ExprId
+            then: BLOCK type=kotlin.Unit origin=null
+              CALL 'public final fun visitNumber (number: <root>.FirNumber): kotlin.Unit declared in <root>.MyCustomVisitor' type=kotlin.Unit origin=null
+                $this: GET_VAR '<this>: <root>.MyCustomVisitor declared in <root>.MyCustomVisitor.dispatch' type=<root>.MyCustomVisitor origin=null
+                number: TYPE_OP type=<root>.FirNumber origin=CAST typeOperand=<root>.FirNumber
+                  GET_VAR 'expr: <root>.FirLiteral declared in <root>.MyCustomVisitor.dispatch' type=<root>.FirLiteral origin=null
+    FUN GENERATED[DispatchFunctionKey] name:dispatch visibility:public modality:FINAL <> ($this:<root>.MyCustomVisitor, expr:<root>.FirOp) returnType:kotlin.Unit
+      overridden:
+        public abstract fun dispatch (expr: <root>.FirOp): kotlin.Unit [fake_override] declared in <root>.FirDefaultVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyCustomVisitor
+      VALUE_PARAMETER GENERATED[DispatchFunctionKey] name:expr index:0 type:<root>.FirOp
+      BLOCK_BODY
+        VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:<root>.ExprId [val]
+          CALL 'public abstract fun getKind (): <root>.ExprId declared in <root>.FirOp' type=<root>.ExprId origin=null
+            $this: GET_VAR 'expr: <root>.FirOp declared in <root>.MyCustomVisitor.dispatch' type=<root>.FirOp origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'val tmp_3: <root>.ExprId [val] declared in <root>.MyCustomVisitor.dispatch' type=<root>.ExprId origin=null
+              arg1: GET_ENUM 'ENUM_ENTRY name:BinOp' type=<root>.ExprId
+            then: BLOCK type=kotlin.Unit origin=null
+              CALL 'public open fun visitBinOp (binOp: <root>.FirBinOp): kotlin.Unit declared in <root>.FirDefaultVisitorVoid' type=kotlin.Unit origin=null
+                $this: GET_VAR '<this>: <root>.MyCustomVisitor declared in <root>.MyCustomVisitor.dispatch' type=<root>.MyCustomVisitor origin=null
+                binOp: TYPE_OP type=<root>.FirBinOp origin=CAST typeOperand=<root>.FirBinOp
+                  GET_VAR 'expr: <root>.FirOp declared in <root>.MyCustomVisitor.dispatch' type=<root>.FirOp origin=null
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'val tmp_3: <root>.ExprId [val] declared in <root>.MyCustomVisitor.dispatch' type=<root>.ExprId origin=null
+              arg1: GET_ENUM 'ENUM_ENTRY name:UnOp' type=<root>.ExprId
+            then: BLOCK type=kotlin.Unit origin=null
+              CALL 'public open fun visitUnOp (unOp: <root>.FirUnOp): kotlin.Unit declared in <root>.FirDefaultVisitorVoid' type=kotlin.Unit origin=null
+                $this: GET_VAR '<this>: <root>.MyCustomVisitor declared in <root>.MyCustomVisitor.dispatch' type=<root>.MyCustomVisitor origin=null
+                unOp: TYPE_OP type=<root>.FirUnOp origin=CAST typeOperand=<root>.FirUnOp
+                  GET_VAR 'expr: <root>.FirOp declared in <root>.MyCustomVisitor.dispatch' type=<root>.FirOp origin=null
+    FUN FAKE_OVERRIDE name:visitBinOp visibility:public modality:OPEN <> ($this:<root>.FirDefaultVisitorVoid, binOp:<root>.FirBinOp) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun visitBinOp (binOp: <root>.FirBinOp): kotlin.Unit declared in <root>.FirDefaultVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirDefaultVisitorVoid
+      VALUE_PARAMETER name:binOp index:0 type:<root>.FirBinOp
+    FUN FAKE_OVERRIDE name:visitUnOp visibility:public modality:OPEN <> ($this:<root>.FirDefaultVisitorVoid, unOp:<root>.FirUnOp) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun visitUnOp (unOp: <root>.FirUnOp): kotlin.Unit declared in <root>.FirDefaultVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirDefaultVisitorVoid
+      VALUE_PARAMETER name:unOp index:0 type:<root>.FirUnOp
+    FUN FAKE_OVERRIDE name:visitLiteral visibility:public modality:OPEN <> ($this:<root>.FirVisitorVoid, literal:<root>.FirLiteral) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun visitLiteral (literal: <root>.FirLiteral): kotlin.Unit [fake_override] declared in <root>.FirDefaultVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:<root>.FirVisitorVoid
+      VALUE_PARAMETER name:literal index:0 type:<root>.FirLiteral
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.FirDefaultVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.FirDefaultVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.FirDefaultVisitorVoid
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:visitor type:<root>.MyCustomVisitor [val]
+        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyCustomVisitor' type=<root>.MyCustomVisitor origin=null
+      VAR name:expr type:<root>.FirBinOp [val]
+        CONSTRUCTOR_CALL 'public constructor <init> (l: <root>.FirElement, r: <root>.FirElement) [primary] declared in <root>.FirBinOp' type=<root>.FirBinOp origin=null
+          l: CONSTRUCTOR_CALL 'public constructor <init> (e: <root>.FirElement) [primary] declared in <root>.FirUnOp' type=<root>.FirUnOp origin=null
+            e: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.FirNumber' type=<root>.FirNumber origin=null
+          r: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.FirString' type=<root>.FirString origin=null
+      CALL 'public final fun dispatch (expr: <root>.FirOp): kotlin.Unit declared in <root>.MyCustomVisitor' type=kotlin.Unit origin=null
+        $this: GET_VAR 'val visitor: <root>.MyCustomVisitor [val] declared in <root>.box' type=<root>.MyCustomVisitor origin=null
+        expr: GET_VAR 'val expr: <root>.FirBinOp [val] declared in <root>.box' type=<root>.FirBinOp origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        BLOCK type=kotlin.String origin=WHEN
+          VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.String [val]
+            CALL 'public final fun <get-result> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
+          WHEN type=kotlin.String origin=WHEN
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'val tmp_4: kotlin.String [val] declared in <root>.box' type=kotlin.String origin=null
+                arg1: CONST String type=kotlin.String value="BinOpUnOpNumberString"
+              then: CONST String type=kotlin.String value="OK"
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST String type=kotlin.String value="FAIL"

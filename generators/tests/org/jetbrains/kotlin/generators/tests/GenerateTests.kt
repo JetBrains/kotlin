@@ -16,12 +16,13 @@ import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidIrBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
+import org.jetbrains.kotlin.dispatcher.runners.AbstractVisitorDispatcherBlackBoxCodegenTest
+import org.jetbrains.kotlin.dispatcher.runners.AbstractVisitorDispatcherDiagnosticTest
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPluginBlackBoxCodegenTest
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPluginDiagnosticTest
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
-import org.jetbrains.kotlin.generators.model.AnnotationModel
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.jvm.abi.*
@@ -270,6 +271,16 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractFirPluginBlackBoxCodegenTest> {
+                model("box")
+            }
+        }
+
+        testGroup("plugins/visitor-dispatcher/compiler-plugin/tests-gen", "plugins/visitor-dispatcher/compiler-plugin/testData") {
+            testClass<AbstractVisitorDispatcherDiagnosticTest> {
+                model("diagnostics")
+            }
+
+            testClass<AbstractVisitorDispatcherBlackBoxCodegenTest> {
                 model("box")
             }
         }

@@ -1,0 +1,194 @@
+FILE: testDispatchVisitor.kt
+    public final enum class ExprId : R|kotlin/Enum<ExprId>| {
+        private constructor(): R|ExprId| {
+            super<R|kotlin/Enum<ExprId>|>()
+        }
+
+        public final static enum entry BinOp: R|ExprId|
+        public final static enum entry Number: R|ExprId|
+        public final static enum entry String: R|ExprId|
+        public final static enum entry UnOp: R|ExprId|
+        public final static fun values(): R|kotlin/Array<ExprId>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|ExprId| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<ExprId>|
+            public get(): R|kotlin/enums/EnumEntries<ExprId>|
+
+    }
+    @R|org/jetbrains/kotlin/dispatcher/WithAbstractKind<ExprId>|() public abstract interface FirElement : R|kotlin/Any| {
+        public abstract fun getKind(): R|ExprId|
+
+    }
+    @R|org/jetbrains/kotlin/dispatcher/WithAbstractKind<ExprId>|() public abstract class FirLiteral : R|FirElement| {
+        public constructor(): R|FirLiteral| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract fun getKind(): R|ExprId|
+
+    }
+    @R|org/jetbrains/kotlin/dispatcher/WithKind<ExprId>|(kind = String(Number)) public final class FirNumber : R|FirLiteral| {
+        public constructor(): R|FirNumber| {
+            super<R|FirLiteral|>()
+        }
+
+        public final fun getKind(): R|ExprId|
+
+    }
+    @R|org/jetbrains/kotlin/dispatcher/WithKind<ExprId>|(kind = String(String)) public final class FirString : R|FirLiteral| {
+        public constructor(): R|FirString| {
+            super<R|FirLiteral|>()
+        }
+
+        public final fun getKind(): R|ExprId|
+
+    }
+    @R|org/jetbrains/kotlin/dispatcher/WithAbstractKind<ExprId>|() public abstract class FirOp : R|FirElement| {
+        public constructor(): R|FirOp| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract fun getKind(): R|ExprId|
+
+    }
+    @R|org/jetbrains/kotlin/dispatcher/WithKind<ExprId>|(kind = String(BinOp)) public final class FirBinOp : R|FirOp| {
+        public constructor(l: R|FirElement|, r: R|FirElement|): R|FirBinOp| {
+            super<R|FirOp|>()
+        }
+
+        public final val l: R|FirElement| = R|<local>/l|
+            public get(): R|FirElement|
+
+        public final val r: R|FirElement| = R|<local>/r|
+            public get(): R|FirElement|
+
+        public final fun getKind(): R|ExprId|
+
+    }
+    @R|org/jetbrains/kotlin/dispatcher/WithKind<ExprId>|(kind = String(UnOp)) public final class FirUnOp : R|FirOp| {
+        public constructor(e: R|FirElement|): R|FirUnOp| {
+            super<R|FirOp|>()
+        }
+
+        public final val e: R|FirElement| = R|<local>/e|
+            public get(): R|FirElement|
+
+        public final fun getKind(): R|ExprId|
+
+    }
+    @R|org/jetbrains/kotlin/dispatcher/DispatchedVisitor<FirElement>|() public abstract class FirVisitorVoid : R|kotlin/Any| {
+        public constructor(): R|FirVisitorVoid| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract fun visitElement(element: R|FirElement|): R|kotlin/Unit|
+
+        public open fun visitLiteral(literal: R|FirLiteral|): R|kotlin/Unit| {
+            ^visitLiteral this@R|/FirVisitorVoid|.R|/FirVisitorVoid.visitElement|(R|<local>/literal|)
+        }
+
+        public open fun visitOp(op: R|FirOp|): R|kotlin/Unit| {
+            ^visitOp this@R|/FirVisitorVoid|.R|/FirVisitorVoid.visitElement|(R|<local>/op|)
+        }
+
+        @R|org/jetbrains/kotlin/dispatcher/Dispatched|() public open fun visitBinOp(binOp: R|FirBinOp|): R|kotlin/Unit| {
+            ^visitBinOp this@R|/FirVisitorVoid|.R|/FirVisitorVoid.visitElement|(R|<local>/binOp|)
+        }
+
+        @R|org/jetbrains/kotlin/dispatcher/Dispatched|() public open fun visitUnOp(unOp: R|FirUnOp|): R|kotlin/Unit| {
+            ^visitUnOp this@R|/FirVisitorVoid|.R|/FirVisitorVoid.visitElement|(R|<local>/unOp|)
+        }
+
+        @R|org/jetbrains/kotlin/dispatcher/Dispatched|() public open fun visitNumber(number: R|FirNumber|): R|kotlin/Unit| {
+            ^visitNumber this@R|/FirVisitorVoid|.R|/FirVisitorVoid.visitElement|(R|<local>/number|)
+        }
+
+        @R|org/jetbrains/kotlin/dispatcher/Dispatched|() public open fun visitString(string: R|FirString|): R|kotlin/Unit| {
+            ^visitString this@R|/FirVisitorVoid|.R|/FirVisitorVoid.visitElement|(R|<local>/string|)
+        }
+
+        public abstract fun dispatch(expr: R|FirElement|): R|kotlin/Unit| {
+        }
+
+        public abstract fun dispatch(expr: R|FirLiteral|): R|kotlin/Unit| {
+        }
+
+        public abstract fun dispatch(expr: R|FirOp|): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract class FirDefaultVisitorVoid : R|FirVisitorVoid| {
+        public constructor(): R|FirDefaultVisitorVoid| {
+            super<R|FirVisitorVoid|>()
+        }
+
+        public open override fun visitBinOp(binOp: R|FirBinOp|): R|kotlin/Unit| {
+            ^visitBinOp this@R|/FirDefaultVisitorVoid|.R|/FirVisitorVoid.visitOp|(R|<local>/binOp|)
+        }
+
+        public open override fun visitUnOp(unOp: R|FirUnOp|): R|kotlin/Unit| {
+            ^visitUnOp this@R|/FirDefaultVisitorVoid|.R|/FirVisitorVoid.visitOp|(R|<local>/unOp|)
+        }
+
+    }
+    public final var result: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): R|kotlin/Unit|
+    @R|org/jetbrains/kotlin/dispatcher/GenerateDispatchFunction|() public final class MyCustomVisitor : R|FirDefaultVisitorVoid| {
+        public constructor(): R|MyCustomVisitor| {
+            super<R|FirDefaultVisitorVoid|>()
+        }
+
+        public final override fun visitElement(element: R|FirElement|): R|kotlin/Unit| {
+        }
+
+        public final override fun visitOp(op: R|FirOp|): R|kotlin/Unit| {
+            when (R|<local>/op|) {
+                ($subj$ is R|FirBinOp|) ->  {
+                    R|/result| = R|/result|.R|kotlin/String.plus|(String(BinOp))
+                    this@R|/MyCustomVisitor|.R|/MyCustomVisitor.dispatch|(R|<local>/op|.R|/FirBinOp.l|)
+                    this@R|/MyCustomVisitor|.R|/MyCustomVisitor.dispatch|(R|<local>/op|.R|/FirBinOp.r|)
+                }
+                ($subj$ is R|FirUnOp|) ->  {
+                    R|/result| = R|/result|.R|kotlin/String.plus|(String(UnOp))
+                    this@R|/MyCustomVisitor|.R|/MyCustomVisitor.dispatch|(R|<local>/op|.R|/FirUnOp.e|)
+                }
+            }
+
+        }
+
+        public final override fun visitString(string: R|FirString|): R|kotlin/Unit| {
+            R|/result| = R|/result|.R|kotlin/String.plus|(String(String))
+        }
+
+        public final override fun visitNumber(number: R|FirNumber|): R|kotlin/Unit| {
+            R|/result| = R|/result|.R|kotlin/String.plus|(String(Number))
+        }
+
+        public final fun dispatch(expr: R|FirElement|): R|kotlin/Unit| {
+        }
+
+        public final fun dispatch(expr: R|FirLiteral|): R|kotlin/Unit| {
+        }
+
+        public final fun dispatch(expr: R|FirOp|): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval visitor: R|MyCustomVisitor| = R|/MyCustomVisitor.MyCustomVisitor|()
+        lval expr: R|FirBinOp| = R|/FirBinOp.FirBinOp|(R|/FirUnOp.FirUnOp|(R|/FirNumber.FirNumber|()), R|/FirString.FirString|())
+        R|<local>/visitor|.R|/MyCustomVisitor.dispatch|(R|<local>/expr|)
+        ^box when (R|/result|) {
+            ==($subj$, String(BinOpUnOpNumberString)) ->  {
+                String(OK)
+            }
+            else ->  {
+                String(FAIL)
+            }
+        }
+
+    }

@@ -1,0 +1,4 @@
+FILE: test1.kt
+    public final fun main(): R|kotlin/Unit| {
+        lval x: R|kotlin/Int| = Int(2)
+    }

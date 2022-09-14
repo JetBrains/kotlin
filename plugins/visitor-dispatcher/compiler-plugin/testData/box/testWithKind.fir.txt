@@ -1,0 +1,81 @@
+FILE: testWithKind.kt
+    public final enum class ExprId : R|kotlin/Enum<ExprId>| {
+        private constructor(): R|ExprId| {
+            super<R|kotlin/Enum<ExprId>|>()
+        }
+
+        public final static enum entry BinOp: R|ExprId|
+        public final static enum entry Number: R|ExprId|
+        public final static enum entry String: R|ExprId|
+        public final static fun values(): R|kotlin/Array<ExprId>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|ExprId| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<ExprId>|
+            public get(): R|kotlin/enums/EnumEntries<ExprId>|
+
+    }
+    @R|org/jetbrains/kotlin/dispatcher/WithAbstractKind<ExprId>|() public abstract interface FirElement : R|kotlin/Any| {
+        public abstract fun getKind(): R|ExprId|
+
+    }
+    @R|org/jetbrains/kotlin/dispatcher/WithKind<ExprId>|(kind = String(BinOp)) public final class FirBinOp : R|FirElement| {
+        public constructor(): R|FirBinOp| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun getKind(): R|ExprId|
+
+    }
+    @R|org/jetbrains/kotlin/dispatcher/WithKind<ExprId>|(kind = String(Number)) public final class FirNumber : R|FirElement| {
+        public constructor(): R|FirNumber| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun getKind(): R|ExprId|
+
+    }
+    @R|org/jetbrains/kotlin/dispatcher/WithKind<ExprId>|(kind = String(String)) public final class FirString : R|FirElement| {
+        public constructor(): R|FirString| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun getKind(): R|ExprId|
+
+    }
+    public final fun testAbstract(node: R|FirElement|): R|kotlin/Boolean| {
+        ^testAbstract when (R|<local>/node|.R|/FirElement.getKind|()) {
+            ==($subj$, Q|ExprId|.R|/ExprId.BinOp|) ->  {
+                Boolean(true)
+            }
+            else ->  {
+                Boolean(false)
+            }
+        }
+
+    }
+    public final fun testDirect(node: R|FirBinOp|): R|kotlin/Boolean| {
+        ^testDirect when (R|<local>/node|.R|/FirBinOp.getKind|()) {
+            ==($subj$, Q|ExprId|.R|/ExprId.BinOp|) ->  {
+                Boolean(true)
+            }
+            else ->  {
+                Boolean(false)
+            }
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval node: R|FirBinOp| = R|/FirBinOp.FirBinOp|()
+        when () {
+            R|/testAbstract|(R|<local>/node|) && R|/testDirect|(R|<local>/node|) ->  {
+                ^box String(OK)
+            }
+            else ->  {
+                ^box String(FAIL)
+            }
+        }
+
+    }

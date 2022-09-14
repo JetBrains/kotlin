@@ -846,3 +846,9 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':kotlin-native-shared'
     project(":kotlin-native-shared").projectDir = "$rootDir/kotlin-native/shared" as File
 }
+
+include 'plugins:visitor-dispatcher:plugin-annotations'
+findProject(':plugins:visitor-dispatcher:plugin-annotations')?.name = 'plugin-annotations'
+include 'plugins:visitor-dispatcher:compiler-plugin'
+findProject(':plugins:visitor-dispatcher:compiler-plugin')?.name = 'compiler-plugin'
+
