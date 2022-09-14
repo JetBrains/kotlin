@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
-import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.JarMetadataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toKpmModuleIdentifiers
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
@@ -136,7 +136,7 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
         object Precise : OutputLibraryFilesDiscovery() {
             override fun resolveOutputLibraryFiles(outputDirectory: File, resolutions: Iterable<ChooseVisibleSourceSets>): Set<File> {
                 return resolutions.flatMap { chooseVisibleSourceSets ->
-                    if (chooseVisibleSourceSets.metadataProvider !is JarMetadataProvider) return@flatMap emptyList()
+                    if (chooseVisibleSourceSets.metadataProvider !is ArtifactMetadataProvider) return@flatMap emptyList()
                     chooseVisibleSourceSets.metadataProvider.read { artifactHandle ->
                         chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops
                             .mapNotNull { visibleSourceSetName -> artifactHandle.findSourceSet(visibleSourceSetName) }
@@ -211,7 +211,7 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
         is ProjectMetadataProvider -> Unit
 
         /* Extract/Materialize all cinterop files from composite jar file */
-        is JarMetadataProvider -> chooseVisibleSourceSets.metadataProvider.read { artifactHandle ->
+        is ArtifactMetadataProvider -> chooseVisibleSourceSets.metadataProvider.read { artifactHandle ->
             chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops
                 .mapNotNull { visibleSourceSetName -> artifactHandle.findSourceSet(visibleSourceSetName) }
                 .flatMap { sourceSet -> sourceSet.cinteropMetadataLibraries }

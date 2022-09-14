@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import org.gradle.api.Project
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.JarMetadataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.project.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.io.File
@@ -109,7 +109,7 @@ internal class GradleKpmFragmentGranularMetadataResolver(
                             moduleIdentifier = projectStructureMetadataExtractor.moduleIdentifier
                         )
 
-                        is JarMppDependencyProjectStructureMetadataExtractor -> JarMetadataProvider(
+                        is JarMppDependencyProjectStructureMetadataExtractor -> ArtifactMetadataProvider(
                             CompositeMetadataArtifactImpl(
                                 moduleDependencyIdentifier = ModuleIds.fromComponent(project, metadataSourceComponent),
                                 moduleDependencyVersion = metadataSourceComponent.moduleVersion?.version ?: "unspecified",

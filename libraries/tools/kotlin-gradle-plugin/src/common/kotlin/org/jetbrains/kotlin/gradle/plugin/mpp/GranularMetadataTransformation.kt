@@ -16,7 +16,7 @@ import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.JarMetadataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
@@ -80,7 +80,7 @@ internal sealed class MetadataDependencyResolution(
     ) : MetadataDependencyResolution(dependency, projectDependency) {
 
         internal sealed class MetadataProvider {
-            class JarMetadataProvider(private val compositeMetadataArtifact: CompositeMetadataArtifact) :
+            class ArtifactMetadataProvider(private val compositeMetadataArtifact: CompositeMetadataArtifact) :
                 MetadataProvider(), CompositeMetadataArtifact by compositeMetadataArtifact
 
             abstract class ProjectMetadataProvider : MetadataProvider() {
@@ -274,7 +274,7 @@ internal class GranularMetadataTransformation(
                 moduleIdentifier = mppDependencyMetadataExtractor.moduleIdentifier
             )
 
-            is JarMppDependencyProjectStructureMetadataExtractor -> JarMetadataProvider(
+            is JarMppDependencyProjectStructureMetadataExtractor -> ArtifactMetadataProvider(
                 CompositeMetadataArtifactImpl(
                     moduleDependencyIdentifier = ModuleIds.fromComponent(project, module),
                     moduleDependencyVersion = module.moduleVersion?.version ?: "unspecified",
