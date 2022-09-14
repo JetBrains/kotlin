@@ -143,6 +143,7 @@ object StandardNames {
         @JvmField val collection: FqName = collectionsFqName("Collection")
         @JvmField val list: FqName = collectionsFqName("List")
         @JvmField val listIterator: FqName = collectionsFqName("ListIterator")
+        @JvmField val charIterator: FqName = collectionsFqName("CharIterator")
         @JvmField val set: FqName = collectionsFqName("Set")
         @JvmField val map: FqName = collectionsFqName("Map")
         @JvmField val mapEntry: FqName = map.child(Name.identifier("Entry"))

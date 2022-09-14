@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics.js
 
 import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 
 /*
@@ -20,6 +23,9 @@ object FirJsErrors {
     // Annotations
     val WRONG_JS_QUALIFIER by error0<KtExpression>()
     val JS_MODULE_PROHIBITED_ON_VAR by error0<KtAnnotationEntry>()
+
+    // Supertypes
+    val WRONG_MULTIPLE_INHERITANCE by error1<KtElement, FirCallableSymbol<*>>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirJsErrorsDefaultMessages)
