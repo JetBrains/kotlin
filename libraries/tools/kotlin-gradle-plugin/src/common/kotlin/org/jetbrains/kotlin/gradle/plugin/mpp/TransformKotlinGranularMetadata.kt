@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.*
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.metadata.ResolvedMetadataFilesProvider
@@ -37,7 +36,7 @@ open class TransformKotlinGranularMetadata
 
     @get:OutputDirectory
     val outputsDir: File by project.provider {
-        project.buildDir.resolve("kotlinSourceSetMetadata/${kotlinSourceSet.name}")
+        project.kotlinTransformedMetadataLibraryDirectoryForBuild(kotlinSourceSet.name)
     }
 
     @Suppress("unused") // Gradle input
@@ -98,14 +97,20 @@ open class TransformKotlinGranularMetadata
         transformation.metadataDependencyResolutions
     }
 
+    /**
+     * Contains "actually transformed" metadata libraries (extracted from any [CompositeMetadataArtifact]) as well as
+     * [FileCollection]s pointing to project dependency klibs.
+     *
+     * Project dependencies are still required to be listed here (despite not being produced by this task), since
+     * this [filesByResolution] will be used to build the compile-classpath for metadata compilations.
+     */
     @get:Internal
     internal val filesByResolution: Map<out MetadataDependencyResolution, FileCollection>
         get() = metadataDependencyResolutions
             .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
             .associateWith { chooseVisibleSourceSets ->
-                chooseVisibleSourceSets.getAllCompiledSourceSetMetadata(
-                    project, outputDirectoryWhenMaterialised = outputsDir, materializeFilesIfNecessary = false
-                ).builtBy(this)
+                val files = project.transformMetadataLibrariesForBuild(chooseVisibleSourceSets, outputsDir, materializeFiles = false)
+                project.files(files).builtBy(this)
             }
 
     @TaskAction
@@ -118,9 +123,7 @@ open class TransformKotlinGranularMetadata
         metadataDependencyResolutions
             .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
             .forEach { chooseVisibleSourceSets ->
-                chooseVisibleSourceSets.getAllCompiledSourceSetMetadata(
-                    project, outputDirectoryWhenMaterialised = outputsDir, materializeFilesIfNecessary = true
-                )
+                project.transformMetadataLibrariesForBuild(chooseVisibleSourceSets, outputsDir, true)
             }
     }
 }

@@ -10,8 +10,8 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
-import org.jetbrains.kotlin.gradle.plugin.mpp.getAllCompiledSourceSetMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
+import org.jetbrains.kotlin.gradle.plugin.mpp.transformMetadataLibrariesForBuild
 import org.jetbrains.kotlin.gradle.targets.metadata.ResolvedMetadataFilesProvider
 import org.jetbrains.kotlin.gradle.utils.getValue
 import java.io.File
@@ -72,9 +72,8 @@ internal open class TransformKotlinGranularMetadataForFragment
         get() = metadataDependencyResolutions
             .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
             .associateWith { chooseVisibleSourceSets ->
-                chooseVisibleSourceSets.getAllCompiledSourceSetMetadata(
-                    project, outputsDir, materializeFilesIfNecessary = false
-                ).builtBy(this)
+                project.files(project.transformMetadataLibrariesForBuild(chooseVisibleSourceSets, outputsDir, materializeFiles = false))
+                    .builtBy(this)
             }
 
     @TaskAction
@@ -87,7 +86,7 @@ internal open class TransformKotlinGranularMetadataForFragment
         metadataDependencyResolutions
             .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
             .forEach { chooseVisibleSourceSets ->
-                chooseVisibleSourceSets.getAllCompiledSourceSetMetadata(project, outputsDir, materializeFilesIfNecessary = true)
+                project.transformMetadataLibrariesForBuild(chooseVisibleSourceSets, outputsDir, materializeFiles = true)
             }
     }
 }
