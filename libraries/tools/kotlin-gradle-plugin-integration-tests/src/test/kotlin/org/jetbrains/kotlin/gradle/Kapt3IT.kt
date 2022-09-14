@@ -286,7 +286,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         doTestSimpleWithIC(gradleVersion, useClasspathSnapshot = true)
     }
 
-    private fun doTestSimpleWithIC(gradleVersion: GradleVersion, useClasspathSnapshot: Boolean? = null) {
+    private fun doTestSimpleWithIC(gradleVersion: GradleVersion, useClasspathSnapshot: Boolean = true) {
         project(
             "simple".withPrefix,
             gradleVersion,

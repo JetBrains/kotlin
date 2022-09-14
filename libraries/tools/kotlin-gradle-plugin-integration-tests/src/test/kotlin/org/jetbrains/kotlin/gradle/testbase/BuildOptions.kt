@@ -24,7 +24,7 @@ data class BuildOptions(
     val configurationCacheProblems: BaseGradleIT.ConfigurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
     val parallel: Boolean = true,
     val incremental: Boolean? = null,
-    val useGradleClasspathSnapshot: Boolean? = null,
+    val useGradleClasspathSnapshot: Boolean = true,
     val useICClasspathSnapshot: Boolean? = null,
     val maxWorkers: Int = (Runtime.getRuntime().availableProcessors() / 4 - 1).coerceAtLeast(2),
     // On Windows OS enabling watch-fs prevents deleting temp directory, which fails the tests
@@ -88,7 +88,7 @@ data class BuildOptions(
             arguments.add("-Pkotlin.incremental=$incremental")
         }
 
-        useGradleClasspathSnapshot?.let { arguments.add("-P${COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.property}=$it") }
+        useGradleClasspathSnapshot.let { arguments.add("-P${COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.property}=$it") }
         useICClasspathSnapshot?.let { arguments.add("-Pkotlin.incremental.classpath.snapshot.enabled=$it") }
 
         if (fileSystemWatchEnabled) {

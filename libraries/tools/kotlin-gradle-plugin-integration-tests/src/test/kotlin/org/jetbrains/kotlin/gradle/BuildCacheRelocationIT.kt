@@ -306,19 +306,10 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     }
 
     @JvmGradlePluginTests
-    @DisplayName("Kotlin incremental compilation should work correctly")
-    @GradleTest
-    fun testKotlinIncrementalCompilation(gradleVersion: GradleVersion) {
-        checkKotlinIncrementalCompilationAfterCacheHit(gradleVersion) {
-            assertNonIncrementalCompilation()
-        }
-    }
-
-    @JvmGradlePluginTests
     @DisplayName("Kotlin incremental compilation with `kotlin.incremental.useClasspathSnapshot` feature should work correctly")
     @GradleTest
     fun testKotlinIncrementalCompilation_withGradleClasspathSnapshot(gradleVersion: GradleVersion) {
-        checkKotlinIncrementalCompilationAfterCacheHit(gradleVersion, defaultBuildOptions.copy(useGradleClasspathSnapshot = true)) {
+        checkKotlinIncrementalCompilationAfterCacheHit(gradleVersion) {
             assertIncrementalCompilation(listOf("src/main/kotlin/foo.kt", "src/main/kotlin/fooUsage.kt").toPaths())
         }
     }
