@@ -8,18 +8,18 @@ package org.jetbrains.kotlin.gradle.targets.js.testing
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
+import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
-import org.jetbrains.kotlin.gradle.targets.js.isTeamCity
 import org.jetbrains.kotlin.gradle.targets.js.writeWasmUnitTestRunner
 
 internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJsTestFramework {
     override val settingsState: String = "KotlinWasmNode"
     @Transient
     override val compilation: KotlinJsCompilation = kotlinJsTest.compilation
-    private val isTeamCity by lazy { compilation.target.project.isTeamCity }
+    private val isTeamCity = compilation.target.project.providers.gradleProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY)
 
     init {
         kotlinJsTest.outputs.upToDateWhen { false }
@@ -39,7 +39,7 @@ internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJs
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true,
-            escapeTCMessagesInLog = isTeamCity
+            escapeTCMessagesInLog = isTeamCity.isPresent
         )
 
         val cliArgs = KotlinTestRunnerCliArgs(

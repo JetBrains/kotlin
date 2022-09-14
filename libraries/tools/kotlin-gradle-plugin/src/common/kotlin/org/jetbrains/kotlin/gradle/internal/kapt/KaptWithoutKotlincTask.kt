@@ -213,12 +213,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         }
     }
 
-    internal fun getValue(propertyName: String): String? =
-        if (isGradleVersionAtLeast(6, 5)) {
-            providerFactory.gradleProperty(propertyName).forUseAtConfigurationTime().orNull
-        } else {
-            project.findProperty(propertyName) as String?
-        }
+    private fun getValue(propertyName: String): String? = providerFactory.gradleProperty(propertyName).orNull
 
     internal interface KaptWorkParameters : WorkParameters {
         val workerOptions: Property<KaptOptionsForWorker>

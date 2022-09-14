@@ -128,14 +128,7 @@ internal open class KaptConfig<TASK : KaptTask>(
                 if ("-source" in result || "--source" in result || "--release" in result) return@also
 
                 if (defaultJavaSourceCompatibility.isPresent) {
-                    val atLeast12Java =
-                        if (isConfigurationCacheAvailable(project.gradle)) {
-                            val currentJavaVersion =
-                                JavaVersion.parse(project.providers.systemProperty("java.version").forUseAtConfigurationTime().get())
-                            currentJavaVersion.feature >= 12
-                        } else {
-                            SystemInfo.isJavaVersionAtLeast(12, 0, 0)
-                        }
+                    val atLeast12Java = SystemInfo.isJavaVersionAtLeast(12, 0, 0)
                     val sourceOptionKey = if (atLeast12Java) {
                         "--source"
                     } else {

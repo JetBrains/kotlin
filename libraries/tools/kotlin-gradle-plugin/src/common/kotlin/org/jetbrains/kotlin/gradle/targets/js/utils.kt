@@ -62,13 +62,6 @@ const val JS = "js"
 const val JS_MAP = "js.map"
 const val META_JS = "meta.js"
 
-val Project.isTeamCity: Boolean
-    get() = if (isConfigurationCacheAvailable(project.gradle)) {
-        project.providers.gradleProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY).forUseAtConfigurationTime().isPresent
-    } else {
-        project.hasProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY)
-    }
-
 internal fun writeWasmUnitTestRunner(compiledFile: File): File {
     val testRunnerFile = compiledFile.parentFile.resolve("runUnitTests.mjs")
     testRunnerFile.writeText(

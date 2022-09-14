@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.internal.operation
 import org.jetbrains.kotlin.gradle.internal.processLogMessage
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
+import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -63,7 +64,7 @@ class KotlinKarma(
     private var configDirectory: File by property {
         defaultConfigDirectory
     }
-    private val isTeamCity by lazy { project.isTeamCity }
+    private val isTeamCity = project.providers.gradleProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY)
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         get() = requiredDependencies + webpackConfig.getRequiredDependencies(versions)
@@ -414,7 +415,7 @@ class KotlinKarma(
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true,
-            escapeTCMessagesInLog = isTeamCity
+            escapeTCMessagesInLog = isTeamCity.isPresent
         )
 
         config.basePath = npmProject.nodeModulesDir.absolutePath

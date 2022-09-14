@@ -11,6 +11,8 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
+import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 
 internal abstract class CompilerSystemPropertiesService : BuildService<CompilerSystemPropertiesService.Parameters>, AutoCloseable {
@@ -60,7 +62,8 @@ internal abstract class CompilerSystemPropertiesService : BuildService<CompilerS
                     CompilerSystemProperties.values()
                         .filterNot { it.alwaysDirectAccess }
                         .associate {
-                            it.property to gradle.rootProject.providers.systemProperty(it.property).forUseAtConfigurationTime()
+                            it.property to gradle.rootProject.providers.systemProperty(it.property)
+                                .usedAtConfigurationTime(gradle.configurationTimePropertiesAccessor)
                         }.toMap()
                 )
             }

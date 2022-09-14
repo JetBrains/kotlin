@@ -9,6 +9,8 @@ import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.provider.Provider
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslModelsParameters
+import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
+import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 
 /**
@@ -80,7 +82,7 @@ private fun Project.syncExceptionsAreNotEmpty(): Boolean {
 private val Project.providerModeSystemPropertyValue: Provider<String>
     get() = providers
         .systemProperty(KotlinDslModelsParameters.PROVIDER_MODE_SYSTEM_PROPERTY_NAME)
-        .forUseAtConfigurationTime()
+        .usedAtConfigurationTime(gradle.configurationTimePropertiesAccessor)
 
 private fun Project.inLenientMode() =
     providerModeSystemPropertyValue.orNull == KotlinDslModelsParameters.CLASSPATH_MODE_SYSTEM_PROPERTY_VALUE

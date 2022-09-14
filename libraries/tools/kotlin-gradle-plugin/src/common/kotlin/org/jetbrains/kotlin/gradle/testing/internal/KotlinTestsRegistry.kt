@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.utils.getSystemProperty
+import org.jetbrains.kotlin.gradle.utils.readSystemPropertyAtConfigurationTime
 
 /**
  * Internal service for creating aggregated test tasks and registering all test tasks.
@@ -74,7 +74,7 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
 
             aggregate.destinationDir = project.testReportsDir.resolve(reportName)
 
-            val isIdeaActive = project.getSystemProperty("idea.active") != null
+            val isIdeaActive = project.readSystemPropertyAtConfigurationTime("idea.active").isPresent
 
             if (isIdeaActive) {
                 aggregate.extensions.extraProperties.set("idea.internal.test", true)
