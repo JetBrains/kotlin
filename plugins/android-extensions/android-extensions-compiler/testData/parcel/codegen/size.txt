@@ -7,7 +7,7 @@ public final class Test$Creator : java/lang/Object, android/os/Parcelable$Creato
           LDC (in)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
         LABEL (L1)
-          NEW
+          NEW (Test)
           DUP
           ALOAD (1)
           INVOKEVIRTUAL (android/os/Parcel, readSize, ()Landroid/util/Size;)
@@ -108,7 +108,7 @@ public final class TestF$Creator : java/lang/Object, android/os/Parcelable$Creat
           LDC (in)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
         LABEL (L1)
-          NEW
+          NEW (TestF)
           DUP
           ALOAD (1)
           INVOKEVIRTUAL (android/os/Parcel, readSizeF, ()Landroid/util/SizeF;)

@@ -6,13 +6,13 @@ public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Cr
           ALOAD (1)
           LDC (parcel)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          NEW
+          NEW (test/Foo)
           DUP
           ALOAD (1)
           LDC (Ltest/Foo;)
           INVOKEVIRTUAL (java/lang/Class, getClassLoader, ()Ljava/lang/ClassLoader;)
           INVOKEVIRTUAL (android/os/Parcel, readParcelable, (Ljava/lang/ClassLoader;)Landroid/os/Parcelable;)
-          CHECKCAST
+          CHECKCAST (android/accounts/Account)
           INVOKESPECIAL (test/Foo, <init>, (Landroid/accounts/Account;)V)
           ARETURN
         LABEL (L1)
@@ -38,10 +38,10 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
     private final android.accounts.Account kp
 
     static void <clinit>() {
-          NEW
+          NEW (test/Foo$Creator)
           DUP
           INVOKESPECIAL (test/Foo$Creator, <init>, ()V)
-          CHECKCAST
+          CHECKCAST (android/os/Parcelable$Creator)
           PUTSTATIC (test/Foo, CREATOR, Landroid/os/Parcelable$Creator;)
           RETURN
     }
@@ -60,7 +60,7 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
           ALOAD (1)
           ALOAD (0)
           GETFIELD (test/Foo, kp, Landroid/accounts/Account;)
-          CHECKCAST
+          CHECKCAST (android/os/Parcelable)
           ILOAD (2)
           INVOKEVIRTUAL (android/os/Parcel, writeParcelable, (Landroid/os/Parcelable;I)V)
           RETURN
