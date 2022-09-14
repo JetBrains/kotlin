@@ -832,6 +832,11 @@ internal class WrongJsQualifierImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.WrongJsQualifier(), KtAbstractFirDiagnostic<KtExpression>
 
+internal class JsModuleProhibitedOnVarImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.JsModuleProhibitedOnVar(), KtAbstractFirDiagnostic<KtAnnotationEntry>
+
 internal class AnnotationInWhereClauseErrorImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

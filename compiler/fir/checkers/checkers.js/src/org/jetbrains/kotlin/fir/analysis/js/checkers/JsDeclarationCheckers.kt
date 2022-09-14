@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.js.checkers.declaration.FirJsInlineDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.js.checkers.declaration.FirJsInlinePropertyChecker
+import org.jetbrains.kotlin.fir.analysis.js.checkers.declaration.FirJsJsModuleOnVarPropertyChecker
 
 object JsDeclarationCheckers : DeclarationCheckers() {
     override val functionCheckers: Set<FirFunctionChecker>
@@ -20,5 +21,6 @@ object JsDeclarationCheckers : DeclarationCheckers() {
     override val propertyCheckers: Set<FirPropertyChecker>
         get() = setOf(
             FirJsInlinePropertyChecker,
+            FirJsModuleOnVarPropertyChecker,
         )
 }

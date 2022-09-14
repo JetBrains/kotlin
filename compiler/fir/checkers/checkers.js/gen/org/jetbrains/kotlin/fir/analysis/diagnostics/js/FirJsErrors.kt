@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics.js
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtExpression
 
 /*
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 object FirJsErrors {
     // Annotations
     val WRONG_JS_QUALIFIER by error0<KtExpression>()
+    val JS_MODULE_PROHIBITED_ON_VAR by error0<KtAnnotationEntry>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirJsErrorsDefaultMessages)
