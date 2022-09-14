@@ -702,6 +702,14 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = JsModuleProhibitedOnVar::class
     }
 
+    abstract class RuntimeAnnotationNotSupported : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = RuntimeAnnotationNotSupported::class
+    }
+
+    abstract class RuntimeAnnotationOnExternalDeclaration : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = RuntimeAnnotationOnExternalDeclaration::class
+    }
+
     abstract class AnnotationInWhereClauseError : KtFirDiagnostic<KtAnnotationEntry>() {
         override val diagnosticClass get() = AnnotationInWhereClauseError::class
     }
