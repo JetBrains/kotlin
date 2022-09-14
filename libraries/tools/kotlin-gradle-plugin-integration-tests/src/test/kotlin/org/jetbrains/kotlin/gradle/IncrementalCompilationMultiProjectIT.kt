@@ -40,6 +40,98 @@ class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiPr
 
     //compileKotlin2Js's modification doe not work
     override fun testFailureHandling_ToolError(gradleVersion: GradleVersion) {}
+
+    @DisplayName("Add new dependency in lib project")
+    @GradleTest
+    override fun testAddDependencyInLib(gradleVersion: GradleVersion) {
+        defaultProject(gradleVersion) {
+            build("assemble")
+
+            testAddDependencyInLib_modifyProject()
+
+            build("assemble") {
+                assertTasksExecuted(":lib:$compileKotlinTaskName")
+                assertTasksUpToDate(":app:$compileKotlinTaskName")
+                assertCompiledKotlinSources(
+                    subProject("lib").projectPath.resolve("src").allKotlinSources.relativizeTo(projectPath),
+                    output
+                )
+            }
+        }
+    }
+
+    @DisplayName("ABI change in lib after lib clean")
+    @GradleTest
+    override fun testAbiChangeInLib_afterLibClean(gradleVersion: GradleVersion) {
+        defaultProject(gradleVersion) {
+            build("assemble")
+
+            build(":lib:clean")
+            changeMethodSignatureInLib()
+
+            build("assemble") {
+                assertCompiledKotlinSources(
+                    subProject("lib")
+                        .projectPath
+                        .resolve("src")
+                        .allKotlinSources
+                        .relativizeTo(projectPath) +
+                            subProject("app")
+                                .projectPath
+                                .resolve("src")
+                                .allKotlinSources
+                                .relativizeTo(projectPath),
+                    output
+                )
+            }
+        }
+    }
+
+    @DisplayName("Lib: change method body with non-ABI change")
+    @GradleTest
+    override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
+        defaultProject(gradleVersion) {
+            build("assemble")
+
+            changeMethodBodyInLib()
+
+            build("assemble") {
+                assertCompiledKotlinSources(
+                    getExpectedKotlinSourcesForDefaultProject(
+                        libSources = listOf("bar/A.kt")
+                    ),
+                    output
+                )
+            }
+        }
+    }
+
+    @DisplayName("Lib: after cleaning lib project")
+    @GradleTest
+    override fun testAbiChangeInLib_afterLibClean_withAbiSnapshot(gradleVersion: GradleVersion) {
+        defaultProject(gradleVersion) {
+            build("assemble")
+
+            build(":lib:clean")
+            changeMethodSignatureInLib()
+
+            build("assemble") {
+                // TODO: With ABI snapshot, app compilation should be incremental, currently it is not.
+                assertCompiledKotlinSources(
+                    (subProject("lib")
+                        .projectPath
+                        .resolve("src")
+                        .allKotlinSources +
+                            subProject("app")
+                                .projectPath
+                                .resolve("src")
+                                .allKotlinSources)
+                        .map { it.relativeTo(projectPath) },
+                    output
+                )
+            }
+        }
+    }
 }
 
 @JvmGradlePluginTests
@@ -56,11 +148,10 @@ open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationM
     override val defaultProjectName: String = "incrementalMultiproject"
 
     @DisplayName("'inspectClassesForKotlinIC' task is added to execution plan")
-    @GradleTest
     open fun testInspectClassesForKotlinICTask(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
             build("assemble") {
-                assertTasksExecuted(
+                assertTasksSkipped(
                     ":lib:inspectClassesForKotlinIC",
                     ":app:inspectClassesForKotlinIC"
                 )
@@ -89,18 +180,15 @@ open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationM
         }
     }
 
-    @DisplayName(
-        "checks that multi-project ic is disabled when there is a task that outputs to javaDestination dir " +
-                "that is not JavaCompile or KotlinCompile"
-    )
+    @DisplayName("Compile lib with Groovy")
     @GradleTest
     open fun testCompileLibWithGroovy(gradleVersion: GradleVersion) {
         testCompileLibWithGroovy_doTest(gradleVersion) { project, result ->
-            val expectedSources = project.subProject("app").projectPath.resolve("src").allKotlinSources +
-                    listOf(project.subProject("lib").kotlinSourcesDir().resolve("bar/A.kt"))
+            result.assertTasksExecuted(":lib:$compileKotlinTaskName")
+            result.assertTasksUpToDate(":app:$compileKotlinTaskName") // App compilation has 'compile avoidance'
 
             assertCompiledKotlinSources(
-                expectedSources.map { it.relativeTo(project.projectPath) },
+                project.getExpectedKotlinSourcesForDefaultProject(libSources = listOf("bar/A.kt")),
                 result.output
             )
         }
@@ -189,15 +277,16 @@ class IncrementalCompilationFirJvmMultiProjectIT : IncrementalCompilationJvmMult
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(useFir = true)
 }
 
-class IncrementalCompilationClasspathSnapshotJvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
+class IncrementalCompilationOldICJvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
 
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(useGradleClasspathSnapshot = true)
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(useGradleClasspathSnapshot = false)
 
     @DisplayName("'inspectClassesForKotlinIC' task is added to execution plan")
+    @GradleTest
     override fun testInspectClassesForKotlinICTask(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
             build("assemble") {
-                assertTasksSkipped(
+                assertTasksExecuted(
                     ":lib:inspectClassesForKotlinIC",
                     ":app:inspectClassesForKotlinIC"
                 )
@@ -205,7 +294,8 @@ class IncrementalCompilationClasspathSnapshotJvmMultiProjectIT : IncrementalComp
         }
     }
 
-    @DisplayName("Lib: Non ABI change in method body")
+
+    @DisplayName("Lib: change method body with non-ABI change")
     @GradleTest
     override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
@@ -214,17 +304,17 @@ class IncrementalCompilationClasspathSnapshotJvmMultiProjectIT : IncrementalComp
             changeMethodBodyInLib()
 
             build("assemble") {
-                assertTasksExecuted(":lib:$compileKotlinTaskName")
-                assertTasksUpToDate(":app:$compileKotlinTaskName")
                 assertCompiledKotlinSources(
-                    getExpectedKotlinSourcesForDefaultProject(libSources = listOf("bar/A.kt")),
+                    getExpectedKotlinSourcesForDefaultProject(
+                        libSources = listOf("bar/A.kt")
+                    ),
                     output
                 )
             }
         }
     }
 
-    @DisplayName("Add dependency in lib subproject")
+    @DisplayName("Add new dependency in lib project")
     @GradleTest
     override fun testAddDependencyInLib(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
@@ -235,15 +325,18 @@ class IncrementalCompilationClasspathSnapshotJvmMultiProjectIT : IncrementalComp
             build("assemble") {
                 assertTasksExecuted(":lib:$compileKotlinTaskName")
                 assertTasksUpToDate(":app:$compileKotlinTaskName")
-                // Lib compilation is incremental (no files are recompiled)
-                assertCompiledKotlinSources(emptyList(), output)
+                assertCompiledKotlinSources(
+                    subProject("lib").projectPath.resolve("src").allKotlinSources.relativizeTo(projectPath),
+                    output
+                )
             }
         }
     }
 
-    @DisplayName("after lib project clean")
+    @DisplayName("ABI change in lib after lib clean")
     @GradleTest
     override fun testAbiChangeInLib_afterLibClean(gradleVersion: GradleVersion) {
+        // To see if app compilation can be incremental after non-incremental lib compilation
         defaultProject(gradleVersion) {
             build("assemble")
 
@@ -251,44 +344,67 @@ class IncrementalCompilationClasspathSnapshotJvmMultiProjectIT : IncrementalComp
             changeMethodSignatureInLib()
 
             build("assemble") {
-                val expectedSources = getExpectedKotlinSourcesForDefaultProject(
-                    appSources = listOf("foo/AA.kt", "foo/AAA.kt", "foo/BB.kt", "foo/fooUseA.kt")
-                ) + subProject("lib").projectPath.resolve("src").allKotlinSources.map { it.relativeTo(projectPath) }
-
-                assertCompiledKotlinSources(expectedSources, output)
+                assertCompiledKotlinSources(
+                    subProject("lib")
+                        .projectPath
+                        .resolve("src")
+                        .allKotlinSources
+                        .relativizeTo(projectPath) +
+                            subProject("app")
+                                .projectPath
+                                .resolve("src")
+                                .allKotlinSources
+                                .relativizeTo(projectPath),
+                    output
+                )
             }
         }
     }
 
-    @DisplayName("Compile lib with Groovy")
+    @DisplayName(
+        "checks that multi-project ic is disabled when there is a task that outputs to javaDestination dir " +
+                "that is not JavaCompile or KotlinCompile"
+    )
     @GradleTest
     override fun testCompileLibWithGroovy(gradleVersion: GradleVersion) {
         testCompileLibWithGroovy_doTest(gradleVersion) { project, result ->
-            result.assertTasksExecuted(":lib:$compileKotlinTaskName")
-            result.assertTasksUpToDate(":app:$compileKotlinTaskName") // App compilation has 'compile avoidance'
+            val expectedSources = project.subProject("app").projectPath.resolve("src").allKotlinSources +
+                    listOf(project.subProject("lib").kotlinSourcesDir().resolve("bar/A.kt"))
 
             assertCompiledKotlinSources(
-                project.getExpectedKotlinSourcesForDefaultProject(libSources = listOf("bar/A.kt")),
+                expectedSources.map { it.relativeTo(project.projectPath) },
                 result.output
             )
         }
     }
 
-    @DisplayName("Lib: after cleaning lib project")
+
+    @DisplayName("Lib with abi snapshot: after clean build")
     @GradleTest
     override fun testAbiChangeInLib_afterLibClean_withAbiSnapshot(gradleVersion: GradleVersion) {
-        defaultProject(gradleVersion) {
+        defaultProject(
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(useGradleClasspathSnapshot = true)
+        ) {
             build("assemble")
 
             build(":lib:clean")
             changeMethodSignatureInLib()
 
             build("assemble") {
-                val expectedSources = getExpectedKotlinSourcesForDefaultProject(
-                    appSources = listOf("foo/AA.kt", "foo/AAA.kt", "foo/BB.kt", "foo/fooUseA.kt")
-                ) + subProject("lib").projectPath.resolve("src").allKotlinSources.map { it.relativeTo(projectPath) }
-
-                assertCompiledKotlinSources(expectedSources, output)
+                // TODO: With ABI snapshot, app compilation should be incremental, currently it is not.
+                assertCompiledKotlinSources(
+                    (subProject("lib")
+                        .projectPath
+                        .resolve("src")
+                        .allKotlinSources +
+                            subProject("app")
+                                .projectPath
+                                .resolve("src")
+                                .allKotlinSources)
+                        .map { it.relativeTo(projectPath) },
+                    output
+                )
             }
         }
     }
@@ -380,7 +496,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
         }
     }
 
-    @DisplayName("Lib: change method body with non-ABI change")
+    @DisplayName("Lib: Non ABI change in method body")
     @GradleTest
     open fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
@@ -389,17 +505,17 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             changeMethodBodyInLib()
 
             build("assemble") {
+                assertTasksExecuted(":lib:$compileKotlinTaskName")
+                assertTasksUpToDate(":app:$compileKotlinTaskName")
                 assertCompiledKotlinSources(
-                    getExpectedKotlinSourcesForDefaultProject(
-                        libSources = listOf("bar/A.kt")
-                    ),
+                    getExpectedKotlinSourcesForDefaultProject(libSources = listOf("bar/A.kt")),
                     output
                 )
             }
         }
     }
 
-    @DisplayName("Add new dependency in lib project")
+    @DisplayName("Add dependency in lib subproject")
     @GradleTest
     open fun testAddDependencyInLib(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
@@ -410,10 +526,8 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             build("assemble") {
                 assertTasksExecuted(":lib:$compileKotlinTaskName")
                 assertTasksUpToDate(":app:$compileKotlinTaskName")
-                assertCompiledKotlinSources(
-                    subProject("lib").projectPath.resolve("src").allKotlinSources.relativizeTo(projectPath),
-                    output
-                )
+                // Lib compilation is incremental (no files are recompiled)
+                assertCompiledKotlinSources(emptyList(), output)
             }
         }
     }
@@ -430,10 +544,9 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
         }
     }
 
-    @DisplayName("ABI change in lib after lib clean")
+    @DisplayName("after lib project clean")
     @GradleTest
     open fun testAbiChangeInLib_afterLibClean(gradleVersion: GradleVersion) {
-        // To see if app compilation can be incremental after non-incremental lib compilation
         defaultProject(gradleVersion) {
             build("assemble")
 
@@ -441,19 +554,11 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             changeMethodSignatureInLib()
 
             build("assemble") {
-                assertCompiledKotlinSources(
-                    subProject("lib")
-                        .projectPath
-                        .resolve("src")
-                        .allKotlinSources
-                        .relativizeTo(projectPath) +
-                            subProject("app")
-                                .projectPath
-                                .resolve("src")
-                                .allKotlinSources
-                                .relativizeTo(projectPath),
-                    output
-                )
+                val expectedSources = getExpectedKotlinSourcesForDefaultProject(
+                    appSources = listOf("foo/AA.kt", "foo/AAA.kt", "foo/BB.kt", "foo/fooUseA.kt")
+                ) + subProject("lib").projectPath.resolve("src").allKotlinSources.map { it.relativeTo(projectPath) }
+
+                assertCompiledKotlinSources(expectedSources, output)
             }
         }
     }
@@ -595,32 +700,21 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
         }
     }
 
-    @DisplayName("Lib with abi snapshot: after clean build")
+    @DisplayName("Lib: after cleaning lib project")
     @GradleTest
     open fun testAbiChangeInLib_afterLibClean_withAbiSnapshot(gradleVersion: GradleVersion) {
-        defaultProject(
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(useGradleClasspathSnapshot = true)
-        ) {
+        defaultProject(gradleVersion) {
             build("assemble")
 
             build(":lib:clean")
             changeMethodSignatureInLib()
 
             build("assemble") {
-                // TODO: With ABI snapshot, app compilation should be incremental, currently it is not.
-                assertCompiledKotlinSources(
-                    (subProject("lib")
-                        .projectPath
-                        .resolve("src")
-                        .allKotlinSources +
-                            subProject("app")
-                                .projectPath
-                                .resolve("src")
-                                .allKotlinSources)
-                        .map { it.relativeTo(projectPath) },
-                    output
-                )
+                val expectedSources = getExpectedKotlinSourcesForDefaultProject(
+                    appSources = listOf("foo/AA.kt", "foo/AAA.kt", "foo/BB.kt", "foo/fooUseA.kt")
+                ) + subProject("lib").projectPath.resolve("src").allKotlinSources.map { it.relativeTo(projectPath) }
+
+                assertCompiledKotlinSources(expectedSources, output)
             }
         }
     }

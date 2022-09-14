@@ -158,9 +158,17 @@ internal class PropertiesProvider private constructor(private val project: Proje
             // The feature should be controlled by a Gradle property.
             // Currently, we also allow it to be controlled by a system property to make it easier to test the feature during development.
             // TODO: Remove the system property later.
-            val gradleProperty = booleanProperty(CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.property) ?: false
-            val systemProperty = CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.value.toBooleanLenient() ?: false
-            return gradleProperty || systemProperty
+
+            val gradleProperty = booleanProperty(CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.property)
+            if (gradleProperty != null) {
+                return gradleProperty
+            }
+            val systemProperty = CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.value?.toBooleanLenient()
+            if (systemProperty != null) {
+                return systemProperty
+            }
+            // Default value
+            return true
         }
 
     val useKotlinAbiSnapshot: Boolean

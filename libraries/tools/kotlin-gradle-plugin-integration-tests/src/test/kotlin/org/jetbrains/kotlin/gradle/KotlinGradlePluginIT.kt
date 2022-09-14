@@ -766,7 +766,10 @@ class KotlinGradleIT : KGPBaseTest() {
 
             buildGradle.modify {
                 val reorderedClasspath = run {
-                    val (kotlinCompilerEmbeddable, others) = classpath.partition { "kotlin-compiler-embeddable" in it }
+                    val (kotlinCompilerEmbeddable, others) = classpath.partition { "kotlin-compiler-embeddable" in it ||
+                                // build-common should be loaded prior compiler-embedable, otherwise we could depend on old version of
+                                // serializer classes and fail with NSME
+                                "kotlin-build-common" in it}
                     others + kotlinCompilerEmbeddable
                 }
                 val newClasspathString = "classpath files(\n" + reorderedClasspath.joinToString(",\n") { "'$it'" } + "\n)"
