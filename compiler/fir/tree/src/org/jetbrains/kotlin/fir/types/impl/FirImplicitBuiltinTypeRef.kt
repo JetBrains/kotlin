@@ -72,6 +72,10 @@ class FirImplicitBooleanTypeRef(
     source: KtSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Boolean)
 
+class FirImplicitNumberTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Number)
+
 class FirImplicitByteTypeRef(
     source: KtSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Byte)
@@ -183,6 +187,7 @@ fun FirImplicitBuiltinTypeRef.withFakeSource(kind: KtFakeSourceElementKind): Fir
         is FirImplicitAnnotationTypeRef -> FirImplicitAnnotationTypeRef(newSource)
         is FirImplicitBooleanTypeRef -> FirImplicitBooleanTypeRef(newSource)
         is FirImplicitByteTypeRef -> FirImplicitByteTypeRef(newSource)
+        is FirImplicitNumberTypeRef -> FirImplicitNumberTypeRef(newSource)
         is FirImplicitShortTypeRef -> FirImplicitShortTypeRef(newSource)
         is FirImplicitIntTypeRef -> FirImplicitIntTypeRef(newSource)
         is FirImplicitLongTypeRef -> FirImplicitLongTypeRef(newSource)

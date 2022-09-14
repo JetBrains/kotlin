@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtAnonymousInitializer
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -31,6 +32,12 @@ object FirJsErrors {
     val JS_MODULE_PROHIBITED_ON_VAR by error0<KtAnnotationEntry>()
     val RUNTIME_ANNOTATION_NOT_SUPPORTED by warning0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION by error0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN by error1<KtElement, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER by error1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val NATIVE_INDEXER_WRONG_PARAMETER_COUNT by error2<KtElement, Int, String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS by error1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)
+    val NATIVE_SETTER_WRONG_RETURN_TYPE by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)
 
     // Supertypes
     val WRONG_MULTIPLE_INHERITANCE by error1<KtElement, FirCallableSymbol<*>>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
