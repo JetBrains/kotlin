@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.checkMissingMessages
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.DYNAMIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_JS_QUALIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_MULTIPLE_INHERITANCE
@@ -23,6 +24,7 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Can''t apply multiple inheritance here, since it''s impossible to generate bridge for system function {0}",
             FirDiagnosticRenderers.SYMBOL
         )
+        map.put(DYNAMIC, "A dynamic type appears here")
 
         map.checkMissingMessages(FirJsErrors)
     }
