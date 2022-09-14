@@ -236,7 +236,7 @@ internal class KtFirScopeProvider(
             project,
             builder,
             token,
-            analysisSession.useSiteAnalisisScope,
+            analysisSession.useSiteAnalysisScope,
             analysisSession.useSiteScopeDeclarationProvider,
             analysisSession.targetPlatform
         )
