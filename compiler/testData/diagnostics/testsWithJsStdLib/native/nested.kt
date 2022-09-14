@@ -1,4 +1,3 @@
-// FIR_IGNORE
 // FIR_IDENTICAL
 object O
 
@@ -41,4 +40,3 @@ fun topLevelFun() {
 
     <!NESTED_EXTERNAL_DECLARATION!>external fun bar(): Int<!>
 }
-

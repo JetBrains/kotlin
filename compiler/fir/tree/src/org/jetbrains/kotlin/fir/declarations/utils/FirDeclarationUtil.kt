@@ -54,6 +54,15 @@ inline val FirDeclaration.isJavaOrEnhancement: Boolean
 inline val FirBasedSymbol<*>.isJavaOrEnhancement: Boolean
     get() = origin is FirDeclarationOrigin.Java || origin == FirDeclarationOrigin.Enhancement
 
+val FirBasedSymbol<*>.singleFqName
+    get() = when (this) {
+        is FirCallableSymbol<*> -> callableId.asSingleFqName()
+        is FirClassLikeSymbol<*> -> classId.asSingleFqName()
+        else -> error("This declaration has no FqName")
+    }
+
+val FirDeclaration.singleFqName get() = symbol.singleFqName
+
 val FirDeclaration.isPubliclyAccessibleMember
     get() = this is FirMemberDeclaration
             && this !is FirValueParameter
@@ -62,3 +71,6 @@ val FirDeclaration.isPubliclyAccessibleMember
 
 val FirDeclaration.isPubliclyAccessible
     get() = this is FirFile || isPubliclyAccessibleMember
+
+val FirDeclaration.isExtension
+    get() = this is FirCallableDeclaration && receiverTypeRef != null

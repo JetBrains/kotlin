@@ -125,18 +125,18 @@ fun FirBasedSymbol<*>.isEffectivelyExternal(session: FirSession): Boolean {
     return getContainingClassSymbol(session)?.isEffectivelyExternal(session) == true
 }
 
-fun FirDeclaration.isNativeObject(session: FirSession): Boolean {
+fun FirBasedSymbol<*>.isNativeObject(session: FirSession): Boolean {
     if (hasAnnotationOrInsideAnnotatedClass(JsNative, session) || isEffectivelyExternal(session)) {
         return true
     }
 
-    if (this is FirPropertyAccessor) {
-        val property = propertySymbol?.fir ?: error("Should've had a property")
+    if (this is FirPropertyAccessorSymbol) {
+        val property = propertySymbol ?: error("Should've had a property")
         return property.hasAnnotationOrInsideAnnotatedClass(JsNative, session)
     }
 
-    return if (this is FirAnonymousInitializer) {
-        getContainingClassSymbol(session)?.fir?.isNativeObject(session) == true
+    return if (this is FirAnonymousInitializerSymbol) {
+        getContainingClassSymbol(session)?.isNativeObject(session) == true
     } else {
         false
     }
