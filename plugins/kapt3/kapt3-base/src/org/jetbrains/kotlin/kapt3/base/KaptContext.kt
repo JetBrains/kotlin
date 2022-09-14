@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.kapt3.base.incremental.JavaClassCacheManager
 import org.jetbrains.kotlin.kapt3.base.incremental.SourcesToReprocess
 import org.jetbrains.kotlin.kapt3.base.javac.*
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
-import org.jetbrains.kotlin.kapt3.base.util.isJava17OrLater
 import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
 import org.jetbrains.kotlin.kapt3.base.util.putJavacOption
 import java.io.Closeable
@@ -39,22 +38,10 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
     private fun preregisterLog(context: Context) {
         val interceptorData = KaptJavaLogBase.DiagnosticInterceptorData()
         context.put(Log.logKey, Context.Factory<Log> { newContext ->
-            if (isJava17OrLater()) {
-                newContext.put(Log.outKey, logger.infoWriter)
-                val errKey = (Log::class.java.fields.firstOrNull() { it.name == "errKey" }
-                    ?: error("Can't find errKey field in Log.class")).get(null)
-                @Suppress("UNCHECKED_CAST")
-                newContext.put(errKey as Context.Key<java.io.PrintWriter>, logger.errorWriter)
-                KaptJavaLog17(
-                    options.projectBaseDir, newContext,
-                    interceptorData, options[KaptFlag.MAP_DIAGNOSTIC_LOCATIONS]
-                )
-            } else {
-                KaptJavaLog(
-                    options.projectBaseDir, newContext, logger.errorWriter, logger.warnWriter, logger.infoWriter,
-                    interceptorData, options[KaptFlag.MAP_DIAGNOSTIC_LOCATIONS]
-                )
-            }
+            KaptJavaLog(
+                options.projectBaseDir, newContext, logger.errorWriter, logger.warnWriter, logger.infoWriter,
+                interceptorData, options[KaptFlag.MAP_DIAGNOSTIC_LOCATIONS]
+            )
         })
     }
 

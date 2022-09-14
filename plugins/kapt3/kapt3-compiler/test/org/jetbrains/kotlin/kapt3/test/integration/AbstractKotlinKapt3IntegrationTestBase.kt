@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.kapt3.test.integration
 
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -33,6 +35,7 @@ abstract class AbstractKotlinKapt3IntegrationTestBase(private val testInfo: Test
         name: String,
         vararg supportedAnnotations: String,
         options: Map<String, String> = emptyMap(),
+        expectFailure: Boolean = false,
         process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, Kapt3ExtensionForTests) -> Unit
     ) {
         val file = File(TEST_DATA_DIR, "$name.kt")
@@ -43,7 +46,12 @@ abstract class AbstractKotlinKapt3IntegrationTestBase(private val testInfo: Test
             process
         ).apply {
             initTestInfo(testInfo)
-            runTest(file.absolutePath)
+            try {
+                runTest(file.absolutePath)
+                if (expectFailure) throw AssertionError("Expected compilation to fail, but it didn't.")
+            } catch (ex: CompilationErrorException) {
+                if (!expectFailure) throw ex
+            }
         }
     }
 
@@ -131,19 +139,21 @@ abstract class AbstractKotlinKapt3IntegrationTestBase(private val testInfo: Test
     }
 
     private fun List<LoggingMessageCollector.Message>.assertContainsDiagnostic(
-        message: String
+        message: String,
+        severity: CompilerMessageSeverity? = null
     ) {
         assertTrue(
-            any {
-                it.message.contains(message)
+            any { msg ->
+                (severity?.let { it == msg.severity } ?: true) && msg.message.contains(message)
             }
         ) {
             """
-            Didn't find expected diagnostic message.
-            Expected: $message
-            Diagnostics:
-            ${this.joinToString("\n") { "${it.severity}: ${it.message}" }}
-            """.trimIndent()
+            |Didn't find expected diagnostic message.
+            |Expected: $message
+            |Severity: ${severity ?: "ANY"}
+            |Diagnostics:
+            |${this.joinToString("\n") { "${it.severity}: ${it.message}" }}
+            """.trimMargin()
         }
     }
 
@@ -151,12 +161,14 @@ abstract class AbstractKotlinKapt3IntegrationTestBase(private val testInfo: Test
     private fun diagnosticsTest(
         name: String,
         vararg supportedAnnotations: String,
+        expectFailure: Boolean = false,
         process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment) -> Unit
     ): List<LoggingMessageCollector.Message> {
         lateinit var messageCollector: LoggingMessageCollector
         test(
             name = name,
-            supportedAnnotations = supportedAnnotations
+            supportedAnnotations = supportedAnnotations,
+            expectFailure = expectFailure,
         ) { typeElements, roundEnv, processingEnv, kaptExtension ->
             messageCollector = kaptExtension.messageCollector
             process(typeElements, roundEnv, processingEnv)
@@ -210,5 +222,21 @@ abstract class AbstractKotlinKapt3IntegrationTestBase(private val testInfo: Test
         assertEquals("someInt", constructors[1].parameters[0].simpleName.toString())
         assertEquals("someLong", constructors[1].parameters[1].simpleName.toString())
         assertEquals("someString", constructors[1].parameters[2].simpleName.toString())
+    }
+
+    @Test
+    fun testLog() {
+        val diagnostics = diagnosticsTest(
+            name = "Log",
+            supportedAnnotations = arrayOf("*"),
+            expectFailure = true
+        ) { _, _, env ->
+            env.messager.printMessage(Diagnostic.Kind.ERROR, "a error from processor")
+            env.messager.printMessage(Diagnostic.Kind.WARNING, "a warning from processor")
+            env.messager.printMessage(Diagnostic.Kind.NOTE, "a note from processor")
+        }
+        diagnostics.assertContainsDiagnostic("error: a error from processor", CompilerMessageSeverity.ERROR)
+        diagnostics.assertContainsDiagnostic("warning: a warning from processor", CompilerMessageSeverity.STRONG_WARNING)
+        diagnostics.assertContainsDiagnostic("Note: a note from processor", CompilerMessageSeverity.INFO)
     }
 }
