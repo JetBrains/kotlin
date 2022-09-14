@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.psi.stubs.elements;
 import org.jetbrains.kotlin.psi.*;
 
 public interface KtStubElementTypes {
-    KtFileElementType FILE = KtFileElementType.INSTANCE;
-
     KtClassElementType CLASS = new KtClassElementType("CLASS");
     KtFunctionElementType FUNCTION = new KtFunctionElementType("FUN");
     KtPropertyElementType PROPERTY = new KtPropertyElementType("PROPERTY");

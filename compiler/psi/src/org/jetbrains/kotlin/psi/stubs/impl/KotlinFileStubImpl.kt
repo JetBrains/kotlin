@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
 import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.FILE
+import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.IMPORT_LIST
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -59,7 +59,7 @@ class KotlinFileStubImpl(
 
     override fun getPackageFqName(): FqName = FqName(packageName)
     override fun isScript(): Boolean = isScript
-    override fun getType(): IStubFileElementType<KotlinFileStub> = FILE
+    override fun getType(): IStubFileElementType<KotlinFileStub> = KtFileElementType.INSTANCE
 
     override fun toString(): String = "PsiJetFileStubImpl[" + "package=" + getPackageFqName().asString() + "]"
 
