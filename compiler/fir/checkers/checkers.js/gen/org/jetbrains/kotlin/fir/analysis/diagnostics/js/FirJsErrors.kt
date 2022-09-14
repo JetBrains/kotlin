@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics.js
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.psi.KtExpression
 
 /*
  * This file was generated automatically
@@ -15,6 +16,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.*
  */
 
 object FirJsErrors {
+    // Annotations
+    val WRONG_JS_QUALIFIER by error0<KtExpression>()
+
     init {
         RootDiagnosticRendererFactory.registerFactory(FirJsErrorsDefaultMessages)
     }
