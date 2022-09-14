@@ -1,4 +1,3 @@
-// FIR_IGNORE
 // FIR_IDENTICAL
 external class C {
     inner class <!WRONG_EXTERNAL_DECLARATION!>Inner<!>
