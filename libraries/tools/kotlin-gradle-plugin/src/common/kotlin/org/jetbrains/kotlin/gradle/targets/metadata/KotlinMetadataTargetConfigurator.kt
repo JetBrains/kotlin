@@ -120,6 +120,7 @@ class KotlinMetadataTargetConfigurator :
             val tasksProvider = KotlinTasksProvider()
             KotlinCommonSourceSetProcessor(compilation, tasksProvider)
         }
+
         is KotlinSharedNativeCompilation -> NativeSharedCompilationProcessor(compilation)
         else -> error("unsupported compilation type ${compilation::class.qualifiedName}")
     }
@@ -306,6 +307,7 @@ class KotlinMetadataTargetConfigurator :
                 target,
                 platformCompilations.map { (it as AbstractKotlinNativeCompilation).konanTarget }
             )
+
             else -> KotlinCommonCompilationFactory(target)
         }
 
@@ -567,10 +569,8 @@ internal fun createMetadataDependencyTransformationClasspath(
 }
 
 internal fun isSharedNativeSourceSet(sourceSet: KotlinSourceSet): Boolean {
-    val compilations = sourceSet.internal.compilations
-    return compilations.isNotEmpty() && compilations.all {
-        it.platformType == KotlinPlatformType.common || it.platformType == KotlinPlatformType.native
-    }
+    val compilations = sourceSet.internal.compilations.filterNot { it.platformType == KotlinPlatformType.common }
+    return compilations.isNotEmpty() && compilations.all { it.platformType == KotlinPlatformType.native }
 }
 
 internal fun dependsOnClosureWithInterCompilationDependencies(sourceSet: KotlinSourceSet): Set<KotlinSourceSet> =
