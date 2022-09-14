@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.ClassId
@@ -61,6 +58,13 @@ inline val FirDeclaration.isJavaOrEnhancement: Boolean
     get() = origin is FirDeclarationOrigin.Java || origin == FirDeclarationOrigin.Enhancement
 inline val FirBasedSymbol<*>.isJavaOrEnhancement: Boolean
     get() = origin is FirDeclarationOrigin.Java || origin == FirDeclarationOrigin.Enhancement
+
+val FirBasedSymbol<*>.name
+    get() = when (this) {
+        is FirCallableSymbol<*> -> name
+        is FirClassLikeSymbol<*> -> name
+        else -> null
+    }
 
 val FirDeclaration.name
     get() = when (this) {
