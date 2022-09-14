@@ -858,6 +858,16 @@ internal class NestedJsModuleProhibitedImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.NestedJsModuleProhibited(), KtAbstractFirDiagnostic<KtElement>
 
+internal class RuntimeAnnotationNotSupportedImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.RuntimeAnnotationNotSupported(), KtAbstractFirDiagnostic<PsiElement>
+
+internal class RuntimeAnnotationOnExternalDeclarationImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.RuntimeAnnotationOnExternalDeclaration(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class OptInUsageImpl(
     override val optInMarkerFqName: FqName,
     override val message: String,
