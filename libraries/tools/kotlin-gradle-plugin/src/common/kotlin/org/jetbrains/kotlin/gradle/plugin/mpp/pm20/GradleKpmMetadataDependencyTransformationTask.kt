@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.utils.getValue
 import java.io.File
 import javax.inject.Inject
 
-internal open class TransformKotlinGranularMetadataForFragment
+internal open class GradleKpmMetadataDependencyTransformationTask
 @Inject constructor(
     @get:Internal
     @field:Transient
@@ -92,7 +92,7 @@ internal open class TransformKotlinGranularMetadataForFragment
 }
 
 internal class FragmentResolvedMetadataProvider(
-    taskProvider: TaskProvider<out TransformKotlinGranularMetadataForFragment>
+    taskProvider: TaskProvider<out GradleKpmMetadataDependencyTransformationTask>
 ) : ResolvedMetadataFilesProvider {
     override val buildDependencies: Iterable<TaskProvider<*>> = listOf(taskProvider)
     override val metadataResolutions: Iterable<MetadataDependencyResolution> by taskProvider.map { it.metadataDependencyResolutions }
