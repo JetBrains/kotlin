@@ -1663,6 +1663,11 @@ internal class MisplacedTypeParameterConstraintsImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.MisplacedTypeParameterConstraints(), KtAbstractFirDiagnostic<KtTypeParameter>
 
+internal class DynamicSupertypeImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.DynamicSupertype(), KtAbstractFirDiagnostic<KtTypeReference>
+
 internal class DynamicUpperBoundImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
