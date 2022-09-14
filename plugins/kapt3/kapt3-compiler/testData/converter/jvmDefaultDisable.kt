@@ -1,4 +1,5 @@
 // !JVM_DEFAULT_MODE: disable
+// EXPECTED_ERROR: (kotlin:20:5) modifier private not allowed here
 
 interface Foo {
     fun foo() {
@@ -11,4 +12,13 @@ interface Foo {
     }
 
     fun bar()
+
+    private fun privateMethodWithDefault() {
+        System.out.println("privateMethodWithDefault")
+    }
+
+    @JvmDefault
+    private fun privateMethodWithDefault2() {
+        System.out.println("privateMethodWithDefault2")
+    }
 }
