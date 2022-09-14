@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
-
 /**
  * @see [compiler/testData/cli/js/jsExtraHelp.out]
  */
@@ -30,6 +28,3 @@ internal const val PER_MODULE = "-Xir-per-module"
 internal const val PER_MODULE_OUTPUT_NAME = "-Xir-per-module-output-name"
 
 internal const val WASM_BACKEND = "-Xwasm"
-
-fun KotlinJsOptions.isProduceUnzippedKlib() = PRODUCE_UNZIPPED_KLIB in freeCompilerArgs
-fun KotlinJsOptions.isProduceZippedKlib() = PRODUCE_ZIPPED_KLIB in freeCompilerArgs

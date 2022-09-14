@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Task
+import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
@@ -117,9 +118,12 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     ),
                     listOf(compilation)
                 ) { task ->
+                    task.dependsOn(binary.linkSyncTask)
                     val entryFileProvider = binary.linkSyncTask.flatMap { syncTask ->
-                        binary.linkTask.map {
-                            syncTask.destinationDir.resolve(it.outputFileProperty.get().name)
+                        binary.linkTask.flatMap { linkTask ->
+                            linkTask.outputFileProperty.map {
+                                syncTask.destinationDir.resolve(it.name)
+                            }
                         }
                     }
 
@@ -203,9 +207,13 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     ),
                     listOf(compilation)
                 ) { task ->
-                    val entryFileProvider = binary.linkSyncTask.map {
-                        it.destinationDir
-                            .resolve(binary.linkTask.get().outputFileProperty.get().name)
+                    task.dependsOn(binary.linkSyncTask)
+                    val entryFileProvider = binary.linkSyncTask.flatMap { linkSyncTask ->
+                        binary.linkTask.flatMap { linkTask ->
+                            linkTask.outputFileProperty.map {
+                                linkSyncTask.destinationDir.resolve(it.name)
+                            }
+                        }
                     }
 
                     task.description = "build webpack ${mode.name.toLowerCase()} bundle"
@@ -266,9 +274,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
         configureOptimization(mode)
 
-        entryProperty.set(
-            project.layout.file(entryFileProvider)
-        )
+        entryProperty.fileProvider(entryFileProvider)
 
         configurationActions.forEach { configure ->
             configure()

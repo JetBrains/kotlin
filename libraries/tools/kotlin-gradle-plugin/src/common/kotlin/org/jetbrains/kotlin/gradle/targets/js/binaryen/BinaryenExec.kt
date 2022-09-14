@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.js.binaryen
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
@@ -75,7 +74,7 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
                 it.binaryen = binaryen
                 it.executable = binaryen.requireConfigured().executablePath.absolutePath
                 it.dependsOn(binaryen.setupTaskProvider)
-                it.dependsOn(compilation.compileKotlinTaskProvider)
+                it.dependsOn(compilation.compileTaskProvider)
                 it.configuration()
             }
         }

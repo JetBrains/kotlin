@@ -530,7 +530,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                     ":compileTestKotlin2Js"
                 )
                 if (irBackend) {
-                    assertFileInProjectExists("build/kotlin2js/main/default/manifest")
+                    assertFileInProjectExists("build/kotlin2js/main/module.js/default/manifest")
                 } else {
                     assertFileInProjectExists("build/kotlin2js/main/module.js")
                 }

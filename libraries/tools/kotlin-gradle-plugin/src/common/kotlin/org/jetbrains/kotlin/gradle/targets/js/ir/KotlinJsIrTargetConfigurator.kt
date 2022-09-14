@@ -5,22 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.gradle.api.InvalidUserDataException
 import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
+import org.jetbrains.kotlin.gradle.dsl.CompilerJsOptions
+import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
+import org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
-import org.jetbrains.kotlin.gradle.utils.isParentOf
-import org.jetbrains.kotlin.gradle.utils.klibModuleName
-import java.io.File
 
 open class KotlinJsIrTargetConfigurator() :
     KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget>(true),
@@ -73,70 +69,30 @@ open class KotlinJsIrTargetConfigurator() :
         super.configureCompilations(target)
 
         target.compilations.all { compilation ->
-            compilation.kotlinOptions {
+            compilation.compilerOptions.configure {
                 configureOptions()
                 
                 if (target.platformType == KotlinPlatformType.wasm) {
-                    freeCompilerArgs = freeCompilerArgs + WASM_BACKEND
+                    freeCompilerArgs.add(WASM_BACKEND)
                 }
 
-                var produceUnzippedKlib = isProduceUnzippedKlib()
-                val produceZippedKlib = isProduceZippedKlib()
-
-                freeCompilerArgs = freeCompilerArgs + DISABLE_PRE_IR
-
-                val isMainCompilation = compilation.isMain()
-
-                if (!produceUnzippedKlib && !produceZippedKlib) {
-                    freeCompilerArgs = freeCompilerArgs + PRODUCE_UNZIPPED_KLIB
-                    produceUnzippedKlib = true
-                }
-
-                // Configure FQ module name to avoid cyclic dependencies in klib manifests (see KT-36721).
-                val baseName = if (isMainCompilation) {
-                    target.project.name
-                } else {
-                    "${target.project.name}_${compilation.name}"
-                }
-
-                compilation.compileKotlinTaskProvider.configure { task ->
-                    val outputFilePath = outputFile ?: if (produceUnzippedKlib) {
-                        task.destinationDirectory.get().asFile.absoluteFile.normalize().absolutePath
-                    } else {
-                        File(task.destinationDirectory.get().asFile, "$baseName.$KLIB_TYPE").absoluteFile.normalize().absolutePath
-                    }
-                    outputFile = outputFilePath
-
-                    val taskOutputDir = if (produceUnzippedKlib) File(outputFilePath) else File(outputFilePath).parentFile
-                    if (taskOutputDir.isParentOf(task.project.rootDir))
-                        throw InvalidUserDataException(
-                            "The output directory '$taskOutputDir' (defined by outputFile of $task) contains or " +
-                                    "matches the project root directory '${task.project.rootDir}'.\n" +
-                                    "Gradle will not be able to build the project because of the root directory lock.\n" +
-                                    "To fix this, consider using the default outputFile location instead of providing it explicitly."
-                        )
-
-                    task.destinationDirectory.set(taskOutputDir)
-                }
-
-                val klibModuleName = target.project.klibModuleName(baseName)
-                freeCompilerArgs = freeCompilerArgs + "$MODULE_NAME=$klibModuleName"
+                freeCompilerArgs.add(DISABLE_PRE_IR)
             }
 
             compilation.binaries
                 .withType(JsIrBinary::class.java)
                 .all { binary ->
                     binary.linkTask.configure { linkTask ->
-                        linkTask.kotlinOptions.configureOptions()
+                        linkTask.compilerOptions.configureOptions()
                     }
                 }
         }
     }
 
-    private fun KotlinJsOptions.configureOptions() {
-        moduleKind = "umd"
-        sourceMap = true
-        sourceMapEmbedSources = "never"
+    private fun CompilerJsOptions.configureOptions() {
+        moduleKind.set(JsModuleKind.MODULE_UMD)
+        sourceMap.set(true)
+        sourceMapEmbedSources.set(JsSourceMapEmbedMode.SOURCE_MAP_SOURCE_CONTENT_NEVER)
     }
 
     override fun defineConfigurationsForTarget(target: KotlinJsIrTarget) {

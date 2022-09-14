@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import groovy.lang.Closure
-import org.gradle.api.DefaultTask
-import org.gradle.api.GradleException
-import org.gradle.api.Project
-import org.gradle.api.Task
+import org.gradle.api.*
 import org.gradle.api.file.*
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
@@ -57,6 +55,11 @@ import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.report.BuildReportsService
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJvmOptionsCompat
+import org.jetbrains.kotlin.gradle.targets.js.ir.*
+import org.jetbrains.kotlin.gradle.targets.js.ir.DISABLE_PRE_IR
+import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_JS
+import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_UNZIPPED_KLIB
+import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_ZIPPED_KLIB
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotDisabled
@@ -940,25 +943,32 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:Input
     internal var incrementalJsKlib: Boolean = true
 
-    override fun isIncrementalCompilationEnabled(): Boolean =
-        when {
-            "-Xir-produce-js" in kotlinOptions.freeCompilerArgs -> {
-                false
-            }
-            "-Xir-produce-klib-dir" in kotlinOptions.freeCompilerArgs -> {
+    override fun isIncrementalCompilationEnabled(): Boolean {
+        val freeArgs = enhancedFreeCompilerArgs.get()
+        return when {
+            PRODUCE_JS in freeArgs -> false
+
+            PRODUCE_UNZIPPED_KLIB in freeArgs -> {
                 KotlinBuildStatsService.applyIfInitialised {
                     it.report(BooleanMetrics.JS_KLIB_INCREMENTAL, incrementalJsKlib)
                 }
                 incrementalJsKlib
             }
-            "-Xir-produce-klib-file" in kotlinOptions.freeCompilerArgs -> {
+
+            PRODUCE_ZIPPED_KLIB in freeArgs -> {
                 KotlinBuildStatsService.applyIfInitialised {
                     it.report(BooleanMetrics.JS_KLIB_INCREMENTAL, incrementalJsKlib)
                 }
                 incrementalJsKlib
             }
+
             else -> incremental
         }
+    }
+
+    // Workaround to be able to use default value and change it later based on external input
+    @get:Internal
+    internal abstract val defaultDestinationDirectory: DirectoryProperty
 
     // This can be file or directory
     @get:Internal
@@ -972,6 +982,14 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:OutputFile
     @get:Optional
     abstract val optionalOutputFile: RegularFileProperty
+
+    // Workaround to add additional compiler args based on the exising one
+    // Currently there is a logic to add additional compiler arguments based on already existing one.
+    // And it is not possible to update compilerOptions.freeCompilerArgs using some kind of .map
+    // or .flatMap call - this will cause StackOverlowException as upstream source will be updated
+    // and .map will be called again.
+    @get:Input
+    internal abstract val enhancedFreeCompilerArgs: ListProperty<String>
 
     override fun createCompilerArgs(): K2JSCompilerArguments =
         K2JSCompilerArguments()
@@ -992,6 +1010,14 @@ abstract class Kotlin2JsCompile @Inject constructor(
         if (defaultsOnly) return
 
         (compilerOptions as CompilerJsOptionsDefault).fillCompilerArguments(args)
+        if (!args.sourceMapPrefix.isNullOrEmpty()) {
+            args.sourceMapBaseDirs = sourceMapBaseDir.get().asFile.absolutePath
+        }
+        // Rewriting default outputFile property back to outputFilePropertyValue
+        args.outputFile = outputFileProperty.get().absoluteFile.normalize().absolutePath
+        // Overriding freeArgs from compilerOptions with enhanced one
+        // containing additional arguments based on the js compilation configuration
+        args.freeArgs = enhancedFreeCompilerArgs.get()
     }
 
     @get:InputFiles
@@ -1018,26 +1044,32 @@ abstract class Kotlin2JsCompile @Inject constructor(
     private fun isHybridKotlinJsLibrary(file: File): Boolean =
         JsLibraryUtils.isKotlinJavascriptLibrary(file) && isKotlinLibrary(file)
 
-    private fun KotlinJsOptions.isPreIrBackendDisabled(): Boolean =
-        listOf(
-            "-Xir-only",
-            "-Xir-produce-js",
-            "-Xir-produce-klib-file"
-        ).any(freeCompilerArgs::contains)
+    private val preIrBackendCompilerFlags = listOf(
+        DISABLE_PRE_IR,
+        PRODUCE_JS,
+        PRODUCE_ZIPPED_KLIB
+    )
+
+    private fun isPreIrBackendDisabled(): Boolean = enhancedFreeCompilerArgs
+        .get()
+        .any { preIrBackendCompilerFlags.contains(it) }
 
     // see also isIncrementalCompilationEnabled
-    private fun KotlinJsOptions.isIrBackendEnabled(): Boolean =
-        listOf(
-            "-Xir-produce-klib-dir",
-            "-Xir-produce-js",
-            "-Xir-produce-klib-file"
-        ).any(freeCompilerArgs::contains)
+    private val irBackendCompilerFlags = listOf(
+        PRODUCE_UNZIPPED_KLIB,
+        PRODUCE_JS,
+        PRODUCE_ZIPPED_KLIB
+    )
+
+    private fun isIrBackendEnabled(): Boolean = enhancedFreeCompilerArgs
+        .get()
+        .any { irBackendCompilerFlags.contains(it) }
 
     private val File.asLibraryFilterCacheKey: LibraryFilterCachingService.LibraryFilterCacheKey
         get() = LibraryFilterCachingService.LibraryFilterCacheKey(
             this,
-            irEnabled = kotlinOptions.isIrBackendEnabled(),
-            preIrDisabled = kotlinOptions.isPreIrBackendDisabled()
+            irEnabled = isIrBackendEnabled(),
+            preIrDisabled = isPreIrBackendDisabled()
         )
 
     // Kotlin/JS can operate in 3 modes:
@@ -1045,8 +1077,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
     //  2) purely IR backend
     //  3) hybrid pre-IR and IR backend. Can only accept libraries with both JS and IR parts.
     private val libraryFilterBody: (File) -> Boolean
-        get() = if (kotlinOptions.isIrBackendEnabled()) {
-            if (kotlinOptions.isPreIrBackendDisabled()) {
+        get() = if (isIrBackendEnabled()) {
+            if (isPreIrBackendDisabled()) {
                 //::isKotlinLibrary
                 // Workaround for KT-47797
                 { isKotlinLibrary(it) }
@@ -1088,7 +1120,9 @@ abstract class Kotlin2JsCompile @Inject constructor(
     ) {
         logger.debug("Calling compiler")
 
-        if (kotlinOptions.isIrBackendEnabled()) {
+        validateOutputDirectory()
+
+        if (isIrBackendEnabled()) {
             logger.info(USING_JS_IR_BACKEND_MESSAGE)
         }
 
@@ -1103,11 +1137,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
         }
 
         args.friendModules = friendDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }
-
-        if (!args.sourceMapPrefix.isNullOrEmpty()) {
-            args.sourceMapBaseDirs = sourceMapBaseDir.get().asFile.absolutePath
-        }
-
         args.legacyDeprecatedNoWarn = jsLegacyNoWarn.get()
 
         logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
@@ -1140,6 +1169,22 @@ abstract class Kotlin2JsCompile @Inject constructor(
             environment,
             taskOutputsBackup
         )
+    }
+
+    private val projectRootDir = project.rootDir
+
+    private fun validateOutputDirectory() {
+        val outputFile = outputFileProperty.get()
+        val outputDir = outputFile.parentFile
+
+        if (outputDir.isParentOf(projectRootDir)) {
+            throw InvalidUserDataException(
+                "The output directory '$outputDir' (defined by outputFile of ':$name') contains or " +
+                        "matches the project root directory '${projectRootDir}'.\n" +
+                        "Gradle will not be able to build the project because of the root directory lock.\n" +
+                        "To fix this, consider using the default outputFile location instead of providing it explicitly."
+            )
+        }
     }
 }
 

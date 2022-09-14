@@ -156,7 +156,11 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     protected fun applyStandardTaskConfiguration(taskConfiguration: AbstractKotlinCompileConfig<*>) {
         taskConfiguration.configureTask {
             it.description = taskDescription
-            it.destinationDirectory.convention(defaultKotlinDestinationDir)
+            if (it is Kotlin2JsCompile) {
+                it.defaultDestinationDirectory.convention(defaultKotlinDestinationDir)
+            } else {
+                it.destinationDirectory.convention(defaultKotlinDestinationDir)
+            }
             it.libraries.from({ kotlinCompilation.compileDependencyFiles })
         }
     }
@@ -252,46 +256,11 @@ internal class Kotlin2JsSourceSetProcessor(
             kotlinCompilation.javaSourceSet.clearJavaSrcDirs()
         }
 
-        // outputFile can be set later during the configuration phase, get it only after the phase:
+
         project.whenEvaluated {
-            kotlinTask.configure { kotlinTaskInstance ->
-                val kotlinOptions = kotlinTaskInstance.kotlinOptions
-                val outputFile = kotlinTaskInstance.outputFileProperty.get()
-                val outputDir: File = outputFile.parentFile
-                kotlinOptions.outputFile = if (!kotlinOptions.isProduceUnzippedKlib()) {
-                    outputFile.absolutePath
-                } else {
-                    outputFile.parentFile.absolutePath
-                }
-                if (outputDir.isParentOf(project.rootDir))
-                    throw InvalidUserDataException(
-                        "The output directory '$outputDir' (defined by outputFile of $kotlinTaskInstance) contains or " +
-                                "matches the project root directory '${project.rootDir}'.\n" +
-                                "Gradle will not be able to build the project because of the root directory lock.\n" +
-                                "To fix this, consider using the default outputFile location instead of providing it explicitly."
-                    )
-                kotlinTaskInstance.destinationDirectory.set(outputDir)
-
-                if (
-                    kotlinOptions.freeCompilerArgs.contains(PRODUCE_JS) ||
-                    kotlinOptions.freeCompilerArgs.contains(PRODUCE_UNZIPPED_KLIB) ||
-                    kotlinOptions.freeCompilerArgs.contains(PRODUCE_ZIPPED_KLIB)
-                ) {
-                    // Configure FQ module name to avoid cyclic dependencies in klib manifests (see KT-36721).
-                    val baseName = if (kotlinCompilation.isMainCompilationData()) {
-                        project.name
-                    } else {
-                        "${project.name}_${kotlinCompilation.compilationPurpose}"
-                    }
-                    kotlinTaskInstance.kotlinOptions.freeCompilerArgs += "$MODULE_NAME=${project.klibModuleName(baseName)}"
-                }
-            }
-
-            project.whenEvaluated {
-                val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
-                if (kotlinCompilation is KotlinCompilation<*>) { // FIXME support compiler plugins with PM20
-                    subpluginEnvironment.addSubpluginOptions(project, kotlinCompilation)
-                }
+            val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
+            if (kotlinCompilation is KotlinCompilation<*>) { // FIXME support compiler plugins with PM20
+                subpluginEnvironment.addSubpluginOptions(project, kotlinCompilation)
             }
         }
     }

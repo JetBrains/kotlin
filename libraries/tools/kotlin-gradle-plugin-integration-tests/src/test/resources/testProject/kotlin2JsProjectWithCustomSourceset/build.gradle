@@ -37,7 +37,7 @@ if (isIrBackend) {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
-    integrationTestImplementation files(file(compileKotlin2Js.kotlinOptions.outputFile).parent)
+    integrationTestImplementation files(compileKotlin2Js.destinationDirectory)
     integrationTestImplementation "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
 }
 

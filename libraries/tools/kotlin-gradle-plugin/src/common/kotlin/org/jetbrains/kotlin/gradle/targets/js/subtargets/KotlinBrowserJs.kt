@@ -289,14 +289,16 @@ abstract class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             KotlinJsBinaryMode.DEVELOPMENT -> devDceTaskProvider
         }
 
+        dependsOn(actualDceTaskProvider)
+
         entryProperty.set(
-            project.layout.file(
-                actualDceTaskProvider
-                    .map {
-                        it.destinationDirectory.file(compilation.compileKotlinTask.outputFileProperty.get().name)
-                    }
-                    .flatMap { it.map { it.asFile } }
-            )
+            actualDceTaskProvider.flatMap { dceTask ->
+                compilation.compileTaskProvider.flatMap { compileTask ->
+                    dceTask.destinationDirectory.file(
+                        compileTask.outputFileProperty.map { it.name }
+                    )
+                }
+            }
         )
 
         resolveFromModulesFirst = true
