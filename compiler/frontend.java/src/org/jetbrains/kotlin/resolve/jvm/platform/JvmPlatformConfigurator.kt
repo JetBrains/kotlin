@@ -61,6 +61,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         PolymorphicSignatureCallChecker,
         SamInterfaceConstructorReferenceCallChecker,
         EnumDeclaringClassDeprecationChecker,
+        UpperBoundViolatedInTypealiasConstructorChecker,
     ),
 
     additionalTypeCheckers = listOf(

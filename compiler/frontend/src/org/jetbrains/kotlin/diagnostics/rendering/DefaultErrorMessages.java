@@ -594,7 +594,7 @@ public class DefaultErrorMessages {
         });
 
         MAP.put(UPPER_BOUND_VIOLATED, "Type argument is not within its bounds: should be subtype of ''{0}''", RENDER_TYPE, RENDER_TYPE);
-        MAP.put(UPPER_BOUND_VIOLATED_WARNING, "Type argument is not within its bounds: should be subtype of ''{0}''", RENDER_TYPE, RENDER_TYPE);
+        MAP.put(UPPER_BOUND_VIOLATED_WARNING, "Type argument is not within its bounds: ''{1}'' should be subtype of ''{0}''. This warning will become an error in K2", RENDER_TYPE, RENDER_TYPE);
         MAP.put(FINAL_UPPER_BOUND, "''{0}'' is a final type, and thus a value of the type parameter is predetermined", RENDER_TYPE);
         MAP.put(UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE, "Extension function type can not be used as an upper bound");
         MAP.put(ONLY_ONE_CLASS_BOUND_ALLOWED, "Only one of the upper bounds can be a class");

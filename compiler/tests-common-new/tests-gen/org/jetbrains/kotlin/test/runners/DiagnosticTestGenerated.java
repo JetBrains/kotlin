@@ -39341,6 +39341,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             public void testUpperBoundViolated() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/typealias/upperBoundViolated.kt");
             }
+
+            @Test
+            @TestMetadata("upperBoundViolated2.kt")
+            public void testUpperBoundViolated2() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/typealias/upperBoundViolated2.kt");
+            }
         }
 
         @Nested
