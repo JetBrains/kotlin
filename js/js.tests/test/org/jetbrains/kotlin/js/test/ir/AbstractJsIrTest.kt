@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.js.test.ir
 
-import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.js.test.AbstractJsBlackBoxCodegenTestBase
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
@@ -16,20 +15,20 @@ import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
-import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.runners.codegen.commonClassicFrontendHandlersForCodegenTest
+import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.services.JsLibraryProvider
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.utils.isDirectiveDefined
-import java.io.File
 import java.lang.Boolean.getBoolean
 
 abstract class AbstractJsIrTest(
@@ -181,10 +179,42 @@ private class SkipMultiModuleTestsMetaConfigurator(testServices: TestServices) :
     }
 }
 
-open class AbstractFirJsTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
-    private val pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/"
-    private val testGroupOutputDirPrefix = "box/"
+class TestPassesNotifier(testServices: TestServices) : AfterAnalysisChecker(testServices) {
+    companion object {
+        const val SUPPRESS_FAILING = true
+    }
 
+    override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
+        val testFile = testServices.moduleStructure.originalTestDataFiles.first()
+
+        val failedNonSuppressibleAssertions = failedAssertions.filter {
+            when (it) {
+                is WrappedException.FromFacade -> it.facade !is FirFrontendFacade && it.facade !is Fir2IrResultsConverter
+                is WrappedException.FromHandler -> it.handler.artifactKind != FrontendKinds.FIR
+                is WrappedException.FromMetaInfoHandler -> false
+                else -> true
+            }
+        }
+
+        if (failedAssertions.size == failedNonSuppressibleAssertions.size) {
+            val lines = testFile.readLines()
+            val clearedLines = lines.filter { it.trim() != "// FIR_IGNORE" }
+            val hasFirIgnore = lines.size != clearedLines.size
+
+            if (hasFirIgnore) {
+                testFile.writeText(clearedLines.joinToString("\n"))
+            }
+        }
+
+        return if (SUPPRESS_FAILING) {
+            failedNonSuppressibleAssertions
+        } else {
+            failedAssertions
+        }
+    }
+}
+
+open class AbstractFirJsTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
     val targetFrontend = FrontendKinds.FIR
     private val skipMinification: Boolean = getBoolean("kotlin.js.skipMinificationTest")
 
@@ -205,8 +235,6 @@ open class AbstractFirJsTest : AbstractKotlinCompilerWithTargetBackendTest(Targe
         defaultDirectives {
             +DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
             JsEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR with pathToRootOutputDir
-            JsEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR with pathToTestDir
-            JsEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX with testGroupOutputDirPrefix
             +JsEnvironmentConfigurationDirectives.TYPED_ARRAYS
             if (skipMinification) +JsEnvironmentConfigurationDirectives.SKIP_MINIFICATION
             if (getBoolean("kotlin.js.ir.skipRegularMode")) +JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE
@@ -224,6 +252,14 @@ open class AbstractFirJsTest : AbstractKotlinCompilerWithTargetBackendTest(Targe
 
         forTestsNotMatching("compiler/testData/codegen/boxError/*") {
             enableMetaInfoHandler()
+        }
+
+        forTestsMatching("compiler/testData/diagnostics/testsWithJsStdLib*") {
+            configurationForClassicAndFirTestsAlongside()
+
+            useAfterAnalysisCheckers(
+                ::TestPassesNotifier,
+            )
         }
 
         useConfigurators(

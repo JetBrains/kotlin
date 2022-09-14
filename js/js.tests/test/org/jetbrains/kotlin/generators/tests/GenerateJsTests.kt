@@ -23,6 +23,8 @@ fun main(args: Array<String>) {
         "compileKotlinAgainstKotlin",
     )
 
+    val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
+
     // TODO: repair these tests
     //generateTestDataForReservedWords()
 
@@ -121,7 +123,13 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractFirJsTest> {
-                model("box/", pattern = "^([^_](.+))\\.kt$")
+                model("box/", pattern = "^([^_](.+))\\.kt$", excludedPattern = excludedFirTestdataPattern)
+            }
+        }
+
+        testGroup("js/js.tests/tests-gen", "compiler/testData/diagnostics", testRunnerMethodName = "runTest0") {
+            testClass<AbstractFirJsTest>(suiteTestClassName = "FirJsOldFrontendDiagnosticsTestGenerated") {
+                model("testsWithJsStdLib", pattern = "^([^_](.+))\\.kt$", excludedPattern = excludedFirTestdataPattern)
             }
         }
 
