@@ -604,7 +604,8 @@ include ":generators:analysis-api-generator",
         ":analysis:decompiled:decompiler-to-stubs",
         ":analysis:decompiled:decompiler-to-file-stubs",
         ":analysis:decompiled:light-classes-for-decompiled",
-        ":analysis:decompiled:light-classes-for-decompiled-fe10"
+        ":analysis:decompiled:light-classes-for-decompiled-fe10",
+        ":prepare:analysis-api-test-framework"
 
 
 if (buildProperties.inJpsBuildIdeaSync) {
