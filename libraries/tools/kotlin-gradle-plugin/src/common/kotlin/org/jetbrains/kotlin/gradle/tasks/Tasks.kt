@@ -363,7 +363,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     private val systemPropertiesService = CompilerSystemPropertiesService.registerIfAbsent(project.gradle)
 
-    /** Task outputs that we don't want to include in [TaskOutputsBackup] (see [TaskOutputsBackup.taskOutputsToRestore] for more info). */
+    /** Task outputs that we don't want to include in [TaskOutputsBackup] (see [TaskOutputsBackup.outputsToRestore] for more info). */
     @get:Internal
     protected open val taskOutputsBackupExcludes: List<File> = emptyList()
 
@@ -391,7 +391,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                             fileSystemOperations,
                             layout.buildDirectory,
                             layout.buildDirectory.dir("snapshot/kotlin/$name"),
-                            taskOutputsToRestore = allOutputFiles() - taskOutputsBackupExcludes,
+                            outputsToRestore = allOutputFiles() - taskOutputsBackupExcludes,
                             logger
                         ).also {
                             it.createSnapshot()

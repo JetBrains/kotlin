@@ -32,7 +32,7 @@ internal class TaskOutputsBackup(
      * restore (e.g., if (1) they are too big and (2) they are updated only at the end of the task execution so in a failed task run, they
      * are usually unchanged and therefore don't need to be restored).
      */
-    val taskOutputsToRestore: List<File>,
+    val outputsToRestore: List<File>,
 
     val logger: Logger
 ) {
@@ -40,7 +40,7 @@ internal class TaskOutputsBackup(
     fun createSnapshot() {
         // Kotlin JS compilation task declares one file from 'destinationDirectory' output as task `@OutputFile'
         // property. To avoid snapshot sync collisions, each snapshot output directory has also 'index' as prefix.
-        taskOutputsToRestore.toSortedSet().forEachIndexed { index, outputPath ->
+        outputsToRestore.toSortedSet().forEachIndexed { index, outputPath ->
             if (outputPath.isDirectory && !outputPath.isEmptyDirectory) {
                 compressDirectoryToZip(
                     File(snapshotsDir.get().asFile, index.asSnapshotArchiveName),
@@ -57,10 +57,10 @@ internal class TaskOutputsBackup(
 
     fun restoreOutputs() {
         fileSystemOperations.delete {
-            it.delete(taskOutputsToRestore)
+            it.delete(outputsToRestore)
         }
 
-        taskOutputsToRestore.toSortedSet().forEachIndexed { index, outputPath ->
+        outputsToRestore.toSortedSet().forEachIndexed { index, outputPath ->
             val snapshotDir = snapshotsDir.get().file(index.asSnapshotDirectoryName).asFile
             if (snapshotDir.isDirectory) {
                 fileSystemOperations.copy { spec ->

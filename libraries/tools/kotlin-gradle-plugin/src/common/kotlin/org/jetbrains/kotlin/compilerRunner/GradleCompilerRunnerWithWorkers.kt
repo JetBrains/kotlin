@@ -40,7 +40,7 @@ internal class GradleCompilerRunnerWithWorkers(
         workQueue.submit(GradleKotlinCompilerWorkAction::class.java) { params ->
             params.compilerWorkArguments.set(workArgs)
             if (taskOutputsBackup != null) {
-                params.taskOutputsToRestore.set(taskOutputsBackup.taskOutputsToRestore)
+                params.taskOutputsToRestore.set(taskOutputsBackup.outputsToRestore)
                 params.buildDir.set(taskOutputsBackup.buildDirectory)
                 params.snapshotsDir.set(taskOutputsBackup.snapshotsDir)
                 params.metricsReporter.set(buildMetrics)

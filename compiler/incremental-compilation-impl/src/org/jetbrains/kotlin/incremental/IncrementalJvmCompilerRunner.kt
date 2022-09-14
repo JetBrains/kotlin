@@ -88,7 +88,13 @@ fun makeIncrementally(
         val compiler =
             if (args.useK2 && args.useFirIC && args.useFirLT /* TODO: move LT check into runner */ )
                 IncrementalFirJvmCompilerRunner(
-                    cachesDir, buildReporter, buildHistoryFile, emptyList(), EmptyModulesApiHistory, kotlinExtensions, ClasspathSnapshotDisabled
+                    cachesDir,
+                    buildReporter,
+                    buildHistoryFile,
+                    outputDirs = null,
+                    EmptyModulesApiHistory,
+                    kotlinExtensions,
+                    ClasspathSnapshotDisabled
                 )
             else
                 IncrementalJvmCompilerRunner(
@@ -96,8 +102,8 @@ fun makeIncrementally(
                     buildReporter,
                     // Use precise setting in case of non-Gradle build
                     usePreciseJavaTracking = !args.useK2, // TODO: add fir-based java classes tracker when available and set this to true
-                    outputFiles = emptyList(),
                     buildHistoryFile = buildHistoryFile,
+                    outputDirs = null,
                     modulesApiHistory = EmptyModulesApiHistory,
                     kotlinSourceFilesExtensions = kotlinExtensions,
                     classpathChanges = ClasspathSnapshotDisabled
@@ -127,7 +133,7 @@ open class IncrementalJvmCompilerRunner(
     reporter: BuildReporter,
     private val usePreciseJavaTracking: Boolean,
     buildHistoryFile: File,
-    outputFiles: Collection<File>,
+    outputDirs: Collection<File>?,
     private val modulesApiHistory: ModulesApiHistory,
     override val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
     private val classpathChanges: ClasspathChanges,
@@ -136,8 +142,8 @@ open class IncrementalJvmCompilerRunner(
     workingDir,
     "caches-jvm",
     reporter,
-    outputDirs = outputFiles,
     buildHistoryFile = buildHistoryFile,
+    outputDirs = outputDirs,
     withAbiSnapshot = withAbiSnapshot
 ) {
     override fun createCacheManager(args: K2JVMCompilerArguments, projectDir: File?): IncrementalJvmCachesManager =
@@ -374,7 +380,9 @@ open class IncrementalJvmCompilerRunner(
         return result
     }
 
-    override fun preBuildHook(args: K2JVMCompilerArguments, compilationMode: CompilationMode) {
+    override fun performWorkBeforeCompilation(compilationMode: CompilationMode, args: K2JVMCompilerArguments) {
+        super.performWorkBeforeCompilation(compilationMode, args)
+
         if (compilationMode is CompilationMode.Incremental) {
             val destinationDir = args.destinationAsFile
             destinationDir.mkdirs()
@@ -482,14 +490,15 @@ open class IncrementalJvmCompilerRunner(
         return exitCode to sourcesToCompile
     }
 
-    override fun performWorkAfterSuccessfulCompilation(caches: IncrementalJvmCachesManager, wasIncremental: Boolean) {
-        super.performWorkAfterSuccessfulCompilation(caches, wasIncremental)
+    override fun performWorkAfterCompilation(compilationMode: CompilationMode, exitCode: ExitCode, caches: IncrementalJvmCachesManager) {
+        super.performWorkAfterCompilation(compilationMode, exitCode, caches)
 
-        if (classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
+        // No need to shrink and save classpath snapshot if exitCode != ExitCode.OK as the task will fail anyway
+        if (classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled && exitCode == ExitCode.OK) {
             reporter.measure(BuildTime.SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION) {
                 shrinkAndSaveClasspathSnapshot(
-                    wasIncremental, classpathChanges, caches.lookupCache, currentClasspathSnapshot,
-                    shrunkCurrentClasspathAgainstPreviousLookups, ClasspathSnapshotBuildReporter(reporter)
+                    compilationWasIncremental = compilationMode is CompilationMode.Incremental, classpathChanges, caches.lookupCache,
+                    currentClasspathSnapshot, shrunkCurrentClasspathAgainstPreviousLookups, ClasspathSnapshotBuildReporter(reporter)
                 )
             }
         }

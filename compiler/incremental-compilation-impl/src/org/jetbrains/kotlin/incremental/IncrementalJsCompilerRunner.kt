@@ -93,6 +93,7 @@ class IncrementalJsCompilerRunner(
     "caches-js",
     reporter,
     buildHistoryFile = buildHistoryFile,
+    outputDirs = null,
     withAbiSnapshot = withAbiSnapshot
 ) {
 

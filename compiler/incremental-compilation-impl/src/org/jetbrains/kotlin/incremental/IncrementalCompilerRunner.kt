@@ -63,7 +63,7 @@ abstract class IncrementalCompilerRunner<
      *
      * If this property is not set, the directories to clean will include the first 2 directories above.
      */
-    private val outputDirs: Collection<File>? = null,
+    private val outputDirs: Collection<File>?,
 
     protected val withAbiSnapshot: Boolean = false
 ) {
@@ -101,8 +101,7 @@ abstract class IncrementalCompilerRunner<
             }
             is ICResult.Failed -> {
                 reporter.warn {
-                    // The indentation after the first line is to make it clear that all of this is one message and is different from the
-                    // next message that appears in the log.
+                    // The indentation after the first line is intentional (so that this message is distinct from next message)
                     """
                     |Incremental compilation was attempted but failed:
                     |    ${result.reason.readableString}: ${result.cause.stackTraceToString().removeSuffixIfPresent("\n")}
@@ -150,6 +149,7 @@ abstract class IncrementalCompilerRunner<
         if (providedChangedFiles is ChangedFiles.Unknown) {
             return ICResult.RequiresRebuild(UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
         }
+        providedChangedFiles as ChangedFiles.Known?
 
         val caches = createCacheManager(args, projectDir)
         val exitCode: ExitCode
@@ -176,14 +176,12 @@ abstract class IncrementalCompilerRunner<
                 return ICResult.RequiresRebuild(compilationMode.reason)
             }
 
-            if (withAbiSnapshot && !abiSnapshotFile.exists()) {
-                reporter.debug { "Jar snapshot file does not exist: ${abiSnapshotFile.path}" }
-                return ICResult.RequiresRebuild(NO_ABI_SNAPSHOT)
-            }
-            if (withAbiSnapshot) {
-                reporter.info { "Incremental compilation with ABI snapshot enabled" }
-            }
             val abiSnapshotData = if (withAbiSnapshot) {
+                if (!abiSnapshotFile.exists()) {
+                    reporter.debug { "Jar snapshot file does not exist: ${abiSnapshotFile.path}" }
+                    return ICResult.RequiresRebuild(NO_ABI_SNAPSHOT)
+                }
+                reporter.info { "Incremental compilation with ABI snapshot enabled" }
                 AbiSnapshotData(
                     snapshot = AbiSnapshotImpl.read(abiSnapshotFile),
                     classpathAbiSnapshot = classpathAbiSnapshot!!
@@ -267,17 +265,21 @@ abstract class IncrementalCompilerRunner<
         }
     }
 
-    private fun getChangedFiles(providedChangedFiles: ChangedFiles?, allSourceFiles: List<File>, caches: CacheManager): ChangedFiles.Known {
-        return when (providedChangedFiles) {
-            is ChangedFiles.Known -> providedChangedFiles
-            is ChangedFiles.Unknown -> error("ChangedFiles.Unknown should have been handled earlier")
-            is ChangedFiles.Dependencies -> caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles).let {
+    private fun getChangedFiles(
+        providedChangedFiles: ChangedFiles.Known?,
+        allSourceFiles: List<File>,
+        caches: CacheManager
+    ): ChangedFiles.Known {
+        return when {
+            providedChangedFiles == null -> caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
+            providedChangedFiles.forDependencies -> {
+                val moreChangedFiles = caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
                 ChangedFiles.Known(
-                    modified = it.modified + providedChangedFiles.modified,
-                    removed = it.removed + providedChangedFiles.removed
+                    modified = providedChangedFiles.modified + moreChangedFiles.modified,
+                    removed = providedChangedFiles.removed + moreChangedFiles.removed
                 )
             }
-            null -> caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
+            else -> providedChangedFiles
         }
     }
 
@@ -313,7 +315,6 @@ abstract class IncrementalCompilerRunner<
         changesCollector: ChangesCollector
     )
 
-    protected open fun preBuildHook(args: Args, compilationMode: CompilationMode) {}
     protected open fun additionalDirtyFiles(caches: CacheManager, generatedFiles: List<GeneratedFile>, services: Services): Iterable<File> =
         emptyList()
 
@@ -352,13 +353,29 @@ abstract class IncrementalCompilerRunner<
         abiSnapshotData: AbiSnapshotData?, // Not null iff withAbiSnapshot = true
         messageCollector: MessageCollector
     ): ExitCode {
-        preBuildHook(args, compilationMode)
+        performWorkBeforeCompilation(compilationMode, args)
+
         val allKotlinFiles = allSourceFiles.filter { it.isKotlinFile(kotlinSourceFilesExtensions) }
         val exitCode = doCompile(compilationMode, allKotlinFiles, args, caches, abiSnapshotData, messageCollector)
-        if (exitCode == ExitCode.OK) {
-            performWorkAfterSuccessfulCompilation(caches, wasIncremental = compilationMode is CompilationMode.Incremental)
-        }
+
+        performWorkAfterCompilation(compilationMode, exitCode, caches)
         return exitCode
+    }
+
+    protected open fun performWorkBeforeCompilation(compilationMode: CompilationMode, args: Args) {}
+
+    protected open fun performWorkAfterCompilation(compilationMode: CompilationMode, exitCode: ExitCode, caches: CacheManager) {
+        collectMetrics()
+    }
+
+    private fun collectMetrics() {
+        reporter.measure(BuildTime.CALCULATE_OUTPUT_SIZE) {
+            reporter.addMetric(
+                BuildPerformanceMetric.SNAPSHOT_SIZE,
+                buildHistoryFile.length() + lastBuildInfoFile.length() + abiSnapshotFile.length()
+            )
+            reporter.addMetric(BuildPerformanceMetric.CACHE_DIRECTORY_SIZE, cacheDirectory.walk().sumOf { it.length() })
+        }
     }
 
     private fun doCompile(
@@ -547,27 +564,6 @@ abstract class IncrementalCompilerRunner<
 
         //TODO(valtman) old history build should be restored in case of build fail
         BuildDiffsStorage.writeToFile(buildHistoryFile, BuildDiffsStorage(prevDiffs + newDiff), reporter)
-    }
-
-    /**
-     * Performs some work after a compilation if the compilation completed successfully (no exceptions were thrown AND exit code == 0).
-     *
-     * This method MUST NOT be called when the compilation failed because the results produced by the work here would be invalid.
-     *
-     * @wasIncremental whether the compilation was incremental or non-incremental
-     */
-    protected open fun performWorkAfterSuccessfulCompilation(caches: CacheManager, wasIncremental: Boolean) {
-        collectMetrics()
-    }
-
-    private fun collectMetrics() {
-        reporter.measure(BuildTime.CALCULATE_OUTPUT_SIZE) {
-            reporter.addMetric(
-                BuildPerformanceMetric.SNAPSHOT_SIZE,
-                buildHistoryFile.length() + lastBuildInfoFile.length() + abiSnapshotFile.length()
-            )
-            reporter.addMetric(BuildPerformanceMetric.CACHE_DIRECTORY_SIZE, cacheDirectory.walk().sumOf { it.length() })
-        }
     }
 
     companion object {

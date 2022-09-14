@@ -72,7 +72,7 @@ class IncrementalFirJvmCompilerRunner(
     workingDir: File,
     reporter: BuildReporter,
     buildHistoryFile: File,
-    outputFiles: Collection<File>,
+    outputDirs: Collection<File>?,
     modulesApiHistory: ModulesApiHistory,
     kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
     classpathChanges: ClasspathChanges
@@ -81,7 +81,7 @@ class IncrementalFirJvmCompilerRunner(
     reporter,
     false,
     buildHistoryFile,
-    outputFiles,
+    outputDirs,
     modulesApiHistory,
     kotlinSourceFilesExtensions,
     classpathChanges

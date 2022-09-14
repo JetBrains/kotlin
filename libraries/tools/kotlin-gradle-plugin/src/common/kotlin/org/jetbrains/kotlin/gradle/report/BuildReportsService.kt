@@ -424,9 +424,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
                 taskExecutionResult?.buildMetrics?.buildPerformanceMetrics?.asMap()?.filterValues { value -> value != 0L } ?: emptyMap()
             val changes = when (val changedFiles = taskExecutionResult?.taskInfo?.changedFiles) {
                 is ChangedFiles.Known -> changedFiles.modified.map { it.absolutePath } + changedFiles.removed.map { it.absolutePath }
-                is ChangedFiles.Dependencies -> changedFiles.modified.map { it.absolutePath } + changedFiles.removed.map { it.absolutePath }
                 else -> emptyList<String>()
-
             }
             return CompileStatisticsData(
                 durationMs = durationMs,
