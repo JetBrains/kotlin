@@ -87,7 +87,7 @@ private val AbstractInsnNode.nextMeaningful: AbstractInsnNode?
     get() = next.skipUntilMeaningful()
 
 private val AbstractInsnNode.isReturnUnit: Boolean
-    get() = isUnitInstance() && nextMeaningful?.opcode == Opcodes.ARETURN
+    get() = isUnitInstance() && nextMeaningful?.let { it.opcode == Opcodes.ARETURN || it.isPopBeforeReturnUnit } == true
 
 private val AbstractInsnNode.isPopBeforeReturnUnit: Boolean
     get() = opcode == Opcodes.POP && nextMeaningful?.isReturnUnit == true
