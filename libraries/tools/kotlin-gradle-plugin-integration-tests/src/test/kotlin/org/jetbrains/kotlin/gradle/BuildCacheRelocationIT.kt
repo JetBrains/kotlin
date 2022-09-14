@@ -306,10 +306,11 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     }
 
     @JvmGradlePluginTests
-    @DisplayName("Kotlin incremental compilation should work correctly")
+    @DisplayName("Kotlin incremental compilation should work correctly after cache hint")
     @GradleTest
     fun testKotlinIncrementalCompilation(gradleVersion: GradleVersion) {
-        checkKotlinIncrementalCompilationAfterCacheHit(gradleVersion) {
+        val options = defaultBuildOptions.copy(useGradleClasspathSnapshot = false)
+        checkKotlinIncrementalCompilationAfterCacheHit(gradleVersion, options) {
             assertNonIncrementalCompilation()
         }
     }
