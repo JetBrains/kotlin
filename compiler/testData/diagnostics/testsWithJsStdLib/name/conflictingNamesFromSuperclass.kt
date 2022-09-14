@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 interface A {
     @JsName("foo") fun f()
 }
