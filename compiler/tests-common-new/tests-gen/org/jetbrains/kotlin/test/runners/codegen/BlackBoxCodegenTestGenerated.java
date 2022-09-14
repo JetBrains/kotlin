@@ -12853,6 +12853,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("lambdaParameterInlining.kt")
+            public void testLambdaParameterInlining() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambdaParameterInlining.kt");
+            }
+
+            @Test
             @TestMetadata("returnInlineClass.kt")
             public void testReturnInlineClass() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/returnInlineClass.kt");

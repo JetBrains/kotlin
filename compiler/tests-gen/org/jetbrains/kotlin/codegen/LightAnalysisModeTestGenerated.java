@@ -10366,6 +10366,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/interfaceDelegation.kt");
             }
 
+            @TestMetadata("lambdaParameterInlining.kt")
+            public void testLambdaParameterInlining() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambdaParameterInlining.kt");
+            }
+
             @TestMetadata("returnInlineClass.kt")
             public void testReturnInlineClass() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/returnInlineClass.kt");
