@@ -246,7 +246,7 @@ open class AbstractFirJsTest : AbstractKotlinCompilerWithTargetBackendTest(Targe
 
         forTestsNotMatching("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*") {
             defaultDirectives {
-                DiagnosticsDirectives.DIAGNOSTICS with "-warnings"
+                DiagnosticsDirectives.DIAGNOSTICS with listOf("-warnings", "-infos")
             }
         }
 
