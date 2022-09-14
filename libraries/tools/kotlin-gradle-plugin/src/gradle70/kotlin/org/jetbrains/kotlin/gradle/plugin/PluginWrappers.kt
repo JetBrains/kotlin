@@ -143,4 +143,6 @@ private fun Project.registerVariantImplementations() {
         BasePluginConfigurationG70.BasePluginConfigurationVariantFactoryG70()
     factories[IdeaSyncDetector.IdeaSyncDetectorVariantFactory::class] =
         IdeaSyncDetectorG70.IdeaSyncDetectorVariantFactoryG70()
+    factories[ConfigurationTimePropertiesAccessor.ConfigurationTimePropertiesAccessorVariantFactory::class] =
+        ConfigurationTimePropertiesAccessorG70.ConfigurationTimePropertiesAccessorVariantFactoryG70()
 }
