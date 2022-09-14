@@ -118,7 +118,7 @@ class FirMetadataSerializer(
         val message = when (metadata) {
             is FirMetadataSource.Class -> serializer!!.classProto(metadata.fir).build()
             is FirMetadataSource.File ->
-                serializer!!.packagePartProto(metadata.fir.packageFqName, metadata.fir).apply {
+                serializer!!.packagePartProto(metadata.files.first().packageFqName, metadata.files).apply {
                     serializerExtension.serializeJvmPackage(this)
                 }.build()
             is FirMetadataSource.Function -> {

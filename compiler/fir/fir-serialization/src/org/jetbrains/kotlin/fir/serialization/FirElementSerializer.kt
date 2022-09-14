@@ -67,15 +67,17 @@ class FirElementSerializer private constructor(
 ) {
     private val contractSerializer = FirContractSerializer()
 
-    fun packagePartProto(packageFqName: FqName, file: FirFile): ProtoBuf.Package.Builder {
+    fun packagePartProto(packageFqName: FqName, files: List<FirFile>): ProtoBuf.Package.Builder {
         val builder = ProtoBuf.Package.newBuilder()
 
-        for (declaration in file.declarations) {
-            when (declaration) {
-                is FirProperty -> propertyProto(declaration)?.let { builder.addProperty(it) }
-                is FirSimpleFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
-                is FirTypeAlias -> typeAliasProto(declaration)?.let { builder.addTypeAlias(it) }
-                else -> {}
+        for (file in files) {
+            for (declaration in file.declarations) {
+                when (declaration) {
+                    is FirProperty -> propertyProto(declaration)?.let { builder.addProperty(it) }
+                    is FirSimpleFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
+                    is FirTypeAlias -> typeAliasProto(declaration)?.let { builder.addTypeAlias(it) }
+                    else -> {}
+                }
             }
         }
 

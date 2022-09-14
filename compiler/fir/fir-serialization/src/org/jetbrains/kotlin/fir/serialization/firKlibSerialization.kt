@@ -26,7 +26,7 @@ fun serializeSingleFirFile(file: FirFile, session: FirSession, scopeSession: Sco
     // TODO: split package fragment (see klib serializer)
     // TODO: handle incremental/monolothic (see klib serializer) - maybe externally
 
-    val packageProto = packageSerializer.packagePartProto(file.packageFqName, file).build()
+    val packageProto = packageSerializer.packagePartProto(file.packageFqName, listOf(file)).build()
 
     fun List<FirDeclaration>.makeClassesProtoWithNested(): List<Pair<ProtoBuf.Class, Int>> =
         // TODO: filter out expects

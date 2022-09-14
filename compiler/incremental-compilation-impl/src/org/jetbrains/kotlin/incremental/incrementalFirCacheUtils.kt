@@ -70,7 +70,7 @@ internal fun collectNewDirtySources(
             }
 
             override fun visitFile(file: FirFile, data: MutableList<MetadataSerializer>) {
-                val metadata = FirMetadataSource.File(file)
+                val metadata = FirMetadataSource.File(listOf(file))
                 withMetadataSerializer(metadata, data) {
                     file.acceptChildren(this, data)
                     // TODO: compare package fragments?
