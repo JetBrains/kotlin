@@ -195,6 +195,7 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
     @Test
     fun `test WhenAndroidIsApplied - android is applied after the health check call`() {
         val project = ProjectBuilder.builder().build()
+        project.gradle.registerConfigurationTimePropertiesAccessorForTests()
 
         project.runMultiplatformAndroidGradlePluginCompatibilityHealthCheckWhenAndroidIsApplied(
             testLogger, FixedAndroidGradlePluginVersionProvider(null)
@@ -211,6 +212,7 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
     @Test
     fun `test - WhenAndroidIsApplied - android is applied before the health check call`() {
         val project = ProjectBuilder.builder().build()
+        project.gradle.registerConfigurationTimePropertiesAccessorForTests()
         addBuildEventsListenerRegistryMock(project)
         project.plugins.apply(LibraryPlugin::class.java)
 
@@ -224,6 +226,7 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
     @Test
     fun `test - WhenAndroidIsApplied - called multiple times - still emits only a single message`() {
         val project = ProjectBuilder.builder().build()
+        project.gradle.registerConfigurationTimePropertiesAccessorForTests()
         addBuildEventsListenerRegistryMock(project)
         project.plugins.apply(LibraryPlugin::class.java)
 

@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
+import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 import java.io.File
-import org.jetbrains.kotlin.gradle.targets.js.isTeamCity
 
 class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, private val basePath: String) :
     KotlinJsTestFramework {
@@ -28,7 +28,7 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
     private val project: Project = compilation.target.project
     private val npmProject = compilation.npmProject
     private val versions = NodeJsRootPlugin.apply(project.rootProject).versions
-    private val isTeamCity by lazy { project.isTeamCity }
+    private val isTeamCity = project.providers.gradleProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY)
 
     override val settingsState: String
         get() = "mocha"
@@ -60,7 +60,7 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true,
-            escapeTCMessagesInLog = isTeamCity
+            escapeTCMessagesInLog = isTeamCity.isPresent
         )
 
         val cliArgs = KotlinTestRunnerCliArgs(
