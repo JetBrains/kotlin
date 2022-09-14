@@ -9,11 +9,11 @@ import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.JarMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragmentGranularMetadataResolverFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinTransformedMetadataLibraryDirectoryForIde
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragmentGranularMetadataResolverFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule.Companion.moduleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toKpmModuleDependency
-import org.jetbrains.kotlin.gradle.utils.withTemporaryDirectory
 
 internal class IdeaKpmMetadataBinaryDependencyResolver(
     private val fragmentGranularMetadataResolverFactory: GradleKpmFragmentGranularMetadataResolverFactory
@@ -34,39 +34,28 @@ internal class IdeaKpmMetadataBinaryDependencyResolver(
             is ProjectMetadataProvider -> return emptySet()
             is JarMetadataProvider -> resolution.metadataProvider
         }
-        return resolution.allVisibleSourceSetNames.mapNotNull { visibleFragmentName ->
-            val binaryFile = withTemporaryDirectory("metadataBinaryDependencyResolver") { temporaryDirectory ->
-                val sourceBinaryFile = metadataProvider.getSourceSetCompiledMetadata(
-                    sourceSetName = visibleFragmentName,
-                    outputDirectory = temporaryDirectory,
-                    materializeFile = true
+
+        return metadataProvider.read { artifactHandle ->
+            resolution.allVisibleSourceSetNames.mapNotNull { visibleFragmentName ->
+                val sourceSet = artifactHandle.findSourceSet(visibleFragmentName) ?: return@mapNotNull null
+                val metadataLibrary = sourceSet.metadataLibrary ?: return@mapNotNull null
+
+                val libraryFile = fragment.project.kotlinTransformedMetadataLibraryDirectoryForIde
+                    .resolve(metadataLibrary.relativeFile)
+                    .apply { if (!isFile) metadataLibrary.copyTo(this) }
+
+                IdeaKpmResolvedBinaryDependencyImpl(
+                    binaryType = IdeaKpmDependency.CLASSPATH_BINARY_TYPE,
+                    binaryFile = libraryFile,
+                    coordinates = IdeaKpmBinaryCoordinatesImpl(
+                        group = gradleModuleIdentifier.group,
+                        module = gradleModuleIdentifier.module,
+                        version = gradleModuleIdentifier.version,
+                        kotlinModuleName = kotlinModuleIdentifier.moduleName,
+                        kotlinFragmentName = visibleFragmentName
+                    )
                 )
-
-                if (!sourceBinaryFile.isFile)
-                    return@mapNotNull null
-
-                fragment.project.rootDir
-                    .resolve(".gradle").resolve("kotlin").resolve("transformedKotlinMetadata")
-                    .resolve(gradleModuleIdentifier.group)
-                    .resolve(gradleModuleIdentifier.module)
-                    .resolve(gradleModuleIdentifier.version)
-                    .resolve(kotlinModuleIdentifier.moduleName)
-                    .resolve(visibleFragmentName)
-                    .resolve(sourceBinaryFile.name)
-                    .apply { if (!isFile) sourceBinaryFile.copyTo(this) }
             }
-
-            IdeaKpmResolvedBinaryDependencyImpl(
-                binaryType = IdeaKpmDependency.CLASSPATH_BINARY_TYPE,
-                binaryFile = binaryFile,
-                coordinates = IdeaKpmBinaryCoordinatesImpl(
-                    group = gradleModuleIdentifier.group,
-                    module = gradleModuleIdentifier.module,
-                    version = gradleModuleIdentifier.version,
-                    kotlinModuleName = kotlinModuleIdentifier.moduleName,
-                    kotlinFragmentName = visibleFragmentName
-                )
-            )
         }
     }
 }

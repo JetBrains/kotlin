@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.util.*
 import java.util.zip.ZipFile
-import kotlin.test.Test
 import kotlin.test.Ignore
+import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -92,10 +92,10 @@ class KlibBasedMppIT : BaseGradleIT() {
         checkTaskCompileClasspath(
             "compile${hostSpecificSourceSet.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}KotlinMetadata",
             listOf(
-                "published-producer-$hostSpecificSourceSet.klib",
-                "published-producer-commonMain.klib",
-                "published-dependency-$hostSpecificSourceSet.klib",
-                "published-dependency-commonMain.klib"
+                "published-producer-1.0-$hostSpecificSourceSet.klib",
+                "published-producer-1.0-commonMain.klib",
+                "published-dependency-1.0-$hostSpecificSourceSet.klib",
+                "published-dependency-1.0-commonMain.klib"
             )
         )
     }
@@ -357,6 +357,7 @@ class KlibBasedMppIT : BaseGradleIT() {
         build("${subproject?.prependIndent(":").orEmpty()}:$printingTaskName") {
             assertSuccessful()
             val itemsLine = output.lines().single { "###$printingTaskName" in it }.substringAfter(printingTaskName)
+            // NOTE: This does not work for commonized libraries, they may contain the ',' naturally
             val items = itemsLine.removeSurrounding("[", "]").split(", ").toSet()
             checkAnyItemsContains.forEach { pattern -> assertTrue { items.any { pattern in it } } }
             checkNoItemContains.forEach { pattern -> assertFalse { items.any { pattern in it } } }

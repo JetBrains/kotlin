@@ -16,7 +16,7 @@ import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.Companion.asMetadataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.JarMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
@@ -80,18 +80,14 @@ internal sealed class MetadataDependencyResolution(
     ) : MetadataDependencyResolution(dependency, projectDependency) {
 
         internal sealed class MetadataProvider {
-            class JarMetadataProvider(private val compositeMetadataArtifact: CompositeMetadataJar) :
-                MetadataProvider(), CompositeMetadataJar by compositeMetadataArtifact
+            class JarMetadataProvider(private val compositeMetadataArtifact: CompositeMetadataArtifact) :
+                MetadataProvider(), CompositeMetadataArtifact by compositeMetadataArtifact
 
             abstract class ProjectMetadataProvider : MetadataProvider() {
                 enum class MetadataConsumer { Ide, Cli }
 
                 abstract fun getSourceSetCompiledMetadata(sourceSetName: String): FileCollection
                 abstract fun getSourceSetCInteropMetadata(sourceSetName: String, consumer: MetadataConsumer): FileCollection
-            }
-
-            companion object {
-                fun CompositeMetadataJar.asMetadataProvider() = JarMetadataProvider(this)
             }
         }
 
@@ -178,6 +174,7 @@ internal class GranularMetadataTransformation(
             val transitiveDependenciesToVisit = when (dependencyResult) {
                 is MetadataDependencyResolution.KeepOriginalDependency ->
                     resolvedDependency.dependencies.filterIsInstance<ResolvedDependencyResult>()
+
                 is MetadataDependencyResolution.ChooseVisibleSourceSets -> dependencyResult.visibleTransitiveDependencies
                 is MetadataDependencyResolution.Exclude.PublishedPlatformSourceSetDependency -> dependencyResult.visibleTransitiveDependencies
                 is MetadataDependencyResolution.Exclude.Unrequested -> error("a visited dependency is erroneously considered unrequested")
@@ -277,12 +274,15 @@ internal class GranularMetadataTransformation(
                 moduleIdentifier = mppDependencyMetadataExtractor.moduleIdentifier
             )
 
-            is JarMppDependencyProjectStructureMetadataExtractor -> CompositeMetadataJar(
-                moduleIdentifier = ModuleIds.fromComponent(project, module).toString(),
-                projectStructureMetadata = projectStructureMetadata,
-                primaryArtifactFile = mppDependencyMetadataExtractor.primaryArtifactFile,
-                hostSpecificArtifactsBySourceSet = sourceSetVisibility.hostSpecificMetadataArtifactBySourceSet,
-            ).asMetadataProvider()
+            is JarMppDependencyProjectStructureMetadataExtractor -> JarMetadataProvider(
+                CompositeMetadataArtifactImpl(
+                    moduleDependencyIdentifier = ModuleIds.fromComponent(project, module),
+                    moduleDependencyVersion = module.moduleVersion?.version ?: "unspecified",
+                    kotlinProjectStructureMetadata = projectStructureMetadata,
+                    primaryArtifactFile = mppDependencyMetadataExtractor.primaryArtifactFile,
+                    hostSpecificArtifactFilesBySourceSetName = sourceSetVisibility.hostSpecificMetadataArtifactBySourceSet
+                )
+            )
         }
 
         return MetadataDependencyResolution.ChooseVisibleSourceSets(
