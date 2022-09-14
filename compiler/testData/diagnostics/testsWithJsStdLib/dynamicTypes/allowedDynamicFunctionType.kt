@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 // !MARK_DYNAMIC_CALLS
 
 fun withDynamicReceiver(<!UNUSED_PARAMETER!>d<!>: dynamic.() -> Unit) {}

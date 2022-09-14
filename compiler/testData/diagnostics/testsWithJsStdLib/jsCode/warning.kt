@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 fun main(): Unit {
     js("var a =<!JSCODE_WARNING!> 08<!>;")
 

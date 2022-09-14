@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 val code = """
     var s = "hello"
     + );

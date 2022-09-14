@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 // !LANGUAGE: -BareArrayClassLiteral -ProhibitGenericArrayClassLiteral
 
 val a01 = <!ARRAY_CLASS_LITERAL_REQUIRES_ARGUMENT!>Array::class<!>
