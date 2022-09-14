@@ -20,6 +20,7 @@ dependencies {
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:backend.jvm"))
     compileOnly(project(":compiler:ir.tree"))
+    compileOnly(project(":compiler:cli"))
     compileOnly(project(":kotlin-android-extensions-runtime"))
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
