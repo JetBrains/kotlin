@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
-import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.JarMetadataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider.MetadataConsumer.Cli
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider.MetadataConsumer.Ide
@@ -56,7 +56,7 @@ private fun Project.createCInteropMetadataDependencyClasspathFromProjectDependen
                 /* We only want to access resolutions that provide metadata from dependency projects */
                 val projectMetadataProvider = when (chooseVisibleSourceSets.metadataProvider) {
                     is ProjectMetadataProvider -> chooseVisibleSourceSets.metadataProvider
-                    is JarMetadataProvider -> return@flatMap emptyList()
+                    is ArtifactMetadataProvider -> return@flatMap emptyList()
                 }
 
                 chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops.map { visibleSourceSetName ->

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.JarMetadataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
 import java.io.File
 
@@ -25,7 +25,7 @@ internal fun Project.transformMetadataLibrariesForIde(
             metadataProvider.getSourceSetCompiledMetadata(visibleSourceSetName)
         }
 
-        is JarMetadataProvider -> transformMetadataLibrariesForIde(
+        is ArtifactMetadataProvider -> transformMetadataLibrariesForIde(
             kotlinTransformedMetadataLibraryDirectoryForIde, resolution, metadataProvider
         )
     }
@@ -47,7 +47,7 @@ internal fun Project.transformMetadataLibrariesForBuild(
             }
         )
 
-        is JarMetadataProvider -> transformMetadataLibrariesForBuild(
+        is ArtifactMetadataProvider -> transformMetadataLibrariesForBuild(
             resolution, outputDirectory, materializeFiles, resolution.metadataProvider
         )
     }

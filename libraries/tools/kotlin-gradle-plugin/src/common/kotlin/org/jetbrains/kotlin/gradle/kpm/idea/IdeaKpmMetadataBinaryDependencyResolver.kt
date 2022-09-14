@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
-import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.JarMetadataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinTransformedMetadataLibraryDirectoryForIde
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
@@ -32,7 +32,7 @@ internal class IdeaKpmMetadataBinaryDependencyResolver(
         /* Project to project metadata dependencies shall be resolved as source dependencies, somewhere else */
         val metadataProvider = when (resolution.metadataProvider) {
             is ProjectMetadataProvider -> return emptySet()
-            is JarMetadataProvider -> resolution.metadataProvider
+            is ArtifactMetadataProvider -> resolution.metadataProvider
         }
 
         return metadataProvider.read { artifactHandle ->
