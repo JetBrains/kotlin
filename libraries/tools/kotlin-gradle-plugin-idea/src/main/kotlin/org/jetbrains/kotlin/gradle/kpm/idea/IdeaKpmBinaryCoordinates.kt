@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+
 sealed interface IdeaKpmBinaryCoordinates : IdeaKpmDependencyCoordinates {
     val group: String
     val module: String

@@ -52,14 +52,14 @@ class RuntimePublicAPITest {
     @Test fun kotlinGradlePluginIdea() {
         snapshotAPIAndCompare(
             "../kotlin-gradle-plugin-idea/build/libs", "kotlin-gradle-plugin-idea(?!-[-a-z]+)",
-            nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/kpm/idea/InternalKotlinGradlePluginApi")
+            nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/InternalKotlinGradlePluginApi")
         )
     }
 
     @Test fun kotlinGradlePluginIdeaProto() {
         snapshotAPIAndCompare(
             "../kotlin-gradle-plugin-idea-proto/build/libs", "kotlin-gradle-plugin-idea-proto-api(?!-[-a-z]+)",
-            nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/kpm/idea/InternalKotlinGradlePluginApi")
+            nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/InternalKotlinGradlePluginApi")
         )
     }
 

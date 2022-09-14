@@ -8,7 +8,7 @@ plugins {
 
 kotlin {
     sourceSets.all {
-        languageSettings.optIn("org.jetbrains.kotlin.gradle.kpm.idea.InternalKotlinGradlePluginApi")
+        languageSettings.optIn("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
     }
 }
 

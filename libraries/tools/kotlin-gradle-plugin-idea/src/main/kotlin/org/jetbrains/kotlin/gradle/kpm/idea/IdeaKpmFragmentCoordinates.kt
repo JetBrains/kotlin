@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import java.io.Serializable
 
 sealed interface IdeaKpmFragmentCoordinates : Serializable, IdeaKpmDependencyCoordinates {

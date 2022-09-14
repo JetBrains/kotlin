@@ -25,8 +25,8 @@ pill {
 kotlin.sourceSets.all {
     languageSettings.optIn("kotlin.RequiresOptIn")
     languageSettings.optIn("org.jetbrains.kotlin.gradle.plugin.mpp.pm20.AdvancedKotlinGradlePluginApi")
-    languageSettings.optIn("org.jetbrains.kotlin.gradle.kpm.idea.InternalKotlinGradlePluginApi")
-    languageSettings.optIn("org.jetbrains.kotlin.gradle.plugin.ExperimentalKotlinGradlePluginApi")
+    languageSettings.optIn("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
+    languageSettings.optIn("org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi")
     languageSettings.optIn("org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
 }
 

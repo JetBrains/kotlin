@@ -3,28 +3,25 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(InternalKotlinGradlePluginApi::class, ExternalVariantApi::class)
-
 package org.jetbrains.kotlin.gradle.kpm.idea
 
-import org.jetbrains.kotlin.gradle.kpm.idea.testUtils.buildIdeaKpmProject
-import org.jetbrains.kotlin.gradle.kpm.idea.testUtils.createKpmProject
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.createProxyInstance
-import org.jetbrains.kotlin.gradle.kpm.idea.testUtils.deserializeIdeaKpmProjectWithBackwardsCompatibleClasses
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.kotlin.dsl.create
 import org.gradle.testfixtures.ProjectBuilder
-import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.TestIdeaKpmExtra
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.TestIdeaKpmExtrasSerializationExtension.anySerializableKey
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.copy
+import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.createProxyInstance
+import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.unwrapProxyInstance
+import org.jetbrains.kotlin.gradle.kpm.idea.testUtils.buildIdeaKpmProject
+import org.jetbrains.kotlin.gradle.kpm.idea.testUtils.createKpmProject
+import org.jetbrains.kotlin.gradle.kpm.idea.testUtils.deserializeIdeaKpmProjectWithBackwardsCompatibleClasses
 import org.jetbrains.kotlin.gradle.plugin.KotlinPm20PluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmIosX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmLinuxX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.jvm
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.unwrapProxyInstance
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

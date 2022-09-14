@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.gradle.android
 
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import org.gradle.api.attributes.Usage
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.external.project
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmDependency.Companion.CLASSPATH_BINARY_TYPE
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProjectModelBuilder.FragmentConstraint
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmResolvedBinaryDependencyImpl
-import org.jetbrains.kotlin.gradle.kpm.idea.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.kpm.idea.configureIdeaKpmSpecialPlatformDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension

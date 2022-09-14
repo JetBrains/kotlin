@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmContentRoot.Companion.RESOURCES_TYPE
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmContentRoot.Companion.SOURCES_TYPE
 import org.jetbrains.kotlin.tooling.core.Extras

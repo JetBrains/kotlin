@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmDependency.Companion.CLASSPATH_BINARY_TYPE
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmDependency.Companion.DOCUMENTATION_BINARY_TYPE
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmDependency.Companion.SOURCES_BINARY_TYPE

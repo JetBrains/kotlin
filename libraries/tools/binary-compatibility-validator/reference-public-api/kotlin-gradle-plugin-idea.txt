@@ -214,9 +214,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmVari
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmWasmPlatform : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmPlatform {
 }
 
-public abstract interface annotation class org/jetbrains/kotlin/gradle/kpm/idea/InternalKotlinGradlePluginApi : java/lang/annotation/Annotation {
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaKpmExtrasSerializationExtension {
 	public abstract fun serializer (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;)Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaKpmExtrasSerializer;
 }

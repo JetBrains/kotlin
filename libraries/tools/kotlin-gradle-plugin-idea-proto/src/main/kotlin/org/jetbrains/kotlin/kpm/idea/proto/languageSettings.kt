@@ -7,9 +7,9 @@
 
 package org.jetbrains.kotlin.kpm.idea.proto
 
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmLanguageSettings
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmLanguageSettingsImpl
-import org.jetbrains.kotlin.gradle.kpm.idea.InternalKotlinGradlePluginApi
 import java.io.File
 
 internal fun IdeaKpmLanguageSettingsProto(languageSettings: IdeaKpmLanguageSettings): IdeaKpmLanguageSettingsProto {
