@@ -18,6 +18,8 @@ dependencies {
     testArtifacts project(':kotlin-gradle-plugin-idea')
     testArtifacts project(path: ":kotlin-gradle-plugin-idea-proto", configuration: "binaryValidationApiElements")
     testArtifacts project(':kotlin-tooling-core')
+    testArtifacts project(':kotlin-gradle-plugin-api')
+    testArtifacts project(':kotlin-gradle-plugin-annotations')
 
     testCompileOnly("org.ow2.asm:asm-tree:9.0") {
         because(
