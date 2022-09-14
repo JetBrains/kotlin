@@ -160,6 +160,8 @@ object StandardClassIds {
         val JvmRepeatable = "JvmRepeatable".jvmId()
 
         val JsQualifier = "JsQualifier".jsId()
+        val JsModule = "JsModule".jsId()
+        val JsNonModule = "JsNonModule".jsId()
 
         val RawTypeAnnotation = "RawType".internalIrId()
         val FlexibleNullability = "FlexibleNullability".internalIrId()
