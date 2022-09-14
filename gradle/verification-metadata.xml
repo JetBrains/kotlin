@@ -18,6 +18,7 @@
          <trust group="org.jetbrains.kotlin" name="kotlin-daemon-embeddable"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-api"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-annotations"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-model"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-idea"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-idea-proto"/>

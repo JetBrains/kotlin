@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    commonApi(project(":kotlin-gradle-plugin-annotations"))
     commonApi(project(":native:kotlin-native-utils"))
     commonApi(project(":kotlin-project-model"))
     commonImplementation(project(":kotlin-tooling-core"))

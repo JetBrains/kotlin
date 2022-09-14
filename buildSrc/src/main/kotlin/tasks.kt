@@ -44,6 +44,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-daemon-client",
     ":kotlin-project-model",
     ":kotlin-gradle-plugin-api",
+    ":kotlin-gradle-plugin-annotations",
     ":kotlin-gradle-plugin-idea",
     ":kotlin-gradle-plugin-idea-proto",
     ":kotlin-gradle-plugin",
