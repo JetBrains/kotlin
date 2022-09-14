@@ -54,3 +54,11 @@ inline val FirDeclaration.isJavaOrEnhancement: Boolean
 inline val FirBasedSymbol<*>.isJavaOrEnhancement: Boolean
     get() = origin is FirDeclarationOrigin.Java || origin == FirDeclarationOrigin.Enhancement
 
+val FirDeclaration.isPubliclyAccessibleMember
+    get() = this is FirMemberDeclaration
+            && this !is FirValueParameter
+            && this !is FirAnonymousFunction
+            && this !is FirAnonymousObject
+
+val FirDeclaration.isPubliclyAccessible
+    get() = this is FirFile || isPubliclyAccessibleMember

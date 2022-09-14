@@ -209,3 +209,12 @@ fun hasLowPriorityAnnotation(annotations: List<FirAnnotation>) = annotations.any
     val lookupTag = it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return@any false
     lookupTag.classId == LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID
 }
+
+fun FirBasedSymbol<*>.hasAnnotationOrInsideAnnotatedClass(classId: ClassId, session: FirSession): Boolean {
+    if (hasAnnotation(classId)) return true
+    val container = getContainingClassSymbol(session) ?: return false
+    return container.hasAnnotationOrInsideAnnotatedClass(classId, session)
+}
+
+fun FirDeclaration.hasAnnotationOrInsideAnnotatedClass(classId: ClassId, session: FirSession) =
+    symbol.hasAnnotationOrInsideAnnotatedClass(classId, session)
