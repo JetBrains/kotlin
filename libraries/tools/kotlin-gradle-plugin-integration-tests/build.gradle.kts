@@ -92,13 +92,9 @@ dependencies {
 // Aapt2 from Android Gradle Plugin 3.2 and below does not handle long paths on Windows.
 val shortenTempRootName = project.providers.systemProperty("os.name").forUseAtConfigurationTime().get().contains("Windows")
 
-val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild ||
-        try {
-            project.providers.gradleProperty("gradle.integration.tests.split.tasks").forUseAtConfigurationTime().orNull
-                ?.toBoolean() ?: false
-        } catch (_: Exception) {
-            false
-        }
+val splitGradleIntegrationTestTasks =
+    project.providers.gradleProperty("gradle.integration.tests.split.tasks").forUseAtConfigurationTime().orNull?.toBoolean()
+        ?: project.kotlinBuildProperties.isTeamcityBuild
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.io.path.ExperimentalPathApi"
@@ -120,7 +116,7 @@ fun Test.includeNative(include: Boolean) = includeTestsWithPattern(include) {
 }
 
 fun Test.includeTestsWithPattern(include: Boolean, patterns: (MutableSet<String>).() -> Unit) {
-    if (isTeamcityBuild) {
+    if (splitGradleIntegrationTestTasks) {
         val filter = if (include)
             filter.includePatterns
         else
@@ -175,7 +171,7 @@ projectTest(
     includeNative(false)
 }
 
-if (isTeamcityBuild) {
+if (splitGradleIntegrationTestTasks) {
     projectTest(
         "testNative",
         shortenTempRootName = shortenTempRootName,
@@ -303,7 +299,7 @@ val androidTestsTask = tasks.register<Test>("kgpAndroidTests") {
 tasks.named<Task>("check") {
     dependsOn("testAdvanceGradleVersion")
     dependsOn(jvmTestsTask, jsTestsTask, nativeTestsTask, daemonsTestsTask, otherPluginsTestTask, mppTestsTask, androidTestsTask)
-    if (isTeamcityBuild) {
+    if (splitGradleIntegrationTestTasks) {
         dependsOn("testAdvanceGradleVersionMppAndAndroid")
         dependsOn("testMppAndAndroid")
         dependsOn("testNative")
