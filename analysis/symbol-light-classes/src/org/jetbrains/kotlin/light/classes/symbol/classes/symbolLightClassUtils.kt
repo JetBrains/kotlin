@@ -290,6 +290,25 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
     if (declaration.getter?.hasBody != true && declaration.setter?.hasBody != true && declaration.visibility.isPrivateOrPrivateToThis()) return
 
     if (declaration.hasJvmFieldAnnotation()) return
+    val propertyTypeIsValueClass = declaration.returnType.typeForValueClass
+    /*
+     * For top-level properties with value class in return type compiler mangles only setter
+     *
+     *   @JvmInline
+     *   value class Some(val value: String)
+     *
+     *   var topLevelProp: Some = Some("1")
+     *
+     * Compiles to
+     *   public final class FooKt {
+     *     public final static getTopLevelProp()Ljava/lang/String;
+     *
+     *     public final static setTopLevelProp-5lyY9Q4(Ljava/lang/String;)V
+     *
+     *     private static Ljava/lang/String; topLevelProp
+     *  }
+     */
+    if (this !is SymbolLightClassForFacade && propertyTypeIsValueClass) return
 
     fun KtPropertyAccessorSymbol.needToCreateAccessor(siteTarget: AnnotationUseSiteTarget): Boolean {
         if (onlyJvmStatic &&
@@ -334,7 +353,7 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
     }
 
     val setter = declaration.setter?.takeIf {
-        !isAnnotationType && it.needToCreateAccessor(AnnotationUseSiteTarget.PROPERTY_SETTER)
+        !isAnnotationType && it.needToCreateAccessor(AnnotationUseSiteTarget.PROPERTY_SETTER) && !propertyTypeIsValueClass
     }
 
     if (isMutable && setter != null) {
@@ -602,3 +621,10 @@ internal fun SymbolLightClassBase.addPropertyBackingFields(
     // Then, regular member properties
     propertyGroups[false]?.forEach(::addPropertyBackingField)
 }
+
+context(KtAnalysisSession)
+internal val KtType.typeForValueClass: Boolean
+    get() {
+        val symbol = expandedClassSymbol as? KtNamedClassOrObjectSymbol ?: return false
+        return symbol.isInline
+    }

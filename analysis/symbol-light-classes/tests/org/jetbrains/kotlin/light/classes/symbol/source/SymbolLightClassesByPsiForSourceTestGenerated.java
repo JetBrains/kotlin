@@ -283,6 +283,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     }
 
     @Test
+    @TestMetadata("valueClassInSignature.kt")
+    public void testValueClassInSignature() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/valueClassInSignature.kt");
+    }
+
+    @Test
     @TestMetadata("wildcardOptimization.kt")
     public void testWildcardOptimization() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/wildcardOptimization.kt");
@@ -367,6 +373,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
         @TestMetadata("throwsAnnotation.kt")
         public void testThrowsAnnotation() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/throwsAnnotation.kt");
+        }
+
+        @Test
+        @TestMetadata("valueClassInSignature.kt")
+        public void testValueClassInSignature() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/valueClassInSignature.kt");
         }
 
         @Test

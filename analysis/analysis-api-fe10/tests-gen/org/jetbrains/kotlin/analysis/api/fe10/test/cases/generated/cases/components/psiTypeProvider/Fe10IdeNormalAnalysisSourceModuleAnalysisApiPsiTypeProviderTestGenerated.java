@@ -107,12 +107,6 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiPsiTypeProviderTestGene
     }
 
     @Test
-    @TestMetadata("parameter_jvmInline.kt")
-    public void testParameter_jvmInline() throws Exception {
-        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/parameter_jvmInline.kt");
-    }
-
-    @Test
     @TestMetadata("suspendFunctionValueParameterNoStdlib.kt")
     public void testSuspendFunctionValueParameterNoStdlib() throws Exception {
         runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/suspendFunctionValueParameterNoStdlib.kt");

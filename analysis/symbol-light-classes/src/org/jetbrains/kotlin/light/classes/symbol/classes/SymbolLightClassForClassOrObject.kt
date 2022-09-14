@@ -139,6 +139,9 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
                         it is KtKotlinPropertySymbol && it.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED && it.name == StandardNames.ENUM_ENTRIES
                     }
                 }
+                .filterNot {
+                    it.hasTypeForValueClassInSignature()
+                }
 
             val suppressStatic = isCompanionObject
             createMethods(visibleDeclarations, result, suppressStatic = suppressStatic)

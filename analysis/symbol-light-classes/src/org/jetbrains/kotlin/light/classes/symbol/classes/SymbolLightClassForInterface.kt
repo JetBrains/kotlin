@@ -57,6 +57,7 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
 
             val visibleDeclarations = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
                 .filterNot { it is KtFunctionSymbol && it.visibility.isPrivateOrPrivateToThis() }
+                .filterNot { it.hasTypeForValueClassInSignature() }
 
             createMethods(visibleDeclarations, result)
             addMethodsFromCompanionIfNeeded(result, classOrObjectSymbol)

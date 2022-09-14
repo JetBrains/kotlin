@@ -97,6 +97,7 @@ class SymbolLightClassForFacade(
                         if (callableSymbol !is KtSymbolWithVisibility) continue
                         if ((callableSymbol as? KtAnnotatedSymbol)?.hasInlineOnlyAnnotation() == true) continue
                         if (multiFileClass && callableSymbol.toPsiVisibilityForMember() == PsiModifier.PRIVATE) continue
+                        if (callableSymbol.hasTypeForValueClassInSignature(ignoreReturnType = true)) continue
                         yield(callableSymbol)
                     }
                 }
