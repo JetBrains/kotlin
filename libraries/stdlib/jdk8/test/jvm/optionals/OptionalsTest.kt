@@ -23,7 +23,7 @@ class OptionalsTest {
 
         // Return type can be a supertype
         assertNull(Optional.empty<String>().getOrDefault(null))
-        assertEquals(5.0, Optional.empty<Int>().getOrDefault<Number, Int>(5.0))
+        assertEquals(5.0, Optional.empty<Int>().getOrDefault(5.0))
     }
 
     @Test
@@ -33,7 +33,7 @@ class OptionalsTest {
 
         // Return type can be a supertype
         assertNull(Optional.empty<String>().getOrElse { null })
-        assertEquals(5.0, Optional.empty<Int>().getOrElse<Number, Int> { 5.0 })
+        assertEquals(5.0, Optional.empty<Int>().getOrElse { 5.0 })
     }
 
     @Test
