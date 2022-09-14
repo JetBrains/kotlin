@@ -14,7 +14,20 @@ object JsStandardClassIds {
         val JsQualifier = "JsQualifier".jsId()
         val JsModule = "JsModule".jsId()
         val JsNonModule = "JsNonModule".jsId()
+
+        val JsNative = "native".jsId()
+        val JsLibrary = "library".jsId()
+        val JsNativeInvoke = "nativeInvoke".jsId()
+        val JsNativeGetter = "nativeGetter".jsId()
+        val JsNativeSetter = "nativeSetter".jsId()
+    }
+
+    object Callables {
+        val JsDefinedExternally = "definedExternally".callableId(BASE_JS_PACKAGE)
+        val JsNoImpl = "noImpl".callableId(BASE_JS_PACKAGE)
     }
 }
 
 private fun String.jsId() = ClassId(JsStandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
+
+private fun String.callableId(packageName: FqName) = CallableId(packageName, Name.identifier(this))
