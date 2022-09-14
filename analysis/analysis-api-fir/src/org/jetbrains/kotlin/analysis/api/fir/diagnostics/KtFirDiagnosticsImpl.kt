@@ -1673,6 +1673,11 @@ internal class DynamicUpperBoundImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.DynamicUpperBound(), KtAbstractFirDiagnostic<KtTypeReference>
 
+internal class DynamicReceiverNotAllowedImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.DynamicReceiverNotAllowed(), KtAbstractFirDiagnostic<KtElement>
+
 internal class IncompatibleTypesImpl(
     override val typeA: KtType,
     override val typeB: KtType,
