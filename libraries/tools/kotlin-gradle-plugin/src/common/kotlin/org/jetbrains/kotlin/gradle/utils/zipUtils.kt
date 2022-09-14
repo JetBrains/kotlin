@@ -12,35 +12,37 @@ import java.util.zip.ZipOutputStream
 
 internal fun copyZipFilePartially(sourceZipFile: File, destinationZipFile: File, path: String) {
     requireValidZipDirectoryPath(path)
+    ZipFile(sourceZipFile).use { zip -> zip.copyPartially(destinationZipFile, path) }
+}
 
-    ZipFile(sourceZipFile).use { zip ->
-        val entries = zip.listDescendants(path).toList()
-        if (entries.isEmpty()) return
+internal fun ZipFile.copyPartially(destinationZipFile: File, path: String) {
+    requireValidZipDirectoryPath(path)
+    val entries = listDescendants(path).toList()
+    if (entries.isEmpty()) return
 
-        ZipOutputStream(destinationZipFile.outputStream()).use { destinationZipOutputStream ->
-            entries.forEach { sourceEntry ->
-                val destinationEntry = ZipEntry(sourceEntry.name.substringAfter(path))
+    ZipOutputStream(destinationZipFile.outputStream()).use { destinationZipOutputStream ->
+        entries.forEach { sourceEntry ->
+            val destinationEntry = ZipEntry(sourceEntry.name.substringAfter(path))
 
-                sourceEntry.lastAccessTime?.let { destinationEntry.lastAccessTime = it }
-                sourceEntry.lastModifiedTime?.let { destinationEntry.lastModifiedTime = it }
-                sourceEntry.creationTime?.let { destinationEntry.creationTime = it }
-                destinationEntry.crc = sourceEntry.crc
-                destinationEntry.comment = sourceEntry.comment
-                destinationEntry.size = sourceEntry.size
-                destinationEntry.compressedSize = sourceEntry.compressedSize
-                destinationEntry.extra = sourceEntry.extra
-                destinationEntry.method = sourceEntry.method
+            sourceEntry.lastAccessTime?.let { destinationEntry.lastAccessTime = it }
+            sourceEntry.lastModifiedTime?.let { destinationEntry.lastModifiedTime = it }
+            sourceEntry.creationTime?.let { destinationEntry.creationTime = it }
+            destinationEntry.crc = sourceEntry.crc
+            destinationEntry.comment = sourceEntry.comment
+            destinationEntry.size = sourceEntry.size
+            destinationEntry.compressedSize = sourceEntry.compressedSize
+            destinationEntry.extra = sourceEntry.extra
+            destinationEntry.method = sourceEntry.method
 
-                destinationZipOutputStream.putNextEntry(destinationEntry)
+            destinationZipOutputStream.putNextEntry(destinationEntry)
 
-                if (!sourceEntry.isDirectory) {
-                    zip.getInputStream(sourceEntry).use { inputStream ->
-                        inputStream.copyTo(destinationZipOutputStream)
-                    }
+            if (!sourceEntry.isDirectory) {
+                getInputStream(sourceEntry).use { inputStream ->
+                    inputStream.copyTo(destinationZipOutputStream)
                 }
-
-                destinationZipOutputStream.closeEntry()
             }
+
+            destinationZipOutputStream.closeEntry()
         }
     }
 }
