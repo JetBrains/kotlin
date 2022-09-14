@@ -39181,6 +39181,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             public void testTypeAliasSamAdapterConstructors2() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/typealias/typeAliasSamAdapterConstructors2.kt");
             }
+
+            @Test
+            @TestMetadata("upperBoundViolated.kt")
+            public void testUpperBoundViolated() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/typealias/upperBoundViolated.kt");
+            }
         }
 
         @Nested
