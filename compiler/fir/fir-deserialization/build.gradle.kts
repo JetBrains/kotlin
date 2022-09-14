@@ -15,6 +15,7 @@ dependencies {
     api(project(":compiler:fir:tree"))
     api(project(":compiler:fir:providers"))
     api(project(":compiler:fir:semantics"))
+    api(project(":compiler:config.jvm"))
 
     compileOnly(intellijCore())
 }
