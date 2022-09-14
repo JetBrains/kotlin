@@ -13,6 +13,10 @@ with(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.apply(rootPr
     nodeDownloadBaseUrl = "https://nodejs.org/download/nightly/"
 }
 
+with(org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin.apply(rootProject)) {
+    version = "10.7.157"
+}
+
 with(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.apply(rootProject)) {
     //A little hacky way to disable yarn for unsupported nightly node version
     command = "echo"

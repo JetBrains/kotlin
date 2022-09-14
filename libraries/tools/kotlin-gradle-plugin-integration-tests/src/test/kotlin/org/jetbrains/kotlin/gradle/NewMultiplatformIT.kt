@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_SHORT_NAME
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_UNIQUE_NAME
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Test
 import java.util.*
 import java.util.jar.JarFile
@@ -2001,15 +2002,18 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
+    @Ignore
     fun testWasmNodeTest() = testWasmTest("nodejs", "Node", useBinaryen = false)
 
     @Test
+    @Ignore
     fun testWasmWithBinaryenNodeTest() = testWasmTest("nodejs", "Node", useBinaryen = true)
 
     @Test
     fun testWasmD8Test() = testWasmTest("d8", "D8", useBinaryen = false)
 
     @Test
+    @Ignore
     fun testWasmWithBinaryenD8Test() = testWasmTest("d8", "D8", useBinaryen = true)
 
     @Test
