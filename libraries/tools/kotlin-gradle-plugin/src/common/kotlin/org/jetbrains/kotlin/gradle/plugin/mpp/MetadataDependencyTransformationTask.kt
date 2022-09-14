@@ -23,7 +23,12 @@ import org.jetbrains.kotlin.gradle.utils.notCompatibleWithConfigurationCache
 import java.io.File
 import javax.inject.Inject
 
-open class TransformKotlinGranularMetadata
+/* Keep typealias for source compatibility */
+@Suppress("unused")
+@Deprecated("Task was renamed to MetadataDependencyTransformationTask", replaceWith = ReplaceWith("MetadataDependencyTransformationTask"))
+typealias TransformKotlinGranularMetadata = MetadataDependencyTransformationTask
+
+open class MetadataDependencyTransformationTask
 @Inject constructor(
     @get:Internal
     @field:Transient
@@ -83,7 +88,7 @@ open class TransformKotlinGranularMetadata
             listOf(API_SCOPE, IMPLEMENTATION_SCOPE, COMPILE_ONLY_SCOPE),
             lazy {
                 dependsOnClosureWithInterCompilationDependencies(kotlinSourceSet).map {
-                    project.tasks.withType(TransformKotlinGranularMetadata::class.java)
+                    project.tasks.withType(MetadataDependencyTransformationTask::class.java)
                         .getByName(KotlinMetadataTargetConfigurator.transformGranularMetadataTaskName(it.name))
                         .transformation
                 }
@@ -129,7 +134,7 @@ open class TransformKotlinGranularMetadata
 }
 
 internal class SourceSetResolvedMetadataProvider(
-    taskProvider: TaskProvider<out TransformKotlinGranularMetadata>
+    taskProvider: TaskProvider<out MetadataDependencyTransformationTask>
 ) : ResolvedMetadataFilesProvider {
     override val buildDependencies: Iterable<TaskProvider<*>> = listOf(taskProvider)
     override val metadataResolutions: Iterable<MetadataDependencyResolution> by taskProvider.map { it.metadataDependencyResolutions }

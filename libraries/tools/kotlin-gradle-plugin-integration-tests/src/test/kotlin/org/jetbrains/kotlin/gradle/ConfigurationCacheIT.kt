@@ -89,7 +89,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             // These tasks currently don't support Configuration Cache and marked as [Task::notCompatibleWithConfigurationCache]
             val configCacheIncompatibleTaskTypes = listOf(
                 "CInteropMetadataDependencyTransformationTask",
-                "TransformKotlinGranularMetadata"
+                "MetadataDependencyTransformationTask"
             )
 
             build("build", buildOptions = buildOptions) {
