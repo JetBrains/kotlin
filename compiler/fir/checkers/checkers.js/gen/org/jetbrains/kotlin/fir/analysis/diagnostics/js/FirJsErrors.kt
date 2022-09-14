@@ -66,6 +66,7 @@ object FirJsErrors {
     val INLINE_CLASS_IN_EXTERNAL_DECLARATION by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE by error0<KtExpression>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE by error1<KtElement, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
 
     // Dynamics
     val DELEGATION_BY_DYNAMIC by error0<KtElement>()
