@@ -1,5 +1,6 @@
 class Test {
     val simple: String = "123"
+    val nullable: String? = null
 
     val inferType = simple.length.toString() + "4891"
 
@@ -8,4 +9,5 @@ class Test {
 
     val constJavaClassValue: Class<*> = String::class.java
     val constClassValue: kotlin.reflect.KClass<*> = (String::class)
+    val nullableClassValue: kotlin.reflect.KClass<*>? = null
 }

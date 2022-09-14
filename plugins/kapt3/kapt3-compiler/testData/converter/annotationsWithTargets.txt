@@ -75,7 +75,7 @@ import java.lang.System;
 public final class Foo {
     @org.jetbrains.annotations.NotNull()
     @FieldAnno()
-    private final java.lang.String a = null;
+    private final java.lang.String a;
 
     public Foo(@org.jetbrains.annotations.NotNull()
     @Anno()

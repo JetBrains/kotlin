@@ -751,10 +751,24 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val value = field.value
 
         val origin = kaptContext.origins[field]
+        // Static fields in interfaces needs an initializer, even when just processing it using APT
+        val isStaticInterfaceField = containingClass.isInterface() && isStatic(field.access)
+        val isPrimitiveOrString = Type.getType(field.desc).isOfPrimitiveOrStringType()
+        val includeInitializer = isStaticInterfaceField ||
+                !isPrimitiveOrString ||
+                when (origin?.element) {
+                    is KtProperty -> true
+                    is KtParameter -> kaptContext.options[KaptFlag.DUMP_DEFAULT_PARAMETER_VALUES] || !isFinal(field.access)
+                    else -> true
+                }
+
+        if (!includeInitializer) {
+            return null
+        }
 
         val propertyInitializer = when (val declaration = origin?.element) {
             is KtProperty -> declaration.initializer
-            is KtParameter -> if (kaptContext.options[KaptFlag.DUMP_DEFAULT_PARAMETER_VALUES]) declaration.defaultValue else null
+            is KtParameter -> declaration.defaultValue
             else -> null
         }
 
@@ -789,7 +803,10 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             }
         }
 
-        if (isFinal(field.access)) {
+        // If the field does not have a simple default value and is final the default value for that type is used.
+        // The value will be omitted for inlinable types (primitives and strings) except for static interface fields as they are required
+        // to have an initializer.
+        if (isFinal(field.access) && (!isPrimitiveOrString || isStaticInterfaceField)) {
             val type = Type.getType(field.desc)
             return convertLiteralExpression(containingClass, getDefaultValue(type))
         }
@@ -814,7 +831,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val evaluator = ConstantExpressionEvaluator(moduleDescriptor, languageVersionSettings, kaptContext.project)
         val trace = DelegatingBindingTrace(kaptContext.bindingContext, "Kapt")
         val const = evaluator.evaluateExpression(expression, trace, expectedType)
-        if (const == null || const.isError || !const.canBeUsedInAnnotations || const.usesNonConstValAsConstant) {
+        if (const == null || const.isError || const.usesNonConstValAsConstant) {
             return null
         }
         return const.toConstantValue(expectedType)
@@ -1498,6 +1515,21 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         Type.DOUBLE_TYPE -> 0.0
         else -> null
     }
+
+    private fun Type.isOfPrimitiveOrStringType(): Boolean =
+        when (sort) {
+            Type.BYTE,
+            Type.BOOLEAN,
+            Type.CHAR,
+            Type.SHORT,
+            Type.INT,
+            Type.LONG,
+            Type.FLOAT,
+            Type.DOUBLE -> true
+
+            Type.OBJECT -> className == "java.lang.String"
+            else -> false
+        }
 
     private fun <T : JCTree> T.keepKdocCommentsIfNecessary(node: Any): T {
         kdocCommentKeeper?.saveKDocComment(this, node)

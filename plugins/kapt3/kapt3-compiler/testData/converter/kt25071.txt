@@ -7,7 +7,7 @@ public final class StaticImport {
     private final java.util.Collection<java.lang.String> x = null;
     private final kapt.StaticMethod<java.lang.String> l = null;
     private final kapt.StaticMethod<java.lang.String> m = null;
-    private final int y = 0;
+    private final int y;
 
     public StaticImport() {
         super();

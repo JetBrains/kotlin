@@ -90,7 +90,7 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class JJ {
     @org.jetbrains.annotations.NotNull()
-    private static final java.lang.String b = null;
+    private static final java.lang.String b;
     @org.jetbrains.annotations.NotNull()
     public static final app.JJ INSTANCE = null;
 
@@ -175,7 +175,7 @@ public final class MyActivity {
     public final int propD = app.B.id.textView;
     @kotlin.jvm.JvmField()
     public int propE = app.B.id.textView;
-    private final int propF = 0;
+    private final int propF;
 
     public MyActivity() {
         super();
