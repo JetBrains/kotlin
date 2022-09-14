@@ -4541,6 +4541,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJsErrors.DELEGATION_BY_DYNAMIC) { firDiagnostic ->
+        DelegationByDynamicImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.DYNAMIC) { firDiagnostic ->
         DynamicImpl(
             firDiagnostic as KtPsiDiagnostic,

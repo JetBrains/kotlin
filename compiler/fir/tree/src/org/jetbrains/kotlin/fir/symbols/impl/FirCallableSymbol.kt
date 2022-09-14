@@ -64,7 +64,7 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
         return fir.deprecationsProvider.getDeprecationsInfo(apiVersion)
     }
 
-    private fun ensureType(typeRef: FirTypeRef?) {
+    protected fun ensureType(typeRef: FirTypeRef?) {
         when (typeRef) {
             null, is FirResolvedTypeRef -> {}
             is FirImplicitTypeRef -> lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
