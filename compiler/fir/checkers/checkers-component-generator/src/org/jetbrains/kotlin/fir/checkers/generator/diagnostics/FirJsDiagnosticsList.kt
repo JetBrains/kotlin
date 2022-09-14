@@ -7,7 +7,12 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
+import org.jetbrains.kotlin.psi.KtExpression
 
 @Suppress("UNUSED_VARIABLE", "LocalVariableName", "ClassName", "unused")
 @OptIn(PrivateForInline::class)
-object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors")
+object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
+    val ANNOTATIONS by object : DiagnosticGroup("Annotations") {
+        val WRONG_JS_QUALIFIER by error<KtExpression>()
+    }
+}
