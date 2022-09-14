@@ -1952,6 +1952,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.DYNAMIC_SUPERTYPE) { firDiagnostic ->
+        DynamicSupertypeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.DYNAMIC_UPPER_BOUND) { firDiagnostic ->
         DynamicUpperBoundImpl(
             firDiagnostic as KtPsiDiagnostic,
