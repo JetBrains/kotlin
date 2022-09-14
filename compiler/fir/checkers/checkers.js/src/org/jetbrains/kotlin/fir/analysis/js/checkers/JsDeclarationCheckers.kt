@@ -33,4 +33,11 @@ object JsDeclarationCheckers : DeclarationCheckers() {
             FirJsRuntimeAnnotationChecker,
             FirJsExternalChecker,
         )
+
+    override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
+        get() = setOf(
+            FirJsNativeInvokeChecker,
+            FirJsNativeGetterChecker,
+            FirJsNativeSetterChecker,
+        )
 }

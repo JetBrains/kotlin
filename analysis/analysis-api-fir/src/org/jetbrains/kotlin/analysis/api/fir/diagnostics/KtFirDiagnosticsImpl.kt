@@ -853,6 +853,41 @@ internal class RuntimeAnnotationOnExternalDeclarationImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.RuntimeAnnotationOnExternalDeclaration(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class NativeAnnotationsAllowedOnlyOnMemberOrExtensionFunImpl(
+    override val type: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.NativeAnnotationsAllowedOnlyOnMemberOrExtensionFun(), KtAbstractFirDiagnostic<KtElement>
+
+internal class NativeIndexerKeyShouldBeStringOrNumberImpl(
+    override val kind: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.NativeIndexerKeyShouldBeStringOrNumber(), KtAbstractFirDiagnostic<KtElement>
+
+internal class NativeIndexerWrongParameterCountImpl(
+    override val parametersCount: Int,
+    override val kind: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.NativeIndexerWrongParameterCount(), KtAbstractFirDiagnostic<KtElement>
+
+internal class NativeIndexerCanNotHaveDefaultArgumentsImpl(
+    override val kind: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.NativeIndexerCanNotHaveDefaultArguments(), KtAbstractFirDiagnostic<KtElement>
+
+internal class NativeGetterReturnTypeShouldBeNullableImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.NativeGetterReturnTypeShouldBeNullable(), KtAbstractFirDiagnostic<KtDeclaration>
+
+internal class NativeSetterWrongReturnTypeImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.NativeSetterWrongReturnType(), KtAbstractFirDiagnostic<KtDeclaration>
+
 internal class AnnotationInWhereClauseErrorImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

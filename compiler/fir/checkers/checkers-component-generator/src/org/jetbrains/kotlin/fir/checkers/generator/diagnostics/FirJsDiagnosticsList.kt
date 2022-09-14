@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticL
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.*
 
 @Suppress("UNUSED_VARIABLE", "LocalVariableName", "ClassName", "unused")
@@ -21,6 +22,21 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val JS_MODULE_PROHIBITED_ON_VAR by error<KtAnnotationEntry>()
         val RUNTIME_ANNOTATION_NOT_SUPPORTED by warning<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<ConeKotlinType>("type")
+        }
+        val NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<String>("kind")
+        }
+        val NATIVE_INDEXER_WRONG_PARAMETER_COUNT by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<Int>("parametersCount")
+            parameter<String>("kind")
+        }
+        val NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<String>("kind")
+        }
+        val NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE by error<KtDeclaration>(PositioningStrategy.DECLARATION_RETURN_TYPE)
+        val NATIVE_SETTER_WRONG_RETURN_TYPE by error<KtDeclaration>(PositioningStrategy.DECLARATION_RETURN_TYPE)
     }
 
     val SUPERTYPES by object : DiagnosticGroup("Supertypes") {
