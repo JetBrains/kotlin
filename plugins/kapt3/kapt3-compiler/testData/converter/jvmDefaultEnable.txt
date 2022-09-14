@@ -11,6 +11,10 @@ public abstract interface Foo {
 
     public abstract void bar();
 
+    @kotlin.jvm.JvmDefault()
+    private void privateMethodWithDefault2() {
+    }
+
     @kotlin.Metadata()
     public static final class DefaultImpls {
 
@@ -20,6 +24,9 @@ public abstract interface Foo {
 
         public static void foo(@org.jetbrains.annotations.NotNull()
         Foo $this) {
+        }
+
+        private static void privateMethodWithDefault(Foo $this) {
         }
     }
 }

@@ -915,7 +915,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             ElementKind.METHOD, packageFqName, visibleAnnotations, method.invisibleAnnotations, descriptor.annotations
         )
 
-        if (containingClass.isInterface() && !method.isAbstract() && !method.isStatic()) {
+        if (containingClass.isInterface() && !method.isAbstract() && !method.isStatic() && (method.access and Opcodes.ACC_PRIVATE == 0)) {
             modifiers.flags = modifiers.flags or Flags.DEFAULT
         }
 
