@@ -804,21 +804,35 @@ internal object CheckSuperExpressionCallPart : ResolutionPart() {
 
         if (callComponents.statelessCallbacks.isSuperExpression(resolvedCall.dispatchReceiverArgument)) {
             if (candidateDescriptor is CallableMemberDescriptor) {
-                if (candidateDescriptor.modality == Modality.ABSTRACT) {
-                    addDiagnostic(AbstractSuperCall(resolvedCall.dispatchReceiverArgument!!))
-                } else if (candidateDescriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
-                    candidateDescriptor.overriddenDescriptors.size > 1
-                ) {
-                    if (candidateDescriptor.overriddenDescriptors.firstOrNull { !it.isInsideInterface }?.modality == Modality.ABSTRACT) {
-                        addDiagnostic(AbstractFakeOverrideSuperCall)
-                    }
-                }
+                checkSuperCandidateDescriptor(candidateDescriptor)
             }
         }
 
         val extensionReceiver = resolvedCall.extensionReceiverArgument
         if (extensionReceiver != null && callComponents.statelessCallbacks.isSuperExpression(extensionReceiver)) {
             addDiagnostic(SuperAsExtensionReceiver(extensionReceiver))
+        }
+    }
+
+    private fun ResolutionCandidate.checkSuperCandidateDescriptor(candidateDescriptor: CallableMemberDescriptor) {
+        if (candidateDescriptor.modality == Modality.ABSTRACT) {
+            addDiagnostic(AbstractSuperCall(resolvedCall.dispatchReceiverArgument!!))
+        } else if (candidateDescriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            var intersectionFakeOverrideDescriptor = candidateDescriptor
+            while (intersectionFakeOverrideDescriptor.overriddenDescriptors.size == 1) {
+                intersectionFakeOverrideDescriptor = intersectionFakeOverrideDescriptor.overriddenDescriptors.first()
+                if (intersectionFakeOverrideDescriptor.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                    return
+                }
+            }
+            if (intersectionFakeOverrideDescriptor.overriddenDescriptors.size > 1) {
+                if (intersectionFakeOverrideDescriptor.overriddenDescriptors.firstOrNull {
+                        !it.isInsideInterface
+                    }?.modality == Modality.ABSTRACT
+                ) {
+                    addDiagnostic(AbstractFakeOverrideSuperCall)
+                }
+            }
         }
     }
 }
