@@ -149,6 +149,8 @@ class StdlibKotlinIdeaDependencyResolutionTest : AbstractLightweightIdeaDependen
             module.assertContainsFragment("jvm").assertResolvedBinaryDependencies(
                 CLASSPATH_BINARY_TYPE,
                 "org.jetbrains.kotlin:kotlin-stdlib:${project.getKotlinPluginVersion()}",
+                "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${project.getKotlinPluginVersion()}",
+                "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${project.getKotlinPluginVersion()}",
                 Regex("""org\.jetbrains:annotations:.*"""),
             )
 
