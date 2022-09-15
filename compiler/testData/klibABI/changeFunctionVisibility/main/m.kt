@@ -13,4 +13,10 @@ fun box() = abiTest {
     expectSuccess("Container.protectedToPublicFunction.v2") { c.protectedToPublicFunctionAccess() }
     expectFailure(prefixed("function protectedToInternalFunction can not be called")) { c.protectedToInternalFunctionAccess() }
     expectFailure(prefixed("function protectedToPrivateFunction can not be called")) { c.protectedToPrivateFunctionAccess() }
+    expectSuccess("ContainerImpl.publicToProtectedOverriddenFunction") { c.publicToProtectedOverriddenFunction() }
+    expectSuccess("ContainerImpl.publicToInternalOverriddenFunction") { c.publicToInternalOverriddenFunction() }
+    expectSuccess("ContainerImpl.publicToPrivateOverriddenFunction") { c.publicToPrivateOverriddenFunction() }
+    expectSuccess("ContainerImpl.protectedToPublicOverriddenFunction") { c.protectedToPublicOverriddenFunctionAccess() }
+    expectSuccess("ContainerImpl.protectedToInternalOverriddenFunction") { c.protectedToInternalOverriddenFunctionAccess() }
+    expectSuccess("ContainerImpl.protectedToPrivateOverriddenFunction") { c.protectedToPrivateOverriddenFunctionAccess() }
 }
