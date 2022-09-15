@@ -2,7 +2,7 @@
 // ISSUE: KT-49110, KT-54055
 
 enum class SomeEnum(val x: Int) {
-    A(<!UNINITIALIZED_ENUM_COMPANION!>companionFun<!>().length),// UNINITIALIZED_ENUM_COMPANION
+    A(<!UNINITIALIZED_ENUM_COMPANION_WARNING!><!UNINITIALIZED_ENUM_COMPANION!>companionFun<!>()<!>.length),// UNINITIALIZED_ENUM_COMPANION
     B(<!UNINITIALIZED_ENUM_COMPANION_WARNING, UNINITIALIZED_VARIABLE!>companionProp<!>.length), // UNINITIALIZED_VARIABLE
 
     C(<!UNINITIALIZED_ENUM_COMPANION_WARNING!>SomeEnum<!>.companionFun().length),
@@ -18,7 +18,7 @@ enum class SomeEnum(val x: Int) {
 }
 
 enum class OtherEnum(val x: Int) {
-    G(<!UNINITIALIZED_ENUM_COMPANION!>extensionFun<!>().length), // UNINITIALIZED_ENUM_COMPANION
+    G(<!UNINITIALIZED_ENUM_COMPANION_WARNING!><!UNINITIALIZED_ENUM_COMPANION!>extensionFun<!>()<!>.length), // UNINITIALIZED_ENUM_COMPANION
     H(<!UNINITIALIZED_ENUM_COMPANION_WARNING!>extensionProp<!>.length),
 
     I(<!UNINITIALIZED_ENUM_COMPANION_WARNING!>OtherEnum<!>.extensionFun().length),
@@ -39,13 +39,13 @@ val OtherEnum.Companion.extensionProp: String
 
 enum class EnumWithLambda(val lambda: () -> Unit) {
     M({
-      companionFun().length
+      <!UNINITIALIZED_ENUM_COMPANION_WARNING!>companionFun()<!>.length
       <!UNINITIALIZED_ENUM_COMPANION_WARNING!>companionProp<!>.length
 
       <!UNINITIALIZED_ENUM_COMPANION_WARNING!>EnumWithLambda<!>.companionFun().length
       <!UNINITIALIZED_ENUM_COMPANION_WARNING!>EnumWithLambda<!>.companionProp.length
 
-      extensionFun().length
+      <!UNINITIALIZED_ENUM_COMPANION_WARNING!>extensionFun()<!>.length
       <!UNINITIALIZED_ENUM_COMPANION_WARNING!>extensionProp<!>.length
 
       <!UNINITIALIZED_ENUM_COMPANION_WARNING!>EnumWithLambda<!>.extensionFun().length

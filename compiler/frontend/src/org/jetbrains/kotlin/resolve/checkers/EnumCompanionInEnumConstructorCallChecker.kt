@@ -67,22 +67,6 @@ object EnumCompanionInEnumConstructorCallChecker : DeclarationChecker {
             val dispatchIsCompanion = dispatchDescriptor == companionDescriptor
             val extensionIsCompanion = extensionDescriptor == companionDescriptor
 
-            val dispatchIsImplicit = resolvedCall.dispatchReceiver is ImplicitClassReceiver
-            val extensionIsImplicit = resolvedCall.extensionReceiver is ImplicitClassReceiver
-
-            /*
-             * ControlFlowInformationProviderImpl already reports UNINITIALIZED_ENUM_COMPANION for extension function calls
-             *   with implicit companion receiver, so we should skip reporting a warning
-             *
-             * If feature is enabled then ControlFlowInformationProviderImpl won't report an error, to keep all checks
-             *   in one place (in this checker)
-             */
-            if (
-                !reportError &&
-                expression is KtCallExpression &&
-                (dispatchIsCompanion && dispatchIsImplicit || extensionIsCompanion && extensionIsImplicit)
-            ) return false
-
             if (dispatchIsCompanion || extensionIsCompanion) {
                 val reportOn = when (val receiverExpression = (expression as? KtQualifiedExpression)?.receiverExpression) {
                     is KtSimpleNameExpression -> receiverExpression
