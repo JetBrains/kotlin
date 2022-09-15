@@ -54,7 +54,7 @@ sealed class ClangArgs(
                     "HAS_FOUNDATION_FRAMEWORK".takeIf { target.hasFoundationFramework() },
                     "HAS_UIKIT_FRAMEWORK".takeIf { target.hasUIKitFramework() },
                     "REPORT_BACKTRACE_TO_IOS_CRASH_LOG".takeIf { target.supportsIosCrashLog() },
-                    "NEAD_SMALL_BINARY".takeIf { target.needSmallBinary() },
+                    "NEED_SMALL_BINARY".takeIf { target.needSmallBinary() },
                     "TARGET_HAS_ADDRESS_DEPENDENCY".takeIf { target.hasAddressDependencyInMemoryModel() },
             ).map { "KONAN_$it=1" }
             val otherOptions = listOfNotNull(

@@ -26,7 +26,7 @@
 #include "PointerBits.h"
 #include "Utils.hpp"
 
-#if KONAN_NEAD_SMALL_BINARY
+#if KONAN_NEED_SMALL_BINARY
   // Currently, codegen places a lot of unnecessary calls to MM functions.
   // By forcing NO_INLINE on these functions we keep binaries from growing too big.
   #define CODEGEN_INLINE_POLICY NO_INLINE

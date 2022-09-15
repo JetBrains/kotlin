@@ -143,7 +143,11 @@ fun KonanTarget.supportsUnalignedAccess(): Boolean = when (architecture) {
     Architecture.X86, Architecture.ARM64, Architecture.X64 -> true
 } && this != KonanTarget.WATCHOS_ARM64
 
-fun KonanTarget.needSmallBinary() = (architecture == Architecture.ARM32 && family.isAppleFamily)
+fun KonanTarget.needSmallBinary() = when {
+    family == Family.WATCHOS -> true
+    family.isAppleFamily -> architecture == Architecture.ARM32
+    else -> false
+}
 
 fun KonanTarget.supportedSanitizers(): List<SanitizerKind> =
     when(this) {
