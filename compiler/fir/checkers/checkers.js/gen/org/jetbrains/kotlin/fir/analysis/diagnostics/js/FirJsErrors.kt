@@ -38,6 +38,12 @@ object FirJsErrors {
     val NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS by error1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)
     val NATIVE_SETTER_WRONG_RETURN_TYPE by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)
+    val JS_NAME_IS_NOT_ON_ALL_ACCESSORS by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val JS_NAME_PROHIBITED_FOR_NAMED_NATIVE by error0<KtElement>()
+    val JS_NAME_PROHIBITED_FOR_OVERRIDE by error0<KtElement>()
+    val JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED by error0<KtElement>()
+    val JS_NAME_ON_ACCESSOR_AND_PROPERTY by error0<KtElement>()
+    val JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY by error0<KtElement>()
 
     // Supertypes
     val WRONG_MULTIPLE_INHERITANCE by error1<KtElement, FirCallableSymbol<*>>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)

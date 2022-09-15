@@ -26,6 +26,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_IS_NOT_ON_ALL_ACCESSORS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_ON_ACCESSOR_AND_PROPERTY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_PROHIBITED_FOR_NAMED_NATIVE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_PROHIBITED_FOR_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS
@@ -130,6 +136,12 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Can''t put non-external declarations in file marked with {0} annotation",
             FirDiagnosticRenderers.RENDER_TYPE
         )
+        map.put(JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY, "@JsName is prohibited for extension properties")
+        map.put(JS_NAME_IS_NOT_ON_ALL_ACCESSORS, "@JsName should be on all of the property accessors")
+        map.put(JS_NAME_PROHIBITED_FOR_NAMED_NATIVE, "@JsName is prohibited for external declaration with explicit name")
+        map.put(JS_NAME_PROHIBITED_FOR_OVERRIDE, "@JsName is prohibited for overridden members")
+        map.put(JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED, "@JsName annotation is prohibited for primary constructors")
+        map.put(JS_NAME_ON_ACCESSOR_AND_PROPERTY, "@JsName can be either on a property or its accessors, not both of them")
 
         map.checkMissingMessages(FirJsErrors)
     }
