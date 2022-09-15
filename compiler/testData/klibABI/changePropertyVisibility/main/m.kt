@@ -24,4 +24,28 @@ fun box() = abiTest {
     expectFailure(prefixed("property accessor protectedToInternalProperty2.<get-protectedToInternalProperty2> can not be called")) { c.protectedToInternalProperty2Access() }
     expectFailure(prefixed("property accessor protectedToPrivateProperty1.<get-protectedToPrivateProperty1> can not be called")) { c.protectedToPrivateProperty1Access() }
     expectFailure(prefixed("property accessor protectedToPrivateProperty2.<get-protectedToPrivateProperty2> can not be called")) { c.protectedToPrivateProperty2Access() }
+    expectSuccess("ContainerImpl.publicToProtectedOverriddenProperty1") { c.publicToProtectedOverriddenProperty1 }
+    expectSuccess("ContainerImpl.publicToProtectedOverriddenProperty2") { c.publicToProtectedOverriddenProperty2 }
+    expectSuccess("ContainerImpl.publicToProtectedOverriddenProperty3") { c.publicToProtectedOverriddenProperty3 }
+    expectSuccess("ContainerImpl.publicToProtectedOverriddenProperty4") { c.publicToProtectedOverriddenProperty4 }
+    expectSuccess("ContainerImpl.publicToInternalOverriddenProperty1") { c.publicToInternalOverriddenProperty1 }
+    expectSuccess("ContainerImpl.publicToInternalOverriddenProperty2") { c.publicToInternalOverriddenProperty2 }
+    expectSuccess("ContainerImpl.publicToInternalOverriddenProperty3") { c.publicToInternalOverriddenProperty3 }
+    expectSuccess("ContainerImpl.publicToInternalOverriddenProperty4") { c.publicToInternalOverriddenProperty4 }
+    expectSuccess("ContainerImpl.publicToPrivateOverriddenProperty1") { c.publicToPrivateOverriddenProperty1 }
+    expectSuccess("ContainerImpl.publicToPrivateOverriddenProperty2") { c.publicToPrivateOverriddenProperty2 }
+    expectSuccess("ContainerImpl.publicToPrivateOverriddenProperty3") { c.publicToPrivateOverriddenProperty3 }
+    expectSuccess("ContainerImpl.publicToPrivateOverriddenProperty4") { c.publicToPrivateOverriddenProperty4 }
+    expectSuccess("ContainerImpl.protectedToPublicOverriddenProperty1") { c.protectedToPublicOverriddenProperty1Access() }
+    expectSuccess("ContainerImpl.protectedToPublicOverriddenProperty2") { c.protectedToPublicOverriddenProperty2Access() }
+    expectSuccess("ContainerImpl.protectedToPublicOverriddenProperty3") { c.protectedToPublicOverriddenProperty3Access() }
+    expectSuccess("ContainerImpl.protectedToPublicOverriddenProperty4") { c.protectedToPublicOverriddenProperty4Access() }
+    expectSuccess("ContainerImpl.protectedToInternalOverriddenProperty1") { c.protectedToInternalOverriddenProperty1Access() }
+    expectSuccess("ContainerImpl.protectedToInternalOverriddenProperty2") { c.protectedToInternalOverriddenProperty2Access() }
+    expectSuccess("ContainerImpl.protectedToInternalOverriddenProperty3") { c.protectedToInternalOverriddenProperty3Access() }
+    expectSuccess("ContainerImpl.protectedToInternalOverriddenProperty4") { c.protectedToInternalOverriddenProperty4Access() }
+    expectSuccess("ContainerImpl.protectedToPrivateOverriddenProperty1") { c.protectedToPrivateOverriddenProperty1Access() }
+    expectSuccess("ContainerImpl.protectedToPrivateOverriddenProperty2") { c.protectedToPrivateOverriddenProperty2Access() }
+    expectSuccess("ContainerImpl.protectedToPrivateOverriddenProperty3") { c.protectedToPrivateOverriddenProperty3Access() }
+    expectSuccess("ContainerImpl.protectedToPrivateOverriddenProperty4") { c.protectedToPrivateOverriddenProperty4Access() }
 }
