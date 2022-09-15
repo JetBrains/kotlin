@@ -164,9 +164,27 @@ abstract class FirJavaFacade(
         parentClassTypeParameterStackCache.remove(classSymbol)
         parentClassEffectiveVisibilityCache.remove(classSymbol)
 
-        // There's a bit of an ordering restriction here:
-        // 1. annotations should be added after the symbol is bound, as annotations can refer to the class itself;
-        // 2. type enhancement requires annotations to be already present (and supertypes can refer to type parameters).
+        // This is where the problems begin. We need to enhance nullability of super types and type parameter bounds,
+        // for which we need the annotations of this class as they may specify default nullability.
+        // However, all three - annotations, type parameter bounds, and supertypes - can refer to other classes,
+        // which will cause the type parameter bounds and supertypes of *those* classes to get enhanced first,
+        // but they may refer back to this class again - which, thanks to the magic of symbol resolver caches,
+        // will be observed in a state where we've not done the enhancement yet. For those cases, we must publish
+        // at least unenhanced resolved types, or else FIR may crash upon encountering a FirJavaTypeRef where FirResolvedTypeRef
+        // is expected.
+        // TODO: some (all?) of those loops can be avoided, e.g. we don't actually need to resolve class arguments of annotations
+        //   to determine whether they set default nullability - but without laziness, breaking those loops is somewhat hard,
+        //   as we have a nested ordering here.
+        for (typeParameter in firJavaClass.typeParameters) {
+            if (typeParameter is FirTypeParameter) {
+                typeParameter.replaceBounds(typeParameter.bounds.map {
+                    it.resolveIfJavaType(session, javaTypeParameterStack, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND)
+                })
+            }
+        }
+        // 1. Resolve annotations
+        // 2. Enhance type parameter bounds - may refer to each other, take default nullability from annotations
+        // 3. Enhance super types - may refer to type parameter bounds, take default nullability from annotations
         firJavaClass.annotations.addFromJava(session, javaClass, javaTypeParameterStack)
         val enhancement = FirSignatureEnhancement(firJavaClass, session) { emptyList() }
         enhancement.enhanceTypeParameterBounds(firJavaClass.typeParameters)

@@ -227,6 +227,11 @@ public class IrLoadJavaTestGenerated extends AbstractIrLoadJavaTest {
             runTest("compiler/testData/loadJava/compiledJava/RecursiveWildcardUpperBound.java");
         }
 
+        @TestMetadata("ReferenceCycleThroughAnnotation.java")
+        public void testReferenceCycleThroughAnnotation() throws Exception {
+            runTest("compiler/testData/loadJava/compiledJava/ReferenceCycleThroughAnnotation.java");
+        }
+
         @TestMetadata("RemoveRedundantProjectionKind.java")
         public void testRemoveRedundantProjectionKind() throws Exception {
             runTest("compiler/testData/loadJava/compiledJava/RemoveRedundantProjectionKind.java");
