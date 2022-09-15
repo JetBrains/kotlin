@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOrNull
 import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
-import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
 
 internal fun Project.configureStdlibDefaultDependency(
     topLevelExtension: KotlinTopLevelExtension,
@@ -66,7 +65,7 @@ private fun addStdlibToKpmProject(
             val dependencyHandler = project.dependencies
             val stdlibModule = when (variant.platformType) {
                 KotlinPlatformType.common -> error("variants are not expected to be common")
-                KotlinPlatformType.jvm -> chooseStdlibJvmDependency(coreLibrariesVersion)
+                KotlinPlatformType.jvm -> "kotlin-stdlib-jdk8"
                 KotlinPlatformType.js -> "kotlin-stdlib-js"
                 KotlinPlatformType.wasm -> "kotlin-stdlib-wasm"
                 KotlinPlatformType.androidJvm -> null // TODO: expect support on the AGP side?
@@ -106,10 +105,11 @@ private fun KotlinTarget.addStdlibDependency(
 
                 val stdlibModule = compilation
                     .platformType
-                    .stdlibPlatformType(coreLibrariesVersion, this, kotlinSourceSet)
+                    .stdlibPlatformType( this, kotlinSourceSet)
                     ?: return@withDependencies
 
                 // Check if stdlib module is added to SourceSets hierarchy
+                @Suppress("DEPRECATION")
                 if (
                     isStdlibAddedByUser(
                         configurations,
@@ -147,16 +147,15 @@ private fun isStdlibAddedByUser(
 }
 
 private fun KotlinPlatformType.stdlibPlatformType(
-    coreLibrariesVersion: Provider<String>,
     kotlinTarget: KotlinTarget,
     kotlinSourceSet: KotlinSourceSet
 ): String? = when (this) {
-    KotlinPlatformType.jvm -> chooseStdlibJvmDependency(coreLibrariesVersion)
+    KotlinPlatformType.jvm -> "kotlin-stdlib-jdk8"
     KotlinPlatformType.androidJvm -> {
         if (kotlinTarget is KotlinAndroidTarget &&
             kotlinSourceSet.androidSourceSetInfoOrNull?.androidSourceSetName == AndroidBaseSourceSetName.Main.name
         ) {
-            chooseStdlibJvmDependency(coreLibrariesVersion)
+            "kotlin-stdlib-jdk8"
         } else {
             null
         }
@@ -167,19 +166,6 @@ private fun KotlinPlatformType.stdlibPlatformType(
     KotlinPlatformType.native -> null
     KotlinPlatformType.common -> // there's no platform compilation that the source set is default for
         "kotlin-stdlib-common"
-}
-
-private val kotlin180Version = SemVer(1.toBigInteger(), 8.toBigInteger(), 0.toBigInteger())
-
-private fun chooseStdlibJvmDependency(
-    coreLibrariesVersion: Provider<String>
-): String {
-    // Current 'SemVer.satisfies' release always returns `false` for any "-SNAPSHOT" version.
-    return if (SemVer.from(coreLibrariesVersion.get()) < kotlin180Version) {
-        "kotlin-stdlib-jdk8"
-    } else {
-        "kotlin-stdlib"
-    }
 }
 
 private val androidTestVariants = setOf(AndroidVariantType.UnitTest, AndroidVariantType.InstrumentedTest)
