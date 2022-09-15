@@ -20,7 +20,7 @@ import com.intellij.codeInsight.ExternalAnnotationsManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 
-class MockExternalAnnotationsManager : ExternalAnnotationsManager() {
+open class MockExternalAnnotationsManager : ExternalAnnotationsManager() {
     override fun chooseAnnotationsPlace(element: PsiElement): AnnotationPlace = AnnotationPlace.NOWHERE
     override fun chooseAnnotationsPlaceNoUi(element: PsiElement): AnnotationPlace = AnnotationPlace.NOWHERE
 

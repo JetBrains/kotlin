@@ -83,6 +83,12 @@ public class FirIdeNormalAnalysisSourceModuleDeclarationReturnTypeTestGenerated 
     }
 
     @Test
+    @TestMetadata("platformTypeWithExternalAnnotation.kt")
+    public void testPlatformTypeWithExternalAnnotation() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/platformTypeWithExternalAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("propertyAccessor.kt")
     public void testPropertyAccessor() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/propertyAccessor.kt");

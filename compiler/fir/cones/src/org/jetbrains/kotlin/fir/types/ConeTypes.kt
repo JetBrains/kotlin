@@ -98,6 +98,16 @@ open class ConeFlexibleType(
     }
 }
 
+interface TypeWithEnhancement {
+    val origin: ConeKotlinType
+    val enhancement: ConeKotlinType
+}
+
+class ConeFlexibleTypeWithEnhancement(
+    override val origin: ConeFlexibleType,
+    override val enhancement: ConeKotlinType,
+) : ConeFlexibleType(origin.lowerBound, origin.upperBound), TypeWithEnhancement
+
 @RequiresOptIn(message = "Please use ConeDynamicType.create instead")
 annotation class DynamicTypeConstructor
 
