@@ -9,9 +9,7 @@ import kotlinx.cinterop.usingJvmCInteropCallbacks
 import llvm.LLVMContextCreate
 import llvm.LLVMCreateDIBuilder
 import llvm.LLVMModuleCreateWithNameInContext
-import org.jetbrains.kotlin.backend.common.phaser.SameTypeNamedCompilerPhase
-import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
-import org.jetbrains.kotlin.backend.common.phaser.then
+import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.llvm.DebugInfo
@@ -46,11 +44,8 @@ class DynamicNativeCompilerDriver(
             ?: MessageCollector.NONE
 
     // It should be a proper (Input, Context, Phases) -> Output pure function, but NamedCompilerPhase is a bit tricky to refactor.
-    private fun <Context : PhaseContext, Data> runTopLevelPhase(context: Context, phase: SameTypeNamedCompilerPhase<Context, Data>, input: Data) =
+    private fun <Context : PhaseContext, Input, Output> runTopLevelPhase(context: Context, input: Input, phase: SimpleNamedCompilerPhase<Context, Input, Output>) =
             phase.invokeToplevel(createPhaseConfig(phase, arguments, messageCollector), context, input)
-
-    private fun <Context : PhaseContext> runTopLevelPhaseUnit(context: Context, phase: SameTypeNamedCompilerPhase<Context, Unit>) =
-            runTopLevelPhase(context, phase, Unit)
 
     companion object {
         fun canRun(config: KonanConfig): Boolean {
@@ -91,23 +86,20 @@ class DynamicNativeCompilerDriver(
     }
 
     private fun buildKlib(config: KonanConfig, environment: KotlinCoreEnvironment) {
-        val frontendPhase = Phases.buildFrontendPhase()
+        val frontendPhaseResult = runFrontend(config, environment)
+        if (frontendPhaseResult !is FrontendPhaseResult.Full) {
+            return
+        }
 
-        val createSymbolTablePhase = Phases.buildCreateSymbolTablePhase()
-        val psiToIrPhase = Phases.buildTranslatePsiToIrPhase(isProducingLibrary = true, createSymbolTablePhase)
-        val destroySymbolTablePhase = Phases.buildDestroySymbolTablePhase(createSymbolTablePhase)
+        SymbolTableResource().use { symbolTable ->
+            val psiToIrPhase = Phases.buildTranslatePsiToIrPhase(isProducingLibrary = true, symbolTable)
+            // TODO: Create new specialized context instead
+            val psiToIrContext: PsiToIrContext = context
+            runTopLevelPhase(psiToIrContext, frontendPhaseResult, psiToIrPhase)
+        }
+
         val serializerPhase = Phases.buildSerializerPhase()
         val produceKlibPhase = Phases.buildProduceKlibPhase()
-
-        val irGen = SameTypeNamedCompilerPhase(
-                "IRGen",
-                "IR generation",
-                nlevels = 1,
-                lower = createSymbolTablePhase then
-                        psiToIrPhase then
-                        destroySymbolTablePhase
-        )
-
         val generateKlib = SameTypeNamedCompilerPhase(
                 "GenerateKlib",
                 "Library serialization",
@@ -116,27 +108,13 @@ class DynamicNativeCompilerDriver(
                         produceKlibPhase
         )
 
-        val context = Context(config)
-        context.environment = environment
-        if (!runTopLevelPhase(context, frontendPhase, true)) {
-            return
-        }
-        // TODO: Create new specialized context instead
-        val psiToIrContext: PsiToIrContext = context
-        runTopLevelPhaseUnit(psiToIrContext, irGen)
-
         val klibProducingContext: KlibProducingContext = context
         runTopLevelPhaseUnit(klibProducingContext, generateKlib)
-
-        val time = frontendPhase.time + irGen.time + generateKlib.time
-        println("It took ${time}")
     }
 
     private fun buildProgram(config: KonanConfig, environment: KotlinCoreEnvironment) {
-        val frontendPhase = Phases.buildFrontendPhase()
-        val frontendContext: FrontendContext = FrontendContextImpl(config, environment)
-
-        if (!runTopLevelPhase(frontendContext, frontendPhase, true)) {
+        val frontendPhaseResult = runFrontend(config, environment)
+        if (frontendPhaseResult !is FrontendPhaseResult.Full) {
             return
         }
 
@@ -282,47 +260,39 @@ class DynamicNativeCompilerDriver(
         tryDisposeLLVMContext()
     }
 
-    private fun buildFramework(config: KonanConfig, environment: KotlinCoreEnvironment) {
+    private fun runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseResult {
         val frontendPhase = Phases.buildFrontendPhase()
         val frontendContext: FrontendContext = FrontendContextImpl(config, environment)
+        return runTopLevelPhase(frontendContext, Unit, frontendPhase)
+    }
 
-        if (!runTopLevelPhase(frontendContext, frontendPhase, true)) {
+    private fun buildFramework(config: KonanConfig, environment: KotlinCoreEnvironment) {
+        val frontendPhaseResult = runFrontend(config, environment)
+        if (frontendPhaseResult !is FrontendPhaseResult.Full) {
             return
         }
 
         val objCExportPhase = Phases.buildObjCExportPhase()
-        val objCExport = runTopLevelPhase(frontendContext, objCExportPhase, null)
+        val objCExport = runTopLevelPhase(frontendContext, frontendPhaseResult, objCExportPhase)
+
+        if (config.omitFrameworkBinary) {
+            val produceFrameworkInterface = Phases.buildProduceFrameworkInterfacePhase()
+            val objCExportContext: BasicPhaseContext = BasicPhaseContext(config)
+            runTopLevelPhase(objCExportContext, objCExport, produceFrameworkInterface)
+            return
+        }
 
         val context = Context(config, objCExport)
         context.populateFromFrontend(frontendContext)
 
-        if (config.omitFrameworkBinary) {
-            val produceFrameworkInterface = Phases.buildProduceFrameworkInterfacePhase()
+        SymbolTableResource().use { symbolTable ->
+            val objCExportCodeSpecPhase = Phases.buildObjCCodeSpecPhase()
+            val psiToIrPhase = Phases.buildTranslatePsiToIrPhase(isProducingLibrary = false, symbolTable)
+
             val objCExportContext: ObjCExportContext = context
-            runTopLevelPhaseUnit(objCExportContext, produceFrameworkInterface)
-            // So the only things we need is
-            // 1. Parse sources
-            // 2. Generate headers
-            // 3. Write them to frameworks directory.
-            return
+            runTopLevelPhase(context, symbolTable, objCExportCodeSpecPhase)
+            runTopLevelPhase(context, fro, psiToIrPhase)
         }
-
-        val createSymbolTablePhase = Phases.buildCreateSymbolTablePhase()
-        val objCExportCodeSpecPhase = Phases.buildObjCCodeSpecPhase(createSymbolTablePhase)
-        val psiToIrPhase = Phases.buildTranslatePsiToIrPhase(isProducingLibrary = false, createSymbolTablePhase)
-        val destroySymbolTablePhase = Phases.buildDestroySymbolTablePhase(createSymbolTablePhase)
-
-        val irGen = SameTypeNamedCompilerPhase(
-                "IRGen",
-                "IR generation",
-                nlevels = 1,
-                lower = createSymbolTablePhase then
-                        objCExportCodeSpecPhase then
-                        psiToIrPhase then
-                        destroySymbolTablePhase
-        )
-        val objCExportContext: ObjCExportContext = context
-        runTopLevelPhaseUnit(objCExportContext, irGen)
 
         val specialBackendChecksPhase = Phases.buildSpecialBackendChecksPhase()
         val copyDefaultValuesToActualPhase = Phases.buildCopyDefaultValuesToActualPhase()
@@ -441,9 +411,8 @@ class DynamicNativeCompilerDriver(
     }
 
     private fun buildPerFileStaticCache(config: KonanConfig, environment: KotlinCoreEnvironment) {
-        val frontendPhase = Phases.buildFrontendPhase()
-        val frontendContext: FrontendContext = FrontendContextImpl(config, environment)
-        if (!runTopLevelPhase(frontendContext, frontendPhase, true)) {
+        val frontendPhaseResult = runFrontend(config, environment)
+        if (frontendPhaseResult !is FrontendPhaseResult.Full) {
             return
         }
 
@@ -604,9 +573,8 @@ class DynamicNativeCompilerDriver(
     }
 
     private fun buildStaticCache(config: KonanConfig, environment: KotlinCoreEnvironment) {
-        val frontendPhase = Phases.buildFrontendPhase()
-        val frontendContext: FrontendContext = FrontendContextImpl(config, environment)
-        if (!runTopLevelPhase(frontendContext, frontendPhase, true)) {
+        val frontendPhaseResult = runFrontend(config, environment)
+        if (frontendPhaseResult !is FrontendPhaseResult.Full) {
             return
         }
 

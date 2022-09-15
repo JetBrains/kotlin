@@ -20,12 +20,14 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class KonanDriver(
@@ -113,7 +115,7 @@ private fun runTopLevelPhases(
 
     if (konanConfig.infoArgsOnly) return
 
-    if (!context.frontendPhase()) return
+    if (context.frontendPhase() == FrontendPhaseResult.ShouldNotGenerateCode) return
 
     usingNativeMemoryAllocator {
         usingJvmCInteropCallbacks {
@@ -126,8 +128,19 @@ private fun runTopLevelPhases(
     }
 }
 
+sealed class FrontendPhaseResult(val shouldGenerateCode: Boolean) {
+    object ShouldNotGenerateCode : FrontendPhaseResult(false)
+
+    data class Full(
+            val moduleDescriptor: ModuleDescriptor,
+            val bindingContext: BindingContext,
+            val environment: KotlinCoreEnvironment,
+            val frontendServices: FrontendServices
+    ) : FrontendPhaseResult(true)
+}
+
 // returns true if should generate code.
-internal fun FrontendContext.frontendPhase(): Boolean {
+internal fun FrontendContext.frontendPhase(): FrontendPhaseResult {
     val config = this.config
     lateinit var analysisResult: AnalysisResult
 
@@ -154,5 +167,9 @@ internal fun FrontendContext.frontendPhase(): Boolean {
     moduleDescriptor = analysisResult.moduleDescriptor
     bindingContext = analysisResult.bindingContext
 
-    return analysisResult.shouldGenerateCode
+    if (analysisResult.shouldGenerateCode) {
+        FrontendPhaseResult.Full(moduleDescriptor, bindingContext, environment, frontendServices)
+    } else {
+        FrontendPhaseResult.ShouldNotGenerateCode
+    }
 }

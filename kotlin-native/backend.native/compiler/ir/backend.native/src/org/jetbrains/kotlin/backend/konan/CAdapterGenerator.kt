@@ -527,7 +527,10 @@ private fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescript
             getPackage(it).fragments.filter { it.module == this }
         }
 
-internal class CAdapterGenerator(val context: PsiToIrContext) : DeclarationDescriptorVisitor<Boolean, Void?> {
+internal class CAdapterGenerator(
+        val context: PsiToIrContext,
+        private val moduleDescriptor: ModuleDescriptor,
+) : DeclarationDescriptorVisitor<Boolean, Void?> {
 
     private val scopes = mutableListOf<ExportedElementScope>()
     internal val prefix = context.config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
@@ -700,15 +703,15 @@ internal class CAdapterGenerator(val context: PsiToIrContext) : DeclarationDescr
 
     private fun buildExports() {
         scopes.push(ExportedElementScope(ScopeKind.TOP, "kotlin"))
-        moduleDescriptors += context.moduleDescriptor
-        moduleDescriptors += context.config.getExportedDependencies(context.moduleDescriptor)
+        moduleDescriptors += moduleDescriptor
+        moduleDescriptors += context.config.getExportedDependencies(moduleDescriptor)
 
         currentPackageFragments = moduleDescriptors.flatMap { it.getPackageFragments() }.toSet().sortedWith(
                 Comparator { o1, o2 ->
                     o1.fqName.toString().compareTo(o2.fqName.toString())
                 })
 
-        context.moduleDescriptor.getPackage(FqName.ROOT).accept(this, null)
+        moduleDescriptor.getPackage(FqName.ROOT).accept(this, null)
     }
 
     private fun generateBindings(context: BitcodegenContext) {

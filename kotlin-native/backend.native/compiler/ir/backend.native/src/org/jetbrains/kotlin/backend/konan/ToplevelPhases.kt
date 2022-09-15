@@ -78,7 +78,7 @@ internal val createSymbolTablePhase = konanUnitPhase<PsiToIrContext>(
 
 internal val objCExportPhase = konanUnitPhase<Context>(
             op = {
-                objCExport = ObjCExport(this, config)
+                objCExport = ObjCExport(this, this.asFrontendPhaseResult(), config)
             },
             name = "ObjCExport",
             description = "Objective-C header generation",
@@ -94,10 +94,10 @@ internal val objcExportCodeSpecPhase = konanUnitPhase<ObjCExportContext>(
         prerequisite = setOf(createSymbolTablePhase)
 )
 
-internal val buildCExportsPhase = konanUnitPhase<CExportContext>(
+internal val buildCExportsPhase = konanUnitPhase<Context>(
         op = {
             if (this.isNativeLibrary) {
-                this.cAdapterGenerator = CAdapterGenerator(this).also {
+                this.cAdapterGenerator = CAdapterGenerator(this, this.moduleDescriptor).also {
                     it.buildExports(this.symbolTable!!)
                 }
             }
@@ -107,13 +107,15 @@ internal val buildCExportsPhase = konanUnitPhase<CExportContext>(
         prerequisite = setOf(createSymbolTablePhase)
 )
 
-internal val psiToIrPhase = konanUnitPhase<PsiToIrContext>(
+internal val psiToIrPhase = konanUnitPhase<Context>(
             op = {
                 psiToIr(this,
                         config,
                         symbolTable!!,
                         isProducingLibrary = config.produce == CompilerOutputKind.LIBRARY,
-                        useLinkerWhenProducingLibrary = false)
+                        useLinkerWhenProducingLibrary = false,
+                        this.asFrontendPhaseResult()
+                )
             },
             name = "Psi2Ir",
             description = "Psi to IR conversion and klib linkage",

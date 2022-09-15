@@ -72,7 +72,7 @@ internal class NativeMapping() : DefaultMapping() {
 
 internal class Context(
         config: KonanConfig,
-        override var objCExport: ObjCExport? = null,
+        override var objCExport: ObjCExport,
 ) : AbstractKonanBackendContext(config),
         ConfigChecks,
         FrontendContext,
@@ -108,6 +108,8 @@ internal class Context(
         moduleDescriptor = frontendContext.moduleDescriptor
         frontendServices = frontendContext.frontendServices
     }
+
+    fun asFrontendPhaseResult() = FrontendPhaseResult.Full(moduleDescriptor, bindingContext, environment, frontendServices)
 
     // Psi To IR context
     override var symbolTable: SymbolTable? = null

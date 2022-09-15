@@ -32,7 +32,7 @@ private class CompositePhase<Context : CommonBackendContext, Input, Output>(
         return result as Output
     }
 
-    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, SameTypeNamedCompilerPhase<Context, *>>> =
+    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, CompilerPhaseWithName<Context, *, *>>> =
         phases.flatMap { it.getNamedSubphases(startDepth) }
 
     override val stickyPostconditions get() = phases.last().stickyPostconditions
@@ -74,7 +74,7 @@ private class CustomPhaseAdapter<Context : CommonBackendContext, Element>(
 fun <Context : CommonBackendContext> namedUnitPhase(
     name: String,
     description: String,
-    prerequisite: Set<SameTypeNamedCompilerPhase<Context, *>> = emptySet(),
+    prerequisite: Set<AnyNamedPhase> = emptySet(),
     nlevels: Int = 1,
     lower: CompilerPhase<Context, Unit, Unit>
 ): SameTypeNamedCompilerPhase<Context, Unit> =
@@ -86,7 +86,7 @@ fun <Context : CommonBackendContext> namedUnitPhase(
 fun <Context : CommonBackendContext> namedOpUnitPhase(
     name: String,
     description: String,
-    prerequisite: Set<SameTypeNamedCompilerPhase<Context, *>>,
+    prerequisite: Set<AnyNamedPhase>,
     op: Context.() -> Unit
 ): SameTypeNamedCompilerPhase<Context, Unit> = namedUnitPhase(
     name, description, prerequisite,

@@ -38,6 +38,8 @@ interface CompilerPhase<in Context : LoggingContext, Input, Output> {
 
 interface CompilerPhaseWithName<in Context : LoggingContext, Input, Output> : CompilerPhase<Context, Input, Output> {
     val name: String
+
+    val description: String
 }
 
 
@@ -72,19 +74,19 @@ infix operator fun <Data, Context> Action<Data, Context>.plus(other: Action<Data
         other(phaseState, data, context)
     }
 
-class NamedCompilerPhase<in Context : LoggingContext, Input, Output>(
-    override val name: String,
-    val description: String,
-    val prerequisite: Set<SameTypeNamedCompilerPhase<*, *>> = emptySet(),
-    private val lower: CompilerPhase<Context, Input, Output>,
-    val preconditions: Set<Checker<Input>> = emptySet(),
-    val postconditions: Set<Checker<Output>> = emptySet(),
-    override val stickyPostconditions: Set<Checker<Output>> = emptySet(),
-    private val preactions: Set<Action<Input, Context>> = emptySet(),
-    private val postaction: Set<Action<Output, Context>> = emptySet(),
-    private val nlevels: Int = 0,
-    private val outputIfNotEnabled: (Context, Input) -> Output
+
+sealed class NamedCompilerPhase<in Context : LoggingContext, Input, Output>(
+    val prerequisite: Set<AnyNamedPhase>,
+    protected val lower: CompilerPhase<Context, Input, Output>,
+    val preconditions: Set<Checker<Input>>,
+    val postconditions: Set<Checker<Output>>,
+    private val preactions: Set<Action<Input, Context>>,
+    private val postactions: Set<Action<Output, Context>>,
+    protected val nlevels: Int = 0,
 ) : CompilerPhaseWithName<Context, Input, Output> {
+
+    abstract fun outputIfNotEnabled(context: Context, input: Input): Output
+
     override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output {
         if (this !in phaseConfig.enabled) {
             return outputIfNotEnabled(context, input)
@@ -112,29 +114,7 @@ class NamedCompilerPhase<in Context : LoggingContext, Input, Output>(
         return output
     }
 
-    private fun runBefore(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input) {
-        val state = ActionState(phaseConfig, this, phaserState.phaseCount, BeforeOrAfter.BEFORE)
-        for (action in preactions) action(state, input, context)
-
-        if (phaseConfig.checkConditions) {
-            for (pre in preconditions) pre(input)
-        }
-    }
-
-    private fun runAfter(phaseConfig: PhaseConfig, phaserState: PhaserState<Output>, context: Context, output: Output) {
-        val state = ActionState(phaseConfig, this, phaserState.phaseCount, BeforeOrAfter.AFTER)
-        for (action in postaction) action(state, output, context)
-
-        if (phaseConfig.checkConditions) {
-            for (post in postconditions) post(output)
-            for (post in stickyPostconditions) post(output)
-            if (phaseConfig.checkStickyConditions) {
-                for (post in phaserState.stickyPostconditions) post(output)
-            }
-        }
-    }
-
-    private fun runAndProfile(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, source: Input): Output {
+    protected fun runAndProfile(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, source: Input): Output {
         var result: Output? = null
         val msec = measureTimeMillis {
             result = phaserState.downlevel(nlevels) {
@@ -147,65 +127,18 @@ class NamedCompilerPhase<in Context : LoggingContext, Input, Output>(
         return result!!
     }
 
-    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, CompilerPhaseWithName<Context, *, *>>> =
-        listOf(startDepth to this) + lower.getNamedSubphases(startDepth + nlevels)
-
-    override fun toString() = "Compiler Phase @$name"
-}
-
-class SameTypeNamedCompilerPhase<in Context : LoggingContext, Data>(
-    override val name: String,
-    val description: String,
-    val prerequisite: Set<SameTypeNamedCompilerPhase<*, *>> = emptySet(),
-    private val lower: CompilerPhase<Context, Data, Data>,
-    val preconditions: Set<Checker<Data>> = emptySet(),
-    val postconditions: Set<Checker<Data>> = emptySet(),
-    override val stickyPostconditions: Set<Checker<Data>> = emptySet(),
-    private val actions: Set<Action<Data, Context>> = emptySet(),
-    private val nlevels: Int = 0
-) : SameTypeCompilerPhase<Context, Data>, CompilerPhaseWithName<Context, Data, Data> {
-
-    var time: Long = 0
-
-    override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Data>, context: Context, input: Data): Data {
-        if (this !in phaseConfig.enabled) {
-            return input
-        }
-
-        assert(phaserState.alreadyDone.containsAll(prerequisite)) {
-            "Lowering $name: phases ${(prerequisite - phaserState.alreadyDone).map { it.name }} are required, but not satisfied"
-        }
-
-        context.inVerbosePhase = this in phaseConfig.verbose
-
-        runBefore(phaseConfig, phaserState, context, input)
-        val output = if (phaseConfig.needProfiling) {
-            runAndProfile(phaseConfig, phaserState, context, input)
-        } else {
-            phaserState.downlevel(nlevels) {
-                lower.invoke(phaseConfig, phaserState, context, input)
-            }
-        }
-        runAfter(phaseConfig, phaserState, context, output)
-
-        phaserState.alreadyDone.add(this)
-        phaserState.phaseCount++
-
-        return output
-    }
-
-    private fun runBefore(phaseConfig: PhaseConfig, phaserState: PhaserState<Data>, context: Context, input: Data) {
+    private fun runBefore(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input) {
         val state = ActionState(phaseConfig, this, phaserState.phaseCount, BeforeOrAfter.BEFORE)
-        for (action in actions) action(state, input, context)
+        for (action in preactions) action(state, input, context)
 
         if (phaseConfig.checkConditions) {
             for (pre in preconditions) pre(input)
         }
     }
 
-    private fun runAfter(phaseConfig: PhaseConfig, phaserState: PhaserState<Data>, context: Context, output: Data) {
+    private fun runAfter(phaseConfig: PhaseConfig, phaserState: PhaserState<Output>, context: Context, output: Output) {
         val state = ActionState(phaseConfig, this, phaserState.phaseCount, BeforeOrAfter.AFTER)
-        for (action in actions) action(state, output, context)
+        for (action in postactions) action(state, output, context)
 
         if (phaseConfig.checkConditions) {
             for (post in postconditions) post(output)
@@ -216,22 +149,72 @@ class SameTypeNamedCompilerPhase<in Context : LoggingContext, Data>(
         }
     }
 
-    private fun runAndProfile(phaseConfig: PhaseConfig, phaserState: PhaserState<Data>, context: Context, source: Data): Data {
-        var result: Data? = null
-        val msec = measureTimeMillis {
-            result = phaserState.downlevel(nlevels) {
-                lower.invoke(phaseConfig, phaserState, context, source)
-            }
-        }
-
-        time = msec
-        // TODO: use a proper logger
-        println("${"\t".repeat(phaserState.depth)}$description: $msec msec")
-        return result!!
-    }
-
     override fun getNamedSubphases(startDepth: Int): List<Pair<Int, CompilerPhaseWithName<Context, *, *>>> =
         listOf(startDepth to this) + lower.getNamedSubphases(startDepth + nlevels)
 
     override fun toString() = "Compiler Phase @$name"
+
+    operator fun <T> invoke() {
+
+    }
+}
+
+class SimpleNamedCompilerPhase<in Context : LoggingContext, Input, Output>(
+    override val name: String,
+    override val description: String,
+    prerequisite: Set<AnyNamedPhase> = emptySet(),
+    lower: CompilerPhase<Context, Input, Output>,
+    preconditions: Set<Checker<Input>> = emptySet(),
+    postconditions: Set<Checker<Output>> = emptySet(),
+    override val stickyPostconditions: Set<Checker<Output>> = emptySet(),
+    preactions: Set<Action<Input, Context>> = emptySet(),
+    postactions: Set<Action<Output, Context>> = emptySet(),
+    nlevels: Int = 0,
+    private val _outputIfNotEnabled: (Context, Input) -> Output
+) : NamedCompilerPhase<Context, Input, Output>(prerequisite, lower, preconditions, postconditions, preactions, postactions, nlevels) {
+    override fun outputIfNotEnabled(context: Context, input: Input): Output {
+        return _outputIfNotEnabled(context, input)
+    }
+}
+
+class UnitNamedCompilerPhase<in Context : LoggingContext, Output>(
+    override val name: String,
+    override val description: String,
+    prerequisite: Set<AnyNamedPhase> = emptySet(),
+    lower: CompilerPhase<Context, Unit, Output>,
+    preconditions: Set<Checker<Unit>> = emptySet(),
+    postconditions: Set<Checker<Output>> = emptySet(),
+    override val stickyPostconditions: Set<Checker<Output>> = emptySet(),
+    preactions: Set<Action<Unit, Context>> = emptySet(),
+    postactions: Set<Action<Output, Context>> = emptySet(),
+    nlevels: Int = 0,
+    private val _outputIfNotEnabled: (Context) -> Output
+) : NamedCompilerPhase<Context, Unit, Output>(prerequisite, lower, preconditions, postconditions, preactions, postactions, nlevels) {
+    override fun outputIfNotEnabled(context: Context, input: Unit): Output {
+        return _outputIfNotEnabled(context)
+    }
+}
+
+class SameTypeNamedCompilerPhase<in Context : LoggingContext, Data>(
+    override val name: String,
+    override val description: String,
+    prerequisite: Set<AnyNamedPhase> = emptySet(),
+    lower: CompilerPhase<Context, Data, Data>,
+    preconditions: Set<Checker<Data>> = emptySet(),
+    postconditions: Set<Checker<Data>> = emptySet(),
+    override val stickyPostconditions: Set<Checker<Data>> = emptySet(),
+    actions: Set<Action<Data, Context>> = emptySet(),
+    nlevels: Int = 0
+) : NamedCompilerPhase<Context, Data, Data>(
+    prerequisite,
+    lower,
+    preconditions,
+    postconditions,
+    preactions = actions,
+    postactions = actions,
+    nlevels
+), SameTypeCompilerPhase<Context, Data> {
+
+    override fun outputIfNotEnabled(context: Context, input: Data): Data =
+        input
 }

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys.Companion.BUNDLE_ID
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.phases.FrontendContext
+import org.jetbrains.kotlin.backend.konan.phases.PhaseContext
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -31,7 +32,8 @@ internal class ObjCExportedInterface(
 )
 
 internal class ObjCExport(
-        val context: FrontendContext,
+        val context: PhaseContext,
+        private val frontendPhaseResult: FrontendPhaseResult.Full,
         private val config: KonanConfig
 ) {
     private val target get() = config.target
@@ -42,8 +44,9 @@ internal class ObjCExport(
 
     var codeSpec: ObjCExportCodeSpec? = null
 
-    fun buildCodeSpec(symbolTable: SymbolTable) {
+    fun buildCodeSpec(symbolTable: SymbolTable): ObjCExportCodeSpec? {
         codeSpec = exportedInterface?.createCodeSpec(symbolTable)
+        return codeSpec
     }
 
     var namer: ObjCExportNamer? = null
@@ -59,12 +62,12 @@ internal class ObjCExport(
 
         return if (produceFramework) {
             val unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport
-            val mapper = ObjCExportMapper(context.frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
-            val moduleDescriptors = listOf(context.moduleDescriptor) + config.getExportedDependencies(context.moduleDescriptor)
+            val mapper = ObjCExportMapper(frontendPhaseResult.frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
+            val moduleDescriptors = listOf(frontendPhaseResult.moduleDescriptor) + config.getExportedDependencies(frontendPhaseResult.moduleDescriptor)
             val objcGenerics = config.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
             val namer = ObjCExportNamerImpl(
                     moduleDescriptors.toSet(),
-                    context.moduleDescriptor.builtIns,
+                    frontendPhaseResult.moduleDescriptor.builtIns,
                     mapper,
                     topLevelNamePrefix,
                     local = false,
@@ -277,8 +280,9 @@ internal class ObjCExport(
         deprecatedBundleIdOption?.let { return it } ?: bundleIdOption?.let { return it }
 
         // Consider exported libraries only if we cannot infer the package from sources or included libs.
-        val mainPackage = guessMainPackage(config.getIncludedLibraryDescriptors(context.moduleDescriptor) + context.moduleDescriptor)
-                ?: guessMainPackage(config.getExportedDependencies(context.moduleDescriptor))
+        val moduleDescriptor = frontendPhaseResult.moduleDescriptor
+        val mainPackage = guessMainPackage(config.getIncludedLibraryDescriptors(moduleDescriptor) + moduleDescriptor)
+                ?: guessMainPackage(config.getExportedDependencies(moduleDescriptor))
                 ?: FqName.ROOT
 
         val bundleID = mainPackage.child(Name.identifier(bundleName)).asString()

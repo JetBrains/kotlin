@@ -120,29 +120,14 @@ internal interface FrontendContext : PhaseContext {
 // TODO: Consider component-based approach
 internal interface PsiToIrContext :
         BackendPhaseContext,
-        LlvmModuleSpecificationComponent,
-        IrLinkerComponent {
-    var symbolTable: SymbolTable?
-
-    var moduleDescriptor: ModuleDescriptor
-
-    var environment: KotlinCoreEnvironment
-
-    var bindingContext: BindingContext
-
+        LlvmModuleSpecificationComponent
+{
     val reflectionTypes: KonanReflectionTypes
-
-    var irModules: Map<String, IrModuleFragment>
-
-    // TODO: make lateinit?
-    var irModule: IrModuleFragment?
-
-    var expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>
 }
 
 // We don't need this interface if we have a proper phase system
 internal interface ObjCExportContext : PsiToIrContext {
-    var objCExport: ObjCExport?
+    var objCExport: ObjCExport
 }
 
 // We don't need this interface if we have a proper phase system

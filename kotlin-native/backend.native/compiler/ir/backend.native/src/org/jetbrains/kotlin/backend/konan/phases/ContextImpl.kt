@@ -56,7 +56,7 @@ internal data class BasicPhaseContextPayload(
         get() = config.configuration
 }
 
-internal abstract class BasicBackendPhaseContext(
+internal open class BasicBackendPhaseContext(
         val payload: BasicPhaseContextPayload,
 ) : AbstractKonanBackendContext(payload.config), BackendPhaseContext {
     override val irBuiltIns: IrBuiltIns
@@ -83,7 +83,7 @@ internal abstract class BasicBackendPhaseContext(
         get() = payload.librariesWithDependencies
 }
 
-internal abstract class BasicPhaseContext(
+internal open class BasicPhaseContext(
         override val config: KonanConfig,
 ) : PhaseContext {
     override var inVerbosePhase = false

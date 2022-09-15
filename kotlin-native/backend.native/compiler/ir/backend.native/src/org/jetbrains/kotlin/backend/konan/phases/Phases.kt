@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
 import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
@@ -38,23 +39,22 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 internal object Phases {
-    fun buildFrontendPhase(): SameTypeNamedCompilerPhase<FrontendContext, Boolean> {
-        // We don't need boolean input, but phasing machinery is too complex, so keep this hack for now.
-        val frontendPhase = SameTypeNamedCompilerPhase<FrontendContext, Boolean>(
+    fun buildFrontendPhase(): SimpleNamedCompilerPhase<FrontendContext, Unit, FrontendPhaseResult> {
+        return SimpleNamedCompilerPhase<FrontendContext, Unit, FrontendPhaseResult>(
                 name = "FrontEnd",
                 description = "Frontend",
-                lower = object : SameTypeCompilerPhase<FrontendContext, Boolean> {
+                lower = object : CompilerPhase<FrontendContext, Unit, FrontendPhaseResult> {
                     override fun invoke(
                             phaseConfig: PhaseConfig,
-                            phaserState: PhaserState<Boolean>,
+                            phaserState: PhaserState<Unit>,
                             context: FrontendContext,
-                            input: Boolean
-                    ): Boolean {
+                            input: Unit
+                    ): FrontendPhaseResult {
                         return context.frontendPhase()
                     }
                 },
+                _outputIfNotEnabled = { _, _ -> FrontendPhaseResult.ShouldNotGenerateCode }
         )
-        return frontendPhase
     }
 
     fun buildSerializerPhase(): SameTypeNamedCompilerPhase<KlibProducingContext, Unit> = namedUnitPhase(
@@ -88,38 +88,22 @@ internal object Phases {
             prerequisite = setOf()
     )
 
-    fun buildCreateSymbolTablePhase(): SameTypeNamedCompilerPhase<PsiToIrContext, Unit> = myLower2(
-            op = { context, _ ->
-                context.symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
-            },
-            name = "CreateSymbolTable",
-            description = "Create SymbolTable",
-            prerequisite = emptySet()
-    )
-
-    fun buildDestroySymbolTablePhase(createSymbolTablePhase: SameTypeNamedCompilerPhase<PsiToIrContext, Unit>): SameTypeNamedCompilerPhase<PsiToIrContext, Unit> = myLower2(
-            op = { context, _ ->
-                context.symbolTable = null // TODO: invalidate symbolTable itself.
-            },
-            name = "DestroySymbolTable",
-            description = "Destroy SymbolTable",
-            prerequisite = setOf(createSymbolTablePhase)
-    )
-
     fun buildTranslatePsiToIrPhase(
             isProducingLibrary: Boolean,
-            createSymbolTablePhase: SameTypeNamedCompilerPhase<PsiToIrContext, Unit>,
-    ): SameTypeNamedCompilerPhase<PsiToIrContext, Unit> = myLower2(
-            op = { context, _ ->
-                psiToIr(context,
-                        context.config,
-                        context.symbolTable!!,
-                        isProducingLibrary,
-                        useLinkerWhenProducingLibrary = false)
-            },
+            symbolTable: SymbolTable,
+    ): SimpleNamedCompilerPhase<PsiToIrContext, FrontendPhaseResult.Full, PsiToIrResult> = SimpleNamedCompilerPhase(
             name = "Psi2Ir",
             description = "Psi to IR conversion and klib linkage",
-            prerequisite = setOf(createSymbolTablePhase)
+            lower = myLower { context, frontendResult ->
+                psiToIr(context,
+                        context.config,
+                        symbolTable,
+                        isProducingLibrary,
+                        useLinkerWhenProducingLibrary = false,
+                        frontendPhaseResult = frontendResult
+                )
+            },
+            _outputIfNotEnabled = { ctx, fe -> PsiToIrResult }
     )
 
     fun buildBuildAdditionalCacheInfoPhase(psiToIrPhase: SameTypeNamedCompilerPhase<PsiToIrContext, Unit>): SameTypeNamedCompilerPhase<MiddleEndContext, Unit> = myLower2(
@@ -166,21 +150,20 @@ internal object Phases {
     )
 
     // Nullable return type allows to pass null as input. Again, proper phase system should help.
-    fun buildObjCExportPhase(): SameTypeNamedCompilerPhase<FrontendContext, ObjCExport?> = myLower2(
-            op = { context, _ ->
-                ObjCExport(context, context.config)
+    fun buildObjCExportPhase(): SimpleNamedCompilerPhase<PhaseContext, FrontendPhaseResult.Full, ObjCExport> = myLower2(
+            op = { context, feResult ->
+                ObjCExport(context, feResult, context.config)
             },
             name = "ObjCExport",
             description = "Objective-C header generation",
     )
 
-    fun buildObjCCodeSpecPhase(createSymbolTablePhase: SameTypeNamedCompilerPhase<PsiToIrContext, Unit>): SameTypeNamedCompilerPhase<ObjCExportContext, Unit> = myLower2(
-            op = { context, _ ->
-                context.objCExport?.buildCodeSpec(context.symbolTable!!)
+    fun buildObjCCodeSpecPhase(): SimpleNamedCompilerPhase<ObjCExportContext, SymbolTable, ObjCExportCodeSpec?> = myLower2(
+            op = { context, symbolTable ->
+                context.objCExport.buildCodeSpec(symbolTable)
             },
             name = "ObjCExportCodeSpec",
-            description = "Objective-C codespec generation",
-            prerequisite = setOf(createSymbolTablePhase)
+            description = "Objective-C codespec generation"
     )
 
     fun buildFinalizeCachePhase() = myLower2<CacheContext, Unit>(
@@ -189,10 +172,11 @@ internal object Phases {
             description = "Finalize cache (rename temp to the final dist)"
     )
 
-    fun buildProduceFrameworkInterfacePhase(): SameTypeNamedCompilerPhase<ObjCExportContext, Unit> = myLower2(
-            op = { ctx, _ -> produceFrameworkInterface(ctx.objCExport) },
+    fun buildProduceFrameworkInterfacePhase(): SimpleNamedCompilerPhase<PhaseContext, ObjCExport, Unit> = myLower2(
+            op = { ctx, objCExport -> produceFrameworkInterface(objCExport) },
             name = "ProduceFrameworkInterface",
-            description = "Create Apple Framework without binary"
+            description = "Create Apple Framework without binary",
+            _outputIfNotEnabled = { _, _ -> }
     )
 
     fun buildSpecialBackendChecksPhase(): SameTypeNamedCompilerPhase<MiddleEndContext, Unit> = myLower2(
@@ -437,28 +421,21 @@ internal object Phases {
         }
     }
 
-    private fun <C : LoggingContext, Data> myLower2(
-            op: (C, Data) -> Data,
+    private fun <C : LoggingContext, Input, Output> myLower2(
+            op: (C, Input) -> Output,
             description: String,
             name: String,
-            prerequisite: Set<SameTypeNamedCompilerPhase<*, *>> = emptySet()
-    ): SameTypeNamedCompilerPhase<C, Data> =
-            SameTypeNamedCompilerPhase(
-                    name = name,
-                    description = description,
-                    prerequisite = prerequisite,
-                    lower = object : SameTypeCompilerPhase<C, Data> {
-                        override fun invoke(
-                                phaseConfig: PhaseConfig,
-                                phaserState: PhaserState<Data>,
-                                context: C,
-                                input: Data
-                        ): Data {
-                            return op(context, input)
-                        }
-                    },
-                    actions = setOf()
-            )
+            prerequisite: Set<SameTypeNamedCompilerPhase<*, *>> = emptySet(),
+            _outputIfNotEnabled: (C, Input) -> Output,
+    ): SimpleNamedCompilerPhase<C, Input, Output> = SimpleNamedCompilerPhase(
+            name = name,
+            description = description,
+            prerequisite = prerequisite,
+            lower = myLower { c, input ->
+                op(c, input)
+            },
+            _outputIfNotEnabled = _outputIfNotEnabled,
+    )
 
     fun getDcePhase(devirtualizationAnalysisPhase: SameTypeNamedCompilerPhase<LtoContext, IrModuleFragment>) = makeKonanModuleOpPhase<LtoContext>(
             name = "DCEPhase",
