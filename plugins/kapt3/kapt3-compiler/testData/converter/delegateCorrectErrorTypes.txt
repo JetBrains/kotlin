@@ -1,7 +1,5 @@
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class Bar {
     private final test.Delegate unknown$delegate = null;
@@ -19,8 +17,6 @@ public final class Bar {
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class Delegate {

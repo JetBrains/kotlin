@@ -1,7 +1,5 @@
 package kapt;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class StaticImport {
     private final java.util.Collection<java.lang.String> x = null;
@@ -57,8 +55,6 @@ public class StaticMethod<T> {
 ////////////////////
 
 package my.lib;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class LibKt {

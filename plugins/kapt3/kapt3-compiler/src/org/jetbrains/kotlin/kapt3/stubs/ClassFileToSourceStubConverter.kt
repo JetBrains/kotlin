@@ -206,14 +206,9 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
         val imports = if (correctErrorTypes) convertImports(ktFile, classDeclaration) else JavacList.nil()
 
-        val nonEmptyImports: JavacList<JCTree> = when {
-            imports.size > 0 -> imports
-            else -> JavacList.of(treeMaker.Import(treeMaker.FqName("java.lang.System"), false))
-        }
-
         val classes = JavacList.of<JCTree>(classDeclaration)
 
-        val topLevel = treeMaker.TopLevelJava9Aware(packageClause, nonEmptyImports + classes)
+        val topLevel = treeMaker.TopLevelJava9Aware(packageClause, imports + classes)
         if (kdocCommentKeeper != null) {
             topLevel.docComments = kdocCommentKeeper.getDocTable(topLevel)
         }

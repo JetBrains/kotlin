@@ -1,5 +1,3 @@
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class MappedList<T extends java.lang.Object, R extends java.lang.Object> extends kotlin.collections.AbstractList<R> implements java.util.List<R> {
     @org.jetbrains.annotations.NotNull()

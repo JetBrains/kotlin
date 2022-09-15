@@ -1,5 +1,3 @@
-import java.lang.System;
-
 @kotlin.Metadata()
 public enum E {
     /*public static final*/ X /* = new E() */,
@@ -35,8 +33,6 @@ public enum E {
 ////////////////////
 
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public enum E2 {
     /*public static final*/ X /* = new E2() */,
@@ -53,8 +49,6 @@ public enum E2 {
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public enum E3 {
@@ -74,8 +68,6 @@ public enum E3 {
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public enum E4 {

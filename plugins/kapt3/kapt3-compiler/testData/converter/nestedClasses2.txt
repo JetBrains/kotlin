@@ -1,5 +1,3 @@
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class A$B {
     @kotlin.jvm.JvmField()
@@ -83,8 +81,6 @@ public final class A$B {
 ////////////////////
 
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class Experiment {
 
@@ -150,8 +146,6 @@ public final class Experiment {
 ////////////////////
 
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class Foo {
 
@@ -180,8 +174,6 @@ public final class Foo {
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public abstract interface IFoo {
@@ -281,8 +273,6 @@ public class JavaClass {
 
 ////////////////////
 
-
-import java.lang.System;
 
 @IFoo.IBar.Anno(value = {IFoo.IBar.IZoo.class, Foo.Bar.class})
 @kotlin.Metadata()

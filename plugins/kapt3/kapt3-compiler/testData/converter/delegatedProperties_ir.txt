@@ -1,7 +1,5 @@
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class A {
     @org.jetbrains.annotations.NotNull()
@@ -53,8 +51,6 @@ public final class A {
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public class C<T extends java.lang.Object> {

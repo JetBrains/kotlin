@@ -1,7 +1,5 @@
 package foo;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public abstract interface InterfaceWithDefaults<T extends java.lang.Object> {
 
@@ -23,8 +21,6 @@ public abstract interface InterfaceWithDefaults<T extends java.lang.Object> {
 ////////////////////
 
 package foo;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public abstract interface SubInterface<T extends java.lang.Object> extends foo.InterfaceWithDefaults<T> {
