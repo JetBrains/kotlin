@@ -14,6 +14,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.compilerRunner.konanVersion
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -139,8 +140,8 @@ class BuildKotlinToolingMetadataTest {
         project.plugins.apply("kotlin-multiplatform")
         val kotlin = multiplatformExtension
         val jvm = kotlin.jvm()
-        jvm.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).kotlinOptions.jvmTarget = "12"
-        jvm.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME).kotlinOptions.jvmTarget = "10"
+        jvm.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).compilerOptions.options.jvmTarget.set(JvmTarget.JVM_12)
+        jvm.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME).compilerOptions.options.jvmTarget.set(JvmTarget.JVM_10)
 
         assertEquals(
             "12", getKotlinToolingMetadata().projectTargets

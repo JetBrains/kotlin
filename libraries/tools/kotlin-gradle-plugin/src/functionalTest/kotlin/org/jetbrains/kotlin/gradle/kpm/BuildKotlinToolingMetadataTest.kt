@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.tooling.KotlinToolingMetadata
 import org.jetbrains.kotlin.tooling.toJsonString
 import org.gradle.kotlin.dsl.create
 import org.jetbrains.kotlin.gradle.disableLegacyWarning
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.*
 import kotlin.test.*
 
@@ -171,8 +172,8 @@ class KotlinToolingMetadataWithModelMappingTest {
         project.plugins.apply("kotlin-multiplatform")
         val kotlin = multiplatformExtension
         val jvm = kotlin.jvm()
-        jvm.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).kotlinOptions.jvmTarget = "12"
-        jvm.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME).kotlinOptions.jvmTarget = "10"
+        jvm.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).compilerOptions.options.jvmTarget.set(JvmTarget.JVM_12)
+        jvm.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME).compilerOptions.options.jvmTarget.set(JvmTarget.JVM_10)
 
         assertEquals(
             "12", getKotlinToolingMetadata().projectTargets
