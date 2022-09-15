@@ -248,7 +248,6 @@ enum class LanguageFeature(
     UseConsistentRulesForPrivateConstructorsOfSealedClasses(sinceVersion = KOTLIN_1_8, kind = BUG_FIX), // KT-44866
     ProgressionsChangingResolve(KOTLIN_1_8), // KT-49276
     AbstractClassMemberNotImplementedWithIntermediateAbstractClass(KOTLIN_1_8, kind = BUG_FIX), // KT-45508
-    ForbidSuperDelegationToAbstractFakeOverride(KOTLIN_1_8), // KT-49017
     ForbidSuperDelegationToAbstractAnyMethod(KOTLIN_1_8), // KT-38078
     ProperEqualityChecksInBuilderInferenceCalls(KOTLIN_1_8, kind = BUG_FIX),
     ProhibitNonExhaustiveIfInRhsOfElvis(KOTLIN_1_8, kind = BUG_FIX), // KT-44705
@@ -282,6 +281,7 @@ enum class LanguageFeature(
     BreakContinueInInlineLambdas(KOTLIN_1_9, defaultState = State.ENABLED), // KT-1436
     EnumEntries(KOTLIN_1_9, sinceApiVersion = ApiVersion.KOTLIN_1_8, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE), // KT-48872
     EnableDfaWarningsInK2(KOTLIN_1_9, kind = OTHER), // KT-50965
+    ForbidSuperDelegationToAbstractFakeOverride(KOTLIN_1_9), // KT-49017
     DataObjects(KOTLIN_1_9), // KT-4107
     ProhibitAccessToEnumCompanionMembersInEnumConstructorCall(KOTLIN_1_9, kind = BUG_FIX), // KT-49110
 
