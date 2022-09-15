@@ -1,20 +1,20 @@
-internal val publicToInternalTopLevelProperty1 = 42
-internal val publicToInternalTopLevelProperty2 get() = 42
-private val publicToPrivateTopLevelProperty1 = 42
-private val publicToPrivateTopLevelProperty2 get() = 42
+internal val publicToInternalTopLevelProperty1 = "publicToInternalTopLevelProperty1.v2"
+internal val publicToInternalTopLevelProperty2 get() = "publicToInternalTopLevelProperty2.v2"
+private val publicToPrivateTopLevelProperty1 = "publicToPrivateTopLevelProperty1.v2"
+private val publicToPrivateTopLevelProperty2 get() = "publicToPrivateTopLevelProperty2.v2"
 
 open class Container {
-    protected val publicToProtectedProperty1 = 42
-    protected val publicToProtectedProperty2 get() = 42
-    internal val publicToInternalProperty1 = 42
-    internal val publicToInternalProperty2 get() = 42
-    private val publicToPrivateProperty1 = 42
-    private val publicToPrivateProperty2 get() = 42
+    protected val publicToProtectedProperty1 = "Container.publicToProtectedProperty1.v2"
+    protected val publicToProtectedProperty2 get() = "Container.publicToProtectedProperty2.v2"
+    internal val publicToInternalProperty1 = "Container.publicToInternalProperty1.v2"
+    internal val publicToInternalProperty2 get() = "Container.publicToInternalProperty2.v2"
+    private val publicToPrivateProperty1 = "Container.publicToPrivateProperty1.v2"
+    private val publicToPrivateProperty2 get() = "Container.publicToPrivateProperty2.v2"
 
-    public val protectedToPublicProperty1 = 42
-    public val protectedToPublicProperty2 get() = 42
-    internal val protectedToInternalProperty1 = 42
-    internal val protectedToInternalProperty2 get() = 42
-    private val protectedToPrivateProperty1 = 42
-    private val protectedToPrivateProperty2 get() = 42
+    public val protectedToPublicProperty1 = "Container.protectedToPublicProperty1.v2"
+    public val protectedToPublicProperty2 get() = "Container.protectedToPublicProperty2.v2"
+    internal val protectedToInternalProperty1 = "Container.protectedToInternalProperty1.v2"
+    internal val protectedToInternalProperty2 get() = "Container.protectedToInternalProperty2.v2"
+    private val protectedToPrivateProperty1 = "Container.protectedToPrivateProperty1.v2"
+    private val protectedToPrivateProperty2 get() = "Container.protectedToPrivateProperty2.v2"
 }
