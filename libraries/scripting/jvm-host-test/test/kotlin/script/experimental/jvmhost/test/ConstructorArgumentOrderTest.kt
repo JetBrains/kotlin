@@ -6,10 +6,7 @@
 package kotlin.script.experimental.jvmhost.test
 
 import org.junit.Test
-import kotlin.script.experimental.api.EvaluationResult
-import kotlin.script.experimental.api.ResultWithDiagnostics
-import kotlin.script.experimental.api.implicitReceivers
-import kotlin.script.experimental.api.providedProperties
+import kotlin.script.experimental.api.*
 import kotlin.test.assertTrue
 
 class ConstructorArgumentsOrderTest {
@@ -51,6 +48,7 @@ class ConstructorArgumentsOrderTest {
         )
     }
 
-    private fun ResultWithDiagnostics<EvaluationResult>.render() =
-        reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception!!.printStackTrace()}" }
 }
+
+internal fun ResultWithDiagnostics<EvaluationResult>.render() =
+    reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception!!.printStackTrace()}" }
