@@ -657,7 +657,9 @@ class KotlinCoreEnvironment private constructor(
                     if (registrar.javaClass.simpleName == "ScriptingCompilerConfigurationComponentRegistrar") {
                         messageCollector?.report(STRONG_WARNING, "Default scripting plugin is disabled: $message")
                     } else {
-                        messageCollector?.report(ERROR, message)
+                        val errorMessageWithStackTrace = "$message.\n" +
+                                e.stackTraceToString().lines().take(6).joinToString("\n")
+                        messageCollector?.report(ERROR, errorMessageWithStackTrace)
                     }
                 }
             }
