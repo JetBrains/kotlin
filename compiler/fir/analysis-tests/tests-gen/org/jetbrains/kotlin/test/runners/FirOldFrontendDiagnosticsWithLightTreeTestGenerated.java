@@ -34594,6 +34594,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
         }
 
         @Test
+        @TestMetadata("genericContainer.kt")
+        public void testGenericContainer() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/genericContainer.kt");
+        }
+
+        @Test
         @TestMetadata("greater.kt")
         public void testGreater() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/greater.kt");
