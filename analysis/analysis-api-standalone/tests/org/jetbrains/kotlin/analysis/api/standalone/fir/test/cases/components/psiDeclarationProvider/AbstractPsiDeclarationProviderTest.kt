@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractDecompiledPsiDeclarationProviderTest : AbstractAnalysisApiBasedSingleModuleTest() {
+abstract class AbstractPsiDeclarationProviderTest : AbstractAnalysisApiBasedSingleModuleTest() {
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val mainKtFile = ktFiles.singleOrNull() ?: ktFiles.firstOrNull { it.name == "main.kt" } ?: ktFiles.first()
         val caretPosition = testServices.expressionMarkerProvider.getCaretPosition(mainKtFile)
@@ -34,7 +34,7 @@ abstract class AbstractDecompiledPsiDeclarationProviderTest : AbstractAnalysisAp
         val resolvedTo =
             analyseForTest(element) {
                 val symbols = ktReferences.flatMap { it.resolveToSymbols() }
-                val psiElements = symbols.mapNotNull { psiForDecompiled(it, element.project) }
+                val psiElements = symbols.mapNotNull { psiForTest(it, element.project) }
                 psiElements.joinToString(separator = "\n") { TestPsiElementRenderer.render(it) }
             }
 
@@ -50,13 +50,12 @@ abstract class AbstractDecompiledPsiDeclarationProviderTest : AbstractAnalysisAp
         mainKtFile.findReferenceAt(caretPosition)?.unwrapMultiReferences().orEmpty().filterIsInstance<KtReference>()
 
     // Mimic [psiForUast] in FIR UAST
-    private fun KtAnalysisSession.psiForDecompiled(symbol: KtSymbol, project: Project): PsiElement? {
+    private fun KtAnalysisSession.psiForTest(symbol: KtSymbol, project: Project): PsiElement? {
         return when (symbol.origin) {
             KtSymbolOrigin.LIBRARY -> {
-                findPsi(symbol, project)
+                findPsi(symbol, project) ?: symbol.psi
             }
-            // NB: This test is checking declarations from libraries (hence decompiled stub) only
-            else -> null
+            else -> symbol.psi
         }
     }
 
