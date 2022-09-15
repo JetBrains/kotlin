@@ -903,6 +903,36 @@ internal class NativeSetterWrongReturnTypeImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.NativeSetterWrongReturnType(), KtAbstractFirDiagnostic<KtDeclaration>
 
+internal class JsNameIsNotOnAllAccessorsImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.JsNameIsNotOnAllAccessors(), KtAbstractFirDiagnostic<KtElement>
+
+internal class JsNameProhibitedForNamedNativeImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.JsNameProhibitedForNamedNative(), KtAbstractFirDiagnostic<KtElement>
+
+internal class JsNameProhibitedForOverrideImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.JsNameProhibitedForOverride(), KtAbstractFirDiagnostic<KtElement>
+
+internal class JsNameOnPrimaryConstructorProhibitedImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.JsNameOnPrimaryConstructorProhibited(), KtAbstractFirDiagnostic<KtElement>
+
+internal class JsNameOnAccessorAndPropertyImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.JsNameOnAccessorAndProperty(), KtAbstractFirDiagnostic<KtElement>
+
+internal class JsNameProhibitedForExtensionPropertyImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.JsNameProhibitedForExtensionProperty(), KtAbstractFirDiagnostic<KtElement>
+
 internal class OptInUsageImpl(
     override val optInMarkerFqName: FqName,
     override val message: String,
