@@ -135,7 +135,8 @@ internal object FirCompileTimeConstantEvaluator {
             return it.adjustType(functionCall.typeRef)
         }
 
-        val opr2 = evaluate(functionCall.argument, mode) ?: return null
+        val argument = functionCall.arguments.firstOrNull() ?: return null
+        val opr2 = evaluate(argument, mode) ?: return null
         opr1.evaluate(function, opr2)?.let {
             return it.adjustType(functionCall.typeRef)
         }
