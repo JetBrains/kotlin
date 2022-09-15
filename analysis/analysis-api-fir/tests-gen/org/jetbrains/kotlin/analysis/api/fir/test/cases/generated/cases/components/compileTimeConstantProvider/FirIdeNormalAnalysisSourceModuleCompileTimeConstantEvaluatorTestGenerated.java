@@ -225,4 +225,10 @@ public class FirIdeNormalAnalysisSourceModuleCompileTimeConstantEvaluatorTestGen
     public void testString_toString() throws Exception {
         runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_toString.kt");
     }
+
+    @Test
+    @TestMetadata("string_trimIndent.kt")
+    public void testString_trimIndent() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_trimIndent.kt");
+    }
 }
