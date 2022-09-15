@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.resolve.dfa.coneType
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
@@ -57,21 +60,19 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirEnumEntryChecker() {
 
 
         private fun checkQualifiedAccess(expression: FirQualifiedAccessExpression): Boolean {
-            val extensionReceiver = expression.extensionReceiver
-            if (extensionReceiver !is FirResolvedQualifier && extensionReceiver !is FirThisReceiverExpression) return true
-
-            val receiverSymbol = expression.toResolvedCallableSymbol()
-                ?.resolvedReceiverTypeRef
-                ?.toRegularClassSymbol(context.session)
+            val companionReceiver = checkReceiver(expression.extensionReceiver)
+                ?: checkReceiver(expression.dispatchReceiver)
                 ?: return true
 
-            if (receiverSymbol == companionSymbol) {
-                val source = expression.extensionReceiver.source ?: expression.source
-                reporter.reportOn(source, FirErrors.UNINITIALIZED_ENUM_COMPANION, companionSymbol, context)
-                return false
-            }
+            val source = companionReceiver.source ?: expression.source
+            reporter.reportOn(source, FirErrors.UNINITIALIZED_ENUM_COMPANION, companionSymbol, context)
+            return false
+        }
 
-            return true
+        private fun checkReceiver(receiverExpression: FirExpression): FirExpression? {
+            if (receiverExpression !is FirResolvedQualifier && receiverExpression !is FirThisReceiverExpression) return null
+            val receiverSymbol = receiverExpression.typeRef.coneType.toRegularClassSymbol(context.session) ?: return null
+            return receiverExpression.takeIf { receiverSymbol == companionSymbol }
         }
     }
 }
