@@ -333,16 +333,11 @@ class FirSignatureEnhancement(
         // (`A : B, B : A` - invalid), the cycles can still appear when type parameters use each other in argument
         // position (`A : C<B>, B : D<A>` - valid). In this case the precise enhancement of each bound depends on
         // the others' nullability, for which we need to enhance at least its head type constructor.
-        //
-        // While this is straightforward to do within a single class/method (enhance all bounds' head type
-        // constructors, then enhance fully), it's not so simple when two classes depend on each other (we need
-        // to enhance *both* classes' type parameters' bounds' heads first). This is why we replace each bound
-        // with an unenhanced version first: this ensures that the frontend at least doesn't fail.
-        //
-        // TODO: find a way to partially enhance type parameters of all classes before fully enhancing anything.
-        // TODO: should this be done in topological order on head type constructors?
-        //   I.e. for `A : B, B : C<A>` should we process `B` first?
         typeParameters.replaceBounds { _, bound ->
+            // Resolve without enhancement so we don't crash the frontend if there is a restricted cycle (`A : B, B : A`)
+            // or if we visit type parameters in the wrong order (`A : B, B : C<A>` with `A` enhanced before `B`).
+            // TODO: the second case technically produces incorrect results - the loop below should visit type parameters
+            //   in topological order, then a resolved-but-not-enhanced type will never be observable with valid code.
             bound.resolveIfJavaType(session, javaTypeParameterStack, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND)
         }
         typeParameters.replaceBounds { typeParameter, bound ->
