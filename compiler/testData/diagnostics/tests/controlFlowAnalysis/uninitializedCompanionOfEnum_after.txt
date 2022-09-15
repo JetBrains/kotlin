@@ -1,7 +1,38 @@
 package
 
+public val EnumWithLambda.Companion.extensionProp: kotlin.String
 public val OtherEnum.Companion.extensionProp: kotlin.String
+public fun EnumWithLambda.Companion.extensionFun(): kotlin.String
 public fun OtherEnum.Companion.extensionFun(): kotlin.String
+
+public final enum class EnumWithLambda : kotlin.Enum<EnumWithLambda> {
+    enum entry M
+
+    private constructor EnumWithLambda(/*0*/ lambda: () -> kotlin.Unit)
+    public final val lambda: () -> kotlin.Unit
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumWithLambda): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<EnumWithLambda!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public final val companionProp: kotlin.String = "someString"
+        public final fun companionFun(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EnumWithLambda
+    public final /*synthesized*/ fun values(): kotlin.Array<EnumWithLambda>
+}
 
 public final enum class OtherEnum : kotlin.Enum<OtherEnum> {
     enum entry G
@@ -80,3 +111,4 @@ public final enum class SomeEnum : kotlin.Enum<SomeEnum> {
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): SomeEnum
     public final /*synthesized*/ fun values(): kotlin.Array<SomeEnum>
 }
+
