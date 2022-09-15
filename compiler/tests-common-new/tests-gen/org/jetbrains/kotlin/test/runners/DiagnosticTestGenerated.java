@@ -19572,6 +19572,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("abstractFakeOverrideSuperCallOneMoreLevel.kt")
+            public void testAbstractFakeOverrideSuperCallOneMoreLevel() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/java8Overrides/abstractFakeOverrideSuperCallOneMoreLevel.kt");
+            }
+
+            @Test
             @TestMetadata("abstractVsAbstract.kt")
             public void testAbstractVsAbstract() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/java8Overrides/abstractVsAbstract.kt");
