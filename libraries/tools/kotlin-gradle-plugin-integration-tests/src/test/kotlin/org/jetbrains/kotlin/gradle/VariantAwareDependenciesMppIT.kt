@@ -119,7 +119,13 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
 
         with(outerProject) {
             embedProject(innerProject)
-            gradleBuildScript(innerProject.projectName).appendText("\ndependencies { implementation rootProject }")
+            gradleBuildScript(innerProject.projectName).modify {
+                """
+                ${it.replace("kotlinOptions.jvmTarget = \"1.7\"", "kotlinOptions.jvmTarget = \"11\"")}
+                
+                dependencies { implementation rootProject }
+                """.trimIndent()
+            }
 
             testResolveAllConfigurations(innerProject.projectName)
         }
