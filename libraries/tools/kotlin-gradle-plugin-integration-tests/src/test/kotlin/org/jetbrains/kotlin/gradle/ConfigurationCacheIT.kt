@@ -241,13 +241,16 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @DisplayName("with build report")
     @GradleTest
     fun testBuildReportSmokeTestForConfigurationCache(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
-            val buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.FILE))
-            build("assemble", buildOptions = buildOptions) {
+        project(
+            "simpleProject",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.FILE))
+        ) {
+            build("assemble") {
                 assertBuildReportPathIsPrinted()
             }
 
-            build("assemble", buildOptions = buildOptions) {
+            build("assemble") {
                 assertBuildReportPathIsPrinted()
             }
         }
