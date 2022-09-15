@@ -42,7 +42,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.*
-import org.jetbrains.org.objectweb.asm.ClassReader.*
+import org.jetbrains.org.objectweb.asm.ClassReader.SKIP_CODE
+import org.jetbrains.org.objectweb.asm.ClassReader.SKIP_DEBUG
 import java.io.File
 import java.security.MessageDigest
 
@@ -785,13 +786,15 @@ private fun getConstantsAndInlineFunctionsOrAccessors(
     val inlineFunctionsAndAccessors = inlineFunctionsAndAccessors(classHeader)
 
     return if (inlineFunctionsAndAccessors.isEmpty()) {
-        ClassReader(classContents).accept(constantsClassVisitor, SKIP_CODE or SKIP_DEBUG or SKIP_FRAMES)
+        // parsingOptions = (SKIP_CODE, SKIP_DEBUG) as method bodies and debug info are not important for constants
+        ClassReader(classContents).accept(constantsClassVisitor, SKIP_CODE or SKIP_DEBUG)
         Pair(constantsClassVisitor.getResult(), emptyMap())
     } else {
         val inlineFunctionsAndAccessorsClassVisitor =
             InlineFunctionsAndAccessorsClassVisitor(inlineFunctionsAndAccessors.toSet(), constantsClassVisitor)
-        // SKIP_DEBUG so that snapshotting the methods is not sensitive to line number changes
-        ClassReader(classContents).accept(inlineFunctionsAndAccessorsClassVisitor, SKIP_DEBUG)
+        // parsingOptions must not include (SKIP_CODE, SKIP_DEBUG) as method bodies and debug info (e.g., line numbers) are important for
+        // inline functions/accessors
+        ClassReader(classContents).accept(inlineFunctionsAndAccessorsClassVisitor, 0)
         Pair(constantsClassVisitor.getResult(), inlineFunctionsAndAccessorsClassVisitor.getResult())
     }
 }

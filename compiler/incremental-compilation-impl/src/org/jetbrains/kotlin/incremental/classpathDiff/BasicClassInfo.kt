@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.ClassReader
-import org.jetbrains.org.objectweb.asm.ClassReader.*
+import org.jetbrains.org.objectweb.asm.ClassReader.SKIP_CODE
+import org.jetbrains.org.objectweb.asm.ClassReader.SKIP_DEBUG
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 
@@ -47,7 +48,8 @@ class BasicClassInfo(
             val innerClassesClassVisitor = InnerClassesClassVisitor(kotlinClassHeaderClassVisitor)
             val basicClassInfoVisitor = BasicClassInfoClassVisitor(innerClassesClassVisitor)
 
-            ClassReader(classContents).accept(basicClassInfoVisitor, SKIP_CODE or SKIP_DEBUG or SKIP_FRAMES)
+            // parsingOptions = (SKIP_CODE, SKIP_DEBUG) as method bodies and debug info are not important
+            ClassReader(classContents).accept(basicClassInfoVisitor, SKIP_CODE or SKIP_DEBUG)
 
             val className = basicClassInfoVisitor.getClassName()
             val innerClassesInfo = innerClassesClassVisitor.getInnerClassesInfo()

@@ -202,6 +202,7 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
 
                 LookupSymbol(name = "inlineFunctionChangedSignature", scope = "com.example.SomeClass"),
                 LookupSymbol(name = "inlineFunctionChangedImplementation", scope = "com.example.SomeClass"),
+                LookupSymbol(name = "inlineFunctionChangedLineNumber", scope = "com.example.SomeClass"),
 
                 LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SomeClass"),
                 LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SomeClass.CompanionObject"),

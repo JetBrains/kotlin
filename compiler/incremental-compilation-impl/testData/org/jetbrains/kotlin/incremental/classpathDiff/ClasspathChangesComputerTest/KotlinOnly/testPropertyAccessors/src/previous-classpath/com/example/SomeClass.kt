@@ -10,7 +10,10 @@ class SomeClass {
         }
 
     var property_ChangedGetterImpl: Int = 0
-        get() = field
+        get() {
+            println("Getter implementation")
+            return field
+        }
         set(value) {
             field = value
         }
@@ -18,6 +21,7 @@ class SomeClass {
     var property_ChangedSetterImpl: Int = 0
         get() = field
         set(value) {
+            println("Setter implementation")
             field = value
         }
 
@@ -47,7 +51,10 @@ inline var inlineProperty_ChangedType: Int
     }
 
 inline var inlineProperty_ChangedGetterImpl: Int
-    get() = inlineProperty_ChangedGetterImpl_BackingField
+    get() {
+        println("Getter implementation")
+        return inlineProperty_ChangedGetterImpl_BackingField
+    }
     set(value) {
         inlineProperty_ChangedGetterImpl_BackingField = value
     }
@@ -55,6 +62,7 @@ inline var inlineProperty_ChangedGetterImpl: Int
 inline var inlineProperty_ChangedSetterImpl: Int
     get() = inlineProperty_ChangedSetterImpl_BackingField
     set(value) {
+        println("Setter implementation")
         inlineProperty_ChangedSetterImpl_BackingField = value
     }
 
