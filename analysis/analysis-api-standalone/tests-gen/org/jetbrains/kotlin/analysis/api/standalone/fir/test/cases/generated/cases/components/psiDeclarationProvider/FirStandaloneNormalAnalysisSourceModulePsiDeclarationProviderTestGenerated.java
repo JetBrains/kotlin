@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
-import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractDecompiledPsiDeclarationProviderTest;
+import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/standalone/singleModule")
 @TestDataPath("$PROJECT_ROOT")
-public class FirStandaloneNormalAnalysisSourceModuleDecompiledPsiDeclarationProviderTestGenerated extends AbstractDecompiledPsiDeclarationProviderTest {
+public class FirStandaloneNormalAnalysisSourceModulePsiDeclarationProviderTestGenerated extends AbstractPsiDeclarationProviderTest {
     @NotNull
     @Override
     public AnalysisApiTestConfigurator getConfigurator() {
@@ -56,6 +56,24 @@ public class FirStandaloneNormalAnalysisSourceModuleDecompiledPsiDeclarationProv
     @TestMetadata("capitalize_locale.kt")
     public void testCapitalize_locale() throws Exception {
         runTest("analysis/analysis-api/testData/standalone/singleModule/capitalize_locale.kt");
+    }
+
+    @Test
+    @TestMetadata("listIterator.kt")
+    public void testListIterator() throws Exception {
+        runTest("analysis/analysis-api/testData/standalone/singleModule/listIterator.kt");
+    }
+
+    @Test
+    @TestMetadata("mapGetOrDefault.kt")
+    public void testMapGetOrDefault() throws Exception {
+        runTest("analysis/analysis-api/testData/standalone/singleModule/mapGetOrDefault.kt");
+    }
+
+    @Test
+    @TestMetadata("mapGetOrDefault_nullable.kt")
+    public void testMapGetOrDefault_nullable() throws Exception {
+        runTest("analysis/analysis-api/testData/standalone/singleModule/mapGetOrDefault_nullable.kt");
     }
 
     @Test
