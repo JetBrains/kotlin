@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
@@ -10,6 +15,7 @@ import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assume
+import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 import java.util.zip.ZipFile
@@ -787,6 +793,7 @@ open class KotlinAndroid71GradleIT : KotlinAndroid70GradleIT() {
     }
 
     @Test
+    @Ignore("Due to KT-51907, remove after fixing stdlib auto-configuration")
     fun `test associate compilation dependencies are passed correctly to android test compilations`() {
         with(Project("kt-49877")) {
             build("allTests") {
