@@ -1,5 +1,3 @@
-import java.lang.System;
-
 @kotlin.Metadata()
 public abstract interface ABC {
 
@@ -16,8 +14,6 @@ public abstract interface ABC {
 ////////////////////
 
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public class BaseClass<B extends java.lang.Object> {
 
@@ -29,8 +25,6 @@ public class BaseClass<B extends java.lang.Object> {
 ////////////////////
 
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public abstract interface Intf<I1 extends java.lang.Object, I2 extends java.io.Serializable> {
 }
@@ -38,16 +32,12 @@ public abstract interface Intf<I1 extends java.lang.Object, I2 extends java.io.S
 ////////////////////
 
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public abstract interface Intf2<T extends java.util.List<? extends java.lang.String>, M extends T> {
 }
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class MyClass<M1 extends java.lang.Object, M2 extends java.lang.Object> extends BaseClass<java.lang.RuntimeException> implements Intf<java.lang.Object, java.util.Date>, OtherIntf<java.lang.String> {
@@ -66,8 +56,6 @@ public final class MyClass<M1 extends java.lang.Object, M2 extends java.lang.Obj
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public abstract interface OtherIntf<O extends java.lang.CharSequence> {

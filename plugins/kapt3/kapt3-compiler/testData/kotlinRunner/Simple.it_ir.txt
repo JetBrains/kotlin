@@ -7,8 +7,6 @@ public final class NonExistentClass {
 
 package test;
 
-import java.lang.System;
-
 /**
  * KDoc comment.
  */
@@ -33,8 +31,6 @@ public final class Simple {
 
 package test;
 
-import java.lang.System;
-
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.Metadata()
 public abstract @interface MyAnnotation {
@@ -43,8 +39,6 @@ public abstract @interface MyAnnotation {
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public enum EnumClass {
@@ -58,8 +52,6 @@ public enum EnumClass {
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public enum EnumClass2 {

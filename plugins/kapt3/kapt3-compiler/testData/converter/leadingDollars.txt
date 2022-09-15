@@ -33,8 +33,6 @@ public class Test$ {
 
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class TestKt {
 

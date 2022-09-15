@@ -1,7 +1,5 @@
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class M1 {
 
@@ -19,8 +17,6 @@ public final class M1 {
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class M2 {

@@ -1,5 +1,3 @@
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class Foo {
     private final kotlin.Lazy foo$delegate = null;
@@ -31,16 +29,12 @@ public final class Foo {
 ////////////////////
 
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public abstract interface GenericIntf<T extends java.lang.Object> {
 }
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public abstract interface Intf {

@@ -7,8 +7,6 @@ public final class NonExistentClass {
 
 package test;
 
-import java.lang.System;
-
 @MyAnnotation()
 @kotlin.Metadata()
 public final class State {
@@ -45,8 +43,6 @@ public final class State {
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.Metadata()

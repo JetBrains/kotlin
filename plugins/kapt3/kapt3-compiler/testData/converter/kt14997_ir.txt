@@ -1,5 +1,3 @@
-import java.lang.System;
-
 @kotlin.Metadata()
 public class CrashMe {
     @org.jetbrains.annotations.NotNull()
@@ -12,8 +10,6 @@ public class CrashMe {
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"AMBIGUOUS_ANONYMOUS_TYPE_INFERRED"})

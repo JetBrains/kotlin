@@ -1,7 +1,5 @@
 package javadoc;
 
-import java.lang.System;
-
 /**
  * Simple
  */
@@ -16,8 +14,6 @@ public final class A {
 ////////////////////
 
 package javadoc;
-
-import java.lang.System;
 
 /**
  * Multi

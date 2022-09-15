@@ -1,5 +1,3 @@
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class Boo {
     @org.jetbrains.annotations.NotNull()
@@ -24,8 +22,6 @@ public final class Boo {
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class Foo {
@@ -122,8 +118,6 @@ public final class Foo {
 ////////////////////
 
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class HavingState {
     @org.jetbrains.annotations.NotNull()
@@ -219,8 +213,6 @@ public final class HavingState {
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public enum State {

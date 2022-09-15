@@ -1,5 +1,3 @@
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class GroupedNewsListDelegateAdapter {
 
@@ -11,8 +9,6 @@ public final class GroupedNewsListDelegateAdapter {
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class HomeFragment {
@@ -41,8 +37,6 @@ public final class HomeFragment {
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class IncorrectDelegateKt {

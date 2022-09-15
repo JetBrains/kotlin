@@ -1,7 +1,5 @@
 package test;
 
-import java.lang.System;
-
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.Metadata()
 public abstract @interface Anno {
@@ -10,8 +8,6 @@ public abstract @interface Anno {
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @Anno()
 @kotlin.Metadata()

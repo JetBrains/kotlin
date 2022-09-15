@@ -1,5 +1,3 @@
-import java.lang.System;
-
 @Condition(condition = "value1")
 @Condition(condition = "value2")
 @kotlin.Metadata()
@@ -12,8 +10,6 @@ public final class A {
 
 ////////////////////
 
-
-import java.lang.System;
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.Metadata()

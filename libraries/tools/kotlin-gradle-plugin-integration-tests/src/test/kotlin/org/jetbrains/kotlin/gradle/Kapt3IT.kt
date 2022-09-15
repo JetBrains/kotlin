@@ -586,12 +586,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
             buildAndFail("build") {
                 val actual = getErrorMessages()
-                // try as 0 starting lines first, then as 1 starting line
-                try {
-                    assertEquals(expected = genJavaErrorString(8, 20), actual = actual)
-                } catch (e: AssertionError) {
-                    assertEquals(expected = genJavaErrorString(9, 21), actual = actual)
-                }
+                assertEquals(expected = genJavaErrorString(7, 19), actual = actual)
             }
 
             buildGradle.modify {
@@ -600,12 +595,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
             buildAndFail("build") {
                 val actual = getErrorMessages()
-                // try as 0 starting lines first, then as 1 starting line
-                try {
-                    assertEquals(expected = genKotlinErrorString(3, 6), actual = actual)
-                } catch (e: AssertionError) {
-                    assertEquals(expected = genKotlinErrorString(4, 7), actual = actual)
-                }
+                assertEquals(expected = genKotlinErrorString(4, 7), actual = actual)
             }
         }
     }

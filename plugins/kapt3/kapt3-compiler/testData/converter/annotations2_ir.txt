@@ -1,7 +1,5 @@
 package test;
 
-import java.lang.System;
-
 @Anno(value = "anno-class")
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.Metadata()
@@ -13,8 +11,6 @@ public abstract @interface Anno {
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 @kotlin.jvm.JvmName(name = "AnnotationsTest")
@@ -46,8 +42,6 @@ public final class AnnotationsTest {
 
 package test;
 
-import java.lang.System;
-
 @Anno(value = "enum")
 @kotlin.Metadata()
 public enum Enum {
@@ -70,8 +64,6 @@ public enum Enum {
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @Anno(value = "clazz")
 @kotlin.Metadata()
