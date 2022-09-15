@@ -1,12 +1,12 @@
-internal fun publicToInternalTopLevelFunction() = 42
-private fun publicToPrivateTopLevelFunction() = 42
+internal fun publicToInternalTopLevelFunction() = "publicToInternalTopLevelFunction.v2"
+private fun publicToPrivateTopLevelFunction() = "publicToPrivateTopLevelFunction.v2"
 
 open class Container {
-    protected fun publicToProtectedFunction() = 42
-    internal fun publicToInternalFunction() = 42
-    private fun publicToPrivateFunction() = 42
+    protected fun publicToProtectedFunction() = "Container.publicToProtectedFunction.v2"
+    internal fun publicToInternalFunction() = "Container.publicToInternalFunction.v2"
+    private fun publicToPrivateFunction() = "Container.publicToPrivateFunction.v2"
 
-    public fun protectedToPublicFunction() = 42
-    internal fun protectedToInternalFunction() = 42
-    private fun protectedToPrivateFunction() = 42
+    public fun protectedToPublicFunction() = "Container.protectedToPublicFunction.v2"
+    internal fun protectedToInternalFunction() = "Container.protectedToInternalFunction.v2"
+    private fun protectedToPrivateFunction() = "Container.protectedToPrivateFunction.v2"
 }
