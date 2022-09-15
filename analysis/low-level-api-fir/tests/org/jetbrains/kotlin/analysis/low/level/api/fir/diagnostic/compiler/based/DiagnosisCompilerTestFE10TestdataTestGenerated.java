@@ -19589,6 +19589,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("falseManyImplementations.kt")
+            public void testFalseManyImplementations() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/java8Overrides/falseManyImplementations.kt");
+            }
+
+            @Test
             @TestMetadata("hidingMethodOfAny.kt")
             public void testHidingMethodOfAny() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/java8Overrides/hidingMethodOfAny.kt");
