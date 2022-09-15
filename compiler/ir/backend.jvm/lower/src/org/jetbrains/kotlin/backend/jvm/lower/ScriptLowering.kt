@@ -598,7 +598,7 @@ private class ScriptToClassTransformer(
             val ctorDispatchReceiverType = expression.symbol.owner.dispatchReceiverParameter?.type
                 ?: if (capturingClassesConstructors.keys.any { it.symbol == expression.symbol }) scriptClassReceiver.type else null
             if (ctorDispatchReceiverType != null) {
-                getDispatchReceiverExpression(data, expression, ctorDispatchReceiverType, expression.origin)?.let {
+                getDispatchReceiverExpression(data, expression, ctorDispatchReceiverType, expression.origin, null)?.let {
                     expression.dispatchReceiver = it
                 }
             }
@@ -607,18 +607,29 @@ private class ScriptToClassTransformer(
     }
 
     private fun getDispatchReceiverExpression(
-        data: ScriptToClassTransformerContext, expression: IrDeclarationReference, receiverType: IrType, origin: IrStatementOrigin?,
+        data: ScriptToClassTransformerContext,
+        expression: IrDeclarationReference,
+        receiverType: IrType,
+        origin: IrStatementOrigin?,
+        originalReceiverParameter: IrValueParameter?,
     ): IrExpression? {
         return if (receiverType == scriptClassReceiver.type) {
-            getAccessCallForScriptInstance(data, expression.startOffset, expression.endOffset, origin)
+            getAccessCallForScriptInstance(data, expression.startOffset, expression.endOffset, origin, originalReceiverParameter)
         } else {
-            getAccessCallForImplicitReceiver(data, expression, receiverType, origin)
+            getAccessCallForImplicitReceiver(data, expression, receiverType, origin, originalReceiverParameter)
         }
     }
 
     private fun getAccessCallForScriptInstance(
-        data: ScriptToClassTransformerContext, startOffset: Int, endOffset: Int, origin: IrStatementOrigin?
-    ) = when {
+        data: ScriptToClassTransformerContext,
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrStatementOrigin?,
+        originalReceiverParameter: IrValueParameter?
+    ): IrExpression? = when {
+        originalReceiverParameter != null && originalReceiverParameter != scriptClassReceiver ->
+            null
+
         data.fieldForScriptThis != null ->
             IrGetFieldImpl(
                 startOffset, endOffset,
@@ -634,6 +645,7 @@ private class ScriptToClassTransformer(
                         origin
                     )
             }
+
         data.valueParameterForScriptThis != null ->
             IrGetValueImpl(
                 startOffset, endOffset,
@@ -641,6 +653,7 @@ private class ScriptToClassTransformer(
                 data.valueParameterForScriptThis,
                 origin
             )
+
         else -> error("Unexpected script transformation state: $data")
     }
 
@@ -648,16 +661,20 @@ private class ScriptToClassTransformer(
         data: ScriptToClassTransformerContext,
         expression: IrDeclarationReference,
         receiverType: IrType,
-        expressionOrigin: IrStatementOrigin?
+        expressionOrigin: IrStatementOrigin?,
+        originalReceiverParameter: IrValueParameter?
     ): IrExpression? {
         // implicit receivers has priority (as per descriptor outer scopes)
-        implicitReceiversFieldsWithParameters.firstOrNull { it.second.type == receiverType }?.let { (field, param) ->
+        implicitReceiversFieldsWithParameters.firstOrNull {
+            if (originalReceiverParameter != null) it.second == originalReceiverParameter
+            else it.second.type == receiverType
+        }?.let { (field, param) ->
             val builder = context.createIrBuilder(expression.symbol)
             return if (data.isInScriptConstructor) {
                 builder.irGet(param.type, param.symbol)
             } else {
                 val scriptReceiver =
-                    getAccessCallForScriptInstance(data, expression.startOffset, expression.endOffset, expressionOrigin)
+                    getAccessCallForScriptInstance(data, expression.startOffset, expression.endOffset, expressionOrigin, null)
                 builder.irGetField(scriptReceiver, field)
             }
         }
@@ -692,7 +709,7 @@ private class ScriptToClassTransformer(
                     builder.irGet(objArray.defaultType, irScript.earlierScriptsParameter!!.symbol)
                 } else {
                     val scriptReceiver =
-                        getAccessCallForScriptInstance(data, expression.startOffset, expression.endOffset, expressionOrigin)
+                        getAccessCallForScriptInstance(data, expression.startOffset, expression.endOffset, expressionOrigin, null)
                     builder.irGetField(scriptReceiver, earlierScriptsField!!)
                 }
             val getPrevScriptObjectExpression = builder.irCall(objArrayGet).apply {
@@ -711,40 +728,13 @@ private class ScriptToClassTransformer(
         return null
     }
 
-    override fun visitGetField(expression: IrGetField, data: ScriptToClassTransformerContext): IrExpression {
-        if (irScript.needsReceiverProcessing) {
-            val receiver = expression.receiver
-            if (receiver is IrGetValue && receiver.symbol.owner.name == SpecialNames.THIS) {
-                val newReceiver = getDispatchReceiverExpression(data, expression, receiver.type, expression.origin)
-                if (newReceiver != null) {
-                    val newGetField =
-                        IrGetFieldImpl(expression.startOffset, expression.endOffset, expression.symbol, expression.type, newReceiver)
-                    return super.visitGetField(newGetField, data)
-                }
-            }
-        }
-        return super.visitGetField(expression, data)
-    }
-
-    override fun visitCall(expression: IrCall, data: ScriptToClassTransformerContext): IrExpression {
-        if (irScript.needsReceiverProcessing) {
-            val target = expression.symbol.owner
-            val receiver: IrValueParameter? = target.dispatchReceiverParameter
-            if (receiver?.name == SpecialNames.THIS) {
-                val newReceiver = getDispatchReceiverExpression(data, expression, receiver.type, expression.origin)
-                if (newReceiver != null) {
-                    expression.dispatchReceiver = newReceiver
-                }
-            }
-        }
-        return super.visitCall(expression, data) as IrExpression
-    }
-
     override fun visitGetValue(expression: IrGetValue, data: ScriptToClassTransformerContext): IrExpression {
         if (irScript.needsReceiverProcessing) {
             val getValueParameter = expression.symbol.owner as? IrValueParameter
             if (getValueParameter != null && getValueParameter.name == SpecialNames.THIS) {
-                val newExpression = getDispatchReceiverExpression(data, expression, getValueParameter.type, expression.origin)
+                val newExpression = getDispatchReceiverExpression(
+                    data, expression, getValueParameter.type, expression.origin, getValueParameter
+                )
                 if (newExpression != null) {
                     return super.visitExpression(newExpression, data)
                 }
