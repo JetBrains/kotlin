@@ -69,6 +69,11 @@ internal class FirAnnotationCallImpl(
         return this
     }
 
+    // TODO: We currently set only FirAnnotationImpl.isIdeExternalAnnotation using JavaAnnotation.isIdeExternalAnnotation
+    //       if it is converted from JavaAnnotation. Handle this property correctly.
+    override val isIdeExternalAnnotation: Boolean
+        get() = false
+
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {

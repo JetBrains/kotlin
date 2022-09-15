@@ -534,7 +534,7 @@ private class EnhancementSignatureParts(
         get() = session.typeContext
 
     override val FirAnnotation.forceWarning: Boolean
-        get() = false // TODO: force warnings on IDEA external annotations
+        get() = isIdeExternalAnnotation
 
     override val KotlinTypeMarker.annotations: Iterable<FirAnnotation>
         get() = (this as ConeKotlinType).attributes.customAnnotations

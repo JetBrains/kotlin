@@ -25,6 +25,7 @@ abstract class FirAnnotation : FirExpression() {
     abstract val annotationTypeRef: FirTypeRef
     abstract val argumentMapping: FirAnnotationArgumentMapping
     abstract val typeArguments: List<FirTypeProjection>
+    abstract val isIdeExternalAnnotation: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotation(this, data)
 

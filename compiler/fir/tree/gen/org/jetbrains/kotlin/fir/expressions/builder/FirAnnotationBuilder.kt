@@ -32,6 +32,7 @@ class FirAnnotationBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder
     lateinit var annotationTypeRef: FirTypeRef
     lateinit var argumentMapping: FirAnnotationArgumentMapping
     val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
+    var isIdeExternalAnnotation: Boolean = false
 
     override fun build(): FirAnnotation {
         return FirAnnotationImpl(
@@ -40,6 +41,7 @@ class FirAnnotationBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder
             annotationTypeRef,
             argumentMapping,
             typeArguments,
+            isIdeExternalAnnotation,
         )
     }
 

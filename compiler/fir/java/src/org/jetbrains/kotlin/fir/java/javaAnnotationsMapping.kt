@@ -242,5 +242,7 @@ private fun JavaAnnotation.toFirAnnotationCall(
                 }
             }
         }
+
+        isIdeExternalAnnotation = this@toFirAnnotationCall.isIdeExternalAnnotation
     }
 }

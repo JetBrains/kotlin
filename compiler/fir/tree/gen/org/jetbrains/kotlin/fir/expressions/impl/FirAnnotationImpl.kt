@@ -26,6 +26,7 @@ internal class FirAnnotationImpl(
     override var annotationTypeRef: FirTypeRef,
     override var argumentMapping: FirAnnotationArgumentMapping,
     override val typeArguments: MutableList<FirTypeProjection>,
+    override val isIdeExternalAnnotation: Boolean,
 ) : FirAnnotation() {
     override val typeRef: FirTypeRef get() = annotationTypeRef
     override val annotations: List<FirAnnotation> get() = emptyList()
