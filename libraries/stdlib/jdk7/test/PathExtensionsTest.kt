@@ -332,6 +332,135 @@ class PathExtensionsTest : AbstractPathTest() {
     }
 
     @Test
+    fun copyToDstLinkPointingToSrc() {
+        for (options in listOf(arrayOf(), arrayOf<CopyOption>(LinkOption.NOFOLLOW_LINKS))) {
+            val root = createTempDirectory().cleanupRecursively()
+            val src = root.resolve("src").createFile()
+            val dstLink = root.resolve("dstLink").tryCreateSymbolicLinkTo(src) ?: return
+
+            assertTrue(src.isSameFileAs(dstLink))
+            assertTrue(dstLink.isSameFileAs(src))
+            assertFailsWith<FileAlreadyExistsException> {
+                src.copyTo(dstLink, *options)
+            }
+            assertTrue(dstLink.isSymbolicLink())
+        }
+    }
+
+    @Test
+    fun copyToDstLinkPointingToSrcOverwrite() {
+        for (options in listOf(arrayOf(), arrayOf<CopyOption>(LinkOption.NOFOLLOW_LINKS))) {
+            val root = createTempDirectory().cleanupRecursively()
+            val src = root.resolve("src").createFile()
+            val dstLink = root.resolve("dstLink").tryCreateSymbolicLinkTo(src) ?: return
+
+            src.copyTo(dstLink, StandardCopyOption.REPLACE_EXISTING, *options)
+            assertFalse(dstLink.isSymbolicLink())
+        }
+    }
+
+    @Test
+    fun copyToSrcLinkAndDstLinkPointingToSameFile() {
+        for (options in listOf(arrayOf(), arrayOf<CopyOption>(LinkOption.NOFOLLOW_LINKS))) {
+            val root = createTempDirectory().cleanupRecursively()
+            val original = root.resolve("original").createFile()
+            val srcLink = root.resolve("srcLink").tryCreateSymbolicLinkTo(original) ?: return
+            val dstLink = root.resolve("dstLink").tryCreateSymbolicLinkTo(original) ?: return
+
+            assertTrue(srcLink.isSameFileAs(dstLink))
+            assertTrue(dstLink.isSameFileAs(srcLink))
+            assertFailsWith<FileAlreadyExistsException> {
+                srcLink.copyTo(dstLink, *options)
+            }
+            assertTrue(dstLink.isSymbolicLink())
+        }
+    }
+
+    @Test
+    fun copyToSrcLinkAndDstLinkPointingToSameFileOverwrite() {
+        for (options in listOf(arrayOf(), arrayOf<CopyOption>(LinkOption.NOFOLLOW_LINKS))) {
+            val root = createTempDirectory().cleanupRecursively()
+            val original = root.resolve("original").createFile()
+            val srcLink = root.resolve("srcLink").tryCreateSymbolicLinkTo(original) ?: return
+            val dstLink = root.resolve("dstLink").tryCreateSymbolicLinkTo(original) ?: return
+
+            srcLink.copyTo(dstLink, StandardCopyOption.REPLACE_EXISTING, *options)
+
+            if (LinkOption.NOFOLLOW_LINKS in options) {
+                assertTrue(dstLink.isSymbolicLink()) // src symlink was copied
+            } else {
+                assertFalse(dstLink.isSymbolicLink()) // src symlink target was copied
+            }
+        }
+    }
+
+    @Test
+    fun copyToSameLinkDifferentRoute() {
+        for (options in listOf(arrayOf(), arrayOf<CopyOption>(LinkOption.NOFOLLOW_LINKS))) {
+            val root = createTempDirectory().cleanupRecursively()
+            val original = root.resolve("original").createFile()
+            val srcLink = root.resolve("srcLink").tryCreateSymbolicLinkTo(original) ?: return
+            val dstLink = root.resolve("dstLink").tryCreateSymbolicLinkTo(root)?.resolve("srcLink") ?: return
+
+            assertTrue(srcLink.isSameFileAs(dstLink))
+            assertTrue(dstLink.isSameFileAs(srcLink))
+
+            if (LinkOption.NOFOLLOW_LINKS in options) {
+                srcLink.copyTo(dstLink, *options) // same file
+            } else {
+                assertFailsWith<FileAlreadyExistsException> {
+                    srcLink.copyTo(dstLink, *options) // target of srcLink copied to srcLink location
+                }
+            }
+
+            assertTrue(dstLink.isSymbolicLink())
+        }
+    }
+
+    @Test
+    fun copyToSameLinkDifferentRouteOverwrite() {
+        for (options in listOf(arrayOf(), arrayOf<CopyOption>(LinkOption.NOFOLLOW_LINKS))) {
+            val root = createTempDirectory().cleanupRecursively()
+            val original = root.resolve("original").createFile()
+            val srcLink = root.resolve("srcLink").tryCreateSymbolicLinkTo(original) ?: return
+            val dstLink = root.resolve("dstLink").tryCreateSymbolicLinkTo(root)?.resolve("srcLink") ?: return
+
+            if (LinkOption.NOFOLLOW_LINKS in options) {
+                srcLink.copyTo(dstLink, StandardCopyOption.REPLACE_EXISTING, *options) // same file
+            } else {
+                // dstLink is deleted before srcLink gets copied.
+                // Actually srcLink gets removed because dstLink is srcLink with different path.
+                val error = assertFailsWith<NoSuchFileException> {
+                    srcLink.copyTo(dstLink, StandardCopyOption.REPLACE_EXISTING, *options)
+                }
+                assertEquals(srcLink.toString(), error.file)
+                assertFalse(srcLink.exists(LinkOption.NOFOLLOW_LINKS))
+                assertFalse(dstLink.exists(LinkOption.NOFOLLOW_LINKS))
+            }
+        }
+    }
+
+    @Test
+    fun copyToSameFileDifferentRoute() {
+        val root = createTempDirectory().cleanupRecursively()
+        val src = root.resolve("src").createFile()
+        val dst = root.resolve("dstLink").tryCreateSymbolicLinkTo(root)?.resolve("src") ?: return
+
+        assertTrue(src.isSameFileAs(dst))
+        assertTrue(dst.isSameFileAs(src))
+        src.copyTo(dst)
+    }
+
+    @Test
+    fun copyToSameFileDifferentRouteOverwrite() {
+        val root = createTempDirectory().cleanupRecursively()
+        val src = root.resolve("src").createFile()
+        val dst = root.resolve("dstLink").tryCreateSymbolicLinkTo(root)?.resolve("src") ?: return
+
+        src.copyTo(dst, overwrite = true)
+    }
+
+    @Test
     fun moveTo() {
         val root = createTempDirectory("moveTo-root").cleanupRecursively()
         val original = createTempFile(root, "original")
