@@ -22,9 +22,20 @@ internal object BinaryenPlatform {
         }
     }
 
-    const val X64 = "64"
-    const val X86 = "86"
+    const val ARM64 = "arm64"
+    const val X64 = "x86_64"
+    const val X86 = "x86_86"
 
     val architecture: String
-        get() = if (property("os.arch").contains("64")) X64 else X86
+        get() {
+            val arch = property("os.arch")
+            return when {
+                arch == "aarch64" -> ARM64
+                arch.contains("64") -> X64
+                else -> X86
+            }
+        }
+
+    val platform: String
+        get() = "$architecture-$name"
 }
