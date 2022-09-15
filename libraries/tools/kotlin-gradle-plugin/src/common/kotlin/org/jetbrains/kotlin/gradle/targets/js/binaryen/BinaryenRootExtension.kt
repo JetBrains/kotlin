@@ -11,7 +11,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
-import java.io.File
 import java.io.Serializable
 import java.net.URL
 
@@ -32,9 +31,7 @@ open class BinaryenRootExtension(@Transient val rootProject: Project) : Configur
         get() = rootProject.tasks.withType(Copy::class.java).named(BinaryenRootPlugin.INSTALL_TASK_NAME)
 
     override fun finalizeConfiguration(): BinaryenEnv {
-        val platform = BinaryenPlatform.name
-        val architecture = BinaryenPlatform.architecture
-        val requiredVersionName = "binaryen-version_$version-x86_$architecture-$platform"
+        val requiredVersionName = "binaryen-version_$version-${BinaryenPlatform.platform}"
         val requiredZipName = "$requiredVersionName.tar.gz"
         val cleanableStore = CleanableStore[installationPath.absolutePath]
         val targetPath = cleanableStore[requiredVersionName].use()

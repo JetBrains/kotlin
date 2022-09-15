@@ -32,11 +32,7 @@ open class D8RootExtension(@Transient val rootProject: Project) : ConfigurationP
         get() = rootProject.tasks.withType(Copy::class.java).named(D8RootPlugin.INSTALL_TASK_NAME)
 
     override fun finalizeConfiguration(): D8Env {
-        val platform = D8Platform.name
-        val architecture = D8Platform.architecture
-        val d8osString = platform + architecture
-
-        val requiredVersionName = "v8-$d8osString-$edition-$version"
+        val requiredVersionName = "v8-${D8Platform.platform}-$edition-$version"
         val requiredZipName = "$requiredVersionName.zip"
         val cleanableStore = CleanableStore[installationPath.absolutePath]
         val targetPath = cleanableStore[requiredVersionName].use()
