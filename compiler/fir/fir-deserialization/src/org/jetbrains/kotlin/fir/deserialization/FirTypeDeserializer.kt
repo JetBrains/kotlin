@@ -149,7 +149,7 @@ class FirTypeDeserializer(
         if (constructor is ConeTypeParameterLookupTag) {
             return ConeTypeParameterTypeImpl(constructor, isNullable = proto.nullable).let {
                 if (Flags.DEFINITELY_NOT_NULL_TYPE.get(proto.flags))
-                    ConeDefinitelyNotNullType.create(it, moduleData.session.typeContext)
+                    ConeDefinitelyNotNullType.create(it, moduleData.session.typeContext) ?: it
                 else
                     it
             }
