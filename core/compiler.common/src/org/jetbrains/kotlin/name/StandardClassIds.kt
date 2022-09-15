@@ -169,6 +169,7 @@ object StandardClassIds {
         val JsNativeInvoke = "nativeInvoke".jsId()
         val JsNativeGetter = "nativeGetter".jsId()
         val JsNativeSetter = "nativeSetter".jsId()
+        val JsName = "JsName".jsId()
 
         val RawTypeAnnotation = "RawType".internalIrId()
         val FlexibleNullability = "FlexibleNullability".internalIrId()

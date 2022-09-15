@@ -35,6 +35,7 @@ object JsDeclarationCheckers : DeclarationCheckers() {
             FirJsRuntimeAnnotationChecker,
             FirJsExternalChecker,
             FirJsExternalFileChecker,
+            FirJsNameChecker,
         )
 
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>

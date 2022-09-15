@@ -37,6 +37,12 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         }
         val NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE by error<KtDeclaration>(PositioningStrategy.DECLARATION_RETURN_TYPE)
         val NATIVE_SETTER_WRONG_RETURN_TYPE by error<KtDeclaration>(PositioningStrategy.DECLARATION_RETURN_TYPE)
+        val JS_NAME_IS_NOT_ON_ALL_ACCESSORS by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JS_NAME_PROHIBITED_FOR_NAMED_NATIVE by error<KtElement>()
+        val JS_NAME_PROHIBITED_FOR_OVERRIDE by error<KtElement>()
+        val JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED by error<KtElement>()
+        val JS_NAME_ON_ACCESSOR_AND_PROPERTY by error<KtElement>()
+        val JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY by error<KtElement>()
     }
 
     val SUPERTYPES by object : DiagnosticGroup("Supertypes") {
