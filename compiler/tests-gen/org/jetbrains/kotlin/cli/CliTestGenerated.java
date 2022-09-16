@@ -103,26 +103,6 @@ public class CliTestGenerated extends AbstractCliTest {
         public void testNoPluginInClasspath() throws Exception {
             runTest("compiler/testData/cli/jvm/plugins/noPluginInClasspath.args");
         }
-
-        @TestMetadata("pluginSimple_legacy.args")
-        public void testPluginSimple_legacy() throws Exception {
-            runTest("compiler/testData/cli/jvm/plugins/pluginSimple_legacy.args");
-        }
-
-        @TestMetadata("pluginSimple_modern_noK2.args")
-        public void testPluginSimple_modern_noK2() throws Exception {
-            runTest("compiler/testData/cli/jvm/plugins/pluginSimple_modern_noK2.args");
-        }
-
-        @TestMetadata("pluginWithK2Error_legacy.args")
-        public void testPluginWithK2Error_legacy() throws Exception {
-            runTest("compiler/testData/cli/jvm/plugins/pluginWithK2Error_legacy.args");
-        }
-
-        @TestMetadata("pluginWithK2Error_modern.args")
-        public void testPluginWithK2Error_modern() throws Exception {
-            runTest("compiler/testData/cli/jvm/plugins/pluginWithK2Error_modern.args");
-        }
     }
 
     @TestMetadata("compiler/testData/cli/jvm")

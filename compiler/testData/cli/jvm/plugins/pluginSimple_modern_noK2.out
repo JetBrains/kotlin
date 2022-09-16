@@ -1,2 +1,0 @@
-error: -Xcompiler-plugin argument is allowed only for for K2 compiler. Please use -Xplugin argument or enable -Xuse-k2
-COMPILATION_ERROR
