@@ -144,7 +144,6 @@ class IrOverridingUtil(
     fun buildFakeOverridesForClass(clazz: IrClass, oldSignatures: Boolean) {
         val superTypes = clazz.superTypes
 
-        @Suppress("UNCHECKED_CAST")
         val fromCurrent = clazz.declarations.filterIsInstance<IrOverridableMember>()
 
         val allFromSuper = superTypes.flatMap { superType ->
@@ -275,13 +274,26 @@ class IrOverridingUtil(
     ) {
         val fromSuper = notOverridden.toMutableSet()
         while (fromSuper.isNotEmpty()) {
-            val notOverriddenFromSuper = findMemberWithMaxVisibility(fromSuper)
-            val overridables = extractMembersOverridableInBothWays(
+            val notOverriddenFromSuper: IrOverridableMember = findMemberWithMaxVisibility(filterOutCustomizedFakeOverrides(fromSuper))
+            val overridables: Collection<IrOverridableMember> = extractMembersOverridableInBothWays(
                 notOverriddenFromSuper,
                 fromSuper
             )
             createAndBindFakeOverride(overridables, current, addedFakeOverrides, compatibilityMode)
         }
+    }
+
+    /**
+     * If there is a mix of [IrOverridableMember]s with origin=[IrDeclarationOrigin.FAKE_OVERRIDE]s (true "fake overrides")
+     * and [IrOverridableMember]s that were customized with the help of [IrUnimplementedOverridesStrategy] (customized "fake overrides"),
+     * then leave only true ones. Rationale: They should point to non-abstract callable members in one of super classes, so
+     * effectively they are implemented in the current class.
+     */
+    private fun filterOutCustomizedFakeOverrides(overridableMembers: Collection<IrOverridableMember>): Collection<IrOverridableMember> {
+        if (overridableMembers.size < 2) return overridableMembers
+
+        val (trueFakeOverrides, customizedFakeOverrides) = overridableMembers.partition { it.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
+        return trueFakeOverrides.ifEmpty { customizedFakeOverrides }
     }
 
     private fun filterVisibleFakeOverrides(toFilter: Collection<IrOverridableMember>): Collection<IrOverridableMember> {
