@@ -90,6 +90,7 @@ public abstract class AbstractLongTimeSource(protected val unit: DurationUnit) :
  */
 @SinceKotlin("1.3")
 @ExperimentalTime
+@Deprecated("Using AbstractDoubleTimeSource is no longer recommended, use AbstractLongTimeSource instead.")
 public abstract class AbstractDoubleTimeSource(protected val unit: DurationUnit) : TimeSource.WithComparableMarks {
     /**
      * This protected method should be overridden to return the current reading of the time source expressed as a [Double] number
@@ -97,6 +98,7 @@ public abstract class AbstractDoubleTimeSource(protected val unit: DurationUnit)
      */
     protected abstract fun read(): Double
 
+    @Suppress("DEPRECATION")
     private class DoubleTimeMark(private val startedAt: Double, private val timeSource: AbstractDoubleTimeSource, private val offset: Duration) : ComparableTimeMark {
         override fun elapsedNow(): Duration = (timeSource.read() - startedAt).toDuration(timeSource.unit) - offset
         override fun plus(duration: Duration): ComparableTimeMark = DoubleTimeMark(startedAt, timeSource, offset + duration)
