@@ -270,28 +270,6 @@ open class KotlinAndroid36GradleIT : KotlinAndroid3GradleIT() {
                 assertFileExists("app/build/tmp/kotlin-classes/$variant/com/example/app/AKt.class")
                 assertFileExists("app/build/tmp/kotlin-classes/$variant/com/example/app/KtUsageKt.class")
             }
-
-            // Check that Android extensions arguments are available only in the Android source sets:
-            val compilerPluginArgsRegex = "(\\w+)${Regex.escape("=args=>")}(.*)".toRegex()
-            val compilerPluginOptionsBySourceSet =
-                compilerPluginArgsRegex.findAll(output).associate { it.groupValues[1] to it.groupValues[2] }
-
-            compilerPluginOptionsBySourceSet.entries.forEach { (sourceSetName, argsString) ->
-                val shouldHaveAndroidExtensionArgs = sourceSetName.startsWith("androidApp") &&
-                        (androidGradlePluginVersion < AGPVersion.v7_0_0 || !sourceSetName.contains("AndroidTestRelease")) &&
-                        (androidGradlePluginVersion < AGPVersion.v7_1_0 || !sourceSetName.contains("androidAppTestFixtures"))
-
-                if (shouldHaveAndroidExtensionArgs)
-                    assertTrue("$sourceSetName is an Android source set and should have Android Extensions in the args") {
-                        "plugin:org.jetbrains.kotlin.android" in argsString
-                    }
-                else
-                    assertEquals(
-                        "[]",
-                        argsString,
-                        "$sourceSetName is not an Android source set and should not have Android Extensions in the args"
-                    )
-            }
         }
 
         val groupDir = "lib/build/repo/com/example/"
@@ -704,16 +682,6 @@ open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
         }
     }
 
-    @Test
-    fun testNamespaceDSLInsteadOfPackageAttributeInManifest() {
-        val project = Project("AndroidExtensionsProjectAGP7")
-        val options = defaultBuildOptions().copy(incremental = false)
-
-        project.build("assembleDebug", options = options) {
-            assertSuccessful()
-            assertContains("The 'kotlin-android-extensions' Gradle plugin is deprecated")
-        }
-    }
 }
 
 open class KotlinAndroid71GradleIT : KotlinAndroid70GradleIT() {
@@ -1024,42 +992,6 @@ abstract class AbstractKotlinAndroidGradleTests : BaseGradleIT() {
         }
     }
 
-    // KT-51177: when experimental flag is enabled
-    @Test
-    fun testIncrementalBuildAfterResourceChangeAndroidExtensions() {
-        val project = Project("AndroidExtensionsProject")
-        project.setupWorkingDir()
-
-        project.projectDir.resolve("app/build.gradle").appendText(
-            """
-            |
-            |androidExtensions {
-            |    experimental = true
-            |}
-            |
-            """.trimMargin()
-        )
-
-        project.build("assembleDebug") {
-            assertSuccessful()
-            assertTasksExecuted(":app:compileDebugKotlin")
-        }
-
-        project.projectDir
-            .resolve("app/src/main/res/layout/activity_main.xml")
-            .modify {
-                it.replace("android:layout_width=\"wrap_content\"", "android:layout_width=\"match_parent\"")
-            }
-
-        project.build("assembleDebug") {
-            assertSuccessful()
-            assertTasksExecuted(":app:compileDebugKotlin")
-            assertContainsRegex(
-                "compilerMode=INCREMENTAL_COMPILER.*areFileChangesKnown=true.*app/build/kotlin".toRegex()
-            )
-        }
-    }
-
     @Test
     fun testAndroidDaggerIC() {
         val project = Project("AndroidDaggerProject")
@@ -1109,81 +1041,11 @@ abstract class AbstractKotlinAndroidGradleTests : BaseGradleIT() {
     }
 
     @Test
-    fun testAndroidExtensions() {
-        val project = Project("AndroidExtensionsProject")
-        val options = defaultBuildOptions().copy(incremental = false)
-
-        project.build("assembleDebug", options = options) {
-            assertSuccessful()
-            assertContains("The 'kotlin-android-extensions' Gradle plugin is deprecated")
-        }
-    }
-
-    @Test
     fun testParcelize() {
         val project = Project("AndroidParcelizeProject")
         val options = defaultBuildOptions().copy(incremental = false)
 
         project.build("assembleDebug", options = options) {
-            assertSuccessful()
-        }
-    }
-
-    @Test
-    fun testAndroidExtensionsIncremental() {
-        val project = Project("AndroidExtensionsProject")
-        val options = defaultBuildOptions().copy(incremental = true, useClasspathSnapshot = true)
-
-        project.build("assembleDebug", options = options) {
-            assertSuccessful()
-            val affectedSources = project.projectDir.getFilesByNames(
-                "MyActivity.kt", "noLayoutUsages.kt"
-            )
-            val relativePaths = project.relativize(affectedSources)
-            assertCompiledKotlinSources(relativePaths)
-        }
-
-        val activityLayout = File(project.projectDir, "app/src/main/res/layout/activity_main.xml")
-        activityLayout.modify { it.replace("textView", "newTextView") }
-
-        project.build("assembleDebug", options = options) {
-            assertFailed()
-            val affectedSources = project.projectDir.getFilesByNames("MyActivity.kt")
-            val relativePaths = project.relativize(affectedSources)
-            assertCompiledKotlinSources(relativePaths)
-        }
-    }
-
-    @Test
-    fun testAndroidExtensionsManyVariants() {
-        val project = Project("AndroidExtensionsManyVariants")
-        val options = defaultBuildOptions().copy(incremental = false)
-
-        project.build("assemble", options = options) {
-            assertSuccessful()
-        }
-    }
-
-    @Test
-    fun testAndroidExtensionsSpecificFeatures() {
-        val project = Project("AndroidExtensionsSpecificFeatures")
-        val options = defaultBuildOptions().copy(incremental = false)
-
-        project.build("assemble", options = options) {
-            assertFailed()
-            assertContains("Unresolved reference: textView")
-        }
-
-        File(project.projectDir, "app/build.gradle").modify { it.replace("[\"parcelize\"]", "[\"views\"]") }
-
-        project.build("assemble", options = options) {
-            assertFailed()
-            assertContainsRegex("Class 'User' is not abstract and does not implement abstract member public abstract fun (writeToParcel|describeContents)".toRegex())
-        }
-
-        File(project.projectDir, "app/build.gradle").modify { it.replace("[\"views\"]", "[\"parcelize\", \"views\"]") }
-
-        project.build("assemble", options = options) {
             assertSuccessful()
         }
     }

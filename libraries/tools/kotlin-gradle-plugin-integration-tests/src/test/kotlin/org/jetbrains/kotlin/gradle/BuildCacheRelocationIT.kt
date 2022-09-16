@@ -208,46 +208,6 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
-    @AndroidGradlePluginTests
-    @DisplayName("KT-48849: Kotlin compile should ignore empty layout resource directories added by kotlin android extensions")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_8)
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_42)
-    @GradleAndroidTest
-    fun compileIgnoreEmptyAndroidResLayoutDirs(
-        gradleVersion: GradleVersion,
-        agpVersion: String,
-        jdkProvider: JdkVersions.ProvidedJdk
-    ) {
-        val (firstProject, secondProject) = prepareTestProjects(
-            "AndroidExtensionsProject",
-            gradleVersion,
-            defaultBuildOptions.copy(androidVersion = agpVersion),
-            jdkProvider.location
-        ) {
-            it.subProject("app").buildGradle.append(
-                """
-                |
-                |androidExtensions {
-                |    experimental = true
-                |}
-                """.trimMargin()
-            )
-        }
-
-        firstProject
-            .subProject("app")
-            .projectPath
-            .resolve("src/main/res/layout-ar")
-            .createDirectory()
-
-        checkBuildCacheRelocation(
-            firstProject,
-            secondProject,
-            listOf("assembleDebug"),
-            listOf(":app:compileDebugKotlin")
-        )
-    }
-
     @NativeGradlePluginTests
     @DisplayName("with native project")
     @GradleTest

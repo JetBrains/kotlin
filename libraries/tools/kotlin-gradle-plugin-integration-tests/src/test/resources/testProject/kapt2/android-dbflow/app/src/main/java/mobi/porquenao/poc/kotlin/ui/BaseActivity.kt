@@ -5,7 +5,7 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import android.support.v7.widget.Toolbar
 import mobi.porquenao.poc.kotlin.R
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -17,7 +17,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun setContentView(layoutResID: Int) {
         super.setContentView(layoutResID)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(findViewById(R.id.toolbar) as Toolbar)
     }
 
     private fun prepareTaskDescription() {
