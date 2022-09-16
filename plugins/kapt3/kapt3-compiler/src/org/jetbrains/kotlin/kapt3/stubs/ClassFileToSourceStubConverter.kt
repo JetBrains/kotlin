@@ -805,7 +805,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
         // If the field does not have a simple default value and is final the default value for that type is used.
         // The value will be omitted for inlinable types (primitives and strings) except for static interface fields as they are required
-        // to have an initializer.
+        // to have an initializer as static initializes are not allowed in interfaces.
         if (isFinal(field.access) && (!isPrimitiveOrString || isStaticInterfaceField)) {
             val type = Type.getType(field.desc)
             return convertLiteralExpression(containingClass, getDefaultValue(type))
