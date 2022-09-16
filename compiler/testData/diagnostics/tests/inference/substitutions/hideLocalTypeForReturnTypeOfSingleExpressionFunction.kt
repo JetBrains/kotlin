@@ -28,3 +28,16 @@ class FieldTest {
     private val ttt = test.bar()
     private val qqq = ttt.qux()
 }
+
+interface I<T>
+interface I2<A, B>
+
+private fun <V> f(x: V) = object : I<I<V>> {}
+private fun <V> f1(x: V) = object : I<I<in V>> {}
+private fun <V> f2(x: V) = object : I2<V, V> {}
+private fun <V, W> f3(x: V, y: W) = object : I<I2<*, W>> {}
+
+fun g() = f("f")
+fun g1() = f("f1")
+fun g2() = f2("f2")
+fun g3() = f3("f3", 3)
