@@ -1176,7 +1176,7 @@ TEST_P(ConcurrentMarkAndSweepTest, MutatorsCanMarkOwnLocals) {
 
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         gcFutures[i] = mutators[i]
-            .Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().impl().gc().PublishAndMark(); });
+            .Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().impl().gc().OnSuspendForGC(); });
     }
 
     if (GetParam() == gc::ConcurrentMarkAndSweep::kMarkOwnStack) {
