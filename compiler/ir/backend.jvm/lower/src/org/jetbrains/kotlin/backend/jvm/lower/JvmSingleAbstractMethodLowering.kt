@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
 import org.jetbrains.kotlin.backend.jvm.ir.rawType
+import org.jetbrains.kotlin.backend.jvm.ir.suspendFunctionOriginal
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
@@ -50,6 +52,9 @@ private class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : Sing
 
     override fun getWrappedFunctionType(klass: IrClass): IrType =
         klass.rawType(context as JvmBackendContext)
+
+    override fun getSuspendFunctionWithoutContinuation(function: IrSimpleFunction): IrSimpleFunction =
+        function.suspendFunctionOriginal()
 
     // The constructor of a SAM wrapper is non-synthetic and should not have line numbers.
     // Otherwise the debugger will try to step into it.

@@ -8100,6 +8100,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 public void testKt49294() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface/kt49294.kt");
                 }
+
+                @Test
+                @TestMetadata("kt50950.kt")
+                public void testKt50950() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface/kt50950.kt");
+                }
             }
 
             @Nested

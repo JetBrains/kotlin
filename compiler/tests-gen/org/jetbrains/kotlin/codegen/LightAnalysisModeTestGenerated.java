@@ -8804,6 +8804,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface/kt49294.kt");
                 }
 
+                @TestMetadata("kt50950.kt")
+                public void ignoreKt50950() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface/kt50950.kt");
+                }
+
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
                 }
