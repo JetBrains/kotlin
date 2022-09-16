@@ -333,6 +333,7 @@ fun Project.confugureFirPluginAnnotationsDependency(testTask: TaskProvider<Test>
 }
 
 fun Project.optInToExperimentalCompilerApi() {
+    @Suppress("DEPRECATION")
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
         kotlinOptions {
             freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi"

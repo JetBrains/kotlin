@@ -139,6 +139,7 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
     // Common outputs will also produce '${project.name}.kotlin_module' file, so we need to avoid
     // files clash
     tasks.named<KotlinCompile>("compile${commonSourceSet.name.replaceFirstChar { it.uppercase() }}Kotlin") {
+        @Suppress("DEPRECATION")
         kotlinOptions {
             moduleName = "${this@createGradleCommonSourceSet.name}_${commonSourceSet.name}"
         }
@@ -479,6 +480,7 @@ fun Project.createGradlePluginVariant(
 
     // KT-52138: Make module name the same for all variants, so KSP could access internal methods/properties
     tasks.named<KotlinCompile>("compile${variantSourceSet.name.replaceFirstChar { it.uppercase() }}Kotlin") {
+        @Suppress("DEPRECATION")
         kotlinOptions {
             moduleName = this@createGradlePluginVariant.name
         }
@@ -515,6 +517,7 @@ private fun Project.commonVariantAttributes(): Action<Configuration> = Action<Co
 }
 
 fun Project.configureKotlinCompileTasksGradleCompatibility() {
+    @Suppress("DEPRECATION")
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions.languageVersion = "1.4"
         kotlinOptions.apiVersion = "1.4"

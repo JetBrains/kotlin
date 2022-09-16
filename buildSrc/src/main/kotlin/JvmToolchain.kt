@@ -123,6 +123,7 @@ fun KotlinCompile.configureTaskToolchain(
                 )
             )
         )
+        @Suppress("DEPRECATION")
         kotlinOptions {
             jvmTarget = jdkVersion.targetName
         }
@@ -165,6 +166,7 @@ fun Project.updateJvmTarget(
         .withType<KotlinCompile>()
         .matching { it.name != "compileJava9Kotlin" }
         .configureEach {
+            @Suppress("DEPRECATION")
             kotlinOptions.jvmTarget = jvmTarget
         }
 

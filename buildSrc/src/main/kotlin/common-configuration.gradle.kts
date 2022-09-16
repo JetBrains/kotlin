@@ -115,6 +115,7 @@ fun Project.configureKotlinCompilationOptions() {
         val useFirIC by extra(project.kotlinBuildProperties.useFirTightIC)
         val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
 
+        @Suppress("DEPRECATION")
         tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
             kotlinOptions {
                 languageVersion = kotlinLanguageVersion
@@ -127,8 +128,10 @@ fun Project.configureKotlinCompilationOptions() {
                     !kotlinBuildProperties.getBoolean("kotlin.build.use.absolute.paths.in.klib")
                 }
 
+            // Workaround to avoid remote build cache misses due to absolute paths in relativePathBaseArg
             doFirst {
                 if (relativePathBaseArg != null) {
+                    @Suppress("DEPRECATION")
                     kotlinOptions.freeCompilerArgs += relativePathBaseArg
                 }
             }

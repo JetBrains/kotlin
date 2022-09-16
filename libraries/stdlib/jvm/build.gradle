@@ -179,7 +179,9 @@ compileTestKotlin {
                 "-XXLanguage:+RangeUntilOperator",
         ]
         // This is needed for JavaTypeTest; typeOf for non-reified type parameters doesn't work otherwise, for implementation reasons.
-        freeCompilerArgs.remove("-Xno-optimized-callable-references")
+        def args = new ArrayList(freeCompilerArgs)
+        args.remove("-Xno-optimized-callable-references")
+        freeCompilerArgs = args
     }
 }
 
