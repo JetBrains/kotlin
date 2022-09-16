@@ -63,8 +63,8 @@ public final class User {
         return 0;
     }
 
-    @org.jetbrains.annotations.NotNull()
     @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
     public java.lang.String toString() {
         return null;
     }

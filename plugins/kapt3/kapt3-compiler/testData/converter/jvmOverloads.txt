@@ -43,8 +43,8 @@ public final class State2 {
     public final int someInt = 0;
     @kotlin.jvm.JvmField()
     public final long someLong = 0L;
-    @org.jetbrains.annotations.NotNull()
     @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String someString = null;
 
     @kotlin.jvm.JvmOverloads()

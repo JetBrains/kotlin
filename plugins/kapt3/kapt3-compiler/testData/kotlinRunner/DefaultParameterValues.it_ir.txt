@@ -9,19 +9,8 @@ package test;
 
 import java.lang.System;
 
-@kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-public abstract @interface Anno {
-}
-
-////////////////////
-
-package test;
-
-import java.lang.System;
-
-@kotlin.Metadata()
 @Anno()
+@kotlin.Metadata()
 public final class User {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String name = "John";
@@ -39,4 +28,15 @@ public final class User {
     public User() {
         super();
     }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
+public abstract @interface Anno {
 }

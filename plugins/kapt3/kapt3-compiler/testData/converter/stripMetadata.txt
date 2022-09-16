@@ -31,8 +31,8 @@ public final class Inheritor extends BaseClass {
         super(null, 0, false);
     }
 
-    @org.jetbrains.annotations.NotNull()
     @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
     public Result doJob() {
         return null;
     }

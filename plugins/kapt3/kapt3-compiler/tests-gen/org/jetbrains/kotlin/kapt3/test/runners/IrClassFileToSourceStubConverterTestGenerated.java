@@ -338,6 +338,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     }
 
     @Test
+    @TestMetadata("jvmRepeatableAnnotation.kt")
+    public void testJvmRepeatableAnnotation() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmRepeatableAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("jvmStatic.kt")
     public void testJvmStatic() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmStatic.kt");

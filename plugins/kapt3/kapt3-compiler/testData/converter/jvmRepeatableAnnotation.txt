@@ -1,0 +1,23 @@
+import java.lang.System;
+
+@Condition(condition = "value1")
+@Condition(condition = "value2")
+@kotlin.Metadata()
+public final class A {
+
+    public A() {
+        super();
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
+public abstract @interface Condition {
+
+    public abstract java.lang.String condition();
+}

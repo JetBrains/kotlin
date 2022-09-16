@@ -19,8 +19,8 @@ package test;
 import lib.Anno;
 import lib.impl.Impl;
 
-@kotlin.Metadata()
 @lib.Anno(impls = {lib.impl.Impl.class, ABC.class})
+@kotlin.Metadata()
 public final class Bar {
 
     public Bar() {
@@ -35,8 +35,8 @@ package test;
 import lib.Anno;
 import lib.impl.Impl;
 
-@kotlin.Metadata()
 @lib.Anno(impls = {lib.impl.Impl.class})
+@kotlin.Metadata()
 public final class Boo {
 
     public Boo() {
@@ -51,8 +51,8 @@ package test;
 import lib.Anno;
 import lib.impl.Impl;
 
-@kotlin.Metadata()
 @lib.Anno(impls = {lib.impl.Impl.class})
+@kotlin.Metadata()
 public final class Foo {
 
     public Foo() {
@@ -67,7 +67,7 @@ package test;
 import lib.Anno;
 import lib.impl.Impl;
 
-@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE", "ANNOTATION_ARGUMENT_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION"})
 @kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE", "ANNOTATION_ARGUMENT_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION"})
 public final class TestKt {
 }

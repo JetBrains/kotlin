@@ -1,8 +1,8 @@
 import java.util.Calendar;
 import kotlin.reflect.KClass;
 
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
 public abstract @interface Anno {
 
     public abstract java.lang.Class<?> a();
@@ -34,8 +34,8 @@ public final class MyType<T extends java.lang.Object> {
 import java.util.Calendar;
 import kotlin.reflect.KClass;
 
-@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE", "ANNOTATION_ARGUMENT_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION", "UNSUPPORTED_FEATURE"})
 @kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE", "ANNOTATION_ARGUMENT_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION", "UNSUPPORTED_FEATURE"})
 public final class NonExistentClassTypesConversionKt {
 }
 
@@ -45,8 +45,8 @@ public final class NonExistentClassTypesConversionKt {
 import java.util.Calendar;
 import kotlin.reflect.KClass;
 
-@kotlin.Metadata()
 @Anno(a = Blah.class, b = {NoFoo1.class, NoBar1.class}, c = {NoFoo2.class, kotlin.String.class}, d = {kotlin.Boolean.class, NoBar3.class})
+@kotlin.Metadata()
 public final class Test<G extends java.lang.Object> {
     public ABC a;
     @org.jetbrains.annotations.Nullable()
