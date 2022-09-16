@@ -1285,6 +1285,12 @@ public class LightTreeFir2IrTextTestGenerated extends AbstractLightTreeFir2IrTex
         }
 
         @Test
+        @TestMetadata("builtinOperators.kt")
+        public void testBuiltinOperators() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/builtinOperators.kt");
+        }
+
+        @Test
         @TestMetadata("callWithReorderedArguments.kt")
         public void testCallWithReorderedArguments() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/callWithReorderedArguments.kt");
