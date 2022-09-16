@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.TestRunnerKind
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
+import org.jetbrains.kotlin.backend.konan.phases.PhaseContext
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -22,7 +23,8 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 internal fun findMainEntryPoint(
         config: CompilerConfiguration,
-        context: CommonBackendContext,
+        context: PhaseContext,
+        builtIns: KotlinBuiltIns,
 ): FunctionDescriptor? {
     if (config.get(KonanConfigKeys.PRODUCE) != PROGRAM) return null
 
@@ -31,7 +33,7 @@ internal fun findMainEntryPoint(
     val entryName = entryPoint.shortName()
     val packageName = entryPoint.parent()
 
-    val packageScope = context.builtIns.builtInsModule.getPackage(packageName).memberScope
+    val packageScope = builtIns.builtInsModule.getPackage(packageName).memberScope
 
     val candidates = packageScope.getContributedFunctions(entryName,
         NoLookupLocation.FROM_BACKEND).filter {

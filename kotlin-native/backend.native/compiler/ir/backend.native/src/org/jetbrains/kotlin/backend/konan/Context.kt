@@ -112,7 +112,7 @@ internal class Context(
     fun asFrontendPhaseResult() = FrontendPhaseResult.Full(moduleDescriptor, bindingContext, environment, frontendServices)
 
     // Psi To IR context
-    override var symbolTable: SymbolTable? = null
+    var symbolTable: SymbolTable? = null
 
     override val isNativeLibrary: Boolean by lazy {
         val kind = config.configuration.get(KonanConfigKeys.PRODUCE)

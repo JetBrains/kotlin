@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.konan.file.use
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.CleanableBindingContext
 
 interface Resource<T> {
     val value: T
@@ -32,6 +33,15 @@ class SymbolTableResource : Resource<SymbolTable> {
 
     override fun close() {
         // TODO: Invalidate
+    }
+}
+
+class BindingContextResource(override val value: BindingContext) : Resource<BindingContext> {
+
+    override fun close() {
+        value as? CleanableBindingContext
+                ?: error("BindingContext should be cleanable in K/N IR to avoid leaking memory: ${value}")
+        value.clear()
     }
 }
 

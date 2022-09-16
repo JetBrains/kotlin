@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
-import org.jetbrains.kotlin.backend.konan.lower.BridgesSupport
-import org.jetbrains.kotlin.backend.konan.lower.EnumsSupport
+import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
 import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
@@ -37,23 +36,30 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.BindingContext
 
 internal data class BasicPhaseContextPayload(
         override val config: KonanConfig,
-        override val irBuiltIns: IrBuiltIns,
-        override val typeSystem: IrTypeSystemContext,
         override val builtIns: KonanBuiltIns,
-        override val ir: KonanIr,
+        val irModuleFragment: IrModuleFragment,
         override val lazyValues: MutableMap<LazyMember<*>, Any?> = mutableMapOf(),
         val librariesWithDependencies: List<KonanLibrary>
 ) : AbstractKonanBackendContext(config) {
     override val configuration: CompilerConfiguration
         get() = config.configuration
+
+    override val ir = KonanIr(this, irModuleFragment)
+
+    override val typeSystem: IrTypeSystemContext = IrTypeSystemContextImpl(irModuleFragment.irBuiltins)
+
+    override val irBuiltIns: IrBuiltIns
+        get() = irModuleFragment.irBuiltins
 }
 
 internal open class BasicBackendPhaseContext(
@@ -105,6 +111,32 @@ internal class FrontendContextImpl(
     override lateinit var bindingContext: BindingContext
     override lateinit var frontendServices: FrontendServices
 }
+
+internal class PsiToIrContextImpl(
+        override val config: KonanConfig,
+        moduleDescriptor: ModuleDescriptor,
+) : BasicPhaseContext(config), PsiToIrContext {
+    override val reflectionTypes: KonanReflectionTypes by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KonanReflectionTypes(moduleDescriptor)
+    }
+
+    override val builtIns: KonanBuiltIns by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        moduleDescriptor.builtIns as KonanBuiltIns
+    }
+
+    override val llvmModuleSpecification: LlvmModuleSpecification by lazy {
+        when {
+            config.produce.isCache ->
+                CacheLlvmModuleSpecification(config.cachedLibraries, config.libraryToCache!!.klib)
+
+            else -> DefaultLlvmModuleSpecification(config.cachedLibraries)
+        }
+    }
+}
+
+internal class KlibProducingContextImpl(
+        payload: BasicPhaseContextPayload
+) : BasicBackendPhaseContext(payload), PhaseContext
 
 internal class LlvmCodegenContextImpl(
         payload: BasicPhaseContextPayload,
@@ -299,4 +331,60 @@ internal class BitcodegenContextImpl(
             }
         }
     }
+}
+
+internal class MiddleEndContextImpl(
+        payload: BasicPhaseContextPayload,
+        psiToIrResult: PsiToIrResult,
+) : BasicBackendPhaseContext(payload), MiddleEndContext {
+    override val llvmModuleSpecification: LlvmModuleSpecification
+        get() = TODO("Not yet implemented")
+    override val bridgesSupport: BridgesSupport
+        get() = TODO("Not yet implemented")
+
+    override fun getClassFieldLayout(irClass: IrClass): ClassFieldsLayout {
+        TODO("Not yet implemented")
+    }
+
+    override var irLinker: KonanIrLinker
+        get() = TODO("Not yet implemented")
+        set(value) {}
+    override val innerClassesSupport: InnerClassesSupport
+        get() = TODO("Not yet implemented")
+    override val localClassNames: MutableMap<IrAttributeContainer, String>
+        get() = TODO("Not yet implemented")
+    override val irModule: IrModuleFragment?
+        get() = TODO("Not yet implemented")
+    override val interopBuiltIns: InteropBuiltIns
+        get() = TODO("Not yet implemented")
+    override val enumsSupport: EnumsSupport
+        get() = TODO("Not yet implemented")
+    override val cachesAbiSupport: CachesAbiSupport
+        get() = TODO("Not yet implemented")
+    override val inlineFunctionsSupport: InlineFunctionsSupport
+        get() = TODO("Not yet implemented")
+    override val cStubsManager: CStubsManager
+        get() = TODO("Not yet implemented")
+    override var functionReferenceCount: Int
+        get() = TODO("Not yet implemented")
+        set(value) {}
+    override var coroutineCount: Int
+        get() = TODO("Not yet implemented")
+        set(value) {}
+    override val testCasesToDump: MutableMap<ClassId, MutableCollection<String>>
+        get() = TODO("Not yet implemented")
+    override var moduleDescriptor: ModuleDescriptor
+        get() = TODO("Not yet implemented")
+        set(value) {}
+    override var irModules: Map<String, IrModuleFragment>
+        get() = TODO("Not yet implemented")
+        set(value) {}
+    override val inlineFunctionBodies: MutableList<SerializedInlineFunctionReference>
+        get() = TODO("Not yet implemented")
+    override val classFields: MutableList<SerializedClassFields>
+        get() = TODO("Not yet implemented")
+    override val constructedFromExportedInlineFunctions: MutableSet<IrClass>
+        get() = TODO("Not yet implemented")
+    override val calledFromExportedInlineFunctions: MutableSet<IrFunction>
+        get() = TODO("Not yet implemented")
 }

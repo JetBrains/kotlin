@@ -41,7 +41,6 @@ internal class ObjCExport(
 
     val exportedInterface = produceInterface()
 
-
     var codeSpec: ObjCExportCodeSpec? = null
 
     fun buildCodeSpec(symbolTable: SymbolTable): ObjCExportCodeSpec? {

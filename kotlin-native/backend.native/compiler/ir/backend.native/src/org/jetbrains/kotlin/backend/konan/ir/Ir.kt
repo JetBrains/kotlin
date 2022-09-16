@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.llvm.findMainEntryPoint
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
+import org.jetbrains.kotlin.backend.konan.phases.PhaseContext
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -41,15 +43,16 @@ internal class KonanIr(context: KonanBackendContext, irModule: IrModuleFragment)
 }
 
 internal class KonanSymbols(
-    context: KonanBackendContext,
+    context: PhaseContext,
+    builtIns: KotlinBuiltIns,
     irBuiltIns: IrBuiltIns,
     private val symbolTable: SymbolTable,
     lazySymbolTable: ReferenceSymbolTable,
     configuration: CompilerConfiguration,
     descriptorsLookup: DescriptorsLookup,
-): Symbols<KonanBackendContext>(context, irBuiltIns, symbolTable) {
+): Symbols(irBuiltIns, symbolTable) {
 
-    val entryPoint = findMainEntryPoint(configuration, context)?.let { symbolTable.referenceSimpleFunction(it) }
+    val entryPoint = findMainEntryPoint(configuration, context, builtIns)?.let { symbolTable.referenceSimpleFunction(it) }
 
     override val externalSymbolTable = lazySymbolTable
 
@@ -329,10 +332,10 @@ internal class KonanSymbols(
     override val suspendCoroutineUninterceptedOrReturn = internalFunction("suspendCoroutineUninterceptedOrReturn")
 
     private val coroutinesIntrinsicsPackage =
-            context.builtIns.builtInsModule.getPackage(StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME).memberScope
+            builtIns.builtInsModule.getPackage(StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME).memberScope
 
     private val coroutinesPackage =
-            context.builtIns.builtInsModule.getPackage(StandardNames.COROUTINES_PACKAGE_FQ_NAME).memberScope
+            builtIns.builtInsModule.getPackage(StandardNames.COROUTINES_PACKAGE_FQ_NAME).memberScope
 
     override val coroutineContextGetter = symbolTable.referenceSimpleFunction(
             coroutinesPackage

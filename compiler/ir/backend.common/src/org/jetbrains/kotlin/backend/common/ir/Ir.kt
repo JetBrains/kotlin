@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.Name
 // This is what Context collects about IR.
 abstract class Ir<out T : CommonBackendContext>(val context: T, val irModule: IrModuleFragment) {
 
-    abstract val symbols: Symbols<T>
+    abstract val symbols: Symbols
 
     val defaultParameterDeclarationsCache = mutableMapOf<IrFunction, IrFunction>()
 
@@ -200,8 +200,8 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns, private val symbolTabl
 
 // Some symbols below are used in kotlin-native, so they can't be private
 @Suppress("MemberVisibilityCanBePrivate", "PropertyName")
-abstract class Symbols<out T : CommonBackendContext>(
-    val context: T, irBuiltIns: IrBuiltIns, symbolTable: ReferenceSymbolTable
+abstract class Symbols(
+    irBuiltIns: IrBuiltIns, symbolTable: ReferenceSymbolTable
 ) : BuiltinSymbolsBase(irBuiltIns, symbolTable) {
 
     abstract val throwNullPointerException: IrSimpleFunctionSymbol

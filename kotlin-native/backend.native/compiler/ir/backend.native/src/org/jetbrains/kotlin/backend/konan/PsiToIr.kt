@@ -51,16 +51,24 @@ internal sealed class PsiToIrResult {
     class ForLibrary(
             val irModules: Map<String, IrModuleFragment>,
             val irModule: IrModuleFragment,
-            val expectDescriptorToSymbol: Map<DeclarationDescriptor, IrSymbol>
+            val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
+            val symbols: KonanSymbols,
     ) : PsiToIrResult()
 
     class Full(
             val irModules: Map<String, IrModuleFragment>,
             val irModule: IrModuleFragment,
-            val expectDescriptorToSymbol: Map<DeclarationDescriptor, IrSymbol>,
+            val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
+            val symbols: KonanSymbols,
             val irLinker: KonanIrLinker,
     ) : PsiToIrResult()
 }
+
+data class PsiToIrInput(
+        val frontendPhaseResult: FrontendPhaseResult.Full,
+        val symbolTable: SymbolTable,
+        val isProducingLibrary: Boolean
+)
 
 internal fun psiToIr(
         context: PsiToIrContext,
@@ -105,7 +113,8 @@ internal fun psiToIr(
 
     val descriptorsLookup = DescriptorsLookup(context.builtIns)
     val symbols = KonanSymbols(
-            context, 
+            context,
+            context.builtIns,
             generatorContext.irBuiltIns, 
             symbolTable, 
             symbolTable.lazyWrapper,
@@ -269,8 +278,6 @@ internal fun psiToIr(
     if (!isProducingLibrary && context is Context)
         context.irLinker = irDeserializer as KonanIrLinker
 
-    context.ir.symbols = symbols
-
     if (!isProducingLibrary) {
         // TODO: find out what should be done in the new builtins/symbols about it
         if (context.stdlibModule in modulesWithoutDCE) {
@@ -285,16 +292,9 @@ internal fun psiToIr(
         module.files.forEach { it.metadata = KonanFileMetadataSource(module as KonanIrModuleFragmentImpl) }
     }
 
-    // TODO: Move to resources
-    val originalBindingContext = frontendPhaseResult.bindingContext as? CleanableBindingContext
-            ?: error("BindingContext should be cleanable in K/N IR to avoid leaking memory: ${frontendPhaseResult.bindingContext}")
-    originalBindingContext.clear()
-
-    // context.bindingContext = BindingContext.EMPTY
-
     return if (isProducingLibrary) {
-        PsiToIrResult.ForLibrary(irModules, irModule, expectDescriptorToSymbol)
+        PsiToIrResult.ForLibrary(irModules, irModule, expectDescriptorToSymbol, symbols)
     } else {
-        PsiToIrResult.Full(irModules, irModule, expectDescriptorToSymbol, irDeserializer as KonanIrLinker)
+        PsiToIrResult.Full(irModules, irModule, expectDescriptorToSymbol, symbols, irDeserializer as KonanIrLinker)
     }
 }

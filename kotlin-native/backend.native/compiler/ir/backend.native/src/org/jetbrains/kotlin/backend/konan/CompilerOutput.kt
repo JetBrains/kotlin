@@ -197,13 +197,12 @@ internal fun linkBitcodeDependencies(context: LlvmCodegenContext, config: KonanC
 
 }
 
-internal fun produceKlib(context: KlibProducingContext, config: KonanConfig) {
+internal fun produceKlib(context: PhaseContext, config: KonanConfig, serializationResult: SerializationResult) {
     val configuration = config.configuration
     val nopack = configuration.getBoolean(KonanConfigKeys.NOPACK)
     val output = config.outputFiles.klibOutputFileName(!nopack)
     val libraryName = config.moduleId
     val shortLibraryName = config.shortModuleName
-    val neededLibraries = context.librariesWithDependencies
     val abiVersion = KotlinAbiVersion.CURRENT
     val compilerVersion = CompilerVersion.CURRENT.toString()
     val libraryVersion = configuration.get(KonanConfigKeys.LIBRARY_VERSION)
@@ -229,9 +228,9 @@ internal fun produceKlib(context: KlibProducingContext, config: KonanConfig) {
     buildLibrary(
             config.nativeLibraries,
             config.includeBinaries,
-            neededLibraries,
-            context.serializedMetadata!!,
-            context.serializedIr,
+            serializationResult.neededLibraries,
+            serializationResult.serializedMetadata!!,
+            serializationResult.serializedIr,
             versions,
             target,
             output,
@@ -239,7 +238,7 @@ internal fun produceKlib(context: KlibProducingContext, config: KonanConfig) {
             nopack,
             shortLibraryName,
             manifestProperties,
-            context.dataFlowGraph)
+            serializationResult.dataFlowGraph)
 }
 
 internal fun produceFrameworkInterface(objcExport: ObjCExport?) {

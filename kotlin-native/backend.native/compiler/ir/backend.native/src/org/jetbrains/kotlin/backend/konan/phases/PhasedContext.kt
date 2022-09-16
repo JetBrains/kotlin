@@ -25,16 +25,14 @@ import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFG
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
+import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.target.needSmallBinary
 import org.jetbrains.kotlin.library.SerializedIrModule
@@ -106,7 +104,6 @@ interface ConfigChecks {
     fun useLazyFileInitializers() = config.propertyLazyInitialization
 }
 
-// It shouldn't inherit from KonanBackendContext, but our phase manager forces us to do so
 internal interface FrontendContext : PhaseContext {
     var environment: KotlinCoreEnvironment
 
@@ -119,10 +116,12 @@ internal interface FrontendContext : PhaseContext {
 
 // TODO: Consider component-based approach
 internal interface PsiToIrContext :
-        BackendPhaseContext,
+        PhaseContext,
         LlvmModuleSpecificationComponent
 {
     val reflectionTypes: KonanReflectionTypes
+
+    val builtIns: KonanBuiltIns
 }
 
 // We don't need this interface if we have a proper phase system
@@ -135,7 +134,7 @@ internal interface CExportContext : PsiToIrContext {
     var cAdapterGenerator: CAdapterGenerator
 }
 
-internal interface LlvmModuleSpecificationComponent : BackendPhaseContext {
+internal interface LlvmModuleSpecificationComponent {
     val llvmModuleSpecification: LlvmModuleSpecification
 
 }
@@ -154,20 +153,12 @@ internal interface LlvmModuleContext : BackendPhaseContext {
     }
 }
 
-internal interface KlibProducingContext : BackendPhaseContext {
-    val moduleDescriptor: ModuleDescriptor
-
-    val irModule: IrModuleFragment?
-
-    val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>
-
-    // We serialize untouched descriptor tree and IR.
-    // But we have to wait until the code generation phase,
-    // to dump this information into generated file.
-    var serializedMetadata: SerializedMetadata?
-    var serializedIr: SerializedIrModule?
-    var dataFlowGraph: ByteArray?
-}
+data class SerializationResult(
+        val serializedMetadata: SerializedMetadata?,
+        val serializedIr: SerializedIrModule?,
+        val dataFlowGraph: ByteArray?,
+        val neededLibraries: List<KonanLibrary>
+)
 
 internal interface BitcodegenContext :
         BackendPhaseContext,

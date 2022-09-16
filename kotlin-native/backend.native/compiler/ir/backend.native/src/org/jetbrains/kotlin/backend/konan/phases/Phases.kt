@@ -22,15 +22,15 @@ import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
 import org.jetbrains.kotlin.backend.konan.optimizations.*
-import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
-import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -57,17 +57,23 @@ internal object Phases {
         )
     }
 
-    fun buildSerializerPhase(): SameTypeNamedCompilerPhase<KlibProducingContext, Unit> = namedUnitPhase(
-            lower = myLower { context, _ ->
+    data class SerializerPhaseInput(
+            val moduleDescriptor: ModuleDescriptor,
+            val irModule: IrModuleFragment?,
+            val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>
+    )
+
+    fun buildSerializerPhase(): SimpleNamedCompilerPhase<PhaseContext, SerializerPhaseInput, SerializationResult> = myLower2(
+            op = { context, input ->
                 val config = context.config
                 val expectActualLinker = config.configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) ?: false
                 val messageLogger = config.configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
                 val relativePathBase = config.configuration.get(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES) ?: emptyList()
                 val normalizeAbsolutePaths = config.configuration.get(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH) ?: false
 
-                context.serializedIr = context.irModule?.let { ir ->
+                val serializedIr = input.irModule?.let { ir ->
                     KonanIrModuleSerializer(
-                            messageLogger, ir.irBuiltins, context.expectDescriptorToSymbol,
+                            messageLogger, ir.irBuiltins, input.expectDescriptorToSymbol,
                             skipExpects = !expectActualLinker,
                             compatibilityMode = CompatibilityMode.CURRENT,
                             normalizeAbsolutePaths = normalizeAbsolutePaths,
@@ -81,29 +87,28 @@ internal object Phases {
                         config.project,
                         exportKDoc = config.checks.shouldExportKDoc(),
                         !expectActualLinker, includeOnlyModuleContent = true)
-                context.serializedMetadata = serializer.serializeModule(context.moduleDescriptor)
+                val serializedMetadata = serializer.serializeModule(input.moduleDescriptor)
+                val neededLibraries = config.librariesWithDependencies(input.moduleDescriptor)
+                SerializationResult(serializedMetadata, serializedIr, null, neededLibraries)
             },
             name = "Serializer",
             description = "Serialize descriptor tree and inline IR bodies",
-            prerequisite = setOf()
+            _outputIfNotEnabled = { ctx, _ -> SerializationResult(null, null, null, emptyList()) }
     )
 
-    fun buildTranslatePsiToIrPhase(
-            isProducingLibrary: Boolean,
-            symbolTable: SymbolTable,
-    ): SimpleNamedCompilerPhase<PsiToIrContext, FrontendPhaseResult.Full, PsiToIrResult> = SimpleNamedCompilerPhase(
+    fun buildTranslatePsiToIrPhase(): SimpleNamedCompilerPhase<PsiToIrContext, PsiToIrInput, PsiToIrResult> = SimpleNamedCompilerPhase(
             name = "Psi2Ir",
             description = "Psi to IR conversion and klib linkage",
-            lower = myLower { context, frontendResult ->
+            lower = myLower { context, input ->
                 psiToIr(context,
                         context.config,
-                        symbolTable,
-                        isProducingLibrary,
+                        input.symbolTable,
+                        input.isProducingLibrary,
                         useLinkerWhenProducingLibrary = false,
-                        frontendPhaseResult = frontendResult
+                        frontendPhaseResult = input.frontendPhaseResult
                 )
             },
-            _outputIfNotEnabled = { ctx, fe -> PsiToIrResult }
+            _outputIfNotEnabled = { ctx, fe -> PsiToIrResult.Empty }
     )
 
     fun buildBuildAdditionalCacheInfoPhase(psiToIrPhase: SameTypeNamedCompilerPhase<PsiToIrContext, Unit>): SameTypeNamedCompilerPhase<MiddleEndContext, Unit> = myLower2(
@@ -140,13 +145,13 @@ internal object Phases {
             description = "Save additional cache info (inline functions bodies and fields of classes)"
     )
 
-    fun buildProduceKlibPhase(): SameTypeNamedCompilerPhase<KlibProducingContext, Unit> = namedUnitPhase(
+    fun buildProduceKlibPhase(): SimpleNamedCompilerPhase<PhaseContext, SerializationResult, Unit> = myLower2(
             name = "ProduceOutput",
             description = "Produce output",
-            lower = myLower { context, _ ->
-                produceKlib(context, context.config)
+            op = { context, input ->
+                produceKlib(context, context.config, input)
             },
-            prerequisite = setOf()
+            _outputIfNotEnabled = { _, _ -> }
     )
 
     // Nullable return type allows to pass null as input. Again, proper phase system should help.
@@ -185,7 +190,7 @@ internal object Phases {
             description = "Special backend checks"
     )
 
-    fun buildCopyDefaultValuesToActualPhase(): SameTypeNamedCompilerPhase<MiddleEndContext, Unit> = myLower2(
+    fun buildCopyDefaultValuesToActualPhase(): SimpleNamedCompilerPhase<MiddleEndContext, Unit, Unit> = myLower2(
             op = { ctx, _ -> ExpectToActualDefaultValueCopier(ctx.irModule!!).process() },
             name = "CopyDefaultValuesToActual",
             description = "Copy default values from expect to actual declarations"
@@ -204,7 +209,7 @@ internal object Phases {
             }
     )
 
-    fun buildEntryPointPhase(): SameTypeNamedCompilerPhase<MiddleEndContext, Unit> = myLower2(
+    fun buildEntryPointPhase(): NamedCompilerPhase<MiddleEndContext, Unit, Unit> = myLower2(
             name = "addEntryPoint",
             description = "Add entry point for program",
             prerequisite = emptySet(),
@@ -324,10 +329,10 @@ internal object Phases {
             prerequisite = setOf() // setOf(functionsWithoutBoundCheck)
     )
 
-    fun buildAllLoweringsPhase(): SameTypeNamedCompilerPhase<MiddleEndContext, IrModuleFragment> {
+    fun buildAllLoweringsPhase(): NamedCompilerPhase<MiddleEndContext, IrModuleFragment, IrModuleFragment> {
         val removeExpectDeclarationsPhase = buildRemoveExpectDeclarationsPhase()
 //        val forLoopsLowering = buildForLoopsLowering()
-        return SameTypeNamedCompilerPhase(
+        return NamedCompilerPhase(
                 name = "IrLowering",
                 description = "IR Lowering",
                 // TODO: The lowerings before inlinePhase should be aligned with [NativeInlineFunctionResolver.kt]
@@ -393,16 +398,18 @@ internal object Phases {
         )
     }
 
-    fun buildObjectFilesPhase(bitcodeFile: BitcodeFile) = myLower2<ObjectFilesContext, Unit>(
-            op = { ctx, _ ->
-                ctx.compilerOutput = BitcodeCompiler(ctx.config, ctx as LoggingContext).makeObjectFiles(bitcodeFile)
+    fun buildObjectFilesPhase() = myLower2<ObjectFilesContext, BitcodeFile, List<ObjectFile>>(
+            op = { ctx, bitcodeFile ->
+                BitcodeCompiler(ctx.config, ctx as LoggingContext).makeObjectFiles(bitcodeFile)
             },
             name = "ObjectFiles",
-            description = "Bitcode to object file"
+            description = "Bitcode to object file",
+            _outputIfNotEnabled = { _, _ -> emptyList() }
     )
 
-    fun buildLinkerPhase(objectFiles: List<ObjectFile>) = myLower2<LinkerContext, Unit>(
-            op = { ctx, _ ->
+    // Probably, should return a path to file instead
+    fun buildLinkerPhase() = myLower2<LinkerContext, List<ObjectFile>, Unit>(
+            op = { ctx, objectFiles ->
                 Linker(
                         ctx.necessaryLlvmParts,
                         ctx.llvmModuleSpecification,
@@ -412,7 +419,8 @@ internal object Phases {
                 ).link(objectFiles)
             },
             name = "Linker",
-            description = "Linker"
+            description = "Linker",
+            _outputIfNotEnabled = { _, _ -> }
     )
 
     private fun <C : LoggingContext, Input, Output> myLower(op: (C, Input) -> Output) = object : CompilerPhase<C, Input, Output> {

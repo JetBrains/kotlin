@@ -196,7 +196,9 @@ class JsIrBackendContext(
         .let { symbolTable.referenceSimpleFunction(it!!) }
 
     override val ir = object : Ir<JsIrBackendContext>(this, irModuleFragment) {
-        override val symbols = object : Symbols<JsIrBackendContext>(this@JsIrBackendContext, irBuiltIns, symbolTable) {
+        override val symbols = object : Symbols(irBuiltIns, symbolTable) {
+            val context = this@JsIrBackendContext
+
             override val throwNullPointerException =
                 symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_NPE"))).single())
 

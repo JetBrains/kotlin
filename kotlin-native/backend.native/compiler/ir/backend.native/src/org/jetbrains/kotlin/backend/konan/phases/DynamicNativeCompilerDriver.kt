@@ -12,22 +12,24 @@ import llvm.LLVMModuleCreateWithNameInContext
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.llvm.DebugInfo
 import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.backend.konan.llvm.llvmContext
 import org.jetbrains.kotlin.backend.konan.llvm.tryDisposeLLVMContext
-import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleFragmentImpl
-import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
+import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.path
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -90,56 +92,126 @@ class DynamicNativeCompilerDriver(
         if (frontendPhaseResult !is FrontendPhaseResult.Full) {
             return
         }
-
-        SymbolTableResource().use { symbolTable ->
-            val psiToIrPhase = Phases.buildTranslatePsiToIrPhase(isProducingLibrary = true, symbolTable)
-            // TODO: Create new specialized context instead
-            val psiToIrContext: PsiToIrContext = context
-            runTopLevelPhase(psiToIrContext, frontendPhaseResult, psiToIrPhase)
+        val psiToIrResult = SymbolTableResource().use { symbolTable ->
+            // TODO: Not thought well, API is fragile. Maybe frontend phase should return resource?
+            BindingContextResource(frontendPhaseResult.bindingContext).use {
+                runPsiToIr(config, frontendPhaseResult, symbolTable, isProducingLibrary = true)
+            }
         }
-
-        val serializerPhase = Phases.buildSerializerPhase()
-        val produceKlibPhase = Phases.buildProduceKlibPhase()
-        val generateKlib = SameTypeNamedCompilerPhase(
-                "GenerateKlib",
-                "Library serialization",
-                nlevels = 1,
-                lower = serializerPhase then
-                        produceKlibPhase
-        )
-
-        val klibProducingContext: KlibProducingContext = context
-        runTopLevelPhaseUnit(klibProducingContext, generateKlib)
+        if (psiToIrResult !is PsiToIrResult.ForLibrary) {
+            return
+        }
+        val serializationResult = runSerializer(frontendPhaseResult.moduleDescriptor, psiToIrResult)
+        produceKlib(config, serializationResult)
     }
+
+    private fun createPayload(
+            config: KonanConfig,
+            frontendPhaseResult: FrontendPhaseResult.Full,
+            psiToIrResult: PsiToIrResult.Full,
+    ) = BasicPhaseContextPayload(
+            config,
+            frontendPhaseResult.moduleDescriptor.builtIns as KonanBuiltIns,
+            psiToIrResult.irModule,
+            lazyValues = mutableMapOf(),
+            config.librariesWithDependencies(frontendPhaseResult.moduleDescriptor),
+    )
 
     private fun buildProgram(config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendPhaseResult = runFrontend(config, environment)
         if (frontendPhaseResult !is FrontendPhaseResult.Full) {
             return
         }
+        val objCExport = runObjCExport(config, frontendPhaseResult)
+        //        val objCExportCodeSpecPhase = Phases.buildObjCCodeSpecPhase(createSymbolTablePhase)
 
-        val objCExportPhase = Phases.buildObjCExportPhase()
-        val objCExport = runTopLevelPhase(frontendContext, objCExportPhase, null)
+        val psiToIrResult = SymbolTableResource().use { symbolTable ->
+            // TODO: Not thought well, API is fragile. Maybe frontend phase should return resource?
+            BindingContextResource(frontendPhaseResult.bindingContext).use {
+                runPsiToIr(config, frontendPhaseResult, symbolTable, isProducingLibrary = false)
+            }
+        }
+        if (psiToIrResult !is PsiToIrResult.Full) {
+            return
+        }
 
-        val context = Context(config, objCExport)
-        context.populateFromFrontend(frontendContext)
+        val payload = createPayload(config, frontendPhaseResult, psiToIrResult)
+        val middleEndContext = MiddleEndContextImpl(payload, psiToIrResult)
 
-        val createSymbolTablePhase = Phases.buildCreateSymbolTablePhase()
-//        val objCExportCodeSpecPhase = Phases.buildObjCCodeSpecPhase(createSymbolTablePhase)
-        val psiToIrPhase = Phases.buildTranslatePsiToIrPhase(isProducingLibrary = false, createSymbolTablePhase)
-        val destroySymbolTablePhase = Phases.buildDestroySymbolTablePhase(createSymbolTablePhase)
+        runLinkedIrProcessing(middleEndContext)
+        runLowerings(middleEndContext)
+        val ltoResults = runLTO(payload, middleEndContext)
 
-        val irGen = SameTypeNamedCompilerPhase(
-                "IRGen",
-                "IR generation",
-                nlevels = 1,
-                lower = createSymbolTablePhase then
-                        psiToIrPhase then
-                        destroySymbolTablePhase
+        val smartHoldersCollection = SmartHoldersCollection(
+                context.classIdComputerHolder,
+                context.classITablePlacer,
+                context.classVTableEntries,
+                context.classFieldsLayoutHolder,
+                context.layoutBuildersHolder
         )
-        val objCExportContext: ObjCExportContext = context
-        runTopLevelPhaseUnit(objCExportContext, irGen)
 
+        val cacheContext = CacheContextImpl(config, context)
+
+        // TODO: Move into phase
+        // TODO: Dispose
+        llvmContext = LLVMContextCreate()!!
+        val llvmModule = LLVMModuleCreateWithNameInContext("out", llvmContext)!!
+        val llvm = Llvm(middleEndContext, middleEndContext.llvmModuleSpecification, config, llvmModule)
+        val debugInfo = DebugInfo(middleEndContext, llvm, llvm.runtime.targetData)
+        debugInfo.builder = LLVMCreateDIBuilder(llvmModule)
+
+        runBitcodeGeneration()
+        runLlvmCodegen()
+        val bitcodeFileName = runBitcodeSerializer()
+        val objectFiles = runBitcodeCompiler(bitcodeFileName)
+        runLinker(config, objectFiles, )
+        tryDisposeLLVMContext()
+    }
+
+    private fun runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseResult {
+        val frontendPhase = Phases.buildFrontendPhase()
+        val frontendContext: FrontendContext = FrontendContextImpl(config, environment)
+        return runTopLevelPhase(frontendContext, Unit, frontendPhase)
+    }
+
+    private fun runPsiToIr(
+            config: KonanConfig,
+            frontendPhaseResult:
+            FrontendPhaseResult.Full,
+            symbolTable: SymbolTable,
+            isProducingLibrary: Boolean,
+    ) : PsiToIrResult {
+        val psiToIrPhase = Phases.buildTranslatePsiToIrPhase()
+        val psiToIrContext: PsiToIrContext = PsiToIrContextImpl(config, frontendPhaseResult.moduleDescriptor)
+        val input = PsiToIrInput(frontendPhaseResult, symbolTable, isProducingLibrary)
+        return runTopLevelPhase(psiToIrContext, input, psiToIrPhase)
+    }
+
+    private fun runSerializer(
+            moduleDescriptor: ModuleDescriptor,
+            psiToIrResult: PsiToIrResult.ForLibrary,
+    ): SerializationResult {
+        val serializerPhase = Phases.buildSerializerPhase()
+        val serializerInput = Phases.SerializerPhaseInput(
+                moduleDescriptor,
+                psiToIrResult.irModule,
+                psiToIrResult.expectDescriptorToSymbol
+        )
+        return runTopLevelPhase(BasicPhaseContext(config), serializerInput, serializerPhase)
+    }
+
+    // TODO: return only meaningful part of objcexport.
+    private fun runObjCExport(
+            config: KonanConfig,
+            frontendPhaseResult: FrontendPhaseResult.Full
+    ): ObjCExport {
+        val objCExportPhase = Phases.buildObjCExportPhase()
+        return runTopLevelPhase(BasicPhaseContext(config), frontendPhaseResult, objCExportPhase)
+    }
+
+    private fun runLinkedIrProcessing(
+            middleEndContext: MiddleEndContext
+    ) {
         val specialBackendChecksPhase = Phases.buildSpecialBackendChecksPhase()
         val copyDefaultValuesToActualPhase = Phases.buildCopyDefaultValuesToActualPhase()
         val buildFunctionsWithoutBoundCheck = Phases.buildFunctionsWithoutBoundCheck()
@@ -153,43 +225,33 @@ class DynamicNativeCompilerDriver(
                         buildFunctionsWithoutBoundCheck then
                         entryPointPhase
         )
-        val middleEndContext: MiddleEndContext = context
-        runTopLevelPhaseUnit(middleEndContext, irProcessing)
+        runTopLevelPhase(middleEndContext, Unit, irProcessing)
+    }
+
+    private fun runLowerings(
+            middleEndContext: MiddleEndContext
+    ) {
         val allLowerings = Phases.buildAllLoweringsPhase()
-        runTopLevelPhase(middleEndContext, allLowerings, middleEndContext.irModule!!)
+        runTopLevelPhase(middleEndContext, middleEndContext.irModule!!, allLowerings)
         dependenciesLowering(middleEndContext.irModule!!, middleEndContext)
+    }
 
-        val payload = BasicPhaseContextPayload(
-                context.config,
-                context.irBuiltIns,
-                context.typeSystem,
-                context.builtIns,
-                context.ir,
-                librariesWithDependencies = context.librariesWithDependencies,
-                lazyValues = context.lazyValues
-        )
-
+    private fun runLTO(
+        payload: BasicPhaseContextPayload,
+        middleEndContext: MiddleEndContext
+    ): LtoResults {
         val ltoPhases = Phases.buildLtoAndMiscPhases(config)
         val ltoContext: LtoContext = LtoContextImpl(
                 payload,
-                context.bridgesSupport,
-                context.irModule!!,
-                context.classIdComputerHolder,
-                context.classITablePlacer,
-                context.classVTableEntries,
-                context.layoutBuildersHolder,
+                middleEndContext.bridgesSupport,
+                middleEndContext.irModule!!,
+                middleEndContext.classIdComputerHolder,
+                middleEndContext.classITablePlacer,
+                middleEndContext.classVTableEntries,
+                middleEndContext.layoutBuildersHolder,
         )
-        runTopLevelPhase(ltoContext, ltoPhases, middleEndContext.irModule!!)
-
-        val smartHoldersCollection = SmartHoldersCollection(
-                context.classIdComputerHolder,
-                context.classITablePlacer,
-                context.classVTableEntries,
-                context.classFieldsLayoutHolder,
-                context.layoutBuildersHolder
-        )
-
-        val ltoResult = LtoResults(
+        runTopLevelPhase(ltoContext, middleEndContext.irModule!!, ltoPhases)
+        return LtoResults(
                 ltoContext.globalHierarchyAnalysisResult,
                 ltoContext.ghaEnabled(),
                 ltoContext.devirtualizationAnalysisResult,
@@ -197,17 +259,9 @@ class DynamicNativeCompilerDriver(
                 ltoContext.referencedFunctions,
                 ltoContext.lifetimes
         )
+    }
 
-        val cacheContext = CacheContextImpl(config, context)
-
-        // TODO: Move into phase
-        // TODO: Dispose
-        llvmContext = LLVMContextCreate()!!
-        val llvmModule = LLVMModuleCreateWithNameInContext("out", llvmContext)!!
-        val llvm = Llvm(middleEndContext, middleEndContext.llvmModuleSpecification, config, llvmModule)
-        val debugInfo = DebugInfo(middleEndContext, llvm, llvm.runtime.targetData)
-        debugInfo.builder = LLVMCreateDIBuilder(llvmModule)
-
+    private fun runBitcodeGeneration() {
         val bitcodegenPhase = Phases.buildBitcodePhases(middleEndContext.irModule!!, needSetup = false)
         val bitcodegenContext: BitcodegenContext = BitcodegenContextImpl(
                 payload,
@@ -229,7 +283,10 @@ class DynamicNativeCompilerDriver(
         )
 
         runTopLevelPhaseUnit(bitcodegenContext, bitcodegenPhase)
+    }
 
+    // TODO: Better name
+    private fun runLlvmCodegen() {
         val llvmCodegenPhase = Phases.buildLlvmCodegenPhase()
         val llvmcodegenContext: LlvmCodegenContext = LlvmCodegenContextImpl(
                 payload,
@@ -241,29 +298,40 @@ class DynamicNativeCompilerDriver(
                 bitcodegenContext.llvmModuleSpecification
         )
         runTopLevelPhase(llvmcodegenContext, llvmCodegenPhase, bitcodegenContext.irModule!!)
+    }
 
+    private fun runBitcodeSerializer() {
         val writeLlvmModulePhase = Phases.buildWriteLlvmModule()
-        runTopLevelPhaseUnit(llvmcodegenContext, writeLlvmModulePhase)
+        runTopLevelPhase(llvmcodegenContext, writeLlvmModulePhase)
+    }
 
+    private fun runBitcodeCompiler(bitcodeFileName: BitcodeFile): List<ObjectFile> {
         val objectFilesContext = ObjectFilesContextImpl(config)
-        val objectFilesPhase = Phases.buildObjectFilesPhase(llvmcodegenContext.bitcodeFileName)
-        runTopLevelPhaseUnit(objectFilesContext, objectFilesPhase)
+        val objectFilesPhase = Phases.buildObjectFilesPhase()
+        return runTopLevelPhase(objectFilesContext, bitcodeFileName, objectFilesPhase)
+    }
 
+    private fun runLinker(
+            config: KonanConfig,
+            objectFiles: List<ObjectFile>,
+            bitcodegenContext: BitcodegenContext
+    ) {
         val linkerContext = LinkerContextImpl(
                 config,
                 bitcodegenContext.necessaryLlvmParts,
                 bitcodegenContext.coverage,
                 bitcodegenContext.llvmModuleSpecification
         )
-        val linkerPhase = Phases.buildLinkerPhase(objectFilesContext.compilerOutput)
-        runTopLevelPhaseUnit(linkerContext, linkerPhase)
-        tryDisposeLLVMContext()
+        val linkerPhase = Phases.buildLinkerPhase()
+        runTopLevelPhase(linkerContext, objectFiles, linkerPhase)
     }
 
-    private fun runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseResult {
-        val frontendPhase = Phases.buildFrontendPhase()
-        val frontendContext: FrontendContext = FrontendContextImpl(config, environment)
-        return runTopLevelPhase(frontendContext, Unit, frontendPhase)
+    private fun produceKlib(
+            config: KonanConfig,
+            serializationResult: SerializationResult,
+    ) {
+        val produceKlibPhase = Phases.buildProduceKlibPhase()
+        runTopLevelPhase(BasicPhaseContext(config), serializationResult, produceKlibPhase)
     }
 
     private fun buildFramework(config: KonanConfig, environment: KotlinCoreEnvironment) {

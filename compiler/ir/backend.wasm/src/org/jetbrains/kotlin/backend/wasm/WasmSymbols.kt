@@ -30,9 +30,9 @@ import java.lang.IllegalArgumentException
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class WasmSymbols(
-    context: WasmBackendContext,
+    val context: WasmBackendContext,
     private val symbolTable: SymbolTable
-) : Symbols<WasmBackendContext>(context, context.irBuiltIns, symbolTable) {
+) : Symbols(context.irBuiltIns, symbolTable) {
 
     private val kotlinTopLevelPackage: PackageViewDescriptor =
         context.module.getPackage(FqName("kotlin"))
