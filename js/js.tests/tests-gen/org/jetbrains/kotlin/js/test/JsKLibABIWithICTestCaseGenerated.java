@@ -40,6 +40,11 @@ public class JsKLibABIWithICTestCaseGenerated extends AbstractJsKLibABIWithICTes
         runTest("compiler/testData/klibABI/changePropertyVisibility/");
     }
 
+    @TestMetadata("noNonImplementedCallableFalsePositives")
+    public void testNoNonImplementedCallableFalsePositives() throws Exception {
+        runTest("compiler/testData/klibABI/noNonImplementedCallableFalsePositives/");
+    }
+
     @TestMetadata("nonAbstractFunctionInAbstractClassBecomesAbstract")
     public void testNonAbstractFunctionInAbstractClassBecomesAbstract() throws Exception {
         runTest("compiler/testData/klibABI/nonAbstractFunctionInAbstractClassBecomesAbstract/");
