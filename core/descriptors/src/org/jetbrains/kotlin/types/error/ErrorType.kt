@@ -24,8 +24,11 @@ class ErrorType @JvmOverloads internal constructor(
 
     override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType = this
 
+    fun replaceArguments(newArguments: List<TypeProjection>): ErrorType =
+        ErrorType(constructor, memberScope, kind, newArguments, isMarkedNullable, *formatParams)
+
     override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType =
-            ErrorType(constructor, memberScope, kind, arguments, newNullability, *formatParams)
+        ErrorType(constructor, memberScope, kind, arguments, newNullability, *formatParams)
 
     @TypeRefinement
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) = this

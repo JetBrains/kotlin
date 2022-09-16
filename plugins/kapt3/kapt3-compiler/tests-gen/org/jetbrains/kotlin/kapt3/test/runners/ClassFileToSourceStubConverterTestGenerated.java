@@ -452,6 +452,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     }
 
     @Test
+    @TestMetadata("kt43786.kt")
+    public void testKt43786() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt43786.kt");
+    }
+
+    @Test
     @TestMetadata("lazyProperty.kt")
     public void testLazyProperty() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/lazyProperty.kt");
