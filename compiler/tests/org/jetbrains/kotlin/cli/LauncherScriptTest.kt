@@ -141,7 +141,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         runProcess(
             "kotlinc-js",
             "$testDataDirectory/emptyMain.kt",
-            "-output", File(tmpdir, "out.js").path
+            "-Xlegacy-deprecated-no-warn", "-output", File(tmpdir, "out.js").path
         )
     }
 

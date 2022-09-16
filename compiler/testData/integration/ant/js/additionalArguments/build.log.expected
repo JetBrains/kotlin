@@ -3,6 +3,7 @@ Buildfile: [TestData]/build.xml
 
 build:
 [kotlin2js] Compiling [[TestData]/hello.kt] => [[Temp]/out.js]
+[kotlin2js] warning: legacy compiler is deprecated. Please migrate onto IR.
 
 BUILD SUCCESSFUL
 Total time: [time]

@@ -312,24 +312,6 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         buildAllModules().assertSuccessful()
     }
 
-    fun testKotlinJavaScriptProjectWithTestsAndTestAndSrcModuleDependency() {
-        initProject(JS_STDLIB)
-        val buildResult = buildAllModules()
-        buildResult.assertSuccessful()
-
-        val warnings = buildResult.getMessages(BuildMessage.Kind.WARNING)
-        assertEquals("Warning about duplicate module definition: $warnings", 0, warnings.size)
-    }
-
-    fun testKotlinJavaScriptProjectWithTwoSrcModuleDependency() {
-        initProject(JS_STDLIB)
-        val buildResult = buildAllModules()
-        buildResult.assertSuccessful()
-
-        val warnings = buildResult.getMessages(BuildMessage.Kind.WARNING)
-        assertEquals("Warning about duplicate module definition: $warnings", 0, warnings.size)
-    }
-
     fun testExcludeFolderInSourceRoot() {
         doTest()
 

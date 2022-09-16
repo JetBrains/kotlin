@@ -5,3 +5,4 @@ Output:
 -- JS --
 Exit code: OK
 Output:
+warning: legacy compiler is deprecated. Please migrate onto IR.

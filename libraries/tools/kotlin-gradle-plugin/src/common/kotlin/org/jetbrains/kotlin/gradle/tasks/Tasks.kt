@@ -1028,6 +1028,11 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:Internal
     internal abstract val libraryCache: Property<LibraryFilterCachingService>
 
+    @get:Input
+    internal val jsLegacyNoWarn: Provider<Boolean> = objectFactory.property(
+        PropertiesProvider(project).jsCompilerNoWarn
+    )
+
     @get:Internal
     protected val libraryFilter: (File) -> Boolean
         get() = { file ->
@@ -1073,6 +1078,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
         if (args.sourceMapBaseDirs == null && !args.sourceMapPrefix.isNullOrEmpty()) {
             args.sourceMapBaseDirs = absolutePathProvider
         }
+
+        args.legacyDeprecatedNoWarn = jsLegacyNoWarn.get()
 
         logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
 

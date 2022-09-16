@@ -1,9 +1,11 @@
 $TESTDATA_DIR$/separateModules/sepModule1.kt
+-Xlegacy-deprecated-no-warn
 -meta-info
 -output
 $TEMP_DIR$/m1/m.js
 ---
 $TESTDATA_DIR$/separateModules/sepModule2.kt
+-Xlegacy-deprecated-no-warn
 -libraries
 $TEMP_DIR$/m1
 -output

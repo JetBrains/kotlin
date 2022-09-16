@@ -1,4 +1,5 @@
 $TESTDATA_DIR$/sourceMapDuplicatePath/
+-Xlegacy-deprecated-no-warn
 -source-map
 -source-map-base-dirs
 $TESTDATA_DIR$/sourceMapDuplicatePath/foo:$TESTDATA_DIR$/sourceMapDuplicatePath/bar

@@ -1,4 +1,5 @@
 $TESTDATA_DIR$/sourceMap.kt
+-Xlegacy-deprecated-no-warn
 -source-map
 -source-map-prefix
 /localhost/src/

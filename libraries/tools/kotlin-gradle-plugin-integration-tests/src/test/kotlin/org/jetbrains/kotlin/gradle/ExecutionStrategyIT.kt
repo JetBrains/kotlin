@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.junit.jupiter.api.DisplayName
+import java.io.File
 
 @DisplayName("Kotlin JS compile execution strategy")
 class ExecutionStrategyJsIT : ExecutionStrategyIT() {
@@ -22,7 +23,7 @@ class ExecutionStrategyJsIT : ExecutionStrategyIT() {
                     |
                     |afterEvaluate {
                     |    tasks.named('compileKotlinJs') {
-                    |        kotlinOptions.outputFile = "${'$'}{project.projectDir}/web/js/out.js"
+                    |        kotlinOptions.outputFile = "${'$'}{project.projectDir}/web/js/"
                     |    }
                     |}
                     |
@@ -31,11 +32,11 @@ class ExecutionStrategyJsIT : ExecutionStrategyIT() {
     }
 
     override fun BuildResult.checkOutput(project: TestProject) {
-        project.subProject("app").assertFileInProjectExists("web/js/out.js")
+        project.subProject("app").assertFileInProjectExists("web/js/default/manifest")
     }
 
     override fun BuildResult.checkOutputAfterChange(project: TestProject) {
-        project.subProject("app").assertFileInProjectExists("web/js/out.js")
+        project.subProject("app").assertFileInProjectExists("web/js/default/manifest")
     }
 }
 

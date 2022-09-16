@@ -122,6 +122,7 @@ constructor(
                     binary.linkTask.configure {
                         it.kotlinOptions.outputFile = project.buildDir
                             .resolve(COMPILE_SYNC)
+                            .resolve(if (compilation.platformType == KotlinPlatformType.wasm) "wasm" else "js")
                             .resolve(compilation.name)
                             .resolve(binary.name)
                             .resolve(npmProject.main)
@@ -144,7 +145,7 @@ constructor(
         return project.registerTask<Copy>(
             binary.linkSyncTaskName
         ) { task ->
-            task.from(project.layout.file(binary.linkTask.normalizedDestinationDirectory))
+            task.from(binary.linkTask.flatMap { it.normalizedDestinationDirectory })
 
             task.from(project.tasks.named(compilation.processResourcesTaskName))
 
@@ -172,7 +173,7 @@ constructor(
             null
         } else {
             project.registerTask(binary.validateGeneratedTsTaskName, listOf(compilation)) {
-                it.inputDir.set(project.layout.dir(linkTask.normalizedDestinationDirectory))
+                it.inputDir.set(linkTask.flatMap { it.normalizedDestinationDirectory })
                 it.validationStrategy.set(
                     when (binary.mode) {
                         KotlinJsBinaryMode.DEVELOPMENT -> propertiesProvider.jsIrGeneratedTypeScriptValidationDevStrategy
@@ -183,11 +184,11 @@ constructor(
         }
     }
 
-    private val TaskProvider<KotlinJsIrLink>.normalizedDestinationDirectory
-        get() =
-            flatMap { linkTask ->
-                linkTask.normalizedDestinationDirectory.map { it.asFile }
-            }
+//    private val TaskProvider<KotlinJsIrLink>.normalizedDestinationDirectory
+//        get() =
+//            flatMap { linkTask ->
+//                linkTask.normalizedDestinationDirectory.map { it.asFile }
+//            }
 
     //Binaryen
     private val applyBinaryenHandlers = mutableListOf<(BinaryenExec.() -> Unit) -> Unit>()

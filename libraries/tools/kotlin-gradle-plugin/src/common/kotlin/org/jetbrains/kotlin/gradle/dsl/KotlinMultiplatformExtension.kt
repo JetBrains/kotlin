@@ -26,7 +26,7 @@ abstract class KotlinMultiplatformExtension(project: Project) :
 
     final override val targets: NamedDomainObjectCollection<KotlinTarget> = project.container(KotlinTarget::class.java)
 
-    override val defaultJsCompilerType: KotlinJsCompilerType = project.kotlinPropertiesProvider.jsCompiler
+    override val compilerTypeFromProperties: KotlinJsCompilerType? = project.kotlinPropertiesProvider.jsCompiler
 
     private val presetExtension = project.objects.newInstance(
         DefaultTargetsFromPresetExtension::class.java,

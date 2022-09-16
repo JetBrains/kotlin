@@ -74,10 +74,11 @@ class NewMultiplatformIT : BaseGradleIT() {
         enableCompatibilityMetadataArtifact = true
     )
 
-    private val HmppFlags.buildOptions get() = defaultBuildOptions().copy(
-        hierarchicalMPPStructureSupport = hmppSupport,
-        enableCompatibilityMetadataVariant = enableCompatibilityMetadataArtifact,
-    )
+    private val HmppFlags.buildOptions
+        get() = defaultBuildOptions().copy(
+            hierarchicalMPPStructureSupport = hmppSupport,
+            enableCompatibilityMetadataVariant = enableCompatibilityMetadataArtifact,
+        )
 
     @Test
     fun testLibAndApp() = doTestLibAndApp(
@@ -134,19 +135,19 @@ class NewMultiplatformIT : BaseGradleIT() {
 
                 val groupDir = projectDir.resolve("repo/com/example")
                 val jvmJarName = "sample-lib-jvm6/1.0/sample-lib-jvm6-1.0.jar"
-                val jsExtension = "jar"
-                val jsJarName = "sample-lib-nodejs/1.0/sample-lib-nodejs-1.0.$jsExtension"
+                val jsExtension = "klib"
+                val jsKlibName = "sample-lib-nodejs/1.0/sample-lib-nodejs-1.0.$jsExtension"
                 val metadataJarName = "sample-lib/1.0/sample-lib-1.0.jar"
                 val nativeKlibName = "sample-lib-linux64/1.0/sample-lib-linux64-1.0.klib"
 
-                listOf(jvmJarName, jsJarName, metadataJarName, "sample-lib/1.0/sample-lib-1.0.module").forEach {
+                listOf(jvmJarName, jsKlibName, metadataJarName, "sample-lib/1.0/sample-lib-1.0.module").forEach {
                     Assert.assertTrue("$it should exist", groupDir.resolve(it).exists())
                 }
 
                 val gradleMetadata = groupDir.resolve("sample-lib/1.0/sample-lib-1.0.module").readText()
                 assertFalse(gradleMetadata.contains(ProjectLocalConfigurations.ATTRIBUTE.name))
 
-                listOf(jvmJarName, jsJarName, nativeKlibName).forEach {
+                listOf(jvmJarName, jsKlibName, nativeKlibName).forEach {
                     val pom = groupDir.resolve(it.replaceAfterLast('.', "pom"))
                     Assert.assertTrue(
                         "$pom should contain a name section.",
@@ -162,12 +163,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 Assert.assertTrue("com/example/lib/CommonKt.class" in jvmJarEntries)
                 Assert.assertTrue("com/example/lib/MainKt.class" in jvmJarEntries)
 
-                val jsJar = ZipFile(groupDir.resolve(jsJarName))
-                val compiledJs = jsJar.getInputStream(jsJar.getEntry("sample-lib.js")).reader().readText()
-                Assert.assertTrue("function id(" in compiledJs)
-                Assert.assertTrue("function idUsage(" in compiledJs)
-                Assert.assertTrue("function expectedFun(" in compiledJs)
-                Assert.assertTrue("function main(" in compiledJs)
+                Assert.assertTrue(groupDir.resolve(jsKlibName).exists())
 
                 val metadataJarEntries = ZipFile(groupDir.resolve(metadataJarName)).entries().asSequence().map { it.name }.toSet()
                 val metadataFileFound = "com/example/lib/CommonKt.kotlin_metadata" in metadataJarEntries
@@ -204,11 +200,6 @@ class NewMultiplatformIT : BaseGradleIT() {
                     projectDir.resolve(targetClassesDir("metadata")).run {
                         Assert.assertTrue(resolve("com/example/app/AKt.kotlin_metadata").exists())
                     }
-                }
-
-                projectDir.resolve(targetClassesDir("nodeJs")).resolve("sample-app.js").readText().run {
-                    Assert.assertTrue(contains("console.info"))
-                    Assert.assertTrue(contains("function nodeJsMain("))
                 }
 
                 val nativeExeName = if (isWindows) "main.exe" else "main.kexe"
@@ -258,15 +249,15 @@ class NewMultiplatformIT : BaseGradleIT() {
 
                 build("assemble", options = buildOptions) {
                     assertSuccessful()
-                    assertTasksExecuted(":app-js:compileKotlin2Js", ":app-jvm:compileKotlin", ":app-common:compileKotlinCommon")
+                    assertTasksExecuted(":app-jvm:compileKotlin", ":app-common:compileKotlinCommon")
 
                     assertFileExists(kotlinClassesDir("app-common") + "com/example/app/CommonAppKt.kotlin_metadata")
 
                     val jvmClassFile = projectDir.resolve(kotlinClassesDir("app-jvm") + "com/example/app/JvmAppKt.class")
                     checkBytecodeContains(jvmClassFile, "CommonKt.id", "MainKt.expectedFun")
 
-                    val jsCompiledFilePath = kotlinClassesDir("app-js") + "app-js.js"
-                    assertFileContains(jsCompiledFilePath, "lib.expectedFun", "lib.id")
+//                    val jsCompiledFilePath = kotlinClassesDir("app-js") + "app-js.js"
+//                    assertFileContains(jsCompiledFilePath, "lib.expectedFun", "lib.id")
                 }
             }
         }
@@ -512,7 +503,8 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     private fun doTestJvmWithJava(testJavaSupportInJvmTargets: Boolean) =
         with(Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
-            embedProject(Project("sample-lib-gradle-kotlin-dsl", directoryPrefix = "new-mpp-lib-and-app"))
+            val embeddedProject = Project("sample-lib-gradle-kotlin-dsl", directoryPrefix = "new-mpp-lib-and-app")
+            embedProject(embeddedProject)
             gradleProperties().apply {
                 configureJvmMemory()
             }
@@ -522,6 +514,14 @@ class NewMultiplatformIT : BaseGradleIT() {
             fun getFilePathsSet(inDirectory: String): Set<String> {
                 val dir = projectDir.resolve(inDirectory)
                 return dir.walk().filter { it.isFile }.map { it.relativeTo(dir).invariantSeparatorsPath }.toSet()
+            }
+
+            gradleBuildScript(embeddedProject.projectName).modify {
+                it.replace("val shouldBeJs = true", "val shouldBeJs = false")
+            }
+
+            gradleBuildScript().modify {
+                it.replace("def shouldBeJs = true", "def shouldBeJs = false")
             }
 
             build("assemble") {
@@ -1113,11 +1113,10 @@ class NewMultiplatformIT : BaseGradleIT() {
             setupWorkingDir()
             gradleBuildScript().appendText("\nallprojects { repositories { maven { url '${repoDir.toURI()}' } } }")
             gradleBuildScript("app-jvm").modify { it.replace("com.example:sample-lib:", "com.example:sample-lib-jvm6:") }
-            gradleBuildScript("app-js").modify { it.replace("com.example:sample-lib:", "com.example:sample-lib-nodejs:") }
 
             build("assemble", "run") {
                 assertSuccessful()
-                assertTasksExecuted(":app-common:compileKotlinCommon", ":app-jvm:compileKotlin", ":app-jvm:run", ":app-js:compileKotlin2Js")
+                assertTasksExecuted(":app-common:compileKotlinCommon", ":app-jvm:compileKotlin", ":app-jvm:run")
             }
 
             // Then run again without even reading the metadata from the repo:
@@ -1125,7 +1124,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             build("assemble", "run", "--rerun-tasks") {
                 assertSuccessful()
-                assertTasksExecuted(":app-common:compileKotlinCommon", ":app-jvm:compileKotlin", ":app-jvm:run", ":app-js:compileKotlin2Js")
+                assertTasksExecuted(":app-common:compileKotlinCommon", ":app-jvm:compileKotlin", ":app-jvm:run")
             }
         }
 
@@ -1461,7 +1460,6 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertTasksExecuted(*listOf("Jvm6", "NodeJs", "Linux64").map { ":compileKotlin$it" }.toTypedArray())
             assertFileExists("build/classes/kotlin/jvm6/main/com/example/Annotated.class")
             assertFileExists("build/classes/kotlin/jvm6/main/com/example/Override.class")
-            assertFileContains("build/classes/kotlin/nodeJs/main/sample-lib.js", "Override")
 
             val (compilerPluginArgsBySourceSet, compilerPluginClasspathBySourceSet) =
                 listOf(compilerPluginArgsRegex, compilerPluginClasspathRegex)
@@ -1483,7 +1481,10 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testJsDceInMpp() = with(Project("new-mpp-js-dce", gradleVersion)) {
-        build("runRhino", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
+        build(
+            "runRhino",
+            options = defaultBuildOptions().copy(warningMode = WarningMode.Summary, jsCompilerType = KotlinJsCompilerType.LEGACY)
+        ) {
             assertSuccessful()
             assertTasksExecuted(":mainProject:processDceBrowserKotlinJs")
 
@@ -1784,7 +1785,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
                 // JS:
                 assertFileExists(
-                    "build/classes/kotlin/js/integrationTest/new-mpp-associate-compilations_integrationTest.js"
+                    "build/classes/kotlin/js/integrationTest/default/manifest"
                 )
 
                 // Native:

@@ -1,4 +1,5 @@
 $TESTDATA_DIR$/../warnings.kt
+-Xlegacy-deprecated-no-warn
 -nowarn
 -output
 $TEMP_DIR$/out.js

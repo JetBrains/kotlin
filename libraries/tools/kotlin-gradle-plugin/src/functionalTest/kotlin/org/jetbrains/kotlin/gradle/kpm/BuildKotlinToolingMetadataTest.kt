@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.tooling.KotlinToolingMetadata
 import org.jetbrains.kotlin.tooling.toJsonString
 import org.gradle.kotlin.dsl.create
+import org.jetbrains.kotlin.gradle.disableLegacyWarning
 import org.jetbrains.kotlin.gradle.plugin.*
 import kotlin.test.*
 
@@ -99,6 +100,8 @@ class KotlinToolingMetadataWithModelMappingTest {
     fun `multiplatform JS JVM Android linuxX64 setup`() {
         project.plugins.apply("com.android.application")
         project.plugins.apply("kotlin-multiplatform")
+
+        disableLegacyWarning(project)
 
         val android = project.extensions.getByType(ApplicationExtension::class.java)
         val kotlin = multiplatformExtension

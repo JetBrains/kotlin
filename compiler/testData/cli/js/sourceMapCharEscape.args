@@ -1,4 +1,5 @@
 $TESTDATA_DIR$/sourceMapCharEscape.kt
+-Xlegacy-deprecated-no-warn
 -source-map
 -source-map-embed-sources
 always

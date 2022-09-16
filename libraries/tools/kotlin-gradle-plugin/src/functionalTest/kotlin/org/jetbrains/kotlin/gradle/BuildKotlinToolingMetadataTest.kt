@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
@@ -40,7 +40,7 @@ import kotlin.test.assertTrue
 
 class BuildKotlinToolingMetadataTest {
 
-    private val project = ProjectBuilder.builder().build().also{ addBuildEventsListenerRegistryMock(it) } as ProjectInternal
+    private val project = ProjectBuilder.builder().build().also { addBuildEventsListenerRegistryMock(it) } as ProjectInternal
     private val multiplatformExtension get() = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
     private val jsExtension get() = project.extensions.getByType(KotlinJsProjectExtension::class.java)
 
@@ -72,6 +72,8 @@ class BuildKotlinToolingMetadataTest {
         project.plugins.apply("com.android.application")
         project.plugins.apply("kotlin-multiplatform")
 
+        disableLegacyWarning(project)
+
         val android = project.extensions.getByType(BaseExtension::class.java)
         val kotlin = multiplatformExtension
 
@@ -93,7 +95,7 @@ class BuildKotlinToolingMetadataTest {
             common to KotlinMetadataTarget::class,
             androidJvm to KotlinAndroidTarget::class,
             jvm to KotlinJvmTarget::class,
-            js to KotlinJsTarget::class,
+            js to KotlinJsIrTarget::class,
             native to KotlinNativeTargetWithHostTests::class
         )
 
@@ -163,6 +165,7 @@ class BuildKotlinToolingMetadataTest {
     @Test
     fun js() {
         project.plugins.apply("org.jetbrains.kotlin.js")
+        disableLegacyWarning(project)
         val kotlin = jsExtension
         kotlin.js { nodejs() }
 

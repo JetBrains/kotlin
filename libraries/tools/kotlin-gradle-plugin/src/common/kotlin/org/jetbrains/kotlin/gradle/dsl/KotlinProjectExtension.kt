@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.Action
+import org.gradle.api.GradleException
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.internal.plugins.DslObject
+import org.gradle.api.logging.Logger
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainSpec
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -217,6 +218,39 @@ abstract class KotlinJsProjectExtension(project: Project) :
                 KotlinJsCompilerType.BOTH -> KotlinBuildStatsService.getInstance()?.report(StringMetrics.JS_COMPILER_MODE, "both")
             }
         }
+
+        internal fun warnAboutDeprecatedCompiler(project: Project, compilerType: KotlinJsCompilerType?) {
+            if (PropertiesProvider(project).jsCompilerNoWarn) return
+            val logger = project.logger
+            when (compilerType) {
+                KotlinJsCompilerType.LEGACY -> logger.warn(LEGACY_DEPRECATED)
+                KotlinJsCompilerType.IR -> {}
+                KotlinJsCompilerType.BOTH -> logger.warn(BOTH_DEPRECATED)
+                null -> throw GradleException(DEFAULT_WARN)
+            }
+        }
+
+        private val LEGACY_DEPRECATED =
+            """
+                The Kotlin/JS Legacy compiler backend is deprecated and will be removed in a future release.
+                Please migrate your project to the new IR-based compiler (https://kotl.in/jsir)
+            """.trimIndent()
+
+        private val BOTH_DEPRECATED =
+            """
+                Both mode is using the Kotlin/JS Legacy compiler backend, which is deprecated and will be removed in a future release.
+                Please migrate your project to the new IR-based compiler (https://kotl.in/jsir)
+            """.trimIndent()
+
+        private val DEFAULT_WARN =
+            """
+                The Kotlin/JS legacy compiler is no longer default. Please specify a compiler explicitly, via:
+                - kotlin.js.compiler=ir|legacy in your gradle.properties
+                - js(IR|LEGACY) { ... } in your build file.
+
+                Note, that the legacy compiler backend is deprecated and will be removed in a future release. 
+                Using the new IR-based compiler is recommended (https://kotl.in/jsir)
+            """.trimIndent()
     }
 
     @Deprecated("Use js() instead", ReplaceWith("js()"))
@@ -229,7 +263,7 @@ abstract class KotlinJsProjectExtension(project: Project) :
             return _target!!
         }
 
-    override lateinit var defaultJsCompilerType: KotlinJsCompilerType
+    override var compilerTypeFromProperties: KotlinJsCompilerType? = null
 
     @Suppress("DEPRECATION")
     private fun jsInternal(
@@ -244,8 +278,10 @@ abstract class KotlinJsProjectExtension(project: Project) :
         }
 
         if (_target == null) {
-            val compilerOrDefault = compiler ?: defaultJsCompilerType
+            val compilerOrFromProperties = compiler ?: compilerTypeFromProperties
+            val compilerOrDefault = compilerOrFromProperties ?: defaultJsCompilerType
             reportJsCompilerMode(compilerOrDefault)
+            warnAboutDeprecatedCompiler(project, compilerOrFromProperties)
             val target: KotlinJsTargetDsl = when (compilerOrDefault) {
                 KotlinJsCompilerType.LEGACY -> legacyPreset
                     .also {

@@ -1,4 +1,5 @@
 $TESTDATA_DIR$/simple2js.kt
+-Xlegacy-deprecated-no-warn
 -kotlin-home
 $TESTDATA_DIR$
 -output

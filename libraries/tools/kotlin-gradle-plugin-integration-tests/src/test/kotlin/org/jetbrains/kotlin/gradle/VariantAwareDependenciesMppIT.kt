@@ -41,17 +41,17 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
                 subproject = innerProject.projectName,
                 options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)
             ) {
-                assertContains(">> :${innerProject.projectName}:runtimeClasspath --> sample-lib-nodejs-1.0.jar")
+                assertContains(">> :${innerProject.projectName}:runtimeClasspath --> sample-lib-nodejs-1.0.klib")
             }
 
-            gradleProperties().appendText(jsCompilerType(KotlinJsCompilerType.IR))
+            gradleProperties().appendText(jsCompilerType(KotlinJsCompilerType.LEGACY))
 
             testResolveAllConfigurations(
                 subproject = innerProject.projectName,
                 skipSetup = true,
                 options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)
             ) {
-                assertContains(">> :${innerProject.projectName}:runtimeClasspath --> sample-lib-nodejs-1.0.klib")
+                assertContains(">> :${innerProject.projectName}:runtimeClasspath --> sample-lib-nodejs-1.0.jar")
             }
         }
     }

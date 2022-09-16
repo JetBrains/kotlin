@@ -2,6 +2,7 @@ OUT:
 Buildfile: [TestData]/build.xml
 
 build:
+     [java] warning: legacy compiler is deprecated. Please migrate onto IR.
 
 BUILD SUCCESSFUL
 Total time: [time]

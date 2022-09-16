@@ -39,7 +39,7 @@ open class KotlinJsPlugin(
         kotlinExtension.apply {
             irPreset = KotlinJsIrSingleTargetPreset(project)
             legacyPreset = KotlinJsSingleTargetPreset(project)
-            defaultJsCompilerType = PropertiesProvider(project).jsCompiler
+            compilerTypeFromProperties = PropertiesProvider(project).jsCompiler
         }
 
         project.runProjectConfigurationHealthCheckWhenEvaluated {

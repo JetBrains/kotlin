@@ -35,6 +35,7 @@ where advanced options include:
   -Xir-safe-external-boolean Safe access via Boolean() to Boolean properties in externals to safely cast falsy values.
   -Xir-safe-external-boolean-diagnostic={log|exception}
                              Enable runtime diagnostics when access safely to boolean in external declarations
+  -Xlegacy-deprecated-no-warn Disable warnings of deprecation of legacy compiler
   -Xmetadata-only            Generate *.meta.js and *.kjsm files only
   -Xpartial-linkage          Allow unlinked symbols
   -Xrepositories=<path>      Paths to additional places where libraries could be found

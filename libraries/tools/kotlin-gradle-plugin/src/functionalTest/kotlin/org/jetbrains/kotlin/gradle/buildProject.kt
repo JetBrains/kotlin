@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.kpm.applyKpmPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 
 fun buildProject(
@@ -29,6 +30,7 @@ fun buildProject(
 
 fun buildProjectWithMPP(projectBuilder: ProjectBuilder.() -> Unit = { }, code: Project.() -> Unit = {}) = buildProject(projectBuilder) {
     project.applyMultiplatformPlugin()
+    disableLegacyWarning(project)
     code()
 }
 
