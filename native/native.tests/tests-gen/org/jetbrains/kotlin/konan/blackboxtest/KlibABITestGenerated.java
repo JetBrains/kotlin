@@ -37,6 +37,12 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     }
 
     @Test
+    @TestMetadata("noNonImplementedCallableFalsePositives")
+    public void testNoNonImplementedCallableFalsePositives() throws Exception {
+        runTest("compiler/testData/klibABI/noNonImplementedCallableFalsePositives/");
+    }
+
+    @Test
     @TestMetadata("nonAbstractFunctionInAbstractClassBecomesAbstract")
     public void testNonAbstractFunctionInAbstractClassBecomesAbstract() throws Exception {
         runTest("compiler/testData/klibABI/nonAbstractFunctionInAbstractClassBecomesAbstract/");
