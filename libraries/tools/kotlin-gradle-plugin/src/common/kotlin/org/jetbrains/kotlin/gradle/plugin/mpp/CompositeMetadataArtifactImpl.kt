@@ -11,6 +11,10 @@ import org.jetbrains.kotlin.gradle.utils.listDescendants
 import java.io.Closeable
 import java.io.File
 import java.io.IOException
+import java.nio.ByteBuffer
+import java.util.*
+import java.util.Base64.Encoder
+import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 
@@ -104,9 +108,15 @@ internal class CompositeMetadataArtifactImpl(
             get() = kotlinProjectStructureMetadata.sourceSetBinaryLayout[sourceSet.sourceSetName]?.archiveExtension
                 ?: SourceSetMetadataLayout.METADATA.archiveExtension
 
+        override val checksum: Int
+            get() = artifactFile.checksum
+
+        override val checksumString: String
+            get() = artifactFile.checksumString
+
         /**
          * Example:
-         * org.jetbrains.sample-sampleLibrary-1.0.0-SNAPSHOT-appleAndLinuxMain.klib
+         * org.jetbrains.sample-sampleLibrary-1.0.0-SNAPSHOT-appleAndLinuxMain-Vk5pxQ.klib
          */
         override val relativeFile: File = File(buildString {
             append(artifactHandle.moduleDependencyIdentifier)
@@ -114,6 +124,8 @@ internal class CompositeMetadataArtifactImpl(
             append(artifactHandle.moduleDependencyVersion)
             append("-")
             append(sourceSet.sourceSetName)
+            append("-")
+            append(checksumString)
             append(".")
             append(archiveExtension)
         })
@@ -136,16 +148,22 @@ internal class CompositeMetadataArtifactImpl(
         override val artifactHandle: CompositeMetadataArtifact.ArtifactHandle,
         override val sourceSet: CompositeMetadataArtifact.SourceSet,
         override val cinteropLibraryName: String,
-        private val artifact: ArtifactFile,
+        private val artifactFile: ArtifactFile,
     ) : CompositeMetadataArtifact.CInteropMetadataLibrary {
 
         override val archiveExtension: String
             get() = SourceSetMetadataLayout.KLIB.archiveExtension
 
+        override val checksum: Int
+            get() = artifactFile.checksum
+
+        override val checksumString: String
+            get() = artifactFile.checksumString
+
         /**
          * Example:
          * org.jetbrains.sample-sampleLibrary-1.0.0-SNAPSHOT-appleAndLinuxMain-cinterop/
-         *     org.jetbrains.sample_sampleLibrary-cinterop-simple.klib
+         *     org.jetbrains.sample_sampleLibrary-cinterop-simple-Vk5pxQ.klib
          */
         override val relativeFile: File = File(buildString {
             append(artifactHandle.moduleDependencyIdentifier)
@@ -154,7 +172,7 @@ internal class CompositeMetadataArtifactImpl(
             append("-")
             append(sourceSet.sourceSetName)
             append("-cinterop")
-        }).resolve("$cinteropLibraryName.${archiveExtension}")
+        }).resolve("$cinteropLibraryName-${checksumString}.${archiveExtension}")
 
         override fun copyTo(file: File): Boolean {
             require(file.extension == archiveExtension) {
@@ -167,9 +185,9 @@ internal class CompositeMetadataArtifactImpl(
             val cinteropMetadataDirectoryPath = ensureValidZipDirectoryPath(cinteropMetadataDirectory)
 
             val libraryPath = "$cinteropMetadataDirectoryPath$cinteropLibraryName/"
-            if (!artifact.containsDirectory(libraryPath)) return false
+            if (!artifactFile.containsDirectory(libraryPath)) return false
             file.parentFile.mkdirs()
-            artifact.zip.copyPartially(file, "$cinteropMetadataDirectoryPath$cinteropLibraryName/")
+            artifactFile.zip.copyPartially(file, "$cinteropMetadataDirectoryPath$cinteropLibraryName/")
 
             return true
         }
@@ -181,6 +199,10 @@ internal class CompositeMetadataArtifactImpl(
      */
     private class ArtifactFile(private val file: File) : Closeable {
 
+        companion object {
+            val checksumStringEncoder: Encoder = Base64.getUrlEncoder().withoutPadding()
+        }
+
         private var isClosed = false
 
         private val lazyZip = lazy {
@@ -190,7 +212,19 @@ internal class CompositeMetadataArtifactImpl(
 
         val zip: ZipFile get() = lazyZip.value
 
-        val entries: List<ZipEntry> by lazy { zip.entries().toList() }
+        val entries: List<ZipEntry> by lazy {
+            zip.entries().toList()
+        }
+
+        val checksum: Int by lazy(LazyThreadSafetyMode.NONE) {
+            val crc32 = CRC32()
+            entries.forEach { entry -> crc32.update(entry.crc.toInt()) }
+            crc32.value.toInt()
+        }
+
+        val checksumString: String by lazy(LazyThreadSafetyMode.NONE) {
+            checksumStringEncoder.encodeToString(ByteBuffer.allocate(4).putInt(checksum).array())
+        }
 
         /**
          * All potential directory paths, including inferred directory paths when the [zip] file does
