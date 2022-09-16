@@ -122,12 +122,11 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             if (configurationKind.withReflection) {
                 files.add(provider.reflectJarForTests())
             }
-            files.add(KtTestUtil.getAnnotationsJar())
+            files.add(provider.getAnnotationsJar())
 
             if (JvmEnvironmentConfigurationDirectives.STDLIB_JDK8 in directives) {
                 files.add(provider.runtimeJarForTestsWithJdk8())
             }
-            files.add(KtTestUtil.getAnnotationsJar())
             return files
         }
 
