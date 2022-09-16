@@ -63,6 +63,7 @@ build/
 .idea/csv-plugin.xml
 .idea/libraries-with-intellij-classes.xml
 .idea/misc.xml
+.idea/protoeditor.xml
 node_modules/
 .rpt2_cache/
 libraries/tools/kotlin-test-js-runner/lib/
