@@ -30,13 +30,10 @@ application {
 dependencies {
     implementation(project(":kotlin-native:Interop:Indexer"))
     implementation(project(":kotlin-native:utilities:basic-utils"))
-    implementation(project(":kotlin-native-shared"))
     api(project(path = ":kotlin-native:endorsedLibraries:kotlinx.cli", configuration = "jvmRuntimeElements"))
 
     api(project(":kotlin-stdlib"))
     api(project(path = ":kotlin-compiler", configuration = "runtimeElements"))
-    // It is shadowed by kotlinx-metadata-klib, so to make IDE happy let's use it as compile-only.
-    compileOnly(project(":kotlinx-metadata"))
     api(project(":kotlinx-metadata-klib"))
     api(project(":native:kotlin-native-utils"))
     implementation(project(":compiler:util"))
@@ -44,8 +41,6 @@ dependencies {
 
     testImplementation(kotlin("test-junit"))
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
-    // It is shadowed by kotlinx-metadata-klib, so to make IDE happy let's use it as compile-only.
-    testCompileOnly(project(":kotlinx-metadata"))
 }
 
 tasks {
@@ -62,6 +57,10 @@ tasks {
 
 sourceSets {
     "main" {
-        kotlin.srcDir(project.kotlinNativeVersionSrc())
+        kotlin {
+            srcDir(project.kotlinNativeVersionSrc())
+            srcDir("../../shared/src/library/kotlin")
+            srcDir("../../shared/src/main/kotlin")
+        }
     }
 }
