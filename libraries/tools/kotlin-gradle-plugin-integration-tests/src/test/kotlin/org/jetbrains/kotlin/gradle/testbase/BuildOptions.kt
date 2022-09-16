@@ -114,6 +114,8 @@ data class BuildOptions(
             jsOptions.useIrBackend?.let { arguments.add("-Pkotlin.js.useIrBackend=$it") }
             jsOptions.jsCompilerType?.let { arguments.add("-Pkotlin.js.compiler=$it") }
         }
+        // because we have legacy compiler tests, we need nowarn for compiler testing
+        arguments.add("-Pkotlin.js.compiler.nowarn=true")
 
         if (androidVersion != null) {
             arguments.add("-Pandroid_tools_version=${androidVersion}")

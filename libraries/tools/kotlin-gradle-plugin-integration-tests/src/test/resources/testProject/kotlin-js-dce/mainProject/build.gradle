@@ -14,23 +14,24 @@ dependencies {
 
 kotlin {
     js {
+        binaries.executable()
         browser()
     }
 }
 
-def compileKotlinJs = tasks.named('compileKotlinJs') {
-    kotlinOptions {
-        sourceMap = true
-        outputFile = "${buildDir}/app/exampleapp.js"
-        suppressWarnings = true
-        verbose = true
-    }
-}
+//def compileKotlinJs = tasks.named('compileKotlinJs') {
+//    kotlinOptions {
+//        sourceMap = true
+//        outputFile = "${buildDir}/app/exampleapp.js"
+//        suppressWarnings = true
+//        verbose = true
+//    }
+//}
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJsDce).configureEach {
-    keep("exampleapp.exampleapp.status")
-    destinationDirectory = project.layout.buildDirectory.dir("kotlin-js-min")
-}
+//tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJsDce).configureEach {
+//    keep("exampleapp.exampleapp.status")
+//    destinationDirectory = project.layout.buildDirectory.dir("kotlin-js-min")
+//}
 
 tasks.register('runRhino', JavaExec) {
     dependsOn(tasks.named('processDceKotlinJs'))
@@ -39,7 +40,7 @@ tasks.register('runRhino', JavaExec) {
     mainClass = 'org.mozilla.javascript.tools.shell.Main'
     args = ["-opt", "-1",
             "-f", "kotlin-js-min/kotlin.js",
-            "-f", "kotlin-js-min/examplelib.js",
-            "-f", "kotlin-js-min/exampleapp.js",
+            "-f", "kotlin-js-min/kotlin-js-dce-libraryProject.js",
+            "-f", "kotlin-js-min/kotlin-js-dce-mainProject.js",
             "-f", "../check.js"]
 }

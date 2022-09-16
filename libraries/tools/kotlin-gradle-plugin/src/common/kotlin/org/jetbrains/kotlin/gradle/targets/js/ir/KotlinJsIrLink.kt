@@ -168,6 +168,7 @@ abstract class KotlinJsIrLink @Inject constructor(
             PRODUCTION -> {
                 kotlinOptions.configureOptions(ENABLE_DCE, GENERATE_D_TS, MINIMIZED_MEMBER_NAMES)
             }
+
             DEVELOPMENT -> {
                 kotlinOptions.configureOptions(GENERATE_D_TS)
             }
@@ -181,17 +182,33 @@ abstract class KotlinJsIrLink @Inject constructor(
     }
 
     private fun KotlinJsOptions.configureOptions(vararg additionalCompilerArgs: String) {
-        freeCompilerArgs += additionalCompilerArgs
+        freeCompilerArgs += (additionalCompilerArgs.toList() + PRODUCE_JS + "$ENTRY_IR_MODULE=${entryModule.get().asFile.canonicalPath}")
             .mapNotNull { arg ->
                 if (kotlinOptions.freeCompilerArgs
                         .any { it.startsWith(arg) }
                 ) null else arg
-            } +
-                PRODUCE_JS +
-                "$ENTRY_IR_MODULE=${entryModule.get().asFile.canonicalPath}"
+            }
 
         if (platformType == KotlinPlatformType.wasm) {
             freeCompilerArgs += WASM_BACKEND
         }
     }
+
+    @get:Input
+    override val filteredArgumentsMap: Map<String, String>
+        get() {
+            val superFiltered = super.filteredArgumentsMap
+            return superFiltered.mapValues { (key, value) ->
+                if (key != K2JSCompilerArguments::freeArgs.name) {
+                    value
+                } else {
+                    value
+                        .removePrefix("[")
+                        .removeSuffix("]")
+                        .split(", ")
+                        .filter { !it.contains(ENTRY_IR_MODULE) }
+                        .joinToString()
+                }
+            }
+        }
 }

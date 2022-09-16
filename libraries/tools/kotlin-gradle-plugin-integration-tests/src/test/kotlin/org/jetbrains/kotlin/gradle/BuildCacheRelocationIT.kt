@@ -84,7 +84,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
             firstProject,
             secondProject,
             listOf("assemble"),
-            listOf(":libraryProject:compileKotlinJs", ":mainProject:compileKotlinJs", ":mainProject:processDceKotlinJs")
+            listOf(":libraryProject:compileKotlinJs", ":mainProject:compileKotlinJs", ":mainProject:compileProductionExecutableKotlinJs")
         )
     }
 

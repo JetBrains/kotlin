@@ -1,4 +1,5 @@
 not/existing/path
 -no-stdlib
+-Xlegacy-deprecated-no-warn
 -output
 $TESTDATA_DIR$

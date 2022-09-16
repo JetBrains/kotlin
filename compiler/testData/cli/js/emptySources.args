@@ -1,4 +1,5 @@
 $TEMP_DIR$
+-Xlegacy-deprecated-no-warn
 -no-stdlib
 -output
 $TESTDATA_DIR$

@@ -1,4 +1,5 @@
 $TESTDATA_DIR$/withLib.kt
+-Xlegacy-deprecated-no-warn
 -libraries
 not/existing/path
 -output

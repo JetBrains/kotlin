@@ -1,3 +1,4 @@
 $TESTDATA_DIR$/reifiedIntersectionType.kt
+-Xlegacy-deprecated-no-warn
 -output
 $TEMP_DIR$/out.js

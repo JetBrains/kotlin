@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension.Companion.reportJsCompilerMode
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension.Companion.warnAboutDeprecatedCompiler
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.js.calculateJsCompilerType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
@@ -98,6 +99,7 @@ private fun KotlinTargetContainerWithJsPresetFunctions.jsInternal(
     }
 
     reportJsCompilerMode(compilerOrDefault)
+
     @Suppress("UNCHECKED_CAST")
     return configureOrCreate(
         targetName,
@@ -108,7 +110,9 @@ private fun KotlinTargetContainerWithJsPresetFunctions.jsInternal(
             )
         ) as KotlinTargetPreset<KotlinJsTargetDsl>,
         configure
-    )
+    ).also { target ->
+        warnAboutDeprecatedCompiler(target.project, compiler ?: compilerTypeFromProperties)
+    }
 }
 
 // Try to find existing target with exact name

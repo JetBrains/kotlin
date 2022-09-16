@@ -12,10 +12,16 @@ repositories {
 }
 
 kotlin {
+    val shouldBeJs = true
     val jvm = jvm("jvm6")
-    val js = js("nodeJs")
+    val js = if (shouldBeJs) {
+        js("nodeJs") {
+            nodejs()
+        }
+    } else null
     linuxX64("linux64")
-    wasm()
+    if (shouldBeJs)
+        wasm()
 
     targets.all {
         mavenPublication(Action<MavenPublication> {
@@ -37,7 +43,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:0.23.4")
             }
         }
-        js.compilations["main"].defaultSourceSet {
+        js?.compilations?.get("main")?.defaultSourceSet {
         	dependencies {
                 api(kotlin("stdlib-js"))
         	}

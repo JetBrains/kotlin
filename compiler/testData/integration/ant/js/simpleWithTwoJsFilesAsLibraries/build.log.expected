@@ -4,8 +4,11 @@ Buildfile: [TestData]/build.xml
 build:
     [mkdir] Created dir: [Temp]/lib
 [kotlin2js] Compiling [[TestData]/jslib-example1] => [[Temp]/lib/jslib-example1.js]
+[kotlin2js] warning: legacy compiler is deprecated. Please migrate onto IR.
 [kotlin2js] Compiling [[TestData]/jslib-example2] => [[Temp]/lib/jslib-example2.js]
+[kotlin2js] warning: legacy compiler is deprecated. Please migrate onto IR.
 [kotlin2js] Compiling [[TestData]/root1] => [[Temp]/out.js]
+[kotlin2js] warning: legacy compiler is deprecated. Please migrate onto IR.
      [copy] Copying 4 files to [Temp]
 
 BUILD SUCCESSFUL

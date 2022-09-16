@@ -122,7 +122,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
         val result =
             when (compiler) {
-                is K2JSCompiler -> compileJsLibrary(libraryName, additionalOptions = libraryOptions)
+                is K2JSCompiler -> compileJsLibrary(libraryName, additionalOptions = libraryOptions + "-Xlegacy-deprecated-no-warn")
                 is K2JVMCompiler -> compileLibrary(libraryName, additionalOptions = libraryOptions)
                 else -> throw UnsupportedOperationException(compiler.toString())
             }
