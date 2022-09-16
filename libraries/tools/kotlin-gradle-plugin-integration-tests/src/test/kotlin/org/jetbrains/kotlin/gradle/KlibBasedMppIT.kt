@@ -92,11 +92,11 @@ class KlibBasedMppIT : BaseGradleIT() {
         checkTaskCompileClasspath(
             "compile${hostSpecificSourceSet.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}KotlinMetadata",
             listOf(
-                "published-producer-1.0-$hostSpecificSourceSet.klib",
-                "published-producer-1.0-commonMain.klib",
-                "published-dependency-1.0-$hostSpecificSourceSet.klib",
-                "published-dependency-1.0-commonMain.klib"
-            )
+                "published-producer-1.0-$hostSpecificSourceSet-\\w+.klib",
+                "published-producer-1.0-commonMain-\\w+.klib",
+                "published-dependency-1.0-$hostSpecificSourceSet-\\w+.klib",
+                "published-dependency-1.0-commonMain-\\w+.klib"
+            ).map(::Regex)
         )
     }
 
@@ -326,8 +326,8 @@ class KlibBasedMppIT : BaseGradleIT() {
 
     private fun BaseGradleIT.Project.checkTaskCompileClasspath(
         taskPath: String,
-        checkModulesInClasspath: List<String> = emptyList(),
-        checkModulesNotInClasspath: List<String> = emptyList()
+        checkModulesInClasspath: List<Regex> = emptyList(),
+        checkModulesNotInClasspath: List<Regex> = emptyList()
     ) {
         val subproject = taskPath.substringBeforeLast(":").takeIf { it.isNotEmpty() && it != taskPath }
         val taskName = taskPath.removePrefix(subproject.orEmpty())
@@ -339,8 +339,8 @@ class KlibBasedMppIT : BaseGradleIT() {
     private fun BaseGradleIT.Project.checkPrintedItems(
         subproject: String?,
         itemsExpression: String,
-        checkAnyItemsContains: List<String>,
-        checkNoItemContains: List<String>
+        checkAnyItemsContains: List<Regex>,
+        checkNoItemContains: List<Regex>
     ) = with(testCase) {
         setupWorkingDir()
         val printingTaskName = "printItems${testBuildRunId++}"
