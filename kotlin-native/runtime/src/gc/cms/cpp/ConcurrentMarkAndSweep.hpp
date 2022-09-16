@@ -93,7 +93,7 @@ public:
 
         void OnOOM(size_t size) noexcept;
 
-        void PublishAndMark() noexcept;
+        void OnSuspendForGC() noexcept;
 
         Allocator CreateAllocator() noexcept { return Allocator(gc::Allocator(), *this); }
 

@@ -50,6 +50,8 @@ void gc::GC::ThreadData::OnStoppedForGC() noexcept {
     impl_->gcScheduler().OnStoppedForGC();
 }
 
+void gc::GC::ThreadData::OnSuspendForGC() noexcept { }
+
 gc::GC::GC() noexcept : impl_(std_support::make_unique<Impl>()) {}
 
 gc::GC::~GC() = default;

@@ -45,6 +45,7 @@ public:
         ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept;
 
         void OnStoppedForGC() noexcept;
+        void OnSuspendForGC() noexcept;
 
     private:
         std_support::unique_ptr<Impl> impl_;

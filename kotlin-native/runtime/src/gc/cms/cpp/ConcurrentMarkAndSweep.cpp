@@ -95,7 +95,7 @@ void gc::ConcurrentMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
     ScheduleAndWaitFullGC();
 }
 
-NO_EXTERNAL_CALLS_CHECK void gc::ConcurrentMarkAndSweep::ThreadData::PublishAndMark() noexcept {
+NO_EXTERNAL_CALLS_CHECK void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendForGC() noexcept {
     std::unique_lock lock(markingMutex);
     if (!markingRequested.load())
         return;
@@ -133,9 +133,6 @@ gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
         }
     });
     markingBehavior_ = kotlin::compiler::gcMarkSingleThreaded() ? MarkingBehavior::kDoNotMark : MarkingBehavior::kMarkOwnStack;
-    mm::SetOnSuspendCallback([](mm::ThreadData& thread) {
-        thread.gc().impl().gc().PublishAndMark();
-    });
     RuntimeLogDebug({kTagGC}, "Concurrent Mark & Sweep GC initialized");
 }
 

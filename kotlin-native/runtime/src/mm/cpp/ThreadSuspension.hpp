@@ -79,11 +79,6 @@ inline bool SuspendThreads() noexcept {
 }
 
 /**
- * Set function `preSuspend` which will be called in threads before suspending.
- */
-void SetOnSuspendCallback(std::function<void(mm::ThreadData&)>) noexcept;
-
-/**
  * Resumes all threads registered in ThreadRegistry that were suspended by the SuspendThreads call.
  * Does not wait until all such threads are actually resumed.
  */
