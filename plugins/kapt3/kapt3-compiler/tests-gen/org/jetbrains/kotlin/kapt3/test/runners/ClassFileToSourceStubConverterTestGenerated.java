@@ -182,6 +182,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     }
 
     @Test
+    @TestMetadata("errorExtensionReceiver.kt")
+    public void testErrorExtensionReceiver() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/errorExtensionReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("errorLocationMapping.kt")
     public void testErrorLocationMapping() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/errorLocationMapping.kt");

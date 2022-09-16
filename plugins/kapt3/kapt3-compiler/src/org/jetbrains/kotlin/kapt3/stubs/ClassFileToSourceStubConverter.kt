@@ -1017,39 +1017,103 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val genericSignature = signatureParser.parseMethodSignature(
             method.signature, parameters, exceptionTypes, jcReturnType,
             nonErrorParameterTypeProvider = { index, lazyType ->
-                if (descriptor is PropertySetterDescriptor && valueParametersFromDescriptor.size == 1 && index == 0) {
-                    getNonErrorType(descriptor.correspondingProperty.returnType, METHOD_PARAMETER_TYPE,
-                                    ktTypeProvider = {
-                                        val setterOrigin = (psiElement as? KtCallableDeclaration)
-                                            ?.takeIf { it !is KtFunction }
-
-                                        setterOrigin?.typeReference
-                                    },
-                                    ifNonError = { lazyType() })
-                } else if (descriptor is FunctionDescriptor && valueParametersFromDescriptor.size == parameters.size) {
-                    val parameterDescriptor = valueParametersFromDescriptor[index]
-                    val sourceElement = when {
-                        psiElement is KtFunction -> psiElement
-                        descriptor is ConstructorDescriptor && descriptor.isPrimary -> (psiElement as? KtClassOrObject)?.primaryConstructor
-                        else -> null
+                when (descriptor) {
+                    is PropertyGetterDescriptor -> {
+                        if (valueParametersFromDescriptor.isEmpty() && index == 0) {
+                            getNonErrorType(
+                                type = descriptor.correspondingProperty.returnType,
+                                kind = METHOD_PARAMETER_TYPE,
+                                ktTypeProvider = {
+                                    when (psiElement) {
+                                        is KtCallableDeclaration -> psiElement.takeIf { it !is KtFunction }?.receiverTypeReference
+                                        is KtPropertyAccessor -> psiElement.property.receiverTypeReference
+                                        else -> null
+                                    }
+                                },
+                                ifNonError = lazyType
+                            )
+                        } else {
+                            lazyType()
+                        }
                     }
 
-                    getNonErrorType(
-                        parameterDescriptor.type, METHOD_PARAMETER_TYPE,
-                        ktTypeProvider = {
-                            if (sourceElement == null) return@getNonErrorType null
+                    is PropertySetterDescriptor -> when {
+                        valueParametersFromDescriptor.size != 1 -> lazyType()
 
-                            if (sourceElement.hasDeclaredReturnType() && isContinuationParameter(parameterDescriptor)) {
-                                val continuationTypeFqName = StandardNames.CONTINUATION_INTERFACE_FQ_NAME
-                                val functionReturnType = sourceElement.typeReference!!.text
-                                KtPsiFactory(kaptContext.project).createType("$continuationTypeFqName<$functionReturnType>")
-                            } else {
-                                sourceElement.valueParameters.getOrNull(index)?.typeReference
+                        index == 0 && descriptor.extensionReceiverParameter != null -> {
+                            getNonErrorType(
+                                type = descriptor.extensionReceiverParameter?.type,
+                                kind = METHOD_PARAMETER_TYPE,
+                                ktTypeProvider = {
+                                    when (psiElement) {
+                                        is KtCallableDeclaration -> psiElement.takeIf { it !is KtFunction }?.receiverTypeReference
+                                        is KtPropertyAccessor -> psiElement.property.receiverTypeReference
+                                        else -> null
+                                    }
+                                },
+                                ifNonError = lazyType
+                            )
+                        }
+
+                        index == (if (descriptor.extensionReceiverParameter == null) 0 else 1) -> {
+                            getNonErrorType(
+                                type = valueParametersFromDescriptor[0].type,
+                                kind = METHOD_PARAMETER_TYPE,
+                                ktTypeProvider = {
+                                    when (psiElement) {
+                                        is KtCallableDeclaration -> psiElement.takeIf { it !is KtFunction }?.typeReference
+                                        is KtPropertyAccessor -> psiElement.property.typeReference
+                                        else -> null
+                                    }
+                                },
+                                ifNonError = lazyType
+                            )
+                        }
+
+                        else -> lazyType()
+                    }
+
+                    is FunctionDescriptor -> {
+                        val extensionReceiverParameter = descriptor.extensionReceiverParameter
+                        val offset = if (extensionReceiverParameter == null) 0 else 1
+                        if (extensionReceiverParameter != null && index == 0) {
+                            getNonErrorType(
+                                extensionReceiverParameter.type,
+                                METHOD_PARAMETER_TYPE,
+                                ktTypeProvider = {
+                                    (psiElement as? KtCallableDeclaration)?.receiverTypeReference
+                                },
+                                ifNonError = lazyType
+                            )
+                        } else if (valueParametersFromDescriptor.size + offset == parameters.size) {
+                            val parameterDescriptor = valueParametersFromDescriptor[index - offset]
+                            val sourceElement = when {
+                                psiElement is KtFunction -> psiElement
+                                descriptor is ConstructorDescriptor && descriptor.isPrimary -> (psiElement as? KtClassOrObject)?.primaryConstructor
+                                else -> null
                             }
-                        },
-                        ifNonError = { lazyType() })
-                } else {
-                    lazyType()
+                            getNonErrorType(
+                                parameterDescriptor.type,
+                                METHOD_PARAMETER_TYPE,
+                                ktTypeProvider = {
+                                    if (sourceElement == null) return@getNonErrorType null
+
+                                    if (sourceElement.hasDeclaredReturnType() && isContinuationParameter(parameterDescriptor)) {
+                                        val continuationTypeFqName = StandardNames.CONTINUATION_INTERFACE_FQ_NAME
+                                        val functionReturnType = sourceElement.typeReference!!.text
+                                        KtPsiFactory(kaptContext.project).createType("$continuationTypeFqName<$functionReturnType>")
+                                    } else {
+                                        sourceElement.valueParameters.getOrNull(index)?.typeReference
+                                    }
+                                },
+                                ifNonError = lazyType
+                            )
+                        } else {
+                            lazyType()
+                        }
+                    }
+
+                    else -> lazyType()
                 }
             })
 
