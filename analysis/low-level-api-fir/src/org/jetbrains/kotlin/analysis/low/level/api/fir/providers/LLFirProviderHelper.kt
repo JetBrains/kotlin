@@ -52,10 +52,7 @@ internal class LLFirProviderHelper(
 
 
     private val callablesByCallableId = firSession.firCachesFactory.createCache<CallableId, List<FirCallableSymbol<*>>> { callableId ->
-        val files = Sets.newIdentityHashSet<KtFile>().apply {
-            declarationProvider.getTopLevelFunctions(callableId).mapTo(this) { it.containingKtFile }
-            declarationProvider.getTopLevelProperties(callableId).mapTo(this) { it.containingKtFile }
-        }
+        val files = declarationProvider.getTopLevelCallableFiles(callableId).ifEmpty { return@createCache emptyList() }
         buildList {
             files.forEach { ktFile ->
                 val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile)
