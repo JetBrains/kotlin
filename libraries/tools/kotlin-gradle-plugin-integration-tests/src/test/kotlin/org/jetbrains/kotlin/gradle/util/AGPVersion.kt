@@ -23,7 +23,9 @@ class AGPVersion private constructor(private val versionNumber: VersionNumber) {
         val v4_2_0 = fromString("4.2.2")
         val v7_0_0 = fromString("7.0.4")
         val v7_1_0 = fromString("7.1.2")
+        val v7_2_2 = fromString("7.2.2")
+        val v7_3_0 = fromString("7.3.0")
 
-        val testedVersions = listOf(v3_6_0, v4_1_0, v4_2_0, v7_0_0, v7_1_0)
+        val testedVersions = listOf(v3_6_0, v4_1_0, v4_2_0, v7_0_0, v7_1_0, v7_2_2, v7_3_0)
     }
 }

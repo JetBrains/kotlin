@@ -19,7 +19,7 @@ internal object KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck {
 
     val compatibleAndroidGradlePluginVersionRange = AndroidGradlePluginVersionRange(
         minSupportedVersion = AndroidGradlePluginVersion(4, 0),
-        maxSupportedVersion = AndroidGradlePluginVersion(7, 2)
+        maxSupportedVersion = AndroidGradlePluginVersion(7, 3)
     )
 
     /**
