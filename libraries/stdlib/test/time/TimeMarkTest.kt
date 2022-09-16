@@ -184,6 +184,7 @@ class TimeMarkTest {
         override fun read(): Long = reading
     }
 
+    @Suppress("DEPRECATION")
     private class DoubleTimeSource(unit: DurationUnit) : AbstractDoubleTimeSource(unit) {
         var reading: Double = 0.0
         override fun read(): Double = reading

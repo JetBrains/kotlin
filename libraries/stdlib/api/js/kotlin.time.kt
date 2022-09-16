@@ -172,6 +172,7 @@ public fun kotlin.Long.toDuration(unit: kotlin.time.DurationUnit): kotlin.time.D
 
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.time.ExperimentalTime
+@kotlin.Deprecated(message = "Using AbstractDoubleTimeSource is no longer recommended, use AbstractLongTimeSource instead.")
 public abstract class AbstractDoubleTimeSource : kotlin.time.TimeSource.WithComparableMarks {
     public constructor AbstractDoubleTimeSource(unit: kotlin.time.DurationUnit)
 
