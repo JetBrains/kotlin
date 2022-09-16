@@ -1,7 +1,7 @@
 import kotlin.reflect.KClass;
 
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
 public abstract @interface Anno {
 
     public abstract java.lang.Class<java.lang.Object> a();
@@ -12,8 +12,8 @@ public abstract @interface Anno {
 
 import kotlin.reflect.KClass;
 
-@kotlin.Metadata()
 @Anno(a = ABC.class)
+@kotlin.Metadata()
 public final class ErrorInAnnotation {
 
     public ErrorInAnnotation() {

@@ -1,7 +1,7 @@
 import java.lang.System;
 
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
 public abstract @interface Anno1 {
 }
 
@@ -10,8 +10,8 @@ public abstract @interface Anno1 {
 
 import java.lang.System;
 
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
 public abstract @interface Anno2 {
 
     public abstract int i() default 5;
@@ -38,8 +38,8 @@ public abstract @interface Anno2 {
 
 import java.lang.System;
 
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
 public abstract @interface Anno3 {
 
     public abstract java.lang.String value();
@@ -79,10 +79,10 @@ public enum Enum1 {
 
 import java.lang.System;
 
-@kotlin.Metadata()
-@Anno3(value = "value")
-@Anno2(a = @Anno1(), clazz = TestAnno.class, classes = {TestAnno.class, Anno1.class})
 @Anno1()
+@Anno2(a = @Anno1(), clazz = TestAnno.class, classes = {TestAnno.class, Anno1.class})
+@Anno3(value = "value")
+@kotlin.Metadata()
 public final class TestAnno {
 
     public TestAnno() {
@@ -95,12 +95,12 @@ public final class TestAnno {
 
 import java.lang.System;
 
-@kotlin.Metadata()
-@Anno2(i = 6, s = "BCD", ii = {4, 5, 6}, ss = {"Z", "X"}, a = @Anno1(), color = Colors.WHITE, colors = {Colors.WHITE}, clazz = TestAnno.class, classes = {TestAnno.class, Anno1.class})
 @Anno3(value = "value")
+@Anno2(i = 6, s = "BCD", ii = {4, 5, 6}, ss = {"Z", "X"}, a = @Anno1(), color = Colors.WHITE, colors = {Colors.WHITE}, clazz = TestAnno.class, classes = {TestAnno.class, Anno1.class})
+@kotlin.Metadata()
 public final class TestAnno2 {
-    @org.jetbrains.annotations.NotNull()
     @Anno3(value = "field")
+    @org.jetbrains.annotations.NotNull()
     private java.lang.String b = "property initializer";
 
     public TestAnno2() {
@@ -108,13 +108,13 @@ public final class TestAnno2 {
     }
 
     @Anno1()
-    public final void a(@org.jetbrains.annotations.NotNull()
-    @Anno3(value = "param-pam-pam")
+    public final void a(@Anno3(value = "param-pam-pam")
+    @org.jetbrains.annotations.NotNull()
     java.lang.String param) {
     }
 
-    @org.jetbrains.annotations.NotNull()
     @Anno3(value = "getter")
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String getB() {
         return null;
     }
@@ -125,8 +125,8 @@ public final class TestAnno2 {
     }
 
     @Anno3(value = "setter")
-    public final void setB(@org.jetbrains.annotations.NotNull()
-    @Anno3(value = "setparam")
+    public final void setB(@Anno3(value = "setparam")
+    @org.jetbrains.annotations.NotNull()
     java.lang.String p0) {
     }
 }

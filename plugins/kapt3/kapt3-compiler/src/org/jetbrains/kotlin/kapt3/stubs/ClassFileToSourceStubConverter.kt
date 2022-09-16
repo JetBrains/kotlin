@@ -1175,7 +1175,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                 seenAnnotations += it
             }
             val annotationTree = convertAnnotation(containingClass, annotation, packageFqName, annotationDescriptor) ?: return list
-            return list.prepend(annotationTree)
+            return list.append(annotationTree)
         }
 
         var annotations = visibleAnnotations?.fold(JavacList.nil<JCAnnotation>(), ::convertAndAdd) ?: JavacList.nil()

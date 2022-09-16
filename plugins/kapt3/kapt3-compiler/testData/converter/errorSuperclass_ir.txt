@@ -2,8 +2,8 @@ package test;
 
 import java.lang.System;
 
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
 public abstract @interface Anno {
 }
 
@@ -13,9 +13,9 @@ package test;
 
 import java.lang.System;
 
-@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
-@kotlin.Metadata()
 @Anno()
+@kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class ClassWithParent implements java.lang.CharSequence {
 
     public ClassWithParent() {

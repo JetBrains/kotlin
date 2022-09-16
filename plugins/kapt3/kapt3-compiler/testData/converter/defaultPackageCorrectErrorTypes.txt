@@ -62,8 +62,8 @@ package test;
 
 import java.lang.Number;
 
-@kotlin.Metadata()
 @ClassRefAnnotation(value = {RootClass.class})
+@kotlin.Metadata()
 public final class PackedWithAnnotation {
 
     public PackedWithAnnotation() {

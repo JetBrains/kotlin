@@ -15,8 +15,8 @@ public class CrashMe {
 
 import java.lang.System;
 
-@kotlin.Suppress(names = {"AMBIGUOUS_ANONYMOUS_TYPE_INFERRED"})
 @kotlin.Metadata()
+@kotlin.Suppress(names = {"AMBIGUOUS_ANONYMOUS_TYPE_INFERRED"})
 public final class Kt14997Kt {
 
     public Kt14997Kt() {
