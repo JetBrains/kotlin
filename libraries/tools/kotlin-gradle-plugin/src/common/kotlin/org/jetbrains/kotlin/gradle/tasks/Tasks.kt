@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.report.BuildReportsService
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
+import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJvmOptionsCompat
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotDisabled
@@ -535,10 +536,10 @@ abstract class KotlinCompile @Inject constructor(
 
     @Suppress("DEPRECATION")
     @Deprecated("Replaced by compilerOptions input", replaceWith = ReplaceWith("compilerOptions"))
-    final override val kotlinOptions: KotlinJvmOptions = object : KotlinJvmOptions {
-        override val options: CompilerJvmOptions
-            get() = compilerOptions
-    }
+    final override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsCompat(
+        { this },
+        compilerOptions
+    )
 
     @Suppress("DEPRECATION")
     @Deprecated("Configure compilerOptions directly", replaceWith = ReplaceWith("compilerOptions"))
@@ -677,6 +678,16 @@ abstract class KotlinCompile @Inject constructor(
     override fun createCompilerArgs(): K2JVMCompilerArguments =
         K2JVMCompilerArguments()
 
+    /**
+     * Workaround for those "nasty" plugins that are adding 'freeCompilerArgs' on task execution phase.
+     * With properties api it is not possible to update property value after task configuration is finished.
+     *
+     * Marking it as `@Internal` as anyway on the configuration phase, when Gradle does task inputs snapshot,
+     * this input will always be empty.
+     */
+    @get:Internal
+    internal var additionalFreeCompilerArgs: List<String> = listOf()
+
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         compilerArgumentsContributor.contributeArguments(
             args, compilerArgumentsConfigurationFlags(
@@ -689,6 +700,10 @@ abstract class KotlinCompile @Inject constructor(
 
         if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
             args.reportPerf = true
+        }
+
+        if (additionalFreeCompilerArgs.isNotEmpty()) {
+            args.freeArgs = compilerOptions.freeCompilerArgs.get().union(additionalFreeCompilerArgs).toList()
         }
     }
 
