@@ -29,6 +29,8 @@ public abstract class KotlinDeclarationProvider {
     public abstract fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty>
     public abstract fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction>
 
+    public abstract fun getTopLevelCallableFiles(callableId: CallableId): Collection<KtFile>
+
     public abstract fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>
 
     public abstract fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile>

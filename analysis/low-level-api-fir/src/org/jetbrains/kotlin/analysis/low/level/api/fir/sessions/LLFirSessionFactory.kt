@@ -98,7 +98,8 @@ internal object LLFirSessionFactory {
                 components,
                 project.createDeclarationProvider(contentScope),
                 project.createPackageProvider(contentScope),
-                cabContainKotlinPackage = true,
+                /* Source modules can contain `kotlin` package only if `-Xallow-kotlin-package` is specified, this is handled in LLFirProvider */
+                canContainKotlinPackage = false,
             )
 
             register(FirProvider::class, provider)
@@ -203,7 +204,7 @@ internal object LLFirSessionFactory {
                 components,
                 project.createDeclarationProvider(contentScope),
                 project.createPackageProvider(contentScope),
-                cabContainKotlinPackage = true,
+                canContainKotlinPackage = true,
             )
 
             register(FirProvider::class, provider)
