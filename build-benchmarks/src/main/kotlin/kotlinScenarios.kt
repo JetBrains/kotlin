@@ -1,7 +1,8 @@
 import org.jetbrains.kotlin.build.benchmarks.dsl.*
 
-fun abiSnapshotBenchmarks() = kotlinBenchmarks(prefix = "ABI_SNAPSHOT: ", arrayOf("-Dkotlin.incremental.classpath.snapshot.enabled=true"))
-fun artifactTransformBenchmarks() = kotlinBenchmarks(prefix = "TRANSFORMATION: ", arrayOf("-Dkotlin.incremental.useClasspathSnapshot=true"))
+fun historyFilesBenchmarks() = kotlinBenchmarks(additionalDefaultProperties = arrayOf("-Pkotlin.incremental.useClasspathSnapshot=false"))
+fun abiSnapshotBenchmarks() = kotlinBenchmarks(prefix = "ABI_SNAPSHOT: ", arrayOf("-Pkotlin.incremental.classpath.snapshot.enabled=true"))
+fun artifactTransformBenchmarks() = kotlinBenchmarks(prefix = "TRANSFORMATION: ", arrayOf("-Pkotlin.incremental.useClasspathSnapshot=true"))
 
 //move prefix to suite
 fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<String> = emptyArray()) =
