@@ -967,6 +967,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/breakContinueInWhen.kt");
         }
 
+        @TestMetadata("builtinOperators.kt")
+        public void testBuiltinOperators() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/builtinOperators.kt");
+        }
+
         @TestMetadata("callWithReorderedArguments.kt")
         public void testCallWithReorderedArguments() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/callWithReorderedArguments.kt");
