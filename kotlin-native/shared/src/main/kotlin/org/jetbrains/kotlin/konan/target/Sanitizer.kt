@@ -9,3 +9,18 @@ enum class SanitizerKind {
     ADDRESS,
     THREAD,
 }
+
+/**
+ * Suffix for [KonanTarget] name.
+ *
+ * In string interpolation use
+ * ```
+ * "… ${target}${sanitizer.targetSuffix} …"
+ * ```
+ */
+val SanitizerKind?.targetSuffix: String
+    get() = when (this) {
+        null -> ""
+        SanitizerKind.THREAD -> "_tsan"
+        SanitizerKind.ADDRESS -> "_asan"
+    }
