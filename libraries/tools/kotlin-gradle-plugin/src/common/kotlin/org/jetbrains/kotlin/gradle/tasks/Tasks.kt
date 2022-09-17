@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.DISABLE_PRE_IR
 import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_JS
 import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_UNZIPPED_KLIB
 import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_ZIPPED_KLIB
+import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJsOptionsCompat
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotDisabled
@@ -935,10 +936,10 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
     @Suppress("DEPRECATION")
     @Deprecated("Replaced by compilerOptions input", replaceWith = ReplaceWith("compilerOptions"))
-    override val kotlinOptions: KotlinJsOptions = object : KotlinJsOptions {
-        override val options: CompilerJsOptions
-            get() = compilerOptions
-    }
+    override val kotlinOptions: KotlinJsOptions = KotlinJsOptionsCompat(
+        { this },
+        compilerOptions
+    )
 
     @get:Input
     internal var incrementalJsKlib: Boolean = true
@@ -991,6 +992,16 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:Input
     internal abstract val enhancedFreeCompilerArgs: ListProperty<String>
 
+    /**
+     * Workaround for those "nasty" plugins that are adding 'freeCompilerArgs' on task execution phase.
+     * With properties api it is not possible to update property value after task configuration is finished.
+     *
+     * Marking it as `@Internal` as anyway on the configuration phase, when Gradle does task inputs snapshot,
+     * this input will always be empty.
+     */
+    @get:Internal
+    internal var additionalFreeCompilerArgs: List<String> = listOf()
+
     override fun createCompilerArgs(): K2JSCompilerArguments =
         K2JSCompilerArguments()
 
@@ -1015,9 +1026,9 @@ abstract class Kotlin2JsCompile @Inject constructor(
         }
         // Rewriting default outputFile property back to outputFilePropertyValue
         args.outputFile = outputFileProperty.get().absoluteFile.normalize().absolutePath
-        // Overriding freeArgs from compilerOptions with enhanced one
+        // Overriding freeArgs from compilerOptions with enhanced one + additional one set on execution phase
         // containing additional arguments based on the js compilation configuration
-        args.freeArgs = enhancedFreeCompilerArgs.get()
+        args.freeArgs = enhancedFreeCompilerArgs.get().union(additionalFreeCompilerArgs).toList()
     }
 
     @get:InputFiles
