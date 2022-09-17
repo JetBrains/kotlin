@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
+import org.jetbrains.kotlin.gradle.tasks.internal.KotlinMultiplatformCommonOptionsCompat
 import java.io.File
 import javax.inject.Inject
 
@@ -46,10 +47,20 @@ abstract class KotlinCompileCommon @Inject constructor(
 
     @Suppress("DEPRECATION")
     @Deprecated("Replaced by compilerOptions input", replaceWith = ReplaceWith("compilerOptions"))
-    override val kotlinOptions: KotlinMultiplatformCommonOptions = object : KotlinMultiplatformCommonOptions {
-        override val options: CompilerMultiplatformCommonOptions
-            get() = compilerOptions
-    }
+    override val kotlinOptions: KotlinMultiplatformCommonOptions = KotlinMultiplatformCommonOptionsCompat(
+        { this },
+        compilerOptions
+    )
+
+    /**
+     * Workaround for those "nasty" plugins that are adding 'freeCompilerArgs' on task execution phase.
+     * With properties api it is not possible to update property value after task configuration is finished.
+     *
+     * Marking it as `@Internal` as anyway on the configuration phase, when Gradle does task inputs snapshot,
+     * this input will always be empty.
+     */
+    @get:Internal
+    internal var additionalFreeCompilerArgs: List<String> = listOf()
 
     override fun createCompilerArgs(): K2MetadataCompilerArguments =
         K2MetadataCompilerArguments()
@@ -77,6 +88,10 @@ abstract class KotlinCompileCommon @Inject constructor(
         }
 
         (compilerOptions as CompilerMultiplatformCommonOptionsDefault).fillCompilerArguments(args)
+
+        if (additionalFreeCompilerArgs.isNotEmpty()) {
+            args.freeArgs = compilerOptions.freeCompilerArgs.get().union(additionalFreeCompilerArgs).toList()
+        }
     }
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
