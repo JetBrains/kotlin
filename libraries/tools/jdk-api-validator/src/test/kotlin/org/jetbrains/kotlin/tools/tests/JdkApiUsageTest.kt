@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.tools.tests
 import org.codehaus.mojo.animal_sniffer.*
 import org.codehaus.mojo.animal_sniffer.logging.Logger
 import org.codehaus.mojo.animal_sniffer.logging.PrintWriterLogger
-import java.nio.file.Path
-import kotlin.io.path.*
+import java.io.File
 import kotlin.test.*
 
 class JdkApiUsageTest {
@@ -17,7 +16,7 @@ class JdkApiUsageTest {
     @Test
     fun kotlinStdlib() {
         testApiUsage(
-            jarArtifact("../../stdlib/jvm/build/libs", "kotlin-stdlib"),
+            jarArtifact("../../stdlib/jvm/build/libs", "kotlin-stdlib-jdk6"),
             dependencies = listOf()
         )
     }
@@ -30,7 +29,7 @@ class JdkApiUsageTest {
         )
     }
 
-    private fun testApiUsage(artifact: Path, dependencies: List<Path>) {
+    private fun testApiUsage(artifact: File, dependencies: List<File>) {
         val logger = TestLogger()
         val additionalArtifacts = buildList {
             add(artifact)
@@ -48,41 +47,43 @@ class JdkApiUsageTest {
         }
     }
 
-    private fun checkSignatures(artifact: Path, signatures: Path, logger: Logger) {
+    private fun checkSignatures(artifact: File, signatures: File, logger: Logger) {
         val checker = SignatureChecker(signatures.inputStream(), emptySet(), logger)
         checker.setSourcePath(emptyList())
         checker.setAnnotationTypes(suppressAnnotations)
-        checker.process(artifact.toFile()) // the overload that takes Path can't handle jar files
+        checker.process(artifact)
     }
 
-    private fun buildSignatures(additionalArtifacts: List<Path>, logger: Logger): Path {
+    private fun buildSignatures(additionalArtifacts: List<File>, logger: Logger): File {
         val signaturesDirectory = System.getProperty("signaturesDirectory")
             .let { requireNotNull(it) { "Specify signaturesDirectory with a system property" } }
-            .let { Path(it) }
+            .let { File(it) }
 
-        val mergedSignaturesDirectory = signaturesDirectory.resolveSibling("signatures-merged").createDirectories()
-        val mergedSignaturesFile = createTempFile(mergedSignaturesDirectory)
+        val mergedSignaturesDirectory = signaturesDirectory.resolveSibling("signatures-merged").also { it.mkdirs() }
+        val mergedSignaturesFile = File.createTempFile("merged", null, mergedSignaturesDirectory)
 
-        val signatureInputStreams = signaturesDirectory.listDirectoryEntries().map { it.inputStream() }
+        val signatureInputStreams = (signaturesDirectory.listFiles() ?: throw Exception("Cannot list files in $signaturesDirectory"))
+            .map { it.inputStream() }
         val mergedSignaturesOutputStream = mergedSignaturesFile.outputStream()
 
         val signatureBuilder = SignatureBuilder(signatureInputStreams.toTypedArray(), mergedSignaturesOutputStream, logger)
         additionalArtifacts.forEach {
-            signatureBuilder.process(it.toFile()) // the overload that takes Path can't handle jar files
+            signatureBuilder.process(it)
         }
         signatureBuilder.close()
 
         return mergedSignaturesFile
     }
 
-    private fun jarArtifact(basePath: String, jarPattern: String): Path {
+    private fun jarArtifact(basePath: String, jarPattern: String): File {
         val kotlinVersion = System.getProperty("kotlinVersion")
             .let { requireNotNull(it) { "Specify kotlinVersion with a system property" } }
 
         val versionPattern = "-" + Regex.escape(kotlinVersion)
         val regex = Regex("$jarPattern$versionPattern\\.jar")
-        val base = Path(basePath).absolute().normalize()
-        val files = base.listDirectoryEntries().filter { it.name matches regex }
+        val base = File(basePath).absoluteFile.normalize()
+        val files = (base.listFiles() ?: throw Exception("Cannot list files in $base"))
+            .filter { it.name matches regex }
 
         return files.singleOrNull() ?: throw Exception("No single file matching $regex in $base:\n${files.joinToString("\n")}")
     }

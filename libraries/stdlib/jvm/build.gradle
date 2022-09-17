@@ -12,6 +12,7 @@ configureSourcesJar()
 
 configurations {
     distSources
+    kotlinStdlibJdk6
 }
 
 sourceSets {
@@ -129,10 +130,20 @@ task distSourcesJar(type: Jar) {
     }
 }
 
+task kotlinStdlibJdk6Jar(type: Jar) {
+    archiveBaseName.set("kotlin-stdlib-jdk6")
+    dependsOn(configurations.builtins)
+    from {
+        zipTree(configurations.builtins.singleFile)
+    }
+    from sourceSets.main.output
+}
+
 artifacts {
     archives sourcesJar
     sources sourcesJar
     distSources distSourcesJar
+    kotlinStdlibJdk6 kotlinStdlibJdk6Jar
 }
 
 DexMethodCountKt.dexMethodCount(project) { task ->

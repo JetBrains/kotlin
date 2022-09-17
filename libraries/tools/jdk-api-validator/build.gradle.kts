@@ -11,10 +11,12 @@ val signature by configurations.creating
 
 dependencies {
     api("org.codehaus.mojo:animal-sniffer:1.21")
-    api(project(":kotlin-stdlib-jdk8"))
+    // should be without configuration, but https://issues.gradle.org/browse/GRADLE-3330 still not fixed properly
+    api(project(":kotlin-stdlib", configuration = "kotlinStdlibJdk6"))
+
     testApi(project(":kotlin-test:kotlin-test-junit"))
 
-    testArtifacts(project(":kotlin-stdlib"))
+    testArtifacts(project(":kotlin-stdlib", configuration = "kotlinStdlibJdk6"))
     testArtifacts(project(":kotlin-reflect"))
 
     signature("org.codehaus.mojo.signature:java16:1.1@signature")
