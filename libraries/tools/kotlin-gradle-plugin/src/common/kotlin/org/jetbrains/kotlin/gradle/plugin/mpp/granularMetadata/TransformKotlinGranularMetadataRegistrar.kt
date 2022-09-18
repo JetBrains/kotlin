@@ -46,10 +46,10 @@ private constructor(
         // Add dependsOn closure as dependencies
         compilation.compileDependencyFiles += sourceSet.dependsOnClassesDirs
 
-        // Inlcude non-multiplatform artifacts that cannot be transformed but still were requested for compilation
+        // Include non-multiplatform artifacts that cannot be transformed but still were requested for compilation
         compilation.compileDependencyFiles += project.files({ artifacts.filterNot { it.isMpp }.map { it.file } })
 
-        // And finally include tranformed metadata artifacts;
+        // And finally include transformed metadata artifacts
         compilation.compileDependencyFiles += project.files({ task.map { it.transformedLibraries } }).builtBy(task)
     }
 
