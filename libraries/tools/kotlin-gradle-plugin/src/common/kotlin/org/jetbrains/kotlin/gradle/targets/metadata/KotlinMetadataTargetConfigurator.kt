@@ -19,6 +19,7 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.granularMetadata.TransformKotlinGranularMetadataRegistrar
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
@@ -348,7 +349,7 @@ class KotlinMetadataTargetConfigurator :
             it.description = "Generates serialized dependencies metadata for compilation '${compilation.name}' of target '${compilation.target.name}' (for tooling)"
         }
 
-        if (PropertiesProvider(project).configurationCacheFriendlyGranularMetadataTransformation) {
+        if (project.kotlinPropertiesProvider.configurationCacheFriendlyGranularMetadataTransformation) {
             val registrar = TransformKotlinGranularMetadataRegistrar.create(project)
             registrar.registerForMetadataCompilation(compilation)
         } else {
