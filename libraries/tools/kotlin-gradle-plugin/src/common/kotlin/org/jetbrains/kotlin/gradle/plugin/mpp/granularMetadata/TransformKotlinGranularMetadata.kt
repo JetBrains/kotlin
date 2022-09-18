@@ -35,11 +35,11 @@ import javax.inject.Inject
  *
  */
 abstract class TransformKotlinGranularMetadata
-@Inject constructor(
+@Inject internal constructor(
     private val settings: Settings,
     private val projectLayout: ProjectLayout
 ) : DefaultTask() {
-    class Settings(
+    internal class Settings(
         val sourceSetName: String,
 
         val resolvedSourceSetMetadataDependencies: ResolvedDependencyGraph,
@@ -48,7 +48,7 @@ abstract class TransformKotlinGranularMetadata
         val projectsData: Map<String, ProjectData>,
     )
 
-    class ProjectData(
+    internal class ProjectData(
         val path: String,
         val sourceSetMetadataOutputs: Provider<Map<String, FileCollection>>,
         val projectStructureMetadata: Provider<KotlinProjectStructureMetadata?>,
