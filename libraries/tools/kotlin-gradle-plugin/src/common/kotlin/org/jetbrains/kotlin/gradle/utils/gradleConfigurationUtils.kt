@@ -46,7 +46,3 @@ internal fun Configuration.addGradlePluginMetadataAttributes(
         }
     }
 }
-
-internal fun ConfigurationContainer.maybeCreate(name: String, configure: Configuration.() -> Unit): Configuration {
-    return findByName(name) ?: maybeCreate(name).apply(configure)
-}

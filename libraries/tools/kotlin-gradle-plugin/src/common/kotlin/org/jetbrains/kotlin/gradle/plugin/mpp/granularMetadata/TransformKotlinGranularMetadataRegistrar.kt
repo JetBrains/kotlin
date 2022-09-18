@@ -171,17 +171,18 @@ private constructor(
 
             val configurationName = lowerCamelCaseName("hostSpecificMetadataDependenciesOf", compilation.compileDependencyConfigurationName)
 
-            project.configurations.maybeCreate(configurationName) {
-                isCanBeResolved = true
-                isCanBeConsumed = false
+            project.configurations.getOrCreate(configurationName, invokeWhenCreated = { configuration ->
+                configuration.isCanBeResolved = true
+                configuration.isCanBeConsumed = false
+                configuration.isVisible = false
 
-                description = "Host specific metadata of compilation: $compilation"
+                configuration.description = "Host specific metadata of compilation: $compilation"
 
-                extendsFrom(*platformCompileDependencies.extendsFrom.toTypedArray())
+                configuration.extendsFrom(*platformCompileDependencies.extendsFrom.toTypedArray())
 
-                copyAttributes(platformCompileDependencies.attributes, attributes)
-                attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-            }
+                copyAttributes(platformCompileDependencies.attributes, configuration.attributes)
+                configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+            })
         }
     }
 
