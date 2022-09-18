@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolveException
 import org.gradle.api.artifacts.result.*
 import org.gradle.api.file.FileCollection
+import org.jetbrains.kotlin.tooling.core.withClosure
 
 /**
  * Gradle Configuration Cache-friendly representation of resolved Configuration
@@ -35,15 +36,14 @@ private constructor(
 
     private val artifactsByComponentId by TransientLazy { artifacts.groupBy { it.id.componentIdentifier } }
 
-    val allDependencies: List<DependencyResult> get() {
-        fun DependencyResult.allDependenciesRecursive(): List<DependencyResult> =
-            if (this is ResolvedDependencyResult) {
-                listOf(this) + selected.dependencies.flatMap { it.allDependenciesRecursive() }
+    val allDependencies: Set<DependencyResult> get() {
+        return root.dependencies.withClosure { dependency: DependencyResult ->
+            if (dependency is ResolvedDependencyResult) {
+                dependency.selected.dependencies
             } else {
-                listOf(this)
+                emptySet()
             }
-
-        return root.dependencies.flatMap { it.allDependenciesRecursive() }
+        }
     }
 
     /**
@@ -94,4 +94,6 @@ private constructor(
     override fun toString(): String = "ResolvedDependencyGraph(configuration='$configurationName')"
 }
 
-internal val ResolvedDependencyGraph.allResolvedDependencies get() = allDependencies.filterIsInstance<ResolvedDependencyResult>()
+internal val ResolvedDependencyGraph.allResolvedDependencies: Set<ResolvedDependencyResult> get() = allDependencies
+    .filterIsInstance<ResolvedDependencyResult>()
+    .toSet()
