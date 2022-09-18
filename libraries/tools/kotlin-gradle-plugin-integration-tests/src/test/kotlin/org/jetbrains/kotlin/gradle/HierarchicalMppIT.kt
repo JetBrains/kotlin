@@ -549,9 +549,9 @@ class HierarchicalMppIT : KGPBaseTest() {
 
     private fun expectedTasks(subprojectPrefix: String?) = listOf(
         "generateProjectStructureMetadata",
-        "transformCommonMainDependenciesMetadata2",
-        "transformJvmAndJsMainDependenciesMetadata2",
-        "transformLinuxAndJsMainDependenciesMetadata2",
+        "transformCommonMainMetadataDependencies",
+        "transformJvmAndJsMainMetadataDependencies",
+        "transformLinuxAndJsMainMetadataDependencies",
         "compileKotlinMetadata",
         "compileJvmAndJsMainKotlinMetadata",
         "compileLinuxAndJsMainKotlinMetadata"
