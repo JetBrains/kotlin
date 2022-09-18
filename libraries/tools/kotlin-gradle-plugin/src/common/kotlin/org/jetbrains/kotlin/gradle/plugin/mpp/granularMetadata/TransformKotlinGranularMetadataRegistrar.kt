@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
-import org.jetbrains.kotlin.gradle.utils.ResolvedDependencyGraph
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.maybeCreate
 import org.jetbrains.kotlin.gradle.utils.withType
@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap
 /**
  * Entrypoint-class for registering and configuring [TransformKotlinGranularMetadata] task
  */
-class TransformKotlinGranularMetadataRegistrar
+internal class TransformKotlinGranularMetadataRegistrar
 private constructor(
     private val project: Project
 ) {
