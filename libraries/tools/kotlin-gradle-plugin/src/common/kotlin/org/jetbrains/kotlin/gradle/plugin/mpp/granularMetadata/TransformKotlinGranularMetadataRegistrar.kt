@@ -143,7 +143,7 @@ private constructor(
     private val projectsData by lazy { collectProjectsData() }
 
     private fun collectProjectsData(): Map<String, TransformKotlinGranularMetadata.ProjectData> {
-        return project.allProjects().mapValues { (path, subProject) ->
+        return project.rootProject.allprojects.associateBy { it.path }.mapValues { (path, subProject) ->
             TransformKotlinGranularMetadata.ProjectData(
                 path = path,
                 sourceSetMetadataOutputs = project.provider { subProject.multiplatformExtensionOrNull?.sourceSetsMetadataOutputs() },
@@ -202,14 +202,6 @@ private constructor(
 
             Pair(sourceSet.name, destination)
         }.toMap()
-    }
-
-    private fun Project.allProjects(): Map<String, Project> {
-        fun Project.allChildProjects(parentPath: String): Map<String, Project> {
-            val result = childProjects.mapKeys { "${parentPath}:${it.key}" }
-            return result + result.map { it.value.allChildProjects(it.key) }.fold(emptyMap()) { acc, item -> acc + item }
-        }
-        return mapOf(":" to rootProject) + rootProject.allChildProjects("")
     }
 
     companion object {
