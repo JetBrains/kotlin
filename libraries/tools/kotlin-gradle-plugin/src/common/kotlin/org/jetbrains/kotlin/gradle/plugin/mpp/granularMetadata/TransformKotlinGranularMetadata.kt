@@ -66,8 +66,8 @@ abstract class TransformKotlinGranularMetadata
             .associateBy { it.selected.id.toModuleDependencyIdentifier() }
     }
 
-    private val psmExtractor = PSMExtractor(
-        psmByProjectPath = settings.projectsData.mapValues { it.value.projectStructureMetadata }
+    private val projectStructureMetadataExtractor = ProjectStructureMetadataExtractor(
+        projectStructureMetadataByProjectPath = settings.projectsData.mapValues { it.value.projectStructureMetadata }
     )
 
     @get:OutputDirectory
@@ -110,20 +110,20 @@ abstract class TransformKotlinGranularMetadata
 
             val klibArtifact = settings.resolvedSourceSetMetadataDependencies.dependencyArtifacts(dependency).single()
             val variants = findVariantsOf(dependency)
-            val psm = psmFrom(klibArtifact)
-            if (psm == null) {
+            val projectStructureMetadata = projectStructureMetadataFrom(klibArtifact)
+            if (projectStructureMetadata == null) {
                 allExtractedKlibs += settings.resolvedSourceSetMetadataDependencies.dependencyArtifacts(dependency).map { it.file }
                 continue
             }
 
-            val visibleSourceSets = inferVisibleSourceSets(psm, variants)
-            val extractedKlibs = extractSourceSetsMetadata(dependency, klibArtifact, psm, visibleSourceSets)
+            val visibleSourceSets = inferVisibleSourceSets(projectStructureMetadata, variants)
+            val extractedKlibs = extractSourceSetsMetadata(dependency, klibArtifact, projectStructureMetadata, visibleSourceSets)
             allExtractedKlibs += extractedKlibs
 
             // It is important that only dependencies from visible source sets are included in further transformation process
             // This covers the case when for example libB.nativeMain dependsOn libA
             // And then libC.commonMain dependsOn libB. In this case libC.commonMain should not see symbols from libA.commonMain
-            queue.addAll(psm.dependenciesOfSourceSets(visibleSourceSets).filterNot { it in visited })
+            queue.addAll(projectStructureMetadata.dependenciesOfSourceSets(visibleSourceSets).filterNot { it in visited })
         }
 
         writeToLibrariesFile(allExtractedKlibs)
@@ -147,8 +147,11 @@ abstract class TransformKotlinGranularMetadata
         return sourceSets.flatMap { sourceSetModuleDependencies[it] ?: emptySet() }.mapNotNull { moduleDependencyIdToDependency[it] }
     }
 
-    private fun hostSpecificMetadataArtifacts(componentId: ComponentIdentifier, psm: KotlinProjectStructureMetadata): Map<String, File> {
-        if (psm.hostSpecificSourceSets.isEmpty()) return emptyMap()
+    private fun hostSpecificMetadataArtifacts(
+        componentId: ComponentIdentifier,
+        projectStructureMetadata: KotlinProjectStructureMetadata
+    ): Map<String, File> {
+        if (projectStructureMetadata.hostSpecificSourceSets.isEmpty()) return emptyMap()
 
         val graph = settings.resolvedHostSpecificDependencies?.first()?.get() ?: return emptyMap()
         val dependency = graph.allResolvedDependencies.find { it.selected.id == componentId } ?: error("Dependency by $componentId not found")
@@ -156,7 +159,7 @@ abstract class TransformKotlinGranularMetadata
         val artifacts = graph.dependencyArtifactsOrNull(dependency) ?: return emptyMap()
         val artifactFile = artifacts.singleOrNull()?.file ?: return emptyMap()
 
-        return psm.hostSpecificSourceSets.associateWith { artifactFile }
+        return projectStructureMetadata.hostSpecificSourceSets.associateWith { artifactFile }
     }
 
     private fun ResolvedDependencyResult.requestedModuleId(): ModuleIdentifier? {
@@ -174,11 +177,11 @@ abstract class TransformKotlinGranularMetadata
         return variants.toSet()
     }
 
-    private fun psmFrom(artifact: ResolvedArtifactResult) = psmExtractor.extract(artifact)
+    private fun projectStructureMetadataFrom(artifact: ResolvedArtifactResult) = projectStructureMetadataExtractor.extract(artifact)
 
-    private fun inferVisibleSourceSets(psm: KotlinProjectStructureMetadata, variants: Set<String>): Set<String> {
+    private fun inferVisibleSourceSets(projectStructureMetadata: KotlinProjectStructureMetadata, variants: Set<String>): Set<String> {
         return variants
-            .map { psm.sourceSetNamesByVariantName[it]!! }
+            .map { projectStructureMetadata.sourceSetNamesByVariantName[it]!! }
             .takeIf { it.isNotEmpty() }
             ?.reduce { visibleSourceSets, platformSourceSets -> visibleSourceSets intersect platformSourceSets }
             ?: emptySet()
@@ -187,7 +190,7 @@ abstract class TransformKotlinGranularMetadata
     private fun extractSourceSetsMetadata(
         dependency: ResolvedDependencyResult,
         artifact: ResolvedArtifactResult,
-        psm: KotlinProjectStructureMetadata,
+        projectStructureMetadata: KotlinProjectStructureMetadata,
         sourceSets: Set<String>
     ): List<File> {
         val id = artifact.variant.owner
@@ -203,7 +206,7 @@ abstract class TransformKotlinGranularMetadata
                 extractSourceSetsMetadataFromJar(
                     id = moduleId,
                     dependency = dependency,
-                    psm = psm,
+                    projectStructureMetadata = projectStructureMetadata,
                     jar = artifact.file,
                     sourceSets = sourceSets
                 )
@@ -211,7 +214,7 @@ abstract class TransformKotlinGranularMetadata
             id is ModuleComponentIdentifier -> extractSourceSetsMetadataFromJar(
                 id = id.moduleIdentifier,
                 dependency = dependency,
-                psm = psm,
+                projectStructureMetadata = projectStructureMetadata,
                 jar = artifact.file,
                 sourceSets = sourceSets
             )
@@ -222,14 +225,14 @@ abstract class TransformKotlinGranularMetadata
     private fun extractSourceSetsMetadataFromJar(
         id: ModuleIdentifier,
         dependency: ResolvedDependencyResult,
-        psm: KotlinProjectStructureMetadata,
+        projectStructureMetadata: KotlinProjectStructureMetadata,
         jar: File,
         sourceSets: Set<String>
     ): List<File> {
-        val hostSpecificMetadataArtifactBySourceSet = hostSpecificMetadataArtifacts(dependency.selected.id, psm)
+        val hostSpecificMetadataArtifactBySourceSet = hostSpecificMetadataArtifacts(dependency.selected.id, projectStructureMetadata)
         val metadataJar = CompositeMetadataJar(
             moduleIdentifier = "${id.group}-${id.name}",
-            projectStructureMetadata = psm,
+            projectStructureMetadata = projectStructureMetadata,
             primaryArtifactFile = jar,
             hostSpecificArtifactsBySourceSet = hostSpecificMetadataArtifactBySourceSet
         )
