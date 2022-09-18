@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSou
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.maybeCreate
 import org.jetbrains.kotlin.gradle.utils.withType
 import java.util.concurrent.ConcurrentHashMap
 
@@ -33,16 +32,16 @@ internal class TransformKotlinGranularMetadataRegistrar
 private constructor(
     private val project: Project
 ) {
-    fun taskName(sourceSet: KotlinSourceSet) = lowerCamelCaseName("transform", sourceSet.name, "DependenciesMetadata2")
+    fun taskName(sourceSet: KotlinSourceSet) = lowerCamelCaseName("transform", sourceSet.name, "MetadataDependencies")
 
-    fun configurationName(sourceSet: KotlinSourceSet) = lowerCamelCaseName(sourceSet.name, "DependenciesMetadata2")
+    fun metadataDependenciesConfigurationName(sourceSet: KotlinSourceSet) = lowerCamelCaseName(sourceSet.name, "MetadataDependencies")
 
     fun registerForMetadataCompilation(compilation: AbstractKotlinCompilation<*>) {
         val sourceSet = compilation.defaultSourceSet
-        val configuration = registerConfiguration(sourceSet)
-        val task = registerTask(sourceSet)
+        val metadataDependenciesConfiguration = registerMetadataDependenciesConfiguration(sourceSet)
+        val task = registerTask(sourceSet, metadataDependenciesConfiguration)
 
-        val artifacts = configuration.incoming.artifacts
+        val artifacts = metadataDependenciesConfiguration.incoming.artifacts
 
         // Add dependsOn closure as dependencies
         compilation.compileDependencyFiles += sourceSet.dependsOnClassesDirs
@@ -71,8 +70,8 @@ private constructor(
     /**
      * Creates Compile Metadata Dependencies configurations
      */
-    private fun registerConfiguration(sourceSet: KotlinSourceSet): Configuration {
-        val name = configurationName(sourceSet)
+    private fun registerMetadataDependenciesConfiguration(sourceSet: KotlinSourceSet): Configuration {
+        val name = metadataDependenciesConfigurationName(sourceSet)
 
         val configurationFound = project.configurations.findByName(name)
         if (configurationFound != null) return configurationFound
@@ -84,7 +83,7 @@ private constructor(
             sourceSet.implementationConfigurationName
         ).map { project.configurations.getByName(it) }.toTypedArray()
 
-        val dependsOnConfigurations = sourceSet.dependsOn.map { registerConfiguration(it) }.toTypedArray()
+        val dependsOnConfigurations = sourceSet.dependsOn.map { registerMetadataDependenciesConfiguration(it) }.toTypedArray()
 
         return project.configurations.create(name) { configuration ->
             configuration.isCanBeResolved = true
@@ -101,7 +100,10 @@ private constructor(
         }
     }
 
-    private fun registerTask(kotlinSourceSet: KotlinSourceSet): TaskProvider<TransformKotlinGranularMetadata> {
+    private fun registerTask(
+        kotlinSourceSet: KotlinSourceSet,
+        metadataDependenciesConfiguration: Configuration
+    ): TaskProvider<TransformKotlinGranularMetadata> {
 
         /**
          * Transformation is possible only in Main Module, which is publishable
@@ -116,7 +118,6 @@ private constructor(
             .filter { it !is KotlinCommonCompilation }
             .filter { it.isMain() }
 
-        val sourceSetMetadataDependenciesConfiguration = project.configurations.getByName(configurationName(kotlinSourceSet))
         val platformVariantsDependenciesConfigurations = platformMainCompilations
             .map { project.configurations.getByName(it.compileDependencyConfigurationName) }
         val hostSpecificVariantsDependenciesConfigurations = hostSpecificDependencies(platformMainCompilations)
@@ -124,7 +125,7 @@ private constructor(
         val settings = TransformKotlinGranularMetadata.Settings(
             sourceSetName = kotlinSourceSet.name,
 
-            resolvedSourceSetMetadataDependencies = ResolvedDependencyGraph(sourceSetMetadataDependenciesConfiguration),
+            resolvedSourceSetMetadataDependencies = ResolvedDependencyGraph(metadataDependenciesConfiguration),
             resolvedVariantDependencies = platformVariantsDependenciesConfigurations.map(::ResolvedDependencyGraph),
 
             projectsData = projectsData,
@@ -136,7 +137,7 @@ private constructor(
             name = taskName(kotlinSourceSet),
             args = listOf(settings)
         ) {
-            inputs.files(sourceSetMetadataDependenciesConfiguration)
+            inputs.files(metadataDependenciesConfiguration)
         }
     }
 
