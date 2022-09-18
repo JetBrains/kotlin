@@ -11,8 +11,8 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.mpp.JarMppDependencyProjectStructureMetadataExtractor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 
-internal class PSMExtractor(
-    private val psmByProjectPath: Map<String, Provider<KotlinProjectStructureMetadata?>>,
+internal class ProjectStructureMetadataExtractor(
+    private val projectStructureMetadataByProjectPath: Map<String, Provider<KotlinProjectStructureMetadata?>>,
 ) {
 
     fun extract(metadataArtifact: ResolvedArtifactResult): KotlinProjectStructureMetadata? {
@@ -20,7 +20,7 @@ internal class PSMExtractor(
 
         // Fast finish if project
         if (moduleId is ProjectComponentIdentifier && moduleId.build.isCurrentBuild) {
-            return psmByProjectPath[moduleId.projectPath]?.get() ?: error("PSM for project ${moduleId.projectPath} not found")
+            return projectStructureMetadataByProjectPath[moduleId.projectPath]?.get() ?: error("PSM for project ${moduleId.projectPath} not found")
         }
 
         return JarMppDependencyProjectStructureMetadataExtractor(metadataArtifact.file).getProjectStructureMetadata()
