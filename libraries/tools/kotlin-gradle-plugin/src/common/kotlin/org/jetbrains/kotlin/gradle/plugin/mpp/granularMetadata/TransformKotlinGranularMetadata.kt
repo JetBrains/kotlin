@@ -108,7 +108,11 @@ abstract class TransformKotlinGranularMetadata
                 continue
             }
 
-            val klibArtifact = settings.resolvedSourceSetMetadataDependencies.dependencyArtifacts(dependency).single()
+            val klibArtifact = settings
+                .resolvedSourceSetMetadataDependencies
+                .dependencyArtifacts(dependency)
+                .singleOrNull()
+                ?: error("Expected only one Metadata klib for dependency $dependency")
             val variants = findVariantsOf(dependency)
             val projectStructureMetadata = projectStructureMetadataFrom(klibArtifact)
             if (projectStructureMetadata == null) {
