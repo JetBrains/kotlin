@@ -41,7 +41,6 @@ abstract class TransformKotlinGranularMetadata
 ) : DefaultTask() {
     internal class Settings(
         val sourceSetName: String,
-
         val resolvedSourceSetMetadataDependencies: ResolvedDependencyGraph,
         val resolvedVariantDependencies: List<ResolvedDependencyGraph>,
         val resolvedHostSpecificDependencies: List<Provider<ResolvedDependencyGraph>>?,
