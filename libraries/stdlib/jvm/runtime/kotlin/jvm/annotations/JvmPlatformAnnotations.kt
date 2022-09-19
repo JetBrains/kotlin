@@ -154,3 +154,12 @@ public actual annotation class JvmInline
 @MustBeDocumented
 @SinceKotlin("1.5")
 public actual annotation class JvmRecord
+
+/**
+ * Exposes the API related to the annotated inline classes as its boxed variant for effective usage from Java.
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+@SinceKotlin("1.8")
+public actual annotation class JvmExposeBoxed

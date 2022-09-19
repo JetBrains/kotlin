@@ -42,6 +42,8 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         if (index >= valueArgumentsCount) {
             throw AssertionError("$this: No such value argument slot: $index")
         }
+        if (index == -1)
+            Unit
         return argumentsByParameterIndex[index]
     }
 

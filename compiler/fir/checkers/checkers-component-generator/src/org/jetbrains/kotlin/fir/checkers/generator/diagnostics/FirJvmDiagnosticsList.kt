@@ -40,6 +40,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
 
         val VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION by error<PsiElement>()
         val JVM_INLINE_WITHOUT_VALUE_CLASS by error<PsiElement>()
+        val JVM_EXPOSE_BOXED_WITHOUT_INLINE by error<PsiElement>()
     }
 
     val TYPES by object : DiagnosticGroup("Types") {

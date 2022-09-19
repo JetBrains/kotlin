@@ -258,7 +258,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         }
         val regularParameters = valueParameters.subList(contextReceiverParametersCount, valueParameters.size)
         for (parameter in regularParameters) {
-            frameMap.enter(parameter, classCodegen.typeMapper.mapType(parameter.type))
+            frameMap.enter(parameter, classCodegen.typeMapper.mapType(parameter))
         }
         return frameMap
     }

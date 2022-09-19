@@ -8,18 +8,23 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
+import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -28,6 +33,7 @@ import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.name.JvmNames
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 
@@ -102,12 +108,13 @@ internal class JvmInlineClassLowering(
     }
 
     override fun handleSpecificNewClass(declaration: IrClass) {
-        val irConstructor = declaration.primaryConstructor!!
+        val primaryConstructor = declaration.primaryConstructor!!
         // The field getter is used by reflection and cannot be removed here unless it is internal.
-        declaration.declarations.removeIf {
-            it == irConstructor || (it is IrFunction && it.isInlineClassFieldGetter && !it.visibility.isPublicAPI)
+        declaration.declarations.removeAll {
+            it == primaryConstructor || (it is IrFunction && it.isInlineClassFieldGetter && !it.visibility.isPublicAPI)
         }
-        buildPrimaryInlineClassConstructor(declaration, irConstructor)
+
+        buildInlineClassConstructors(declaration, primaryConstructor)
         buildBoxFunction(declaration)
         buildUnboxFunction(declaration)
         buildSpecializedEqualsMethodIfNeeded(declaration)
@@ -134,11 +141,66 @@ internal class JvmInlineClassLowering(
         }
     }
 
+    override fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
+        replacement.valueParameters.forEach {
+            visitParameter(it)
+            it.defaultValue?.patchDeclarationParents(replacement)
+        }
+
+        allScopes.push(createScope(replacement))
+        replacement.body = function.body?.transform(this, null)?.patchDeclarationParents(replacement)
+        allScopes.pop()
+        replacement.copyAttributes(function)
+        val result = ArrayList<IrDeclaration>(3)
+        result += replacement
+
+        // Don't create a wrapper for functions which are only used in an unboxed context, except the one are annotated with JvmExposeBoxed
+        val declaredInExposeBoxedClass = function.parentClassOrNull?.hasAnnotation(JvmNames.JVM_EXPOSE_BOXED) == true
+
+        val declaredOverrideWithDispatchReceiver = function.overriddenSymbols.isNotEmpty() && replacement.dispatchReceiverParameter == null
+
+        val takesOrReturnsExposeBoxedClass = function.valueParameters
+            .any { it.type.classOrNull?.owner?.hasAnnotation(JvmNames.JVM_EXPOSE_BOXED) == true }
+                || function.returnType.classOrNull?.owner?.hasAnnotation(JvmNames.JVM_EXPOSE_BOXED) == true
+
+        if (declaredOverrideWithDispatchReceiver || (declaredInExposeBoxedClass && !takesOrReturnsExposeBoxedClass))
+            result += createBridgeFunction(function, replacement)
+
+        // Replaces the original with boxed function for Java.
+        // We should call the replacement if the function is declared not as override with dispatch receiver, bridge method otherwise
+        if (takesOrReturnsExposeBoxedClass && !function.isEquals()) {
+            function.origin = JvmLoweredDeclarationOrigin.FUNCTION_WITH_EXPOSED_INLINE_CLASS
+
+            if (replacement.modality != Modality.ABSTRACT) {
+                function.body = context.createIrBuilder(function.symbol).irBlockBody(function) {
+                    +irReturn(irCall(replacement).apply {
+                        function.dispatchReceiverParameter?.let {
+                            putValueArgument(0, irGet(it))
+                        }
+                        val paramOffset = if (function.dispatchReceiverParameter == null)
+                            0
+                        else
+                            1
+
+                        for ((idx, parameter) in (function.valueParameters).withIndex()) {
+                            putValueArgument(idx + paramOffset, irGet(parameter))
+                        }
+                    })
+                }
+            }
+
+            result += function
+        }
+
+        return result
+    }
+
     // Secondary constructors for boxed types get translated to static functions returning
     // unboxed arguments. We remove the original constructor.
     // Primary constructors' case is handled at the start of transformFunctionFlat
     override fun transformSecondaryConstructorFlat(constructor: IrConstructor, replacement: IrSimpleFunction): List<IrDeclaration> {
         replacement.valueParameters.forEach { it.transformChildrenVoid() }
+
         replacement.body = context.createIrBuilder(replacement.symbol, replacement.startOffset, replacement.endOffset).irBlockBody(
             replacement
         ) {
@@ -146,12 +208,10 @@ internal class JvmInlineClassLowering(
             valueMap[constructor.constructedClass.thisReceiver!!.symbol] = thisVar
 
             constructor.body?.statements?.forEach { statement ->
-                +statement
+                +statement.deepCopyWithVariables()
                     .transformStatement(object : IrElementTransformerVoid() {
                         // Don't recurse under nested class declarations
-                        override fun visitClass(declaration: IrClass): IrStatement {
-                            return declaration
-                        }
+                        override fun visitClass(declaration: IrClass): IrStatement = declaration
 
                         // Capture the result of a delegating constructor call in a temporary variable "thisVar".
                         //
@@ -191,6 +251,9 @@ internal class JvmInlineClassLowering(
 
             +irReturn(irGet(thisVar))
         }
+
+        if (constructor.parentAsClass.hasAnnotation(JvmNames.JVM_EXPOSE_BOXED))
+            return listOf(constructor, replacement)
 
         return listOf(replacement)
     }
@@ -326,33 +389,32 @@ internal class JvmInlineClassLowering(
         }
     }
 
-    override fun visitCall(expression: IrCall): IrExpression =
-        when {
-            // Getting the underlying field of an inline class merely changes the IR type,
-            // since the underlying representations are the same.
-            expression.symbol.owner.isInlineClassFieldGetter -> {
-                val arg = expression.dispatchReceiver!!.transform(this, null)
-                coerceInlineClasses(arg, expression.symbol.owner.dispatchReceiverParameter!!.type, expression.type)
-            }
-            // Specialize calls to equals when the left argument is a value of inline class type.
-            expression.isSpecializedInlineClassEqEq || expression.isSpecializedInlineClassEquals -> {
-                expression.transformChildrenVoid()
-                val leftOp: IrExpression
-                val rightOp: IrExpression
-                if (expression.isSpecializedInlineClassEqEq) {
-                    leftOp = expression.getValueArgument(0)!!
-                    rightOp = expression.getValueArgument(1)!!
-                } else {
-                    leftOp = expression.dispatchReceiver!!
-                    rightOp = expression.getValueArgument(0)!!
-                }
-                context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
-                    .specializeEqualsCall(leftOp, rightOp)
-                    ?: expression
-            }
-            else ->
-                super.visitCall(expression)
+    override fun visitCall(expression: IrCall): IrExpression = when {
+        // Getting the underlying field of an inline class merely changes the IR type,
+        // since the underlying representations are the same.
+        expression.symbol.owner.isInlineClassFieldGetter -> {
+            val arg = expression.dispatchReceiver!!.transform(this, null)
+            coerceInlineClasses(arg, expression.symbol.owner.dispatchReceiverParameter!!.type, expression.type)
         }
+        // Specialize calls to equals when the left argument is a value of inline class type.
+        expression.isSpecializedInlineClassEqEq || expression.isSpecializedInlineClassEquals -> {
+            expression.transformChildrenVoid()
+            val leftOp: IrExpression
+            val rightOp: IrExpression
+            if (expression.isSpecializedInlineClassEqEq) {
+                leftOp = expression.getValueArgument(0)!!
+                rightOp = expression.getValueArgument(1)!!
+            } else {
+                leftOp = expression.dispatchReceiver!!
+                rightOp = expression.getValueArgument(0)!!
+            }
+            context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
+                .specializeEqualsCall(leftOp, rightOp)
+                ?: expression
+        }
+        else ->
+            super.visitCall(expression)
+    }
 
     private val IrCall.isSpecializedInlineClassEquals: Boolean
         get() {
@@ -416,8 +478,8 @@ internal class JvmInlineClassLowering(
         return super.visitSetValue(expression)
     }
 
-    private fun buildPrimaryInlineClassConstructor(valueClass: IrClass, irConstructor: IrConstructor) {
-        // Add the default primary constructor
+    private fun buildInlineClassConstructors(valueClass: IrClass, irConstructor: IrConstructor) {
+        // Add the primary synthetic constructor for boxing
         valueClass.addConstructor {
             updateFrom(irConstructor)
             visibility = DescriptorVisibilities.PRIVATE
@@ -425,49 +487,95 @@ internal class JvmInlineClassLowering(
             returnType = irConstructor.returnType
         }.apply {
             // Don't create a default argument stub for the primary constructor
-            irConstructor.valueParameters.forEach { it.defaultValue = null }
+            for (param in irConstructor.valueParameters) {
+                param.defaultValue = null
+            }
             copyParameterDeclarationsFrom(irConstructor)
+            if (valueClass.hasAnnotation(JvmNames.JVM_EXPOSE_BOXED)) {
+                valueParameters += buildValueParameter(this) {
+                    type = context.irBuiltIns.nothingNType
+                    name = Name.identifier("boxingConstructorMarker")
+                    index = 1
+                }
+            }
             annotations = irConstructor.annotations
-            body = context.createIrBuilder(this.symbol).irBlockBody(this) {
+            body = context.createIrBuilder(symbol).irBlockBody(this) {
                 +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
                 +irSetField(
                     irGet(valueClass.thisReceiver!!),
                     getInlineClassBackingField(valueClass),
-                    irGet(this@apply.valueParameters[0])
+                    irGet(this@apply.valueParameters[0]),
                 )
             }
         }
 
         // Add a static bridge method to the primary constructor. This contains
         // null-checks, default arguments, and anonymous initializers.
-        val function = context.inlineClassReplacements.getReplacementFunction(irConstructor)!!
+        val constructorImpl = checkNotNull(context.inlineClassReplacements.getReplacementFunction(irConstructor)) {
+            "No replacement function present for ${irConstructor.dump()}"
+        }
 
         val initBlocks = valueClass.declarations.filterIsInstance<IrAnonymousInitializer>()
 
-        function.valueParameters.forEach { it.transformChildrenVoid() }
-        function.body = context.createIrBuilder(function.symbol).irBlockBody {
-            val argument = function.valueParameters[0]
-            val thisValue = irTemporary(coerceInlineClasses(irGet(argument), argument.type, function.returnType, skipCast = true))
+        constructorImpl.valueParameters.forEach { it.transformChildrenVoid() }
+        constructorImpl.body = context.createIrBuilder(constructorImpl.symbol).irBlockBody {
+            val argument = constructorImpl.valueParameters[0]
+            val thisValue = irTemporary(coerceInlineClasses(irGet(argument), argument.type, constructorImpl.returnType, skipCast = true))
             valueMap[valueClass.thisReceiver!!.symbol] = thisValue
             for (initBlock in initBlocks) {
                 for (stmt in initBlock.body.statements) {
-                    +stmt.transformStatement(this@JvmInlineClassLowering).patchDeclarationParents(function)
+                    +stmt.deepCopyWithVariables().transformStatement(this@JvmInlineClassLowering).patchDeclarationParents(constructorImpl)
                 }
             }
             +irReturn(irGet(thisValue))
         }
 
+        if (valueClass.hasAnnotation(JvmNames.JVM_EXPOSE_BOXED)) {
+            // Build primary constructor as a public secondary constructor for Java
+            valueClass.addConstructor {
+                updateFrom(irConstructor)
+                returnType = irConstructor.returnType
+                isPrimary = false
+            }.apply constructor@{
+                // Don't create a default argument stub for the primary constructor
+                for (param in irConstructor.valueParameters) {
+                    param.defaultValue = null
+                }
+                copyParameterDeclarationsFrom(irConstructor)
+                annotations = irConstructor.annotations
+                body = context.createIrBuilder(symbol).irBlockBody(this) {
+                    +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
+                    +irSetField(
+                        irGet(valueClass.thisReceiver!!),
+                        getInlineClassBackingField(valueClass),
+                        irGet(valueParameters[0])
+                    )
+                    val argument = valueParameters[0]
+                    val thisValue =
+                        irTemporary(coerceInlineClasses(irGet(argument), argument.type, constructorImpl.returnType, skipCast = true))
+                    valueMap[valueClass.thisReceiver!!.symbol] = thisValue
+                    for (initBlock in initBlocks) {
+                        for (stmt in initBlock.body.statements) {
+                            +stmt.patchDeclarationParents(this@constructor)
+                        }
+                    }
+                }
+            }
+        }
+
         valueClass.declarations.removeAll(initBlocks)
-        valueClass.declarations += function
+        valueClass.declarations += constructorImpl
     }
 
     private fun buildBoxFunction(valueClass: IrClass) {
         val function = context.inlineClassReplacements.getBoxFunction(valueClass)
         with(context.createIrBuilder(function.symbol)) {
             function.body = irExprBody(
-                irCall(valueClass.primaryConstructor!!.symbol).apply {
+                irCall(checkNotNull(valueClass.primaryConstructor).symbol).apply {
                     passTypeArgumentsFrom(function)
                     putValueArgument(0, irGet(function.valueParameters[0]))
+                    if (valueClass.hasAnnotation(JvmNames.JVM_EXPOSE_BOXED))
+                        putValueArgument(1, irNull())
                 }
             )
         }
@@ -528,5 +636,4 @@ internal class JvmInlineClassLowering(
 
         valueClass.declarations += function
     }
-
 }

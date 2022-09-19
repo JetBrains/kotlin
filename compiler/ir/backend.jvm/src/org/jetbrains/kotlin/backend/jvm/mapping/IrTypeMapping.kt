@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.backend.jvm.mapping
 
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
@@ -27,8 +25,14 @@ import org.jetbrains.org.objectweb.asm.Type
 fun IrTypeMapper.mapType(irVariable: IrVariable): Type =
     mapType(irVariable.type)
 
-fun IrTypeMapper.mapType(irValueParameter: IrValueParameter): Type =
-    mapType(irValueParameter.type)
+fun IrTypeMapper.mapType(irValueParameter: IrValueParameter): Type {
+    val mode = if ((irValueParameter.parent as? IrFunction)?.origin == JvmLoweredDeclarationOrigin.FUNCTION_WITH_EXPOSED_INLINE_CLASS)
+        TypeMappingMode.DEFAULT.wrapInlineClassesMode()
+    else
+        TypeMappingMode.DEFAULT
+
+    return mapType(irValueParameter.type, mode)
+}
 
 fun IrTypeMapper.mapType(irField: IrField): Type =
     mapType(irField.type)

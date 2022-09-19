@@ -35,6 +35,12 @@ class SerialInfoImplJvmIrGenerator(
         }
     }
 
+    private val jvmExpose: IrClassSymbol = createClass(createPackage("kotlin.jvm"), "JvmExpose", ClassKind.ANNOTATION_CLASS) { klass ->
+        klass.addConstructor().apply {
+            addValueParameter("name", context.irBuiltIns.stringType)
+        }
+    }
+
     private val kClassJava: IrPropertySymbol =
         IrFactoryImpl.buildProperty {
             name = Name.identifier("java")

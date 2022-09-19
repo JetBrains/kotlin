@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -131,7 +132,7 @@ class MemoizedInlineClassReplacements(
 
     private val specializedEqualsCache = storageManager.createCacheWithNotNullValues<IrClass, IrSimpleFunction>()
     fun getSpecializedEqualsMethod(irClass: IrClass, irBuiltIns: IrBuiltIns): IrSimpleFunction {
-        require(irClass.isSingleFieldValueClass)
+        require(irClass.isSingleFieldValueClass) { "Not a single-field inline class" }
         return specializedEqualsCache.computeIfAbsent(irClass) {
             irFactory.buildFun {
                 name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
@@ -164,13 +165,14 @@ class MemoizedInlineClassReplacements(
                 this, index = -1, name = Name.identifier(function.extensionReceiverName(context.state))
             )
             contextReceiverParametersCount = function.contextReceiverParametersCount
-            valueParameters = function.valueParameters.mapIndexed { index, parameter ->
-                parameter.copyTo(this, index = index, defaultValue = null).also {
-                    // Assuming that constructors and non-override functions are always replaced with the unboxed
-                    // equivalent, deep-copying the value here is unnecessary. See `JvmInlineClassLowering`.
-                    it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
-                }
-            }
+            valueParameters =
+                function.valueParameters
+                    .map { it.deepCopyWithVariables().patchDeclarationParents(this) }
+                    .mapIndexed { index, parameter ->
+                        parameter.copyTo(this, index = index, defaultValue = null).also {
+                            it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
+                        }
+                    }
             context.remapMultiFieldValueClassStructure(function, this, parametersMappingOrNull = null)
         }
 

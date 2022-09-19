@@ -190,3 +190,13 @@ internal expect annotation class JvmPackageName(val name: String)
 @SinceKotlin("1.8")
 @OptionalExpectation
 public expect annotation class JvmSerializableLambda()
+
+/**
+ * Exposes the API related to the annotated inline classes as its boxed variant for effective usage from Java.
+ */
+@Target(CLASS)
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+@SinceKotlin("1.8")
+@OptionalExpectation
+public expect annotation class JvmExposeBoxed

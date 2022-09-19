@@ -45,6 +45,7 @@ object FirJvmErrors {
     val FUNCTION_DELEGATE_MEMBER_NAME_CLASH by error0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION by error0<PsiElement>()
     val JVM_INLINE_WITHOUT_VALUE_CLASS by error0<PsiElement>()
+    val JVM_EXPOSE_BOXED_WITHOUT_INLINE by error0<PsiElement>()
 
     // Types
     val JAVA_TYPE_MISMATCH by error2<KtExpression, ConeKotlinType, ConeKotlinType>()

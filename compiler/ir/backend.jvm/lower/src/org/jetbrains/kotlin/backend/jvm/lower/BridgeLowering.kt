@@ -34,7 +34,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import kotlin.collections.set
 
-/*
+/**
  * Generate bridge methods to fix virtual dispatch after type erasure and to adapt Kotlin collections to
  * the Java collection interfaces. For example, consider the following Kotlin declaration
  *

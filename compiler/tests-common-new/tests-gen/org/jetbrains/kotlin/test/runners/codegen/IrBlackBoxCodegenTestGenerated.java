@@ -51164,6 +51164,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("exposedInlineClass.kt")
+        public void testExposedInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/exposedInlineClass.kt");
+        }
+
+        @Test
         @TestMetadata("forStatement.kt")
         public void testForStatement() throws Exception {
             runTest("compiler/testData/codegen/box/valueClasses/forStatement.kt");

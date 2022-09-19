@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.name.JvmNames
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
@@ -194,6 +195,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
     // See also: KotlinTypeMapper.forceBoxedReturnType
     private fun forceBoxedReturnType(function: IrFunction): Boolean =
         isBoxMethodForInlineClass(function) ||
+                function.origin == JvmLoweredDeclarationOrigin.FUNCTION_WITH_EXPOSED_INLINE_CLASS ||
                 forceFoxedReturnTypeOnOverride(function) ||
                 forceBoxedReturnTypeOnDefaultImplFun(function) ||
                 function.isFromJava() && function.returnType.isInlineClassType()
@@ -344,24 +346,31 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
     }
 
     private fun writeParameterType(sw: JvmSignatureWriter, type: IrType, declaration: IrDeclaration, materialized: Boolean = true) {
-        if (sw.skipGenericSignature()) {
+        var mode = if (sw.skipGenericSignature()) {
             if (type.isInlineClassType() && declaration.isFromJava()) {
-                typeMapper.mapType(type, TypeMappingMode.GENERIC_ARGUMENT, sw, materialized)
+                TypeMappingMode.GENERIC_ARGUMENT
             } else {
-                typeMapper.mapType(type, TypeMappingMode.DEFAULT, sw, materialized)
+                TypeMappingMode.DEFAULT
             }
-            return
+        } else {
+            with(typeSystem) {
+                val extractTypeMappingModeFromAnnotation = extractTypeMappingModeFromAnnotation(
+                    declaration.suppressWildcardsMode(), type, isForAnnotationParameter = false, mapTypeAliases = false
+                )
+                when {
+                    extractTypeMappingModeFromAnnotation != null -> extractTypeMappingModeFromAnnotation
+                    declaration.isMethodWithDeclarationSiteWildcards && !declaration.isStaticInlineClassReplacement && type.argumentsCount() != 0 ->
+                        TypeMappingMode.GENERIC_ARGUMENT // Render all wildcards
+                    else -> typeSystem.getOptimalModeForValueParameter(type)
+                }
+            }
         }
 
-        val mode = with(typeSystem) {
-            extractTypeMappingModeFromAnnotation(
-                declaration.suppressWildcardsMode(), type, isForAnnotationParameter = false, mapTypeAliases = false
-            )
-                ?: if (declaration.isMethodWithDeclarationSiteWildcards && !declaration.isStaticInlineClassReplacement && type.argumentsCount() != 0) {
-                    TypeMappingMode.GENERIC_ARGUMENT // Render all wildcards
-                } else {
-                    typeSystem.getOptimalModeForValueParameter(type)
-                }
+
+        if (type.classOrNull?.owner?.hasAnnotation(JvmNames.JVM_EXPOSE_BOXED) == true &&
+            declaration.origin == JvmLoweredDeclarationOrigin.FUNCTION_WITH_EXPOSED_INLINE_CLASS
+        ) {
+            mode = mode.wrapInlineClassesMode()
         }
 
         typeMapper.mapType(type, mode, sw, materialized)

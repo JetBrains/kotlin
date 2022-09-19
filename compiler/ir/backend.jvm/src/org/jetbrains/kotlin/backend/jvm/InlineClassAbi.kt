@@ -63,7 +63,7 @@ object InlineClassAbi {
             assert(irFunction.constructedClass.isValue) {
                 "Should not mangle names of non-inline class constructors: ${irFunction.render()}"
             }
-            return Name.identifier("constructor-impl")
+            return Name.identifier("constructor${JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS}")
         }
 
         val suffix = hashSuffix(irFunction, mangleReturnTypes, useOldMangleRules)
@@ -82,7 +82,7 @@ object InlineClassAbi {
                 irFunction.name.asString()
         }
 
-        return Name.identifier("$base-${suffix ?: "impl"}")
+        return Name.identifier("$base${if (suffix == null) JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS else "-$suffix"}")
     }
 
     fun hashSuffix(irFunction: IrFunction, mangleReturnTypes: Boolean, useOldMangleRules: Boolean): String? =

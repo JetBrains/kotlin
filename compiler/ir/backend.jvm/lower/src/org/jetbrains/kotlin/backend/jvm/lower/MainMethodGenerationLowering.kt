@@ -106,8 +106,7 @@ private class MainMethodGenerationLowering(private val context: JvmBackendContex
         val parameter = allParameters.singleOrNull() ?: return false
         if (!parameter.type.isArray() && !parameter.type.isNullableArray()) return false
 
-        val argType = (parameter.type as IrSimpleType).arguments.first()
-        return when (argType) {
+        return when (val argType = (parameter.type as IrSimpleType).arguments.first()) {
             is IrTypeProjection -> {
                 (argType.variance != Variance.IN_VARIANCE) && argType.type.isStringClassType()
             }

@@ -412,6 +412,26 @@ internal class JvmMultiFieldValueClassLowering(
         rootNode.replacePrimaryMultiFieldValueClassConstructor()
     }
 
+    override fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
+        replacement.valueParameters.forEach {
+            visitParameter(it)
+            it.defaultValue?.patchDeclarationParents(replacement)
+        }
+
+        allScopes.push(createScope(replacement))
+        replacement.body = function.body?.transform(this, null)?.patchDeclarationParents(replacement)
+        allScopes.pop()
+        replacement.copyAttributes(function)
+
+        // Don't create a wrapper for functions which are only used in an unboxed context
+        if (function.overriddenSymbols.isEmpty() || replacement.dispatchReceiverParameter != null)
+            return listOf(replacement)
+
+        val bridgeFunction = createBridgeFunction(function, replacement)
+        return listOf(replacement, bridgeFunction)
+    }
+
+
     override fun transformSecondaryConstructorFlat(constructor: IrConstructor, replacement: IrSimpleFunction): List<IrDeclaration> {
         for (param in replacement.valueParameters) {
             param.transformChildrenVoid()

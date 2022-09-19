@@ -14,6 +14,14 @@ object JvmNames {
 
     val JVM_NAME_SHORT: String = JVM_NAME.shortName().asString()
 
+    @JvmField
+    val JVM_EXPOSE_BOXED: FqName = FqName("kotlin.jvm.JvmExposeBoxed")
+
+    @JvmField
+    val JVM_EXPOSE_BOXED_CLASS_ID = ClassId.topLevel(JVM_EXPOSE_BOXED)
+
+    val JVM_EXPOSE_BOXED_SHORT: String = JVM_EXPOSE_BOXED.shortName().asString()
+
     val JVM_MULTIFILE_CLASS: FqName = FqName("kotlin.jvm.JvmMultifileClass")
     val JVM_MULTIFILE_CLASS_ID: ClassId = ClassId(FqName("kotlin.jvm"), Name.identifier("JvmMultifileClass"))
     val JVM_MULTIFILE_CLASS_SHORT = JVM_MULTIFILE_CLASS.shortName().asString()

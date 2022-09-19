@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
@@ -378,6 +379,7 @@ class ExpressionCodegen(
         }
 
         val type = typeMapper.mapType(param)
+
         // NOTE: we expect all value parameters to be present in the frame.
         mv.visitLocalVariable(
             name, type.descriptor, null, startLabel, endLabel, findLocalIndex(param.symbol)
