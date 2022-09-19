@@ -26,11 +26,11 @@ internal class CompositeMetadataArtifactImpl(
     private val hostSpecificArtifactFilesBySourceSetName: Map<String, File>
 ) : CompositeMetadataArtifact {
 
-    override fun open(): CompositeMetadataArtifact.ArtifactHandle {
+    override fun open(): CompositeMetadataArtifact.ArtifactContent {
         return HandlerImpl()
     }
 
-    inner class HandlerImpl : CompositeMetadataArtifact.ArtifactHandle {
+    inner class HandlerImpl : CompositeMetadataArtifact.ArtifactContent {
 
         override val moduleDependencyIdentifier: ModuleDependencyIdentifier
             get() = this@CompositeMetadataArtifactImpl.moduleDependencyIdentifier
@@ -61,7 +61,7 @@ internal class CompositeMetadataArtifactImpl(
     }
 
     private inner class SourceSetImpl(
-        override val artifactHandle: CompositeMetadataArtifact.ArtifactHandle,
+        override val artifactContent: CompositeMetadataArtifact.ArtifactContent,
         override val sourceSetName: String,
         private val artifactFile: ArtifactFile
     ) : CompositeMetadataArtifact.SourceSet, Closeable {
@@ -74,7 +74,7 @@ internal class CompositeMetadataArtifactImpl(
 
             In this case, return null
              */
-            if (artifactFile.containsDirectory(sourceSetName)) MetadataLibraryImpl(artifactHandle, this, artifactFile) else null
+            if (artifactFile.containsDirectory(sourceSetName)) MetadataLibraryImpl(artifactContent, this, artifactFile) else null
         }
 
         override val cinteropMetadataLibraries: List<CompositeMetadataArtifact.CInteropMetadataLibrary> by lazy {
@@ -89,7 +89,7 @@ internal class CompositeMetadataArtifactImpl(
             }.toSet()
 
             cinteropLibraryNames.map { cinteropLibraryName ->
-                CInteropMetadataLibraryImpl(artifactHandle, this, cinteropLibraryName, artifactFile)
+                CInteropMetadataLibraryImpl(artifactContent, this, cinteropLibraryName, artifactFile)
             }
         }
 
@@ -99,7 +99,7 @@ internal class CompositeMetadataArtifactImpl(
     }
 
     private inner class MetadataLibraryImpl(
-        override val artifactHandle: CompositeMetadataArtifact.ArtifactHandle,
+        override val artifactContent: CompositeMetadataArtifact.ArtifactContent,
         override val sourceSet: CompositeMetadataArtifact.SourceSet,
         private val artifactFile: ArtifactFile
     ) : CompositeMetadataArtifact.MetadataLibrary {
@@ -119,9 +119,9 @@ internal class CompositeMetadataArtifactImpl(
          * org.jetbrains.sample-sampleLibrary-1.0.0-SNAPSHOT-appleAndLinuxMain-Vk5pxQ.klib
          */
         override val relativeFile: File = File(buildString {
-            append(artifactHandle.moduleDependencyIdentifier)
+            append(artifactContent.moduleDependencyIdentifier)
             append("-")
-            append(artifactHandle.moduleDependencyVersion)
+            append(artifactContent.moduleDependencyVersion)
             append("-")
             append(sourceSet.sourceSetName)
             append("-")
@@ -145,7 +145,7 @@ internal class CompositeMetadataArtifactImpl(
     }
 
     private inner class CInteropMetadataLibraryImpl(
-        override val artifactHandle: CompositeMetadataArtifact.ArtifactHandle,
+        override val artifactContent: CompositeMetadataArtifact.ArtifactContent,
         override val sourceSet: CompositeMetadataArtifact.SourceSet,
         override val cinteropLibraryName: String,
         private val artifactFile: ArtifactFile,
@@ -166,9 +166,9 @@ internal class CompositeMetadataArtifactImpl(
          *     org.jetbrains.sample_sampleLibrary-cinterop-simple-Vk5pxQ.klib
          */
         override val relativeFile: File = File(buildString {
-            append(artifactHandle.moduleDependencyIdentifier)
+            append(artifactContent.moduleDependencyIdentifier)
             append("-")
-            append(artifactHandle.moduleDependencyVersion)
+            append(artifactContent.moduleDependencyVersion)
             append("-")
             append(sourceSet.sourceSetName)
             append("-cinterop")

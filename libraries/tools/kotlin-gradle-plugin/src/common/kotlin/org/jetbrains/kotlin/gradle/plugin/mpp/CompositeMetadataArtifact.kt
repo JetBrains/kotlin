@@ -11,7 +11,7 @@ import java.io.File
 internal interface CompositeMetadataArtifact {
 
     interface Library {
-        val artifactHandle: ArtifactHandle
+        val artifactContent: ArtifactContent
         val sourceSet: SourceSet
         val archiveExtension: String
         val checksum: Int
@@ -54,13 +54,13 @@ internal interface CompositeMetadataArtifact {
      * Represents a SourceSet packaged into the [CompositeMetadataArtifact]
      */
     interface SourceSet {
-        val artifactHandle: ArtifactHandle
+        val artifactContent: ArtifactContent
         val sourceSetName: String
         val metadataLibrary: MetadataLibrary?
         val cinteropMetadataLibraries: List<CInteropMetadataLibrary>
     }
 
-    interface ArtifactHandle : Closeable {
+    interface ArtifactContent : Closeable {
         val moduleDependencyIdentifier: ModuleDependencyIdentifier
         val moduleDependencyVersion: String
         val sourceSets: List<SourceSet>
@@ -71,9 +71,9 @@ internal interface CompositeMetadataArtifact {
     val moduleDependencyIdentifier: ModuleDependencyIdentifier
     val moduleDependencyVersion: String
 
-    fun open(): ArtifactHandle
+    fun open(): ArtifactContent
 
-    fun <T> read(action: (artifactHandle: ArtifactHandle) -> T): T {
+    fun <T> read(action: (artifactContent: ArtifactContent) -> T): T {
         return open().use(action)
     }
 }

@@ -137,9 +137,9 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
             override fun resolveOutputLibraryFiles(outputDirectory: File, resolutions: Iterable<ChooseVisibleSourceSets>): Set<File> {
                 return resolutions.flatMap { chooseVisibleSourceSets ->
                     if (chooseVisibleSourceSets.metadataProvider !is ArtifactMetadataProvider) return@flatMap emptyList()
-                    chooseVisibleSourceSets.metadataProvider.read { artifactHandle ->
+                    chooseVisibleSourceSets.metadataProvider.read { artifactContent ->
                         chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops
-                            .mapNotNull { visibleSourceSetName -> artifactHandle.findSourceSet(visibleSourceSetName) }
+                            .mapNotNull { visibleSourceSetName -> artifactContent.findSourceSet(visibleSourceSetName) }
                             .flatMap { sourceSet -> sourceSet.cinteropMetadataLibraries }
                             .map { cInteropMetadataLibrary -> outputDirectory.resolve(cInteropMetadataLibrary.relativeFile) }
                     }
@@ -211,9 +211,9 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
         is ProjectMetadataProvider -> Unit
 
         /* Extract/Materialize all cinterop files from composite jar file */
-        is ArtifactMetadataProvider -> chooseVisibleSourceSets.metadataProvider.read { artifactHandle ->
+        is ArtifactMetadataProvider -> chooseVisibleSourceSets.metadataProvider.read { artifactContent ->
             chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops
-                .mapNotNull { visibleSourceSetName -> artifactHandle.findSourceSet(visibleSourceSetName) }
+                .mapNotNull { visibleSourceSetName -> artifactContent.findSourceSet(visibleSourceSetName) }
                 .flatMap { sourceSet -> sourceSet.cinteropMetadataLibraries }
                 .forEach { cInteropMetadataLibrary -> cInteropMetadataLibrary.copyIntoDirectory(outputDirectory) }
         }
