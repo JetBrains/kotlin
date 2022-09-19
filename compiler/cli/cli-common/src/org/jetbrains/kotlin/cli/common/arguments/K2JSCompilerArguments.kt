@@ -17,16 +17,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     }
 
     @GradleDeprecatedOption(
-        "Only for legacy backend. For IR backend please use task.destinationDirectory and moduleName",
-        "1.10",
-        DeprecationLevel.WARNING
-    )
-    @GradleOption(
-        value = DefaultValues.StringNullDefault::class,
-        gradleInputType = GradleInputTypes.INTERNAL // handled by task 'outputFileProperty'
-    )
-    @GradleDeprecatedOption(
-        message = "Use task 'outputFileProperty' to specify location",
+        message = "Only for legacy backend. For IR backend please use task.destinationDirectory and moduleName",
         level = DeprecationLevel.WARNING,
         removeAfter = "1.9.0"
     )

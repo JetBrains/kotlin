@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
@@ -35,60 +34,19 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
 
             configureAdditionalFreeCompilerArguments(task, compilation)
 
-            @Suppress("DEPRECATION")
-            task.compilerOptions.outputFile.convention(
-                task.defaultDestinationDirectory.zip(task.enhancedFreeCompilerArgs) { destDir, freeArgs ->
-                    val baseName = if (compilation.isMainCompilationData()) {
-                        project.name
-                    } else {
-                        "${project.name}_${compilation.compilationPurpose}"
-                    }
-
-                    if (freeArgs.contains(PRODUCE_UNZIPPED_KLIB)) {
-                        destDir.asFile.absoluteFile.normalize().absolutePath
-                    } else {
-                        if (compilation is KotlinJsIrCompilation) {
-                            destDir.asFile.resolve("$baseName.$KLIB_TYPE").absoluteFile.normalize().absolutePath
-                        } else {
-                            val extensionName = if (compilation.platformType == KotlinPlatformType.wasm) ".mjs" else ".js"
-                            destDir.asFile.resolve("${compilation.ownModuleName}$extensionName").absolutePath
-                        }
-                    }
-                }
+            task.compilerOptions.outputName.convention(
+                compilation.ownModuleName
             )
 
             @Suppress("DEPRECATION")
             task.outputFileProperty.value(
-                task.compilerOptions.outputFile.map { File(it) }
-            )
-
-            task.destinationDirectory
-                .fileProvider(
-                    task.outputFileProperty.zip(task.enhancedFreeCompilerArgs) { outputFile, freeArgs ->
-                        if (freeArgs.contains(PRODUCE_UNZIPPED_KLIB)) {
-                            outputFile
-                        } else {
-                            outputFile.parentFile
-                        }
-                    }
-                )
-                .disallowChanges()
-
-            task.outputName.value(task.project.provider {
-                (task.kotlinOptions as KotlinJsOptionsImpl).outputName ?: compilation.ownModuleName
-            }).disallowChanges()
-
-            task.optionalOutputFile.fileProvider(
-                task.outputFileProperty.flatMap { outputFile ->
-                    task.enhancedFreeCompilerArgs.flatMap { freeArgs ->
-                        task.project.providers.provider {
-                            outputFile.takeUnless {
-                                freeArgs.contains(PRODUCE_UNZIPPED_KLIB)
-                            }
-                        }
+                task.destinationDirectory.flatMap { dir ->
+                    task.compilerOptions.outputName.map { name ->
+                        dir.file(name).asFile
                     }
                 }
-            ).disallowChanges()
+            )
+
             task.libraryCache.set(libraryCacheService).also { task.libraryCache.disallowChanges() }
         }
     }

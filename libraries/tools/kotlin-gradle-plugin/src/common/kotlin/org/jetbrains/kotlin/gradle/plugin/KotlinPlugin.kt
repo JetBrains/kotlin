@@ -52,6 +52,7 @@ internal const val COMPILER_CLASSPATH_CONFIGURATION_NAME = "kotlinCompilerClassp
 internal const val KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME = "kotlinKlibCommonizerClasspath"
 
 val KOTLIN_DSL_NAME = "kotlin"
+
 @Deprecated("Should be removed with 'platform.js' plugin removal")
 val KOTLIN_JS_DSL_NAME = "kotlin2js"
 val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"
@@ -156,11 +157,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     protected fun applyStandardTaskConfiguration(taskConfiguration: AbstractKotlinCompileConfig<*>) {
         taskConfiguration.configureTask {
             it.description = taskDescription
-            if (it is Kotlin2JsCompile) {
-                it.defaultDestinationDirectory.convention(defaultKotlinDestinationDir)
-            } else {
-                it.destinationDirectory.convention(defaultKotlinDestinationDir)
-            }
+            it.destinationDirectory.convention(defaultKotlinDestinationDir)
             it.libraries.from({ kotlinCompilation.compileDependencyFiles })
         }
     }
@@ -294,8 +291,11 @@ internal class KotlinJsIrSourceSetProcessor(
         compilation.binaries
             .withType(JsIrBinary::class.java)
             .all { binary ->
-                val configAction = KotlinJsIrLinkConfig(compilation)
-                applyStandardTaskConfiguration(configAction)
+                val configAction = KotlinJsIrLinkConfig(binary)
+                configAction.configureTask {
+                    it.description = taskDescription
+                    it.libraries.from({ kotlinCompilation.compileDependencyFiles })
+                }
                 configAction.configureTask { task ->
                     task.modeProperty.set(binary.mode)
                     task.dependsOn(kotlinTask)
@@ -887,6 +887,7 @@ internal fun Project.forEachVariant(action: (BaseVariant) -> Unit) {
                 androidExtension.featureVariants.all(action)
             }
         }
+
         is TestExtension -> androidExtension.applicationVariants.all(action)
     }
     if (androidExtension is TestedExtension) {

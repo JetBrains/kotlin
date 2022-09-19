@@ -908,6 +908,7 @@ abstract class KotlinCompile @Inject constructor(
                 !classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.exists() -> {
                     NotAvailableDueToMissingClasspathSnapshot(classpathSnapshotFiles)
                 }
+
                 inputChanges.getFileChanges(classpathSnapshotProperties.classpathSnapshot).none() -> NoChanges(classpathSnapshotFiles)
                 else -> ToBeComputedByIncrementalCompiler(classpathSnapshotFiles)
             }
@@ -976,16 +977,9 @@ abstract class Kotlin2JsCompile @Inject constructor(
         }
     }
 
-    // Workaround to be able to use default value and change it later based on external input
-    @get:Internal
-    internal abstract val defaultDestinationDirectory: DirectoryProperty
-
     @Deprecated("Use destinationDirectory and moduleName instead")
     @get:Internal
     abstract val outputFileProperty: Property<File>
-
-    @get:Input
-    abstract val outputName: Property<String>
 
     // Workaround to add additional compiler args based on the exising one
     // Currently there is a logic to add additional compiler arguments based on already existing one.
@@ -1012,13 +1006,15 @@ abstract class Kotlin2JsCompile @Inject constructor(
         (compilerOptions as CompilerJsOptionsDefault).fillDefaultValues(args)
         super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
-        if (kotlinOptions.isIrBackendEnabled()) {
-            if (kotlinOptions.outputFile != null) {
-                args.outputDir = (kotlinOptions as KotlinJsOptionsImpl).destDir
-                kotlinOptions.outputFile?.let { args.outputName = File(it).nameWithoutExtension }
+        if (isIrBackendEnabled()) {
+            val outputFilePath: String? = compilerOptions.outputFile.orNull
+            if (outputFilePath != null) {
+                val outputFile = File(outputFilePath)
+                args.outputDir = (if (outputFile.extension == "") outputFile else outputFile.parentFile).normalize().absolutePath
+                args.outputName = outputFile.nameWithoutExtension
             } else {
                 args.outputDir = destinationDirectory.get().asFile.normalize().absolutePath
-                args.outputName = outputName.get()
+                args.outputName = compilerOptions.outputName.get()
             }
         } else {
             args.outputFile = outputFileProperty.get().absoluteFile.normalize().absolutePath

@@ -11,7 +11,6 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
@@ -114,7 +113,6 @@ constructor(
 
     private val commonLazy by lazy {
         compilations.all { compilation ->
-            val npmProject = compilation.npmProject
             compilation.binaries
                 .withType(JsIrBinary::class.java)
                 .all { binary ->
@@ -122,15 +120,6 @@ constructor(
                     val tsValidationTask = registerTypeScriptCheckTask(binary)
 
                     binary.linkTask.configure {
-                        it.destinationDirectory.set(
-                            project.buildDir
-                                .resolve(COMPILE_SYNC)
-                                .resolve(if (compilation.platformType == KotlinPlatformType.wasm) "wasm" else "js")
-                                .resolve(compilation.name)
-                                .resolve(binary.name)
-                                .resolve(NpmProject.DIST_FOLDER)
-                        )
-                        (it.kotlinOptions as KotlinJsOptionsImpl).outputName = npmProject.name
 
                         it.finalizedBy(syncTask)
 

@@ -50,7 +50,10 @@ interface CompilerJsOptions : org.jetbrains.kotlin.gradle.dsl.CompilerCommonOpti
      */
     @Deprecated(message = "Use task 'outputFileProperty' to specify location", level = DeprecationLevel.WARNING)
     @get:org.gradle.api.tasks.Internal
-    val outputFile: org.gradle.api.provider.Property<kotlin.String>
+    val outputFile: org.gradle.api.provider.Property<kotlin.String?>
+
+    @get:org.gradle.api.tasks.Input
+    val outputName: org.gradle.api.provider.Property<kotlin.String>
 
     /**
      * Generate source map

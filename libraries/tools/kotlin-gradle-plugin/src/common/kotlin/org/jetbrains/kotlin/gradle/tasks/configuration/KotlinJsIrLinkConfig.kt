@@ -5,18 +5,20 @@
 
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
-import java.io.File
 import org.gradle.api.InvalidUserDataException
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 
 internal open class KotlinJsIrLinkConfig(
-    compilation: KotlinJsIrCompilation
-) : BaseKotlin2JsCompileConfig<KotlinJsIrLink>(compilation) {
+    private val binary: JsIrBinary
+) : BaseKotlin2JsCompileConfig<KotlinJsIrLink>(binary.compilation) {
+
+    private val compilation
+        get() = binary.compilation
 
     init {
         configureTask { task ->
@@ -33,6 +35,15 @@ internal open class KotlinJsIrLinkConfig(
                 }
             ).disallowChanges()
             task.compilation = compilation
+            task.destinationDirectory.convention(
+                project.layout.buildDirectory
+                    .dir(COMPILE_SYNC)
+                    .map { it.dir(if (compilation.platformType == KotlinPlatformType.wasm) "wasm" else "js") }
+                    .map { it.dir(compilation.name) }
+                    .map { it.dir(binary.name) }
+                    .map { it.dir(NpmProject.DIST_FOLDER) }
+            )
+            task.compilerOptions.outputName.convention(project.provider { compilation.npmProject.name })
         }
     }
 

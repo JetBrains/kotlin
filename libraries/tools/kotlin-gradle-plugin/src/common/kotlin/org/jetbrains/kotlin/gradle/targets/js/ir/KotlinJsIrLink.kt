@@ -15,8 +15,8 @@ import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
+import org.jetbrains.kotlin.gradle.dsl.CompilerJsOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
@@ -37,8 +37,7 @@ import javax.inject.Inject
 @CacheableTask
 abstract class KotlinJsIrLink @Inject constructor(
     objectFactory: ObjectFactory,
-    workerExecutor: WorkerExecutor,
-    private val projectLayout: ProjectLayout
+    workerExecutor: WorkerExecutor
 ) : Kotlin2JsCompile(
     objectFactory.newInstance(CompilerJsOptionsDefault::class.java),
     objectFactory,
@@ -60,11 +59,6 @@ abstract class KotlinJsIrLink @Inject constructor(
     @Transient
     @get:Internal
     internal lateinit var compilation: KotlinCompilationData<*>
-
-    @get:Internal
-    val platformType by project.provider {
-        compilation.platformType
-    }
 
     @Transient
     @get:Internal
@@ -152,53 +146,4 @@ abstract class KotlinJsIrLink @Inject constructor(
             .toTypedArray()
             .filterNot { it.isEmpty() }
     }
-
-    override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        when (mode) {
-            PRODUCTION -> {
-                kotlinOptions.configureOptions(ENABLE_DCE, GENERATE_D_TS, MINIMIZED_MEMBER_NAMES)
-            }
-
-            DEVELOPMENT -> {
-                kotlinOptions.configureOptions(GENERATE_D_TS)
-            }
-        }
-        val alreadyDefinedOutputMode = kotlinOptions.freeCompilerArgs
-            .any { it.startsWith(PER_MODULE) }
-        if (!alreadyDefinedOutputMode) {
-            kotlinOptions.freeCompilerArgs += outputGranularity.toCompilerArgument()
-        }
-        super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
-    }
-
-    private fun KotlinJsOptions.configureOptions(vararg additionalCompilerArgs: String) {
-        freeCompilerArgs += (additionalCompilerArgs.toList() + PRODUCE_JS + "$ENTRY_IR_MODULE=${entryModule.get().asFile.canonicalPath}")
-            .mapNotNull { arg ->
-                if (kotlinOptions.freeCompilerArgs
-                        .any { it.startsWith(arg) }
-                ) null else arg
-            }
-
-        if (platformType == KotlinPlatformType.wasm) {
-            freeCompilerArgs += WASM_BACKEND
-        }
-    }
-
-    @get:Input
-    override val filteredArgumentsMap: Map<String, String>
-        get() {
-            val superFiltered = super.filteredArgumentsMap
-            return superFiltered.mapValues { (key, value) ->
-                if (key != K2JSCompilerArguments::freeArgs.name) {
-                    value
-                } else {
-                    value
-                        .removePrefix("[")
-                        .removeSuffix("]")
-                        .split(", ")
-                        .filter { !it.contains(ENTRY_IR_MODULE) }
-                        .joinToString()
-                }
-            }
-        }
 }
