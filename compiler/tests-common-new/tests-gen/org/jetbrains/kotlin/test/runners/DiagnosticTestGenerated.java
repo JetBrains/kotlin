@@ -23041,6 +23041,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("InternalPotentialOverride.kt")
+            public void testInternalPotentialOverride() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/InternalPotentialOverride.kt");
+            }
+
+            @Test
             @TestMetadata("InvisiblePotentialOverride.kt")
             public void testInvisiblePotentialOverride() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/override/InvisiblePotentialOverride.kt");
