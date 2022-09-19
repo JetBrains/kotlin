@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConversionScope
@@ -88,7 +87,6 @@ class FakeOverrideGenerator(
         return result
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     fun generateFakeOverridesForName(
         irClass: IrClass,
         name: Name,
@@ -205,7 +203,7 @@ class FakeOverrideGenerator(
         // But they are treated differently in IR (real declarations have already been declared before) and such methods are present among realDeclarationSymbols
         if (originalSymbol in realDeclarationSymbols) return
 
-        if (originalDeclaration.visibility == Visibilities.Private) return
+        if (!session.visibilityChecker.isVisibleForOverriding(session, klass.moduleData, klass.symbol, originalDeclaration)) return
 
         val origin = IrDeclarationOrigin.FAKE_OVERRIDE
         val baseSymbol = originalSymbol.unwrapSubstitutionAndIntersectionOverrides() as S
