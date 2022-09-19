@@ -41,7 +41,7 @@ sourceSets["main"].withConvention(KotlinSourceSet::class) {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.freeCompilerArgs = listOf("-Xskip-prerelease-check")
+    kotlinOptions.freeCompilerArgs += listOf("-Xskip-prerelease-check")
 }
 
 tasks.jar {

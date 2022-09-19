@@ -10,7 +10,7 @@ apply plugin: 'kotlin'
 
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xskip-metadata-version-check']
+        freeCompilerArgs += ['-Xskip-metadata-version-check']
     }
 }
 

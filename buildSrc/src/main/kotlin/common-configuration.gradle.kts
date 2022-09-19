@@ -154,8 +154,21 @@ fun Project.configureKotlinCompilationOptions() {
             ":wasm:wasm.ir",
             // Uses multiplatform
             ":kotlin-stdlib-jvm-minimal-for-test",
+            ":kotlin-native:endorsedLibraries:kotlinx.cli",
+            ":kotlin-native:klib",
             // Requires serialization plugin
             ":js:js.tests",
+            // ISE "Cannot serialize error type: ERROR CLASS: Cannot calculate return type (local class/object?)"
+            ":kotlin-native-shared",
+            // Warnings about deprecated usages of companion objects in `::class`
+            ":kotlin-native:Interop:Runtime",
+            // Some warnings which are not printed out for some reason
+            ":kotlin-native:Interop:Indexer",
+            ":kotlin-native:Interop:Skia",
+            // ISE "Fake override should have at least one overridden descriptor",
+            ":kotlin-native:Interop:StubGenerator",
+            // Overload resolution ambiguity between candidates
+            ":kotlin-native:backend.native",
         )
 
         // TODO: fix remaining warnings and remove this property.
