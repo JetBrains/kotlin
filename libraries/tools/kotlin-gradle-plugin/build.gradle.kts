@@ -91,8 +91,10 @@ dependencies {
 
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         val functionalTestImplementation by configurations.getting
+        val functionalTestCompileOnly by configurations.getting
         functionalTestImplementation("com.android.tools.build:gradle:7.2.1")
         functionalTestImplementation("com.android.tools.build:gradle-api:7.2.1")
+        functionalTestCompileOnly("com.android.tools:common:30.2.1")
         functionalTestImplementation(gradleKotlinDsl())
         functionalTestImplementation(project(":kotlin-gradle-plugin-kpm-android"))
         functionalTestImplementation(project(":kotlin-tooling-metadata"))
