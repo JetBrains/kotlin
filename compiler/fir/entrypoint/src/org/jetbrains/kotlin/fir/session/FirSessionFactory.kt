@@ -28,8 +28,7 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchSco
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
-import org.jetbrains.kotlin.ir.backend.js.toResolverLogger
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.backend.js.resolverLogger
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
@@ -278,7 +277,7 @@ object FirSessionFactory : FirAbstractSessionFactory() {
         ).also { it.bindSession(this) }
 
         val repositories = configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList()
-        val logger = configuration[IrMessageLogger.IR_MESSAGE_LOGGER].toResolverLogger()
+        val logger = configuration.resolverLogger
         val klibProviders = jsResolveLibraries(libraries, repositories, logger).getFullResolvedList().map {
             KlibBasedSymbolProvider(this, moduleDataProvider, kotlinScopeProvider, it)
         }
