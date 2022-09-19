@@ -969,6 +969,11 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         buildAllModules().assertSuccessful()
     }
 
+    fun testKotlinConventions() {
+        initProject(JVM_FULL_RUNTIME)
+        buildAllModules().assertSuccessful()
+    }
+
     private fun BuildResult.checkErrors() {
         val actualErrors = getMessages(BuildMessage.Kind.ERROR)
                 .map { it as CompilerMessage }

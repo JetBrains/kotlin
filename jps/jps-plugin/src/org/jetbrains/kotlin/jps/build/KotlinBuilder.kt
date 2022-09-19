@@ -356,6 +356,10 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return NOTHING_DONE
         }
 
+        if (representativeTarget.targetId.name == "buildSrc") {
+            return NOTHING_DONE
+        }
+
         val kotlinContext = context.kotlin
         val kotlinChunk = chunk.toKotlinChunk(context)!!
 
