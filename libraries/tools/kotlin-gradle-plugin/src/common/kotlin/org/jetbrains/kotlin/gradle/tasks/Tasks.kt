@@ -1011,10 +1011,10 @@ abstract class Kotlin2JsCompile @Inject constructor(
             if (outputFilePath != null) {
                 val outputFile = File(outputFilePath)
                 args.outputDir = (if (outputFile.extension == "") outputFile else outputFile.parentFile).normalize().absolutePath
-                args.outputName = outputFile.nameWithoutExtension
+                args.moduleName = outputFile.nameWithoutExtension
             } else {
                 args.outputDir = destinationDirectory.get().asFile.normalize().absolutePath
-                args.outputName = compilerOptions.outputName.get()
+                args.moduleName = compilerOptions.moduleName.get()
             }
         } else {
             args.outputFile = outputFileProperty.get().absoluteFile.normalize().absolutePath

@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
-import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import java.io.File
 
 abstract class AbstractIncrementalJsKlibCompilerRunnerTest : AbstractIncrementalJsCompilerRunnerTest() {
@@ -10,7 +9,7 @@ abstract class AbstractIncrementalJsKlibCompilerRunnerTest : AbstractIncremental
         K2JSCompilerArguments().apply {
             libraries = "build/js-ir-runtime/full-runtime.klib"
             outputDir = destinationDir.path
-            outputName = testDir.name
+            moduleName = testDir.name
             outputFile = null
             sourceMap = false
             irProduceKlibDir = false

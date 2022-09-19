@@ -21,11 +21,14 @@ internal abstract class CompilerJsOptionsDefault @javax.inject.Inject constructo
     override val moduleKind: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.JsModuleKind> =
         objectFactory.property(org.jetbrains.kotlin.gradle.dsl.JsModuleKind::class.java).convention(org.jetbrains.kotlin.gradle.dsl.JsModuleKind.MODULE_PLAIN)
 
+    override val moduleName: org.gradle.api.provider.Property<kotlin.String> =
+        objectFactory.property(kotlin.String::class.java)
+
     override val noStdlib: org.gradle.api.provider.Property<kotlin.Boolean> =
         objectFactory.property(kotlin.Boolean::class.java).convention(true)
 
-    @Deprecated(message = "Use task 'outputFileProperty' to specify location", level = DeprecationLevel.WARNING)
-    override val outputFile: org.gradle.api.provider.Property<kotlin.String?> =
+    @Deprecated(message = "Only for legacy backend. For IR backend please use task.destinationDirectory and moduleName", level = DeprecationLevel.WARNING)
+    override val outputFile: org.gradle.api.provider.Property<kotlin.String> =
         objectFactory.property(kotlin.String::class.java)
 
     override val sourceMap: org.gradle.api.provider.Property<kotlin.Boolean> =
@@ -49,6 +52,7 @@ internal abstract class CompilerJsOptionsDefault @javax.inject.Inject constructo
         args.main = main.get().mode
         args.metaInfo = metaInfo.get()
         args.moduleKind = moduleKind.get().kind
+        args.moduleName = moduleName.orNull
         args.noStdlib = noStdlib.get()
         args.outputFile = outputFile.orNull
         args.sourceMap = sourceMap.get()
@@ -64,6 +68,7 @@ internal abstract class CompilerJsOptionsDefault @javax.inject.Inject constructo
         args.main = org.jetbrains.kotlin.gradle.dsl.JsMainFunctionExecutionMode.CALL.mode
         args.metaInfo = true
         args.moduleKind = org.jetbrains.kotlin.gradle.dsl.JsModuleKind.MODULE_PLAIN.kind
+        args.moduleName = null
         args.noStdlib = true
         args.outputFile = null
         args.sourceMap = false

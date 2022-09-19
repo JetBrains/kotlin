@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Task
-import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
@@ -207,7 +206,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 ) { task ->
                     val entryFileProvider = binary.linkSyncTask.zip(binary.linkTask) { sync, link ->
                         sync.destinationDir
-                            .resolve(link.compilerOptions.outputName.get() + ".js")
+                            .resolve(link.compilerOptions.moduleName.get() + ".js")
                     }
 
                     task.description = "build webpack ${mode.name.toLowerCase()} bundle"

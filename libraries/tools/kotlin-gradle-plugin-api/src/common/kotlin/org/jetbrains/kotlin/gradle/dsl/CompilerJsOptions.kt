@@ -38,6 +38,14 @@ interface CompilerJsOptions : org.jetbrains.kotlin.gradle.dsl.CompilerCommonOpti
     val moduleKind: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.JsModuleKind>
 
     /**
+     * Base name of generated files
+     * Default value: null
+     */
+    @get:org.gradle.api.tasks.Optional
+    @get:org.gradle.api.tasks.Input
+    val moduleName: org.gradle.api.provider.Property<kotlin.String>
+
+    /**
      * Don't automatically include the default Kotlin/JS stdlib into compilation dependencies
      * Default value: true
      */
@@ -48,12 +56,9 @@ interface CompilerJsOptions : org.jetbrains.kotlin.gradle.dsl.CompilerCommonOpti
      * Destination *.js file for the compilation result
      * Default value: null
      */
-    @Deprecated(message = "Use task 'outputFileProperty' to specify location", level = DeprecationLevel.WARNING)
+    @Deprecated(message = "Only for legacy backend. For IR backend please use task.destinationDirectory and moduleName", level = DeprecationLevel.WARNING)
     @get:org.gradle.api.tasks.Internal
-    val outputFile: org.gradle.api.provider.Property<kotlin.String?>
-
-    @get:org.gradle.api.tasks.Input
-    val outputName: org.gradle.api.provider.Property<kotlin.String>
+    val outputFile: org.gradle.api.provider.Property<kotlin.String>
 
     /**
      * Generate source map

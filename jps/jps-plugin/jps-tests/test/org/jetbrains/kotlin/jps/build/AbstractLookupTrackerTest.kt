@@ -107,7 +107,7 @@ abstract class AbstractJsKlibLookupTrackerTest : AbstractJsLookupTrackerTest() {
         args.irProduceKlibDir = true
         args.irOnly = true
         args.outputDir = outDir.normalize().absolutePath
-        args.outputName = "out"
+        args.moduleName = "out"
     }
 }
 

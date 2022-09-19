@@ -54,7 +54,7 @@ abstract class AbstractJsKlibBinaryCompatibilityTest : AbstractKlibBinaryCompati
             freeArgs = createFiles(module.versionFiles(version))
             libraries = module.dependenciesToLibrariesArg(version = version)
             outputDir = workingDir.normalize().absolutePath
-            outputName = module.name(version)
+            moduleName = module.name(version)
             irProduceKlibFile = true
             irOnly = true
             irModuleName = module.name
@@ -69,7 +69,7 @@ abstract class AbstractJsKlibBinaryCompatibilityTest : AbstractKlibBinaryCompati
             freeArgs = createFiles(module.files) + runnerFunctionFile()
             libraries = module.dependenciesToLibrariesArg(version = 2)
             outputDir = workingDir.normalize().absolutePath
-            outputName = module.name
+            moduleName = module.name
             irProduceJs = true
             irOnly = true
             irModuleName = module.name

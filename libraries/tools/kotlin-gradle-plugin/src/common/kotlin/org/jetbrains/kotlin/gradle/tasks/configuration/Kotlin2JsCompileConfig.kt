@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_UNZIPPED_KLIB
 import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_ZIPPED_KLIB
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
-import java.io.File
 
 internal typealias Kotlin2JsCompileConfig = BaseKotlin2JsCompileConfig<Kotlin2JsCompile>
 
@@ -34,14 +32,14 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
 
             configureAdditionalFreeCompilerArguments(task, compilation)
 
-            task.compilerOptions.outputName.convention(
+            task.compilerOptions.moduleName.convention(
                 compilation.ownModuleName
             )
 
             @Suppress("DEPRECATION")
             task.outputFileProperty.value(
                 task.destinationDirectory.flatMap { dir ->
-                    task.compilerOptions.outputName.map { name ->
+                    task.compilerOptions.moduleName.map { name ->
                         dir.file(name).asFile
                     }
                 }
@@ -84,7 +82,7 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
             } else {
                 "${project.name}_${compilation.compilationPurpose}"
             }
-            add("$MODULE_NAME=${project.klibModuleName(baseName)}")
+            add("$KLIB_MODULE_NAME=${project.klibModuleName(baseName)}")
         }
     }
 }

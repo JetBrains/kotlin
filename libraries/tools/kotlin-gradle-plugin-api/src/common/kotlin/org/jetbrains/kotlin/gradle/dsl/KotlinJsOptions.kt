@@ -52,6 +52,14 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
         set(value) = options.moduleKind.set(value.moduleKindCompilerOption)
 
     /**
+     * Base name of generated files
+     * Default value: null
+     */
+    var moduleName: kotlin.String?
+        get() = options.moduleName.orNull
+        set(value) = options.moduleName.set(value)
+
+    /**
      * Don't automatically include the default Kotlin/JS stdlib into compilation dependencies
      * Default value: true
      */

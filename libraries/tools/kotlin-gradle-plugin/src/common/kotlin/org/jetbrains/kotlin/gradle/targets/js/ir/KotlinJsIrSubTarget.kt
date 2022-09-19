@@ -136,7 +136,7 @@ abstract class KotlinJsIrSubTarget(
                             else -> error("Only JS and WASM supported for KotlinJsTest")
                         }
                         binary.linkTask
-                            .flatMap { linkTask -> linkTask.compilerOptions.outputName }
+                            .flatMap { linkTask -> linkTask.compilerOptions.moduleName }
                             .map { outputName ->
                                 copyTask.destinationDir
                                     .resolve(outputName + extension)

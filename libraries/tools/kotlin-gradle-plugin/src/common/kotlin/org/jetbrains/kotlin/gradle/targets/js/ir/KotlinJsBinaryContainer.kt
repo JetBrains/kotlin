@@ -43,7 +43,7 @@ constructor(
         val linkTask = binary.linkTask
 
         val compiledWasmFile = linkTask.map { link ->
-            link.destinationDirectory.asFile.get().resolve(link.compilerOptions.outputName.get() + ".wasm")
+            link.destinationDirectory.asFile.get().resolve(link.compilerOptions.moduleName.get() + ".wasm")
         }
 
         //TODO This is temporary solution that overrides compiled files that triggers recompile and reoptimize wasm every time (when binaryen is enabled)

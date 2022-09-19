@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli.js
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
@@ -48,14 +47,12 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.*
-import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import org.jetbrains.kotlin.utils.join
 import java.io.File
 import java.io.IOException
@@ -239,7 +236,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         if (!checkKotlinPackageUsage(environmentForJS.configuration, sourcesFiles)) return ExitCode.COMPILATION_ERROR
 
         val outputDirPath = arguments.outputDir
-        val outputName = arguments.outputName
+        val outputName = arguments.moduleName
         if (outputDirPath == null) {
             messageCollector.report(ERROR, "IR: Specify output dir via -Xir-output-dir", null)
             return ExitCode.COMPILATION_ERROR
