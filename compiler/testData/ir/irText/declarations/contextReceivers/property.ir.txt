@@ -45,5 +45,4 @@ FILE fqName:<root> fileName:/property.kt
             $this: CALL 'public abstract fun a (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
               $this: GET_VAR '<this>: <root>.A declared in <root>.<get-c>' type=<root>.A origin=null
             other: CALL 'public abstract fun b (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=null
-              $this: TYPE_OP type=<root>.B origin=IMPLICIT_CAST typeOperand=<root>.B
-                GET_VAR '<this>: <root>.B declared in <root>.<get-c>' type=<root>.A origin=null
+              $this: GET_VAR '<this>: <root>.B declared in <root>.<get-c>' type=<root>.B origin=null
