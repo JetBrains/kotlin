@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.lower.ExpectDeclarationRemover
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.serialization.ICData
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
@@ -57,7 +58,11 @@ fun generateIrForKlibSerialization(
     val messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
     val allowUnboundSymbols = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
     val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
-    val psi2Ir = Psi2IrTranslator(configuration.languageVersionSettings, Psi2IrConfiguration(errorPolicy.allowErrors, allowUnboundSymbols))
+    val psi2Ir = Psi2IrTranslator(
+        configuration.languageVersionSettings,
+        Psi2IrConfiguration(errorPolicy.allowErrors, allowUnboundSymbols),
+        messageLogger::checkNoUnboundSymbols
+    )
     val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
     val irBuiltIns = psi2IrContext.irBuiltIns
 
