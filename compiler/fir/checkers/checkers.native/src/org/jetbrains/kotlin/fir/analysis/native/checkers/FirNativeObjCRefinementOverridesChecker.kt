@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 object FirNativeObjCRefinementOverridesChecker : FirClassChecker() {
 
@@ -52,7 +50,7 @@ object FirNativeObjCRefinementOverridesChecker : FirClassChecker() {
         objCAnnotations: List<FirAnnotation>,
         swiftAnnotations: List<FirAnnotation>
     ) {
-        val overriddenMemberSymbols = firTypeScope.getDirectOverriddenSymbols(memberSymbol)
+        val overriddenMemberSymbols = firTypeScope.retrieveDirectOverriddenOf(memberSymbol)
         if (overriddenMemberSymbols.isEmpty()) return
         var isHiddenFromObjC = objCAnnotations.isNotEmpty()
         var isRefinedInSwift = swiftAnnotations.isNotEmpty()
@@ -71,27 +69,11 @@ object FirNativeObjCRefinementOverridesChecker : FirClassChecker() {
         }
     }
 
-    private fun FirTypeScope.getDirectOverriddenSymbols(memberSymbol: FirCallableSymbol<*>): List<FirCallableSymbol<*>> {
-        return when (memberSymbol) {
-            is FirNamedFunctionSymbol -> {
-                processFunctionsByName(memberSymbol.name) {}
-                getDirectOverriddenFunctions(memberSymbol)
-            }
-
-            is FirPropertySymbol -> {
-                processPropertiesByName(memberSymbol.name) {}
-                getDirectOverriddenProperties(memberSymbol)
-            }
-
-            else -> error("unexpected member kind $memberSymbol")
-        }
-    }
-
     private fun FirCallableSymbol<*>.inheritsRefinedAnnotations(session: FirSession, firTypeScope: FirTypeScope): Pair<Boolean, Boolean> {
         val (hasObjC, hasSwift) = hasRefinedAnnotations(session)
         if (hasObjC && hasSwift) return true to true
         // Note: `checkMember` requires all overridden symbols to be either refined or not refined.
-        val overriddenMemberSymbol = firTypeScope.getDirectOverriddenSymbols(this).firstOrNull()
+        val overriddenMemberSymbol = firTypeScope.retrieveDirectOverriddenOf(this).firstOrNull()
             ?: return hasObjC to hasSwift
         val (inheritsObjC, inheritsSwift) = overriddenMemberSymbol.inheritsRefinedAnnotations(session, firTypeScope)
         return (hasObjC || inheritsObjC) to (hasSwift || inheritsSwift)
