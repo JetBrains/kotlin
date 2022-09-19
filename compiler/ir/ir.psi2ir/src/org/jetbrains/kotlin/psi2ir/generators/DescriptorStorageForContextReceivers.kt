@@ -17,4 +17,8 @@ class DescriptorStorageForContextReceivers {
 
     fun getSyntheticField(receiverValue: ReceiverValue) =
         syntheticFieldStorage[receiverValue] ?: error("No synthetic field for receiver value $receiverValue")
+
+    fun addAllFrom(storage: DescriptorStorageForContextReceivers) {
+        syntheticFieldStorage.putAll(storage.syntheticFieldStorage)
+    }
 }
