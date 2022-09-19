@@ -946,6 +946,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             }
 
             @Test
+            @TestMetadata("dataClassWithJvmRecord.kt")
+            public void testDataClassWithJvmRecord() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/jvmRecord/dataClassWithJvmRecord.kt");
+            }
+
+            @Test
             @TestMetadata("javaRecordComponentAccess.kt")
             public void testJavaRecordComponentAccess() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/jvmRecord/javaRecordComponentAccess.kt");

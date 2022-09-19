@@ -61,7 +61,7 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
     }
 
     private inner class DesignatedFirApplySupertypesTransformer(classDesignation: FirDeclarationDesignation) :
-        FirApplySupertypesTransformer(supertypeComputationSession) {
+        FirApplySupertypesTransformer(supertypeComputationSession, session, scopeSession) {
 
         val declarationTransformer = LLFirDeclarationTransformer(classDesignation)
 
