@@ -17,7 +17,7 @@ public external fun eval(expr: kotlin.String): dynamic
 
 public external fun js(code: kotlin.String): dynamic
 
-/*∆*/ public fun jsTypeOf(value_hack: kotlin.Any?): kotlin.String
+/*∆*/ public external fun jsTypeOf(a: kotlin.Any?): kotlin.String
 
 public fun json(vararg pairs: kotlin.Pair<kotlin.String, kotlin.Any?>): kotlin.js.Json
 
