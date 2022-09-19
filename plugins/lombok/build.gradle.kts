@@ -52,9 +52,10 @@ sourceSets {
     }
 }
 
-projectTest(parallel = true) {
+projectTest(jUnitMode = JUnitMode.JUnit5) {
+    useJUnitPlatform()
     workingDir = rootDir
-    
+
     doFirst {
         project.configurations
             .testRuntimeClasspath.get()
