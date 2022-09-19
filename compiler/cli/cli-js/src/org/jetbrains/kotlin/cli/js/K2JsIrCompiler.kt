@@ -579,7 +579,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             .flatMap { (it.firProvider as FirProviderImpl).getAllFirFiles() }
 
         val repositories = configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList()
-        val logger = configuration[IrMessageLogger.IR_MESSAGE_LOGGER].toResolverLogger()
+        val logger = configuration.resolverLogger
         val resolvedLibraries = jsResolveLibraries(libraries + friendLibraries, repositories, logger).getFullResolvedList()
         var builtInsModule: KotlinBuiltIns? = null
         val dependencies = mutableListOf<ModuleDescriptorImpl>()
