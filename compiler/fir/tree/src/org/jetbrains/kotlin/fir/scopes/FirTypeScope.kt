@@ -254,6 +254,22 @@ fun FirTypeScope.getDirectOverriddenProperties(
     return overriddenProperties.toList()
 }
 
+fun FirTypeScope.retrieveDirectOverriddenOf(memberSymbol: FirCallableSymbol<*>): List<FirCallableSymbol<*>> {
+    return when (memberSymbol) {
+        is FirNamedFunctionSymbol -> {
+            processFunctionsByName(memberSymbol.name) {}
+            getDirectOverriddenFunctions(memberSymbol)
+        }
+
+        is FirPropertySymbol -> {
+            processPropertiesByName(memberSymbol.name) {}
+            getDirectOverriddenProperties(memberSymbol)
+        }
+
+        else -> throw IllegalArgumentException("unexpected member kind $memberSymbol")
+    }
+}
+
 private inline fun <reified D : FirCallableSymbol<*>> MutableCollection<D>.addOverridden(
     symbol: D,
     unwrapIntersectionAndSubstitutionOverride: Boolean
