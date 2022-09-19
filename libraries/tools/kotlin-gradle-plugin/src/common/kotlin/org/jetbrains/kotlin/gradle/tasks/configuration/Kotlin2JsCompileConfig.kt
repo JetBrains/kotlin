@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_UNZIPPED_KLIB
 import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_ZIPPED_KLIB
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
+import java.io.File
 
 internal typealias Kotlin2JsCompileConfig = BaseKotlin2JsCompileConfig<Kotlin2JsCompile>
 
@@ -39,8 +40,12 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
             @Suppress("DEPRECATION")
             task.outputFileProperty.value(
                 task.destinationDirectory.flatMap { dir ->
-                    task.compilerOptions.moduleName.map { name ->
-                        dir.file(name).asFile
+                    if (task.compilerOptions.outputFile.orNull != null) {
+                        task.compilerOptions.outputFile.map { File(it) }
+                    } else {
+                        task.compilerOptions.moduleName.map { name ->
+                            dir.file(name + compilation.platformType.fileExtension).asFile
+                        }
                     }
                 }
             )

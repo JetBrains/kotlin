@@ -56,6 +56,10 @@ abstract class KotlinJsIrLink @Inject constructor(
         return !entryModule.get().asFile.exists()
     }
 
+    val platformType by lazy {
+        compilation.platformType
+    }
+
     @Transient
     @get:Internal
     internal lateinit var compilation: KotlinCompilationData<*>
@@ -147,3 +151,16 @@ abstract class KotlinJsIrLink @Inject constructor(
             .filterNot { it.isEmpty() }
     }
 }
+
+val KotlinPlatformType.fileExtension
+    get() = when (this) {
+        KotlinPlatformType.wasm -> {
+            ".mjs"
+        }
+
+        KotlinPlatformType.js -> {
+            ".js"
+        }
+
+        else -> error("Only JS and WASM supported for KotlinJsTest")
+    }

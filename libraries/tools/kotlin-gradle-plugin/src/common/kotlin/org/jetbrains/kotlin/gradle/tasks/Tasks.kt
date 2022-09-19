@@ -1006,6 +1006,12 @@ abstract class Kotlin2JsCompile @Inject constructor(
         (compilerOptions as CompilerJsOptionsDefault).fillDefaultValues(args)
         super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
+        if (defaultsOnly) return
+
+        (compilerOptions as CompilerJsOptionsDefault).fillCompilerArguments(args)
+        if (!args.sourceMapPrefix.isNullOrEmpty()) {
+            args.sourceMapBaseDirs = sourceMapBaseDir.get().asFile.absolutePath
+        }
         if (isIrBackendEnabled()) {
             val outputFilePath: String? = compilerOptions.outputFile.orNull
             if (outputFilePath != null) {
@@ -1019,15 +1025,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
         } else {
             args.outputFile = outputFileProperty.get().absoluteFile.normalize().absolutePath
         }
-
-        if (defaultsOnly) return
-
-        (compilerOptions as CompilerJsOptionsDefault).fillCompilerArguments(args)
-        if (!args.sourceMapPrefix.isNullOrEmpty()) {
-            args.sourceMapBaseDirs = sourceMapBaseDir.get().asFile.absolutePath
-        }
-        // Rewriting default outputFile property back to outputFilePropertyValue
-        args.outputFile = outputFileProperty.get().absoluteFile.normalize().absolutePath
         // Overriding freeArgs from compilerOptions with enhanced one + additional one set on execution phase
         // containing additional arguments based on the js compilation configuration
         args.freeArgs = enhancedFreeCompilerArgs.get().union(additionalFreeCompilerArgs).toList()

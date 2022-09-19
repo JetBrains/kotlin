@@ -124,22 +124,11 @@ abstract class KotlinJsIrSubTarget(
             testJs.inputFileProperty.set(
                 project.layout.file(
                     binary.linkSyncTask.flatMap { copyTask ->
-                        val extension = when (compilation.platformType) {
-                            KotlinPlatformType.wasm -> {
-                                ".mjs"
-                            }
-
-                            KotlinPlatformType.js -> {
-                                ".js"
-                            }
-
-                            else -> error("Only JS and WASM supported for KotlinJsTest")
-                        }
                         binary.linkTask
                             .flatMap { linkTask -> linkTask.compilerOptions.moduleName }
                             .map { outputName ->
                                 copyTask.destinationDir
-                                    .resolve(outputName + extension)
+                                    .resolve(outputName + compilation.platformType.fileExtension)
                             }
                     }
                 )
