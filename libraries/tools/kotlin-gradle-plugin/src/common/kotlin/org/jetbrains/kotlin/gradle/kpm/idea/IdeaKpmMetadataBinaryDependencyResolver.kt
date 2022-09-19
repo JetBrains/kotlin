@@ -35,9 +35,9 @@ internal class IdeaKpmMetadataBinaryDependencyResolver(
             is ArtifactMetadataProvider -> resolution.metadataProvider
         }
 
-        return metadataProvider.read { artifactHandle ->
+        return metadataProvider.read { artifactContent ->
             resolution.allVisibleSourceSetNames.mapNotNull { visibleFragmentName ->
-                val sourceSet = artifactHandle.findSourceSet(visibleFragmentName) ?: return@mapNotNull null
+                val sourceSet = artifactContent.findSourceSet(visibleFragmentName) ?: return@mapNotNull null
                 val metadataLibrary = sourceSet.metadataLibrary ?: return@mapNotNull null
 
                 val libraryFile = fragment.project.kotlinTransformedMetadataLibraryDirectoryForIde

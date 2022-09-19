@@ -60,9 +60,9 @@ private fun transformMetadataLibrariesForIde(
     resolution: MetadataDependencyResolution.ChooseVisibleSourceSets,
     compositeMetadataArtifact: CompositeMetadataArtifact
 ): Map<String /* visibleSourceSetName */, Iterable<File>> {
-    return compositeMetadataArtifact.read { artifactHandle ->
+    return compositeMetadataArtifact.read { artifactContent ->
         resolution.visibleSourceSetNamesExcludingDependsOn.mapNotNull { visibleSourceSetName ->
-            val sourceSet = artifactHandle.findSourceSet(visibleSourceSetName) ?: return@mapNotNull null
+            val sourceSet = artifactContent.findSourceSet(visibleSourceSetName) ?: return@mapNotNull null
             val sourceSetMetadataLibrary = sourceSet.metadataLibrary ?: return@mapNotNull null
             val metadataLibraryOutputFile = baseOutputDirectory.resolve(sourceSetMetadataLibrary.relativeFile)
             metadataLibraryOutputFile.parentFile.mkdirs()
@@ -82,9 +82,9 @@ private fun transformMetadataLibrariesForBuild(
     materializeFiles: Boolean,
     compositeMetadataArtifact: CompositeMetadataArtifact
 ): Set<File> {
-    return compositeMetadataArtifact.read { artifactHandle ->
+    return compositeMetadataArtifact.read { artifactContent ->
         resolution.visibleSourceSetNamesExcludingDependsOn.mapNotNull { visibleSourceSetName ->
-            val sourceSet = artifactHandle.findSourceSet(visibleSourceSetName) ?: return@mapNotNull null
+            val sourceSet = artifactContent.findSourceSet(visibleSourceSetName) ?: return@mapNotNull null
             val metadataLibrary = sourceSet.metadataLibrary ?: return@mapNotNull null
             val metadataLibraryFile = outputDirectory.resolve(metadataLibrary.relativeFile)
             if (materializeFiles) {

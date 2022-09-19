@@ -42,9 +42,9 @@ class CompositeMetadataArtifactTest {
         )
 
 
-        metadataArtifact.read { artifactHandle ->
-            if (artifactHandle.sourceSets.size != 1) fail("Expected one SourceSet in metadataArtifact")
-            val sourceSet = artifactHandle.sourceSets.first()
+        metadataArtifact.read { artifactContent ->
+            if (artifactContent.sourceSets.size != 1) fail("Expected one SourceSet in metadataArtifact")
+            val sourceSet = artifactContent.sourceSets.first()
             assertEquals("testSourceSetName", sourceSet.sourceSetName)
             assertNull(sourceSet.metadataLibrary, "Expected no 'metadataLibrary' listed for SourceSet")
 
@@ -80,11 +80,11 @@ class CompositeMetadataArtifactTest {
             hostSpecificArtifactFilesBySourceSetName = emptyMap()
         )
 
-        metadataArtifact.read { artifactHandle ->
-            if (artifactHandle.sourceSets.size != 1)
-                fail("Expected exactly one SourceSet in ${artifactHandle.sourceSets.map { it.sourceSetName }}")
+        metadataArtifact.read { artifactContent ->
+            if (artifactContent.sourceSets.size != 1)
+                fail("Expected exactly one SourceSet in ${artifactContent.sourceSets.map { it.sourceSetName }}")
 
-            val sourceSet = artifactHandle.getSourceSet(testSourceSetName)
+            val sourceSet = artifactContent.getSourceSet(testSourceSetName)
             val metadataOutputDirectory = temporaryFolder.newFolder()
             val metadataFile = metadataOutputDirectory.resolve("testSourceSet.klib")
 
@@ -117,9 +117,9 @@ class CompositeMetadataArtifactTest {
             hostSpecificArtifactFilesBySourceSetName = emptyMap()
         )
 
-        metadataArtifact.read { artifactHandle ->
-            val sourceSet = artifactHandle.getSourceSet("testSourceSetName")
-            assertEquals(listOf(sourceSet), artifactHandle.sourceSets)
+        metadataArtifact.read { artifactContent ->
+            val sourceSet = artifactContent.getSourceSet("testSourceSetName")
+            assertEquals(listOf(sourceSet), artifactContent.sourceSets)
 
             assertEquals(emptyList(), sourceSet.cinteropMetadataLibraries, "Expected empty cinteropMetadataLibraries")
         }
@@ -160,11 +160,11 @@ class CompositeMetadataArtifactTest {
             hostSpecificArtifactFilesBySourceSetName = emptyMap()
         )
 
-        metadataArtifact.read { artifactHandle ->
+        metadataArtifact.read { artifactContent ->
             val metadataOutputDirectory = temporaryFolder.newFolder()
 
             /* Extract and assert sourceSetA */
-            artifactHandle.getSourceSet("sourceSetA").also { sourceSetA ->
+            artifactContent.getSourceSet("sourceSetA").also { sourceSetA ->
                 val sourceSetAMetadataFile = metadataOutputDirectory.resolve("sourceSetA.klib")
                 assertNotNull(sourceSetA.metadataLibrary).copyTo(sourceSetAMetadataFile)
                 assertTrue(sourceSetAMetadataFile.isFile, "Expected sourceSetAMetadataFile.isFile")
@@ -180,7 +180,7 @@ class CompositeMetadataArtifactTest {
             }
 
             /* Extract and assert sourceSetB */
-            artifactHandle.getSourceSet("sourceSetB").also { sourceSetB ->
+            artifactContent.getSourceSet("sourceSetB").also { sourceSetB ->
                 val sourceSetBMetadataFile = metadataOutputDirectory.resolve("sourceSetB.jar")
                 assertNotNull(sourceSetB.metadataLibrary).copyTo(sourceSetBMetadataFile)
                 assertTrue(sourceSetBMetadataFile.isFile, "Expected sourceSetBMetadataFile.isFile")
@@ -235,9 +235,9 @@ class CompositeMetadataArtifactTest {
             hostSpecificArtifactFilesBySourceSetName = emptyMap()
         )
 
-        metadataArtifact.read { artifactHandle ->
+        metadataArtifact.read { artifactContent ->
             /* Assertions on sourceSetA */
-            artifactHandle.getSourceSet("sourceSetA").also { sourceSetA ->
+            artifactContent.getSourceSet("sourceSetA").also { sourceSetA ->
                 val sourceSetAOutputDirectory = temporaryFolder.newFolder()
                 val sourceSetAInteropMetadataFiles = sourceSetA.cinteropMetadataLibraries.map { cinteropLibrary ->
                     sourceSetAOutputDirectory.resolve("${cinteropLibrary.cinteropLibraryName}.klib").also { file ->
@@ -270,7 +270,7 @@ class CompositeMetadataArtifactTest {
             }
 
             /* Assertions on sourceSetB */
-            artifactHandle.getSourceSet("sourceSetB").also { sourceSetB ->
+            artifactContent.getSourceSet("sourceSetB").also { sourceSetB ->
                 val sourceSetBOutputDirectory = temporaryFolder.newFolder()
                 val sourceSetBInteropMetadataFiles = sourceSetB.cinteropMetadataLibraries.map { cinteropLibrary ->
                     sourceSetBOutputDirectory.resolve("${cinteropLibrary.cinteropLibraryName}.klib").also { file ->
