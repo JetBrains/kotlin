@@ -18074,6 +18074,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("internalPotentialOverride.kt")
+        public void testInternalPotentialOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/internalPotentialOverride.kt");
+        }
+
+        @Test
         @TestMetadata("IrBuiltIns.kt")
         public void testIrBuiltIns() throws Exception {
             runTest("compiler/testData/codegen/box/fir/IrBuiltIns.kt");
