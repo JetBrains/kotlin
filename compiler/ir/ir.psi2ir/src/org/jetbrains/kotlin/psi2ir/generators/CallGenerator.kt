@@ -51,10 +51,13 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         return when (descriptor) {
             is PropertyDescriptor ->
                 generatePropertyGetterCall(descriptor, startOffset, endOffset, call)
+
             is ClassConstructorDescriptor ->
                 generateConstructorCall(descriptor, startOffset, endOffset, origin, call)
+
             is FunctionDescriptor ->
                 generateFunctionCall(descriptor, startOffset, endOffset, origin, call)
+
             else ->
                 call.callReceiver.call { _, _, _ ->
                     generateValueReference(startOffset, endOffset, descriptor, call.original, origin)
@@ -102,12 +105,15 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         return when (descriptor) {
             is FakeCallableDescriptorForObject ->
                 generateValueReference(startOffset, endOffset, descriptor.getReferencedDescriptor(), resolvedCall, origin, smartCastIrType)
+
             is TypeAliasDescriptor ->
                 generateValueReference(startOffset, endOffset, descriptor.classDescriptor!!, null, origin, smartCastIrType)
+
             is ClassDescriptor -> {
                 val classValueType = descriptor.classValueType!!
                 statementGenerator.generateSingletonReference(descriptor, startOffset, endOffset, classValueType)
             }
+
             is PropertyDescriptor -> {
                 val irCall = generateCall(startOffset, endOffset, statementGenerator.pregenerateCall(resolvedCall!!))
                 if (smartCastIrType != null)
@@ -115,14 +121,17 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                 else
                     irCall
             }
+
             is SyntheticFieldDescriptor -> {
                 val receiver = statementGenerator.generateBackingFieldReceiver(startOffset, endOffset, resolvedCall, descriptor)
                 val field = statementGenerator.context.symbolTable.referenceField(descriptor.propertyDescriptor)
                 val fieldType = descriptor.propertyDescriptor.type.toIrType()
                 IrGetFieldImpl(startOffset, endOffset, field, fieldType, receiver?.load())
             }
+
             is VariableDescriptor ->
                 generateGetVariable(startOffset, endOffset, descriptor, getTypeArguments(resolvedCall), origin, smartCastIrType)
+
             else ->
                 TODO("Unexpected callable descriptor: $descriptor ${descriptor::class.java.simpleName}")
         }
@@ -388,8 +397,10 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         return when {
             call.original.isImplicitInvoke() ->
                 makeDynamicOperatorExpressionWithArguments(IrDynamicOperator.INVOKE, dynamicReceiver)
+
             call.original.isImplicitGet() ->
                 makeDynamicOperatorExpressionWithArguments(IrDynamicOperator.ARRAY_ACCESS, dynamicReceiver)
+
             call.original.isImplicitSet() ->
                 makeDynamicOperatorExpression(IrDynamicOperator.EQ).apply {
                     val args = call.getValueArgumentsInParameterOrder()
@@ -404,6 +415,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                         }
                     right = arg1
                 }
+
             else ->
                 makeDynamicOperatorExpressionWithArguments(
                     IrDynamicOperator.INVOKE,
