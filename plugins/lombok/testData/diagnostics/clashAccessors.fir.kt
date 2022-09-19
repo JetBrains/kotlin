@@ -82,11 +82,11 @@ class KotlinChildClass : ClashTest() {
 fun test() {
     val obj = ClashTest()
 
-    obj.getAge()
+    obj.<!OVERLOAD_RESOLUTION_AMBIGUITY!>getAge<!>()
     //thats shouldn't work because lombok doesn't generate clashing method
-    obj.setAge(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>41<!>)
-    <!VAL_REASSIGNMENT!>obj.age<!> = 12
-    val age = obj.age
+    obj.setAge(41)
+    obj.<!OVERLOAD_RESOLUTION_AMBIGUITY!>age<!> = 12
+    val age = obj.<!OVERLOAD_RESOLUTION_AMBIGUITY!>age<!>
 
 
     obj.getName()
