@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: base/Base.java
 package base;
 
