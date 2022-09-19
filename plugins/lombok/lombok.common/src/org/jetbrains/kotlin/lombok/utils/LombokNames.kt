@@ -22,7 +22,7 @@ object LombokNames {
     val BUILDER = FqName("lombok.Builder")
     val SINGULAR = FqName("lombok.Singular")
 
-    val TABLE = FqName("com.google.common.collect.Table")
+    val TABLE = FqName("Table".guavaPackage())
 
     val ACCESSORS_ID = ClassId.topLevel(ACCESSORS)
     val GETTER_ID = ClassId.topLevel(GETTER)
@@ -86,23 +86,35 @@ object LombokNames {
         "kotlin.collections.MutableMap",
     )
 
-    val SUPPORTED_GUAVA_COLLECTIONS = setOf(
-        "com.google.common.collect.ImmutableCollection",
-        "com.google.common.collect.ImmutableList",
-        "com.google.common.collect.ImmutableSet",
-        "com.google.common.collect.ImmutableSortedSet",
-    )
+    val SUPPORTED_GUAVA_COLLECTIONS = listOf(
+        "ImmutableCollection",
+        "ImmutableList",
+        "ImmutableSet",
+        "ImmutableSortedSet",
+    ).guavaPackage()
 
-    private val SUPPORTED_GUAVA_MAPS = setOf(
-        "com.google.common.collect.ImmutableMap",
-        "com.google.common.collect.ImmutableBiMap",
-        "com.google.common.collect.ImmutableSortedMap",
-    )
+    private val SUPPORTED_GUAVA_MAPS = listOf(
+        "ImmutableMap",
+        "ImmutableBiMap",
+        "ImmutableSortedMap",
+    ).guavaPackage()
+
     val SUPPORTED_COLLECTIONS = SUPPORTED_JAVA_COLLECTIONS + SUPPORTED_KOTLIN_COLLECTIONS + SUPPORTED_GUAVA_COLLECTIONS
 
     val SUPPORTED_MAPS = SUPPORTED_JAVA_MAPS + SUPPORTED_KOTLIN_MAPS + SUPPORTED_GUAVA_MAPS
 
-    val SUPPORTED_TABLES = setOf(
-        "com.google.common.collect.ImmutableTable",
-    )
+    val SUPPORTED_TABLES = listOf(
+        "ImmutableTable",
+    ).guavaPackage()
+
+    // Such ugly function is needed because shade plugin shades any name starting with com.google
+    //   which causes shading even from string literals
+    private fun Collection<String>.guavaPackage(): Set<String> {
+        return mapTo(mutableSetOf()) { it.guavaPackage() }
+    }
+
+    private fun String.guavaPackage(): String {
+        val prefix = listOf("com", "google", "common", "collect").joinToString(".")
+        return "$prefix.$this"
+    }
 }
