@@ -95,8 +95,9 @@ fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffse
             is ExtensionReceiver ->
                 receiver.declarationDescriptor.extensionReceiverParameter!!.type.toIrType()
             is ContextReceiver -> {
-                val receiverParameter = receiver.declarationDescriptor.contextReceiverParameters.firstOrNull()
-                    ?: error("Unknown receiver: $receiver")
+                val receiverParameter = receiver.declarationDescriptor.contextReceiverParameters.find {
+                    it.value == receiver
+                } ?: error("Unknown receiver: $receiver")
                 receiverParameter.type.toIrType()
             }
             else ->
