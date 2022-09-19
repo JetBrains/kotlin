@@ -794,6 +794,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             }
 
             @Test
+            @TestMetadata("contextReceiverMethod.kt")
+            public void testContextReceiverMethod() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/contextReceiverMethod.kt");
+            }
+
+            @Test
             @TestMetadata("contextualFunctionConversion.kt")
             public void testContextualFunctionConversion() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/contextReceivers/contextualFunctionConversion.kt");
