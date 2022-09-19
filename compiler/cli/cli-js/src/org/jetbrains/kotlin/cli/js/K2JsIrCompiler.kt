@@ -243,7 +243,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         if (outputName == null) {
-            messageCollector.report(ERROR, "IR: Specify output name via -Xir-output-name", null)
+            messageCollector.report(ERROR, "IR: Specify output name via -Xir-module-name", null)
             return ExitCode.COMPILATION_ERROR
         }
 

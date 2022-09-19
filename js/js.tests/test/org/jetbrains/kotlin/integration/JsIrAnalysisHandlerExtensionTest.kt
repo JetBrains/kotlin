@@ -70,7 +70,7 @@ class JsIrAnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
             "-Xplugin=$plugin",
             "-libraries", libs,
             "-Xir-output-dir", outputFile.parentFile.path,
-            "-Xir-output-name", outputFile.nameWithoutExtension,
+            "-Xir-module-name", outputFile.nameWithoutExtension,
             mainKt.absolutePath
         )
         CompilerTestUtil.executeCompilerAssertSuccessful(compiler, args + extras)
