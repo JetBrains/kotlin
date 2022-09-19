@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.util.irMessageLogger
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
@@ -52,7 +53,6 @@ class JsKlibBackendFacade(
                 configuration[CommonConfigurationKeys.MODULE_NAME]!!,
                 configuration,
                 configuration.irMessageLogger,
-                inputArtifact.bindingContext,
                 inputArtifact.sourceFiles,
                 klibPath = outputFile,
                 JsEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices).keys.toList(),
