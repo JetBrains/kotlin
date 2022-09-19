@@ -63,10 +63,12 @@ object FirOverrideChecker : FirClassChecker() {
                 processFunctionsByName(memberSymbol.name) {}
                 getDirectOverriddenFunctions(memberSymbol)
             }
+
             is FirPropertySymbol -> {
                 processPropertiesByName(memberSymbol.name) {}
                 getDirectOverriddenProperties(memberSymbol)
             }
+
             else -> throw IllegalArgumentException("unexpected member kind $memberSymbol")
         }
     }
@@ -267,7 +269,22 @@ object FirOverrideChecker : FirClassChecker() {
 
             if (kind !is KtRealSourceElementKind && kind !is KtFakeSourceElementKind.PropertyFromParameter) return
 
-            val overridden = overriddenMemberSymbols.first().originalOrSelf()
+            val visibilityChecker = context.session.visibilityChecker
+            val file = context.findClosest<FirFile>() ?: return
+            val containingDeclarations = context.containingDeclarations + containingClass
+
+            @OptIn(SymbolInternals::class)
+            val overridden = overriddenMemberSymbols.firstOrNull {
+                it.lazyResolveToPhase(FirResolvePhase.STATUS)
+                visibilityChecker.isVisible(
+                    it.originalOrSelf().fir,
+                    context.session,
+                    file,
+                    containingDeclarations,
+                    null,
+                    skipCheckForContainingClassVisibility = true
+                )
+            }?.originalOrSelf() ?: return
             val originalContainingClassSymbol = overridden.containingClass()?.toSymbol(context.session) as? FirRegularClassSymbol ?: return
             reporter.reportOn(
                 member.source,
