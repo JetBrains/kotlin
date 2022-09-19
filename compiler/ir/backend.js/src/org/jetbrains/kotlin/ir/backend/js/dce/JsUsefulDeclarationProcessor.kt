@@ -5,22 +5,17 @@
 
 package org.jetbrains.kotlin.ir.backend.js.dce
 
+import org.jetbrains.kotlin.backend.common.lower.MethodsFromAnyGeneratorForLowerings.Companion.collectOverridenSymbols
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
-import org.jetbrains.kotlin.ir.backend.js.utils.associatedObject
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsName
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
-import org.jetbrains.kotlin.ir.backend.js.utils.invokeFunForLambda
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 
 internal class JsUsefulDeclarationProcessor(
@@ -33,6 +28,13 @@ internal class JsUsefulDeclarationProcessor(
     private val hashCodeMethod = getMethodOfAny("hashCode")
 
     override val bodyVisitor: BodyVisitorBase = object : BodyVisitorBase() {
+        override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration) {
+            if (expression.symbol != context.intrinsics.implementSymbol) {
+                // Just ignore implement to not include large chunk of code inside small applications if it's not needed
+                super.visitFunctionAccess(expression, data)
+            }
+        }
+
         override fun visitCall(expression: IrCall, data: IrDeclaration) {
             super.visitCall(expression, data)
             when (expression.symbol) {
@@ -113,20 +115,41 @@ internal class JsUsefulDeclarationProcessor(
 
     }
 
+    override fun processSuperTypes(irClass: IrClass) {
+        irClass.superTypes.forEach {
+            if (!it.isInterface()) {
+                (it.classifierOrNull as? IrClassSymbol)?.owner?.enqueue(irClass, "superTypes")
+            }
+        }
+    }
+
     override fun processClass(irClass: IrClass) {
         super.processClass(irClass)
 
         if (irClass.containsMetadata()) {
             when {
-                irClass.isInterface -> context.intrinsics.metadataInterfaceConstructorSymbol.owner.enqueue(irClass, "interface metadata")
                 irClass.isObject -> context.intrinsics.metadataObjectConstructorSymbol.owner.enqueue(irClass, "object metadata")
+                irClass.isInterface -> {
+                    context.intrinsics.implementSymbol.owner.enqueue(irClass, "interface metadata")
+                    context.intrinsics.metadataInterfaceConstructorSymbol.owner.enqueue(irClass, "interface metadata")
+                }
                 else -> context.intrinsics.metadataClassConstructorSymbol.owner.enqueue(irClass, "class metadata")
             }
+
+            context.intrinsics.setMetadataForSymbol.owner.enqueue(irClass, "metadata")
+        }
+    }
+
+    override fun processSimpleFunction(irFunction: IrSimpleFunction) {
+        super.processSimpleFunction(irFunction)
+
+        if (irFunction.isReal && irFunction.body != null) {
+            irFunction.parentClassOrNull?.takeIf { it.isInterface }?.enqueue(irFunction, "interface default method is used")
         }
     }
 
     private fun IrClass.containsMetadata(): Boolean =
-        !isExternal && !isExpect &&  !isBuiltInClass(this)
+        !isExternal && !isExpect && !isBuiltInClass(this)
 
     override fun processConstructedClassDeclaration(declaration: IrDeclaration) {
         if (declaration in result) return

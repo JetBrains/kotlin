@@ -526,7 +526,7 @@ private val privateMemberUsagesLoweringPhase = makeBodyLoweringPhase(
 private val propertyReferenceLoweringPhase = makeBodyLoweringPhase(
     ::PropertyReferenceLowering,
     name = "PropertyReferenceLowering",
-    description = "Transform property references"
+    description = "Transform property references",
 )
 
 private val interopCallableReferenceLoweringPhase = makeBodyLoweringPhase(
@@ -669,7 +669,7 @@ private val typeOperatorLoweringPhase = makeBodyLoweringPhase(
         bridgesConstructionPhase,
         removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
         singleAbstractMethodPhase, errorExpressionLoweringPhase,
-        interopCallableReferenceLoweringPhase
+        interopCallableReferenceLoweringPhase,
     )
 )
 
@@ -705,7 +705,6 @@ private val constLoweringPhase = makeBodyLoweringPhase(
     name = "ConstLowering",
     description = "Wrap Long and Char constants into constructor invocation"
 )
-
 private val inlineClassDeclarationLoweringPhase = makeDeclarationTransformerPhase(
     { InlineClassLowering(it).inlineClassDeclarationLowering },
     name = "InlineClassDeclarationLowering",
@@ -805,6 +804,7 @@ private val implicitlyExportedDeclarationsMarkingLowering = makeDeclarationTrans
     name = "ImplicitlyExportedDeclarationsMarkingLowering",
     description = "Add @JsImplicitExport annotation to declarations which are not exported but are used inside other exported declarations as a type"
 )
+
 
 private val cleanupLoweringPhase = makeBodyLoweringPhase(
     { CleanupLowering() },

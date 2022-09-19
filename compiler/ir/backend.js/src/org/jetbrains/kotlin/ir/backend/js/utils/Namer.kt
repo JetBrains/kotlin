@@ -32,7 +32,7 @@ object Namer {
     val JS_OBJECT_CREATE_FUNCTION = JsNameRef("create", JS_OBJECT)
 
     val METADATA = "\$metadata\$"
-    val METADATA_INTERFACE_ID = "interfaceId"
+    val INTERFACES_MASK = "\$imask\$"
 
     val KCALLABLE_GET_NAME = "<get-name>"
     val KCALLABLE_NAME = "callableName"

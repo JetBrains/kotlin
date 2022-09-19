@@ -4266,6 +4266,12 @@ public class FirJsTestGenerated extends AbstractFirJsTest {
             }
 
             @Test
+            @TestMetadata("complexIsInterface.kt")
+            public void testComplexIsInterface() throws Exception {
+                runTest("js/js.translator/testData/box/expression/typeCheck/complexIsInterface.kt");
+            }
+
+            @Test
             @TestMetadata("simpleAsClass.kt")
             public void testSimpleAsClass() throws Exception {
                 runTest("js/js.translator/testData/box/expression/typeCheck/simpleAsClass.kt");

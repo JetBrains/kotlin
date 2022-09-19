@@ -272,7 +272,7 @@ class Merger(
 
         DFS.dfs(
             classModelMap.keys,
-            { klass -> classModelMap[klass]?.superClasses ?: emptyList() },
+            { classModelMap[it]?.superClasses ?: emptyList() },
             declarationHandler
         )
     }
