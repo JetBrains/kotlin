@@ -19,6 +19,13 @@ package org.jetbrains.kotlin.psi.stubs.elements;
 import org.jetbrains.kotlin.psi.*;
 
 public interface KtStubElementTypes {
+    /**
+     * @deprecated use {@link KtFileElementType#INSTANCE}.
+     * Field is provided for the sake of binary compatibility with external usages. It will be deleted in the future.
+     */
+    @Deprecated
+    KtFileElementType FILE = KtFileElementType.INSTANCE;
+
     KtClassElementType CLASS = new KtClassElementType("CLASS");
     KtFunctionElementType FUNCTION = new KtFunctionElementType("FUN");
     KtPropertyElementType PROPERTY = new KtPropertyElementType("PROPERTY");
