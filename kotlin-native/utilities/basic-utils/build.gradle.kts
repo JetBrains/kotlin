@@ -15,7 +15,7 @@ plugins {
 
 tasks.named<KotlinCompile>("compileKotlin") {
     kotlinOptions {
-        freeCompilerArgs = listOf("-Xskip-metadata-version-check")
+        freeCompilerArgs += listOf("-Xskip-metadata-version-check")
     }
 }
 
