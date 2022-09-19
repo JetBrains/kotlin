@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.hasChild
 import org.jetbrains.kotlin.backend.jvm.ir.isReadOfCrossinline
+import org.jetbrains.kotlin.backend.jvm.mapping.mapType
 import org.jetbrains.kotlin.codegen.coroutines.COROUTINE_LABEL_FIELD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
@@ -177,7 +178,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
 
             val parametersFields = function.explicitParameters.map {
                 val field = if (it in usedParams) addField {
-                    val normalizedType = context.defaultTypeMapper.mapType(it.type).normalize()
+                    val normalizedType = context.defaultTypeMapper.mapType(it).normalize()
                     val index = varsCountByType[normalizedType]?.plus(1) ?: 0
                     varsCountByType[normalizedType] = index
                     // Rename `$this` to avoid being caught by inlineCodegenUtils.isCapturedFieldName()

@@ -52440,6 +52440,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("exposedInlineClass.kt")
+        public void testExposedInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/exposedInlineClass.kt");
+        }
+
+        @Test
         @TestMetadata("fakeOverrideCall.kt")
         public void testFakeOverrideCall() throws Exception {
             runTest("compiler/testData/codegen/box/valueClasses/fakeOverrideCall.kt");

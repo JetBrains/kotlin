@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.isExposedSingleFieldValueClass
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isValueClassType
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 
 /**
  * Replace inline classes by their underlying types.
@@ -65,7 +67,7 @@ object InlineClassAbi {
             assert(irFunction.constructedClass.isValue) {
                 "Should not mangle names of non-inline class constructors: ${irFunction.render()}"
             }
-            return Name.identifier("constructor-impl")
+            return Name.identifier("constructor${JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS}")
         }
         if (irFunction.isAlreadyMangledMfvcFunction(context)) {
             return irFunction.name
@@ -87,7 +89,7 @@ object InlineClassAbi {
                 irFunction.name.asString()
         }
 
-        return Name.identifier("$base-${suffix ?: "impl"}")
+        return Name.identifier("$base${if (suffix == null) JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS else "-$suffix"}")
     }
 
     private fun IrFunction.isAlreadyMangledMfvcFunction(context: JvmBackendContext) =
@@ -144,16 +146,21 @@ fun IrType.getRequiresMangling(includeInline: Boolean = true, includeMFVC: Boole
 val IrFunction.fullValueParameterList: List<IrValueParameter>
     get() = listOfNotNull(extensionReceiverParameter) + valueParameters
 
-fun IrFunction.hasMangledParameters(includeInline: Boolean = true, includeMFVC: Boolean = true): Boolean =
-    (dispatchReceiverParameter != null && when {
-        parentAsClass.isSingleFieldValueClass -> includeInline
+fun IrFunction.hasMangledParameters(includeInline: Boolean = true, includeMFVC: Boolean = true): Boolean {
+    val includesInlineAndNotExposed = includeInline && origin != JvmLoweredDeclarationOrigin.FUNCTION_WITH_EXPOSED_INLINE_CLASS
+
+    return (dispatchReceiverParameter != null && when {
+        parentAsClass.isSingleFieldValueClass -> includesInlineAndNotExposed
         parentAsClass.isMultiFieldValueClass -> includeMFVC
         else -> false
-    }) || fullValueParameterList.any { it.type.getRequiresMangling(includeInline, includeMFVC) } || (this is IrConstructor && when {
-        constructedClass.isSingleFieldValueClass -> includeInline
+    }) || fullValueParameterList.any {
+        it.type.getRequiresMangling(includesInlineAndNotExposed, includeMFVC)
+    } || (this is IrConstructor && when {
+        constructedClass.isSingleFieldValueClass -> includesInlineAndNotExposed
         constructedClass.isMultiFieldValueClass -> includeMFVC
         else -> false
     })
+}
 
 val IrFunction.hasMangledReturnType: Boolean
     get() = returnType.isInlineClassType() && parentClassOrNull?.isFileClass != true
