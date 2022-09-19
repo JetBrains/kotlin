@@ -197,6 +197,35 @@ class MultiplatformAndroidSourceSetLayoutV1Test {
         assertSame(kotlin.sourceSets.getByName("androidAndroidTest"), androidTest.kotlinSourceSetByConvention())
     }
 
+    @Test
+    fun `AndroidSourceSet kotlin AndroidSourceDirectorySet`() {
+        kotlin.android()
+        project.evaluate()
+        android.libraryVariants.all { variant ->
+            val main = variant.sourceSets.first { it.name == "main" }
+            assertEquals(
+                project.files("src/main/kotlin", "src/main/java", "src/androidMain/kotlin").toSet(),
+                main.kotlinDirectories.toSet()
+            )
+        }
+
+        android.unitTestVariants.all { variant ->
+            val test = variant.sourceSets.first { it.name == "test" }
+            assertEquals(
+                project.files("src/test/kotlin", "src/test/java", "src/androidTest/kotlin").toSet(),
+                test.kotlinDirectories.toSet()
+            )
+        }
+
+        android.testVariants.all { variant ->
+            val androidTest = variant.sourceSets.first { it.name == "androidTest" }
+            assertEquals(
+                project.files("src/androidTest/java", "src/androidAndroidTest/kotlin").toSet(),
+                androidTest.kotlinDirectories.toSet()
+            )
+        }
+    }
+
     private val AndroidSourceSet.kotlinSourceSet
         get() = project.findKotlinSourceSet(this) ?: fail("Missing KotlinSourceSet for AndroidSourceSet: $name")
 }

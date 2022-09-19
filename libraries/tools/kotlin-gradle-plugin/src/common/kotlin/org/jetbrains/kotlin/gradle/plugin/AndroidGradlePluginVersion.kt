@@ -58,14 +58,19 @@ internal data class AndroidGradlePluginVersion(
     }
 
     companion object {
-        /**
-         * The currently applied/accessible Android Gradle Plugin version
-         */
-        val current: AndroidGradlePluginVersion? = try {
+        val currentOrNull: AndroidGradlePluginVersion? = try {
             AndroidGradlePluginVersion(Version.ANDROID_GRADLE_PLUGIN_VERSION)
         } catch (_: LinkageError) {
             null
         }
+
+        /**
+         * The currently applied/accessible Android Gradle Plugin version
+         */
+        val current: AndroidGradlePluginVersion
+            get() = currentOrNull ?: throw IllegalStateException(
+                "Can't infer current AndroidGradlePluginVersion: Is the Android plugin applied?"
+            )
     }
 }
 

@@ -64,7 +64,7 @@ internal object KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck {
 
         object Default : AndroidGradlePluginVersionProvider {
             override fun getAndroidGradlePluginVersion(): AndroidGradlePluginVersion? {
-                return AndroidGradlePluginVersion.current
+                return AndroidGradlePluginVersion.currentOrNull
             }
         }
     }

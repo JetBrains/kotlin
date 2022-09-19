@@ -737,7 +737,7 @@ internal open class KotlinAndroidPlugin(
         private const val MINIMAL_SUPPORTED_AGP_VERSION = "3.6.4"
         fun androidTargetHandler(): AndroidProjectHandler {
             val tasksProvider = KotlinTasksProvider()
-            val androidGradlePluginVersion = AndroidGradlePluginVersion.current
+            val androidGradlePluginVersion = AndroidGradlePluginVersion.currentOrNull
 
             if (androidGradlePluginVersion != null) {
                 if (androidGradlePluginVersion < MINIMAL_SUPPORTED_AGP_VERSION) {

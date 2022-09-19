@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.gradle.plugin.sources.android.checker
 
 import com.android.Version
-import org.jetbrains.kotlin.gradle.plugin.compareVersionNumbers
+import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
+import org.jetbrains.kotlin.gradle.plugin.isAtLeast
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSetLayout
 
 internal object MultiplatformLayoutV2AgpRequirementChecker : KotlinAndroidSourceSetLayoutChecker {
 
-    private const val AGP_VERSION_MIN = "7.0.0"
+    internal val minimumRequiredAgpVersion = AndroidGradlePluginVersion(7, 0, 0)
 
     override fun checkBeforeLayoutApplied(
         diagnosticReporter: KotlinAndroidSourceSetLayoutChecker.DiagnosticReporter,
@@ -20,21 +21,23 @@ internal object MultiplatformLayoutV2AgpRequirementChecker : KotlinAndroidSource
         layout: KotlinAndroidSourceSetLayout
     ) {
         if (!isAgpRequirementMet()) {
-            diagnosticReporter.error(AgpRequirementNotMetDiagnostic(AGP_VERSION_MIN, Version.ANDROID_GRADLE_PLUGIN_VERSION))
+            diagnosticReporter.error(
+                AgpRequirementNotMetDiagnostic(minimumRequiredAgpVersion.toString(), Version.ANDROID_GRADLE_PLUGIN_VERSION)
+            )
         }
     }
 
     internal fun isAgpRequirementMet(): Boolean {
-        return compareVersionNumbers(Version.ANDROID_GRADLE_PLUGIN_VERSION, AGP_VERSION_MIN) >= 0
+        return AndroidGradlePluginVersion.currentOrNull.isAtLeast(minimumRequiredAgpVersion)
     }
 
     internal data class AgpRequirementNotMetDiagnostic(
-        val requiredMinAgpVersion: String,
+        val minimumRequiredAgpVersion: String,
         val currentAgpVersion: String
     ) : KotlinAndroidSourceSetLayoutChecker.Diagnostic {
         override val message: String
             get() = """
-                requires Android Gradle Plugin Version >= $requiredMinAgpVersion.
+                requires Android Gradle Plugin Version >= $minimumRequiredAgpVersion.
                 Found $currentAgpVersion
             """.trimIndent()
     }

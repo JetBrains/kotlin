@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android
 
+import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
+import org.jetbrains.kotlin.gradle.plugin.compareTo
 import org.jetbrains.kotlin.gradle.plugin.sources.android.checker.*
 import org.jetbrains.kotlin.gradle.plugin.sources.android.configurator.*
 
@@ -23,7 +25,10 @@ internal val singleTargetAndroidSourceSetLayout = KotlinAndroidSourceSetLayout(
     sourceSetConfigurator = KotlinAndroidSourceSetConfigurator(
         KotlinAndroidSourceSetInfoConfigurator,
         AndroidKaptSourceSetConfigurator,
-        AndroidSourceSetConventionConfigurator,
+        GradleConventionAddKotlinSourcesToAndroidSourceSetConfigurator,
+        Agp7AddKotlinSourcesToAndroidSourceSetConfigurator
+            .onlyIf { AndroidGradlePluginVersion.current >= "7.0.0" },
+
         SingleTargetSourceDirConfigurator,
     ),
     checker = KotlinAndroidSourceSetLayoutChecker()
@@ -35,7 +40,9 @@ internal val multiplatformAndroidSourceSetLayoutV1 = KotlinAndroidSourceSetLayou
     sourceSetConfigurator = KotlinAndroidSourceSetConfigurator(
         KotlinAndroidSourceSetInfoConfigurator,
         AndroidKaptSourceSetConfigurator,
-        AndroidSourceSetConventionConfigurator,
+        GradleConventionAddKotlinSourcesToAndroidSourceSetConfigurator,
+        Agp7AddKotlinSourcesToAndroidSourceSetConfigurator
+            .onlyIf { AndroidGradlePluginVersion.current >= "7.0.0" },
         MultiplatformAndroidResourceDirConfigurator,
         MultiplatformLayoutV1DependsOnConfigurator,
         MultiplatformLayoutV1SourceDirConfigurator
@@ -53,6 +60,7 @@ internal val multiplatformAndroidSourceSetLayoutV2 = KotlinAndroidSourceSetLayou
         AndroidKaptSourceSetConfigurator,
         MultiplatformAndroidResourceDirConfigurator,
         MultiplatformLayoutV2DependsOnConfigurator,
+        Agp7AddKotlinSourcesToAndroidSourceSetConfigurator,
         MultiplatformLayoutV2SourceDirConfigurator,
         MultiplatformLayoutV2DefaultManifestLocationConfigurator
     ),
