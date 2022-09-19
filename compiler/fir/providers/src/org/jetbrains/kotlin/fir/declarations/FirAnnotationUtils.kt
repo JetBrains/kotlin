@@ -26,8 +26,14 @@ private fun FirAnnotation.toAnnotationLookupTag(): ConeClassLikeLookupTag? =
     // this cast fails when we have generic-typed annotations @T
     (annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag
 
+private fun FirAnnotation.toAnnotationLookupTagSafe(): ConeClassLikeLookupTag? =
+    annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag
+
 fun FirAnnotation.toAnnotationClassId(): ClassId? =
     toAnnotationLookupTag()?.classId
+
+fun FirAnnotation.toAnnotationClassIdSafe(): ClassId? =
+    toAnnotationLookupTagSafe()?.classId
 
 private fun FirAnnotation.toAnnotationClass(session: FirSession): FirRegularClass? =
     toAnnotationLookupTag()?.toSymbol(session)?.fir as? FirRegularClass
@@ -99,12 +105,20 @@ fun FirDeclaration.hasAnnotation(classId: ClassId): Boolean {
     return annotations.hasAnnotation(classId)
 }
 
+fun FirDeclaration.hasAnnotationSafe(classId: ClassId): Boolean {
+    return annotations.hasAnnotationSafe(classId)
+}
+
 fun FirBasedSymbol<*>.hasAnnotation(classId: ClassId): Boolean {
     return resolvedAnnotationsWithClassIds.hasAnnotation(classId)
 }
 
 fun List<FirAnnotation>.hasAnnotation(classId: ClassId): Boolean {
     return this.any { it.toAnnotationClassId() == classId }
+}
+
+fun List<FirAnnotation>.hasAnnotationSafe(classId: ClassId): Boolean {
+    return this.any { it.toAnnotationClassIdSafe() == classId }
 }
 
 fun <D> FirBasedSymbol<out D>.getAnnotationByClassId(classId: ClassId): FirAnnotation? where D : FirAnnotationContainer, D : FirDeclaration {
