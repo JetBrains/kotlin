@@ -555,7 +555,7 @@ private val defaultArgumentPatchOverridesPhase = makeDeclarationTransformerPhase
 )
 
 private val defaultParameterInjectorPhase = makeBodyLoweringPhase(
-    { context -> DefaultParameterInjector(context, skipExternalMethods = true, forceSetOverrideSymbols = false) },
+    ::JsDefaultParameterInjector,
     name = "DefaultParameterInjector",
     description = "Replace callsite with default parameters with corresponding stub function",
     prerequisite = setOf(interopCallableReferenceLoweringPhase, innerClassesLoweringPhase)
@@ -565,19 +565,6 @@ private val defaultParameterCleanerPhase = makeDeclarationTransformerPhase(
     ::DefaultParameterCleaner,
     name = "DefaultParameterCleaner",
     description = "Clean default parameters up"
-)
-
-
-private val exportedDefaultParameterStubPhase = makeDeclarationTransformerPhase(
-    ::ExportedDefaultParameterStub,
-    name = "ExportedDefaultParameterStub",
-    description = "Generates default stub for exported entity and renames the non-default counterpart"
-)
-
-private val jsDefaultCallbackGeneratorPhase = makeBodyLoweringPhase(
-    ::JsDefaultCallbackGenerator,
-    name = "JsDefaultCallbackGenerator",
-    description = "Build binding for super calls with default parameters"
 )
 
 private val varargLoweringPhase = makeBodyLoweringPhase(
@@ -811,6 +798,7 @@ private val cleanupLoweringPhase = makeBodyLoweringPhase(
     name = "CleanupLowering",
     description = "Clean up IR before codegen"
 )
+
 private val moveOpenClassesToSeparatePlaceLowering = makeCustomJsModulePhase(
     { context, module ->
         if (context.granularity == JsGenerationGranularity.PER_FILE)
@@ -899,12 +887,10 @@ val loweringList = listOf<Lowering>(
     computeStringTrimPhase,
     privateMembersLoweringPhase,
     privateMemberUsagesLoweringPhase,
-    exportedDefaultParameterStubPhase,
     defaultArgumentStubGeneratorPhase,
     defaultArgumentPatchOverridesPhase,
     defaultParameterInjectorPhase,
     defaultParameterCleanerPhase,
-    jsDefaultCallbackGeneratorPhase,
     throwableSuccessorsLoweringPhase,
     es6AddInternalParametersToConstructorPhase,
     es6ConstructorLowering,

@@ -57,7 +57,7 @@ fun box() {
 // test.kt:11 E
 // test.kt:11 E
 // test.kt:22 box
-// test.kt:9 E.foo_26di_k$
+// test.kt:9 protoOf.foo_26di_k$
 // test.kt:15 E2_initEntries
 // test.kt:14 E2
 // test.kt:17 E2_initEntries

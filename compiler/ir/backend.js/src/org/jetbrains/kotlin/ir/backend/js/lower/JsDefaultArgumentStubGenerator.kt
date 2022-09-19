@@ -1,117 +1,247 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
-import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentStubGenerator
-import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
-import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
+import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.js.export.isExported
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
-import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irImplicitCast
+import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
+import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
+import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) : DefaultArgumentStubGenerator(context, true, true, false) {
+class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
+    DefaultArgumentStubGenerator(
+        context,
+        skipExternalMethods = true,
+        forceSetOverrideSymbols = false,
+        factory = JsDefaultArgumentFunctionFactory(context)
+    ) {
 
-    override fun needSpecialDispatch(irFunction: IrSimpleFunction) = irFunction.isOverridableOrOverrides
-
-    override fun IrFunction.resolveAnnotations(): List<IrConstructorCall> = copyAnnotationsWhen {
-        !(isAnnotation(JsAnnotations.jsExportFqn) || isAnnotation(JsAnnotations.jsNameFqn))
-    }
-
-    override fun IrBlockBodyBuilder.generateHandleCall(
-        handlerDeclaration: IrValueParameter,
-        oldIrFunction: IrFunction,
-        newIrFunction: IrFunction,
-        params: MutableList<IrValueDeclaration>
-    ): IrExpression {
-        val paramCount = oldIrFunction.valueParameters.size
-        val invokeFunctionN = resolveInvoke(paramCount)
-
-        return irCall(invokeFunctionN, IrStatementOrigin.INVOKE).apply {
-            dispatchReceiver = irImplicitCast(irGet(handlerDeclaration), invokeFunctionN.dispatchReceiverParameter!!.type)
-            // NOTE: currently we do not have a syntax to perform super extension call
-            // that's why we've used to just fail with an exception in case we have extension function in for JS IR compilation
-            // TODO: that was overkill, however, we still need to revisit this issue later on
-            params.forEachIndexed { i, variable -> putValueArgument(i, irGet(variable)) }
+    private fun IrBuilderWithScope.createDefaultResolutionExpression(
+        defaultExpression: IrExpression?,
+        toParameter: IrValueParameter,
+    ): IrExpression? {
+        return defaultExpression?.let {
+            irIfThenElse(
+                toParameter.type,
+                irEqeqeqWithoutBox(
+                    irGet(toParameter, toParameter.type),
+                    this@JsDefaultArgumentStubGenerator.context.getVoid()
+                ),
+                it,
+                irGet(toParameter)
+            )
         }
     }
 
-    override fun IrExpression.prepareToBeUsedIn(function: IrFunction): IrExpression {
-        return deepCopyWithVariables().also {
-            it.patchDeclarationParents(function)
+    private fun IrBuilderWithScope.createResolutionStatement(
+        parameter: IrValueParameter,
+        defaultExpression: IrExpression?,
+    ): IrSetValue? {
+        return createDefaultResolutionExpression(defaultExpression, parameter)?.let {
+            JsIrBuilder.buildSetValue(parameter.symbol, it)
         }
     }
 
-    private fun resolveInvoke(paramCount: Int): IrSimpleFunction {
-        assert(paramCount > 0)
-        val functionKlass = context.ir.symbols.functionN(paramCount).owner
-        return functionKlass.declarations.filterIsInstance<IrSimpleFunction>().first { it.name == Name.identifier("invoke") }
-    }
-}
+    private fun IrFunction.introduceDefaultResolution(): IrFunction {
+        val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
 
-class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringPass {
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitCall(expression: IrCall): IrExpression {
-                super.visitCall(expression)
-                if (expression.origin != LoweredStatementOrigins.DEFAULT_DISPATCH_CALL || expression.superQualifierSymbol == null) return expression
+        val variables = mutableMapOf<IrValueParameter, IrValueParameter>()
 
-                val binding = buildBoundSuperCall(expression)
+        valueParameters = valueParameters.map { param ->
+            param.takeIf { it.defaultValue != null }
+                ?.copyTo(this, isAssignable = true, origin = JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER)
+                ?.also { new -> variables[param] = new } ?: param
+        }
 
-                expression.putValueArgument(expression.valueArgumentsCount - 1, binding)
+        val defaultResolutionStatements = valueParameters.mapNotNull {
+            irBuilder.createResolutionStatement(it, it.defaultValue?.expression)
+        }
 
-                return expression
+        if (variables.isNotEmpty()) {
+            body?.transformChildren(VariableRemapper(variables), null)
+
+            body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+                statements += defaultResolutionStatements
+                statements += body?.statements ?: emptyList()
             }
-        })
-    }
 
-    private fun buildBoundSuperCall(irCall: IrCall): IrExpression {
-
-        val originalFunction = context.mapping.defaultArgumentsOriginalFunction[irCall.symbol.owner]!!
-
-        val reference = irCall.run {
-            IrFunctionReferenceImpl(
-                startOffset,
-                endOffset,
-                context.irBuiltIns.anyType,
-                originalFunction.symbol,
-                typeArgumentsCount = 0,
-                valueArgumentsCount = originalFunction.valueParameters.size,
-                reflectionTarget = originalFunction.symbol,
-                origin = JsStatementOrigins.BIND_CALL
-            )
         }
 
-        return irCall.run {
-            IrCallImpl(
-                startOffset,
-                endOffset,
-                context.irBuiltIns.anyType,
-                context.intrinsics.jsBind,
-                valueArgumentsCount = 2,
-                typeArgumentsCount = 0,
-                origin = JsStatementOrigins.BIND_CALL,
-                superQualifierSymbol = superQualifierSymbol
-            )
-        }.apply {
-            putValueArgument(0, irCall.dispatchReceiver?.deepCopyWithSymbols())
-            putValueArgument(1, reference)
+        return also {
+            context.mapping.defaultArgumentsDispatchFunction[it] = it
         }
     }
 
+    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        if (declaration !is IrFunction || declaration.isExternalOrInheritedFromExternal()) {
+            return null
+        }
+
+        if (declaration.hasDefaultArgs() && (declaration is IrConstructor || declaration.isTopLevel)) {
+            return listOf(declaration.introduceDefaultResolution())
+        }
+
+        val (originalFun, defaultFunStub) = super.transformFlat(declaration) ?: return null
+
+        if (originalFun !is IrFunction || defaultFunStub !is IrFunction) {
+            return listOf(originalFun, defaultFunStub)
+        }
+
+        if (!defaultFunStub.isFakeOverride) {
+            with(defaultFunStub) {
+                valueParameters.forEach {
+                    if (it.defaultValue != null) {
+                        it.origin = JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER
+                    }
+                    it.defaultValue = null
+                }
+
+                if (originalFun.isExported(context)) {
+                    context.additionalExportedDeclarations.add(defaultFunStub)
+
+                    if (!originalFun.hasAnnotation(JsAnnotations.jsNameFqn)) {
+                        annotations += originalFun.generateJsNameAnnotationCall()
+                    }
+                }
+            }
+        }
+
+        val (exportAnnotations, irrelevantAnnotations) = originalFun.annotations
+            .map { it.deepCopyWithSymbols(originalFun as? IrDeclarationParent) }
+            .partition {
+                it.isAnnotation(JsAnnotations.jsExportFqn) || (it.isAnnotation(JsAnnotations.jsNameFqn))
+            }
+
+        originalFun.annotations = irrelevantAnnotations
+        defaultFunStub.annotations += exportAnnotations
+        originalFun.origin = JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT
+
+        return listOf(originalFun, defaultFunStub)
+    }
+
+    override fun IrFunction.generateDefaultStubBody(originalDeclaration: IrFunction): IrBody {
+        val ctx = context
+        val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
+
+        val variables = mutableMapOf<IrValueParameter, IrValueDeclaration>().apply {
+            originalDeclaration.dispatchReceiverParameter?.let {
+                set(it, dispatchReceiverParameter!!)
+            }
+            originalDeclaration.extensionReceiverParameter?.let {
+                set(it, extensionReceiverParameter!!)
+            }
+            originalDeclaration.valueParameters.forEachIndexed { index, param ->
+                set(param, valueParameters[index])
+            }
+        }
+
+        return irBuilder.irBlockBody(this) {
+            +valueParameters.zip(originalDeclaration.valueParameters)
+                .mapNotNull { (new, original) ->
+                    createResolutionStatement(
+                        new,
+                        original.defaultValue?.expression?.transform(VariableRemapper(variables), null),
+                    )
+                }
+
+            val wrappedFunctionCall = irCall(originalDeclaration, JsStatementOrigins.IMPLEMENTATION_DELEGATION_CALL).apply {
+                passTypeArgumentsFrom(originalDeclaration)
+                dispatchReceiver = dispatchReceiverParameter?.let { irGet(it) }
+                extensionReceiver = extensionReceiverParameter?.let { irGet(it) }
+
+                originalDeclaration.valueParameters.forEachIndexed { index, irValueParameter ->
+                    putValueArgument(index, irGet(variables[irValueParameter] ?: valueParameters[index]))
+                }
+            }
+
+            var superContextValueParam: IrValueParameter? = null
+
+            val superFunCall = runIf(wrappedFunctionCall.dispatchReceiver != null && !originalDeclaration.isExported(ctx)) {
+                val superContext = valueParameters.last().also {
+                    superContextValueParam = it
+                }
+                val realOverrideTarget = originalDeclaration.realOverrideTarget.takeIf {
+                    it !is IrOverridableMember || it.modality !== Modality.ABSTRACT
+                }
+                if (realOverrideTarget?.parentClassOrNull?.isInterface == true) {
+                    irCall(realOverrideTarget).apply {
+                        extensionReceiver = wrappedFunctionCall.extensionReceiver?.deepCopyWithSymbols()
+                        (0 until wrappedFunctionCall.valueArgumentsCount).forEach {
+                            putValueArgument(it, wrappedFunctionCall.getValueArgument(it)?.deepCopyWithSymbols())
+                        }
+                    }
+                } else {
+                    irCall(ctx.intrinsics.jsCall).apply {
+                        putValueArgument(0, wrappedFunctionCall.dispatchReceiver!!.deepCopyWithSymbols())
+                        putValueArgument(
+                            1,
+                            irCall(ctx.intrinsics.jsContexfulRef).apply {
+                                putValueArgument(0, irGet(superContext))
+                                putValueArgument(1, irRawFunctionReference(ctx.dynamicType, originalDeclaration.symbol))
+                            }
+                        )
+                        putValueArgument(2, irVararg(ctx.dynamicType, buildList {
+                            addIfNotNull(wrappedFunctionCall.extensionReceiver?.deepCopyWithSymbols())
+                            (0 until wrappedFunctionCall.valueArgumentsCount).forEach {
+                                addIfNotNull(wrappedFunctionCall.getValueArgument(it)?.deepCopyWithSymbols())
+                            }
+                        }))
+                    }
+                }
+            }
+
+            +irReturn(
+                if (superFunCall == null) {
+                    wrappedFunctionCall
+                } else {
+                    irIfThenElse(
+                        originalDeclaration.returnType,
+                        irEqeqeqWithoutBox(irGet(superContextValueParam!!), ctx.getVoid()),
+                        wrappedFunctionCall,
+                        superFunCall
+                    )
+                }
+            )
+        }
+    }
+
+    private fun IrFunction.generateJsNameAnnotationCall(): IrConstructorCall {
+        val builder = context.createIrBuilder(symbol, startOffset, endOffset)
+
+        return with(context) {
+            builder.irCall(intrinsics.jsNameAnnotationSymbol.constructors.single())
+                .apply {
+                    putValueArgument(
+                        0,
+                        IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.stringType, name.identifier)
+                    )
+                }
+        }
+    }
+
+    private fun IrConstructorCall.isAnnotation(name: FqName): Boolean {
+        return symbol.owner.parentAsClass.fqNameWhenAvailable == name
+    }
+
+    private fun IrFunction.hasDefaultArgs(): Boolean =
+        valueParameters.any { it.defaultValue != null }
 }

@@ -38,7 +38,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private val baseClassRef by lazy { // Lazy in case was not collected by namer during JsClassGenerator construction
         if (baseClass != null && !baseClass.isAny()) baseClass.getClassRef(context) else null
     }
-    private val classPrototypeRef = prototypeOf(classNameRef)
+    private val classPrototypeRef = prototypeOf(classNameRef, context.staticContext)
     private val classBlock = JsCompositeBlock()
     private val classModel = JsIrClassModel(irClass)
 
@@ -202,7 +202,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                             classPrototypeRef,
                             context.getNameForProperty(property).ident,
                             getter = getterForwarder,
-                            setter = setterForwarder
+                            setter = setterForwarder,
+                            context.staticContext
                         )
                     )
                 }
@@ -328,11 +329,13 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         val associatedObjects = generateAssociatedObjects()
         val suspendArity = generateSuspendArity()
 
+        val undefined = context.staticContext.backendContext.getVoid().accept(IrElementToJsExpressionTransformer(), context)
+
         return JsInvocation(
             JsNameRef(context.getNameForStaticFunction(setMetadataFor)),
             listOf(ctor, name, metadataConstructor, parent, interfaces, associatedObjectKey, associatedObjects, suspendArity)
                 .dropLastWhile { it == null }
-                .map { it ?: Namer.JS_UNDEFINED }
+                .map { it ?: undefined }
         ).makeStmt()
 
     }

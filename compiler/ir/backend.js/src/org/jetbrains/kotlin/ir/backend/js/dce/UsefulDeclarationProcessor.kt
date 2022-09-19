@@ -218,13 +218,16 @@ abstract class UsefulDeclarationProcessor(
         }
     }
 
-    private fun IrSimpleFunction.isAccessorForOverriddenExternalField(): Boolean {
+    protected fun IrSimpleFunction.isAccessorForOverriddenExternalField(): Boolean {
         return correspondingPropertySymbol?.owner?.isExternalOrOverriddenExternal() ?: false
     }
 
-    private fun IrProperty.isExternalOrOverriddenExternal(): Boolean {
-        return isEffectivelyExternal() || overriddenSymbols.any { it.owner.isExternalOrOverriddenExternal() }
+    protected fun IrProperty.isExternalOrOverriddenExternal(): Boolean {
+        return isEffectivelyExternal() || isOverriddenExternal()
     }
+
+    protected fun IrProperty.isOverriddenExternal(): Boolean =
+        overriddenSymbols.any { it.owner.isExternalOrOverriddenExternal() }
 
     protected open fun handleAssociatedObjects(): Unit = Unit
 

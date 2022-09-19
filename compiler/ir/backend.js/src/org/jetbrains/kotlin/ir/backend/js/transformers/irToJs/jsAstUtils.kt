@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.sourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -30,6 +31,14 @@ import java.io.FileInputStream
 import java.io.IOException
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
+
+
+fun jsUndefined(context: IrNamer, backendContext: JsIrBackendContext): JsExpression {
+    return when (val void = backendContext.getVoid()) {
+        is IrGetField -> context.getNameForField(void.symbol.owner).makeRef()
+        else -> JsNullLiteral()
+    }
+}
 
 fun jsVar(name: JsName, initializer: IrExpression?, context: JsGenerationContext): JsVars {
     val jsInitializer = initializer?.accept(IrElementToJsExpressionTransformer(), context)
@@ -63,7 +72,34 @@ fun jsElementAccess(name: JsName, receiver: JsExpression?): JsExpression =
 
 fun jsAssignment(left: JsExpression, right: JsExpression) = JsBinaryOperation(JsBinaryOperator.ASG, left, right)
 
-fun prototypeOf(classNameRef: JsExpression) = JsNameRef(Namer.PROTOTYPE_NAME, classNameRef)
+fun prototypeOf(classNameRef: JsExpression, context: JsStaticContext) =
+    JsInvocation(
+        context
+            .getNameForStaticFunction(context.backendContext.intrinsics.jsPrototypeOfSymbol.owner)
+            .makeRef(),
+        classNameRef
+    )
+
+fun objectCreate(prototype: JsExpression, context: JsStaticContext) =
+    JsInvocation(
+        context
+            .getNameForStaticFunction(context.backendContext.intrinsics.jsObjectCreateSymbol.owner)
+            .makeRef(),
+        prototype
+    )
+
+fun defineProperty(obj: JsExpression, name: String, getter: JsExpression?, setter: JsExpression?, context: JsStaticContext) =
+    JsInvocation(
+        context
+            .getNameForStaticFunction(context.backendContext.intrinsics.jsDefinePropertySymbol.owner)
+            .makeRef(),
+        obj,
+        JsStringLiteral(name),
+        *listOf(getter, setter)
+            .dropLastWhile { it == null }
+            .map { it ?: jsUndefined(context, context.backendContext) }
+            .toTypedArray()
+    )
 
 fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerationContext): JsFunction {
     context.staticContext.backendContext.getJsCodeForFunction(declaration.symbol)?.let { function ->
@@ -167,7 +203,7 @@ fun translateCall(
         } else {
             val qualifierName = context.getNameForClass(klass).makeRef()
             val targetName = context.getNameForMemberFunction(target)
-            val qPrototype = JsNameRef(targetName, prototypeOf(qualifierName))
+            val qPrototype = JsNameRef(targetName, prototypeOf(qualifierName, context.staticContext))
             JsNameRef(Namer.CALL_FUNCTION, qPrototype)
         }
 
@@ -336,6 +372,7 @@ fun translateCallArguments(
     expression: IrMemberAccessExpression<IrFunctionSymbol>,
     context: JsGenerationContext,
     transformer: IrElementToJsExpressionTransformer,
+    allowDropTailVoids: Boolean = true
 ): List<JsExpression> {
     val size = expression.valueArgumentsCount
 
@@ -344,13 +381,15 @@ fun translateCallArguments(
     val validWithNullArgs = expression.validWithNullArgs()
     val arguments = (0 until size)
         .mapTo(ArrayList(size)) { index ->
-            val argument = expression.getValueArgument(index)
-            argument?.accept(transformer, context)
+            expression.getValueArgument(index).checkOnNullability(validWithNullArgs)
         }
-        .onEach { result ->
-            if (result == null) {
-                assert(validWithNullArgs)
-            }
+        .dropLastWhile {
+            allowDropTailVoids &&
+                    it is IrGetField &&
+                    it.symbol.owner.correspondingPropertySymbol == context.staticContext.backendContext.intrinsics.void
+        }
+        .map {
+            it?.accept(transformer, context)
         }
         .mapIndexed { index, result ->
             val isEmptyExternalVararg = validWithNullArgs &&
@@ -363,33 +402,23 @@ fun translateCallArguments(
             } else result
         }
         .dropLastWhile { it == null }
-        .map { it ?: JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(1)) }
+        .map { it ?: jsUndefined(context, context.staticContext.backendContext) }
 
     check(!expression.symbol.isSuspend) { "Suspend functions should be lowered" }
     return arguments
 }
 
+private fun IrExpression?.checkOnNullability(validWithNullArgs: Boolean) =
+    also {
+        if (it == null) {
+            assert(validWithNullArgs)
+        }
+    }
+
 private fun IrMemberAccessExpression<*>.validWithNullArgs() =
     this is IrFunctionAccessExpression && symbol.owner.isExternalOrInheritedFromExternal()
 
 fun JsStatement.asBlock() = this as? JsBlock ?: JsBlock(this)
-
-fun defineProperty(receiver: JsExpression, name: String, value: () -> JsExpression): JsInvocation {
-    val objectDefineProperty = JsNameRef("defineProperty", Namer.JS_OBJECT)
-    return JsInvocation(objectDefineProperty, receiver, JsStringLiteral(name), value())
-}
-
-fun defineProperty(receiver: JsExpression, name: String, getter: JsExpression?, setter: JsExpression? = null) =
-    defineProperty(receiver, name) {
-        JsObjectLiteral(true).apply {
-            propertyInitializers += JsPropertyInitializer(JsStringLiteral("configurable"), JsBooleanLiteral(true))
-            if (getter != null)
-                propertyInitializers += JsPropertyInitializer(JsStringLiteral("get"), getter)
-            if (setter != null)
-                propertyInitializers += JsPropertyInitializer(JsStringLiteral("set"), setter)
-        }
-    }
-
 
 // Partially copied from org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 object JsAstUtils {

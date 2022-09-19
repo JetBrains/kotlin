@@ -5,21 +5,14 @@
 
 package org.jetbrains.kotlin.ir.backend.js.export
 
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsAstUtils
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.defineProperty
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.jsAssignment
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.prototypeOf
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.jsElementAccess
-import org.jetbrains.kotlin.ir.backend.js.utils.IrNamer
-import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
 
 class ExportModelToJsStatements(
-    private val namer: IrNamer,
+    private val namer: JsStaticContext,
     private val declareNewNamespace: (String) -> String
 ) {
     private val namespaceToRefMap = mutableMapOf<String, JsNameRef>()
@@ -88,7 +81,7 @@ class ExportModelToJsStatements(
                 require(namespace != null) { "Only namespaced properties are allowed" }
                 val getter = declaration.irGetter?.let { JsNameRef(namer.getNameForStaticDeclaration(it)) }
                 val setter = declaration.irSetter?.let { JsNameRef(namer.getNameForStaticDeclaration(it)) }
-                listOf(defineProperty(namespace, declaration.name, getter, setter).makeStmt())
+                listOf(defineProperty(namespace, declaration.name, getter, setter, namer).makeStmt())
             }
 
             is ErrorDeclaration -> emptyList()
@@ -98,7 +91,7 @@ class ExportModelToJsStatements(
                 val newNameSpace = jsElementAccess(declaration.name, namespace)
                 val getter = JsNameRef(namer.getNameForStaticDeclaration(declaration.irGetter))
                 val staticsExport = declaration.nestedClasses.flatMap { generateDeclarationExport(it, newNameSpace, esModules) }
-                listOf(defineProperty(namespace, declaration.name, getter, null).makeStmt()) + staticsExport
+                listOf(defineProperty(namespace, declaration.name, getter, null, namer).makeStmt()) + staticsExport
             }
 
             is ExportedRegularClass -> {
@@ -106,7 +99,7 @@ class ExportModelToJsStatements(
                 val newNameSpace = if (namespace != null)
                     jsElementAccess(declaration.name, namespace)
                 else
-                    JsNameRef(Namer.PROTOTYPE_NAME, namer.getNameForClass(declaration.ir).makeRef())
+                    prototypeOf(namer.getNameForClass(declaration.ir).makeRef(), namer)
                 val name = namer.getNameForStaticDeclaration(declaration.ir)
                 val klassExport =
                     if (esModules) {
@@ -173,14 +166,15 @@ class ExportModelToJsStatements(
         blockStatements.add(JsReturn(bindConstructor.makeRef()))
 
         return defineProperty(
-            prototypeOf(outerClassRef),
+            prototypeOf(outerClassRef, namer),
             name,
             JsFunction(
                 emptyScope,
                 JsBlock(*blockStatements.toTypedArray()),
                 "inner class '$name' getter"
             ),
-            null
+            null,
+            namer
         ).makeStmt()
     }
 

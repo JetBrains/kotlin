@@ -16,6 +16,7 @@ object JsLoweredDeclarationOrigin : IrDeclarationOrigin {
     object BRIDGE_PROPERTY_ACCESSOR : IrDeclarationOriginImpl("BRIDGE_PROPERTY_ACCESSOR")
     object OBJECT_GET_INSTANCE_FUNCTION : IrDeclarationOriginImpl("OBJECT_GET_INSTANCE_FUNCTION")
     object JS_SHADOWED_EXPORT : IrDeclarationOriginImpl("JS_SHADOWED_EXPORT")
+    object JS_SUPER_CONTEXT_PARAMETER : IrDeclarationOriginImpl("JS_SUPER_CONTEXT_PARAMETER")
     object JS_SHADOWED_DEFAULT_PARAMETER : IrDeclarationOriginImpl("JS_SHADOWED_DEFAULT_PARAMETER")
     object ENUM_GET_INSTANCE_FUNCTION : IrDeclarationOriginImpl("ENUM_GET_INSTANCE_FUNCTION")
 }

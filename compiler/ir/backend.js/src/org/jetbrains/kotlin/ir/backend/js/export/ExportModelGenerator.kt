@@ -86,13 +86,15 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 ExportedFunction(
                     function.getExportedIdentifier(),
                     returnType = exportType(function.returnType),
-                    parameters = (listOfNotNull(function.extensionReceiverParameter) + function.valueParameters).map { exportParameter(it) },
                     typeParameters = function.typeParameters.map(::exportTypeParameter),
                     isMember = parent is IrClass,
                     isStatic = function.isStaticMethodOfClass,
                     isAbstract = parent is IrClass && !parent.isInterface && function.modality == Modality.ABSTRACT,
                     isProtected = function.visibility == DescriptorVisibilities.PROTECTED,
-                    ir = function
+                    ir = function,
+                    parameters = (listOfNotNull(function.extensionReceiverParameter) + function.valueParameters)
+                        .filter { it.shouldBeExported() }
+                        .map { exportParameter(it) },
                 )
             }
         }
@@ -360,6 +362,10 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
     private fun IrClass.shouldNotBeImplemented(): Boolean {
         return isInterface && !isExternal || isJsImplicitExport()
+    }
+
+    private fun IrValueParameter.shouldBeExported(): Boolean {
+        return origin != JsLoweredDeclarationOrigin.JS_SUPER_CONTEXT_PARAMETER
     }
 
     private fun IrClass.shouldContainImplementationOfMagicProperty(superTypes: Iterable<IrType>): Boolean {
@@ -640,7 +646,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         if (function.origin == JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME ||
             function.origin == JsLoweredDeclarationOrigin.BRIDGE_PROPERTY_ACCESSOR ||
             function.origin == JsLoweredDeclarationOrigin.BRIDGE_WITH_STABLE_NAME ||
-            function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
             function.origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION ||
             function.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT ||
             function.origin == JsLoweredDeclarationOrigin.ENUM_GET_INSTANCE_FUNCTION

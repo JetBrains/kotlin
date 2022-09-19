@@ -44,7 +44,7 @@ internal fun classMeta(name: String?, associatedObjectKey: Number?, associatedOb
 }
 
 // Seems like we need to disable this check if variables are used inside js annotation
-@Suppress("UNUSED_PARAMETER")
+@Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE")
 private fun createMetadata(
     kind: String,
     name: String?,
@@ -53,13 +53,14 @@ private fun createMetadata(
     suspendArity: Array<Int>?,
     iid: Int?
 ): Metadata {
+    val undef = VOID
     return js("""({
     kind: kind,
     simpleName: name,
     associatedObjectKey: associatedObjectKey,
     associatedObjects: associatedObjects,
     suspendArity: suspendArity,
-    ${'$'}kClass$: undefined,
+    ${'$'}kClass$: undef,
     iid: iid
 })""")
 }

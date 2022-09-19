@@ -239,7 +239,7 @@ class IrToJs(
 
         val globalNames = NameTable<String>(nameGenerator.staticNames)
         val exporter = ExportModelToJsStatements(
-            nameGenerator,
+            staticContext,
             declareNewNamespace = { globalNames.declareFreshName(it, it) }
         )
         exportedDeclarations.forEach {

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -28,10 +29,8 @@ class ThrowableLowering(
 
     private val throwableConstructors = context.throwableConstructors
     private val newThrowableFunction = context.newThrowableSymbol
-    private val jsUndefined = context.intrinsics.jsUndefined
 
-    fun nullValue(): IrExpression = IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, nothingNType)
-    fun undefinedValue(): IrExpression = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, nothingNType, jsUndefined, 0, 0)
+    private fun undefinedValue(): IrExpression = context.getVoid()
 
     data class ThrowableArguments(
         val message: IrExpression,

@@ -227,10 +227,14 @@ class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsag
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        if (expression.symbol == irBuiltIns.eqeqeqSymbol && expression.allArgumentsHaveType(irBuiltIns.charType)) {
-            return expression.apply { transformChildrenVoid() }
+        return if (
+            expression.symbol != irBuiltIns.eqeqeqSymbol ||
+            !expression.allArgumentsHaveType(irBuiltIns.charType) &&
+            expression.origin != IrStatementOrigin.SYNTHETIC_NOT_AUTOBOXED_CHECK
+        ) {
+            super.visitCall(expression)
         } else {
-            return super.visitCall(expression)
+            expression.apply { transformChildrenVoid() }
         }
     }
 

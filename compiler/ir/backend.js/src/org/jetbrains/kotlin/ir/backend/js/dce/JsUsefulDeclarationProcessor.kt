@@ -67,9 +67,9 @@ internal class JsUsefulDeclarationProcessor(
                     val ref = expression.getTypeArgument(0)?.classOrNull ?: context.irBuiltIns.anyClass
                     referencedJsClassesFromExpressions += ref.owner
                 }
-                context.intrinsics.jsObjectCreate -> {
+                context.intrinsics.jsObjectCreateSymbol -> {
                     val classToCreate = expression.getTypeArgument(0)!!.classifierOrFail.owner as IrClass
-                    classToCreate.enqueue(data, "intrinsic: jsObjectCreate")
+                    classToCreate.enqueue(data, "intrinsic: jsObjectCreateSymbol")
                     constructedClasses += classToCreate
                 }
                 context.intrinsics.jsEquals -> {
@@ -129,11 +129,29 @@ internal class JsUsefulDeclarationProcessor(
         if (irClass.containsMetadata()) {
             when {
                 irClass.isObject -> context.intrinsics.metadataObjectConstructorSymbol.owner.enqueue(irClass, "object metadata")
+
                 irClass.isInterface -> {
                     context.intrinsics.implementSymbol.owner.enqueue(irClass, "interface metadata")
                     context.intrinsics.metadataInterfaceConstructorSymbol.owner.enqueue(irClass, "interface metadata")
                 }
-                else -> context.intrinsics.metadataClassConstructorSymbol.owner.enqueue(irClass, "class metadata")
+
+                else -> {
+                    context.intrinsics.metadataClassConstructorSymbol.owner.enqueue(irClass, "class metadata")
+                }
+            }
+        }
+
+        if (!irClass.isExpect && !irClass.isExternal && !irClass.defaultType.isAny()) {
+            if (!irClass.isInterface) {
+                context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(irClass, "class metadata")
+            }
+
+            if (irClass.superTypes.any { !it.isInterface() }) {
+                context.intrinsics.jsObjectCreateSymbol.owner.enqueue(irClass, "class metadata")
+            }
+
+            if (irClass.isInner || irClass.isObject) {
+                context.intrinsics.jsDefinePropertySymbol.owner.enqueue(irClass, "class metadata")
             }
 
             context.intrinsics.setMetadataForSymbol.owner.enqueue(irClass, "metadata")
@@ -145,6 +163,12 @@ internal class JsUsefulDeclarationProcessor(
 
         if (irFunction.isReal && irFunction.body != null) {
             irFunction.parentClassOrNull?.takeIf { it.isInterface }?.enqueue(irFunction, "interface default method is used")
+        }
+
+        val property = irFunction.correspondingPropertySymbol?.owner ?: return
+
+        if (property.isExported(context) || property.isOverriddenExternal()) {
+            context.intrinsics.jsDefinePropertySymbol.owner.enqueue(irFunction, "property for export")
         }
     }
 

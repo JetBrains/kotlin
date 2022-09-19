@@ -24,6 +24,11 @@ class JsPropertyAccessorInlineLowering(
         if (!isTopLevel && !context.icCompatibleIr2Js.incrementalCacheEnabled)
             return true
 
+        // Just undefined value
+        if (symbol == context.intrinsics.void) {
+            return true
+        }
+
         // TODO: teach the deserializer to load constant property initializers
         if (context.icCompatibleIr2Js.isCompatible) {
             val accessFile = accessContainer.fileOrNull ?: return false

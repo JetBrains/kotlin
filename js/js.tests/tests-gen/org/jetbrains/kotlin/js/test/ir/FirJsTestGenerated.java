@@ -1285,6 +1285,12 @@ public class FirJsTestGenerated extends AbstractFirJsTest {
         }
 
         @Test
+        @TestMetadata("interfaceSuperCall.kt")
+        public void testInterfaceSuperCall() throws Exception {
+            runTest("js/js.translator/testData/box/defaultArguments/interfaceSuperCall.kt");
+        }
+
+        @Test
         @TestMetadata("overloadFunWithDefArg.kt")
         public void testOverloadFunWithDefArg() throws Exception {
             runTest("js/js.translator/testData/box/defaultArguments/overloadFunWithDefArg.kt");
@@ -2600,6 +2606,12 @@ public class FirJsTestGenerated extends AbstractFirJsTest {
         @TestMetadata("exportClassWithInternalOneFile.kt")
         public void testExportClassWithInternalOneFile() throws Exception {
             runTest("js/js.translator/testData/box/export/exportClassWithInternalOneFile.kt");
+        }
+
+        @Test
+        @TestMetadata("exportDefaultParameterAndOverrideIt.kt")
+        public void testExportDefaultParameterAndOverrideIt() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportDefaultParameterAndOverrideIt.kt");
         }
 
         @Test

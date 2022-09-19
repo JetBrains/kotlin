@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun eliminateDeadDeclarations(
     modules: Iterable<IrModuleFragment>,
@@ -116,6 +117,7 @@ private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackend
         }
     }
 
+    addIfNotNull(context.intrinsics.void.owner.backingField)
     addAll(context.testFunsPerFile.values)
     addAll(context.additionalExportedDeclarations)
 }
