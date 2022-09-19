@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FIR_DUMP
 // FILE: GenericContainer.java
 

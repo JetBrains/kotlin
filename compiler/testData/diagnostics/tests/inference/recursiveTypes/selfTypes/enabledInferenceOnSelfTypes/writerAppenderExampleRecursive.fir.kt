@@ -26,10 +26,10 @@ fun test() {
 }
 
 fun testJava(appender: JavaWriterAppender) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("JavaWriterAppender.Builder1<*>..JavaWriterAppender.Builder1<*>?!"), NEW_INFERENCE_ERROR!>appender.newBuilder()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("JavaWriterAppender.Builder1<out JavaWriterAppender.Builder1<*>..JavaWriterAppender.Builder1<*>?!>"), NEW_INFERENCE_ERROR!>appender.Builder1()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("JavaWriterAppender.Builder1<*>..JavaWriterAppender.Builder1<*>?!")!>appender.newBuilder()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("JavaWriterAppender.Builder1<out JavaWriterAppender.Builder1<*>..JavaWriterAppender.Builder1<*>?!>")!>appender.Builder1()<!>
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("JavaWriterAppender.Builder1<*> & JavaWriterAppender.Builder2<*>..JavaWriterAppender.Builder1<*>? & JavaWriterAppender.Builder2<*>?"), NEW_INFERENCE_ERROR!>appender.intersectTwoSelfTypes()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("JavaWriterAppender.Builder1<*> & JavaWriterAppender.Builder2<*>..JavaWriterAppender.Builder1<*>? & JavaWriterAppender.Builder2<*>?")!>appender.intersectTwoSelfTypes()<!>
 }
 
 object WriterAppender {
