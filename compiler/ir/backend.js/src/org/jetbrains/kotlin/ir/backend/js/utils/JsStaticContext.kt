@@ -21,6 +21,7 @@ class JsStaticContext(
 ) : IrNamer by irNamer {
     val intrinsics = JsIntrinsicTransformers(backendContext)
     val classModels = mutableMapOf<IrClassSymbol, JsIrClassModel>()
+    val metaClasses = mutableSetOf<IrClassSymbol>()
     val coroutineImplDeclaration = backendContext.ir.symbols.coroutineImpl.owner
 
     val initializerBlock = JsCompositeBlock()

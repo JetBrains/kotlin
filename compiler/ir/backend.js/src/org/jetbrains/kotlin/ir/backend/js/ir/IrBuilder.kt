@@ -62,7 +62,10 @@ object JsIrBuilder {
         IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, classSymbol)
 
     fun buildGetValue(symbol: IrValueSymbol) =
-        IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, JsStatementOrigins.SYNTHESIZED_STATEMENT)
+        buildGetValue(symbol, JsStatementOrigins.SYNTHESIZED_STATEMENT)
+
+    fun buildGetValue(symbol: IrValueSymbol, origin: IrStatementOrigin) =
+        IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, origin)
 
     fun buildSetValue(symbol: IrValueSymbol, value: IrExpression) =
         IrSetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, value, JsStatementOrigins.SYNTHESIZED_STATEMENT)

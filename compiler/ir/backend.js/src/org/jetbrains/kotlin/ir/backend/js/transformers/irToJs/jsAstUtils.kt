@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase
 import org.jetbrains.kotlin.ir.backend.js.sourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -378,10 +379,11 @@ fun translateCallArguments(
 
     val varargParameterIndex = expression.symbol.owner.realOverrideTarget.varargParameterIndex()
 
-    val validWithNullArgs = expression.validWithNullArgs()
+    val isValidForMemberAccessToHaveNullArg = expression.validWithNullArgs()
     val arguments = (0 until size)
         .mapTo(ArrayList(size)) { index ->
-            expression.getValueArgument(index).checkOnNullability(validWithNullArgs)
+            val couldArgumentBeNull = expression.couldArgumentBeNull(index)
+            expression.getValueArgument(index).checkOnNullability(couldArgumentBeNull || isValidForMemberAccessToHaveNullArg)
         }
         .dropLastWhile {
             allowDropTailVoids &&
@@ -392,7 +394,7 @@ fun translateCallArguments(
             it?.accept(transformer, context)
         }
         .mapIndexed { index, result ->
-            val isEmptyExternalVararg = validWithNullArgs &&
+            val isEmptyExternalVararg = isValidForMemberAccessToHaveNullArg &&
                     varargParameterIndex == index &&
                     result is JsArrayLiteral &&
                     result.expressions.isEmpty()
@@ -417,6 +419,12 @@ private fun IrExpression?.checkOnNullability(validWithNullArgs: Boolean) =
 
 private fun IrMemberAccessExpression<*>.validWithNullArgs() =
     this is IrFunctionAccessExpression && symbol.owner.isExternalOrInheritedFromExternal()
+
+private fun IrMemberAccessExpression<*>.couldArgumentBeNull(index: Int) =
+    this is IrFunctionAccessExpression && symbol.owner.valueParameters[index].let {
+        it.origin === ES6AddInternalParametersToConstructorPhase.ES6_INIT_BOX_PARAMETER ||
+                it.origin === ES6AddInternalParametersToConstructorPhase.ES6_RESULT_TYPE_PARAMETER
+    }
 
 fun JsStatement.asBlock() = this as? JsBlock ?: JsBlock(this)
 

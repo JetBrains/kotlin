@@ -17,6 +17,7 @@ class JsIrProgramFragment(val packageFqn: String) {
     val imports = mutableMapOf<String, JsExpression>()
     var dts: String? = null
     val classes = mutableMapOf<JsName, JsIrIcClassModel>()
+    val metaClasses = mutableSetOf<JsName>()
     val initializers = JsCompositeBlock()
     var mainFunction: JsStatement? = null
     var testFunInvocation: JsStatement? = null

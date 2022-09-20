@@ -38,8 +38,14 @@ class Merger(
                     importStatements.putIfAbsent(declaration, JsVars(JsVars.JsVar(importName, rename(importExpression))))
                 }
 
-                val classModels = mutableMapOf<JsName, JsIrIcClassModel>() + f.classes
-                f.classes.clear()
+                val metaClasses = (mutableSetOf<JsName>() + f.metaClasses)
+                    .also { f.metaClasses.clear() }
+
+                metaClasses.forEach { f.metaClasses.add(rename(it)) }
+
+                val classModels = (mutableMapOf<JsName, JsIrIcClassModel>() + f.classes)
+                    .also { f.classes.clear() }
+
                 classModels.entries.forEach { (name, model) ->
                     f.classes[rename(name)] = JsIrIcClassModel(model.superClasses.map { rename(it) }).also {
                         it.preDeclarationBlock.statements += model.preDeclarationBlock.statements
@@ -175,6 +181,12 @@ class Merger(
             classModels += it.classes
             initializerBlock.statements += it.initializers.statements
             polyfillDeclarationBlock.statements += it.polyfills.statements
+
+            for (name in it.metaClasses) {
+                val model = classModels.remove(name) ?: continue
+                preDeclarationBlock.statements += model.preDeclarationBlock
+                postDeclarationBlock.statements += model.postDeclarationBlock
+            }
         }
 
         // sort member forwarding code
