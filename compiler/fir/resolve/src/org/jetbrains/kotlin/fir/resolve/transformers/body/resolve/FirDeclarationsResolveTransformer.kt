@@ -459,7 +459,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 } else {
                     returnTypeRef
                 }
-                val resolutionMode = if (expectedReturnTypeRef.coneTypeSafe<ConeKotlinType>() == session.builtinTypes.unitType.type) {
+                val resolutionMode = if (owner.delegate == null || expectedReturnTypeRef.coneTypeSafe<ConeKotlinType>()?.isUnit == true) {
                     ResolutionMode.ContextIndependent
                 } else {
                     withExpectedType(expectedReturnTypeRef)

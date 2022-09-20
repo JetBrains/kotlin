@@ -3438,6 +3438,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("getterWithEarlyReturn.kt")
+            public void testGetterWithEarlyReturn() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/properties/getterWithEarlyReturn.kt");
+            }
+
+            @Test
             @TestMetadata("javaAccessorConversion.kt")
             public void testJavaAccessorConversion() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/properties/javaAccessorConversion.kt");
