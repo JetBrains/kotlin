@@ -1,0 +1,14 @@
+
+package pod1 {
+    var A: Int
+        @CCall(id = "knifunptr_pod13_A_getter") get
+        @CCall(id = "knifunptr_pod14_A_setter") set
+    @CCall(id = "knifunptr_pod10_AAA") external fun AAA(): Int
+    var B: Int
+        @CCall(id = "knifunptr_pod15_B_getter") get
+        @CCall(id = "knifunptr_pod16_B_setter") set
+    var C: Int
+        @CCall(id = "knifunptr_pod11_C_getter") get
+        @CCall(id = "knifunptr_pod12_C_setter") set
+}
+
