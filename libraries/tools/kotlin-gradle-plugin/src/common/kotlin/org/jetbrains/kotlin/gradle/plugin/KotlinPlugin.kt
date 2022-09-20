@@ -157,7 +157,11 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     protected fun applyStandardTaskConfiguration(taskConfiguration: AbstractKotlinCompileConfig<*>) {
         taskConfiguration.configureTask {
             it.description = taskDescription
-            it.destinationDirectory.convention(defaultKotlinDestinationDir)
+            if (it is Kotlin2JsCompile) {
+                it.defaultDestinationDirectory.convention(defaultKotlinDestinationDir)
+            } else {
+                it.destinationDirectory.convention(defaultKotlinDestinationDir)
+            }
             it.libraries.from({ kotlinCompilation.compileDependencyFiles })
         }
     }

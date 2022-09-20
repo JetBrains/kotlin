@@ -50,6 +50,24 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
                 }
             )
 
+            task.destinationDirectory
+                .convention(
+                    project.objects.directoryProperty().fileProvider(
+                        task.defaultDestinationDirectory.map {
+                            val freeArgs = task.enhancedFreeCompilerArgs.get()
+                            if (task.compilerOptions.outputFile.orNull != null) {
+                                if (freeArgs.contains(PRODUCE_UNZIPPED_KLIB)) {
+                                    File(task.compilerOptions.outputFile.get())
+                                } else {
+                                    File(task.compilerOptions.outputFile.get()).parentFile
+                                }
+                            } else {
+                                it.asFile
+                            }
+                        }
+                    )
+                )
+
             task.libraryCache.set(libraryCacheService).also { task.libraryCache.disallowChanges() }
         }
     }

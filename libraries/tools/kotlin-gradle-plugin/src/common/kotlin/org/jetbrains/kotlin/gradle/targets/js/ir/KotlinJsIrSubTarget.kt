@@ -121,17 +121,15 @@ abstract class KotlinJsIrSubTarget(
                 KotlinJsBinaryMode.DEVELOPMENT
             ).single()
 
-            testJs.inputFileProperty.set(
-                project.layout.file(
-                    binary.linkSyncTask.flatMap { copyTask ->
-                        binary.linkTask
-                            .flatMap { linkTask -> linkTask.compilerOptions.moduleName }
-                            .map { outputName ->
-                                copyTask.destinationDir
-                                    .resolve(outputName + compilation.platformType.fileExtension)
-                            }
+            testJs.dependsOn(binary.linkSyncTask)
+            testJs.inputFileProperty.fileProvider(
+                binary.linkSyncTask.flatMap { linkSyncTask ->
+                    binary.linkTask.flatMap { linkTask ->
+                        linkTask.outputFileProperty.map {
+                            linkSyncTask.destinationDir.resolve(it.name)
+                        }
                     }
-                )
+                }
             )
 
             configureTestDependencies(testJs)

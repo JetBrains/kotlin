@@ -977,6 +977,10 @@ abstract class Kotlin2JsCompile @Inject constructor(
         }
     }
 
+    // Workaround to be able to use default value and change it later based on external input
+    @get:Internal
+    internal abstract val defaultDestinationDirectory: DirectoryProperty
+
     @Deprecated("Use destinationDirectory and moduleName instead")
     @get:Internal
     abstract val outputFileProperty: Property<File>
