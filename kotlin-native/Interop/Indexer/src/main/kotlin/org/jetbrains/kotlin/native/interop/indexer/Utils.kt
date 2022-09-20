@@ -25,6 +25,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.security.DigestInputStream
 import java.security.MessageDigest
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 val CValue<CXType>.kind: CXTypeKind get() = this.useContents { kind }
@@ -742,12 +743,13 @@ private fun filterHeadersByName(
 ) {
     val topLevelFiles = mutableSetOf<CXFile>()
     var mainFile: CXFile? = null
+    val translationUnits = LinkedList<CXTranslationUnit>()
+    translationUnits.addLast(translationUnit)
 
     // The *name* of the header here is the path relative to the include path element., e.g. `curl/curl.h`.
     val headerToName = mutableMapOf<String, String>()
 
-    lateinit var indexer: Indexer
-    indexer = object : Indexer {
+    indexMutatingTUList(translationUnits, index, object : Indexer {
         override fun enteredMainFile(file: CXFile) {
             mainFile = file
             allHeaders += file
@@ -801,10 +803,9 @@ private fun filterHeadersByName(
         }
 
         override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
-            translationUnitsCache.put(index, info)?.also { indexTranslationUnit(index, it, 0, indexer) }
+            translationUnitsCache.put(index, info)?.also { if (!translationUnits.contains(it)) translationUnits.addLast(it) }
         }
-    }
-    indexTranslationUnit(index, translationUnit, 0, indexer)
+    })
 
     if (filter.excludeDepdendentModules) {
         ModulesMap(compilation, translationUnit).use { modulesMap ->
@@ -834,9 +835,10 @@ private fun filterHeadersByPredefined(
         allHeaders: MutableSet<CXFile?>,
         translationUnitsCache: TranslationUnitsCache
 ) {
+    val translationUnits = LinkedList<CXTranslationUnit>()
+    translationUnits.addLast(translationUnit)
     // Note: suboptimal but simple.
-    lateinit var indexer: Indexer
-    indexer = object : Indexer {
+    indexMutatingTUList(translationUnits, index, object : Indexer {
         override fun enteredMainFile(file: CXFile) {
             ownHeaders += file
             allHeaders += file
@@ -855,10 +857,20 @@ private fun filterHeadersByPredefined(
         }
 
         override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
-            translationUnitsCache.put(index, info)?.also { indexTranslationUnit(index, it, 0, indexer) }
+            translationUnitsCache.put(index, info)?.also { if (!translationUnits.contains(it)) translationUnits.addLast(it) }
         }
+    })
+}
+
+private fun indexMutatingTUList(
+        translationUnits: LinkedList<CXTranslationUnit>,
+        index: CXIndex,
+        indexer: Indexer
+) {
+    var curUnitIndex = 0
+    while (curUnitIndex < translationUnits.size) {
+        indexTranslationUnit(index, translationUnits[curUnitIndex++], 0, indexer)
     }
-    indexTranslationUnit(index, translationUnit, 0, indexer)
 }
 
 fun NativeLibrary.getHeaderPaths(translationUnitsCache: TranslationUnitsCache): NativeLibraryHeaders<String> {
