@@ -82,6 +82,8 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
         addKotlinCompilerConfiguration(project)
 
+        project.registerDefaultVariantImplementations()
+
         project.configurations.maybeCreate(PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
             isVisible = false
             isCanBeConsumed = false
@@ -116,6 +118,34 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
                     project.configurations.named(COMPILER_CLASSPATH_CONFIGURATION_NAME)
                 )
             }
+    }
+
+    private fun Project.registerDefaultVariantImplementations() {
+        val factories = VariantImplementationFactories.get(project.gradle)
+        factories.putIfAbsent(
+            MavenPluginConfigurator.MavenPluginConfiguratorVariantFactory::class,
+            MavenPluginConfigurator.DefaultMavenPluginConfiguratorVariantFactory()
+        )
+
+        factories.putIfAbsent(
+            JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory::class,
+            DefaultJavaSourceSetsAccessorVariantFactory()
+        )
+
+        factories.putIfAbsent(
+            BasePluginConfiguration.BasePluginConfigurationVariantFactory::class,
+            DefaultBasePluginConfigurationVariantFactory()
+        )
+
+        factories.putIfAbsent(
+            IdeaSyncDetector.IdeaSyncDetectorVariantFactory::class,
+            DefaultIdeaSyncDetectorVariantFactory()
+        )
+
+        factories.putIfAbsent(
+            ConfigurationTimePropertiesAccessor.ConfigurationTimePropertiesAccessorVariantFactory::class,
+            DefaultConfigurationTimePropertiesAccessorVariantFactory()
+        )
     }
 
     protected fun setupAttributeMatchingStrategy(
@@ -159,8 +189,6 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
         }
         project.maybeCreateCommonizerClasspathConfiguration()
 
-        project.registerDefaultVariantImplementations()
-
         project.createKotlinExtension(projectExtensionClass).apply {
             coreLibrariesVersion = kotlinPluginVersion
 
@@ -184,34 +212,6 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
         project.addNpmDependencyExtension()
 
         project.registerBuildKotlinToolingMetadataTask()
-    }
-
-    private fun Project.registerDefaultVariantImplementations() {
-        val factories = VariantImplementationFactories.get(project.gradle)
-        factories.putIfAbsent(
-            MavenPluginConfigurator.MavenPluginConfiguratorVariantFactory::class,
-            MavenPluginConfigurator.DefaultMavenPluginConfiguratorVariantFactory()
-        )
-
-        factories.putIfAbsent(
-            JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory::class,
-            DefaultJavaSourceSetsAccessorVariantFactory()
-        )
-
-        factories.putIfAbsent(
-            BasePluginConfiguration.BasePluginConfigurationVariantFactory::class,
-            DefaultBasePluginConfigurationVariantFactory()
-        )
-
-        factories.putIfAbsent(
-            IdeaSyncDetector.IdeaSyncDetectorVariantFactory::class,
-            DefaultIdeaSyncDetectorVariantFactory()
-        )
-
-        factories.putIfAbsent(
-            ConfigurationTimePropertiesAccessor.ConfigurationTimePropertiesAccessorVariantFactory::class,
-            DefaultConfigurationTimePropertiesAccessorVariantFactory()
-        )
     }
 
     internal open fun createTestRegistry(project: Project) = KotlinTestsRegistry(project)
