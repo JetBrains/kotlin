@@ -49,7 +49,7 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
 
     @Test
     public void testAllFilesPresentInSymbolByReference() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByReference"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
     }
 
     @Test
@@ -86,21 +86,5 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
     @TestMetadata("samConstructor.kt")
     public void testSamConstructor() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/samConstructor.kt");
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled")
-    @TestDataPath("$PROJECT_ROOT")
-    public class WithTestCompilerPluginEnabled {
-        @Test
-        public void testAllFilesPresentInWithTestCompilerPluginEnabled() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("generatedCompanionWorksAsValue.kt")
-        public void testGeneratedCompanionWorksAsValue() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled/generatedCompanionWorksAsValue.kt");
-        }
     }
 }
