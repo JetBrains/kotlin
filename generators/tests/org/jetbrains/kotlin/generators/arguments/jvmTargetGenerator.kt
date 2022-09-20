@@ -17,18 +17,12 @@ internal fun generateJvmTarget(
     val jvmTargetFqName = FqName("org.jetbrains.kotlin.gradle.dsl.JvmTarget")
     filePrinter(fileFromFqName(apiDir, jvmTargetFqName)) {
         generateDeclaration("enum class", jvmTargetFqName, afterType = "(val target: String)") {
-            val jvmTargetValues = JvmTarget.values()
-            val deprecatedJvmTargetValues = JvmTarget.values().subtract(JvmTarget.supportedValues().toSet())
+            val jvmTargetValues = JvmTarget.supportedValues()
 
             val lastIndex = jvmTargetValues.size - 1
             jvmTargetValues.forEachIndexed { index, jvmTarget ->
                 val lastChar = if (index == lastIndex) ";" else ","
-                val prefix = if (jvmTarget in deprecatedJvmTargetValues) {
-                    "@Deprecated(\"Will be removed soon\") "
-                } else {
-                    ""
-                }
-                println("$prefix${jvmTarget.name}(\"${jvmTarget.description}\")$lastChar")
+                println("${jvmTarget.name}(\"${jvmTarget.description}\")$lastChar")
             }
 
             println()
