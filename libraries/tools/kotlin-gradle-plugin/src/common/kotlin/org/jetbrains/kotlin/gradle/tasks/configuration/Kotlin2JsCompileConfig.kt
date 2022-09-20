@@ -57,7 +57,8 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
                             val freeArgs = task.enhancedFreeCompilerArgs.get()
                             if (task.compilerOptions.outputFile.orNull != null) {
                                 if (freeArgs.contains(PRODUCE_UNZIPPED_KLIB)) {
-                                    File(task.compilerOptions.outputFile.get())
+                                    val file = File(task.compilerOptions.outputFile.get())
+                                    if (file.extension == "") file else file.parentFile
                                 } else {
                                     File(task.compilerOptions.outputFile.get()).parentFile
                                 }
