@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
@@ -88,6 +89,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.primaryConstructor
@@ -410,16 +412,11 @@ class ComposerLambdaMemoization(
             inlineLambdaInfo.preservesComposableScope(this) &&
             declarationContextStack.peek()?.composable == true
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitFunction(declaration: IrFunction): IrStatement {
-        val descriptor = declaration.descriptor
         val composable = declaration.allowsComposableCalls
         val canRemember = composable &&
             // Don't use remember in an inline function
-            !descriptor.isInline &&
-            // Don't use remember if in a composable that returns a value
-            // TODO(b/150390108): Consider allowing remember in effects
-            descriptor.returnType.let { it != null && it.isUnit() }
+            !declaration.isInline
 
         val context = FunctionContext(declaration, composable, canRemember)
         declarationContextStack.push(context)
@@ -799,10 +796,12 @@ class ComposerLambdaMemoization(
             return expression.markAsStatic(true)
         }
 
-        // If the function captures any unstable values or var declarations, do not memoize
-        if (captures.any {
-            !((it as? IrVariable)?.isVar != true && stabilityOf(it.type).knownStable())
-        }
+        // Don't memoize if the function captures any var declarations, unstable values,
+        // or inlined lambdas.
+        if (
+            captures.any {
+                it.isVar() || !it.isStable() || it.isInlinedLambda()
+            }
         ) {
             metrics.recordLambda(
                 composable = false,
@@ -885,6 +884,18 @@ class ComposerLambdaMemoization(
             )
         }.patchDeclarationParents(declaration).markAsSynthetic(mark = true)
     }
+
+    private fun IrValueDeclaration.isVar(): Boolean =
+        (this as? IrVariable)?.isVar == true
+
+    private fun IrValueDeclaration.isStable(): Boolean =
+        stabilityOf(type).knownStable()
+
+    private fun IrValueDeclaration.isInlinedLambda(): Boolean =
+        type.isFunctionOrKFunction() &&
+            this is IrValueParameter &&
+            (parent as? IrFunction)?.isInline == true &&
+            !isNoinline
 
     private fun IrBuilderWithScope.calculationExpressionForRemember(
         expression: IrExpression
