@@ -334,6 +334,8 @@ public inline fun kotlin.CharSequence.forEach(action: (kotlin.Char) -> kotlin.Un
 
 public inline fun kotlin.CharSequence.forEachIndexed(action: (index: kotlin.Int, kotlin.Char) -> kotlin.Unit): kotlin.Unit
 
+@kotlin.Deprecated(message = "MatchGroupCollection has a member function with the same signature.")
+@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.8")
 @kotlin.SinceKotlin(version = "1.7")
 public operator fun kotlin.text.MatchGroupCollection.get(name: kotlin.String): kotlin.text.MatchGroup?
 
@@ -1347,11 +1349,16 @@ public final data class MatchGroup {
 
 public interface MatchGroupCollection : kotlin.collections.Collection<kotlin.text.MatchGroup?> {
     public abstract operator fun get(index: kotlin.Int): kotlin.text.MatchGroup?
+
+    @kotlin.SinceKotlin(version = "1.8")
+    public abstract operator fun get(name: kotlin.String): kotlin.text.MatchGroup?
 }
 
+@kotlin.Deprecated(message = "Use MatchGroupCollection instead.", replaceWith = kotlin.ReplaceWith(expression = "MatchGroupCollection", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.8")
 @kotlin.SinceKotlin(version = "1.1")
 public interface MatchNamedGroupCollection : kotlin.text.MatchGroupCollection {
-    public abstract operator fun get(name: kotlin.String): kotlin.text.MatchGroup?
+    public abstract override operator fun get(name: kotlin.String): kotlin.text.MatchGroup?
 }
 
 public interface MatchResult {

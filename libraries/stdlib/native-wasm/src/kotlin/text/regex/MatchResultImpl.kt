@@ -91,6 +91,7 @@ constructor (internal val input: CharSequence,
      * Groups are indexed from 1 to `groupCount` and group with the index 0 corresponds to the entire match.
      */
     // Create one object or several ones?
+    @Suppress("DEPRECATION")
     override val groups: MatchGroupCollection = object: MatchNamedGroupCollection, AbstractCollection<MatchGroup?>() {
         override val size: Int
             get() = this@MatchResultImpl.groupCount
