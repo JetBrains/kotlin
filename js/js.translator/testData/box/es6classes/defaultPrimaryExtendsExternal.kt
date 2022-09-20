@@ -1,4 +1,5 @@
-//IGNORE_BACKEND: JS, JS_IR
+// ES_CLASSES
+// IGNORE_BACKEND: JS
 
 var sideEffect = ""
 

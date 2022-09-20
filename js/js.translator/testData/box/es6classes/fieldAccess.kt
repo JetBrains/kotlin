@@ -1,3 +1,4 @@
+// ES_CLASSES
 // EXPECTED_REACHABLE_NODES: 1340
 open class A(val x: Int)
 
