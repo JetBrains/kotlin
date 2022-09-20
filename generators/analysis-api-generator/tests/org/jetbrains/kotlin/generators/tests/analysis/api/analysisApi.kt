@@ -88,7 +88,12 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             AbstractMemberScopeByFqNameTest::class,
             filter = frontendIs(FrontendKind.Fir),
         ) {
-            model("memberScopeByFqName")
+            when (it.analysisApiMode) {
+                AnalysisApiMode.Ide ->
+                    model("memberScopeByFqName")
+                AnalysisApiMode.Standalone ->
+                    model("memberScopeByFqName", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+            }
         }
 
         test(AbstractFileScopeTest::class) {
@@ -108,11 +113,21 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
         test(
             AbstractSymbolByFqNameTest::class
         ) {
-            model("symbolByFqName")
+            when (it.analysisApiMode) {
+                AnalysisApiMode.Ide ->
+                    model("symbolByFqName")
+                AnalysisApiMode.Standalone ->
+                    model("symbolByFqName", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+            }
         }
 
         test(AbstractSymbolByReferenceTest::class, filter = frontendIs(FrontendKind.Fir)) {
-            model("symbolByReference")
+            when (it.analysisApiMode) {
+                AnalysisApiMode.Ide ->
+                    model("symbolByReference")
+                AnalysisApiMode.Standalone ->
+                    model("symbolByReference", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+            }
         }
     }
 
@@ -149,9 +164,17 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
 
 private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     component("callResolver", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
-        test(AbstractResolveCallTest::class) {
-            model("resolveCall")
+        group(filter = { it.analysisApiMode == AnalysisApiMode.Standalone }) {
+            test(AbstractResolveCallTest::class) {
+                when (it.analysisApiMode) {
+                    AnalysisApiMode.Ide ->
+                        model("resolveCall")
+                    AnalysisApiMode.Standalone ->
+                        model("resolveCall", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+                }
+            }
         }
+
         test(
             AbstractResolveCandidatesTest::class
         ) {
