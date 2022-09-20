@@ -97,6 +97,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     }
 
     @Test
+    @TestMetadata("exposedAnonymousType.kt")
+    public void testExposedAnonymousType() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/exposedAnonymousType.kt");
+    }
+
+    @Test
     @TestMetadata("generics.kt")
     public void testGenerics() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/generics.kt");

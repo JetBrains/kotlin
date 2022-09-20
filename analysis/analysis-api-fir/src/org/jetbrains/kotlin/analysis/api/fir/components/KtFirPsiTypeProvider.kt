@@ -96,7 +96,9 @@ private fun ConeKotlinType.simplifyType(
             return currentType
         }
         currentType = currentType.upperBoundIfFlexible()
-        currentType = substitutor.substituteOrSelf(currentType)
+        if (visibilityForApproximation != Visibilities.Local) {
+            currentType = substitutor.substituteOrSelf(currentType)
+        }
         val needLocalTypeApproximation = needLocalTypeApproximation(visibilityForApproximation, isInlineFunction, session, useSitePosition)
         // TODO: can we approximate local types in type arguments *selectively* ?
         currentType = PublicTypeApproximator.approximateTypeToPublicDenotable(currentType, session, needLocalTypeApproximation)
@@ -132,6 +134,7 @@ private val PsiElement.visibilityForApproximation: Visibility
         val containerVisibility =
             if (parent is KtLightClassForFacade) Visibilities.Public
             else (parent as? PsiClass)?.visibility ?: Visibilities.Local
+        val visibility = visibility
         if (containerVisibility == Visibilities.Local || visibility == Visibilities.Local) return Visibilities.Local
         if (containerVisibility == Visibilities.Private) return Visibilities.Private
         return visibility
@@ -140,6 +143,7 @@ private val PsiElement.visibilityForApproximation: Visibility
 // Mimic JavaElementUtil#getVisibility
 private val PsiModifierListOwner.visibility: Visibility
     get() {
+        if (parents.any { it is PsiMethod }) return Visibilities.Local
         if (hasModifierProperty(PsiModifier.PUBLIC)) {
             return Visibilities.Public
         }
@@ -211,19 +215,12 @@ private class AnonymousTypesSubstitutor(
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeClassLikeType) return null
 
-        val isAnonymous = type.classId.let { it?.shortClassName?.asString() == SpecialNames.ANONYMOUS_STRING }
-        if (!isAnonymous) return null
-
-        fun ConeClassLikeType.isNotInterface(): Boolean {
-            val firClassNode = lookupTag.toSymbol(session) as? FirClassSymbol<*> ?: return false
-            return firClassNode.classKind != ClassKind.INTERFACE
-        }
+        val hasStableName = type.classId?.isLocal == true
+        if (!hasStableName) return null
 
         val firClassNode = type.lookupTag.toSymbol(session) as? FirClassSymbol
         if (firClassNode != null) {
-            val superTypesCones = firClassNode.resolvedSuperTypes
-            val superClass = superTypesCones.firstOrNull { (it as? ConeClassLikeType)?.isNotInterface() == true }
-            if (superClass != null) return superClass
+            firClassNode.resolvedSuperTypes.singleOrNull()?.let { return it }
         }
 
         return if (type.nullability.isNullable) session.builtinTypes.nullableAnyType.type
