@@ -230,6 +230,11 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
+    val ES_CLASSES by directive(
+        description = "",
+        applicability = DirectiveApplicability.Global
+    )
+
     val ES_MODULES by directive(
         description = "",
         applicability = DirectiveApplicability.Global
