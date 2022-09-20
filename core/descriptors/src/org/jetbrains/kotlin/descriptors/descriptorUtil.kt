@@ -11,9 +11,13 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.types.typeUtil.isBoolean
+import org.jetbrains.kotlin.types.typeUtil.isNullableAny
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.sure
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -22,11 +26,11 @@ fun ModuleDescriptor.resolveClassByFqName(fqName: FqName, lookupLocation: Lookup
     if (fqName.isRoot) return null
 
     (getPackage(fqName.parent())
-            .memberScope.getContributedClassifier(fqName.shortName(), lookupLocation) as? ClassDescriptor)?.let { return it }
+        .memberScope.getContributedClassifier(fqName.shortName(), lookupLocation) as? ClassDescriptor)?.let { return it }
 
     return resolveClassByFqName(fqName.parent(), lookupLocation)
-            ?.unsubstitutedInnerClassesScope
-            ?.getContributedClassifier(fqName.shortName(), lookupLocation) as? ClassDescriptor
+        ?.unsubstitutedInnerClassesScope
+        ?.getContributedClassifier(fqName.shortName(), lookupLocation) as? ClassDescriptor
 }
 
 fun ModuleDescriptor.findContinuationClassDescriptorOrNull(lookupLocation: LookupLocation): ClassDescriptor? =
@@ -88,3 +92,12 @@ fun DeclarationDescriptor.containingPackage(): FqName? {
 }
 
 object DeserializedDeclarationsFromSupertypeConflictDataKey : CallableDescriptor.UserDataKey<CallableMemberDescriptor>
+
+fun FunctionDescriptor.isTypedEqualsInInlineClass(): Boolean = name == OperatorNameConventions.EQUALS
+        && (returnType?.isBoolean() ?: false) && containingDeclaration.isInlineClass()
+        && valueParameters.size == 1 && valueParameters[0].type == (containingDeclaration as? ClassDescriptor)?.defaultType
+
+
+fun FunctionDescriptor.overridesEqualsFromAny(): Boolean = name == OperatorNameConventions.EQUALS
+        && (returnType?.isBoolean() ?: false)
+        && valueParameters.size == 1 && valueParameters[0].type.isNullableAny()

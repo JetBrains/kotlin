@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.isNothing
-import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
-import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private val javaLangCloneable = FqNameUnsafe("java.lang.Cloneable")
@@ -105,7 +103,7 @@ object InlineClassDeclarationChecker : DeclarationChecker {
             if (baseParameterType != null && baseParameterTypeReference != null) {
                 if (baseParameterType.isInapplicableParameterType() &&
                     !(context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
-                        (baseParameterType.isTypeParameter() || baseParameterType.isGenericArrayOfTypeParameter()))
+                            (baseParameterType.isTypeParameter() || baseParameterType.isGenericArrayOfTypeParameter()))
                 ) {
                     trace.report(Errors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE.on(baseParameterTypeReference, baseParameterType))
                     baseParametersOk = false
@@ -151,7 +149,21 @@ object InlineClassDeclarationChecker : DeclarationChecker {
             trace.report(Errors.VALUE_CLASS_CANNOT_BE_CLONEABLE.on(inlineOrValueKeyword))
             return
         }
+
+        fun getFunctionDescriptor(declaration: KtDeclaration): SimpleFunctionDescriptor? =
+            (declaration as? KtFunction)?.run { context.trace.bindingContext.get(BindingContext.FUNCTION, declaration) }
+
+        fun isUntypedEquals(declaration: KtDeclaration): Boolean = getFunctionDescriptor(declaration)?.overridesEqualsFromAny() ?: false
+        fun isTypedEquals(declaration: KtDeclaration): Boolean = getFunctionDescriptor(declaration)?.isTypedEqualsInInlineClass() ?: false
+
+
+        (declaration.declarations.singleOrNull { isUntypedEquals(it) } as? KtNamedFunction)?.apply {
+            if (declaration.declarations.none { isTypedEquals(it) }) {
+                trace.report(Errors.ILLEGAL_EQUALS_OVERRIDING_IN_INLINE_CLASS.on(this@apply, descriptor.name.asString()))
+            }
+        }
     }
+
 
     private fun KotlinType.isInapplicableParameterType() =
         isUnit() || isNothing() || isTypeParameter() || isGenericArrayOfTypeParameter()
@@ -203,7 +215,7 @@ class InnerClassInsideInlineClass : DeclarationChecker {
 class ReservedMembersAndConstructsForInlineClass : DeclarationChecker {
 
     companion object {
-        private val reservedFunctions = setOf("box", "unbox", "equals", "hashCode")
+        private val reservedFunctions = setOf("box", "unbox")
     }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
