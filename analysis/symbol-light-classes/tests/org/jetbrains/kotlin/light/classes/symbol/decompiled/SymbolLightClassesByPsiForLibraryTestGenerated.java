@@ -229,6 +229,12 @@ public class SymbolLightClassesByPsiForLibraryTestGenerated extends AbstractSymb
     }
 
     @Test
+    @TestMetadata("strangeIdentifiers.kt")
+    public void testStrangeIdentifiers() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/strangeIdentifiers.kt");
+    }
+
+    @Test
     @TestMetadata("throwsAnnotation.kt")
     public void testThrowsAnnotation() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/throwsAnnotation.kt");
