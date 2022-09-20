@@ -185,10 +185,6 @@ compileTestKotlin {
     }
 }
 
-test {
-    systemProperty("supportsNamedCapturingGroup", false)
-}
-
 compileLongRunningTestKotlin {
     kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.ExperimentalStdlibApi"
 }

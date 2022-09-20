@@ -8,7 +8,6 @@
 package test.text
 
 import test.regexSplitUnicodeCodePointHandling
-import test.supportsNamedCapturingGroup
 import test.supportsOctalLiteralInRegex
 import test.supportsEscapeAnyCharInRegex
 import test.BackReferenceHandling
@@ -174,8 +173,6 @@ class RegexTest {
     }
 
     @Test fun matchNamedGroups() {
-        if (!supportsNamedCapturingGroup) return
-
         val regex = "\\b(?<city>[A-Za-z\\s]+),\\s(?<state>[A-Z]{2}):\\s(?<areaCode>[0-9]{3})\\b".toRegex()
         val input = "Coordinates: Austin, TX: 123"
 
@@ -190,16 +187,12 @@ class RegexTest {
     }
 
     @Test fun matchDuplicateGroupName() {
-        if (!supportsNamedCapturingGroup) return
-
         // should fail with IllegalArgumentException, but JS fails with SyntaxError
         assertFails { "(?<hi>hi)|(?<hi>bye)".toRegex() }
         assertFails { "(?<first>\\d+)-(?<first>\\d+)".toRegex() }
     }
 
     @Test fun matchOptionalNamedGroup() {
-        if (!supportsNamedCapturingGroup) return
-
         "(?<hi>hi)|(?<bye>bye)".toRegex(RegexOption.IGNORE_CASE).let { regex ->
             val hiMatch = regex.find("Hi!")!!
             val hiGroups = hiMatch.groups
@@ -278,8 +271,6 @@ class RegexTest {
     }
 
     @Test fun matchNamedGroupsWithBackReference() {
-        if (!supportsNamedCapturingGroup) return
-
         "(?<title>\\w+), yes \\k<title>".toRegex().let { regex ->
             val match = regex.find("Do you copy? Sir, yes Sir!")!!
             assertEquals("Sir, yes Sir", match.value)
@@ -314,8 +305,6 @@ class RegexTest {
     }
 
     @Test fun invalidNamedGroupDeclaration() {
-        if (!supportsNamedCapturingGroup) return
-
         // should fail with IllegalArgumentException, but JS fails with SyntaxError
 
         assertFails {
@@ -468,8 +457,6 @@ class RegexTest {
     }
 
     @Test fun replaceWithNamedGroups() {
-        if (!supportsNamedCapturingGroup) return
-
         val pattern = Regex("(?<first>\\d+)-(?<second>\\d+)")
 
         "123-456".let { input ->
@@ -500,8 +487,6 @@ class RegexTest {
     }
 
     @Test fun replaceWithNamedOptionalGroups() {
-        if (!supportsNamedCapturingGroup) return
-
         val regex = "(?<hi>hi)|(?<bye>bye)".toRegex(RegexOption.IGNORE_CASE)
 
         assertEquals("[Hi, ]gh wall", regex.replace("High wall", "[$1, $2]"))

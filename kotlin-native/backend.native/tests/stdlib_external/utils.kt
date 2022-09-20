@@ -22,8 +22,6 @@ actual fun testOnJs(action: () -> Unit) {}
 
 public actual val isFloat32RangeEnforced: Boolean get() = true
 
-public actual val supportsNamedCapturingGroup: Boolean get() = true
-
 public actual val supportsOctalLiteralInRegex: Boolean get() = true
 
 public actual val supportsEscapeAnyCharInRegex: Boolean get() = true
