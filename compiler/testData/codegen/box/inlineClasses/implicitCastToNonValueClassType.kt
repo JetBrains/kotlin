@@ -13,7 +13,3 @@ fun box(): String {
 }
 
 fun func(para: Int) {}
-
-// CHECK_BYTECODE_TEXT
-// 1 CHECKCAST java/lang/Integer
-// 1 L2I
