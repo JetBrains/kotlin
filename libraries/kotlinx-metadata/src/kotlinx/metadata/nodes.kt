@@ -1036,7 +1036,7 @@ class KmEffect(
  */
 @ExperimentalContracts
 @OptIn(DeprecatedVisitor::class)
-class KmEffectExpression : KmEffectExpressionVisitor() {
+class  KmEffectExpression : KmEffectExpressionVisitor() {
     /**
      * Effect expression flags, consisting of [Flag.EffectExpression] flags.
      */

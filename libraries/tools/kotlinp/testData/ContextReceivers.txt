@@ -40,6 +40,8 @@ package {
   context(B)
   public final val h: kotlin/Int
     public final /* non-default */ get
+
+  // module name: test-module
 }
 // META-INF/test-module.kotlin_module
 // ------------------------------------------

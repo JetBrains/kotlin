@@ -4,6 +4,8 @@ package {
 
   // signature: ok()V
   public final fun ok(): kotlin/Unit
+
+  // module name: test-module
 }
 // META-INF/test-module.kotlin_module
 // ------------------------------------------
