@@ -13,7 +13,4 @@ open class A {
 // FILE: B.kt
 
 class B : A() {
-    fun foo() : String = "OK"
-
-    val bar: Int = 2
 }

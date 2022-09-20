@@ -28,12 +28,4 @@ class B : A {
 
   }
 
-  fun foo(): String {
-    return "OK"
-  }
-
-  val bar: Int
-    field = 2
-    get
-
 }
