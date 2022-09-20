@@ -225,6 +225,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_CONST_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_DECLARATION_IN_WHEN_SUBJECT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_EQUALS_OVERRIDING_IN_INLINE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_ESCAPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_INLINE_PARAMETER_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_KOTLIN_VERSION_STRING_VALUE
@@ -1981,6 +1982,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE,
             "Redundant 'suspend' modifier: lambda parameters of suspend function type uses existing continuation."
+        )
+
+        map.put(
+            ILLEGAL_EQUALS_OVERRIDING_IN_INLINE_CLASS,
+            "''equals(other: {0}): Boolean'' must be defined since ''equals(other: Any?): Boolean'' is overridden",
+            STRING
         )
 
         //imports

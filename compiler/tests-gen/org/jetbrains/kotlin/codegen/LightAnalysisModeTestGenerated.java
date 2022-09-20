@@ -16458,6 +16458,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
+        @TestMetadata("inlineClassEqualsOverride.kt")
+        public void ignoreInlineClassEqualsOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualsOverride.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @TestMetadata("inlineClassEqualsOverrideForCollection.kt")
+        public void ignoreInlineClassEqualsOverrideForCollection() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualsOverrideForCollection.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
         @TestMetadata("inlineClassFieldHandlingGeneric.kt")
         public void ignoreInlineClassFieldHandlingGeneric() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFieldHandlingGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
@@ -17340,6 +17350,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambdaGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
+        @TestMetadata("inlineClassBothEqualsOverride.kt")
+        public void testInlineClassBothEqualsOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassBothEqualsOverride.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
         @TestMetadata("inlineClassEqualityShouldUseTotalOrderForFloatingPointData.kt")
         public void testInlineClassEqualityShouldUseTotalOrderForFloatingPointData() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualityShouldUseTotalOrderForFloatingPointData.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
@@ -17363,6 +17378,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("inlineClassFunctionInvokeGeneric.kt")
         public void testInlineClassFunctionInvokeGeneric() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFunctionInvokeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @TestMetadata("inlineClassHashCodeOverride.kt")
+        public void testInlineClassHashCodeOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassHashCodeOverride.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @TestMetadata("inlineClassImplementsCollection.kt")

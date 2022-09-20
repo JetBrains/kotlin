@@ -42,6 +42,18 @@ fun box(): String {
 }
 
 // CHECK_BYTECODE_TEXT
+// JVM_IR_TEMPLATES
+// 0 java/lang/Boolean.valueOf
+// 0 java/lang/Byte.valueOf
+// 0 java/lang/Character.valueOf
+// 0 java/lang/Short.valueOf
+// 0 java/lang/Integer.valueOf
+// 0 java/lang/Long.valueOf
+// 0 java/lang/Float.valueOf
+// 0 java/lang/Double.valueOf
+// 1 java/lang/Float.compare
+// 1 java/lang/Double.compare
+// JVM_TEMPLATES
 // 0 java/lang/Boolean.valueOf
 // 0 java/lang/Byte.valueOf
 // 0 java/lang/Character.valueOf

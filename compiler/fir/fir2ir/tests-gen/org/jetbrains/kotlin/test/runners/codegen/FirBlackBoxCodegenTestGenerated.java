@@ -21264,6 +21264,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("inlineClassBothEqualsOverride.kt")
+        public void testInlineClassBothEqualsOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassBothEqualsOverride.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
         @TestMetadata("inlineClassEqualityShouldUseTotalOrderForFloatingPointData.kt")
         public void testInlineClassEqualityShouldUseTotalOrderForFloatingPointData() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualityShouldUseTotalOrderForFloatingPointData.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
@@ -21273,6 +21279,18 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("inlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric.kt")
         public void testInlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassEqualsOverride.kt")
+        public void testInlineClassEqualsOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualsOverride.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassEqualsOverrideForCollection.kt")
+        public void testInlineClassEqualsOverrideForCollection() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualsOverrideForCollection.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @Test
@@ -21297,6 +21315,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("inlineClassFunctionInvokeGeneric.kt")
         public void testInlineClassFunctionInvokeGeneric() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFunctionInvokeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassHashCodeOverride.kt")
+        public void testInlineClassHashCodeOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassHashCodeOverride.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @Test

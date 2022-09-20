@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -198,8 +199,14 @@ object OperatorChecks : AbstractModifierChecks() {
         Checks(RANGE_UNTIL, MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck),
         Checks(EQUALS, Member) {
             fun DeclarationDescriptor.isAny() = this is ClassDescriptor && KotlinBuiltIns.isAny(this)
-            ensure(containingDeclaration.isAny() || overriddenDescriptors.any { it.containingDeclaration.isAny() }) {
-                "must override ''equals()'' in Any"
+            ensure(containingDeclaration.isAny() || overriddenDescriptors.any { it.containingDeclaration.isAny() }
+                           || (containingDeclaration.isInlineClass() && isTypedEqualsInInlineClass())) {
+                buildString {
+                    append("must override ''equals()'' in Any")
+                    if (containingDeclaration.isInlineClass()) {
+                        append(" or define ''equals(other: ${containingDeclaration.name}): Boolean''")
+                    }
+                }
             }
         },
         Checks(COMPARE_TO, MemberOrExtension, ReturnsInt, SingleValueParameter, NoDefaultAndVarargsCheck),

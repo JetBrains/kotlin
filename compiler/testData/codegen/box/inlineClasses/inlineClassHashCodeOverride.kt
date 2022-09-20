@@ -1,0 +1,18 @@
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class A(val value: MyClass) {
+    override fun hashCode(): Int {
+        return 42
+    }
+}
+
+class MyClass() {
+    override fun hashCode(): Int {
+        return -1;
+    }
+}
+
+fun box(): String = if (A(MyClass()).hashCode() == 42) "OK" else "Fail"

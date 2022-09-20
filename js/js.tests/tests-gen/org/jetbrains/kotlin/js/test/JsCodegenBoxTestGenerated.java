@@ -16232,6 +16232,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("inlineClassBothEqualsOverride.kt")
+        public void testInlineClassBothEqualsOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassBothEqualsOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineClassEqualityShouldUseTotalOrderForFloatingPointData.kt")
         public void testInlineClassEqualityShouldUseTotalOrderForFloatingPointData() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualityShouldUseTotalOrderForFloatingPointData.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -16241,6 +16247,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("inlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric.kt")
         public void testInlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("inlineClassEqualsOverride.kt")
+        public void testInlineClassEqualsOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualsOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("inlineClassEqualsOverrideForCollection.kt")
+        public void testInlineClassEqualsOverrideForCollection() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualsOverrideForCollection.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -16265,6 +16283,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("inlineClassFunctionInvokeGeneric.kt")
         public void testInlineClassFunctionInvokeGeneric() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFunctionInvokeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("inlineClassHashCodeOverride.kt")
+        public void testInlineClassHashCodeOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassHashCodeOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
