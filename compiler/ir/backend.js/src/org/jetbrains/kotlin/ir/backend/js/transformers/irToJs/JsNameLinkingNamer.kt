@@ -86,10 +86,15 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext, private val mi
     override fun getNameForMemberFunction(function: IrSimpleFunction): JsName {
         require(function.dispatchReceiverParameter != null)
         val signature = jsFunctionSignature(function, context)
+        if (context.keeper.shouldKeep(function)) {
+            context.minimizedNameGenerator.keepName(signature)
+        }
         val result = if (minimizedMemberNames && !function.hasStableJsName(context)) {
             function.parentAsClass.fieldData()
             context.minimizedNameGenerator.nameBySignature(signature)
-        } else signature
+        } else {
+            signature
+        }
         return result.toJsName()
     }
 
@@ -125,6 +130,7 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext, private val mi
                                     context.minimizedNameGenerator.reserveName(signature)
                                 }
                             }
+
                             declaration is IrProperty -> {
                                 if (declaration.isExported(context)) {
                                     context.minimizedNameGenerator.reserveName(declaration.getJsNameOrKotlinName().identifier)
@@ -146,7 +152,7 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext, private val mi
                                     correspondingProperty.isSimpleProperty
                             val safeName = when {
                                hasStableName -> (correspondingProperty ?: it).getJsNameOrKotlinName().identifier
-                               minimizedMemberNames -> context.minimizedNameGenerator.generateNextName()
+                               minimizedMemberNames && !context.keeper.shouldKeep(it) -> context.minimizedNameGenerator.generateNextName()
                                else -> it.safeName()
                             }
                             val resultName = if (!hasStableName) {
@@ -156,6 +162,7 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext, private val mi
                             } else safeName
                             result[it] = resultName
                         }
+
                         it is IrFunction && it.dispatchReceiverParameter != null -> {
                             nameCnt[jsFunctionSignature(it, context)] = 1 // avoid clashes with member functions
                         }

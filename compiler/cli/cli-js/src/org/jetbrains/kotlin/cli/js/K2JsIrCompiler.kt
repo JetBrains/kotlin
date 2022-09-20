@@ -100,6 +100,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 module,
                 phaseConfig,
                 irFactory,
+                keep = arguments.irKeep?.split(",")
+                    ?.filterNot { it.isEmpty() }
+                    ?.toSet()
+                    ?: emptySet(),
                 dceRuntimeDiagnostic = RuntimeDiagnostic.resolve(
                     arguments.irDceRuntimeDiagnostic,
                     messageCollector

@@ -593,7 +593,15 @@ class GenerateIrRuntime {
     private fun doBackEnd(
         module: IrModuleFragment, symbolTable: SymbolTable, irBuiltIns: IrBuiltIns, jsLinker: JsIrLinker
     ): CompilerResult {
-        val context = JsIrBackendContext(module.descriptor, irBuiltIns, symbolTable, module, emptySet(), configuration)
+        val context = JsIrBackendContext(
+            module.descriptor,
+            irBuiltIns,
+            symbolTable,
+            module,
+            additionalExportedDeclarationNames = emptySet(),
+            keep = emptySet(),
+            configuration
+        )
 
         ExternalDependenciesGenerator(symbolTable, listOf(jsLinker)).generateUnboundSymbolsAsDependencies()
 

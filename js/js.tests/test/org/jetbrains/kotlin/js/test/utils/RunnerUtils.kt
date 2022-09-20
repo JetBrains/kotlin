@@ -136,10 +136,14 @@ fun getAllFilesForRunner(
         val artifactsPaths = modulesToArtifact.values.map { it.outputFile.absolutePath }.filter { !File(it).isDirectory }
         val allJsFiles = additionalFiles + inputJsFilesBefore +artifactsPaths + commonFiles + additionalMainFiles + inputJsFilesAfter
 
-        val result = mutableMapOf(TranslationMode.FULL to allJsFiles)
+        val result = mutableMapOf<TranslationMode, List<String>>()
 
         val globalDirectives = testServices.moduleStructure.allDirectives
         val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in globalDirectives
+        val onlyIrDce = JsEnvironmentConfigurationDirectives.ONLY_IR_DCE in globalDirectives
+        if (!onlyIrDce) {
+            result[TranslationMode.FULL] = allJsFiles
+        }
         if (runIrDce) {
             val dceJsFiles = artifactsPaths.map { it.replace(outputDir.absolutePath, dceOutputDir.absolutePath) }
             val dceAllJsFiles = additionalFiles + inputJsFilesBefore + dceJsFiles + commonFiles + additionalMainFiles + inputJsFilesAfter

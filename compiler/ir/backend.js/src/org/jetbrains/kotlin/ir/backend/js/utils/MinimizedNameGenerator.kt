@@ -9,6 +9,7 @@ class MinimizedNameGenerator {
     private var index = 0
     private val functionSignatureToName = mutableMapOf<String, String>()
     private val reservedNames = mutableSetOf<String>()
+    private val keptNames = mutableSetOf<String>()
 
     fun generateNextName(): String {
         var candidate = index++.toJsIdentifier()
@@ -19,9 +20,14 @@ class MinimizedNameGenerator {
     }
 
     fun nameBySignature(signature: String): String {
+        if (signature in keptNames) return signature
         return functionSignatureToName.getOrPut(signature) {
             generateNextName()
         }
+    }
+
+    fun keepName(signature: String): Boolean {
+        return keptNames.add(signature)
     }
 
     fun reserveName(signature: String) {

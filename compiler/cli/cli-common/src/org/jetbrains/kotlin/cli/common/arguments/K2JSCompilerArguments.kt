@@ -100,6 +100,13 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-target", valueDescription = "{ v5 }", description = "Generate JS files for specific ECMA version")
     var target: String? by NullableStringFreezableVar(null)
 
+    @Argument(
+        value = "-Xir-keep",
+        description = "Comma-separated list of fully-qualified names to not be eliminated by DCE (if it can be reached), " +
+                "and for which to keep non-minified names."
+    )
+    var irKeep: String? by NullableStringFreezableVar(null)
+
     @GradleOption(
         value = DefaultValues.JsModuleKinds::class,
         gradleInputType = GradleInputTypes.INPUT

@@ -32,6 +32,7 @@ fun compileWithIC(
     filesToLower: Collection<IrFile>,
     mainArguments: List<String>? = null,
     exportedDeclarations: Set<FqName> = emptySet(),
+    keep: Set<String> = emptySet(),
     generateFullJs: Boolean = true,
     generateDceJs: Boolean = false,
     dceDriven: Boolean = false,
@@ -42,7 +43,7 @@ fun compileWithIC(
     baseClassIntoMetadata: Boolean = false,
     lowerPerModule: Boolean = false,
     safeExternalBoolean: Boolean = false,
-    safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null
+    safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
 ): List<JsIrFragmentAndBinaryAst> {
     val irBuiltIns = mainModule.irBuiltins
     val symbolTable = (irBuiltIns as IrBuiltInsOverDescriptors).symbolTable
@@ -53,13 +54,14 @@ fun compileWithIC(
         symbolTable,
         mainModule,
         exportedDeclarations,
+        keep,
         configuration,
         es6mode = es6mode,
         dceRuntimeDiagnostic = dceRuntimeDiagnostic,
         baseClassIntoMetadata = baseClassIntoMetadata,
         safeExternalBoolean = safeExternalBoolean,
         safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
-        icCompatibleIr2Js = IcCompatibleIr2Js.IC_MODE
+        icCompatibleIr2Js = IcCompatibleIr2Js.IC_MODE,
     )
 
     // Load declarations referenced during `context` initialization

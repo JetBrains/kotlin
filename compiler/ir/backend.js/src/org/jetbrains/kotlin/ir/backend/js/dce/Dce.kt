@@ -57,6 +57,7 @@ private fun IrDeclaration.addRootsTo(
             getter?.addRootsTo(nestedVisitor, context)
             setter?.addRootsTo(nestedVisitor, context)
         }
+
         isEffectivelyExternal() -> {
             val correspondingProperty = when (this) {
                 is IrField -> correspondingPropertySymbol?.owner
@@ -68,15 +69,18 @@ private fun IrDeclaration.addRootsTo(
                 acceptVoid(nestedVisitor)
             }
         }
+
         isExported(context) -> {
             acceptVoid(nestedVisitor)
         }
+
         this is IrField -> {
             // TODO: simplify
             if ((initializer != null && !isKotlinPackage() || correspondingPropertySymbol?.owner?.isExported(context) == true) && !isConstant()) {
                 acceptVoid(nestedVisitor)
             }
         }
+
         this is IrSimpleFunction -> {
             val correspondingProperty = correspondingPropertySymbol?.owner ?: return
             if (correspondingProperty.isExported(context)) {

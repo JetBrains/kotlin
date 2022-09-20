@@ -51,6 +51,7 @@ fun compile(
     phaseConfig: PhaseConfig,
     irFactory: IrFactory,
     exportedDeclarations: Set<FqName> = emptySet(),
+    keep: Set<String> = emptySet(),
     dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
     es6mode: Boolean = false,
     verifySignatures: Boolean = true,
@@ -76,6 +77,7 @@ fun compile(
         deserializer,
         phaseConfig,
         exportedDeclarations,
+        keep,
         dceRuntimeDiagnostic,
         es6mode,
         baseClassIntoMetadata,
@@ -97,6 +99,7 @@ fun compileIr(
     irLinker: JsIrLinker,
     phaseConfig: PhaseConfig,
     exportedDeclarations: Set<FqName>,
+    keep: Set<String>,
     dceRuntimeDiagnostic: RuntimeDiagnostic?,
     es6mode: Boolean,
     baseClassIntoMetadata: Boolean,
@@ -119,6 +122,7 @@ fun compileIr(
         symbolTable,
         allModules.first(),
         exportedDeclarations,
+        keep,
         configuration,
         es6mode = es6mode,
         dceRuntimeDiagnostic = dceRuntimeDiagnostic,
@@ -126,7 +130,7 @@ fun compileIr(
         safeExternalBoolean = safeExternalBoolean,
         safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
         granularity = granularity,
-        icCompatibleIr2Js = if (icCompatibleIr2Js) IcCompatibleIr2Js.COMPATIBLE else IcCompatibleIr2Js.DISABLED
+        icCompatibleIr2Js = if (icCompatibleIr2Js) IcCompatibleIr2Js.COMPATIBLE else IcCompatibleIr2Js.DISABLED,
     )
 
     // Load declarations referenced during `context` initialization
