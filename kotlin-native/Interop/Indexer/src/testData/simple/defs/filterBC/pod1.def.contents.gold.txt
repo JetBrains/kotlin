@@ -1,10 +1,10 @@
 
 package pod1 {
     var B: Int
-        @CCall(id = "knifunptr_pod12_B_getter") get
-        @CCall(id = "knifunptr_pod13_B_setter") set
+        @CCall(id = "knifunptr_pod10_B_getter") get
+        @CCall(id = "knifunptr_pod11_B_setter") set
     var C: Int
-        @CCall(id = "knifunptr_pod10_C_getter") get
-        @CCall(id = "knifunptr_pod11_C_setter") set
+        @CCall(id = "knifunptr_pod12_C_getter") get
+        @CCall(id = "knifunptr_pod13_C_setter") set
 }
 
