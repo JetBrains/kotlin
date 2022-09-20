@@ -152,6 +152,7 @@ dependencies {
     api(project(":kotlin-native:utilities:basic-utils"))
 
     testImplementation(kotlin("test-junit"))
+    testImplementation(projectTests(":compiler:tests-common"))
 }
 
 val nativelibs = project.tasks.create<Copy>("nativelibs") {
@@ -223,4 +224,8 @@ tasks.create("updatePrebuilt") {
             into("prebuilt/nativeInteropStubs/c")
         }
     }
+}
+
+projectTest(parallel = true) {
+    workingDir = rootDir
 }

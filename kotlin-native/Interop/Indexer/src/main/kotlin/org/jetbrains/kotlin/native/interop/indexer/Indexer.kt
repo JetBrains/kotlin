@@ -1209,7 +1209,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                 translationUnits.putMainModule(translationUnit)
                 val headers = cachedHeaders.ownHeaders
                 val headersCanonicalPaths = headers.filterNotNull().map { it.canonicalPath }.toSet()
-                val unitsToProcess = translationUnits.filter(headersCanonicalPaths)
+                val unitsToProcess = translationUnits.filter(headersCanonicalPaths).toList()
 
                 nativeIndex.includedHeaders = headers.map {
                     nativeIndex.getHeaderId(it)
