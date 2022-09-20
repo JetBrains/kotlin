@@ -365,6 +365,24 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     }
 
     @Test
+    @TestMetadata("eqEqCall_fromDataClass.kt")
+    public void testEqEqCall_fromDataClass() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/eqEqCall_fromDataClass.kt");
+    }
+
+    @Test
+    @TestMetadata("eqEqCall_fromDataClass_overridden.kt")
+    public void testEqEqCall_fromDataClass_overridden() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/eqEqCall_fromDataClass_overridden.kt");
+    }
+
+    @Test
+    @TestMetadata("eqEqCall_fromSealedClass.kt")
+    public void testEqEqCall_fromSealedClass() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/eqEqCall_fromSealedClass.kt");
+    }
+
+    @Test
     @TestMetadata("eqEqCall_fromSuperType.kt")
     public void testEqEqCall_fromSuperType() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/eqEqCall_fromSuperType.kt");
