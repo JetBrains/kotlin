@@ -43,7 +43,7 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
 
     @Test
     public void testAllFilesPresentInSymbolByFqName() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByFqName"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByFqName"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
     }
 
     @Test
@@ -98,21 +98,5 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
     @TestMetadata("nestedClass.kt")
     public void testNestedClass() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByFqName/nestedClass.kt");
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/symbols/symbolByFqName/withTestCompilerPluginEnabled")
-    @TestDataPath("$PROJECT_ROOT")
-    public class WithTestCompilerPluginEnabled {
-        @Test
-        public void testAllFilesPresentInWithTestCompilerPluginEnabled() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByFqName/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("myInterfaceSupertype.kt")
-        public void testMyInterfaceSupertype() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/symbolByFqName/withTestCompilerPluginEnabled/myInterfaceSupertype.kt");
-        }
     }
 }

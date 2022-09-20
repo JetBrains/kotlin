@@ -43,7 +43,7 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
 
     @Test
     public void testAllFilesPresentInResolveCall() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
     }
 
     @Test
@@ -844,35 +844,13 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     public class Assignments {
         @Test
         public void testAllFilesPresentInAssignments() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/assignments"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/assignments"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
         }
 
         @Test
         @TestMetadata("insidePlusAssignTarget.kt")
         public void testInsidePlusAssignTarget() throws Exception {
             runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/assignments/insidePlusAssignTarget.kt");
-        }
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/withTestCompilerPluginEnabled")
-    @TestDataPath("$PROJECT_ROOT")
-    public class WithTestCompilerPluginEnabled {
-        @Test
-        public void testAllFilesPresentInWithTestCompilerPluginEnabled() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("customSerlializable.kt")
-        public void testCustomSerlializable() throws Exception {
-            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/withTestCompilerPluginEnabled/customSerlializable.kt");
-        }
-
-        @Test
-        @TestMetadata("dummyFunction.kt")
-        public void testDummyFunction() throws Exception {
-            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/withTestCompilerPluginEnabled/dummyFunction.kt");
         }
     }
 }
