@@ -204,9 +204,15 @@ class VariableFixationFinder(
 inline fun TypeSystemInferenceExtensionContext.isProperTypeForFixation(type: KotlinTypeMarker, isProper: (KotlinTypeMarker) -> Boolean) =
     isProper(type) && extractProjectionsForAllCapturedTypes(type).all(isProper)
 
-@OptIn(ExperimentalStdlibApi::class)
 fun TypeSystemInferenceExtensionContext.extractProjectionsForAllCapturedTypes(baseType: KotlinTypeMarker): Set<KotlinTypeMarker> {
-    val simpleBaseType = baseType.asSimpleType()
+    if (baseType.isFlexible()) {
+        val flexibleType = baseType.asFlexibleType()!!
+        return buildSet {
+            addAll(extractProjectionsForAllCapturedTypes(flexibleType.lowerBound()))
+            addAll(extractProjectionsForAllCapturedTypes(flexibleType.upperBound()))
+        }
+    }
+    val simpleBaseType = baseType.asSimpleType()?.originalIfDefinitelyNotNullable()
 
     return buildSet {
         val projectionType = if (simpleBaseType is CapturedTypeMarker) {
