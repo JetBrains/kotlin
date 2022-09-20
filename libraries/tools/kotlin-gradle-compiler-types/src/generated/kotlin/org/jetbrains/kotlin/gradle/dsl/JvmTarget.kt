@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 enum class JvmTarget(val target: String) {
-    @Deprecated("Will be removed soon") JVM_1_6("1.6"),
     JVM_1_8("1.8"),
     JVM_9("9"),
     JVM_10("10"),
