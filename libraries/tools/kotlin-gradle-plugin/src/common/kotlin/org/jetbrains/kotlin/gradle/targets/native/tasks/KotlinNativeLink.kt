@@ -187,6 +187,11 @@ constructor(
     val isStaticFramework: Boolean
         get() = binary.let { it is Framework && it.isStatic }
 
+    @Suppress("DEPRECATION")
+    @get:Input
+    val target: String
+        get() = compilation.konanTarget.name
+
     @get:Input
     val embedBitcode: BitcodeEmbeddingMode
         get() = (binary as? Framework)?.embedBitcode ?: BitcodeEmbeddingMode.DISABLE
