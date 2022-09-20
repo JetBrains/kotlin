@@ -17,8 +17,6 @@ public actual val TestPlatform.Companion.current: TestPlatform get() = TestPlatf
 // TODO: See KT-24975
 public actual val isFloat32RangeEnforced: Boolean = false
 
-public actual val supportsNamedCapturingGroup: Boolean get() = true
-
 public actual val supportsOctalLiteralInRegex: Boolean get() = true
 
 public actual val supportsEscapeAnyCharInRegex: Boolean get() = true

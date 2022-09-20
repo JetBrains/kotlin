@@ -53,10 +53,6 @@ compileKotlin {
 compileTestKotlin {
 }
 
-tasks.withType(Test) {
-    systemProperty("supportsNamedCapturingGroup", false)
-}
-
 configureFrontendIr(project)
 
 LibrariesCommon.configureJava9Compilation(project, 'kotlin.stdlib.jdk7')

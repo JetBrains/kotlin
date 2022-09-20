@@ -9,8 +9,6 @@ public expect fun assertTypeEquals(expected: Any?, actual: Any?)
 
 public expect val isFloat32RangeEnforced: Boolean
 
-public expect val supportsNamedCapturingGroup: Boolean
-
 public expect val supportsOctalLiteralInRegex: Boolean
 
 public expect val supportsEscapeAnyCharInRegex: Boolean

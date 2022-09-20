@@ -19,9 +19,6 @@ public fun <T> platformNull() = Collections.singletonList(null as T).first()
 
 public actual val isFloat32RangeEnforced: Boolean = true
 
-public actual val supportsNamedCapturingGroup: Boolean
-    get() = System.getProperty("supportsNamedCapturingGroup")?.toBooleanStrict() ?: true
-
 public actual val supportsOctalLiteralInRegex: Boolean get() = true
 
 public actual val supportsEscapeAnyCharInRegex: Boolean get() = true
