@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
@@ -259,6 +260,9 @@ private tailrec fun IrExpression.isGetUnit(irBuiltIns: IrBuiltIns): Boolean =
 
         is IrGetObjectValue ->
             this.symbol == irBuiltIns.unitClass
+
+        is IrGetValue ->
+            this.origin == JsStatementOrigins.ES6_FIELDS_ASSIGNMENT
 
         else -> false
     }

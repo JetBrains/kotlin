@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.ES6_INIT_BOX_PARAMETER
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.ES6_RESULT_TYPE_PARAMETER
@@ -316,16 +317,16 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : BodyLoweringPass
 
         val superCall = constructor.body!!.statements.filterIsInstance<IrDelegatingConstructorCall>().first()
         repeat(superCall.valueArgumentsCount) { i ->
-            val arg = superCall.getValueArgument(i) ?: return@repeat
-            if (superCall.symbol.owner.valueParameters[i].origin === ES6_INIT_BOX_PARAMETER) {
-                result += JsIrBuilder.buildGetValue(boxSymbol!!)
-            } else {
+            val arg = superCall.getValueArgument(i)
+            if (arg != null) {
                 if (context.inlineClassesUtils.getInlinedClass(arg.type) != null) {
                     val any = context.irBuiltIns.anyNType
                     result += JsIrBuilder.buildTypeOperator(any, IrTypeOperator.REINTERPRET_CAST, arg, any)
                 } else {
                     result += arg
                 }
+            } else if (superCall.symbol.owner.valueParameters[i].origin === ES6_INIT_BOX_PARAMETER) {
+                result += JsIrBuilder.buildGetValue(boxSymbol!!)
             }
         }
 
@@ -372,8 +373,8 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : BodyLoweringPass
     //builder
     private fun openBoxStatement(thisSymbol: IrValueSymbol, boxSymbol: IrValueSymbol): IrCall {
         return JsIrBuilder.buildCall(context.intrinsics.jsOpenInitializerBox).also {
-            it.putValueArgument(0, JsIrBuilder.buildGetValue(thisSymbol))
-            it.putValueArgument(1, JsIrBuilder.buildGetValue(boxSymbol))
+            it.putValueArgument(0, JsIrBuilder.buildGetValue(thisSymbol, JsStatementOrigins.ES6_FIELDS_ASSIGNMENT))
+            it.putValueArgument(1, JsIrBuilder.buildGetValue(boxSymbol, JsStatementOrigins.ES6_FIELDS_ASSIGNMENT))
         }
     }
 
