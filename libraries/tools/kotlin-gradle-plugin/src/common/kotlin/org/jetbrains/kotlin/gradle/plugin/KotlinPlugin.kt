@@ -734,16 +734,16 @@ internal open class KotlinAndroidPlugin(
     }
 
     companion object {
-        private const val MINIMAL_SUPPORTED_AGP_VERSION = "3.6.4"
+        private val minimalSupportedAgpVersion = AndroidGradlePluginVersion(3, 6, 4)
         fun androidTargetHandler(): AndroidProjectHandler {
             val tasksProvider = KotlinTasksProvider()
             val androidGradlePluginVersion = AndroidGradlePluginVersion.currentOrNull
 
             if (androidGradlePluginVersion != null) {
-                if (androidGradlePluginVersion < MINIMAL_SUPPORTED_AGP_VERSION) {
+                if (androidGradlePluginVersion < minimalSupportedAgpVersion) {
                     throw IllegalStateException(
                         "Kotlin: Unsupported version of com.android.tools.build:gradle plugin: " +
-                                "version $MINIMAL_SUPPORTED_AGP_VERSION or higher should be used with kotlin-android plugin"
+                                "version $minimalSupportedAgpVersion or higher should be used with kotlin-android plugin"
                     )
                 }
             }
