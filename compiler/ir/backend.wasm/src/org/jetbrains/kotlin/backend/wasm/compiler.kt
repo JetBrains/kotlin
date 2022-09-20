@@ -134,13 +134,14 @@ fun generateJsWasmLoader(wasmFilePath: String, externalJs: String): String =
     let wasmInstance;
     let require; // Placed here to give access to it from externals (js_code)
     if (isNodeJs) {
-      const module = await import('node:module');
-      require = module.createRequire(import.meta.url);
+      const module = await import(/* webpackIgnore: true */'node:module');
+      require = module.default.createRequire(import.meta.url);
       const fs = require('fs');
       const path = require('path');
       const url = require('url');
-      const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
-      const wasmBuffer = fs.readFileSync(path.resolve(__dirname, './$wasmFilePath'));
+      const filepath = url.fileURLToPath(import.meta.url);
+      const dirpath = path.dirname(filepath);
+      const wasmBuffer = fs.readFileSync(path.resolve(dirpath, '$wasmFilePath'));
       const wasmModule = new WebAssembly.Module(wasmBuffer);
       wasmInstance = new WebAssembly.Instance(wasmModule, { js_code });
     }
