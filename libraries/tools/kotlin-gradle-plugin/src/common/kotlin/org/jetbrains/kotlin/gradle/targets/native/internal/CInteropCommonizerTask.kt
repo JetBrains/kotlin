@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask.CInteropGist
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.utils.chainedFinalizeValueOnRead
+import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -116,6 +117,12 @@ internal open class CInteropCommonizerTask
     private val commonizerLogLevel = project.commonizerLogLevel
     private val additionalCommonizerSettings = project.additionalCommonizerSettings
 
+
+    interface CInteropCommonizerGroupDependencies {
+        val nativeDistributionDependencies: Set<CommonizerDependency>
+        val externalDependencies: Map<CommonizerTarget, FileCollection>
+    }
+
     /**
      * For Gradle Configuration Cache support the Group-to-Dependencies relation should be pre-cached.
      * It is used during execution phase.
@@ -128,27 +135,46 @@ internal open class CInteropCommonizerTask
         }
     }
 
-    private val externalDependenciesMap: Map<CInteropCommonizerGroup, Set<CommonizerDependency>> by lazy {
+    private val externalDependenciesMap: Map<CInteropCommonizerGroup, Map<CommonizerTarget, FileCollection>> by lazy {
         val multiplatformExtension = project.multiplatformExtensionOrNull ?: return@lazy emptyMap()
-        val sourceSets = multiplatformExtension.sourceSets.groupBy { sourceSet ->
+
+        val sourceSetsByTarget = multiplatformExtension.sourceSets.groupBy { sourceSet ->
             project.getCommonizerTarget(sourceSet)
         }
+
+        val sourceSetsByGroup = multiplatformExtension.sourceSets.groupBy { sourceSet ->
+            val cinteropCommonizerDependent = CInteropCommonizerDependent.from(project, sourceSet) ?: return@groupBy null
+            findInteropsGroup(cinteropCommonizerDependent) ?: return@groupBy null
+        }
+
         getAllInteropsGroups().associateWith { group ->
-            (group.targets + group.targets.allLeaves()).flatMapTo(mutableSetOf()) { target ->
+            (group.targets + group.targets.allLeaves()).associateWith { target ->
                 val files = when (target) {
                     is LeafCommonizerTarget -> cinterops
                         .filter { cinterop -> cinterop.identifier in group.interops && cinterop.konanTarget == target.konanTarget }
-                        .flatMap { cinterop -> cinterop.dependencies.files }
+                        .map { cinterop -> cinterop.dependencies }
 
-                    is SharedCommonizerTarget -> sourceSets[target].orEmpty()
+                    is SharedCommonizerTarget -> sourceSetsByTarget[target].orEmpty().intersect(sourceSetsByGroup[group].orEmpty().toSet())
                         .filterIsInstance<DefaultKotlinSourceSet>()
-                        .flatMap { sourceSet -> project.createCInteropMetadataDependencyClasspath(sourceSet).files }
+                        .map { sourceSet -> project.createCInteropMetadataDependencyClasspath(sourceSet) }
                 }
 
-                files.filter { file -> (file.extension == "klib" || file.isDirectory) && file.exists() }
-                    .map { file -> TargetedCommonizerDependency(target, file) }
+                project.files(files)
             }
         }
+    }
+
+    private fun getExternalDependencies(group: CInteropCommonizerGroup): Set<CommonizerDependency> {
+        return externalDependenciesMap[group].orEmpty().flatMap { (target, files) ->
+            files.filter { it.exists() && (it.isDirectory || it.extension == "klib") }
+                .map { file -> TargetedCommonizerDependency(target, file) }
+        }.toSet()
+    }
+
+    @Suppress("RemoveExplicitTypeArguments")
+    @get:Classpath
+    protected val externalDependenciesClasspath = project.filesProvider<List<FileCollection>> {
+        externalDependenciesMap.values.flatMap { it.values }
     }
 
     @get:Nested
@@ -195,7 +221,7 @@ internal open class CInteropCommonizerTask
             settings = runnerSettings.get()
         )
 
-        val externalDependencies = externalDependenciesMap[group].orEmpty()
+        val externalDependencies = getExternalDependencies(group).orEmpty()
         val nativeDistributionDependencies = getNativeDistributionDependencies(group)
         GradleCliCommonizer(commonizerRunner).commonizeLibraries(
             konanHome = konanHome,

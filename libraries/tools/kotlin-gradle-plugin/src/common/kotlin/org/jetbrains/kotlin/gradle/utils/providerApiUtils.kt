@@ -105,9 +105,9 @@ internal fun Project.newFileProperty(initialize: (() -> File)? = null): RegularF
     }
 }
 
-internal fun Project.filesProvider(
+internal fun <T> Project.filesProvider(
     vararg buildDependencies: Any,
-    provider: () -> Any
+    provider: () -> T
 ): ConfigurableFileCollection {
     return project.files(project.provider(provider)).builtBy(*buildDependencies)
 }

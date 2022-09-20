@@ -10,13 +10,11 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
-import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -72,14 +70,6 @@ internal val Project.commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>
                     commonizeTask.dependsOn(this)
                     whenEvaluated {
                         commonizeNativeDistributionTask?.let(task::dependsOn)
-                        multiplatformExtensionOrNull?.let { multiplatformExtension ->
-                            multiplatformExtension.sourceSets.all { sourceSet ->
-                                if (sourceSet is DefaultKotlinSourceSet) {
-                                    val transformationTasks = createCInteropMetadataDependencyClasspath(sourceSet).buildDependencies
-                                    task.configure { it.dependsOn(transformationTasks) }
-                                }
-                            }
-                        }
                     }
                 },
                 configureTask = {
