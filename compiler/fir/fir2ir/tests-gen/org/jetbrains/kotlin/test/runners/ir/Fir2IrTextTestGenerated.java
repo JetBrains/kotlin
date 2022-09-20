@@ -2597,6 +2597,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("internalPotentialFakeOverride.kt")
+        public void testInternalPotentialFakeOverride() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/internalPotentialFakeOverride.kt");
+        }
+
+        @Test
         @TestMetadata("internalPotentialOverride.kt")
         public void testInternalPotentialOverride() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/internalPotentialOverride.kt");
