@@ -9,7 +9,7 @@ val testModules = listOf(
     ":analysis:analysis-api-impl-barebone",
     ":analysis:analysis-api-impl-base",
     ":analysis:analysis-api-standalone",
-    ":plugins:fir-plugin-prototype",
+//    ":plugins:fir-plugin-prototype",
 )
 
 dependencies {
