@@ -77,6 +77,7 @@ class KotlinTypeRefinerImpl(
     @TypeRefinement
     override fun refineType(type: KotlinTypeMarker): KotlinType {
         require(type is KotlinType)
+        if (type.constructor.declarationDescriptor?.module == moduleDescriptor) return type
         return when {
             !type.needsRefinement() -> type
 
