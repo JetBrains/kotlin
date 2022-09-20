@@ -3030,6 +3030,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/properties"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("getterWithEarlyReturn.kt")
+        public void testGetterWithEarlyReturn() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/properties/getterWithEarlyReturn.kt");
+        }
+
         @TestMetadata("javaAccessorConversion.kt")
         public void testJavaAccessorConversion() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/properties/javaAccessorConversion.kt");
