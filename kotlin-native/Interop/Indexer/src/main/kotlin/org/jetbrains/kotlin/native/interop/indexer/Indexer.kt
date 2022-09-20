@@ -147,7 +147,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     private val globalById = mutableMapOf<DeclarationID, GlobalDecl>()
 
     override val globals: Collection<GlobalDecl>
-        get() = globalById.values
+        get() = globalById.values.sortedBy { it.name }  // values are sorted, so different indexing order would not spoil the tests
 
     override lateinit var includedHeaders: List<HeaderId>
 
