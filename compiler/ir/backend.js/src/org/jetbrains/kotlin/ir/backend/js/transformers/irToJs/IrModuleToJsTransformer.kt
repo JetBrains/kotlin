@@ -282,6 +282,8 @@ class IrModuleToJsTransformer(
             }
         }
 
+        result.metaClasses.addAll(staticContext.metaClasses.map { nameGenerator.getNameForClass(it.owner) })
+
         staticContext.classModels.entries.forEach { (symbol, model) ->
             result.classes[nameGenerator.getNameForClass(symbol.owner)] =
                 JsIrIcClassModel(model.superClasses.map { staticContext.getNameForClass(it.owner) }).also {

@@ -65,7 +65,7 @@ public final class DebugKlibMetadataProtoBuf {
      * <code>optional int32 flags = 2;</code>
      *
      * <pre>
-     *0x1 = preRelease
+     *Possible values are listed in KlibMetadataHeaderFlags class.
      * </pre>
      */
     boolean hasFlags();
@@ -73,7 +73,7 @@ public final class DebugKlibMetadataProtoBuf {
      * <code>optional int32 flags = 2;</code>
      *
      * <pre>
-     *0x1 = preRelease
+     *Possible values are listed in KlibMetadataHeaderFlags class.
      * </pre>
      */
     int getFlags();
@@ -433,7 +433,7 @@ public final class DebugKlibMetadataProtoBuf {
      * <code>optional int32 flags = 2;</code>
      *
      * <pre>
-     *0x1 = preRelease
+     *Possible values are listed in KlibMetadataHeaderFlags class.
      * </pre>
      */
     public boolean hasFlags() {
@@ -443,7 +443,7 @@ public final class DebugKlibMetadataProtoBuf {
      * <code>optional int32 flags = 2;</code>
      *
      * <pre>
-     *0x1 = preRelease
+     *Possible values are listed in KlibMetadataHeaderFlags class.
      * </pre>
      */
     public int getFlags() {
@@ -1225,7 +1225,7 @@ public final class DebugKlibMetadataProtoBuf {
        * <code>optional int32 flags = 2;</code>
        *
        * <pre>
-       *0x1 = preRelease
+       *Possible values are listed in KlibMetadataHeaderFlags class.
        * </pre>
        */
       public boolean hasFlags() {
@@ -1235,7 +1235,7 @@ public final class DebugKlibMetadataProtoBuf {
        * <code>optional int32 flags = 2;</code>
        *
        * <pre>
-       *0x1 = preRelease
+       *Possible values are listed in KlibMetadataHeaderFlags class.
        * </pre>
        */
       public int getFlags() {
@@ -1245,7 +1245,7 @@ public final class DebugKlibMetadataProtoBuf {
        * <code>optional int32 flags = 2;</code>
        *
        * <pre>
-       *0x1 = preRelease
+       *Possible values are listed in KlibMetadataHeaderFlags class.
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -1258,7 +1258,7 @@ public final class DebugKlibMetadataProtoBuf {
        * <code>optional int32 flags = 2;</code>
        *
        * <pre>
-       *0x1 = preRelease
+       *Possible values are listed in KlibMetadataHeaderFlags class.
        * </pre>
        */
       public Builder clearFlags() {

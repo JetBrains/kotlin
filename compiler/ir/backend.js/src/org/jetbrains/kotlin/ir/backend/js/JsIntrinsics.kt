@@ -110,6 +110,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
 
     // RTTI:
+    val bitMaskSymbol = getInternalClassWithoutPackage("kotlin.js.BitMask")
     val implementSymbol = getInternalFunction("implement")
     val setMetadataForSymbol = getInternalFunction("setMetadataFor")
 

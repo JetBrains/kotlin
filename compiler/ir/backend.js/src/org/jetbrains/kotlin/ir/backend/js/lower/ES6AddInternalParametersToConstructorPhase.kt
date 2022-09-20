@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering.SYNTHETIC_PRIMARY_CONSTRUCTOR
+import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
@@ -137,6 +138,7 @@ class ES6AddInternalParametersToConstructorPhase(val context: JsIrBackendContext
      */
     inner class CallSiteTransformer : IrElementTransformerVoid() {
         override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
+            super.visitConstructorCall(expression)
             val constructor = expression.symbol.owner
             val parent = constructor.parentAsClass
 
@@ -157,22 +159,17 @@ class ES6AddInternalParametersToConstructorPhase(val context: JsIrBackendContext
                         it.putValueArgument(i, getValueArgument(i))
                     }
 
-                    it.putValueArgument(
-                        valueArgumentsCount,
-                        JsIrBuilder.buildNull(context.dynamicType)
-                    )
+                    it.putValueArgument(valueArgumentsCount, null)
 
                     if (!constructor.isPrimary) {
-                        it.putValueArgument(
-                            valueArgumentsCount + 1,
-                            JsIrBuilder.buildNull(context.dynamicType)
-                        )
+                        it.putValueArgument(valueArgumentsCount + 1, null)
                     }
                 }
             }
         }
 
         override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+            super.visitDelegatingConstructorCall(expression)
             val constructor = expression.symbol.owner
             val parent = constructor.parentAsClass
 
@@ -193,16 +190,10 @@ class ES6AddInternalParametersToConstructorPhase(val context: JsIrBackendContext
                         it.putValueArgument(i, getValueArgument(i))
                     }
 
-                    it.putValueArgument(
-                        valueArgumentsCount,
-                        JsIrBuilder.buildNull(context.dynamicType)
-                    )
+                    it.putValueArgument(valueArgumentsCount, null)
 
                     if (!constructor.isPrimary) {
-                        it.putValueArgument(
-                            valueArgumentsCount + 1,
-                            JsIrBuilder.buildNull(context.dynamicType)
-                        )
+                        it.putValueArgument(valueArgumentsCount + 1, null)
                     }
                 }
             }

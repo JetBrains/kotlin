@@ -153,6 +153,10 @@ internal class JsUsefulDeclarationProcessor(
         }
 
         if (!irClass.isExpect && !irClass.isExternal && !irClass.defaultType.isAny()) {
+            context.intrinsics.setMetadataForSymbol.owner.enqueue(irClass, "metadata")
+
+            if (context.es6mode) return
+
             if (!irClass.isInterface) {
                 context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(irClass, "class metadata")
             }
@@ -164,8 +168,6 @@ internal class JsUsefulDeclarationProcessor(
             if (irClass.isInner || irClass.isObject) {
                 context.intrinsics.jsDefinePropertySymbol.owner.enqueue(irClass, "class metadata")
             }
-
-            context.intrinsics.setMetadataForSymbol.owner.enqueue(irClass, "metadata")
         }
     }
 
@@ -176,7 +178,7 @@ internal class JsUsefulDeclarationProcessor(
             irFunction.parentClassOrNull?.takeIf { it.isInterface }?.enqueue(irFunction, "interface default method is used")
         }
 
-        val property = irFunction.correspondingPropertySymbol?.owner ?: return
+        val property = irFunction.correspondingPropertySymbol?.owner?.takeIf { !context.es6mode } ?: return
 
         if (property.isExported(context) || property.isOverriddenExternal()) {
             context.intrinsics.jsDefinePropertySymbol.owner.enqueue(irFunction, "property for export")

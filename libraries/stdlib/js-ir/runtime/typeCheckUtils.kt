@@ -22,7 +22,7 @@ internal fun setMetadataFor(
         """)
     }
 
-    val metadata = metadataConstructor(name, associatedObjectKey, associatedObjects, suspendArity)
+    val metadata = metadataConstructor(name, associatedObjectKey, associatedObjects, suspendArity ?: js("[]"))
     ctor.`$metadata$` = metadata
 
     if (interfaces != null) {

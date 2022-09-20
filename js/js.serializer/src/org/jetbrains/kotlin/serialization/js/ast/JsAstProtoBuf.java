@@ -33030,6 +33030,19 @@ public final class JsAstProtoBuf {
      * <code>repeated int32 optionalCrossModuleImports = 19;</code>
      */
     int getOptionalCrossModuleImports(int index);
+
+    /**
+     * <code>repeated int32 meta_class = 20;</code>
+     */
+    java.util.List<java.lang.Integer> getMetaClassList();
+    /**
+     * <code>repeated int32 meta_class = 20;</code>
+     */
+    int getMetaClassCount();
+    /**
+     * <code>repeated int32 meta_class = 20;</code>
+     */
+    int getMetaClass(int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Fragment}
@@ -33282,6 +33295,27 @@ public final class JsAstProtoBuf {
               input.popLimit(limit);
               break;
             }
+            case 160: {
+              if (!((mutable_bitField0_ & 0x00080000) == 0x00080000)) {
+                metaClass_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00080000;
+              }
+              metaClass_.add(input.readInt32());
+              break;
+            }
+            case 162: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00080000) == 0x00080000) && input.getBytesUntilLimit() > 0) {
+                metaClass_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00080000;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                metaClass_.add(input.readInt32());
+              }
+              input.popLimit(limit);
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -33319,6 +33353,9 @@ public final class JsAstProtoBuf {
         }
         if (((mutable_bitField0_ & 0x00040000) == 0x00040000)) {
           optionalCrossModuleImports_ = java.util.Collections.unmodifiableList(optionalCrossModuleImports_);
+        }
+        if (((mutable_bitField0_ & 0x00080000) == 0x00080000)) {
+          metaClass_ = java.util.Collections.unmodifiableList(metaClass_);
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -33859,6 +33896,28 @@ public final class JsAstProtoBuf {
       return optionalCrossModuleImports_.get(index);
     }
 
+    public static final int META_CLASS_FIELD_NUMBER = 20;
+    private java.util.List<java.lang.Integer> metaClass_;
+    /**
+     * <code>repeated int32 meta_class = 20;</code>
+     */
+    public java.util.List<java.lang.Integer>
+        getMetaClassList() {
+      return metaClass_;
+    }
+    /**
+     * <code>repeated int32 meta_class = 20;</code>
+     */
+    public int getMetaClassCount() {
+      return metaClass_.size();
+    }
+    /**
+     * <code>repeated int32 meta_class = 20;</code>
+     */
+    public int getMetaClass(int index) {
+      return metaClass_.get(index);
+    }
+
     private void initFields() {
       importedModule_ = java.util.Collections.emptyList();
       importEntry_ = java.util.Collections.emptyList();
@@ -33879,6 +33938,7 @@ public final class JsAstProtoBuf {
       definitions_ = java.util.Collections.emptyList();
       polyfills_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.CompositeBlock.getDefaultInstance();
       optionalCrossModuleImports_ = java.util.Collections.emptyList();
+      metaClass_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -34034,6 +34094,9 @@ public final class JsAstProtoBuf {
       for (int i = 0; i < optionalCrossModuleImports_.size(); i++) {
         output.writeInt32(19, optionalCrossModuleImports_.get(i));
       }
+      for (int i = 0; i < metaClass_.size(); i++) {
+        output.writeInt32(20, metaClass_.get(i));
+      }
       output.writeRawBytes(unknownFields);
     }
 
@@ -34128,6 +34191,15 @@ public final class JsAstProtoBuf {
         }
         size += dataSize;
         size += 2 * getOptionalCrossModuleImportsList().size();
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < metaClass_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(metaClass_.get(i));
+        }
+        size += dataSize;
+        size += 2 * getMetaClassList().size();
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -34261,6 +34333,8 @@ public final class JsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00020000);
         optionalCrossModuleImports_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00040000);
+        metaClass_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00080000);
         return this;
       }
 
@@ -34370,6 +34444,11 @@ public final class JsAstProtoBuf {
           bitField0_ = (bitField0_ & ~0x00040000);
         }
         result.optionalCrossModuleImports_ = optionalCrossModuleImports_;
+        if (((bitField0_ & 0x00080000) == 0x00080000)) {
+          metaClass_ = java.util.Collections.unmodifiableList(metaClass_);
+          bitField0_ = (bitField0_ & ~0x00080000);
+        }
+        result.metaClass_ = metaClass_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -34504,6 +34583,16 @@ public final class JsAstProtoBuf {
           } else {
             ensureOptionalCrossModuleImportsIsMutable();
             optionalCrossModuleImports_.addAll(other.optionalCrossModuleImports_);
+          }
+          
+        }
+        if (!other.metaClass_.isEmpty()) {
+          if (metaClass_.isEmpty()) {
+            metaClass_ = other.metaClass_;
+            bitField0_ = (bitField0_ & ~0x00080000);
+          } else {
+            ensureMetaClassIsMutable();
+            metaClass_.addAll(other.metaClass_);
           }
           
         }
@@ -36291,6 +36380,72 @@ public final class JsAstProtoBuf {
       public Builder clearOptionalCrossModuleImports() {
         optionalCrossModuleImports_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00040000);
+        
+        return this;
+      }
+
+      private java.util.List<java.lang.Integer> metaClass_ = java.util.Collections.emptyList();
+      private void ensureMetaClassIsMutable() {
+        if (!((bitField0_ & 0x00080000) == 0x00080000)) {
+          metaClass_ = new java.util.ArrayList<java.lang.Integer>(metaClass_);
+          bitField0_ |= 0x00080000;
+         }
+      }
+      /**
+       * <code>repeated int32 meta_class = 20;</code>
+       */
+      public java.util.List<java.lang.Integer>
+          getMetaClassList() {
+        return java.util.Collections.unmodifiableList(metaClass_);
+      }
+      /**
+       * <code>repeated int32 meta_class = 20;</code>
+       */
+      public int getMetaClassCount() {
+        return metaClass_.size();
+      }
+      /**
+       * <code>repeated int32 meta_class = 20;</code>
+       */
+      public int getMetaClass(int index) {
+        return metaClass_.get(index);
+      }
+      /**
+       * <code>repeated int32 meta_class = 20;</code>
+       */
+      public Builder setMetaClass(
+          int index, int value) {
+        ensureMetaClassIsMutable();
+        metaClass_.set(index, value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 meta_class = 20;</code>
+       */
+      public Builder addMetaClass(int value) {
+        ensureMetaClassIsMutable();
+        metaClass_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 meta_class = 20;</code>
+       */
+      public Builder addAllMetaClass(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureMetaClassIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, metaClass_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 meta_class = 20;</code>
+       */
+      public Builder clearMetaClass() {
+        metaClass_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00080000);
         
         return this;
       }
