@@ -1,3 +1,4 @@
+// ES_CLASSES
 // EXPECTED_REACHABLE_NODES: 1345
 var sideEffect = ""
 

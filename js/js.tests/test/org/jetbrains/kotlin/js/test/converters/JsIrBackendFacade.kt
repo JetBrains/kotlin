@@ -75,6 +75,7 @@ class JsIrBackendFacade(
         val splitPerFile = JsEnvironmentConfigurationDirectives.SPLIT_PER_FILE in module.directives
         val perModule = JsEnvironmentConfigurationDirectives.PER_MODULE in module.directives
         val keep = module.directives[JsEnvironmentConfigurationDirectives.KEEP].toSet()
+        val es6Mode = JsEnvironmentConfigurationDirectives.ES_CLASSES in module.directives
 
         val granularity = when {
             !firstTimeCompilation -> JsGenerationGranularity.WHOLE_PROGRAM
@@ -141,7 +142,7 @@ class JsIrBackendFacade(
             exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, TEST_FUNCTION))),
             keep = keep,
             dceRuntimeDiagnostic = null,
-            es6mode = false,
+            es6mode = es6Mode,
             safeExternalBoolean = JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN in module.directives,
             safeExternalBooleanDiagnostic = module.directives[JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC].singleOrNull(),
             granularity = granularity,
