@@ -172,21 +172,9 @@ fun FirNamedFunctionSymbol.overriddenFunctions(
     return overriddenFunctions
 }
 
-fun FirClass.collectSupertypesWithDelegates(): Map<FirTypeRef, FirField?> {
-    // We don't care about the same cone type being represented
-    // by multiple type refs since this is an error anyway.
-    val superConesToSuperTypeRefs = superTypeRefs.groupingBy { it.coneType }.reduce { _, accumulator, _ -> accumulator }
-    val superTypeRefsToDelegate = superTypeRefs.keysToMap<FirTypeRef, FirField?> { null }.toMutableMap()
-
-    for (it in declarations) {
-        if (it is FirField && it.name.asString().startsWith("<$\$delegate_")) {
-            val type = it.returnTypeRef.coneType as? ConeClassLikeType ?: continue
-            val correspondingTypeRef = superConesToSuperTypeRefs[type] ?: continue
-            superTypeRefsToDelegate[correspondingTypeRef] = it
-        }
-    }
-
-    return superTypeRefsToDelegate
+fun FirClass.collectSupertypesWithDelegates(): Map<FirTypeRef, FirFieldSymbol?> {
+    val fieldsMap = delegateFieldsMap ?: emptyMap()
+    return superTypeRefs.mapIndexed { index, it -> it to fieldsMap[index] }.toMap()
 }
 
 /**

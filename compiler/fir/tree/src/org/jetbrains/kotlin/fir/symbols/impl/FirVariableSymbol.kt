@@ -87,6 +87,8 @@ class FirFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirField>(calla
     val hasInitializer: Boolean
         get() = fir.initializer != null
 
+    val initializer get() = fir.initializer
+
     val isVal: Boolean
         get() = fir.isVal
 
