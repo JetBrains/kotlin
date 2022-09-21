@@ -62,12 +62,12 @@ private fun transformMetadataLibrariesForIde(
 ): Map<String /* visibleSourceSetName */, Iterable<File>> {
     return compositeMetadataArtifact.read { artifactContent ->
         resolution.visibleSourceSetNamesExcludingDependsOn.mapNotNull { visibleSourceSetName ->
-            val sourceSet = artifactContent.findSourceSet(visibleSourceSetName) ?: return@mapNotNull null
-            val sourceSetMetadataLibrary = sourceSet.metadataLibrary ?: return@mapNotNull null
-            val metadataLibraryOutputFile = baseOutputDirectory.resolve(sourceSetMetadataLibrary.relativeFile)
+            val sourceSetContent = artifactContent.findSourceSet(visibleSourceSetName) ?: return@mapNotNull null
+            val sourceSetMetadataBinary = sourceSetContent.metadataBinary ?: return@mapNotNull null
+            val metadataLibraryOutputFile = baseOutputDirectory.resolve(sourceSetMetadataBinary.relativeFile)
             metadataLibraryOutputFile.parentFile.mkdirs()
             if (!metadataLibraryOutputFile.exists()) {
-                sourceSetMetadataLibrary.copyTo(metadataLibraryOutputFile)
+                sourceSetMetadataBinary.copyTo(metadataLibraryOutputFile)
                 if (!metadataLibraryOutputFile.exists()) return@mapNotNull null
             }
 
@@ -84,12 +84,12 @@ private fun transformMetadataLibrariesForBuild(
 ): Set<File> {
     return compositeMetadataArtifact.read { artifactContent ->
         resolution.visibleSourceSetNamesExcludingDependsOn.mapNotNull { visibleSourceSetName ->
-            val sourceSet = artifactContent.findSourceSet(visibleSourceSetName) ?: return@mapNotNull null
-            val metadataLibrary = sourceSet.metadataLibrary ?: return@mapNotNull null
-            val metadataLibraryFile = outputDirectory.resolve(metadataLibrary.relativeFile)
+            val sourceSetContent = artifactContent.findSourceSet(visibleSourceSetName) ?: return@mapNotNull null
+            val metadataBinary = sourceSetContent.metadataBinary ?: return@mapNotNull null
+            val metadataLibraryFile = outputDirectory.resolve(metadataBinary.relativeFile)
             if (materializeFiles) {
                 metadataLibraryFile.parentFile?.mkdirs()
-                metadataLibrary.copyTo(metadataLibraryFile)
+                metadataBinary.copyTo(metadataLibraryFile)
             }
             metadataLibraryFile
         }

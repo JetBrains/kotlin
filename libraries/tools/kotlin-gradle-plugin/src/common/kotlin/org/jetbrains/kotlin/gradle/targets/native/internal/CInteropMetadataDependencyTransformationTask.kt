@@ -141,8 +141,8 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
                     chooseVisibleSourceSets.metadataProvider.read { artifactContent ->
                         chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops
                             .mapNotNull { visibleSourceSetName -> artifactContent.findSourceSet(visibleSourceSetName) }
-                            .flatMap { sourceSet -> sourceSet.cinteropMetadataLibraries }
-                            .map { cInteropMetadataLibrary -> outputDirectory.resolve(cInteropMetadataLibrary.relativeFile) }
+                            .flatMap { sourceSetContent -> sourceSetContent.cinteropMetadataBinaries }
+                            .map { cInteropMetadataBinary -> outputDirectory.resolve(cInteropMetadataBinary.relativeFile) }
                     }
                 }.toSet()
             }
@@ -215,8 +215,8 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
         is ArtifactMetadataProvider -> chooseVisibleSourceSets.metadataProvider.read { artifactContent ->
             chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops
                 .mapNotNull { visibleSourceSetName -> artifactContent.findSourceSet(visibleSourceSetName) }
-                .flatMap { sourceSet -> sourceSet.cinteropMetadataLibraries }
-                .forEach { cInteropMetadataLibrary -> cInteropMetadataLibrary.copyIntoDirectory(outputDirectory) }
+                .flatMap { sourceSetContent -> sourceSetContent.cinteropMetadataBinaries }
+                .forEach { cInteropMetadataBinary -> cInteropMetadataBinary.copyIntoDirectory(outputDirectory) }
         }
     }
 

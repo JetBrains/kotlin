@@ -23,7 +23,7 @@ class CompositeMetadataArtifactTest {
     val temporaryFolder = TemporaryFolder()
 
     @Test
-    fun `empty jar - contains no metadataLibrary and no cinteropMetadataLibraries`() {
+    fun `empty jar - contains no metadataBinary and no cinteropMetadataBinaries`() {
         val primaryArtifactContent = temporaryFolder.newFolder()
         val primaryArtifactFile = temporaryFolder.newFile("metadata.jar")
         zipTo(primaryArtifactFile, primaryArtifactContent)
@@ -44,14 +44,14 @@ class CompositeMetadataArtifactTest {
 
         metadataArtifact.read { artifactContent ->
             if (artifactContent.sourceSets.size != 1) fail("Expected one SourceSet in metadataArtifact")
-            val sourceSet = artifactContent.sourceSets.first()
-            assertEquals("testSourceSetName", sourceSet.sourceSetName)
-            assertNull(sourceSet.metadataLibrary, "Expected no 'metadataLibrary' listed for SourceSet")
+            val sourceSetContent = artifactContent.sourceSets.first()
+            assertEquals("testSourceSetName", sourceSetContent.sourceSetName)
+            assertNull(sourceSetContent.metadataBinary, "Expected no 'metadataBinary' listed for SourceSet")
 
-            if (sourceSet.cinteropMetadataLibraries.isNotEmpty()) {
+            if (sourceSetContent.cinteropMetadataBinaries.isNotEmpty()) {
                 fail(
-                    "Expected no 'cinteropMetadataLibraries' in 'testSourceSet'. " +
-                            "Found ${sourceSet.cinteropMetadataLibraries.map { it.cinteropLibraryName }}"
+                    "Expected no 'cinteropMetadataBinaries' in 'testSourceSet'. " +
+                            "Found ${sourceSetContent.cinteropMetadataBinaries.map { it.cinteropLibraryName }}"
                 )
             }
         }
@@ -88,8 +88,8 @@ class CompositeMetadataArtifactTest {
             val metadataOutputDirectory = temporaryFolder.newFolder()
             val metadataFile = metadataOutputDirectory.resolve("testSourceSet.klib")
 
-            val metadataLibrary = sourceSet.metadataLibrary ?: fail("Missing metadataLibrary for ${sourceSet.sourceSetName}")
-            assertTrue(metadataLibrary.copyTo(metadataFile), "Expected 'copyTo' to perform copy action")
+            val metadataBinary = sourceSet.metadataBinary ?: fail("Missing metadataBinary for ${sourceSet.sourceSetName}")
+            assertTrue(metadataBinary.copyTo(metadataFile), "Expected 'copyTo' to perform copy action")
             assertTrue(metadataFile.isFile)
 
             val unzippedMetadataFile = metadataOutputDirectory.resolve("unzipped")
@@ -101,7 +101,7 @@ class CompositeMetadataArtifactTest {
     }
 
     @Test
-    fun `empty jar - returns no cinteropMetadataLibraries`() {
+    fun `empty jar - returns no cinteropMetadataBinaries`() {
         val primaryArtifactContent = temporaryFolder.newFolder()
         val primaryArtifactFile = temporaryFolder.newFile("metadata.jar")
         zipTo(primaryArtifactFile, primaryArtifactContent)
@@ -121,12 +121,12 @@ class CompositeMetadataArtifactTest {
             val sourceSet = artifactContent.getSourceSet("testSourceSetName")
             assertEquals(listOf(sourceSet), artifactContent.sourceSets)
 
-            assertEquals(emptyList(), sourceSet.cinteropMetadataLibraries, "Expected empty cinteropMetadataLibraries")
+            assertEquals(emptyList(), sourceSet.cinteropMetadataBinaries, "Expected empty cinteropMetadataBinaries")
         }
     }
 
     @Test
-    fun `copy metadataLibrary`() {
+    fun `copy metadataBinary`() {
         /* Setup Artifact content */
         val primaryArtifactContent = temporaryFolder.newFolder()
 
@@ -166,7 +166,7 @@ class CompositeMetadataArtifactTest {
             /* Extract and assert sourceSetA */
             artifactContent.getSourceSet("sourceSetA").also { sourceSetA ->
                 val sourceSetAMetadataFile = metadataOutputDirectory.resolve("sourceSetA.klib")
-                assertNotNull(sourceSetA.metadataLibrary).copyTo(sourceSetAMetadataFile)
+                assertNotNull(sourceSetA.metadataBinary).copyTo(sourceSetAMetadataFile)
                 assertTrue(sourceSetAMetadataFile.isFile, "Expected sourceSetAMetadataFile.isFile")
                 assertEquals(
                     KLIB.archiveExtension, sourceSetAMetadataFile.extension,
@@ -182,7 +182,7 @@ class CompositeMetadataArtifactTest {
             /* Extract and assert sourceSetB */
             artifactContent.getSourceSet("sourceSetB").also { sourceSetB ->
                 val sourceSetBMetadataFile = metadataOutputDirectory.resolve("sourceSetB.jar")
-                assertNotNull(sourceSetB.metadataLibrary).copyTo(sourceSetBMetadataFile)
+                assertNotNull(sourceSetB.metadataBinary).copyTo(sourceSetBMetadataFile)
                 assertTrue(sourceSetBMetadataFile.isFile, "Expected sourceSetBMetadataFile.isFile")
                 assertEquals(
                     METADATA.archiveExtension, sourceSetBMetadataFile.extension,
@@ -198,7 +198,7 @@ class CompositeMetadataArtifactTest {
     }
 
     @Test
-    fun `copy cinteropMetadataLibraries`() {
+    fun `copy cinteropMetadataBinaries`() {
         /* Setup Artifact content */
         val primaryArtifactContent = temporaryFolder.newFolder()
 
@@ -239,7 +239,7 @@ class CompositeMetadataArtifactTest {
             /* Assertions on sourceSetA */
             artifactContent.getSourceSet("sourceSetA").also { sourceSetA ->
                 val sourceSetAOutputDirectory = temporaryFolder.newFolder()
-                val sourceSetAInteropMetadataFiles = sourceSetA.cinteropMetadataLibraries.map { cinteropLibrary ->
+                val sourceSetAInteropMetadataFiles = sourceSetA.cinteropMetadataBinaries.map { cinteropLibrary ->
                     sourceSetAOutputDirectory.resolve("${cinteropLibrary.cinteropLibraryName}.klib").also { file ->
                         cinteropLibrary.copyTo(file)
                     }
@@ -272,7 +272,7 @@ class CompositeMetadataArtifactTest {
             /* Assertions on sourceSetB */
             artifactContent.getSourceSet("sourceSetB").also { sourceSetB ->
                 val sourceSetBOutputDirectory = temporaryFolder.newFolder()
-                val sourceSetBInteropMetadataFiles = sourceSetB.cinteropMetadataLibraries.map { cinteropLibrary ->
+                val sourceSetBInteropMetadataFiles = sourceSetB.cinteropMetadataBinaries.map { cinteropLibrary ->
                     sourceSetBOutputDirectory.resolve("${cinteropLibrary.cinteropLibraryName}.klib").also { file ->
                         cinteropLibrary.copyTo(file)
                     }

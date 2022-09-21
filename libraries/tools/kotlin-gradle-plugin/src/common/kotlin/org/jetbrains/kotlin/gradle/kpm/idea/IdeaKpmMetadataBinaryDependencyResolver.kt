@@ -37,12 +37,12 @@ internal class IdeaKpmMetadataBinaryDependencyResolver(
 
         return metadataProvider.read { artifactContent ->
             resolution.allVisibleSourceSetNames.mapNotNull { visibleFragmentName ->
-                val sourceSet = artifactContent.findSourceSet(visibleFragmentName) ?: return@mapNotNull null
-                val metadataLibrary = sourceSet.metadataLibrary ?: return@mapNotNull null
+                val sourceSetContent = artifactContent.findSourceSet(visibleFragmentName) ?: return@mapNotNull null
+                val metadataBinary = sourceSetContent.metadataBinary ?: return@mapNotNull null
 
                 val libraryFile = fragment.project.kotlinTransformedMetadataLibraryDirectoryForIde
-                    .resolve(metadataLibrary.relativeFile)
-                    .apply { if (!isFile) metadataLibrary.copyTo(this) }
+                    .resolve(metadataBinary.relativeFile)
+                    .apply { if (!isFile) metadataBinary.copyTo(this) }
 
                 IdeaKpmResolvedBinaryDependencyImpl(
                     binaryType = IdeaKpmDependency.CLASSPATH_BINARY_TYPE,

@@ -9,70 +9,91 @@ import java.io.Closeable
 import java.io.File
 
 internal interface CompositeMetadataArtifact {
+    val moduleDependencyIdentifier: ModuleDependencyIdentifier
+    val moduleDependencyVersion: String
 
-    interface Library {
-        val artifactContent: ArtifactContent
-        val sourceSet: SourceSet
+    /**
+     * Provides access to the actual content provided by this artifact.
+     * Note: [CompositeMetadataArtifactContent] is [Closeable] and might actively open Files on access.
+     * A [Closeable.close] call is required.
+     *
+     * Alternatively use the [read] function instead.
+     */
+    fun open(): CompositeMetadataArtifactContent
+
+    /**
+     * Safe shortcut function for opening and reading the content of this artifact.
+     * The [CompositeMetadataArtifactContent] will be closed after the [action] executed.
+     */
+    fun <T> read(action: (artifactContent: CompositeMetadataArtifactContent) -> T): T {
+        return open().use(action)
+    }
+}
+
+internal interface CompositeMetadataArtifactContent : Closeable {
+    /**
+     * Back reference to the [CompositeMetadataArtifact] that opened this [CompositeMetadataArtifactContent]
+     */
+    val containingArtifact: CompositeMetadataArtifact
+    val sourceSets: List<SourceSetContent>
+    fun getSourceSet(name: String): SourceSetContent
+    fun findSourceSet(name: String): SourceSetContent?
+
+    /**
+     * Represents a SourceSet packaged into the [CompositeMetadataArtifact]
+     */
+    interface SourceSetContent {
+        /**
+         * Back reference to the [CompositeMetadataArtifactContent] that contains this [SourceSetContent]
+         */
+        val containingArtifactContent: CompositeMetadataArtifactContent
+        val sourceSetName: String
+        val metadataBinary: MetadataBinary?
+        val cinteropMetadataBinaries: List<CInteropMetadataBinary>
+    }
+
+
+    interface Binary {
+        /**
+         * Back reference to the [SourceSetContent] that contains this [Binary]
+         */
+        val containingSourceSetContent: SourceSetContent
+
         val archiveExtension: String
-        val checksum: String
 
         /**
          * The proposed file-output path.
-         * This can actually include several path parts if the [Library] requires additional scoping (e.g. [CInteropMetadataLibrary]s
+         * This can actually include several path parts if the [Binary] requires additional scoping (e.g. [CInteropMetadataBinary]s
          * need to be put into another folder)
          */
         val relativeFile: File
 
+        val checksum: String
+
         /**
-         * Copies the content of this [Library] directly into the given [file].
+         * Copies the content of this [Binary] directly into the given [file].
          * The [file] will be overwritten when it already exists.
          * Parent directories will be created if necessary.
          */
         fun copyTo(file: File): Boolean
 
         /**
-         * Copies the content of this [Library] into the [directory] appending the [relativeFile] to it.
+         * Copies the content of this [Binary] into the [directory] appending the [relativeFile] to it.
          * @see copyTo
          */
         fun copyIntoDirectory(directory: File) = copyTo(directory.resolve(relativeFile))
     }
 
-    /**
-     * Represents a Kotlin Metadata library produced by compiling the contained [sourceSet]
-     */
-    interface MetadataLibrary : Library
 
     /**
-     * Represents a CInterop Metadata library, produced by the commonizer and attached to the [sourceSet]
+     * Represents a Kotlin Metadata Binary produced by compiling the contained [containingSourceSetContent]
      */
-    interface CInteropMetadataLibrary : Library {
+    interface MetadataBinary : Binary
+
+    /**
+     * Represents a CInterop Metadata Binary, produced by the commonizer and attached to the [containingSourceSetContent]
+     */
+    interface CInteropMetadataBinary : Binary {
         val cinteropLibraryName: String
-    }
-
-    /**
-     * Represents a SourceSet packaged into the [CompositeMetadataArtifact]
-     */
-    interface SourceSet {
-        val artifactContent: ArtifactContent
-        val sourceSetName: String
-        val metadataLibrary: MetadataLibrary?
-        val cinteropMetadataLibraries: List<CInteropMetadataLibrary>
-    }
-
-    interface ArtifactContent : Closeable {
-        val moduleDependencyIdentifier: ModuleDependencyIdentifier
-        val moduleDependencyVersion: String
-        val sourceSets: List<SourceSet>
-        fun getSourceSet(name: String): SourceSet
-        fun findSourceSet(name: String): SourceSet?
-    }
-
-    val moduleDependencyIdentifier: ModuleDependencyIdentifier
-    val moduleDependencyVersion: String
-
-    fun open(): ArtifactContent
-
-    fun <T> read(action: (artifactContent: ArtifactContent) -> T): T {
-        return open().use(action)
     }
 }
