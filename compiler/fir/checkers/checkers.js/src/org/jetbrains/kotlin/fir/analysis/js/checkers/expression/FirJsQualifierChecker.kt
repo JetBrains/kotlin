@@ -12,14 +12,15 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationCallCh
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.resolved
+import org.jetbrains.kotlin.fir.resolvedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JsQualifier
 
 object FirJsQualifierChecker : FirAnnotationCallChecker() {
     override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val name = expression.calleeReference.resolved?.name
+        val annotationFqName = (expression.calleeReference.resolvedSymbol as? FirCallableSymbol<*>)?.callableId?.asSingleFqName()?.parent()
 
-        if (name != JsQualifier.shortClassName) {
+        if (annotationFqName != JsQualifier.asSingleFqName()) {
             return
         }
 
