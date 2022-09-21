@@ -118,7 +118,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/JvmTarget : java/lang/Enum {
 	public static final field JVM_16 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_17 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_18 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
-	public static final field JVM_1_6 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_1_8 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_9 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public final fun getTarget ()Ljava/lang/String;
