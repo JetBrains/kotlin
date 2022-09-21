@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.*
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
 import org.jetbrains.kotlin.gradle.utils.*
@@ -671,11 +670,6 @@ internal open class JsCompilationDetails(
 internal class JsIrCompilationDetails(
     target: KotlinTarget, compilationPurpose: String, defaultSourceSet: KotlinSourceSet
 ) : JsCompilationDetails(target, compilationPurpose, defaultSourceSet) {
-
-    override fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) {
-        super.addSourcesToCompileTask(sourceSet, addAsCommonSources)
-        (compilation as KotlinJsIrCompilation).allSources.add(sourceSet.kotlin)
-    }
 
     internal abstract class JsIrCompilationDependencyHolder @Inject constructor(target: KotlinTarget, compilationPurpose: String) :
         JsCompilationDependenciesHolder(target, compilationPurpose) {

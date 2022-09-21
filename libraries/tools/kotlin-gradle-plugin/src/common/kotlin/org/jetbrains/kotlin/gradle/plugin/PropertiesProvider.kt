@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
-import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
-import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat.Companion.externalsOutputFormatProperty
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion
@@ -405,13 +403,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
                 }
             }
             ?: WebpackMajorVersion.DEFAULT
-
-
-    /**
-     * Default mode of generating of Dukat
-     */
-    val externalsOutputFormat: ExternalsOutputFormat?
-        get() = this.property(externalsOutputFormatProperty)?.let { ExternalsOutputFormat.byArgumentOrNull(it) }
 
     /**
      * Use Kotlin/JS backend compiler type
