@@ -14,14 +14,12 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
-import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.RootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnv
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnResolution
 
 // We use this service as a single storage for duplicated data in configuration cache
 abstract class KotlinRootNpmResolverStateHolder : BuildService<KotlinRootNpmResolverStateHolder.Parameters> {
     internal interface Parameters : BuildServiceParameters {
-        val plugins: ListProperty<RootResolverPlugin>
         val projectResolvers: MapProperty<String, KotlinProjectNpmResolver>
         val packageManager: Property<NpmApi>
         val yarnEnvironment: Property<YarnEnv>

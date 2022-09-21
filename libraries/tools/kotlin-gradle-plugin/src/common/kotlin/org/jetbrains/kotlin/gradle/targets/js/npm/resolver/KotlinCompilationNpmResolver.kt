@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
-import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.CompilationResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -94,16 +93,6 @@ internal class KotlinCompilationNpmResolver(
                     .configure {
                         it.dependsOn(packageJsonTask)
                     }
-            }
-        }
-
-    @Transient
-    val plugins: List<CompilationResolverPlugin> = projectResolver.resolver.plugins
-        .flatMap {
-            if (compilation.isMain()) {
-                it.createCompilationResolverPlugins(this)
-            } else {
-                emptyList()
             }
         }
 
@@ -278,16 +267,6 @@ internal class KotlinCompilationNpmResolver(
                     .configure { task ->
                         task.from(publicPackageJsonTaskHolder)
                     }
-            }
-
-            plugins.forEach {
-                it.hookDependencies(
-                    internalDependencies,
-                    internalCompositeDependencies,
-                    externalGradleDependencies,
-                    externalNpmDependencies,
-                    fileCollectionDependencies
-                )
             }
         }
 

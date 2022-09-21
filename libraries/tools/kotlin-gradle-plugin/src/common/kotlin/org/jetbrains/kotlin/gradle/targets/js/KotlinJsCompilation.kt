@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
-import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
@@ -33,13 +31,6 @@ abstract class KotlinJsCompilation @Inject internal constructor(
     @Suppress("UNCHECKED_CAST")
     final override val compilerOptions: HasCompilerOptions<KotlinJsCompilerOptions>
         get() = super.compilerOptions as HasCompilerOptions<KotlinJsCompilerOptions>
-
-    private val kotlinProperties = PropertiesProvider(target.project)
-
-    internal open val externalsOutputFormat: ExternalsOutputFormat
-        get() = kotlinProperties.externalsOutputFormat ?: defaultExternalsOutputFormat
-
-    internal open val defaultExternalsOutputFormat: ExternalsOutputFormat = ExternalsOutputFormat.SOURCE
 
     val binaries: KotlinJsBinaryContainer =
         target.project.objects.newInstance(

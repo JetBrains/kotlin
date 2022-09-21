@@ -179,7 +179,6 @@ class KotlinNpmResolutionManager(@Transient private val nodeJsSettings: NodeJsRo
                 val resolution = installation
                     .install(forceUpToDate, args, services, logger)
                 state = ResolutionState.Installed(resolution)
-                installation.closePlugins(resolution)
                 resolution
             } catch (e: Exception) {
                 state = ResolutionState.Error(e)
