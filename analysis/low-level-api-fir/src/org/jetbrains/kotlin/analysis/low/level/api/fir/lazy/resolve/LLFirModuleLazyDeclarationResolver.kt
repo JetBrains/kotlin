@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
+import org.jetbrains.kotlin.util.SourceCodeAnalysisException
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignationWithFile
@@ -443,7 +444,7 @@ private fun rethrowWithDetails(
             appendLine("declaration KtModule: ${moduleData.ktModule::class}")
             appendLine("declaration platform: ${moduleData.ktModule.platform}")
         },
-        cause = e,
+        cause = if (e is SourceCodeAnalysisException) e.cause else e,
     ) {
         withEntry("KtModule", firDeclarationToResolve.llFirModuleData.ktModule) { it.moduleDescription }
         withEntry("session", firDeclarationToResolve.llFirSession) { it.toString() }

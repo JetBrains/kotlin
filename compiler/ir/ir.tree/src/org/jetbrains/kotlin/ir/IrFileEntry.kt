@@ -20,6 +20,7 @@ data class SourceRangeInfo(
 interface IrFileEntry {
     val name: String
     val maxOffset: Int
+    val supportsDebugInfo: Boolean get() = true
     fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo
     fun getLineNumber(offset: Int): Int
     fun getColumnNumber(offset: Int): Int

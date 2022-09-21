@@ -65,7 +65,11 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
                     phase.invoke(phaseConfig, filePhaserState, context, irFile)
                 }
             } catch (e: Throwable) {
-                CodegenUtil.reportBackendException(e, "IR lowering", irFile.fileEntry.name)
+                CodegenUtil.reportBackendException(e, "IR lowering", irFile.fileEntry.name) { offset ->
+                    irFile.fileEntry.takeIf { it.supportsDebugInfo }?.let {
+                        it.getLineNumber(offset) to it.getColumnNumber(offset)
+                    }
+                }
             }
         }
 
@@ -110,7 +114,11 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
         executor.awaitTermination(1, TimeUnit.DAYS) // Wait long enough
 
         thrownFromThread.get()?.let { (e, irFile) ->
-            CodegenUtil.reportBackendException(e, "Experimental parallel IR backend", irFile.fileEntry.name)
+            CodegenUtil.reportBackendException(e, "Experimental parallel IR backend", irFile.fileEntry.name) { offset ->
+                irFile.fileEntry.takeIf { it.supportsDebugInfo }?.let {
+                    it.getLineNumber(offset) to it.getColumnNumber(offset)
+                }
+            }
         }
 
         // Presumably each thread has run through the same list of phases.

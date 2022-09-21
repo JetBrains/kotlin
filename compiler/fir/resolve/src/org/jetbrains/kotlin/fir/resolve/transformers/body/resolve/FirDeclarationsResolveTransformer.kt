@@ -111,7 +111,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         }
     }
 
-    override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty {
+    override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty = whileAnalysing(property) {
         require(property !is FirSyntheticProperty) { "Synthetic properties should not be processed by body transformers" }
 
         if (property.isLocal) {
@@ -207,7 +207,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         }
     }
 
-    override fun transformField(field: FirField, data: ResolutionMode): FirField {
+    override fun transformField(field: FirField, data: ResolutionMode): FirField = whileAnalysing(field) {
         val returnTypeRef = field.returnTypeRef
         if (implicitTypeOnly) return field
         if (field.initializerResolved) return field
@@ -373,7 +373,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         return delegateExpression
     }
 
-    private fun transformLocalVariable(variable: FirProperty): FirProperty {
+    private fun transformLocalVariable(variable: FirProperty): FirProperty = whileAnalysing(variable) {
         assert(variable.isLocal)
         val delegate = variable.delegate
 
@@ -455,7 +455,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         accessor: FirPropertyAccessor,
         enhancedTypeRef: FirTypeRef,
         owner: FirProperty
-    ) {
+    ): Unit = whileAnalysing(accessor) {
         context.withPropertyAccessor(owner, accessor, components) {
             if (accessor is FirDefaultPropertyAccessor || accessor.body == null) {
                 transformFunction(accessor, withExpectedType(enhancedTypeRef))
@@ -490,8 +490,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         )
     }
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
-        context.withContainingClass(regularClass) {
+    override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement = whileAnalysing(regularClass) {
+        return context.withContainingClass(regularClass) {
             if (regularClass.isLocal && regularClass !in context.targetedLocalClasses) {
                 return regularClass.runAllPhasesForLocalClass(
                     transformer,
@@ -503,7 +503,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
             }
 
             doTransformTypeParameters(regularClass)
-            return doTransformRegularClass(regularClass, data)
+            doTransformRegularClass(regularClass, data)
         }
     }
 
@@ -519,7 +519,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         return result
     }
 
-    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias {
+    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias = whileAnalysing(typeAlias) {
         if (typeAlias.isLocal && typeAlias !in context.targetedLocalClasses) {
             return typeAlias.runAllPhasesForLocalClass(
                 transformer,
@@ -559,7 +559,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
     override fun transformAnonymousObject(
         anonymousObject: FirAnonymousObject,
         data: ResolutionMode
-    ): FirStatement {
+    ): FirStatement = whileAnalysing(anonymousObject) {
         if (anonymousObject !in context.targetedLocalClasses) {
             return anonymousObject.runAllPhasesForLocalClass(
                 transformer,
@@ -617,7 +617,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
         data: ResolutionMode
-    ): FirSimpleFunction {
+    ): FirSimpleFunction = whileAnalysing(simpleFunction) {
         if (simpleFunction.bodyResolved) {
             return simpleFunction
         }
@@ -681,7 +681,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
     override fun transformFunction(
         function: FirFunction,
         data: ResolutionMode
-    ): FirStatement {
+    ): FirStatement = whileAnalysing(function) {
         val functionIsNotAnalyzed = !function.bodyResolved
         if (functionIsNotAnalyzed) {
             dataFlowAnalyzer.enterFunction(function)
@@ -696,7 +696,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         } as FirStatement
     }
 
-    override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirConstructor {
+    override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirConstructor = whileAnalysing(constructor) {
         if (implicitTypeOnly) return constructor
         val container = context.containerIfAny as? FirRegularClass
         if (constructor.isPrimary && container?.classKind == ClassKind.ANNOTATION_CLASS) {
@@ -737,7 +737,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
     override fun transformAnonymousInitializer(
         anonymousInitializer: FirAnonymousInitializer,
         data: ResolutionMode
-    ): FirAnonymousInitializer {
+    ): FirAnonymousInitializer = whileAnalysing(anonymousInitializer) {
         if (implicitTypeOnly) return anonymousInitializer
         dataFlowAnalyzer.enterInitBlock(anonymousInitializer)
         return context.withAnonymousInitializer(anonymousInitializer, session) {
@@ -749,7 +749,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         }
     }
 
-    override fun transformValueParameter(valueParameter: FirValueParameter, data: ResolutionMode): FirStatement {
+    override fun transformValueParameter(
+        valueParameter: FirValueParameter,
+        data: ResolutionMode
+    ): FirStatement = whileAnalysing(valueParameter) {
         dataFlowAnalyzer.enterValueParameter(valueParameter)
         val result = context.withValueParameter(valueParameter, session) {
             transformDeclarationContent(
@@ -768,7 +771,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
     override fun transformAnonymousFunction(
         anonymousFunction: FirAnonymousFunction,
         data: ResolutionMode
-    ): FirStatement {
+    ): FirStatement = whileAnalysing(anonymousFunction) {
         // Either ContextDependent, ContextIndependent or WithExpectedType could be here
         if (data !is ResolutionMode.LambdaResolution) {
             anonymousFunction.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
@@ -1019,7 +1022,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
     override fun transformBackingField(
         backingField: FirBackingField,
         data: ResolutionMode,
-    ): FirStatement {
+    ): FirStatement = whileAnalysing(backingField) {
         val propertyType = data.expectedType
         val initializerData = if (backingField.returnTypeRef is FirResolvedTypeRef) {
             withExpectedType(backingField.returnTypeRef)
@@ -1123,7 +1126,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
             return element
         }
 
-        override fun transformValueParameter(valueParameter: FirValueParameter, data: Any?): FirStatement {
+        override fun transformValueParameter(valueParameter: FirValueParameter, data: Any?): FirStatement = whileAnalysing(valueParameter) {
             if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
                 valueParameter.transformReturnTypeRef(
                     StoreType,

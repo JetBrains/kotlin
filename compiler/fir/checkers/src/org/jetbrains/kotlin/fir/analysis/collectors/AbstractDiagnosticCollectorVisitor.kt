@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractDiagnosticCollectorVisitor(
@@ -270,7 +271,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
         val existingContext = context
         context = context.addQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall)
         try {
-            return block()
+            return whileAnalysing(qualifiedAccessOrAnnotationCall) {
+                block()
+            }
         } finally {
             existingContext.dropQualifiedAccessOrAnnotationCall()
             context = existingContext
@@ -283,7 +286,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
         val existingContext = context
         context = context.addGetClassCall(getClassCall)
         try {
-            return block()
+            return whileAnalysing(getClassCall) {
+                block()
+            }
         } finally {
             existingContext.dropGetClassCall()
             context = existingContext
@@ -296,7 +301,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
         val existingContext = context
         context = context.addDeclaration(declaration)
         try {
-            return block()
+            return whileAnalysing(declaration) {
+                block()
+            }
         } finally {
             existingContext.dropDeclaration()
             context = existingContext
