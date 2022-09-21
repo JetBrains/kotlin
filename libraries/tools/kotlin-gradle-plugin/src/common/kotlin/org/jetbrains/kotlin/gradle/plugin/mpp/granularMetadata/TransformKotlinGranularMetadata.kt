@@ -94,7 +94,14 @@ abstract class TransformKotlinGranularMetadata
 
         val allExtractedKlibs = mutableListOf<File>()
 
-        val directDependencies = settings.resolvedSourceSetMetadataDependencies.root.dependencies.filterIsInstance<ResolvedDependencyResult>()
+        val directDependencies = settings.resolvedSourceSetMetadataDependencies
+            .root
+            .dependencies
+            .filterIsInstance<ResolvedDependencyResult>()
+            // Filter out constraints. They look like regular dependencies
+            // and only take effect on dependencies in the resolved graph.
+            // Keeping them can cause incorrect results for transitive dependencies transformation
+            .filterNot { it.isConstraint }
 
         val queue = ArrayDeque<ResolvedDependencyResult>(directDependencies)
         val visited = mutableSetOf<ResolvedDependencyResult>()

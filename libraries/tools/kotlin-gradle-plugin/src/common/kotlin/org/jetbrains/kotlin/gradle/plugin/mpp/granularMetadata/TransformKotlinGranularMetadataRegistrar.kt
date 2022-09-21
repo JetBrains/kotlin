@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
@@ -97,6 +98,8 @@ private constructor(
 
             configuration.extendsFrom(*configurations)
             configuration.extendsFrom(*dependsOnConfigurations)
+
+            configuration.shouldResolveConsistentlyWith(project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME))
         }
     }
 
