@@ -108,11 +108,8 @@ internal class CompositeMetadataArtifactImpl(
             get() = kotlinProjectStructureMetadata.sourceSetBinaryLayout[sourceSet.sourceSetName]?.archiveExtension
                 ?: SourceSetMetadataLayout.METADATA.archiveExtension
 
-        override val checksum: Int
+        override val checksum: String
             get() = artifactFile.checksum
-
-        override val checksumString: String
-            get() = artifactFile.checksumString
 
         /**
          * Example:
@@ -125,7 +122,7 @@ internal class CompositeMetadataArtifactImpl(
             append("-")
             append(sourceSet.sourceSetName)
             append("-")
-            append(checksumString)
+            append(this@MetadataLibraryImpl.checksum)
             append(".")
             append(archiveExtension)
         })
@@ -154,11 +151,8 @@ internal class CompositeMetadataArtifactImpl(
         override val archiveExtension: String
             get() = SourceSetMetadataLayout.KLIB.archiveExtension
 
-        override val checksum: Int
+        override val checksum: String
             get() = artifactFile.checksum
-
-        override val checksumString: String
-            get() = artifactFile.checksumString
 
         /**
          * Example:
@@ -172,7 +166,7 @@ internal class CompositeMetadataArtifactImpl(
             append("-")
             append(sourceSet.sourceSetName)
             append("-cinterop")
-        }).resolve("$cinteropLibraryName-${checksumString}.${archiveExtension}")
+        }).resolve("$cinteropLibraryName-${this.checksum}.${archiveExtension}")
 
         override fun copyTo(file: File): Boolean {
             require(file.extension == archiveExtension) {
@@ -216,14 +210,10 @@ internal class CompositeMetadataArtifactImpl(
             zip.entries().toList()
         }
 
-        val checksum: Int by lazy(LazyThreadSafetyMode.NONE) {
+        val checksum: String by lazy(LazyThreadSafetyMode.NONE) {
             val crc32 = CRC32()
             entries.forEach { entry -> crc32.update(entry.crc.toInt()) }
-            crc32.value.toInt()
-        }
-
-        val checksumString: String by lazy(LazyThreadSafetyMode.NONE) {
-            checksumStringEncoder.encodeToString(ByteBuffer.allocate(4).putInt(checksum).array())
+            checksumStringEncoder.encodeToString(ByteBuffer.allocate(4).putInt(crc32.value.toInt()).array())
         }
 
         /**

@@ -14,8 +14,7 @@ internal interface CompositeMetadataArtifact {
         val artifactContent: ArtifactContent
         val sourceSet: SourceSet
         val archiveExtension: String
-        val checksum: Int
-        val checksumString: String
+        val checksum: String
 
         /**
          * The proposed file-output path.
