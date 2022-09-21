@@ -75,7 +75,9 @@ public class PackageCodegenImpl implements PackageCodegen {
             }
             catch (Throwable e) {
                 VirtualFile vFile = file.getVirtualFile();
-                CodegenUtil.reportBackendException(e, "file facade code generation", vFile == null ? null : vFile.getUrl(), null);
+                CodegenUtil.reportBackendException(
+                        e, "file facade code generation", vFile == null ? null : vFile.getUrl(), null, (it) -> null
+                );
             }
         }
     }

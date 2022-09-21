@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.util.withSourceCodeAnalysisExceptionUnwrapping
 
 internal abstract class FileStructureElementDiagnosticRetriever {
     abstract fun retrieve(
@@ -36,8 +37,10 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
         val context = moduleComponents.globalResolveComponents.lockProvider.withWriteLock(firFile) {
             PersistenceContextCollector.collectContext(sessionHolder, firFile, structureElementDeclaration)
         }
-        return collector.collectForStructureElement(structureElementDeclaration) { components ->
-            Visitor(structureElementDeclaration, context, components)
+        return withSourceCodeAnalysisExceptionUnwrapping {
+            collector.collectForStructureElement(structureElementDeclaration) { components ->
+                Visitor(structureElementDeclaration, context, components)
+            }
         }
     }
 
@@ -102,8 +105,10 @@ internal object FileDiagnosticRetriever : FileStructureElementDiagnosticRetrieve
         collector: FileStructureElementDiagnosticsCollector,
         moduleComponents: LLFirModuleResolveComponents,
     ): FileStructureElementDiagnosticList =
-        collector.collectForStructureElement(firFile) { components ->
-            Visitor(components, moduleComponents)
+        withSourceCodeAnalysisExceptionUnwrapping {
+            collector.collectForStructureElement(firFile) { components ->
+                Visitor(components, moduleComponents)
+            }
         }
 
     private class Visitor(

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
+import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 
 fun FirSession.runResolution(firFiles: List<FirFile>): Pair<ScopeSession, List<FirFile>> {
     val resolveProcessor = FirTotalResolveProcessor(this)
@@ -21,6 +22,8 @@ fun FirSession.runResolution(firFiles: List<FirFile>): Pair<ScopeSession, List<F
 fun FirSession.runCheckers(scopeSession: ScopeSession, firFiles: List<FirFile>, reporter: DiagnosticReporter) {
     val collector = FirDiagnosticsCollector.create(this, scopeSession)
     for (file in firFiles) {
-        collector.collectDiagnostics(file, reporter)
+        withFileAnalysisExceptionWrapping(file) {
+            collector.collectDiagnostics(file, reporter)
+        }
     }
 }
