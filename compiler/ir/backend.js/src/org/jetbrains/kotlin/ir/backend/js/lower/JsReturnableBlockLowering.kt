@@ -204,7 +204,6 @@ private class JsReturnableBlockTransformer(val context: JsIrBackendContext, val 
             return irGet(flagVariable)
         }
 
-        val iterator = returnTargetSymbols
         val firstSymbol = returnTargetSymbols.firstOrNull() ?: compilationException("Expected at least one non-local return", expression)
         return returnTargetSymbols.asSequence().drop(1).fold(irGetFlagVariable(firstSymbol)) { result, returnTargetSymbol ->
             irCall(this@JsReturnableBlockTransformer.context.intrinsics.jsOr).apply {
