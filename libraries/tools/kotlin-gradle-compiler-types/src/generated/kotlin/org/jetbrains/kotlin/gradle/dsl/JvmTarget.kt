@@ -16,7 +16,8 @@ enum class JvmTarget(val target: String) {
     JVM_15("15"),
     JVM_16("16"),
     JVM_17("17"),
-    JVM_18("18");
+    JVM_18("18"),
+    ;
 
     companion object {
         fun fromTarget(target: String): JvmTarget =
