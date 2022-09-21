@@ -26,32 +26,29 @@ internal class CompositeMetadataArtifactImpl(
     private val hostSpecificArtifactFilesBySourceSetName: Map<String, File>
 ) : CompositeMetadataArtifact {
 
-    override fun open(): CompositeMetadataArtifact.ArtifactContent {
-        return HandlerImpl()
+    override fun open(): CompositeMetadataArtifactContent {
+        return CompositeMetadataArtifactContentImpl()
     }
 
-    inner class HandlerImpl : CompositeMetadataArtifact.ArtifactContent {
+    inner class CompositeMetadataArtifactContentImpl : CompositeMetadataArtifactContent {
 
-        override val moduleDependencyIdentifier: ModuleDependencyIdentifier
-            get() = this@CompositeMetadataArtifactImpl.moduleDependencyIdentifier
-
-        override val moduleDependencyVersion: String
-            get() = this@CompositeMetadataArtifactImpl.moduleDependencyVersion
+        override val containingArtifact: CompositeMetadataArtifact
+            get() = this@CompositeMetadataArtifactImpl
 
         /* Creating SourceSet instances eagerly, as they will only lazily access files */
         private val sourceSetsImpl = kotlinProjectStructureMetadata.sourceSetNames.associateWith { sourceSetName ->
-            SourceSetImpl(this, sourceSetName, ArtifactFile(hostSpecificArtifactFilesBySourceSetName[sourceSetName] ?: primaryArtifactFile))
+            SourceSetContentImpl(this, sourceSetName, ArtifactFile(hostSpecificArtifactFilesBySourceSetName[sourceSetName] ?: primaryArtifactFile))
         }
 
-        override val sourceSets: List<CompositeMetadataArtifact.SourceSet> =
+        override val sourceSets: List<CompositeMetadataArtifactContent.SourceSetContent> =
             sourceSetsImpl.values.toList()
 
-        override fun getSourceSet(name: String): CompositeMetadataArtifact.SourceSet {
+        override fun getSourceSet(name: String): CompositeMetadataArtifactContent.SourceSetContent {
             return findSourceSet(name)
                 ?: throw IllegalArgumentException("No SourceSet with name $name found. Known SourceSets: ${sourceSetsImpl.keys}")
         }
 
-        override fun findSourceSet(name: String): CompositeMetadataArtifact.SourceSet? =
+        override fun findSourceSet(name: String): CompositeMetadataArtifactContent.SourceSetContent? =
             sourceSetsImpl[name]
 
 
@@ -60,13 +57,13 @@ internal class CompositeMetadataArtifactImpl(
         }
     }
 
-    private inner class SourceSetImpl(
-        override val artifactContent: CompositeMetadataArtifact.ArtifactContent,
+    private inner class SourceSetContentImpl(
+        override val containingArtifactContent: CompositeMetadataArtifactContent,
         override val sourceSetName: String,
         private val artifactFile: ArtifactFile
-    ) : CompositeMetadataArtifact.SourceSet, Closeable {
+    ) : CompositeMetadataArtifactContent.SourceSetContent, Closeable {
 
-        override val metadataLibrary: CompositeMetadataArtifact.MetadataLibrary? by lazy {
+        override val metadataBinary: CompositeMetadataArtifactContent.MetadataBinary? by lazy {
             /*
             There are published multiplatform libraries that indeed suppress, disable certain compilations.
             In this scenario, the sourceSetName might still be mentioned in the artifact, but there will be no
@@ -74,10 +71,10 @@ internal class CompositeMetadataArtifactImpl(
 
             In this case, return null
              */
-            if (artifactFile.containsDirectory(sourceSetName)) MetadataLibraryImpl(artifactContent, this, artifactFile) else null
+            if (artifactFile.containsDirectory(sourceSetName)) MetadataBinaryImpl(this, artifactFile) else null
         }
 
-        override val cinteropMetadataLibraries: List<CompositeMetadataArtifact.CInteropMetadataLibrary> by lazy {
+        override val cinteropMetadataBinaries: List<CompositeMetadataArtifactContent.CInteropMetadataBinary> by lazy {
             val cinteropMetadataDirectory = kotlinProjectStructureMetadata.sourceSetCInteropMetadataDirectory[sourceSetName]
                 ?: return@lazy emptyList()
 
@@ -89,7 +86,7 @@ internal class CompositeMetadataArtifactImpl(
             }.toSet()
 
             cinteropLibraryNames.map { cinteropLibraryName ->
-                CInteropMetadataLibraryImpl(artifactContent, this, cinteropLibraryName, artifactFile)
+                CInteropMetadataBinaryImpl(this, cinteropLibraryName, artifactFile)
             }
         }
 
@@ -98,14 +95,13 @@ internal class CompositeMetadataArtifactImpl(
         }
     }
 
-    private inner class MetadataLibraryImpl(
-        override val artifactContent: CompositeMetadataArtifact.ArtifactContent,
-        override val sourceSet: CompositeMetadataArtifact.SourceSet,
+    private inner class MetadataBinaryImpl(
+        override val containingSourceSetContent: CompositeMetadataArtifactContent.SourceSetContent,
         private val artifactFile: ArtifactFile
-    ) : CompositeMetadataArtifact.MetadataLibrary {
+    ) : CompositeMetadataArtifactContent.MetadataBinary {
 
         override val archiveExtension: String
-            get() = kotlinProjectStructureMetadata.sourceSetBinaryLayout[sourceSet.sourceSetName]?.archiveExtension
+            get() = kotlinProjectStructureMetadata.sourceSetBinaryLayout[containingSourceSetContent.sourceSetName]?.archiveExtension
                 ?: SourceSetMetadataLayout.METADATA.archiveExtension
 
         override val checksum: String
@@ -116,13 +112,13 @@ internal class CompositeMetadataArtifactImpl(
          * org.jetbrains.sample-sampleLibrary-1.0.0-SNAPSHOT-appleAndLinuxMain-Vk5pxQ.klib
          */
         override val relativeFile: File = File(buildString {
-            append(artifactContent.moduleDependencyIdentifier)
+            append(containingSourceSetContent.containingArtifactContent.containingArtifact.moduleDependencyIdentifier)
             append("-")
-            append(artifactContent.moduleDependencyVersion)
+            append(containingSourceSetContent.containingArtifactContent.containingArtifact.moduleDependencyVersion)
             append("-")
-            append(sourceSet.sourceSetName)
+            append(containingSourceSetContent.sourceSetName)
             append("-")
-            append(this@MetadataLibraryImpl.checksum)
+            append(this@MetadataBinaryImpl.checksum)
             append(".")
             append(archiveExtension)
         })
@@ -132,7 +128,7 @@ internal class CompositeMetadataArtifactImpl(
                 "Expected file.extension == '$archiveExtension'. Found ${file.extension}"
             }
 
-            val libraryPath = "${sourceSet.sourceSetName}/"
+            val libraryPath = "${containingSourceSetContent.sourceSetName}/"
             if (!artifactFile.containsDirectory(libraryPath)) return false
             file.parentFile.mkdirs()
             artifactFile.zip.copyPartially(file, libraryPath)
@@ -141,12 +137,11 @@ internal class CompositeMetadataArtifactImpl(
         }
     }
 
-    private inner class CInteropMetadataLibraryImpl(
-        override val artifactContent: CompositeMetadataArtifact.ArtifactContent,
-        override val sourceSet: CompositeMetadataArtifact.SourceSet,
+    private inner class CInteropMetadataBinaryImpl(
+        override val containingSourceSetContent: CompositeMetadataArtifactContent.SourceSetContent,
         override val cinteropLibraryName: String,
         private val artifactFile: ArtifactFile,
-    ) : CompositeMetadataArtifact.CInteropMetadataLibrary {
+    ) : CompositeMetadataArtifactContent.CInteropMetadataBinary {
 
         override val archiveExtension: String
             get() = SourceSetMetadataLayout.KLIB.archiveExtension
@@ -160,11 +155,11 @@ internal class CompositeMetadataArtifactImpl(
          *     org.jetbrains.sample_sampleLibrary-cinterop-simple-Vk5pxQ.klib
          */
         override val relativeFile: File = File(buildString {
-            append(artifactContent.moduleDependencyIdentifier)
+            append(containingSourceSetContent.containingArtifactContent.containingArtifact.moduleDependencyIdentifier)
             append("-")
-            append(artifactContent.moduleDependencyVersion)
+            append(containingSourceSetContent.containingArtifactContent.containingArtifact.moduleDependencyVersion)
             append("-")
-            append(sourceSet.sourceSetName)
+            append(containingSourceSetContent.sourceSetName)
             append("-cinterop")
         }).resolve("$cinteropLibraryName-${this.checksum}.${archiveExtension}")
 
@@ -173,7 +168,7 @@ internal class CompositeMetadataArtifactImpl(
                 "Expected 'file.extension == '${SourceSetMetadataLayout.KLIB.archiveExtension}'. Found ${file.extension}"
             }
 
-            val sourceSetName = sourceSet.sourceSetName
+            val sourceSetName = containingSourceSetContent.sourceSetName
             val cinteropMetadataDirectory = kotlinProjectStructureMetadata.sourceSetCInteropMetadataDirectory[sourceSetName]
                 ?: error("Missing CInteropMetadataDirectory for SourceSet $sourceSetName")
             val cinteropMetadataDirectoryPath = ensureValidZipDirectoryPath(cinteropMetadataDirectory)
