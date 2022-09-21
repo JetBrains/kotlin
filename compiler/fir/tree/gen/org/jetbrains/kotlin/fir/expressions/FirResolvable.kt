@@ -15,8 +15,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed interface FirResolvable : FirElement {
+sealed interface FirResolvable : FirStatement {
     override val source: KtSourceElement?
+    override val annotations: List<FirAnnotation>
     val calleeReference: FirReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvable(this, data)
@@ -26,6 +27,8 @@ sealed interface FirResolvable : FirElement {
         transformer.transformResolvable(this, data) as E
 
     fun replaceCalleeReference(newCalleeReference: FirReference)
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvable
 
     fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirResolvable
 }

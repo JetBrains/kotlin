@@ -15,8 +15,6 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val reference by element(Reference)
     val label by element(Other)
 
-    val resolvable by sealedElement(Expression)
-
     val targetElement by element(Other)
 
     val declarationStatus by element(Declaration)
@@ -26,6 +24,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
 
     val statement by element(Expression, annotationContainer)
     val expression by element(Expression, statement)
+    val resolvable by sealedElement(Expression, statement)
 
     val contextReceiver by element(Declaration)
 

@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirVariableAssignmentBuilder : FirQualifiedAccessBuilder, FirAnnotationContainerBuilder {
-    lateinit var calleeReference: FirReference
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    lateinit var calleeReference: FirReference
     override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override var explicitReceiver: FirExpression? = null
@@ -43,8 +43,8 @@ class FirVariableAssignmentBuilder : FirQualifiedAccessBuilder, FirAnnotationCon
 
     override fun build(): FirVariableAssignment {
         return FirVariableAssignmentImpl(
-            calleeReference,
             annotations,
+            calleeReference,
             contextReceiverArguments,
             typeArguments,
             explicitReceiver,

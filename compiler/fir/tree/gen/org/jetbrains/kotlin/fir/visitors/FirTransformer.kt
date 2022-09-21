@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
@@ -166,10 +166,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElement(label, data)
     }
 
-    open fun transformResolvable(resolvable: FirResolvable, data: D): FirResolvable {
-        return transformElement(resolvable, data)
-    }
-
     open fun transformTargetElement(targetElement: FirTargetElement, data: D): FirTargetElement {
         return transformElement(targetElement, data)
     }
@@ -192,6 +188,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     open fun transformExpression(expression: FirExpression, data: D): FirStatement {
         return transformElement(expression, data)
+    }
+
+    open fun transformResolvable(resolvable: FirResolvable, data: D): FirStatement {
+        return transformElement(resolvable, data)
     }
 
     open fun transformContextReceiver(contextReceiver: FirContextReceiver, data: D): FirContextReceiver {
@@ -706,10 +706,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformLabel(label, data)
     }
 
-    final override fun visitResolvable(resolvable: FirResolvable, data: D): FirResolvable {
-        return transformResolvable(resolvable, data)
-    }
-
     final override fun visitTargetElement(targetElement: FirTargetElement, data: D): FirTargetElement {
         return transformTargetElement(targetElement, data)
     }
@@ -732,6 +728,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitExpression(expression: FirExpression, data: D): FirStatement {
         return transformExpression(expression, data)
+    }
+
+    final override fun visitResolvable(resolvable: FirResolvable, data: D): FirStatement {
+        return transformResolvable(resolvable, data)
     }
 
     final override fun visitContextReceiver(contextReceiver: FirContextReceiver, data: D): FirContextReceiver {

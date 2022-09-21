@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  */
 
 abstract class FirVariableAssignment : FirPureAbstractElement(), FirQualifiedAccess {
-    abstract override val calleeReference: FirReference
     abstract override val annotations: List<FirAnnotation>
+    abstract override val calleeReference: FirReference
     abstract override val contextReceiverArguments: List<FirExpression>
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val explicitReceiver: FirExpression?
@@ -51,9 +51,9 @@ abstract class FirVariableAssignment : FirPureAbstractElement(), FirQualifiedAcc
 
     abstract fun replaceLValueTypeRef(newLValueTypeRef: FirTypeRef)
 
-    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirVariableAssignment
-
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirVariableAssignment
+
+    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirVariableAssignment
 
     abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirVariableAssignment
 

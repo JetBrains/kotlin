@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  */
 
 internal class FirVariableAssignmentImpl(
-    override var calleeReference: FirReference,
     override val annotations: MutableList<FirAnnotation>,
+    override var calleeReference: FirReference,
     override val contextReceiverArguments: MutableList<FirExpression>,
     override val typeArguments: MutableList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
@@ -42,8 +42,8 @@ internal class FirVariableAssignmentImpl(
     override var lValueTypeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        calleeReference.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
+        calleeReference.accept(visitor, data)
         contextReceiverArguments.forEach { it.accept(visitor, data) }
         typeArguments.forEach { it.accept(visitor, data) }
         explicitReceiver?.accept(visitor, data)
@@ -58,8 +58,8 @@ internal class FirVariableAssignmentImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
-        transformCalleeReference(transformer, data)
         transformAnnotations(transformer, data)
+        transformCalleeReference(transformer, data)
         contextReceiverArguments.transformInplace(transformer, data)
         transformTypeArguments(transformer, data)
         explicitReceiver = explicitReceiver?.transform(transformer, data)
@@ -74,13 +74,13 @@ internal class FirVariableAssignmentImpl(
         return this
     }
 
-    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
-        calleeReference = calleeReference.transform(transformer, data)
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
-        annotations.transformInplace(transformer, data)
+    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
+        calleeReference = calleeReference.transform(transformer, data)
         return this
     }
 
