@@ -92,6 +92,11 @@ sealed class SourceSetMetadataLayout(
     }
 }
 
+/**
+ * Represents the structure of "shared" source sets within a Kotlin Project.
+ * Note: This entity is designed to only list "shared" source sets.
+ * No "platform" source sets will be listed.
+ */
 data class KotlinProjectStructureMetadata(
     @Input
     val sourceSetNamesByVariantName: Map<String, Set<String>>,
