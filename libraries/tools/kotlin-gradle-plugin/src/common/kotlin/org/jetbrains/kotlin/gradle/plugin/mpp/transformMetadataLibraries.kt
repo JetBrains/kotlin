@@ -15,7 +15,7 @@ import java.io.File
  * The map is necessary to support [MetadataDependencyTransformation]'s shape, which
  * is used in import and therefore hard to change.
  *
- * When this function will also support project dependencies and just return the compiled output files.
+ * This function will also support project to project dependencies and just returns the compiled output FileCollections to the metadata.
  */
 internal fun Project.transformMetadataLibrariesForIde(
     resolution: MetadataDependencyResolution.ChooseVisibleSourceSets
