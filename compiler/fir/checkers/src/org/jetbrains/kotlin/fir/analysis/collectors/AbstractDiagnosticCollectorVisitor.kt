@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractDiagnosticCollectorVisitor(
@@ -71,7 +72,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?) {
         withAnnotationContainer(regularClass) {
-            visitClassAndChildren(regularClass, regularClass.defaultType())
+            whileAnalysing(regularClass) {
+                visitClassAndChildren(regularClass, regularClass.defaultType())
+            }
         }
     }
 
@@ -87,13 +90,17 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?) {
         withAnnotationContainer(simpleFunction) {
-            visitWithDeclarationAndReceiver(simpleFunction, simpleFunction.name, simpleFunction.receiverTypeRef)
+            whileAnalysing(simpleFunction) {
+                visitWithDeclarationAndReceiver(simpleFunction, simpleFunction.name, simpleFunction.receiverTypeRef)
+            }
         }
     }
 
     override fun visitConstructor(constructor: FirConstructor, data: Nothing?) {
         withAnnotationContainer(constructor) {
-            visitWithDeclaration(constructor)
+            whileAnalysing(constructor) {
+                visitWithDeclaration(constructor)
+            }
         }
     }
 
@@ -114,13 +121,17 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitProperty(property: FirProperty, data: Nothing?) {
         withAnnotationContainer(property) {
-            visitWithDeclaration(property)
+            whileAnalysing(property) {
+                visitWithDeclaration(property)
+            }
         }
     }
 
     override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Nothing?) {
         withAnnotationContainer(typeAlias) {
-            visitWithDeclaration(typeAlias)
+            whileAnalysing(typeAlias) {
+                visitWithDeclaration(typeAlias)
+            }
         }
     }
 
@@ -139,7 +150,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Nothing?) {
         withAnnotationContainer(enumEntry) {
-            visitWithDeclaration(enumEntry)
+            whileAnalysing(enumEntry) {
+                visitWithDeclaration(enumEntry)
+            }
         }
     }
 
@@ -211,7 +224,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: Nothing?) {
-        visitWithQualifiedAccessOrAnnotationCall(variableAssignment)
+        whileAnalysing(variableAssignment) {
+            visitWithQualifiedAccessOrAnnotationCall(variableAssignment)
+        }
     }
 
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: Nothing?) {

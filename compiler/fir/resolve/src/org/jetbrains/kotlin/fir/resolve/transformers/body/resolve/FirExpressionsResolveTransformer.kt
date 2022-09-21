@@ -354,7 +354,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         return checkedSafeCallSubject
     }
 
-    override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement {
+    override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode) = whileAnalysing(functionCall) {
         val calleeReference = functionCall.calleeReference
         if (
             (calleeReference is FirResolvedNamedReference || calleeReference is FirErrorNamedReference) &&
@@ -368,9 +368,9 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             if (calleeReference !is FirResolvedNamedReference) {
                 functionCall.transformChildren(transformer, data)
             }
-            return functionCall
+            return@whileAnalysing functionCall
         }
-        if (calleeReference is FirNamedReferenceWithCandidate) return functionCall
+        if (calleeReference is FirNamedReferenceWithCandidate) return@whileAnalysing functionCall
         dataFlowAnalyzer.enterCall()
         functionCall.transformAnnotations(transformer, data)
         functionCall.transformSingle(InvocationKindTransformer, null)
@@ -396,10 +396,10 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
         if (callCompleted) {
             if (enableArrayOfCallTransformation) {
-                return arrayOfCallTransformer.transformFunctionCall(result, null)
+                return@whileAnalysing arrayOfCallTransformer.transformFunctionCall(result, null)
             }
         }
-        return result
+        result
     }
 
     @OptIn(PrivateForInline::class)
@@ -523,7 +523,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     override fun transformAssignmentOperatorStatement(
         assignmentOperatorStatement: FirAssignmentOperatorStatement,
         data: ResolutionMode
-    ): FirStatement {
+    ) = whileAnalysing(assignmentOperatorStatement) {
         val operation = assignmentOperatorStatement.operation
         require(operation != FirOperation.ASSIGN)
 
@@ -627,7 +627,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             }
         }
 
-        return when {
+        when {
             assignIsSuccessful && !lhsIsVar -> chooseAssign()
             !assignIsSuccessful && !operatorIsSuccessful -> {
                 // If neither candidate is successful, choose whichever is resolved, prioritizing assign
@@ -1003,7 +1003,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     override fun <T> transformConstExpression(
         constExpression: FirConstExpression<T>,
         data: ResolutionMode,
-    ): FirStatement {
+    ) = whileAnalysing(constExpression) {
         constExpression.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
 
         val type = when (val kind = constExpression.kind) {
@@ -1040,7 +1040,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
         dataFlowAnalyzer.exitConstExpression(constExpression as FirConstExpression<*>)
         constExpression.resultType = constExpression.resultType.resolvedTypeFromPrototype(type)
-        return constExpression
+        constExpression
     }
 
     override fun transformAnnotation(annotation: FirAnnotation, data: ResolutionMode): FirStatement {
@@ -1193,7 +1193,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     override fun transformAugmentedArraySetCall(
         augmentedArraySetCall: FirAugmentedArraySetCall,
         data: ResolutionMode
-    ): FirStatement {
+    ) = whileAnalysing(augmentedArraySetCall) {
         /*
          * a[b] += c can be desugared to:
          *
@@ -1234,7 +1234,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
         // prefer a "simpler" variant for dynamics
         if (transformedLhsCall.calleeReference.resolvedSymbol?.origin == FirDeclarationOrigin.DynamicScope) {
-            return chooseAssign()
+            return@whileAnalysing chooseAssign()
         }
 
         // <array>.set(<index_i>, <array>.get(<index_i>).plus(c))
@@ -1245,7 +1245,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
         // if `plus` call already inapplicable then there is no need to try to resolve `set` call
         if (assignIsSuccessful && !operatorIsSuccessful) {
-            return chooseAssign()
+            return@whileAnalysing chooseAssign()
         }
 
         // a.set(b, a.get(b).plus(c))

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.generators.*
 import org.jetbrains.kotlin.fir.backend.generators.DataClassMembersGenerator
 import org.jetbrains.kotlin.fir.declarations.*
@@ -27,9 +27,6 @@ import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedMembers
 import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
-import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.packageFqName
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.fir.signaturer.FirMangler
@@ -92,9 +89,7 @@ class Fir2IrConverter(
         //   5. Body processing
         //   If we encounter local class / anonymous object here, then we perform all (1)-(5) stages immediately
         delegatedMemberGenerator.generateBodies()
-        for (firFile in allFirFiles) {
-            firFile.accept(fir2irVisitor, null)
-        }
+        allFirFiles.forEachWrappingFileAnalysisException { it.accept(fir2irVisitor, null) }
 
         if (irGenerationExtensions.isNotEmpty()) {
             val pluginContext = Fir2IrPluginContext(components, irModuleFragment.descriptor)

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.path
 
 fun CommonBackendContext.reportWarning(message: String, irFile: IrFile?, irElement: IrElement) {
     report(irElement, irFile, message, false)
@@ -35,3 +36,12 @@ fun <E> MutableList<E>.peek(): E? = if (size == 0) null else this[size - 1]
 fun IrElement.sourceElement(): AbstractKtSourceElement? =
     if (startOffset != UNDEFINED_OFFSET) KtOffsetsOnlySourceElement(this.startOffset, this.endOffset)
     else null
+
+inline fun <R> withFileAnalysisExceptionWrapping(file: IrFile, block: () -> R): R {
+    return org.jetbrains.kotlin.withFileAnalysisExceptionWrapping(
+        file.path,
+        file.sourceElement(),
+        { file.fileEntry.getLineNumber(it) to file.fileEntry.getColumnNumber(it) },
+        block,
+    )
+}

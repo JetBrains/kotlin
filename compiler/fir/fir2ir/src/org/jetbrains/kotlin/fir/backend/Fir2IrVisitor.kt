@@ -212,9 +212,9 @@ class Fir2IrVisitor(
 
     // ==================================================================================
 
-    override fun visitConstructor(constructor: FirConstructor, data: Any?): IrElement {
+    override fun visitConstructor(constructor: FirConstructor, data: Any?): IrElement = whileAnalysing(constructor) {
         val irConstructor = declarationStorage.getCachedIrConstructor(constructor)!!
-        return conversionScope.withFunction(irConstructor) {
+        conversionScope.withFunction(irConstructor) {
             memberGenerator.convertFunctionContent(irConstructor, constructor, containingClass = conversionScope.containerFirClass())
         }
     }
@@ -227,7 +227,7 @@ class Fir2IrVisitor(
         return irAnonymousInitializer
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?): IrElement {
+    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?): IrElement = whileAnalysing(simpleFunction) {
         val irFunction = if (simpleFunction.visibility == Visibilities.Local) {
             declarationStorage.createIrFunction(
                 simpleFunction, irParent = conversionScope.parent(), predefinedOrigin = IrDeclarationOrigin.LOCAL_FUNCTION, isLocal = true
@@ -235,7 +235,7 @@ class Fir2IrVisitor(
         } else {
             declarationStorage.getCachedIrFunction(simpleFunction)!!
         }
-        return conversionScope.withFunction(irFunction) {
+        conversionScope.withFunction(irFunction) {
             memberGenerator.convertFunctionContent(
                 irFunction, simpleFunction, containingClass = conversionScope.containerFirClass()
             )
@@ -318,24 +318,24 @@ class Fir2IrVisitor(
             this@insertImplicitCast.cast(baseExpression, valueType, expectedType)
         }
 
-    override fun visitProperty(property: FirProperty, data: Any?): IrElement {
+    override fun visitProperty(property: FirProperty, data: Any?): IrElement = whileAnalysing(property) {
         if (property.isLocal) return visitLocalVariable(property)
         val irProperty = declarationStorage.getCachedIrProperty(property)
-            ?: return IrErrorExpressionImpl(
+            ?: return@whileAnalysing IrErrorExpressionImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT),
                 "Stub for Enum.entries"
             )
-        return conversionScope.withProperty(irProperty, property) {
+        conversionScope.withProperty(irProperty, property) {
             memberGenerator.convertPropertyContent(irProperty, property, containingClass = conversionScope.containerFirClass())
         }
     }
 
     // ==================================================================================
 
-    override fun visitReturnExpression(returnExpression: FirReturnExpression, data: Any?): IrElement {
+    override fun visitReturnExpression(returnExpression: FirReturnExpression, data: Any?): IrElement = whileAnalysing(returnExpression) {
         val irTarget = conversionScope.returnTarget(returnExpression, declarationStorage)
-        return returnExpression.convertWithOffsets { startOffset, endOffset ->
+        returnExpression.convertWithOffsets { startOffset, endOffset ->
             val result = returnExpression.result
             // For implicit returns, use the expression endOffset to generate the expected line number for debugging.
             val returnStartOffset = if (returnExpression.source?.kind is KtFakeSourceElementKind.ImplicitReturn) endOffset else startOffset
@@ -582,15 +582,16 @@ class Fir2IrVisitor(
         )
     }
 
-    override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: Any?): IrElement {
+    override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: Any?) = whileAnalysing(variableAssignment) {
         val explicitReceiverExpression = convertToIrReceiverExpression(
             variableAssignment.explicitReceiver, variableAssignment.calleeReference
         )
-        return callGenerator.convertToIrSetCall(variableAssignment, explicitReceiverExpression)
+        callGenerator.convertToIrSetCall(variableAssignment, explicitReceiverExpression)
     }
 
-    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Any?): IrElement =
+    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Any?) = whileAnalysing(constExpression) {
         constExpression.toIrConst(constExpression.typeRef.toIrType())
+    }
 
     // ==================================================================================
 
@@ -721,7 +722,7 @@ class Fir2IrVisitor(
         return if (origin == IrStatementOrigin.EQ) null else origin
     }
 
-    internal fun convertToIrBlockBody(block: FirBlock): IrBlockBody {
+    internal fun convertToIrBlockBody(block: FirBlock): IrBlockBody = whileAnalysing(block) {
         return block.convertWithOffsets { startOffset, endOffset ->
             val irStatements = block.statements.mapToIrStatements()
             irFactory.createBlockBody(

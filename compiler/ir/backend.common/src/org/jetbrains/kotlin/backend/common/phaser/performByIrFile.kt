@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.phaser
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -62,7 +63,9 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
             try {
                 val filePhaserState = phaserState.changePhaserStateType<IrModuleFragment, IrFile>()
                 for (phase in lower) {
-                    phase.invoke(phaseConfig, filePhaserState, context, irFile)
+                    withFileAnalysisExceptionWrapping(irFile) {
+                        phase.invoke(phaseConfig, filePhaserState, context, irFile)
+                    }
                 }
             } catch (e: Throwable) {
                 CodegenUtil.reportBackendException(e, "IR lowering", irFile.fileEntry.name)

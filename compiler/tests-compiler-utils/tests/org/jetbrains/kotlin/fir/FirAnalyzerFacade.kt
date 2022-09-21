@@ -92,10 +92,10 @@ class FirAnalyzerFacade(
         if (collectedDiagnostics != null) return collectedDiagnostics!!
         val collector = FirDiagnosticsCollector.create(session, scopeSession)
         collectedDiagnostics = buildMap {
-            for (file in firFiles!!) {
+            firFiles!!.forEachWrappingFileAnalysisException {
                 val reporter = DiagnosticReporterFactory.createPendingReporter()
-                collector.collectDiagnostics(file, reporter)
-                put(file, reporter.diagnostics)
+                collector.collectDiagnostics(it, reporter)
+                put(it, reporter.diagnostics)
             }
         }
         return collectedDiagnostics!!
