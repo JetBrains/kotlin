@@ -87,7 +87,7 @@ open class KotlinJsTargetPreset(
     override fun getName(): String = JS_PRESET_NAME
 
     public override fun createCompilationFactory(forTarget: KotlinJsTarget): KotlinJsCompilationFactory {
-        return KotlinJsCompilationFactory(project, forTarget)
+        return KotlinJsCompilationFactory(forTarget)
     }
 
     companion object {
