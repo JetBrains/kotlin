@@ -12,11 +12,12 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.resolved
+import org.jetbrains.kotlin.fir.resolvedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JsModule
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JsNonModule
 
-object FirJsJsModuleOnVarPropertyChecker : FirPropertyChecker() {
+object FirJsModuleOnVarPropertyChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isVar) {
             return
@@ -24,9 +25,9 @@ object FirJsJsModuleOnVarPropertyChecker : FirPropertyChecker() {
 
         for (annotation in declaration.annotations) {
             val call = annotation as? FirAnnotationCall ?: continue
-            val name = call.calleeReference.resolved?.name
+            val annotationFqName = (call.calleeReference.resolvedSymbol as? FirCallableSymbol<*>)?.callableId?.asSingleFqName()?.parent()
 
-            if (name == JsModule.shortClassName || name == JsNonModule.shortClassName) {
+            if (annotationFqName == JsModule.asSingleFqName() || annotationFqName == JsNonModule.asSingleFqName()) {
                 reporter.reportOn(annotation.source, FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR, context)
             }
         }
