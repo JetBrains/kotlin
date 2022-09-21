@@ -17,11 +17,13 @@ fun box(): String {
 
     // JDK 8 and earlier
     val expected1 = "[@test.Anno(k1=class $fqName, k2=class [L$fqName;, k3=class [[L$fqName;)]"
-    // JDK 9 and later
+    // JDK 9..18
     val expected2 = "[@test.Anno(k1=$fqName.class, k2=$fqName[].class, k3=$fqName[][].class)]"
+    // JDK 19 and later
+    val expected3 = "[@test.Anno(k1=<no canonical name>.class, k2=<no canonical name>.class, k3=<no canonical name>.class)]"
 
     val actual = M::class.annotations.toString()
-    if (actual != expected1 && actual != expected2) return "Fail: $actual"
+    if (actual != expected1 && actual != expected2 && actual != expected3) return "Fail: $actual"
 
     return "OK"
 }

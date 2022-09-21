@@ -15,8 +15,8 @@ interface CompilerJvmOptions : org.jetbrains.kotlin.gradle.dsl.CompilerCommonOpt
     val javaParameters: org.gradle.api.provider.Property<kotlin.Boolean>
 
     /**
-     * Target version of the generated JVM bytecode (1.8, 9, 10, ..., 18), default is 1.8
-     * Possible values: "1.8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18"
+     * Target version of the generated JVM bytecode (1.8, 9, 10, ..., 19), default is 1.8
+     * Possible values: "1.8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19"
      * Default value: null
      */
     @get:org.gradle.api.tasks.Optional
