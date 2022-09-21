@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically
@@ -38,7 +39,7 @@ abstract class FirAnonymousObject : FirClass(), FirControlFlowGraphOwner {
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val symbol: FirAnonymousObjectSymbol
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousObject(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visitAnonymousObject(this, data) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically

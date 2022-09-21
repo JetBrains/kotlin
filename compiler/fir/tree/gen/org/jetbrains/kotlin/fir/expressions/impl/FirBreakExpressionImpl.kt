@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically

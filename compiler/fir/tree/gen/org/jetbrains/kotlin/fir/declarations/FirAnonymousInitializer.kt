@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically
@@ -30,7 +31,7 @@ abstract class FirAnonymousInitializer : FirDeclaration(), FirControlFlowGraphOw
     abstract val body: FirBlock?
     abstract override val symbol: FirAnonymousInitializerSymbol
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousInitializer(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visitAnonymousInitializer(this, data) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

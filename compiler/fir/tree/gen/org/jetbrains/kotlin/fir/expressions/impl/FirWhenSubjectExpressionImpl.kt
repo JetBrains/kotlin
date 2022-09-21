@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirTarget
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically
@@ -24,7 +25,7 @@ abstract class FirReturnExpression : FirJump<FirFunction>() {
     abstract override val target: FirTarget<FirFunction>
     abstract val result: FirExpression
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitReturnExpression(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visitReturnExpression(this, data) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

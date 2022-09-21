@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically
@@ -20,7 +21,7 @@ abstract class FirWhenBranch : FirPureAbstractElement(), FirElement {
     abstract val condition: FirExpression
     abstract val result: FirBlock
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhenBranch(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visitWhenBranch(this, data) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

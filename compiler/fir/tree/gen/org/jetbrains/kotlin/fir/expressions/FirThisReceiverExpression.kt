@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 
 /*
@@ -31,7 +32,7 @@ abstract class FirThisReceiverExpression : FirQualifiedAccessExpression() {
     abstract override val calleeReference: FirThisReference
     abstract val isImplicit: Boolean
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitThisReceiverExpression(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visitThisReceiverExpression(this, data) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

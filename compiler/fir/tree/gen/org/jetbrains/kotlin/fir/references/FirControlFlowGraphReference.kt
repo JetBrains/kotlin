@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.references
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirControlFlowGraphReference : FirReference() {
     abstract override val source: KtSourceElement?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitControlFlowGraphReference(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visitControlFlowGraphReference(this, data) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

@@ -81,7 +81,7 @@ private fun List<String>.filterRedundantImports(
     val realPackageName = "$packageName.${kind.postfix}"
     return filter { fqn ->
         fqn.dropLastWhile { it != '.' } != realPackageName
-    }.distinct().sorted() + "$VISITOR_PACKAGE.*"
+    }.distinct().sorted() + "$VISITOR_PACKAGE.*" + "org.jetbrains.kotlin.fir.whileAnalysing"
 }
 
 

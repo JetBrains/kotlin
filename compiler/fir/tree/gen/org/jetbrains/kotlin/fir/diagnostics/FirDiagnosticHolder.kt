@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.diagnostics
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically
@@ -18,7 +19,7 @@ interface FirDiagnosticHolder : FirElement {
     override val source: KtSourceElement?
     val diagnostic: ConeDiagnostic
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDiagnosticHolder(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visitDiagnosticHolder(this, data) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

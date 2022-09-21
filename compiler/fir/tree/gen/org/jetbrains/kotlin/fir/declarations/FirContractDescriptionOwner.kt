@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically
@@ -19,7 +20,7 @@ sealed interface FirContractDescriptionOwner : FirElement {
     override val source: KtSourceElement?
     val contractDescription: FirContractDescription
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitContractDescriptionOwner(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visitContractDescriptionOwner(this, data) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

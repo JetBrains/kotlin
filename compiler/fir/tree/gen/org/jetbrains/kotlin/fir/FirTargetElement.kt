@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 interface FirTargetElement : FirElement {
     override val source: KtSourceElement?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTargetElement(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visitTargetElement(this, data) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

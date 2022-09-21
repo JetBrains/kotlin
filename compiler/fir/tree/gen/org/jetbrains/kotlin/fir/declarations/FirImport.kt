@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically
@@ -23,7 +24,7 @@ interface FirImport : FirElement {
     val aliasName: Name?
     val aliasSource: KtSourceElement?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitImport(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visitImport(this, data) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

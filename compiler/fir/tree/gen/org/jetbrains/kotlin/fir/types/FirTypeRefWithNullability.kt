@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically
@@ -20,7 +21,7 @@ abstract class FirTypeRefWithNullability : FirTypeRef() {
     abstract override val annotations: List<FirAnnotation>
     abstract val isMarkedNullable: Boolean
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeRefWithNullability(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visitTypeRefWithNullability(this, data) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

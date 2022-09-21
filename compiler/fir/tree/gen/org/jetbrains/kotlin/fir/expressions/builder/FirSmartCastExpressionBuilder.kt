@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirSmartCastExpressionImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.types.SmartcastStability
 
 /*

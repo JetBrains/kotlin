@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 
 /*
@@ -27,7 +28,7 @@ interface FirQualifiedAccess : FirResolvable, FirStatement, FirContextReceiverAr
     val extensionReceiver: FirExpression
     override val source: KtSourceElement?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitQualifiedAccess(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visitQualifiedAccess(this, data) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

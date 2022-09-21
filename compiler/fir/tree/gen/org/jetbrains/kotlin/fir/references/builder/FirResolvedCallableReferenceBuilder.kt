@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.CallableReferenceMappedArguments
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.name.Name
 
 /*

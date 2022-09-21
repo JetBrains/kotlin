@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically
@@ -23,7 +24,7 @@ abstract class FirBackingFieldReference : FirResolvedNamedReference() {
     abstract override val candidateSymbol: FirBasedSymbol<*>?
     abstract override val resolvedSymbol: FirBackingFieldSymbol
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitBackingFieldReference(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visitBackingFieldReference(this, data) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

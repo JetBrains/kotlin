@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.expressions.builder.FirLoopBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirWhileLoopImpl
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically

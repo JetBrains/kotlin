@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 
 /*
@@ -31,7 +32,7 @@ abstract class FirCallableReferenceAccess : FirQualifiedAccessExpression() {
     abstract override val calleeReference: FirNamedReference
     abstract val hasQuestionMarkAtLHS: Boolean
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCallableReferenceAccess(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visitCallableReferenceAccess(this, data) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically
@@ -20,7 +21,7 @@ abstract class FirEffectDeclaration : FirPureAbstractElement(), FirElement {
     abstract override val source: KtSourceElement?
     abstract val effect: ConeEffectDeclaration
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitEffectDeclaration(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visitEffectDeclaration(this, data) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

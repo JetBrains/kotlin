@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirAugmentedArraySetCallImpl
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically

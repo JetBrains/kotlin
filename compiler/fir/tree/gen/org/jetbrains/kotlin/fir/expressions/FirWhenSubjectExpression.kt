@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirExpressionRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically
@@ -22,7 +23,7 @@ abstract class FirWhenSubjectExpression : FirExpression() {
     abstract override val annotations: List<FirAnnotation>
     abstract val whenRef: FirExpressionRef<FirWhenExpression>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhenSubjectExpression(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visitWhenSubjectExpression(this, data) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

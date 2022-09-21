@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.impl.FirPackageDirectiveImpl
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.name.FqName
 
 /*

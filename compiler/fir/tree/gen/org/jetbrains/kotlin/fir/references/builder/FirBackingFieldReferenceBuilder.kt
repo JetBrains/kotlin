@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirBackingFieldReferenceImpl
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.name.Name
 
 /*

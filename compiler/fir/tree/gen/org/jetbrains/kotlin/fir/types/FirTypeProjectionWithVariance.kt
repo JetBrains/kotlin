@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically
@@ -20,7 +21,7 @@ abstract class FirTypeProjectionWithVariance : FirTypeProjection() {
     abstract val typeRef: FirTypeRef
     abstract val variance: Variance
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeProjectionWithVariance(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visitTypeProjectionWithVariance(this, data) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

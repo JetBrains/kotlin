@@ -6,16 +6,10 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtPsiSourceElement
-import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fakeElement
-import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -141,4 +135,63 @@ fun FirDeclarationStatus.copy(
         this.isFromEnumClass = isFromEnumClass
         this.isFun = isFun
     }
+}
+
+val Throwable.classNameAndMessage get() = "${this::class.qualifiedName}: $message"
+
+class SourceCodeAnalysisError(val source: KtSourceElement, override val cause: Throwable) : Throwable() {
+    init {
+        stackTrace = cause.stackTrace
+    }
+
+    override val message get() = cause.classNameAndMessage
+}
+
+inline fun <R> whileAnalysing(element: FirElement, block: () -> R): R {
+    return try {
+        block()
+    } catch (error: SourceCodeAnalysisError) {
+        throw error
+    } catch (error: Throwable) {
+        val source = element.source?.takeIf { it is KtRealPsiSourceElement } ?: throw error
+        throw SourceCodeAnalysisError(source, error)
+    }
+}
+
+class FileAnalysisError(
+    private val path: String,
+    override val cause: Throwable,
+    private val lineAndOffset: Pair<Int, Int>? = null,
+) : Throwable() {
+    init {
+        stackTrace = cause.stackTrace
+    }
+
+    override val message
+        get(): String {
+            val (line, offset) = lineAndOffset ?: return "Somewhere in file $path: ${cause.classNameAndMessage}"
+            return "While analysing $path:${line + 1}:${offset + 1}: ${cause.classNameAndMessage}"
+        }
+}
+
+fun <R> withFileAnalysisErrorWrapping(file: FirFile, block: () -> R): R {
+    return try {
+        block()
+    } catch (error: SourceCodeAnalysisError) {
+        val path = file.sourceFile?.path ?: throw error
+
+        if (file.source == error.source) {
+            throw FileAnalysisError(path, error.cause)
+        }
+
+        val lineAndOffset = file.sourceFileLinesMapping?.getLineAndColumnByOffset(error.source.startOffset)
+        throw FileAnalysisError(path, error.cause, lineAndOffset)
+    } catch (error: Throwable) {
+        val path = file.sourceFile?.path ?: throw error
+        throw FileAnalysisError(path, error)
+    }
+}
+
+fun Collection<FirFile>.forEachWrappingFileAnalysisError(block: (FirFile) -> Unit) = forEach {
+    withFileAnalysisErrorWrapping(it) { block(it) }
 }

@@ -85,7 +85,7 @@ fun SmartPrinter.printElement(element: Element) {
             }
 
             override()
-            println("fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visit$name(this, data)")
+            println("fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visit$name(this, data) }")
 
             println()
             println("@Suppress(\"UNCHECKED_CAST\")")

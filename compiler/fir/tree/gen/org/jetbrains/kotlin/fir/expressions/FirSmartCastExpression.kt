@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically
@@ -28,7 +29,7 @@ abstract class FirSmartCastExpression : FirExpression() {
     abstract val isStable: Boolean
     abstract val smartcastStability: SmartcastStability
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitSmartCastExpression(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visitSmartCastExpression(this, data) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

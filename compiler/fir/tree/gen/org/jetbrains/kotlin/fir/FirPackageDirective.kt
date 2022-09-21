@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically
@@ -18,7 +19,7 @@ abstract class FirPackageDirective : FirPureAbstractElement(), FirElement {
     abstract override val source: KtSourceElement?
     abstract val packageFqName: FqName
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitPackageDirective(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visitPackageDirective(this, data) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 

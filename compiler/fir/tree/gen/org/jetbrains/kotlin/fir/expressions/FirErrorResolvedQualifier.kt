@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 /*
  * This file was generated automatically
@@ -35,7 +36,7 @@ abstract class FirErrorResolvedQualifier : FirResolvedQualifier(), FirDiagnostic
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val diagnostic: ConeDiagnostic
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorResolvedQualifier(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = whileAnalysing(this) { visitor.visitErrorResolvedQualifier(this, data) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
