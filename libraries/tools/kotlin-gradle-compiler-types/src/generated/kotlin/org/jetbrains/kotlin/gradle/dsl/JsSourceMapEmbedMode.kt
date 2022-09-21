@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.gradle.dsl
 enum class JsSourceMapEmbedMode(val mode: String) {
     SOURCE_MAP_SOURCE_CONTENT_INLINING("inlining"),
     SOURCE_MAP_SOURCE_CONTENT_NEVER("never"),
-    SOURCE_MAP_SOURCE_CONTENT_ALWAYS("always");
+    SOURCE_MAP_SOURCE_CONTENT_ALWAYS("always"),
+    ;
 
     companion object {
         fun fromMode(mode: String): JsSourceMapEmbedMode =

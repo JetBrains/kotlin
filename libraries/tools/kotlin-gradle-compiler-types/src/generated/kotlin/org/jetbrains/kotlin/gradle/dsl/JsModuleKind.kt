@@ -10,7 +10,8 @@ enum class JsModuleKind(val kind: String) {
     MODULE_PLAIN("plain"),
     MODULE_ES("es"),
     MODULE_COMMONJS("commonjs"),
-    MODULE_UMD("umd");
+    MODULE_UMD("umd"),
+    ;
 
     companion object {
         fun fromKind(kind: String): JsModuleKind =

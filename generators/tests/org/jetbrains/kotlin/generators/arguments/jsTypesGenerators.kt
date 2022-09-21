@@ -22,11 +22,10 @@ internal fun generateJsMainFunctionExecutionMode(
                 K2JsArgumentConstants::NO_CALL.name to K2JsArgumentConstants.NO_CALL
             )
 
-            val lastIndex = modes.size - 1
-            modes.entries.forEachIndexed { index, mode ->
-                val lastChar = if (index == lastIndex) ";" else ","
-                println("${mode.key}(\"${mode.value}\")$lastChar")
+            for ((key, value) in modes) {
+                println("$key(\"$value\"),")
             }
+            println(";")
 
             println()
             println("companion object {")
@@ -55,11 +54,10 @@ internal fun generateJsModuleKind(
                 K2JsArgumentConstants::MODULE_ES.name to K2JsArgumentConstants.MODULE_ES
             )
 
-            val lastIndex = kinds.size - 1
-            kinds.entries.forEachIndexed { index, mode ->
-                val lastChar = if (index == lastIndex) ";" else ","
-                println("${mode.key}(\"${mode.value}\")$lastChar")
+            for ((key, value) in kinds) {
+                println("$key(\"$value\"),")
             }
+            println(";")
 
             println()
             println("companion object {")
@@ -86,11 +84,10 @@ internal fun generateJsSourceMapEmbedMode(
                 K2JsArgumentConstants::SOURCE_MAP_SOURCE_CONTENT_INLINING.name to K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING,
             )
 
-            val lastIndex = modes.size - 1
-            modes.entries.forEachIndexed { index, mode ->
-                val lastChar = if (index == lastIndex) ";" else ","
-                println("${mode.key}(\"${mode.value}\")$lastChar")
+            for ((key, value) in modes) {
+                println("$key(\"$value\"),")
             }
+            println(";")
 
             println()
             println("companion object {")
@@ -111,16 +108,15 @@ internal fun generateJsDiagnosticMode(
     val diagnosticModeFqName = FqName("org.jetbrains.kotlin.gradle.dsl.JsDiagnosticMode")
     filePrinter(fileFromFqName(apiDir, diagnosticModeFqName)) {
         generateDeclaration("enum class", diagnosticModeFqName, afterType = "(val mode: String)") {
-            val mods = hashMapOf(
+            val modes = hashMapOf(
                 K2JsArgumentConstants::RUNTIME_DIAGNOSTIC_EXCEPTION.name to K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_EXCEPTION,
                 K2JsArgumentConstants::RUNTIME_DIAGNOSTIC_LOG.name to K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_LOG,
             )
 
-            val lastIndex = mods.size - 1
-            mods.entries.forEachIndexed { index, mode ->
-                val lastChar = if (index == lastIndex) ";" else ","
-                println("${mode.key}(\"${mode.value}\")$lastChar")
+            for ((key, value) in modes) {
+                println("$key(\"$value\"),")
             }
+            println(";")
 
             println()
             println("companion object {")

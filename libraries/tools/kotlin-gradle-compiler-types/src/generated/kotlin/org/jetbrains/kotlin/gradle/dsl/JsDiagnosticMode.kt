@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.gradle.dsl
 
 enum class JsDiagnosticMode(val mode: String) {
     RUNTIME_DIAGNOSTIC_EXCEPTION("exception"),
-    RUNTIME_DIAGNOSTIC_LOG("log");
+    RUNTIME_DIAGNOSTIC_LOG("log"),
+    ;
 
     companion object {
         fun fromMode(mode: String): JsDiagnosticMode =
