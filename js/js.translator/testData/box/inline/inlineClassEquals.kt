@@ -1,7 +1,7 @@
 // The test checks an optimization which is implemented only for JS_IR backend
 // DONT_TARGET_EXACT_BACKEND: JS
 
-@file:Suppress("RESERVED_MEMBER_INSIDE_VALUE_CLASS")
+@file:Suppress("RESERVED_MEMBER_INSIDE_VALUE_CLASS", "ILLEGAL_EQUALS_OVERRIDING_IN_INLINE_CLASS")
 
 inline class ClassInt(val x: Int)
 inline class ClassString(val x: String)
