@@ -72,8 +72,7 @@ abstract class TransformKotlinGranularMetadata
     @get:OutputDirectory
     val outputsDir: File get() = projectBuildDir.resolve("kotlinSourceSetMetadata2/${settings.sourceSetName}")
 
-    @get:OutputFile
-    val librariesFile: File get() = outputsDir.resolve("${settings.sourceSetName}.libraries")
+    private val librariesFile: File get() = outputsDir.resolve("${settings.sourceSetName}.libraries")
 
     @get:Internal
     val transformedLibraries: List<File> get() = librariesFile
