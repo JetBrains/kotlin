@@ -136,6 +136,7 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
         object Precise : OutputLibraryFilesDiscovery() {
             override fun resolveOutputLibraryFiles(outputDirectory: File, resolutions: Iterable<ChooseVisibleSourceSets>): Set<File> {
                 return resolutions.flatMap { chooseVisibleSourceSets ->
+                    /* This task only cares about extracting artifacts. Project to Project dependencies can return emptyList */
                     if (chooseVisibleSourceSets.metadataProvider !is ArtifactMetadataProvider) return@flatMap emptyList()
                     chooseVisibleSourceSets.metadataProvider.read { artifactContent ->
                         chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops
