@@ -202,39 +202,18 @@ interface JvmSignatureUtils {
     fun PageContentBuilder.DocumentableContentBuilder.parametersBlock(
         function: DFunction, paramBuilder: PageContentBuilder.DocumentableContentBuilder.(DParameter) -> Unit
     ) {
-        val shouldWrap = function.shouldWrapParams()
-        val parametersStyle = if (shouldWrap) setOf(ContentStyle.Wrapped) else emptySet()
-        val elementStyle = if (shouldWrap) setOf(ContentStyle.Indented) else emptySet()
-        group(kind = SymbolContentKind.Parameters, styles = parametersStyle) {
+        group(kind = SymbolContentKind.Parameters, styles = emptySet()) {
             function.parameters.dropLast(1).forEach {
-                group(kind = SymbolContentKind.Parameter, styles = elementStyle) {
+                group(kind = SymbolContentKind.Parameter) {
                     paramBuilder(it)
                     punctuation(", ")
                 }
             }
-            group(kind = SymbolContentKind.Parameter, styles = elementStyle) {
+            group(kind = SymbolContentKind.Parameter) {
                 paramBuilder(function.parameters.last())
             }
         }
     }
-
-    /**
-     * Determines whether parameters in a function (including constructor) should be wrapped
-     *
-     * Without wrapping:
-     * ```
-     * class SimpleClass(foo: String, bar: String) {}
-     * ```
-     * With wrapping:
-     * ```
-     * class SimpleClass(
-     *     foo: String,
-     *     bar: String,
-     *     baz: String
-     * )
-     * ```
-     */
-    private fun DFunction.shouldWrapParams() = this.parameters.size >= 3
 }
 
 sealed class AtStrategy
