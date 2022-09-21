@@ -1,8 +1,7 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
-// IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: NATIVE
+// TARGET_BACKEND: JVM_IR
 
 import kotlin.math.abs
 
