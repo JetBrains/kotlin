@@ -14450,16 +14450,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
-        @TestMetadata("inlineClassEqualsOverride.kt")
-        public void testInlineClassEqualsOverride() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualsOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        }
-
-        @TestMetadata("inlineClassEqualsOverrideForCollection.kt")
-        public void testInlineClassEqualsOverrideForCollection() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualsOverrideForCollection.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        }
-
         @TestMetadata("inlineClassFieldHandling.kt")
         public void testInlineClassFieldHandling() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFieldHandling.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
