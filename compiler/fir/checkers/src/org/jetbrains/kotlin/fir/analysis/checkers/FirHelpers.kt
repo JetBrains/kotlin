@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
+import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
@@ -683,3 +684,16 @@ fun FirBasedSymbol<*>.isPredefinedObject(context: CheckerContext) = isPredefined
 val CheckerContext.closestPubliclyAccessibleContainer get() = containingDeclarations.takeWhile { it.isPubliclyAccessible }.lastOrNull()
 
 val CheckerContext.isTopLevel get() = containingDeclarations.lastOrNull() is FirFile
+
+fun FirFunctionSymbol<*>.isOverridingExternalWithOptionalParams(context: CheckerContext): Boolean {
+    if (!isSubstitutionOrIntersectionOverride && modality == Modality.ABSTRACT) return false
+
+    val overridden = getDirectBases(context).mapNotNull { it as? FirFunctionSymbol<*> }
+
+    for (overriddenFunction in overridden.filter { it.isEffectivelyExternal(context) }) {
+        if (overriddenFunction.valueParameterSymbols.any { it.hasDefaultValue }) return true
+    }
+
+    return false
+}
+
