@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import kotlinx.collections.immutable.toImmutableList
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.whileAnalysing
 
 class FirTypeResolveProcessor(
     session: FirSession,
@@ -73,7 +75,7 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
+    override fun transformRegularClass(regularClass: FirRegularClass, data: Any?) = whileAnalysing(regularClass) {
         withClassDeclarationCleanup(classDeclarationsStack, regularClass) {
             withScopeCleanup {
                 regularClass.addTypeParametersScope()
@@ -83,7 +85,7 @@ open class FirTypeResolveTransformer(
                 unboundCyclesInTypeParametersSupertypes(regularClass)
             }
 
-            return resolveClassContent(regularClass, data)
+            resolveClassContent(regularClass, data)
         }
     }
 
@@ -93,29 +95,29 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    override fun transformConstructor(constructor: FirConstructor, data: Any?): FirConstructor {
-        return withScopeCleanup {
+    override fun transformConstructor(constructor: FirConstructor, data: Any?) = whileAnalysing(constructor) {
+        withScopeCleanup {
             constructor.addTypeParametersScope()
             transformDeclaration(constructor, data)
         } as FirConstructor
     }
 
-    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?): FirTypeAlias {
-        return withScopeCleanup {
+    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?) = whileAnalysing(typeAlias) {
+        withScopeCleanup {
             typeAlias.addTypeParametersScope()
             transformDeclaration(typeAlias, data)
         } as FirTypeAlias
     }
 
-    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Any?): FirEnumEntry {
+    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Any?) = whileAnalysing(enumEntry) {
         enumEntry.transformReturnTypeRef(this, data)
         enumEntry.transformTypeParameters(this, data)
         enumEntry.transformAnnotations(this, data)
-        return enumEntry
+        enumEntry
     }
 
-    override fun transformProperty(property: FirProperty, data: Any?): FirProperty {
-        return withScopeCleanup {
+    override fun transformProperty(property: FirProperty, data: Any?) = whileAnalysing(property) {
+        withScopeCleanup {
             property.addTypeParametersScope()
             property.transformTypeParameters(this, data)
                 .transformReturnTypeRef(this, data)
@@ -153,8 +155,8 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?): FirSimpleFunction {
-        return withScopeCleanup {
+    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?) = whileAnalysing(simpleFunction) {
+        withScopeCleanup {
             simpleFunction.addTypeParametersScope()
             transformDeclaration(simpleFunction, data).also {
                 unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
