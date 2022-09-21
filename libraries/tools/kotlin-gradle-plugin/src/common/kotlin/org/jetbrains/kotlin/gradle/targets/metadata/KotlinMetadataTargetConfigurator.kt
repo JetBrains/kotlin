@@ -300,7 +300,7 @@ class KotlinMetadataTargetConfigurator :
         val platformCompilations = sourceSet.internal.compilations
             .filter { it.target.name != KotlinMultiplatformPlugin.METADATA_TARGET_NAME }
 
-        val isNativeSourceSet = isSharedNativeSourceSet(sourceSet)
+        val isNativeSourceSet = isNativeSourceSet(sourceSet)
 
         val compilationFactory: KotlinCompilationFactory<out AbstractKotlinCompilation<*>> = when {
             isNativeSourceSet -> KotlinSharedNativeCompilationFactory(
@@ -568,7 +568,7 @@ internal fun createMetadataDependencyTransformationClasspath(
     )
 }
 
-internal fun isSharedNativeSourceSet(sourceSet: KotlinSourceSet): Boolean {
+internal fun isNativeSourceSet(sourceSet: KotlinSourceSet): Boolean {
     val compilations = sourceSet.internal.compilations.filterNot { it.platformType == KotlinPlatformType.common }
     return compilations.isNotEmpty() && compilations.all { it.platformType == KotlinPlatformType.native }
 }

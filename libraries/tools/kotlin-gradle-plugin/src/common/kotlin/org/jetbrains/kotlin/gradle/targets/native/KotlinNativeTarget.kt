@@ -177,7 +177,7 @@ internal fun getHostSpecificFragments(
 internal fun getHostSpecificSourceSets(project: Project): Set<KotlinSourceSet> {
     return getHostSpecificElements(
         project.kotlinExtension.sourceSets,
-        isNativeShared = { sourceSet -> isSharedNativeSourceSet(sourceSet) },
+        isNativeShared = { sourceSet -> isNativeSourceSet(sourceSet) },
         getKonanTargets = { sourceSet ->
             sourceSet.internal.compilations
                 .filterIsInstance<KotlinNativeCompilation>()
