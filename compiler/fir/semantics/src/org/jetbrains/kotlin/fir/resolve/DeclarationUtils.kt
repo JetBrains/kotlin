@@ -156,7 +156,7 @@ private val FirBasedSymbol<*>.isExpect
     }
 
 fun FirBasedSymbol<*>.isPredefinedObject(session: FirSession): Boolean {
-    if (fir is FirMemberDeclaration && (isExpect)) return true
+    if (fir is FirMemberDeclaration && isExpect) return true
     if (isEffectivelyExternalMember(session)) return true
 
     for (annotation in PREDEFINED_ANNOTATIONS) {
