@@ -73,18 +73,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             )
         }
 
-        runOnceAfterEvaluated("Sync language settings for NativeLinkTask") {
-            result.configure {
-                // We propagate compilation free args to the link task for now (see KT-33717).
-                val defaultLanguageSettings = binary.compilation.languageSettings as? DefaultLanguageSettingsBuilder
-                if (defaultLanguageSettings != null) {
-                    it.toolOptions.freeCompilerArgs.addAll(
-                        defaultLanguageSettings.freeCompilerArgs
-                    )
-                }
-            }
-        }
-
 
         if (binary !is TestExecutable) {
             tasks.named(binary.compilation.target.artifactsTaskName).dependsOn(result)
@@ -93,6 +81,18 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
         if (binary is Framework) {
             createFrameworkArtifact(binary, result)
+        }
+    }
+
+    private fun Project.syncLanguageSettingsToLinkTask(binary: NativeBinary) {
+        tasks.named(binary.linkTaskName, KotlinNativeLink::class.java).configure {
+            // We propagate compilation free args to the link task for now (see KT-33717).
+            val defaultLanguageSettings = binary.compilation.languageSettings as? DefaultLanguageSettingsBuilder
+            if (defaultLanguageSettings != null) {
+                it.toolOptions.freeCompilerArgs.addAll(
+                    defaultLanguageSettings.freeCompilerArgs
+                )
+            }
         }
     }
 
@@ -316,6 +316,11 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         // Create link and run tasks.
         target.binaries.all {
             project.createLinkTask(it)
+        }
+        project.runOnceAfterEvaluated("Sync language settings for NativeLinkTask") {
+            target.binaries.all { binary ->
+                project.syncLanguageSettingsToLinkTask(binary)
+            }
         }
 
         target.binaries.withType(Executable::class.java).all {
