@@ -28,8 +28,10 @@ abstract class FirInferenceSession {
     abstract fun shouldRunCompletion(call: FirResolvable): Boolean
     abstract val currentConstraintStorage: ConstraintStorage
 
+    abstract fun addSkippedCall(call: FirResolvable)
     abstract fun addPartiallyResolvedCall(call: FirResolvable)
     abstract fun addCompletedCall(call: FirResolvable, candidate: Candidate)
+    open fun getCompletedCalls(): Map<FirResolvable, Candidate>? = null
 
     abstract fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>)
 
@@ -57,6 +59,7 @@ abstract class FirStubInferenceSession : FirInferenceSession() {
     override val currentConstraintStorage: ConstraintStorage
         get() = ConstraintStorage.Empty
 
+    override fun addSkippedCall(call: FirResolvable) {}
     override fun addPartiallyResolvedCall(call: FirResolvable) {}
     override fun addCompletedCall(call: FirResolvable, candidate: Candidate) {}
 

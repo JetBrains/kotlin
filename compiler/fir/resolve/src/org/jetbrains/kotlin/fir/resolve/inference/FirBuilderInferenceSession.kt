@@ -104,6 +104,14 @@ class FirBuilderInferenceSession(
         commonCalls += call to candidate
     }
 
+    override fun addPartiallyResolvedCall(call: FirResolvable) {
+        if (skipCall(call)) return
+        commonCalls += call to call.candidate
+    }
+
+    override fun getCompletedCalls(): Map<FirResolvable, Candidate> =
+        commonCalls.toMap()
+
     @Suppress("UNUSED_PARAMETER")
     private fun skipCall(call: FirResolvable): Boolean {
         // TODO: what is FIR analog?
@@ -246,7 +254,8 @@ class FirBuilderInferenceSession(
         // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]
 
         val completionResultsWriter = components.callCompleter.createCompletionResultsWriter(substitutor)
-        for ((call, _) in partiallyResolvedCalls) {
+        for ((call, candidate) in partiallyResolvedCalls) {
+            addCompletedCall(call, candidate)
             call.transformSingle(completionResultsWriter, null)
             // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]
         }

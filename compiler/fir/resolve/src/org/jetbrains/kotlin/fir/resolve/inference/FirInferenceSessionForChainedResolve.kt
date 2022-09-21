@@ -38,6 +38,10 @@ abstract class FirInferenceSessionForChainedResolve(
         // do nothing
     }
 
+    override fun addSkippedCall(call: FirResolvable) {
+        partiallyResolvedCalls += call to call.candidate
+    }
+
     override fun addPartiallyResolvedCall(call: FirResolvable) {
         partiallyResolvedCalls += call to call.candidate
     }
