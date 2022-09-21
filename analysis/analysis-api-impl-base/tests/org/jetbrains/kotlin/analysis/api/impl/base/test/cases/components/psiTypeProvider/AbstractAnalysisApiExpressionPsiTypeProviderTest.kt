@@ -30,7 +30,7 @@ abstract class AbstractAnalysisApiExpressionPsiTypeProviderTest : AbstractAnalys
         val actual = analyze(ktFile) {
             val returnType = declarationAtCaret.getKtType()
                 ?: error("Not a typable expression ${declarationAtCaret::class} ${declarationAtCaret.text}")
-            val psiType = returnType.asPsiType(psiContext)
+            val psiType = returnType.asPsiType(psiContext, allowErrorTypes = false)
             buildString {
                 appendLine("KtType: ${returnType.render(position = Variance.INVARIANT)}")
                 appendLine("PsiType: $psiType")

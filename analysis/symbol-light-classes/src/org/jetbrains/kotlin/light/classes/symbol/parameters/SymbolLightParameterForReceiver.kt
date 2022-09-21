@@ -85,7 +85,7 @@ internal class SymbolLightParameterForReceiver private constructor(
 
     private val _type: PsiType by lazyPub {
         withReceiverSymbol { receiver ->
-            receiver.type.asPsiType(this)
+            receiver.type.asPsiType(this, allowErrorTypes = true)
         } ?: nonExistentType()
     }
 

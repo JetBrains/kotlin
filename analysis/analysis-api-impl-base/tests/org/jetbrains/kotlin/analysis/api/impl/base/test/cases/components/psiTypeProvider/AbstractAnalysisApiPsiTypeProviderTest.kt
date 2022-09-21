@@ -39,7 +39,7 @@ abstract class AbstractAnalysisApiPsiTypeProviderTest : AbstractAnalysisApiBased
                 analyze(declaration) {
                     val ktType = declaration.getReturnKtType()
                     appendLine("KtType: ${ktType.render(position = Variance.INVARIANT)}")
-                    appendLine("PsiType: ${ktType.asPsiType(psiContext)}")
+                    appendLine("PsiType: ${ktType.asPsiType(psiContext, allowErrorTypes = false)}")
                 }
             }
         }

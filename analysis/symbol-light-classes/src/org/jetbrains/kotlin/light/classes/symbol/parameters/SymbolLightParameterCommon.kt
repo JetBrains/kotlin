@@ -75,7 +75,7 @@ internal abstract class SymbolLightParameterCommon(
                     else -> KtTypeMappingMode.VALUE_PARAMETER
                 }
 
-                ktType.asPsiType(this@SymbolLightParameterCommon, typeMappingMode)
+                ktType.asPsiType(this@SymbolLightParameterCommon, allowErrorTypes = true, typeMappingMode)
             } ?: nonExistentType()
 
             if (parameterSymbol.isVararg) {
