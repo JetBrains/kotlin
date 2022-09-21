@@ -27,9 +27,6 @@ package kotlin.text
  * @throws UnsupportedOperationException if this match group collection doesn't support getting match groups by name,
  * for example, when it's not supported by the current platform.
  */
-@Deprecated("MatchGroupCollection has a member function with the same signature.")
-@DeprecatedSinceKotlin(hiddenSince = "1.8")
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "DEPRECATION")
 @SinceKotlin("1.2")
 public operator fun MatchGroupCollection.get(name: String): MatchGroup? {
     val namedGroups = this as? MatchNamedGroupCollection

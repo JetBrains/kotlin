@@ -5413,7 +5413,6 @@ public final class kotlin/text/MatchGroup {
 
 public abstract interface class kotlin/text/MatchGroupCollection : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
 	public abstract fun get (I)Lkotlin/text/MatchGroup;
-	public abstract fun get (Ljava/lang/String;)Lkotlin/text/MatchGroup;
 }
 
 public abstract interface class kotlin/text/MatchNamedGroupCollection : kotlin/text/MatchGroupCollection {
@@ -5900,7 +5899,7 @@ public final class kotlin/text/UStringsKt {
 }
 
 public final class kotlin/text/jdk8/RegexExtensionsJDK8Kt {
-	public static final synthetic fun get (Lkotlin/text/MatchGroupCollection;Ljava/lang/String;)Lkotlin/text/MatchGroup;
+	public static final fun get (Lkotlin/text/MatchGroupCollection;Ljava/lang/String;)Lkotlin/text/MatchGroup;
 }
 
 public abstract class kotlin/time/AbstractDoubleTimeSource : kotlin/time/TimeSource$WithComparableMarks {

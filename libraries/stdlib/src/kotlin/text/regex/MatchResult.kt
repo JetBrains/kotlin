@@ -25,24 +25,11 @@ public interface MatchGroupCollection : Collection<MatchGroup?> {
      * corresponds to the entire match.
      */
     public operator fun get(index: Int): MatchGroup?
-
-    /**
-     * Returns a named group with the specified [name].
-     *
-     * @return An instance of [MatchGroup] if the group with the specified [name] was matched or `null` otherwise.
-     * @throws IllegalArgumentException if there is no group with the specified [name] defined in the regex pattern.
-     * @throws UnsupportedOperationException if this match group collection doesn't support getting match groups by name,
-     * for example, when it's not supported by the current platform.
-     */
-    @SinceKotlin("1.8")
-    public operator fun get(name: String): MatchGroup?
 }
 
 /**
  * Extends [MatchGroupCollection] by introducing a way to get matched groups by name, when regex supports it.
  */
-@Deprecated("Use MatchGroupCollection instead.", ReplaceWith("MatchGroupCollection"))
-@DeprecatedSinceKotlin(warningSince = "1.8")
 @SinceKotlin("1.1")
 public interface MatchNamedGroupCollection : MatchGroupCollection {
     /**
@@ -52,7 +39,7 @@ public interface MatchNamedGroupCollection : MatchGroupCollection {
      * @throws UnsupportedOperationException if this match group collection doesn't support getting match groups by name,
      * for example, when it's not supported by the current platform.
      */
-    public override operator fun get(name: String): MatchGroup?
+    public operator fun get(name: String): MatchGroup?
 }
 
 /**
