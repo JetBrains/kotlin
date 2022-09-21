@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -35,7 +34,6 @@ import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible as coneLowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible as coneUpperBoundIfFlexible
 
@@ -817,7 +815,7 @@ fun FirBasedSymbol<*>.getContainingClassSymbol(session: FirSession): FirClassLik
 
 fun FirDeclaration.getContainingClassSymbol(session: FirSession) = symbol.getContainingClassSymbol(session)
 
-fun FirPropertySymbol.getDirectBases(session: FirSession, scopeSession: ScopeSession): List<FirPropertySymbol> {
+fun FirPropertySymbol.directOverriddenFunctions(session: FirSession, scopeSession: ScopeSession): List<FirPropertySymbol> {
     val classSymbol = getContainingClassSymbol(session) as? FirClassSymbol ?: return emptyList()
     val scope = classSymbol.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
 
@@ -825,7 +823,7 @@ fun FirPropertySymbol.getDirectBases(session: FirSession, scopeSession: ScopeSes
     return scope.getDirectOverriddenProperties(this, true)
 }
 
-fun FirNamedFunctionSymbol.getDirectBases(session: FirSession, scopeSession: ScopeSession): List<FirNamedFunctionSymbol> {
+fun FirNamedFunctionSymbol.directOverriddenFunctions(session: FirSession, scopeSession: ScopeSession): List<FirNamedFunctionSymbol> {
     val classSymbol = getContainingClassSymbol(session) as? FirClassSymbol ?: return emptyList()
     val scope = classSymbol.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
 
@@ -833,8 +831,8 @@ fun FirNamedFunctionSymbol.getDirectBases(session: FirSession, scopeSession: Sco
     return scope.getDirectOverriddenFunctions(this, true)
 }
 
-fun FirCallableSymbol<*>.getDirectBases(session: FirSession, scopeSession: ScopeSession) = when (this) {
-    is FirPropertySymbol -> getDirectBases(session, scopeSession)
-    is FirNamedFunctionSymbol -> getDirectBases(session, scopeSession)
+fun FirCallableSymbol<*>.directOverriddenFunctions(session: FirSession, scopeSession: ScopeSession) = when (this) {
+    is FirPropertySymbol -> directOverriddenFunctions(session, scopeSession)
+    is FirNamedFunctionSymbol -> directOverriddenFunctions(session, scopeSession)
     else -> emptyList()
 }
