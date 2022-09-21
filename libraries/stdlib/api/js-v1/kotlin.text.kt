@@ -1349,6 +1349,8 @@ public interface MatchGroupCollection : kotlin.collections.Collection<kotlin.tex
     public abstract operator fun get(index: kotlin.Int): kotlin.text.MatchGroup?
 }
 
+@kotlin.Deprecated(message = "Use MatchGroupCollection instead.", replaceWith = kotlin.ReplaceWith(expression = "MatchGroupCollection", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.8")
 @kotlin.SinceKotlin(version = "1.1")
 public interface MatchNamedGroupCollection : kotlin.text.MatchGroupCollection {
     public abstract operator fun get(name: kotlin.String): kotlin.text.MatchGroup?

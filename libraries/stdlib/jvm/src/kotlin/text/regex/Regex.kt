@@ -355,6 +355,7 @@ private class MatcherMatchResult(private val matcher: Matcher, private val input
     override val value: String
         get() = matchResult.group()
 
+    @Suppress("DEPRECATION")
     override val groups: MatchGroupCollection = object : MatchNamedGroupCollection, AbstractCollection<MatchGroup?>() {
         override val size: Int get() = matchResult.groupCount() + 1
         override fun isEmpty(): Boolean = false

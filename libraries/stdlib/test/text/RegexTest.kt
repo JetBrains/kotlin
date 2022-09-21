@@ -179,7 +179,7 @@ class RegexTest {
         val match = regex.find(input)!!
         assertEquals(listOf("Austin, TX: 123", "Austin", "TX", "123"), match.groupValues)
 
-        val namedGroups = match.groups as MatchNamedGroupCollection
+        val namedGroups = match.groups
         assertEquals(4, namedGroups.size)
         assertEquals("Austin", namedGroups["city"]?.value)
         assertEquals("TX", namedGroups["state"]?.value)
@@ -195,14 +195,14 @@ class RegexTest {
     @Test fun matchOptionalNamedGroup() {
         "(?<hi>hi)|(?<bye>bye)".toRegex(RegexOption.IGNORE_CASE).let { regex ->
             val hiMatch = regex.find("Hi!")!!
-            val hiGroups = hiMatch.groups as MatchNamedGroupCollection
+            val hiGroups = hiMatch.groups
             assertEquals(3, hiGroups.size)
             assertEquals("Hi", hiGroups["hi"]?.value)
             assertEquals(null, hiGroups["bye"])
             assertFailsWith<IllegalArgumentException> { hiGroups["hello"] }
 
             val byeMatch = regex.find("bye...")!!
-            val byeGroups = byeMatch.groups as MatchNamedGroupCollection
+            val byeGroups = byeMatch.groups
             assertEquals(3, byeGroups.size)
             assertEquals(null, byeGroups["hi"])
             assertEquals("bye", byeGroups["bye"]?.value)
@@ -211,14 +211,14 @@ class RegexTest {
 
         "(?<hi>hi)|bye".toRegex(RegexOption.IGNORE_CASE).let { regex ->
             val hiMatch = regex.find("Hi!")!!
-            val hiGroups = hiMatch.groups as MatchNamedGroupCollection
+            val hiGroups = hiMatch.groups
             assertEquals(2, hiGroups.size)
             assertEquals("Hi", hiGroups["hi"]?.value)
             assertFailsWith<IllegalArgumentException> { hiGroups["bye"] }
 
             // Named group collection consisting of a single 'null' group value
             val byeMatch = regex.find("bye...")!!
-            val byeGroups = byeMatch.groups as MatchNamedGroupCollection
+            val byeGroups = byeMatch.groups
             assertEquals(2, byeGroups.size)
             assertEquals(null, byeGroups["hi"])
             assertFailsWith<IllegalArgumentException> { byeGroups["bye"] }
@@ -274,7 +274,7 @@ class RegexTest {
         "(?<title>\\w+), yes \\k<title>".toRegex().let { regex ->
             val match = regex.find("Do you copy? Sir, yes Sir!")!!
             assertEquals("Sir, yes Sir", match.value)
-            assertEquals("Sir", (match.groups as MatchNamedGroupCollection)["title"]?.value)
+            assertEquals("Sir", match.groups["title"]?.value)
 
             assertNull(regex.find("Do you copy? Sir, yes I do!"))
         }
@@ -282,6 +282,14 @@ class RegexTest {
         testInvalidBackReference(BackReferenceHandling.nonExistentNamedGroup, pattern = "a(a)\\k<name>")
         testInvalidBackReference(BackReferenceHandling.enclosingGroup, pattern = "a(?<first>a\\k<first>)")
         testInvalidBackReference(BackReferenceHandling.notYetDefinedNamedGroup, pattern = "a\\k<first>(?<first>a)")
+    }
+
+    @Suppress("DEPRECATION")
+    @Test fun matchNamedGroupCollection() {
+        val regex = "(?<hi>hi)".toRegex(RegexOption.IGNORE_CASE)
+        val hiMatch = regex.find("Hi!")!!
+        val hiGroups = hiMatch.groups as MatchNamedGroupCollection
+        assertEquals("Hi", hiGroups["hi"]?.value)
     }
 
     private fun testInvalidBackReference(option: HandlingOption, pattern: String, input: CharSequence = "aaaa", matchValue: String = "aa") {

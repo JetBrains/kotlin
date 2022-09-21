@@ -75,8 +75,9 @@ public actual data class MatchGroup(actual val value: String, val range: IntRang
  * @throws UnsupportedOperationException if this match group collection doesn't support getting match groups by name,
  * for example, when it's not supported by the current platform.
  */
+@Suppress("DEPRECATION")
 @SinceKotlin("1.7")
-public operator fun MatchGroupCollection.get(name: String): MatchGroup? {
+public actual operator fun MatchGroupCollection.get(name: String): MatchGroup? {
     val namedGroups = this as? MatchNamedGroupCollection
         ?: throw UnsupportedOperationException("Retrieving groups by name is not supported on this platform.")
 

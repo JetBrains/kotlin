@@ -39,8 +39,9 @@ public actual data class MatchGroup(actual val value: String)
  * @throws UnsupportedOperationException if this match group collection doesn't support getting match groups by name,
  * for example, when it's not supported by the current platform.
  */
+@Suppress("DEPRECATION")
 @SinceKotlin("1.7")
-public operator fun MatchGroupCollection.get(name: String): MatchGroup? {
+public actual operator fun MatchGroupCollection.get(name: String): MatchGroup? {
     val namedGroups = this as? MatchNamedGroupCollection
         ?: throw UnsupportedOperationException("Retrieving groups by name is not supported on this platform.")
 
@@ -353,6 +354,7 @@ private fun RegExp.findNext(input: String, from: Int, nextPattern: RegExp): Matc
         override val value: String
             get() = match[0]!!
 
+        @Suppress("DEPRECATION")
         override val groups: MatchGroupCollection = object : MatchNamedGroupCollection, AbstractCollection<MatchGroup?>() {
             override val size: Int get() = match.length
             override fun iterator(): Iterator<MatchGroup?> = indices.asSequence().map { this[it] }.iterator()

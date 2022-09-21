@@ -30,6 +30,8 @@ public interface MatchGroupCollection : Collection<MatchGroup?> {
 /**
  * Extends [MatchGroupCollection] by introducing a way to get matched groups by name, when regex supports it.
  */
+@Deprecated("Use MatchGroupCollection instead.", ReplaceWith("MatchGroupCollection"))
+@DeprecatedSinceKotlin(warningSince = "1.8")
 @SinceKotlin("1.1")
 public interface MatchNamedGroupCollection : MatchGroupCollection {
     /**
