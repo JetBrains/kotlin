@@ -57,8 +57,6 @@ object FirJsExternalChecker : FirBasicDeclarationChecker() {
             val classKind = when {
                 declaration.status.isData -> "data class"
                 declaration.status.isInner -> "inner class"
-//                declaration.status.isInline -> "inline class"
-//                declaration.status.isValue -> "value class"
                 declaration.status.isInline -> "value class"
                 declaration.status.isFun -> "fun interface"
                 declaration.classKind == ClassKind.ANNOTATION_CLASS -> "annotation class"
@@ -344,8 +342,6 @@ object FirJsExternalChecker : FirBasicDeclarationChecker() {
     private fun FirElement.isDefinedExternallyExpression(): Boolean {
         val declaration = (this as? FirPropertyAccessExpression)
             ?.calleeReference?.resolvedSymbol as? FirPropertySymbol ?: return false
-        return DEFINED_EXTERNALLY_PROPERTY_NAMES.any {
-            declaration.callableId.packageName == it.packageName && declaration.name == it.callableName
-        }
+        return declaration.callableId in DEFINED_EXTERNALLY_PROPERTY_NAMES
     }
 }
