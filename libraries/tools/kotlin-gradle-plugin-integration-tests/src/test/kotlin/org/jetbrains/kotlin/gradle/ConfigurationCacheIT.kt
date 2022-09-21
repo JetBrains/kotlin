@@ -116,16 +116,23 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
-            val buildOptions = buildOptions.copy(freeArgs = listOf("--rerun-tasks"))
-            testConfigurationCacheOf(
+            val buildOptions = defaultBuildOptions.copy(
+                configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
+                warningMode = WarningMode.All
+            )
+            build(
                 ":lib:commonizeCInterop",
                 ":commonizeNativeDistribution",
-                buildOptions = buildOptions,
-                // TODO(alakotka): Report will be still generated due to incorrect consumption of properties and environmental variables.
-                //  https://docs.gradle.org/7.4.2/userguide/configuration_cache.html#config_cache:requirements:reading_sys_props_and_env_vars
-                checkConfigurationCacheFileReport = false,
-                checkUpToDateOnRebuild = false
-            )
+                buildOptions = buildOptions
+            ) {
+                // Reduce the problem numbers when a Task become compatible with GCC.
+                // When all tasks support GCC, replace these assertions with `testConfigurationCacheOf`
+                assertOutputContains("1 problem was found storing the configuration cache.")
+                assertOutputContains(
+                    """Task `\S+` of type `[\w.]+CInteropMetadataDependencyTransformationTask`: .+(at execution time is unsupported)|(not supported with the configuration cache)"""
+                        .toRegex()
+                )
+            }
         }
     }
 
