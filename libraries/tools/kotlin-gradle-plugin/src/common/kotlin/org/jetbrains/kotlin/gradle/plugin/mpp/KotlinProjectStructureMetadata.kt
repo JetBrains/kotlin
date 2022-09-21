@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import org.jetbrains.kotlin.gradle.targets.metadata.getPublishedPlatformCompilations
-import org.jetbrains.kotlin.gradle.targets.metadata.isSharedNativeSourceSet
+import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerCompositeMetadataJarBundling.cinteropMetadataDirectoryPath
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 import org.w3c.dom.Document
@@ -180,7 +180,7 @@ private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformEx
              * published as API dependencies of the metadata module to get into the resolution result, see
              * [KotlinMetadataTargetConfigurator.exportDependenciesForPublishing].
              */
-            val isNativeSharedSourceSet = isSharedNativeSourceSet(sourceSet)
+            val isNativeSharedSourceSet = isNativeSourceSet(sourceSet)
             val scopes = listOfNotNull(
                 KotlinDependencyScope.API_SCOPE,
                 KotlinDependencyScope.IMPLEMENTATION_SCOPE.takeIf { isNativeSharedSourceSet }
@@ -197,7 +197,7 @@ private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformEx
             sourceSet.name to sourceSetExportedDependencies.map { ModuleIds.fromDependency(it) }.toSet()
         },
         sourceSetCInteropMetadataDirectory = sourceSetsWithMetadataCompilations.keys
-            .filter { isSharedNativeSourceSet(it) }
+            .filter { isNativeSourceSet(it) }
             .associate { sourceSet -> sourceSet.name to cinteropMetadataDirectoryPath(sourceSet.name) },
         hostSpecificSourceSets = getHostSpecificSourceSets(project)
             .filter { it in sourceSetsWithMetadataCompilations }.map { it.name }
