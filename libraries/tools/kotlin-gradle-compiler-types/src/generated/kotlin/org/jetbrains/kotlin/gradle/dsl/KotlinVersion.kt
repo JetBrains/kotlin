@@ -15,7 +15,8 @@ enum class KotlinVersion(val version: String) {
     KOTLIN_1_6("1.6"),
     KOTLIN_1_7("1.7"),
     KOTLIN_1_8("1.8"),
-    KOTLIN_1_9("1.9");
+    KOTLIN_1_9("1.9"),
+    ;
 
     companion object {
         fun fromVersion(version: String): KotlinVersion =

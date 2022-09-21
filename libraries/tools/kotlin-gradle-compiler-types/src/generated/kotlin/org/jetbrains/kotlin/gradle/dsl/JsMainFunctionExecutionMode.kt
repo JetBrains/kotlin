@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.gradle.dsl
 
 enum class JsMainFunctionExecutionMode(val mode: String) {
     CALL("call"),
-    NO_CALL("noCall");
+    NO_CALL("noCall"),
+    ;
 
     companion object {
         fun fromMode(mode: String): JsMainFunctionExecutionMode =
