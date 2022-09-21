@@ -1178,4 +1178,30 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
             """
         )
     }
+
+    @Test // Regression validating b/246399235 without function returning a value
+    fun testB246399235_noReturn() {
+        testCompile(
+            """
+            import androidx.compose.runtime.Composable
+
+            @Composable
+            fun Something() {
+                noRippleClickable { }
+            }
+
+            inline fun noRippleClickable(crossinline onClick: () -> Unit) {
+                 composed {
+                    clickable {
+                        onClick()
+                    }
+                 }
+            }
+
+            fun composed(block: @Composable () -> Unit) { }
+
+            fun clickable(onClick: () -> Unit) { }
+            """
+        )
+    }
 }
