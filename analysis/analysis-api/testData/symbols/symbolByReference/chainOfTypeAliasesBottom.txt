@@ -1,0 +1,29 @@
+KtConstructorSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  containingClassIdIfNonLocal: A
+  contextReceivers: []
+  hasStableParameterNames: true
+  isExtension: false
+  isPrimary: true
+  origin: SOURCE_MEMBER_GENERATED
+  receiverType: null
+  returnType: A
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtTypeAliasSymbol:
+  annotationsList: []
+  classIdIfNonLocal: D
+  expandedType: C
+  name: D
+  origin: SOURCE
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
