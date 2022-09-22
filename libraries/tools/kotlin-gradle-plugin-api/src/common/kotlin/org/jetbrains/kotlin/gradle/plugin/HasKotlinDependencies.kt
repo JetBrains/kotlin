@@ -68,50 +68,19 @@ interface KotlinDependencyHandler {
     fun platform(notation: Any, configureAction: Action<in Dependency>): Dependency =
         project.dependencies.platform(notation, configureAction)
 
-    @Deprecated("Declaring NPM dependency without version is forbidden")
-    fun npm(name: String): Dependency
-
     fun npm(
         name: String,
         version: String,
-        generateExternals: Boolean
     ): Dependency
-
-    fun npm(
-        name: String,
-        version: String
-    ): Dependency = npm(
-        name = name,
-        version = version,
-        generateExternals = DEFAULT_GENERATE_EXTERNALS
-    )
 
     fun npm(
         name: String,
         directory: File,
-        generateExternals: Boolean
     ): Dependency
-
-    fun npm(
-        name: String,
-        directory: File
-    ): Dependency = npm(
-        name = name,
-        directory = directory,
-        generateExternals = DEFAULT_GENERATE_EXTERNALS
-    )
 
     fun npm(
         directory: File,
-        generateExternals: Boolean
     ): Dependency
-
-    fun npm(
-        directory: File
-    ): Dependency = npm(
-        directory = directory,
-        generateExternals = DEFAULT_GENERATE_EXTERNALS
-    )
 
     fun devNpm(
         name: String,
@@ -130,44 +99,16 @@ interface KotlinDependencyHandler {
     fun optionalNpm(
         name: String,
         version: String,
-        generateExternals: Boolean
     ): Dependency
-
-    fun optionalNpm(
-        name: String,
-        version: String
-    ): Dependency = optionalNpm(
-        name = name,
-        version = version,
-        generateExternals = DEFAULT_GENERATE_EXTERNALS
-    )
 
     fun optionalNpm(
         name: String,
         directory: File,
-        generateExternals: Boolean
     ): Dependency
-
-    fun optionalNpm(
-        name: String,
-        directory: File
-    ): Dependency = optionalNpm(
-        name = name,
-        directory = directory,
-        generateExternals = DEFAULT_GENERATE_EXTERNALS
-    )
 
     fun optionalNpm(
         directory: File,
-        generateExternals: Boolean
     ): Dependency
-
-    fun optionalNpm(
-        directory: File
-    ): Dependency = optionalNpm(
-        directory = directory,
-        generateExternals = DEFAULT_GENERATE_EXTERNALS
-    )
 
     fun peerNpm(
         name: String,

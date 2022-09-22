@@ -55,7 +55,6 @@ constructor(
                     scope = it.scope,
                     name = it.name,
                     version = it.version,
-                    generateExternals = it.generateExternals
                 )
             }
 
