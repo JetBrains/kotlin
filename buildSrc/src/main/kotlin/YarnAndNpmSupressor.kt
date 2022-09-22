@@ -54,7 +54,7 @@ fun Project.suppressYarnAndNpmForAssemble() {
 
             if (removeDependencies.isNotEmpty()) {
                 task.setDependsOn(task.dependsOn - removeDependencies)
-                logger.quiet("Disable NPM/Yarn dependency tasks in $project - " +
+                logger.info("Disable NPM/Yarn dependency tasks in $project - " +
                                     "remove ${removeDependencies.joinToString(", ") { "'${it.name}'" }} dependencies from $task")
             }
         }
