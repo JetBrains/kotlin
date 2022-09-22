@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.generators.gradle.targets.js
 
 val npmPackages = listOf(
-    NpmPackage("dukat", "0.5.8-rc.4"),
     NpmPackage("webpack"),
     NpmPackage("webpack", "4.46.0", "webpack4"),
     NpmPackage("webpack-cli"),

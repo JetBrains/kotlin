@@ -449,17 +449,7 @@ internal class KotlinCompilationNpmResolver(
             val toolsNpmDependencies = compilationResolver.rootResolver.taskRequirements
                 .getCompilationNpmRequirements(projectPath, compilationResolver.compilationDisambiguatedName)
 
-            val dukatIfNecessary = if (externalNpmDependencies.isNotEmpty()) {
-                setOf(
-                    NpmDependencyDeclaration(
-                        scope = NpmDependency.Scope.DEV,
-                        name = dukatPackageVersion.name,
-                        version = dukatPackageVersion.version,
-                    )
-                )
-            } else emptySet()
-
-            val otherNpmDependencies = toolsNpmDependencies + dukatIfNecessary + transitiveNpmDependencies
+            val otherNpmDependencies = toolsNpmDependencies + transitiveNpmDependencies
             val allNpmDependencies = disambiguateDependencies(externalNpmDependencies, otherNpmDependencies)
             val packageJsonHandlers = if (compilationResolver.compilation != null) {
                 compilationResolver.compilation.packageJsonHandlers

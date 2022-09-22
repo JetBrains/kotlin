@@ -12,7 +12,6 @@ import java.io.Serializable
  */
 // DO NOT MODIFY DIRECTLY! Use org.jetbrains.kotlin.generators.gradle.targets.js.MainKt
 class NpmVersions : Serializable {
-    val dukat = NpmPackageVersion("dukat", "0.5.8-rc.4")
     val webpack4 = NpmPackageVersion("webpack", "4.46.0")
     val webpackCli3 = NpmPackageVersion("webpack-cli", "3.3.12")
     val webpackDevServer3 = NpmPackageVersion("webpack-dev-server", "3.11.2")
