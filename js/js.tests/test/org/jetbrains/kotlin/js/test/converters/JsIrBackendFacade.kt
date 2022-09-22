@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -367,7 +368,16 @@ class JsIrBackendFacade(
 
 fun String.augmentWithModuleName(moduleName: String): String {
     check(endsWith("_v5.js"))
-    return removeSuffix("_v5.js") + "-${moduleName}_v5.js"
+    val normalizedName = moduleName.run { if (isWindows) minify() else this }
+    return removeSuffix("_v5.js") + "-${normalizedName}_v5.js"
+}
+
+// D8 ignores Windows settings related to extending of maximum path symbols count
+// The hack should be deleted when D8 fixes the bug.
+// The issue is here: https://bugs.chromium.org/p/v8/issues/detail?id=13318
+fun String.minify(): String {
+    return replace("kotlin_org_jetbrains_kotlin_kotlin_", "")
+        .replace("_minimal_for_test", "_min")
 }
 
 fun File.augmentWithModuleName(moduleName: String): File = File(absolutePath.augmentWithModuleName(moduleName))
