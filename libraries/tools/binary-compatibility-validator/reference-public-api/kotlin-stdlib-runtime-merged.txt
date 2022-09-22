@@ -4007,6 +4007,7 @@ public abstract class kotlin/jvm/internal/PropertyReference : kotlin/jvm/interna
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/Object;)V
 	public fun <init> (Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
+	public fun compute ()Lkotlin/reflect/KCallable;
 	public fun equals (Ljava/lang/Object;)Z
 	protected synthetic fun getReflected ()Lkotlin/reflect/KCallable;
 	protected fun getReflected ()Lkotlin/reflect/KProperty;

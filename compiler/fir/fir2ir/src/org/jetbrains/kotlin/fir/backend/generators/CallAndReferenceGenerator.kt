@@ -89,7 +89,8 @@ class CallAndReferenceGenerator(
             callableReferenceAccess.dispatchReceiver,
             conversionScope,
             explicitReceiver = callableReferenceAccess.explicitReceiver,
-            isDelegate = isDelegate
+            isDelegate = isDelegate,
+            isReference = true
         )
         // val x by y ->
         //   val `x$delegate` = y
