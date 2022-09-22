@@ -146,7 +146,6 @@ enum class LanguageFeature(
     ContractsOnCallsWithImplicitReceiver(KOTLIN_1_4),
     BooleanElvisBoundSmartCasts(KOTLIN_1_3, defaultState = State.DISABLED), // see KT-26357 for details
     NewDataFlowForTryExpressions(KOTLIN_1_4, defaultState = State.DISABLED),
-    ReferencesToSyntheticJavaProperties(KOTLIN_1_3, defaultState = State.DISABLED),
     // ^----------------------------------------------------------------------^
 
     // 1.5
@@ -284,6 +283,7 @@ enum class LanguageFeature(
     ForbidSuperDelegationToAbstractFakeOverride(KOTLIN_1_9), // KT-49017
     DataObjects(KOTLIN_1_9), // KT-4107
     ProhibitAccessToEnumCompanionMembersInEnumConstructorCall(KOTLIN_1_9, kind = BUG_FIX), // KT-49110
+    ReferencesToSyntheticJavaProperties(KOTLIN_1_9), // KT-8575
 
     // Disabled for indefinite time. See KT-53751
     IgnoreNullabilityForErasedValueParameters(sinceVersion = null, kind = BUG_FIX),
