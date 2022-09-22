@@ -38,6 +38,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("contextualByDefault.kt")
+    public void testContextualByDefault() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/contextualByDefault.kt");
+    }
+
+    @Test
     @TestMetadata("enumsAreCached.kt")
     public void testEnumsAreCached() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/enumsAreCached.kt");

@@ -403,6 +403,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                     // new signature of context serializer
                     args = args + mutableListOf<IrExpression>().apply {
                         val fallbackDefaultSerializer = findTypeSerializer(pluginContext, kType)
+                            .takeIf { it?.owner?.classId != contextSerializerId }
                         add(instantiate(fallbackDefaultSerializer, kType) ?: irNull())
                         add(
                             createArrayOfExpression(
