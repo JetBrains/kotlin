@@ -53,6 +53,18 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
     }
 
     @Test
+    @TestMetadata("chainOfTypeAliasesBottom.kt")
+    public void testChainOfTypeAliasesBottom() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/chainOfTypeAliasesBottom.kt");
+    }
+
+    @Test
+    @TestMetadata("chainOfTypeAliasesTop.kt")
+    public void testChainOfTypeAliasesTop() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/chainOfTypeAliasesTop.kt");
+    }
+
+    @Test
     @TestMetadata("constructorViaTypeAlias.kt")
     public void testConstructorViaTypeAlias() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorViaTypeAlias.kt");
