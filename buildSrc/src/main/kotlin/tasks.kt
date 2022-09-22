@@ -107,6 +107,7 @@ fun Project.projectTest(
     maxHeapSizeMb: Int? = null,
     minHeapSizeMb: Int? = null,
     reservedCodeCacheSizeMb: Int = 256,
+    defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {}
 ): TaskProvider<Test> {
     val shouldInstrument = project.providers.gradleProperty("kotlin.test.instrumentation.disable")
@@ -249,10 +250,9 @@ fun Project.projectTest(
                     ?: forks.coerceIn(1, Runtime.getRuntime().availableProcessors())
         }
 
-        JdkMajorVersion.values().forEach { version ->
-            project.getToolchainLauncherFor(version).orNull?.let {
-                environment(version.envName, it.metadata.installationPath.asFile.absolutePath)
-            }
+        defineJDKEnvVariables.forEach { version ->
+            val javaLauncher = project.getToolchainLauncherFor(version).orNull ?: error("Can't find toolchain for $version")
+            environment(version.envName, javaLauncher.metadata.installationPath.asFile.absolutePath)
         }
     }.apply { configure(body) }
 }
