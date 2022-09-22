@@ -108,15 +108,6 @@ internal val FirCallableDeclaration.isExtensionMember: Boolean
 internal val FirCallableSymbol<*>.isExtensionMember: Boolean
     get() = resolvedReceiverTypeRef != null && dispatchReceiverType != null
 
-fun FirClassSymbol<*>.primaryConstructorSymbol(): FirConstructorSymbol? {
-    for (declarationSymbol in this.declarationSymbols) {
-        if (declarationSymbol is FirConstructorSymbol && declarationSymbol.isPrimary) {
-            return declarationSymbol
-        }
-    }
-    return null
-}
-
 fun FirSimpleFunction.isTypedEqualsInInlineClass(session: FirSession): Boolean =
     containingClass()?.toFirRegularClassSymbol(session)?.run {
         this@isTypedEqualsInInlineClass.name == OperatorNameConventions.EQUALS
@@ -129,4 +120,12 @@ fun FirSimpleFunction.isTypedEqualsInInlineClass(session: FirSession): Boolean =
 fun FirSimpleFunction.overridesEqualsFromAny(): Boolean {
     return name == OperatorNameConventions.EQUALS && returnTypeRef.isBoolean
             && valueParameters.size == 1 && valueParameters[0].returnTypeRef.isNullableAny
+}
+fun FirClassSymbol<*>.primaryConstructorSymbol(): FirConstructorSymbol? {
+    for (declarationSymbol in this.declarationSymbols) {
+        if (declarationSymbol is FirConstructorSymbol && declarationSymbol.isPrimary) {
+            return declarationSymbol
+        }
+    }
+    return null
 }
