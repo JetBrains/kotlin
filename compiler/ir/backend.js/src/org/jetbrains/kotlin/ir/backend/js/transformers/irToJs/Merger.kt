@@ -110,16 +110,7 @@ class Merger(
     private fun <T : JsNode> Map<JsName, JsName>.rename(rootNode: T): T {
         rootNode.accept(object : RecursiveJsVisitor() {
             override fun visitElement(node: JsNode) {
-                // We need it to not rename methods and fields inside class body
-                // Because if they are in clash with something, it means overriding
-                if (node is JsClass) {
-                    node.constructor?.accept(this)
-                    node.members.forEach {
-                        it.acceptChildren(this)
-                    }
-                } else {
-                    super.visitElement(node)
-                }
+                super.visitElement(node)
                 if (node is HasName) {
                     node.name = node.name?.let { rename(it) }
                 }
@@ -235,9 +226,6 @@ class Merger(
 
         if (generateScriptModule) {
             with(program.globalBlock) {
-                if (!generateScriptModule) {
-                    statements += JsStringLiteral("use strict").makeStmt()
-                }
                 statements.addWithComment("block: polyfills", polyfillDeclarationBlock.statements)
                 statements.addWithComment("block: imports", importStatements)
                 statements += moduleBody
@@ -249,9 +237,7 @@ class Merger(
                 parameters += JsParameter(internalModuleName)
                 parameters += (importedJsModules).map { JsParameter(it.internalName) }
                 with(body) {
-                    if (!generateScriptModule) {
-                        statements += JsStringLiteral("use strict").makeStmt()
-                    }
+                    statements += JsStringLiteral("use strict").makeStmt()
                     statements.addWithComment("block: imports", importStatements)
                     statements += moduleBody
                     statements.addWithComment("block: exports", exportStatements)
