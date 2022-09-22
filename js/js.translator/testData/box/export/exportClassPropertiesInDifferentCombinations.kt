@@ -20,6 +20,9 @@ interface IOwner {
 open class Owner {
     open val classOpenReadonly: String = "Class Readonly Open"
     open var classOpenVar: String = "Class Var Open"
+    open lateinit var classOpenLateinitVar: String;
+
+    lateinit var classLateinitVar: String;
 
     val classFinalReadonly: String = "Class Readonly Final"
     var classFinalVar: String = "Class Default"
@@ -63,6 +66,7 @@ open class AnotherOneHiddenChild: HiddenChild() {
 class ExportedChild: AnotherOneHiddenChild() {
     override val classOpenReadonly: String = "Exported Child Readonly Open"
     override var classOpenVar: String = "Exported Child Var Open"
+    override var classOpenLateinitVar: String = "Exported Child Lateinit Open Var"
 
     override val classOpenGetterOnly: String
         get() = "Exported Child with Open Getter"
@@ -94,6 +98,22 @@ function testOwner(pkg) {
 
     assertEquals(owner.classOpenReadonly, "Class Readonly Open")
     assertEquals(owner.classOpenVar, "Class Var Open")
+
+    try {
+        owner.classOpenLateinitVar;
+        return "Fail: invalid getter for open lateinit var in Owner class";
+    } catch(e) {}
+
+    owner.classOpenLateinitVar = "Class Open Lateinit Var"
+    assertEquals(owner.classOpenLateinitVar, "Class Open Lateinit Var")
+
+    try {
+        owner.classLateinitVar;
+        return "Fail: invalid getter for lateinit var in Owner class";
+    } catch(e) {}
+
+    owner.classLateinitVar = "Class Lateinit Var"
+    assertEquals(owner.classLateinitVar, "Class Lateinit Var")
 
     assertEquals(owner.classFinalReadonly, "Class Readonly Final")
     assertEquals(owner.classFinalVar, "Class Default")
@@ -130,6 +150,22 @@ function testHiddenChild(pkg) {
     assertEquals(owner.classOpenReadonly, "Class Readonly Open")
     assertEquals(owner.classOpenVar, "Class Var Open")
 
+    try {
+        owner.classOpenLateinitVar;
+        return "Fail: invalid getter for open lateinit var in Hidden Child class";
+    } catch(e) {}
+
+    owner.classOpenLateinitVar = "Hidden Child Open Lateinit Var"
+    assertEquals(owner.classOpenLateinitVar, "Hidden Child Open Lateinit Var")
+
+    try {
+        owner.classLateinitVar;
+        return "Fail: invalid getter for lateinit var in Hidden Child class";
+    } catch(e) {}
+
+    owner.classLateinitVar = "Hidden Child Lateinit Var"
+    assertEquals(owner.classLateinitVar, "Hidden Child Lateinit Var")
+
     assertEquals(owner.classFinalReadonly, "Class Readonly Final")
     assertEquals(owner.classFinalVar, "Class Default")
 
@@ -165,6 +201,22 @@ function testAnotherHiddenChild(pkg) {
     assertEquals(owner.classOpenReadonly, "Class Readonly Open")
     assertEquals(owner.classOpenVar, "Class Var Open")
 
+    try {
+        owner.classOpenLateinitVar;
+        return "Fail: invalid getter for open lateinit var in Another Hidden Child class";
+    } catch(e) {}
+
+    owner.classOpenLateinitVar = "Another Hidden Child Open Lateinit Var"
+    assertEquals(owner.classOpenLateinitVar, "Another Hidden Child Open Lateinit Var")
+
+    try {
+        owner.classLateinitVar;
+        return "Fail: invalid getter for lateinit var in Another Hidden Child class";
+    } catch(e) {}
+
+    owner.classLateinitVar = "Another Hidden Child Lateinit Var"
+    assertEquals(owner.classLateinitVar, "Another Hidden Child Lateinit Var")
+
     assertEquals(owner.classFinalReadonly, "Class Readonly Final")
     assertEquals(owner.classFinalVar, "Class Default")
 
@@ -195,6 +247,24 @@ function testExportedChild(pkg) {
 
     assertEquals(owner.classOpenReadonly, "Exported Child Readonly Open")
     assertEquals(owner.classOpenVar, "Exported Child Var Open")
+
+    try {
+        owner.classOpenLateinitVar;
+    } catch(e) {
+        return "Fail: invalid overridding of getter for open lateinit var in ExportedChild class";
+    }
+
+    owner.classOpenLateinitVar = "Exported Child Open Lateinit Var"
+    assertEquals(owner.classOpenLateinitVar, "Exported Child Open Lateinit Var")
+
+    try {
+        owner.classLateinitVar;
+    } catch(e) {
+        return "Fail: invalid overridding of getter for lateinit var in ExportedChild class";
+    }
+
+    owner.classLateinitVar = "Exported Child Lateinit Var"
+    assertEquals(owner.classLateinitVar, "Exported Child Lateinit Var")
 
     assertEquals(owner.classFinalReadonly, "Class Readonly Final")
     assertEquals(owner.classFinalVar, "Class Default")

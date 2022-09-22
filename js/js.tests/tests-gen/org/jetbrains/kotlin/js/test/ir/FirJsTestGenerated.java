@@ -2573,6 +2573,12 @@ public class FirJsTestGenerated extends AbstractFirJsTest {
         }
 
         @Test
+        @TestMetadata("consumeExportedLateinitProperty.kt")
+        public void testConsumeExportedLateinitProperty() throws Exception {
+            runTest("js/js.translator/testData/box/export/consumeExportedLateinitProperty.kt");
+        }
+
+        @Test
         @TestMetadata("defaultInlineClassConstructorParam.kt")
         public void testDefaultInlineClassConstructorParam() throws Exception {
             runTest("js/js.translator/testData/box/export/defaultInlineClassConstructorParam.kt");
