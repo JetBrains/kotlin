@@ -13,6 +13,7 @@ import kotlin.wasm.internal.reftypes.anyref
 import kotlin.wasm.internal.reftypes.dataref
 import kotlin.wasm.internal.reftypes.funcref
 import kotlin.wasm.internal.reftypes.i31ref
+import kotlin.wasm.internal.ExternalInterfaceType
 
 @WasmOp(WasmOp.UNREACHABLE)
 internal fun wasm_unreachable(): Nothing =
@@ -385,3 +386,6 @@ internal external fun wasm_ref_as_data(x: anyref): dataref
 
 @WasmOp(WasmOp.REF_AS_I31)
 internal external fun wasm_ref_as_i31(x: anyref): i31ref
+
+@WasmOp(WasmOp.REF_IS_NULL)
+internal external fun wasm_externref_is_null(a: ExternalInterfaceType?): Boolean

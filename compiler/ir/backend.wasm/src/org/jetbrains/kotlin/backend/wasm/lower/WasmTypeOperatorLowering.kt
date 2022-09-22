@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -205,6 +202,11 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         val toClass = toType.eraseToClassOrInterface
 
         if (fromClass.isExternal && toClass.isExternal) {
+            return value
+        }
+
+        if (value.isNullConst() && fromClass.isExternal != toClass.isExternal) {
+            value.type = toType
             return value
         }
 

@@ -108,9 +108,15 @@ fun compileWasm(
 fun WasmCompiledModuleFragment.generateJs(): String {
     //language=js
     val runtime = """
-    
     const externrefBoxes = new WeakMap();
-    """.trimIndent()
+    function tryGetOrSetExternrefBox(ref, ifNotCached) {
+        if (ref == null) return null;
+        if (typeof ref !== 'object') return ifNotCached;
+        const cachedBox = externrefBoxes.get(ref);
+        if (cachedBox !== void 0) return cachedBox;
+        externrefBoxes.set(ref, ifNotCached);
+        return ifNotCached;
+    }    """.trimIndent()
 
     val jsCodeBody = jsFuns.joinToString(",\n") { "\"" + it.importName + "\" : " + it.jsCode }
     val jsCodeBodyIndented = jsCodeBody.prependIndent("    ")
