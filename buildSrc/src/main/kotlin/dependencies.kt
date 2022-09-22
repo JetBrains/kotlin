@@ -295,7 +295,7 @@ fun Project.toolsJarApi(): Any =
         dependencies.project(":dependencies:tools-jar-api")
 
 fun Project.toolsJar(): FileCollection = files(
-    getToolchainLauncherFor(JdkMajorVersion.JDK_1_8)
+    getToolchainLauncherFor(DEFAULT_JVM_TOOLCHAIN)
         .map {
             Jvm.forHome(it.metadata.installationPath.asFile).toolsJar ?: throw GradleException("tools.jar not found!")
         }

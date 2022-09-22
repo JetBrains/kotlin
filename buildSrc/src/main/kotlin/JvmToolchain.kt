@@ -33,8 +33,10 @@ enum class JdkMajorVersion(
     }
 }
 
+val DEFAULT_JVM_TOOLCHAIN = JdkMajorVersion.JDK_1_8
+
 fun Project.configureJvmDefaultToolchain() {
-    configureJvmToolchain(JdkMajorVersion.JDK_1_8)
+    configureJvmToolchain(DEFAULT_JVM_TOOLCHAIN)
 }
 
 fun Project.shouldOverrideObsoleteJdk(
