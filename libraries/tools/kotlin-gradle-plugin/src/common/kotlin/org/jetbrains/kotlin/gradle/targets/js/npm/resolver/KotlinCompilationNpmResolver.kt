@@ -455,7 +455,6 @@ internal class KotlinCompilationNpmResolver(
                         scope = NpmDependency.Scope.DEV,
                         name = dukatPackageVersion.name,
                         version = dukatPackageVersion.version,
-                        generateExternals = false
                     )
                 )
             } else emptySet()
