@@ -86,6 +86,24 @@ fun test10(a: Int): String {
     } + "-one"
 }
 
+inline fun doCallAlwaysBreak(block: (i: Int)-> Int) : Int {
+    var res = 0;
+    for (i in 1..10) {
+        try {
+            block(i)
+        } finally {
+            break;
+        }
+    }
+    return res
+}
+
+fun test11(): String {
+    return doCallAlwaysBreak {
+        return "Fail"
+    }.toString()
+}
+
 fun box(): String {
     assertEquals("OK", test1(true) + test1(false))
     assertEquals("OK", test2())
@@ -100,5 +118,6 @@ fun box(): String {
     assertEquals("2-two-one", test10(2))
     assertEquals("undefined-two-one", test10(3))
     assertEquals("4", test10(4))
+    assertEquals("0", test11())
     return "OK"
 }
