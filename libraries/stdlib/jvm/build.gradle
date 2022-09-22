@@ -60,8 +60,8 @@ configurations {
         }
     }
     compileOnly.extendsFrom(builtins)
-    mainJdk7CompileOnly.extendsFrom(builtins)
-    mainJdk8CompileOnly.extendsFrom(builtins)
+    mainJdk7CompileOnly.extendsFrom(compileClasspath)
+    mainJdk8CompileOnly.extendsFrom(compileClasspath)
     testCompileOnly.extendsFrom(builtins)
 }
 
