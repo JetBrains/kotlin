@@ -19,13 +19,12 @@ import org.gradle.api.file.ProjectLayout
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompositeMetadataJar
-import org.jetbrains.kotlin.gradle.utils.ResolvedDependencyGraph
-import org.jetbrains.kotlin.gradle.utils.allResolvedDependencies
+import org.jetbrains.kotlin.gradle.internal.ResolvedDependencyGraph
+import org.jetbrains.kotlin.gradle.internal.allResolvedDependencies
 import java.io.File
 import javax.inject.Inject
 

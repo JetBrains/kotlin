@@ -3,13 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.utils
+package org.jetbrains.kotlin.gradle.internal
 
 import org.gradle.api.artifacts.ArtifactCollection
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolveException
 import org.gradle.api.artifacts.result.*
 import org.gradle.api.file.FileCollection
+import org.jetbrains.kotlin.gradle.utils.TransientLazy
 import org.jetbrains.kotlin.tooling.core.withClosure
 
 /**
