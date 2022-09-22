@@ -146,7 +146,7 @@ val proguard by task<CacheableProguardTask> {
     injars(mapOf("filter" to "!META-INF/**,!**/*.kotlin_builtins"), proguardAdditionalInJars)
     outjars(fileFrom(base.libsDirectory.asFile.get(), "${base.archivesName.get()}-$version-proguard.jar"))
 
-    javaLauncher.set(project.getToolchainLauncherFor(chooseJdk18ForJpsBuild(JdkMajorVersion.JDK_1_8)))
+    javaLauncher.set(project.getToolchainLauncherFor(chooseJdk_1_8ForJpsBuild(JdkMajorVersion.JDK_1_8)))
     libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardDeps)
     libraryjars(
         project.files(
