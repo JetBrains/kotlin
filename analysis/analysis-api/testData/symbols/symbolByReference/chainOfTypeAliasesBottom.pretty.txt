@@ -1,0 +1,3 @@
+constructor()
+
+typealias D = C

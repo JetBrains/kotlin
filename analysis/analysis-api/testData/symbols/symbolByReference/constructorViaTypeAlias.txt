@@ -19,3 +19,20 @@ KtConstructorSymbol:
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
+
+KtTypeAliasSymbol:
+  annotationsList: [
+    kotlin/SinceKotlin(version = "1.1")
+      psi: null
+  ]
+  classIdIfNonLocal: kotlin/collections/ArrayList
+  expandedType: java/util/ArrayList<E>
+  name: ArrayList
+  origin: LIBRARY
+  symbolKind: TOP_LEVEL
+  typeParameters: [
+    KtTypeParameterSymbol(E)
+  ]
+  visibility: Public
+  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  deprecationStatus: null
