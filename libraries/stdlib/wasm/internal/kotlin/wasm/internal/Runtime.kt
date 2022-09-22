@@ -65,9 +65,6 @@ internal fun nullableDoubleIeee754Equals(lhs: Double?, rhs: Double?): Boolean {
     return wasm_f64_eq(lhs, rhs)
 }
 
-
-internal fun <T : Any> ensureNotNull(v: T?): T = if (v == null) THROW_NPE() else v
-
 @ExcludedFromCodegen
 internal fun <T, R> boxIntrinsic(x: T): R =
     implementedAsIntrinsic

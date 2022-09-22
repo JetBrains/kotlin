@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.backend.js.utils.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -63,10 +64,12 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                     }
                 }
                 if (lhs.isNullConst()) {
-                    return builder.irCall(symbols.refIsNull).apply { putValueArgument(0, rhs) }
+                    val refIsNull = if (rhsType.erasedUpperBound?.isExternal == true) symbols.externRefIsNull else symbols.refIsNull
+                    return builder.irCall(refIsNull).apply { putValueArgument(0, rhs) }
                 }
                 if (rhs.isNullConst()) {
-                    return builder.irCall(symbols.refIsNull).apply { putValueArgument(0, lhs) }
+                    val refIsNull = if (lhsType.erasedUpperBound?.isExternal == true) symbols.externRefIsNull else symbols.refIsNull
+                    return builder.irCall(refIsNull).apply { putValueArgument(0, lhs) }
                 }
                 if (!lhsType.isNullable()) {
                     return irCall(call, lhsType.findEqualsMethod().symbol, argumentsAsReceivers = true)
@@ -81,17 +84,20 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
             }
 
             irBuiltins.checkNotNullSymbol -> {
+                val arg = call.getValueArgument(0)!!
 
-                // Workaround: v8 doesnt support ref.cast-ing unreachable very well.
-                run {
-                    val arg = call.getValueArgument(0)!!
-                    if (arg.isNullConst()) {
-                        return builder.irCall(symbols.wasmUnreachable, irBuiltins.nothingType)
-                    }
+                if (arg.isNullConst()) {
+                    return builder.irCall(symbols.throwNullPointerException)
                 }
 
-                return irCall(call, symbols.ensureNotNull).also {
-                    it.putTypeArgument(0, call.type)
+                return builder.irComposite {
+                    val temporary = irTemporary(arg)
+                    +builder.irIfNull(
+                        type = arg.type.makeNotNull(),
+                        subject = irGet(temporary),
+                        thenPart = builder.irCall(symbols.throwNullPointerException),
+                        elsePart = irGet(temporary)
+                    )
                 }
             }
             in symbols.comparisonBuiltInsToWasmIntrinsics.keys -> {
