@@ -42669,12 +42669,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
-            @TestMetadata("overrideKotlinPropertyByJavaMethod.kt")
-            public void testOverrideKotlinPropertyByJavaMethod() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/properties/overrideKotlinPropertyByJavaMethod.kt");
-            }
-
-            @Test
             @TestMetadata("privateClassVal.kt")
             public void testPrivateClassVal() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/properties/privateClassVal.kt");
@@ -47283,6 +47277,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("implicitReceiver.kt")
         public void testImplicitReceiver() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticExtensions/implicitReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("overrideKotlinPropertyByJavaMethod.kt")
+        public void testOverrideKotlinPropertyByJavaMethod() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticExtensions/overrideKotlinPropertyByJavaMethod.kt");
         }
 
         @Test

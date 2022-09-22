@@ -44121,12 +44121,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
-            @TestMetadata("overrideKotlinPropertyByJavaMethod.kt")
-            public void testOverrideKotlinPropertyByJavaMethod() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/properties/overrideKotlinPropertyByJavaMethod.kt");
-            }
-
-            @Test
             @TestMetadata("privateClassVal.kt")
             public void testPrivateClassVal() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/properties/privateClassVal.kt");
@@ -44190,6 +44184,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("simpleGetProperties.kt")
             public void testSimpleGetProperties() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/properties/simpleGetProperties.kt");
+            }
+
+            @Test
+            @TestMetadata("syntheticJavaProperty.kt")
+            public void testSyntheticJavaProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/properties/syntheticJavaProperty.kt");
             }
 
             @Test
@@ -48816,6 +48816,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("overrideKotlinPropertyByJavaMethod.kt")
+        public void testOverrideKotlinPropertyByJavaMethod() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticExtensions/overrideKotlinPropertyByJavaMethod.kt");
+        }
+
+        @Test
         @TestMetadata("overrideOnlyGetter.kt")
         public void testOverrideOnlyGetter() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticExtensions/overrideOnlyGetter.kt");
@@ -48855,6 +48861,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("setterNonVoid2.kt")
         public void testSetterNonVoid2() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticExtensions/setterNonVoid2.kt");
+        }
+
+        @Test
+        @TestMetadata("syntheticJavaProperty.kt")
+        public void testSyntheticJavaProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticExtensions/syntheticJavaProperty.kt");
         }
     }
 
