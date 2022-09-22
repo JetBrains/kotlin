@@ -74,6 +74,13 @@ private fun JsNode.computeScopes(): Scope {
     accept(object : RecursiveJsVisitor() {
         var currentScope: Scope = rootScope
 
+        override fun visitClass(x: JsClass) {
+            // We need it to not rename methods and fields inside class body
+            // Because if they are in clash with something, it means overriding
+            x.constructor?.accept(this)
+            x.members.forEach { it.acceptChildren(this) }
+        }
+
         override fun visitFunction(x: JsFunction) {
             x.name?.let { currentScope.declaredNames += it }
             val oldScope = currentScope

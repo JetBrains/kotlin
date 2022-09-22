@@ -120,16 +120,7 @@ class Merger(
     private fun <T : JsNode> Map<JsName, JsName>.rename(rootNode: T): T {
         rootNode.accept(object : RecursiveJsVisitor() {
             override fun visitElement(node: JsNode) {
-                // We need it to not rename methods and fields inside class body
-                // Because if they are in clash with something, it means overriding
-                if (node is JsClass) {
-                    node.constructor?.accept(this)
-                    node.members.forEach {
-                        it.acceptChildren(this)
-                    }
-                } else {
-                    super.visitElement(node)
-                }
+                super.visitElement(node)
                 if (node is HasName) {
                     node.name = node.name?.let { rename(it) }
                 }
