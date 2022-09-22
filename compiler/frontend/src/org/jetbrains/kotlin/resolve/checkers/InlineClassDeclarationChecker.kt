@@ -150,20 +150,20 @@ object InlineClassDeclarationChecker : DeclarationChecker {
             return
         }
 
-        fun getFunctionDescriptor(declaration: KtDeclaration): SimpleFunctionDescriptor? =
-            (declaration as? KtFunction)?.run { context.trace.bindingContext.get(BindingContext.FUNCTION, declaration) }
+        fun getFunctionDescriptor(declaration: KtNamedFunction): SimpleFunctionDescriptor? =
+            context.trace.bindingContext.get(BindingContext.FUNCTION, declaration)
 
-        fun isUntypedEquals(declaration: KtDeclaration): Boolean = getFunctionDescriptor(declaration)?.overridesEqualsFromAny() ?: false
-        fun isTypedEquals(declaration: KtDeclaration): Boolean = getFunctionDescriptor(declaration)?.isTypedEqualsInInlineClass() ?: false
+        fun isUntypedEquals(declaration: KtNamedFunction): Boolean = getFunctionDescriptor(declaration)?.overridesEqualsFromAny() ?: false
+        fun isTypedEquals(declaration: KtNamedFunction): Boolean = getFunctionDescriptor(declaration)?.isTypedEqualsInInlineClass() ?: false
 
-
-        (declaration.declarations.singleOrNull { isUntypedEquals(it) } as? KtNamedFunction)?.apply {
-            if (declaration.declarations.none { isTypedEquals(it) }) {
+        declaration.namedFunctions().singleOrNull { isUntypedEquals(it) }?.apply {
+            if (declaration.namedFunctions().none { isTypedEquals(it) }) {
                 trace.report(Errors.ILLEGAL_EQUALS_OVERRIDING_IN_INLINE_CLASS.on(this@apply, descriptor.name.asString()))
             }
         }
     }
 
+    private fun KtClass.namedFunctions() = declarations.filterIsInstance<KtNamedFunction>()
 
     private fun KotlinType.isInapplicableParameterType() =
         isUnit() || isNothing() || isTypeParameter() || isGenericArrayOfTypeParameter()
