@@ -66,13 +66,15 @@ fun main() {
             testClass<AbstractNativeInteropIndexerTest>(
                 suiteTestClassName = "InteropIndexerTestGenerated"
             ) {
-                model("Interop/Indexer/", pattern = "^([^_](.+))$", recursive = false)
+                model("Interop/Indexer/simple/simpleDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("Interop/Indexer/framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
+//                model("Interop/Indexer/twoframeworks/defs", pattern = "^([^_](.+))$", recursive = false)
             }
-            testClass<AbstractNativeInteropIndexerTest>(
-                suiteTestClassName = "InteropIndexerFModulesTestGenerated"
-            ) {
-                model("Interop/Indexer/", pattern = "^([^_](.+))$", recursive = false)
-            }
+//            testClass<AbstractNativeInteropIndexerTest>(
+//                suiteTestClassName = "InteropIndexerSimpleTestGenerated"
+//            ) {
+//                model("Interop/Indexer/simple", pattern = "^([^_](.+))$", recursive = false)
+//            }
         }
     }
 }
