@@ -157,13 +157,15 @@ private fun FirBasedSymbol<*>.toSymbolForCall(
     dispatchReceiver: FirExpression,
     preferGetter: Boolean,
     explicitReceiver: FirExpression? = null,
-    isDelegate: Boolean = false
+    isDelegate: Boolean = false,
+    isReference: Boolean = false
 ): IrSymbol? = when (this) {
     is FirCallableSymbol<*> -> unwrapCallRepresentative().toSymbolForCall(
         dispatchReceiver,
         preferGetter,
         explicitReceiver,
-        isDelegate
+        isDelegate,
+        isReference
     )
     is FirClassifierSymbol<*> -> toSymbol()
     else -> error("Unknown symbol: $this")
@@ -175,7 +177,8 @@ fun FirReference.toSymbolForCall(
     conversionScope: Fir2IrConversionScope,
     preferGetter: Boolean = true,
     explicitReceiver: FirExpression? = null, // Actual only for callable references
-    isDelegate: Boolean = false
+    isDelegate: Boolean = false,
+    isReference: Boolean = false
 ): IrSymbol? {
     return when (this) {
         is FirResolvedNamedReference ->
@@ -183,14 +186,16 @@ fun FirReference.toSymbolForCall(
                 dispatchReceiver,
                 preferGetter,
                 explicitReceiver,
-                isDelegate
+                isDelegate,
+                isReference
             )
         is FirErrorNamedReference ->
             candidateSymbol?.toSymbolForCall(
                 dispatchReceiver,
                 preferGetter,
                 explicitReceiver,
-                isDelegate
+                isDelegate,
+                isReference
             )
         is FirThisReference -> {
             when (val boundSymbol = boundSymbol) {
@@ -212,7 +217,8 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
     dispatchReceiver: FirExpression,
     preferGetter: Boolean,
     explicitReceiver: FirExpression? = null,
-    isDelegate: Boolean = false
+    isDelegate: Boolean = false,
+    isReference: Boolean = false
 ): IrSymbol? {
     val dispatchReceiverLookupTag = when {
         dispatchReceiver is FirNoReceiverExpression -> {
@@ -236,14 +242,18 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
                 declarationStorage.getIrPropertySymbol(this)
             } else {
                 (fir as? FirSyntheticProperty)?.let { syntheticProperty ->
-                    val delegateSymbol = if (preferGetter) {
-                        syntheticProperty.getter.delegate.symbol
+                    if (isReference) {
+                        declarationStorage.getIrPropertySymbol(this, dispatchReceiverLookupTag)
                     } else {
-                        syntheticProperty.setter?.delegate?.symbol
-                            ?: throw AssertionError("Written synthetic property must have a setter")
+                        val delegateSymbol = if (preferGetter) {
+                            syntheticProperty.getter.delegate.symbol
+                        } else {
+                            syntheticProperty.setter?.delegate?.symbol
+                                ?: throw AssertionError("Written synthetic property must have a setter")
+                        }
+                        delegateSymbol.unwrapCallRepresentative()
+                            .toSymbolForCall(dispatchReceiver, preferGetter, isDelegate = false)
                     }
-                    delegateSymbol.unwrapCallRepresentative()
-                        .toSymbolForCall(dispatchReceiver, preferGetter, isDelegate = false)
                 } ?: declarationStorage.getIrPropertySymbol(this)
             }
         }
