@@ -1,7 +1,10 @@
-depends = darwin posix
+depends = CoreFoundationBase darwin posix
 language = Objective-C
 package = platform.CoreFoundation
-modules = CoreFoundation
+headers = CoreFoundation/CoreFoundation.h CoreFoundation/CFPlugInCOM.h
+headerFilter = CoreFoundation/**
+excludeFilter = CoreFoundation/CFBase.h CoreFoundation/CFAvailability.h
 
 compilerOpts = -framework CoreFoundation
 linkerOpts = -framework CoreFoundation
+

@@ -1,4 +1,4 @@
-depends = CoreFoundation Foundation darwin posix
+depends = CoreFoundationBase Foundation darwin posix
 language = Objective-C
 package = platform.VideoSubscriberAccount
 modules = VideoSubscriberAccount
