@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
+import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.stubs.elements.KtClassElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -542,14 +544,20 @@ object LightTreePositioningStrategies {
                 }
             }
             val nodeToStart = when (node.tokenType) {
-                in KtTokens.QUALIFIED_ACCESS -> tree.findLastChildByType(node, KtNodeTypes.CALL_EXPRESSION) ?: node
+                in QUALIFIED_ACCESS -> tree.findLastChildByType(node, KtNodeTypes.CALL_EXPRESSION) ?: node
+                KtNodeTypes.CLASS -> tree.findLastChildByType(node, KtNodeTypes.SUPER_TYPE_LIST) ?: node
                 else -> node
             }
-            return tree.findDescendantByType(nodeToStart, KtNodeTypes.VALUE_ARGUMENT_LIST)?.let { valueArgumentList ->
-                tree.findLastChildByType(valueArgumentList, KtTokens.RPAR)?.let { rpar ->
-                    markElement(rpar, startOffset, endOffset, tree, node)
-                }
-            } ?: markElement(nodeToStart, startOffset, endOffset, tree, node)
+            val argumentList = tree.findDescendantByType(nodeToStart, KtNodeTypes.VALUE_ARGUMENT_LIST)
+                ?: return markElement(nodeToStart, startOffset, endOffset, tree, node)
+            val rightParenthesis = tree.findLastChildByType(argumentList, RPAR)
+                ?: return markElement(nodeToStart, startOffset, endOffset, tree, node)
+            val lastArgument = tree.findLastChildByType(argumentList, KtNodeTypes.VALUE_ARGUMENT)
+            return if (lastArgument != null) {
+                markRange(lastArgument, rightParenthesis, startOffset, endOffset, tree, node)
+            } else {
+                markRange(nodeToStart, rightParenthesis, startOffset, endOffset, tree, node)
+            }
         }
     }
 

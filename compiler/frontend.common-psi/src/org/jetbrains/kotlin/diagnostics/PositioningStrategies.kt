@@ -644,9 +644,17 @@ object PositioningStrategies {
             }
             val qualifiedAccess = when (element) {
                 is KtQualifiedExpression -> element.selectorExpression ?: element
+                is KtClassOrObject -> element.getSuperTypeList() ?: element
                 else -> element
             }
-            return markElement(qualifiedAccess.findDescendantOfType<KtValueArgumentList>()?.rightParenthesis ?: qualifiedAccess)
+            val argumentList = qualifiedAccess.findDescendantOfType<KtValueArgumentList>() ?: return markElement(qualifiedAccess)
+            val rightParenthesis = argumentList.rightParenthesis ?: return markElement(qualifiedAccess)
+            val lastArgument = argumentList.children.findLast { it is KtValueArgument }
+            return if (lastArgument != null) {
+                markRange(lastArgument, rightParenthesis)
+            } else {
+                markRange(qualifiedAccess, rightParenthesis)
+            }
         }
     }
 

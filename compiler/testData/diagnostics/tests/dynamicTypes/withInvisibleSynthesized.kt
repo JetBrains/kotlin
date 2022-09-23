@@ -24,8 +24,8 @@ class K: J.C() {
         <!DEBUG_INFO_DYNAMIC!>sam<!>(null)
         <!DEBUG_INFO_DYNAMIC!>sam<!>(
             name = null,
-            <!ARGUMENT_PASSED_TWICE!>name<!> = null
-        <!NO_VALUE_FOR_PARAMETER!>)<!>
+            <!NO_VALUE_FOR_PARAMETER!><!ARGUMENT_PASSED_TWICE!>name<!> = null
+        )<!>
     }
 
     fun test() {

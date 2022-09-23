@@ -4,7 +4,7 @@
 expect class Ok(x: Int, y: String = "")
 
 fun test() {
-    Ok(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    Ok<!NO_VALUE_FOR_PARAMETER!>()<!>
     Ok(42)
     Ok(42, "OK")
 }
@@ -15,7 +15,7 @@ fun test() {
 actual class Ok actual constructor(x: Int, y: String)
 
 fun testJvm() {
-    Ok(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    Ok<!NO_VALUE_FOR_PARAMETER!>()<!>
     Ok(42)
     Ok(42, "OK")
 }
