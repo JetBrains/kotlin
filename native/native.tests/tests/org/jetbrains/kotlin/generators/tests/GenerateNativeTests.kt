@@ -60,18 +60,17 @@ fun main() {
         // CInterop tests.
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeInteropIndexerFModulesTest>(
-                suiteTestClassName = "InteropIndexerTestFModulesGenerated"
+                suiteTestClassName = "InteropIndexerFModulesTestGenerated"
             ) {
                 model("Interop/Indexer/simple/simpleDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("Interop/Indexer/framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("Interop/Indexer/twoFrameworks/twoFrameworksDefs", pattern = "^([^_](.+))$", recursive = false)
             }
             testClass<AbstractNativeInteropIndexerNoFModulesTest>(
-                suiteTestClassName = "InteropIndexerNoFmodulesTestGenerated"
+                suiteTestClassName = "InteropIndexerNoFModulesTestGenerated"
             ) {
                 model("Interop/Indexer/simple/simpleDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("Interop/Indexer/framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
-                model("Interop/Indexer/twoFrameworks/twoFrameworksDefs", pattern = "^([^_](.+))$", recursive = false)
             }
         }
     }

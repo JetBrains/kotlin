@@ -3,7 +3,7 @@
 set -e
 TESTPATH=$1
 WORK_DIR=$2
-FMODULES_ARG=$3
+FMODULES_ARG="$3 $4"
 
 TESTDATA=$TESTPATH/../..
 KLIB=klib.klib
