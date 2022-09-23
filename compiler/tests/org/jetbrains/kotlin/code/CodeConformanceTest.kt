@@ -308,23 +308,30 @@ class CodeConformanceTest : TestCase() {
             RepoAllowList(
                 // Please use cache-redirector for importing in tests
                 "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root,
-                setOf("gradle/cacheRedirector.gradle.kts")
+                setOf("repo/scripts/cache-redirector.settings.gradle.kts")
             ),
             RepoAllowList(
                 "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root,
-                setOf("gradle/cacheRedirector.gradle.kts")
+                setOf("repo/scripts/cache-redirector.settings.gradle.kts")
             ),
             RepoAllowList(
                 // Please use cache-redirector for importing in tests
                 "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/eap", root,
-                setOf("gradle/cacheRedirector.gradle.kts")
+                setOf("repo/scripts/cache-redirector.settings.gradle.kts")
             ),
             RepoAllowList(
                 "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root,
-                setOf("gradle/cacheRedirector.gradle.kts")
+                setOf("repo/scripts/cache-redirector.settings.gradle.kts")
             ),
-            RepoAllowList("kotlin/ktor", root, setOf("gradle/cacheRedirector.gradle.kts")),
-            RepoAllowList("bintray.com", root, setOf("gradle/cacheRedirector.gradle.kts"), exclude = "jcenter.bintray.com")
+            RepoAllowList(
+                "kotlin/ktor", root,
+                setOf("repo/scripts/cache-redirector.settings.gradle.kts")
+            ),
+            RepoAllowList(
+                "bintray.com", root,
+                setOf("repo/scripts/cache-redirector.settings.gradle.kts"),
+                exclude = "jcenter.bintray.com"
+            )
         )
 
         data class RepoOccurance(val repo: String, val file: File)

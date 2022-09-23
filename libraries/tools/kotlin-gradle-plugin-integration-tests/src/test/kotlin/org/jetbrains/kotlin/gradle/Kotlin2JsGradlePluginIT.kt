@@ -406,11 +406,12 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
             }
             libBuildscript.appendText(
                 """
-                kotlin.js().browser {
-                    dceTask {
-                        dceOptions.devMode = true
-                    }
-                }
+                |
+                |kotlin.js().browser {
+                |    dceTask {
+                |        dceOptions.devMode = true
+                |    }
+                |}
                 """.trimMargin()
             )
 

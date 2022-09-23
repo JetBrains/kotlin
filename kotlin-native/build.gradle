@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-import kotlin.text.Regex
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.CopySamples
 import org.jetbrains.kotlin.CopyCommonSources
 import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.KotlinBuildPusher
-import org.jetbrains.kotlin.CollisionDetector
-import org.jetbrains.kotlin.CollisionTransformer
 import org.jetbrains.kotlin.cpp.CompilationDatabasePlugin
 import org.jetbrains.kotlin.CompareDistributionSignatures
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
@@ -34,14 +31,8 @@ buildscript {
     apply from: "gradle/kotlinGradlePlugin.gradle"
 
     repositories {
-        if (UtilsKt.getCacheRedirectorEnabled(project)) {
-            maven { url "https://cache-redirector.jetbrains.com/maven-central" }
-            maven { url "https://cache-redirector.jetbrains.com/jcenter" }
-        }
-        else {
-            mavenCentral()
-            jcenter()
-        }
+        mavenCentral()
+        jcenter()
         gradlePluginPortal()
     }
 
@@ -101,10 +92,7 @@ ext {
 allprojects {
     buildscript {
         repositories {
-            if (UtilsKt.getCacheRedirectorEnabled(project))
-                maven { url 'https://cache-redirector.jetbrains.com/jcenter' }
-            else
-                jcenter()
+            jcenter()
         }
     }
     if (path != ":kotlin-native:dependencies") {
@@ -112,10 +100,7 @@ allprojects {
     }
 
     repositories {
-        if (UtilsKt.getCacheRedirectorEnabled(project))
-            maven { url 'https://cache-redirector.jetbrains.com/maven-central' }
-        else
-            mavenCentral()
+        mavenCentral()
         maven {
             url project.bootstrapKotlinRepo
         }
