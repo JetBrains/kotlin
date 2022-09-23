@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.utils.SmartSet
 import java.util.*
 
@@ -154,7 +153,7 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
         val substitutor = buildSubstitutorForOverridesCheck(aFir, bFir, session) ?: return false
         // NB: these lines throw CCE in modularized tests when changed to just .coneType (FirImplicitTypeRef)
         val aReturnType = returnTypeCalculator.tryCalculateReturnTypeOrNull(a.fir)?.type?.let(substitutor::substituteOrSelf) ?: return false
-        val bReturnType = returnTypeCalculator.tryCalculateReturnTypeOrNull(b.fir)?.type ?: return false
+        val bReturnType = returnTypeCalculator.tryCalculateReturnTypeOrNull(b.fir)?.type?.let(substitutor::substituteOrSelf) ?: return false
 
         val typeCheckerState = session.typeContext.newTypeCheckerState(
             errorTypesEqualToAnything = false,
@@ -163,7 +162,7 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
 
         if (aFir is FirSimpleFunction) {
             require(bFir is FirSimpleFunction) { "b is " + b.javaClass }
-            return isTypeMoreSpecific(aReturnType, bReturnType, typeCheckerState)
+            return AbstractTypeChecker.isSubtypeOf(typeCheckerState, aReturnType, bReturnType)
         }
         if (aFir is FirProperty) {
             require(bFir is FirProperty) { "b is " + b.javaClass }
@@ -173,14 +172,11 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
             return if (aFir.isVar && bFir.isVar) {
                 AbstractTypeChecker.equalTypes(typeCheckerState, aReturnType, bReturnType)
             } else { // both vals or var vs val: val can't be more specific then var
-                !(!aFir.isVar && bFir.isVar) && isTypeMoreSpecific(aReturnType, bReturnType, typeCheckerState)
+                !(!aFir.isVar && bFir.isVar) && AbstractTypeChecker.isSubtypeOf(typeCheckerState, aReturnType, bReturnType)
             }
         }
         throw IllegalArgumentException("Unexpected callable: " + a.javaClass)
     }
-
-    private fun isTypeMoreSpecific(a: ConeKotlinType, b: ConeKotlinType, typeCheckerState: TypeCheckerState): Boolean =
-        AbstractTypeChecker.isSubtypeOf(typeCheckerState, a, b)
 
     private fun isAccessorMoreSpecific(a: FirPropertyAccessor?, b: FirPropertyAccessor?): Boolean {
         if (a == null || b == null) return true
