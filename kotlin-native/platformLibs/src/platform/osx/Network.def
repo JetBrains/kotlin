@@ -1,4 +1,4 @@
-depends = CoreFoundation Security darwin posix
+depends = CoreFoundation CoreFoundationBase Security darwin posix
 language = Objective-C
 package = platform.Network
 modules = Network

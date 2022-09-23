@@ -1,4 +1,4 @@
-depends = CFNetwork CoreFoundation DiskArbitration IOKit Security darwin libkern osx posix
+depends = CFNetwork CoreFoundation CoreFoundationBase DiskArbitration IOKit Security darwin libkern osx posix
 language = Objective-C
 package = platform.CoreServices
 modules = CoreServices

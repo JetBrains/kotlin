@@ -1,4 +1,4 @@
-depends = CoreFoundation IOKit darwin libkern posix
+depends = CoreFoundation CoreFoundationBase IOKit darwin libkern posix
 language = Objective-C
 package = platform.ForceFeedback
 modules = ForceFeedback
