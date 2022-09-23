@@ -1,0 +1,8 @@
+package pod1 {
+package pod1 {
+    var pod1VersionNumber: Double
+    val pod1VersionString: CArrayPointer<UByteVar /* = UByteVarOf<UByte> */> /* = CPointer<UByteVar /* = UByteVarOf<UByte> */> */
+package pod2 {
+package pod2 {
+    var pod2VersionNumber: Double
+    val pod2VersionString: CArrayPointer<UByteVar /* = UByteVarOf<UByte> */> /* = CPointer<UByteVar /* = UByteVarOf<UByte> */> */

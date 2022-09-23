@@ -100,6 +100,12 @@ internal sealed interface TestRunParameter {
     class WithExpectedOutputData(val expectedOutputDataFile: File) : TestRunParameter {
         override fun applyTo(programArgs: MutableList<String>) = Unit
     }
+
+    class WithFreeCommandLineArguments(val args: List<String>) : TestRunParameter {
+        override fun applyTo(programArgs: MutableList<String>) {
+            programArgs += args
+        }
+    }
 }
 
 internal inline fun <reified T : TestRunParameter> List<TestRunParameter>.has(): Boolean =
