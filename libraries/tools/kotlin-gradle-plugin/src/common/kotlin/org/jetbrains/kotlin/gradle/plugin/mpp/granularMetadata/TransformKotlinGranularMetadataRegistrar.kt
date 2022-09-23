@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
-import org.jetbrains.kotlin.gradle.targets.metadata.isSharedNativeSourceSet
+import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -124,7 +124,7 @@ private constructor(
         val platformVariantsDependenciesConfigurations = platformMainCompilations
             .map { project.configurations.getByName(it.compileDependencyConfigurationName) }
         val hostSpecificVariantsDependenciesConfigurations =
-            if (isSharedNativeSourceSet(kotlinSourceSet)) hostSpecificDependencies(platformMainCompilations) else null
+            if (isNativeSourceSet(kotlinSourceSet)) hostSpecificDependencies(platformMainCompilations) else null
 
         val settings = TransformKotlinGranularMetadata.Settings(
             sourceSetName = kotlinSourceSet.name,
