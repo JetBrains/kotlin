@@ -191,5 +191,11 @@ public class SerializationFirDiagnosticTestGenerated extends AbstractSerializati
         public void testSerializableObject() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/firMembers/serializableObject.kt");
         }
+
+        @Test
+        @TestMetadata("serializableWith.kt")
+        public void testSerializableWith() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/firMembers/serializableWith.kt");
+        }
     }
 }
