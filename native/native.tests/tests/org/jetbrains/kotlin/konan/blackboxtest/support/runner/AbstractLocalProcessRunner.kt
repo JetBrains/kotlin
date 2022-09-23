@@ -115,7 +115,7 @@ internal abstract class AbstractLocalProcessRunner<R>(private val checks: TestRu
     }
 }
 
-internal class UnfilteredProcessOutput {
+private class UnfilteredProcessOutput {
     private val stdOut = ByteArrayOutputStream()
     private val stdErr = ByteArrayOutputStream()
 
