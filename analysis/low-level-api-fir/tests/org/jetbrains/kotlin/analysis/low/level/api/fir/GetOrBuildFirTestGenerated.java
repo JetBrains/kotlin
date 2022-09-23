@@ -134,6 +134,12 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         }
 
         @Test
+        @TestMetadata("compoundAssignWithArrayAccessConvention_propertyAccess.kt")
+        public void testCompoundAssignWithArrayAccessConvention_propertyAccess() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/compoundAssignWithArrayAccessConvention_propertyAccess.kt");
+        }
+
+        @Test
         @TestMetadata("compoundAssignWithArrayGetConvention.kt")
         public void testCompoundAssignWithArrayGetConvention() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/compoundAssignWithArrayGetConvention.kt");
@@ -161,6 +167,24 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         @TestMetadata("functionCallArgumentList.kt")
         public void testFunctionCallArgumentList() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/functionCallArgumentList.kt");
+        }
+
+        @Test
+        @TestMetadata("incWithArrayAccessConvention.kt")
+        public void testIncWithArrayAccessConvention() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/incWithArrayAccessConvention.kt");
+        }
+
+        @Test
+        @TestMetadata("incWithArrayAccessConvention_propertyAccess.kt")
+        public void testIncWithArrayAccessConvention_propertyAccess() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/incWithArrayAccessConvention_propertyAccess.kt");
+        }
+
+        @Test
+        @TestMetadata("incWithArrayAccessConvention_set.kt")
+        public void testIncWithArrayAccessConvention_set() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/incWithArrayAccessConvention_set.kt");
         }
 
         @Test
