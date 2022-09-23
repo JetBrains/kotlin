@@ -60,6 +60,16 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/classFunctionsAndFields/");
     }
 
+    @TestMetadata("companionInlineFunction")
+    public void testCompanionInlineFunction() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/companionInlineFunction/");
+    }
+
+    @TestMetadata("companionWithStdLibCall")
+    public void testCompanionWithStdLibCall() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/companionWithStdLibCall/");
+    }
+
     @TestMetadata("constVals")
     public void testConstVals() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/constVals/");
@@ -203,6 +213,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
     @TestMetadata("moveInlineFunctionBetweenModules")
     public void testMoveInlineFunctionBetweenModules() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/moveInlineFunctionBetweenModules/");
+    }
+
+    @TestMetadata("nestedClass")
+    public void testNestedClass() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/nestedClass/");
     }
 
     @TestMetadata("nonInlineBecomeInline")
