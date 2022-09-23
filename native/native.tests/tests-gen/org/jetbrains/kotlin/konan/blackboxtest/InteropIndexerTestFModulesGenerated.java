@@ -114,4 +114,20 @@ public class InteropIndexerTestFModulesGenerated extends AbstractNativeInteropIn
             runTest("native/native.tests/testData/Interop/Indexer/framework/frameworkDefs/full/");
         }
     }
+
+    @Nested
+    @TestMetadata("native/native.tests/testData/Interop/Indexer/twoFrameworks/twoFrameworksDefs")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TwoFrameworksDefs {
+        @Test
+        public void testAllFilesPresentInTwoFrameworksDefs() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/Interop/Indexer/twoFrameworks/twoFrameworksDefs"), Pattern.compile("^([^_](.+))$"), null, false);
+        }
+
+        @Test
+        @TestMetadata("KT-39120")
+        public void testKT_39120() throws Exception {
+            runTest("native/native.tests/testData/Interop/Indexer/twoFrameworks/twoFrameworksDefs/KT-39120/");
+        }
+    }
 }
