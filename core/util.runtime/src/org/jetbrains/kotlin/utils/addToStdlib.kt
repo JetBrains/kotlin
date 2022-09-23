@@ -300,3 +300,23 @@ fun <T : Enum<T>> enumSetOf(element: T, vararg elements: T): EnumSet<T> = EnumSe
 fun shouldNotBeCalled(message: String = "should not be called"): Nothing {
     error(message)
 }
+
+private inline fun <T, R> Iterable<T>.zipWithDefault(other: Iterable<R>, leftDefault: () -> T, rightDefault: () -> R): List<Pair<T, R>> {
+    val leftIterator = this.iterator()
+    val rightIterator = other.iterator()
+    return buildList {
+        while (leftIterator.hasNext() && rightIterator.hasNext()) {
+            add(leftIterator.next() to rightIterator.next())
+        }
+        while (leftIterator.hasNext()) {
+            add(leftIterator.next() to rightDefault())
+        }
+        while (rightIterator.hasNext()) {
+            add(leftDefault() to rightIterator.next())
+        }
+    }
+}
+
+fun <T, R> Iterable<T>.zipWithNulls(other: Iterable<R>): List<Pair<T?, R?>> {
+    return zipWithDefault(other, { null }, { null })
+}

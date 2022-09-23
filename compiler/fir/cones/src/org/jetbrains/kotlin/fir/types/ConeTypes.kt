@@ -43,13 +43,11 @@ class ConeClassLikeErrorLookupTag(override val classId: ClassId) : ConeClassLike
 class ConeErrorType(
     val diagnostic: ConeDiagnostic,
     val isUninferredParameter: Boolean = false,
+    override val typeArguments: Array<out ConeTypeProjection> = EMPTY_ARRAY,
     override val attributes: ConeAttributes = ConeAttributes.Empty
 ) : ConeClassLikeType() {
     override val lookupTag: ConeClassLikeLookupTag
         get() = ConeClassLikeErrorLookupTag(ClassId.fromString("<error>"))
-
-    override val typeArguments: Array<out ConeTypeProjection>
-        get() = EMPTY_ARRAY
 
     override val nullability: ConeNullability
         get() = ConeNullability.UNKNOWN

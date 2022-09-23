@@ -79,6 +79,8 @@ object StandardNames {
     @JvmField
     val KOTLIN_INTERNAL_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal"))
 
+    val NON_EXISTENT_CLASS = FqName("error.NonExistentClass")
+
     @JvmField
     val BUILT_INS_PACKAGE_FQ_NAMES = setOf(
         BUILT_INS_PACKAGE_FQ_NAME,
