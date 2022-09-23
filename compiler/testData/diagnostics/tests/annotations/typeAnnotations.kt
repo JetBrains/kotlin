@@ -17,8 +17,8 @@ val <T> @x List<@x T>.f: Int get() = 42
 @Target(AnnotationTarget.TYPE)
 annotation class TypeAnnWithArg(val arg: String)
 
-fun badArgs(a: List<@TypeAnnWithArg(<!NAMED_PARAMETER_NOT_FOUND!>unresolved<!> = ""<!NO_VALUE_FOR_PARAMETER!>)<!> Int>) {}
-fun badArgsWithProjection(a: Array<out @TypeAnnWithArg(<!NAMED_PARAMETER_NOT_FOUND!>unresolved<!> = ""<!NO_VALUE_FOR_PARAMETER!>)<!> Int>) {}
+fun badArgs(a: List<@TypeAnnWithArg(<!NO_VALUE_FOR_PARAMETER!><!NAMED_PARAMETER_NOT_FOUND!>unresolved<!> = "")<!> Int>) {}
+fun badArgsWithProjection(a: Array<out @TypeAnnWithArg(<!NO_VALUE_FOR_PARAMETER!><!NAMED_PARAMETER_NOT_FOUND!>unresolved<!> = "")<!> Int>) {}
 
 typealias BadArgsInTypeAlias = List<@<!NO_VALUE_FOR_PARAMETER!>TypeAnnWithArg<!> Int>
 fun badArgsInTypeAlias(a: BadArgsInTypeAlias) {}

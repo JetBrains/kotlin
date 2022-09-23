@@ -119,8 +119,8 @@ fun main() {
      * K <: (A) -> Unit -> TypeVariable(_RP1) >: A
      * K >: (C) -> TypeVariable(_R) -> TypeVariable(_RP1) <: C
      */
-    val x12 = selectC(id { <!DEBUG_INFO_EXPRESSION_TYPE("C")!>it<!> }, id { x: B -> }<!NO_VALUE_FOR_PARAMETER!>)<!>
-    val x13 = selectA(id { <!DEBUG_INFO_EXPRESSION_TYPE("A")!>it<!> }, id { x: C -> }<!NO_VALUE_FOR_PARAMETER!>)<!>
+    val x12 = selectC(id { <!DEBUG_INFO_EXPRESSION_TYPE("C")!>it<!> }, <!NO_VALUE_FOR_PARAMETER!>id { x: B -> })<!>
+    val x13 = selectA(id { <!DEBUG_INFO_EXPRESSION_TYPE("A")!>it<!> }, <!NO_VALUE_FOR_PARAMETER!>id { x: C -> })<!>
     val x14 = selectC(id { <!DEBUG_INFO_EXPRESSION_TYPE("C")!>it<!> }, id { x: A -> }, { x -> x })
     val x15 = selectC(id { <!DEBUG_INFO_EXPRESSION_TYPE("C")!>it<!> }, { x: A -> }, id { x -> x })
     /*
