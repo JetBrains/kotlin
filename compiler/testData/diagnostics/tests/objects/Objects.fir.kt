@@ -5,13 +5,13 @@ package toplevelObjectDeclarations
     open fun foo() : Int = 1
   }
 
-  <!NO_VALUE_FOR_PARAMETER!>class T : <!SUPERTYPE_NOT_INITIALIZED!>Foo<!> {}<!>
+  class T : <!NO_VALUE_FOR_PARAMETER, SUPERTYPE_NOT_INITIALIZED!>Foo<!> {}
 
-  <!NO_VALUE_FOR_PARAMETER{LT}!>object A : <!SUPERTYPE_NOT_INITIALIZED!>Foo<!> {
+  <!NO_VALUE_FOR_PARAMETER{LT}!>object A : <!NO_VALUE_FOR_PARAMETER{PSI}, SUPERTYPE_NOT_INITIALIZED!>Foo<!> {
     val x : Int = 2
 
     fun test() : Int {
-      return x + foo(<!NO_VALUE_FOR_PARAMETER{PSI}!>)<!>
+      return x + foo()
     }
   }<!>
 

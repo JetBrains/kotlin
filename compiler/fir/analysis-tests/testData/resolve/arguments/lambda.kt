@@ -21,7 +21,7 @@ fun test() {
 
     // Bad
     <!NO_VALUE_FOR_PARAMETER!>bar {}<!>
-    bar({}<!NO_VALUE_FOR_PARAMETER!>)<!>
+    bar(<!NO_VALUE_FOR_PARAMETER!>{})<!>
 
     // OK
     baz(other = false, f = {})
@@ -29,6 +29,6 @@ fun test() {
 
     // Bad
     <!NO_VALUE_FOR_PARAMETER!>baz {}<!>
-    baz(<!NO_VALUE_FOR_PARAMETER!>)<!> {}
-    baz(other = false<!NO_VALUE_FOR_PARAMETER!>)<!> <!TOO_MANY_ARGUMENTS!>{}<!>
+    <!NO_VALUE_FOR_PARAMETER!>baz()<!> {}
+    baz(<!NO_VALUE_FOR_PARAMETER!>other = false)<!> <!TOO_MANY_ARGUMENTS!>{}<!>
 }

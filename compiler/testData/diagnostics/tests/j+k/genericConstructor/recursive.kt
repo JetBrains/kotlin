@@ -9,4 +9,4 @@ public class C {
 
 // FILE: main.kt
 
-fun foo() = C(<!NO_VALUE_FOR_PARAMETER!>)<!>
+fun foo() = <!NO_VALUE_FOR_PARAMETER!>C()<!>

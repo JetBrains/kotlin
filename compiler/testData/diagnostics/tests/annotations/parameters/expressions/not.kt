@@ -8,6 +8,6 @@ annotation class Ann(
         val b3: Boolean
 )
 
-@Ann(!true, !false<!NO_VALUE_FOR_PARAMETER!>)<!> class MyClass
+@Ann(!true, <!NO_VALUE_FOR_PARAMETER!>!false)<!> class MyClass
 
 // EXPECTED: @Ann(b1 = false, b2 = true)
