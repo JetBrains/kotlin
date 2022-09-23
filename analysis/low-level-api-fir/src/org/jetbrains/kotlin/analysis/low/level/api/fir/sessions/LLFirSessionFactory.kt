@@ -98,6 +98,7 @@ internal object LLFirSessionFactory {
                 components,
                 project.createDeclarationProvider(contentScope),
                 project.createPackageProvider(contentScope),
+                cabContainKotlinPackage = true,
             )
 
             register(FirProvider::class, provider)
@@ -202,6 +203,7 @@ internal object LLFirSessionFactory {
                 components,
                 project.createDeclarationProvider(contentScope),
                 project.createPackageProvider(contentScope),
+                cabContainKotlinPackage = true,
             )
 
             register(FirProvider::class, provider)
