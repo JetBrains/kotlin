@@ -207,9 +207,9 @@ private constructor(
     }
 
     companion object {
-        private val instances = ConcurrentHashMap<Project, TransformKotlinGranularMetadataRegistrar>()
+        private val propertyKey = TransformKotlinGranularMetadataRegistrar::class.java.name
         fun create(project: Project): TransformKotlinGranularMetadataRegistrar {
-            return instances.getOrPut(project) { TransformKotlinGranularMetadataRegistrar(project) }
+            return project.extensions.extraProperties.getOrPut(propertyKey) { TransformKotlinGranularMetadataRegistrar(project) }
         }
     }
 }
