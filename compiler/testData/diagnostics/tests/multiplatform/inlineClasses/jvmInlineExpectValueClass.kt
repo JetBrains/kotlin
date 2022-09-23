@@ -1,5 +1,7 @@
 // FIR_IDENTICAL
 // SKIP_TXT
+// ALLOW_KOTLIN_PACKAGE
+
 // MODULE: m1-common
 // FILE: common.kt
 
