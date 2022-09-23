@@ -2,15 +2,15 @@
 
 fun foo(p: (Int, () -> Int) -> Unit) {
     // Errors except last call
-    <!NO_VALUE_FOR_PARAMETER!>p { 1 }<!>
-    p(<!NO_VALUE_FOR_PARAMETER!>)<!> { 2 }
+    <!NO_VALUE_FOR_PARAMETER!>p<!> { 1 }
+    <!NO_VALUE_FOR_PARAMETER!>p()<!> { 2 }
     p(3) { 4 }
 }
 
 fun bar(p: (String, Any, () -> String) -> Unit) {
     // Errors except last call
-    <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>p { "" }<!>
-    p(<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>)<!> { "x" }
-    p("y"<!NO_VALUE_FOR_PARAMETER!>)<!> { "z" }
+    <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>p<!> { "" }
+    <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>p()<!> { "x" }
+    p(<!NO_VALUE_FOR_PARAMETER!>"y")<!> { "z" }
     p("v", Any()) { "w" }
 }

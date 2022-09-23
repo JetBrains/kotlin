@@ -13,7 +13,7 @@ open class C2(val x: Int) {
 typealias C2_Alias = C2
 
 val test1 = C1_Alias()
-val test2 = C2_Alias(<!NO_VALUE_FOR_PARAMETER!>)<!>
+val test2 = <!NO_VALUE_FOR_PARAMETER!>C2_Alias()<!>
 
 class Test3 : C1_Alias()
 
