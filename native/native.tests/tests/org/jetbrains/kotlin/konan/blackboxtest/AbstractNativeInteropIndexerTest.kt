@@ -60,9 +60,8 @@ abstract class AbstractNativeInteropIndexerTest : AbstractNativeSimpleTest() {
                 TestRunParameter.WithFreeCommandLineArguments(
                     listOf(
                         testPathFull.canonicalPath,
-                        tempDir.canonicalPath,
-                        if (fmodules) "-compiler-option -fmodules" else ""
-                    )
+                        tempDir.canonicalPath
+                    ) + if (fmodules) listOf("-compiler-option", "-fmodules") else listOf()
                 )
             ),
             checks = TestRunChecks(
