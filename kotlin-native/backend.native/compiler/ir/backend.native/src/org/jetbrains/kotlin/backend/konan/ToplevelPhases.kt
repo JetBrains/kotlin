@@ -67,7 +67,7 @@ internal fun fileValidationCallback(state: ActionState, irFile: IrFile, context:
 internal fun konanUnitPhase(
         name: String,
         description: String,
-        prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
+        prerequisite: Set<SameTypeNamedCompilerPhase<Context, *>> = emptySet(),
         op: Context.() -> Unit
 ) = namedOpUnitPhase(name, description, prerequisite, op)
 
@@ -227,7 +227,7 @@ internal val finalizeCachePhase = konanUnitPhase(
         description = "Finalize cache (rename temp to the final dist)"
 )
 
-internal val allLoweringsPhase = NamedCompilerPhase(
+internal val allLoweringsPhase = SameTypeNamedCompilerPhase(
         name = "IrLowering",
         description = "IR Lowering",
         // TODO: The lowerings before inlinePhase should be aligned with [NativeInlineFunctionResolver.kt]
@@ -290,7 +290,7 @@ internal val allLoweringsPhase = NamedCompilerPhase(
         actions = setOf(defaultDumper, ::moduleValidationCallback)
 )
 
-internal val dependenciesLowerPhase = NamedCompilerPhase(
+internal val dependenciesLowerPhase = SameTypeNamedCompilerPhase(
         name = "LowerLibIR",
         description = "Lower library's IR",
         prerequisite = emptySet(),
@@ -328,7 +328,7 @@ internal val dependenciesLowerPhase = NamedCompilerPhase(
             }
         })
 
-internal val umbrellaCompilation = NamedCompilerPhase(
+internal val umbrellaCompilation = SameTypeNamedCompilerPhase(
         name = "UmbrellaCompilation",
         description = "A batched compilation with shared FE and ME phases",
         prerequisite = emptySet(),
@@ -404,7 +404,7 @@ internal val entryPointPhase = makeCustomPhase<Context, IrModuleFragment>(
         }
 )
 
-internal val bitcodePhase = NamedCompilerPhase(
+internal val bitcodePhase = SameTypeNamedCompilerPhase(
         name = "Bitcode",
         description = "LLVM Bitcode generation",
         lower = returnsInsertionPhase then
@@ -429,7 +429,7 @@ internal val bitcodePhase = NamedCompilerPhase(
                 cStubsPhase
 )
 
-private val bitcodePostprocessingPhase = NamedCompilerPhase(
+private val bitcodePostprocessingPhase = SameTypeNamedCompilerPhase(
         name = "BitcodePostprocessing",
         description = "Optimize and rewrite bitcode",
         lower = checkExternalCallsPhase then
@@ -440,7 +440,7 @@ private val bitcodePostprocessingPhase = NamedCompilerPhase(
                 rewriteExternalCallsCheckerGlobals
 )
 
-private val backendCodegen = NamedCompilerPhase(
+private val backendCodegen = SameTypeNamedCompilerPhase(
         name = "Backend codegen",
         description = "Backend code generation",
         lower = entryPointPhase then
@@ -475,7 +475,7 @@ internal val disposeGenerationStatePhase = namedUnitPhase(
         }
 )
 
-private val entireBackend = NamedCompilerPhase(
+private val entireBackend = SameTypeNamedCompilerPhase(
         name = "EntireBackend",
         description = "Entire backend",
         lower = createGenerationStatePhase then
@@ -492,7 +492,7 @@ private val entireBackend = NamedCompilerPhase(
                 disposeGenerationStatePhase
 )
 
-private val middleEnd = NamedCompilerPhase(
+private val middleEnd = SameTypeNamedCompilerPhase(
         name = "MiddleEnd",
         description = "Build and prepare IR for back end",
         lower = createSymbolTablePhase then
@@ -506,7 +506,7 @@ private val middleEnd = NamedCompilerPhase(
                 functionsWithoutBoundCheck
 )
 
-private val singleCompilation = NamedCompilerPhase(
+private val singleCompilation = SameTypeNamedCompilerPhase(
         name = "SingleCompilation",
         description = "Single compilation",
         lower = entireBackend
