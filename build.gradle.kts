@@ -10,14 +10,8 @@ buildscript {
     repositories {
         bootstrapKotlinRepo?.let(::maven)
 
-        if (cacheRedirectorEnabled) {
-            maven("https://cache-redirector.jetbrains.com/plugins.gradle.org/m2")
-            maven("https://cache-redirector.jetbrains.com/repo.maven.apache.org/maven2")
-
-        } else {
-            maven("https://plugins.gradle.org/m2")
-            mavenCentral()
-        }
+        mavenCentral()
+        gradlePluginPortal()
     }
 
     // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes

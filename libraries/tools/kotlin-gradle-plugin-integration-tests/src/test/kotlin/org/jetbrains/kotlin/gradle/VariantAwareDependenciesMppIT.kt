@@ -409,16 +409,6 @@ internal fun BaseGradleIT.Project.embedProject(other: BaseGradleIT.Project, rena
     } finally {
         check(tempDir.deleteRecursively())
     }
-    if (projectName == other.projectName) {
-        val embeddedModuleDir = projectDir.resolve(embeddedModuleName)
-        embeddedModuleDir.walk().forEach {
-            if (it.name.contains("build.gradle")) {
-                it.modify { string ->
-                    string.lines().dropLast(5).joinToString(separator = "\n")
-                }
-            }
-        }
-    }
     testCase.apply {
         gradleSettingsScript().appendText("\ninclude(\"$embeddedModuleName\")")
 

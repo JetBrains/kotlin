@@ -4,10 +4,7 @@ project.buildscript.repositories {
     maven {
         url BootstrapKt.getBootstrapKotlinRepo(project)
     }
-    if (UtilsKt.getCacheRedirectorEnabled(project))
-        maven { url 'https://cache-redirector.jetbrains.com/maven-central' }
-    else
-        mavenCentral()
+    mavenCentral()
 }
 def kotlinRoot = ext.properties.containsKey("rootBuildDirectory") ? file("${ext.rootBuildDirectory}/..") : rootProject.projectDir
 File versionPropertiesFile = new File(kotlinRoot, "gradle/versions.properties")

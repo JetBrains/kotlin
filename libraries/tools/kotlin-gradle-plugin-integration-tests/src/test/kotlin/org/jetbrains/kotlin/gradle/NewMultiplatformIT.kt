@@ -228,9 +228,6 @@ class NewMultiplatformIT : BaseGradleIT() {
             gradleBuildScript(libProjectName).takeIf { it.extension == "kts" }?.modify {
                 it.replace(Regex("""\.version\(.*\)"""), "")
             }
-            gradleBuildScript(subproject = libProject.projectDir.name).modify {
-                it.lines().dropLast(5).joinToString(separator = "\n")
-            }
 
             build(
                 "clean",
@@ -429,9 +426,6 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             gradleBuildScript(libProjectName).takeIf { it.extension == "kts" }?.modify {
                 it.replace(Regex("""\.version\(.*\)"""), "")
-            }
-            gradleBuildScript(subproject = libProject.projectDir.name).modify {
-                it.lines().dropLast(5).joinToString(separator = "\n")
             }
 
             build(
@@ -714,7 +708,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     arrayOf(
                         it + "com/example/lib/TestCommonCode.class",
                         it + "com/example/lib/TestWithJava.class",
-                        it + "META-INF/new-mpp-lib-with-tests.kotlin_module" // Note: same name as in main
+                        it + "META-INF/new-mpp-lib-with-tests_test.kotlin_module"
                     )
                 },
                 *kotlinClassesDir(sourceSet = "jvmWithoutJava/main").let {
@@ -729,7 +723,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     arrayOf(
                         it + "com/example/lib/TestCommonCode.class",
                         it + "com/example/lib/TestWithoutJava.class",
-                        it + "META-INF/new-mpp-lib-with-tests.kotlin_module" // Note: same name as in main
+                        it + "META-INF/new-mpp-lib-with-tests_test.kotlin_module"
                     )
                 }
             )
@@ -1057,9 +1051,6 @@ class NewMultiplatformIT : BaseGradleIT() {
             libProject.setupWorkingDir()
 
             libProject.projectDir.copyRecursively(projectDir.resolve(libProject.projectDir.name))
-            gradleBuildScript(libProject.projectDir.name).modify {
-                it.lines().dropLast(5).joinToString(separator = "\n")
-            }
             projectDir.resolve("settings.gradle").appendText("\ninclude '${libProject.projectDir.name}'")
             gradleBuildScript().modify {
                 it.replace("'com.example:sample-lib:1.0'", "project(':${libProject.projectDir.name}')") +
@@ -1277,9 +1268,6 @@ class NewMultiplatformIT : BaseGradleIT() {
             setupWorkingDir()
             appProject.setupWorkingDir(false)
             appProject.projectDir.copyRecursively(projectDir.resolve("sample-app"))
-            gradleBuildScript("sample-app").modify {
-                it.lines().dropLast(5).joinToString(separator = "\n")
-            }
 
             gradleSettingsScript().writeText("include 'sample-app'") // disables feature preview 'GRADLE_METADATA', resets rootProject name
             gradleBuildScript("sample-app").modify {

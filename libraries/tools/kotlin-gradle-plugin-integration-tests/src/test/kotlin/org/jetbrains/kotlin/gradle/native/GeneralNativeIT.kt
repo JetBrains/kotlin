@@ -1135,6 +1135,10 @@ class GeneralNativeIT : BaseGradleIT() {
                 """.trimIndent()
             )
 
+            gradleProperties().modify {
+                it.replace("cacheRedirectorEnabled=true", "cacheRedirectorEnabled=false")
+            }
+
             build(
                 "build",
                 options = defaultBuildOptions().copy(

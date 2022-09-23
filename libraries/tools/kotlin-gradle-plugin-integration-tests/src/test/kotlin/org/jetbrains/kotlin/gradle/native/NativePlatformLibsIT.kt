@@ -148,13 +148,16 @@ class NativePlatformLibsIT : BaseGradleIT() {
                 appendText("\nkotlin.native.linkArgs=-Xfoo=bar -Xbaz=qux")
             }
             gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
-            gradleBuildScript().appendText("""
-                kotlin.linuxX64() {
-                    binaries.sharedLib {
-                        freeCompilerArgs += "-Xmen=pool"
-                    }
-                }
-            """.trimIndent())
+            gradleBuildScript().appendText(
+                """
+                |
+                |kotlin.linuxX64() {
+                |    binaries.sharedLib {
+                |        freeCompilerArgs += "-Xmen=pool"
+                |    }
+                |}
+                """.trimMargin()
+            )
             build("linkDebugSharedLinuxX64") {
                 assertSuccessful()
                 assertTasksExecuted(

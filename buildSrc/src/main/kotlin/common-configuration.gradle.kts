@@ -28,7 +28,6 @@ dependencies {
     }
 }
 
-apply(from = "$rootDir/gradle/cacheRedirector.gradle.kts")
 project.configureJvmDefaultToolchain()
 project.addEmbeddedConfigurations()
 project.configureJavaCompile()

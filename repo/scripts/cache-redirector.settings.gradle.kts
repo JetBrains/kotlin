@@ -1,17 +1,27 @@
+import java.net.URI
+
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-import org.gradle.api.Project
-import org.gradle.api.artifacts.dsl.RepositoryHandler
-import org.gradle.api.artifacts.repositories.MavenArtifactRepository
-import java.net.URI
+// Apply this settings script in the project settings.gradle following way:
+// pluginManagement {
+//    apply from: 'cache-redirector.settings.gradle.kts'
+// }
+
+internal val Settings.cacheRedirectorEnabled: Provider<Boolean>
+    get() = providers
+        .gradleProperty("cacheRedirectorEnabled")
+        .forUseAtConfigurationTime()
+        .map { it.toBoolean() }
+        .orElse(false)
+
+// Repository override section
 
 /**
  *  The list of repositories supported by cache redirector should be synced with the list at https://cache-redirector.jetbrains.com/redirects_generated.html
  *  To add a repository to the list create an issue in ADM project (example issue https://youtrack.jetbrains.com/issue/IJI-149)
- *  Repositories in `buildscript` blocks are *NOT* substituted by this script and should be handled manually
  */
 val cacheMap: Map<String, String> = mapOf(
     "https://archive.kernel.org/centos-vault/7.0.1406/os/x86_64/Packages" to "https://cache-redirector.jetbrains.com/archive.kernel.org/centos-vault/7.0.1406/os/x86_64/Packages",
@@ -106,18 +116,14 @@ val aliases = mapOf(
     "https://repo.maven.apache.org/maven2" to "https://repo1.maven.org/maven2" // Maven Central
 )
 
-val isTeamcityBuild = project.hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
-
-fun Project.cacheRedirectorEnabled(): Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
-
 fun URI.maybeRedirect(): URI {
     val url = toString().trimEnd('/')
-    val dealiasedUrl = aliases.getOrDefault(url, url)
+    val deAliasedUrl = aliases.getOrDefault(url, url)
 
-    val cacheUrlEntry = cacheMap.entries.find { (origin, _) -> dealiasedUrl.startsWith(origin) }
+    val cacheUrlEntry = cacheMap.entries.find { (origin, _) -> deAliasedUrl.startsWith(origin) }
     return if (cacheUrlEntry != null) {
         val cacheUrl = cacheUrlEntry.value
-        val originRestPath = dealiasedUrl.substringAfter(cacheUrlEntry.key, "")
+        val originRestPath = deAliasedUrl.substringAfter(cacheUrlEntry.key, "")
         URI("$cacheUrl$originRestPath")
     } else {
         this
@@ -133,10 +139,60 @@ fun RepositoryHandler.redirect() = configureEach {
     }
 }
 
+// Native compiler download url override section
+
+fun Project.overrideNativeCompilerDownloadUrl() {
+    logger.info("Redirecting Kotlin/Native compiler download url")
+    extensions.extraProperties["kotlin.native.distribution.baseDownloadUrl"] =
+        "https://cache-redirector.jetbrains.com/download.jetbrains.com/kotlin/native/builds"
+}
+
+// Check repositories are overriden section
+
+fun Project.addCheckRepositoriesTask() {
+    val checkRepoTask = tasks.register("checkRepositories") {
+        val isTeamcityBuildInput = providers.provider {
+            project.hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
+        }.forUseAtConfigurationTime()
+
+        doLast {
+            val testName = "$name in ${project.displayName}"
+            val isTeamcityBuild = isTeamcityBuildInput.get()
+            if (isTeamcityBuild) {
+                testStarted(testName)
+            }
+
+            project.repositories.filterIsInstance<IvyArtifactRepository>().forEach {
+                @Suppress("SENSELESS_COMPARISON") if (it.url == null) {
+                    logInvalidIvyRepo(testName, isTeamcityBuild)
+                }
+            }
+
+            project.repositories.findNonCachedRepositories().forEach {
+                logNonCachedRepo(testName, it, isTeamcityBuild)
+            }
+
+            project.buildscript.repositories.findNonCachedRepositories().forEach {
+                logNonCachedRepo(testName, it, isTeamcityBuild)
+            }
+
+            if (isTeamcityBuild) {
+                testFinished(testName)
+            }
+        }
+    }
+
+    tasks.configureEach {
+        if (name == "checkBuild") {
+            dependsOn(checkRepoTask)
+        }
+    }
+}
+
 fun URI.isCachedOrLocal() = scheme == "file" ||
-            host == "cache-redirector.jetbrains.com" ||
-            host == "teamcity.jetbrains.com" ||
-            host == "buildserver.labs.intellij.net"
+        host == "cache-redirector.jetbrains.com" ||
+        host == "teamcity.jetbrains.com" ||
+        host == "buildserver.labs.intellij.net"
 
 fun RepositoryHandler.findNonCachedRepositories(): List<String> {
     val mavenNonCachedRepos = filterIsInstance<MavenArtifactRepository>()
@@ -151,7 +207,7 @@ fun RepositoryHandler.findNonCachedRepositories(): List<String> {
 }
 
 fun escape(s: String): String {
-    return s.replace("[\\|'\\[\\]]".toRegex(), "\\|$0").replace("\n".toRegex(), "|n").replace("\r".toRegex(), "|r")
+    return s.replace("[|'\\[\\]]".toRegex(), "\\|$0").replace("\n".toRegex(), "|n").replace("\r".toRegex(), "|r")
 }
 
 fun testStarted(testName: String) {
@@ -166,7 +222,11 @@ fun testFailed(name: String, message: String, details: String) {
     println("##teamcity[testFailed name='%s' message='%s' details='%s']".format(escape(name), escape(message), escape(details)))
 }
 
-fun Task.logNonCachedRepo(testName: String, repoUrl: String) {
+fun Task.logNonCachedRepo(
+    testName: String,
+    repoUrl: String,
+    isTeamcityBuild: Boolean
+) {
     val msg = "Repository $repoUrl in ${project.displayName} should be cached with cache-redirector"
     val details = "Using non cached repository may lead to download failures in CI builds." +
             " Check https://github.com/JetBrains/kotlin/blob/master/gradle/cacheRedirector.gradle.kts for details."
@@ -178,7 +238,10 @@ fun Task.logNonCachedRepo(testName: String, repoUrl: String) {
     logger.warn("WARNING - $msg\n$details")
 }
 
-fun Task.logInvalidIvyRepo(testName: String) {
+fun Task.logInvalidIvyRepo(
+    testName: String,
+    isTeamcityBuild: Boolean
+) {
     val msg = "Invalid ivy repo found in ${project.displayName}"
     val details = "Url must be not null"
 
@@ -189,49 +252,18 @@ fun Task.logInvalidIvyRepo(testName: String) {
     logger.warn("WARNING - $msg: $details")
 }
 
-val checkRepositories: TaskProvider<Task> = tasks.register("checkRepositories") {
-    doLast {
-        val testName = "$name in ${project.displayName}"
-        if (isTeamcityBuild) {
-            testStarted(testName)
-        }
+// Main configuration
 
-        project.repositories.filterIsInstance<IvyArtifactRepository>().forEach {
-            @Suppress("SENSELESS_COMPARISON") if (it.url == null) {
-                logInvalidIvyRepo(testName)
-            }
-        }
+if (cacheRedirectorEnabled.get()) {
+    logger.info("Redirecting repositories for settings in ${settingsDir.absolutePath}")
 
-        project.repositories.findNonCachedRepositories().forEach {
-            logNonCachedRepo(testName, it)
-        }
+    pluginManagement.repositories.redirect()
+    buildscript.repositories.redirect()
 
-        project.buildscript.repositories.findNonCachedRepositories().forEach {
-            logNonCachedRepo(testName, it)
-        }
-
-        if (isTeamcityBuild) {
-            testFinished(testName)
-        }
+    gradle.beforeProject {
+        buildscript.repositories.redirect()
+        repositories.redirect()
+        overrideNativeCompilerDownloadUrl()
+        addCheckRepositoriesTask()
     }
-}
-
-fun Project.overrideNativeCompilerDownloadUrl() {
-    logger.info("Redirecting Kotlin/Native compiler download url")
-    extensions.extraProperties["kotlin.native.distribution.baseDownloadUrl"] =
-        "https://cache-redirector.jetbrains.com/download.jetbrains.com/kotlin/native/builds"
-}
-
-tasks
-    .matching {
-        it.name == "checkBuild"
-    }
-    .configureEach {
-        dependsOn(checkRepositories)
-    }
-
-if (cacheRedirectorEnabled()) {
-    logger.info("Redirecting repositories for $displayName")
-    repositories.redirect()
-    overrideNativeCompilerDownloadUrl()
 }
