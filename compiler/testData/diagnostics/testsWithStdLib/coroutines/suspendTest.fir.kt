@@ -1,3 +1,4 @@
+// ALLOW_KOTLIN_PACKAGE
 // SKIP_TXT
 // FILE: test.kt
 
