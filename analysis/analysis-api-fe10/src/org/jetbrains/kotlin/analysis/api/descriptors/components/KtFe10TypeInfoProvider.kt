@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnaly
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
@@ -44,6 +45,19 @@ internal class KtFe10TypeInfoProvider(
         require(type is KtFe10Type)
         val kotlinType = type.type
         return kotlinType.isDenotable()
+    }
+
+    override fun isArrayOrPrimitiveArray(type: KtType): Boolean {
+        require(type is KtFe10Type)
+        return KotlinBuiltIns.isArrayOrPrimitiveArray(type.type)
+    }
+
+    override fun isNestedArray(type: KtType): Boolean {
+        if (!isArrayOrPrimitiveArray(type)) return false
+        require(type is KtFe10Type)
+        val unwrappedType = type.type
+        val elementType = unwrappedType.constructor.builtIns.getArrayElementType(unwrappedType)
+        return KotlinBuiltIns.isArrayOrPrimitiveArray(elementType)
     }
 
     private fun KotlinType.isDenotable(): Boolean {
