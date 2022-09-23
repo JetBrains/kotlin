@@ -9,7 +9,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.ModuleIdentifier
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
-import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
@@ -22,7 +21,6 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.CompositeMetadataJar
 import org.jetbrains.kotlin.gradle.internal.ResolvedDependencyGraph
 import org.jetbrains.kotlin.gradle.internal.allResolvedDependencies
 import java.io.File
@@ -170,11 +168,6 @@ abstract class TransformKotlinGranularMetadata
         return projectStructureMetadata.hostSpecificSourceSets.associateWith { artifactFile }
     }
 
-    private fun ResolvedDependencyResult.requestedModuleId(): ModuleIdentifier? {
-        val requestedComponent = (requested as? ModuleComponentSelector) ?: return null
-        return requestedComponent.moduleIdentifier
-    }
-
     private fun findVariantsOf(dependency: ResolvedDependencyResult): Set<String> {
         val id = dependency.selected.id
         val variants = settings
@@ -210,9 +203,11 @@ abstract class TransformKotlinGranularMetadata
                 sourceSets.flatMap { allProjectMetadata[it]?.files ?: error("Can't get metadata for sourceset $it in $projectPath") }
             }
             id is ProjectComponentIdentifier && !id.build.isCurrentBuild -> {
-                val moduleId = dependency.requestedModuleId() ?: error("Unknown requested module ID $dependency")
+                val componentIdentifier = (dependency.selected.id as? ModuleComponentIdentifier)
+                    ?: error("Expected $dependency to be selected as Module in Included Build")
                 extractSourceSetsMetadataFromJar(
-                    id = moduleId,
+                    moduleIdentifier = componentIdentifier.moduleIdentifier,
+                    moduleVersion = componentIdentifier.version,
                     dependency = dependency,
                     projectStructureMetadata = projectStructureMetadata,
                     jar = artifact.file,
@@ -220,7 +215,8 @@ abstract class TransformKotlinGranularMetadata
                 )
             }
             id is ModuleComponentIdentifier -> extractSourceSetsMetadataFromJar(
-                id = id.moduleIdentifier,
+                moduleIdentifier = id.moduleIdentifier,
+                moduleVersion = id.version,
                 dependency = dependency,
                 projectStructureMetadata = projectStructureMetadata,
                 jar = artifact.file,
@@ -231,22 +227,29 @@ abstract class TransformKotlinGranularMetadata
     }
 
     private fun extractSourceSetsMetadataFromJar(
-        id: ModuleIdentifier,
+        moduleIdentifier: ModuleIdentifier,
+        moduleVersion: String?,
         dependency: ResolvedDependencyResult,
         projectStructureMetadata: KotlinProjectStructureMetadata,
         jar: File,
         sourceSets: Set<String>
     ): List<File> {
         val hostSpecificMetadataArtifactBySourceSet = hostSpecificMetadataArtifacts(dependency.selected.id, projectStructureMetadata)
-        val metadataJar = CompositeMetadataJar(
-            moduleIdentifier = "${id.group}-${id.name}",
-            projectStructureMetadata = projectStructureMetadata,
+        val metadataArtifact = CompositeMetadataArtifactImpl(
+            moduleDependencyIdentifier = ModuleDependencyIdentifier(moduleIdentifier.group, moduleIdentifier.name),
+            moduleDependencyVersion = moduleVersion ?: "unspecified",
+            kotlinProjectStructureMetadata = projectStructureMetadata,
             primaryArtifactFile = jar,
-            hostSpecificArtifactsBySourceSet = hostSpecificMetadataArtifactBySourceSet
+            hostSpecificArtifactFilesBySourceSetName = hostSpecificMetadataArtifactBySourceSet
         )
 
-        return sourceSets.map { sourceSet ->
-            metadataJar.getSourceSetCompiledMetadata(sourceSet, outputsDir, materializeFile = true)
+        return metadataArtifact.read { compositeMetadataArtifactContent ->
+            sourceSets.mapNotNull { sourceSet ->
+                val metadataBinary = compositeMetadataArtifactContent.getSourceSet(sourceSet).metadataBinary ?: return@mapNotNull null
+                val outputBinaryFile = outputsDir.resolve(metadataBinary.relativeFile)
+                metadataBinary.copyTo(outputBinaryFile)
+                outputBinaryFile
+            }
         }
     }
 
