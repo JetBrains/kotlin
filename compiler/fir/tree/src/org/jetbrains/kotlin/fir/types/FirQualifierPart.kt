@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.name.Name
 
 interface FirTypeArgumentList {
-    val source: KtSourceElement
+    val source: KtSourceElement?
     val typeArguments: List<FirTypeProjection>
 }
 
 interface FirQualifierPart {
-    val source: KtSourceElement
+    val source: KtSourceElement?
     val name: Name
     val typeArgumentList: FirTypeArgumentList
 }
