@@ -802,7 +802,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
             val arrayVariable = generateTemporaryVariable(
                 baseModuleData,
-                array?.toFirSourceElement(),
+                array?.toFirSourceElement(KtFakeSourceElementKind.ArrayAccessNameReference),
                 name = SpecialNames.ARRAY,
                 initializer = arrayReceiver,
             ).also { statements += it }
