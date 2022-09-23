@@ -13,6 +13,7 @@ dependencies {
     implementation(intellijCore())
 
     testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
 }
 
