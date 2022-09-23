@@ -6,7 +6,7 @@ KtConstructorSymbol:
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
-  origin: SUBSTITUTION_OVERRIDE
+  origin: JAVA
   receiverType: null
   returnType: java/util/ArrayList<E>
   symbolKind: CLASS_MEMBER
@@ -17,5 +17,5 @@ KtConstructorSymbol:
     KtValueParameterSymbol(c)
   ]
   visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null

@@ -248,8 +248,9 @@ internal class KtSymbolByFirBuilder constructor(
 
         fun buildConstructorSymbol(firSymbol: FirConstructorSymbol): KtFirConstructorSymbol {
             val originalFirSymbol = firSymbol.fir.originalConstructorIfTypeAlias?.symbol ?: firSymbol
-            return symbolsCache.cache(originalFirSymbol) {
-                KtFirConstructorSymbol(originalFirSymbol, firResolveSession, token, this@KtSymbolByFirBuilder)
+            val unwrapped = originalFirSymbol.originalIfFakeOverride() ?: originalFirSymbol
+            return symbolsCache.cache(unwrapped) {
+                KtFirConstructorSymbol(unwrapped, firResolveSession, token, this@KtSymbolByFirBuilder)
             }
         }
 
