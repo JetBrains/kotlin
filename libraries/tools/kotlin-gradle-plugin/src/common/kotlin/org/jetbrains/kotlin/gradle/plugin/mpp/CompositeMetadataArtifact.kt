@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.jetbrains.kotlin.gradle.plugin.mpp.CompositeMetadataArtifactContent.SourceSetContent
 import java.io.Closeable
 import java.io.File
 
@@ -30,6 +31,32 @@ internal interface CompositeMetadataArtifact {
     }
 }
 
+
+/**
+ * This [CompositeMetadataArtifactContent] abstraction provides access into a metadata artifact published by a Multiplatform Library
+ *
+ * ### Example for the kotlinx.coroutines.core library
+ * During publication, kotlinx.coroutines.core will compile all its shared SourceSets individually into "kotlin metadata klib"s.
+ * e.g. a task called compileCommonMainKotlinMetadata will take the 'commonMain' SourceSet of the coroutines library
+ * and will produce a 'commonMain.klib' library which will contain only "Kotlin Metadata" (Signatures w/o any function bodies).
+ * Such klibs will be produced for all 'shared SourceSets'.
+ *
+ * During publication, all of those individual SourceSet klib binaries will be packaged into a 'jar' file called
+ * the Composite Metadata Artifact. All non-host specific klibs will be packaged and published in the root publication without target
+ * classifier (e.g. kotlinx-coroutines-core:
+ * https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core/1.6.4/kotlinx-coroutines-core-1.6.4-all.jar
+ *
+ * In the case of kotlinx.coroutines.core there will be [sourceSets] named 'commonMain', 'nativeMain', ....
+ * The commonMain.klib can therefore be accessed through the [SourceSetContent] of the
+ * 'commonMain' source set inside this [CompositeMetadataArtifactContent]
+ *
+ * e.g. copy the metadata klib of the 'commonMain' SourceSet into 'myFile'
+ * ```kotlin
+ * artifact.read { artifactContent ->
+ *     artifactContent.getSourceSet("commonMain").metadataBinary?.copyTo(myFile)
+ * }
+ * ```
+ */
 internal interface CompositeMetadataArtifactContent : Closeable {
     /**
      * Back reference to the [CompositeMetadataArtifact] that opened this [CompositeMetadataArtifactContent]
