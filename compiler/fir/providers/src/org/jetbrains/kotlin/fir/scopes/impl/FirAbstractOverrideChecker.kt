@@ -7,9 +7,13 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.withCombinedAttributesFrom
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 
 abstract class FirAbstractOverrideChecker : FirOverrideChecker {
@@ -26,10 +30,35 @@ fun buildSubstitutorForOverridesCheck(
     useSiteSession: FirSession
 ): ConeSubstitutor? {
     if (overrideCandidate.typeParameters.size != baseDeclaration.typeParameters.size) return null
+    val mapping = overrideCandidate.typeParameters.zip(baseDeclaration.typeParameters).associate { (from, to) -> from.symbol to to.symbol }
+    return ConeSubstitutorForOverridesCheck(useSiteSession, mapping)
+}
 
-    if (baseDeclaration.typeParameters.isEmpty()) return ConeSubstitutor.Empty
-    val types = baseDeclaration.typeParameters.map {
-        ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
+class ConeSubstitutorForOverridesCheck(
+    session: FirSession,
+    private val substitution: Map<FirTypeParameterSymbol, FirTypeParameterSymbol>,
+) : AbstractConeSubstitutor(session.typeContext) {
+    override fun substituteArgument(projection: ConeTypeProjection, lookupTag: ConeClassLikeLookupTag, index: Int): ConeTypeProjection? {
+        // Erase captured types to the underlying type - the instantiations of these variables will be
+        // the same in both declarations, so the subtyping relationships are valid.
+        val type = projection.type ?: return null
+        if (type is ConeCapturedType) return type.constructor.projection
+        return super.substituteArgument(projection, lookupTag, index)
     }
-    return substitutorByMap(overrideCandidate.typeParameters.map { it.symbol }.zip(types).toMap(), useSiteSession)
+
+    override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+        return when (type) {
+            is ConeTypeParameterType -> {
+                // Replace override's type parameters with the base declaration's type parameters.
+                val replaced = substitution[type.lookupTag.symbol] ?: return null
+                ConeTypeParameterTypeImpl(replaced.toLookupTag(), type.isNullable)
+            }
+            is ConeCapturedType ->
+                when (val projection = type.constructor.projection) {
+                    is ConeKotlinTypeProjectionOut, is ConeKotlinType -> projection.type.updateNullabilityIfNeeded(type)
+                    else -> null
+                }
+            else -> null
+        }?.withCombinedAttributesFrom(type)
+    }
 }
