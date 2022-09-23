@@ -1,4 +1,4 @@
-depends = CFNetwork CoreFoundation CoreGraphics CoreLocation CoreServices DiskArbitration Foundation IOKit Security UserNotifications darwin libkern osx posix
+depends = CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreLocation CoreServices DiskArbitration Foundation IOKit Security UserNotifications darwin libkern osx posix
 language = Objective-C
 package = platform.Intents
 modules = Intents

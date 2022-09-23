@@ -1,4 +1,4 @@
-depends = AppKit ApplicationServices CFNetwork CoreData CoreFoundation CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
+depends = AppKit ApplicationServices CFNetwork CoreData CoreFoundation CoreFoundationBase CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
 language = Objective-C
 package = platform.GameController
 modules = GameController
