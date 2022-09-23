@@ -174,14 +174,10 @@ class NativePlatformLibsIT : BaseGradleIT() {
 
     @Test
     fun testNoGenerationForUnsupportedHost() {
+        hostHaveUnsupportedTarget()
         deleteInstalledCompilers()
 
-        val unsupportedTarget = when {
-            HostManager.hostIsMac -> KonanTarget.LINUX_MIPSEL32
-            else -> KonanTarget.IOS_X64
-        }
-
-        platformLibrariesProject(unsupportedTarget.presetName).buildWithLightDist("assemble") {
+        platformLibrariesProject(KonanTarget.IOS_X64.presetName).buildWithLightDist("assemble") {
             assertSuccessful()
             assertNotContains("Generate platform libraries for ")
         }
