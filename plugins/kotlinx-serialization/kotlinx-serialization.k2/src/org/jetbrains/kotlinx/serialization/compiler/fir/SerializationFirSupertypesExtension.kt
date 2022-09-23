@@ -26,6 +26,8 @@ class SerializationFirSupertypesExtension(session: FirSession) : FirSupertypeGen
         register(serializerFor)
     }
 
+    context(TypeResolveServiceContainer)
+    @Suppress("IncorrectFormatting") // KTIJ-22227
     override fun computeAdditionalSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirResolvedTypeRef>
