@@ -188,6 +188,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.mimallocUseDefaultOptions) ?: false
     }
 
+    val mimallocUseCompaction by lazy {
+        // Turned off by default, because it slows down allocation.
+        configuration.get(BinaryOptions.mimallocUseCompaction) ?: false
+    }
+
     init {
         if (!platformManager.isEnabled(target)) {
             error("Target ${target.visibleName} is not available on the ${HostManager.hostName} host")

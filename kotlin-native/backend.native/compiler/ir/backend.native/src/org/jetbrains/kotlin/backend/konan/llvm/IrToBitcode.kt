@@ -2794,6 +2794,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }
         overrideRuntimeGlobal("Kotlin_appStateTracking", Int32(context.config.appStateTracking.value))
         overrideRuntimeGlobal("Kotlin_mimallocUseDefaultOptions", Int32(if (context.config.mimallocUseDefaultOptions) 1 else 0))
+        overrideRuntimeGlobal("Kotlin_mimallocUseCompaction", Int32(if (context.config.mimallocUseCompaction) 1 else 0))
     }
 
     //-------------------------------------------------------------------------//

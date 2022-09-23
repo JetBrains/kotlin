@@ -204,13 +204,15 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     mm::ResumeThreads();
     auto timeResumeUs = konan::getTimeMicros();
 
-    RuntimeLogInfo({kTagGC},
-                    "Resumed threads in %" PRIu64 " microseconds. Total pause for most threads is %"  PRIu64" microseconds",
-                    timeResumeUs - timeSweepExtraObjectsUs, timeResumeUs - timeStartUs);
+    RuntimeLogInfo(
+            {kTagGC}, "Resumed threads in %" PRIu64 " microseconds. Total pause for most threads is %" PRIu64 " microseconds",
+            timeResumeUs - timeSweepExtraObjectsUs, timeResumeUs - timeStartUs);
 
     auto finalizerQueue = gc::Sweep<SweepTraits>(objectFactoryIterable);
     auto timeSweepUs = konan::getTimeMicros();
     RuntimeLogDebug({kTagGC}, "Swept in %" PRIu64 " microseconds", timeSweepUs - timeResumeUs);
+
+    kotlin::compactObjectPoolInMainThread();
 
     // Can be unsafe, because we have a lock in objectFactoryIterable
     auto objectsCountAfter = objectFactory_.GetSizeUnsafe();

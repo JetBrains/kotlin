@@ -172,6 +172,11 @@ fun KonanTarget.hasAddressDependencyInMemoryModel(): Boolean =
          Architecture.MIPS32, Architecture.MIPSEL32, Architecture.WASM32 -> false
      }
 
+val KonanTarget.supportsGrandCentralDispatch
+    get() = when(family) {
+        Family.WATCHOS, Family.IOS, Family.TVOS, Family.OSX -> true
+        else -> false
+    }
 
 // TODO: this is bad function. It should be replaced by capabilities functions like above
 // but two affected targets are too strange, so we postpone it
