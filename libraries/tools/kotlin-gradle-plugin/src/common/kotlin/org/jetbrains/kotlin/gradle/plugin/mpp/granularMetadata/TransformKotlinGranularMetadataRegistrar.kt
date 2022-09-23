@@ -50,24 +50,22 @@ private constructor(
         compilation.compileDependencyFiles += sourceSet.dependsOnClassesDirs
 
         // Include non-multiplatform artifacts that cannot be transformed but still were requested for compilation
-        compilation.compileDependencyFiles += project.files({ artifacts.filterNot { it.isMpp }.map { it.file } })
+        compilation.compileDependencyFiles += project.filesProvider { artifacts.filterNot { it.isMpp }.map { it.file } }
 
         // And finally include transformed metadata artifacts
-        compilation.compileDependencyFiles += project.files({ task.map { it.transformedLibraries } }).builtBy(task)
+        compilation.compileDependencyFiles += project.filesProvider(task) { task.map { it.transformedLibraries } }
     }
 
     private val ResolvedArtifactResult.isMpp: Boolean get() = variant.attributes.doesContainMultiplatformAttributes
 
-    private val KotlinSourceSet.dependsOnClassesDirs get(): FileCollection {
-            return project.files({
-                  internal.dependsOnClosure.mapNotNull { hierarchySourceSet ->
-                      val compilation =
-                          project.getMetadataCompilationForSourceSet(
-                              hierarchySourceSet
-                          ) ?: return@mapNotNull null
-                      compilation.output.classesDirs
-                  }
-              })
+    private val KotlinSourceSet.dependsOnClassesDirs: FileCollection get() = project.filesProvider {
+            internal.dependsOnClosure.mapNotNull { hierarchySourceSet ->
+                val compilation =
+                    project.getMetadataCompilationForSourceSet(
+                        hierarchySourceSet
+                    ) ?: return@mapNotNull null
+                compilation.output.classesDirs
+            }
         }
 
     /**
