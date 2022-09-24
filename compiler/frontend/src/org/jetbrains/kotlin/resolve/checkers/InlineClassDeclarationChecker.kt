@@ -203,7 +203,7 @@ class InnerClassInsideInlineClass : DeclarationChecker {
 class ReservedMembersAndConstructsForInlineClass : DeclarationChecker {
 
     companion object {
-        private val reservedFunctions = setOf("box", "unbox", "equals", "hashCode")
+        private val reservedFunctions = setOf("box", "unbox")
     }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
