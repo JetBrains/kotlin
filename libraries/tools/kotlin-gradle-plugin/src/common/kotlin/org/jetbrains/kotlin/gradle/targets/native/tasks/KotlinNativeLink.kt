@@ -278,7 +278,8 @@ constructor(
             objectFactory.property(it.file(filename).asFile)
         }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION", "DeprecatedCallableAddReplaceWith")
+    @Deprecated("Declare dependencies explicitly please. This option is scheduled to be removed in 1.9.0")
     @get:Input
     val enableEndorsedLibs: Boolean get() = compilation.enableEndorsedLibs
 
@@ -314,6 +315,8 @@ constructor(
             settings = cacheBuilderSettings,
             konanPropertiesService = konanPropertiesService.get()
         ).buildCompilerArgs(resolvedDependencyGraph)
+
+        @Suppress("DEPRECATION") val enableEndorsedLibs = this.enableEndorsedLibs // TODO: remove before 1.9.0, see KT-54098
 
         val buildArgs = buildKotlinNativeBinaryLinkerArgs(
             output,

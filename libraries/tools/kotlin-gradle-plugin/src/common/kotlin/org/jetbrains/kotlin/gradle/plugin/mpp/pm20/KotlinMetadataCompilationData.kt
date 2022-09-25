@@ -198,7 +198,8 @@ internal open class KotlinNativeFragmentMetadataCompilationDataImpl(
                 ?: HostManager.host
         }
 
-    // FIXME endorsed libs?
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("Declare dependencies explicitly please. This option is scheduled to be removed in 1.9.0")
     override val enableEndorsedLibs: Boolean
         get() = false
 }

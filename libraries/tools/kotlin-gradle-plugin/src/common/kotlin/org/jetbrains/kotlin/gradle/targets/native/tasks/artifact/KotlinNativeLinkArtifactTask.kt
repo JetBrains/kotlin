@@ -63,6 +63,7 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
     @get:Input
     var debuggable: Boolean = true
 
+    @Deprecated("Declare dependencies explicitly please. This option is scheduled to be removed in 1.9.0")
     @get:Input
     var enableEndorsedLibs: Boolean = false
 
@@ -201,6 +202,8 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
         fun FileCollection.klibs() = files.filter { it.extension == "klib" }
 
         val localBinaryOptions = nativeBinaryOptions + binaryOptions
+
+        @Suppress("DEPRECATION") val enableEndorsedLibs = this.enableEndorsedLibs // TODO: remove before 1.9.0, see KT-54098
 
         val buildArgs = buildKotlinNativeBinaryLinkerArgs(
             outFile = outFile,

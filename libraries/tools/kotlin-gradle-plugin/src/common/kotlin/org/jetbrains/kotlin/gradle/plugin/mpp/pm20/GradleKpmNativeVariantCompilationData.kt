@@ -18,6 +18,8 @@ internal class GradleKpmNativeVariantCompilationData(
     override val konanTarget: KonanTarget
         get() = variant.konanTarget
 
+    @Suppress("DEPRECATION", "DeprecatedCallableAddReplaceWith")
+    @Deprecated("Declare dependencies explicitly please. This option is scheduled to be removed in 1.9.0")
     override val enableEndorsedLibs: Boolean
         get() = variant.enableEndorsedLibraries
 
