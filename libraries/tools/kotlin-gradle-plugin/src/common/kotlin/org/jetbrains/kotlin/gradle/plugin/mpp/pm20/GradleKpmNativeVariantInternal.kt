@@ -29,6 +29,7 @@ abstract class GradleKpmNativeVariantInternal(
     ),
     GradleKpmSingleMavenPublishedModuleHolder by GradleKpmDefaultSingleMavenPublishedModuleHolder(containingModule, fragmentName) {
 
+    @Deprecated("Declare dependencies explicitly please. This option is scheduled to be removed in 1.9.0")
     override var enableEndorsedLibraries: Boolean = false
 
     override val gradleVariantNames: Set<String>
@@ -43,6 +44,8 @@ abstract class GradleKpmNativeVariantInternal(
 
 interface KotlinNativeCompilationData<T : KotlinCommonOptions> : KotlinCompilationData<T> {
     val konanTarget: KonanTarget
+
+    @Deprecated("Declare dependencies explicitly please. This option is scheduled to be removed in 1.9.0")
     val enableEndorsedLibs: Boolean
 }
 
