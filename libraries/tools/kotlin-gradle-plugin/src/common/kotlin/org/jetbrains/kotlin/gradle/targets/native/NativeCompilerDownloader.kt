@@ -40,10 +40,11 @@ class NativeCompilerDownloader(
         }
 
         internal const val BASE_DOWNLOAD_URL = "https://download.jetbrains.com/kotlin/native/builds"
+        internal const val KOTLIN_GROUP_ID = "org.jetbrains.kotlin"
     }
 
     val compilerDirectory: File
-        get() = DependencyDirectories.localKonanDir.resolve(dependencyNameWithVersion)
+        get() = DependencyDirectories.localKonanDir.resolve(dependencyNameWithOsAndVersion)
 
     private val logger: Logger
         get() = project.logger
@@ -66,17 +67,17 @@ class NativeCompilerDownloader(
         get() {
             val dependencySuffix = distributionType.suffix
             return if (dependencySuffix != null) {
-                "kotlin-native-$dependencySuffix-$simpleOsName"
+                "kotlin-native-$dependencySuffix"
             } else {
-                "kotlin-native-$simpleOsName"
+                "kotlin-native"
             }
         }
 
-    private val dependencyNameWithVersion: String
-        get() = "$dependencyName-$compilerVersion"
+    private val dependencyNameWithOsAndVersion: String
+        get() = "$dependencyName-$simpleOsName-$compilerVersion"
 
     private val dependencyFileName: String
-        get() = "$dependencyNameWithVersion.$archiveExtension"
+        get() = "$dependencyNameWithOsAndVersion.$archiveExtension"
 
     private val useZip
         get() = HostManager.hostIsMingw
@@ -107,34 +108,69 @@ class NativeCompilerDownloader(
         }
     }
 
+    private fun setupMavenRepo(repoUrl: String): ArtifactRepository {
+        return project.repositories.maven { repo ->
+            repo.setUrl(repoUrl)
+            repo.metadataSources {
+                it.artifact()
+            }
+        }
+    }
+
     private fun removeRepo(repo: ArtifactRepository) {
         project.repositories.remove(repo)
     }
 
     private fun downloadAndExtract() {
-        val repoUrl = buildString {
-            append("${kotlinProperties.nativeBaseDownloadUrl}/")
-            append(if (compilerVersion.meta == MetaVersion.DEV) "dev/" else "releases/")
-            append("$compilerVersion/")
-            append(simpleOsName)
+        val repoUrl = if (kotlinProperties.nativeDownloadFromMaven) {
+            kotlinProperties.nativeBaseDownloadUrl.takeIf { it != BASE_DOWNLOAD_URL }
+        } else {
+            buildString {
+                append("${kotlinProperties.nativeBaseDownloadUrl}/")
+                append(if (compilerVersion.meta == MetaVersion.DEV) "dev/" else "releases/")
+                append("$compilerVersion/")
+                append(simpleOsName)
+            }
         }
-        val dependencyUrl = "$repoUrl/$dependencyFileName"
+        val dependencyUrl = if (repoUrl != null) "$repoUrl/$dependencyFileName" else "maven://$dependencyFileName"
 
-        val repo = setupRepo(repoUrl)
+        val repo = if (repoUrl != null) {
+            if (kotlinProperties.nativeDownloadFromMaven) {
+                setupMavenRepo(repoUrl)
+            } else {
+                setupRepo(repoUrl)
+            }
+        } else null
 
-        val compilerDependency = project.dependencies.create(
-            mapOf(
-                "name" to dependencyName,
-                "version" to compilerVersion.toString(),
-                "ext" to archiveExtension
+        val compilerDependency = if (kotlinProperties.nativeDownloadFromMaven) {
+            project.dependencies.create(
+                mapOf(
+                    "group" to KOTLIN_GROUP_ID,
+                    "name" to dependencyName,
+                    "version" to compilerVersion.toString(),
+                    "classifier" to simpleOsName,
+                    "ext" to archiveExtension
+                )
             )
-        )
+        } else {
+            project.dependencies.create(
+                mapOf(
+                    "name" to "$dependencyName-$simpleOsName",
+                    "version" to compilerVersion.toString(),
+                    "ext" to archiveExtension
+                )
+            )
+        }
 
         val configuration = project.configurations.detachedConfiguration(compilerDependency)
         logger.lifecycle("\nPlease wait while Kotlin/Native compiler $compilerVersion is being installed.")
 
-        val suffix = project.probeRemoteFileLength(dependencyUrl, probingTimeoutMs = 200)?.let { " (${formatContentLength(it)})" }.orEmpty()
-        logger.lifecycle("Download $dependencyUrl$suffix")
+        if (!kotlinProperties.nativeDownloadFromMaven) {
+            val suffix = project.probeRemoteFileLength(dependencyUrl, probingTimeoutMs = 200)
+                ?.let { " (${formatContentLength(it)})" }
+                .orEmpty()
+            logger.lifecycle("Download $dependencyUrl$suffix")
+        }
         val archive = logger.lifecycleWithDuration("Download $dependencyUrl finished,") {
             configuration.files.single()
         }
@@ -151,7 +187,7 @@ class NativeCompilerDownloader(
                     it.from(archiveFileTree(archive))
                     it.into(tmpDir)
                 }
-                val compilerTmp = tmpDir.resolve(dependencyNameWithVersion)
+                val compilerTmp = tmpDir.resolve(dependencyNameWithOsAndVersion)
                 if (!compilerTmp.renameTo(compilerDirectory)) {
                     project.copy {
                         it.from(compilerTmp)
@@ -164,7 +200,7 @@ class NativeCompilerDownloader(
             }
         }
 
-        removeRepo(repo)
+        if (repo != null) removeRepo(repo)
     }
 
     fun downloadIfNeeded() {
