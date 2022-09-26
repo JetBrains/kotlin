@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
+import org.jetbrains.kotlin.gradle.utils.Xcode
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -668,12 +669,8 @@ class KotlinNativeTargetWithSimulatorTestsConfigurator :
     override fun configureTestTask(target: KotlinNativeTargetWithSimulatorTests, testTask: KotlinNativeSimulatorTest) {
         super.configureTestTask(target, testTask)
 
-        testTask.deviceId = when (target.konanTarget) {
-            KonanTarget.IOS_X64, KonanTarget.IOS_SIMULATOR_ARM64 -> "iPhone 12"
-            KonanTarget.WATCHOS_X86, KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_SIMULATOR_ARM64 -> "Apple Watch Series 5 - 44mm"
-            KonanTarget.TVOS_X64, KonanTarget.TVOS_SIMULATOR_ARM64 -> "Apple TV"
-            else -> error("Simulator tests are not supported for platform ${target.konanTarget.name}")
-        }
+        testTask.deviceId = Xcode.getDefaultTestDeviceId(target.konanTarget)
+            ?: error("Xcode does not support simulator tests for ${target.konanTarget.name}. Check that requested SDK is installed.")
     }
 
     override fun createTestRun(
