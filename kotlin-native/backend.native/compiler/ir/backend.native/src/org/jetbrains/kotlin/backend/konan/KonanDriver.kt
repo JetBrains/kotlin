@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
+import org.jetbrains.kotlin.backend.konan.driver.CompilerDriver
+import org.jetbrains.kotlin.backend.konan.driver.DynamicCompilerDriver
+import org.jetbrains.kotlin.backend.konan.driver.StaticCompilerDriver
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -43,12 +46,11 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
             configuration.put(KonanConfigKeys.FILES_TO_CACHE, fileNames)
         }
 
-        KonanConfig(project, configuration).runTopLevelPhases()
-    }
+        val config = KonanConfig(project, configuration)
+        ensureModuleName(config)
 
-    private fun KonanConfig.runTopLevelPhases() {
-        ensureModuleName(this)
-        runTopLevelPhases(this, environment)
+        pickCompilerDriver()?.run(config, environment)
+                ?: error("Kotlin/Native compiler does not support given configuration")
     }
 
     private fun ensureModuleName(config: KonanConfig) {
@@ -62,62 +64,10 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
             }
         }
     }
-}
 
-private fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironment) {
-
-    val config = konanConfig.configuration
-
-    val targets = konanConfig.targetManager
-    if (config.get(KonanConfigKeys.LIST_TARGETS) ?: false) {
-        targets.list()
+    private fun pickCompilerDriver(): CompilerDriver? = when {
+        DynamicCompilerDriver.supportsConfig() -> DynamicCompilerDriver()
+        StaticCompilerDriver.supportsConfig() -> StaticCompilerDriver()
+        else -> null
     }
-
-    val context = Context(konanConfig)
-    context.environment = environment
-    context.phaseConfig.konanPhasesConfig(konanConfig) // TODO: Wrong place to call it
-
-    if (konanConfig.infoArgsOnly) return
-
-    if (!context.frontendPhase()) return
-
-    usingNativeMemoryAllocator {
-        usingJvmCInteropCallbacks {
-            try {
-                toplevelPhase.cast<CompilerPhase<Context, Unit, Unit>>().invokeToplevel(context.phaseConfig, context, Unit)
-            } finally {
-                context.disposeGenerationState()
-            }
-        }
-    }
-}
-
-// returns true if should generate code.
-internal fun Context.frontendPhase(): Boolean {
-    lateinit var analysisResult: AnalysisResult
-
-    do {
-        val analyzerWithCompilerReport = AnalyzerWithCompilerReport(
-                messageCollector,
-                environment.configuration.languageVersionSettings,
-                environment.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-        )
-
-        // Build AST and binding info.
-        analyzerWithCompilerReport.analyzeAndReport(environment.getSourceFiles()) {
-            TopDownAnalyzerFacadeForKonan.analyzeFiles(environment.getSourceFiles(), this)
-        }
-        if (analyzerWithCompilerReport.hasErrors()) {
-            throw KonanCompilationException()
-        }
-        analysisResult = analyzerWithCompilerReport.analysisResult
-        if (analysisResult is AnalysisResult.RetryWithAdditionalRoots) {
-            environment.addKotlinSourceRoots(analysisResult.additionalKotlinRoots)
-        }
-    } while(analysisResult is AnalysisResult.RetryWithAdditionalRoots)
-
-    moduleDescriptor = analysisResult.moduleDescriptor
-    bindingContext = analysisResult.bindingContext
-
-    return analysisResult.shouldGenerateCode
 }
