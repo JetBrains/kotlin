@@ -61,7 +61,9 @@ internal fun Project.setupKotlinNativePlatformDependencies() {
 internal fun Project.getNativeDistributionDependencies(target: CommonizerTarget): FileCollection {
     return when (target) {
         is LeafCommonizerTarget -> getOriginalPlatformLibrariesFor(target)
-        is SharedCommonizerTarget -> commonizeNativeDistributionTask?.get()?.getCommonizedPlatformLibrariesFor(target) ?: project.files()
+        is SharedCommonizerTarget -> project.files(
+            commonizeNativeDistributionTask?.map { it.getCommonizedPlatformLibrariesFor(target) } ?: project.files()
+        )
     }
 }
 
