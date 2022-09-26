@@ -32,6 +32,16 @@ class AtomicSymbols(
     private val kotlinJvm: IrPackageFragment = createPackage("kotlin.jvm")
     val javaLangClass: IrClassSymbol = createClass(javaLang, "Class", ClassKind.CLASS, Modality.FINAL)
 
+    // Native classes
+    private val kotlinNativeConcurrentPackage: IrPackageFragment = createPackage("kotlin.native.concurrent")
+
+    val atomicIntNativeClass: IrClassSymbol =
+        createClass(kotlinNativeConcurrentPackage, "AtomicInt", ClassKind.CLASS, Modality.FINAL)
+
+    val atomicIntNativeConstructor: IrConstructorSymbol = atomicIntNativeClass.owner.addConstructor().apply {
+        addValueParameter("value_", irBuiltIns.intType)
+    }.symbol
+
     // AtomicIntegerFieldUpdater
     val atomicIntFieldUpdaterClass: IrClassSymbol =
         createClass(javaUtilConcurrent, "AtomicIntegerFieldUpdater", ClassKind.CLASS, Modality.FINAL)

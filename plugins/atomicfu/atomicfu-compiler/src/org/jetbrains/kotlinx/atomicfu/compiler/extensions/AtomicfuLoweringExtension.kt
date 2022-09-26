@@ -18,22 +18,31 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm.AtomicSymbols
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.js.AtomicfuJsIrTransformer
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm.AtomicfuJvmIrTransformer
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.native.AtomicfuNativeIrTransformer
 
 public open class AtomicfuLoweringExtension : IrGenerationExtension {
     override fun generate(
         moduleFragment: IrModuleFragment,
         pluginContext: IrPluginContext
     ) {
-        if (pluginContext.platform.isJvm()) {
-            val atomicSymbols = AtomicSymbols(pluginContext.irBuiltIns, moduleFragment)
-            AtomicfuJvmIrTransformer(pluginContext, atomicSymbols).transform(moduleFragment)
-        }
-        if (pluginContext.platform.isJs()) {
-            for (file in moduleFragment.files) {
-                AtomicfuClassLowering(pluginContext).runOnFileInOrder(file)
+        val platform = pluginContext.platform
+        when {
+            platform.isJvm() -> {
+                val atomicSymbols = AtomicSymbols(pluginContext.irBuiltIns, moduleFragment)
+                AtomicfuJvmIrTransformer(pluginContext, atomicSymbols).transform(moduleFragment)
+            }
+            platform.isNative() -> {
+                val atomicSymbols = AtomicSymbols(pluginContext.irBuiltIns, moduleFragment)
+                AtomicfuNativeIrTransformer(pluginContext, atomicSymbols).transform(moduleFragment)
+            }
+            platform.isJs() -> {
+                for (file in moduleFragment.files) {
+                    AtomicfuClassLowering(pluginContext).runOnFileInOrder(file)
+                }
             }
         }
     }
