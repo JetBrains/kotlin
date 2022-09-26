@@ -1,6 +1,8 @@
 package model
 
+import org.jetbrains.dokka.model.DClass
 import org.jetbrains.dokka.model.DProperty
+import org.jetbrains.dokka.model.doc.CodeBlock
 import org.jetbrains.dokka.model.doc.CustomTagWrapper
 import org.jetbrains.dokka.model.doc.Text
 import org.junit.jupiter.api.Test
@@ -267,4 +269,39 @@ class CommentTest : AbstractModelTest("/src/main/kotlin/comment/Test.kt", "comme
             }
         }
     }
+
+    @Test
+    fun `should remove spaces inside indented code block`() {
+        inlineModelTest(
+            """
+            |/**
+            | * Welcome:
+            | *
+            | * ```kotlin
+            | * fun main() {
+            | *     println("Hello World!")
+            | * }
+            | * ```
+            | *
+            | *     fun thisIsACodeBlock() {
+            | *         val butWhy = "per markdown spec, because four-spaces prefix"
+            | *     }
+            | */
+            |class Foo
+        """
+        ) {
+            with((this / "comment" / "Foo").cast<DClass>()) {
+                docs()[0].children[2] equals CodeBlock(
+                    listOf(
+                        Text(
+                            "fun thisIsACodeBlock() {\n" +
+                                    "    val butWhy = \"per markdown spec, because four-spaces prefix\"\n" +
+                                    "}"
+                        )
+                    )
+                )
+            }
+        }
+    }
+
 }
