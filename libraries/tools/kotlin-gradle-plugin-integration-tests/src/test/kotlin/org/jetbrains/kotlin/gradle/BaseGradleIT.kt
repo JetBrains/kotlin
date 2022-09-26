@@ -427,12 +427,16 @@ abstract class BaseGradleIT {
             result = runProcess(cmd, projectDir, env, buildOptions)
             CompiledProject(this, result.output, result.exitCode).check()
         } catch (t: Throwable) {
-            println("<=== Test build: ${this.projectName} $cmd ===>")
+            println("<=== Test build: $projectName $cmd ===>")
 
             // to prevent duplication of output
             if (!options.forceOutputToStdout && result != null) {
-                println(result.output)
+                result.output
+                    .split("\n")
+                    .map { "    |test output $projectName|$it" }
+                    .forEach(::println)
             }
+
             throw t
         }
     }
