@@ -116,7 +116,7 @@ class KotlinEnumsTest : BaseAbstractTest() {
                 val testEnumNode = packagePage.children[0]
                 assertEquals("TestEnum", testEnumNode.name)
 
-                val enumEntries = testEnumNode.children
+                val enumEntries = testEnumNode.children.filterIsInstance<ClasslikePage>()
                 assertEquals(10, enumEntries.size)
 
                 assertEquals("ZERO", enumEntries[0].name)

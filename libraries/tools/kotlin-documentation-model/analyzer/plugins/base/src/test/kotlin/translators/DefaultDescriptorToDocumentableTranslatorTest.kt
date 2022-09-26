@@ -3,6 +3,7 @@ package translators
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
+import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -19,6 +20,7 @@ class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
         sourceSets {
             sourceSet {
                 sourceRoots = listOf("src/main/kotlin")
+                classpath = listOf(commonStdlibPath!!, jvmStdlibPath!!)
             }
         }
     }
@@ -849,6 +851,138 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
                     expectedName = "com.example.util.CollectionExtensions.property",
                     expectedDescription = "static property"
                 )
+            }
+        }
+    }
+
+    @Test
+    fun `should have documentation for synthetic Enum values functions`() {
+        testInline(
+            """
+            |/src/main/kotlin/test/KotlinEnum.kt
+            |package test
+            |
+            |enum class KotlinEnum {
+            |    FOO, BAR;
+            |}
+            """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val kotlinEnum = module.packages.find { it.name == "test" }
+                    ?.classlikes
+                    ?.single { it.name == "KotlinEnum" }
+                checkNotNull(kotlinEnum)
+                val valuesFunction = kotlinEnum.functions.single { it.name == "values" }
+
+                val expectedValuesType = GenericTypeConstructor(
+                    dri = DRI(
+                        packageName = "kotlin",
+                        classNames = "Array"
+                    ),
+                    projections = listOf(
+                        Invariance(
+                            GenericTypeConstructor(
+                                dri = DRI(
+                                    packageName = "test",
+                                    classNames = "KotlinEnum"
+                                ),
+                                projections = emptyList()
+                            )
+                        )
+                    )
+                )
+                assertEquals(expectedValuesType, valuesFunction.type)
+
+                val expectedDocumentation = DocumentationNode(listOf(
+                    Description(
+                        CustomDocTag(
+                            children = listOf(
+                                P(listOf(
+                                    Text(
+                                        "Returns an array containing the constants of this enum type, in the order " +
+                                                "they're declared."
+                                    ),
+                                )),
+                                P(listOf(
+                                    Text("This method may be used to iterate over the constants.")
+                                ))
+                            ),
+                            name = "MARKDOWN_FILE"
+                        )
+                    )
+                ))
+                assertEquals(expectedDocumentation, valuesFunction.documentation.values.single())
+            }
+        }
+    }
+
+    @Test
+    fun `should have documentation for synthetic Enum valueOf functions`() {
+        testInline(
+            """
+            |/src/main/kotlin/test/KotlinEnum.kt
+            |package test
+            |
+            |enum class KotlinEnum {
+            |    FOO, BAR;
+            |}
+            """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val kotlinEnum = module.packages.find { it.name == "test" }
+                    ?.classlikes
+                    ?.single { it.name == "KotlinEnum" }
+                checkNotNull(kotlinEnum)
+
+                val expectedValueOfType = GenericTypeConstructor(
+                    dri = DRI(
+                        packageName = "test",
+                        classNames = "KotlinEnum"
+                    ),
+                    projections = emptyList()
+                )
+
+                val expectedDocumentation = DocumentationNode(listOf(
+                    Description(
+                        CustomDocTag(
+                            children = listOf(
+                                P(listOf(
+                                    Text(
+                                        "Returns the enum constant of this type with the specified name. " +
+                                            "The string must match exactly an identifier used to declare an enum " +
+                                            "constant in this type. (Extraneous whitespace characters are not permitted.)"
+                                    )
+                                ))
+                            ),
+                            name = "MARKDOWN_FILE"
+                        )
+                    ),
+                    Throws(
+                        root = CustomDocTag(
+                            children = listOf(
+                                P(listOf(
+                                    Text("if this enum type has no constant with the specified name")
+                                ))
+                            ),
+                            name = "MARKDOWN_FILE"
+                        ),
+                        name = "kotlin.IllegalArgumentException",
+                        exceptionAddress = DRI(
+                            packageName = "kotlin",
+                            classNames = "IllegalArgumentException",
+                            target = PointingToDeclaration
+                        ),
+                    )
+                ))
+
+                val valueOfFunction = kotlinEnum.functions.single { it.name == "valueOf" }
+                assertEquals(expectedDocumentation, valueOfFunction.documentation.values.single())
+                assertEquals(expectedValueOfType, valueOfFunction.type)
+
+                val valueOfParamDRI = (valueOfFunction.parameters.single().type as GenericTypeConstructor).dri
+                assertEquals(DRI(packageName = "kotlin", classNames = "String"), valueOfParamDRI)
             }
         }
     }
