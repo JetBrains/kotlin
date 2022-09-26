@@ -69,7 +69,8 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             val entry = classDescriptor.findAnnotationDeclaration(SerializationAnnotations.serializerAnnotationFqName)
             val inSameModule =
                 trace.bindingContext[BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, serializableDescriptor.fqNameUnsafe] != null
-            val diagnostic = if (inSameModule) SerializationErrors.EXTERNAL_CLASS_NOT_SERIALIZABLE else SerializationErrors.EXTERNAL_CLASS_IN_ANOTHER_MODULE
+            val diagnostic =
+                if (inSameModule) SerializationErrors.EXTERNAL_CLASS_NOT_SERIALIZABLE else SerializationErrors.EXTERNAL_CLASS_IN_ANOTHER_MODULE
 
             trace.report(diagnostic.on(entry ?: declaration, classDescriptor.defaultType, serializableKType))
         }
@@ -263,6 +264,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         }
 
     }
+
     private fun ClassDescriptor.isSerializableEnumWithMissingSerializer(): Boolean {
         if (kind != ClassKind.ENUM_CLASS) return false
         if (hasSerializableOrMetaAnnotation) return false
@@ -344,7 +346,20 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
                 generatorContextForAnalysis.checkTypeArguments(it.module, it.type, element, trace, propertyPsi)
             } else {
                 generatorContextForAnalysis.checkType(it.module, it.type, ktType, trace, propertyPsi)
+                checkGenericArrayType(it.type, ktType, trace, propertyPsi)
             }
+        }
+    }
+
+    private fun checkGenericArrayType(
+        type: KotlinType,
+        ktType: KtTypeReference?,
+        trace: BindingTrace,
+        fallbackElement: PsiElement
+    ) {
+        if (KotlinBuiltIns.isArray(type) && type.arguments.first().type.genericIndex != null) {
+            // Array<T> is unsupported, since we can't get T::class from KSerializer<T>
+            trace.report(SerializationErrors.GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED.on(ktType ?: fallbackElement))
         }
     }
 

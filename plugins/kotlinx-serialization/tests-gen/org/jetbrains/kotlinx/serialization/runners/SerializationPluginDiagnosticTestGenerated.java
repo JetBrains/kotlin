@@ -43,6 +43,12 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
     }
 
     @Test
+    @TestMetadata("GenericArrays.kt")
+    public void testGenericArrays() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/diagnostics/GenericArrays.kt");
+    }
+
+    @Test
     @TestMetadata("IncorrectTransient.kt")
     public void testIncorrectTransient() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/diagnostics/IncorrectTransient.kt");

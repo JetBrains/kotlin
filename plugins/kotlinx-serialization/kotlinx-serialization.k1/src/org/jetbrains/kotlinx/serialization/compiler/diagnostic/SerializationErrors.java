@@ -32,6 +32,8 @@ public interface SerializationErrors {
     DiagnosticFactory1<PsiElement, KotlinType> LOCAL_SERIALIZER_USAGE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> TRANSIENT_MISSING_INITIALIZER = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED = DiagnosticFactory0.create(ERROR);
+
     DiagnosticFactory0<PsiElement> TRANSIENT_IS_REDUNDANT = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> JSON_FORMAT_REDUNDANT_DEFAULT = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> JSON_FORMAT_REDUNDANT = DiagnosticFactory0.create(WARNING);

@@ -204,9 +204,9 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
             )
             return false
         }
-        
+
         if (!classSymbol.hasSerializableOrMetaAnnotation) return false
-        
+
         if (classSymbol.isAnonymousObjectOrInsideIt) {
             reporter.reportOn(classSymbol.serializableOrMetaAnnotationSource, FirSerializationErrors.ANONYMOUS_OBJECTS_NOT_SUPPORTED)
             return false
@@ -370,7 +370,18 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
                 checkSerializerNullability(propertyType, serializerType, source, reporter)
             } else {
                 checkType(propertyType, source, reporter)
+                checkGenericArrayType(propertyType, source, reporter)
             }
+        }
+    }
+
+    context(CheckerContext)
+    private fun checkGenericArrayType(propertyType: ConeKotlinType, source: KtSourceElement?, reporter: DiagnosticReporter) {
+        if (propertyType.isNonPrimitiveArray && propertyType.typeArguments.first().type?.isTypeParameter == true) {
+            reporter.reportOn(
+                source,
+                FirSerializationErrors.GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED,
+            )
         }
     }
 
