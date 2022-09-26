@@ -2,10 +2,10 @@
  * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION")
 
 package kotlinx.metadata.klib.impl
 
-import kotlinx.metadata.DeprecatedVisitor
 import kotlinx.metadata.impl.*
 import kotlinx.metadata.klib.KlibSourceFile
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
@@ -26,7 +26,6 @@ class ReverseSourceFileIndexWriteExtension : WriteContextExtension {
     }
 }
 
-@DeprecatedVisitor
 class KlibModuleFragmentWriter(
     stringTable: ApproximatingStringTable,
     contextExtensions: List<WriteContextExtension> = emptyList()

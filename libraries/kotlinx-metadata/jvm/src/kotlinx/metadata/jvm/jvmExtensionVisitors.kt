@@ -2,6 +2,7 @@
  * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION")
 
 package kotlinx.metadata.jvm
 
@@ -11,6 +12,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 /**
  * A visitor containing the common code to visit JVM extensions for Kotlin declaration containers, such as classes and package fragments.
  */
+@Deprecated(visitorApiMessage)
 abstract class JvmDeclarationContainerExtensionVisitor @JvmOverloads constructor(
     protected open val delegate: JvmDeclarationContainerExtensionVisitor? = null
 ) : KmDeclarationContainerExtensionVisitor {
@@ -30,7 +32,6 @@ abstract class JvmDeclarationContainerExtensionVisitor @JvmOverloads constructor
      * @param setterFlags property accessor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag
      *   and [Flag.PropertyAccessor] flags
      */
-    @OptIn(DeprecatedVisitor::class) // TODO
     open fun visitLocalDelegatedProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor? =
         delegate?.visitLocalDelegatedProperty(flags, name, getterFlags, setterFlags)
 
@@ -45,6 +46,7 @@ abstract class JvmDeclarationContainerExtensionVisitor @JvmOverloads constructor
 /**
  * A visitor to visit JVM extensions for a class.
  */
+@Deprecated(visitorApiMessage)
 open class JvmClassExtensionVisitor @JvmOverloads constructor(
     delegate: JvmClassExtensionVisitor? = null
 ) : KmClassExtensionVisitor, JvmDeclarationContainerExtensionVisitor(delegate) {
@@ -90,6 +92,7 @@ open class JvmClassExtensionVisitor @JvmOverloads constructor(
 /**
  * A visitor to visit JVM extensions for a package fragment.
  */
+@Deprecated(visitorApiMessage)
 open class JvmPackageExtensionVisitor @JvmOverloads constructor(
     delegate: JvmPackageExtensionVisitor? = null
 ) : KmPackageExtensionVisitor, JvmDeclarationContainerExtensionVisitor(delegate) {
@@ -120,6 +123,7 @@ open class JvmPackageExtensionVisitor @JvmOverloads constructor(
 /**
  * A visitor to visit JVM extensions for a function.
  */
+@Deprecated(visitorApiMessage)
 open class JvmFunctionExtensionVisitor @JvmOverloads constructor(
     private val delegate: JvmFunctionExtensionVisitor? = null
 ) : KmFunctionExtensionVisitor {
@@ -166,6 +170,7 @@ open class JvmFunctionExtensionVisitor @JvmOverloads constructor(
 /**
  * A visitor to visit JVM extensions for a property.
  */
+@Deprecated(visitorApiMessage)
 open class JvmPropertyExtensionVisitor @JvmOverloads constructor(
     private val delegate: JvmPropertyExtensionVisitor? = null
 ) : KmPropertyExtensionVisitor {
@@ -254,6 +259,7 @@ open class JvmPropertyExtensionVisitor @JvmOverloads constructor(
 /**
  * A visitor to visit JVM extensions for a constructor.
  */
+@Deprecated(visitorApiMessage)
 open class JvmConstructorExtensionVisitor @JvmOverloads constructor(
     private val delegate: JvmConstructorExtensionVisitor? = null
 ) : KmConstructorExtensionVisitor {
@@ -285,6 +291,7 @@ open class JvmConstructorExtensionVisitor @JvmOverloads constructor(
 /**
  * A visitor to visit JVM extensions for a type parameter.
  */
+@Deprecated(visitorApiMessage)
 open class JvmTypeParameterExtensionVisitor @JvmOverloads constructor(
     private val delegate: JvmTypeParameterExtensionVisitor? = null
 ) : KmTypeParameterExtensionVisitor {
@@ -321,6 +328,7 @@ open class JvmTypeParameterExtensionVisitor @JvmOverloads constructor(
 /**
  * A visitor to visit JVM extensions for a type.
  */
+@Deprecated(visitorApiMessage)
 open class JvmTypeExtensionVisitor @JvmOverloads constructor(
     private val delegate: JvmTypeExtensionVisitor? = null
 ) : KmTypeExtensionVisitor {
@@ -366,6 +374,6 @@ open class JvmTypeExtensionVisitor @JvmOverloads constructor(
          *
          * @see KmTypeVisitor.visitFlexibleTypeUpperBound
          */
-        const val PLATFORM_TYPE_ID = JvmProtoBufUtil.PLATFORM_TYPE_ID
+        const val PLATFORM_TYPE_ID = JvmProtoBufUtil.PLATFORM_TYPE_ID // TODO: move out of deprecated visitor
     }
 }
