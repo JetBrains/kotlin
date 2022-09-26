@@ -58,7 +58,8 @@ object AbstractTypeMapper {
         sw: Writer? = null
     ): Type {
         if (type.isError()) {
-            val jvmType = Type.getObjectType(NON_EXISTENT_CLASS_NAME)
+            val name = type.getNameForErrorType() ?: NON_EXISTENT_CLASS_NAME
+            val jvmType = Type.getObjectType(name)
             with(context) { sw?.writeGenericType(type, jvmType, mode) }
             return jvmType
         }

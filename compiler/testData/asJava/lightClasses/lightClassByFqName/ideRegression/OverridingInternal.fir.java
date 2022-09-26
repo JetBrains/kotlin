@@ -1,4 +1,4 @@
-public final class C /* p.C*/ {
+public final class C /* p.C*/ extends A implements I {
   private final int ip = 5 /* initializer type: int */;
 
   @java.lang.Override()

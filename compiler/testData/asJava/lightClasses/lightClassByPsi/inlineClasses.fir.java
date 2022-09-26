@@ -6,7 +6,7 @@ public enum Foo /* Foo*/ {
   public final int getX();//  getX()
 }
 
-public final class InlineInheritance /* InlineInheritance*/ {
+public final class InlineInheritance /* InlineInheritance*/ implements I {
   private final int v;
 
   @java.lang.Override()

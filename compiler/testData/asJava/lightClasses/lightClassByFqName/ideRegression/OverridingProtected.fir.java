@@ -1,4 +1,4 @@
-public final class C /* p.C*/ {
+public final class C /* p.C*/ extends A {
   @java.lang.Override()
   public int af();//  af()
 

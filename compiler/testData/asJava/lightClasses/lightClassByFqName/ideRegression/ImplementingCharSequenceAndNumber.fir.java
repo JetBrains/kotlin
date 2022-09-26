@@ -32,13 +32,13 @@ public final class Container /* p1.Container*/ {
     public java.lang.CharSequence subSequence(int, int);//  subSequence(int, int)
 
     @java.lang.Override()
+    public IntStream chars();//  chars()
+
+    @java.lang.Override()
+    public IntStream codePoints();//  codePoints()
+
+    @java.lang.Override()
     public char get(int);//  get(int)
-
-    @java.lang.Override()
-    public error.NonExistentClass chars();//  chars()
-
-    @java.lang.Override()
-    public error.NonExistentClass codePoints();//  codePoints()
 
     public  MyString();//  .ctor()
 

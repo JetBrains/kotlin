@@ -78,4 +78,6 @@ interface TypeSystemCommonBackendContextForTypeMapping : TypeSystemCommonBackend
 
     fun continuationTypeConstructor(): TypeConstructorMarker
     fun functionNTypeConstructor(n: Int): TypeConstructorMarker
+
+    fun KotlinTypeMarker.getNameForErrorType(): String?
 }

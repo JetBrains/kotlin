@@ -121,4 +121,8 @@ internal class KtFe10TypeSystemCommonBackendContextForTypeMapping(
     override fun functionNTypeConstructor(n: Int): TypeConstructorMarker {
         return builtIns.getFunction(n).typeConstructor
     }
+
+    override fun KotlinTypeMarker.getNameForErrorType(): String? {
+        return null
+    }
 }
