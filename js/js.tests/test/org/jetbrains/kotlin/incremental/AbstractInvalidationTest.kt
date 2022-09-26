@@ -43,7 +43,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         private const val BOX_FUNCTION_NAME = "box"
         private const val STDLIB_ALIAS = "stdlib"
 
-        private val STDLIB_MODULE_NAME = "kotlin-kotlin-stdlib-js-ir"
+        private const val STDLIB_MODULE_NAME = "kotlin-kotlin-stdlib-js-ir"
         private val STDLIB_KLIB = File(System.getProperty("kotlin.js.stdlib.klib.path") ?: error("Please set stdlib path")).canonicalPath
 
         private val KT_FILE_IGNORE_PATTERN = Regex("^.*\\..+\\.kt$")
@@ -139,7 +139,9 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                 modification.execute(moduleTestDir, moduleSourceDir) { deletedFiles.add(it.name) }
             }
 
-            val dependencies = moduleStep.dependencies.mapTo(mutableListOf(File(STDLIB_KLIB))) { resolveModuleArtifact(it, buildDir) }
+            val dependencies = moduleStep.dependencies.mapTo(mutableListOf(File(STDLIB_KLIB))) {
+                resolveModuleArtifact(it.moduleName, buildDir)
+            }
             val outputKlibFile = resolveModuleArtifact(module, buildDir)
             val configuration = createConfiguration(module, projStep.language)
             buildArtifact(configuration, module, moduleSourceDir, dependencies, outputKlibFile)
