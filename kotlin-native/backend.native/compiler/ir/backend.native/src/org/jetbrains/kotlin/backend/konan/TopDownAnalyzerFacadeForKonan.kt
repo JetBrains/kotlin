@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendContext
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -29,7 +30,7 @@ internal object TopDownAnalyzerFacadeForKonan {
 
     private val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer, NativeTypeTransformer())
 
-    fun analyzeFiles(files: Collection<KtFile>, context: Context): AnalysisResult {
+    fun analyzeFiles(files: Collection<KtFile>, context: FrontendContext): AnalysisResult {
         val config = context.config
         val moduleName = Name.special("<${config.moduleId}>") 
 
@@ -62,7 +63,7 @@ internal object TopDownAnalyzerFacadeForKonan {
             files: Collection<KtFile>,
             trace: BindingTrace,
             moduleContext: ModuleContext,
-            context: Context,
+            context: FrontendContext,
             projectContext: ProjectContext,
             additionalPackages: List<PackageFragmentProvider> = emptyList()
     ): AnalysisResult {

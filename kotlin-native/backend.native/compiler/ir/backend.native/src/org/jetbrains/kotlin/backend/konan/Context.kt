@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.BridgeDirections
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysisResult
 import org.jetbrains.kotlin.backend.konan.descriptors.deepPrint
+import org.jetbrains.kotlin.backend.konan.driver.context.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.llvm.CodegenClassMetadata
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
@@ -68,7 +69,7 @@ internal class NativeMapping : DefaultMapping() {
     val enumValuesCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
 }
 
-internal class Context(config: KonanConfig) : KonanBackendContext(config) {
+internal class Context(config: KonanConfig) : KonanBackendContext(config), ConfigChecks {
     lateinit var frontendServices: FrontendServices
     lateinit var environment: KotlinCoreEnvironment
     lateinit var bindingContext: BindingContext
@@ -259,26 +260,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         printIr()
         printBitCode()
     }
-
-    fun shouldExportKDoc() = config.configuration.getBoolean(KonanConfigKeys.EXPORT_KDOC)
-
-    fun shouldVerifyBitCode() = config.configuration.getBoolean(KonanConfigKeys.VERIFY_BITCODE)
-
-    fun shouldPrintBitCode() = config.configuration.getBoolean(KonanConfigKeys.PRINT_BITCODE)
-
-    fun shouldPrintLocations() = config.configuration.getBoolean(KonanConfigKeys.PRINT_LOCATIONS)
-
-    fun shouldPrintFiles() = config.configuration.getBoolean(KonanConfigKeys.PRINT_FILES)
-
-    fun shouldProfilePhases() = config.phaseConfig.needProfiling
-
-    fun shouldContainDebugInfo() = config.debug
-    fun shouldContainLocationDebugInfo() = shouldContainDebugInfo() || config.lightDebug
-    fun shouldContainAnyDebugInfo() = shouldContainDebugInfo() || shouldContainLocationDebugInfo()
-    fun shouldUseDebugInfoFromNativeLibs() = shouldContainAnyDebugInfo() && config.useDebugInfoInNativeLibs
-
-    fun shouldOptimize() = config.optimizationsEnabled
-    fun shouldInlineSafepoints() = !config.target.needSmallBinary()
     fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized
     fun useLazyFileInitializers() = config.propertyLazyInitialization
 
