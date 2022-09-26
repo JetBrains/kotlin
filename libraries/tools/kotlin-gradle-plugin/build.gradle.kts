@@ -97,6 +97,7 @@ dependencies {
         functionalTestCompileOnly("com.android.tools:common:30.2.1")
         functionalTestImplementation(gradleKotlinDsl())
         functionalTestImplementation(project(":kotlin-gradle-plugin-kpm-android"))
+        functionalTestImplementation(project(":kotlin-gradle-plugin-tcs-android"))
         functionalTestImplementation(project(":kotlin-tooling-metadata"))
         functionalTestImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
         functionalTestImplementation("com.github.gundy:semver4j:0.16.4:nodeps") {
