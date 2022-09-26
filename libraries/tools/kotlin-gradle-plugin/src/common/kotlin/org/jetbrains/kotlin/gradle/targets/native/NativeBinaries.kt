@@ -19,6 +19,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
+import org.jetbrains.kotlin.gradle.utils.Xcode
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -278,7 +279,8 @@ class Framework(
     /**
      * Embed bitcode for the framework or not. See [BitcodeEmbeddingMode].
      */
-    var embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode = buildType.embedBitcode(konanTarget)
+    var embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode =
+        Xcode.defaultBitcodeEmbeddingMode(konanTarget, buildType)
 
     /**
      * Enable or disable embedding bitcode for the framework. See [BitcodeEmbeddingMode].

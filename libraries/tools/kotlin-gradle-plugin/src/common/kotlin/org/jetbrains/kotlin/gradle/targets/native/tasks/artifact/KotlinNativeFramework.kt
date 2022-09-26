@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.Xcode
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
@@ -122,7 +123,7 @@ internal fun KotlinNativeArtifact.registerLinkFrameworkTask(
         task.linkerOptions = linkerOptions
         task.binaryOptions = binaryOptions
         task.isStaticFramework = isStatic
-        task.embedBitcode = embedBitcode ?: buildType.embedBitcode(target)
+        task.embedBitcode = embedBitcode ?: Xcode.defaultBitcodeEmbeddingMode(target, buildType)
         task.librariesConfiguration = librariesConfigurationName
         task.exportLibrariesConfiguration = exportConfigurationName
         task.kotlinOptions(kotlinOptionsFn)
