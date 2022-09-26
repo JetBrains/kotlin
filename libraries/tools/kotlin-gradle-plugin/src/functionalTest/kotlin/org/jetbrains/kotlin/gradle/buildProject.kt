@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
@@ -13,7 +14,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.kpm.applyKpmPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
-import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 
 fun buildProject(
@@ -51,8 +51,13 @@ fun Project.kotlin(code: KotlinMultiplatformExtension.() -> Unit) {
 
 fun Project.androidLibrary(code: LibraryExtension.() -> Unit) {
     plugins.findPlugin("com.android.library") ?: plugins.apply("com.android.library")
-    val androidExtension = project.extensions.findByName("android") as? LibraryExtension
-        ?: throw IllegalStateException("Android library extension is missing in project")
+    val androidExtension = project.extensions.getByName("android") as LibraryExtension
+    androidExtension.code()
+}
+
+fun Project.androidApplication(code: ApplicationExtension.() -> Unit) {
+    plugins.findPlugin("com.android.application") ?: plugins.apply("com.android.application")
+    val androidExtension = project.extensions.getByName("android") as ApplicationExtension
     androidExtension.code()
 }
 

@@ -9,9 +9,16 @@ dependencies {
     compileOnly(project(":kotlin-gradle-plugin"))
 }
 
+configureKotlinCompileTasksGradleCompatibility()
+
+kotlin {
+    sourceSets.all {
+        languageSettings.optIn("org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi")
+    }
+}
+
 /* This module is just for local development / prototyping and demos */
 if (!kotlinBuildProperties.isTeamcityBuild) {
-    tasks.register("install") {
-        dependsOn(tasks.named("publishToMavenLocal"))
-    }
+    publish()
+    standardPublicJars()
 }
