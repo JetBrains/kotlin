@@ -49,6 +49,16 @@ fun main() {
                 model("klibABI/", pattern = "^([^_](.+))$", recursive = false)
             }
         }
+
+        // Atomicfu compiler plugin native tests.
+        testGroup("plugins/atomicfu/atomicfu-compiler/test", "plugins/atomicfu/atomicfu-compiler/testData") {
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "AtomicfuNativeTestGenerated",
+                annotations = listOf(codegen(), provider<UseExtTestCaseGroupProvider>())
+            ) {
+                model("box", targetBackend = TargetBackend.NATIVE)
+            }
+        }
     }
 }
 
