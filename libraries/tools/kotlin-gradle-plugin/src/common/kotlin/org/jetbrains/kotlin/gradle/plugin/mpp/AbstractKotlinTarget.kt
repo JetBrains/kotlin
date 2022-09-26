@@ -6,7 +6,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Action
 import org.gradle.api.DomainObjectSet
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.PublishArtifact
@@ -285,17 +284,3 @@ internal fun KotlinTarget.disambiguateName(simpleName: String) =
 
 internal fun javaApiUsageForMavenScoping() = "java-api-jars"
 
-abstract class KotlinOnlyTarget<T : KotlinCompilation<*>>(
-    project: Project,
-    override val platformType: KotlinPlatformType
-) : AbstractKotlinTarget(project) {
-
-    override lateinit var compilations: NamedDomainObjectContainer<T>
-        internal set
-
-    override lateinit var targetName: String
-        internal set
-
-    override var disambiguationClassifier: String? = null
-        internal set
-}
