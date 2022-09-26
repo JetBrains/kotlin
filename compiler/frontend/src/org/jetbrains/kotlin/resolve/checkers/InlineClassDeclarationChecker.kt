@@ -151,6 +151,19 @@ object InlineClassDeclarationChecker : DeclarationChecker {
             trace.report(Errors.VALUE_CLASS_CANNOT_BE_CLONEABLE.on(inlineOrValueKeyword))
             return
         }
+
+        fun getFunctionDescriptor(declaration: KtNamedFunction): SimpleFunctionDescriptor? =
+            context.trace.bindingContext.get(BindingContext.FUNCTION, declaration)
+
+        fun isUntypedEquals(declaration: KtNamedFunction): Boolean = getFunctionDescriptor(declaration)?.overridesEqualsFromAny() ?: false
+        fun isTypedEquals(declaration: KtNamedFunction): Boolean = getFunctionDescriptor(declaration)?.isTypedEqualsInInlineClass() ?: false
+        fun KtClass.namedFunctions() = declarations.filterIsInstance<KtNamedFunction>()
+        declaration.namedFunctions().singleOrNull { isUntypedEquals(it) }?.apply {
+            if (declaration.namedFunctions().none { isTypedEquals(it) }) {
+                trace.report(Errors.ILLEGAL_EQUALS_OVERRIDING_IN_INLINE_CLASS.on(this@apply, descriptor.name.asString()))
+            }
+        }
+
     }
 
     private fun KotlinType.isInapplicableParameterType() =

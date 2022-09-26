@@ -427,6 +427,8 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> INLINE_CLASS_DEPRECATED = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtContextReceiverList> INLINE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory1<KtDeclaration, String> ILLEGAL_EQUALS_OVERRIDING_IN_INLINE_CLASS = DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE);
+
     // Result class
 
     DiagnosticFactory0<PsiElement> RESULT_CLASS_IN_RETURN_TYPE = DiagnosticFactory0.create(ERROR);
