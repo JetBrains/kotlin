@@ -5,7 +5,6 @@ import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
-import org.junit.Assert
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Disabled
@@ -148,15 +147,15 @@ class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
                     CodeBlock(
                         children = listOf(
                             Text(
-                                """    val soapAttrs = attrs("soap-env" to "http://www.w3.org/2001/12/soap-envelope",
-        "soap-env:encodingStyle" to "http://www.w3.org/2001/12/soap-encoding")
-    val soapXml = node("soap-env:Envelope", soapAttrs,
-        node("soap-env:Body", attrs("xmlns:m" to "http://example"),
-            node("m:GetExample",
-                node("m:GetExampleName", "BasePair")
-            )
+                                """val soapAttrs = attrs("soap-env" to "http://www.w3.org/2001/12/soap-envelope",
+    "soap-env:encodingStyle" to "http://www.w3.org/2001/12/soap-encoding")
+val soapXml = node("soap-env:Envelope", soapAttrs,
+    node("soap-env:Body", attrs("xmlns:m" to "http://example"),
+        node("m:GetExample",
+            node("m:GetExampleName", "BasePair")
         )
-    )"""
+    )
+)"""
                             )
                         )
                     )
