@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.lower.MethodsFromAnyGeneratorForLowerings.Companion.isEquals
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.MemoizedValueClassAbstractReplacements
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.irReturn
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
@@ -41,6 +42,11 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
     abstract fun IrFunction.isSpecificFieldGetter(): Boolean
 
     final override fun visitClassNew(declaration: IrClass): IrStatement {
+
+        if (declaration.isSingleFieldValueClass) {
+            delegateEqualsToSpecializedEqualsIfNeeded(declaration)
+        }
+
         // The arguments to the primary constructor are in scope in the initializers of IrFields.
         declaration.primaryConstructor?.let {
             replacements.getReplacementFunction(it)?.let { replacement -> addBindingsFor(it, replacement) }
@@ -71,6 +77,24 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
         }
 
         return declaration
+    }
+
+
+    private fun delegateEqualsToSpecializedEqualsIfNeeded(declaration: IrClass) {
+        declaration.functions.singleOrNull { it.isEquals(context) && it.origin == IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER }
+            ?.apply {
+                val builder = context.createIrBuilder(symbol)
+                body = builder.irBlockBody {
+                    val otherParam = this@apply.valueParameters[0]
+                    +irIfThenReturnFalse(irNotIs(irGet(otherParam), declaration.defaultType))
+                    val thisObj = irGet(this@apply.dispatchReceiverParameter!!)
+                    val otherObj = irAs(irGet(otherParam), declaration.defaultType)
+                    +irReturn(irCall(context.irBuiltIns.eqeqSymbol).apply {
+                        putValueArgument(0, thisObj)
+                        putValueArgument(1, otherObj)
+                    })
+                }
+            }
     }
 
     protected fun transformFunctionFlat(function: IrFunction): List<IrDeclaration>? {
