@@ -39,7 +39,7 @@ abstract class AbstractNativeInteropIndexerTest : AbstractNativeSimpleTest() {
     protected fun runTest(@TestDataFile testPath: String) {
         val homeDirectory = KtTestUtil.getHomeDirectory()
         val testPathFull = File(homeDirectory).resolve(testPath)
-        val tempDir = testRunSettings.get<BaseDirs>().testBuildDir.resolve(testPath).apply { mkdirs() }
+        val tempDir = org.jetbrains.kotlin.konan.file.createTempDir(testPathFull.name)
 
         val dummyCompilerCall = LoggedData.CompilerCall(
             parameters = LoggedData.CompilerParameters(home = testRunSettings.get(), compilerArgs = arrayOf(), sourceModules = listOf()),
