@@ -26,12 +26,11 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.withType
-import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Entrypoint-class for registering and configuring [TransformKotlinGranularMetadata] task
+ * Entrypoint-class for registering and configuring [TransformMetadataDependencies] task
  */
-internal class TransformKotlinGranularMetadataRegistrar
+internal class TransformMetadataDependenciesTaskRegistrar
 private constructor(
     private val project: Project
 ) {
@@ -106,14 +105,14 @@ private constructor(
     private fun registerTask(
         kotlinSourceSet: KotlinSourceSet,
         metadataDependenciesConfiguration: Configuration
-    ): TaskProvider<TransformKotlinGranularMetadata> {
+    ): TaskProvider<TransformMetadataDependencies> {
 
         /**
          * Transformation is possible only in Main Module, which is publishable
          * Any associated compilations such as test are not publishable thus their
          * intermediate sourceSets don't need to be compiled into a separate klib
          * and having granular metadata transformations
-         * TODO: This will not be true when [TransformKotlinGranularMetadata] will be used in IDE Import
+         * TODO: This will not be true when [TransformMetadataDependencies] will be used in IDE Import
          */
         val platformMainCompilations = kotlinSourceSet
             .internal
@@ -126,7 +125,7 @@ private constructor(
         val hostSpecificVariantsDependenciesConfigurations =
             if (isNativeSourceSet(kotlinSourceSet)) hostSpecificDependencies(platformMainCompilations) else null
 
-        val settings = TransformKotlinGranularMetadata.Settings(
+        val settings = TransformMetadataDependencies.Settings(
             sourceSetName = kotlinSourceSet.name,
 
             resolvedSourceSetMetadataDependencies = ResolvedDependencyGraph(metadataDependenciesConfiguration),
@@ -147,9 +146,9 @@ private constructor(
 
     private val projectsData by lazy { collectProjectsData() }
 
-    private fun collectProjectsData(): Map<String, TransformKotlinGranularMetadata.ProjectData> {
+    private fun collectProjectsData(): Map<String, TransformMetadataDependencies.ProjectData> {
         return project.rootProject.allprojects.associateBy { it.path }.mapValues { (path, subProject) ->
-            TransformKotlinGranularMetadata.ProjectData(
+            TransformMetadataDependencies.ProjectData(
                 path = path,
                 sourceSetMetadataOutputs = project.provider { subProject.multiplatformExtensionOrNull?.sourceSetsMetadataOutputs() },
                 projectStructureMetadata = project.provider { subProject.multiplatformExtensionOrNull?.kotlinProjectStructureMetadata },
@@ -205,9 +204,9 @@ private constructor(
     }
 
     companion object {
-        private val propertyKey = TransformKotlinGranularMetadataRegistrar::class.java.name
-        fun create(project: Project): TransformKotlinGranularMetadataRegistrar {
-            return project.extensions.extraProperties.getOrPut(propertyKey) { TransformKotlinGranularMetadataRegistrar(project) }
+        private val propertyKey = TransformMetadataDependenciesTaskRegistrar::class.java.name
+        fun create(project: Project): TransformMetadataDependenciesTaskRegistrar {
+            return project.extensions.extraProperties.getOrPut(propertyKey) { TransformMetadataDependenciesTaskRegistrar(project) }
         }
     }
 }
