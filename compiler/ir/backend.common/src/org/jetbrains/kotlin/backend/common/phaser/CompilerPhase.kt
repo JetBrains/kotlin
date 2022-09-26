@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.phaser
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.LoggingContext
 import kotlin.system.measureTimeMillis
 
 class PhaserState<Data>(
@@ -27,7 +28,7 @@ inline fun <R, D> PhaserState<D>.downlevel(nlevels: Int, block: () -> R): R {
     return result
 }
 
-interface CompilerPhase<in Context : CommonBackendContext, Input, Output> {
+interface CompilerPhase<in Context : LoggingContext, Input, Output> {
     fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output
 
     fun getNamedSubphases(startDepth: Int = 0): List<Pair<Int, NamedCompilerPhase<Context, *, *>>> = emptyList()
@@ -36,13 +37,13 @@ interface CompilerPhase<in Context : CommonBackendContext, Input, Output> {
     val stickyPostconditions: Set<Checker<Output>> get() = emptySet()
 }
 
-fun <Context : CommonBackendContext, Input, Output> CompilerPhase<Context, Input, Output>.invokeToplevel(
+fun <Context : LoggingContext, Input, Output> CompilerPhase<Context, Input, Output>.invokeToplevel(
     phaseConfig: PhaseConfig,
     context: Context,
     input: Input
 ): Output = invoke(phaseConfig, PhaserState(), context, input)
 
-interface SameTypeCompilerPhase<in Context : CommonBackendContext, Data> : CompilerPhase<Context, Data, Data>
+interface SameTypeCompilerPhase<in Context : LoggingContext, Data> : CompilerPhase<Context, Data, Data>
 
 // A failing checker should just throw an exception.
 typealias Checker<Data> = (Data) -> Unit
@@ -66,7 +67,7 @@ infix operator fun <Data, Context> Action<Data, Context>.plus(other: Action<Data
         other(phaseState, data, context)
     }
 
-sealed class NamedCompilerPhase<in Context : CommonBackendContext, Input, Output>(
+sealed class NamedCompilerPhase<in Context : LoggingContext, Input, Output>(
     val name: String,
     val description: String,
     val prerequisite: Set<SameTypeNamedCompilerPhase<Context, *>> = emptySet(),
@@ -128,7 +129,7 @@ sealed class NamedCompilerPhase<in Context : CommonBackendContext, Input, Output
     override fun toString() = "Compiler Phase @$name"
 }
 
-class SameTypeNamedCompilerPhase<in Context : CommonBackendContext, Data>(
+class SameTypeNamedCompilerPhase<in Context : LoggingContext, Data>(
     name: String,
     description: String,
     prerequisite: Set<SameTypeNamedCompilerPhase<Context, *>> = emptySet(),
@@ -175,7 +176,7 @@ class SameTypeNamedCompilerPhase<in Context : CommonBackendContext, Data>(
         phaserState
 }
 
-class SimpleNamedCompilerPhase<in Context : CommonBackendContext, Input, Output>(
+class SimpleNamedCompilerPhase<in Context : LoggingContext, Input, Output>(
     name: String,
     description: String,
     prerequisite: Set<SameTypeNamedCompilerPhase<Context, *>> = emptySet(),
