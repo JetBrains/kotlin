@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.targets.native.cocoapods.MissingCocoapodsMess
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.MissingSpecReposMessage
 import org.jetbrains.kotlin.gradle.tasks.PodspecTask.Companion.retrievePods
 import org.jetbrains.kotlin.gradle.tasks.PodspecTask.Companion.retrieveSpecRepos
+import org.jetbrains.kotlin.gradle.utils.runCommand
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
@@ -112,69 +113,6 @@ open class PodInstallTask : CocoapodsTask() {
             }
         }
     }
-}
-
-private fun runCommand(
-    command: List<String>,
-    logger: Logger,
-    errorHandler: ((retCode: Int, output: String, process: Process) -> String?)? = null,
-    exceptionHandler: ((ex: IOException) -> Unit)? = null,
-    processConfiguration: ProcessBuilder.() -> Unit = { }
-): String {
-    var process: Process? = null
-    try {
-        process = ProcessBuilder(command)
-            .apply {
-                this.processConfiguration()
-            }.start()
-    } catch (e: IOException) {
-        if (exceptionHandler != null) exceptionHandler(e) else throw e
-    }
-
-    if (process == null) {
-        throw IllegalStateException("Failed to run command ${command.joinToString(" ")}")
-    }
-
-    var inputText = ""
-    var errorText = ""
-
-    val inputThread = thread {
-        inputText = process.inputStream.use {
-            it.reader().readText()
-        }
-    }
-
-    val errorThread = thread {
-        errorText = process.errorStream.use {
-            it.reader().readText()
-        }
-    }
-
-    inputThread.join()
-    errorThread.join()
-
-    val retCode = process.waitFor()
-    logger.info(
-        """
-            |Information about "${command.joinToString(" ")}" call:
-            |
-            |${inputText}
-        """.trimMargin()
-    )
-
-    check(retCode == 0) {
-        errorHandler?.invoke(retCode, inputText.ifBlank { errorText }, process)
-            ?: """
-                |Executing of '${command.joinToString(" ")}' failed with code $retCode and message: 
-                |
-                |$inputText
-                |
-                |$errorText
-                |
-                """.trimMargin()
-    }
-
-    return inputText
 }
 
 /**
