@@ -1340,11 +1340,11 @@ class ParserTest : KDocTest() {
                             CodeBlock(
                                 listOf(
                                     Text(
-                                        "    val x = 1\n" +
-                                                "    val y = 2\n" +
-                                                "    if (x == 1) {\n" +
-                                                "        println(y)\n" +
-                                                "    }"
+                                        "val x = 1\n" +
+                                                "val y = 2\n" +
+                                                "if (x == 1) {\n" +
+                                                "    println(y)\n" +
+                                                "}"
                                     )
                                 )
                             )
