@@ -96,6 +96,10 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             "Property does not have backing field which makes it non-serializable and therefore @Transient is redundant"
         )
         MAP.put(
+            SerializationErrors.GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED,
+            "Serialization of Arrays with generic type arguments is impossible because of unknown compile-time type."
+        )
+        MAP.put(
             SerializationErrors.JSON_FORMAT_REDUNDANT_DEFAULT,
             "Redundant creation of Json default format. Creating instances for each usage can be slow."
         )
