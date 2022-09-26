@@ -3256,6 +3256,12 @@ internal class RedundantInlineSuspendFunctionTypeImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.RedundantInlineSuspendFunctionType(), KtAbstractFirDiagnostic<KtElement>
 
+internal class IllegalEqualsOverridingInInlineClassImpl(
+    override val className: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.IllegalEqualsOverridingInInlineClass(), KtAbstractFirDiagnostic<KtDeclaration>
+
 internal class CannotAllUnderImportFromSingletonImpl(
     override val objectName: Name,
     override val firDiagnostic: KtPsiDiagnostic,

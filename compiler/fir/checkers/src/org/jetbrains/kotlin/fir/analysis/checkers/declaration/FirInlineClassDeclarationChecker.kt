@@ -188,6 +188,18 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                 }
             }
         }
+
+        val simpleFunctions = declaration.declarations.filterIsInstance<FirSimpleFunction>()
+        simpleFunctions.singleOrNull() { it.overridesEqualsFromAny() }?.apply {
+            if (declaration.symbol.isInline && simpleFunctions.none { it.isTypedEqualsInInlineClass(context.session) }) {
+                reporter.reportOn(
+                    source,
+                    FirErrors.ILLEGAL_EQUALS_OVERRIDING_IN_INLINE_CLASS,
+                    declaration.name.asString(),
+                    context
+                )
+            }
+        }
     }
 
     private fun FirProperty.isRelatedToParameter(parameter: FirValueParameter?) =

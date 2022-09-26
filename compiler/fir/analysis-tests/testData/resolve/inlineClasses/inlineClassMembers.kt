@@ -16,7 +16,7 @@ inline class ReversedMembers(val x: Int) {
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>box<!>() {}
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>() {}
 
-    override fun equals(other: Any?) = true
+    <!ILLEGAL_EQUALS_OVERRIDING_IN_INLINE_CLASS!>override fun equals(other: Any?)<!> = true
     override fun hashCode() = 1
 }
 
