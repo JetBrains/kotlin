@@ -654,16 +654,16 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
     }
 
     private fun getClassAccessFlags(clazz: ClassNode, descriptor: DeclarationDescriptor, isInner: Boolean, isNested: Boolean): Int {
-        if ((descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.INTERFACE) {
-            // Classes inside interfaces should always be public and static.
-            // See com.sun.tools.javac.comp.Enter.visitClassDef for more information.
-            return (clazz.access or Opcodes.ACC_PUBLIC or Opcodes.ACC_STATIC) and
-                    Opcodes.ACC_PRIVATE.inv() and Opcodes.ACC_PROTECTED.inv() // Remove private and protected modifiers
-        }
         var access = clazz.access
         if ((descriptor as? ClassDescriptor)?.kind == ClassKind.ENUM_CLASS) {
             // Enums are final in the bytecode, but "final enum" is not allowed in Java.
             access = access and Opcodes.ACC_FINAL.inv()
+        }
+        if ((descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.INTERFACE) {
+            // Classes inside interfaces should always be public and static.
+            // See com.sun.tools.javac.comp.Enter.visitClassDef for more information.
+            return (access or Opcodes.ACC_PUBLIC or Opcodes.ACC_STATIC) and
+                    Opcodes.ACC_PRIVATE.inv() and Opcodes.ACC_PROTECTED.inv() // Remove private and protected modifiers
         }
         if (!isInner && isNested) {
             access = access or Opcodes.ACC_STATIC
