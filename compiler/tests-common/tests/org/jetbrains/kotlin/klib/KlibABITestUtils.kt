@@ -18,13 +18,22 @@ object KlibABITestUtils {
         val buildDir: File
         val stdlibFile: File
 
-        fun buildKlib(moduleName: String, moduleSourceDir: File, moduleDependencies: Collection<File>, klibFile: File)
-        fun buildBinaryAndRun(mainModuleKlibFile: File, allDependencies: Collection<File>)
+        fun buildKlib(moduleName: String, moduleSourceDir: File, dependencies: Dependencies, klibFile: File)
+        fun buildBinaryAndRun(mainModuleKlibFile: File, dependencies: Dependencies)
 
         fun onNonEmptyBuildDirectory(directory: File)
 
         fun isIgnoredTest(projectInfo: ProjectInfo): Boolean = projectInfo.muted
         fun onIgnoredTest()
+    }
+
+    class Dependencies(val regularDependencies: Set<File>, val friendDependencies: Set<File>) {
+        fun mergeWith(other: Dependencies): Dependencies =
+            Dependencies(regularDependencies + other.regularDependencies, friendDependencies + other.friendDependencies)
+
+        companion object {
+            val EMPTY = Dependencies(emptySet(), emptySet())
+        }
     }
 
     fun runTest(testConfiguration: TestConfiguration) = with(testConfiguration) {
@@ -70,6 +79,9 @@ object KlibABITestUtils {
             }
         }
 
+        // Collect all dependencies for building the final binary file.
+        var binaryDependencies = Dependencies.EMPTY
+
         projectInfo.steps.forEach { projectStep ->
             projectStep.order.forEach { moduleName ->
                 val (moduleInfo, moduleTestDir, moduleBuildDirs, klibFile) = modulesMap[moduleName]
@@ -84,24 +96,31 @@ object KlibABITestUtils {
                 if (!moduleBuildDirs.outputDir.list().isNullOrEmpty())
                     onNonEmptyBuildDirectory(moduleBuildDirs.outputDir)
 
-                val moduleDependencies = moduleStep.dependencies.map { dependencyName ->
-                    if (dependencyName == "stdlib")
-                        stdlibFile
-                    else
-                        modulesMap[dependencyName]?.klibFile ?: fail { "No module $dependencyName found on step ${projectStep.id}" }
+                val regularDependencies = hashSetOf<File>()
+                val friendDependencies = hashSetOf<File>()
+
+                moduleStep.dependencies.forEach { dependency ->
+                    if (dependency.moduleName == "stdlib")
+                        regularDependencies += stdlibFile
+                    else {
+                        val moduleFile = modulesMap[dependency.moduleName]?.klibFile
+                            ?: fail { "No module ${dependency.moduleName} found on step ${projectStep.id}" }
+                        regularDependencies += moduleFile
+                        if (dependency.isFriend) friendDependencies += moduleFile
+                    }
                 }
 
-                buildKlib(moduleInfo.moduleName, moduleBuildDirs.sourceDir, moduleDependencies, klibFile)
+                val dependencies = Dependencies(regularDependencies, friendDependencies)
+                binaryDependencies = binaryDependencies.mergeWith(dependencies)
+
+                buildKlib(moduleInfo.moduleName, moduleBuildDirs.sourceDir, dependencies, klibFile)
             }
         }
 
         val mainModuleKlibFile = modulesMap[MAIN_MODULE_NAME]?.klibFile ?: fail { "No main module $MAIN_MODULE_NAME found" }
-        val allKlibs = buildSet {
-            this += stdlibFile
-            modulesMap.mapTo(this) { (_, module) -> module.klibFile }
-        }
+        binaryDependencies = binaryDependencies.mergeWith(Dependencies(setOf(mainModuleKlibFile), emptySet()))
 
-        buildBinaryAndRun(mainModuleKlibFile, allKlibs)
+        buildBinaryAndRun(mainModuleKlibFile, binaryDependencies)
     }
 
     private fun copySources(from: File, to: File) {
