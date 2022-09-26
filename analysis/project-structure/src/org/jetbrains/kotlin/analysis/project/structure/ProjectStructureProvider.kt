@@ -37,4 +37,4 @@ public inline fun <reified M : KtModule> PsiElement.getKtModuleOfType(project: P
  * @param project [Project] which contains current [PsiElement]. `PsiElement.project` may be a heavy operation as it includes PSI tree traversal. So, when a [Project] is  already available, it is better to pass it explicitly
  */
 public inline fun <reified M : KtModule> PsiElement.getKtModuleOfTypeSafe(project: Project = this.project): M? =
-    getKtModule(project) as M?
+    getKtModule(project) as? M
