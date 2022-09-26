@@ -7,8 +7,9 @@ import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 import org.jetbrains.kotlin.native.interop.gen.jvm.buildNativeLibrary
 import org.jetbrains.kotlin.native.interop.gen.jvm.prepareTool
 import org.jetbrains.kotlin.native.interop.indexer.NativeLibraryHeaders
-import org.jetbrains.kotlin.native.interop.indexer.TranslationUnitsCache
+import org.jetbrains.kotlin.native.interop.indexer.TURepository
 import org.jetbrains.kotlin.native.interop.indexer.getHeaderPaths
+import org.jetbrains.kotlin.native.interop.indexer.use
 import org.jetbrains.kotlin.native.interop.tool.CInteropArguments
 import java.io.File
 import java.util.stream.Collectors
@@ -48,16 +49,17 @@ private fun makeDependencyAssignerForTarget(target: String, defFiles: List<File>
     val tool = prepareTool(target, KotlinPlatform.NATIVE, runFromDaemon)
     val cinteropArguments = CInteropArguments()
     cinteropArguments.argParser.parse(arrayOf())
-    val translationUnitsCache = TranslationUnitsCache()
-    val libraries = defFiles.parallelStream().map {
-        it to buildNativeLibrary(
-                tool,
-                DefFile(it, tool.substitutions),
-                cinteropArguments,
-                ImportsImpl(emptyMap())
-        ).getHeaderPaths(translationUnitsCache)
-    }.toList().toMap()
-    return SingleTargetDependencyAssigner(libraries)
+    return TURepository().use { tuRepository ->
+        val libraries = defFiles.parallelStream().map {
+            it to buildNativeLibrary(
+                    tool,
+                    DefFile(it, tool.substitutions),
+                    cinteropArguments,
+                    ImportsImpl(emptyMap())
+            ).getHeaderPaths(tuRepository)
+        }.toList().toMap()
+        SingleTargetDependencyAssigner(libraries)
+    }
 }
 
 private fun defFileDependencies(dependencyAssigner: DependencyAssigner) {
