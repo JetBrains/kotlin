@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
@@ -143,7 +144,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                 compilation.compileKotlinTaskProvider.map { it.outputs.files }
             })
 
-            if (compilation is KotlinJvmCompilation && compilation.target.withJavaEnabled) {
+            if (compilation is KotlinJvmCompilation && (compilation.target as? KotlinJvmTarget)?.withJavaEnabled == true) {
                 it.inputs.files({ compilation.compileJavaTaskProvider?.map { it.outputs.files } })
             }
 
