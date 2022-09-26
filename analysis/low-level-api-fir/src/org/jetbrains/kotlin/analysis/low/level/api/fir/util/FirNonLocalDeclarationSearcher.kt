@@ -5,15 +5,55 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
+import org.jetbrains.kotlin.analysis.utils.errors.requireWithAttachmentBuilder
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.name.ClassId
 
 object FirElementFinder {
+    fun findClassifierWithClassId(firFile: FirFile, classId: ClassId): FirClassLikeDeclaration? {
+        requireWithAttachmentBuilder(!classId.isLocal, { "ClassId should not be local" }) {
+            withEntry("classId", classId) { it.asString() }
+        }
+        requireWithAttachmentBuilder(
+            firFile.packageFqName == classId.packageFqName,
+            { "ClassId should not be local" }
+        ) {
+            withEntry("FirFile.packageName", firFile.packageFqName) { it.asString() }
+            withEntry("ClassId.packageName", classId.packageFqName) { it.asString() }
+        }
+
+        val classIdPathSegment = classId.relativeClassName.pathSegments()
+        var result: FirClassLikeDeclaration? = null
+
+        fun find(declarations: List<FirDeclaration>, classIdPathIndex: Int) {
+            if (result != null) return
+            val currentClassSegment = classIdPathSegment[classIdPathIndex]
+
+            for (subDeclaration in declarations) {
+                if (subDeclaration is FirClassLikeDeclaration && currentClassSegment == subDeclaration.symbol.name) {
+                    if (classIdPathIndex == classIdPathSegment.lastIndex) {
+                        result = subDeclaration
+                        return
+                    }
+                    if (subDeclaration is FirRegularClass) {
+                        find(subDeclaration.declarations, classIdPathIndex + 1)
+                    }
+                }
+            }
+        }
+
+        find(firFile.declarations, classIdPathIndex = 0)
+        return result
+    }
+
     inline fun <reified E : FirElement> findElementIn(
         container: FirElement,
         crossinline canGoInside: (E) -> Boolean = { true },

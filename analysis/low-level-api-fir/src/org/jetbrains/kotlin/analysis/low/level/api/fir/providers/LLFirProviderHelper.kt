@@ -42,11 +42,7 @@ internal class LLFirProviderHelper(
             ?: return@createCache null
         if (ktClass.getClassId() == null) return@createCache null
         val firFile = firFileBuilder.buildRawFirFileWithCaching(ktClass.containingKtFile)
-        FirElementFinder.findElementIn<FirClassLikeDeclaration>(
-            firFile,
-            canGoInside = { it is FirRegularClass },
-            predicate = { it.symbol.classId == classId },
-        )
+        FirElementFinder.findClassifierWithClassId(firFile, classId)
             ?: error("Classifier $classId was found in file ${ktClass.containingKtFile.virtualFilePath} but was not found in FirFile")
     }
 
