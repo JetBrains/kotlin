@@ -37,7 +37,8 @@ abstract class AbstractNativeInteropIndexerTest : AbstractNativeSimpleTest() {
 
     @Synchronized
     protected fun runTest(@TestDataFile testPath: String) {
-        val testPathFull = File(KtTestUtil.getHomeDirectory()).resolve(testPath)
+        val homeDirectory = KtTestUtil.getHomeDirectory()
+        val testPathFull = File(homeDirectory).resolve(testPath)
         val tempDir = testRunSettings.get<BaseDirs>().testBuildDir.resolve(testPath).apply { mkdirs() }
 
         val dummyCompilerCall = LoggedData.CompilerCall(
@@ -58,7 +59,8 @@ abstract class AbstractNativeInteropIndexerTest : AbstractNativeSimpleTest() {
             runParameters = listOf(
                 TestRunParameter.WithFreeCommandLineArguments(
                     listOf(
-                        testPathFull.canonicalPath,
+                        homeDirectory,
+                        testPath,
                         tempDir.canonicalPath
                     ) + if (fmodules) listOf("-compiler-option", "-fmodules") else listOf()
                 )
