@@ -17,6 +17,15 @@ import java.io.File
 import kotlin.io.path.createTempDirectory
 
 abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
+    class Dependencies(val regularDependencies: Set<File>, val friendDependencies: Set<File>) {
+        fun mergeWith(other: Dependencies): Dependencies =
+            Dependencies(regularDependencies + other.regularDependencies, friendDependencies + other.friendDependencies)
+
+        companion object {
+            val EMPTY = Dependencies(emptySet(), emptySet())
+        }
+    }
+
     protected lateinit var buildDir: File
     protected lateinit var environment: KotlinCoreEnvironment
 
@@ -41,13 +50,13 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
     protected abstract fun buildKlib(
         moduleName: String,
         moduleSourceDir: File,
-        moduleDependencies: Collection<File>,
+        dependencies: Dependencies,
         klibFile: File
     )
 
     protected abstract fun buildBinaryAndRun(
         mainModuleKlibFile: File,
-        libraries: Collection<File>
+        dependencies: Dependencies
     )
 
     fun doTest(testPath: String) = Companion.doTest(
@@ -65,8 +74,8 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
             testDir: File,
             buildDir: File,
             stdlibFile: File,
-            buildKlib: (moduleName: String, moduleSourceDir: File, moduleDependencies: Collection<File>, klibFile: File) -> Unit,
-            buildBinaryAndRun: (mainModuleKlibFile: File, allDependencies: Collection<File>) -> Unit,
+            buildKlib: (moduleName: String, moduleSourceDir: File, dependencies: Dependencies, klibFile: File) -> Unit,
+            buildBinaryAndRun: (mainModuleKlibFile: File, allDependencies: Dependencies) -> Unit,
             onNonEmptyBuildDirectory: (directory: File) -> Unit,
             onIgnoredTest: () -> Unit
         ) {
@@ -113,6 +122,9 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
                 }
             }
 
+            // Collect all dependencies for building the final binary file.
+            var binaryDependencies = Dependencies.EMPTY
+
             projectInfo.steps.forEach { projectStep ->
                 projectStep.order.forEach { moduleName ->
                     val (moduleInfo, moduleTestDir, moduleBuildDirs, klibFile) = modulesMap[moduleName]
@@ -127,24 +139,31 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
                     if (!moduleBuildDirs.outputDir.list().isNullOrEmpty())
                         onNonEmptyBuildDirectory(moduleBuildDirs.outputDir)
 
-                    val moduleDependencies = moduleStep.dependencies.map { dependencyName ->
-                        if (dependencyName == "stdlib")
-                            stdlibFile
-                        else
-                            modulesMap[dependencyName]?.klibFile ?: fail { "No module $dependencyName found on step ${projectStep.id}" }
+                    val regularDependencies = hashSetOf<File>()
+                    val friendDependencies = hashSetOf<File>()
+
+                    moduleStep.dependencies.forEach { dependency ->
+                        if (dependency.moduleName == "stdlib")
+                            regularDependencies += stdlibFile
+                        else {
+                            val moduleFile = modulesMap[dependency.moduleName]?.klibFile
+                                ?: fail { "No module ${dependency.moduleName} found on step ${projectStep.id}" }
+                            regularDependencies += moduleFile
+                            if (dependency.isFriend) friendDependencies += moduleFile
+                        }
                     }
 
-                    buildKlib(moduleInfo.moduleName, moduleBuildDirs.sourceDir, moduleDependencies, klibFile)
+                    val dependencies = Dependencies(regularDependencies, friendDependencies)
+                    binaryDependencies = binaryDependencies.mergeWith(dependencies)
+
+                    buildKlib(moduleInfo.moduleName, moduleBuildDirs.sourceDir, dependencies, klibFile)
                 }
             }
 
             val mainModuleKlibFile = modulesMap[MAIN_MODULE_NAME]?.klibFile ?: fail { "No main module $MAIN_MODULE_NAME found" }
-            val allKlibs = buildSet {
-                this += stdlibFile
-                modulesMap.mapTo(this) { (_, module) -> module.klibFile }
-            }
+            binaryDependencies = binaryDependencies.mergeWith(Dependencies(setOf(mainModuleKlibFile), emptySet()))
 
-            buildBinaryAndRun(mainModuleKlibFile, allKlibs)
+            buildBinaryAndRun(mainModuleKlibFile, binaryDependencies)
         }
 
         private fun copySources(from: File, to: File) {

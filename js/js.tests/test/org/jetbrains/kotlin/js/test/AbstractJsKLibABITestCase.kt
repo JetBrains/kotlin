@@ -31,7 +31,7 @@ import java.io.File
 abstract class AbstractJsKLibABITestCase : AbstractKlibABITestCase() {
     override fun stdlibFile(): File = File("libraries/stdlib/js-ir/build/classes/kotlin/js/main").absoluteFile
 
-    override fun buildKlib(moduleName: String, moduleSourceDir: File, moduleDependencies: Collection<File>, klibFile: File) {
+    override fun buildKlib(moduleName: String, moduleSourceDir: File, dependencies: Dependencies, klibFile: File) {
         val ktFiles = environment.createPsiFiles(moduleSourceDir)
 
         val config = environment.configuration.copy()
@@ -41,15 +41,15 @@ abstract class AbstractJsKLibABITestCase : AbstractKlibABITestCase() {
             environment.project,
             ktFiles,
             config,
-            moduleDependencies.map { it.path },
-            emptyList(), // TODO
+            dependencies.regularDependencies.map { it.path },
+            dependencies.friendDependencies.map { it.path },
             AnalyzerWithCompilerReport(config)
         )
 
         generateKLib(sourceModule, IrFactoryImpl, klibFile.path, nopack = false, jsOutputName = moduleName)
     }
 
-    override fun buildBinaryAndRun(mainModuleKlibFile: File, libraries: Collection<File>) {
+    override fun buildBinaryAndRun(mainModuleKlibFile: File, dependencies: Dependencies) {
         val project = environment.project
         val configuration = environment.configuration
 
@@ -59,7 +59,14 @@ abstract class AbstractJsKLibABITestCase : AbstractKlibABITestCase() {
         configuration.put(CommonConfigurationKeys.MODULE_NAME, MAIN_MODULE_NAME)
 
         val kLib = MainModule.Klib(mainModuleKlibFile.path)
-        val moduleStructure = ModulesStructure(project, kLib, configuration, libraries.map { it.path }, emptyList())
+
+        val moduleStructure = ModulesStructure(
+            project,
+            kLib,
+            configuration,
+            dependencies.regularDependencies.map { it.path },
+            dependencies.friendDependencies.map { it.path }
+        )
 
         val ir = compile(
             moduleStructure,
@@ -78,7 +85,7 @@ abstract class AbstractJsKLibABITestCase : AbstractKlibABITestCase() {
 
         val binariesDir = File(buildDir, BIN_DIR_NAME).also { it.mkdirs() }
 
-        val binaries = ArrayList<File>(libraries.size)
+        val binaries = ArrayList<File>(dependencies.regularDependencies.size)
 
         for ((name, code) in dceOutput.dependencies) {
             val depBinary = binariesDir.binJsFile(name)

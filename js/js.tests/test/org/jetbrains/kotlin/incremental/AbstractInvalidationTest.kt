@@ -142,7 +142,9 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                 modification.execute(moduleTestDir, moduleSourceDir) { deletedFiles.add(it.name) }
             }
 
-            val dependencies = moduleStep.dependencies.mapTo(mutableListOf(File(STDLIB_KLIB))) { resolveModuleArtifact(it, buildDir) }
+            val dependencies = moduleStep.dependencies.mapTo(mutableListOf(File(STDLIB_KLIB))) {
+                resolveModuleArtifact(it.moduleName, buildDir)
+            }
             val outputKlibFile = resolveModuleArtifact(module, buildDir)
             val configuration = createConfiguration(module, projStep.language)
             buildArtifact(configuration, module, moduleSourceDir, dependencies, outputKlibFile)
