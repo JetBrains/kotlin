@@ -618,10 +618,9 @@ class DeclarationsConverter(
         return withChildClassName(SpecialNames.ANONYMOUS, isExpect = false) {
             var delegatedFieldsMap: Map<Int, FirFieldSymbol>? = null
             buildAnonymousObjectExpression {
-                val objectDeclaration = objectLiteral.getChildNodesByType(OBJECT_DECLARATION).first()
-                val sourceElement = objectDeclaration.toFirSourceElement()
-                source = sourceElement
+                source = objectLiteral.toFirSourceElement()
                 anonymousObject = buildAnonymousObject {
+                    val objectDeclaration = objectLiteral.getChildNodesByType(OBJECT_DECLARATION).first()
                     source = objectDeclaration.toFirSourceElement()
                     origin = FirDeclarationOrigin.Source
                     moduleData = baseModuleData

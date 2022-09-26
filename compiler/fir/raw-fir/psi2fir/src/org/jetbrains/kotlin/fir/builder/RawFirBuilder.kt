@@ -1197,14 +1197,13 @@ open class RawFirBuilder(
         }
 
         override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression, data: Unit): FirElement {
-            val objectDeclaration = expression.objectDeclaration
             return withChildClassName(SpecialNames.ANONYMOUS, forceLocalContext = true, isExpect = false) {
                 var delegatedFieldsMap: Map<Int, FirFieldSymbol>?
                 buildAnonymousObjectExpression {
-                    val sourceElement = objectDeclaration.toFirSourceElement()
-                    source = sourceElement
+                    source = expression.toFirSourceElement()
                     anonymousObject = buildAnonymousObject {
-                        source = sourceElement
+                        val objectDeclaration = expression.objectDeclaration
+                        source = objectDeclaration.toFirSourceElement()
                         moduleData = baseModuleData
                         origin = FirDeclarationOrigin.Source
                         classKind = ClassKind.OBJECT

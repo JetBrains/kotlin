@@ -192,6 +192,18 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         }
 
         @Test
+        @TestMetadata("objectLiteral.kt")
+        public void testObjectLiteral() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/objectLiteral.kt");
+        }
+
+        @Test
+        @TestMetadata("objectLiteralExpression.kt")
+        public void testObjectLiteralExpression() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/objectLiteralExpression.kt");
+        }
+
+        @Test
         @TestMetadata("propertyDelegate.kt")
         public void testPropertyDelegate() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/propertyDelegate.kt");
