@@ -432,8 +432,8 @@ abstract class IncrementalCompilerRunner<
             val cache = caches.platformCache
             val filesToRecompileFromListeners = mutableListOf<File>()
             for (change in changesCollector.changes()) {
-                val dirtyFilesByChild = cache.getChildListenerFqNames(cache.getSubtypesOf(change.fqName).toList())
-                val dirtyFilesByParent = cache.getParentListenerFqNames(cache.getSupertypesOf(change.fqName).toList())
+                val dirtyFilesByChild = cache.getChildListenerFqNames(cache.getSupertypesOf(change.fqName).toList())
+                val dirtyFilesByParent = cache.getParentListenerFqNames(cache.getSubtypesOf(change.fqName).toList())
                 filesToRecompileFromListeners.addAll(dirtyFilesByChild + dirtyFilesByParent)
             }
 
