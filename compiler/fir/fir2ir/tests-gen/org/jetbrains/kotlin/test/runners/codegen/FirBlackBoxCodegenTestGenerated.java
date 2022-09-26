@@ -21342,6 +21342,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("inlineClassEqualsOverride.kt")
+        public void testInlineClassEqualsOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualsOverride.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
         @TestMetadata("inlineClassFieldHandling.kt")
         public void testInlineClassFieldHandling() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFieldHandling.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());

@@ -25,15 +25,13 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.transformStatement
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 
 val jvmInlineClassPhase = makeIrFilePhase(
     ::JvmInlineClassLowering,
@@ -96,8 +94,10 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                 // names at this point.
                 replacement.isGetter ->
                     Name.identifier(JvmAbi.getterName(replacement.correspondingPropertySymbol!!.owner.name.asString()))
+
                 replacement.isSetter ->
                     Name.identifier(JvmAbi.setterName(replacement.correspondingPropertySymbol!!.owner.name.asString()))
+
                 else ->
                     function.name
             }
@@ -500,15 +500,33 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         val right = function.valueParameters[1]
         val type = left.type.unboxInlineClass()
 
+        val typedEqualsStaticReplacement = findStaticReplacementForTypedEquals(valueClass)
+
         function.body = context.createIrBuilder(valueClass.symbol).run {
             irExprBody(
-                irEquals(
-                    coerceInlineClasses(irGet(left), left.type, type),
-                    coerceInlineClasses(irGet(right), right.type, type)
-                )
+                if (typedEqualsStaticReplacement == null) {
+                    irEquals(coerceInlineClasses(irGet(left), left.type, type), coerceInlineClasses(irGet(right), right.type, type))
+                } else {
+                    irCall(typedEqualsStaticReplacement).apply {
+                        putValueArgument(0, irGet(left))
+                        putValueArgument(1, irGet(right))
+                    }
+                }
             )
         }
 
         valueClass.declarations += function
+    }
+
+
+    private fun findStaticReplacementForTypedEquals(valueClass: IrClass): IrFunction? {
+        fun isTypedEquals(irFunction: IrFunction, valueClass: IrClass): Boolean {
+            return irFunction.run {
+                name == EQUALS && returnType.isBoolean() && valueParameters.size == 1
+                        && (valueParameters[0].type.classFqName?.run { valueClass.hasEqualFqName(this) } ?: false)
+            }
+        }
+        return valueClass.functions
+            .singleOrNull { replacements.originalFunctionForStaticReplacement[it]?.run { isTypedEquals(this, valueClass) } ?: false }
     }
 }
