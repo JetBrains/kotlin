@@ -361,29 +361,6 @@ internal val umbrellaCompilation = NamedCompilerPhase(
             }
         })
 
-internal val dumpTestsPhase = makeCustomPhase<Context, IrModuleFragment>(
-        name = "dumpTestsPhase",
-        description = "Dump the list of all available tests",
-        op = { context, _ ->
-            val testDumpFile = context.config.testDumpFile
-            requireNotNull(testDumpFile)
-
-            if (!testDumpFile.exists)
-                testDumpFile.createNew()
-
-            if (context.generationState.testCasesToDump.isEmpty())
-                return@makeCustomPhase
-
-            testDumpFile.appendLines(
-                    context.generationState.testCasesToDump
-                            .flatMap { (suiteClassId, functionNames) ->
-                                val suiteName = suiteClassId.asString()
-                                functionNames.asSequence().map { "$suiteName:$it" }
-                            }
-            )
-        }
-)
-
 internal val entryPointPhase = makeCustomPhase<Context, IrModuleFragment>(
         name = "addEntryPoint",
         description = "Add entry point for program",
@@ -447,7 +424,6 @@ private val backendCodegen = NamedCompilerPhase(
                 allLoweringsPhase then // Lower current module first.
                 dependenciesLowerPhase then // Then lower all libraries in topological order.
                                             // With that we guarantee that inline functions are unlowered while being inlined.
-                dumpTestsPhase then
                 bitcodePhase then
                 verifyBitcodePhase then
                 printBitcodePhase then
@@ -566,7 +542,6 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
             disable(linkerPhase)
         }
         disableIf(testProcessorPhase, getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) == TestRunnerKind.NONE)
-        disableIf(dumpTestsPhase, getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) == TestRunnerKind.NONE || config.testDumpFile == null)
         if (!config.optimizationsEnabled) {
             disable(buildDFGPhase)
             disable(devirtualizationAnalysisPhase)
