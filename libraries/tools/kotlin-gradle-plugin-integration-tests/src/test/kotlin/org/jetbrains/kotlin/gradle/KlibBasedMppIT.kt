@@ -92,10 +92,10 @@ class KlibBasedMppIT : BaseGradleIT() {
         checkTaskCompileClasspath(
             "compile${hostSpecificSourceSet.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}KotlinMetadata",
             listOf(
-                "published-producer-1.0-$hostSpecificSourceSet-\\w+.klib",
-                "published-producer-1.0-commonMain-\\w+.klib",
-                "published-dependency-1.0-$hostSpecificSourceSet-\\w+.klib",
-                "published-dependency-1.0-commonMain-\\w+.klib"
+                "published-producer-1.0-$hostSpecificSourceSet-[\\w-]+.klib",
+                "published-producer-1.0-commonMain-[\\w-]+.klib",
+                "published-dependency-1.0-$hostSpecificSourceSet-[\\w-]+.klib",
+                "published-dependency-1.0-commonMain-[\\w-]+.klib"
             ).map(::Regex)
         )
     }
