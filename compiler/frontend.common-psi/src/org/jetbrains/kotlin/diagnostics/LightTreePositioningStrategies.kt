@@ -35,8 +35,10 @@ object LightTreePositioningStrategies {
         ): List<TextRange> {
             when (node.tokenType) {
                 KtNodeTypes.OBJECT_LITERAL -> {
-                    val objectKeyword = tree.findDescendantByType(node, KtTokens.OBJECT_KEYWORD)!!
-                    return markElement(objectKeyword, startOffset, endOffset, tree, node)
+                    val objectDeclaration = tree.findDescendantByType(node, KtNodeTypes.OBJECT_DECLARATION)!!
+                    val objectKeyword = tree.objectKeyword(objectDeclaration)!!
+                    val supertypeList = tree.supertypesList(objectDeclaration)
+                    return markRange(objectKeyword, supertypeList ?: objectKeyword, startOffset, endOffset, tree, node)
                 }
                 KtNodeTypes.OBJECT_DECLARATION -> {
                     val objectKeyword = tree.objectKeyword(node)!!
