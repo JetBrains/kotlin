@@ -15,6 +15,7 @@ value class Z(val data: Int) {
                 data % 256 == other.data % 256
 }
 
+
 fun box(): String {
     if (Z(0) != Z(256)) throw AssertionError()
 
