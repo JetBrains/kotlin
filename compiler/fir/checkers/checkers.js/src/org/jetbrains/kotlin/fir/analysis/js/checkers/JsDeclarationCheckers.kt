@@ -12,9 +12,6 @@ object JsDeclarationCheckers : DeclarationCheckers() {
     override val functionCheckers: Set<FirFunctionChecker>
         get() = setOf(
             FirJsInlineDeclarationChecker,
-            FirJsNativeInvokeChecker,
-            FirJsNativeGetterChecker,
-            FirJsNativeSetterChecker,
             FirJsInheritanceFunctionChecker,
         )
 
@@ -42,5 +39,8 @@ object JsDeclarationCheckers : DeclarationCheckers() {
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
         get() = setOf(
             FirJsTopLevelFunctionsChecker,
+            FirJsNativeInvokeChecker,
+            FirJsNativeGetterChecker,
+            FirJsNativeSetterChecker,
         )
 }
