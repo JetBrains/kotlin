@@ -2,11 +2,10 @@
  * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
+@file:Suppress("DEPRECATION")
 package kotlinx.metadata.impl
 
 import kotlinx.metadata.*
-import kotlinx.metadata.impl.extensions.MetadataExtensions
 import kotlinx.metadata.impl.extensions.applySingleExtension
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
@@ -30,7 +29,6 @@ open class WriteContext(val strings: StringTable, val contextExtensions: List<Wr
         strings.getClassNameIndex(name)
 }
 
-@DeprecatedVisitor
 private fun writeTypeParameter(
     c: WriteContext, flags: Flags, name: String, id: Int, variance: KmVariance,
     output: (ProtoBuf.TypeParameter.Builder) -> Unit
@@ -62,7 +60,6 @@ private fun writeTypeParameter(
         }
     }
 
-@DeprecatedVisitor
 private fun writeType(c: WriteContext, flags: Flags, output: (ProtoBuf.Type.Builder) -> Unit): KmTypeVisitor =
     object : KmTypeVisitor() {
         private val t = ProtoBuf.Type.newBuilder()
@@ -128,7 +125,6 @@ private fun writeType(c: WriteContext, flags: Flags, output: (ProtoBuf.Type.Buil
         }
     }
 
-@DeprecatedVisitor
 private fun writeConstructor(c: WriteContext, flags: Flags, output: (ProtoBuf.Constructor.Builder) -> Unit): KmConstructorVisitor =
     object : KmConstructorVisitor() {
         val t = ProtoBuf.Constructor.newBuilder()
@@ -152,7 +148,6 @@ private fun writeConstructor(c: WriteContext, flags: Flags, output: (ProtoBuf.Co
         }
     }
 
-@DeprecatedVisitor
 private fun writeFunction(c: WriteContext, flags: Flags, name: String, output: (ProtoBuf.Function.Builder) -> Unit): KmFunctionVisitor =
     object : KmFunctionVisitor() {
         val t = ProtoBuf.Function.newBuilder()
@@ -194,7 +189,7 @@ private fun writeFunction(c: WriteContext, flags: Flags, name: String, output: (
         }
     }
 
-@DeprecatedVisitor
+@Deprecated(visitorApiMessage)
 fun writeProperty(
     c: WriteContext, flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags, output: (ProtoBuf.Property.Builder) -> Unit
 ): KmPropertyVisitor = object : KmPropertyVisitor() {
@@ -236,7 +231,6 @@ fun writeProperty(
     }
 }
 
-@DeprecatedVisitor
 private fun writeValueParameter(
     c: WriteContext, flags: Flags, name: String,
     output: (ProtoBuf.ValueParameter.Builder) -> Unit
@@ -263,7 +257,6 @@ private fun writeValueParameter(
     }
 }
 
-@DeprecatedVisitor
 private fun writeTypeAlias(
     c: WriteContext, flags: Flags, name: String,
     output: (ProtoBuf.TypeAlias.Builder) -> Unit
@@ -300,7 +293,6 @@ private fun writeTypeAlias(
     }
 }
 
-@DeprecatedVisitor
 private fun writeVersionRequirement(
     c: WriteContext, output: (Int) -> Unit
 ): KmVersionRequirementVisitor = object : KmVersionRequirementVisitor() {
@@ -351,7 +343,6 @@ private fun writeVersionRequirement(
     }
 }
 
-@DeprecatedVisitor
 @ExperimentalContracts
 private fun writeContract(c: WriteContext, output: (ProtoBuf.Contract.Builder) -> Unit): KmContractVisitor =
     object : KmContractVisitor() {
@@ -365,7 +356,6 @@ private fun writeContract(c: WriteContext, output: (ProtoBuf.Contract.Builder) -
         }
     }
 
-@DeprecatedVisitor
 @ExperimentalContracts
 private fun writeEffect(
     c: WriteContext, type: KmEffectType, invocationKind: KmEffectInvocationKind?,
@@ -396,7 +386,6 @@ private fun writeEffect(
     }
 }
 
-@DeprecatedVisitor
 @ExperimentalContracts
 private fun writeEffectExpression(c: WriteContext, output: (ProtoBuf.Expression.Builder) -> Unit): KmEffectExpressionVisitor =
     object : KmEffectExpressionVisitor() {
@@ -434,7 +423,7 @@ private fun writeEffectExpression(c: WriteContext, output: (ProtoBuf.Expression.
         }
     }
 
-@DeprecatedVisitor // TODO: this likely need to be rewritten directly or deprecated completely
+@Deprecated(visitorApiMessage)
 open class ClassWriter(stringTable: StringTable, contextExtensions: List<WriteContextExtension> = emptyList()) : KmClassVisitor() {
     protected val t = ProtoBuf.Class.newBuilder()!!
     protected val c: WriteContext = WriteContext(stringTable, contextExtensions)
@@ -508,7 +497,7 @@ open class ClassWriter(stringTable: StringTable, contextExtensions: List<WriteCo
     }
 }
 
-@DeprecatedVisitor // TODO: this likely need to be rewritten directly
+@Deprecated(visitorApiMessage)
 open class PackageWriter(stringTable: StringTable, contextExtensions: List<WriteContextExtension> = emptyList()) : KmPackageVisitor() {
     protected val t = ProtoBuf.Package.newBuilder()!!
     protected val c: WriteContext = WriteContext(stringTable, contextExtensions)
@@ -534,7 +523,7 @@ open class PackageWriter(stringTable: StringTable, contextExtensions: List<Write
     }
 }
 
-@DeprecatedVisitor // TODO: this likely need to be rewritten directly
+@Deprecated(visitorApiMessage)
 open class ModuleFragmentWriter(stringTable: StringTable, contextExtensions: List<WriteContextExtension> = emptyList()) :
     KmModuleFragmentVisitor() {
     protected val t = ProtoBuf.PackageFragment.newBuilder()!!
@@ -560,7 +549,7 @@ open class ModuleFragmentWriter(stringTable: StringTable, contextExtensions: Lis
         }
 }
 
-@DeprecatedVisitor
+@Deprecated(visitorApiMessage)
 open class LambdaWriter(stringTable: StringTable) : KmLambdaVisitor() {
     protected var t: ProtoBuf.Function.Builder? = null
     protected val c = WriteContext(stringTable)

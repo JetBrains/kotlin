@@ -2,6 +2,7 @@
  * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION")
 
 package kotlinx.metadata
 
@@ -42,6 +43,7 @@ class KmExtensionType(private val klass: KClass<out KmExtensionVisitor>) {
 /**
  * A base interface for all extension visitors.
  */
+@Deprecated(visitorApiMessage)
 interface KmExtensionVisitor {
     /**
      * Type of this extension visitor.
@@ -52,54 +54,65 @@ interface KmExtensionVisitor {
 /**
  * A visitor to visit platform-specific extensions for a declaration container, such as a class or a package fragment.
  */
+@Deprecated(visitorApiMessage)
 interface KmDeclarationContainerExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a class.
  */
+@Deprecated(visitorApiMessage)
 interface KmClassExtensionVisitor : KmDeclarationContainerExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a package fragment.
  */
+@Deprecated(visitorApiMessage)
 interface KmPackageExtensionVisitor : KmDeclarationContainerExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a module fragment.
  */
+@Deprecated(visitorApiMessage)
 interface KmModuleFragmentExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a function.
  */
+@Deprecated(visitorApiMessage)
 interface KmFunctionExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a property.
  */
+@Deprecated(visitorApiMessage)
 interface KmPropertyExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a constructor.
  */
+@Deprecated(visitorApiMessage)
 interface KmConstructorExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a type parameter.
  */
+@Deprecated(visitorApiMessage)
 interface KmTypeParameterExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a type.
  */
+@Deprecated(visitorApiMessage)
 interface KmTypeExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a type alias.
  */
+@Deprecated(visitorApiMessage)
 interface KmTypeAliasExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a value parameter.
  */
+@Deprecated(visitorApiMessage)
 interface KmValueParameterExtensionVisitor : KmExtensionVisitor

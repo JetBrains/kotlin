@@ -15,7 +15,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.full.primaryConstructor
 import kotlin.test.*
 
-@OptIn(DeprecatedVisitor::class)
+@Suppress("DEPRECATION")
 class MetadataSmokeTest {
     private fun Class<*>.readMetadata(): Metadata {
         return getAnnotation(Metadata::class.java)

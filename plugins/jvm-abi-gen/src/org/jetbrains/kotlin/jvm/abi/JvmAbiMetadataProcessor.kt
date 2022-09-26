@@ -18,7 +18,6 @@ import org.jetbrains.org.objectweb.asm.Opcodes
  * Wrap the visitor for a Kotlin Metadata annotation to strip out private and local
  * functions, properties, and type aliases as well as local delegated properties.
  */
-@OptIn(DeprecatedVisitor::class)
 fun abiMetadataProcessor(annotationVisitor: AnnotationVisitor): AnnotationVisitor =
     kotlinClassHeaderVisitor { header ->
         // kotlinx-metadata only supports writing Kotlin metadata of version >= 1.4, so we need to
@@ -137,7 +136,7 @@ private fun AnnotationVisitor.visitKotlinMetadata(header: KotlinClassHeader) {
  * Class metadata adapter which removes private functions, properties, type aliases,
  * and local delegated properties.
  */
-@DeprecatedVisitor
+@Suppress("DEPRECATION")
 private class AbiKmClassVisitor(delegate: KmClassVisitor) : KmClassVisitor(delegate) {
     override fun visitConstructor(flags: Flags): KmConstructorVisitor? {
         if (!isPrivateDeclaration(flags))
@@ -174,7 +173,7 @@ private class AbiKmClassVisitor(delegate: KmClassVisitor) : KmClassVisitor(deleg
  * Class metadata adapter which removes private functions, properties, type aliases,
  * and local delegated properties.
  */
-@DeprecatedVisitor
+@Suppress("DEPRECATION")
 private class AbiKmPackageVisitor(delegate: KmPackageVisitor) : KmPackageVisitor(delegate) {
     override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? {
         if (!isPrivateDeclaration(flags))
