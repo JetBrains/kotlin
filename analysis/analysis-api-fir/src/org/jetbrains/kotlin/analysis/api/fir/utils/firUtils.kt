@@ -45,7 +45,6 @@ internal fun KtExpression.unwrap(): KtExpression {
     return when (this) {
         is KtLabeledExpression -> baseExpression?.unwrap()
         is KtAnnotatedExpression -> baseExpression?.unwrap()
-        is KtObjectLiteralExpression -> objectDeclaration
         is KtFunctionLiteral -> (parent as? KtLambdaExpression)?.unwrap()
         else -> this
     } ?: this
