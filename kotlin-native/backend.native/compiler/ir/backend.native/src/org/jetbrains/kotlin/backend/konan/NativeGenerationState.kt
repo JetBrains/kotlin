@@ -58,9 +58,6 @@ internal class NativeGenerationState(private val context: Context) {
         getLocalClassName(source)?.let { name -> putLocalClassName(destination, name) }
     }
 
-    /* test suite class -> test function names */
-    val testCasesToDump = mutableMapOf<ClassId, MutableCollection<String>>()
-
     init {
         llvmContext = LLVMContextCreate()!!
     }

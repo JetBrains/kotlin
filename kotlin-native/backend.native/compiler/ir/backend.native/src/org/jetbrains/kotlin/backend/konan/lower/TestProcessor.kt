@@ -65,6 +65,7 @@ internal class TestProcessor (val context: Context) {
 
     // region Useful extensions.
     private var testSuiteCnt = 0
+
     private fun Name.synthesizeSuiteClassName() = identifier.synthesizeSuiteClassName()
     private fun String.synthesizeSuiteClassName() = "$this\$test\$${testSuiteCnt++}".synthesizedName
 
@@ -638,11 +639,14 @@ internal class TestProcessor (val context: Context) {
 
     // region test functions to be dumped
     private fun recordTestFunctions(annotationCollector: AnnotationCollector) {
-        if (context.config.testDumpFile == null) return
+        val testDumpFile = context.config.testDumpFile ?: return
+
+        /* test suite class -> test function names */
+        val testCasesToDump = mutableMapOf<ClassId, MutableCollection<String>>()
 
         fun recordFunction(suiteClassId: ClassId, function: TestFunction) {
             if (function.kind == FunctionKind.TEST)
-                context.generationState.testCasesToDump.computeIfAbsent(suiteClassId) { mutableListOf() } += function.functionName
+                testCasesToDump.computeIfAbsent(suiteClassId) { mutableListOf() } += function.functionName
         }
 
         annotationCollector.topLevelFunctions.forEach { function ->
@@ -652,6 +656,20 @@ internal class TestProcessor (val context: Context) {
         annotationCollector.testClasses.values.forEach { testClass ->
             testClass.functions.forEach { function -> recordFunction(testClass.suiteClassId, function) }
         }
+
+        if (!testDumpFile.exists)
+            testDumpFile.createNew()
+
+        if (testCasesToDump.isEmpty())
+            return
+
+        testDumpFile.appendLines(
+                testCasesToDump
+                        .flatMap { (suiteClassId, functionNames) ->
+                            val suiteName = suiteClassId.asString()
+                            functionNames.asSequence().map { "$suiteName:$it" }
+                        }
+        )
     }
     // endregion
 
