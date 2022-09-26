@@ -359,8 +359,12 @@ class KlibBasedMppIT : BaseGradleIT() {
             val itemsLine = output.lines().single { "###$printingTaskName" in it }.substringAfter(printingTaskName)
             // NOTE: This does not work for commonized libraries, they may contain the ',' naturally
             val items = itemsLine.removeSurrounding("[", "]").split(", ").toSet()
-            checkAnyItemsContains.forEach { pattern -> assertTrue { items.any { pattern in it } } }
-            checkNoItemContains.forEach { pattern -> assertFalse { items.any { pattern in it } } }
+            checkAnyItemsContains.forEach { pattern ->
+                assertTrue(items.any { pattern in it }, "Couldn't find pattern `$pattern` in the output")
+            }
+            checkNoItemContains.forEach { pattern ->
+                assertFalse(items.any { pattern in it }, "Pattern '$pattern' should NOT be present in the output")
+            }
         }
     }
 }
