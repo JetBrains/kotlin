@@ -139,34 +139,29 @@ fun FirDeclarationStatus.copy(
 
 val Throwable.classNameAndMessage get() = "${this::class.qualifiedName}: $message"
 
-class SourceCodeAnalysisError(val source: KtSourceElement, override val cause: Throwable) : Throwable() {
-    init {
-        stackTrace = cause.stackTrace
-    }
-
+class SourceCodeAnalysisException(val source: KtSourceElement, override val cause: Throwable) : Exception() {
     override val message get() = cause.classNameAndMessage
 }
 
 inline fun <R> whileAnalysing(element: FirElement, block: () -> R): R {
     return try {
         block()
-    } catch (error: SourceCodeAnalysisError) {
-        throw error
-    } catch (error: Throwable) {
+    } catch (exception: SourceCodeAnalysisException) {
+        throw exception
+    } catch (exception: Exception) {
+        val source = element.source?.takeIf { it is KtRealPsiSourceElement } ?: throw exception
+        throw SourceCodeAnalysisException(source, exception)
+    } catch (error: StackOverflowError) {
         val source = element.source?.takeIf { it is KtRealPsiSourceElement } ?: throw error
-        throw SourceCodeAnalysisError(source, error)
+        throw SourceCodeAnalysisException(source, error)
     }
 }
 
-class FileAnalysisError(
+class FileAnalysisException(
     private val path: String,
     override val cause: Throwable,
     private val lineAndOffset: Pair<Int, Int>? = null,
-) : Throwable() {
-    init {
-        stackTrace = cause.stackTrace
-    }
-
+) : Exception() {
     override val message
         get(): String {
             val (line, offset) = lineAndOffset ?: return "Somewhere in file $path: ${cause.classNameAndMessage}"
@@ -174,24 +169,27 @@ class FileAnalysisError(
         }
 }
 
-fun <R> withFileAnalysisErrorWrapping(file: FirFile, block: () -> R): R {
+inline fun <R> withFileAnalysisErrorWrapping(file: FirFile, block: () -> R): R {
     return try {
         block()
-    } catch (error: SourceCodeAnalysisError) {
-        val path = file.sourceFile?.path ?: throw error
+    } catch (exception: SourceCodeAnalysisException) {
+        val path = file.sourceFile?.path ?: throw exception
 
-        if (file.source == error.source) {
-            throw FileAnalysisError(path, error.cause)
+        if (file.source == exception.source) {
+            throw FileAnalysisException(path, exception.cause)
         }
 
-        val lineAndOffset = file.sourceFileLinesMapping?.getLineAndColumnByOffset(error.source.startOffset)
-        throw FileAnalysisError(path, error.cause, lineAndOffset)
-    } catch (error: Throwable) {
+        val lineAndOffset = file.sourceFileLinesMapping?.getLineAndColumnByOffset(exception.source.startOffset)
+        throw FileAnalysisException(path, exception.cause, lineAndOffset)
+    } catch (exception: Exception) {
+        val path = file.sourceFile?.path ?: throw exception
+        throw FileAnalysisException(path, exception)
+    } catch (error: StackOverflowError) {
         val path = file.sourceFile?.path ?: throw error
-        throw FileAnalysisError(path, error)
+        throw FileAnalysisException(path, error)
     }
 }
 
-fun Collection<FirFile>.forEachWrappingFileAnalysisError(block: (FirFile) -> Unit) = forEach {
+inline fun Collection<FirFile>.forEachWrappingFileAnalysisError(block: (FirFile) -> Unit) = forEach {
     withFileAnalysisErrorWrapping(it) { block(it) }
 }
