@@ -52,7 +52,7 @@ fun LexicalScope.getDeclarationsByLabel(labelName: Name): Collection<Declaration
 // Result is guaranteed to be filtered by kind and name.
 fun HierarchicalScope.collectDescriptorsFiltered(
     kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
-    nameFilter: (Name) -> Boolean = { true },
+    nameFilter: (Name) -> Boolean = MemberScope.ALL_NAME_FILTER,
     changeNamesForAliased: Boolean = false
 ): Collection<DeclarationDescriptor> {
     if (kindFilter.kindMask == 0) return listOf()
