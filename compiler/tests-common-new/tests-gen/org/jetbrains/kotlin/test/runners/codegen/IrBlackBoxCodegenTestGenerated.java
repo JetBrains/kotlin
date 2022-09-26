@@ -26817,6 +26817,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("kt51282.kt")
+            public void testKt51282() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/kt51282.kt");
+            }
+
+            @Test
+            @TestMetadata("kt512832_inherit_multifile_parts.kt")
+            public void testKt512832_inherit_multifile_parts() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/kt512832_inherit_multifile_parts.kt");
+            }
+
+            @Test
             @TestMetadata("kt51868_contravariantGenericSam.kt")
             public void testKt51868_contravariantGenericSam() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/kt51868_contravariantGenericSam.kt");
