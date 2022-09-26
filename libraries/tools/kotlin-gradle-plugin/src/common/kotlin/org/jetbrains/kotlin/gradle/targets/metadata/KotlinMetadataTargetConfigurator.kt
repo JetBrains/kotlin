@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.granularMetadata.TransformKotlinGranularMetadataRegistrar
+import org.jetbrains.kotlin.gradle.plugin.mpp.granularMetadata.TransformMetadataDependenciesTaskRegistrar
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.plugin.sources.*
@@ -350,7 +350,7 @@ class KotlinMetadataTargetConfigurator :
         }
 
         if (project.kotlinPropertiesProvider.configurationCacheFriendlyGranularMetadataTransformation) {
-            val registrar = TransformKotlinGranularMetadataRegistrar.create(project)
+            val registrar = TransformMetadataDependenciesTaskRegistrar.create(project)
             registrar.registerForMetadataCompilation(compilation)
         } else {
             compilation.compileDependencyFiles += createMetadataDependencyTransformationClasspath(

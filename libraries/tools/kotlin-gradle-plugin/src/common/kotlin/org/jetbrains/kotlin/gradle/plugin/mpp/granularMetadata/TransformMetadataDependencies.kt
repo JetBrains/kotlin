@@ -31,7 +31,7 @@ import javax.inject.Inject
  * source set dependencies that should be visible from a given Source Set
  *
  */
-abstract class TransformKotlinGranularMetadata
+abstract class TransformMetadataDependencies
 @Inject internal constructor(
     private val settings: Settings,
     private val projectLayout: ProjectLayout
@@ -67,7 +67,7 @@ abstract class TransformKotlinGranularMetadata
     )
 
     @get:OutputDirectory
-    val outputsDir: File get() = projectBuildDir.resolve("kotlinSourceSetMetadata2/${settings.sourceSetName}")
+    val outputsDir: File get() = projectBuildDir.resolve("transformedMetadataDependencies/${settings.sourceSetName}")
 
     private val librariesFile: File get() = outputsDir.resolve("${settings.sourceSetName}.libraries")
 
