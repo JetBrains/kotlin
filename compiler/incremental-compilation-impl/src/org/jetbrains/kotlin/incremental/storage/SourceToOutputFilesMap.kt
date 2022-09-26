@@ -25,4 +25,5 @@ class SourceToOutputFilesMap(
 
     fun remove(file: File): Collection<File> =
         get(file).also { storage.remove(pathConverter.toPath(file)) }
+    fun getMyStorage() = storage
 }

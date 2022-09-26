@@ -256,7 +256,7 @@ object StringExternalizer : DataExternalizer<String> {
 // Should be consistent with org.jetbrains.jps.incremental.storage.PathStringDescriptor for correct work of portable caches
 object PathStringDescriptor : EnumeratorStringDescriptor() {
     private const val PORTABLE_CACHES_PROPERTY = "org.jetbrains.jps.portable.caches"
-    private val PORTABLE_CACHES = java.lang.Boolean.getBoolean(PORTABLE_CACHES_PROPERTY)
+    private val PORTABLE_CACHES = true
 
     override fun getHashCode(path: String): Int {
         if (!PORTABLE_CACHES) return FileUtil.pathHashCode(path)

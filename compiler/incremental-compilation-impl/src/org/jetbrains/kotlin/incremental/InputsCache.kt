@@ -39,6 +39,8 @@ class InputsCache(
     internal val sourceSnapshotMap = registerMap(FileSnapshotMap(SOURCE_SNAPSHOTS.storageFile, pathConverter))
     private val sourceToOutputMap = registerMap(SourceToOutputFilesMap(SOURCE_TO_OUTPUT_FILES.storageFile, pathConverter))
 
+    val a = registerMap(SourceToOutputFilesMap(File("/Users/Aleksei.Cherepanov/Downloads/kotlin 2/compileKotlinJvm/cacheable/caches-jvm/inputs/source-to-output.tab"), pathConverter))
+    val value = a.getMyStorage()[a.getMyStorage().keys.first()]
     fun removeOutputForSourceFiles(sources: Iterable<File>) {
         for (sourceFile in sources) {
             sourceToOutputMap.remove(sourceFile).forEach {
