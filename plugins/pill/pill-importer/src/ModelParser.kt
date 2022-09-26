@@ -364,6 +364,7 @@ class ModelParser(private val variant: Variant, private val modulePrefix: String
 
 private val SourceSet.isTestSourceSet: Boolean
     get() = name == SourceSet.TEST_SOURCE_SET_NAME
+            || name == "testFixtures"
             || name.endsWith("Test")
             || name.endsWith("Tests")
             || (extra.has("jpsKind") && extra.get("jpsKind") == SourceSet.TEST_SOURCE_SET_NAME)
