@@ -348,7 +348,7 @@ class KotlinMetadataTargetConfigurator :
                 "Generates serialized dependencies metadata for compilation '${compilation.name}' of target '${compilation.target.name}' (for tooling)"
         }
 
-        if (project.kotlinPropertiesProvider.configurationCacheFriendlyGranularMetadataTransformation) {
+        if (project.kotlinPropertiesProvider.transformMetadataDependenciesWithConfigurationCache) {
             val registrar = TransformMetadataDependenciesTaskRegistrar.create(project)
             registrar.registerForMetadataCompilation(compilation)
         } else {
