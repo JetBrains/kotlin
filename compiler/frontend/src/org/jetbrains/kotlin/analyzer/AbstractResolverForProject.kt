@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.checkWithAttachment
 
 abstract class AbstractResolverForProject<M : ModuleInfo>(
@@ -252,7 +253,9 @@ private class DelegatingPackageFragmentProvider<M : ModuleInfo>(
     override fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>) {
         if (certainlyDoesNotExist(fqName)) return
 
-        resolverForProject.resolverForModuleDescriptor(module).packageFragmentProvider.collectPackageFragmentsOptimizedIfPossible(fqName, packageFragments)
+        resolverForProject.resolverForModuleDescriptor(module)
+            .packageFragmentProvider
+            .collectPackageFragmentsOptimizedIfPossible(fqName, packageFragments)
     }
 
     override fun isEmpty(fqName: FqName): Boolean {
@@ -280,8 +283,8 @@ private class DelegatingPackageFragmentProvider<M : ModuleInfo>(
 
 private object DiagnoseUnknownModuleInfoReporter {
     fun report(name: String, infos: List<ModuleInfo>, allModules: Collection<ModuleInfo>): Nothing {
-        val message = "$name does not know how to resolve $infos, allModules: $allModules"
-        when {
+        val message = "$name does not know how to resolve"
+        val error = when {
             name.contains(ResolverForProject.resolverForSdkName) -> errorInSdkResolver(message)
             name.contains(ResolverForProject.resolverForLibrariesName) -> errorInLibrariesResolver(message)
             name.contains(ResolverForProject.resolverForModulesName) -> {
@@ -295,9 +298,11 @@ private object DiagnoseUnknownModuleInfoReporter {
                             else -> errorInModulesResolver(message)
                         }
                     }
+
                     else -> errorInModulesResolver(message)
                 }
             }
+
             name.contains(ResolverForProject.resolverForScriptDependenciesName) -> errorInScriptDependenciesInfoResolver(message)
             name.contains(ResolverForProject.resolverForSpecialInfoName) -> {
                 when {
@@ -305,23 +310,26 @@ private object DiagnoseUnknownModuleInfoReporter {
                     else -> errorInSpecialModuleInfoResolver(message)
                 }
             }
+
             else -> otherError(message)
         }
+
+        throw error.withAttachment("infos.txt", infos).withAttachment("allModules.txt", allModules)
     }
 
     // Do not inline 'error*'-methods, they are needed to avoid Exception Analyzer merging those AssertionErrors
 
-    private fun errorInSdkResolver(message: String): Nothing = throw AssertionError(message)
-    private fun errorInLibrariesResolver(message: String): Nothing = throw AssertionError(message)
-    private fun errorInModulesResolver(message: String): Nothing = throw AssertionError(message)
+    private fun errorInSdkResolver(message: String) = KotlinExceptionWithAttachments(message)
+    private fun errorInLibrariesResolver(message: String) = KotlinExceptionWithAttachments(message)
+    private fun errorInModulesResolver(message: String) = KotlinExceptionWithAttachments(message)
 
-    private fun errorInModulesResolverWithEmptyInfos(message: String): Nothing = throw AssertionError(message)
-    private fun errorInModulesResolverWithScriptDependencies(message: String): Nothing = throw AssertionError(message)
-    private fun errorInModulesResolverWithLibraryInfo(message: String): Nothing = throw AssertionError(message)
+    private fun errorInModulesResolverWithEmptyInfos(message: String) = KotlinExceptionWithAttachments(message)
+    private fun errorInModulesResolverWithScriptDependencies(message: String) = KotlinExceptionWithAttachments(message)
+    private fun errorInModulesResolverWithLibraryInfo(message: String) = KotlinExceptionWithAttachments(message)
 
-    private fun errorInScriptDependenciesInfoResolver(message: String): Nothing = throw AssertionError(message)
-    private fun errorInScriptModuleInfoResolver(message: String): Nothing = throw AssertionError(message)
-    private fun errorInSpecialModuleInfoResolver(message: String): Nothing = throw AssertionError(message)
+    private fun errorInScriptDependenciesInfoResolver(message: String) = KotlinExceptionWithAttachments(message)
+    private fun errorInScriptModuleInfoResolver(message: String) = KotlinExceptionWithAttachments(message)
+    private fun errorInSpecialModuleInfoResolver(message: String) = KotlinExceptionWithAttachments(message)
 
-    private fun otherError(message: String): Nothing = throw AssertionError(message)
+    private fun otherError(message: String) = KotlinExceptionWithAttachments(message)
 }
