@@ -174,3 +174,50 @@ class SameTypeNamedCompilerPhase<in Context : CommonBackendContext, Data>(
     override fun changeType(phaserState: PhaserState<Data>): PhaserState<Data> =
         phaserState
 }
+
+class SimpleNamedCompilerPhase<in Context : CommonBackendContext, Input, Output>(
+    name: String,
+    description: String,
+    prerequisite: Set<SameTypeNamedCompilerPhase<Context, *>> = emptySet(),
+    lower: CompilerPhase<Context, Input, Output>,
+    preconditions: Set<Checker<Input>> = emptySet(),
+    postconditions: Set<Checker<Output>> = emptySet(),
+    private val preactions: Set<Action<Input, Context>> = emptySet(),
+    private val postactions: Set<Action<Output, Context>> = emptySet(),
+    nlevels: Int = 0,
+    outputIfNotEnabled: (Context, Input) -> Output
+) : NamedCompilerPhase<Context, Input, Output>(
+    name,
+    description,
+    prerequisite,
+    lower,
+    preconditions,
+    postconditions,
+    nlevels,
+    outputIfNotEnabled = outputIfNotEnabled
+) {
+    override fun changeType(phaserState: PhaserState<Input>): PhaserState<Output> =
+        phaserState.changeType()
+
+    override fun runBefore(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input) {
+        val state = ActionState(phaseConfig, this, phaserState.phaseCount, BeforeOrAfter.BEFORE)
+        for (action in preactions) action(state, input, context)
+
+        if (phaseConfig.checkConditions) {
+            for (pre in preconditions) pre(input)
+        }
+    }
+
+    override fun runAfter(phaseConfig: PhaseConfig, phaserState: PhaserState<Output>, context: Context, output: Output) {
+        val state = ActionState(phaseConfig, this, phaserState.phaseCount, BeforeOrAfter.AFTER)
+        for (action in postactions) action(state, output, context)
+
+        if (phaseConfig.checkConditions) {
+            for (post in postconditions) post(output)
+            for (post in stickyPostconditions) post(output)
+            if (phaseConfig.checkStickyConditions) {
+                for (post in phaserState.stickyPostconditions) post(output)
+            }
+        }
+    }
+}
