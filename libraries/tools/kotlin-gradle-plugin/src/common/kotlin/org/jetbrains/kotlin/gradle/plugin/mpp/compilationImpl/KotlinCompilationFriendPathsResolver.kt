@@ -32,7 +32,7 @@ internal class DefaultKotlinCompilationFriendPathsResolver(
 
     /* Resolution of friend artifacts */
 
-    interface FriendArtifactResolver {
+    fun interface FriendArtifactResolver {
         fun resolveFriendArtifacts(compilation: InternalKotlinCompilation<*>): FileCollection
 
         companion object {

@@ -25,16 +25,14 @@ import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
-import javax.inject.Inject
 
-
-internal class KotlinCompilationImpl @Inject constructor(
+internal class KotlinCompilationImpl internal constructor(
     private val params: Params
 ) : InternalKotlinCompilation<KotlinCommonOptions> {
 
     //region Params
 
-    data class Params(
+    internal data class Params(
         val target: KotlinTarget,
         val compilationName: String,
         val sourceSets: KotlinCompilationSourceSetsContainer,
@@ -61,7 +59,7 @@ internal class KotlinCompilationImpl @Inject constructor(
 
     override val extras: MutableExtras = mutableExtrasOf()
 
-    val sourceSets get() = params.sourceSets
+    internal val sourceSets get() = params.sourceSets
 
     override val configurations: KotlinCompilationConfigurationsContainer
         get() = params.dependencyConfigurations
