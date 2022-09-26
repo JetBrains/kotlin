@@ -66,6 +66,23 @@ public enum Enum2 {
 import java.lang.System;
 
 @kotlin.Metadata()
+public abstract interface I {
+
+    @kotlin.Metadata()
+    public static enum Nested {
+        /*public static final*/ WHITE /* = new Nested() */;
+
+        Nested() {
+        }
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
 public enum Nested1 {
     /*public static final*/ WHITE /* = new Nested1() */;
 
