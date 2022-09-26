@@ -373,15 +373,29 @@ class GeneralNativeIT : BaseGradleIT() {
             frameworkPaths.forEach { assertFileExists(it) }
 
             assertTrue(fileInWorkingDir(headerPaths[0]).readText().contains("+ (int32_t)exported"))
+            val xcodeVersionString = runProcess(
+                listOf("/usr/bin/xcrun", "xcodebuild", "-version"),
+                workingDir,
+                System.getenv()
+            ).output.lines()[0].removePrefix("Xcode ")
+            val xcodeMajorVersion = xcodeVersionString.split(".")[0].toInt()
 
             // Check that by default release frameworks have bitcode embedded.
             withNativeCommandLineArguments(":linkMainReleaseFrameworkIos") { arguments ->
-                assertTrue("-Xembed-bitcode" in arguments)
+                if (xcodeMajorVersion < 14) {
+                    assertTrue("-Xembed-bitcode" in arguments)
+                } else {
+                    assertFalse("-Xembed-bitcode" in arguments)
+                }
                 assertTrue("-opt" in arguments)
             }
             // Check that by default debug frameworks have bitcode marker embedded.
             withNativeCommandLineArguments(":linkMainDebugFrameworkIos") { arguments ->
-                assertTrue("-Xembed-bitcode-marker" in arguments)
+                if (xcodeMajorVersion < 14) {
+                    assertTrue("-Xembed-bitcode-marker" in arguments)
+                } else {
+                    assertFalse("-Xembed-bitcode-marker" in arguments)
+                }
                 assertTrue("-g" in arguments)
             }
             // Check that bitcode can be disabled by setting custom compiler options
