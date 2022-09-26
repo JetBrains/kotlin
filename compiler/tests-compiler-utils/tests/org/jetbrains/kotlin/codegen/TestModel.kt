@@ -41,9 +41,11 @@ class ModuleInfo(val moduleName: String) {
         abstract fun execute(testDirectory: File, sourceDirectory: File, deletedFilesCollector: (File) -> Unit = {})
     }
 
+    class Dependency(val moduleName: String, val isFriend: Boolean)
+
     class ModuleStep(
         val id: Int,
-        val dependencies: Collection<String>,
+        val dependencies: Collection<Dependency>,
         val modifications: List<Modification>,
         val expectedFileStats: Map<String, Set<String>>
     )
@@ -51,9 +53,18 @@ class ModuleInfo(val moduleName: String) {
     val steps = mutableListOf<ModuleStep>()
 }
 
-const val MODULES_LIST = "MODULES"
 const val PROJECT_INFO_FILE = "project.info"
+private const val MODULES_LIST = "MODULES"
+private const val LIBS_LIST = "libs"
+private const val DIRTY_JS_MODULES_LIST = "dirty js"
+private const val LANGUAGE = "language"
+
 const val MODULE_INFO_FILE = "module.info"
+private const val DEPENDENCIES = "dependencies"
+private const val FRIENDS = "friends"
+private const val MODIFICATIONS = "modifications"
+private const val MODIFICATION_UPDATE = "U"
+private const val MODIFICATION_DELETE = "D"
 
 private val STEP_PATTERN = Pattern.compile("^\\s*STEP\\s+(\\d+)\\.*(\\d+)?\\s*:?$")
 
@@ -104,8 +115,8 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
             val splitIndex = line.indexOf(':')
             if (splitIndex < 0) throwSyntaxError(line)
 
-            val splitted = line.split(":")
-            val op = splitted[0]
+            val split = line.split(":")
+            val op = split[0]
 
             if (op.matches(STEP_PATTERN.toRegex())) {
                 return@loop true // break the loop
@@ -115,15 +126,9 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
 
 
             when (op) {
-                "libs" -> {
-                    order += splitted[1].splitAndTrim()
-                }
-                "dirty js" -> {
-                    dirtyJS += splitted[1].splitAndTrim()
-                }
-                "language" -> {
-                    language += splitted[1].splitAndTrim()
-                }
+                LIBS_LIST -> order += split[1].splitAndTrim()
+                DIRTY_JS_MODULES_LIST -> dirtyJS += split[1].splitAndTrim()
+                LANGUAGE -> language += split[1].splitAndTrim()
                 else -> println(diagnosticMessage("Unknown op $op", line))
             }
 
@@ -149,13 +154,11 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
             val splitIndex = line.indexOf(':')
             if (splitIndex < 0) throwSyntaxError(line)
 
-            val splitted = line.split(":")
-            val op = splitted[0]
+            val split = line.split(":")
+            val op = split[0]
 
             when {
-                op == MODULES_LIST -> {
-                    libraries += splitted[1].splitAndTrim()
-                }
+                op == MODULES_LIST -> libraries += split[1].splitAndTrim()
                 op.matches(STEP_PATTERN.toRegex()) -> {
                     val m = STEP_PATTERN.matcher(op)
                     if (!m.matches()) throwSyntaxError(line)
@@ -164,7 +167,7 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
                     val lastId = m.group(2)?.let { Integer.parseInt(it) } ?: firstId
                     steps += parseSteps(firstId, lastId)
                 }
-                else -> println(diagnosticMessage("Unknown op $op", line))
+                else -> error(diagnosticMessage("Unknown op $op", line))
             }
 
             false
@@ -186,11 +189,11 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
                 val mop = matcher3.group(1)
                 val cmd = matcher3.group(2)
                 when (mop) {
-                    "U" -> {
+                    MODIFICATION_UPDATE -> {
                         val (from, to) = cmd.split("->")
                         modifications.add(ModuleInfo.Modification.Update(from.trim(), to.trim()))
                     }
-                    "D" -> modifications.add(ModuleInfo.Modification.Delete(cmd.trim()))
+                    MODIFICATION_DELETE -> modifications.add(ModuleInfo.Modification.Delete(cmd.trim()))
                     else -> error("Unknown modification $line")
                 }
                 false
@@ -204,7 +207,8 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
 
     private fun parseSteps(firstId: Int, lastId: Int): List<ModuleInfo.ModuleStep> {
         val expectedFileStats = mutableMapOf<String, Set<String>>()
-        val dependencies = mutableSetOf<String>()
+        val regularDependencies = mutableSetOf<String>()
+        val friendDependencies = mutableSetOf<String>()
         val modifications = mutableListOf<ModuleInfo.Modification>()
 
         loop { line ->
@@ -223,13 +227,22 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
                 expectedFileStats[expectedState.str] = getOpArgs().toSet()
             } else {
                 when (op) {
-                    "dependencies" -> getOpArgs().forEach { dependencies.add(it) }
-                    "modifications" -> modifications.addAll(parseModifications())
-                    else -> println(diagnosticMessage("Unknown op $op", line))
+                    DEPENDENCIES -> getOpArgs().forEach { regularDependencies += it }
+                    FRIENDS -> getOpArgs().forEach { friendDependencies += it }
+                    MODIFICATIONS -> modifications += parseModifications()
+                    else -> error(diagnosticMessage("Unknown op $op", line))
                 }
             }
 
             false
+        }
+
+        (friendDependencies - regularDependencies)
+            .takeIf(Set<String>::isNotEmpty)
+            ?.let { error("Misconfiguration: There are friend modules that are not listed as regular dependencies: $it") }
+
+        val dependencies = regularDependencies.map { regularDependency ->
+            ModuleInfo.Dependency(regularDependency, regularDependency in friendDependencies)
         }
 
         return (firstId..lastId).map {

@@ -71,11 +71,11 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
         override val buildDir: File get() = this@AbstractJsKLibABITestCase.buildDir
         override val stdlibFile: File get() = File("libraries/stdlib/js-ir/build/classes/kotlin/js/main").absoluteFile
 
-        override fun buildKlib(moduleName: String, moduleSourceDir: File, moduleDependencies: Collection<File>, klibFile: File) =
-            this@AbstractJsKLibABITestCase.buildKlib(moduleName, moduleSourceDir, moduleDependencies, klibFile)
+        override fun buildKlib(moduleName: String, moduleSourceDir: File, dependencies: KlibABITestUtils.Dependencies, klibFile: File) =
+            this@AbstractJsKLibABITestCase.buildKlib(moduleName, moduleSourceDir, dependencies, klibFile)
 
-        override fun buildBinaryAndRun(mainModuleKlibFile: File, allDependencies: Collection<File>) =
-            this@AbstractJsKLibABITestCase.buildBinaryAndRun(mainModuleKlibFile, allDependencies)
+        override fun buildBinaryAndRun(mainModuleKlibFile: File, dependencies: KlibABITestUtils.Dependencies) =
+            this@AbstractJsKLibABITestCase.buildBinaryAndRun(mainModuleKlibFile, dependencies)
 
         override fun onNonEmptyBuildDirectory(directory: File) {
             directory.listFiles()?.forEach(File::deleteRecursively)
@@ -103,7 +103,7 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
     // The entry point to generated test classes.
     fun doTest(testPath: String) = KlibABITestUtils.runTest(JsTestConfiguration(testPath))
 
-    private fun buildKlib(moduleName: String, moduleSourceDir: File, moduleDependencies: Collection<File>, klibFile: File) {
+    private fun buildKlib(moduleName: String, moduleSourceDir: File, dependencies: KlibABITestUtils.Dependencies, klibFile: File) {
         val ktFiles = environment.createPsiFiles(moduleSourceDir)
 
         val config = environment.configuration.copy()
@@ -113,15 +113,15 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
             environment.project,
             ktFiles,
             config,
-            moduleDependencies.map { it.path },
-            emptyList(), // TODO
+            dependencies.regularDependencies.map { it.path },
+            dependencies.friendDependencies.map { it.path },
             AnalyzerWithCompilerReport(config)
         )
 
         generateKLib(sourceModule, IrFactoryImpl, klibFile.path, nopack = false, jsOutputName = moduleName)
     }
 
-    private fun buildBinaryAndRun(mainModuleKlibFile: File, libraries: Collection<File>) {
+    private fun buildBinaryAndRun(mainModuleKlibFile: File, allDependencies: KlibABITestUtils.Dependencies) {
         val configuration = environment.configuration.copy()
 
         configuration.put(JSConfigurationKeys.PARTIAL_LINKAGE, true)
@@ -130,12 +130,12 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
         configuration.put(CommonConfigurationKeys.MODULE_NAME, MAIN_MODULE_NAME)
 
         val compilationOutputs = if (useIncrementalCompiler)
-            buildBinaryWithIC(configuration, mainModuleKlibFile, libraries)
+            buildBinaryWithIC(configuration, mainModuleKlibFile, allDependencies)
         else
-            buildBinaryNoIC(configuration, mainModuleKlibFile, libraries)
+            buildBinaryNoIC(configuration, mainModuleKlibFile, allDependencies)
 
         val binariesDir = File(buildDir, BIN_DIR_NAME).also { it.mkdirs() }
-        val binaries = ArrayList<File>(libraries.size)
+        val binaries = ArrayList<File>(allDependencies.regularDependencies.size)
 
         for ((name, code) in compilationOutputs.dependencies) {
             val depBinary = binariesDir.binJsFile(name)
@@ -154,14 +154,15 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
     private fun buildBinaryWithIC(
         configuration: CompilerConfiguration,
         mainModuleKlibFile: File,
-        libraries: Collection<File>
+        allDependencies: KlibABITestUtils.Dependencies
     ): CompilationOutputs {
         fun cacheDir(library: File): File = buildDir.resolve("libs-cache").resolve(library.name).apply { mkdirs() }
 
+        // TODO: what about friend dependencies?
         val cacheUpdater = CacheUpdater(
             mainModule = mainModuleKlibFile.absolutePath,
-            allModules = libraries.map { it.absolutePath },
-            icCachePaths = libraries.map { cacheDir(it).absolutePath },
+            allModules = allDependencies.regularDependencies.map { it.path },
+            icCachePaths = allDependencies.regularDependencies.map { cacheDir(it).path },
             compilerConfiguration = configuration,
             irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
             mainArguments = null,
@@ -186,10 +187,16 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
     private fun buildBinaryNoIC(
         configuration: CompilerConfiguration,
         mainModuleKlibFile: File,
-        libraries: Collection<File>
+        allDependencies: KlibABITestUtils.Dependencies
     ): CompilationOutputs {
         val klib = MainModule.Klib(mainModuleKlibFile.path)
-        val moduleStructure = ModulesStructure(environment.project, klib, configuration, libraries.map { it.path }, emptyList())
+        val moduleStructure = ModulesStructure(
+            environment.project,
+            klib,
+            configuration,
+            allDependencies.regularDependencies.map { it.path },
+            allDependencies.friendDependencies.map { it.path }
+        )
 
         val ir = compile(
             moduleStructure,
