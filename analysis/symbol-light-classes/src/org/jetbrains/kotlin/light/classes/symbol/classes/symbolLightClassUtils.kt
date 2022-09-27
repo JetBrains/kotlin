@@ -360,12 +360,11 @@ internal fun SymbolLightClassBase.createField(
 }
 
 context(KtAnalysisSession)
-internal fun SymbolLightClassBase.createInheritanceList(forExtendsList: Boolean, superTypes: List<KtType>): PsiReferenceList {
-
+internal fun SymbolLightClassForClassOrObject.createInheritanceList(forExtendsList: Boolean, superTypes: List<KtType>): PsiReferenceList {
     val role = if (forExtendsList) PsiReferenceList.Role.EXTENDS_LIST else PsiReferenceList.Role.IMPLEMENTS_LIST
 
     val listBuilder = KotlinSuperTypeListBuilder(
-        kotlinOrigin = kotlinOrigin?.getSuperTypeList(),
+        kotlinOrigin = kotlinOrigin.getSuperTypeList(),
         manager = manager,
         language = language,
         role = role
