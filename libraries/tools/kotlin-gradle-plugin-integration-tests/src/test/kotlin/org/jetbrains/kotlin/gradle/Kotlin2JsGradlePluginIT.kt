@@ -1218,7 +1218,8 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                 |
                 |allprojects {
                 |    tasks.configureEach {
-                |        if (this is org.gradle.configuration.Help) return@configureEach
+                |        if (name == org.gradle.language.base.plugins.LifecycleBasePlugin.CLEAN_TASK_NAME ||
+                |            this is org.gradle.configuration.Help) return@configureEach
                 |        throw GradleException("Task ${'$'}{path} shouldn't be configured")
                 |    }
                 |}
@@ -1237,7 +1238,8 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                 |
                 |allprojects {
                 |    tasks.configureEach {
-                |        if (it instanceof org.gradle.configuration.Help) return
+                |        if (it.name == org.gradle.language.base.plugins.LifecycleBasePlugin.CLEAN_TASK_NAME ||
+                |            it instanceof org.gradle.configuration.Help) return
                 |        throw new GradleException("Task ${'$'}{path} shouldn't be configured")
                 |    }
                 |}

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.writeWasmUnitTestRunner
+import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
 
 internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJsTestFramework {
     override val settingsState: String = "KotlinWasmNode"
@@ -22,7 +23,7 @@ internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJs
     private val isTeamCity = compilation.target.project.providers.gradleProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY)
 
     init {
-        kotlinJsTest.outputs.upToDateWhen { false }
+        kotlinJsTest.doNotTrackStateCompat("Should always re-run for WASM")
     }
 
     override fun createTestExecutionSpec(
