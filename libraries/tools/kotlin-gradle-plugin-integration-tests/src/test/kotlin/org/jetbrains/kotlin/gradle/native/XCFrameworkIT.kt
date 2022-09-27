@@ -27,7 +27,7 @@ class XCFrameworkIT : BaseGradleIT() {
     override val defaultGradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
     override fun defaultBuildOptions() = super.defaultBuildOptions().copy(
         androidHome = KtTestUtil.findAndroidSdk(),
-        androidGradlePluginVersion = AGPVersion.v3_6_0
+        androidGradlePluginVersion = AGPVersion.v4_1_0
     )
 
     @Test

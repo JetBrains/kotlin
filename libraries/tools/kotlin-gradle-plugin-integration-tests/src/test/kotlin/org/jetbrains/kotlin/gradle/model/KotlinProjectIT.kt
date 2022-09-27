@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.model
 
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
@@ -17,9 +16,6 @@ import kotlin.test.assertTrue
 @DisplayName("Kotlin plugin model")
 @OtherGradlePluginTests
 class KotlinProjectIT : KGPBaseTest() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(
-        androidVersion = TestVersions.AGP.AGP_36,
-    )
 
     @DisplayName("Valid model is available in Kotlin only project")
     @GradleTest
