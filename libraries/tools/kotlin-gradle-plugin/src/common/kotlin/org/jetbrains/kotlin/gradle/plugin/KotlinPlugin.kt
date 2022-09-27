@@ -9,7 +9,6 @@ import com.android.build.gradle.*
 import org.gradle.api.*
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
-import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
@@ -33,8 +32,6 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.configuration.*
 import org.jetbrains.kotlin.gradle.utils.*
-import java.io.File
-import java.util.concurrent.Callable
 
 const val PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinCompilerPluginClasspath"
 const val NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinNativeCompilerPluginClasspath"
@@ -47,55 +44,6 @@ val KOTLIN_DSL_NAME = "kotlin"
 val KOTLIN_JS_DSL_NAME = "kotlin2js"
 val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"
 
-
-
-internal class KotlinJsIrSourceSetProcessor(
-    tasksProvider: KotlinTasksProvider,
-    kotlinCompilation: AbstractKotlinCompilation<*>
-) : KotlinSourceSetProcessor<Kotlin2JsCompile>(
-    tasksProvider, taskDescription = "Compiles the Kotlin sources in $kotlinCompilation to JavaScript.",
-    kotlinCompilation = kotlinCompilation
-) {
-    override fun doRegisterTask(project: Project, taskName: String): TaskProvider<out Kotlin2JsCompile> {
-        val configAction = Kotlin2JsCompileConfig(kotlinCompilation)
-        applyStandardTaskConfiguration(configAction)
-        return tasksProvider.registerKotlinJSTask(
-            project,
-            taskName,
-            kotlinCompilation.compilerOptions.options as KotlinJsCompilerOptions,
-            configAction
-        )
-    }
-
-    override fun doTargetSpecificProcessing() {
-        project.tasks.named(kotlinCompilation.compileAllTaskName).configure {
-            it.dependsOn(kotlinTask)
-        }
-
-        val compilation = kotlinCompilation as KotlinJsIrCompilation
-
-        compilation.binaries
-            .withType(JsIrBinary::class.java)
-            .all { binary ->
-                val configAction = KotlinJsIrLinkConfig(binary)
-                configAction.configureTask {
-                    it.description = taskDescription
-                    it.libraries.from({ kotlinCompilation.compileDependencyFiles })
-                }
-                configAction.configureTask { task ->
-                    task.modeProperty.set(binary.mode)
-                    task.dependsOn(kotlinTask)
-                }
-
-                tasksProvider.registerKotlinJsIrTask(project, binary.linkTaskName, configAction)
-            }
-
-        project.whenEvaluated {
-            val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
-            subpluginEnvironment.addSubpluginOptions(project, kotlinCompilation)
-        }
-    }
-}
 
 internal class KotlinCommonSourceSetProcessor(
     compilation: KotlinCompilationData<*>,
