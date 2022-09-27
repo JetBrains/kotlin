@@ -12,9 +12,6 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.*
 import org.jetbrains.kotlin.gradle.plugin.sources.*
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.closure
 import java.util.*
@@ -55,20 +52,6 @@ interface CompilationDetailsWithRuntime<T : KotlinCommonOptions> : CompilationDe
 internal val CompilationDetails<*>.associateCompilationsClosure: Iterable<CompilationDetails<*>>
     get() = closure { it.associateCompilations }
 
-
-internal class JsIrCompilationDetails(
-    target: KotlinTarget, compilationPurpose: String, defaultSourceSet: KotlinSourceSet
-) : JsCompilationDetails(target, compilationPurpose, defaultSourceSet) {
-
-    internal abstract class JsIrCompilationDependencyHolder @Inject constructor(target: KotlinTarget, compilationPurpose: String) :
-        JsCompilationDependenciesHolder(target, compilationPurpose) {
-        override val disambiguationClassifierInPlatform: String?
-            get() = (target as KotlinJsIrTarget).disambiguationClassifierInPlatform
-    }
-
-    override val kotlinDependenciesHolder: HasKotlinDependencies
-        get() = target.project.objects.newInstance(JsIrCompilationDependencyHolder::class.java, target, compilationPurpose)
-}
 
 internal abstract class KotlinDependencyConfigurationsHolder @Inject constructor(
     val project: Project,
