@@ -59,6 +59,7 @@ dependencies {
     testImplementation("androidx.core:core-ktx:1.1.0")
     testImplementation("androidx.activity:activity-ktx:1.2.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.4")
+    testImplementation("com.google.dagger:dagger:2.40.1")
 }
 
 afterEvaluate {
