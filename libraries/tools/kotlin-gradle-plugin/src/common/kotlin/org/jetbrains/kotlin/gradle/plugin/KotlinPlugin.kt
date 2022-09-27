@@ -80,46 +80,6 @@ internal open class KotlinPlugin(
     }
 }
 
-internal open class KotlinCommonPlugin(
-    registry: ToolingModelBuilderRegistry
-) : AbstractKotlinPlugin(KotlinTasksProvider(), registry) {
-
-    companion object {
-        private const val targetName = "common"
-    }
-
-    override fun buildSourceSetProcessor(
-        project: Project,
-        compilation: AbstractKotlinCompilation<*>
-    ): KotlinSourceSetProcessor<*> =
-        KotlinCommonSourceSetProcessor(compilation, tasksProvider)
-
-    override fun apply(project: Project) {
-        @Suppress("UNCHECKED_CAST")
-        val target = project.objects.newInstance(
-            KotlinWithJavaTarget::class.java,
-            project,
-            KotlinPlatformType.common,
-            targetName,
-            {
-                object : HasCompilerOptions<CompilerMultiplatformCommonOptions> {
-                    override val options: CompilerMultiplatformCommonOptions =
-                        project.objects.newInstance(CompilerMultiplatformCommonOptionsDefault::class.java)
-                }
-            },
-            { compilerOptions: CompilerMultiplatformCommonOptions ->
-                object : KotlinMultiplatformCommonOptions {
-                    override val options: CompilerMultiplatformCommonOptions
-                        get() = compilerOptions
-                }
-            }
-        ) as KotlinWithJavaTarget<KotlinMultiplatformCommonOptions, CompilerMultiplatformCommonOptions>
-        (project.kotlinExtension as KotlinCommonProjectExtension).target = target
-
-        super.apply(project)
-    }
-}
-
 @Deprecated(
     message = "Should be removed with Js platform plugin",
     level = DeprecationLevel.ERROR
