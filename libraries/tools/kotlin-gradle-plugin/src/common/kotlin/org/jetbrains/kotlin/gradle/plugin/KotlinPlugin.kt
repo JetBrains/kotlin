@@ -54,27 +54,6 @@ val KOTLIN_DSL_NAME = "kotlin"
 val KOTLIN_JS_DSL_NAME = "kotlin2js"
 val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"
 
-abstract class KotlinCompilationProcessor<out T : AbstractKotlinCompileTool<*>>(
-    open val kotlinCompilation: KotlinCompilationData<*>
-) {
-    abstract val kotlinTask: TaskProvider<out T>
-    abstract fun run()
-
-    protected val project: Project
-        get() = kotlinCompilation.project
-
-    protected val defaultKotlinDestinationDir: Provider<Directory>
-        get() {
-            val kotlinExt = project.topLevelExtension
-            val targetSubDirectory =
-                if (kotlinExt is KotlinSingleJavaTargetExtension)
-                    "" // In single-target projects, don't add the target name part to this path
-                else
-                    kotlinCompilation.compilationClassifier?.let { "$it/" }.orEmpty()
-            return project.layout.buildDirectory.dir("classes/kotlin/$targetSubDirectory${kotlinCompilation.compilationPurpose}")
-        }
-}
-
 internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     val tasksProvider: KotlinTasksProvider,
     val taskDescription: String,
