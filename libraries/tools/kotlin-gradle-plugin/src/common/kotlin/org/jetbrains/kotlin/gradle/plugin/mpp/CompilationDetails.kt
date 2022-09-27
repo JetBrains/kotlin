@@ -9,13 +9,11 @@ import com.android.build.gradle.api.BaseVariant
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
-import org.gradle.api.tasks.SourceSet
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.*
 import org.jetbrains.kotlin.gradle.plugin.sources.*
-import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.*
@@ -58,41 +56,6 @@ interface CompilationDetailsWithRuntime<T : KotlinCommonOptions> : CompilationDe
 internal val CompilationDetails<*>.associateCompilationsClosure: Iterable<CompilationDetails<*>>
     get() = closure { it.associateCompilations }
 
-
-internal class WithJavaCompilationDetails<T : KotlinCommonOptions, CO : KotlinCommonCompilerOptions>(
-    target: KotlinTarget,
-    compilationPurpose: String,
-    defaultSourceSet: KotlinSourceSet,
-    createCompilerOptions: DefaultCompilationDetails<T, CO>.() -> HasCompilerOptions<CO>,
-    createKotlinOptions: DefaultCompilationDetails<T, CO>.() -> T
-) : DefaultCompilationDetailsWithRuntime<T, CO>(target, compilationPurpose, defaultSourceSet, createCompilerOptions, createKotlinOptions) {
-    @Suppress("UNCHECKED_CAST")
-    override val compilation: KotlinWithJavaCompilation<T, CO>
-        get() = super.compilation as KotlinWithJavaCompilation<T, CO>
-
-    val javaSourceSet: SourceSet
-        get() = compilation.javaSourceSet
-
-    override val output: KotlinCompilationOutput by lazy { KotlinWithJavaCompilationOutput(compilation) }
-
-    override val compileDependencyFilesHolder: GradleKpmDependencyFilesHolder
-        get() = object : GradleKpmDependencyFilesHolder {
-            override val dependencyConfigurationName: String by javaSourceSet::compileClasspathConfigurationName
-            override var dependencyFiles: FileCollection by javaSourceSet::compileClasspath
-        }
-
-    override val runtimeDependencyFilesHolder: GradleKpmDependencyFilesHolder
-        get() = object : GradleKpmDependencyFilesHolder {
-            override val dependencyConfigurationName: String by javaSourceSet::runtimeClasspathConfigurationName
-            override var dependencyFiles: FileCollection by javaSourceSet::runtimeClasspath
-        }
-
-    override fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
-        if (compilationPurpose != SourceSet.TEST_SOURCE_SET_NAME || other.name != SourceSet.MAIN_SOURCE_SET_NAME) {
-            super.addAssociateCompilationDependencies(other)
-        } // otherwise, do nothing: the Java Gradle plugin adds these dependencies for us, we don't need to add them to the classpath
-    }
-}
 
 class AndroidCompilationDetails(
     target: KotlinTarget,
