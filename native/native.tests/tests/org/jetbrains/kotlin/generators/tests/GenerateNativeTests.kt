@@ -64,13 +64,17 @@ fun main() {
             ) {
                 model("Interop/Indexer/simple/simpleDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("Interop/Indexer/framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
-                model("Interop/Indexer/twoFrameworks/twoFrameworksDefs", pattern = "^([^_](.+))$", recursive = false)
             }
             testClass<AbstractNativeInteropIndexerNoFModulesTest>(
                 suiteTestClassName = "InteropIndexerNoFModulesTestGenerated"
             ) {
                 model("Interop/Indexer/simple/simpleDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("Interop/Indexer/framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
+            }
+            testClass<AbstractNativeInteropIndexerKT39120Test>(
+                suiteTestClassName = "InteropIndexerKT39120TestGenerated"
+            ) {
+                model("Interop/Indexer/KT-39120/defs", pattern = "^([^_](.+))$", recursive = false)
             }
         }
     }
