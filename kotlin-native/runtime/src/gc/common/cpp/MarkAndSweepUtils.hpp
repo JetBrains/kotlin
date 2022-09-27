@@ -52,14 +52,13 @@ MarkStats Mark(typename Traits::MarkQueue& markQueue) noexcept {
         stats.aliveHeapSetBytes += mm::GetAllocatedHeapSize(top);
 
         traverseReferredObjects(top, [&](ObjHeader* field) noexcept {
-            if (!isNullOrMarker(field) && field->heap()) {
+            if (field->heap()) {
                 Traits::enqueue(markQueue, field);
             }
         });
 
         if (auto* extraObjectData = mm::ExtraObjectData::Get(top)) {
-            auto weakCounter = extraObjectData->GetWeakReferenceCounter();
-            if (!isNullOrMarker(weakCounter)) {
+            if (auto weakCounter = extraObjectData->GetWeakReferenceCounter()) {
                 RuntimeAssert(
                         weakCounter->heap(), "Weak counter must be a heap object. object=%p counter=%p permanent=%d local=%d", top,
                         weakCounter, weakCounter->permanent(), weakCounter->local());
@@ -133,7 +132,7 @@ void collectRootSetForThread(typename Traits::MarkQueue& markQueue, mm::ThreadDa
             } else {
                 traverseReferredObjects(object, [&](ObjHeader* field) noexcept {
                     // Each permanent and stack object has own entry in the root set.
-                    if (field->heap() && !isNullOrMarker(field)) {
+                    if (field->heap()) {
                         Traits::enqueue(markQueue, field);
                     }
                 });
@@ -165,7 +164,7 @@ void collectRootSetGlobals(typename Traits::MarkQueue& markQueue) noexcept {
             } else {
                 traverseReferredObjects(object, [&](ObjHeader* field) noexcept {
                     // Each permanent and stack object has own entry in the root set.
-                    if (field->heap() && !isNullOrMarker(field)) {
+                    if (field->heap()) {
                         Traits::enqueue(markQueue, field);
                     }
                 });
