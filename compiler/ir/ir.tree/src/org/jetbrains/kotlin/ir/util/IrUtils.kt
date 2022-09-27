@@ -1125,9 +1125,16 @@ private class FakeOverrideBuilderForLowerings : FakeOverrideBuilderStrategy(empt
     }
 }
 
-fun IrClass.addFakeOverrides(typeSystem: IrTypeSystemContext, implementedMembers: List<IrOverridableMember> = emptyList()) {
+fun IrClass.addFakeOverrides(
+    typeSystem: IrTypeSystemContext,
+    implementedMembers: List<IrOverridableMember> = emptyList(),
+    ignoredParentSymbols: List<IrSymbol> = emptyList()
+) {
     IrOverridingUtil(typeSystem, FakeOverrideBuilderForLowerings())
-        .buildFakeOverridesForClassUsingOverriddenSymbols(this, implementedMembers, compatibilityMode = false)
+        .buildFakeOverridesForClassUsingOverriddenSymbols(this,
+                                                          implementedMembers = implementedMembers,
+                                                          compatibilityMode = false,
+                                                          ignoredParentSymbols = ignoredParentSymbols)
         .forEach { addChild(it) }
 }
 

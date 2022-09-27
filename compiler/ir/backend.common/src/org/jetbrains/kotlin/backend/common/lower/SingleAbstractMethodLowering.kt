@@ -219,7 +219,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             isSuspend = originalSuperMethod.isSuspend
             setSourceRange(createFor)
         }.apply {
-            overriddenSymbols = listOf(transformedSuperMethod.symbol)
+            overriddenSymbols = listOf(originalSuperMethod.symbol)
             dispatchReceiverParameter = subclass.thisReceiver!!.copyTo(this)
             extensionReceiverParameter = originalSuperMethod.extensionReceiverParameter?.copyTo(this)
             valueParameters = originalSuperMethod.valueParameters.map { it.copyTo(this) }
@@ -239,7 +239,13 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
         if (superType.needEqualsHashCodeMethods)
             generateEqualsHashCode(subclass, superType, field)
 
-        subclass.addFakeOverrides(context.typeSystem)
+        subclass.addFakeOverrides(
+            context.typeSystem,
+            // Built function overrides originalSuperMethod, while, if parent class is already lowered, it would
+            // transformedSuperMethod in its declaration list. We need not fake override in that case.
+            // Later lowerings will fix it and replace function with one overriding transformedSuperMethod.
+            ignoredParentSymbols = listOf(transformedSuperMethod.symbol)
+        )
 
         return subclass
     }

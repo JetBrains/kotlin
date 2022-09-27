@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -194,8 +193,6 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
         private val isKFunction = functionReference.type.isKFunction()
         private val isKSuspendFunction = functionReference.type.isKSuspendFunction()
 
-        private val samSuperClass = samSuperType?.let { it.classOrNull ?: error("Expected a class but was: ${it.render()}") }
-
         private val adaptedReferenceOriginalTarget: IrFunction? = functionReference.reflectionTarget?.owner
 
         private val functionReferenceTarget = adaptedReferenceOriginalTarget ?: referencedFunction
@@ -251,31 +248,25 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                 else -> kFunctionImplSymbol.typeWith(functionReturnType)
             }
             val superTypes = mutableListOf(superClass)
+            val transformedSuperMethod: IrSimpleFunction
             if (samSuperType != null) {
                 superTypes += samSuperType
-
-                val sam = samSuperClass!!.functions.single { it.owner.modality == Modality.ABSTRACT }
-                buildInvokeMethod(sam.owner)
+                val samSuperClass = samSuperType.classOrNull ?: error("Expected a class but was: ${samSuperType.render()}")
+                transformedSuperMethod = samSuperClass.functions.single { it.owner.modality == Modality.ABSTRACT }.owner
             } else {
                 val numberOfParameters = unboundFunctionParameters.size
-                val functionClass: IrClass?
-                val suspendFunctionClass: IrClass?
                 if (isKSuspendFunction) {
-                    functionClass = null
-                    suspendFunctionClass = symbols.kSuspendFunctionN(numberOfParameters).owner
+                    val suspendFunctionClass = symbols.kSuspendFunctionN(numberOfParameters).owner
                     superTypes += suspendFunctionClass.typeWith(functionParameterAndReturnTypes)
+                    transformedSuperMethod = suspendFunctionClass.getInvokeFunction()
                 } else {
-                    functionClass = (if (isKFunction) symbols.kFunctionN(numberOfParameters) else symbols.functionN(numberOfParameters)).owner
-                    suspendFunctionClass = null
+                    val functionClass = (if (isKFunction) symbols.kFunctionN(numberOfParameters) else symbols.functionN(numberOfParameters)).owner
                     superTypes += functionClass.typeWith(functionParameterAndReturnTypes)
-                }
-
-                if (functionClass != null)
-                    buildInvokeMethod(functionClass.getInvokeFunction())
-                if (suspendFunctionClass != null) {
-                    buildInvokeMethod(suspendFunctionClass.getInvokeFunction())
+                    transformedSuperMethod = functionClass.getInvokeFunction()
                 }
             }
+            val originalSuperMethod = context.mapping.functionWithContinuationsToSuspendFunctions[transformedSuperMethod] ?: transformedSuperMethod
+            buildInvokeMethod(originalSuperMethod)
 
             functionReferenceClass.superTypes += superTypes
             if (!isLambda) {
@@ -329,7 +320,13 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                         }
             }
 
-            functionReferenceClass.addFakeOverrides(context.typeSystem)
+            functionReferenceClass.addFakeOverrides(
+                    context.typeSystem,
+                    // Built function overrides originalSuperMethod, while, if parent class is already lowered, it would
+                    // transformedSuperMethod in its declaration list. We need not fake override in that case.
+                    // Later lowerings will fix it and replace function with one overriding transformedSuperMethod.
+                    ignoredParentSymbols = listOf(transformedSuperMethod.symbol)
+            )
 
             return functionReferenceClass
         }
@@ -428,10 +425,7 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
             return false
         }
 
-        private fun buildInvokeMethod(superFunction: IrSimpleFunction) =
-                buildInvokeMethodImpl(context.mapping.functionWithContinuationsToSuspendFunctions[superFunction] ?: superFunction)
-
-        private fun buildInvokeMethodImpl(superFunction: IrSimpleFunction): IrSimpleFunction {
+        private fun buildInvokeMethod(superFunction: IrSimpleFunction): IrSimpleFunction {
             return IrFunctionImpl(
                     startOffset, endOffset,
                     DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,

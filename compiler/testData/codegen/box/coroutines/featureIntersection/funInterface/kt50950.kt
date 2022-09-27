@@ -11,11 +11,20 @@ import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 import helpers.EmptyContinuation
 
-suspend fun run(block: suspend () -> Unit) = A(block).run()
+suspend fun runA(block: suspend () -> Unit) = A(block).run()
+suspend fun runC(block: suspend () -> Unit) = C(block).run()
 
 fun box(): String {
     suspend {
-        run {}
+        runA {}
+        runC {}
+        A { }.run()
+        C { }.run()
     }.startCoroutine(EmptyContinuation)
     return "OK"
+}
+
+// FILE: c.kt
+fun interface C {
+    suspend fun run()
 }
