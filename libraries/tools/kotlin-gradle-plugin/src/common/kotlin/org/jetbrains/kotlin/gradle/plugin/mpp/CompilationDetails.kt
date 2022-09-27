@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
@@ -56,36 +55,6 @@ interface CompilationDetailsWithRuntime<T : KotlinCommonOptions> : CompilationDe
 internal val CompilationDetails<*>.associateCompilationsClosure: Iterable<CompilationDetails<*>>
     get() = closure { it.associateCompilations }
 
-
-internal class MetadataCompilationDetails(
-    target: KotlinTarget,
-    name: String,
-    defaultSourceSet: KotlinSourceSet,
-) : DefaultCompilationDetails<KotlinMultiplatformCommonOptions, CompilerMultiplatformCommonOptions>(
-    target,
-    name,
-    defaultSourceSet,
-    {
-        object : HasCompilerOptions<CompilerMultiplatformCommonOptions> {
-            override val options: CompilerMultiplatformCommonOptions =
-                target.project.objects.newInstance(CompilerMultiplatformCommonOptionsDefault::class.java)
-        }
-    },
-    {
-        object : KotlinMultiplatformCommonOptions {
-            override val options: CompilerMultiplatformCommonOptions
-                get() = compilerOptions.options
-        }
-    }
-) {
-
-    override val friendArtifacts: FileCollection
-        get() = super.friendArtifacts.plus(run {
-            val project = target.project
-            val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(defaultSourceSet)
-            project.files(friendSourceSets.mapNotNull { target.compilations.findByName(it.name)?.output?.classesDirs })
-        })
-}
 
 internal open class JsCompilationDetails(
     target: KotlinTarget,
