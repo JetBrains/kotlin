@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import com.android.build.gradle.*
-import com.android.build.gradle.api.BaseVariant
 import org.gradle.api.*
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
@@ -185,7 +184,7 @@ internal class Kotlin2JvmSourceSetProcessor(
     }
 
     override fun doTargetSpecificProcessing() {
-        ifKaptEnabled(project) {
+        project.whenKaptEnabled {
             Kapt3GradleSubplugin.createAptConfigurationIfNeeded(project, kotlinCompilation.compilationPurpose)
         }
 
@@ -786,19 +785,6 @@ class KotlinConfigurationTools internal constructor(
     val kotlinTasksProvider: KotlinTasksProvider
 )
 
-
-internal fun ifKaptEnabled(project: Project, block: () -> Unit) {
-    var triggered = false
-
-    fun trigger() {
-        if (triggered) return
-        triggered = true
-        block()
-    }
-
-    project.pluginManager.withPlugin("kotlin-kapt") { trigger() }
-    project.pluginManager.withPlugin("org.jetbrains.kotlin.kapt") { trigger() }
-}
 
 private fun SourceSet.clearJavaSrcDirs() {
     java.setSrcDirs(emptyList<File>())
