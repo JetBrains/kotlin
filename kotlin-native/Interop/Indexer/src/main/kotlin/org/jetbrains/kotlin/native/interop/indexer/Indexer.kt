@@ -1196,8 +1196,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
         )
         try {
             if (errors.isNotEmpty()) {
-                val errorMessage = errors.take(10).joinToString("\n") { it.format }
-                throw Error(errorMessage)
+                error(errors.take(10).joinToString("\n") { it.format })
             }
             translationUnit.ensureNoCompileErrors()
 
@@ -1207,7 +1206,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                 val cachedHeaders = getHeaders(nativeIndex.library, index, translationUnit, tuRepository)
                 val headers = cachedHeaders.ownHeaders
                 val headersCanonicalPaths = headers.filterNotNull().map { it.canonicalPath }.toSet()
-                val unitsToProcess = (tuRepository.headerUsage.unitsImportingTheseHeaders(headersCanonicalPaths) + setOf(translationUnit)).toList()
+                val unitsToProcess = (tuRepository.headerUsage.unitsIncludingTheseHeaders(headersCanonicalPaths) + setOf(translationUnit)).toList()
 
                 nativeIndex.includedHeaders = headers.map {
                     nativeIndex.getHeaderId(it)
