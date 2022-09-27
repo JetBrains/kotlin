@@ -38,7 +38,7 @@ sealed class ProgressionType(
     fun IrExpression.asStepType() = castIfNecessary(stepClass)
 
     companion object {
-        fun fromIrType(irType: IrType, symbols: Symbols<CommonBackendContext>, allowUnsignedBounds: Boolean): ProgressionType? =
+        fun fromIrType(irType: IrType, symbols: Symbols, allowUnsignedBounds: Boolean): ProgressionType? =
             when {
                 irType.isSubtypeOfClass(symbols.charProgression) -> CharProgressionType(symbols)
                 irType.isSubtypeOfClass(symbols.intProgression) -> IntProgressionType(symbols)
@@ -52,7 +52,7 @@ sealed class ProgressionType(
     }
 }
 
-internal class IntProgressionType(symbols: Symbols<CommonBackendContext>) :
+internal class IntProgressionType(symbols: Symbols) :
     ProgressionType(
         elementClass = symbols.int.owner,
         stepClass = symbols.int.owner,
@@ -65,7 +65,7 @@ internal class IntProgressionType(symbols: Symbols<CommonBackendContext>) :
     override fun DeclarationIrBuilder.zeroStepExpression() = irInt(0)
 }
 
-internal class LongProgressionType(symbols: Symbols<CommonBackendContext>) :
+internal class LongProgressionType(symbols: Symbols) :
     ProgressionType(
         elementClass = symbols.long.owner,
         stepClass = symbols.long.owner,
@@ -78,7 +78,7 @@ internal class LongProgressionType(symbols: Symbols<CommonBackendContext>) :
     override fun DeclarationIrBuilder.zeroStepExpression() = irLong(0)
 }
 
-internal class CharProgressionType(symbols: Symbols<CommonBackendContext>) :
+internal class CharProgressionType(symbols: Symbols) :
     ProgressionType(
         elementClass = symbols.char.owner,
         stepClass = symbols.int.owner,
@@ -107,7 +107,7 @@ internal class CharProgressionType(symbols: Symbols<CommonBackendContext>) :
 // `to(U)Int/(U)Long()` functions otherwise.
 
 internal abstract class UnsignedProgressionType(
-    symbols: Symbols<CommonBackendContext>,
+    symbols: Symbols,
     elementClass: IrClass,
     stepClass: IrClass,
     minValueAsLong: Long,
@@ -170,7 +170,7 @@ internal abstract class UnsignedProgressionType(
     }
 }
 
-internal class UIntProgressionType(symbols: Symbols<CommonBackendContext>, allowUnsignedBounds: Boolean) :
+internal class UIntProgressionType(symbols: Symbols, allowUnsignedBounds: Boolean) :
     UnsignedProgressionType(
         symbols,
         elementClass = if (allowUnsignedBounds) symbols.uInt!!.owner else symbols.int.owner,
@@ -186,7 +186,7 @@ internal class UIntProgressionType(symbols: Symbols<CommonBackendContext>, allow
     override fun DeclarationIrBuilder.zeroStepExpression() = irInt(0)
 }
 
-internal class ULongProgressionType(symbols: Symbols<CommonBackendContext>, allowUnsignedBounds: Boolean) :
+internal class ULongProgressionType(symbols: Symbols, allowUnsignedBounds: Boolean) :
     UnsignedProgressionType(
         symbols,
         elementClass = if (allowUnsignedBounds) symbols.uLong!!.owner else symbols.long.owner,
