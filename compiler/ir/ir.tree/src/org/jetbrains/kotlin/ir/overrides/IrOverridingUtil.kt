@@ -171,7 +171,8 @@ class IrOverridingUtil(
     fun buildFakeOverridesForClassUsingOverriddenSymbols(
         clazz: IrClass,
         implementedMembers: List<IrOverridableMember> = emptyList(),
-        compatibilityMode: Boolean
+        compatibilityMode: Boolean,
+        ignoredParentSymbols: List<IrSymbol> = emptyList()
     ): List<IrOverridableMember> {
         val overriddenMembers = (clazz.declarations.filterIsInstance<IrOverridableMember>() + implementedMembers)
             .flatMap { member -> member.overriddenSymbols.map { it.owner } }
@@ -182,7 +183,7 @@ class IrOverridingUtil(
             superClass.declarations
                 .filterIsInstance<IrOverridableMember>()
                 .filterNot {
-                    it in overriddenMembers || it.isStaticMember || DescriptorVisibilities.isPrivate(it.visibility)
+                    it in overriddenMembers || it.symbol in ignoredParentSymbols || it.isStaticMember || DescriptorVisibilities.isPrivate(it.visibility)
                 }
                 .map { overriddenMember ->
                     val fakeOverride = fakeOverrideBuilder.fakeOverrideMember(superType, overriddenMember, clazz)
