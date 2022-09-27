@@ -23,7 +23,6 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "25.0.2"
 }
 
 dependencies {
