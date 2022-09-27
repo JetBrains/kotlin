@@ -7,6 +7,8 @@ package kotlin.test
 
 /**
  * Marks a function as a test.
+ *
+ * Top-level test functions are currently not supported.
  */
 @Target(AnnotationTarget.FUNCTION)
 public expect annotation class Test()
