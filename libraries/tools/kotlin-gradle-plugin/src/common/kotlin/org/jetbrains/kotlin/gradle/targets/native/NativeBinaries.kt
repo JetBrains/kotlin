@@ -279,14 +279,22 @@ class Framework(
     /**
      * Embed bitcode for the framework or not. See [BitcodeEmbeddingMode].
      */
-    var embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode =
-        Xcode.defaultBitcodeEmbeddingMode(konanTarget, buildType)
+    val embedBitcodeMode = project.objects.property(org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode::class.java).apply {
+        convention(project.provider { Xcode.defaultBitcodeEmbeddingMode(konanTarget, buildType) })
+    }
+
+    @Deprecated("Use 'embedBitcodeMode' property instead.")
+    var embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
+        get() = embedBitcodeMode.get()
+        set(value) {
+            embedBitcodeMode.set(value)
+        }
 
     /**
      * Enable or disable embedding bitcode for the framework. See [BitcodeEmbeddingMode].
      */
     fun embedBitcode(mode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode) {
-        embedBitcode = mode
+        embedBitcodeMode.set(mode)
     }
 
     /**
