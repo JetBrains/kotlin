@@ -23,7 +23,6 @@ apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId 'io.realm.examples.kotlin'
         minSdkVersion 14

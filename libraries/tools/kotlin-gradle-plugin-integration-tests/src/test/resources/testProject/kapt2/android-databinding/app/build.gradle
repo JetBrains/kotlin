@@ -4,7 +4,6 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.example.databinding"
         minSdkVersion 21

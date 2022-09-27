@@ -4,7 +4,6 @@ apply plugin: 'kotlin-parcelize'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "com.example.dagger.kotlin"

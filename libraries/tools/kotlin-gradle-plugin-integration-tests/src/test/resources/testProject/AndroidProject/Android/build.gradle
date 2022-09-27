@@ -7,7 +7,6 @@ plugins {
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "28.0.3"
 
     sourceSets {
         main.java.srcDirs += 'src/main/java2'
