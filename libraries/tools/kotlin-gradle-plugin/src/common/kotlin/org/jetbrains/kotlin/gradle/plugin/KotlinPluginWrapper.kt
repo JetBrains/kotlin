@@ -226,7 +226,7 @@ abstract class AbstractKotlinPluginWrapper(
     protected val registry: ToolingModelBuilderRegistry
 ) : KotlinBasePluginWrapper() {
     override fun getPlugin(project: Project): Plugin<Project> =
-        KotlinPlugin(registry)
+        KotlinJvmPlugin(registry)
 
     override val projectExtensionClass: KClass<out KotlinJvmProjectExtension>
         get() = KotlinJvmProjectExtension::class
