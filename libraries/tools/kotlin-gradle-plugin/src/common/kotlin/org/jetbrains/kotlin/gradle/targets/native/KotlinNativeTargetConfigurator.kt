@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.Xcode
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -669,8 +670,11 @@ class KotlinNativeTargetWithSimulatorTestsConfigurator :
     override fun configureTestTask(target: KotlinNativeTargetWithSimulatorTests, testTask: KotlinNativeSimulatorTest) {
         super.configureTestTask(target, testTask)
 
-        testTask.deviceId = Xcode.getDefaultTestDeviceId(target.konanTarget)
-            ?: error("Xcode does not support simulator tests for ${target.konanTarget.name}. Check that requested SDK is installed.")
+        val deviceIdProvider = testTask.project.provider {
+            Xcode.getDefaultTestDeviceId(target.konanTarget)
+                ?: error("Xcode does not support simulator tests for ${target.konanTarget.name}. Check that requested SDK is installed.")
+        }
+        testTask.device.set(deviceIdProvider)
     }
 
     override fun createTestRun(
