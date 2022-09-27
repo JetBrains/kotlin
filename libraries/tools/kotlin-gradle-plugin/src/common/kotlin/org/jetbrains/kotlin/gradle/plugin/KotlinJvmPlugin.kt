@@ -29,7 +29,7 @@ val KOTLIN_JS_DSL_NAME = "kotlin2js"
 val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"
 
 
-internal open class KotlinPlugin(
+internal open class KotlinJvmPlugin(
     registry: ToolingModelBuilderRegistry
 ) : AbstractKotlinPlugin(KotlinTasksProvider(), registry) {
 
