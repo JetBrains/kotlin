@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPublication
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
-import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 
 internal interface GradleKpmProjectModelContainer {
@@ -19,24 +17,8 @@ internal interface GradleKpmProjectModelContainer {
     val rootPublication: MavenPublication?
 }
 
-internal val Project.kpmModelContainer: GradleKpmProjectModelContainer
-    get() = kpmModelContainerOrNull ?: error("Couldn't find KPM container for $project")
-
-internal val Project.kpmModelContainerOrNull: GradleKpmProjectModelContainer?
-    get() = when (val ext = project.topLevelExtensionOrNull) {
-        is KotlinPm20ProjectExtension -> ext.kpmModelContainer
-        is KotlinProjectExtension -> if (PropertiesProvider(project).experimentalKpmModelMapping) ext.kpmModelContainer else null
-        else -> null
-    }
-
-internal val Project.hasKpmModel: Boolean
-    get() = kpmModelContainerOrNull != null
-
-internal val Project.kpmModules: NamedDomainObjectContainer<GradleKpmModule>
-    get() = kpmModelContainer.modules
-
 internal val Project.metadataCompilationRegistryByModuleId: MutableMap<KpmModuleIdentifier, MetadataCompilationRegistry>
-    get() = kpmModelContainer.metadataCompilationRegistryByModuleId
+    get() = this.pm20Extension.kpmModelContainer.metadataCompilationRegistryByModuleId
 
 internal class GradleKpmDefaultProjectModelContainer(
     override val modules: NamedDomainObjectContainer<GradleKpmModule>,

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.JavaBasePlugin
@@ -20,10 +19,8 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.VariantMappedCompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.handleHierarchicalStructureFlagsMigration
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.registerDefaultVariantFactories
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.setupFragmentsMetadataForKpmModules
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.setupKpmModulesPublication
@@ -55,18 +52,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
         project.plugins.apply(JavaBasePlugin::class.java)
 
-        if (project.hasKpmModel) {
-            setupFragmentsMetadataForKpmModules(project)
-            setupKpmModulesPublication(project)
-            registerDefaultVariantFactories(project)
-            with(project.kpmModules) {
-                create(GradleKpmModule.MAIN_MODULE_NAME) {
-                    it.makePublic()
-                }
-                create(GradleKpmModule.TEST_MODULE_NAME)
-            }
-        }
-
         val kotlinMultiplatformExtension = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
 
         setupDefaultPresets(project)
@@ -80,9 +65,8 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         )
         project.registerKotlinArtifactsExtension()
 
-        if (!project.hasKpmModel) {
-            configurePublishingWithMavenPublish(project)
-        }
+        configurePublishingWithMavenPublish(project)
+
         kotlinMultiplatformExtension.targets.withType(AbstractKotlinTarget::class.java).all { applyUserDefinedAttributes(it) }
 
         // propagate compiler plugin options to the source set language settings
@@ -122,6 +106,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
                             1 -> sourceSetTargets.single().compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)
                                 ?: // use any of the compilations for now, looks OK for Android TODO maybe reconsider
                                 compilations.first()
+
                             else -> metadataCompilation
                         }
                     }
@@ -163,8 +148,10 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
                     val targetToAdd = when (konanTarget) {
                         in nativeTargetsWithHostTests ->
                             KotlinNativeTargetWithHostTestsPreset(konanTarget.presetName, project, konanTarget)
+
                         in nativeTargetsWithSimulatorTests ->
                             KotlinNativeTargetWithSimulatorTestsPreset(konanTarget.presetName, project, konanTarget)
+
                         else -> KotlinNativeTargetPreset(konanTarget.presetName, project, konanTarget)
                     }
 
@@ -216,52 +203,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
  */
 internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
     val project = target.project
-
-    if (!project.hasKpmModel) {
-        applyUserDefinedAttributesWithLegacyModel(target)
-    } else {
-        applyUserDefinedAttributesWithKpm(target)
-    }
-}
-
-private fun applyUserDefinedAttributesWithKpm(
-    target: AbstractKotlinTarget,
-) {
-    fun copyAttributesToVariant(variant: GradleKpmVariant, from: AttributeContainer) {
-        variant.gradleVariantNames.forEach { configurationOrVariantName ->
-            val configuration = variant.project.configurations.findByName(configurationOrVariantName)
-                ?: return@forEach
-            copyAttributes(from, configuration.attributes)
-        }
-    }
-
-    val project = target.project
-    project.whenEvaluated {
-        multiplatformExtension.targets.all target@{ target ->
-            if (target is KotlinMetadataTarget)
-                return@target
-
-            target.compilations.all compilation@{ compilation ->
-                if (compilation is AbstractKotlinCompilation) {
-                    val details = compilation.compilationDetails as? VariantMappedCompilationDetails<*>
-                        ?: return@compilation
-                    copyAttributesToVariant(details.variant, compilation.attributes)
-                }
-            }
-        }
-    }
-
-    // Also handle the legacy-mapped variants, which are not accessible through the compilations in the loop above
-    project.kpmModules.getByName(GradleKpmModule.MAIN_MODULE_NAME).variants.withType(GradleKpmLegacyMappedVariant::class.java).all { variant ->
-        val compilation = variant.compilation
-        copyAttributesToVariant(variant, compilation.attributes)
-    }
-}
-
-private fun applyUserDefinedAttributesWithLegacyModel(
-    target: AbstractKotlinTarget,
-) {
-    val project = target.project
     project.whenEvaluated {
         // To copy the attributes to the output configurations, find those output configurations and their producing compilations
         // based on the target's components:
@@ -293,14 +234,20 @@ private fun applyUserDefinedAttributesWithLegacyModel(
 }
 
 internal fun sourcesJarTask(compilation: KotlinCompilation<*>, componentName: String, artifactNameAppendix: String): TaskProvider<Jar> =
-    sourcesJarTask(compilation.target.project, lazy { compilation.allKotlinSourceSets.associate { it.name to it.kotlin } }, componentName, artifactNameAppendix)
+    sourcesJarTask(
+        compilation.target.project,
+        lazy { compilation.allKotlinSourceSets.associate { it.name to it.kotlin } },
+        componentName,
+        artifactNameAppendix
+    )
 
 private fun sourcesJarTask(
     project: Project,
     sourceSets: Lazy<Map<String, Iterable<File>>>,
     taskNamePrefix: String,
     artifactNameAppendix: String
-): TaskProvider<Jar> = sourcesJarTaskNamed(lowerCamelCaseName(taskNamePrefix, "sourcesJar"), taskNamePrefix, project, sourceSets, artifactNameAppendix)
+): TaskProvider<Jar> =
+    sourcesJarTaskNamed(lowerCamelCaseName(taskNamePrefix, "sourcesJar"), taskNamePrefix, project, sourceSets, artifactNameAppendix)
 
 internal fun sourcesJarTaskNamed(
     taskName: String,

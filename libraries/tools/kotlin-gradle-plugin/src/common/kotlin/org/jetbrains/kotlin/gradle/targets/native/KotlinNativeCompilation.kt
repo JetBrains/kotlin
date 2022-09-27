@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.MetadataMappedCompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeFragmentMetadataCompilationData
 import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
@@ -110,9 +109,6 @@ abstract class KotlinSharedNativeCompilation @Inject constructor(
         compilationDetails
     ),
     KotlinMetadataCompilation<KotlinCommonOptions> {
-
-    override fun getName() =
-        if (compilationDetails is MetadataMappedCompilationDetails) defaultSourceSetName else super.compilationPurpose
 
     override val target: KotlinMetadataTarget get() = super.target as KotlinMetadataTarget
 
