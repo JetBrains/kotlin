@@ -46,7 +46,7 @@ fun BaseIrGenerator.getIrSerialTypeInfo(property: IrSerializableProperty, ctx: S
     val T = property.type
     property.serializableWith(ctx)?.let { return SerializableInfo(it) }
     findAddOnSerializer(T, ctx)?.let { return SerializableInfo(it) }
-    T.overridenSerializer?.let { return SerializableInfo(it) }
+    T.overriddenSerializer?.let { return SerializableInfo(it) }
     return when {
         T.isTypeParameter() -> IrSerialTypeInfo(property, if (property.type.isMarkedNullable()) "Nullable" else "", null)
         T.isPrimitiveType() -> IrSerialTypeInfo(
@@ -112,7 +112,7 @@ fun analyzeSpecialSerializers(
 
 
 fun findTypeSerializer(context: SerializationBaseContext, type: IrType): IrClassSymbol? {
-    type.overridenSerializer?.let { return it }
+    type.overriddenSerializer?.let { return it }
     if (type.isTypeParameter()) return null
     if (type.isArray()) return context.referenceClassId(referenceArraySerializerId)
     if (type.isGeneratedSerializableObject()) return context.referenceClassId(objectSerializerId)
@@ -166,8 +166,9 @@ internal fun IrClass.polymorphicSerializerIfApplicableAutomatically(context: Ser
     }
 }
 
-internal val IrType.overridenSerializer: IrClassSymbol?
+internal val IrType.overriddenSerializer: IrClassSymbol?
     get() {
+        annotations.serializableWith()?.let { return it }
         val desc = this.classOrNull ?: return null
         desc.owner.serializableWith?.let { return it }
         return null

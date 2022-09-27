@@ -104,6 +104,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("serializableOnPropertyType.kt")
+    public void testSerializableOnPropertyType() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/serializableOnPropertyType.kt");
+    }
+
+    @Test
     @TestMetadata("starProjections.kt")
     public void testStarProjections() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/starProjections.kt");

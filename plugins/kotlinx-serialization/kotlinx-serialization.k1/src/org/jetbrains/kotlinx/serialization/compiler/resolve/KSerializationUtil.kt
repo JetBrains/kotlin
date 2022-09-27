@@ -245,13 +245,13 @@ val ClassDescriptor?.classSerializer: ClassDescriptor?
 val ClassDescriptor.hasCompanionObjectAsSerializer: Boolean
     get() = isInternallySerializableObject || companionObjectDescriptor?.serializerForClass == this.defaultType
 
-// returns only user-overriden Serializer
-val KotlinType.overridenSerializer: KotlinType?
-    get() {
-        val desc = this.toClassDescriptor ?: return null
-        desc.serializableWith?.let { return it }
-        return null
-    }
+// returns only user-overridden Serializer
+fun KotlinType.overriddenSerializer(module: ModuleDescriptor): KotlinType? {
+    annotations.serializableWith(module)?.let { return it }
+    val desc = this.toClassDescriptor ?: return null
+    desc.serializableWith?.let { return it }
+    return null
+}
 
 val KotlinType.genericIndex: Int?
     get() = (this.constructor.declarationDescriptor as? TypeParameterDescriptor)?.index
