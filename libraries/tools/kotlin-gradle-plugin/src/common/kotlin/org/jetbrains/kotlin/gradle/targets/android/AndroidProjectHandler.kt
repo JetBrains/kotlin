@@ -41,10 +41,7 @@ import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinCompileConfig
 import org.jetbrains.kotlin.gradle.tasks.thisTaskProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.tooling.includeKotlinToolingMetadataInApk
-import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
-import org.jetbrains.kotlin.gradle.utils.androidPluginIds
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -78,7 +75,7 @@ internal class AndroidProjectHandler(
                                                     "plugins to be applied to the project:\n\t" +
                                                     androidPluginIds.joinToString("\n\t") { "* $it" })
 
-        project.forEachVariant { variant ->
+        project.forAllAndroidVariants { variant ->
             val compilationFactory = KotlinJvmAndroidCompilationFactory(kotlinAndroidTarget, variant)
             val variantName = getVariantName(variant)
 
@@ -101,7 +98,7 @@ internal class AndroidProjectHandler(
         }
 
         project.whenEvaluated {
-            forEachVariant { variant ->
+            forAllAndroidVariants { variant ->
                 val compilation = kotlinAndroidTarget.compilations.getByName(getVariantName(variant))
                 postprocessVariant(variant, compilation, project, ext, plugin)
 
@@ -201,7 +198,7 @@ internal class AndroidProjectHandler(
         project.tasks.matching { it.name == allTestTaskName }.configureEach { task ->
             task.dependsOn(project.provider {
                 val androidUnitTestTasks = mutableListOf<Any>()
-                forEachVariant(project) { variant ->
+                project.forAllAndroidVariants { variant ->
                     if (variant is UnitTestVariant) {
                         // There's no API for getting the Android unit test tasks from the variant, so match them by name:
                         androidUnitTestTasks.add(project.provider {
@@ -397,24 +394,6 @@ internal fun BaseVariant.getJavaTaskProvider(): TaskProvider<out JavaCompile> =
     this::class.java.methods.firstOrNull { it.name == "getJavaCompileProvider" }
         ?.invoke(this) as? TaskProvider<JavaCompile>
         ?: @Suppress("DEPRECATION") javaCompile.thisTaskProvider
-
-internal fun forEachVariant(project: Project, action: (BaseVariant) -> Unit) {
-    val androidExtension = project.extensions.getByName("android")
-    when (androidExtension) {
-        is AppExtension -> androidExtension.applicationVariants.all(action)
-        is LibraryExtension -> {
-            androidExtension.libraryVariants.all(action)
-            if (androidExtension is FeatureExtension) {
-                androidExtension.featureVariants.all(action)
-            }
-        }
-        is TestExtension -> androidExtension.applicationVariants.all(action)
-    }
-    if (androidExtension is TestedExtension) {
-        androidExtension.testVariants.all(action)
-        androidExtension.unitTestVariants.all(action)
-    }
-}
 
 /** Filter for the AGP test variant classpath artifacts. */
 class AndroidTestedVariantArtifactsFilter(
