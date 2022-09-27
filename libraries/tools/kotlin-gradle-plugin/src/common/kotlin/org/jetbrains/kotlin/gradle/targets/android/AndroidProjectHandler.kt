@@ -49,7 +49,7 @@ import java.io.Serializable
 import java.util.concurrent.Callable
 
 internal class AndroidProjectHandler(
-    private val kotlinConfigurationTools: KotlinConfigurationTools
+    private val kotlinTasksProvider: KotlinTasksProvider
 ) {
     private val logger = Logging.getLogger(this.javaClass)
 
@@ -89,7 +89,7 @@ internal class AndroidProjectHandler(
                     compilation.compilerOptions.options as KotlinJvmCompilerOptions
                 )
 
-                preprocessVariant(variant, compilation, project, kotlinConfigurationTools.kotlinTasksProvider)
+                preprocessVariant(variant, compilation, project, kotlinTasksProvider)
 
                 @Suppress("UNCHECKED_CAST")
                 (kotlinAndroidTarget.compilations as NamedDomainObjectCollection<in KotlinJvmAndroidCompilation>).add(compilation)
@@ -451,3 +451,4 @@ internal inline fun BaseVariant.forEachKotlinSourceDirectorySet(
 internal inline fun BaseVariant.forEachJavaSourceDir(action: (ConfigurableFileTree) -> Unit) {
     getSourceFolders(SourceKind.JAVA).forEach(action)
 }
+
