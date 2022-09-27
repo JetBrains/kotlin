@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.AndroidComp
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import javax.inject.Inject
 
-abstract class KotlinJvmAndroidCompilation @Inject constructor(
+abstract class KotlinJvmAndroidCompilation @Inject internal constructor(
     final override val compilationDetails: AndroidCompilationDetails
 ) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilationDetails) {
 
