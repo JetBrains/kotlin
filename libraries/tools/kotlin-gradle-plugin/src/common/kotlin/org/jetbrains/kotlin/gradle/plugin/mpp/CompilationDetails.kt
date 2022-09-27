@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.closure
 import java.util.*
@@ -58,107 +57,6 @@ interface CompilationDetailsWithRuntime<T : KotlinCommonOptions> : CompilationDe
 
 internal val CompilationDetails<*>.associateCompilationsClosure: Iterable<CompilationDetails<*>>
     get() = closure { it.associateCompilations }
-
-open class NativeCompilationDetails(
-    target: KotlinTarget,
-    compilationPurpose: String,
-    defaultSourceSet: KotlinSourceSet,
-    @Suppress("DEPRECATION")
-    createCompilerOptions: DefaultCompilationDetails<KotlinCommonOptions, KotlinCommonCompilerOptions>.() -> HasCompilerOptions<KotlinCommonCompilerOptions>,
-    @Suppress("DEPRECATION")
-    createKotlinOptions: DefaultCompilationDetails<KotlinCommonOptions, KotlinCommonCompilerOptions>.() -> KotlinCommonOptions
-) : DefaultCompilationDetails<KotlinCommonOptions, KotlinCommonCompilerOptions>(
-    target,
-    compilationPurpose,
-    defaultSourceSet,
-    createCompilerOptions,
-    createKotlinOptions
-) {
-    override val compileDependencyFilesHolder: GradleKpmDependencyFilesHolder = project.newDependencyFilesHolder(
-        lowerCamelCaseName(
-            target.disambiguationClassifier,
-            compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }.orEmpty(),
-            "compileKlibraries"
-        )
-    )
-
-    override val compileAllTaskName: String
-        get() = lowerCamelCaseName(target.disambiguationClassifier, compilationPurpose, "klibrary")
-
-    override fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
-        compileDependencyFilesHolder.dependencyFiles +=
-            other.output.classesDirs + project.filesProvider { other.compileDependencyFiles }
-
-        target.project.configurations.named(compilation.implementationConfigurationName).configure { configuration ->
-            configuration.extendsFrom(target.project.configurations.findByName(other.implementationConfigurationName))
-        }
-    }
-
-    override fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) {
-        addSourcesToKotlinNativeCompileTask(project, compileKotlinTaskName, { sourceSet.kotlin }, addAsCommonSources)
-    }
-}
-
-internal open class SharedNativeCompilationDetails(
-    target: KotlinTarget,
-    compilationPurpose: String,
-    defaultSourceSet: KotlinSourceSet,
-    @Suppress("DEPRECATION")
-    createCompilerOptions: DefaultCompilationDetails<KotlinCommonOptions, KotlinCommonCompilerOptions>.() -> HasCompilerOptions<KotlinCommonCompilerOptions>,
-    @Suppress("DEPRECATION")
-    createKotlinOptions: DefaultCompilationDetails<KotlinCommonOptions, KotlinCommonCompilerOptions>.() -> KotlinCommonOptions
-) : DefaultCompilationDetails<KotlinCommonOptions, KotlinCommonCompilerOptions>(
-    target,
-    compilationPurpose,
-    defaultSourceSet,
-    createCompilerOptions,
-    createKotlinOptions
-) {
-
-    override val friendArtifacts: FileCollection
-        get() = super.friendArtifacts.plus(run {
-            val project = target.project
-            val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(defaultSourceSet).toMutableSet().apply {
-                // TODO: implement proper dependsOn/refines compiler args for Kotlin/Native and pass the dependsOn klibs separately;
-                //       But for now, those dependencies don't have any special semantics, so passing all them as friends works, too
-                addAll(defaultSourceSet.internal.dependsOnClosure)
-            }
-            project.files(friendSourceSets.mapNotNull { project.getMetadataCompilationForSourceSet(it)?.output?.classesDirs })
-        })
-
-    override fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) {
-        addSourcesToKotlinNativeCompileTask(project, compileKotlinTaskName, { sourceSet.kotlin }, addAsCommonSources)
-    }
-}
-
-internal open class MetadataMappedCompilationDetails<T : KotlinCommonOptions>(
-    override val target: KotlinMetadataTarget,
-    defaultSourceSet: KotlinSourceSet,
-    final override val compilationData: AbstractKotlinFragmentMetadataCompilationData<T>
-) : AbstractCompilationDetails<T>(defaultSourceSet) {
-
-    @Suppress("UNCHECKED_CAST")
-    override val compilation: KotlinCompilation<T>
-        get() = target.compilations.getByName(defaultSourceSet.name) as KotlinCompilation<T>
-
-    override val compileDependencyFilesHolder: GradleKpmDependencyFilesHolder =
-        GradleKpmDependencyFilesHolder.ofMetadataCompilationDependencies(compilationData)
-
-    override val kotlinDependenciesHolder: HasKotlinDependencies
-        get() = compilationData.fragment
-
-    override fun associateWith(other: CompilationDetails<*>) {
-        throw UnsupportedOperationException("not supported in the mapped model")
-    }
-
-    override val associateCompilations: Set<CompilationDetails<*>>
-        get() = emptySet()
-
-    override fun whenSourceSetAdded(sourceSet: KotlinSourceSet) {
-        if (sourceSet != defaultSourceSet)
-            throw UnsupportedOperationException("metadata compilations have predefined sources")
-    }
-}
 
 internal open class VariantMappedCompilationDetails<T : KotlinCommonOptions>(
     open val variant: GradleKpmVariantInternal,
