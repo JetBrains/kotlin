@@ -9,7 +9,6 @@ import com.android.build.gradle.*
 import org.gradle.api.*
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
-import org.gradle.api.file.Directory
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
@@ -18,11 +17,9 @@ import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -34,7 +31,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.configuration.*
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
@@ -50,62 +46,6 @@ val KOTLIN_DSL_NAME = "kotlin"
 @Deprecated("Should be removed with 'platform.js' plugin removal")
 val KOTLIN_JS_DSL_NAME = "kotlin2js"
 val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"
-
-internal class Kotlin2JvmSourceSetProcessor(
-    tasksProvider: KotlinTasksProvider,
-    kotlinCompilation: KotlinCompilationData<*>
-) : KotlinSourceSetProcessor<KotlinCompile>(
-    tasksProvider, "Compiles the $kotlinCompilation.", kotlinCompilation
-) {
-    override fun doRegisterTask(project: Project, taskName: String): TaskProvider<out KotlinCompile> {
-        val configAction = KotlinCompileConfig(kotlinCompilation)
-        applyStandardTaskConfiguration(configAction)
-        return tasksProvider.registerKotlinJVMTask(
-            project,
-            taskName,
-            kotlinCompilation.compilerOptions.options as KotlinJvmCompilerOptions,
-            configAction
-        )
-    }
-
-    override fun doTargetSpecificProcessing() {
-        project.whenKaptEnabled {
-            Kapt3GradleSubplugin.createAptConfigurationIfNeeded(project, kotlinCompilation.compilationPurpose)
-        }
-
-        ScriptingGradleSubplugin.configureForSourceSet(project, kotlinCompilation.compilationPurpose)
-
-        project.whenEvaluated {
-            val subpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
-
-            if (kotlinCompilation is KotlinCompilation<*>) // FIXME support compiler plugins with PM20
-                subpluginEnvironment.addSubpluginOptions(project, kotlinCompilation)
-
-            javaSourceSet?.let { java ->
-                val javaTask = project.tasks.withType<AbstractCompile>().named(java.compileJavaTaskName)
-                javaTask.configure { javaCompile ->
-                    javaCompile.classpath += project.files(kotlinTask.flatMap { it.destinationDirectory })
-                }
-                kotlinTask.configure { kotlinCompile ->
-                    kotlinCompile.javaOutputDir.set(javaTask.flatMap { it.destinationDirectory })
-                }
-            }
-
-            if (sourceSetName == SourceSet.MAIN_SOURCE_SET_NAME) {
-                project.pluginManager.withPlugin("java-library") {
-                    registerKotlinOutputForJavaLibrary(kotlinTask.flatMap { it.destinationDirectory })
-                }
-            }
-        }
-    }
-
-    private fun registerKotlinOutputForJavaLibrary(outputDir: Provider<Directory>) {
-        val configuration = project.configurations.getByName("apiElements")
-        configuration.outgoing.variants.getByName("classes").artifact(outputDir) {
-            it.type = "java-classes-directory"
-        }
-    }
-}
 
 internal fun KotlinCompilationOutput.addClassesDir(classesDirProvider: () -> FileCollection) {
     classesDirs.from(Callable { classesDirProvider() })
