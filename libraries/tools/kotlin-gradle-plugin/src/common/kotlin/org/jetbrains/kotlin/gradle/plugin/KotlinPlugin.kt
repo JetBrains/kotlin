@@ -80,50 +80,6 @@ internal open class KotlinPlugin(
     }
 }
 
-@Deprecated(
-    message = "Should be removed with Js platform plugin",
-    level = DeprecationLevel.ERROR
-)
-internal open class Kotlin2JsPlugin(
-    registry: ToolingModelBuilderRegistry
-) : AbstractKotlinPlugin(KotlinTasksProvider(), registry) {
-
-    companion object {
-        private const val targetName = "2Js"
-    }
-
-    override fun buildSourceSetProcessor(
-        project: Project,
-        compilation: AbstractKotlinCompilation<*>
-    ): KotlinSourceSetProcessor<*> =
-        Kotlin2JsSourceSetProcessor(tasksProvider, compilation)
-
-    override fun apply(project: Project) {
-        @Suppress("UNCHECKED_CAST")
-        val target = project.objects.newInstance(
-            KotlinWithJavaTarget::class.java,
-            project,
-            KotlinPlatformType.js,
-            targetName,
-            {
-                object : HasCompilerOptions<KotlinJsCompilerOptions> {
-                    override val options: KotlinJsCompilerOptions =
-                        project.objects.newInstance(KotlinJsCompilerOptionsDefault::class.java)
-                }
-            },
-            { compilerOptions: KotlinJsCompilerOptions ->
-                object : KotlinJsOptions {
-                    override val options: KotlinJsCompilerOptions
-                        get() = compilerOptions
-                }
-            }
-        ) as KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>
-
-        (project.kotlinExtension as Kotlin2JsProjectExtension).setTarget(target)
-        super.apply(project)
-    }
-}
-
 internal open class KotlinAndroidPlugin(
     private val registry: ToolingModelBuilderRegistry
 ) : Plugin<Project> {
