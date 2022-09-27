@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.MetadataCompilationDetails
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 interface KotlinCompilationFactory<T : KotlinCompilation<*>> : NamedDomainObjectFactory<T> {

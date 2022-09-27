@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.DefaultCompilationDetailsWithRuntime
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 open class KotlinJvmCompilationFactory(
