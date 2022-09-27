@@ -168,7 +168,7 @@ private fun Project.buildProjectSettings(): KotlinToolingMetadata.ProjectSetting
     return KotlinToolingMetadata.ProjectSettings(
         isHmppEnabled = project.isKotlinGranularMetadataEnabled,
         isCompatibilityMetadataVariantEnabled = project.isCompatibilityMetadataVariantEnabled,
-        isKPMEnabled = false
+        isKPMEnabled = pm20ExtensionOrNull != null
     )
 }
 
@@ -192,6 +192,7 @@ private fun GradleKpmVariant.jvmExtrasOrNull() =
             jvmTarget = compilationData.kotlinOptions.jvmTarget,
             withJavaEnabled = false
         )
+
         else -> null
     }
 
