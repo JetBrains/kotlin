@@ -236,7 +236,7 @@ private val localClassesInInlineFunctionsPhase = makeBodyLoweringPhase(
 )
 
 private val localClassesExtractionFromInlineFunctionsPhase = makeBodyLoweringPhase(
-    { context -> LocalClassesExtractionFromInlineFunctionsLowering(context, BackendContext::jsRecordExtractedLocalClasses) },
+    { context -> LocalClassesExtractionFromInlineFunctionsLowering(context) },
     name = "localClassesExtractionFromInlineFunctionsPhase",
     description = "Move local classes from inline functions into nearest declaration container",
     prerequisite = setOf(localClassesInInlineFunctionsPhase)
@@ -459,7 +459,7 @@ private val localDeclarationsLoweringPhase = makeBodyLoweringPhase(
 )
 
 private val localClassExtractionPhase = makeBodyLoweringPhase(
-    { context -> LocalClassPopupLowering(context, BackendContext::jsRecordExtractedLocalClasses) },
+    { context -> LocalClassPopupLowering(context) },
     name = "LocalClassExtractionPhase",
     description = "Move local declarations into nearest declaration container",
     prerequisite = setOf(localDeclarationsLoweringPhase)
