@@ -13,16 +13,15 @@ import org.gradle.api.file.ProjectLayout
 import org.gradle.api.internal.GeneratedSubclass
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.compilerRunner.konanVersion
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmJvmVariant
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmNativeVariantInternal
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
@@ -38,18 +37,13 @@ import javax.inject.Inject
 
 internal fun Project.registerBuildKotlinToolingMetadataTask() {
     if (!project.kotlinPropertiesProvider.enableKotlinToolingMetadataArtifact) return
-
-    if (hasKpmModel) {
-        buildKotlinToolingMetadataForAllKpmModulesTask
-    } else {
-        buildKotlinToolingMetadataTask
-    }
+    if (project.pm20ExtensionOrNull != null) buildKotlinToolingMetadataForMainKpmModuleTask
+    else buildKotlinToolingMetadataTask
 }
 
 internal val Project.buildKotlinToolingMetadataForMainKpmModuleTask: TaskProvider<BuildKotlinToolingMetadataTask.FromKpmModule>?
     get() {
-        require(hasKpmModel)
-        val mainModule = kpmModules.getByName(GradleKpmModule.MAIN_MODULE_NAME)
+        val mainModule = pm20Extension.modules.getByName(GradleKpmModule.MAIN_MODULE_NAME)
         return mainModule.buildKotlinToolingMetadataTask
     }
 
@@ -92,26 +86,27 @@ internal val GradleKpmModule.buildKotlinToolingMetadataTask: TaskProvider<BuildK
 abstract class BuildKotlinToolingMetadataTask : DefaultTask() {
 
     abstract class FromKpmModule
-        @Inject constructor (
-            @get:Internal
-            val module: GradleKpmModule,
-            private val projectLayout: ProjectLayout
-        ) : BuildKotlinToolingMetadataTask() {
+    @Inject constructor(
+        @get:Internal
+        val module: GradleKpmModule,
+        private val projectLayout: ProjectLayout
+    ) : BuildKotlinToolingMetadataTask() {
 
-        override val outputDirectory: File get() = projectLayout
-            .buildDirectory
-            .get()
-            .asFile
-            .resolve("kotlinToolingMetadata")
-            .resolve(module.name)
+        override val outputDirectory: File
+            get() = projectLayout
+                .buildDirectory
+                .get()
+                .asFile
+                .resolve("kotlinToolingMetadata")
+                .resolve(module.name)
 
         override fun buildKotlinToolingMetadata() = module.getKotlinToolingMetadata()
     }
 
     abstract class FromKotlinExtension
-        @Inject constructor(
-            private val projectLayout: ProjectLayout
-        ) : BuildKotlinToolingMetadataTask() {
+    @Inject constructor(
+        private val projectLayout: ProjectLayout
+    ) : BuildKotlinToolingMetadataTask() {
 
         override val outputDirectory: File get() = projectLayout.buildDirectory.get().asFile.resolve("kotlinToolingMetadata")
 
@@ -173,7 +168,7 @@ private fun Project.buildProjectSettings(): KotlinToolingMetadata.ProjectSetting
     return KotlinToolingMetadata.ProjectSettings(
         isHmppEnabled = project.isKotlinGranularMetadataEnabled,
         isCompatibilityMetadataVariantEnabled = project.isCompatibilityMetadataVariantEnabled,
-        isKPMEnabled = project.hasKpmModel
+        isKPMEnabled = pm20ExtensionOrNull != null
     )
 }
 
@@ -197,19 +192,17 @@ private fun GradleKpmVariant.jvmExtrasOrNull() =
             jvmTarget = compilationData.kotlinOptions.jvmTarget,
             withJavaEnabled = false
         )
-        is GradleKpmLegacyMappedVariant -> buildJvmExtrasOrNull(compilation.target)
+
         else -> null
     }
 
 private fun GradleKpmVariant.androidExtrasOrNull() =
     when (this) {
-        is GradleKpmLegacyMappedVariant -> buildAndroidExtrasOrNull(compilation.target)
         else -> null
     }
 
 private fun GradleKpmVariant.jsExtrasOrNull() =
     when (this) {
-        is GradleKpmLegacyMappedVariant -> buildJsExtrasOrNull(compilation.target)
         else -> null
     }
 
@@ -220,7 +213,7 @@ private fun GradleKpmVariant.nativeExtrasOrNull() =
             konanVersion = project.konanVersion.toString(),
             konanAbiVersion = KotlinAbiVersion.CURRENT.toString()
         )
-        is GradleKpmLegacyMappedVariant -> buildNativeExtrasOrNull(compilation.target)
+
         else -> null
     }
 

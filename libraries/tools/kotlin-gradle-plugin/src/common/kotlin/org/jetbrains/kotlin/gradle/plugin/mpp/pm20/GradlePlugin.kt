@@ -97,7 +97,7 @@ open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtensio
     internal val ideaKpmProjectModelBuilder by lazy { IdeaKpmProjectModelBuilder.default(this) }
 
     val modules: NamedDomainObjectContainer<GradleKpmModule>
-        get() = project.kpmModules
+        get() = kpmModelContainer.modules
 
     @Suppress("unused") // DSL function
     fun mainAndTest(configure: GradleKpmModule.() -> Unit) {

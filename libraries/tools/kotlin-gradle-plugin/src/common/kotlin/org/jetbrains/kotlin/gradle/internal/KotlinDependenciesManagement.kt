@@ -6,13 +6,19 @@
 package org.jetbrains.kotlin.gradle.internal
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.*
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.ExternalDependency
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import org.jetbrains.kotlin.gradle.utils.withType
 
@@ -80,12 +86,8 @@ private fun KotlinTarget.excludeStdlibAndKotlinTestCommonFromPlatformCompilation
     compilations.all {
         listOfNotNull(
             it.compileDependencyConfigurationName,
-            if (!PropertiesProvider(project).experimentalKpmModelMapping)
-                it.defaultSourceSet.apiMetadataConfigurationName
-            else null,
-            if (!PropertiesProvider(project).experimentalKpmModelMapping)
-                it.defaultSourceSet.implementationMetadataConfigurationName
-            else null,
+            it.defaultSourceSet.apiMetadataConfigurationName,
+            it.defaultSourceSet.implementationMetadataConfigurationName,
             (it as? KotlinCompilationToRunnableFiles<*>)?.runtimeDependencyConfigurationName,
 
             // Additional configurations for (old) jvmWithJava-preset. Remove it when we drop it completely

@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NA
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmAwareTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
@@ -576,22 +575,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 is KotlinTarget -> dataOwner.apiElementsConfigurationName
                 else -> error("unexpected owner of $this")
             }
-    }
-}
-
-internal class GradleKpmNativeTargetConfigurator<T : KotlinNativeTarget>(private val nativeTargetConfigurator: KotlinNativeTargetConfigurator<T>) :
-    GradleKpmAwareTargetConfigurator<T>(nativeTargetConfigurator) {
-
-    override fun configureTarget(target: T) {
-        super.configureTarget(target)
-        configureBinariesTask(target)
-    }
-
-    private fun configureBinariesTask(target: T) {
-        target.project.registerTask<DefaultTask>(target.artifactsTaskName) {
-            it.group = BasePlugin.BUILD_GROUP
-            it.description = "Assembles outputs for target '${target.name}'."
-        }
     }
 }
 

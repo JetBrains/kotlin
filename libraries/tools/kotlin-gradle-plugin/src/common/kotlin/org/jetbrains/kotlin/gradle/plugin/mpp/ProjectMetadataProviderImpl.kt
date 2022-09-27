@@ -7,12 +7,11 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.pm20ExtensionOrNull
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.metadataCompilationRegistryByModuleId
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
@@ -31,9 +30,9 @@ private class ProjectMetadataProviderImpl(
     override fun getSourceSetCompiledMetadata(sourceSetName: String): FileCollection {
         val projectExtension = dependencyProject.topLevelExtensionOrNull
         return when {
-            dependencyProject.hasKpmModel -> {
+            dependencyProject.pm20ExtensionOrNull != null -> {
                 val moduleId = moduleIdentifier
-                val module = dependencyProject.kpmModules.single { it.moduleIdentifier == moduleId }
+                val module = dependencyProject.pm20Extension.modules.single { it.moduleIdentifier == moduleId }
                 val metadataCompilationRegistry = dependencyProject.metadataCompilationRegistryByModuleId.getValue(moduleId)
                 metadataCompilationRegistry.getForFragmentOrNull(module.fragments.getByName(sourceSetName))?.output?.classesDirs
                     ?: dependencyProject.files()

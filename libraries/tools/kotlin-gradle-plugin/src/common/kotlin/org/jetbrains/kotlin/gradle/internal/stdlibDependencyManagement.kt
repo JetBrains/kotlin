@@ -10,19 +10,13 @@ import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidBaseSourceSetName
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
@@ -36,17 +30,18 @@ internal fun Project.configureStdlibDefaultDependency(
     topLevelExtension: KotlinTopLevelExtension,
     coreLibrariesVersion: Provider<String>
 ) {
+    when (topLevelExtension) {
+        is KotlinPm20ProjectExtension -> addStdlibToKpmProject(project, coreLibrariesVersion)
 
-    when {
-        project.hasKpmModel -> addStdlibToKpmProject(project, coreLibrariesVersion)
-        topLevelExtension is KotlinJsProjectExtension -> topLevelExtension.registerTargetObserver { target ->
+        is KotlinJsProjectExtension -> topLevelExtension.registerTargetObserver { target ->
             target?.addStdlibDependency(configurations, dependencies, coreLibrariesVersion)
         }
-        topLevelExtension is KotlinSingleTargetExtension<*> -> topLevelExtension
+
+        is KotlinSingleTargetExtension<*> -> topLevelExtension
             .target
             .addStdlibDependency(configurations, dependencies, coreLibrariesVersion)
 
-        topLevelExtension is KotlinMultiplatformExtension -> topLevelExtension
+        is KotlinMultiplatformExtension -> topLevelExtension
             .targets
             .configureEach { target ->
                 target.addStdlibDependency(configurations, dependencies, coreLibrariesVersion)
@@ -93,7 +88,7 @@ private fun addStdlibToKpmProject(
     project: Project,
     coreLibrariesVersion: Provider<String>
 ) {
-    project.kpmModules.named(GradleKpmModule.MAIN_MODULE_NAME) { main ->
+    project.pm20Extension.modules.named(GradleKpmModule.MAIN_MODULE_NAME) { main ->
         main.fragments.named(GradleKpmFragment.COMMON_FRAGMENT_NAME) { common ->
             common.dependencies {
                 api(project.dependencies.kotlinDependency("kotlin-stdlib-common", coreLibrariesVersion.get()))
@@ -143,7 +138,7 @@ private fun KotlinTarget.addStdlibDependency(
 
                 val stdlibModule = compilation
                     .platformType
-                    .stdlibPlatformType( this, kotlinSourceSet)
+                    .stdlibPlatformType(this, kotlinSourceSet)
                     ?: return@withDependencies
 
                 // Check if stdlib module is added to SourceSets hierarchy
