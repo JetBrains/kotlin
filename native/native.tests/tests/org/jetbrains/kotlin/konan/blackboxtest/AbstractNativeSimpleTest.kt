@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest
 
+import org.jetbrains.kotlin.cli.klib.Library
 import org.jetbrains.kotlin.konan.blackboxtest.support.NativeSimpleTestSupport
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.SimpleTestRunProvider
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunners.createProperTestRunner
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.SimpleTestRunSettings
 import org.junit.jupiter.api.extension.ExtendWith
+import java.io.File
 
 @ExtendWith(NativeSimpleTestSupport::class)
 abstract class AbstractNativeSimpleTest {
@@ -22,5 +24,17 @@ abstract class AbstractNativeSimpleTest {
         val testRun = testRunProvider.getTestRun(testCase, executable)
         val testRunner = createProperTestRunner(testRun, testRunSettings)
         testRunner.run()
+    }
+
+    protected fun invokeCInterop(inputDef: File, outputLib: File, extraArgs: Array<String>) {
+        val args = arrayOf("cinterop", "-o", outputLib.canonicalPath, "-def", inputDef.canonicalPath)
+        org.jetbrains.kotlin.cli.utilities.main(args + extraArgs)
+    }
+
+    protected fun invokeKLibContents(klib: File): String {
+        val output = StringBuilder()
+        val lib = Library(klib.canonicalPath, null, "host")
+        lib.contents(output, false)
+        return output.toString()
     }
 }

@@ -697,9 +697,10 @@ class TUOptimizedIndex {
      * Should AST file contain declarations from nested headers, this fun makes both headers to refer to PCM file.
      */
     internal fun processInclude(includerFilename: String, includedFilename: String) {
-        unitsByHeaderFile[includerFilename].let {
-            unitsByHeaderFile.putValues(includedFilename, it)
-        }
+        if (includerFilename != includedFilename)  // this check is needed since couple of MacOS SDK headers include themselves
+            unitsByHeaderFile[includerFilename].let {
+                unitsByHeaderFile.putValues(includedFilename, it)
+            }
     }
 
     internal fun processTopHeaders(unit: CXTranslationUnit, info: CXIdxImportedASTFileInfo) {
@@ -948,7 +949,6 @@ internal val CXFile.path: String get() = clang_getFileName(this).convertAndDispo
 // TODO: this map doesn't get cleaned up but adds quite significant performance improvement.
 private val canonicalPaths = ConcurrentHashMap<String, String>()
 internal val CXFile.canonicalPath: String get() = canonicalPaths.getOrPut(this.path) { File(this.path).canonicalPath }
-internal val CXModule.fullName: String get() = clang_Module_getFullName(this).convertAndDispose()
 
 private fun createVfsOverlayFileContents(virtualPathToReal: Map<Path, Path>): ByteArray {
     val overlay = clang_VirtualFileOverlay_create(0)

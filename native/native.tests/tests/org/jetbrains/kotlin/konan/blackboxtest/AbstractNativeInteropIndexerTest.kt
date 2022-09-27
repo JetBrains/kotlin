@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest
 
+import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.*
@@ -12,14 +13,8 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilati
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.junit.jupiter.api.Tag
-import kotlin.time.Duration.Companion.seconds
-import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.*
-import org.jetbrains.kotlin.konan.blackboxtest.support.runner.LocalTestRunner
-import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestExecutable
-import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRun
-import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck
-import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 
 abstract class AbstractNativeInteropIndexerFModulesTest : AbstractNativeInteropIndexerTest() {
     override val fmodules = true
@@ -35,40 +30,25 @@ abstract class AbstractNativeInteropIndexerTest : AbstractNativeSimpleTest() {
 
     @Synchronized
     protected fun runTest(@TestDataFile testPath: String) {
-        val konanHomeDirectory = System.getProperty("kotlin.internal.native.test.nativeHome")
         val testPathFull = getAbsoluteFile(testPath)
-        val testBuildDir = testRunSettings.get<SimpleTestDirectories>().testBuildDir
+        val testDataDir = testPathFull.parentFile.parentFile
+        val includeFolder = testDataDir.resolve("include")
+        val defFile = testPathFull.resolve("pod1.def")
 
-        val dummyCompilerCall = LoggedData.CompilerCall(
-            parameters = LoggedData.CompilerParameters(home = testRunSettings.get(), compilerArgs = arrayOf(), sourceModules = listOf()),
-            exitCode = ExitCode.OK,
-            compilerOutput = "",
-            compilerOutputHasErrors = false,
-            duration = 0.seconds
-        )
-        val testRun = TestRun(
-            executable = TestExecutable(
-                executableFile = testPathFull.parentFile.parentFile.resolve("cinterop_contents.sh").canonicalFile,
-                testNames = listOf(),
-                loggedCompilerCall = dummyCompilerCall
-            ),
-            displayName = testPath,
-            testCaseId = TestCaseId.Named(testPath),
-            runParameters = listOf(
-                TestRunParameter.WithFreeCommandLineArguments(
-                    listOf(
-                        konanHomeDirectory,
-                        testPathFull.canonicalPath,
-                        testBuildDir.canonicalPath
-                    ) + if (fmodules) listOf("-compiler-option", "-fmodules") else listOf()
-                )
-            ),
-            checks = TestRunChecks(
-                executionTimeoutCheck = TestRunCheck.ExecutionTimeout.ShouldNotExceed(timeout = 30.seconds),
-                exitCodeCheck = TestRunCheck.ExitCode.Expected(0),
-                outputDataFile = TestRunCheck.OutputDataFile(testPathFull.resolve("contents.gold.txt"))
-            )
-        )
-        LocalTestRunner(testRun).run()
+        val testBuildDir = testRunSettings.get<SimpleTestDirectories>().testBuildDir
+        val klibFile = testBuildDir.resolve("pod1.klib")
+
+        val fmodulesArgs = if (fmodules) arrayOf("-compiler-option", "-fmodules") else arrayOf()
+        val includeFrameworkArgs = if (testDataDir.name == "simple")
+            arrayOf("-compiler-option", "-I${includeFolder.canonicalPath}")
+        else
+            arrayOf("-compiler-option", "-F${testDataDir.canonicalPath}")
+
+        invokeCInterop(defFile, klibFile, includeFrameworkArgs + fmodulesArgs)
+
+        val contents = invokeKLibContents(klibFile)
+
+        val expectedOutput = testPathFull.resolve("contents.gold.txt").readText()
+        assertEquals(StringUtilRt.convertLineSeparators(expectedOutput), StringUtilRt.convertLineSeparators(contents))
     }
 }
