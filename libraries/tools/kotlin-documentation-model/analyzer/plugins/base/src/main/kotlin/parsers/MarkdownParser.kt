@@ -327,6 +327,7 @@ open class MarkdownParser(
                 .children
                 .dropWhile { it.type != MarkdownTokenTypes.CODE_FENCE_CONTENT }
                 .dropLastWhile { it.type != MarkdownTokenTypes.CODE_FENCE_CONTENT }
+                .filter { it.type != MarkdownTokenTypes.WHITE_SPACE }
                 .map {
                     if (it.type == MarkdownTokenTypes.EOL)
                         LeafASTNode(MarkdownTokenTypes.HARD_LINE_BREAK, 0, 0)
