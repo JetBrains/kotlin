@@ -33,7 +33,7 @@ import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.services.BuildServiceRegistry
 import org.gradle.internal.component.model.AttributeConfigurationSelector
-import org.jetbrains.kotlin.gradle.plugin.forEachVariant
+import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 import java.nio.file.Path
@@ -136,7 +136,7 @@ object AndroidDependencyResolver {
         val sourceSet2Impl = HashMap<String, SourceSetConfigs>()
         val allImplConfigs = HashSet<Configuration>()
 
-        project.forEachVariant { variant ->
+        project.forAllAndroidVariants { variant ->
             val compileConfig = variant.compileConfiguration
             variant.sourceSets.filterIsInstance(AndroidSourceSet::class.java).map {
                 val implConfig = project.configurations.getByName(it.implementationConfigurationName)
