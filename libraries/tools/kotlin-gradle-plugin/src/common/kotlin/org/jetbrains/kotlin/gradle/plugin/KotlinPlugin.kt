@@ -15,7 +15,6 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -25,8 +24,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.MavenPluginConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.tasks.*
@@ -44,39 +41,6 @@ val KOTLIN_DSL_NAME = "kotlin"
 val KOTLIN_JS_DSL_NAME = "kotlin2js"
 val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"
 
-
-internal class KotlinCommonSourceSetProcessor(
-    compilation: KotlinCompilationData<*>,
-    tasksProvider: KotlinTasksProvider
-) : KotlinSourceSetProcessor<KotlinCompileCommon>(
-    tasksProvider, taskDescription = "Compiles the kotlin sources in $compilation to Metadata.", kotlinCompilation = compilation
-) {
-    override fun doTargetSpecificProcessing() {
-        project.tasks.named(kotlinCompilation.compileAllTaskName).dependsOn(kotlinTask)
-        // can be missing (e.g. in case of tests)
-        if ((kotlinCompilation as? AbstractKotlinCompilation<*>)?.isMainCompilationData() == true) {
-            project.locateTask<Task>(kotlinCompilation.target.artifactsTaskName)?.dependsOn(kotlinTask)
-        }
-
-        if (kotlinCompilation is KotlinCompilation<*>) {
-            project.whenEvaluated {
-                val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
-                subpluginEnvironment.addSubpluginOptions(project, kotlinCompilation)
-            }
-        }
-    }
-
-    override fun doRegisterTask(project: Project, taskName: String): TaskProvider<out KotlinCompileCommon> {
-        val configAction = KotlinCompileCommonConfig(kotlinCompilation)
-        applyStandardTaskConfiguration(configAction)
-        return tasksProvider.registerKotlinCommonTask(
-            project,
-            taskName,
-            kotlinCompilation.compilerOptions.options as KotlinMultiplatformCommonCompilerOptions,
-            configAction
-        )
-    }
-}
 
 internal abstract class AbstractKotlinPlugin(
     val tasksProvider: KotlinTasksProvider,
