@@ -173,6 +173,8 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
         auto timeSweepUs = konan::getTimeMicros();
         RuntimeLogDebug({kTagGC}, "Sweeped in %" PRIu64 " microseconds", timeSweepUs - timeSweepExtraObjectsUs);
 
+        kotlin::compactObjectPoolInMainThread();
+
         // Can be unsafe, because we've stopped the world.
         auto objectsCountAfter = objectFactory_.GetSizeUnsafe();
         auto extraObjectsCountAfter = mm::GlobalData::Instance().extraObjectDataFactory().GetSizeUnsafe();
