@@ -42,7 +42,7 @@ internal class StaticCompilerDriver: CompilerDriver() {
         if (konanConfig.infoArgsOnly) return
 
         val frontendContext = FrontendContext(konanConfig)
-        when (val frontendResult = FrontendPhase().run(frontendContext, context.messageCollector, environment)) {
+        when (val frontendResult = FrontendPhase.phaseBody(frontendContext, environment)) {
             is FrontendPhaseResult.Full -> {
                 context.moduleDescriptor = frontendResult.moduleDescriptor
                 context.bindingContext = frontendResult.bindingContext

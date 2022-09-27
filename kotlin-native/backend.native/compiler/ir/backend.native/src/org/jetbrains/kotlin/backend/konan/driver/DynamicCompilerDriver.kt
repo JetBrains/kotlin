@@ -6,6 +6,12 @@
 package org.jetbrains.kotlin.backend.konan.driver
 
 import org.jetbrains.kotlin.backend.konan.KonanConfig
+import org.jetbrains.kotlin.backend.konan.driver.phases.*
+import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendContext
+import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendPhase
+import org.jetbrains.kotlin.backend.konan.driver.phases.PhaseEngine
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 
 internal class DynamicCompilerDriver: CompilerDriver() {
@@ -14,6 +20,13 @@ internal class DynamicCompilerDriver: CompilerDriver() {
     }
 
     override fun run(config: KonanConfig, environment: KotlinCoreEnvironment) {
-        TODO("Not yet implemented")
+        val engine = PhaseEngine(config.phaseConfig)
+
+        val frontendContext = FrontendContext(config)
+        val frontendResult = engine.runPhase(frontendContext, FrontendPhase, environment)
+        if (frontendResult is FrontendPhaseResult.ShouldNotGenerateCode) {
+            return
+        }
+
     }
 }

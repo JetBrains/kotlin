@@ -71,12 +71,12 @@ sealed class NamedCompilerPhase<in Context : LoggingContext, Input, Output>(
     val name: String,
     val description: String,
     val prerequisite: Set<SameTypeNamedCompilerPhase<Context, *>> = emptySet(),
-    private val lower: CompilerPhase<Context, Input, Output>,
     val preconditions: Set<Checker<Input>> = emptySet(),
     val postconditions: Set<Checker<Output>> = emptySet(),
-    private val nlevels: Int = 0,
+    protected val nlevels: Int = 0,
     private val outputIfNotEnabled: (Context, Input) -> Output
 ) : CompilerPhase<Context, Input, Output> {
+
     override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output {
         if (this !in phaseConfig.enabled) {
             return outputIfNotEnabled(context, input)
@@ -93,7 +93,7 @@ sealed class NamedCompilerPhase<in Context : LoggingContext, Input, Output>(
             runAndProfile(phaseConfig, phaserState, context, input)
         } else {
             phaserState.downlevel(nlevels) {
-                lower.invoke(phaseConfig, phaserState, context, input)
+                phaseBody(phaseConfig, phaserState, context, input)
             }
         }
 
@@ -105,6 +105,8 @@ sealed class NamedCompilerPhase<in Context : LoggingContext, Input, Output>(
         return output
     }
 
+    abstract fun phaseBody(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output
+
     abstract fun changeType(phaserState: PhaserState<Input>): PhaserState<Output>
 
     abstract fun runBefore(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input)
@@ -115,16 +117,13 @@ sealed class NamedCompilerPhase<in Context : LoggingContext, Input, Output>(
         var result: Output? = null
         val msec = measureTimeMillis {
             result = phaserState.downlevel(nlevels) {
-                lower.invoke(phaseConfig, phaserState, context, source)
+                phaseBody(phaseConfig, phaserState, context, source)
             }
         }
         // TODO: use a proper logger
         println("${"\t".repeat(phaserState.depth)}$description: $msec msec")
         return result!!
     }
-
-    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *, *>>> =
-        listOf(startDepth to this) + lower.getNamedSubphases(startDepth + nlevels)
 
     override fun toString() = "Compiler Phase @$name"
 }
@@ -133,7 +132,7 @@ class SameTypeNamedCompilerPhase<in Context : LoggingContext, Data>(
     name: String,
     description: String,
     prerequisite: Set<SameTypeNamedCompilerPhase<Context, *>> = emptySet(),
-    lower: CompilerPhase<Context, Data, Data>,
+    private val lower: CompilerPhase<Context, Data, Data>,
     preconditions: Set<Checker<Data>> = emptySet(),
     postconditions: Set<Checker<Data>> = emptySet(),
     override val stickyPostconditions: Set<Checker<Data>> = emptySet(),
@@ -143,12 +142,14 @@ class SameTypeNamedCompilerPhase<in Context : LoggingContext, Data>(
     name,
     description,
     prerequisite,
-    lower,
     preconditions,
     postconditions,
     nlevels,
     outputIfNotEnabled = { _, input -> input }
 ), SameTypeCompilerPhase<Context, Data> {
+
+    override fun phaseBody(phaseConfig: PhaseConfig, phaserState: PhaserState<Data>, context: Context, input: Data): Data =
+        lower.invoke(phaseConfig, phaserState, context, input)
 
     override fun runBefore(phaseConfig: PhaseConfig, phaserState: PhaserState<Data>, context: Context, input: Data) {
         val state = ActionState(phaseConfig, this, phaserState.phaseCount, BeforeOrAfter.BEFORE)
@@ -174,13 +175,15 @@ class SameTypeNamedCompilerPhase<in Context : LoggingContext, Data>(
 
     override fun changeType(phaserState: PhaserState<Data>): PhaserState<Data> =
         phaserState
+
+    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *, *>>> =
+        listOf(startDepth to this) + lower.getNamedSubphases(startDepth + nlevels)
 }
 
-class SimpleNamedCompilerPhase<in Context : LoggingContext, Input, Output>(
+abstract class SimpleNamedCompilerPhase<in Context : LoggingContext, Input, Output>(
     name: String,
     description: String,
     prerequisite: Set<SameTypeNamedCompilerPhase<Context, *>> = emptySet(),
-    lower: CompilerPhase<Context, Input, Output>,
     preconditions: Set<Checker<Input>> = emptySet(),
     postconditions: Set<Checker<Output>> = emptySet(),
     private val preactions: Set<Action<Input, Context>> = emptySet(),
@@ -191,12 +194,16 @@ class SimpleNamedCompilerPhase<in Context : LoggingContext, Input, Output>(
     name,
     description,
     prerequisite,
-    lower,
     preconditions,
     postconditions,
     nlevels,
     outputIfNotEnabled = outputIfNotEnabled
 ) {
+    final override fun phaseBody(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output =
+        phaseBody(context, input)
+
+    abstract fun phaseBody(context: Context, input: Input): Output
+
     override fun changeType(phaserState: PhaserState<Input>): PhaserState<Output> =
         phaserState.changeType()
 
@@ -221,4 +228,7 @@ class SimpleNamedCompilerPhase<in Context : LoggingContext, Input, Output>(
             }
         }
     }
+
+    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *, *>>> =
+        listOf(startDepth to this)
 }
