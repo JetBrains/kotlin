@@ -58,48 +58,6 @@ interface CompilationDetailsWithRuntime<T : KotlinCommonOptions> : CompilationDe
 internal val CompilationDetails<*>.associateCompilationsClosure: Iterable<CompilationDetails<*>>
     get() = closure { it.associateCompilations }
 
-internal open class VariantMappedCompilationDetails<T : KotlinCommonOptions>(
-    open val variant: GradleKpmVariantInternal,
-    override val target: KotlinTarget,
-    defaultSourceSet: FragmentMappedKotlinSourceSet,
-) : AbstractCompilationDetails<T>(defaultSourceSet) {
-
-    @Suppress("UNCHECKED_CAST")
-    override val compilationData: KotlinCompilationData<T>
-        get() = variant.compilationData as KotlinCompilationData<T>
-
-    override fun whenSourceSetAdded(sourceSet: KotlinSourceSet) {
-        compilation.defaultSourceSet.dependsOn(sourceSet)
-    }
-
-    override fun associateWith(other: CompilationDetails<*>) {
-        if (other !is VariantMappedCompilationDetails<*>)
-            error("a mapped variant can't be associated with a legacy one")
-        val otherModule = other.variant.containingModule
-        if (otherModule === variant.containingModule)
-            error("cannot associate $compilation with ${other.compilation} as they are mapped to the same $otherModule")
-        variant.containingModule.dependencies { implementation(otherModule) }
-    }
-
-    override val associateCompilations: Set<CompilationDetails<*>> get() = emptySet()
-
-    override val compileDependencyFilesHolder: GradleKpmDependencyFilesHolder
-        get() = GradleKpmDependencyFilesHolder.ofVariantCompileDependencies(variant)
-
-    override val kotlinDependenciesHolder: HasKotlinDependencies
-        get() = variant
-
-}
-
-internal open class VariantMappedCompilationDetailsWithRuntime<T : KotlinCommonOptions>(
-    override val variant: GradleKpmVariantWithRuntimeInternal,
-    target: KotlinTarget,
-    defaultSourceSet: FragmentMappedKotlinSourceSet
-) : VariantMappedCompilationDetails<T>(variant, target, defaultSourceSet),
-    CompilationDetailsWithRuntime<T> {
-    override val runtimeDependencyFilesHolder: GradleKpmDependencyFilesHolder
-        get() = GradleKpmDependencyFilesHolder.ofVariantRuntimeDependencies(variant)
-}
 
 internal class WithJavaCompilationDetails<T : KotlinCommonOptions, CO : KotlinCommonCompilerOptions>(
     target: KotlinTarget,
