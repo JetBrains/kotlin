@@ -803,22 +803,3 @@ internal fun ifKaptEnabled(project: Project, block: () -> Unit) {
 private fun SourceSet.clearJavaSrcDirs() {
     java.setSrcDirs(emptyList<File>())
 }
-
-internal fun Project.forEachVariant(action: (BaseVariant) -> Unit) {
-    val androidExtension = this.extensions.getByName("android")
-    when (androidExtension) {
-        is AppExtension -> androidExtension.applicationVariants.all(action)
-        is LibraryExtension -> {
-            androidExtension.libraryVariants.all(action)
-            if (androidExtension is FeatureExtension) {
-                androidExtension.featureVariants.all(action)
-            }
-        }
-
-        is TestExtension -> androidExtension.applicationVariants.all(action)
-    }
-    if (androidExtension is TestedExtension) {
-        androidExtension.testVariants.all(action)
-        androidExtension.unitTestVariants.all(action)
-    }
-}
