@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.JsIrCompilationDetails
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.JsIrCompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import javax.inject.Inject
 

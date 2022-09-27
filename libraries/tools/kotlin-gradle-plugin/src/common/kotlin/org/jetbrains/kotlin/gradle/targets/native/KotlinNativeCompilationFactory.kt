@@ -6,7 +6,10 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.NativeCompilationDetails
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.SharedNativeCompilationDetails
 import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -40,7 +43,7 @@ open class KotlinNativeCompilationFactory(
                 },
                 {
                     object : KotlinCommonOptions {
-                        override val options: KotlinCommonCompilerOptions
+                        override val options: CompilerCommonOptions
                             get() = compilerOptions.options
                     }
                 }
@@ -73,7 +76,7 @@ class KotlinSharedNativeCompilationFactory(
                 },
                 {
                     object : KotlinCommonOptions {
-                        override val options: KotlinCommonCompilerOptions
+                        override val options: CompilerCommonOptions
                             get() = compilerOptions.options
                     }
                 }

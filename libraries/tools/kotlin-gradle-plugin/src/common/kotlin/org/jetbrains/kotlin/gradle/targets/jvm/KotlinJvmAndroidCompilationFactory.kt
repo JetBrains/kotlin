@@ -7,6 +7,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import com.android.build.gradle.api.BaseVariant
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.AndroidCompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.sources.android.kotlinAndroidSourceSetLayout
 
 class KotlinJvmAndroidCompilationFactory(
