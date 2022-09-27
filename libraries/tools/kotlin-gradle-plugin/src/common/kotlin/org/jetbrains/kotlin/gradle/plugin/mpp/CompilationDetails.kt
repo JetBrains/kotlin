@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import com.android.build.gradle.api.BaseVariant
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
@@ -56,65 +55,6 @@ interface CompilationDetailsWithRuntime<T : KotlinCommonOptions> : CompilationDe
 internal val CompilationDetails<*>.associateCompilationsClosure: Iterable<CompilationDetails<*>>
     get() = closure { it.associateCompilations }
 
-
-class AndroidCompilationDetails(
-    target: KotlinTarget,
-    compilationPurpose: String,
-    defaultSourceSet: KotlinSourceSet,
-    val androidVariant: BaseVariant,
-    /** Workaround mutual creation order: a compilation is not added to the target's compilations collection until some point, pass it here */
-    private val getCompilationInstance: () -> KotlinJvmAndroidCompilation
-) : DefaultCompilationDetailsWithRuntime<KotlinJvmOptions, KotlinJvmCompilerOptions>(
-    target,
-    compilationPurpose,
-    defaultSourceSet,
-    {
-        object : HasCompilerOptions<KotlinJvmCompilerOptions> {
-            override val options: KotlinJvmCompilerOptions =
-                target.project.objects.newInstance(KotlinJvmCompilerOptionsDefault::class.java)
-        }
-    },
-    {
-        object : KotlinJvmOptions {
-            override val options: KotlinJvmCompilerOptions
-                get() = compilerOptions.options
-        }
-    }
-) {
-    override val compilation: KotlinJvmAndroidCompilation get() = getCompilationInstance()
-
-    override val friendArtifacts: FileCollection
-        get() = target.project.files(super.friendArtifacts, compilation.testedVariantArtifacts)
-
-    /*
-    * Example of how multiplatform dependencies from common would get to Android test classpath:
-    * commonMainImplementation -> androidDebugImplementation -> debugImplementation -> debugAndroidTestCompileClasspath
-    * After the fix for KT-35916 MPP compilation configurations receive a 'compilation' postfix for disambiguation.
-    * androidDebugImplementation remains a source set configuration, but no longer contains compilation dependencies.
-    * Therefore, it doesn't get dependencies from common source sets.
-    * We now explicitly add associate compilation dependencies to the Kotlin test compilation configurations (test classpaths).
-    * This helps, because the Android test classpath configurations extend from the Kotlin test compilations' directly.
-    */
-    override fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
-        compilation.compileDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
-            project,
-            other.apiConfigurationName,
-            other.implementationConfigurationName,
-            other.compileOnlyConfigurationName
-        )
-    }
-
-    override val kotlinDependenciesHolder: HasKotlinDependencies
-        get() = object : HasKotlinDependencies by super.kotlinDependenciesHolder {
-            override val relatedConfigurationNames: List<String>
-                get() = super.relatedConfigurationNames + listOf(
-                    "${androidVariant.name}ApiElements",
-                    "${androidVariant.name}RuntimeElements",
-                    androidVariant.compileConfiguration.name,
-                    androidVariant.runtimeConfiguration.name
-                )
-        }
-}
 
 internal class MetadataCompilationDetails(
     target: KotlinTarget,
