@@ -23,9 +23,9 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-open class KotlinAndroid36GradleIT : KotlinAndroid3GradleIT() {
+open class KotlinAndroid41GradleIT : KotlinAndroid4GradleIT() {
     override val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v3_6_0
+        get() = AGPVersion.v4_1_0
 
     // AGP 3.+ is not working well with Gradle 7+
     override val defaultGradleVersion: GradleVersionRequired
@@ -603,7 +603,7 @@ open class KotlinAndroid36GradleIT : KotlinAndroid3GradleIT() {
     }
 }
 
-open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
+open class KotlinAndroid70GradleIT : KotlinAndroid41GradleIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v7_0_0
 
@@ -787,7 +787,7 @@ open class KotlinAndroid71GradleIT : KotlinAndroid70GradleIT() {
     }
 }
 
-abstract class KotlinAndroid3GradleIT : AbstractKotlinAndroidGradleTests() {
+abstract class KotlinAndroid4GradleIT : AbstractKotlinAndroidGradleTests() {
     @Test
     fun testAfterEvaluateOrdering() = with(Project("AndroidProject")) {
         setupWorkingDir()

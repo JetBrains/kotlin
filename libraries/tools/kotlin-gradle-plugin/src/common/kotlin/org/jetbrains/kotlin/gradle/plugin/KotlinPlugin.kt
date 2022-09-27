@@ -732,7 +732,7 @@ internal open class KotlinAndroidPlugin(
     }
 
     companion object {
-        const val MINIMAL_SUPPORTED_AGP_VERSION = "3.6.4"
+        const val MINIMAL_SUPPORTED_AGP_VERSION = "4.1.3"
         fun androidTargetHandler(): AndroidProjectHandler {
             val tasksProvider = KotlinTasksProvider()
 
