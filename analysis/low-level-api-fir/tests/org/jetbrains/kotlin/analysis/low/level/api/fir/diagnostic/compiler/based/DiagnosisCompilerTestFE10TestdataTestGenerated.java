@@ -33431,6 +33431,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("valueClassWithGenericUnderlyingTypeNoFeature.kt")
+            public void testValueClassWithGenericUnderlyingTypeNoFeature() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/valueClasses/valueClassWithGenericUnderlyingTypeNoFeature.kt");
+            }
+
+            @Test
             @TestMetadata("valueClassesInsideAnnotations.kt")
             public void testValueClassesInsideAnnotations() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/valueClasses/valueClassesInsideAnnotations.kt");

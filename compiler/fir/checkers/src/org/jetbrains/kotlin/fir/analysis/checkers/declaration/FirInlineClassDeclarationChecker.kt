@@ -168,20 +168,25 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                         context
                     )
 
+                !context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
+                        primaryConstructorParameter.returnTypeRef.coneType.let {
+                            it is ConeTypeParameterType || it.isGenericArrayOfTypeParameter()
+                        } -> {
+                    reporter.reportOn(
+                        primaryConstructorParameter.returnTypeRef.source,
+                        FirErrors.UNSUPPORTED_FEATURE,
+                        LanguageFeature.GenericInlineClassParameter to context.languageVersionSettings,
+                        context
+                    )
+                }
+
                 primaryConstructorParameter.returnTypeRef.isInapplicableParameterType() -> {
-                    val inlineClassHasGenericUnderlyingType = primaryConstructorParameter.returnTypeRef.coneType.let {
-                        (it is ConeTypeParameterType || it.isGenericArrayOfTypeParameter())
-                    }
-                    if (!(context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
-                                inlineClassHasGenericUnderlyingType)
-                    ) {
-                        reporter.reportOn(
-                            primaryConstructorParameter.returnTypeRef.source,
-                            FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
-                            primaryConstructorParameter.returnTypeRef.coneType,
-                            context
-                        )
-                    }
+                    reporter.reportOn(
+                        primaryConstructorParameter.returnTypeRef.source,
+                        FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
+                        primaryConstructorParameter.returnTypeRef.coneType,
+                        context
+                    )
                 }
 
                 primaryConstructorParameter.returnTypeRef.coneType.isRecursiveInlineClassType(context.session) -> {
@@ -220,7 +225,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
     }
 
     private fun FirTypeRef.isInapplicableParameterType() =
-        isUnit || isNothing || coneType is ConeTypeParameterType || coneType.isGenericArrayOfTypeParameter()
+        isUnit || isNothing
 
     private fun ConeKotlinType.isGenericArrayOfTypeParameter(): Boolean {
         if (this.typeArguments.firstOrNull() is ConeStarProjection || !isPotentiallyArray())
