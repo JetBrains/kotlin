@@ -190,8 +190,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val enableCompatibilityMetadataVariant: Boolean
         get() {
-            return (booleanProperty("kotlin.mpp.enableCompatibilityMetadataVariant") ?: !mppHierarchicalStructureByDefault) &&
-                    !experimentalKpmModelMapping
+            return (booleanProperty("kotlin.mpp.enableCompatibilityMetadataVariant") ?: !mppHierarchicalStructureByDefault)
         }
 
     val enableKotlinToolingMetadataArtifact: Boolean
@@ -208,9 +207,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val jsCompilerNoWarn: Boolean
         get() = booleanProperty("$jsCompilerProperty.nowarn") ?: false
-
-    val experimentalKpmModelMapping: Boolean
-        get() = booleanProperty(PropertyNames.KOTLIN_KPM_EXPERIMENTAL_MODEL_MAPPING) ?: false
 
     val ignoreDisabledNativeTargets: Boolean?
         get() = booleanProperty(DisabledNativeTargetsReporter.DISABLE_WARNING_PROPERTY_NAME)
@@ -492,7 +488,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION_1_NO_WARN = "${KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION}1.nowarn"
         const val KOTLIN_NATIVE_DEPENDENCY_PROPAGATION = "kotlin.native.enableDependencyPropagation"
         const val KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION = "kotlin.mpp.enableOptimisticNumberCommonization"
-        const val KOTLIN_KPM_EXPERIMENTAL_MODEL_MAPPING = "kotlin.kpm.experimentalModelMapping"
         const val KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION = "kotlin.mpp.enablePlatformIntegerCommonization"
         const val KOTLIN_ABI_SNAPSHOT = "kotlin.incremental.classpath.snapshot.enabled"
         const val KOTLIN_JS_KARMA_BROWSERS = "kotlin.js.browser.karma.browsers"

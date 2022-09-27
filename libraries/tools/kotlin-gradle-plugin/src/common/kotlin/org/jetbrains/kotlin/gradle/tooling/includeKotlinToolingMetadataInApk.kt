@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.gradle.tooling
 
 import com.android.build.gradle.AppExtension
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
+import org.jetbrains.kotlin.gradle.dsl.pm20ExtensionOrNull
 
 internal fun Project.includeKotlinToolingMetadataInApk() {
     plugins.withId("com.android.application") {
-        val buildKotlinToolingMetadataTask = if (hasKpmModel) {
+        val buildKotlinToolingMetadataTask = if (project.pm20ExtensionOrNull != null) {
             buildKotlinToolingMetadataForMainKpmModuleTask
         } else {
             buildKotlinToolingMetadataTask

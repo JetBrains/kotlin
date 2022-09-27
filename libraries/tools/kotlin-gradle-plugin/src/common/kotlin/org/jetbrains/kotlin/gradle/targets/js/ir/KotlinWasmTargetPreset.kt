@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.PublicationRegistrationMode
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.mapTargetCompilationsToKpmVariants
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenEvaluated
 
 class KotlinWasmTargetPreset(
@@ -52,14 +50,6 @@ class KotlinWasmTargetPreset(
 
     override fun createKotlinTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinJsIrTarget> =
         KotlinJsIrTargetConfigurator()
-
-    override fun createTarget(name: String): KotlinJsIrTarget {
-        val result = super.createTarget(name)
-        if (project.hasKpmModel) {
-            mapTargetCompilationsToKpmVariants(result, PublicationRegistrationMode.IMMEDIATE)
-        }
-        return result
-    }
 
     override fun getName(): String = WASM_PRESET_NAME
 

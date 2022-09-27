@@ -9,10 +9,7 @@ import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.VariantMappedCompilationDetailsWithRuntime
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
-import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import javax.inject.Inject
 
 abstract class GradleKpmJvmVariant @Inject constructor(
@@ -62,21 +59,4 @@ internal fun GradleKpmVariant.ownModuleName(): String {
         ?: project.name
     val suffix = if (containingModule.moduleClassifier == null) "" else "_${containingModule.moduleClassifier}"
     return filterModuleName("$baseName$suffix")
-}
-
-internal class KotlinMappedJvmCompilationFactory(
-    target: KotlinJvmTarget
-) : KotlinJvmCompilationFactory(target) {
-    override fun create(name: String): KotlinJvmCompilation {
-        val module = target.project.kpmModules.maybeCreate(name)
-        val variant = module.fragments.create(target.name, GradleKpmJvmVariant::class.java)
-
-        return target.project.objects.newInstance(
-            KotlinJvmCompilation::class.java,
-            @Suppress("DEPRECATION")
-            (VariantMappedCompilationDetailsWithRuntime<KotlinJvmOptions>(
-        variant, target, getOrCreateDefaultSourceSet(name) as FragmentMappedKotlinSourceSet
-    ))
-        )
-    }
 }

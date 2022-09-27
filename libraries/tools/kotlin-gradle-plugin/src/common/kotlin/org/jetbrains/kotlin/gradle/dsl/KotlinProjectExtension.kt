@@ -62,6 +62,9 @@ internal val Project.multiplatformExtension: KotlinMultiplatformExtension
 internal val Project.pm20Extension: KotlinPm20ProjectExtension
     get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
 
+internal val Project.pm20ExtensionOrNull: KotlinPm20ProjectExtension?
+    get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME)?.castIsolatedKotlinPluginClassLoaderAware()
+
 abstract class KotlinTopLevelExtension(internal val project: Project) : KotlinTopLevelExtensionConfig {
 
     override lateinit var coreLibrariesVersion: String
@@ -147,12 +150,6 @@ open class KotlinProjectExtension @Inject constructor(project: Project) : Kotlin
         internal set(value) {
             DslObject(this).extensions.add("sourceSets", value)
         }
-
-    internal val kpmModelContainer by lazy {
-        if (project.kotlinPropertiesProvider.experimentalKpmModelMapping) {
-            GradleKpmDefaultProjectModelContainer.create(project)
-        } else error("Model mapping is not enabled.")
-    }
 }
 
 abstract class KotlinSingleTargetExtension<TARGET : KotlinTarget>(project: Project) : KotlinProjectExtension(project) {
