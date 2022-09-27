@@ -79,8 +79,9 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
         """
     )
 
-    // TODO(b/147250515): get inlined lambdas to analyze correctly
-    fun xtestBasicComposable3() = assertComposability(
+    // We only analyze scopes that contain composable calls, so this test fails without the
+    // nested call to `Bar`. This is why this test was originally muted (b/147250515).
+    fun testBasicComposable3() = assertComposability(
         """
             import androidx.compose.runtime.*
 
@@ -88,7 +89,7 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
             fun Bar() {
                 <composable>
                 listOf(1, 2, 3).forEach {
-                    <composable>
+                    <composable>Bar()
                 }
             }
         """
@@ -144,23 +145,21 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
         """
     )
 
-    private fun <T> setup(block: () -> T): T {
-        return block()
-    }
-
-    fun assertComposability(srcText: String) = setup {
+    private fun assertComposability(srcText: String) {
         val (text, carets) = extractCarets(srcText)
 
         val environment = myEnvironment ?: error("Environment not initialized")
 
         val ktFile = KtPsiFactory(environment.project).createFile(text)
-        val bindingContext = JvmResolveUtil.analyze(
-            ktFile,
-            environment
+        val bindingContext = JvmResolveUtil.analyzeAndCheckForErrors(
+            environment.project,
+            listOf(ktFile),
+            environment.configuration,
+            environment::createPackagePartProvider
         ).bindingContext
 
         carets.forEachIndexed { index, (offset, marking) ->
-            val composable = composabiliityAtOffset(bindingContext, ktFile, offset)
+            val composable = composabilityAtOffset(bindingContext, ktFile, offset)
 
             when (marking) {
                 "<composable>" -> assertTrue("index: $index", composable)
@@ -173,7 +172,7 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
         }
     }
 
-    private val callPattern = Regex("(<marked>)|(<inferred>)|(<normal>)")
+    private val callPattern = Regex("(<composable>)|(<normal>)")
     private fun extractCarets(text: String): Pair<String, List<Pair<Int, String>>> {
         val indices = mutableListOf<Pair<Int, String>>()
         var offset = 0
@@ -185,7 +184,7 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
         return src to indices
     }
 
-    private fun composabiliityAtOffset(
+    private fun composabilityAtOffset(
         bindingContext: BindingContext,
         jetFile: KtFile,
         index: Int
@@ -205,14 +204,15 @@ fun PsiElement?.getNearestComposability(
                 // keep going, as this is a "KtFunction", but we actually want the
                 // KtLambdaExpression
             }
-            is KtLambdaExpression,
+            is KtLambdaExpression -> {
+                val descriptor = bindingContext[BindingContext.FUNCTION, node.functionLiteral]
+                    ?: return false
+                return descriptor.allowsComposableCalls(bindingContext)
+            }
             is KtFunction,
             is KtPropertyAccessor,
             is KtProperty -> {
-                val descriptor = bindingContext[BindingContext.FUNCTION, node]
-                if (descriptor == null) {
-                    return false
-                }
+                val descriptor = bindingContext[BindingContext.FUNCTION, node] ?: return false
                 return descriptor.allowsComposableCalls(bindingContext)
             }
         }
