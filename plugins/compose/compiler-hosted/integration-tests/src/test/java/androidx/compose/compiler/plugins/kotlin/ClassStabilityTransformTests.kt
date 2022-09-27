@@ -303,6 +303,23 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
     )
 
     @Test
+    fun testDaggerLazyIsStableIfItsTypeIs() = assertStability(
+        """
+            class Foo<T>(val x: dagger.Lazy<T>)
+        """,
+        "Parameter(T)"
+    )
+
+    @Test
+    fun testDaggerLazyOfCrossModuleTypeIsRuntimeStable() = assertStability(
+        """
+            class A
+        """,
+        "class Foo(val x: dagger.Lazy<A>)",
+        "Runtime(A)"
+    )
+
+    @Test
     fun testVarPropDelegateWithCrossModuleStableDelegateTypeIsStable() = assertStability(
         """
             @Stable
