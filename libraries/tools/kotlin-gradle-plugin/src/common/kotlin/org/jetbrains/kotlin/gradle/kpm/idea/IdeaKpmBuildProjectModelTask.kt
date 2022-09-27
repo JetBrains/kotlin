@@ -13,11 +13,10 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
 import org.jetbrains.kotlin.kpm.idea.proto.writeTo
 import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
-import kotlin.time.ExperimentalTime
-import kotlin.time.measureTime
 
 internal fun Project.locateOrRegisterIdeaKpmBuildProjectModelTask(): TaskProvider<IdeaKpmBuildProjectModelTask> {
     return locateOrRegisterTask(IdeaKpmBuildProjectModelTask.defaultTaskName)
@@ -34,7 +33,7 @@ internal open class IdeaKpmBuildProjectModelTask : DefaultTask() {
     private val builder = project.pm20Extension.ideaKpmProjectModelBuilder
 
     init {
-        outputs.upToDateWhen { false }
+        doNotTrackStateCompat("Should always re-run to produce updated models")
     }
 
     @TaskAction
