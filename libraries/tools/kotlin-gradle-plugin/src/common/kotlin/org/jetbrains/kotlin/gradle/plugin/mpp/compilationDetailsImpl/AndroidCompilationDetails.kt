@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.mpp
+package org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl
 
 import com.android.build.gradle.api.BaseVariant
 import org.gradle.api.file.FileCollection
@@ -11,8 +11,9 @@ import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 
-class AndroidCompilationDetails(
+internal class AndroidCompilationDetails(
     target: KotlinTarget,
     compilationPurpose: String,
     defaultSourceSet: KotlinSourceSet,

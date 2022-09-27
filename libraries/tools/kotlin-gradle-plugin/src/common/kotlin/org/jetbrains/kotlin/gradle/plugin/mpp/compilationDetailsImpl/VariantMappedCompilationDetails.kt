@@ -3,15 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
+package org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractCompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationDetailsWithRuntime
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariantInternal
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariantWithRuntimeInternal
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.GradleKpmDependencyFilesHolder
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ofVariantCompileDependencies
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ofVariantRuntimeDependencies

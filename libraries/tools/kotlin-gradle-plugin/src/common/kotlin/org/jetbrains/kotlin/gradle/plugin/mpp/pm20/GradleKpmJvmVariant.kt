@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.VariantMappedCompilationDetailsWithRuntime
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
@@ -75,9 +76,9 @@ internal class KotlinMappedJvmCompilationFactory(
         return target.project.objects.newInstance(
             KotlinJvmCompilation::class.java,
             @Suppress("DEPRECATION")
-            VariantMappedCompilationDetailsWithRuntime<KotlinJvmOptions>(
-                variant, target, getOrCreateDefaultSourceSet(name) as FragmentMappedKotlinSourceSet
-            )
+            (VariantMappedCompilationDetailsWithRuntime<KotlinJvmOptions>(
+        variant, target, getOrCreateDefaultSourceSet(name) as FragmentMappedKotlinSourceSet
+    ))
         )
     }
 }

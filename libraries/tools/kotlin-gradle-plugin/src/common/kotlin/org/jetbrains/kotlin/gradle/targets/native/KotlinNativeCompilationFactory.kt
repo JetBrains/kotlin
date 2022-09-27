@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.NativeCompilationDetails
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.SharedNativeCompilationDetails
 import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
 import org.jetbrains.kotlin.konan.target.KonanTarget
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.VariantMappedCompilationDetails
 import java.util.concurrent.Callable
 
 internal open class GradleKpmAwareTargetConfigurator<T : KotlinTarget>(

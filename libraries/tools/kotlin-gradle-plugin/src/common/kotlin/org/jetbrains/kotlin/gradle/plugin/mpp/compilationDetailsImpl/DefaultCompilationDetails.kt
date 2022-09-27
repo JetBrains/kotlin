@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.mpp
+package org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl
 
 import org.gradle.api.Project
 import org.gradle.api.UnknownTaskException
@@ -16,6 +16,10 @@ import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinDependencyConfigurationsHolder
+import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.filterModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.KotlinCompilationsModuleGroups
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
@@ -31,7 +35,7 @@ import org.jetbrains.kotlin.project.model.LanguageSettings
 import java.util.*
 import java.util.concurrent.Callable
 
-open class DefaultCompilationDetails<T : KotlinCommonOptions, CO : CompilerCommonOptions>(
+internal open class DefaultCompilationDetails<T : KotlinCommonOptions, CO : CompilerCommonOptions>(
     final override val target: KotlinTarget,
     final override val compilationPurpose: String,
     defaultSourceSet: KotlinSourceSet,

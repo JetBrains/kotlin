@@ -3,16 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.mpp
+package org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSet
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSetImpl
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
 
-abstract class AbstractCompilationDetails<T : KotlinCommonOptions>(
+internal abstract class AbstractCompilationDetails<T : KotlinCommonOptions>(
     final override val defaultSourceSet: KotlinSourceSet
 ) : CompilationDetails<T> {
     private val directlyIncludedKotlinSourceSetsImpl: MutableObservableSet<KotlinSourceSet> = MutableObservableSetImpl(defaultSourceSet)

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.file.SourceDirectorySet
-import org.jetbrains.kotlin.gradle.plugin.mpp.JsIrCompilationDetails
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.JsIrCompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import javax.inject.Inject

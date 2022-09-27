@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.JsIrCompilationDetails
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.JsIrCompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.getOrCreateDefaultSourceSet
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName

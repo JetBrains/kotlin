@@ -3,13 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.mpp
+package org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl
 
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.SourceSet
 import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.GradleKpmDependencyFilesHolder
 
 internal class WithJavaCompilationDetails<T : KotlinCommonOptions, CO : CompilerCommonOptions>(

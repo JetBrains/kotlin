@@ -14,6 +14,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.plugin.getJavaTaskProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.AndroidCompilationDetails
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import javax.inject.Inject
 
