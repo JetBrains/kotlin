@@ -59,24 +59,6 @@ interface CompilationDetailsWithRuntime<T : KotlinCommonOptions> : CompilationDe
 internal val CompilationDetails<*>.associateCompilationsClosure: Iterable<CompilationDetails<*>>
     get() = closure { it.associateCompilations }
 
-open class DefaultCompilationDetailsWithRuntime<T : KotlinCommonOptions, CO : CompilerCommonOptions>(
-    target: KotlinTarget,
-    compilationPurpose: String,
-    defaultSourceSet: KotlinSourceSet,
-    createCompilerOptions: DefaultCompilationDetails<T, CO>.() -> HasCompilerOptions<CO>,
-    createKotlinOptions: DefaultCompilationDetails<T, CO>.() -> T
-) : DefaultCompilationDetails<T, CO>(
-    target, compilationPurpose, defaultSourceSet, createCompilerOptions, createKotlinOptions
-), CompilationDetailsWithRuntime<T> {
-    override val runtimeDependencyFilesHolder: GradleKpmDependencyFilesHolder = project.newDependencyFilesHolder(
-        lowerCamelCaseName(
-            target.disambiguationClassifier,
-            compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }.orEmpty(),
-            "runtimeClasspath"
-        )
-    )
-}
-
 open class NativeCompilationDetails(
     target: KotlinTarget,
     compilationPurpose: String,
