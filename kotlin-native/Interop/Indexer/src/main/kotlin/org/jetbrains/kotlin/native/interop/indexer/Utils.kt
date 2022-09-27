@@ -27,6 +27,7 @@ import java.security.DigestInputStream
 import java.security.MessageDigest
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import com.intellij.util.containers.MultiMap
 
 val CValue<CXType>.kind: CXTypeKind get() = this.useContents { kind }
 
@@ -690,14 +691,14 @@ class TURepository : Disposable {
 }
 
 class TUOptimizedIndex {
-    private val unitsByHeaderFile = SetMultiMap<String, CXTranslationUnit>()
+    private val unitsByHeaderFile = MultiMap<String, CXTranslationUnit>()
 
     /**
      * Should AST file contain declarations from nested headers, this fun makes both headers to refer to PCM file.
      */
     internal fun processInclude(includerFilename: String, includedFilename: String) {
-        unitsByHeaderFile.get(includerFilename)?.let {
-            unitsByHeaderFile.putAll(includedFilename, it)
+        unitsByHeaderFile[includerFilename].let {
+            unitsByHeaderFile.putValues(includedFilename, it)
         }
     }
 
@@ -705,13 +706,15 @@ class TUOptimizedIndex {
         val numTopLevelHeaders = clang_Module_getNumTopLevelHeaders(unit, info.module)
         (0 until numTopLevelHeaders).map {
             val topLevelHeader: String = clang_Module_getTopLevelHeader(unit, info.module, it)!!.canonicalPath
-            unitsByHeaderFile.put(topLevelHeader, unit)
+            unitsByHeaderFile.putValue(topLevelHeader, unit)
         }
     }
 
-    // gets those units, which include any own header
-    internal fun unitsImportingTheseHeaders(ownHeadersCanonicalPaths: Set<String>): Set<CXTranslationUnit> {
-        return unitsByHeaderFile.entries().filter {
+    /**
+     *  Gets set of units, each of them includes at least one `own header`
+     */
+    internal fun unitsIncludingTheseHeaders(ownHeadersCanonicalPaths: Set<String>): Set<CXTranslationUnit> {
+        return unitsByHeaderFile.entrySet().filter {
             ownHeadersCanonicalPaths.contains(it.key)
         }.flatMap { it.value }.toSet()
     }
@@ -1019,51 +1022,4 @@ inline fun <T : Disposable, R> T.use(block: (T) -> R): R = try {
     block(this)
 } finally {
     this.dispose()
-}
-
-class SetMultiMap<K, V> {
-    private val map: MutableMap<K, MutableCollection<V>> = hashMapOf()
-
-    fun get(key: K): MutableCollection<V>? = map[key]
-
-    fun put(key: K, value: V) {
-        if (map[key] == null) map[key] = mutableSetOf()
-        map[key]!!.add(value)
-    }
-
-    fun putAll(key: K, value: Iterable<V>) {
-        if (map[key] == null) map[key] = mutableSetOf()
-        map[key]!!.addAll(value)
-    }
-
-    fun putIfAbsent(key: K, value: V) {
-        if (map[key] == null) map[key] = mutableSetOf()
-        if (!map[key]!!.contains(value)) map[key]!!.add(value)
-    }
-
-    fun remove(key: K, value: V): Boolean {
-        return if (map[key] != null) map[key]!!.remove(value) else false
-    }
-
-    fun containsKey(key: K?): Boolean = map.containsKey(key)
-
-    fun remove(key: K) {
-        map.remove(key)
-    }
-
-    fun values(): MutableCollection<MutableCollection<V>> {
-        return map.values
-    }
-
-    fun entries(): MutableSet<MutableMap.MutableEntry<K, MutableCollection<V>>> {
-        return map.entries
-    }
-
-    fun size(): Int {
-        var size = 0
-        for (value in map.values) size += value.size
-        return size
-    }
-
-    fun entrySet(): Set<Map.Entry<K, Collection<V>?>> = map.entries
 }

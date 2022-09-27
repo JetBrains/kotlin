@@ -150,9 +150,9 @@ dependencies {
     api(project(":kotlin-stdlib"))
     api(project(":kotlin-native:Interop:Runtime"))
     api(project(":kotlin-native:utilities:basic-utils"))
+    api(intellijCore())
 
     testImplementation(kotlin("test-junit"))
-    testImplementation(projectTests(":compiler:tests-common"))
 }
 
 val nativelibs = project.tasks.create<Copy>("nativelibs") {

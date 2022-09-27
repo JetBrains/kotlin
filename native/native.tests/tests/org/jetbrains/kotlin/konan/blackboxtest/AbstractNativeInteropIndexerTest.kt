@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.jupiter.api.Tag
-import java.io.File
 import kotlin.time.Duration.Companion.seconds
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.*
@@ -37,9 +35,9 @@ abstract class AbstractNativeInteropIndexerTest : AbstractNativeSimpleTest() {
 
     @Synchronized
     protected fun runTest(@TestDataFile testPath: String) {
-        val homeDirectory = KtTestUtil.getHomeDirectory()
-        val testPathFull = File(homeDirectory).resolve(testPath)
-        val tempDir = org.jetbrains.kotlin.konan.file.createTempDir(testPathFull.name)
+        val konanHomeDirectory = System.getProperty("kotlin.internal.native.test.nativeHome")
+        val testPathFull = getAbsoluteFile(testPath)
+        val testBuildDir = testRunSettings.get<SimpleTestDirectories>().testBuildDir
 
         val dummyCompilerCall = LoggedData.CompilerCall(
             parameters = LoggedData.CompilerParameters(home = testRunSettings.get(), compilerArgs = arrayOf(), sourceModules = listOf()),
@@ -59,9 +57,9 @@ abstract class AbstractNativeInteropIndexerTest : AbstractNativeSimpleTest() {
             runParameters = listOf(
                 TestRunParameter.WithFreeCommandLineArguments(
                     listOf(
-                        homeDirectory,
-                        testPath,
-                        tempDir.canonicalPath
+                        konanHomeDirectory,
+                        testPathFull.canonicalPath,
+                        testBuildDir.canonicalPath
                     ) + if (fmodules) listOf("-compiler-option", "-fmodules") else listOf()
                 )
             ),
