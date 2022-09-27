@@ -192,9 +192,14 @@ constructor(
     val target: String
         get() = compilation.konanTarget.name
 
-    @get:Input
+    @Deprecated("Use 'embedBitcodeMode' provider instead.", ReplaceWith("embedBitcodeMode.get()"))
+    @get:Internal
     val embedBitcode: BitcodeEmbeddingMode
-        get() = (binary as? Framework)?.embedBitcode ?: BitcodeEmbeddingMode.DISABLE
+        get() = embedBitcodeMode.get()
+
+    @get:Input
+    val embedBitcodeMode: Provider<BitcodeEmbeddingMode> =
+        (binary as? Framework)?.embedBitcodeMode ?: project.provider { BitcodeEmbeddingMode.DISABLE }
 
     @get:Internal
     val apiFiles = project.files(project.configurations.getByName(compilation.apiConfigurationName)).filterKlibsPassedToCompiler()
@@ -328,7 +333,7 @@ constructor(
             plugins,
             processTests,
             entryPoint,
-            embedBitcode,
+            embedBitcodeMode.get(),
             linkerOpts,
             binaryOptions,
             isStaticFramework,
