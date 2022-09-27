@@ -41,7 +41,7 @@ interface TestVersions {
         const val AGP_73 = "7.3.0"
 
         const val MIN_SUPPORTED = AGP_41 // KotlinAndroidPlugin.MINIMAL_SUPPORTED_AGP_VERSION
-        const val MAX_SUPPORTED = AGP_70 // Update once Gradle MAX_SUPPORTED version will be bumped to 7.2+
+        const val MAX_SUPPORTED = AGP_72 // Update once Gradle MAX_SUPPORTED version will be bumped to 7.2+
     }
 
     enum class AgpCompatibilityMatrix(
