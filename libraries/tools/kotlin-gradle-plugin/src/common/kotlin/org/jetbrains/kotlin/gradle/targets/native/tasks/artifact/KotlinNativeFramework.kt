@@ -116,16 +116,20 @@ internal fun KotlinNativeArtifact.registerLinkFrameworkTask(
     ) { task ->
         task.description = "Assemble ${kind.description} '$name' for a target '${target.name}'."
         task.enabled = target.enabledOnCurrentHost
-        task.baseName = name
-        task.destinationDir = destinationDir
-        task.optimized = buildType.optimized
-        task.debuggable = buildType.debuggable
-        task.linkerOptions = linkerOptions
-        task.binaryOptions = binaryOptions
-        task.isStaticFramework = isStatic
-        task.embedBitcode = embedBitcode ?: Xcode.defaultBitcodeEmbeddingMode(target, buildType)
-        task.librariesConfiguration = librariesConfigurationName
-        task.exportLibrariesConfiguration = exportConfigurationName
+        task.baseName.set(name)
+        task.destinationDir.set(destinationDir)
+        task.optimized.set(buildType.optimized)
+        task.debuggable.set(buildType.debuggable)
+        task.linkerOptions.set(linkerOptions)
+        task.binaryOptions.set(binaryOptions)
+        task.staticFramework.set(isStatic)
+        if (embedBitcode != null) {
+            task.embedBitcode.set(embedBitcode)
+        } else {
+            task.embedBitcode.set(project.provider { Xcode.defaultBitcodeEmbeddingMode(target, buildType) })
+        }
+        task.libraries.setFrom(project.configurations.getByName(librariesConfigurationName))
+        task.exportLibraries.setFrom(project.configurations.getByName(exportConfigurationName))
         task.kotlinOptions(kotlinOptionsFn)
     }
     project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(resultTask)
