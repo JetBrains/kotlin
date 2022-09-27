@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+import org.gradle.api.Project
+
 interface CompilerCommonOptions : org.jetbrains.kotlin.gradle.dsl.CompilerCommonToolOptions {
 
     /**

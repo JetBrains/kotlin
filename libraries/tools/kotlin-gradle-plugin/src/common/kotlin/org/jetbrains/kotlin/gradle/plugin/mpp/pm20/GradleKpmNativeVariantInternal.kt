@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.VariantMappedCompilationDetails
-import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 abstract class GradleKpmNativeVariantInternal(
@@ -45,22 +44,4 @@ abstract class GradleKpmNativeVariantInternal(
 interface KotlinNativeCompilationData<T : KotlinCommonOptions> : KotlinCompilationData<T> {
     val konanTarget: KonanTarget
     val enableEndorsedLibs: Boolean
-}
-
-internal class KotlinMappedNativeCompilationFactory(
-    target: KotlinNativeTarget,
-    private val variantClass: Class<out GradleKpmNativeVariantInternal>
-) : KotlinNativeCompilationFactory(target) {
-    override fun create(name: String): KotlinNativeCompilation {
-        val module = target.project.kpmModules.maybeCreate(name)
-        val variant = module.fragments.create(target.name, variantClass)
-
-        return target.project.objects.newInstance(
-            KotlinNativeCompilation::class.java,
-            target.konanTarget,
-            VariantMappedCompilationDetails<KotlinCommonOptions>(
-                variant, target, getOrCreateDefaultSourceSet(name) as FragmentMappedKotlinSourceSet
-            )
-        )
-    }
 }

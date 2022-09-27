@@ -11,17 +11,14 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.component.*
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.publish.maven.MavenPublication
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.PublishedModuleCoordinatesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
 import org.jetbrains.kotlin.gradle.utils.getValue
-import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 import org.jetbrains.kotlin.project.model.KpmLocalModuleIdentifier
 import org.jetbrains.kotlin.project.model.KpmMavenModuleIdentifier
+import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 
 internal object ModuleIds {
     fun fromDependency(dependency: Dependency): ModuleDependencyIdentifier = when (dependency) {
@@ -79,8 +76,8 @@ internal object ModuleIds {
                 val dependencyProject = thisProject.project(moduleIdentifier.projectId)
                 val topLevelExtension = dependencyProject.topLevelExtension
                 val getRootPublication: () -> MavenPublication? = when {
-                    dependencyProject.hasKpmModel -> {
-                        { dependencyProject.kpmModelContainer.rootPublication }
+                    dependencyProject.pm20ExtensionOrNull != null -> {
+                        { dependencyProject.pm20Extension.kpmModelContainer.rootPublication }
                     }
                     topLevelExtension is KotlinMultiplatformExtension -> {
                         { topLevelExtension.rootSoftwareComponent.publicationDelegate }
@@ -88,8 +85,8 @@ internal object ModuleIds {
                     else -> error("unexpected top-level extension $topLevelExtension")
                 }
                 val capabilities = when {
-                    dependencyProject.hasKpmModel -> listOfNotNull(ComputedCapability.capabilityStringFromModule(
-                        dependencyProject.kpmModules.single { it.moduleIdentifier == moduleIdentifier }
+                    dependencyProject.pm20ExtensionOrNull != null -> listOfNotNull(ComputedCapability.capabilityStringFromModule(
+                        dependencyProject.pm20Extension.modules.single { it.moduleIdentifier == moduleIdentifier }
                     ))
                     topLevelExtension is KotlinMultiplatformExtension -> emptyList()
                     else -> error("unexpected top-level extension $topLevelExtension")

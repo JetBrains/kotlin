@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20GradlePlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
-import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.report.BuildReportsService
@@ -172,9 +171,7 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
     abstract val pluginVariant: String
 
     internal open fun kotlinSourceSetFactory(project: Project): NamedDomainObjectFactory<KotlinSourceSet> =
-        if (PropertiesProvider(project).experimentalKpmModelMapping)
-            FragmentMappedKotlinSourceSetFactory(project)
-        else DefaultKotlinSourceSetFactory(project)
+        DefaultKotlinSourceSetFactory(project)
 
     override fun apply(project: Project) {
         super.apply(project)

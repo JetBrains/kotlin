@@ -9,11 +9,12 @@ import org.gradle.api.Project
 import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 import javax.inject.Inject
 
 internal fun setupKpmModulesPublication(project: Project) {
-    project.kpmModules.all { module ->
+    project.pm20Extension.modules.all { module ->
         setupPublicationForModule(module)
     }
 }

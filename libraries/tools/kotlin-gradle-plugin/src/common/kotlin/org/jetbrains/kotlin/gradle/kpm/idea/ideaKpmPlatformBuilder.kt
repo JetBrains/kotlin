@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.konan.target.HostManager
 
 @Suppress("unused")
@@ -18,13 +17,6 @@ internal fun IdeaKpmProjectBuildingContext.IdeaKpmPlatform(variant: GradleKpmVar
     when (variant) {
         is GradleKpmJvmVariant -> return IdeaKpmJvmPlatformImpl(variant.compilationData.kotlinOptions.jvmTarget ?: JvmTarget.DEFAULT.name)
         is GradleKpmNativeVariantInternal -> return IdeaKpmNativePlatformImpl(variant.konanTarget.name)
-        is GradleKpmLegacyMappedVariant -> when (val compilation = variant.compilation) {
-            is KotlinJvmCompilation -> return IdeaKpmJvmPlatformImpl(compilation.kotlinOptions.jvmTarget ?: JvmTarget.DEFAULT.name)
-            is KotlinJvmAndroidCompilation -> return IdeaKpmJvmPlatformImpl(compilation.kotlinOptions.jvmTarget ?: JvmTarget.DEFAULT.name)
-            is KotlinNativeCompilation -> return IdeaKpmNativePlatformImpl(compilation.konanTarget.name)
-            is KotlinJsIrCompilation -> return IdeaKpmJsPlatformImpl(isIr = true)
-            is KotlinJsCompilation -> return IdeaKpmJsPlatformImpl(isIr = false)
-        }
     }
 
     /* Fallback calculation based on 'platformType' alone */

@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 
 internal fun registerDefaultVariantFactories(project: Project) {
-    project.kpmModules.configureEach { module ->
+    project.pm20Extension.modules.configureEach { module ->
         module.fragments.registerFactory(
             GradleKpmJvmVariant::class.java,
             GradleKpmJvmVariantFactory(module)

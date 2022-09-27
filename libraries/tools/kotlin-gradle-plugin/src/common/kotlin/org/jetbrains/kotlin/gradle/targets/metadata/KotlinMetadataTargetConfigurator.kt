@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.DefaultCompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
@@ -37,14 +36,14 @@ internal const val ALL_COMPILE_METADATA_CONFIGURATION_NAME = "allSourceSetsCompi
 internal const val ALL_RUNTIME_METADATA_CONFIGURATION_NAME = "allSourceSetsRuntimeDependenciesMetadata"
 
 internal val Project.isKotlinGranularMetadataEnabled: Boolean
-    get() = project.hasKpmModel || with(PropertiesProvider(rootProject)) {
+    get() = project.pm20ExtensionOrNull != null || with(PropertiesProvider(rootProject)) {
         mppHierarchicalStructureByDefault || // then we want to use KLIB granular compilation & artifacts even if it's just commonMain
                 hierarchicalStructureSupport ||
                 enableGranularSourceSetsMetadata == true
     }
 
 internal val Project.shouldCompileIntermediateSourceSetsToMetadata: Boolean
-    get() = project.hasKpmModel || with(PropertiesProvider(rootProject)) {
+    get() = project.pm20ExtensionOrNull != null || with(PropertiesProvider(rootProject)) {
         when {
             !hierarchicalStructureSupport && mppHierarchicalStructureByDefault -> false
             else -> true
@@ -294,8 +293,6 @@ class KotlinMetadataTargetConfigurator :
     ): AbstractKotlinCompilation<*> {
         val project = target.project
 
-        check(!project.hasKpmModel) { "KotlinMetadataTargetConfigurator cannot work with KPM!" }
-
         val compilationName = sourceSet.name
 
         val platformCompilations = sourceSet.internal.compilations
@@ -394,21 +391,19 @@ class KotlinMetadataTargetConfigurator :
                 }
             }
 
-            if (!PropertiesProvider(project).experimentalKpmModelMapping) {
-                val sourceSetMetadataConfigurationByScope = project.sourceSetMetadataConfigurationByScope(sourceSet, scope)
-                granularMetadataTransformation.applyToConfiguration(sourceSetMetadataConfigurationByScope)
-                if (scope != KotlinDependencyScope.COMPILE_ONLY_SCOPE) {
-                    project.addExtendsFromRelation(
-                        sourceSetMetadataConfigurationByScope.name,
-                        ALL_COMPILE_METADATA_CONFIGURATION_NAME
-                    )
-                }
-                if (scope != KotlinDependencyScope.RUNTIME_ONLY_SCOPE) {
-                    project.addExtendsFromRelation(
-                        sourceSetMetadataConfigurationByScope.name,
-                        ALL_COMPILE_METADATA_CONFIGURATION_NAME
-                    )
-                }
+            val sourceSetMetadataConfigurationByScope = project.sourceSetMetadataConfigurationByScope(sourceSet, scope)
+            granularMetadataTransformation.applyToConfiguration(sourceSetMetadataConfigurationByScope)
+            if (scope != KotlinDependencyScope.COMPILE_ONLY_SCOPE) {
+                project.addExtendsFromRelation(
+                    sourceSetMetadataConfigurationByScope.name,
+                    ALL_COMPILE_METADATA_CONFIGURATION_NAME
+                )
+            }
+            if (scope != KotlinDependencyScope.RUNTIME_ONLY_SCOPE) {
+                project.addExtendsFromRelation(
+                    sourceSetMetadataConfigurationByScope.name,
+                    ALL_COMPILE_METADATA_CONFIGURATION_NAME
+                )
             }
         }
     }
