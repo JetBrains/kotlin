@@ -77,8 +77,3 @@ internal open class KotlinPlugin(
         }
     }
 }
-
-class KotlinConfigurationTools internal constructor(
-    @Suppress("EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR_WARNING", "EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR_ERROR")
-    val kotlinTasksProvider: KotlinTasksProvider
-)

@@ -59,7 +59,7 @@ internal open class KotlinAndroidPlugin(
                 }
             }
 
-            return AndroidProjectHandler(KotlinConfigurationTools(tasksProvider))
+            return AndroidProjectHandler(tasksProvider)
         }
 
         internal fun Project.dynamicallyApplyWhenAndroidPluginIsApplied(
