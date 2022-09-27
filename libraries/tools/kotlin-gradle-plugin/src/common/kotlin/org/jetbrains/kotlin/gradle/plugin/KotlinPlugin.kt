@@ -47,47 +47,7 @@ val KOTLIN_DSL_NAME = "kotlin"
 val KOTLIN_JS_DSL_NAME = "kotlin2js"
 val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"
 
-internal fun KotlinCompilationOutput.addClassesDir(classesDirProvider: () -> FileCollection) {
-    classesDirs.from(Callable { classesDirProvider() })
-}
 
-internal class Kotlin2JsSourceSetProcessor(
-    tasksProvider: KotlinTasksProvider,
-    kotlinCompilation: KotlinCompilationData<*>
-) : KotlinSourceSetProcessor<Kotlin2JsCompile>(
-    tasksProvider,
-    taskDescription = "Compiles the Kotlin sources in $kotlinCompilation to JavaScript.",
-    kotlinCompilation = kotlinCompilation
-) {
-    override fun doRegisterTask(project: Project, taskName: String): TaskProvider<out Kotlin2JsCompile> {
-        val configAction = Kotlin2JsCompileConfig(kotlinCompilation)
-        applyStandardTaskConfiguration(configAction)
-        return tasksProvider.registerKotlinJSTask(
-            project,
-            taskName,
-            kotlinCompilation.compilerOptions.options as KotlinJsCompilerOptions,
-            configAction
-        )
-    }
-
-    override fun doTargetSpecificProcessing() {
-        project.tasks.named(kotlinCompilation.compileAllTaskName).configure {
-            it.dependsOn(kotlinTask)
-        }
-
-        if (kotlinCompilation is KotlinWithJavaCompilation<*, *>) {
-            kotlinCompilation.javaSourceSet.clearJavaSrcDirs()
-        }
-
-
-        project.whenEvaluated {
-            val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
-            if (kotlinCompilation is KotlinCompilation<*>) { // FIXME support compiler plugins with PM20
-                subpluginEnvironment.addSubpluginOptions(project, kotlinCompilation)
-            }
-        }
-    }
-}
 
 internal class KotlinJsIrSourceSetProcessor(
     tasksProvider: KotlinTasksProvider,
@@ -609,8 +569,3 @@ class KotlinConfigurationTools internal constructor(
     @Suppress("EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR_WARNING", "EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR_ERROR")
     val kotlinTasksProvider: KotlinTasksProvider
 )
-
-
-private fun SourceSet.clearJavaSrcDirs() {
-    java.setSrcDirs(emptyList<File>())
-}
