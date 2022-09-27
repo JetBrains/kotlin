@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.gradle.api.Action
-import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
@@ -15,7 +13,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.closure
 import java.util.*
-import javax.inject.Inject
 
 interface CompilationDetails<T : KotlinCommonOptions> {
     val target: KotlinTarget
@@ -53,26 +50,3 @@ internal val CompilationDetails<*>.associateCompilationsClosure: Iterable<Compil
     get() = closure { it.associateCompilations }
 
 
-internal abstract class KotlinDependencyConfigurationsHolder @Inject constructor(
-    val project: Project,
-    private val configurationNamesPrefix: String?,
-) : HasKotlinDependencies {
-
-    override val apiConfigurationName: String
-        get() = lowerCamelCaseName(configurationNamesPrefix, API)
-
-    override val implementationConfigurationName: String
-        get() = lowerCamelCaseName(configurationNamesPrefix, IMPLEMENTATION)
-
-    override val compileOnlyConfigurationName: String
-        get() = lowerCamelCaseName(configurationNamesPrefix, COMPILE_ONLY)
-
-    override val runtimeOnlyConfigurationName: String
-        get() = lowerCamelCaseName(configurationNamesPrefix, RUNTIME_ONLY)
-
-    override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
-        DefaultKotlinDependencyHandler(this, project).run(configure)
-
-    override fun dependencies(configure: Action<KotlinDependencyHandler>) =
-        dependencies { configure.execute(this) }
-}
