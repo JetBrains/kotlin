@@ -179,7 +179,7 @@ private fun Project.configureKotlinCompilation(
     val apiDirProvider = targetConfig.apiDir
     val apiBuildDir = apiDirProvider.map { buildDir.resolve(it) }
 
-    val apiBuild = task<KotlinApiBuildTask>(targetConfig.apiTaskName("Build"), extension) {
+    val apiBuild = task<KotlinApiBuildTask>(targetConfig.apiTaskName("Build")) {
         // Do not enable task for empty umbrella modules
         isEnabled =
             apiCheckEnabled(projectName, extension) && compilation.allKotlinSourceSets.any { it.kotlin.srcDirs.any { it.exists() } }
@@ -199,6 +199,9 @@ private fun Project.configureKotlinCompilation(
                 files(provider<Any> { if (isEnabled) compilation.compileDependencyFiles else emptyList<Any>() })
         }
         outputApiDir = apiBuildDir.get()
+        ignoredPackages = extension.ignoredPackages
+        ignoredClasses = extension.ignoredClasses
+        nonPublicMarkers = extension.nonPublicMarkers
     }
     configureCheckTasks(apiBuildDir, apiBuild, extension, targetConfig, commonApiDump, commonApiCheck)
 }
@@ -216,7 +219,7 @@ private fun Project.configureApiTasks(
 ) {
     val projectName = project.name
     val apiBuildDir = targetConfig.apiDir.map { buildDir.resolve(it) }
-    val apiBuild = task<KotlinApiBuildTask>(targetConfig.apiTaskName("Build"), extension) {
+    val apiBuild = task<KotlinApiBuildTask>(targetConfig.apiTaskName("Build")) {
         isEnabled = apiCheckEnabled(projectName, extension)
         // 'group' is not specified deliberately so it will be hidden from ./gradlew tasks
         description =
@@ -224,6 +227,9 @@ private fun Project.configureApiTasks(
         inputClassesDirs = files(provider<Any> { if (isEnabled) sourceSet.output.classesDirs else emptyList<Any>() })
         inputDependencies = files(provider<Any> { if (isEnabled) sourceSet.output.classesDirs else emptyList<Any>() })
         outputApiDir = apiBuildDir.get()
+        ignoredPackages = extension.ignoredPackages
+        ignoredClasses = extension.ignoredClasses
+        nonPublicMarkers = extension.nonPublicMarkers
     }
 
     configureCheckTasks(apiBuildDir, apiBuild, extension, targetConfig)
@@ -247,16 +253,7 @@ private fun Project.configureCheckTasks(
         isEnabled = apiCheckEnabled(projectName, extension) && apiBuild.map { it.enabled }.getOrElse(true)
         group = "verification"
         description = "Checks signatures of public API against the golden value in API folder for $projectName"
-        run {
-            val d = apiCheckDir.get()
-            projectApiDir = if (d.exists()) {
-                d
-            } else {
-                nonExistingProjectApiDir = d.toString()
-                null
-            }
-            this.apiBuildDir = apiBuildDir.get()
-        }
+        compareApiDumps(apiReferenceDir = apiCheckDir.get(), apiBuildDir = apiBuildDir.get())
         dependsOn(apiBuild)
     }
 

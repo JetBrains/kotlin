@@ -10,15 +10,21 @@ import org.gradle.api.*
 import org.gradle.api.file.*
 import org.gradle.api.tasks.*
 import java.io.*
+import java.util.jar.JarFile
 import javax.inject.Inject
 
 open class KotlinApiBuildTask @Inject constructor(
-    private val extension: ApiValidationExtension
 ) : DefaultTask() {
 
     @InputFiles
+    @Optional
     @PathSensitive(PathSensitivity.RELATIVE)
-    lateinit var inputClassesDirs: FileCollection
+    var inputClassesDirs: FileCollection? = null
+
+    @InputFile
+    @Optional
+    @PathSensitive(PathSensitivity.RELATIVE)
+    val inputJar: RegularFileProperty = this.project.objects.fileProperty()
 
     @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -28,13 +34,13 @@ open class KotlinApiBuildTask @Inject constructor(
     lateinit var outputApiDir: File
 
     @get:Input
-    val ignoredPackages : Set<String> get() = extension.ignoredPackages
+    var ignoredPackages : Set<String> = emptySet()
 
     @get:Input
-    val nonPublicMarkers : Set<String> get() = extension.nonPublicMarkers
+    var nonPublicMarkers : Set<String> = emptySet()
 
     @get:Input
-    val ignoredClasses : Set<String> get() = extension.ignoredClasses
+    var ignoredClasses : Set<String> = emptySet()
 
     @get:Internal
     internal val projectName = project.name
@@ -44,17 +50,32 @@ open class KotlinApiBuildTask @Inject constructor(
         cleanup(outputApiDir)
         outputApiDir.mkdirs()
 
-        val signatures = inputClassesDirs.asFileTree.asSequence()
-            .filter {
-                !it.isDirectory && it.name.endsWith(".class") && !it.name.startsWith("META-INF/")
-            }
-            .map { it.inputStream() }
-            .loadApiFromJvmClasses()
+        val inputClassesDirs = inputClassesDirs
+        if (listOfNotNull(inputClassesDirs, inputJar.orNull).size != 1) {
+            throw GradleException("KotlinApiBuildTask should have either inputClassesDirs, or inputJar properties set")
+        }
+        val signatures = when {
+            inputClassesDirs != null ->
+                inputClassesDirs.asFileTree.asSequence()
+                    .filter {
+                        !it.isDirectory && it.name.endsWith(".class") && !it.name.startsWith("META-INF/")
+                    }
+                    .map { it.inputStream() }
+                    .loadApiFromJvmClasses()
+            inputJar.isPresent ->
+                JarFile(inputJar.get().asFile)
+                    .loadApiFromJvmClasses()
+            else ->
+                error("Unreachable")
+        }
+
+
+        val filteredSignatures = signatures
             .filterOutNonPublic(ignoredPackages, ignoredClasses)
             .filterOutAnnotated(nonPublicMarkers.map { it.replace(".", "/") }.toSet())
 
         outputApiDir.resolve("$projectName.api").bufferedWriter().use { writer ->
-            signatures
+            filteredSignatures
                 .sortedBy { it.name }
                 .forEach { api ->
                     writer.append(api.signature).appendLine(" {")

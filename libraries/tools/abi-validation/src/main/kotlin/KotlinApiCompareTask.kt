@@ -32,6 +32,16 @@ open class KotlinApiCompareTask @Inject constructor(private val objects: ObjectF
     @Optional
     var nonExistingProjectApiDir: String? = null
 
+    fun compareApiDumps(apiReferenceDir: File, apiBuildDir: File) {
+        if (apiReferenceDir.exists()) {
+            projectApiDir = apiReferenceDir
+        } else {
+            projectApiDir = null
+            nonExistingProjectApiDir = apiReferenceDir.toString()
+        }
+        this.apiBuildDir = apiBuildDir
+    }
+
     @InputDirectory
     @PathSensitive(PathSensitivity.RELATIVE)
     lateinit var apiBuildDir: File
