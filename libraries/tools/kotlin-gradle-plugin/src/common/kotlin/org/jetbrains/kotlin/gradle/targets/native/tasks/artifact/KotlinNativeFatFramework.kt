@@ -114,7 +114,7 @@ class KotlinNativeFatFrameworkImpl(
                     taskNameSuffix = nameSuffix
                 )
                 fatTask.dependsOn(targetTask)
-                val frameworkFileProvider = targetTask.map { it.outputFile }
+                val frameworkFileProvider = targetTask.flatMap { it.outputFile }
                 FrameworkDescriptor(frameworkFileProvider.get(), isStatic, target)
             }
             fatTask.configure { it.fromFrameworkDescriptors(frameworkDescriptors) }

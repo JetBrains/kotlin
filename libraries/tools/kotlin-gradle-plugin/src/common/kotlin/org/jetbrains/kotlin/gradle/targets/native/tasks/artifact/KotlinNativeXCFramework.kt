@@ -110,7 +110,7 @@ class KotlinNativeXCFrameworkImpl(
                     taskNameSuffix = nameSuffix
                 )
                 holder.task.dependsOn(targetTask)
-                val frameworkFileProvider = targetTask.map { it.outputFile }
+                val frameworkFileProvider = targetTask.flatMap { it.outputFile }
                 val descriptor = FrameworkDescriptor(frameworkFileProvider.get(), isStatic, target)
 
                 val group = AppleTarget.values().firstOrNull { it.targets.contains(target) }
