@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 import javax.inject.Inject
@@ -175,7 +176,7 @@ abstract class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                         }
                     )()
 
-                    task.outputs.upToDateWhen { false }
+                    task.doNotTrackStateCompat("Tracked by external webpack tool")
 
                     task.commonConfigure(
                         compilation = compilation,

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.GradleException
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.CopySpec
 import org.gradle.api.file.FileSystemOperations
@@ -98,4 +99,17 @@ internal interface LegacyTestDescriptorInternal : TestDescriptor {
     fun getOwnerBuildOperationId(): Any?
 
     fun getClassDisplayName(): String?
+}
+
+/**
+ * According to [Gradle 7.3 release notes](https://docs.gradle.org/7.3/release-notes.html#allow-plugin-authors-to-declare-tasks-as-untracked)
+ * [Task.doNotTrackState] is a better replacement for `Task.outputs.upToDateWhen { false }`
+ */
+internal fun Task.doNotTrackStateCompat(because: String) {
+    if (GradleVersion.current() < GradleVersion.version("7.3")) {
+        logger.info("Not UP-TO-DATE because $because")
+        outputs.upToDateWhen { false }
+    } else {
+        doNotTrackState(because)
+    }
 }
