@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.project.model.LanguageSettings
 import java.util.*
+import java.util.concurrent.Callable
 
 open class DefaultCompilationDetails<T : KotlinCommonOptions, CO : CompilerCommonOptions>(
     final override val target: KotlinTarget,
