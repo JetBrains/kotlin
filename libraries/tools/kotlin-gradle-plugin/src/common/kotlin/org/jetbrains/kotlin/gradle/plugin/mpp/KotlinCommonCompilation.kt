@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.gradle.dsl.CompilerMultiplatformCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.MetadataMappedCompilationDetails
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
@@ -22,9 +21,6 @@ abstract class KotlinCommonCompilation @Inject constructor(
     compilationDetails: CompilationDetails<KotlinMultiplatformCommonOptions>
 ) : AbstractKotlinCompilation<KotlinMultiplatformCommonOptions>(compilationDetails),
     KotlinMetadataCompilation<KotlinMultiplatformCommonOptions> {
-
-    override fun getName() =
-        if (compilationDetails is MetadataMappedCompilationDetails) defaultSourceSetName else super.compilationPurpose
 
     @Suppress("DEPRECATION")
     @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
