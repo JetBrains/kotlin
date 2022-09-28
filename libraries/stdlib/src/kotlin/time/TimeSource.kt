@@ -17,21 +17,21 @@ import kotlin.jvm.JvmInline
  */
 @SinceKotlin("1.9")
 @WasExperimental(ExperimentalTime::class)
-public interface TimeSource {
+interface TimeSource {
     /**
      * Marks a point in time on this time source.
      *
      * The returned [TimeMark] instance encapsulates the captured time point and allows querying
      * the duration of time interval [elapsed][TimeMark.elapsedNow] from that point.
      */
-    public fun markNow(): TimeMark
+    fun markNow(): TimeMark
 
     /**
      * A [TimeSource] that returns [time marks][ComparableTimeMark] that can be compared for difference with each other.
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalTime::class)
-    public interface WithComparableMarks : TimeSource {
+    interface WithComparableMarks : TimeSource {
         override fun markNow(): ComparableTimeMark
     }
 
@@ -44,7 +44,7 @@ public interface TimeSource {
      * The function [markNow] of this time source returns the specialized [ValueTimeMark] that is an inline value class
      * wrapping a platform-dependent time reading value.
      */
-    public object Monotonic : TimeSource.WithComparableMarks {
+    object Monotonic : WithComparableMarks {
         override fun markNow(): ValueTimeMark = MonotonicTimeSource.markNow()
         override fun toString(): String = MonotonicTimeSource.toString()
 
@@ -62,8 +62,8 @@ public interface TimeSource {
          */
         @SinceKotlin("1.9")
         @WasExperimental(ExperimentalTime::class)
-        @JvmInline
-        public value class ValueTimeMark internal constructor(internal val reading: ValueTimeMarkReading) : ComparableTimeMark {
+        @Suppress("INLINE_CLASS_DEPRECATED")
+        inline class ValueTimeMark internal constructor(internal val reading: ValueTimeMarkReading) : ComparableTimeMark {
             override fun elapsedNow(): Duration = MonotonicTimeSource.elapsedFrom(this)
             override fun plus(duration: Duration): ValueTimeMark = MonotonicTimeSource.adjustReading(this, duration)
             override fun minus(duration: Duration): ValueTimeMark = MonotonicTimeSource.adjustReading(this, -duration)
@@ -87,7 +87,7 @@ public interface TimeSource {
              * Two infinitely distant time marks on the same side of the time scale are considered equal and
              * the duration between them is [Duration.ZERO].
              */
-            public operator fun minus(other: ValueTimeMark): Duration = MonotonicTimeSource.differenceBetween(this, other)
+            operator fun minus(other: ValueTimeMark): Duration = MonotonicTimeSource.differenceBetween(this, other)
 
             /**
              * Compares this time mark with the [other] time mark for order.
@@ -96,14 +96,12 @@ public interface TimeSource {
              * - Returns a negative number if this time mark is *earlier* than the [other] time mark.
              * - Returns a positive number if this time mark is *later* than the [other] time mark.
              */
-            public operator fun compareTo(other: ValueTimeMark): Int =
+            operator fun compareTo(other: ValueTimeMark): Int =
                 (this - other).compareTo(Duration.ZERO)
         }
     }
 
-    public companion object {
-
-    }
+    companion object
 }
 
 /** A platform-specific reading type that is wrapped by [TimeSource.Monotonic.ValueTimeMark] inline class. */
@@ -116,7 +114,7 @@ internal expect class ValueTimeMarkReading
  */
 @SinceKotlin("1.9")
 @WasExperimental(ExperimentalTime::class)
-public interface TimeMark {
+interface TimeMark {
     /**
      * Returns the amount of time passed from this mark measured with the time source from which this mark was taken.
      *
@@ -126,7 +124,7 @@ public interface TimeMark {
      * adding a positive infinite duration to an infinitely distant past time mark or
      * a negative infinite duration to an infinitely distant future time mark.
      */
-    public abstract fun elapsedNow(): Duration
+    fun elapsedNow(): Duration
 
     /**
      * Returns a time mark on the same time source that is ahead of this time mark by the specified [duration].
@@ -139,7 +137,7 @@ public interface TimeMark {
      * @throws IllegalArgumentException an implementation may throw if a positive infinite duration is added to an infinitely distant past time mark or
      * a negative infinite duration is added to an infinitely distant future time mark.
      */
-    public operator fun plus(duration: Duration): TimeMark = AdjustedTimeMark(this, duration)
+    operator fun plus(duration: Duration): TimeMark = AdjustedTimeMark(this, duration)
 
     /**
      * Returns a time mark on the same time source that is behind this time mark by the specified [duration].
@@ -152,7 +150,7 @@ public interface TimeMark {
      * @throws IllegalArgumentException an implementation may throw if a positive infinite duration is subtracted from an infinitely distant future time mark or
      * a negative infinite duration is subtracted from an infinitely distant past time mark.
      */
-    public open operator fun minus(duration: Duration): TimeMark = plus(-duration)
+    operator fun minus(duration: Duration): TimeMark = plus(-duration)
 
 
     /**
@@ -161,7 +159,7 @@ public interface TimeMark {
      * Note that the value returned by this function can change on subsequent invocations.
      * If the time source is monotonic, it can change only from `false` to `true`, namely, when the time mark becomes behind the current point of the time source.
      */
-    public fun hasPassedNow(): Boolean = !elapsedNow().isNegative()
+    fun hasPassedNow(): Boolean = !elapsedNow().isNegative()
 
     /**
      * Returns false if this time mark has not passed according to the time source from which this mark was taken.
@@ -169,7 +167,7 @@ public interface TimeMark {
      * Note that the value returned by this function can change on subsequent invocations.
      * If the time source is monotonic, it can change only from `true` to `false`, namely, when the time mark becomes behind the current point of the time source.
      */
-    public fun hasNotPassedNow(): Boolean = elapsedNow().isNegative()
+    fun hasNotPassedNow(): Boolean = elapsedNow().isNegative()
 }
 
 /**
@@ -177,9 +175,9 @@ public interface TimeMark {
  */
 @SinceKotlin("1.9")
 @WasExperimental(ExperimentalTime::class)
-public interface ComparableTimeMark : TimeMark, Comparable<ComparableTimeMark> {
-    public abstract override operator fun plus(duration: Duration): ComparableTimeMark
-    public open override operator fun minus(duration: Duration): ComparableTimeMark = plus(-duration)
+interface ComparableTimeMark : TimeMark, Comparable<ComparableTimeMark> {
+    override operator fun plus(duration: Duration): ComparableTimeMark
+    override operator fun minus(duration: Duration): ComparableTimeMark = plus(-duration)
 
     /**
      * Returns the duration elapsed between the [other] time mark and `this` time mark.
@@ -196,7 +194,7 @@ public interface ComparableTimeMark : TimeMark, Comparable<ComparableTimeMark> {
      *
      * @throws IllegalArgumentException if time marks were obtained from different time sources.
      */
-    public operator fun minus(other: ComparableTimeMark): Duration
+    operator fun minus(other: ComparableTimeMark): Duration
 
     /**
      * Compares this time mark with the [other] time mark for order.
@@ -209,7 +207,7 @@ public interface ComparableTimeMark : TimeMark, Comparable<ComparableTimeMark> {
      *
      * @throws IllegalArgumentException if time marks were obtained from different time sources.
      */
-    public override operator fun compareTo(other: ComparableTimeMark): Int =
+    override operator fun compareTo(other: ComparableTimeMark): Int =
         (this - other).compareTo(Duration.ZERO)
 
     /**
