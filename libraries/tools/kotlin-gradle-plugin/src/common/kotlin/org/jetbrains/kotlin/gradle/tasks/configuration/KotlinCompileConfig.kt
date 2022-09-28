@@ -8,14 +8,15 @@ package org.jetbrains.kotlin.gradle.tasks.configuration
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.internal.transforms.ClasspathEntrySnapshotTransform
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationProjection
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.plugin.tcsOrNull
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.project.model.LanguageSettings
@@ -60,8 +61,8 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         }
     }
 
-    constructor(compilation: KotlinCompilationData<*>) : super(compilation) {
-        val javaTaskProvider = when (compilation) {
+    constructor(compilationProjection: KotlinCompilationProjection) : super(compilationProjection) {
+        val javaTaskProvider = when (val compilation = compilationProjection.tcsOrNull?.compilation) {
             is KotlinJvmCompilation -> compilation.compileJavaTaskProvider
             is KotlinJvmAndroidCompilation -> compilation.compileJavaTaskProvider
             is KotlinWithJavaCompilation<*, *> -> compilation.compileJavaTaskProvider
@@ -76,11 +77,12 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                     task.associatedJavaCompileTaskName.value(javaTaskProvider.name)
                 }
                 task.ownModuleName.value(
-                    (compilation.compilerOptions.options as KotlinJvmCompilerOptions).moduleName.convention(compilation.ownModuleName)
+                    (compilationProjection.compilerOptions.options as CompilerJvmOptions).moduleName.convention(compilationProjection.ownModuleName)
                 )
             }
         }
     }
+
 
     constructor(project: Project, ext: KotlinTopLevelExtension) : super(
         project, ext, languageSettings = getDefaultLangSetting(project, ext)

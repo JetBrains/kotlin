@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithClosure
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToCompilerOptions
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.report.BuildReportsService
@@ -85,12 +84,12 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
     protected fun getClasspathSnapshotDir(task: TASK): Provider<Directory> =
         getKotlinBuildDir(task).map { it.dir("classpath-snapshot") }
 
-    constructor(compilation: KotlinCompilationData<*>) : this(
-        compilation.project, compilation.project.topLevelExtension, compilation.project.provider { compilation.languageSettings }
+    constructor(compilationProjection: KotlinCompilationProjection) : this(
+        compilationProjection.project, compilationProjection.project.topLevelExtension, compilationProjection.project.provider { compilationProjection.languageSettings }
     ) {
         configureTask { task ->
-            task.friendPaths.from({ compilation.friendPaths })
-            if (compilation is KotlinCompilation<*>) {
+            task.friendPaths.from({ compilationProjection.friendPaths })
+            compilationProjection.tcsOrNull?.compilation?.let { compilation ->
                 task.friendSourceSets
                     .value(providers.provider { compilation.associateWithClosure.map { it.name } })
                     .disallowChanges()
@@ -98,12 +97,12 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                     compilation.project.configurations.getByName(compilation.pluginConfigurationName)
                 )
             }
-            task.moduleName.set(providers.provider { compilation.moduleName })
-            task.ownModuleName.set(project.provider { compilation.ownModuleName })
-            task.sourceSetName.value(providers.provider { compilation.compilationPurpose })
+            task.moduleName.set(providers.provider { compilationProjection.moduleName })
+            task.ownModuleName.set(project.provider { compilationProjection.ownModuleName })
+            task.sourceSetName.value(providers.provider { compilationProjection.compilationName })
             task.multiPlatformEnabled.value(
                 providers.provider {
-                    compilation.project.plugins.any {
+                    compilationProjection.project.plugins.any {
                         it is KotlinPlatformPluginBase ||
                                 it is AbstractKotlinMultiplatformPluginWrapper ||
                                 it is AbstractKotlinPm20PluginWrapper

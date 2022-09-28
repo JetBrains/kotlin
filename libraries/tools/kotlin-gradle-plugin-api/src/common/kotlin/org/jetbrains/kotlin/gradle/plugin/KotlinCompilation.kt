@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Action
 import org.gradle.api.Named
+import org.gradle.api.Project
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.file.FileCollection
@@ -20,6 +21,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
     HasAttributes,
     HasKotlinDependencies {
+
+    val project: Project
+
     val target: KotlinTarget
 
     val compilationName: String
@@ -39,6 +43,10 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
     val compileDependencyConfigurationName: String
 
     var compileDependencyFiles: FileCollection
+
+    val runtimeDependencyConfigurationName: String?
+
+    val runtimeDependencyFiles: FileCollection?
 
     val output: KotlinCompilationOutput
 
@@ -113,15 +121,18 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
         get() = target.disambiguationClassifier + name
 }
 
+// TODO NOW: Revisit/Remove?
 interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptionsDeprecated> : KotlinCompilation<T> {
-    val runtimeDependencyConfigurationName: String
+    override val runtimeDependencyConfigurationName: String
 
-    var runtimeDependencyFiles: FileCollection
+    override var runtimeDependencyFiles: FileCollection
 
     override val relatedConfigurationNames: List<String>
         get() = super.relatedConfigurationNames + runtimeDependencyConfigurationName
 }
 
+@Deprecated("Scheduled for removal with Kotlin 1.9")
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // kept for compatibility
 val <T : KotlinCommonOptionsDeprecated> KotlinCompilation<T>.runtimeDependencyConfigurationName: String?
     get() = (this as? KotlinCompilationToRunnableFiles<T>)?.runtimeDependencyConfigurationName
 

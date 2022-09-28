@@ -9,9 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.CompilerMultiplatformCommonOptions
-import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinCompileCommonConfig
@@ -19,33 +16,36 @@ import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 
 internal class KotlinCommonSourceSetProcessor(
-    compilation: KotlinCompilationData<*>,
+    compilation: KotlinCompilationProjection,
     tasksProvider: KotlinTasksProvider
 ) : KotlinSourceSetProcessor<KotlinCompileCommon>(
     tasksProvider, taskDescription = "Compiles the kotlin sources in $compilation to Metadata.", kotlinCompilation = compilation
 ) {
     override fun doTargetSpecificProcessing() {
-        project.tasks.named(kotlinCompilation.compileAllTaskName).dependsOn(kotlinTask)
+        project.tasks.named(compilationProjection.compileAllTaskName).dependsOn(kotlinTask)
         // can be missing (e.g. in case of tests)
-        if ((kotlinCompilation as? AbstractKotlinCompilation<*>)?.isMainCompilationData() == true) {
-            project.locateTask<Task>(kotlinCompilation.target.artifactsTaskName)?.dependsOn(kotlinTask)
+        if (compilationProjection.isMain) {
+            compilationProjection.tcsOrNull?.compilation?.target?.let { target ->
+                project.locateTask<Task>(target.artifactsTaskName)?.dependsOn(kotlinTask)
+            }
         }
 
-        if (kotlinCompilation is KotlinCompilation<*>) {
-            project.whenEvaluated {
-                val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
-                subpluginEnvironment.addSubpluginOptions(project, kotlinCompilation)
+        project.whenEvaluated {
+            val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
+            /* Not supported in KPM yet */
+            compilationProjection.tcsOrNull?.compilation?.let { compilation ->
+                subpluginEnvironment.addSubpluginOptions(project, compilation)
             }
         }
     }
 
     override fun doRegisterTask(project: Project, taskName: String): TaskProvider<out KotlinCompileCommon> {
-        val configAction = KotlinCompileCommonConfig(kotlinCompilation)
+        val configAction = KotlinCompileCommonConfig(compilationProjection)
         applyStandardTaskConfiguration(configAction)
         return tasksProvider.registerKotlinCommonTask(
             project,
             taskName,
-            kotlinCompilation.compilerOptions.options as CompilerMultiplatformCommonOptions,
+            compilationProjection.compilerOptions.options as CompilerMultiplatformCommonOptions,
             configAction
         )
     }

@@ -38,7 +38,7 @@ internal open class KotlinJvmPlugin(
     }
 
     override fun buildSourceSetProcessor(project: Project, compilation: AbstractKotlinCompilation<*>) =
-        Kotlin2JvmSourceSetProcessor(tasksProvider, compilation)
+        Kotlin2JvmSourceSetProcessor(tasksProvider, KotlinCompilationProjection(compilation))
 
     override fun apply(project: Project) {
         @Suppress("UNCHECKED_CAST")

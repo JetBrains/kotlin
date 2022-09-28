@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.CompilerJsOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
@@ -29,7 +28,7 @@ internal open class Kotlin2JsPlugin(
         project: Project,
         compilation: AbstractKotlinCompilation<*>
     ): KotlinSourceSetProcessor<*> =
-        Kotlin2JsSourceSetProcessor(tasksProvider, compilation)
+        Kotlin2JsSourceSetProcessor(tasksProvider, KotlinCompilationProjection(compilation))
 
     override fun apply(project: Project) {
         @Suppress("UNCHECKED_CAST")

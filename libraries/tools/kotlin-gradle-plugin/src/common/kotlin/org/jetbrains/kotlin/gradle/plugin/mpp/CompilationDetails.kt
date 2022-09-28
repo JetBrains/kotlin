@@ -28,7 +28,7 @@ interface CompilationDetails<T : KotlinCommonOptions> {
 
     fun source(sourceSet: KotlinSourceSet)
 
-    val directlyIncludedKotlinSourceSets: ObservableSet<KotlinSourceSet>
+    val kotlinSourceSets: ObservableSet<KotlinSourceSet>
 
     val allKotlinSourceSets: ObservableSet<KotlinSourceSet>
 

@@ -17,10 +17,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinDependencyConfigurationsHolder
-import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.filterModuleName
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal.KotlinCompilationsModuleGroups
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationModuleManager
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationModuleManager.CompilationModule.Type
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.kotlinCompilationModuleManager
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.GradleKpmDependencyFilesHolder
@@ -80,7 +79,7 @@ internal open class DefaultCompilationDetails<T : KotlinCommonOptions, CO : Comp
         get() = target.disambiguationClassifier
 
     override val kotlinSourceDirectoriesByFragmentName: Map<String, SourceDirectorySet>
-        get() = directlyIncludedKotlinSourceSets.withDependsOnClosure.associate { it.name to it.kotlin }
+        get() = kotlinSourceSets.withDependsOnClosure.associate { it.name to it.kotlin }
 
     override val compileKotlinTaskName: String
         get() = lowerCamelCaseName(
@@ -107,16 +106,22 @@ internal open class DefaultCompilationDetails<T : KotlinCommonOptions, CO : Comp
     override val platformType: KotlinPlatformType
         get() = target.platformType
 
-    override val moduleName: String
-        get() = KotlinCompilationsModuleGroups.getModuleLeaderCompilation(this).takeIf { it != this }?.ownModuleName ?: ownModuleName
-
-    override val ownModuleName: String
-        get() {
+    private val compilationModule = KotlinCompilationModuleManager.CompilationModule(
+        ownModuleName = project.provider {
             val baseName = project.archivesName.orNull
                 ?: project.name
             val suffix = if (isMainCompilationData()) "" else "_$compilationPurpose"
-            return filterModuleName("$baseName$suffix")
-        }
+            filterModuleName("$baseName$suffix")
+        },
+        compilationName = compilationPurpose,
+        type = if (isMainCompilationData()) Type.Main else Type.Auxiliary
+    )
+
+    override val moduleName: String
+        get() = project.kotlinCompilationModuleManager.getModuleLeader(compilationModule).ownModuleName.get()
+
+    override val ownModuleName: String
+        get() = compilationModule.ownModuleName.get()
 
     override val friendPaths: Iterable<FileCollection>
         get() = mutableListOf<FileCollection>().also { allCollections ->
@@ -169,7 +174,7 @@ internal open class DefaultCompilationDetails<T : KotlinCommonOptions, CO : Comp
         require(other.target == target) { "Only associations between compilations of a single target are supported" }
         _associateCompilations += other
         addAssociateCompilationDependencies(other.compilation)
-        KotlinCompilationsModuleGroups.unionModules(this, other.compilationData)
+        project.kotlinCompilationModuleManager.unionModules(this.compilationModule, other.compilation.internal.compilationModule)
         _associateCompilations.add(other)
     }
 

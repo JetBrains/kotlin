@@ -13,7 +13,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
@@ -23,33 +22,34 @@ import org.jetbrains.kotlin.gradle.utils.whenKaptEnabled
 
 internal class Kotlin2JvmSourceSetProcessor(
     tasksProvider: KotlinTasksProvider,
-    kotlinCompilation: KotlinCompilationData<*>
+    kotlinCompilation: KotlinCompilationProjection
 ) : KotlinSourceSetProcessor<KotlinCompile>(
     tasksProvider, "Compiles the $kotlinCompilation.", kotlinCompilation
 ) {
     override fun doRegisterTask(project: Project, taskName: String): TaskProvider<out KotlinCompile> {
-        val configAction = KotlinCompileConfig(kotlinCompilation)
+        val configAction = KotlinCompileConfig(compilationProjection)
         applyStandardTaskConfiguration(configAction)
         return tasksProvider.registerKotlinJVMTask(
             project,
             taskName,
-            kotlinCompilation.compilerOptions.options as CompilerJvmOptions,
+            compilationProjection.compilerOptions.options as CompilerJvmOptions,
             configAction
         )
     }
 
     override fun doTargetSpecificProcessing() {
         project.whenKaptEnabled {
-            Kapt3GradleSubplugin.createAptConfigurationIfNeeded(project, kotlinCompilation.compilationPurpose)
+            Kapt3GradleSubplugin.createAptConfigurationIfNeeded(project, compilationProjection.compilationName)
         }
 
-        ScriptingGradleSubplugin.configureForSourceSet(project, kotlinCompilation.compilationPurpose)
+        ScriptingGradleSubplugin.configureForSourceSet(project, compilationProjection.compilationName)
 
         project.whenEvaluated {
             val subpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
-
-            if (kotlinCompilation is KotlinCompilation<*>) // FIXME support compiler plugins with PM20
-                subpluginEnvironment.addSubpluginOptions(project, kotlinCompilation)
+            /* Not supported in KPM yet */
+            compilationProjection.tcsOrNull?.compilation?.let { compilation ->
+                subpluginEnvironment.addSubpluginOptions(project, compilation)
+            }
 
             javaSourceSet?.let { java ->
                 val javaTask = project.tasks.withType<AbstractCompile>().named(java.compileJavaTaskName)
