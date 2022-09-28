@@ -173,9 +173,15 @@ class AccessorPropertyLValue(
 
     override fun store(irExpression: IrExpression) =
         callReceiver.adjustForCallee(setterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue, contextReceiverValues ->
+            // We translate getX/setX methods coming from Java into Kotlin properties, even if
+            // the setX call has a non-void return type.
+            val returnType = setterDescriptor.returnType?.let {
+                context.typeTranslator.translateType(it)
+            } ?: context.irBuiltIns.unitType
+
             IrCallImpl(
                 startOffset, endOffset,
-                context.irBuiltIns.unitType,
+                returnType,
                 setter!!, typeArgumentsCount,
                 1 + contextReceiverValues.size,
                 origin,
