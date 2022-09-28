@@ -10,7 +10,7 @@ fun Box.test() {
             other.item = null
             take<String>(<!SMARTCAST_IMPOSSIBLE!>item<!>)
             this.item = null
-            take<String>(<!SMARTCAST_IMPOSSIBLE!>item<!>)
+            take<String>(<!ARGUMENT_TYPE_MISMATCH!>item<!>)
         }
     }
 
@@ -18,7 +18,7 @@ fun Box.test() {
     myRun {
         if (item != null) {
             this.item = null
-            take<String>(<!SMARTCAST_IMPOSSIBLE!>item<!>)
+            take<String>(item)
         }
     }
 }

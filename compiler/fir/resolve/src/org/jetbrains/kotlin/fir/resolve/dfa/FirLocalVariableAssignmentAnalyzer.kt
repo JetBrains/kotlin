@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.referredPropertySymbol
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.resolve.dfa.FirLocalVariableAssignmentAnalyzer.Companion.MiniFlow.Companion.join
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -369,23 +370,21 @@ internal class FirLocalVariableAssignmentAnalyzer(
 
             override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: MiniCfgData) {
                 super.visitVariableAssignment(variableAssignment, data)
-                val flow = data.flow ?: return
-                val name = (variableAssignment.lValue as? FirNamedReference)?.name ?: return
-                flow.recordAssignment(name, data)
+                if (variableAssignment.explicitReceiver != null) return
+                data.recordAssignment(variableAssignment.lValue)
             }
 
             override fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: MiniCfgData) {
                 super.visitAssignmentOperatorStatement(assignmentOperatorStatement, data)
-                val flow = data.flow ?: return
                 val lhs = assignmentOperatorStatement.leftArgument as? FirQualifiedAccessExpression ?: return
                 if (lhs.explicitReceiver != null) return
-                val name = (lhs.calleeReference as? FirNamedReference)?.name ?: return
-                flow.recordAssignment(name, data)
+                data.recordAssignment(lhs.calleeReference)
             }
 
-            fun MiniFlow.recordAssignment(name: Name, data: MiniCfgData) {
-                val property = data.resolveLocalVariable(name) ?: return
-                recordAssignment(property, mutableSetOf())
+            fun MiniCfgData.recordAssignment(reference: FirReference) {
+                val name = (reference as? FirNamedReference)?.name ?: return
+                val property = resolveLocalVariable(name) ?: return
+                flow?.recordAssignment(property, mutableSetOf())
             }
 
             private fun MiniFlow.recordAssignment(property: FirProperty, visited: MutableSet<MiniFlow>) {
