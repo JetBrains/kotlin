@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
-import org.jetbrains.kotlin.serialization.deserialization.DeserializedArrayValue
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import java.lang.reflect.Type
 import kotlin.jvm.internal.FunctionReference
@@ -188,7 +187,7 @@ private fun ConstantValue<*>.toRuntimeValue(classLoader: ClassLoader): Any? = wh
 }
 
 private fun ArrayValue.arrayToRuntimeValue(classLoader: ClassLoader): Any? {
-    val type = (this as? DeserializedArrayValue)?.type ?: return null
+    val type = (this as? TypedArrayValue)?.type ?: return null
     val values = value.map { it.toRuntimeValue(classLoader) }
 
     return when (KotlinBuiltIns.getPrimitiveArrayElementType(type)) {

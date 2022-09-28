@@ -83,7 +83,7 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
             Type.CLASS -> KClassValue(nameResolver.getClassId(value.classId), value.arrayDimensionCount)
             Type.ENUM -> EnumValue(nameResolver.getClassId(value.classId), nameResolver.getName(value.enumValueId))
             Type.ANNOTATION -> AnnotationValue(deserializeAnnotation(value.annotation, nameResolver))
-            Type.ARRAY -> DeserializedArrayValue(
+            Type.ARRAY -> ConstantValueFactory.createArrayValue(
                 value.arrayElementList.map { resolveValue(builtIns.anyType, it, nameResolver) },
                 expectedType
             )

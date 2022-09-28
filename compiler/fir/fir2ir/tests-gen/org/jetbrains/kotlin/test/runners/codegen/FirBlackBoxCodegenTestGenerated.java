@@ -41744,6 +41744,18 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 }
 
                 @Test
+                @TestMetadata("kt53279_explicitContainer.kt")
+                public void testKt53279_explicitContainer() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/annotations/repeatable/kt53279_explicitContainer.kt");
+                }
+
+                @Test
+                @TestMetadata("kt53279_implicitContainer.kt")
+                public void testKt53279_implicitContainer() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/annotations/repeatable/kt53279_implicitContainer.kt");
+                }
+
+                @Test
                 @TestMetadata("nonRepeatedAnnotationWithItsContainer.kt")
                 public void testNonRepeatedAnnotationWithItsContainer() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/annotations/repeatable/nonRepeatedAnnotationWithItsContainer.kt");
