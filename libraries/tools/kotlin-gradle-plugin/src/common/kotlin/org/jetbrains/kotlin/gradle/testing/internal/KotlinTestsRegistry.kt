@@ -72,7 +72,7 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
             aggregate.description = description
             aggregate.group = JavaBasePlugin.VERIFICATION_GROUP
 
-            aggregate.destinationDir = project.testReportsDir.resolve(reportName)
+            aggregate.destinationDirectory.set(project.testReportsDir.resolve(reportName))
 
             val isIdeaActive = project.readSystemPropertyAtConfigurationTime("idea.active").isPresent
 
