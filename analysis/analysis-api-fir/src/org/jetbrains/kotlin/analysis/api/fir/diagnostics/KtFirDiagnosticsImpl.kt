@@ -827,6 +827,11 @@ internal class WrongExtensionFunctionTypeWarningImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.WrongExtensionFunctionTypeWarning(), KtAbstractFirDiagnostic<KtAnnotationEntry>
 
+internal class AnnotationInWhereClauseErrorImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.AnnotationInWhereClauseError(), KtAbstractFirDiagnostic<KtAnnotationEntry>
+
 internal class OptInUsageImpl(
     override val optInMarkerFqName: FqName,
     override val message: String,
