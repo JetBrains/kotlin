@@ -424,6 +424,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
         }
 
         @Test
+        @TestMetadata("kt46483.kt")
+        public void testKt46483() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/kt46483.kt");
+        }
+
+        @Test
         @TestMetadata("kt49438.kt")
         public void testKt49438() throws Exception {
             runTest("compiler/testData/diagnostics/tests/kt49438.kt");
