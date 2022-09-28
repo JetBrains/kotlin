@@ -62,8 +62,8 @@ public interface TimeSource {
          */
         @SinceKotlin("1.9")
         @WasExperimental(ExperimentalTime::class)
-        @JvmInline
-        public value class ValueTimeMark internal constructor(internal val reading: ValueTimeMarkReading) : ComparableTimeMark {
+        @Suppress("INLINE_CLASS_DEPRECATED")
+        public inline class ValueTimeMark internal constructor(internal val reading: ValueTimeMarkReading) : ComparableTimeMark {
             override fun elapsedNow(): Duration = MonotonicTimeSource.elapsedFrom(this)
             override fun plus(duration: Duration): ValueTimeMark = MonotonicTimeSource.adjustReading(this, duration)
             override fun minus(duration: Duration): ValueTimeMark = MonotonicTimeSource.adjustReading(this, -duration)
