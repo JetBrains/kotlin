@@ -175,7 +175,6 @@ val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     kotlinOptions {
-        allWarningsAsErrors = true
         freeCompilerArgs += listOf("-Xskip-prerelease-check")
     }
 }

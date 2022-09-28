@@ -50,7 +50,6 @@ tasks {
                 "-opt-in=kotlin.ExperimentalUnsignedTypes",
                 "-Xskip-metadata-version-check"
             )
-            allWarningsAsErrors = true
         }
     }
 
