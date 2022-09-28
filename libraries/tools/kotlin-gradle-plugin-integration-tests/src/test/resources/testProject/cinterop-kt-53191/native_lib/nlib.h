@@ -1,0 +1,1 @@
+void sample(int i);
