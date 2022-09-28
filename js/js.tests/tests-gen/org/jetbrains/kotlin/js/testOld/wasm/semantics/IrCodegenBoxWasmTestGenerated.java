@@ -123,6 +123,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 runTest("compiler/testData/codegen/box/annotations/instances/annotationToString.kt");
             }
 
+            @TestMetadata("annotationsUnsignedTypes.kt")
+            public void testAnnotationsUnsignedTypes() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/annotationsUnsignedTypes.kt");
+            }
+
             @TestMetadata("inInlineFunction.kt")
             public void testInInlineFunction() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/inInlineFunction.kt");

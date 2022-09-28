@@ -395,6 +395,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/annotations/instances/annotationToString.kt");
             }
 
+            @TestMetadata("annotationsUnsignedTypes.kt")
+            public void ignoreAnnotationsUnsignedTypes() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/annotationsUnsignedTypes.kt");
+            }
+
             @TestMetadata("inInlineFunction.kt")
             public void ignoreInInlineFunction() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/inInlineFunction.kt");
