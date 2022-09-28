@@ -121,6 +121,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("annotationsUnsignedTypes.kt")
+            public void testAnnotationsUnsignedTypes() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/annotationsUnsignedTypes.kt");
+            }
+
+            @Test
             @TestMetadata("inInlineFunction.kt")
             public void testInInlineFunction() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/inInlineFunction.kt");

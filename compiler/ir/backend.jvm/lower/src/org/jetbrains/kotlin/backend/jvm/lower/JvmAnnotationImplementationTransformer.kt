@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
 import org.jetbrains.kotlin.backend.jvm.ir.javaClassReference
+import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
@@ -134,8 +135,22 @@ class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, 
         return block
     }
 
+    // There's no specialized Array.equals for unsigned arrays (as this is a Java function), so we force compiler not to box
+    // result of property getter call
+    override fun IrExpression.transformArrayEqualsArgument(type: IrType, irBuilder: IrBlockBodyBuilder): IrExpression =
+        if (!type.isUnsignedArray()) this
+        else irBuilder.irCall(jvmContext.ir.symbols.unsafeCoerceIntrinsic).apply {
+            putTypeArgument(0, type)
+            putTypeArgument(1, type.unboxInlineClass())
+            putValueArgument(0, this@transformArrayEqualsArgument)
+        }
+
     override fun getArrayContentEqualsSymbol(type: IrType): IrFunctionSymbol {
-        val targetType = if (type.isPrimitiveArray()) type else jvmContext.ir.symbols.arrayOfAnyNType
+        val targetType = when {
+            type.isPrimitiveArray() -> type
+            type.isUnsignedArray() -> type.unboxInlineClass()
+            else -> jvmContext.ir.symbols.arrayOfAnyNType
+        }
         val requiredSymbol = jvmContext.ir.symbols.arraysClass.owner.findDeclaration<IrFunction> {
             it.name.asString() == "equals" && it.valueParameters.size == 2 && it.valueParameters.first().type == targetType
         }
