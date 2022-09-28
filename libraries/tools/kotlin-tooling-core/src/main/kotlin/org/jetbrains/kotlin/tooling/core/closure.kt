@@ -115,7 +115,7 @@ inline fun <reified T : Any> T.linearClosure(next: (T) -> T?): Set<T> {
     while (enqueued != null) {
         if (enqueued != this && results.add(enqueued)) {
             enqueued = next(enqueued)
-        }
+        } else break
     }
 
     return results
@@ -134,7 +134,7 @@ inline fun <reified T : Any> T.withLinearClosure(next: (T) -> T?): Set<T> {
     while (enqueued != null) {
         if (results.add(enqueued)) {
             enqueued = next(enqueued)
-        }
+        } else break
     }
 
     return results
