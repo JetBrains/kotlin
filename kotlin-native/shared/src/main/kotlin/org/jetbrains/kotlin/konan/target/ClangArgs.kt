@@ -56,6 +56,7 @@ sealed class ClangArgs(
                     "REPORT_BACKTRACE_TO_IOS_CRASH_LOG".takeIf { target.supportsIosCrashLog() },
                     "NEED_SMALL_BINARY".takeIf { target.needSmallBinary() },
                     "TARGET_HAS_ADDRESS_DEPENDENCY".takeIf { target.hasAddressDependencyInMemoryModel() },
+                    "SUPPORTS_GRAND_CENTRAL_DISPATCH".takeIf { target.supportsGrandCentralDispatch },
             ).map { "KONAN_$it=1" }
             val otherOptions = listOfNotNull(
                     "USE_ELF_SYMBOLS=1".takeIf { target.binaryFormat() == BinaryFormat.ELF },

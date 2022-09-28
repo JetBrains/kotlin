@@ -138,5 +138,11 @@ public class FirPluginDiagnosticTestGenerated extends AbstractFirPluginDiagnosti
         public void testSimple() throws Exception {
             runTest("plugins/fir-plugin-prototype/testData/diagnostics/supertypes/simple.kt");
         }
+
+        @Test
+        @TestMetadata("supertypeWithArgument.kt")
+        public void testSupertypeWithArgument() throws Exception {
+            runTest("plugins/fir-plugin-prototype/testData/diagnostics/supertypes/supertypeWithArgument.kt");
+        }
     }
 }

@@ -29,7 +29,7 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
     fun run() {
         val fileNames = configuration.get(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE)?.let { libPath ->
             if (configuration.get(KonanConfigKeys.MAKE_PER_FILE_CACHE) != true)
-                null
+                configuration.get(KonanConfigKeys.FILES_TO_CACHE)
             else {
                 val lib = createKonanLibrary(File(libPath), "default", null, true)
                 (0 until lib.fileCount()).map { fileIndex ->
@@ -38,32 +38,17 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
                 }
             }
         }
-
-        if (fileNames == null) {
-            KonanConfig(project, configuration).runTopLevelPhases()
-        } else {
-            fileNames.forEach { buildFileCache(it, CompilerOutputKind.PRELIMINARY_CACHE) }
-            fileNames.forEach { buildFileCache(it, configuration.get(KonanConfigKeys.PRODUCE)!!) }
+        if (fileNames != null) {
+            configuration.put(KonanConfigKeys.MAKE_PER_FILE_CACHE, true)
+            configuration.put(KonanConfigKeys.FILES_TO_CACHE, fileNames)
         }
-    }
 
-    private fun buildFileCache(fileName: String, cacheKind: CompilerOutputKind) {
-        val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)!!
-        val subConfiguration = configuration.copy()
-        subConfiguration.put(KonanConfigKeys.PRODUCE, cacheKind)
-        subConfiguration.put(KonanConfigKeys.FILE_TO_CACHE, fileName)
-        subConfiguration.put(KonanConfigKeys.MAKE_PER_FILE_CACHE, false)
-        subConfiguration.put(CLIConfigurationKeys.PHASE_CONFIG, phaseConfig.toBuilder().build())
-        KonanConfig(project, subConfiguration).runTopLevelPhases()
+        KonanConfig(project, configuration).runTopLevelPhases()
     }
 
     private fun KonanConfig.runTopLevelPhases() {
-        try {
-            ensureModuleName(this)
-            runTopLevelPhases(this, environment)
-        } finally {
-            dispose()
-        }
+        ensureModuleName(this)
+        runTopLevelPhases(this, environment)
     }
 
     private fun ensureModuleName(config: KonanConfig) {
@@ -101,7 +86,7 @@ private fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreE
             try {
                 toplevelPhase.cast<CompilerPhase<Context, Unit, Unit>>().invokeToplevel(context.phaseConfig, context, Unit)
             } finally {
-                context.disposeLlvm()
+                context.disposeGenerationState()
             }
         }
     }

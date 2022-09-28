@@ -1,4 +1,4 @@
-depends = CoreFoundation darwin libkern posix
+depends = CoreFoundation CoreFoundationBase darwin libkern posix
 language = Objective-C
 package = platform.IOKit
 modules = IOKit

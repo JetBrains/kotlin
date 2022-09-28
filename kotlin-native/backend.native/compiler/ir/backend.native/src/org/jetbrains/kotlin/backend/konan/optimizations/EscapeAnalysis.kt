@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import kotlin.math.min
 
 private val DataFlowIR.Node.isAlloc
     get() = this is DataFlowIR.Node.NewObject || this is DataFlowIR.Node.AllocInstance
@@ -642,7 +641,7 @@ internal object EscapeAnalysis {
                         ?: (node as? DataFlowIR.Node.Variable)
                                 ?.values?.singleOrNull()?.let { arrayLengthOf(it.node) }
 
-        private val pointerSize = context.llvm.runtime.pointerSize
+        private val pointerSize = context.generationState.runtime.pointerSize
 
         private fun arrayItemSizeOf(irClass: IrClass): Int? = when (irClass.symbol) {
             symbols.array -> pointerSize

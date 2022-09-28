@@ -21,6 +21,7 @@ private fun LLVMValueRef.isLLVMBuiltin(): Boolean {
 
 
 private class CallsChecker(val context: Context, goodFunctions: List<String>) {
+    private val llvm = context.generationState.llvm
     private val goodFunctionsExact = goodFunctions.filterNot { it.endsWith("*") }.toSet()
     private val goodFunctionsByPrefix = goodFunctions.filter { it.endsWith("*") }.map { it.substring(0, it.length - 1) }.sorted()
 
@@ -33,23 +34,23 @@ private class CallsChecker(val context: Context, goodFunctions: List<String>) {
     }
 
     private fun moduleFunction(name: String) =
-            LLVMGetNamedFunction(context.llvmModule, name) ?: throw IllegalStateException("$name function is not available")
+            LLVMGetNamedFunction(llvm.module, name) ?: throw IllegalStateException("$name function is not available")
 
-    val getMethodImpl = context.llvm.externalFunction(LlvmFunctionProto(
+    val getMethodImpl = llvm.externalFunction(LlvmFunctionProto(
             "class_getMethodImplementation",
             LlvmRetType(pointerType(functionType(voidType, false))),
             listOf(LlvmParamType(int8TypePtr), LlvmParamType(int8TypePtr)),
             origin = context.stdlibModule.llvmSymbolOrigin)
     )
 
-    val getClass = context.llvm.externalFunction(LlvmFunctionProto(
+    val getClass = llvm.externalFunction(LlvmFunctionProto(
             "object_getClass",
             LlvmRetType(int8TypePtr),
             listOf(LlvmParamType(int8TypePtr)),
             origin = context.stdlibModule.llvmSymbolOrigin)
     )
 
-    val getSuperClass = context.llvm.externalFunction(LlvmFunctionProto(
+    val getSuperClass = llvm.externalFunction(LlvmFunctionProto(
             "class_getSuperclass",
             LlvmRetType(int8TypePtr),
             listOf(LlvmParamType(int8TypePtr)),
@@ -140,8 +141,8 @@ private class CallsChecker(val context: Context, goodFunctions: List<String>) {
                     }
                 }
             }
-            val callSiteDescriptionLlvm = context.llvm.staticData.cStringLiteral(callSiteDescription).llvm
-            val calledNameLlvm = if (calledName == null) LLVMConstNull(int8TypePtr) else context.llvm.staticData.cStringLiteral(calledName).llvm
+            val callSiteDescriptionLlvm = llvm.staticData.cStringLiteral(callSiteDescription).llvm
+            val calledNameLlvm = if (calledName == null) LLVMConstNull(int8TypePtr) else llvm.staticData.cStringLiteral(calledName).llvm
             LLVMBuildCall(builder, checkerFunction, listOf(callSiteDescriptionLlvm, calledNameLlvm, calledPtrLlvm).toCValues(), 3, "")
         }
         LLVMDisposeBuilder(builder)
@@ -164,10 +165,11 @@ private const val functionListGlobal = "Kotlin_callsCheckerKnownFunctions"
 private const val functionListSizeGlobal = "Kotlin_callsCheckerKnownFunctionsCount"
 
 internal fun checkLlvmModuleExternalCalls(context: Context) {
-    val staticData = context.llvm.staticData
+    val llvm = context.generationState.llvm
+    val staticData = llvm.staticData
 
 
-    val ignoredFunctions = (context.llvm.runtimeAnnotationMap["no_external_calls_check"] ?: emptyList())
+    val ignoredFunctions = (llvm.runtimeAnnotationMap["no_external_calls_check"] ?: emptyList())
 
     val goodFunctions = staticData.getGlobal("Kotlin_callsCheckerGoodFunctionNames")?.getInitializer()?.run {
         getOperands(this).map {
@@ -176,7 +178,7 @@ internal fun checkLlvmModuleExternalCalls(context: Context) {
     } ?: emptyList()
 
     val checker = CallsChecker(context, goodFunctions)
-    getFunctions(context.llvmModule!!)
+    getFunctions(llvm.module)
             .filter { !it.isExternalFunction() && it !in ignoredFunctions }
             .forEach(checker::processFunction)
     // otherwise optimiser can inline it
@@ -187,9 +189,10 @@ internal fun checkLlvmModuleExternalCalls(context: Context) {
 
 // this should be a separate pass, to handle DCE correctly
 internal fun addFunctionsListSymbolForChecker(context: Context) {
-    val staticData = context.llvm.staticData
+    val llvm = context.generationState.llvm
+    val staticData = llvm.staticData
 
-    val functions = getFunctions(context.llvmModule!!)
+    val functions = getFunctions(llvm.module)
             .filter { !it.isExternalFunction() }
             .map { constPointer(it).bitcast(int8TypePtr) }
             .toList()

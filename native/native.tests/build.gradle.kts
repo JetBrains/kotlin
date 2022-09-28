@@ -171,6 +171,7 @@ val codegenBoxTest = nativeTest("codegenBoxTest", "codegen")
 val stdlibTest = nativeTest("stdlibTest", "stdlib")
 val kotlinTestLibraryTest = nativeTest("kotlinTestLibraryTest", "kotlin-test")
 val klibAbiTest = nativeTest("klibAbiTest", "klib-abi")
+val klibBinaryCompatibilityTest = nativeTest("klibBinaryCompatibilityTest", "klib-binary-compatibility")
 val interopIndexerTest = nativeTest("interopIndexerTest", "interop-indexer")
 
 // "test" task is created by convention. We can't just remove it. Let's enable it in developer's environment, so it can be used

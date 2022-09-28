@@ -219,7 +219,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
         description = "Path to file to cache",
         delimiter = ""
     )
-    var fileToCache: String? = null
+    var filesToCache: Array<String>? = null
 
     @Argument(value = "-Xmake-per-file-cache", description = "Force compiler to produce per-file cache")
     var makePerFileCache: Boolean = false

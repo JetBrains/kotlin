@@ -32,9 +32,9 @@ private fun process(function: LLVMValueRef, currentThreadTLV: LLVMValueRef) {
 }
 
 internal fun removeMultipleThreadDataLoads(context: Context) {
-    val currentThreadTLV = context.llvm.runtimeAnnotationMap["current_thread_tlv"]?.singleOrNull() ?: return
+    val currentThreadTLV = context.generationState.llvm.runtimeAnnotationMap["current_thread_tlv"]?.singleOrNull() ?: return
 
-    getFunctions(context.llvmModule!!)
+    getFunctions(context.generationState.llvm.module)
             .filter { it.name?.startsWith("kfun:") == true }
             .filterNot { LLVMIsDeclaration(it) == 1 }
             .forEach { process(it, currentThreadTLV) }

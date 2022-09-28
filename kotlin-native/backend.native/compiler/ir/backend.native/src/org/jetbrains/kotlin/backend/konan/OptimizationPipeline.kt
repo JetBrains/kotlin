@@ -89,7 +89,7 @@ private fun tryGetInlineThreshold(context: Context): Int? {
 internal fun createLTOPipelineConfigForRuntime(context: Context): LlvmPipelineConfig {
     val configurables: Configurables = context.config.platform.configurables
     return LlvmPipelineConfig(
-            context.llvm.targetTriple,
+            context.generationState.llvm.targetTriple,
             getCpuModel(context),
             getCpuFeatures(context),
             LlvmOptimizationLevel.AGGRESSIVE,
@@ -160,7 +160,7 @@ internal fun createLTOFinalPipelineConfig(context: Context): LlvmPipelineConfig 
     }
 
     return LlvmPipelineConfig(
-            context.llvm.targetTriple,
+            context.generationState.llvm.targetTriple,
             cpuModel,
             cpuFeatures,
             optimizationLevel,

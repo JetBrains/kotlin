@@ -10,11 +10,7 @@ buildscript {
     kotlinBootstrapFrom(BootstrapOption.SpaceBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
 
     repositories {
-        if (cacheRedirectorEnabled) {
-            maven("https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-        } else {
-            maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-        }
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
 
         project.bootstrapKotlinRepo?.let {
             maven(url = it)
@@ -238,10 +234,6 @@ tasks.named("compileGroovy", GroovyCompile::class.java) {
 
 allprojects {
     tasks.register("checkBuild")
-
-    afterEvaluate {
-        apply(from = "$rootDir/../gradle/cacheRedirector.gradle.kts")
-    }
 }
 
 gradlePlugin {

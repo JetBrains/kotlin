@@ -10,14 +10,8 @@ buildscript {
     repositories {
         bootstrapKotlinRepo?.let(::maven)
 
-        if (cacheRedirectorEnabled) {
-            maven("https://cache-redirector.jetbrains.com/plugins.gradle.org/m2")
-            maven("https://cache-redirector.jetbrains.com/repo.maven.apache.org/maven2")
-
-        } else {
-            maven("https://plugins.gradle.org/m2")
-            mavenCentral()
-        }
+        mavenCentral()
+        gradlePluginPortal()
     }
 
     // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
@@ -127,7 +121,7 @@ rootProject.apply {
 IdeVersionConfigurator.setCurrentIde(project)
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.8.0-dev-3049"
+    extra["versions.kotlin-native"] = "1.8.20-dev-247"
 }
 
 val irCompilerModules = arrayOf(
@@ -371,9 +365,11 @@ val projectsWithEnabledContextReceivers by extra {
     listOf(
         ":core:descriptors.jvm",
         ":compiler:frontend.common",
+        ":compiler:fir:resolve",
         ":compiler:fir:fir2ir",
         ":kotlin-lombok-compiler-plugin.k1",
         ":kotlinx-serialization-compiler-plugin.k2",
+        ":plugins:fir-plugin-prototype"
     )
 }
 

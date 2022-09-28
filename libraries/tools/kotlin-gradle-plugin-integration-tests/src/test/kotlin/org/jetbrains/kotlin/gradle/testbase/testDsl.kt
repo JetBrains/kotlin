@@ -499,15 +499,14 @@ internal fun Path.enableAndroidSdk() {
     applyAndroidTestFixes()
 }
 
-@OptIn(ExperimentalPathApi::class)
 internal fun Path.enableCacheRedirector() {
     // Path relative to the current gradle module project dir
-    val redirectorScript = Paths.get("../../../gradle/cacheRedirector.gradle.kts")
+    val redirectorScript = Paths.get("../../../repo/scripts/cache-redirector.settings.gradle.kts")
     assert(redirectorScript.exists()) {
-        "$redirectorScript does not exist! Please provide correct path to 'cacheRedirector.gradle.kts' file."
+        "$redirectorScript does not exist! Please provide correct path to 'cache-redirector.settings.gradle.kts' file."
     }
     val gradleDir = resolve("gradle").also { it.createDirectories() }
-    redirectorScript.copyTo(gradleDir.resolve("cacheRedirector.gradle.kts"))
+    redirectorScript.copyTo(gradleDir.resolve("cache-redirector.settings.gradle.kts"))
 
     val projectCacheRedirectorStatus = Paths
         .get("../../../gradle.properties")
@@ -519,45 +518,34 @@ internal fun Path.enableCacheRedirector() {
         .also { if (!it.exists()) it.createFile() }
         .appendText(
             """
-
-            $projectCacheRedirectorStatus
-
-            """.trimIndent()
+            |
+            |$projectCacheRedirectorStatus
+            |
+            """.trimMargin()
         )
 
-    val projectDir = toFile()
-    projectDir.walk().forEach {
-        when (it.name) {
-            "build.gradle" -> {
-                it.appendText(
-                    """
-
-                        def cacheRedirectorFile = "${'$'}rootDir/gradle/cacheRedirector.gradle.kts"
-                        if (new File(cacheRedirectorFile).exists()) {
-                            apply(from: cacheRedirectorFile)
-                        }
-
-                    """.trimIndent()
-                )
-            }
-
-            "build.gradle.kts" -> {
-                it.appendText(
-                    """
-
-                        val cacheRedirectorFile = "${'$'}rootDir/gradle/cacheRedirector.gradle.kts"
-                        if (File(cacheRedirectorFile).exists()) {
-                            apply(from = cacheRedirectorFile)
-                        }
-
-                    """.trimIndent()
-                )
-            }
+    val settingsGradle = resolve("settings.gradle")
+    val settingsGradleKts = resolve("settings.gradle.kts")
+    when {
+        Files.exists(settingsGradle) -> settingsGradle.modify {
+            """
+            |${it.substringBefore("pluginManagement {")}
+            |pluginManagement {
+            |    apply from: 'gradle/cache-redirector.settings.gradle.kts'
+            |${it.substringAfter("pluginManagement {")}
+            """.trimMargin()
+        }
+        Files.exists(settingsGradleKts) -> settingsGradleKts.modify {
+            """
+            |${it.substringBefore("pluginManagement {")}
+            |pluginManagement {
+            |    apply(from = "gradle/cache-redirector.settings.gradle.kts")
+            |${it.substringAfter("pluginManagement {")}
+            """.trimMargin()
         }
     }
 }
 
-@OptIn(ExperimentalPathApi::class)
 private fun Path.addHeapDumpOptions() {
     val propertiesFile = resolve("gradle.properties")
     if (!propertiesFile.exists()) propertiesFile.createFile()

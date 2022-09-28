@@ -30,7 +30,7 @@ internal class CoverageManager(val context: Context) {
     private val llvmProfileFilenameGlobal = "__llvm_profile_filename"
 
     private val defaultOutputFilePath: String by lazy {
-        "${context.config.outputFile}.profraw"
+        "${context.generationState.outputFile}.profraw"
     }
 
     private val outputFileName: String =
@@ -124,8 +124,8 @@ internal class CoverageManager(val context: Context) {
 internal fun runCoveragePass(context: Context) {
     if (!context.coverage.enabled) return
     val passManager = LLVMCreatePassManager()!!
-    LLVMKotlinAddTargetLibraryInfoWrapperPass(passManager, context.llvm.targetTriple)
+    LLVMKotlinAddTargetLibraryInfoWrapperPass(passManager, context.generationState.llvm.targetTriple)
     context.coverage.addLateLlvmPasses(passManager)
-    LLVMRunPassManager(passManager, context.llvmModule)
+    LLVMRunPassManager(passManager, context.generationState.llvm.module)
     LLVMDisposePassManager(passManager)
 }

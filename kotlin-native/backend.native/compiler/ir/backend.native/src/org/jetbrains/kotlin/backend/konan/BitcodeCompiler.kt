@@ -31,7 +31,7 @@ internal class BitcodeCompiler(val context: Context) {
                     .execute()
 
     private fun temporary(name: String, suffix: String): String =
-            context.config.tempFiles.create(name, suffix).absolutePath
+            context.generationState.tempFiles.create(name, suffix).absolutePath
 
     private fun targetTool(tool: String, vararg arg: String) {
         val absoluteToolName = if (platform.configurables is AppleConfigurables) {

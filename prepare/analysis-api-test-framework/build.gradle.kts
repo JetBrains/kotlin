@@ -8,8 +8,7 @@ val testModules = listOf(
     ":analysis:analysis-test-framework",
     ":analysis:analysis-api-impl-barebone",
     ":analysis:analysis-api-impl-base",
-    ":analysis:analysis-api-standalone",
-//    ":plugins:fir-plugin-prototype",
+    ":analysis:analysis-api-standalone"
 )
 
 dependencies {
@@ -25,3 +24,4 @@ sourcesJar {
         testModules.map { project(it).testSourceSet.allSource }
     }
 }
+javadocJar()

@@ -77,7 +77,7 @@ internal fun Context.psiToIr(
     )
     val irBuiltInsOverDescriptors = generatorContext.irBuiltIns as IrBuiltInsOverDescriptors
     val functionIrClassFactory: KonanIrAbstractDescriptorBasedFunctionFactory =
-            if (shouldDefineFunctionClasses || (!config.lazyIrForCaches && !config.producePerFileCache))
+            if (shouldDefineFunctionClasses || !config.lazyIrForCaches)
                 BuiltInFictitiousFunctionIrClassFactory(symbolTable, irBuiltInsOverDescriptors, reflectionTypes)
             else
                 LazyIrFunctionFactory(symbolTable, stubGenerator, irBuiltInsOverDescriptors, reflectionTypes)

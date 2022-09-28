@@ -29,6 +29,7 @@ RUNTIME_WEAK int32_t Kotlin_printToAndroidLogcat = 1;
 // Keep it 0 even when the compiler defaults to 1: if the overriding mechanism breaks, keeping it disabled is safer.
 RUNTIME_WEAK int32_t Kotlin_appStateTracking = 0;
 RUNTIME_WEAK int32_t Kotlin_mimallocUseDefaultOptions = 1;
+RUNTIME_WEAK int32_t Kotlin_mimallocUseCompaction = 0;
 
 ALWAYS_INLINE compiler::DestroyRuntimeMode compiler::destroyRuntimeMode() noexcept {
     return static_cast<compiler::DestroyRuntimeMode>(Kotlin_destroyRuntimeMode);
@@ -67,4 +68,8 @@ ALWAYS_INLINE int compiler::getSourceInfo(void* addr, SourceInfo *result, int re
 
 ALWAYS_INLINE bool compiler::mimallocUseDefaultOptions() noexcept {
     return Kotlin_mimallocUseDefaultOptions != 0;
+}
+
+ALWAYS_INLINE bool compiler::mimallocUseCompaction() noexcept {
+    return Kotlin_mimallocUseCompaction != 0;
 }

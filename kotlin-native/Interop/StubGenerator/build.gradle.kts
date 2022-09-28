@@ -46,9 +46,9 @@ dependencies {
 tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
-            freeCompilerArgs = listOf(
-                    "-opt-in=kotlin.ExperimentalUnsignedTypes",
-                    "-Xskip-metadata-version-check"
+            freeCompilerArgs += listOf(
+                "-opt-in=kotlin.ExperimentalUnsignedTypes",
+                "-Xskip-metadata-version-check"
             )
             allWarningsAsErrors = true
         }

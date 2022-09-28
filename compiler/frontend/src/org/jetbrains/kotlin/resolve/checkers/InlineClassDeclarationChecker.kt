@@ -103,10 +103,20 @@ object InlineClassDeclarationChecker : DeclarationChecker {
 
             val baseParameterTypeReference = baseParameter.typeReference
             if (baseParameterType != null && baseParameterTypeReference != null) {
-                if (baseParameterType.isInapplicableParameterType() &&
-                    !(context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
-                        (baseParameterType.isTypeParameter() || baseParameterType.isGenericArrayOfTypeParameter()))
+                if (!context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
+                    (baseParameterType.isTypeParameter() || baseParameterType.isGenericArrayOfTypeParameter())
                 ) {
+                    trace.report(
+                        Errors.UNSUPPORTED_FEATURE.on(
+                            baseParameterTypeReference,
+                            LanguageFeature.GenericInlineClassParameter to context.languageVersionSettings
+                        )
+                    )
+                    baseParametersOk = false
+                    continue
+                }
+
+                if (baseParameterType.isInapplicableParameterType()) {
                     trace.report(Errors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE.on(baseParameterTypeReference, baseParameterType))
                     baseParametersOk = false
                     continue
@@ -154,7 +164,7 @@ object InlineClassDeclarationChecker : DeclarationChecker {
     }
 
     private fun KotlinType.isInapplicableParameterType() =
-        isUnit() || isNothing() || isTypeParameter() || isGenericArrayOfTypeParameter()
+        isUnit() || isNothing()
 
     private fun KotlinType.isGenericArrayOfTypeParameter(): Boolean {
         if (!KotlinBuiltIns.isArray(this)) return false

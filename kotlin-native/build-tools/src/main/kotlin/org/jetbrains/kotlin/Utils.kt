@@ -85,17 +85,8 @@ val Project.testOutputFramework
 val Project.testOutputExternal
     get() = (findProperty("testOutputExternal") as File).toString()
 
-val Project.cacheRedirectorEnabled
-    get() = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false
-
 val Project.compileOnlyTests: Boolean
     get() = hasProperty("test_compile_only")
-
-fun Project.redirectIfEnabled(url: String): String = if (cacheRedirectorEnabled) {
-    val base = URL(url)
-    "https://cache-redirector.jetbrains.com/${base.host}/${base.path}"
-} else
-    url
 
 val validPropertiesNames = listOf(
     "konan.home",

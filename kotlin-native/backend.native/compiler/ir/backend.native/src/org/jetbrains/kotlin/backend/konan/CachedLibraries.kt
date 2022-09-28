@@ -54,8 +54,8 @@ class CachedLibraries(
             val result = mutableListOf<SerializedInlineFunctionReference>()
             when (granularity) {
                 Granularity.MODULE -> {
-                    val directory = File(path).absoluteFile.parent
-                    val data = File(directory, INLINE_FUNCTION_BODIES_FILE_NAME).readBytes()
+                    val directory = File(path).absoluteFile.parentFile.parentFile
+                    val data = directory.child(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).child(INLINE_FUNCTION_BODIES_FILE_NAME).readBytes()
                     InlineFunctionBodyReferenceSerializer.deserializeTo(data, result)
                 }
                 Granularity.FILE -> {
@@ -72,8 +72,8 @@ class CachedLibraries(
             val result = mutableListOf<SerializedClassFields>()
             when (granularity) {
                 Granularity.MODULE -> {
-                    val directory = File(path).absoluteFile.parent
-                    val data = File(directory, CLASS_FIELDS_FILE_NAME).readBytes()
+                    val directory = File(path).absoluteFile.parentFile.parentFile
+                    val data = directory.child(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).child(CLASS_FIELDS_FILE_NAME).readBytes()
                     ClassFieldsSerializer.deserializeTo(data, result)
                 }
                 Granularity.FILE -> {
@@ -95,16 +95,20 @@ class CachedLibraries(
             cacheDir.listFilesOrEmpty.map { it.absolutePath }.toSet()
         }
         if (cacheDirContents.isEmpty()) return null
+        val cacheBinaryPartDir = cacheDir.child(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME)
+        val cacheBinaryPartDirContents = cacheDirsContents.getOrPut(cacheBinaryPartDir.absolutePath) {
+            cacheBinaryPartDir.listFilesOrEmpty.map { it.absolutePath }.toSet()
+        }
         val baseName = getCachedLibraryName(library)
-        val dynamicFile = cacheDir.child(getArtifactName(baseName, CompilerOutputKind.DYNAMIC_CACHE))
-        val staticFile = cacheDir.child(getArtifactName(baseName, CompilerOutputKind.STATIC_CACHE))
+        val dynamicFile = cacheBinaryPartDir.child(getArtifactName(baseName, CompilerOutputKind.DYNAMIC_CACHE))
+        val staticFile = cacheBinaryPartDir.child(getArtifactName(baseName, CompilerOutputKind.STATIC_CACHE))
 
-        if (dynamicFile.absolutePath in cacheDirContents && staticFile.absolutePath in cacheDirContents)
+        if (dynamicFile.absolutePath in cacheBinaryPartDirContents && staticFile.absolutePath in cacheBinaryPartDirContents)
             error("Both dynamic and static caches files cannot be in the same directory." +
                     " Library: ${library.libraryName}, path to cache: ${cacheDir.absolutePath}")
         return when {
-            dynamicFile.absolutePath in cacheDirContents -> Cache(Kind.DYNAMIC, Granularity.MODULE, dynamicFile.absolutePath)
-            staticFile.absolutePath in cacheDirContents -> Cache(Kind.STATIC, Granularity.MODULE, staticFile.absolutePath)
+            dynamicFile.absolutePath in cacheBinaryPartDirContents -> Cache(Kind.DYNAMIC, Granularity.MODULE, dynamicFile.absolutePath)
+            staticFile.absolutePath in cacheBinaryPartDirContents -> Cache(Kind.STATIC, Granularity.MODULE, staticFile.absolutePath)
             else -> Cache(Kind.STATIC, Granularity.FILE, cacheDir.absolutePath)
         }
     }

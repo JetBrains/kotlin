@@ -81,9 +81,9 @@ public class JsKlibBinaryCompatibilityTestGenerated extends AbstractJsKlibBinary
         runTest("compiler/testData/binaryCompatibility/klibEvolution/addParameterDefaulValue.kt");
     }
 
-    @TestMetadata("addProeprtyAccessor.kt")
-    public void testAddProeprtyAccessor() throws Exception {
-        runTest("compiler/testData/binaryCompatibility/klibEvolution/addProeprtyAccessor.kt");
+    @TestMetadata("addPropertyAccessor.kt")
+    public void testAddPropertyAccessor() throws Exception {
+        runTest("compiler/testData/binaryCompatibility/klibEvolution/addPropertyAccessor.kt");
     }
 
     @TestMetadata("addingSealedClassMember.kt")

@@ -7,17 +7,14 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.toKString
 import llvm.*
-import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
-import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface.functionName
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -143,7 +140,7 @@ internal interface ContextUtils : RuntimeAware {
     val context: Context
 
     override val runtime: Runtime
-        get() = context.llvm.runtime
+        get() = context.generationState.llvm.runtime
 
     val argumentAbiInfo: TargetAbiInfo
         get() = context.targetAbiInfo
@@ -156,8 +153,11 @@ internal interface ContextUtils : RuntimeAware {
     val llvmTargetData: LLVMTargetDataRef
         get() = runtime.targetData
 
+    val llvm: Llvm
+        get() = context.generationState.llvm
+
     val staticData: KotlinStaticData
-        get() = context.llvm.staticData
+        get() = context.generationState.llvm.staticData
 
     /**
      * TODO: maybe it'd be better to replace with [IrDeclaration::isEffectivelyExternal()],
@@ -190,10 +190,10 @@ internal interface ContextUtils : RuntimeAware {
                         this.computePrivateSymbolName(containerName)
                     }
                     val proto = LlvmFunctionProto(this, symbolName, this@ContextUtils)
-                    context.llvm.externalFunction(proto)
+                    llvm.externalFunction(proto)
                 }
             } else {
-                context.llvmDeclarations.forFunctionOrNull(this)
+                context.generationState.llvmDeclarations.forFunctionOrNull(this)
             }
         }
 
@@ -218,7 +218,7 @@ internal interface ContextUtils : RuntimeAware {
                 constPointer(importGlobal(typeInfoSymbolName, runtime.typeInfoType,
                         origin = this.llvmSymbolOrigin))
             } else {
-                context.llvmDeclarations.forClass(this).typeInfo
+                context.generationState.llvmDeclarations.forClass(this).typeInfo
             }
         }
 
@@ -271,10 +271,10 @@ internal class InitializersGenerationState {
             && moduleGlobalInitializers.isEmpty() && moduleThreadLocalInitializers.isEmpty()
 }
 
-internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : RuntimeAware {
+internal class Llvm(val context: Context, val module: LLVMModuleRef) : RuntimeAware {
 
     private fun importFunction(name: String, otherModule: LLVMModuleRef): LlvmCallable {
-        if (LLVMGetNamedFunction(llvmModule, name) != null) {
+        if (LLVMGetNamedFunction(module, name) != null) {
             throw IllegalArgumentException("function $name already exists")
         }
 
@@ -283,7 +283,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
         val attributesCopier = LlvmFunctionAttributeProvider.copyFromExternal(externalFunction)
 
         val functionType = getFunctionType(externalFunction)
-        val function = LLVMAddFunction(llvmModule, name, functionType)!!
+        val function = LLVMAddFunction(module, name, functionType)!!
 
         attributesCopier.addFunctionAttributes(function)
 
@@ -291,13 +291,13 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
     }
 
     private fun importGlobal(name: String, otherModule: LLVMModuleRef): LLVMValueRef {
-        if (LLVMGetNamedGlobal(llvmModule, name) != null) {
+        if (LLVMGetNamedGlobal(module, name) != null) {
             throw IllegalArgumentException("global $name already exists")
         }
 
         val externalGlobal = LLVMGetNamedGlobal(otherModule, name)!!
         val globalType = getGlobalType(externalGlobal)
-        val global = LLVMAddGlobal(llvmModule, globalType, name)!!
+        val global = LLVMAddGlobal(module, globalType, name)!!
 
         return global
     }
@@ -308,7 +308,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
     }
 
     private fun llvmIntrinsic(name: String, type: LLVMTypeRef, vararg attributes: String): LlvmCallable {
-        val result = LLVMAddFunction(llvmModule, name, type)!!
+        val result = LLVMAddFunction(module, name, type)!!
         attributes.forEach {
             val kindId = getLlvmAttributeKindId(it)
             addLlvmFunctionEnumAttribute(result, kindId)
@@ -318,7 +318,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
 
     internal fun externalFunction(llvmFunctionProto: LlvmFunctionProto): LlvmCallable {
         this.imports.add(llvmFunctionProto.origin, onlyBitcode = llvmFunctionProto.independent)
-        val found = LLVMGetNamedFunction(llvmModule, llvmFunctionProto.name)
+        val found = LLVMGetNamedFunction(module, llvmFunctionProto.name)
         if (found != null) {
             assert(getFunctionType(found) == llvmFunctionProto.llvmFunctionType) {
                 "Expected: ${LLVMPrintTypeToString(llvmFunctionProto.llvmFunctionType)!!.toKString()} " +
@@ -327,13 +327,13 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
             assert(LLVMGetLinkage(found) == LLVMLinkage.LLVMExternalLinkage)
             return LlvmCallable(found, llvmFunctionProto)
         } else {
-            val function = addLlvmFunctionWithDefaultAttributes(context, llvmModule, llvmFunctionProto.name, llvmFunctionProto.llvmFunctionType)
+            val function = addLlvmFunctionWithDefaultAttributes(context, module, llvmFunctionProto.name, llvmFunctionProto.llvmFunctionType)
             llvmFunctionProto.addFunctionAttributes(function)
             return LlvmCallable(function, llvmFunctionProto)
         }
     }
 
-    val imports get() = context.llvmImports
+    val imports get() = context.generationState.llvmImports
 
     class ImportsImpl(private val context: Context) : LlvmImports {
 
@@ -440,18 +440,17 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
 
     val additionalProducedBitcodeFiles = mutableListOf<String>()
 
-    val staticData = KotlinStaticData(context)
+    val staticData = KotlinStaticData(context, module)
 
     private val target = context.config.target
 
-    val runtimeFile = context.config.distribution.compilerInterface(target)
-    override val runtime = Runtime(runtimeFile) // TODO: dispose
+    override val runtime get() = context.generationState.runtime
 
     val targetTriple = runtime.target
 
     init {
-        LLVMSetDataLayout(llvmModule, runtime.dataLayout)
-        LLVMSetTarget(llvmModule, targetTriple)
+        LLVMSetDataLayout(module, runtime.dataLayout)
+        LLVMSetTarget(module, targetTriple)
     }
 
     private fun importRtFunction(name: String) = importFunction(name, runtime.llvmModule)
@@ -534,7 +533,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
     var tlsCount = 0
 
     val tlsKey by lazy {
-        val global = LLVMAddGlobal(llvmModule, kInt8Ptr, "__KonanTlsKey")!!
+        val global = LLVMAddGlobal(module, kInt8Ptr, "__KonanTlsKey")!!
         LLVMSetLinkage(global, LLVMLinkage.LLVMInternalLinkage)
         LLVMSetInitializer(global, LLVMConstNull(kInt8Ptr))
         global
@@ -602,7 +601,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
     val boxCacheGlobals = mutableMapOf<BoxCache, StaticData.Global>()
 
     val runtimeAnnotationMap by lazy {
-        context.llvm.staticData.getGlobal("llvm.global.annotations")
+        staticData.getGlobal("llvm.global.annotations")
                 ?.getInitializer()
                 ?.let { getOperands(it) }
                 ?.groupBy(

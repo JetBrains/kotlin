@@ -67,7 +67,7 @@ internal fun fileValidationCallback(state: ActionState, irFile: IrFile, context:
 internal fun konanUnitPhase(
         name: String,
         description: String,
-        prerequisite: Set<AnyNamedPhase> = emptySet(),
+        prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
         op: Context.() -> Unit
 ) = namedOpUnitPhase(name, description, prerequisite, op)
 
@@ -95,10 +95,8 @@ internal val objCExportPhase = konanUnitPhase(
 
 internal val buildCExportsPhase = konanUnitPhase(
         op = {
-            if (this.isNativeLibrary) {
-                this.cAdapterGenerator = CAdapterGenerator(this).also {
-                    it.buildExports(this.symbolTable!!)
-                }
+            this.cAdapterGenerator = CAdapterGenerator(this).also {
+                it.buildExports(this.symbolTable!!)
             }
         },
         name = "BuildCExports",
@@ -330,28 +328,38 @@ internal val dependenciesLowerPhase = NamedCompilerPhase(
             }
         })
 
-internal val dumpTestsPhase = makeCustomPhase<Context, IrModuleFragment>(
-        name = "dumpTestsPhase",
-        description = "Dump the list of all available tests",
-        op = { context, _ ->
-            val testDumpFile = context.config.testDumpFile
-            requireNotNull(testDumpFile)
+internal val umbrellaCompilation = NamedCompilerPhase(
+        name = "UmbrellaCompilation",
+        description = "A batched compilation with shared FE and ME phases",
+        prerequisite = emptySet(),
+        lower = object : CompilerPhase<Context, Unit, Unit> {
+            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
+                val module = context.irModules.values.single()
 
-            if (!testDumpFile.exists)
-                testDumpFile.createNew()
+                val files = module.files.toList()
+                module.files.clear()
+                val functionInterfaceFiles = files.filter { it.isFunctionInterfaceFile }
 
-            if (context.testCasesToDump.isEmpty())
-                return@makeCustomPhase
+                for (file in files) {
+                    if (file.isFunctionInterfaceFile) continue
 
-            testDumpFile.appendLines(
-                    context.testCasesToDump
-                            .flatMap { (suiteClassId, functionNames) ->
-                                val suiteName = suiteClassId.asString()
-                                functionNames.asSequence().map { "$suiteName:$it" }
-                            }
-            )
-        }
-)
+                    // Pretend we're about to create a single file cache.
+                    context.config.cacheSupport.libraryToCache!!.strategy =
+                            CacheDeserializationStrategy.SingleFile(file.path, file.fqName.asString())
+
+                    module.files += file
+                    if (context.shouldDefineFunctionClasses)
+                        module.files += functionInterfaceFiles
+
+                    entireBackend.invoke(phaseConfig, phaserState, context, Unit)
+
+                    module.files.clear()
+                    context.irModule!!.files.clear() // [dependenciesLowerPhase] puts all files to [context.irModule] for codegen.
+                }
+
+                module.files += files
+            }
+        })
 
 internal val entryPointPhase = makeCustomPhase<Context, IrModuleFragment>(
         name = "addEntryPoint",
@@ -376,8 +384,7 @@ internal val entryPointPhase = makeCustomPhase<Context, IrModuleFragment>(
 internal val bitcodePhase = NamedCompilerPhase(
         name = "Bitcode",
         description = "LLVM Bitcode generation",
-        lower = contextLLVMSetupPhase then
-                returnsInsertionPhase then
+        lower = returnsInsertionPhase then
                 buildDFGPhase then
                 devirtualizationAnalysisPhase then
                 dcePhase then
@@ -410,50 +417,84 @@ private val bitcodePostprocessingPhase = NamedCompilerPhase(
                 rewriteExternalCallsCheckerGlobals
 )
 
-private val backendCodegen = namedUnitPhase(
+private val backendCodegen = NamedCompilerPhase(
         name = "Backend codegen",
         description = "Backend code generation",
-        lower = takeFromContext<Context, Unit, IrModuleFragment> { it.irModule!! } then
-                entryPointPhase then
-                functionsWithoutBoundCheck then
+        lower = entryPointPhase then
                 allLoweringsPhase then // Lower current module first.
                 dependenciesLowerPhase then // Then lower all libraries in topological order.
                                             // With that we guarantee that inline functions are unlowered while being inlined.
-                dumpTestsPhase then
                 bitcodePhase then
                 verifyBitcodePhase then
                 printBitcodePhase then
                 linkBitcodeDependenciesPhase then
-                bitcodePostprocessingPhase then
-                unitSink()
+                bitcodePostprocessingPhase
+)
+
+internal val createGenerationStatePhase = namedUnitPhase(
+        name = "CreateGenerationState",
+        description = "Create generation state",
+        lower = object : CompilerPhase<Context, Unit, Unit> {
+            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
+                context.generationState = NativeGenerationState(context)
+            }
+        }
+)
+
+internal val disposeGenerationStatePhase = namedUnitPhase(
+        name = "DisposeGenerationState",
+        description = "Dispose generation state",
+        lower = object : CompilerPhase<Context, Unit, Unit> {
+            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
+                context.disposeGenerationState()
+            }
+        }
+)
+
+private val entireBackend = NamedCompilerPhase(
+        name = "EntireBackend",
+        description = "Entire backend",
+        lower = createGenerationStatePhase then
+                buildAdditionalCacheInfoPhase then
+                takeFromContext { it.irModule!! } then
+                specialBackendChecksPhase then
+                backendCodegen then
+                unitSink() then
+                saveAdditionalCacheInfoPhase then
+                produceOutputPhase then
+                objectFilesPhase then
+                linkerPhase then
+                finalizeCachePhase then
+                disposeGenerationStatePhase
+)
+
+private val middleEnd = NamedCompilerPhase(
+        name = "MiddleEnd",
+        description = "Build and prepare IR for back end",
+        lower = createSymbolTablePhase then
+                objCExportPhase then
+                buildCExportsPhase then
+                psiToIrPhase then
+                destroySymbolTablePhase then
+                copyDefaultValuesToActualPhase then
+                checkSamSuperTypesPhase then
+                serializerPhase then
+                functionsWithoutBoundCheck
+)
+
+private val singleCompilation = NamedCompilerPhase(
+        name = "SingleCompilation",
+        description = "Single compilation",
+        lower = entireBackend
 )
 
 // Have to hide Context as type parameter in order to expose toplevelPhase outside of this module.
 val toplevelPhase: CompilerPhase<*, Unit, Unit> = namedUnitPhase(
         name = "Compiler",
         description = "The whole compilation process",
-        lower = createSymbolTablePhase then
-                objCExportPhase then
-                buildCExportsPhase then
-                psiToIrPhase then
-                buildAdditionalCacheInfoPhase then
-                destroySymbolTablePhase then
-                copyDefaultValuesToActualPhase then
-                checkSamSuperTypesPhase then
-                serializerPhase then
-                specialBackendChecksPhase then
-                namedUnitPhase(
-                        name = "Backend",
-                        description = "All backend",
-                        lower = backendCodegen then
-                                produceOutputPhase then
-                                disposeLLVMPhase then
-                                unitSink()
-                ) then
-                saveAdditionalCacheInfoPhase then
-                objectFilesPhase then
-                linkerPhase then
-                finalizeCachePhase
+        lower = middleEnd then
+                singleCompilation then
+                umbrellaCompilation
 )
 
 internal fun PhaseConfig.disableIf(phase: AnyNamedPhase, condition: Boolean) {
@@ -474,18 +515,26 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
 
         disable(localEscapeAnalysisPhase)
 
+        disableIf(singleCompilation, config.producePerFileCache)
+        disableUnless(umbrellaCompilation, config.producePerFileCache)
+
         // Don't serialize anything to a final executable.
         disableUnless(serializerPhase, config.produce == CompilerOutputKind.LIBRARY)
         disableUnless(entryPointPhase, config.produce == CompilerOutputKind.PROGRAM)
-        disableUnless(buildAdditionalCacheInfoPhase, config.produce.isCache && config.lazyIrForCaches)
-        disableUnless(saveAdditionalCacheInfoPhase, config.produce.isCache && config.lazyIrForCaches)
+        disableUnless(buildAdditionalCacheInfoPhase, config.produce.isCache)
+        disableUnless(saveAdditionalCacheInfoPhase, config.produce.isCache)
         disableUnless(finalizeCachePhase, config.produce.isCache)
         disableUnless(exportInternalAbiPhase, config.produce.isCache)
-        disableIf(backendCodegen, config.produce == CompilerOutputKind.LIBRARY || config.omitFrameworkBinary || config.produce == CompilerOutputKind.PRELIMINARY_CACHE)
+        disableUnless(buildCExportsPhase, config.produce.isNativeLibrary)
+        disableUnless(backendCodegen, config.involvesCodegen)
         disableUnless(checkExternalCallsPhase, getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
         disableUnless(rewriteExternalCallsCheckerGlobals, getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
         disableUnless(stringConcatenationTypeNarrowingPhase, config.optimizationsEnabled)
         disableUnless(optimizeTLSDataLoadsPhase, config.optimizationsEnabled)
+        if (!config.debug && !config.lightDebug) {
+            disable(generateDebugInfoHeaderPhase)
+            disable(finalizeDebugInfoPhase)
+        }
         if (!config.involvesLinkStage) {
             disable(bitcodePostprocessingPhase)
             disable(linkBitcodeDependenciesPhase)
@@ -493,7 +542,6 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
             disable(linkerPhase)
         }
         disableIf(testProcessorPhase, getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) == TestRunnerKind.NONE)
-        disableIf(dumpTestsPhase, getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) == TestRunnerKind.NONE || config.testDumpFile == null)
         if (!config.optimizationsEnabled) {
             disable(buildDFGPhase)
             disable(devirtualizationAnalysisPhase)

@@ -1,4 +1,4 @@
-depends = CoreFoundation CoreGraphics CoreText IOKit darwin libkern posix
+depends = CoreFoundation CoreFoundationBase CoreGraphics CoreText IOKit darwin libkern posix
 language = Objective-C
 package = platform.MediaAccessibility
 modules = MediaAccessibility

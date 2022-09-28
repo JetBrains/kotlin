@@ -1,0 +1,75 @@
+FILE: supertypeWithArgument.kt
+    package foo
+
+    public abstract interface InterfaceWithArgument<T> : R|kotlin/Any| {
+        public open fun generate(): R|T| {
+            ^generate Null(null)!!
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/SupertypeWithTypeArgument|(kClass = <getClass>(Q|kotlin/String|)) public final class TopLevelType : R|kotlin/Any|, R|foo/InterfaceWithArgument<kotlin/String>| {
+        public constructor(): R|foo/TopLevelType| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Nested : R|kotlin/Any| {
+        public constructor(): R|foo/Nested| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract class Base : R|kotlin/Any| {
+        public constructor(): R|foo/Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class Nested : R|kotlin/Any| {
+            public constructor(): R|foo/Base.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class Derived : R|foo/Base| {
+        public constructor(): R|foo/Derived| {
+            super<R|foo/Base|>()
+        }
+
+        @R|org/jetbrains/kotlin/fir/plugin/SupertypeWithTypeArgument|(kClass = <getClass>(Q|foo/Base.Nested|)) public final class TypeFromSupertype : R|kotlin/Any|, R|foo/InterfaceWithArgument<foo/Base.Nested>| {
+            public constructor(): R|foo/Derived.TypeFromSupertype| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        @R|org/jetbrains/kotlin/fir/plugin/SupertypeWithTypeArgument|(kClass = <getClass>(Q|foo/Nested|)) public final class QualifiedType : R|kotlin/Any|, R|foo/InterfaceWithArgument<foo/Nested>| {
+            public constructor(): R|foo/Derived.QualifiedType| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/SupertypeWithTypeArgument|(kClass = <getClass>(<Unresolved name: UnresolvedClass>#)) public final class UnresolvedType : R|kotlin/Any|, R|foo/InterfaceWithArgument<ERROR CLASS: Symbol not found for UnresolvedClass>| {
+        public constructor(): R|foo/UnresolvedType| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun takeString(x: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final fun takeTopLevelNested(x: R|foo/Base.Nested|): R|kotlin/Unit| {
+    }
+    public final fun takeInnerNested(x: R|foo/Nested|): R|kotlin/Unit| {
+    }
+    public final fun test_1(x: R|foo/TopLevelType|): R|kotlin/Unit| {
+        R|foo/takeString|(R|<local>/x|.R|SubstitutionOverride<foo/TopLevelType.generate: R|kotlin/String|>|())
+    }
+    public final fun test_2(x: R|foo/Derived.TypeFromSupertype|): R|kotlin/Unit| {
+        R|foo/takeTopLevelNested|(R|<local>/x|.R|SubstitutionOverride<foo/Derived.TypeFromSupertype.generate: R|foo/Base.Nested|>|())
+    }
+    public final fun test_3(x: R|foo/Derived.QualifiedType|): R|kotlin/Unit| {
+        R|foo/takeInnerNested|(R|<local>/x|.R|SubstitutionOverride<foo/Derived.QualifiedType.generate: R|foo/Nested|>|())
+    }

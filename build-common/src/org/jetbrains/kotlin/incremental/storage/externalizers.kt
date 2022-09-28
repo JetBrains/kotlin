@@ -253,20 +253,12 @@ object StringExternalizer : DataExternalizer<String> {
     override fun read(input: DataInput): String = IOUtil.readString(input)
 }
 
-// Should be consistent with org.jetbrains.jps.incremental.storage.PathStringDescriptor for correct work of portable caches
 object PathStringDescriptor : EnumeratorStringDescriptor() {
-    private const val PORTABLE_CACHES_PROPERTY = "org.jetbrains.jps.portable.caches"
-    private val PORTABLE_CACHES = java.lang.Boolean.getBoolean(PORTABLE_CACHES_PROPERTY)
-
     override fun getHashCode(path: String): Int {
-        if (!PORTABLE_CACHES) return FileUtil.pathHashCode(path)
-        // On case insensitive OS hash calculated from value converted to lower case
         return if (StringUtil.isEmpty(path)) 0 else FileUtil.toCanonicalPath(path).hashCode()
     }
 
     override fun isEqual(val1: String, val2: String?): Boolean {
-        if (!PORTABLE_CACHES) return FileUtil.pathsEqual(val1, val2)
-        // On case insensitive OS hash calculated from path converted to lower case
         if (val1 == val2) return true
         if (val2 == null) return false
 

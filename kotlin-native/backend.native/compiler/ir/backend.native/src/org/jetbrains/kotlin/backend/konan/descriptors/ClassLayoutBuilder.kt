@@ -405,16 +405,25 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
      * All fields of the class instance.
      * The order respects the class hierarchy, i.e. a class [fields] contains superclass [fields] as a prefix.
      */
-    val fields: List<FieldInfo> by lazy {
+    val fields: List<FieldInfo>
+        get() = fieldsInternal.map { fieldInfo ->
+            val mappedField = fieldInfo.irField?.let { context.mapping.lateInitFieldToNullableField[it] ?: it }
+            if (mappedField == fieldInfo.irField)
+                fieldInfo
+            else
+                mappedField!!.toFieldInfo().also { it.index = fieldInfo.index }
+        }
+
+    private val fieldsInternal: List<FieldInfo> by lazy {
         val superClass = irClass.getSuperClassNotAny()
-        val superFields = if (superClass != null) context.getLayoutBuilder(superClass).fields else emptyList()
+        val superFields = if (superClass != null) context.getLayoutBuilder(superClass).fieldsInternal else emptyList()
 
         val declaredFields = getDeclaredFields()
         val sortedDeclaredFields = if (irClass.hasAnnotation(KonanFqNames.noReorderFields))
             declaredFields
         else
             declaredFields.sortedByDescending {
-                with(context.llvm) { LLVMStoreSizeOfType(runtime.targetData, getLLVMType(it.type)) }
+                with(context.generationState.llvm) { LLVMStoreSizeOfType(runtime.targetData, getLLVMType(it.type)) }
             }
 
         val superFieldsCount = 1 /* First field is ObjHeader */ + superFields.size

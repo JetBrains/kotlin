@@ -67,9 +67,15 @@ class LazyExplicitImportScope(
     ): Collection<DeclarationDescriptor> {
         val descriptors = SmartList<DeclarationDescriptor>()
 
-        descriptors.addIfNotNull(getContributedClassifier(aliasName, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS))
-        descriptors.addAll(getContributedFunctions(aliasName, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS))
-        descriptors.addAll(getContributedVariables(aliasName, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS))
+        if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
+            descriptors.addIfNotNull(getContributedClassifier(aliasName, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS))
+        }
+        if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
+            descriptors.addAll(getContributedFunctions(aliasName, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS))
+        }
+        if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
+            descriptors.addAll(getContributedVariables(aliasName, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS))
+        }
 
         if (changeNamesForAliased && aliasName != declaredName) {
             for (i in descriptors.indices) {

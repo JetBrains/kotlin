@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask.CInteropGist
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.utils.chainedFinalizeValueOnRead
-import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -150,11 +149,9 @@ internal open class CInteropCommonizerTask
                             .map { sourceSet -> project.createCInteropMetadataDependencyClasspath(sourceSet) }
                     }
                 }
-                val nativeDistributionDependencyFiles = project.getNativeDistributionDependencies(target)
 
                 CInteropCommonizerDependencies(
-                    target,
-                    project.files(externalDependencyFiles + nativeDistributionDependencyFiles)
+                    target, project.files(externalDependencyFiles, project.getNativeDistributionDependencies(target))
                 )
             }
         }
@@ -174,13 +171,6 @@ internal open class CInteropCommonizerTask
     @get:OutputDirectories
     val allOutputDirectories: Set<File>
         get() = getAllInteropsGroups().map { outputDirectory(it) }.toSet()
-
-    @Suppress("unused") // Used for UP-TO-DATE check
-    @get:Classpath
-    val commonizedNativeDistributionDependencies: Set<File>
-        get() = getAllInteropsGroups().flatMap { group -> group.targets }
-            .flatMap { target -> project.getNativeDistributionDependencies(target) }
-            .toSet()
 
     fun from(vararg tasks: CInteropProcess) = from(
         tasks.toList()

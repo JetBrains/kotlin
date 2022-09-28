@@ -48,7 +48,16 @@ fun main() {
             }
         }
 
-        // CInterop tests.
+        // KLIB binary compatibility tests.
+        testGroup("native/native.tests/tests-gen", "compiler/testData") {
+            testClass<AbstractNativeKlibBinaryCompatibilityTest>(
+                suiteTestClassName = "KlibBinaryCompatibilityTestGenerated"
+            ) {
+                model("binaryCompatibility/klibEvolution", recursive = false)
+            }
+        }
+
+        // CInterop Indexer tests.
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeInteropIndexerFModulesTest>(
                 suiteTestClassName = "InteropIndexerFModulesTestGenerated"

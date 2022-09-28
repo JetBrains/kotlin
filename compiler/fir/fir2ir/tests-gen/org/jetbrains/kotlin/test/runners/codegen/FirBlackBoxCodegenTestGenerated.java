@@ -11284,6 +11284,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 public void testKt49294() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface/kt49294.kt");
                 }
+
+                @Test
+                @TestMetadata("kt50950.kt")
+                public void testKt50950() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface/kt50950.kt");
+                }
             }
 
             @Nested
@@ -26784,6 +26790,18 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("kt47510.kt")
             public void testKt47510() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/kt47510.kt");
+            }
+
+            @Test
+            @TestMetadata("kt51282.kt")
+            public void testKt51282() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/kt51282.kt");
+            }
+
+            @Test
+            @TestMetadata("kt512832_inherit_multifile_parts.kt")
+            public void testKt512832_inherit_multifile_parts() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/kt512832_inherit_multifile_parts.kt");
             }
 
             @Test

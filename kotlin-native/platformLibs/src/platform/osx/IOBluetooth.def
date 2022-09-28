@@ -1,4 +1,4 @@
-depends = CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreServices DiskArbitration Foundation IOKit Security darwin libkern osx posix
+depends = CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreServices DiskArbitration Foundation IOKit Security darwin libkern osx posix
 language = Objective-C
 package = platform.IOBluetooth
 modules = IOBluetooth
