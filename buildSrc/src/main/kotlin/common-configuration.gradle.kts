@@ -157,13 +157,8 @@ fun Project.configureKotlinCompilationOptions() {
             ":kotlin-native:klib",
             // Requires serialization plugin
             ":js:js.tests",
-            // ISE "Cannot serialize error type: ERROR CLASS: Cannot calculate return type (local class/object?)"
+            // ISE "Cannot serialize error type: ERROR CLASS: Cannot calculate return type (local class/object?)" (KT-54212)
             ":kotlin-native-shared",
-            // Warnings about deprecated usages of companion objects in `::class`
-            ":kotlin-native:Interop:Runtime",
-            // Some warnings which are not printed out for some reason
-            ":kotlin-native:Interop:Indexer",
-            ":kotlin-native:Interop:Skia",
             // ISE "Fake override should have at least one overridden descriptor",
             ":kotlin-native:Interop:StubGenerator",
             // Overload resolution ambiguity between candidates
