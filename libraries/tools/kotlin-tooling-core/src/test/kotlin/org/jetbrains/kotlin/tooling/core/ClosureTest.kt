@@ -289,6 +289,21 @@ class ClosureTest {
     }
 
     @Test
+    fun `linearClosure - loop`() {
+        val a = Node("a")
+        val b = Node("b")
+        val c = Node("c")
+
+        c.parent = b
+        b.parent = a
+        a.parent = c
+
+        assertEquals(
+            listOf("b", "a"), c.linearClosure { it.parent }.map { it.value },
+        )
+    }
+
+    @Test
     fun `linearClosure on empty`() {
         assertSame(
             emptySet(), Node("").linearClosure { it.parent },
@@ -304,6 +319,21 @@ class ClosureTest {
 
         c.parent = b
         b.parent = a
+
+        assertEquals(
+            listOf("c", "b", "a"), c.withLinearClosure { it.parent }.map { it.value },
+        )
+    }
+
+    @Test
+    fun `withLinearClosure - loop`() {
+        val a = Node("a")
+        val b = Node("b")
+        val c = Node("c")
+
+        c.parent = b
+        b.parent = a
+        a.parent = c
 
         assertEquals(
             listOf("c", "b", "a"), c.withLinearClosure { it.parent }.map { it.value },
