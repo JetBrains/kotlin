@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.CompilerVersionImpl
+import org.jetbrains.kotlin.konan.MetaVersion
 import org.jetbrains.kotlin.konan.isAtLeast
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -24,17 +25,21 @@ import org.junit.Assume
 import org.junit.BeforeClass
 import org.junit.Test
 import kotlin.test.assertTrue
+import kotlin.test.BeforeTest
 
-class NativePlatformLibsIT : BaseGradleIT() {
+class NativeDownloadAndPlatformLibsIT : BaseGradleIT() {
 
     companion object {
         @BeforeClass
         @JvmStatic
         fun skipOnWindows() {
             // This test class causes build timeouts on Windows CI machines.
-            // We temporary disable it for windows until a proper fix is found.
+            // We temporarily disable it for windows until a proper fix is found.
             Assume.assumeFalse(HostManager.hostIsMingw)
         }
+
+        private const val KOTLIN_SPACE_DEV = "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev"
+        private const val MAVEN_CENTRAL = "https://cache-redirector.jetbrains.com/maven-central"
     }
 
     override val defaultGradleVersion: GradleVersionRequired
@@ -63,14 +68,19 @@ class NativePlatformLibsIT : BaseGradleIT() {
             HostManager.simpleOsName()
         }
 
-    private fun deleteInstalledCompilers() {
-        // Clean existing installation directories.
+    @BeforeTest
+    fun deleteInstalledCompilers() {
         val oldOsName = simpleOsName(CompilerVersion.fromString(oldCompilerVersion))
         val currentOsName = simpleOsName(currentCompilerVersion)
-        val oldCompilerDir = DependencyDirectories.localKonanDir.resolve("kotlin-native-$oldOsName-$oldCompilerVersion")
-        val currentCompilerDir = DependencyDirectories.localKonanDir.resolve("kotlin-native-$currentOsName-$currentCompilerVersion")
 
-        for (compilerDirectory in listOf(oldCompilerDir, currentCompilerDir)) {
+        val oldCompilerDir = DependencyDirectories.localKonanDir
+            .resolve("kotlin-native-$oldOsName-$oldCompilerVersion")
+        val currentCompilerDir = DependencyDirectories.localKonanDir
+            .resolve("kotlin-native-$currentOsName-$currentCompilerVersion")
+        val prebuiltDistDir = DependencyDirectories.localKonanDir
+            .resolve("kotlin-native-prebuilt-$currentOsName-$currentCompilerVersion")
+
+        for (compilerDirectory in listOf(oldCompilerDir, currentCompilerDir, prebuiltDistDir)) {
             compilerDirectory.deleteRecursively()
         }
     }
@@ -80,8 +90,6 @@ class NativePlatformLibsIT : BaseGradleIT() {
 
     @Test
     fun testNoGenerationForOldCompiler() = with(platformLibrariesProject("linuxX64")) {
-        deleteInstalledCompilers()
-
         // Check that we don't run the library generator for old compiler distributions where libraries are prebuilt.
         // Don't run the build to reduce execution time.
         build("tasks", "-Pkotlin.native.version=$oldCompilerVersion") {
@@ -95,7 +103,7 @@ class NativePlatformLibsIT : BaseGradleIT() {
 
     @Test
     fun testNoGenerationByDefault() = with(platformLibrariesProject("linuxX64")) {
-        deleteInstalledCompilers()
+
 
         // Check that a prebuilt distribution is used by default.
         build("assemble") {
@@ -108,8 +116,6 @@ class NativePlatformLibsIT : BaseGradleIT() {
 
     @Test
     fun testLibrariesGeneration() {
-        deleteInstalledCompilers()
-
         val rootProject = Project("native-platform-libraries").apply {
             embedProject(Project("native-platform-libraries"), renameTo = "subproject")
             gradleProperties().apply {
@@ -178,7 +184,6 @@ class NativePlatformLibsIT : BaseGradleIT() {
     @Test
     fun testNoGenerationForUnsupportedHost() {
         hostHaveUnsupportedTarget()
-        deleteInstalledCompilers()
 
         platformLibrariesProject(KonanTarget.IOS_X64.presetName).buildWithLightDist("assemble") {
             assertSuccessful()
@@ -190,8 +195,6 @@ class NativePlatformLibsIT : BaseGradleIT() {
     fun testRerunGeneratorIfCacheKindChanged() {
         // There are no cacheable targets on MinGW for now.
         Assume.assumeFalse(HostManager.hostIsMingw)
-
-        deleteInstalledCompilers()
 
         fun buildPlatformLibrariesWithoutAndWithCaches(target: KonanTarget) {
             val presetName = target.presetName
@@ -219,8 +222,6 @@ class NativePlatformLibsIT : BaseGradleIT() {
 
     @Test
     fun testCanUsePrebuiltDistribution() = with(platformLibrariesProject("linuxX64")) {
-        deleteInstalledCompilers()
-
         build("assemble", "-Pkotlin.native.distribution.type=prebuilt") {
             assertSuccessful()
             val osName = simpleOsName(currentCompilerVersion)
@@ -279,8 +280,6 @@ class NativePlatformLibsIT : BaseGradleIT() {
 
     @Test
     fun testSettingGenerationMode() = with(platformLibrariesProject("linuxX64")) {
-        deleteInstalledCompilers()
-
         // Check that user can change generation mode used by the cinterop tool.
         buildWithLightDist("tasks", "-Pkotlin.native.platform.libraries.mode=metadata") {
             assertSuccessful()
@@ -290,8 +289,6 @@ class NativePlatformLibsIT : BaseGradleIT() {
 
     @Test
     fun testCompilerReinstallation() = with(platformLibrariesProject("linuxX64")) {
-        deleteInstalledCompilers()
-
         // Install the compiler at the first time. Don't build to reduce execution time.
         buildWithLightDist("tasks") {
             assertSuccessful()
@@ -303,6 +300,89 @@ class NativePlatformLibsIT : BaseGradleIT() {
             assertSuccessful()
             assertContains("Unpack Kotlin/Native compiler to ")
             assertContains("Generate platform libraries for linux_x64")
+        }
+    }
+
+    private fun mavenUrl(): String = when (currentCompilerVersion.meta) {
+        MetaVersion.DEV -> KOTLIN_SPACE_DEV
+        MetaVersion.RELEASE, MetaVersion.RC, MetaVersion("RC2"), MetaVersion.BETA -> MAVEN_CENTRAL
+        else -> throw IllegalStateException("Not a published version $currentCompilerVersion")
+    }
+
+    @Test
+    fun `download prebuilt Native bundle with maven`() {
+        with(transformNativeTestProjectWithPluginDsl("native-download-maven")) {
+            gradleProperties().appendText(
+                """
+                    kotlin.native.distribution.mavenDownloadUrl=${mavenUrl()}
+                    kotlin.native.distribution.downloadFromMaven=true
+                """.trimIndent()
+            )
+            build("assemble") {
+                assertSuccessful()
+                assertContains("Unpack Kotlin/Native compiler to ")
+                assertNotContains("Generate platform libraries for ")
+            }
+        }
+    }
+
+    @Test
+    fun `download light Native bundle with maven`() {
+        with(transformNativeTestProjectWithPluginDsl("native-download-maven")) {
+            gradleProperties().appendText(
+                """
+                    kotlin.native.distribution.mavenDownloadUrl=${mavenUrl()}
+                    kotlin.native.distribution.downloadFromMaven=true
+                """.trimIndent()
+            )
+            build("assemble", "-Pkotlin.native.distribution.type=light") {
+                assertSuccessful()
+                assertContains("Unpack Kotlin/Native compiler to ")
+                assertContains("Generate platform libraries for ")
+            }
+        }
+    }
+
+    @Test
+    fun `download from maven specified in the build`() {
+        with(transformNativeTestProjectWithPluginDsl("native-download-maven")) {
+            gradleProperties().appendText(
+                """
+                    kotlin.native.distribution.downloadFromMaven=true
+                """.trimIndent()
+            )
+            gradleBuildScript().let {
+                val text = it.readText()
+                    .replaceFirst(
+                        "mavenLocal()",
+                        """
+                           mavenLocal()
+                           maven("${mavenUrl()}")
+                        """.trimIndent()
+                    )
+                it.writeText(text)
+            }
+
+            build("assemble") {
+                assertSuccessful()
+                assertContains("Unpack Kotlin/Native compiler to ")
+            }
+        }
+    }
+
+    @Test
+    fun `download from maven should fail if there is no such build in the default repos`() {
+        with(transformNativeTestProjectWithPluginDsl("native-download-maven")) {
+            gradleProperties().appendText(
+                """
+                    kotlin.native.version=1.8.0-dev-1234
+                    kotlin.native.distribution.downloadFromMaven=true
+                """.trimIndent()
+            )
+            build("assemble") {
+                assertContains("Could not find org.jetbrains.kotlin:kotlin-native")
+                assertFailed()
+            }
         }
     }
 }
