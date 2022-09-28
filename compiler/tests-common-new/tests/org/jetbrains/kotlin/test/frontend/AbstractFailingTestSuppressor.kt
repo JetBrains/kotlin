@@ -14,13 +14,13 @@ abstract class AbstractFailingTestSuppressor(testServices: TestServices) : After
 
     protected abstract fun testFile(): File
 
-    protected abstract fun hasFail(failedAssertions: List<WrappedException>): Boolean
+    protected abstract fun hasFailure(failedAssertions: List<WrappedException>): Boolean
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         val failFile = testFile().parentFile.resolve("${testFile().nameWithoutExtension}.fail").takeIf { it.exists() }
             ?: return failedAssertions
         val failReason = failFile.readText().trim()
-        if (hasFail(failedAssertions) || failReason == INCONSISTENT_DIAGNOSTICS) return emptyList()
+        if (hasFailure(failedAssertions) || failReason == INCONSISTENT_DIAGNOSTICS) return emptyList()
         return failedAssertions + AssertionError("Fail file exists but no exception was thrown. Please remove ${failFile.name}").wrap()
     }
 

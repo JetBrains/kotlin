@@ -19,7 +19,7 @@ class FirFailingTestSuppressor(testServices: TestServices) : AbstractFailingTest
         return testServices.moduleStructure.originalTestDataFiles.first().firTestDataFile
     }
 
-    override fun hasFail(failedAssertions: List<WrappedException>): Boolean {
+    override fun hasFailure(failedAssertions: List<WrappedException>): Boolean {
         return failedAssertions.any {
             when (it) {
                 is WrappedException.FromFacade -> it.facade is FirFrontendFacade
