@@ -371,7 +371,7 @@ internal fun FirSimpleFunction.processOverriddenFunctionSymbols(
     scope.processFunctionsByName(name) {}
     scope.processOverriddenFunctionsFromSuperClasses(symbol, containingClass) { overriddenSymbol ->
         if (!session.visibilityChecker.isVisibleForOverriding(
-                session, candidateInDerivedClass = symbol.fir, candidateInBaseClass = overriddenSymbol.fir
+                candidateInDerivedClass = symbol.fir, candidateInBaseClass = overriddenSymbol.fir
             )
         ) {
             return@processOverriddenFunctionsFromSuperClasses ProcessorAction.NEXT
@@ -446,7 +446,7 @@ internal fun FirProperty.processOverriddenPropertySymbols(
     val overriddenSet = mutableSetOf<IrPropertySymbol>()
     scope.processOverriddenPropertiesFromSuperClasses(symbol, containingClass) { overriddenSymbol ->
         if (!session.visibilityChecker.isVisibleForOverriding(
-                session, candidateInDerivedClass = symbol.fir, candidateInBaseClass = overriddenSymbol.fir
+                candidateInDerivedClass = symbol.fir, candidateInBaseClass = overriddenSymbol.fir
             )
         ) {
             return@processOverriddenPropertiesFromSuperClasses ProcessorAction.NEXT
@@ -482,7 +482,7 @@ internal fun FirProperty.generateOverriddenAccessorSymbols(containingClass: FirC
 
     scope.processOverriddenPropertiesFromSuperClasses(symbol, containingClass) { overriddenSymbol ->
         if (!session.visibilityChecker.isVisibleForOverriding(
-                session, candidateInDerivedClass = symbol.fir, candidateInBaseClass = overriddenSymbol.fir
+                candidateInDerivedClass = symbol.fir, candidateInBaseClass = overriddenSymbol.fir
             )
         ) {
             return@processOverriddenPropertiesFromSuperClasses ProcessorAction.NEXT
