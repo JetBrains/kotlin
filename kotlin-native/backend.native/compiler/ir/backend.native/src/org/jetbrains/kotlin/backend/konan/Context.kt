@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysisResult
 import org.jetbrains.kotlin.backend.konan.descriptors.deepPrint
 import org.jetbrains.kotlin.backend.konan.driver.context.ConfigChecks
+import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendPhaseResult
+import org.jetbrains.kotlin.backend.konan.driver.phases.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.llvm.CodegenClassMetadata
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
@@ -39,6 +42,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -69,11 +73,11 @@ internal class NativeMapping : DefaultMapping() {
     val enumValuesCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
 }
 
-internal class Context(config: KonanConfig) : KonanBackendContext(config), ConfigChecks {
+internal class Context(config: KonanConfig) : KonanBackendContext(config), ConfigChecks, PsiToIrContext {
+
     lateinit var frontendServices: FrontendServices
     lateinit var environment: KotlinCoreEnvironment
     lateinit var bindingContext: BindingContext
-
     lateinit var moduleDescriptor: ModuleDescriptor
 
     lateinit var objCExport: ObjCExport
@@ -81,6 +85,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
     lateinit var cAdapterGenerator: CAdapterGenerator
 
     lateinit var expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>
+
+    var symbolTable: SymbolTable? = null
 
     override val builtIns: KonanBuiltIns by lazy(PUBLICATION) {
         moduleDescriptor.builtIns as KonanBuiltIns
@@ -100,53 +106,13 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
 
     val phaseConfig = config.phaseConfig
 
-    private val packageScope by lazy { builtIns.builtInsModule.getPackage(KonanFqNames.internalPackageName).memberScope }
-
-    val nativePtr by lazy { packageScope.getContributedClassifier(NATIVE_PTR_NAME) as ClassDescriptor }
-    val nonNullNativePtr by lazy { packageScope.getContributedClassifier(NON_NULL_NATIVE_PTR_NAME) as ClassDescriptor }
-    val getNativeNullPtr  by lazy { packageScope.getContributedFunctions("getNativeNullPtr").single() }
-    val immutableBlobOf by lazy {
-        builtIns.builtInsModule.getPackage(KonanFqNames.packageName).memberScope.getContributedFunctions("immutableBlobOf").single()
-    }
-
     val innerClassesSupport by lazy { InnerClassesSupport(mapping, irFactory) }
     val bridgesSupport by lazy { BridgesSupport(mapping, irBuiltIns, irFactory) }
     val inlineFunctionsSupport by lazy { InlineFunctionsSupport(mapping) }
     val enumsSupport by lazy { EnumsSupport(mapping, ir.symbols, irBuiltIns, irFactory) }
     val cachesAbiSupport by lazy { CachesAbiSupport(mapping, ir.symbols, irFactory) }
 
-    open class LazyMember<T>(val initializer: Context.() -> T) {
-        operator fun getValue(thisRef: Context, property: KProperty<*>): T = thisRef.getValue(this)
-    }
-
-    class LazyVarMember<T>(initializer: Context.() -> T) : LazyMember<T>(initializer) {
-        operator fun setValue(thisRef: Context, property: KProperty<*>, newValue: T) = thisRef.setValue(this, newValue)
-    }
-
-    companion object {
-        fun <T> lazyMember(initializer: Context.() -> T) = LazyMember<T>(initializer)
-
-        fun <K, V> lazyMapMember(initializer: Context.(K) -> V): LazyMember<(K) -> V> = lazyMember {
-            val storage = mutableMapOf<K, V>()
-            val result: (K) -> V = {
-                storage.getOrPut(it, { initializer(it) })
-            }
-            result
-        }
-
-        fun <T> nullValue() = LazyVarMember<T?>({ null })
-    }
-
-    private val lazyValues = mutableMapOf<LazyMember<*>, Any?>()
-
-    fun <T> getValue(member: LazyMember<T>): T =
-            @Suppress("UNCHECKED_CAST") (lazyValues.getOrPut(member, { member.initializer(this) }) as T)
-
-    fun <T> setValue(member: LazyVarMember<T>, newValue: T) {
-        lazyValues[member] = newValue
-    }
-
-    val reflectionTypes: KonanReflectionTypes by lazy(PUBLICATION) {
+    override val reflectionTypes: KonanReflectionTypes by lazy(PUBLICATION) {
         KonanReflectionTypes(moduleDescriptor)
     }
 
@@ -198,7 +164,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
                 throw Error("Another IrModule in the context.")
             }
             field = module!!
-            ir = KonanIr(this, module)
         }
 
     override lateinit var ir: KonanIr
@@ -209,7 +174,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
     override val typeSystem: IrTypeSystemContext
         get() = IrTypeSystemContextImpl(irBuiltIns)
 
-    val interopBuiltIns by lazy {
+    override val interopBuiltIns by lazy {
         InteropBuiltIns(this.builtIns)
     }
 
@@ -222,24 +187,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
         println("\n\n--- ${title} ----------------------\n")
     }
 
-    fun verifyDescriptors() {
-        // TODO: Nothing here for now.
-    }
-
-    fun printDescriptors() {
-        if (!::moduleDescriptor.isInitialized)
-            return
-
-        separator("Descriptors:")
-        moduleDescriptor.deepPrint()
-    }
-
-    fun printIr() {
-        if (irModule == null) return
-        separator("IR:")
-        irModule!!.accept(DumpIrTreeVisitor(out), "")
-    }
-
     fun verifyBitCode() {
         if (::generationState.isInitialized)
             generationState.verifyBitCode()
@@ -250,16 +197,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
             generationState.printBitCode()
     }
 
-    fun verify() {
-        verifyDescriptors()
-        verifyBitCode()
-    }
-
-    fun print() {
-        printDescriptors()
-        printIr()
-        printBitCode()
-    }
     fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized
     fun useLazyFileInitializers() = config.propertyLazyInitialization
 
@@ -279,12 +216,9 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
 
     var referencedFunctions: Set<IrFunction>? = null
 
-    internal val stdlibModule
-        get() = this.builtIns.any.module
-
     lateinit var compilerOutput: List<ObjectFile>
 
-    val llvmModuleSpecification: LlvmModuleSpecification by lazy {
+    override val llvmModuleSpecification: LlvmModuleSpecification by lazy {
         when {
             config.produce.isCache ->
                 CacheLlvmModuleSpecification(this, config.cachedLibraries, config.libraryToCache!!)
@@ -310,12 +244,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
         }
     }
 }
-
-private fun MemberScope.getContributedClassifier(name: String) =
-        this.getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
-
-private fun MemberScope.getContributedFunctions(name: String) =
-        this.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
 
 internal class ContextLogger(val context: LoggingContext) {
     operator fun String.unaryPlus() = context.log { this }

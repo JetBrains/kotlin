@@ -12,6 +12,11 @@ import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
+import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendPhaseResult
+import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrInput
+import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrResult
+import org.jetbrains.kotlin.backend.konan.ir.KonanIr
+import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
@@ -71,11 +76,6 @@ internal fun konanUnitPhase(
         op: Context.() -> Unit
 ) = namedOpUnitPhase(name, description, prerequisite, op)
 
-/**
- * Valid from [createSymbolTablePhase] until [destroySymbolTablePhase].
- */
-private var Context.symbolTable: SymbolTable? by Context.nullValue()
-
 internal val createSymbolTablePhase = konanUnitPhase(
         op = {
             this.symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
@@ -106,9 +106,27 @@ internal val buildCExportsPhase = konanUnitPhase(
 
 internal val psiToIrPhase = konanUnitPhase(
         op = {
-            this.psiToIr(symbolTable!!,
-                    isProducingLibrary = config.produce == CompilerOutputKind.LIBRARY,
-                    useLinkerWhenProducingLibrary = false)
+            val frontendPhaseResult = FrontendPhaseResult.Full(moduleDescriptor, bindingContext, frontendServices, environment)
+            val input = PsiToIrInput(frontendPhaseResult, symbolTable!!, isProducingLibrary = config.produce == CompilerOutputKind.LIBRARY)
+            val result = this.psiToIr(input, useLinkerWhenProducingLibrary = false)
+            when (result) {
+                PsiToIrResult.Empty -> {}
+                is PsiToIrResult.ForLibrary -> {
+                    this.irModules = result.irModules
+                    this.irModule = result.irModule
+                    this.expectDescriptorToSymbol = result.expectDescriptorToSymbol
+                    this.ir = KonanIr(this, result.irModule)
+                    this.ir.symbols = result.symbols
+                }
+                is PsiToIrResult.Full -> {
+                    this.irModules = result.irModules
+                    this.irModule = result.irModule
+                    this.expectDescriptorToSymbol = result.expectDescriptorToSymbol
+                    this.ir = KonanIr(this, result.irModule)
+                    this.ir.symbols = result.symbols
+                    this.irLinker = result.irLinker
+                }
+            }
         },
         name = "Psi2Ir",
         description = "Psi to IR conversion and klib linkage",

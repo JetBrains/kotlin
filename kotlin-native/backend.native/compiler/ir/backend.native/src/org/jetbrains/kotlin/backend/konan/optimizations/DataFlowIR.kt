@@ -575,8 +575,8 @@ internal object DataFlowIR {
 
         private fun mapTypeToFunctionParameter(type: IrType) =
                 type.getInlinedClassNative().let { inlinedClass ->
-                    FunctionParameter(mapType(type), inlinedClass?.let { mapFunction(context.getBoxFunction(it)) },
-                            inlinedClass?.let { mapFunction(context.getUnboxFunction(it)) })
+                    FunctionParameter(mapType(type), inlinedClass?.let { mapFunction(context.ir.symbols.getBoxFunction(it)) },
+                            inlinedClass?.let { mapFunction(context.ir.symbols.getUnboxFunction(it)) })
                 }
 
         fun mapFunction(declaration: IrDeclaration): FunctionSymbol = when (declaration) {

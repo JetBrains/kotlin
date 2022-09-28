@@ -19,10 +19,11 @@ import org.jetbrains.kotlin.resolve.BindingContext
 sealed class FrontendPhaseResult() {
     object ShouldNotGenerateCode : FrontendPhaseResult()
 
-    class Full(
+    data class Full(
             val moduleDescriptor: ModuleDescriptor,
             val bindingContext: BindingContext,
             val frontendServices: FrontendServices,
+            val environment: KotlinCoreEnvironment,
     ) : FrontendPhaseResult()
 }
 
@@ -63,7 +64,7 @@ internal val FrontendPhase = object : SimpleNamedCompilerPhase<FrontendContext, 
         val bindingContext = analysisResult.bindingContext
 
         return if (analysisResult.shouldGenerateCode) {
-            FrontendPhaseResult.Full(moduleDescriptor, bindingContext, context.frontendServices)
+            FrontendPhaseResult.Full(moduleDescriptor, bindingContext, context.frontendServices, input)
         } else {
             FrontendPhaseResult.ShouldNotGenerateCode
         }

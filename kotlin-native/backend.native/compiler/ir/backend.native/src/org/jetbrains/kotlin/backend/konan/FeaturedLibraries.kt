@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.konan.driver.phases.PhaseContext
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -17,11 +18,20 @@ import org.jetbrains.kotlin.library.isInterop
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-internal fun Context.getExportedDependencies(): List<ModuleDescriptor> = getDescriptorsFromLibraries((config.resolve.exportedLibraries + config.resolve.includedLibraries).toSet())
-internal fun Context.getIncludedLibraryDescriptors(): List<ModuleDescriptor> = getDescriptorsFromLibraries(config.resolve.includedLibraries.toSet())
+internal fun PhaseContext.getExportedDependencies(root: ModuleDescriptor): List<ModuleDescriptor> =
+        root.getDescriptorsFromLibraries((config.resolve.exportedLibraries + config.resolve.includedLibraries).toSet())
 
-private fun Context.getDescriptorsFromLibraries(libraries: Set<KonanLibrary>) =
-    moduleDescriptor.allDependencyModules.filter {
+internal fun PhaseContext.getIncludedLibraryDescriptors(root: ModuleDescriptor): List<ModuleDescriptor> =
+        root.getDescriptorsFromLibraries(config.resolve.includedLibraries.toSet())
+
+internal fun Context.getExportedDependencies(): List<ModuleDescriptor> =
+        getExportedDependencies(this.moduleDescriptor)
+
+internal fun Context.getIncludedLibraryDescriptors(): List<ModuleDescriptor> =
+        getIncludedLibraryDescriptors(this.moduleDescriptor)
+
+private fun ModuleDescriptor.getDescriptorsFromLibraries(libraries: Set<KonanLibrary>) =
+    this.allDependencyModules.filter {
         when (val origin = it.klibModuleOrigin) {
             CurrentKlibModuleOrigin, SyntheticModulesOrigin -> false
             is DeserializedKlibModuleOrigin -> origin.library in libraries
