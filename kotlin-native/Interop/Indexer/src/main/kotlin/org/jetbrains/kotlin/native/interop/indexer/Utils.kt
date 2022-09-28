@@ -741,6 +741,7 @@ class TUCache : Disposable {
 
     override fun dispose() {
         unitByBinaryFile.values.forEach { clang_disposeTranslationUnit(it) }
+        unitByBinaryFile.clear()
     }
 }
 
