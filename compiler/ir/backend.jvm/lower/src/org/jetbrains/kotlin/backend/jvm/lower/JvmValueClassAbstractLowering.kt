@@ -43,10 +43,6 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
 
     final override fun visitClassNew(declaration: IrClass): IrStatement {
 
-        if (declaration.isSingleFieldValueClass) {
-            delegateEqualsToSpecializedEqualsIfNeeded(declaration)
-        }
-
         // The arguments to the primary constructor are in scope in the initializers of IrFields.
         declaration.primaryConstructor?.let {
             replacements.getReplacementFunction(it)?.let { replacement -> addBindingsFor(it, replacement) }
@@ -79,23 +75,6 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
         return declaration
     }
 
-
-    private fun delegateEqualsToSpecializedEqualsIfNeeded(declaration: IrClass) {
-        declaration.functions.singleOrNull { it.isEquals(context) && it.origin == IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER }
-            ?.apply {
-                val builder = context.createIrBuilder(symbol)
-                body = builder.irBlockBody {
-                    val otherParam = this@apply.valueParameters[0]
-                    +irIfThenReturnFalse(irNotIs(irGet(otherParam), declaration.defaultType))
-                    val thisObj = irGet(this@apply.dispatchReceiverParameter!!)
-                    val otherObj = irAs(irGet(otherParam), declaration.defaultType)
-                    +irReturn(irCall(context.irBuiltIns.eqeqSymbol).apply {
-                        putValueArgument(0, thisObj)
-                        putValueArgument(1, otherObj)
-                    })
-                }
-            }
-    }
 
     protected fun transformFunctionFlat(function: IrFunction): List<IrDeclaration>? {
         if (function is IrConstructor && function.isPrimary && function.constructedClass.isSpecificLoweringLogicApplicable()) {

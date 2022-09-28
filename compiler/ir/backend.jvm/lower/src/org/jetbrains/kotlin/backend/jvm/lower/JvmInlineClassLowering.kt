@@ -520,13 +520,13 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
 
     private fun findStaticReplacementForTypedEquals(valueClass: IrClass): IrFunction? {
-        fun isTypedEquals(irFunction: IrFunction, valueClass: IrClass): Boolean {
+        fun isTypedEquals(irFunction: IrFunction): Boolean {
             return irFunction.run {
                 name == EQUALS && returnType.isBoolean() && valueParameters.size == 1
                         && (valueParameters[0].type.classFqName?.run { valueClass.hasEqualFqName(this) } ?: false)
             }
         }
         return valueClass.functions
-            .singleOrNull { replacements.originalFunctionForStaticReplacement[it]?.run { isTypedEquals(this, valueClass) } ?: false }
+            .singleOrNull { replacements.originalFunctionForStaticReplacement[it]?.run { isTypedEquals(this) } ?: false }
     }
 }
