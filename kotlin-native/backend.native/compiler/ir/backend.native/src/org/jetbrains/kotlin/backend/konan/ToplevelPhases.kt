@@ -451,15 +451,22 @@ internal val disposeGenerationStatePhase = namedUnitPhase(
         }
 )
 
+private val phasesOverMainModule = NamedCompilerPhase(
+        name = "PhasesOverMainModule",
+        description = "Phases over main module",
+        lower = takeFromContext<Context, Unit, IrModuleFragment> { it.irModule!! } then
+                specialBackendChecksPhase then
+                backendCodegen then
+                unitSink(),
+        prerequisite = setOf(psiToIrPhase)
+)
+
 private val entireBackend = NamedCompilerPhase(
         name = "EntireBackend",
         description = "Entire backend",
         lower = createGenerationStatePhase then
                 buildAdditionalCacheInfoPhase then
-                takeFromContext { it.irModule!! } then
-                specialBackendChecksPhase then
-                backendCodegen then
-                unitSink() then
+                phasesOverMainModule then
                 saveAdditionalCacheInfoPhase then
                 produceOutputPhase then
                 objectFilesPhase then
@@ -526,6 +533,7 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         disableUnless(finalizeCachePhase, config.produce.isCache)
         disableUnless(exportInternalAbiPhase, config.produce.isCache)
         disableUnless(buildCExportsPhase, config.produce.isNativeLibrary)
+        disableUnless(functionsWithoutBoundCheck, config.involvesCodegen)
         disableUnless(backendCodegen, config.involvesCodegen)
         disableUnless(checkExternalCallsPhase, getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
         disableUnless(rewriteExternalCallsCheckerGlobals, getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
@@ -566,7 +574,7 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         if (config.metadataKlib || config.omitFrameworkBinary) {
             disable(psiToIrPhase)
             disable(copyDefaultValuesToActualPhase)
-            disable(specialBackendChecksPhase)
+            disable(phasesOverMainModule)
             disable(checkSamSuperTypesPhase)
         }
     }
