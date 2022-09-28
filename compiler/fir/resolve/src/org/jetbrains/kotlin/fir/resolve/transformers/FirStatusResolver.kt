@@ -95,7 +95,7 @@ class FirStatusResolver(
             scope.processPropertiesByName(property.name) {}
             scope.processDirectOverriddenPropertiesWithBaseScope(property.symbol) { overriddenSymbol, _ ->
                 if (session.visibilityChecker.isVisibleForOverriding(
-                        session, candidateInDerivedClass = property, candidateInBaseClass = overriddenSymbol.fir
+                        candidateInDerivedClass = property, candidateInBaseClass = overriddenSymbol.fir
                     )
                 ) {
                     this += overriddenSymbol.fir
@@ -135,7 +135,7 @@ class FirStatusResolver(
             scope.processFunctionsByName(function.name) {}
             scope.processDirectOverriddenFunctionsWithBaseScope(symbol) { overriddenSymbol, _ ->
                 if (session.visibilityChecker.isVisibleForOverriding(
-                        session, candidateInDerivedClass = function, candidateInBaseClass = overriddenSymbol.fir
+                        candidateInDerivedClass = function, candidateInBaseClass = overriddenSymbol.fir
                     )
                 ) {
                     this += overriddenSymbol.fir

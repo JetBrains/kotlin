@@ -57,7 +57,6 @@ object FirJavaVisibilityChecker : FirVisibilityChecker() {
     }
 
     override fun platformOverrideVisibilityCheck(
-        session: FirSession,
         candidateInDerivedClass: FirBasedSymbol<*>,
         symbolInBaseClass: FirBasedSymbol<*>,
         visibilityInBaseClass: Visibility,
