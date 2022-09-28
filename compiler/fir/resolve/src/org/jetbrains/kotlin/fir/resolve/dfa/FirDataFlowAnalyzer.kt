@@ -1219,6 +1219,11 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         // TODO: add unstable smartcast
         if (property.isLocal || !property.isVar) {
             exitVariableInitialization(node, assignment.rValue, property, assignment, hasExplicitType = false)
+        } else {
+            val variable = variableStorage.getRealVariableWithoutUnwrappingAlias(node.flow, property.symbol, assignment)
+            if (variable != null) {
+                logicSystem.removeAllAboutVariable(node.flow, variable)
+            }
         }
         processConditionalContract(assignment)
     }
