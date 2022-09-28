@@ -548,15 +548,26 @@ object LightTreePositioningStrategies {
                 KtNodeTypes.CLASS -> tree.findLastChildByType(node, KtNodeTypes.SUPER_TYPE_LIST) ?: node
                 else -> node
             }
-            val argumentList = tree.findDescendantByType(nodeToStart, KtNodeTypes.VALUE_ARGUMENT_LIST)
-                ?: return markElement(nodeToStart, startOffset, endOffset, tree, node)
-            val rightParenthesis = tree.findLastChildByType(argumentList, RPAR)
-                ?: return markElement(nodeToStart, startOffset, endOffset, tree, node)
-            val lastArgument = tree.findLastChildByType(argumentList, KtNodeTypes.VALUE_ARGUMENT)
-            return if (lastArgument != null) {
-                markRange(lastArgument, rightParenthesis, startOffset, endOffset, tree, node)
-            } else {
-                markRange(nodeToStart, rightParenthesis, startOffset, endOffset, tree, node)
+            val argumentList = nodeToStart.takeIf { nodeToStart.tokenType == KtNodeTypes.VALUE_ARGUMENT_LIST }
+                ?: tree.findChildByType(nodeToStart, KtNodeTypes.VALUE_ARGUMENT_LIST)
+            return when {
+                argumentList != null -> {
+                    val rightParenthesis = tree.findLastChildByType(argumentList, RPAR)
+                        ?: return markElement(nodeToStart, startOffset, endOffset, tree, node)
+                    val lastArgument = tree.findLastChildByType(argumentList, KtNodeTypes.VALUE_ARGUMENT)
+                    if (lastArgument != null) {
+                        markRange(lastArgument, rightParenthesis, startOffset, endOffset, tree, node)
+                    } else {
+                        markRange(nodeToStart, rightParenthesis, startOffset, endOffset, tree, node)
+                    }
+                }
+
+                nodeToStart.tokenType == KtNodeTypes.CALL_EXPRESSION -> markElement(
+                    tree.findChildByType(nodeToStart, KtNodeTypes.REFERENCE_EXPRESSION) ?: nodeToStart,
+                    startOffset, endOffset, tree, node,
+                )
+
+                else -> markElement(nodeToStart, startOffset, endOffset, tree, node)
             }
         }
     }

@@ -20,7 +20,7 @@ fun test() {
     bar(x = 1, f = {})
 
     // Bad
-    <!NO_VALUE_FOR_PARAMETER!>bar {}<!>
+    <!NO_VALUE_FOR_PARAMETER!>bar<!> {}
     bar(<!NO_VALUE_FOR_PARAMETER!>{})<!>
 
     // OK
@@ -28,7 +28,7 @@ fun test() {
     baz({}, false)
 
     // Bad
-    <!NO_VALUE_FOR_PARAMETER!>baz {}<!>
+    <!NO_VALUE_FOR_PARAMETER!>baz<!> {}
     <!NO_VALUE_FOR_PARAMETER!>baz()<!> {}
     baz(<!NO_VALUE_FOR_PARAMETER!>other = false)<!> <!TOO_MANY_ARGUMENTS!>{}<!>
 }

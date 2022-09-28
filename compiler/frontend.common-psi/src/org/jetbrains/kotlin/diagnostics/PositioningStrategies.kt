@@ -647,13 +647,24 @@ object PositioningStrategies {
                 is KtClassOrObject -> element.getSuperTypeList() ?: element
                 else -> element
             }
-            val argumentList = qualifiedAccess.findDescendantOfType<KtValueArgumentList>() ?: return markElement(qualifiedAccess)
-            val rightParenthesis = argumentList.rightParenthesis ?: return markElement(qualifiedAccess)
-            val lastArgument = argumentList.children.findLast { it is KtValueArgument }
-            return if (lastArgument != null) {
-                markRange(lastArgument, rightParenthesis)
-            } else {
-                markRange(qualifiedAccess, rightParenthesis)
+            val argumentList = qualifiedAccess as? KtValueArgumentList
+                ?: qualifiedAccess.getChildOfType()
+            return when {
+                argumentList != null -> {
+                    val rightParenthesis = argumentList.rightParenthesis ?: return markElement(qualifiedAccess)
+                    val lastArgument = argumentList.children.findLast { it is KtValueArgument }
+                    if (lastArgument != null) {
+                        markRange(lastArgument, rightParenthesis)
+                    } else {
+                        markRange(qualifiedAccess, rightParenthesis)
+                    }
+                }
+
+                qualifiedAccess is KtCallExpression -> markElement(
+                    qualifiedAccess.getChildOfType<KtNameReferenceExpression>() ?: qualifiedAccess
+                )
+
+                else -> markElement(qualifiedAccess)
             }
         }
     }

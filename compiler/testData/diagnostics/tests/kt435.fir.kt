@@ -4,5 +4,5 @@ fun Any.foo1() : (i : Int) -> Unit {
 }
 
 fun test(a : Any) {
-    <!NO_VALUE_FOR_PARAMETER{LT}!><!NO_VALUE_FOR_PARAMETER{PSI}!>a.foo1()<!>()<!>
+    <!NO_VALUE_FOR_PARAMETER!>a.foo1()()<!>
 }
