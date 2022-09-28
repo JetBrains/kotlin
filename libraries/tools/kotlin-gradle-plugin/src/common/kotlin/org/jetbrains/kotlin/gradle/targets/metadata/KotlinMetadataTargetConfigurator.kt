@@ -118,7 +118,7 @@ class KotlinMetadataTargetConfigurator :
     override fun buildCompilationProcessor(compilation: AbstractKotlinCompilation<*>): KotlinCompilationProcessor<*> = when (compilation) {
         is KotlinCommonCompilation -> {
             val tasksProvider = KotlinTasksProvider()
-            KotlinCommonSourceSetProcessor(compilation, tasksProvider)
+            KotlinCommonSourceSetProcessor(KotlinCompilationProjection(compilation), tasksProvider)
         }
 
         is KotlinSharedNativeCompilation -> NativeSharedCompilationProcessor(compilation)
@@ -486,8 +486,8 @@ class KotlinMetadataTargetConfigurator :
 }
 
 internal class NativeSharedCompilationProcessor(
-    override val kotlinCompilation: KotlinNativeFragmentMetadataCompilationData
-) : KotlinCompilationProcessor<KotlinNativeCompile>(kotlinCompilation) {
+    private  val kotlinCompilation: KotlinSharedNativeCompilation
+) : KotlinCompilationProcessor<KotlinNativeCompile>(KotlinCompilationProjection(kotlinCompilation)) {
 
     override val kotlinTask: TaskProvider<out KotlinNativeCompile> =
         KotlinNativeTargetConfigurator.createKlibCompilationTask(kotlinCompilation)

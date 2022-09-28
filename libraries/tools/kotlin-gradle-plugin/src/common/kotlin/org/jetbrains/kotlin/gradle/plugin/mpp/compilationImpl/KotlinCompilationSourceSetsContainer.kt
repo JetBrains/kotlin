@@ -3,29 +3,40 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl
+package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSet
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSetImpl
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
 
-internal abstract class AbstractCompilationDetails<T : KotlinCommonOptions>(
-    final override val defaultSourceSet: KotlinSourceSet
-) : CompilationDetails<T> {
-    private val directlyIncludedKotlinSourceSetsImpl: MutableObservableSet<KotlinSourceSet> = MutableObservableSetImpl(defaultSourceSet)
+internal fun KotlinCompilationSourceSetsContainer(
+    defaultSourceSet: KotlinSourceSet
+): KotlinCompilationSourceSetsContainer {
+    return DefaultKotlinCompilationSourceSetsContainer(defaultSourceSet)
+}
 
-    final override val kotlinSourceSets: ObservableSet<KotlinSourceSet>
-        get() = directlyIncludedKotlinSourceSetsImpl
+internal interface KotlinCompilationSourceSetsContainer {
+    val defaultSourceSet: KotlinSourceSet
+    val kotlinSourceSets: ObservableSet<KotlinSourceSet>
+    val allKotlinSourceSets: ObservableSet<KotlinSourceSet>
+    fun source(sourceSet: KotlinSourceSet)
+}
+
+private class DefaultKotlinCompilationSourceSetsContainer(
+    override val defaultSourceSet: KotlinSourceSet
+) : KotlinCompilationSourceSetsContainer {
+    private val kotlinSourceSetsImpl: MutableObservableSet<KotlinSourceSet> = MutableObservableSetImpl(defaultSourceSet)
 
     private val allKotlinSourceSetsImpl: MutableObservableSet<KotlinSourceSet> = MutableObservableSetImpl<KotlinSourceSet>().also { set ->
         defaultSourceSet.internal.withDependsOnClosure.forAll(set::add)
     }
 
-    final override val allKotlinSourceSets: ObservableSet<KotlinSourceSet>
+    override val kotlinSourceSets: ObservableSet<KotlinSourceSet>
+        get() = kotlinSourceSetsImpl
+
+    override val allKotlinSourceSets: ObservableSet<KotlinSourceSet>
         get() = allKotlinSourceSetsImpl
 
     /**
@@ -35,19 +46,11 @@ internal abstract class AbstractCompilationDetails<T : KotlinCommonOptions>(
      */
     private val sourcedKotlinSourceSets = hashSetOf<KotlinSourceSet>()
 
-    final override fun source(sourceSet: KotlinSourceSet) {
+    override fun source(sourceSet: KotlinSourceSet) {
         if (!sourcedKotlinSourceSets.add(sourceSet)) return
-        directlyIncludedKotlinSourceSetsImpl.add(sourceSet)
+        kotlinSourceSetsImpl.add(sourceSet)
         sourceSet.internal.withDependsOnClosure.forAll { inDependsOnClosure ->
             allKotlinSourceSetsImpl.add(inDependsOnClosure)
-            inDependsOnClosure.internal.compilations.add(compilation)
         }
-
-        whenSourceSetAdded(sourceSet)
     }
-
-    /**
-     * Called after [sourceSet] added the [sourceSet] to its respective ObservableSet's
-     */
-    protected open fun whenSourceSetAdded(sourceSet: KotlinSourceSet) = Unit
 }

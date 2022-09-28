@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.jvm
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.Kotlin2JvmSourceSetProcessor
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
@@ -74,6 +72,6 @@ open class KotlinJvmTargetConfigurator :
 
     override fun buildCompilationProcessor(compilation: KotlinJvmCompilation): KotlinSourceSetProcessor<*> {
         val tasksProvider = KotlinTasksProvider()
-        return Kotlin2JvmSourceSetProcessor(tasksProvider, compilation)
+        return Kotlin2JvmSourceSetProcessor(tasksProvider, KotlinCompilationProjection(compilation))
     }
 }

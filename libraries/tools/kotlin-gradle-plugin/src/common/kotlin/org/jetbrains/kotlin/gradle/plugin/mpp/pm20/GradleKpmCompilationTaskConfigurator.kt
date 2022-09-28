@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JvmSourceSetProcessor
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationProjection
 import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.addCommonSourcesToKotlinCompileTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
@@ -30,7 +31,7 @@ open class GradleKpmCompilationTaskConfigurator(
         variant: GradleKpmVariant,
         compilationData: KotlinCompilationData<*>
     ): TaskProvider<out KotlinCompile> {
-        Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(), compilationData).run()
+        Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(), KotlinCompilationProjection.KPM(compilationData)).run()
         val allSources = getSourcesForFragmentCompilation(variant)
         val commonSources = getCommonSourcesForFragmentCompilation(variant)
 
