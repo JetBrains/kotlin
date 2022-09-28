@@ -6003,6 +6003,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
         @TestDataPath("$PROJECT_ROOT")
         public class Problems {
             @Test
+            @TestMetadata("AbstractToolConfig.kt")
+            public void testAbstractToolConfig() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/AbstractToolConfig.kt");
+            }
+
+            @Test
             public void testAllFilesPresentInProblems() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
