@@ -678,7 +678,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               if (%default and 0b0010 !== 0) {
                 %dirty = %dirty or 0b00110000
               } else if (%changed and 0b01110000 === 0) {
-                %dirty = %dirty or if (%composer.changed(content)) 0b00100000 else 0b00010000
+                %dirty = %dirty or if (%composer.changedInstance(content)) 0b00100000 else 0b00010000
               }
               if (%dirty and 0b01011011 !== 0b00010010 || !%composer.skipping) {
                 if (%default and 0b0010 !== 0) {
@@ -805,7 +805,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               sourceInformation(%composer, "C(TestLambda):Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
-                %dirty = %dirty or if (%composer.changed(content)) 0b0100 else 0b0010
+                %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
@@ -871,7 +871,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
           sourceInformation(%composer, "C(TestLambda):Test.kt")
           val %dirty = %changed
           if (%changed and 0b1110 === 0) {
-            %dirty = %dirty or if (%composer.changed(content)) 0b0100 else 0b0010
+            %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
           }
           if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
             if (isTraceInProgress()) {
