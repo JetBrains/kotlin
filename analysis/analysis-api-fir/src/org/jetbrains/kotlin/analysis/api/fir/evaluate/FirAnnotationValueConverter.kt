@@ -17,9 +17,13 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedTypeQualifierError
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeErrorType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -145,7 +149,27 @@ internal object FirAnnotationValueConverter {
             is FirGetClassCall -> {
                 val symbol = (argument as? FirResolvedQualifier)?.symbol
                 when {
-                    symbol == null -> KtKClassAnnotationValue.KtErrorClassAnnotationValue(sourcePsi)
+                    symbol == null -> {
+                        val qualifierParts = mutableListOf<String?>()
+
+                        fun process(expression: FirExpression) {
+                            val errorType = expression.typeRef.coneType as? ConeErrorType
+                            val unresolvedName = when (val diagnostic = errorType?.diagnostic) {
+                                is ConeUnresolvedTypeQualifierError -> diagnostic.qualifier
+                                is ConeUnresolvedNameError -> diagnostic.qualifier
+                                else -> null
+                            }
+                            qualifierParts += unresolvedName
+                            if (errorType != null && expression is FirPropertyAccessExpression) {
+                                expression.explicitReceiver?.let { process(it) }
+                            }
+                        }
+
+                        process(argument)
+
+                        val unresolvedName = qualifierParts.asReversed().filterNotNull().takeIf { it.isNotEmpty() }?.joinToString(".")
+                        KtKClassAnnotationValue.KtErrorClassAnnotationValue(sourcePsi, unresolvedName)
+                    }
                     symbol.isLocal -> KtKClassAnnotationValue.KtLocalKClassAnnotationValue(
                         symbol.fir.psi as KtClassOrObject,
                         sourcePsi

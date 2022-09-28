@@ -271,12 +271,6 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     }
 
     @Test
-    @TestMetadata("typealiasInTypeArguments.kt")
-    public void testTypealiasInTypeArguments() throws Exception {
-        runTest("compiler/testData/asJava/lightClasses/typealiasInTypeArguments.kt");
-    }
-
-    @Test
     @TestMetadata("VarArgs.kt")
     public void testVarArgs() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/VarArgs.kt");
@@ -409,6 +403,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
         @TestMetadata("TwoOverrides.kt")
         public void testTwoOverrides() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/TwoOverrides.kt");
+        }
+
+        @Test
+        @TestMetadata("unresolvedQuialifierInAnnotation.kt")
+        public void testUnresolvedQuialifierInAnnotation() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/unresolvedQuialifierInAnnotation.kt");
         }
 
         @Test

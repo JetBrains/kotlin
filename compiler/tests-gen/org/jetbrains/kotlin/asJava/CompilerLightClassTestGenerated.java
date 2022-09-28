@@ -234,11 +234,6 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/TypePararametersInClass.kt");
     }
 
-    @TestMetadata("typealiasInTypeArguments.kt")
-    public void testTypealiasInTypeArguments() throws Exception {
-        runTest("compiler/testData/asJava/lightClasses/typealiasInTypeArguments.kt");
-    }
-
     @TestMetadata("VarArgs.kt")
     public void testVarArgs() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/VarArgs.kt");
@@ -354,6 +349,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         @TestMetadata("TwoOverrides.kt")
         public void testTwoOverrides() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/TwoOverrides.kt");
+        }
+
+        @TestMetadata("unresolvedQuialifierInAnnotation.kt")
+        public void testUnresolvedQuialifierInAnnotation() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/unresolvedQuialifierInAnnotation.kt");
         }
 
         @TestMetadata("WrongAnnotations.kt")

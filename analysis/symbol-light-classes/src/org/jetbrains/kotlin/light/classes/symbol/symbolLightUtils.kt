@@ -201,16 +201,18 @@ internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiA
         }
 
         KtUnsupportedAnnotationValue -> null
-        is KtKClassAnnotationValue.KtErrorClassAnnotationValue -> null
-        is KtKClassAnnotationValue.KtLocalKClassAnnotationValue -> null
-        is KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue -> toAnnotationMemberValue(parent)
+        is KtKClassAnnotationValue -> toAnnotationMemberValue(parent)
     }
 }
 
-private fun KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiExpression? {
-    val fqName = classId.asSingleFqName()
+private fun KtKClassAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiExpression? {
+    val typeString = when (this) {
+        is KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue -> classId.asSingleFqName().asString()
+        is KtKClassAnnotationValue.KtLocalKClassAnnotationValue -> null
+        is KtKClassAnnotationValue.KtErrorClassAnnotationValue -> unresolvedQualifierName
+    } ?: return null
     val canonicalText = psiType(
-        fqName.asString(), parent, boxPrimitiveType = false, /* TODO value.arrayNestedness > 0*/
+        typeString, parent, boxPrimitiveType = false, /* TODO value.arrayNestedness > 0*/
     ).let(TypeConversionUtil::erasure).getCanonicalText(false)
     return try {
         PsiElementFactory.getInstance(parent.project).createExpressionFromText("$canonicalText.class", parent)

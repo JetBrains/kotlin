@@ -271,12 +271,6 @@ public class SymbolLightClassesParentingForLibraryTestGenerated extends Abstract
     }
 
     @Test
-    @TestMetadata("typealiasInTypeArguments.kt")
-    public void testTypealiasInTypeArguments() throws Exception {
-        runTest("compiler/testData/asJava/lightClasses/typealiasInTypeArguments.kt");
-    }
-
-    @Test
     @TestMetadata("VarArgs.kt")
     public void testVarArgs() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/VarArgs.kt");
