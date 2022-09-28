@@ -64,7 +64,6 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         }
 
         override fun platformOverrideVisibilityCheck(
-            session: FirSession,
             candidateInDerivedClass: FirBasedSymbol<*>,
             symbolInBaseClass: FirBasedSymbol<*>,
             visibilityInBaseClass: Visibility,
@@ -117,28 +116,23 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     }
 
     fun isVisibleForOverriding(
-        session: FirSession,
         candidateInDerivedClass: FirMemberDeclaration,
         candidateInBaseClass: FirMemberDeclaration
-    ): Boolean = isVisibleForOverriding(session, candidateInDerivedClass.moduleData, candidateInDerivedClass.symbol, candidateInBaseClass)
+    ): Boolean = isVisibleForOverriding(candidateInDerivedClass.moduleData, candidateInDerivedClass.symbol, candidateInBaseClass)
 
     fun isVisibleForOverriding(
-        session: FirSession,
         derivedClassModuleData: FirModuleData,
         symbolFromDerivedClass: FirBasedSymbol<*>,
         candidateInBaseClass: FirMemberDeclaration,
     ): Boolean = when (candidateInBaseClass.visibility) {
         Visibilities.Internal -> {
             candidateInBaseClass.moduleData == derivedClassModuleData ||
-                    (derivedClassModuleData == session.moduleData &&
-                            session.moduleVisibilityChecker?.isInFriendModule(candidateInBaseClass) == true)
+                    derivedClassModuleData.session.moduleVisibilityChecker?.isInFriendModule(candidateInBaseClass) == true
         }
 
         Visibilities.Private, Visibilities.PrivateToThis -> false
         Visibilities.Protected -> true
-        else -> platformOverrideVisibilityCheck(
-            session, symbolFromDerivedClass, candidateInBaseClass.symbol, candidateInBaseClass.visibility
-        )
+        else -> platformOverrideVisibilityCheck(symbolFromDerivedClass, candidateInBaseClass.symbol, candidateInBaseClass.visibility)
     }
 
     private fun FirMemberDeclaration.containingNonLocalClass(
@@ -261,7 +255,6 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     ): Boolean
 
     protected abstract fun platformOverrideVisibilityCheck(
-        session: FirSession,
         candidateInDerivedClass: FirBasedSymbol<*>,
         symbolInBaseClass: FirBasedSymbol<*>,
         visibilityInBaseClass: Visibility,
