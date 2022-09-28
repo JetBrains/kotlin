@@ -28941,6 +28941,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("implicitThisOrLocalVar.kt")
+            public void testImplicitThisOrLocalVar() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/implicitThisOrLocalVar.kt");
+            }
+
+            @Test
             @TestMetadata("implicitToGrandSon.kt")
             public void testImplicitToGrandSon() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/implicitToGrandSon.kt");
