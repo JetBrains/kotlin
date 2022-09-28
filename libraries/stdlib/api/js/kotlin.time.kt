@@ -598,7 +598,6 @@ public interface TimeSource {
 
         @kotlin.SinceKotlin(version = "1.9")
         @kotlin.WasExperimental(markerClass = {kotlin.time.ExperimentalTime::class})
-        @kotlin.jvm.JvmInline
         public final inline class ValueTimeMark : kotlin.time.ComparableTimeMark {
             public final operator fun compareTo(other: kotlin.time.TimeSource.Monotonic.ValueTimeMark): kotlin.Int
 
