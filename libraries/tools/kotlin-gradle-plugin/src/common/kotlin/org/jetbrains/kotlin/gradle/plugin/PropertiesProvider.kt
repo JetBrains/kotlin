@@ -278,10 +278,18 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = this.property("kotlin.native.distribution.baseDownloadUrl") ?: NativeCompilerDownloader.BASE_DOWNLOAD_URL
 
     /**
+     * Allows setting Kotlin/Native maven url to download bundles from.
+     *
+     * This path will be added as a maven repository to the project.
+     */
+    val nativeMavenDownloadUrl: String?
+        get() = this.property("kotlin.native.distribution.mavenDownloadUrl")
+
+    /**
      * Allows downloading Kotlin/Native distribution with maven.
      *
      * Makes downloader search for bundles in maven repositories.
-     * Property `kotlin.native.distribution.baseDownloadUrl` allows to specify custom maven url.
+     * Property `kotlin.native.distribution.mavenDownloadUrl` allows to specify custom maven url.
      */
     val nativeDownloadFromMaven: Boolean
         get() = this.booleanProperty("kotlin.native.distribution.downloadFromMaven") ?: false

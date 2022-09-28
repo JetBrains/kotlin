@@ -123,7 +123,7 @@ class NativeCompilerDownloader(
 
     private fun downloadAndExtract() {
         val repoUrl = if (kotlinProperties.nativeDownloadFromMaven) {
-            kotlinProperties.nativeBaseDownloadUrl.takeIf { it != BASE_DOWNLOAD_URL }
+            kotlinProperties.nativeMavenDownloadUrl
         } else {
             buildString {
                 append("${kotlinProperties.nativeBaseDownloadUrl}/")
@@ -132,7 +132,6 @@ class NativeCompilerDownloader(
                 append(simpleOsName)
             }
         }
-        val dependencyUrl = if (repoUrl != null) "$repoUrl/$dependencyFileName" else "maven://$dependencyFileName"
 
         val repo = if (repoUrl != null) {
             if (kotlinProperties.nativeDownloadFromMaven) {
@@ -166,12 +165,13 @@ class NativeCompilerDownloader(
         logger.lifecycle("\nPlease wait while Kotlin/Native compiler $compilerVersion is being installed.")
 
         if (!kotlinProperties.nativeDownloadFromMaven) {
-            val suffix = project.probeRemoteFileLength(dependencyUrl, probingTimeoutMs = 200)
+            val dependencyUrl = "$repoUrl/$dependencyFileName"
+            val lengthSuffix = project.probeRemoteFileLength(dependencyUrl, probingTimeoutMs = 200)
                 ?.let { " (${formatContentLength(it)})" }
                 .orEmpty()
-            logger.lifecycle("Download $dependencyUrl$suffix")
+            logger.lifecycle("Download $dependencyUrl$lengthSuffix")
         }
-        val archive = logger.lifecycleWithDuration("Download $dependencyUrl finished,") {
+        val archive = logger.lifecycleWithDuration("Download $dependencyFileName finished,") {
             configuration.files.single()
         }
 
