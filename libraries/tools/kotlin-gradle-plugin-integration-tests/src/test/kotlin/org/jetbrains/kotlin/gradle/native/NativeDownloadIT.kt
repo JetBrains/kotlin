@@ -49,7 +49,7 @@ class NativeDownloadIT : BaseGradleIT() {
         with(transformNativeTestProjectWithPluginDsl("native-download-maven")) {
             gradleProperties().appendText(
                 """
-                    kotlin.native.distribution.baseDownloadUrl=${mavenUrl()}
+                    kotlin.native.distribution.mavenDownloadUrl=${mavenUrl()}
                     kotlin.native.distribution.downloadFromMaven=true
                 """.trimIndent()
             )
@@ -66,7 +66,7 @@ class NativeDownloadIT : BaseGradleIT() {
         with(transformNativeTestProjectWithPluginDsl("native-download-maven")) {
             gradleProperties().appendText(
                 """
-                    kotlin.native.distribution.baseDownloadUrl=${mavenUrl()}
+                    kotlin.native.distribution.mavenDownloadUrl=${mavenUrl()}
                     kotlin.native.distribution.downloadFromMaven=true
                 """.trimIndent()
             )
