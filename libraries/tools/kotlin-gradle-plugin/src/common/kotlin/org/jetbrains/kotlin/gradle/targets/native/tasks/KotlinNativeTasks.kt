@@ -1007,10 +1007,14 @@ open class CInteropProcess
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val headers: FileCollection get() = settings.headers
 
-    @get:Input
+    @get:IgnoreEmptyDirectories
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     val allHeadersDirs: Set<File> get() = settings.includeDirs.allHeadersDirs.files
 
-    @get:Input
+    @get:IgnoreEmptyDirectories
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     val headerFilterDirs: Set<File> get() = settings.includeDirs.headerFilterDirs.files
 
     private val libDirectories = project.buildLibDirectories()
