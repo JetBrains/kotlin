@@ -251,13 +251,6 @@ internal fun PsiToIrContext.psiToIr(
         module.files.forEach { it.metadata = KonanFileMetadataSource(module as KonanIrModuleFragmentImpl) }
     }
 
-    // TODO: Move to cleanup
-//    val originalBindingContext = bindingContext as? CleanableBindingContext
-//            ?: error("BindingContext should be cleanable in K/N IR to avoid leaking memory: $bindingContext")
-//    originalBindingContext.clear()
-//
-//    this.bindingContext = BindingContext.EMPTY
-
     return if (isProducingLibrary) {
         PsiToIrResult.ForLibrary(irModules, mainModule, expectDescriptorToSymbol, symbols)
     } else {

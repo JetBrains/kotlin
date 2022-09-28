@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.CleanableBindingContext
 
 // TODO: What is the difference between input and context?
 //  Don't have a good answer yet.
@@ -81,6 +83,9 @@ internal class PhaseEngine(
     ): PsiToIrResult {
         val psiToIrInput = PsiToIrInput(frontendResult, symbolTable, isProducingLibrary)
         val context = PsiToContextImpl(config, frontendResult.moduleDescriptor)
+        val originalBindingContext = frontendResult.bindingContext as? CleanableBindingContext
+                ?: error("BindingContext should be cleanable in K/N IR to avoid leaking memory: ${frontendResult.bindingContext}")
+        originalBindingContext.clear()
         return this.runPhase(context, PsiToIrPhase, psiToIrInput)
     }
 

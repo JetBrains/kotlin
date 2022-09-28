@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.CleanableBindingContext
 
 internal fun moduleValidationCallback(state: ActionState, module: IrModuleFragment, context: Context) {
     if (!context.config.needVerifyIr) return
@@ -127,6 +129,11 @@ internal val psiToIrPhase = konanUnitPhase(
                     this.irLinker = result.irLinker
                 }
             }
+            val originalBindingContext = bindingContext as? CleanableBindingContext
+                        ?: error("BindingContext should be cleanable in K/N IR to avoid leaking memory: $bindingContext")
+            originalBindingContext.clear()
+
+            this.bindingContext = BindingContext.EMPTY
         },
         name = "Psi2Ir",
         description = "Psi to IR conversion and klib linkage",
