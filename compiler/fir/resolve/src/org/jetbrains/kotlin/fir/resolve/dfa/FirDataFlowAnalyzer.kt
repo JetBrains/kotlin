@@ -1216,9 +1216,14 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     fun exitVariableAssignment(assignment: FirVariableAssignment) {
         val node = graphBuilder.exitVariableAssignment(assignment).mergeIncomingFlow()
         val property = assignment.lValue.resolvedSymbol?.fir as? FirProperty ?: return
-        // TODO: add unstable smartcast
-        if (property.isLocal || !property.isVar) {
+        if (property.isLocal || property.isVal) {
             exitVariableInitialization(node, assignment.rValue, property, assignment, hasExplicitType = false)
+        } else {
+            // TODO: add unstable smartcast for non-local var
+            val variable = variableStorage.getRealVariableWithoutUnwrappingAlias(node.flow, property.symbol, assignment)
+            if (variable != null) {
+                logicSystem.removeAllAboutVariable(node.flow, variable)
+            }
         }
         processConditionalContract(assignment)
     }
