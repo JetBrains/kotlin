@@ -97,9 +97,20 @@ private fun loadClass(classLoader: ClassLoader, packageName: String, className: 
         }
     }
 
-    var fqName = "$packageName.${className.replace('.', '$')}"
-    if (arrayDimensions > 0) {
-        fqName = "[".repeat(arrayDimensions) + "L$fqName;"
+    val fqName = buildString {
+        if (arrayDimensions > 0) {
+            repeat(arrayDimensions) {
+                append("[")
+            }
+            append("L")
+        }
+        if (packageName.isNotEmpty()) {
+            append("$packageName.")
+        }
+        append(className.replace('.', '$'))
+        if (arrayDimensions > 0) {
+            append(";")
+        }
     }
 
     return classLoader.tryLoadClass(fqName)

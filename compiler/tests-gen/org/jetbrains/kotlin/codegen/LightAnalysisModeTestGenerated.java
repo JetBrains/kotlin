@@ -32100,6 +32100,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/reflection/annotations/onTypes/arrayKClass.kt");
                 }
 
+                @TestMetadata("arrayTypeInDefaultPackage.kt")
+                public void testArrayTypeInDefaultPackage() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/annotations/onTypes/arrayTypeInDefaultPackage.kt");
+                }
+
                 @TestMetadata("classLiteralWithExpectedType.kt")
                 public void testClassLiteralWithExpectedType() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/annotations/onTypes/classLiteralWithExpectedType.kt");
