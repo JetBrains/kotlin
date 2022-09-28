@@ -110,11 +110,42 @@ internal object FirCompileTimeConstantEvaluator {
     ): KtConstantValue? {
         val evaluated = evaluate(fir, mode) ?: return null
 
-        val ktConstantValue = KtConstantValueFactory.createConstantValue(evaluated.value, evaluated.psi as? KtElement) ?: return null
-        check(ktConstantValue.constantValueKind == evaluated.kind) {
-            "Expected ${evaluated.kind} for created KtConstantValue but ${ktConstantValue.constantValueKind} found"
+        val value = evaluated.value
+        val psi = evaluated.psi as? KtElement
+        return when (evaluated.kind) {
+            ConstantValueKind.Byte -> KtConstantValue.KtByteConstantValue(value as Byte, psi)
+            ConstantValueKind.Int -> KtConstantValue.KtIntConstantValue(value as Int, psi)
+            ConstantValueKind.Long -> KtConstantValue.KtLongConstantValue(value as Long, psi)
+            ConstantValueKind.Short -> KtConstantValue.KtShortConstantValue(value as Short, psi)
+
+            ConstantValueKind.UnsignedByte -> KtConstantValue.KtUnsignedByteConstantValue(value as UByte, psi)
+            ConstantValueKind.UnsignedInt -> KtConstantValue.KtUnsignedIntConstantValue(value as UInt, psi)
+            ConstantValueKind.UnsignedLong -> KtConstantValue.KtUnsignedLongConstantValue(value as ULong, psi)
+            ConstantValueKind.UnsignedShort -> KtConstantValue.KtUnsignedShortConstantValue(value as UShort, psi)
+
+            ConstantValueKind.Double -> KtConstantValue.KtDoubleConstantValue(value as Double, psi)
+            ConstantValueKind.Float -> KtConstantValue.KtFloatConstantValue(value as Float, psi)
+
+            ConstantValueKind.Boolean -> KtConstantValue.KtBooleanConstantValue(value as Boolean, psi)
+            ConstantValueKind.Char -> KtConstantValue.KtCharConstantValue(value as Char, psi)
+            ConstantValueKind.String -> KtConstantValue.KtStringConstantValue(value as String, psi)
+            ConstantValueKind.Null -> KtConstantValue.KtNullConstantValue(psi)
+
+
+            ConstantValueKind.IntegerLiteral -> {
+                val long = value as Long
+                if (Int.MIN_VALUE < long && long < Int.MAX_VALUE) KtConstantValue.KtIntConstantValue(long.toInt(), psi)
+                else KtConstantValue.KtLongConstantValue(long, psi)
+            }
+
+            ConstantValueKind.UnsignedIntegerLiteral -> {
+                val long = value as ULong
+                if (UInt.MIN_VALUE < long && long < UInt.MAX_VALUE) KtConstantValue.KtUnsignedIntConstantValue(long.toUInt(), psi)
+                else KtConstantValue.KtUnsignedLongConstantValue(long, psi)
+            }
+
+            ConstantValueKind.Error -> error("Should not be possible to get from FIR tree")
         }
-        return ktConstantValue
     }
 
     private fun FirConstExpression<*>.adaptToConstKind(): FirConstExpression<*> {

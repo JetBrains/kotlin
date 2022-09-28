@@ -231,4 +231,38 @@ public class Fe10IdeNormalAnalysisSourceModuleCompileTimeConstantEvaluatorTestGe
     public void testString_trimIndent() throws Exception {
         runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_trimIndent.kt");
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode")
+    @TestDataPath("$PROJECT_ROOT")
+    public class IncompleteCode {
+        @Test
+        public void testAllFilesPresentInIncompleteCode() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("incompleteRange.kt")
+        public void testIncompleteRange() throws Exception {
+            runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode/incompleteRange.kt");
+        }
+
+        @Test
+        @TestMetadata("noRightOperand.kt")
+        public void testNoRightOperand() throws Exception {
+            runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode/noRightOperand.kt");
+        }
+
+        @Test
+        @TestMetadata("noRightOperandLong.kt")
+        public void testNoRightOperandLong() throws Exception {
+            runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode/noRightOperandLong.kt");
+        }
+
+        @Test
+        @TestMetadata("noRightOperandUnsignedLong.kt")
+        public void testNoRightOperandUnsignedLong() throws Exception {
+            runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode/noRightOperandUnsignedLong.kt");
+        }
+    }
 }
