@@ -170,7 +170,6 @@ class CheckIrElementVisitor(
             returnType.classifier is IrClassSymbol &&
             returnType.arguments.isEmpty()
         ) {
-
             expression.ensureTypeIs(returnType)
         }
 
@@ -258,6 +257,7 @@ class CheckIrElementVisitor(
 
             val allDescriptors = declaration.descriptor.unsubstitutedMemberScope
                 .getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>()
+                .filter { it.visibility != DescriptorVisibilities.INVISIBLE_FAKE }
 
             val presentDescriptors = declaration.declarations.map { it.descriptor }
 
