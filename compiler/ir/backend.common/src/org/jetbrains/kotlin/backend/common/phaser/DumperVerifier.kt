@@ -131,7 +131,7 @@ fun <Data, Context> dumpToStdout(
 
 val defaultDumper = makeDumpAction(dumpToStdout(::dumpIrElement) + dumpToFile("ir", ::dumpIrElement))
 
-fun <Fragment : IrElement> validationCallback(context: CommonBackendContext, fragment: Fragment, checkProperties: Boolean = false) {
+fun validationCallback(context: CommonBackendContext, fragment: IrElement, checkProperties: Boolean = false) {
     val validatorConfig = IrValidatorConfig(
         abortOnError = true,
         ensureAllNodesAreDifferent = true,
