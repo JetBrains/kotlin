@@ -85,6 +85,18 @@ public class InteropIndexerFModulesTestGenerated extends AbstractNativeInteropIn
         }
 
         @Test
+        @TestMetadata("excludePod1")
+        public void testExcludePod1() throws Exception {
+            runTest("native/native.tests/testData/Interop/Indexer/framework/frameworkDefs/excludePod1/");
+        }
+
+        @Test
+        @TestMetadata("excludePod1Umbrella")
+        public void testExcludePod1Umbrella() throws Exception {
+            runTest("native/native.tests/testData/Interop/Indexer/framework/frameworkDefs/excludePod1Umbrella/");
+        }
+
+        @Test
         @TestMetadata("filterPod1")
         public void testFilterPod1() throws Exception {
             runTest("native/native.tests/testData/Interop/Indexer/framework/frameworkDefs/filterPod1/");
