@@ -544,7 +544,7 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
               sourceInformation(%composer, "C(Test)<b("yay...>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b001110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(b)) 0b000100000000 else 0b10000000
+                %dirty = %dirty or if (%composer.changedInstance(b)) 0b000100000000 else 0b10000000
               }
               if (%dirty and 0b001010000001 !== 0b10000000 || !%composer.skipping) {
                 if (isTraceInProgress()) {
