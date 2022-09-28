@@ -1,0 +1,155 @@
+/*
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+@file:Suppress("FunctionName")
+
+package org.jetbrains.kotlin.gradle.plugin
+
+import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.FileCollection
+import org.gradle.api.file.SourceDirectorySet
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
+import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.project.model.LanguageSettings
+
+internal sealed class KotlinCompilationProjection {
+    abstract val origin: Any
+    abstract val project: Project
+    abstract val platformType: KotlinPlatformType
+    abstract val targetDisambiguationClassifier: String?
+    abstract val compilationName: String
+    abstract val ownModuleName: String
+    abstract val moduleName: String
+    abstract val compilerOptions: HasCompilerOptions<*>
+    abstract val compileKotlinTaskName: String
+    abstract val compileAllTaskName: String
+    abstract val languageSettings: LanguageSettings
+    abstract val friendPaths: FileCollection
+    abstract val isMain: Boolean
+    abstract val classesDirs: ConfigurableFileCollection
+    abstract val compileDependencyFiles: FileCollection
+    abstract val sources: List<SourceDirectorySet>
+
+    class TCS(val compilation: KotlinCompilation<*>) : KotlinCompilationProjection() {
+
+        override val origin: KotlinCompilation<*> = compilation
+
+        override val project: Project
+            get() = origin.project
+
+        override val platformType: KotlinPlatformType
+            get() = origin.platformType
+
+        override val targetDisambiguationClassifier: String?
+            get() = origin.target.disambiguationClassifier
+
+        override val compilationName: String
+            get() = origin.compilationName
+
+        override val ownModuleName: String
+            get() = origin.internal.compilationModule.ownModuleName.get()
+
+        override val moduleName: String
+            get() = origin.internal.moduleName
+
+        override val compilerOptions: HasCompilerOptions<*>
+            get() = origin.compilerOptions
+
+        override val compileKotlinTaskName: String
+            get() = origin.compileKotlinTaskName
+
+        override val compileAllTaskName: String
+            get() = origin.compileAllTaskName
+
+        override val languageSettings: LanguageSettings
+            get() = origin.defaultSourceSet.languageSettings
+
+        override val friendPaths: FileCollection
+            get() = project.filesProvider { origin.internal.friendPaths }
+
+        override val isMain: Boolean
+            get() = origin.isMain()
+
+        override val classesDirs: ConfigurableFileCollection
+            get() = origin.output.classesDirs
+
+        override val compileDependencyFiles: FileCollection
+            get() = project.filesProvider { origin.compileDependencyFiles }
+
+        override val sources: List<SourceDirectorySet>
+            get() = origin.allKotlinSourceSets.map { it.kotlin }
+    }
+
+    class KPM(val compilationData: KotlinCompilationData<*>) : KotlinCompilationProjection() {
+
+        override val origin: KotlinCompilationData<*> = compilationData
+
+        override val project: Project
+            get() = origin.project
+
+        override val platformType: KotlinPlatformType
+            get() = origin.platformType
+
+        override val targetDisambiguationClassifier: String?
+            get() = origin.compilationClassifier
+
+        override val compilationName: String
+            get() = origin.compilationPurpose
+
+        override val ownModuleName: String
+            get() = origin.ownModuleName
+
+        override val moduleName: String
+            get() = origin.moduleName
+
+        override val compilerOptions: HasCompilerOptions<*>
+            get() = origin.compilerOptions
+
+        override val compileKotlinTaskName: String
+            get() = origin.compileKotlinTaskName
+
+        override val compileAllTaskName: String
+            get() = origin.compileAllTaskName
+
+        override val languageSettings: LanguageSettings
+            get() = origin.languageSettings
+
+        override val friendPaths: FileCollection
+            get() = project.filesProvider { origin.friendPaths }
+
+        override val isMain: Boolean
+            get() = origin.isMainCompilationData()
+
+        override val classesDirs: ConfigurableFileCollection
+            get() = origin.output.classesDirs
+
+        override val compileDependencyFiles: FileCollection
+            get() = project.filesProvider { origin.compileDependencyFiles }
+
+        override val sources: List<SourceDirectorySet>
+            get() = origin.kotlinSourceDirectoriesByFragmentName.values.toList()
+
+    }
+}
+
+internal fun KotlinCompilationProjection(compilation: KotlinCompilation<*>): KotlinCompilationProjection.TCS {
+    return KotlinCompilationProjection.TCS(compilation)
+}
+
+internal val KotlinCompilationProjection.tcsOrNull: KotlinCompilationProjection.TCS?
+    get() = when (this) {
+        is KotlinCompilationProjection.KPM -> null
+        is KotlinCompilationProjection.TCS -> this
+    }
+
+internal val KotlinCompilationProjection.kpmOrNull: KotlinCompilationProjection.KPM?
+    get() = when (this) {
+        is KotlinCompilationProjection.KPM -> this
+        is KotlinCompilationProjection.TCS -> null
+    }

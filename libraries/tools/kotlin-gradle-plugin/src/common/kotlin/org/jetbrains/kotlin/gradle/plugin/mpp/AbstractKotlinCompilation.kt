@@ -50,6 +50,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     final override val output: KotlinCompilationOutput get() = compilationData.output
     final override val compileKotlinTaskName: String get() = compilationData.compileKotlinTaskName
 
+
     override val compilerOptions: HasCompilerOptions<*>
         get() = compilationData.compilerOptions
 
@@ -71,7 +72,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
         }
 
     final override val kotlinSourceSets: ObservableSet<KotlinSourceSet>
-        get() = compilationDetails.directlyIncludedKotlinSourceSets
+        get() = compilationDetails.kotlinSourceSets
 
     override val allKotlinSourceSets: ObservableSet<KotlinSourceSet>
         get() = compilationDetails.allKotlinSourceSets

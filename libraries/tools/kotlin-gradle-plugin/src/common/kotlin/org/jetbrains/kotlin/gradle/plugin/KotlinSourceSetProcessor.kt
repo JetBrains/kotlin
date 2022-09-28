@@ -15,7 +15,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -27,39 +26,41 @@ import java.util.concurrent.Callable
 internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     val tasksProvider: KotlinTasksProvider,
     val taskDescription: String,
-    kotlinCompilation: KotlinCompilationData<*>
+    kotlinCompilation: KotlinCompilationProjection
 ) : KotlinCompilationProcessor<T>(kotlinCompilation) {
     protected abstract fun doTargetSpecificProcessing()
     protected val logger = Logging.getLogger(this.javaClass)!!
 
-    protected val sourceSetName: String = kotlinCompilation.compilationPurpose
+    protected val sourceSetName: String = kotlinCompilation.compilationName
 
     override val kotlinTask: TaskProvider<out T> = prepareKotlinCompileTask()
 
     protected val javaSourceSet: SourceSet?
         get() {
-            val compilation = kotlinCompilation
+            if (compilationProjection !is KotlinCompilationProjection.TCS) return null
+            val compilation = compilationProjection.origin
+            val target = compilationProjection.origin.target
+
             return (compilation as? KotlinWithJavaCompilation<*, *>)?.javaSourceSet
-                ?: kotlinCompilation.owner.let {
-                    if (it is KotlinJvmTarget && it.withJavaEnabled && compilation is KotlinJvmCompilation)
-                        project.gradle.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
-                            .getInstance(project)
-                            .sourceSets
-                            .maybeCreate(compilation.name)
-                    else null
-                }
+                ?: if (target is KotlinJvmTarget && target.withJavaEnabled && compilation is KotlinJvmCompilation)
+                    project.gradle.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
+                        .getInstance(project)
+                        .sourceSets
+                        .maybeCreate(compilation.name)
+                else null
+
         }
 
     private fun prepareKotlinCompileTask(): TaskProvider<out T> =
-        doRegisterTask(project, kotlinCompilation.compileKotlinTaskName).also { task ->
-            kotlinCompilation.output.classesDirs.from(task.flatMap { it.destinationDirectory })
+        doRegisterTask(project, compilationProjection.compileKotlinTaskName).also { task ->
+            compilationProjection.classesDirs.from(task.flatMap { it.destinationDirectory })
         }
 
     override fun run() {
         addKotlinDirectoriesToJavaSourceSet()
         doTargetSpecificProcessing()
 
-        if (kotlinCompilation is KotlinWithJavaCompilation<*, *>) {
+        if (compilationProjection.tcsOrNull?.compilation is KotlinWithJavaCompilation<*, *>) {
             createAdditionalClassesTaskForIdeRunner()
         }
     }
@@ -69,7 +70,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
 
         // Try to avoid duplicate Java sources in allSource; run lazily to allow changing the directory set:
         val kotlinSrcDirsToAdd = Callable {
-            kotlinCompilation.kotlinSourceDirectoriesByFragmentName.values.map { filterOutJavaSrcDirsIfPossible(it) }
+            compilationProjection.sources.map { filterOutJavaSrcDirsIfPossible(it) }
         }
 
         java.allJava.srcDirs(kotlinSrcDirsToAdd)
@@ -84,7 +85,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     }
 
     private fun createAdditionalClassesTaskForIdeRunner() {
-        val kotlinCompilation = kotlinCompilation as? KotlinCompilation<*> ?: return
+        val kotlinCompilation = compilationProjection.tcsOrNull?.compilation ?: return
 
         open class IDEClassesTask : DefaultTask()
         // Workaround: as per KT-26641, when there's a Kotlin compilation with a Java source set, we create another task
@@ -108,7 +109,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
             } else {
                 it.destinationDirectory.convention(defaultKotlinDestinationDir)
             }
-            it.libraries.from({ kotlinCompilation.compileDependencyFiles })
+            it.libraries.from({ compilationProjection.compileDependencyFiles })
         }
     }
 

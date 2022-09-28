@@ -6,29 +6,34 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal.KotlinCompilationsModuleGroups
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationModuleManager
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.kotlinCompilationModuleManager
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class KotlinCompilationsModuleGroupsTest {
     private val project = buildProjectWithMPP()
     private val kotlin = project.multiplatformExtension
-    private val instance: KotlinCompilationsModuleGroups = KotlinCompilationsModuleGroups()
+    private val instance: KotlinCompilationModuleManager = project.kotlinCompilationModuleManager
 
-    private fun compilation(name: String): AbstractKotlinCompilation<*> =
+    private fun compilation(name: String): InternalKotlinCompilation<*> =
         kotlin.jvm().compilations.maybeCreate(name)
+
+    private fun KotlinCompilationModuleManager.unionModules(first: InternalKotlinCompilation<*>, second: InternalKotlinCompilation<*>) {
+        unionModules(first.compilationModule, second.compilationModule)
+    }
 
     @Test
     fun testIdentityAsModuleLeaderForNewCompilation() {
         val a = compilation("a")
-        assertEquals(a, instance.getModuleLeader(a))
+        assertEquals(a.internal.compilationModule, instance.getModuleLeader(a.compilationModule))
     }
 
-    private fun assertLeader(leader: KotlinCompilationData<*>, vararg ofCompilations: KotlinCompilationData<*>) {
-        val leadersForModules = ofCompilations.map { instance.getModuleLeader(it) }
-        assertEquals(leadersForModules.map { leader }, leadersForModules)
+    private fun assertLeader(leader: InternalKotlinCompilation<*>, vararg ofCompilations: InternalKotlinCompilation<*>) {
+        val leadersForModules = ofCompilations.map { instance.getModuleLeader(it.compilationModule) }
+        assertEquals(leadersForModules.map { leader.compilationModule }, leadersForModules)
     }
 
     @Test

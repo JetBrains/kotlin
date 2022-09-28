@@ -11,17 +11,17 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 
-abstract class KotlinCompilationProcessor<out T : AbstractKotlinCompileTool<*>>(
-    open val kotlinCompilation: KotlinCompilationData<*>
+abstract class KotlinCompilationProcessor<out T : AbstractKotlinCompileTool<*>> internal constructor(
+    internal val compilationProjection: KotlinCompilationProjection
 ) {
+
     abstract val kotlinTask: TaskProvider<out T>
     abstract fun run()
 
     protected val project: Project
-        get() = kotlinCompilation.project
+        get() = compilationProjection.project
 
     protected val defaultKotlinDestinationDir: Provider<Directory>
         get() {
@@ -30,7 +30,7 @@ abstract class KotlinCompilationProcessor<out T : AbstractKotlinCompileTool<*>>(
                 if (kotlinExt is KotlinSingleJavaTargetExtension)
                     "" // In single-target projects, don't add the target name part to this path
                 else
-                    kotlinCompilation.compilationClassifier?.let { "$it/" }.orEmpty()
-            return project.layout.buildDirectory.dir("classes/kotlin/$targetSubDirectory${kotlinCompilation.compilationPurpose}")
+                    compilationProjection.targetDisambiguationClassifier?.let { "$it/" }.orEmpty()
+            return project.layout.buildDirectory.dir("classes/kotlin/$targetSubDirectory${compilationProjection.compilationName}")
         }
 }

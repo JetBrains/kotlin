@@ -15,12 +15,11 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.KAPT_SUBPLUGIN_ID
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isIncludeCompileClasspath
-import org.jetbrains.kotlin.gradle.internal.KotlinJvmCompilerArgumentsContributor
-import org.jetbrains.kotlin.gradle.internal.buildKaptSubpluginOptions
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationProjection
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompilerArgumentsProvider
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
@@ -32,10 +31,10 @@ import java.util.concurrent.ConcurrentHashMap
 internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStubsTask> {
 
     constructor(
-        compilation: KotlinCompilationData<*>,
+        compilation: KotlinCompilation<*>,
         kotlinTaskProvider: TaskProvider<KotlinCompile>,
-        kaptClassesDir: File,
-    ) : super(compilation) {
+        kaptClassesDir: File
+    ) : super(KotlinCompilationProjection(compilation)) {
         configureFromExtension(project.extensions.getByType(KaptExtension::class.java))
         configureTask { task ->
             val kotlinCompileTask = kotlinTaskProvider.get()
@@ -48,11 +47,11 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
             // We are filtering them to avoid failed UP-TO-DATE checks
             val kaptJavaSourcesDir = Kapt3GradleSubplugin.getKaptGeneratedSourcesDir(
                 project,
-                compilation.compilationPurpose
+                compilation.compilationName
             )
             val kaptKotlinSourcesDir = Kapt3GradleSubplugin.getKaptGeneratedKotlinSourcesDir(
                 project,
-                compilation.compilationPurpose
+                compilation.compilationName
             )
             val destinationDirectory = task.destinationDirectory
             val stubsDir = task.stubsDir
@@ -94,7 +93,8 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
         }
     }
 
-    private fun isIncludeCompileClasspath(kaptExtension: KaptExtension) = kaptExtension.includeCompileClasspath ?: project.isIncludeCompileClasspath()
+    private fun isIncludeCompileClasspath(kaptExtension: KaptExtension) =
+        kaptExtension.includeCompileClasspath ?: project.isIncludeCompileClasspath()
 
     private fun buildOptions(kaptExtension: KaptExtension, task: KaptGenerateStubsTask): Provider<CompilerPluginOptions> {
         val javacOptions = project.provider { kaptExtension.getJavacOptions() }

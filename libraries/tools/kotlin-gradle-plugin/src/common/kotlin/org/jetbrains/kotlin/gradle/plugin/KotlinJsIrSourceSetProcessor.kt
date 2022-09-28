@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.CompilerJsOptions
-import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -18,28 +17,28 @@ import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinJsIrLinkConfig
 
 internal class KotlinJsIrSourceSetProcessor(
     tasksProvider: KotlinTasksProvider,
-    kotlinCompilation: AbstractKotlinCompilation<*>
+    kotlinCompilation: KotlinCompilationProjection
 ) : KotlinSourceSetProcessor<Kotlin2JsCompile>(
     tasksProvider, taskDescription = "Compiles the Kotlin sources in $kotlinCompilation to JavaScript.",
     kotlinCompilation = kotlinCompilation
 ) {
     override fun doRegisterTask(project: Project, taskName: String): TaskProvider<out Kotlin2JsCompile> {
-        val configAction = Kotlin2JsCompileConfig(kotlinCompilation)
+        val configAction = Kotlin2JsCompileConfig(compilationProjection)
         applyStandardTaskConfiguration(configAction)
         return tasksProvider.registerKotlinJSTask(
             project,
             taskName,
-            kotlinCompilation.compilerOptions.options as CompilerJsOptions,
+            compilationProjection.compilerOptions.options as CompilerJsOptions,
             configAction
         )
     }
 
     override fun doTargetSpecificProcessing() {
-        project.tasks.named(kotlinCompilation.compileAllTaskName).configure {
+        project.tasks.named(compilationProjection.compileAllTaskName).configure {
             it.dependsOn(kotlinTask)
         }
 
-        val compilation = kotlinCompilation as KotlinJsIrCompilation
+        val compilation = compilationProjection.tcsOrNull?.compilation as KotlinJsIrCompilation
 
         compilation.binaries
             .withType(JsIrBinary::class.java)
@@ -47,7 +46,7 @@ internal class KotlinJsIrSourceSetProcessor(
                 val configAction = KotlinJsIrLinkConfig(binary)
                 configAction.configureTask {
                     it.description = taskDescription
-                    it.libraries.from({ kotlinCompilation.compileDependencyFiles })
+                    it.libraries.from({ compilationProjection.compileDependencyFiles })
                 }
                 configAction.configureTask { task ->
                     task.modeProperty.set(binary.mode)
@@ -59,7 +58,11 @@ internal class KotlinJsIrSourceSetProcessor(
 
         project.whenEvaluated {
             val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
-            subpluginEnvironment.addSubpluginOptions(project, kotlinCompilation)
+            /* Not supported in KPM, yet */
+            compilationProjection.tcsOrNull?.compilation?.let { compilation ->
+                subpluginEnvironment.addSubpluginOptions(project, compilation)
+
+            }
         }
     }
 }

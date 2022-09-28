@@ -12,13 +12,10 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
-import org.jetbrains.kotlin.gradle.plugin.KotlinCommonSourceSetProcessor
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.categoryByName
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
-import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.metadata.createGenerateProjectStructureMetadataTask
 import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
@@ -221,10 +218,7 @@ private class GradleKpmMetadataCompilationTasksConfigurator(project: Project) : 
         fragment: GradleKpmFragment,
         compilationData: KotlinCommonFragmentMetadataCompilationData
     ) {
-        KotlinCommonSourceSetProcessor(
-            compilationData,
-            KotlinTasksProvider()
-        ).run()
+        KotlinCommonSourceSetProcessor(KotlinCompilationProjection.KPM(compilationData), KotlinTasksProvider()).run()
         val allSources = getSourcesForFragmentCompilation(fragment)
         val commonSources = getCommonSourcesForFragmentCompilation(fragment)
 

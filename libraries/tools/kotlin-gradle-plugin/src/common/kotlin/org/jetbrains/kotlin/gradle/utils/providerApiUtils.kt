@@ -83,12 +83,12 @@ internal fun <PropType : Any?, T : ListProperty<PropType>> T.chainedFinalizeValu
         finalizeValueOnRead()
     }
 
-internal fun <PropType : Any?, T: Property<PropType>> T.chainedFinalizeValue(): T =
+internal fun <PropType : Any?, T : Property<PropType>> T.chainedFinalizeValue(): T =
     apply {
         finalizeValue()
     }
 
-internal fun <PropType : Any?, T: Property<PropType>> T.chainedDisallowChanges(): T =
+internal fun <PropType : Any?, T : Property<PropType>> T.chainedDisallowChanges(): T =
     apply {
         disallowChanges()
     }
