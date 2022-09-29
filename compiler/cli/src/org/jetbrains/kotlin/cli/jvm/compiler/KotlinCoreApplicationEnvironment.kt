@@ -11,27 +11,59 @@ import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.lang.MetaLanguage
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.psi.FileContextProvider
 import com.intellij.psi.augment.PsiAugmentProvider
 import com.intellij.psi.impl.smartPointers.SmartPointerAnchorProvider
 import com.intellij.psi.meta.MetaDataContributor
 import org.jetbrains.kotlin.cli.jvm.compiler.IdeaExtensionPoints.registerVersionSpecificAppExtensionPoints
+import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 
-class KotlinCoreApplicationEnvironment private constructor(parentDisposable: Disposable, unitTestMode: Boolean) :
+class KotlinCoreApplicationEnvironment private constructor(
+    parentDisposable: Disposable, unitTestMode: Boolean
+) :
     JavaCoreApplicationEnvironment(parentDisposable, unitTestMode) {
-    override fun createJrtFileSystem(): VirtualFileSystem? {
+
+    override fun createJrtFileSystem(): VirtualFileSystem {
         return CoreJrtFileSystem()
     }
 
+    private var fastJarFileSystemField: FastJarFileSystem? = null
+    private var fastJarFileSystemFieldInitialized = false
+
+    val fastJarFileSystem: FastJarFileSystem?
+        get() {
+            synchronized(KotlinCoreEnvironment.APPLICATION_LOCK) {
+                if (!fastJarFileSystemFieldInitialized) {
+
+                    // may return null e.g. on the old JDKs, therefore fastJarFileSystemFieldInitialized flag is needed
+                    fastJarFileSystemField = FastJarFileSystem.createIfUnmappingPossible()?.also {
+                        Disposer.register(parentDisposable) {
+                            it.clearHandlersCache()
+                        }
+                    }
+                    fastJarFileSystemFieldInitialized = true
+                }
+                return fastJarFileSystemField
+            }
+        }
+
+    fun idleCleanup() {
+        fastJarFileSystemField?.cleanOpenFilesCache()
+    }
+
     companion object {
-        fun create(parentDisposable: Disposable, unitTestMode: Boolean): KotlinCoreApplicationEnvironment {
+        fun create(
+            parentDisposable: Disposable, unitTestMode: Boolean
+        ): KotlinCoreApplicationEnvironment {
             val environment = KotlinCoreApplicationEnvironment(parentDisposable, unitTestMode)
             registerExtensionPoints()
             return environment
         }
 
+        @Suppress("UnstableApiUsage")
         private fun registerExtensionPoints() {
             registerApplicationExtensionPoint(DynamicBundle.LanguageBundleEP.EP_NAME, DynamicBundle.LanguageBundleEP::class.java)
             registerApplicationExtensionPoint(FileContextProvider.EP_NAME, FileContextProvider::class.java)
