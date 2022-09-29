@@ -9,6 +9,7 @@ import com.intellij.testFramework.TestDataFile
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_DISABLE_WARNING_PROPERTY_NAME
 import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX
 import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_PROPERTY_WARNING
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.gradle.utils.Xcode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -101,6 +103,7 @@ private fun BaseGradleIT.Project.configureSingleNativeTarget(preset: String = Ho
         }
 }
 
+@OptIn(InternalKotlinGradlePluginApi::class)
 class GeneralNativeIT : BaseGradleIT() {
 
     val nativeHostTargetName = MPPNativeTargets.current
@@ -373,12 +376,7 @@ class GeneralNativeIT : BaseGradleIT() {
             frameworkPaths.forEach { assertFileExists(it) }
 
             assertTrue(fileInWorkingDir(headerPaths[0]).readText().contains("+ (int32_t)exported"))
-            val xcodeVersionString = runProcess(
-                listOf("/usr/bin/xcrun", "xcodebuild", "-version"),
-                workingDir,
-                System.getenv()
-            ).output.lines()[0].removePrefix("Xcode ")
-            val xcodeMajorVersion = xcodeVersionString.split(".")[0].toInt()
+            val xcodeMajorVersion = Xcode!!.currentVersion.split(".")[0].toInt()
 
             // Check that by default release frameworks have bitcode embedded.
             withNativeCommandLineArguments(":linkMainReleaseFrameworkIos") { arguments ->

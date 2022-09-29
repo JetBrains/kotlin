@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.Architecture.ARM32
@@ -15,16 +16,15 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 
+@InternalKotlinGradlePluginApi
+val Xcode = XcodeUtils.INSTANCE
 
-internal val Xcode = XcodeUtils()
-
-internal class XcodeUtils private constructor() {
+@InternalKotlinGradlePluginApi
+class XcodeUtils private constructor() {
 
     companion object {
-        private val current: XcodeUtils? =
+        internal val INSTANCE: XcodeUtils? =
             if (HostManager.hostIsMac) XcodeUtils() else null
-
-        operator fun invoke() = current
     }
 
     val currentVersion: String by lazy {
