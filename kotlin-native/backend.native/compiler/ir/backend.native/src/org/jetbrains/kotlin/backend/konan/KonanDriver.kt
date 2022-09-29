@@ -49,7 +49,7 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
         val config = KonanConfig(project, configuration)
         ensureModuleName(config)
 
-        pickCompilerDriver()?.run(config, environment)
+        pickCompilerDriver(config)?.run(config, environment)
                 ?: error("Kotlin/Native compiler does not support given configuration")
     }
 
@@ -65,8 +65,8 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
         }
     }
 
-    private fun pickCompilerDriver(): CompilerDriver? = when {
-        DynamicCompilerDriver.supportsConfig() -> DynamicCompilerDriver()
+    private fun pickCompilerDriver(config: KonanConfig): CompilerDriver? = when {
+        DynamicCompilerDriver.supportsConfig(config) -> DynamicCompilerDriver()
         StaticCompilerDriver.supportsConfig() -> StaticCompilerDriver()
         else -> null
     }

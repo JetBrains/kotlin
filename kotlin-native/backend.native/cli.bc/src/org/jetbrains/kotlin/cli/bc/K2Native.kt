@@ -68,6 +68,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             return ExitCode.COMPILATION_ERROR
         }
         configuration.put(CLIConfigurationKeys.PHASE_CONFIG, createPhaseConfig(toplevelPhase, arguments, messageCollector))
+        // TODO: Should be either.
+        configuration.put(CLIConfigurationKeys.DUMB_PHASE_CONFIG, createDumbPhaseConfig(arguments))
 
         val enoughArguments = arguments.freeArgs.isNotEmpty() || arguments.isUsefulWithoutFreeArgs
         if (!enoughArguments) {

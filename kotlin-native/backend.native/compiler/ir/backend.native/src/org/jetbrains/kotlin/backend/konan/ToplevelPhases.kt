@@ -110,23 +110,17 @@ internal val psiToIrPhase = konanUnitPhase(
         op = {
             val frontendPhaseResult = FrontendPhaseResult.Full(moduleDescriptor, bindingContext, frontendServices, environment)
             val input = PsiToIrInput(frontendPhaseResult, symbolTable!!, isProducingLibrary = config.produce == CompilerOutputKind.LIBRARY)
-            val result = this.psiToIr(input, useLinkerWhenProducingLibrary = false)
-            when (result) {
+            when (val result = this.psiToIr(input, useLinkerWhenProducingLibrary = false)) {
                 PsiToIrResult.Empty -> {}
-                is PsiToIrResult.ForLibrary -> {
-                    this.irModules = result.irModules
-                    this.irModule = result.irModule
-                    this.expectDescriptorToSymbol = result.expectDescriptorToSymbol
-                    this.ir = KonanIr(this, result.irModule)
-                    this.ir.symbols = result.symbols
-                }
                 is PsiToIrResult.Full -> {
                     this.irModules = result.irModules
                     this.irModule = result.irModule
                     this.expectDescriptorToSymbol = result.expectDescriptorToSymbol
                     this.ir = KonanIr(this, result.irModule)
                     this.ir.symbols = result.symbols
-                    this.irLinker = result.irLinker
+                    if (result.irLinker is KonanIrLinker) {
+                        this.irLinker = result.irLinker
+                    }
                 }
             }
             val originalBindingContext = bindingContext as? CleanableBindingContext
@@ -320,7 +314,7 @@ internal val dependenciesLowerPhase = SameTypeNamedCompilerPhase(
         description = "Lower library's IR",
         prerequisite = emptySet(),
         lower = object : CompilerPhase<Context, IrModuleFragment, IrModuleFragment> {
-            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {
+            override fun invoke(phaseConfig: PhaseConfigService, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {
                 val files = mutableListOf<IrFile>()
                 files += input.files
                 input.files.clear()
@@ -358,7 +352,7 @@ internal val umbrellaCompilation = SameTypeNamedCompilerPhase(
         description = "A batched compilation with shared FE and ME phases",
         prerequisite = emptySet(),
         lower = object : CompilerPhase<Context, Unit, Unit> {
-            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
+            override fun invoke(phaseConfig: PhaseConfigService, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
                 val module = context.irModules.values.single()
 
                 val files = module.files.toList()
@@ -484,7 +478,7 @@ internal val createGenerationStatePhase = namedUnitPhase(
         name = "CreateGenerationState",
         description = "Create generation state",
         lower = object : CompilerPhase<Context, Unit, Unit> {
-            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
+            override fun invoke(phaseConfig: PhaseConfigService, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
                 context.generationState = NativeGenerationState(context)
             }
         }
@@ -494,7 +488,7 @@ internal val disposeGenerationStatePhase = namedUnitPhase(
         name = "DisposeGenerationState",
         description = "Dispose generation state",
         lower = object : CompilerPhase<Context, Unit, Unit> {
-            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
+            override fun invoke(phaseConfig: PhaseConfigService, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
                 context.disposeGenerationState()
             }
         }

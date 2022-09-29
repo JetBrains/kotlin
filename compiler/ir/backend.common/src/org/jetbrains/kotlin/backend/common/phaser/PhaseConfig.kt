@@ -35,6 +35,66 @@ class PhaseConfigBuilder(private val compoundPhase: CompilerPhase<*, *, *>) {
     )
 }
 
+interface PhaseConfigService {
+    fun isEnabled(phase: AnyNamedPhase): Boolean
+
+    fun isVerbose(phase: AnyNamedPhase): Boolean
+
+    fun shouldDumpStateBefore(phase: AnyNamedPhase): Boolean
+
+    fun shouldDumpStateAfter(phase: AnyNamedPhase): Boolean
+
+    fun shouldValidateStateBefore(phase: AnyNamedPhase): Boolean
+
+    fun shouldValidateStateAfter(phase: AnyNamedPhase): Boolean
+
+    val needProfiling: Boolean
+
+    val checkConditions: Boolean
+
+    val checkStickyConditions: Boolean
+
+    val dumpToDirectory: String?
+
+    val dumpOnlyFqName: String?
+}
+
+/**
+ * Phase config that does not know anything
+ * about actual compiler pipeline.
+ */
+class DumbPhaseConfig(
+    private val disabled: Set<String>,
+    private val verbose: Set<String>,
+    private val toDumpStateBefore: Set<String>,
+    private val toDumpStateAfter: Set<String>,
+    private val toValidateStateBefore: Set<String>,
+    private val toValidateStateAfter: Set<String>,
+    override val dumpToDirectory: String? = null,
+    override val dumpOnlyFqName: String? = null,
+    override val needProfiling: Boolean = false,
+    override val checkConditions: Boolean = false,
+    override val checkStickyConditions: Boolean = false
+) : PhaseConfigService {
+    override fun isEnabled(phase: AnyNamedPhase): Boolean =
+        phase.name !in disabled
+
+    override fun isVerbose(phase: AnyNamedPhase): Boolean =
+        phase.name in verbose
+
+    override fun shouldDumpStateBefore(phase: AnyNamedPhase): Boolean =
+        phase.name in toDumpStateBefore
+
+    override fun shouldDumpStateAfter(phase: AnyNamedPhase): Boolean =
+        phase.name in toDumpStateAfter
+
+    override fun shouldValidateStateBefore(phase: AnyNamedPhase): Boolean =
+        phase.name in toValidateStateBefore
+
+    override fun shouldValidateStateAfter(phase: AnyNamedPhase): Boolean =
+        phase.name in toValidateStateAfter
+}
+
 class PhaseConfig(
     private val compoundPhase: CompilerPhase<*, *, *>,
     private val phases: Map<String, AnyNamedPhase> = compoundPhase.toPhaseMap(),
@@ -42,15 +102,15 @@ class PhaseConfig(
     val verbose: Set<AnyNamedPhase> = emptySet(),
     val toDumpStateBefore: Set<AnyNamedPhase> = emptySet(),
     val toDumpStateAfter: Set<AnyNamedPhase> = emptySet(),
-    val dumpToDirectory: String? = null,
-    val dumpOnlyFqName: String? = null,
+    override val dumpToDirectory: String? = null,
+    override val dumpOnlyFqName: String? = null,
     val toValidateStateBefore: Set<AnyNamedPhase> = emptySet(),
     val toValidateStateAfter: Set<AnyNamedPhase> = emptySet(),
     val namesOfElementsExcludedFromDumping: Set<String> = emptySet(),
-    val needProfiling: Boolean = false,
-    val checkConditions: Boolean = false,
-    val checkStickyConditions: Boolean = false
-) {
+    override val needProfiling: Boolean = false,
+    override val checkConditions: Boolean = false,
+    override val checkStickyConditions: Boolean = false
+): PhaseConfigService {
     fun toBuilder() = PhaseConfigBuilder(compoundPhase).also {
         it.enabled.addAll(initiallyEnabled)
         it.verbose.addAll(verbose)
@@ -65,6 +125,24 @@ class PhaseConfig(
         it.checkConditions = checkConditions
         it.checkStickyConditions = checkStickyConditions
     }
+
+    override fun isEnabled(phase: AnyNamedPhase): Boolean =
+        phase in enabled
+
+    override fun isVerbose(phase: AnyNamedPhase): Boolean =
+        phase in verbose
+
+    override fun shouldDumpStateBefore(phase: AnyNamedPhase): Boolean =
+        phase in toDumpStateBefore
+
+    override fun shouldDumpStateAfter(phase: AnyNamedPhase): Boolean =
+        phase in toDumpStateAfter
+
+    override fun shouldValidateStateBefore(phase: AnyNamedPhase): Boolean =
+        phase in toValidateStateBefore
+
+    override fun shouldValidateStateAfter(phase: AnyNamedPhase): Boolean =
+        phase in toValidateStateAfter
 
     private val enabledMut = initiallyEnabled.toMutableSet()
 

@@ -35,7 +35,6 @@ data class SerializerResult(
 
 internal val SerializerPhase = object : SimpleNamedCompilerPhase<PhaseContext, SerializerInput, SerializerResult>(
         "Serializer", "IR serialzer",
-        outputIfNotEnabled = { _, _ -> SerializerResult(null, null, null, emptyList()) }
 ) {
     override fun phaseBody(context: PhaseContext, input: SerializerInput): SerializerResult {
         val config = context.config
@@ -64,4 +63,7 @@ internal val SerializerPhase = object : SimpleNamedCompilerPhase<PhaseContext, S
         val neededLibraries = config.librariesWithDependencies(input.moduleDescriptor)
         return SerializerResult(serializedMetadata, serializedIr, null, neededLibraries)
     }
+
+    override fun outputIfNotEnabled(context: PhaseContext, input: SerializerInput): SerializerResult =
+            SerializerResult(null, null, null, emptyList())
 }

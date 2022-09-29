@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.common.phaser.NamedCompilerPhase
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.common.phaser.PhaserState
-import org.jetbrains.kotlin.backend.common.phaser.changeType
+import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.driver.context.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.getCompilerMessageLocation
@@ -25,7 +22,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 
 // TODO: What is the difference between input and context?
@@ -56,10 +52,32 @@ internal open class BasicPhaseContext(
     }
 }
 
+
+
 internal class PhaseEngine(
-        private val phaseConfig: PhaseConfig
+        private val phaseConfig: PhaseConfigService,
+        private val phaserState: PhaserState<Any>,
 ) {
-    private val phaserState = PhaserState<Any>()
+    companion object {
+        fun startTopLevel(config: KonanConfig, body: (PhaseEngine) -> Unit) {
+            val phaserState = PhaserState<Any>()
+            val phaseConfig = config.dumbPhaseConfig
+            val topLevelPhase = object: SimpleNamedCompilerPhase<PhaseContext, Any, Unit>(
+                    "Compiler",
+                    "The whole compilation process",
+            ) {
+                override fun phaseBody(context: PhaseContext, input: Any) {
+                    val engine = PhaseEngine(phaseConfig, phaserState)
+                    body(engine)
+                }
+
+                override fun outputIfNotEnabled(context: PhaseContext, input: Any) {
+                    error("Compiler was disabled")
+                }
+            }
+            topLevelPhase.invoke(phaseConfig, phaserState, BasicPhaseContext(config), Unit)
+        }
+    }
 
     internal fun <C : PhaseContext, Input, Output> runPhase(
             context: C,
@@ -83,16 +101,17 @@ internal class PhaseEngine(
     ): PsiToIrResult {
         val psiToIrInput = PsiToIrInput(frontendResult, symbolTable, isProducingLibrary)
         val context = PsiToContextImpl(config, frontendResult.moduleDescriptor)
+        val result = this.runPhase(context, PsiToIrPhase, psiToIrInput)
         val originalBindingContext = frontendResult.bindingContext as? CleanableBindingContext
                 ?: error("BindingContext should be cleanable in K/N IR to avoid leaking memory: ${frontendResult.bindingContext}")
         originalBindingContext.clear()
-        return this.runPhase(context, PsiToIrPhase, psiToIrInput)
+        return result
     }
 
     fun runSerializer(
             config: KonanConfig,
             moduleDescriptor: ModuleDescriptor,
-            psiToIrResult: PsiToIrResult.ForLibrary,
+            psiToIrResult: PsiToIrResult.Full,
     ): SerializerResult {
         val context = BasicPhaseContext(config)
         val input = SerializerInput(moduleDescriptor, psiToIrResult.irModule, psiToIrResult.expectDescriptorToSymbol)

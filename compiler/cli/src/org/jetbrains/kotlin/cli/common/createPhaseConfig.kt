@@ -5,13 +5,33 @@
 
 package org.jetbrains.kotlin.cli.common
 
-import org.jetbrains.kotlin.backend.common.phaser.AnyNamedPhase
-import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
+import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+
+fun createDumbPhaseConfig(
+    arguments: CommonCompilerArguments,
+): DumbPhaseConfig {
+    fun Array<String>?.asNonNullSet(): Set<String> = this?.toSet() ?: emptySet()
+
+    val toDumpBoth = arguments.phasesToDump.asNonNullSet()
+    val toValidateBoth = arguments.phasesToValidate.asNonNullSet()
+
+    return DumbPhaseConfig(
+        disabled = arguments.disablePhases.asNonNullSet(),
+        verbose = arguments.verbosePhases.asNonNullSet(),
+        toDumpStateBefore = arguments.phasesToDumpBefore.asNonNullSet() + toDumpBoth,
+        toDumpStateAfter = arguments.phasesToDumpAfter.asNonNullSet() + toDumpBoth,
+        toValidateStateBefore = arguments.phasesToValidateBefore.asNonNullSet() + toValidateBoth,
+        toValidateStateAfter = arguments.phasesToValidateAfter.asNonNullSet() + toValidateBoth,
+        dumpOnlyFqName = arguments.dumpOnlyFqName,
+        dumpToDirectory = arguments.dumpDirectory,
+        needProfiling = arguments.profilePhases,
+        checkConditions = arguments.checkPhaseConditions,
+        checkStickyConditions = arguments.checkStickyPhaseConditions,
+    )
+}
 
 fun createPhaseConfig(
     compoundPhase: CompilerPhase<*, *, *>,

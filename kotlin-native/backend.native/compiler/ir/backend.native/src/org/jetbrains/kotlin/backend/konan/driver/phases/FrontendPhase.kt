@@ -35,8 +35,10 @@ internal class FrontendContext(
 
 internal val FrontendPhase = object : SimpleNamedCompilerPhase<FrontendContext, KotlinCoreEnvironment, FrontendPhaseResult>(
         "Frontend", "Compiler frontend",
-        outputIfNotEnabled = { _, _ -> FrontendPhaseResult.ShouldNotGenerateCode }
 ) {
+    override fun outputIfNotEnabled(context: FrontendContext, input: KotlinCoreEnvironment): FrontendPhaseResult =
+            FrontendPhaseResult.ShouldNotGenerateCode
+
     override fun phaseBody(context: FrontendContext, input: KotlinCoreEnvironment): FrontendPhaseResult {
         lateinit var analysisResult: AnalysisResult
 

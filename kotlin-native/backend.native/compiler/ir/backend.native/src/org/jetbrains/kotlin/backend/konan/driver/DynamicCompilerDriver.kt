@@ -6,28 +6,21 @@
 package org.jetbrains.kotlin.backend.konan.driver
 
 import kotlinx.cinterop.usingJvmCInteropCallbacks
-import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
-import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfig
-import org.jetbrains.kotlin.backend.konan.LlvmModuleSpecification
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
-import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendContext
-import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendPhase
 import org.jetbrains.kotlin.backend.konan.driver.phases.PhaseEngine
-import org.jetbrains.kotlin.backend.konan.toplevelPhase
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 internal class DynamicCompilerDriver: CompilerDriver() {
     companion object {
-        fun supportsConfig(): Boolean = false
+        fun supportsConfig(config: KonanConfig): Boolean {
+            if (config.produce == CompilerOutputKind.LIBRARY) {
+                return true
+            }
+            return false
+        }
     }
 
     override fun run(config: KonanConfig, environment: KotlinCoreEnvironment) {
@@ -49,18 +42,18 @@ internal class DynamicCompilerDriver: CompilerDriver() {
     }
 
     private fun produceKlib(config: KonanConfig, environment: KotlinCoreEnvironment) {
-        val engine = PhaseEngine(config.phaseConfig)
-
-        val frontendResult = engine.runFrontend(config, environment)
-        if (frontendResult is FrontendPhaseResult.ShouldNotGenerateCode) {
-            return
+        PhaseEngine.startTopLevel(config) { engine ->
+            val frontendResult = engine.runFrontend(config, environment)
+            if (frontendResult is FrontendPhaseResult.ShouldNotGenerateCode) {
+                return@startTopLevel
+            }
+            require(frontendResult is FrontendPhaseResult.Full)
+            val psiToIrResult = SymbolTableResource().use { symbolTable ->
+                engine.runPsiToIr(config, frontendResult, symbolTable, isProducingLibrary = true)
+            }
+            require(psiToIrResult is PsiToIrResult.Full)
+            val serializerResult = engine.runSerializer(config, frontendResult.moduleDescriptor, psiToIrResult)
+            engine.writeKlib(config, serializerResult)
         }
-        require(frontendResult is FrontendPhaseResult.Full)
-        val psiToIrResult = SymbolTableResource().use { symbolTable ->
-            engine.runPsiToIr(config, frontendResult, symbolTable, isProducingLibrary = true)
-        }
-        require(psiToIrResult is PsiToIrResult.ForLibrary)
-        val serializerResult = engine.runSerializer(config, frontendResult.moduleDescriptor, psiToIrResult)
-        engine.writeKlib(config, serializerResult)
     }
 }

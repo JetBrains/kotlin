@@ -27,19 +27,12 @@ data class PsiToIrInput(
 internal sealed class PsiToIrResult {
     object Empty : PsiToIrResult()
 
-    class ForLibrary(
-            val irModules: Map<String, IrModuleFragment>,
-            val irModule: IrModuleFragment,
-            val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
-            val symbols: KonanSymbols,
-    ) : PsiToIrResult()
-
     class Full(
             val irModules: Map<String, IrModuleFragment>,
             val irModule: IrModuleFragment,
             val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
             val symbols: KonanSymbols,
-            val irLinker: KonanIrLinker,
+            val irLinker: KonanIrLinker?,
     ) : PsiToIrResult()
 }
 
@@ -85,9 +78,12 @@ internal class PsiToContextImpl(
 
 internal val PsiToIrPhase = object : SimpleNamedCompilerPhase<PsiToIrContext, PsiToIrInput, PsiToIrResult>(
         "PsiToIr", "Translate PSI to IR",
-        outputIfNotEnabled = { _, _ -> error("") }
 ) {
     override fun phaseBody(context: PsiToIrContext, input: PsiToIrInput): PsiToIrResult {
         return context.psiToIr(input, useLinkerWhenProducingLibrary = false)
+    }
+
+    override fun outputIfNotEnabled(context: PsiToIrContext, input: PsiToIrInput): PsiToIrResult {
+        error("disabled")
     }
 }

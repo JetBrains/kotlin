@@ -57,7 +57,7 @@ internal fun makeKonanFileOpPhase(
 ) = SameTypeNamedCompilerPhase(
         name, description, prerequisite, nlevels = 0,
         lower = object : SameTypeCompilerPhase<Context, IrFile> {
-            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrFile>, context: Context, input: IrFile): IrFile {
+            override fun invoke(phaseConfig: PhaseConfigService, phaserState: PhaserState<IrFile>, context: Context, input: IrFile): IrFile {
                 op(context, input)
                 return input
             }
@@ -73,7 +73,7 @@ internal fun makeKonanModuleOpPhase(
 ) = SameTypeNamedCompilerPhase(
         name, description, prerequisite, nlevels = 0,
         lower = object : SameTypeCompilerPhase<Context, IrModuleFragment> {
-            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {
+            override fun invoke(phaseConfig: PhaseConfigService, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {
                 op(context, input)
                 return input
             }

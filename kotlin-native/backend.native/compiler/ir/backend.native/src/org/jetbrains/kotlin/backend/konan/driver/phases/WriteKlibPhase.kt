@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 
 internal val WriteKlibPhase = object : SimpleNamedCompilerPhase<PhaseContext, SerializerResult, Unit>(
         "WriteKlib", "Write klib output",
-        outputIfNotEnabled = { _, _ -> }
 ) {
     override fun phaseBody(context: PhaseContext, input: SerializerResult) {
         val config = context.config
@@ -64,5 +63,9 @@ internal val WriteKlibPhase = object : SimpleNamedCompilerPhase<PhaseContext, Se
                 shortLibraryName,
                 manifestProperties,
                 input.dataFlowGraph)
+    }
+
+    override fun outputIfNotEnabled(context: PhaseContext, input: SerializerResult) {
+
     }
 }
