@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCommonizerToolRunner
 import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
 import org.jetbrains.kotlin.compilerRunner.konanHome
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -283,7 +285,10 @@ private fun CInteropProcess.toGist(): CInteropGist {
         identifier = settings.identifier,
         konanTarget = konanTarget,
         // FIXME support cinterop with PM20
-        sourceSets = project.provider { (settings.compilation as? KotlinCompilation<*>)?.kotlinSourceSets },
+        sourceSets = project.provider {
+            project.multiplatformExtension.targets.getByName(targetName)
+                .compilations.getByName(compilationName).kotlinSourceSets
+        },
         libraryFile = outputFileProvider,
         dependencies = libraries
     )

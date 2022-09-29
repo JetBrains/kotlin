@@ -51,7 +51,9 @@ open class GradleKpmCompilationTaskConfigurator(
         compilationData: KotlinNativeCompilationData<*>,
         configure: KotlinNativeCompile.() -> Unit
     ): TaskProvider<KotlinNativeCompile> {
-        val compileTask = KotlinNativeTargetConfigurator.createKlibCompilationTask(compilationData)
+        val compileTask = KotlinNativeTargetConfigurator.createKlibCompilationTask(
+            KotlinCompilationProjection.KPM(compilationData), compilationData.konanTarget
+        )
 
         val allSources = getSourcesForFragmentCompilation(fragment)
         val commonSources = getCommonSourcesForFragmentCompilation(fragment)
@@ -66,9 +68,9 @@ open class GradleKpmCompilationTaskConfigurator(
     }
 
     fun createKotlinNativeCompilationTask(
-        variant: GradleKpmVariant,
+        variant: GradleKpmNativeVariantInternal,
         compilationData: KotlinNativeCompilationData<*>
     ): TaskProvider<KotlinNativeCompile> = createKotlinNativeCompilationTask(variant, compilationData) {
         kotlinPluginData = project.compilerPluginProviderForPlatformCompilation(variant, compilationData)
     }
- }
+}

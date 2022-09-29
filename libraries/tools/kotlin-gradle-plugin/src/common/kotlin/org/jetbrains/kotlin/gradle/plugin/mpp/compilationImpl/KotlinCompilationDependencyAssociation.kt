@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.tasks.SourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 
 internal fun interface KotlinCompilationAssociator {
@@ -70,7 +72,7 @@ internal object DefaultKotlinCompilationAssociator : KotlinCompilationAssociator
     }
 }
 
-internal object KotlinNativeCompilationAssociator : KotlinCompilationAssociator {
+internal object NativeKotlinCompilationAssociator : KotlinCompilationAssociator {
     override fun associate(target: KotlinTarget, first: InternalKotlinCompilation<*>, second: InternalKotlinCompilation<*>) {
         target.project.kotlinCompilationModuleManager.unionModules(first.compilationModule, second.compilationModule)
 
@@ -83,12 +85,14 @@ internal object KotlinNativeCompilationAssociator : KotlinCompilationAssociator 
     }
 }
 
-internal object KotlinJvmWithJavaCompilationAssociator : KotlinCompilationAssociator {
+internal object JvmKotlinCompilationAssociator : KotlinCompilationAssociator {
     override fun associate(target: KotlinTarget, first: InternalKotlinCompilation<*>, second: InternalKotlinCompilation<*>) {
         target.project.kotlinCompilationModuleManager.unionModules(first.compilationModule, second.compilationModule)
-        if (first.compilationName != SourceSet.TEST_SOURCE_SET_NAME || second.compilationName != SourceSet.MAIN_SOURCE_SET_NAME) {
-            DefaultKotlinCompilationAssociator.associate(target, first, second)
-        } // otherwise, do nothing: the Java Gradle plugin adds these dependencies for us, we don't need to add them to the classpath
+
+        /* Main to Test association handled already by java plugin */
+        if (target is KotlinJvmTarget && target.withJavaEnabled && first.isMain() && second.isTest()) {
+            return
+        } else DefaultKotlinCompilationAssociator.associate(target, first, second)
     }
 }
 

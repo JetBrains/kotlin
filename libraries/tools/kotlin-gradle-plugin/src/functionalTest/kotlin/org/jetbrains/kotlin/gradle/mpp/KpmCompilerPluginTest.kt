@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerPluginData
 import org.jetbrains.kotlin.project.model.*
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 class KpmCompilerPluginTest {
     @Test
@@ -146,7 +149,7 @@ class KpmCompilerPluginTest {
         .let {
             when (it) {
                 is AbstractKotlinCompile<*> -> it.kotlinPluginData
-                is AbstractKotlinNativeCompile<*, *, *> -> it.kotlinPluginData
+                is AbstractKotlinNativeCompile<*, *> -> it.kotlinPluginData
                 else -> error("Unknown task type: $it")
             }
         }

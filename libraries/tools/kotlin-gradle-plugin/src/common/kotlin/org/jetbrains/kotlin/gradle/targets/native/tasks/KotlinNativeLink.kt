@@ -107,7 +107,7 @@ constructor(
     @Suppress("DEPRECATION")
     @Deprecated("Use toolOptions to configure the task")
     @get:Internal
-    val languageSettings: LanguageSettings = compilation.languageSettings
+    val languageSettings: LanguageSettings = compilation.defaultSourceSet.languageSettings
 
     @Suppress("unused")
     @get:Input

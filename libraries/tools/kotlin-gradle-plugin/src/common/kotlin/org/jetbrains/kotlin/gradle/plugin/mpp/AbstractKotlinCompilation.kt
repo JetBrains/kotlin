@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
 import org.jetbrains.kotlin.project.model.LanguageSettings
+import org.jetbrains.kotlin.tooling.core.MutableExtras
+import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import java.util.*
 
 abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
@@ -61,6 +63,8 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     //endregion
 
     override val target: KotlinTarget get() = compilationDetails.target
+
+    override val extras: MutableExtras = mutableExtrasOf()
 
     final override val compileDependencyConfigurationName: String
         get() = compilationDetails.compileDependencyFilesHolder.dependencyConfigurationName
