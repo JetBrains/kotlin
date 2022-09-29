@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
-data class KotlinCompilationTaskNameContainer(
+internal data class KotlinCompilationTaskNamesContainer(
     val compileTaskName: String,
     val compileAllTaskName: String
 )

@@ -533,7 +533,7 @@ internal inline val <reified T : Task> T.thisTaskProvider: TaskProvider<out T>
 
 @CacheableTask
 abstract class KotlinCompile @Inject constructor(
-    override val compilerOptions: KotlinJvmCompilerOptions,
+    final override val compilerOptions: CompilerJvmOptions,
     workerExecutor: WorkerExecutor,
     objectFactory: ObjectFactory
 ) : AbstractKotlinCompile<K2JVMCompilerArguments>(objectFactory, workerExecutor),

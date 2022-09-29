@@ -14,17 +14,17 @@ import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigur
 
 class KotlinMetadataTargetPreset(
     project: Project
-) : KotlinOnlyTargetPreset<KotlinMetadataTarget, AbstractKotlinCompilation<*>>(project) {
+) : KotlinOnlyTargetPreset<KotlinMetadataTarget, KotlinCompilation<*>>(project) {
     override fun getName(): String = PRESET_NAME
 
     override fun createCompilationFactory(
         forTarget: KotlinMetadataTarget
-    ): KotlinCompilationFactory<AbstractKotlinCompilation<*>> =
-        object : KotlinCompilationFactory<AbstractKotlinCompilation<*>> {
+    ): KotlinCompilationFactory<KotlinCompilation<*>> =
+        object : KotlinCompilationFactory<KotlinCompilation<*>> {
             override val target: KotlinTarget = forTarget
 
-            override val itemClass: Class<AbstractKotlinCompilation<*>>
-                get() = AbstractKotlinCompilation::class.java
+            override val itemClass: Class<KotlinCompilation<*>>
+                get() = KotlinCompilation::class.java
 
             override fun create(name: String): AbstractKotlinCompilation<*> = when (name) {
                 KotlinCompilation.MAIN_COMPILATION_NAME -> KotlinCommonCompilationFactory(forTarget).create(name)

@@ -54,3 +54,6 @@ operator fun Extras.plus(entry: Extras.Entry<*>): Extras = ImmutableExtrasImpl(t
 
 operator fun Extras.plus(entries: Iterable<Extras.Entry<*>>): Extras = ImmutableExtrasImpl(this.entries + entries)
 
+inline fun <T : Any> MutableExtras.getOrPut(key: Extras.Key<T>, defaultValue: () -> T): T {
+    return this[key] ?: defaultValue().also { this[key] = it }
+}

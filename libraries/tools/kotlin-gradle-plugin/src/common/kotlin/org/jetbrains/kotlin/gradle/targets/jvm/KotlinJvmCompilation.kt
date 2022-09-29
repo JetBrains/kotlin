@@ -70,56 +70,16 @@ open class KotlinJvmCompilation @Inject internal constructor(
         get() = compilation.relatedConfigurationNames
 }
 
-
-private inline fun <reified T : KotlinCommonOptions> InternalKotlinCompilation<*>.castKotlinOptionsType(): InternalKotlinCompilation<T> {
+//TODO SEB: Find a good spot for this function
+internal inline fun <reified T : KotlinCommonOptions> InternalKotlinCompilation<*>.castKotlinOptionsType(): InternalKotlinCompilation<T> {
     this.kotlinOptions as T
     @Suppress("UNCHECKED_CAST")
     return this as InternalKotlinCompilation<T>
 }
 
-private inline fun <reified T : CompilerCommonOptions> HasCompilerOptions<*>.castCompilerOptionsType(): HasCompilerOptions<T> {
+//TODO SEB: Find home for function
+internal inline fun <reified T : CompilerCommonOptions> HasCompilerOptions<*>.castCompilerOptionsType(): HasCompilerOptions<T> {
     this.options as T
     @Suppress("UNCHECKED_CAST")
     return this as HasCompilerOptions<T>
 }
-
-
-abstract class oKotlinJvmCompilation @Inject constructor(
-    compilationDetails: CompilationDetailsWithRuntime<KotlinJvmOptions>,
-) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilationDetails),
-    KotlinCompilationWithResources<KotlinJvmOptions> {
-    override val target: KotlinJvmTarget get() = compilationDetails.target as KotlinJvmTarget
-
-    @Suppress("UNCHECKED_CAST")
-    override val compilerOptions: HasCompilerOptions<CompilerJvmOptions>
-        get() = super.compilerOptions as HasCompilerOptions<CompilerJvmOptions>
-
-    override val processResourcesTaskName: String
-        get() = disambiguateName("processResources")
-
-    @Deprecated("Replaced with compileTaskProvider", replaceWith = ReplaceWith("compileTaskProvider"))
-    @Suppress("UNCHECKED_CAST", "DEPRECATION")
-    override val compileKotlinTaskProvider: TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
-        get() = super.compileKotlinTaskProvider as TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
-
-    @Suppress("DEPRECATION")
-    @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
-    override val compileKotlinTask: org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-        get() = super.compileKotlinTask as org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-    @Suppress("UNCHECKED_CAST")
-    override val compileTaskProvider: TaskProvider<out KotlinCompilationTask<CompilerJvmOptions>>
-        get() = super.compileTaskProvider as TaskProvider<KotlinCompilationTask<CompilerJvmOptions>>
-
-    val compileJavaTaskProvider: TaskProvider<out JavaCompile>?
-        get() = if (target.withJavaEnabled) {
-            val project = target.project
-            val javaSourceSets =
-                project.gradle.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
-                    .getInstance(project)
-                    .sourceSets
-            val javaSourceSet = javaSourceSets.getByName(compilationPurpose)
-            project.tasks.withType(JavaCompile::class.java).named(javaSourceSet.compileJavaTaskName)
-        } else null
-}
-

@@ -177,10 +177,7 @@ internal open class KotlinNativeFragmentMetadataCompilationDataImpl(
     override val isActive: Boolean
         get() = fragment.isNativeShared() && fragment.containingVariants.count() > 1
 
-    override val compilerOptions: HasCompilerOptions<KotlinCommonCompilerOptions> = NativeCompilerOptions(
-        project,
-        languageSettings
-    )
+    override val compilerOptions: HasCompilerOptions<KotlinCommonCompilerOptions> = NativeCompilerOptions(project)
 
     @Suppress("DEPRECATION")
     @Deprecated("Replaced with compilerOptions.options", replaceWith = ReplaceWith("compilerOptions.options"))

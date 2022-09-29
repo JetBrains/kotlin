@@ -113,8 +113,10 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
             defineConfigurationsForCompilation(compilation)
 
-            if (compilation is KotlinCompilationWithResources) {
-                configureResourceProcessing(compilation, project.files(Callable { compilation.allKotlinSourceSets.map { it.resources } }))
+            compilation.internal.processResourcesTaskName?.let { processResourcesTaskName ->
+                configureResourceProcessing(
+                    compilation, processResourcesTaskName, project.files(Callable { compilation.allKotlinSourceSets.map { it.resources } })
+                )
             }
 
             createLifecycleTask(compilation)
@@ -122,13 +124,14 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
     }
 
     protected fun configureResourceProcessing(
-        compilation: KotlinCompilationWithResources<*>,
+        compilation: KotlinCompilation<*>,
+        processResourcesTaskName: String,
         resourceSet: FileCollection
     ) {
         val project = compilation.target.project
 
         val resourcesDestinationDir = project.file(compilation.output.resourcesDir)
-        val resourcesTask = project.locateOrRegisterTask<ProcessResources>(compilation.processResourcesTaskName) { resourcesTask ->
+        val resourcesTask = project.locateOrRegisterTask<ProcessResources>(processResourcesTaskName) { resourcesTask ->
             resourcesTask.description = "Processes $resourceSet."
             resourcesTask.from(resourceSet)
             resourcesTask.into(resourcesDestinationDir)

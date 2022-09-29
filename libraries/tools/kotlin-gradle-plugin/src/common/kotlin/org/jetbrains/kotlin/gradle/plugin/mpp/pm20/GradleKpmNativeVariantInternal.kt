@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
+import org.jetbrains.kotlin.gradle.plugin.mpp.GradleKpmDefaultCInteropSettingsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -35,8 +36,10 @@ abstract class GradleKpmNativeVariantInternal(
     override val gradleVariantNames: Set<String>
         get() = listOf(apiElementsConfiguration.name).flatMap { listOf(it, publishedConfigurationName(it)) }.toSet()
 
-    val cinterops = project.container(DefaultCInteropSettings::class.java) { cinteropName ->
-        project.objects.newInstance(DefaultCInteropSettings::class.java, project, cinteropName, compilationData)
+    val cinterops by lazy {
+        project.container(
+            DefaultCInteropSettings::class.java, GradleKpmDefaultCInteropSettingsFactory(compilationData)
+        )
     }
 
     override val compilationData by lazy { GradleKpmNativeVariantCompilationData(this) }

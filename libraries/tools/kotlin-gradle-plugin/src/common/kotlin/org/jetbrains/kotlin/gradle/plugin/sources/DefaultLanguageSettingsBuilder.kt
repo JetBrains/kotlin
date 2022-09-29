@@ -79,7 +79,7 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
             val pluginOptionsTask = compilerPluginOptionsTask.value ?: return null
             return when (pluginOptionsTask) {
                 is AbstractKotlinCompile<*> -> pluginOptionsTask.pluginOptions.toSingleCompilerPluginOptions()
-                is AbstractKotlinNativeCompile<*, *, *> -> pluginOptionsTask.compilerPluginOptions
+                is AbstractKotlinNativeCompile<*, *> -> pluginOptionsTask.compilerPluginOptions
                 else -> error("Unexpected task: $pluginOptionsTask")
             }.arguments
         }
@@ -89,7 +89,7 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
             val pluginClasspathTask = compilerPluginOptionsTask.value ?: return null
             return when (pluginClasspathTask) {
                 is AbstractKotlinCompile<*> -> pluginClasspathTask.pluginClasspath
-                is AbstractKotlinNativeCompile<*, *, *> -> pluginClasspathTask.compilerPluginClasspath ?: pluginClasspathTask.project.files()
+                is AbstractKotlinNativeCompile<*, *> -> pluginClasspathTask.compilerPluginClasspath ?: pluginClasspathTask.project.files()
                 else -> error("Unexpected task: $pluginClasspathTask")
             }
         }
@@ -106,16 +106,16 @@ internal fun applyLanguageSettingsToCompilerOptions(
 ) = with(compilerOptions) {
     languageVersion.convention(languageSettingsBuilder.languageVersion?.let { KotlinVersion.fromVersion(it) })
     apiVersion.convention(languageSettingsBuilder.apiVersion?.let { KotlinVersion.fromVersion(it) })
-    
+
     val freeArgs = mutableListOf<String>().apply {
         if (languageSettingsBuilder.progressiveMode) {
             add("-progressive")
         }
-    
+
         languageSettingsBuilder.enabledLanguageFeatures.forEach { featureName ->
             add("-XXLanguage:+$featureName")
         }
-    
+
         languageSettingsBuilder.optInAnnotationsInUse.forEach { annotationName ->
             add("-opt-in=$annotationName")
         }
