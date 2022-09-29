@@ -18,10 +18,11 @@ package org.jetbrains.kotlin.js.backend.ast
 
 import java.io.Reader
 
-data class JsLocation(
+data class JsLocation @JvmOverloads constructor(
     override val file: String,
     override val startLine: Int,
-    override val startChar: Int
+    override val startChar: Int,
+    override val name: String? = null
 ) : JsLocationWithSource {
     override val fileIdentity: Any?
         get() = null
@@ -35,6 +36,11 @@ interface JsLocationWithSource {
     val file: String
     val startLine: Int
     val startChar: Int
+
+    /**
+     * The original name of the entity in the source code that this JS node was generated from.
+     */
+    val name: String?
 
     /**
      * An object to distinguish different files with the same paths

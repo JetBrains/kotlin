@@ -87,9 +87,9 @@ class JsGenerationContext(
 
     fun checkIfHasAssociatedJsCode(symbol: IrFunctionSymbol): Boolean = staticContext.backendContext.getJsCodeForFunction(symbol) != null
 
-    fun getLocationForIrElement(irElement: IrElement): JsLocation? {
+    fun getLocationForIrElement(irElement: IrElement, originalName: String? = null): JsLocation? {
         return locationCache.getOrPut(irElement.startOffset) {
             irElement.getSourceInfo(currentFile.fileEntry) ?: return null
-        }
+        }.copy(name = originalName)
     }
 }

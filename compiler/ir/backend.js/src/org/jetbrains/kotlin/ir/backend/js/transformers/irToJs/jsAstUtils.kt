@@ -522,17 +522,17 @@ object JsAstUtils {
     }
 }
 
-internal fun <T : JsNode> T.withSource(node: IrElement, context: JsGenerationContext): T {
-    addSourceInfoIfNeed(node, context)
+internal fun <T : JsNode> T.withSource(node: IrElement, context: JsGenerationContext, originalName: String? = null): T {
+    addSourceInfoIfNeed(node, context, originalName)
     return this
 }
 
 @Suppress("NOTHING_TO_INLINE")
-private inline fun <T : JsNode> T.addSourceInfoIfNeed(node: IrElement, context: JsGenerationContext) {
+private inline fun <T : JsNode> T.addSourceInfoIfNeed(node: IrElement, context: JsGenerationContext, originalName: String?) {
 
     val sourceMapsInfo = context.staticContext.backendContext.sourceMapsInfo ?: return
 
-    val location = context.getLocationForIrElement(node) ?: return
+    val location = context.getLocationForIrElement(node, originalName) ?: return
 
     val isNodeFromCurrentModule = context.currentFile.module.descriptor == context.staticContext.backendContext.module
 

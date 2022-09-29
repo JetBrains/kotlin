@@ -86,6 +86,17 @@ object SourceMapParser {
             }
         }
 
+        val names = jsonObject.properties["names"].let {
+            if (it != null) {
+                val namesProperty = it as? JsonArray ?: return SourceMapError("'names' property is not of array type")
+                namesProperty.elements.map {
+                    (it as? JsonString ?: return SourceMapError("'names' array must contain strings")).value
+                }
+            } else {
+                emptyList()
+            }
+        }
+
         val sourcePathToContent = sources.zip(sourcesContent).associate { it }
 
         val mappings = jsonObject.properties["mappings"] ?: return SourceMapError("'mappings' property not found")
@@ -95,6 +106,7 @@ object SourceMapParser {
         var sourceLine = 0
         var sourceColumn = 0
         var sourceIndex = 0
+        var nameIndex = 0
         val stream = MappingStream(mappings.value)
         val sourceMap = SourceMap { sourcePathToContent[it]?.let { StringReader(it) } }
         var currentGroup = SourceMapGroup().also { sourceMap.groups += it }
@@ -113,17 +125,20 @@ object SourceMapParser {
                 sourceIndex += stream.readInt() ?: return stream.createError("VLQ-encoded source index expected")
                 sourceLine += stream.readInt() ?: return stream.createError("VLQ-encoded source line expected")
                 sourceColumn += stream.readInt() ?: return stream.createError("VLQ-encoded source column expected")
-                if (stream.isEncodedInt) {
-                    stream.readInt() ?: return stream.createError("VLQ-encoded name index expected")
-                }
+                val name = if (stream.isEncodedInt) {
+                    nameIndex += stream.readInt() ?: return stream.createError("VLQ-encoded name index expected")
+                    if (nameIndex !in names.indices) {
+                        return stream.createError("Name index $nameIndex is out of bounds ${names.indices}")
+                    }
+                    names[nameIndex]
+                } else null
 
                 if (sourceIndex !in sources.indices) {
                     return stream.createError("Source index $sourceIndex is out of bounds ${sources.indices}")
                 }
-                currentGroup.segments += SourceMapSegment(jsColumn, sourceRoot + sources[sourceIndex], sourceLine, sourceColumn)
-            }
-            else {
-                currentGroup.segments += SourceMapSegment(jsColumn, null, -1, -1)
+                currentGroup.segments += SourceMapSegment(jsColumn, sourceRoot + sources[sourceIndex], sourceLine, sourceColumn, name)
+            } else {
+                currentGroup.segments += SourceMapSegment(jsColumn, null, -1, -1, null)
             }
 
             when {

@@ -59,7 +59,7 @@ class SourceMapBuilderConsumer(
                     } else {
                         { null }
                     }
-                    mappingConsumer.addMapping(sourceFilePath, null, contentSupplier, startLine, startChar)
+                    mappingConsumer.addMapping(sourceFilePath, null, contentSupplier, startLine, startChar, null)
                 } catch (e: IOException) {
                     throw RuntimeException("IO error occurred generating source maps", e)
                 }
@@ -85,7 +85,8 @@ class SourceMapBuilderConsumer(
                     sourceInfo.fileIdentity,
                     contentSupplier,
                     sourceInfo.startLine,
-                    sourceInfo.startChar
+                    sourceInfo.startChar,
+                    sourceInfo.name
                 )
             }
 
