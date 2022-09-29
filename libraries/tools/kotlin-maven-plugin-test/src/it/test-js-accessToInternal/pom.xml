@@ -32,6 +32,9 @@
                         </goals>
                         <configuration>
                             <output>${project.basedir}/customOutput/</output>
+                            <args>
+                                <arg>-Xuse-deprecated-legacy-compiler</arg>
+                            </args>
                         </configuration>
                     </execution>
                     <execution>
@@ -39,6 +42,11 @@
                         <goals>
                             <goal>test-js</goal>
                         </goals>
+                        <configuration>
+                            <args>
+                                <arg>-Xuse-deprecated-legacy-compiler</arg>
+                            </args>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

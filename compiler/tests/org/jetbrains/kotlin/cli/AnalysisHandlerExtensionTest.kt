@@ -67,7 +67,7 @@ class AnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
         val plugin = writePlugin(klass)
         val args = listOf("-Xplugin=$plugin", mainKt.absolutePath)
         val outputPath = if (compiler is K2JSCompiler)
-            listOf("-output", tmpdir.resolve("out.js").absolutePath)
+            listOf("-Xuse-deprecated-legacy-compiler", "-output", tmpdir.resolve("out.js").absolutePath)
         else
             listOf("-d", tmpdir.resolve("out").absolutePath)
         val (output, exitCode) = CompilerTestUtil.executeCompiler(compiler, args + outputPath + extras)

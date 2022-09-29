@@ -33,6 +33,9 @@
                 </executions>
                 <configuration>
                     <nowarn>true</nowarn>
+                    <args>
+                        <arg>-Xuse-deprecated-legacy-compiler</arg>
+                    </args>
                 </configuration>
             </plugin>
         </plugins>
