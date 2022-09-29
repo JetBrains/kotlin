@@ -152,6 +152,7 @@ import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
+import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.kotlinFqName
@@ -502,6 +503,12 @@ class ComposableFunctionBodyTransformer(
         .first {
             it.name.identifier == "changed" && it.valueParameters.first().type.isNullableAny()
         }
+
+    private val changedInstanceFunction = composerIrClass.functions
+        .firstOrNull() {
+            it.name.identifier == "changedInstance" &&
+                it.valueParameters.first().type.isNullableAny()
+        } ?: changedFunction
 
     private fun IrType.toPrimitiveType(): PrimitiveType? = when {
         isInt() -> PrimitiveType.INT
@@ -2150,7 +2157,8 @@ class ComposableFunctionBodyTransformer(
         val expr = value.unboxValueIfInline()
         val descriptor = type
             .toPrimitiveType()
-            .let { changedPrimitiveFunctions[it] } ?: changedFunction
+            .let { changedPrimitiveFunctions[it] }
+            ?: if (type.isFunction()) changedInstanceFunction else changedFunction
         return irMethodCall(irCurrentComposer(), descriptor).also {
             it.putValueArgument(0, expr)
         }

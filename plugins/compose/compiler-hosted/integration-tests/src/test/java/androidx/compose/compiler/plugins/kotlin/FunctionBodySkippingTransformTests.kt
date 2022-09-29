@@ -167,7 +167,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
               if (%default and 0b0010 !== 0) {
                 %dirty = %dirty or 0b00110000
               } else if (%changed and 0b01110000 === 0) {
-                %dirty = %dirty or if (%composer.changed(onTextLayout)) 0b00100000 else 0b00010000
+                %dirty = %dirty or if (%composer.changedInstance(onTextLayout)) 0b00100000 else 0b00010000
               }
               if (%default and 0b0100 !== 0) {
                 %dirty = %dirty or 0b000110000000
@@ -273,7 +273,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
               } else if (%changed and 0b1110 === 0) {
-                %dirty = %dirty or if (%composer.changed(content)) 0b0100 else 0b0010
+                %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (%default and 0b0001 !== 0) {
@@ -565,7 +565,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
               if (%default and 0b00100000 !== 0) {
                 %dirty = %dirty or 0b00110000000000000000
               } else if (%changed and 0b01110000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(content)) 0b00100000000000000000 else 0b00010000000000000000
+                %dirty = %dirty or if (%composer.changedInstance(content)) 0b00100000000000000000 else 0b00010000000000000000
               }
               if (%dirty and 0b01011011011011011011 !== 0b00010010010010010010 || !%composer.skipping) {
                 if (%default and 0b0010 !== 0) {
@@ -623,7 +623,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
               if (%default and 0b1000 !== 0) {
                 %dirty = %dirty or 0b110000000000
               } else if (%changed and 0b0001110000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(content)) 0b100000000000 else 0b010000000000
+                %dirty = %dirty or if (%composer.changedInstance(content)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (%default and 0b0001 !== 0) {
@@ -960,7 +960,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
               if (%default and 0b0010 !== 0) {
                 %dirty = %dirty or 0b00110000
               } else if (%changed and 0b01110000 === 0) {
-                %dirty = %dirty or if (%composer.changed(content)) 0b00100000 else 0b00010000
+                %dirty = %dirty or if (%composer.changedInstance(content)) 0b00100000 else 0b00010000
               }
               if (%dirty and 0b01011011 !== 0b00010010 || !%composer.skipping) {
                 if (%default and 0b0001 !== 0) {
@@ -1100,7 +1100,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
               sourceInformation(%composer, "C(SomeThing)<conten...>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
-                %dirty = %dirty or if (%composer.changed(content)) 0b0100 else 0b0010
+                %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
@@ -1435,7 +1435,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                 %dirty = %dirty or if (%composer.changed(y)) 0b0100 else 0b0010
               }
               if (%changed and 0b01110000 === 0) {
-                %dirty = %dirty or if (%composer.changed(content)) 0b00100000 else 0b00010000
+                %dirty = %dirty or if (%composer.changedInstance(content)) 0b00100000 else 0b00010000
               }
               if (%dirty and 0b01011011 !== 0b00010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
@@ -3454,7 +3454,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
               sourceInformation(%composer, "C(Example)<invoke...>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
-                %dirty = %dirty or if (%composer.changed(content)) 0b0100 else 0b0010
+                %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
@@ -3540,7 +3540,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
               if (%default and 0b0100 !== 0) {
                 %dirty = %dirty or 0b000110000000
               } else if (%changed and 0b001110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(content)) 0b000100000000 else 0b10000000
+                %dirty = %dirty or if (%composer.changedInstance(content)) 0b000100000000 else 0b10000000
               }
               if (%dirty and 0b001011011011 !== 0b10010010 || !%composer.skipping) {
                 if (%default and 0b0001 !== 0) {
