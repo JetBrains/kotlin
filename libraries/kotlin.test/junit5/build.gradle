@@ -16,8 +16,8 @@ dependencies {
     expectedBy project(':kotlin-test:kotlin-test-annotations-common')
     api project(':kotlin-test:kotlin-test-jvm')
 
-    api("org.junit.jupiter:junit-jupiter-api:5.0.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.2.0")
+    api("org.junit.jupiter:junit-jupiter-api:5.9.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.1")
 }
 
 jar {

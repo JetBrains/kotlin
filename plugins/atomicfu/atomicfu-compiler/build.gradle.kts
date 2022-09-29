@@ -89,7 +89,7 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlinx:atomicfu:0.17.1")
 
-    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.6.2")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.9.1")
 }
 
 optInToExperimentalCompilerApi()
