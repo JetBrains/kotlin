@@ -167,6 +167,7 @@ abstract class AbstractJsLookupTrackerTest : AbstractLookupTrackerTest() {
             libraries = libPaths.joinToString(File.pathSeparator)
             reportOutputFiles = true
             freeArgs = filesToCompile.map { it.canonicalPath }
+            useDeprecatedLegacyCompiler = true
         }
         configureAdditionalArgs(args)
         return runJSCompiler(args, env)

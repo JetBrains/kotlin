@@ -42,6 +42,7 @@ abstract class AbstractIncrementalJsCompilerRunnerTest : AbstractIncrementalComp
             outputFile = File(destinationDir, "${testDir.name}.js").path
             sourceMap = true
             metaInfo = true
+            useDeprecatedLegacyCompiler = true
         }
 
     protected open val scopeExpansionMode = CompileScopeExpansionMode.NEVER
