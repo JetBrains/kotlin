@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.isTypedEqualsInInlineClass
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -42,14 +43,17 @@ object OperatorModifierChecker {
         if (!functionDescriptor.isOperator) return
         val modifier = declaration.modifierList?.getModifier(KtTokens.OPERATOR_KEYWORD) ?: return
 
-        val checkResult =
-            OperatorChecks(languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses)).check(functionDescriptor)
+        val checkResult = OperatorChecks.check(functionDescriptor)
         if (checkResult.isSuccess) {
-            when (functionDescriptor.name) {
-                in REM_TO_MOD_OPERATION_NAMES.keys ->
+            when {
+                functionDescriptor.name in REM_TO_MOD_OPERATION_NAMES.keys ->
                     checkSupportsFeature(LanguageFeature.OperatorRem, languageVersionSettings, diagnosticHolder, modifier)
-                OperatorNameConventions.PROVIDE_DELEGATE ->
+
+                functionDescriptor.name == OperatorNameConventions.PROVIDE_DELEGATE ->
                     checkSupportsFeature(LanguageFeature.OperatorProvideDelegate, languageVersionSettings, diagnosticHolder, modifier)
+
+                functionDescriptor.isTypedEqualsInInlineClass() ->
+                    checkSupportsFeature(LanguageFeature.CustomEqualsInInlineClasses, languageVersionSettings, diagnosticHolder, modifier)
             }
 
             if (functionDescriptor.name in REM_TO_MOD_OPERATION_NAMES.values &&
