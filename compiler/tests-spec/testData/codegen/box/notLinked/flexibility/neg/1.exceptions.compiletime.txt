@@ -1,1 +1,0 @@
-java.lang.IllegalStateException: TYPE_MISMATCH: Type mismatch: inferred type is Nothing? but Boolean was expected (7,21) in /KotlinClass.kt

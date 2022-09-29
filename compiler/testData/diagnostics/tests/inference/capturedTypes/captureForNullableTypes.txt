@@ -1,6 +1,0 @@
-package
-
-public fun </*0*/ T : kotlin.Any> bar(/*0*/ a: kotlin.Array<T>): kotlin.Array<T?>
-public fun </*0*/ T : kotlin.Any> foo(/*0*/ l: kotlin.Array<T>): kotlin.Array<kotlin.Array<T?>>
-public fun test1(/*0*/ a: kotlin.Array<out kotlin.Int>): kotlin.Unit
-public fun test2(/*0*/ a: kotlin.Array<out kotlin.Int>): kotlin.Unit

@@ -1,9 +1,0 @@
-depends = AVFAudio CFCGTypes CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreMIDI CoreMedia CoreVideo Foundation ImageIO Security UniformTypeIdentifiers darwin posix
-language = Objective-C
-package = platform.AVFoundation
-modules = AVFoundation
-
-excludedFunctions = AVCaptureLensPositionCurrent
-
-compilerOpts = -framework AVFoundation
-linkerOpts = -framework AVFoundation

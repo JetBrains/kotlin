@@ -1,8 +1,0 @@
-depends = AVFAudio AVFoundation AudioToolbox CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreMIDI CoreMedia CoreVideo Foundation IOSurface Metal ModelIO OpenGLESCommon Security darwin posix
-language = Objective-C
-package = platform.PHASE
-
-modules.tvos_arm64 = PHASE
-compilerOpts.tvos_arm64 = -framework PHASE
-linkerOpts.tvos_arm64 = -framework PHASE
-# No framework in simulator SDK in Xcode 13 beta 5. Forgotten?

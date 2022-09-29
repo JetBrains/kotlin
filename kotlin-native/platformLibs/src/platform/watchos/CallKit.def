@@ -1,7 +1,0 @@
-depends = CFCGTypes CoreFoundation CoreFoundationBase Foundation Security darwin posix
-language = Objective-C
-package = platform.CallKit
-
-modules = CallKit
-compilerOpts = -framework CallKit
-linkerOpts = -framework CallKit

@@ -1,7 +1,0 @@
-package
-
-package a {
-    public fun bar(): kotlin.Int
-    public fun doSmth(): kotlin.Unit
-    public fun foo(): kotlin.Int
-}

@@ -1,6 +1,0 @@
-depends = android posix
-package = platform.media
-headers = media/NdkMediaCodec.h media/NdkMediaCrypto.h media/NdkMediaDrm.h media/NdkMediaError.h \
-    media/NdkMediaExtractor.h media/NdkMediaFormat.h media/NdkMediaMuxer.h
-headerFilter = media/**
-linkerOpts = -lmediandk

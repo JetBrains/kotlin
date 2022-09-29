@@ -1,9 +1,0 @@
-depends = EAGL OpenGLESCommon darwin posix
-language = Objective-C
-package = platform.gles2
-headers = OpenGLES/ES2/gl.h OpenGLES/ES2/glext.h
-
-headerFilter = OpenGLES/ES2/**
-
-compilerOpts = -framework OpenGLES
-linkerOpts = -framework OpenGLES

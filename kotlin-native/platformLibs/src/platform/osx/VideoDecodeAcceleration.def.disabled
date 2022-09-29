@@ -1,6 +1,0 @@
-language = Objective-C
-package = platform.VideoDecodeAcceleration
-modules = VideoDecodeAcceleration
-compilerOpts = -framework VideoDecodeAcceleration
-linkerOpts = -framework VideoDecodeAcceleration
-#Disabled: Unavailable

@@ -1,6 +1,0 @@
-package test
-
-public open class SyntaxError {
-    /*primary*/ public constructor SyntaxError()
-    public open fun foo(): kotlin.Int?
-}

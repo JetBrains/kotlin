@@ -1,3 +1,0 @@
-function box() {
-    return "OK";
-}

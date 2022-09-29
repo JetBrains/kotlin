@@ -1,6 +1,0 @@
-package test
-
-public open class MethodTypePOneUpperBound {
-    /*primary*/ public constructor MethodTypePOneUpperBound()
-    public open fun </*0*/ T : kotlin.Cloneable?> bar(): kotlin.Unit
-}

@@ -1,4 +1,0 @@
-package
-
-public fun eat(/*0*/ value: kotlin.Any): kotlin.Unit
-public fun test(/*0*/ param: kotlin.String): kotlin.Unit

@@ -1,3 +1,0 @@
-package
-
-public fun `<no name provided>`(): kotlin.Unit

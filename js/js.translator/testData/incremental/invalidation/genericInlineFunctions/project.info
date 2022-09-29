@@ -1,8 +1,0 @@
-MODULES: lib1, main, libProxy
-
-STEP 0..7:
-    libs: lib1, main
-    dirty js: lib1, main
-STEP 8..23:
-    libs: lib1, libProxy, main
-    dirty js: lib1, libProxy, main

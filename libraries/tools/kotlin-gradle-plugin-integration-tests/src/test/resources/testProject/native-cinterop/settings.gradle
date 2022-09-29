@@ -1,4 +1,0 @@
-rootProject.name = "native-cinterop"
-
-include 'projectLibrary'
-include 'publishedLibrary'

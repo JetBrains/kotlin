@@ -1,4 +1,0 @@
-fun main() {
-    srcEmptyTestsSrc()
-    srcMissingTestsSrc()
-}

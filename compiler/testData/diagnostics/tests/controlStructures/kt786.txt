@@ -1,7 +1,0 @@
-package
-
-package kt786 {
-    public fun bar(): kotlin.Int
-    public fun fff(): kotlin.Int
-    public fun foo(): kotlin.Int
-}

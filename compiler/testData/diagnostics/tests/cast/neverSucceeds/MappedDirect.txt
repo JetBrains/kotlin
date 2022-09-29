@@ -1,3 +1,0 @@
-package
-
-public fun test(/*0*/ s: kotlin.String, /*1*/ js: java.lang.String, /*2*/ cs: kotlin.CharSequence, /*3*/ jcs: java.lang.CharSequence): kotlin.Unit

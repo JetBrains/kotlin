@@ -1,6 +1,0 @@
-Set global = 1
-Set member = 42
-Get member = 42
-Set global = 42
-Get global = 42
-Set member = 42

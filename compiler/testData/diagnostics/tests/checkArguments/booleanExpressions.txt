@@ -1,3 +1,0 @@
-package
-
-public fun foo1(/*0*/ b: kotlin.Boolean, /*1*/ c: kotlin.Int): kotlin.Unit

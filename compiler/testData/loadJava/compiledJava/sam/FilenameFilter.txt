@@ -1,5 +1,0 @@
-package test
-
-public interface FilenameFilter {
-    public abstract fun accept(/*0*/ p0: java.io.File!, /*1*/ p1: kotlin.String!): kotlin.Boolean
-}

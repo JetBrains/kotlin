@@ -1,6 +1,0 @@
-package
-
-public val a1: kotlin.ULong = 1.toULong()
-public val a2: kotlin.ULong = 1.toULong()
-public val a3: kotlin.ULong = 1.toULong()
-public val a4: kotlin.ULong = 1.toULong()

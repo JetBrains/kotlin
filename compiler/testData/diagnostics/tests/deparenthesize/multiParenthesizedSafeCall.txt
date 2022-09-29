@@ -1,3 +1,0 @@
-package
-
-public fun f(/*0*/ s: kotlin.String?): kotlin.Boolean

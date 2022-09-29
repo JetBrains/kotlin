@@ -1,3 +1,0 @@
-package
-
-public fun foo(): kotlin.Any

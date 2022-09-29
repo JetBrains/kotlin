@@ -1,3 +1,0 @@
-error: JVM target 1.6 is no longer supported. Please migrate to JVM target 1.8 or above
-error: '-Xjvm-default=all' is only supported since JVM target 1.8. Recompile with '-jvm-target 1.8'
-COMPILATION_ERROR

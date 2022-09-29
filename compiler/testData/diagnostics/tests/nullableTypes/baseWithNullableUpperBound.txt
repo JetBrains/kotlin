@@ -1,5 +1,0 @@
-package
-
-public fun </*0*/ T> interactionWithRedundant(/*0*/ t: T?): kotlin.Unit
-public fun </*0*/ T, /*1*/ N : T, /*2*/ INDIRECT : N> misleadingNullableSimple(/*0*/ t: T?, /*1*/ t2: T?, /*2*/ n: N?, /*3*/ ind: INDIRECT?): kotlin.Unit
-public fun </*0*/ NN : kotlin.Any, /*1*/ NNN : NN> nonMisleadingNullable(/*0*/ nn: NN?, /*1*/ nnn: NNN?): kotlin.Unit

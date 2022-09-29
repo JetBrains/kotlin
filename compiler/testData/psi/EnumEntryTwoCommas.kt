@@ -1,3 +1,0 @@
-enum class My {
-    FIRST,,
-}

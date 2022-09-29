@@ -1,4 +1,0 @@
-package
-
-public suspend fun main(): kotlin.Unit
-public suspend fun main(): kotlin.Unit

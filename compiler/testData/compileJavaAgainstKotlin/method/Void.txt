@@ -1,7 +1,0 @@
-package test
-
-public fun f(): kotlin.Unit
-
-public/*package*/ open class Void {
-    public/*package*/ constructor Void()
-}

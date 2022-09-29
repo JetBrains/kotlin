@@ -1,3 +1,0 @@
-PROTO DIFFERENCE in test/MainKt: FUNCTION_LIST, PROPERTY_LIST
-CHANGES in test/MainKt: MEMBERS
-    [addedFun, addedVal, changedFun, changedVal, removedFun, removedVal]

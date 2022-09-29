@@ -1,7 +1,0 @@
-package
-
-package aaa {
-    public fun a(): kotlin.Unit
-    public fun </*0*/ T> id(/*0*/ t: T): T
-    public infix fun </*0*/ T> T.foo(/*0*/ t: T): T
-}

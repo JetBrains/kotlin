@@ -1,7 +1,0 @@
-depends = AppKit ApplicationServices CFNetwork CoreData CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreServices CoreText CoreVideo DiskArbitration FileProvider Foundation IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security darwin libkern osx posix
-language = Objective-C
-package = platform.FileProviderUI
-modules = FileProviderUI
-
-compilerOpts = -framework FileProviderUI
-linkerOpts = -framework FileProviderUI

@@ -1,7 +1,0 @@
-depends = AppKit ApplicationServices CFNetwork CoreData CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal ModelIO OpenGL3 OpenGLCommon QuartzCore Security darwin libkern osx posix
-language = Objective-C
-package = platform.GLKit
-modules = GLKit
-
-compilerOpts = -framework GLKit
-linkerOpts = -framework GLKit

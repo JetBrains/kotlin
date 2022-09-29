@@ -1,6 +1,0 @@
-<modules>
-    <module name="name" outputDir="$TEMP_DIR$/whatever" type="java-production">
-        <sources path="$TESTDATA_DIR$/nonexistentFile.kt"/>
-        <sources path="$TESTDATA_DIR$/some/nonexistent/dir/"/>
-    </module>
-</modules>

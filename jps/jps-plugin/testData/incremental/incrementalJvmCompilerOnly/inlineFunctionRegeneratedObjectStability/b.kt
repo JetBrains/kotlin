@@ -1,7 +1,0 @@
-package inline1
-
-import inline2.*
-
-fun g() = h()
-
-inline fun h() = root { "OK" }

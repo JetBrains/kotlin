@@ -1,3 +1,0 @@
-fun useA() {
-    A().buzz()
-}

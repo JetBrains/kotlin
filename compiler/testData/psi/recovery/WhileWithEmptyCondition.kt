@@ -1,5 +1,0 @@
-fun test() {
-    while ()
-
-    return
-}

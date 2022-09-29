@@ -1,4 +1,0 @@
-package
-
-@kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi::class}) public fun test1(): kotlin.collections.List<kotlin.Int>
-@kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi::class}) public fun test2(): kotlin.collections.Map<kotlin.Int, kotlin.Int>

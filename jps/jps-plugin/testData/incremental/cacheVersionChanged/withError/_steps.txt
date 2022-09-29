@@ -1,2 +1,0 @@
-add file with compilation error to module1
-fix compilation error in module1

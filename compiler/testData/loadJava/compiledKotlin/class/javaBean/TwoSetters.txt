@@ -1,7 +1,0 @@
-package test
-
-public open class TwoSetters {
-    /*primary*/ public constructor TwoSetters()
-    public open fun setSize(/*0*/ p0: kotlin.Int): kotlin.Unit
-    public open fun setSize(/*0*/ p0: kotlin.String?): kotlin.Unit
-}

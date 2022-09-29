@@ -1,5 +1,0 @@
-package
-
-package kt843 {
-    public fun main(): kotlin.Unit
-}

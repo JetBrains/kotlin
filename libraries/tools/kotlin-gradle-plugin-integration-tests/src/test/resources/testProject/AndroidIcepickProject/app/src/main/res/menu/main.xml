@@ -1,7 +1,0 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-  <item
-    android:id="@+id/action_add_state"
-    android:title="@string/action_add_state"
-    android:orderInCategory="100"
-    android:showAsAction="never" />
-</menu>

@@ -1,6 +1,0 @@
-/suspendInlineCycle_ir.kt:8:5: error: the 'inlineFun2' invocation is a part of inline cycle
-    inlineFun2(p)
-    ^
-/suspendInlineCycle_ir.kt:13:5: error: the 'inlineFun1' invocation is a part of inline cycle
-    inlineFun1(p)
-    ^

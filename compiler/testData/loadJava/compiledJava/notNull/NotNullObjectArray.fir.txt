@@ -1,6 +1,0 @@
-public open class NotNullObjectArray : R|kotlin/Any| {
-    @R|org/jetbrains/annotations/NotNull|() public open fun hi(): R|ft<@EnhancedNullability kotlin/Array<kotlin/Any!>, @EnhancedNullability kotlin/Array<out kotlin/Any!>>|
-
-    public constructor(): R|test/NotNullObjectArray|
-
-}

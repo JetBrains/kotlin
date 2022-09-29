@@ -1,6 +1,0 @@
-$TESTDATA_DIR$/include.js
--output-dir
-$TEMP_DIR$/min
--keep
-global.foo,global.bar
--Xprint-reachability-info

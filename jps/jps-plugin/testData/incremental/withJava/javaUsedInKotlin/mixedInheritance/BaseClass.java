@@ -1,3 +1,0 @@
-abstract public class BaseClass {
-
-}

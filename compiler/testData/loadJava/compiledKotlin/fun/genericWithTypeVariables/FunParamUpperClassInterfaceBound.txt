@@ -1,3 +1,0 @@
-package test
-
-public fun </*0*/ A : java.lang.Number> tres(): kotlin.Int where A : java.io.Serializable

@@ -1,3 +1,0 @@
-getter.java:3:1:compiler.err.annotation.type.not.applicable
-
-

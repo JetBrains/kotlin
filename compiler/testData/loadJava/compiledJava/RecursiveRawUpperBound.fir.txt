@@ -1,2 +1,0 @@
-public abstract interface RecursiveRawUpperBound<T : R|ft<test/RecursiveRawUpperBound<*>, test/RecursiveRawUpperBound<*>?>|> : R|kotlin/Any| {
-}

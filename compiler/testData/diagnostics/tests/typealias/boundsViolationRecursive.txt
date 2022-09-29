@@ -1,3 +1,0 @@
-package
-
-public typealias R</*0*/ T : kotlin.collections.List<[Error type: Unresolved type for R]>> = kotlin.collections.List<T>

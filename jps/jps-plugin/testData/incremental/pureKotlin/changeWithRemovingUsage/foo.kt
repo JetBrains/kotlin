@@ -1,3 +1,0 @@
-package test
-
-fun foo() = ""

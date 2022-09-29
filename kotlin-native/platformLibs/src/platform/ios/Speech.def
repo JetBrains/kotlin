@@ -1,7 +1,0 @@
-depends = AVFAudio AVFoundation AudioToolbox CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreMIDI CoreMedia CoreVideo EAGL Foundation IOSurface ImageIO MediaToolbox Metal OpenGLESCommon QuartzCore Security UniformTypeIdentifiers darwin posix
-language = Objective-C
-package = platform.Speech
-modules = Speech
-
-compilerOpts = -framework Speech
-linkerOpts = -framework Speech

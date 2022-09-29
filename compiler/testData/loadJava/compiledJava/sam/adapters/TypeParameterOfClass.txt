@@ -1,6 +1,0 @@
-package test
-
-public open class TypeParameterOfClass</*0*/ T : kotlin.Any!> {
-    public constructor TypeParameterOfClass</*0*/ T : kotlin.Any!>()
-    public open fun foo(/*0*/ p0: java.util.Comparator<T!>!): kotlin.Unit
-}

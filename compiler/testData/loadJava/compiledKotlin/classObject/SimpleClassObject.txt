@@ -1,9 +1,0 @@
-package test
-
-public final class SimpleClassObject {
-    /*primary*/ public constructor SimpleClassObject()
-
-    public companion object Companion {
-        /*primary*/ private constructor Companion()
-    }
-}

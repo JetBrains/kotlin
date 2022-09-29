@@ -1,4 +1,0 @@
-package
-
-public fun arrayAccessLHS(/*0*/ a: kotlin.Int?, /*1*/ b: kotlin.Array<kotlin.Int>): kotlin.Unit
-public fun arrayAccessRHS(/*0*/ a: kotlin.Int?, /*1*/ b: kotlin.Array<kotlin.Int>): kotlin.Unit

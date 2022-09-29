@@ -1,4 +1,0 @@
-package
-
-public fun foo(/*0*/ o: kotlin.Any): kotlin.Unit
-public fun foo1(/*0*/ o: kotlin.Any): kotlin.Unit

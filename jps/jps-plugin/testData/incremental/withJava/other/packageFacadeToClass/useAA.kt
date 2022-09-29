@@ -1,3 +1,0 @@
-fun useAA() {
-    AA.f()
-}

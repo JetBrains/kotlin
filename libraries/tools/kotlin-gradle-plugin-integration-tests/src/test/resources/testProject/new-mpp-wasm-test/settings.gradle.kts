@@ -1,1 +1,0 @@
-rootProject.name = "new-mpp-wasm-node-test"

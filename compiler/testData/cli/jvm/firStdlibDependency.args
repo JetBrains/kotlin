@@ -1,6 +1,0 @@
-$TESTDATA_DIR$/firStdlibDependency.kt
--Xuse-k2
--cp
-.
--d
-$TEMP_DIR$

@@ -1,4 +1,0 @@
-public abstract interface FilenameFilter : R|kotlin/Any| {
-    public abstract fun accept(dir: R|java/io/File!|, name: R|kotlin/String!|): R|kotlin/Boolean|
-
-}

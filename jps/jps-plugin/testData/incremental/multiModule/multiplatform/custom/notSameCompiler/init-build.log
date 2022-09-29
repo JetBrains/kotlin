@@ -1,5 +1,0 @@
-Building pJs, pJvm
-Exit code: ABORT
-------------------------------------------
-COMPILATION FAILED
-Cyclically dependent modules pJvm (jvm), pJs (js) should have same compiler.

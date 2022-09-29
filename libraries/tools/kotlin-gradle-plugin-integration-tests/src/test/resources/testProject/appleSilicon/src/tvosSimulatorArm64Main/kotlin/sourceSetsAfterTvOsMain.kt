@@ -1,1 +1,0 @@
-actual val sourceSetsAfterTvOsMain: String = "tvosSimulatorArm64Main"

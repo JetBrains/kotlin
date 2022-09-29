@@ -1,6 +1,0 @@
-package
-
-public var x: kotlin.Int
-public val y: kotlin.String
-public fun testX(): kotlin.Unit
-public fun testY(): kotlin.Unit

@@ -1,4 +1,0 @@
-package
-
-public fun asCall(): kotlin.Unit
-public fun asSafe(): kotlin.Unit

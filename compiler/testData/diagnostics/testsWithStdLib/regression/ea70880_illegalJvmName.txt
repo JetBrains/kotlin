@@ -1,5 +1,0 @@
-package
-
-@kotlin.jvm.JvmName(name = 42) public fun bar(): kotlin.Unit
-@kotlin.jvm.JvmName(name = "a") public fun baz(): kotlin.Unit
-@kotlin.jvm.JvmName public fun foo(): kotlin.Unit

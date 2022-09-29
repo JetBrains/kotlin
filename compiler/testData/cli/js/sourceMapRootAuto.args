@@ -1,9 +1,0 @@
-$TESTDATA_DIR$/sourceMapRoot/foo/file1.kt
-$TESTDATA_DIR$/sourceMapRoot/bar/file2.kt
--Xlegacy-deprecated-no-warn
--Xuse-deprecated-legacy-compiler
--source-map
--source-map-prefix
-./
--output
-$TEMP_DIR$/out.js

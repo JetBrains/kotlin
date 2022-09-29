@@ -1,9 +1,0 @@
-depends = CoreData CoreFoundationBase Foundation darwin posix
-language = Objective-C
-package = platform._CoreData_CloudKit
-
-modules = _CoreData_CloudKit
-compilerOpts = -framework _CoreData_CloudKit
-linkerOpts = -framework _CoreData_CloudKit
-#Provides <CoreData/NSPersistentCloudKitContainer_Sharing.h>. Why is it so complicated?
-

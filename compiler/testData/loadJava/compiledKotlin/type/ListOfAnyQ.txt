@@ -1,3 +1,0 @@
-package test
-
-public fun listOfAnyQ(): kotlin.collections.List<kotlin.Any?>

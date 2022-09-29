@@ -1,1 +1,0 @@
-fun bar() = "\uDFFF"

@@ -1,4 +1,0 @@
-package
-
-public typealias S = @S /* = kotlin.Suppress */(names = {}) kotlin.Suppress
-

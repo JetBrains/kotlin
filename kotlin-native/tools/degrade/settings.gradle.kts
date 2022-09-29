@@ -1,1 +1,0 @@
-// Defines an empty Gradle project, helping to open degrade.init.gradle.kts in IntelliJ IDEA.

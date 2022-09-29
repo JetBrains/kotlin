@@ -1,4 +1,0 @@
-package inline
-
-fun other() {
-}

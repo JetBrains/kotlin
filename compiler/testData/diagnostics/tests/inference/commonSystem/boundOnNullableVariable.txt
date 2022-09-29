@@ -1,5 +1,0 @@
-package
-
-public fun </*0*/ R : kotlin.Any> doFun(/*0*/ f: () -> R?): () -> R?
-public fun </*0*/ T : kotlin.Any> test(/*0*/ f: (T) -> T?): kotlin.Unit
-public fun </*0*/ E : kotlin.Any> ((E) -> E?).ext(): () -> E?

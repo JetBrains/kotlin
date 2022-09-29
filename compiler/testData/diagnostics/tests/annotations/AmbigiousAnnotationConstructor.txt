@@ -1,6 +1,0 @@
-package
-
-@java.lang.Deprecated public fun a(): kotlin.Unit
-@java.util.ArrayList<kotlin.Int> public fun b(): kotlin.Unit
-@[Error type: Unresolved type for Xoo] /* annotation class not found */ public fun c(): kotlin.Unit
-

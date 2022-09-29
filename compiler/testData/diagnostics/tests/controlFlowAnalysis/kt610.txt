@@ -1,5 +1,0 @@
-package
-
-package kt610 {
-    public fun foo(): kotlin.Unit
-}

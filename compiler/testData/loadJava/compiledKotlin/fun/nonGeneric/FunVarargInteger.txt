@@ -1,3 +1,0 @@
-package test
-
-public fun varargCharSequence(/*0*/ a: kotlin.Int, /*1*/ vararg b: java.lang.Integer /*kotlin.Array<out java.lang.Integer>*/): kotlin.Int

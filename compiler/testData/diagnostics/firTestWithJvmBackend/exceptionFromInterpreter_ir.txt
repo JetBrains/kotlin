@@ -1,4 +1,0 @@
-package
-
-public const val divideByZero: kotlin.Int
-public const val trimMarginException: kotlin.String

@@ -1,6 +1,0 @@
-package test
-
-public final class ExtFunInClass {
-    /*primary*/ public constructor ExtFunInClass()
-    public final fun kotlin.Int.shuffle(): kotlin.Int
-}

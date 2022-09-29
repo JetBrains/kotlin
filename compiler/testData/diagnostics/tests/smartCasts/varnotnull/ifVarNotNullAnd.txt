@@ -1,4 +1,0 @@
-package
-
-public fun foo(): kotlin.Int
-public fun get(): kotlin.String?

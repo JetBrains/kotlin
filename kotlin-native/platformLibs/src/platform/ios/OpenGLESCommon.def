@@ -1,9 +1,0 @@
-depends = posix
-language = Objective-C
-package = platform.glescommon
-headers = OpenGLES/gltypes.h
-
-headerFilter = OpenGLES/gltypes.h
-
-compilerOpts = -framework OpenGLES
-linkerOpts = -framework OpenGLES

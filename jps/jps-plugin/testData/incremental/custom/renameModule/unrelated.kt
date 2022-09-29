@@ -1,4 +1,0 @@
-package unrelated
-
-fun doSomething() {
-}

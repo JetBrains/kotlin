@@ -1,2 +1,0 @@
-
-@file:TestAnnotation(options = ["option"])

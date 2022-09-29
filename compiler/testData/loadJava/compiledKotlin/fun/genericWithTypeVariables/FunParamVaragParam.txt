@@ -1,3 +1,0 @@
-package test
-
-public fun </*0*/ P> funParamVarargParam(/*0*/ a: kotlin.Int, /*1*/ vararg b: P /*kotlin.Array<out P>*/): kotlin.Int

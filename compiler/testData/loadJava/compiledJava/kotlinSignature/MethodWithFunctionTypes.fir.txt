@@ -1,6 +1,0 @@
-public open class MethodWithFunctionTypes : R|kotlin/Any| {
-    public open fun foo(f: R|ft<kotlin/Function1<kotlin/String!, kotlin/String!>, kotlin/Function1<kotlin/String!, kotlin/String!>?>|): R|ft<kotlin/Function0<kotlin/String!>, kotlin/Function0<kotlin/String!>?>|
-
-    public constructor(): R|test/MethodWithFunctionTypes|
-
-}

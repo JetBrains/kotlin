@@ -1,7 +1,0 @@
-depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics CoreLocation CoreText Foundation Security UIKit darwin posix
-language = Objective-C
-package = platform.MapKit
-modules = MapKit
-
-compilerOpts = -framework MapKit
-linkerOpts = -framework MapKit

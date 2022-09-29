@@ -1,7 +1,0 @@
-depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics CoreText Foundation Security UIKit darwin posix
-language = Objective-C
-package = platform.AuthenticationServices
-modules = AuthenticationServices
-
-compilerOpts = -framework AuthenticationServices
-linkerOpts = -framework AuthenticationServices

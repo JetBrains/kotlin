@@ -1,5 +1,0 @@
-package test
-
-public open class ConstructorWithSeveralParams {
-    public constructor ConstructorWithSeveralParams(/*0*/ p0: kotlin.Int!, /*1*/ p1: kotlin.Int, /*2*/ p2: java.util.ArrayList<kotlin.String!>!)
-}

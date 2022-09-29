@@ -1,3 +1,0 @@
-package
-
-public fun foo(/*0*/ arr: kotlin.Array<kotlin.Int>?): kotlin.Unit

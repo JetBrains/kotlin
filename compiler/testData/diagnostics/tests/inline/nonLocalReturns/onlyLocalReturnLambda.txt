@@ -1,9 +1,0 @@
-package
-
-public fun </*0*/ R> fun1(/*0*/ p: () -> R): kotlin.Unit
-public fun </*0*/ R> fun1ValueArgument(/*0*/ p: () -> R): kotlin.Unit
-public fun </*0*/ R> fun3(/*0*/ p: () -> R): kotlin.Unit
-public fun </*0*/ R> fun3ValueArgument(/*0*/ p: () -> R): kotlin.Unit
-public fun </*0*/ R> fun4(/*0*/ p: () -> R): kotlin.Unit
-public fun </*0*/ R> fun4ValueArgument(/*0*/ p: () -> R): kotlin.Unit
-public inline fun </*0*/ R> inlineFun(/*0*/ crossinline p: () -> R): kotlin.Unit

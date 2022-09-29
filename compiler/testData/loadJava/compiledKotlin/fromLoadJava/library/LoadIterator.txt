@@ -1,6 +1,0 @@
-package test
-
-public interface LoadIterator</*0*/ T> {
-    public abstract fun getIterator(): kotlin.collections.MutableIterator<T>?
-    public abstract fun setIterator(/*0*/ p0: kotlin.collections.Iterator<T>?): kotlin.Unit
-}

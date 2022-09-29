@@ -1,6 +1,0 @@
-language = Objective-C
-package = platform.DiscRecording
-modules = DiscRecording
-compilerOpts = -framework DiscRecording
-linkerOpts = -framework DiscRecording
-#Disabled: Unavailable

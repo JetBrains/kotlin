@@ -1,7 +1,0 @@
-depends = AppKit ApplicationServices CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
-language = Objective-C
-package = platform.FinderSync
-modules = FinderSync
-
-compilerOpts = -framework FinderSync
-linkerOpts = -framework FinderSync

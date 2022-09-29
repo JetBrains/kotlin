@@ -1,4 +1,0 @@
-compiler/testData/cli/jvm/newInferenceImpliesSamConversions.kt:1:9: warning: parameter 'r' is never used
-fun foo(r: Runnable) {}
-        ^
-OK

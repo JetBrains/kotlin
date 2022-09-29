@@ -1,5 +1,0 @@
-package
-
-public val a: kotlin.String = "1"
-public fun nonConst(): kotlin.String
-public fun test(): kotlin.Unit

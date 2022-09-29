@@ -1,3 +1,0 @@
-package
-
-public fun foo(/*0*/ file: java.io.File): kotlin.Unit

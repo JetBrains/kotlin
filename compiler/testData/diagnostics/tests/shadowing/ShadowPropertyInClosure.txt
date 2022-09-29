@@ -1,4 +1,0 @@
-package
-
-public val f: () -> kotlin.Int
-public val i: kotlin.Int = 17

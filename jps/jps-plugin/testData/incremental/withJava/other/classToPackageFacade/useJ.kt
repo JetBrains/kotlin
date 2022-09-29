@@ -1,3 +1,0 @@
-fun useJ() {
-    getAChild().j()
-}

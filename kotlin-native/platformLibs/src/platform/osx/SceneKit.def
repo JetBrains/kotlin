@@ -1,7 +1,0 @@
-depends = AppKit ApplicationServices CFNetwork CoreData CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreServices CoreText CoreVideo DiskArbitration Foundation GLKit IOKit IOSurface ImageIO Metal ModelIO OpenGLCommon QuartzCore Security darwin libkern osx posix
-language = Objective-C
-package = platform.SceneKit
-modules = SceneKit
-
-compilerOpts = -framework SceneKit
-linkerOpts = -framework SceneKit

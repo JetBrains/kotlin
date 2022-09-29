@@ -1,1 +1,0 @@
-public class A @param:Ann : B

@@ -1,7 +1,0 @@
-depends = AppKit ApplicationServices CFNetwork CoreData CoreFoundation CoreFoundationBase CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
-language = Objective-C
-package = platform.GameController
-modules = GameController
-
-compilerOpts = -framework GameController
-linkerOpts = -framework GameController

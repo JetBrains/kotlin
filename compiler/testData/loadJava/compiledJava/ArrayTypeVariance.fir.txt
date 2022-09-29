@@ -1,6 +1,0 @@
-public final class ArrayTypeVariance : R|kotlin/Any| {
-    public final fun toArray(p0: R|ft<kotlin/Array<kotlin/Any!>, kotlin/Array<out kotlin/Any!>?>|): R|ft<kotlin/Array<kotlin/Any!>, kotlin/Array<out kotlin/Any!>?>|
-
-    public constructor(): R|test/ArrayTypeVariance|
-
-}

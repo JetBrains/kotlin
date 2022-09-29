@@ -1,4 +1,0 @@
-rootProject.name = "kotlin-js-ir-ic-multiple-artifacts"
-
-include("lib")
-include("app")

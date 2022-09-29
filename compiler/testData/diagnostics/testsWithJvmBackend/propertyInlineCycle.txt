@@ -1,3 +1,0 @@
-package
-
-public val kotlin.String.foo: kotlin.String

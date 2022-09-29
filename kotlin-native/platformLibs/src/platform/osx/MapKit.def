@@ -1,7 +1,0 @@
-depends = AppKit ApplicationServices CFNetwork CoreData CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreLocation CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security darwin libkern osx posix
-language = Objective-C
-package = platform.MapKit
-modules = MapKit
-
-compilerOpts = -framework MapKit
-linkerOpts = -framework MapKit

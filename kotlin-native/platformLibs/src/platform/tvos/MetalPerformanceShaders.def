@@ -1,7 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics Foundation IOSurface Metal Security darwin posix
-language = Objective-C
-package = platform.MetalPerformanceShaders
-modules.arm64 = MetalPerformanceShaders
-
-compilerOpts.arm64 = -framework MetalPerformanceShaders
-linkerOpts.arm64 = -framework MetalPerformanceShaders

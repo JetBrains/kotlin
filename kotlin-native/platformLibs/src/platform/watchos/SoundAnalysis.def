@@ -1,7 +1,0 @@
-depends = AVFAudio AVFoundation CFCGTypes CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreMIDI CoreML CoreMedia CoreVideo Foundation ImageIO Security UniformTypeIdentifiers darwin posix
-language = Objective-C
-package = platform.SoundAnalysis
-modules = SoundAnalysis
-
-compilerOpts = -framework SoundAnalysis
-linkerOpts = -framework SoundAnalysis

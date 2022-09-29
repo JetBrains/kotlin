@@ -1,2 +1,0 @@
-
-__FILE__.absolutePath

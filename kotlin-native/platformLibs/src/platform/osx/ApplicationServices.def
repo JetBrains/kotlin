@@ -1,9 +1,0 @@
-depends = CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreServices CoreText DiskArbitration IOKit ImageIO Security darwin libkern osx posix
-language = Objective-C
-package = platform.ApplicationServices
-modules = ApplicationServices ColorSync
-
-excludedFunctions = kSpeechSynthesizerInfoManufacturer
-
-compilerOpts = -framework ApplicationServices
-linkerOpts = -framework ApplicationServices

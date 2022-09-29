@@ -1,7 +1,0 @@
-depends = CFCGTypes CoreFoundation CoreFoundationBase ExtensionFoundation Foundation Security darwin posix
-language = Objective-C
-package = platform.ExtensionKit
-
-modules = ExtensionKit
-compilerOpts = -framework ExtensionKit
-linkerOpts = -framework ExtensionKit

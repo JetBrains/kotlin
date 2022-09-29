@@ -1,8 +1,0 @@
-package
-
-package f {
-    public fun getAnswer(): kotlin.Int
-    public fun </*0*/ R> h(/*0*/ f: (kotlin.Boolean) -> R): kotlin.Int
-    public fun </*0*/ R> h(/*0*/ f: (kotlin.String) -> R): kotlin.Int
-    public fun test(): [Error type: Return type for function cannot be resolved]
-}

@@ -1,1 +1,0 @@
-fun foo(i: Int = 1, j: Int) = i + j

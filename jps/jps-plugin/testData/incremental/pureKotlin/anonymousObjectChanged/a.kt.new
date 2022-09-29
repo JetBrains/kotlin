@@ -1,5 +1,0 @@
-package a
-
-fun foo() = object {
-    fun baz() = ":)"
-}

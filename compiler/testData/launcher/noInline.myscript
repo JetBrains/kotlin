@@ -1,3 +1,0 @@
-@file:CompilerOptions("-Xno-inline")
-
-println("OK")

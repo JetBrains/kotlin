@@ -1,7 +1,0 @@
-depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics CoreVideo Foundation ImageIO Security darwin posix
-language = Objective-C
-package = platform.CoreML
-modules = CoreML
-
-compilerOpts = -framework CoreML
-linkerOpts = -framework CoreML

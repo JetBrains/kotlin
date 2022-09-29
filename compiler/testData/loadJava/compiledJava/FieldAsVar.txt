@@ -1,6 +1,0 @@
-package test
-
-public final class FieldAsVar {
-    public constructor FieldAsVar()
-    public final var f: kotlin.Int
-}

@@ -1,6 +1,0 @@
-package
-
-package foo {
-    public fun bar(): kotlin.Int
-    @kotlin.js.JsName(name = "bar") private fun foo(/*0*/ x: kotlin.Int): kotlin.Int
-}

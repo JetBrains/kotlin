@@ -1,8 +1,0 @@
-public open class AmbiguousAdapters : R|kotlin/Any| {
-    public open fun foo(r: R|java/lang/Runnable!|): R|kotlin/Unit|
-
-    public open fun foo(c: R|java/io/Closeable!|): R|kotlin/Unit|
-
-    public constructor(): R|test/AmbiguousAdapters|
-
-}

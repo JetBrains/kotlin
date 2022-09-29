@@ -1,3 +1,0 @@
-package test
-
-public fun varargInt(/*0*/ a: kotlin.Int, /*1*/ vararg b: kotlin.Int /*kotlin.IntArray*/): kotlin.Int

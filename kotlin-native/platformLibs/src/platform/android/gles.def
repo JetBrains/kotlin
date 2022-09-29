@@ -1,5 +1,0 @@
-depends = glesCommon posix
-package = platform.gles
-headers = GLES/gl.h GLES/glext.h GLES/glplatform.h
-headerFilter = GLES/**
-linkerOpts = -lGLESv1_CM

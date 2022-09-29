@@ -1,7 +1,0 @@
-<project name="Ant Task Test" default="build">
-  <taskdef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="${kotlin.lib}/kotlin-ant.jar"/>
-
-  <target name="build">
-    <kotlin2js src="${test.data}/root1"/>
-  </target>
-</project>

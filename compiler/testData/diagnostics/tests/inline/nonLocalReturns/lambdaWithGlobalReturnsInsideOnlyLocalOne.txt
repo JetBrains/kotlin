@@ -1,4 +1,0 @@
-package
-
-public inline fun </*0*/ R> doWork(/*0*/ crossinline job: () -> R): R
-public inline fun testSameCaptured(/*0*/ lambdaWithResultCaptured: () -> kotlin.Unit): kotlin.String

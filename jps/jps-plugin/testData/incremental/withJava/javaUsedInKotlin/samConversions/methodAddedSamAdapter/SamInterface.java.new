@@ -1,4 +1,0 @@
-public interface SamInterface {
-    Object run();
-    Object walk();
-}

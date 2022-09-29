@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class ParameterlessMain_beforeKt {
-    // source: 'parameterlessMain_before.kt'
-    public final static method main(): void
-}

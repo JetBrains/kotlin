@@ -1,7 +1,0 @@
-package = test.cinterop
-
----
-
-static int testCinterop(char* str) {
-    return 42;
-}

@@ -1,6 +1,0 @@
-package test
-
-public open class ArrayType {
-    public constructor ArrayType()
-    public open fun foo(): kotlin.Array<(out) kotlin.String!>!
-}

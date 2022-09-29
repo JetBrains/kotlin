@@ -1,4 +1,0 @@
-public open class Constructor : R|kotlin/Any| {
-    public constructor(r: R|java/lang/Runnable!|): R|test/Constructor|
-
-}

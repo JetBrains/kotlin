@@ -1,9 +1,0 @@
-package
-
-package kt1977 {
-    public fun bar(): kotlin.Unit
-    public fun foo(): kotlin.Unit
-    public fun strToInt(/*0*/ s: kotlin.String): kotlin.Int?
-    public fun test1(/*0*/ s: kotlin.String): kotlin.Int?
-    public fun test2(/*0*/ s: kotlin.String): kotlin.Int?
-}

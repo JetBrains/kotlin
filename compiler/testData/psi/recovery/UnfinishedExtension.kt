@@ -1,4 +1,0 @@
-fun Any.
-
-fun goodFunction() {
-}

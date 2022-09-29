@@ -1,5 +1,0 @@
-package test
-
-public object Bar {
-    /*primary*/ private constructor Bar()
-}

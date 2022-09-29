@@ -1,1 +1,0 @@
-fun compare(x: Int, y: Int) = if (x > y) 1 else if (x < y) -1 else 0

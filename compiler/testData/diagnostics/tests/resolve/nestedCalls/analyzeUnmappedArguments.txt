@@ -1,6 +1,0 @@
-package
-
-package c {
-    public fun foo(/*0*/ x: kotlin.Int): kotlin.Int
-    public fun test(): kotlin.Unit
-}

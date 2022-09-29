@@ -1,9 +1,0 @@
-package
-
-package b {
-    public fun foo(): kotlin.Int
-}
-
-package c {
-    public fun foo(): kotlin.Int
-}

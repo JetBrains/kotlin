@@ -1,5 +1,0 @@
-package test
-
-fun foo() {
-    println("body is changed, but it doesn't matter, we won't rebuild dependencies")
-}

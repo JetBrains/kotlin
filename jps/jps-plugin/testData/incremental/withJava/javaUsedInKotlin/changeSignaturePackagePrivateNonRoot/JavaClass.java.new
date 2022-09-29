@@ -1,7 +1,0 @@
-public class JavaClass {
-    void foo() {
-    }
-
-    public void bar() {
-    }
-}

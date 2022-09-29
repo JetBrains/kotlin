@@ -1,7 +1,0 @@
-depends = AVFAudio AVFoundation AudioToolbox CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreMIDI CoreMedia CoreVideo Foundation IOSurface Metal ModelIO OpenGLESCommon Security darwin posix
-language = Objective-C
-package = platform.PHASE
-
-modules = PHASE
-compilerOpts = -framework PHASE
-linkerOpts = -framework PHASE

@@ -1,8 +1,0 @@
-public class JavaClass {
-    public static String foo() {
-        return "";
-    }
-
-    public static void bar() {
-    }
-}

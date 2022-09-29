@@ -1,1 +1,0 @@
-These tests aren't invoked so far because there is no mechanism of checking compilation errors yet.

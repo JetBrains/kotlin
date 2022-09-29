@@ -1,4 +1,0 @@
-package
-
-private var x: x.`<no name provided>`
-public fun test(): kotlin.Unit

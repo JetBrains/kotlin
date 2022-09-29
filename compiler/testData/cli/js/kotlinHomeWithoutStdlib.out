@@ -1,2 +1,0 @@
-warning: unable to find kotlin-stdlib-js.jar in the Kotlin home directory. Pass either '-no-stdlib' to prevent adding it to the classpath, or the correct '-kotlin-home'
-OK

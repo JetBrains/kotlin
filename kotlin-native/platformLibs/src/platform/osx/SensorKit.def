@@ -1,7 +1,0 @@
-depends = CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreLocation CoreServices DiskArbitration Foundation IOKit Security darwin libkern osx posix
-language = Objective-C
-package = platform.SensorKit
-
-modules = SensorKit
-compilerOpts = -framework SensorKit
-linkerOpts = -framework SensorKit

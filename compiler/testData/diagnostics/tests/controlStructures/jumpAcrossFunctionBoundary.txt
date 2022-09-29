@@ -1,5 +1,0 @@
-package
-
-public fun call(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
-public fun f1(): kotlin.Unit
-public fun f2(): kotlin.Unit

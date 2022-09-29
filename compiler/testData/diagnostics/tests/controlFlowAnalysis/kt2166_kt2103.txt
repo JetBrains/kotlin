@@ -1,7 +1,0 @@
-package
-
-package a {
-    public fun bar(): kotlin.Boolean
-    public fun foo(): kotlin.Int
-    public fun foo1(): kotlin.Boolean
-}

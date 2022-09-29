@@ -1,6 +1,0 @@
-package test
-
-public open class MethodWithFunctionTypes {
-    /*primary*/ public constructor MethodWithFunctionTypes()
-    public open fun foo(/*0*/ f: (kotlin.String?) -> kotlin.String): (kotlin.String.() -> kotlin.String?)?
-}

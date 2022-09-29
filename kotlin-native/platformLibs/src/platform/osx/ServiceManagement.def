@@ -1,7 +1,0 @@
-depends = CoreFoundation CoreFoundationBase Security darwin posix
-language = Objective-C
-package = platform.ServiceManagement
-modules = ServiceManagement
-
-compilerOpts = -framework ServiceManagement
-linkerOpts = -framework ServiceManagement

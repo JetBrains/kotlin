@@ -1,7 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Foundation Security darwin posix
-language = Objective-C
-package = platform.CoreLocation
-modules = CoreLocation
-
-compilerOpts = -framework CoreLocation
-linkerOpts = -framework CoreLocation

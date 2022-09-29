@@ -1,5 +1,0 @@
-package test
-
-public final class ClassParamReferencesParam</*0*/ A, /*1*/ B : A> {
-    /*primary*/ public constructor ClassParamReferencesParam</*0*/ A, /*1*/ B : A>()
-}

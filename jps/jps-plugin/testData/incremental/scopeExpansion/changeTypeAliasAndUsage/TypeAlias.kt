@@ -1,1 +1,0 @@
-typealias TypeAlias = String

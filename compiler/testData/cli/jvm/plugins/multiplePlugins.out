@@ -1,7 +1,0 @@
-warning: ATTENTION!
- This build uses experimental K2 compiler:
-  -Xuse-k2
-compiler/testData/cli/jvm/plugins/multiplePlugins.kt:11:17: error:
-    inner class Inner(val s: String)
-                ^
-COMPILATION_ERROR

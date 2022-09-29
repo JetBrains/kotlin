@@ -1,5 +1,0 @@
-package test
-
-public final class Juice</*0*/ out T> {
-    /*primary*/ public constructor Juice</*0*/ out T>()
-}

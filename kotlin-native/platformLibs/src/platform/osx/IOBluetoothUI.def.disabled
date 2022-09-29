@@ -1,8 +1,0 @@
-depends = AppKit ApplicationServices CFNetwork CloudKit Cocoa CoreData CoreFoundation CoreGraphics CoreImage CoreLocation CoreServices CoreText CoreVideo DiskArbitration Foundation IOBluetooth IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security darwin libkern osx posix
-language = Objective-C
-package = platform.IOBluetoothUI
-modules = IOBluetoothUI
-
-# -DAPI_UNAVAILABLE_BEGIN workarounds bug in IOBluetoothUI headers which use this macro before importing it.
-compilerOpts = -framework IOBluetoothUI -DAPI_UNAVAILABLE_BEGIN=__API_UNAVAILABLE_BEGIN
-linkerOpts = -framework IOBluetoothUI

@@ -1,6 +1,0 @@
-language = Objective-C
-package = platform.OpenAL
-modules = OpenAL
-compilerOpts = -framework OpenAL
-linkerOpts = -framework OpenAL
-#Disabled: Unavailable

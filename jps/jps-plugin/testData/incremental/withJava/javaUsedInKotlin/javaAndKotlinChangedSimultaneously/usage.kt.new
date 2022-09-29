@@ -1,4 +1,0 @@
-fun main(args: Array<String>) {
-    JavaClass().foo()
-    JavaClass().bar()
-}

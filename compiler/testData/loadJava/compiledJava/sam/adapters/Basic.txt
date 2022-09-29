@@ -1,9 +1,0 @@
-package test
-
-public open class Basic {
-    public constructor Basic()
-    public open fun foo(/*0*/ p0: java.lang.Runnable!): kotlin.Unit
-
-    // Static members
-    public open fun bar(/*0*/ p0: java.lang.Runnable!): kotlin.Unit
-}

@@ -1,7 +1,0 @@
-depends = CFCGTypes CoreFoundation CoreFoundationBase darwin posix
-language = Objective-C
-package = platform.CoreGraphics
-modules = CoreGraphics
-
-compilerOpts = -framework CoreGraphics
-linkerOpts = -framework CoreGraphics

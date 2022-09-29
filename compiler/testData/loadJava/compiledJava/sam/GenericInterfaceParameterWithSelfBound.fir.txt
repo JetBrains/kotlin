@@ -1,4 +1,0 @@
-public abstract interface GenericInterfaceParameterWithSelfBound<T : R|ft<test/GenericInterfaceParameterWithSelfBound<ft<T & Any, T?>>, test/GenericInterfaceParameterWithSelfBound<ft<T & Any, T?>>?>|> : R|kotlin/Any| {
-    public abstract fun method(t: R|ft<T & Any, T?>|): R|ft<T & Any, T?>|
-
-}

@@ -1,1 +1,0 @@
-fun common() = 1

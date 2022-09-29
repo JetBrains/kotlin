@@ -1,5 +1,0 @@
-name
-	type=java-production
-	outputDir=out
-	sources=[foo, foo1, foo2]
-	classpath=[bar, bar1, bar2]

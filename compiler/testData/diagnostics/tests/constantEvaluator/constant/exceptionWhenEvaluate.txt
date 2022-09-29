@@ -1,5 +1,0 @@
-package
-
-package test {
-    public val prop1: kotlin.Char
-}

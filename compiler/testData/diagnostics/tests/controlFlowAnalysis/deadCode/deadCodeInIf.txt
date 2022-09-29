@@ -1,6 +1,0 @@
-package
-
-public fun bar(): kotlin.Unit
-public fun testIf(): kotlin.Unit
-public fun testIf1(/*0*/ b: kotlin.Boolean): kotlin.Unit
-public fun todo(): kotlin.Nothing

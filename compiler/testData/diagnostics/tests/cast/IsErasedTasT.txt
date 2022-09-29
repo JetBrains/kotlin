@@ -1,3 +1,0 @@
-package
-
-public fun </*0*/ T> testing(/*0*/ a: T): kotlin.Boolean

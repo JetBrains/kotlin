@@ -1,5 +1,0 @@
-package
-
-public val w: kotlin.Any
-public val y0: kotlin.Unit
-public val y1: kotlin.Unit

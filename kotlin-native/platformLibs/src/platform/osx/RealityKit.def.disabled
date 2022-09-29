@@ -1,6 +1,0 @@
-language = Objective-C
-package = platform.RealityKit
-modules = RealityKit
-compilerOpts = -framework RealityKit
-linkerOpts = -framework RealityKit
-#Disabled: Swift-only framework

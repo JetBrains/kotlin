@@ -1,3 +1,0 @@
-package
-
-public fun testing(/*0*/ a: kotlin.Any): kotlin.Boolean

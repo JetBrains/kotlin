@@ -1,5 +1,0 @@
-package
-
-public fun test(/*0*/ array: kotlin.Array<kotlin.String?>?): kotlin.Unit
-public fun kotlin.Array<kotlin.String>.length(): kotlin.Int
-public fun </*0*/ T : kotlin.Any> T?.sure(): T

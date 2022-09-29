@@ -1,3 +1,0 @@
-package test
-
-public fun objq(): java.lang.Object?

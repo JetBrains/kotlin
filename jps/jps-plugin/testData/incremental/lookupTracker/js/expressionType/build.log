@@ -1,7 +1,0 @@
-==== INITIAL BUILD ====
-Compiling files:
-  src/genericType.kt
-  src/inferredType.kt
-  src/lambdaParameterType.kt
-  src/localInnerClassType.kt
-Exit code: OK

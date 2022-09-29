@@ -1,5 +1,0 @@
-package
-
-public fun bar(): kotlin.Unit
-public fun cond(): kotlin.Boolean
-public fun foo(): kotlin.Unit

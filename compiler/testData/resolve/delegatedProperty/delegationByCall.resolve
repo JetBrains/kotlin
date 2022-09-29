@@ -1,6 +1,0 @@
-~A~class A {
-  ~foo~fun foo() = A()
-}
-
-val a: Int by `A`A().`foo`foo()
-

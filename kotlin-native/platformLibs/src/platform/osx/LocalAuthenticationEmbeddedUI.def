@@ -1,7 +1,0 @@
-depends = AppKit ApplicationServices CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit ImageIO LocalAuthentication Security darwin libkern osx posix
-language = Objective-C
-package = platform.LocalAuthenticationEmbeddedUI
-
-modules = LocalAuthenticationEmbeddedUI
-compilerOpts = -framework LocalAuthenticationEmbeddedUI
-linkerOpts = -framework LocalAuthenticationEmbeddedUI

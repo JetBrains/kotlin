@@ -1,3 +1,0 @@
-// ISSUE: KT-14612
-
-typealias S = <!RECURSIVE_TYPEALIAS_EXPANSION!>@S<!> Suppress

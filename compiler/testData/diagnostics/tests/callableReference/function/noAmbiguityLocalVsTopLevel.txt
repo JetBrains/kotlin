@@ -1,4 +1,0 @@
-package
-
-public fun bar(): kotlin.Int
-public fun main(): kotlin.Unit

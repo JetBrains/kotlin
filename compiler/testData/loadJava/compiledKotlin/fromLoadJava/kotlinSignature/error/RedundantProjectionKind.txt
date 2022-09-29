@@ -1,6 +1,0 @@
-package test
-
-public open class RedundantProjectionKind {
-    /*primary*/ public constructor RedundantProjectionKind()
-    public open fun foo(/*0*/ list: kotlin.collections.List<kotlin.Number>): kotlin.Unit
-}

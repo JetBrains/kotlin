@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class TopLevelKt {
-    // source: 'topLevel.kt'
-    public final static @org.jetbrains.annotations.NotNull method foo(): java.lang.Object
-}

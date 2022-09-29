@@ -1,9 +1,0 @@
-depends = darwin posix
-language = Objective-C
-package = platform.OpenGLCommon
-headers = OpenGL/OpenGL.h
-
-headerFilter = OpenGL/**
-
-compilerOpts = -framework OpenGL
-linkerOpts = -framework OpenGL

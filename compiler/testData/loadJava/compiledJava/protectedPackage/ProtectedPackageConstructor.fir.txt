@@ -1,8 +1,0 @@
-public open class ProtectedPackageConstructor : R|kotlin/Any| {
-    public constructor(): R|test/ProtectedPackageConstructor|
-
-    protected/*protected static*/ open class Foo : R|kotlin/Any| {
-        protected/*protected static*/ constructor(): R|test/ProtectedPackageConstructor.Foo|
-
-    }
-}

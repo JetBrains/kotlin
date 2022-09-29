@@ -1,8 +1,0 @@
-
-// KOTLIN_SCRIPT_DEFINITION: org.jetbrains.kotlin.codegen.TestScriptWithNonKtsExtension
-
-// param: world
-
-val res = "Hello $name"
-
-// expected: res=Hello world

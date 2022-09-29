@@ -1,7 +1,0 @@
-depends = AppKit ApplicationServices CFNetwork CloudKit Cocoa CoreData CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreLocation CoreServices CoreText CoreVideo DiskArbitration Foundation GLKit IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore SceneKit Security SpriteKit darwin libkern osx posix
-language = Objective-C
-package = platform.GameplayKit
-modules = GameplayKit
-
-compilerOpts = -framework GameplayKit
-linkerOpts = -framework GameplayKit

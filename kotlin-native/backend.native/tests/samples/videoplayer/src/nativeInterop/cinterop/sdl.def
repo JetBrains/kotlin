@@ -1,7 +1,0 @@
-package = sdl
-headers = SDL.h
-entryPoint = SDL_main
-
-headerFilter = SDL*
-
-linkerOpts = -lSDL2

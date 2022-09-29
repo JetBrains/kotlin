@@ -1,1 +1,0 @@
-println(args.joinToString())

@@ -1,7 +1,0 @@
-package
-
-package kt2216 {
-    public fun bar(/*0*/ y: kotlin.Int, /*1*/ z: kotlin.Int): kotlin.Int
-    public fun baz(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int, /*2*/ c: kotlin.Int, /*3*/ d: kotlin.Int): kotlin.Int
-    public fun foo(): kotlin.Unit
-}

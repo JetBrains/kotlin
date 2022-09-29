@@ -1,6 +1,0 @@
-package inline
-
-inline suspend fun f(body: () -> Unit) {
-    body()
-    println("i'm inline suspend function")
-}

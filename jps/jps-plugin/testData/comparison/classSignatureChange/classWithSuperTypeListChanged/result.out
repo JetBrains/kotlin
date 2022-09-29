@@ -1,3 +1,0 @@
-PROTO DIFFERENCE in test/ClassWithSuperTypeListChanged: SUPERTYPE_LIST
-CHANGES in test/ClassWithSuperTypeListChanged: CLASS_SIGNATURE, PARENTS
-    [kotlin.Any, kotlin.Throwable]

@@ -1,4 +1,0 @@
-@R|test/AnnotatedAnnotation|() public final annotation class AnnotatedAnnotation : R|kotlin/Annotation| {
-    public constructor(): R|test/AnnotatedAnnotation|
-
-}

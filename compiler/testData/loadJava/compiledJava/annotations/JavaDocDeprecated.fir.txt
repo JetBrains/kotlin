@@ -1,6 +1,0 @@
-public open class JavaDocDeprecated : R|kotlin/Any| {
-    public open fun getFoo(text: R|kotlin/String!|): R|kotlin/String!|
-
-    public constructor(): R|test/JavaDocDeprecated|
-
-}

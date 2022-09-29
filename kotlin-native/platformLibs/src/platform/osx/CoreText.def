@@ -1,7 +1,0 @@
-depends = CoreFoundation CoreFoundationBase CoreGraphics IOKit darwin libkern posix
-language = Objective-C
-package = platform.CoreText
-modules = CoreText
-
-compilerOpts = -framework CoreText
-linkerOpts = -framework CoreText

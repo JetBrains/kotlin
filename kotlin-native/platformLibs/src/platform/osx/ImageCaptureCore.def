@@ -1,7 +1,0 @@
-depends = AppKit ApplicationServices CFNetwork CloudKit Cocoa CoreData CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreLocation CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security darwin libkern osx posix
-language = Objective-C
-package = platform.ImageCaptureCore
-modules = ImageCaptureCore
-
-compilerOpts = -framework ImageCaptureCore
-linkerOpts = -framework ImageCaptureCore
