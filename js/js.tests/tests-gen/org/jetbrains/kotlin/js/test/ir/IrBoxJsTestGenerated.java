@@ -7291,6 +7291,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("keepInterface.kt")
+        public void testKeepInterface() throws Exception {
+            runTest("js/js.translator/testData/box/keep/keepInterface.kt");
+        }
+
+        @Test
         @TestMetadata("keepMethod.kt")
         public void testKeepMethod() throws Exception {
             runTest("js/js.translator/testData/box/keep/keepMethod.kt");
@@ -7312,6 +7318,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         @TestMetadata("keepOverriddenMethod.kt")
         public void testKeepOverriddenMethod() throws Exception {
             runTest("js/js.translator/testData/box/keep/keepOverriddenMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("keepVarAnonymousClass.kt")
+        public void testKeepVarAnonymousClass() throws Exception {
+            runTest("js/js.translator/testData/box/keep/keepVarAnonymousClass.kt");
         }
     }
 
