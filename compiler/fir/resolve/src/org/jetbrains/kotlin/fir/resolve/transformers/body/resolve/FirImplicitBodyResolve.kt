@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.TransformImplicitType
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.fakeOverrideSubstitution
+import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -234,6 +235,11 @@ private class ReturnTypeCalculatorWithJump(
 
         if (declaration is FirSyntheticProperty) {
             return tryCalculateReturnType(declaration.getter.delegate)
+        }
+
+        val unwrappedDelegate = declaration.delegatedWrapperData?.wrapped
+        if (unwrappedDelegate != null) {
+            return tryCalculateReturnType(unwrappedDelegate)
         }
 
         if (declaration.isSubstitutionOrIntersectionOverride) {

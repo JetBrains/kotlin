@@ -16,8 +16,8 @@ FILE: AbstractToolConfig.kt
         protected final val platform: R|Platform| = this@R|/AbstractToolConfig|.R|/AbstractToolConfig.platformManager|.R|/PlatformManager.platform|(this@R|/AbstractToolConfig|.R|/AbstractToolConfig.target|)
             protected get(): R|Platform|
 
-        public final val llvmHome: R|ERROR CLASS: Cannot calculate return type (local class/object?)| = this@R|/AbstractToolConfig|.R|/AbstractToolConfig.platform|.R|/Configurables.absoluteLlvmHome|
-            public get(): R|ERROR CLASS: Cannot calculate return type (local class/object?)|
+        public final val llvmHome: R|kotlin/String| = this@R|/AbstractToolConfig|.R|/AbstractToolConfig.platform|.R|/Configurables.absoluteLlvmHome|
+            public get(): R|kotlin/String|
 
         public abstract fun platformManager(): R|PlatformManager|
 
