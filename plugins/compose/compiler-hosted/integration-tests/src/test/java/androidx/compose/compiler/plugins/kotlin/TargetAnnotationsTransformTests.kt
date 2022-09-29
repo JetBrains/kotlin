@@ -1073,7 +1073,7 @@ class TargetAnnotationsTransformTests : ComposeIrTransformTest() {
             }
             BasicText(AnnotatedString(
               text = "Some text"
-            ), null, null, null, <unsafe-coerce>(0), false, 0, null, %composer, 0, 0b11111110)
+            ), null, null, null, <unsafe-coerce>(0), false, 0, 0, null, %composer, 0, 0b000111111110)
             if (isTraceInProgress()) {
               traceEventEnd()
             }
