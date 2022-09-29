@@ -58,6 +58,10 @@ class FastJarFileSystem private constructor(internal val unmapBuffer: MappedByte
 
     fun clearHandlersCache() {
         myHandlers.clear()
+        cleanOpenFilesCache()
+    }
+
+    fun cleanOpenFilesCache() {
         cachedOpenFileHandles.clear()
     }
 
