@@ -108,7 +108,8 @@ internal val buildCExportsPhase = konanUnitPhase(
 
 internal val psiToIrPhase = konanUnitPhase(
         op = {
-            val frontendPhaseResult = FrontendPhaseResult.Full(moduleDescriptor, bindingContext, frontendServices, environment)
+            val frontendPhaseResult = getFrontendResult()
+            require(frontendPhaseResult is FrontendPhaseResult.Full)
             val input = PsiToIrInput(frontendPhaseResult, symbolTable!!, isProducingLibrary = config.produce == CompilerOutputKind.LIBRARY)
             when (val result = this.psiToIr(input, useLinkerWhenProducingLibrary = false)) {
                 PsiToIrResult.Empty -> {}

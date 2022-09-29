@@ -80,6 +80,16 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
     lateinit var bindingContext: BindingContext
     lateinit var moduleDescriptor: ModuleDescriptor
 
+    /**
+     * Returns [FrontendPhaseResult.Full] if frontend phase is complete.
+     */
+    fun getFrontendResult(): FrontendPhaseResult =
+            if (::frontendServices.isInitialized) {
+                FrontendPhaseResult.Full(moduleDescriptor, bindingContext, frontendServices, environment)
+            } else {
+                FrontendPhaseResult.ShouldNotGenerateCode
+            }
+
     lateinit var objCExport: ObjCExport
 
     lateinit var cAdapterGenerator: CAdapterGenerator

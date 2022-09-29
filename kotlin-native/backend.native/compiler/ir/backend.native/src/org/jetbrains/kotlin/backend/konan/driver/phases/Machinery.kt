@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.driver.context.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.getCompilerMessageLocation
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 
 // TODO: What is the difference between input and context?
@@ -123,6 +126,32 @@ internal class PhaseEngine(
             serializationResult: SerializerResult,
     ) {
         this.runPhase(BasicPhaseContext(config), WriteKlibPhase, serializationResult)
+    }
+
+    fun produceObjCExportInterface(
+            config: KonanConfig,
+            frontendResult: FrontendPhaseResult.Full,
+    ): ObjCExportedInterface {
+        return this.runPhase(BasicPhaseContext(config), ProduceObjCInterfacePhase, frontendResult)
+    }
+
+    fun produceObjCCodeSpec(
+            config: KonanConfig,
+            objCExportedInterface: ObjCExportedInterface,
+            symbolTable: SymbolTable,
+    ): ObjCExportCodeSpec {
+        val input = ObjCCodeSpecInput(symbolTable, objCExportedInterface)
+        return this.runPhase(BasicPhaseContext(config), ProduceObjCCodeSpecPhase, input)
+    }
+
+    fun writeObjCFramework(
+            config: KonanConfig,
+            objCExportedInterface: ObjCExportedInterface,
+            moduleDescriptor: ModuleDescriptor,
+            frameworkFile: File,
+    ) {
+        val input = WriteObjCFrameworkInput(objCExportedInterface, moduleDescriptor, frameworkFile)
+        return this.runPhase(BasicPhaseContext(config), WriteObjCFramework, input)
     }
 }
 

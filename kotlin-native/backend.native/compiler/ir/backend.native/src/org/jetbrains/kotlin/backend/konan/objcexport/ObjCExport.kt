@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys.Companion.BUNDLE_ID
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
+import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendPhaseResult
+import org.jetbrains.kotlin.backend.konan.driver.phases.PhaseContext
 import org.jetbrains.kotlin.backend.konan.getExportedDependencies
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
@@ -37,42 +39,44 @@ internal class ObjCExportedInterface(
         val mapper: ObjCExportMapper
 )
 
+internal fun produceObjCExportInterface(
+        context: PhaseContext,
+        frontendPhaseResult: FrontendPhaseResult.Full,
+): ObjCExportedInterface {
+    // TODO: emit RTTI to the same modules as classes belong to.
+    //   Not possible yet, since ObjCExport translates the entire "world" API at once
+    //   and can't do this per-module, e.g. due to global name conflict resolution.
+
+
+    val topLevelNamePrefix = context.objCExportTopLevelNamePrefix
+    val unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport
+    val mapper = ObjCExportMapper(frontendPhaseResult.frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
+    val moduleDescriptors = listOf(frontendPhaseResult.moduleDescriptor) + context.getExportedDependencies(frontendPhaseResult.moduleDescriptor)
+    val objcGenerics = context.config.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
+    val namer = ObjCExportNamerImpl(
+            moduleDescriptors.toSet(),
+            frontendPhaseResult.moduleDescriptor.builtIns,
+            mapper,
+            topLevelNamePrefix,
+            local = false,
+            objcGenerics = objcGenerics
+    )
+    val headerGenerator = ObjCExportHeaderGeneratorImpl(context, moduleDescriptors, mapper, namer, objcGenerics)
+    headerGenerator.translateModule()
+    return headerGenerator.buildInterface()
+}
+
 internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
     private val target get() = context.config.target
     private val topLevelNamePrefix get() = context.objCExportTopLevelNamePrefix
 
-    private val exportedInterface = produceInterface()
-    private val codeSpec = exportedInterface?.createCodeSpec(symbolTable)
+    private val exportedInterface: ObjCExportedInterface? = when {
+            !target.family.isAppleFamily -> null
+            context.config.produce != CompilerOutputKind.FRAMEWORK -> null
+            else -> produceObjCExportInterface(context, context.getFrontendResult() as FrontendPhaseResult.Full)
 
-    private fun produceInterface(): ObjCExportedInterface? {
-        if (!target.family.isAppleFamily) return null
-
-        // TODO: emit RTTI to the same modules as classes belong to.
-        //   Not possible yet, since ObjCExport translates the entire "world" API at once
-        //   and can't do this per-module, e.g. due to global name conflict resolution.
-
-        val produceFramework = context.config.produce == CompilerOutputKind.FRAMEWORK
-
-        return if (produceFramework) {
-            val unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport
-            val mapper = ObjCExportMapper(context.frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
-            val moduleDescriptors = listOf(context.moduleDescriptor) + context.getExportedDependencies()
-            val objcGenerics = context.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
-            val namer = ObjCExportNamerImpl(
-                    moduleDescriptors.toSet(),
-                    context.moduleDescriptor.builtIns,
-                    mapper,
-                    topLevelNamePrefix,
-                    local = false,
-                    objcGenerics = objcGenerics
-            )
-            val headerGenerator = ObjCExportHeaderGeneratorImpl(context, moduleDescriptors, mapper, namer, objcGenerics)
-            headerGenerator.translateModule()
-            headerGenerator.buildInterface()
-        } else {
-            null
         }
-    }
+    private val codeSpec = exportedInterface?.createCodeSpec(symbolTable)
 
     lateinit var namer: ObjCExportNamer
 
@@ -107,12 +111,62 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
      */
     fun produceFrameworkInterface() {
         if (exportedInterface != null) {
-            produceFrameworkSpecific(exportedInterface.headerLines)
+            val objCExportFrameworkWriter = ObjCExportFrameworkWriter(context, context.moduleDescriptor)
+            objCExportFrameworkWriter.produceFrameworkSpecific(exportedInterface.headerLines, File(context.generationState.outputFile))
         }
     }
 
-    private fun produceFrameworkSpecific(headerLines: List<String>) {
-        val framework = File(context.generationState.outputFile)
+
+    // See https://bugs.swift.org/browse/SR-10177
+    private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177() {
+        // Code for all protocols from the header should get into the binary.
+        // Objective-C protocols ABI is complicated (consider e.g. undocumented extended type encoding),
+        // so the easiest way to achieve this (quickly) is to compile a stub by clang.
+
+        val protocolsStub = listOf(
+                "__attribute__((used)) static void __workaroundSwiftSR10177() {",
+                buildString {
+                    append("    ")
+                    generatedClasses.forEach {
+                        if (it.isInterface) {
+                            val protocolName = namer.getClassOrProtocolName(it).objCName
+                            append("@protocol($protocolName); ")
+                        }
+                    }
+                },
+                "}"
+        )
+
+        val source = createTempFile("protocols", ".m").deleteOnExit()
+        source.writeLines(headerLines + protocolsStub)
+
+        val bitcode = createTempFile("protocols", ".bc").deleteOnExit()
+
+        val clangCommand = context.config.clang.clangC(
+                source.absolutePath,
+                "-O2",
+                "-emit-llvm",
+                "-c", "-o", bitcode.absolutePath
+        )
+
+        val result = Command(clangCommand).getResult(withErrors = true)
+
+        if (result.exitCode == 0) {
+            context.generationState.llvm.additionalProducedBitcodeFiles += bitcode.absolutePath
+        } else {
+            // Note: ignoring compile errors intentionally.
+            // In this case resulting framework will likely be unusable due to compile errors when importing it.
+        }
+    }
+}
+
+internal class ObjCExportFrameworkWriter(
+        private val context: PhaseContext,
+        private val moduleDescriptor: ModuleDescriptor,
+) {
+    private val target get() = context.config.target
+
+    fun produceFrameworkSpecific(headerLines: List<String>, framework: File) {
         val frameworkContents = when(target.family) {
             Family.IOS,
             Family.WATCHOS,
@@ -167,8 +221,8 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
 
         val file = directory.child("Info.plist")
         val bundleId = guessBundleID(name)
-        val bundleShortVersionString = context.configuration[BinaryOptions.bundleShortVersionString] ?: "1.0"
-        val bundleVersion = context.configuration[BinaryOptions.bundleVersion] ?: "1"
+        val bundleShortVersionString = context.config.configuration[BinaryOptions.bundleShortVersionString] ?: "1.0"
+        val bundleVersion = context.config.configuration[BinaryOptions.bundleVersion] ?: "1"
         val platform = properties.platformName()
         val minimumOsVersion = properties.osVersionMin
 
@@ -258,48 +312,6 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
         file.writeBytes(contents.toString().toByteArray())
     }
 
-    // See https://bugs.swift.org/browse/SR-10177
-    private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177() {
-        // Code for all protocols from the header should get into the binary.
-        // Objective-C protocols ABI is complicated (consider e.g. undocumented extended type encoding),
-        // so the easiest way to achieve this (quickly) is to compile a stub by clang.
-
-        val protocolsStub = listOf(
-                "__attribute__((used)) static void __workaroundSwiftSR10177() {",
-                buildString {
-                    append("    ")
-                    generatedClasses.forEach {
-                        if (it.isInterface) {
-                            val protocolName = namer.getClassOrProtocolName(it).objCName
-                            append("@protocol($protocolName); ")
-                        }
-                    }
-                },
-                "}"
-        )
-
-        val source = createTempFile("protocols", ".m").deleteOnExit()
-        source.writeLines(headerLines + protocolsStub)
-
-        val bitcode = createTempFile("protocols", ".bc").deleteOnExit()
-
-        val clangCommand = context.config.clang.clangC(
-                source.absolutePath,
-                "-O2",
-                "-emit-llvm",
-                "-c", "-o", bitcode.absolutePath
-        )
-
-        val result = Command(clangCommand).getResult(withErrors = true)
-
-        if (result.exitCode == 0) {
-            context.generationState.llvm.additionalProducedBitcodeFiles += bitcode.absolutePath
-        } else {
-            // Note: ignoring compile errors intentionally.
-            // In this case resulting framework will likely be unusable due to compile errors when importing it.
-        }
-    }
-
     private fun guessMainPackage(modules: List<ModuleDescriptor>): FqName? {
         if (modules.isEmpty()) {
             return null
@@ -310,17 +322,17 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
         }
 
         val nonEmptyPackages = allPackages
-            .filter { it.getMemberScope().getContributedDescriptors().isNotEmpty() }
-            .map { it.fqName }.distinct()
+                .filter { it.getMemberScope().getContributedDescriptors().isNotEmpty() }
+                .map { it.fqName }.distinct()
 
         return allPackages.map { it.fqName }.distinct()
-            .filter { candidate -> nonEmptyPackages.all { it.isSubpackageOf(candidate) } }
-            // Now there are all common ancestors of non-empty packages. Longest of them is the least common accessor:
-            .maxByOrNull { it.asString().length }
+                .filter { candidate -> nonEmptyPackages.all { it.isSubpackageOf(candidate) } }
+                // Now there are all common ancestors of non-empty packages. Longest of them is the least common accessor:
+                .maxByOrNull { it.asString().length }
     }
 
     private fun guessBundleID(bundleName: String): String {
-        val configuration = context.configuration
+        val configuration = context.config.configuration
         val deprecatedBundleIdOption = configuration[BUNDLE_ID]
         val bundleIdOption = configuration[BinaryOptions.bundleId]
         if (deprecatedBundleIdOption != null && bundleIdOption != null && deprecatedBundleIdOption != bundleIdOption) {
@@ -334,8 +346,9 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
         deprecatedBundleIdOption?.let { return it } ?: bundleIdOption?.let { return it }
 
         // Consider exported libraries only if we cannot infer the package from sources or included libs.
-        val mainPackage = guessMainPackage(context.getIncludedLibraryDescriptors() + context.moduleDescriptor)
-                ?: guessMainPackage(context.getExportedDependencies())
+        // TODO: Compute early instead, so we won't have to pass moduleDescriptor as input.
+        val mainPackage = guessMainPackage(context.getIncludedLibraryDescriptors(moduleDescriptor) + moduleDescriptor)
+                ?: guessMainPackage(context.getExportedDependencies(moduleDescriptor))
                 ?: FqName.ROOT
 
         val bundleID = mainPackage.child(Name.identifier(bundleName)).asString()
