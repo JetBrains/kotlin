@@ -7,8 +7,13 @@ package org.jetbrains.kotlin.incremental.util
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 
+public fun MessageCollector.reportException(e: Throwable, location: ExceptionLocation) {
+    report(severity = CompilerMessageSeverity.EXCEPTION, message = "$location failed:${e.message}\n${e.stackTraceToString()}")
+}
 
-internal fun MessageCollector.reportException(e: Throwable) {
-    report(severity = CompilerMessageSeverity.EXCEPTION, message = "Incremental compilation failed:${e.message}\n${e.stackTraceToString()}")
+public enum class ExceptionLocation(val readablename: String) {
+    INCREMENTAL_COMPILATION("Incremental compilation"),
+    DAEMON("Daemon compilation"),
+    OUT_OF_PROCESS_COMPILATION("Out of process compilation")
 }
 
