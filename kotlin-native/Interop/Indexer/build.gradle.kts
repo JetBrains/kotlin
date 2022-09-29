@@ -150,7 +150,7 @@ dependencies {
     api(project(":kotlin-stdlib"))
     api(project(":kotlin-native:Interop:Runtime"))
     api(project(":kotlin-native:utilities:basic-utils"))
-    api(intellijCore())
+    implementation(intellijCore())
 
     testImplementation(kotlin("test-junit"))
 }
