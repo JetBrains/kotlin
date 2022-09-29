@@ -16886,6 +16886,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("kt50974_resultMultiModule.kt")
+        public void testKt50974_resultMultiModule() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt50974_resultMultiModule.kt");
+        }
+
+        @Test
         @TestMetadata("kt51157.kt")
         public void testKt51157() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt51157.kt");

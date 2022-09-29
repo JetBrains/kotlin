@@ -4782,6 +4782,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("kt53146.kt")
+        public void testKt53146() throws Exception {
+            runTest("compiler/testData/codegen/box/casts/kt53146.kt");
+        }
+
+        @Test
         @TestMetadata("kt53677.kt")
         public void testKt53677() throws Exception {
             runTest("compiler/testData/codegen/box/casts/kt53677.kt");
@@ -22134,6 +22140,18 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("kt50909.kt")
+        public void testKt50909() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt50909.kt");
+        }
+
+        @Test
+        @TestMetadata("kt50974_resultMultiModule.kt")
+        public void testKt50974_resultMultiModule() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt50974_resultMultiModule.kt");
+        }
+
+        @Test
         @TestMetadata("kt51157.kt")
         public void testKt51157() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt51157.kt");
@@ -29817,6 +29835,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 @Test
                 public void testAllFilesPresentInNonDefaultInheritance() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("diamondWithJava.kt")
+                public void testDiamondWithJava() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance/diamondWithJava.kt");
                 }
 
                 @Test

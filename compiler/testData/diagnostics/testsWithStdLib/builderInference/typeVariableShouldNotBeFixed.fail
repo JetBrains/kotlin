@@ -1,0 +1,1 @@
+java.lang.AssertionError: Lower bound CapturedType(in (Model..Model?)) of a flexible type must be a subtype of the upper bound CapturedType(in (Model..Model?))?

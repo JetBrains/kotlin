@@ -424,6 +424,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("kt46483.kt")
+        public void testKt46483() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/kt46483.kt");
+        }
+
+        @Test
         @TestMetadata("kt49438.kt")
         public void testKt49438() throws Exception {
             runTest("compiler/testData/diagnostics/tests/kt49438.kt");
@@ -35776,6 +35782,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("resolveUsualCallWithBuilderInferenceWithRestrictions.kt")
             public void testResolveUsualCallWithBuilderInferenceWithRestrictions() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/resolveUsualCallWithBuilderInferenceWithRestrictions.kt");
+            }
+
+            @Test
+            @TestMetadata("typeVariableShouldNotBeFixed.kt")
+            public void testTypeVariableShouldNotBeFixed() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/typeVariableShouldNotBeFixed.kt");
             }
 
             @Test

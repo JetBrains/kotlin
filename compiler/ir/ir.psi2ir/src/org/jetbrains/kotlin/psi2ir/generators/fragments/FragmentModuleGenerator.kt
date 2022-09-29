@@ -57,6 +57,7 @@ class FragmentModuleGenerator(
 
         return block(fileContext).also {
             symbolTableDecorator.fragmentInfo = fragmentInfo
+            context.additionalDescriptorStorage.addAllFrom(fileContext.additionalDescriptorStorage)
         }
     }
 
