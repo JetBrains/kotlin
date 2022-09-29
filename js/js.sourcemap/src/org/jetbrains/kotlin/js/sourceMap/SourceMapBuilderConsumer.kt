@@ -64,6 +64,7 @@ class SourceMapBuilderConsumer(
                     throw RuntimeException("IO error occurred generating source maps", e)
                 }
             }
+
             is JsLocationWithSource -> {
                 val contentSupplier = if (provideExternalModuleContent) sourceInfo.sourceProvider else {
                     { null }
@@ -87,7 +88,11 @@ class SourceMapBuilderConsumer(
                     sourceInfo.startChar
                 )
             }
-            is JsNode, is KtPureElement -> { /* Can occur on legacy BE */ }
+
+            is JsNode, is KtPureElement -> {
+                /* Can occur on legacy BE */
+            }
+
             else -> {}
         }
     }

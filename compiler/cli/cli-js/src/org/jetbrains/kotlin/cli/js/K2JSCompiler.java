@@ -100,7 +100,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         doMain(new K2JSCompiler(), args);
     }
 
-    final K2JSCompilerPerformanceManager performanceManager = new K2JSCompilerPerformanceManager();
+    private final K2JSCompilerPerformanceManager performanceManager = new K2JSCompilerPerformanceManager();
 
     @NotNull
     @Override
@@ -338,7 +338,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         TranslationResult translationResult;
 
         try {
-            //noinspection unchecked
             translationResult = translate(reporter, sourcesFiles, jsAnalysisResult, mainCallParameters, config);
         }
         catch (Exception e) {
