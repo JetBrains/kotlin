@@ -10,8 +10,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.file.FileCollection
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptionsDeprecated
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 
 interface CInteropSettings : Named {
 
@@ -22,9 +20,6 @@ interface CInteropSettings : Named {
         fun headerFilterOnly(vararg includeDirs: Any)
         fun headerFilterOnly(includeDirs: Collection<Any>)
     }
-
-    // TODO: Provide an interface for native compilations.
-    val compilation: KotlinCompilationData<out KotlinCommonOptionsDeprecated>
 
     val dependencyConfigurationName: String
     var dependencyFiles: FileCollection

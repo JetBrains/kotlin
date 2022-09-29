@@ -6,14 +6,16 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import javax.inject.Inject
 
 abstract class KotlinMetadataTarget @Inject constructor(
     project: Project
-) : KotlinOnlyTarget<AbstractKotlinCompilation<*>>(project, KotlinPlatformType.common) {
+) : KotlinOnlyTarget</* TODO SEB AbstractKotlinCompilation<*> */ KotlinCompilation<*>>(project, KotlinPlatformType.common) {
 
     override val artifactsTaskName: String
         // The IDE import looks at this task name to determine the artifact and register the path to the artifact;

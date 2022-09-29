@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
+import org.jetbrains.kotlin.tooling.core.MutableExtras
+import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import javax.inject.Inject
 
 
@@ -35,7 +37,7 @@ internal class KotlinCompilationImpl @Inject constructor(
         val compilationModule: KotlinCompilationModuleManager.CompilationModule,
         val sourceSets: KotlinCompilationSourceSetsContainer,
         val dependencyConfigurations: KotlinCompilationDependencyConfigurationsContainer,
-        val compilationTaskNames: KotlinCompilationTaskNameContainer,
+        val compilationTaskNames: KotlinCompilationTaskNamesContainer,
         val processResourcesTaskName: String?,
         val output: KotlinCompilationOutput,
         val compilerOptions: HasCompilerOptions<*>,
@@ -54,6 +56,8 @@ internal class KotlinCompilationImpl @Inject constructor(
 
     override val target: KotlinTarget
         get() = params.target
+
+    override val extras: MutableExtras = mutableExtrasOf()
 
     val sourceSets get() = params.sourceSets
 

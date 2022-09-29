@@ -10,20 +10,25 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.*
 import org.gradle.api.internal.artifacts.ArtifactAttributes
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator.NativeArtifactFormat
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.cinteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 
 internal fun createCInteropApiElementsKlibArtifact(
+    target: KotlinNativeTarget,
     settings: DefaultCInteropSettings,
     interopTask: TaskProvider<out CInteropProcess>
 ) {
-    val project = settings.compilation.project
-    val configurationName = cInteropApiElementsConfigurationName(settings.target ?: return)
+    val project = target.project
+    val configurationName = cInteropApiElementsConfigurationName(target)
     val configuration = project.configurations.getByName(configurationName)
     project.artifacts.add(configuration.name, interopTask.map { it.outputFile }) { artifact ->
         artifact.extension = "klib"

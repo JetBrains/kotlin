@@ -15,15 +15,16 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinNativeCompileTask
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
+import org.jetbrains.kotlin.tooling.core.extrasKeyOf
+import org.jetbrains.kotlin.tooling.core.getOrPut
 
 internal interface KotlinCompilationSourceSetInclusion {
     fun include(compilation: InternalKotlinCompilation<*>, sourceSet: KotlinSourceSet)
 }
 
 internal class DefaultKotlinCompilationSourceSetInclusion(
-    private val addSourcesToCompileTask: AddSourcesToCompileTask
+    private val addSourcesToCompileTask: AddSourcesToCompileTask = AddSourcesToCompileTask.Default
 ) : KotlinCompilationSourceSetInclusion {
-
 
     interface AddSourcesToCompileTask {
         fun addSources(compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>)
@@ -51,10 +52,9 @@ internal class DefaultKotlinCompilationSourceSetInclusion(
         }
     }
 
-    private val processedSourceSets = hashSetOf<KotlinSourceSet>()
-
     override fun include(compilation: InternalKotlinCompilation<*>, sourceSet: KotlinSourceSet) {
-        if (!processedSourceSets.add(sourceSet)) return
+        /* Check if the source set was already included */
+        if (!compilation.includedSourceSets.add(sourceSet)) return
 
         addSourcesToCompileTask.addSources(
             compilation, sourceSet,
@@ -96,5 +96,18 @@ internal class DefaultKotlinCompilationSourceSetInclusion(
             // the compilation depends on the one added to the compilation:
             defaultSourceSetLanguageSettingsChecker.runAllChecks(compilation.defaultSourceSet, sourceSet)
         }
+    }
+
+    private companion object {
+        /**
+         * Key used to store already processed source sets on the compilation instance itself
+         * to avoid re-processing of unnecessary source sets!
+         */
+        private val includedSourceSetsKey = extrasKeyOf<MutableSet<KotlinSourceSet>>(
+            DefaultKotlinCompilationSourceSetInclusion::class.java.name
+        )
+
+        val InternalKotlinCompilation<*>.includedSourceSets: MutableSet<KotlinSourceSet>
+            get() = extras.getOrPut(includedSourceSetsKey, { hashSetOf() })
     }
 }

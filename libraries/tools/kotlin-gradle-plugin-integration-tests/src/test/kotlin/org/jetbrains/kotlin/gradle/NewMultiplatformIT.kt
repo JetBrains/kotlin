@@ -1769,7 +1769,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     "Hello.internalFun\$new_mpp_associate_compilations",
                     "HelloTest.internalTestFun\$new_mpp_associate_compilations"
                 )
-                assertFileExists("build/classes/kotlin/jvm/integrationTest/META-INF/new-mpp-associate-compilations_integrationTest.kotlin_module")
+                assertFileExists("build/classes/kotlin/jvm/integrationTest/META-INF/new-mpp-associate-compilations.kotlin_module")
 
                 // JS:
                 assertFileExists(
@@ -2007,7 +2007,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testResolveMetadataCompileClasspathKt50925() {
-        Project("lib", directoryPrefix =  "kt-50925-resolve-metadata-compile-classpath").apply {
+        Project("lib", directoryPrefix = "kt-50925-resolve-metadata-compile-classpath").apply {
             setupWorkingDir()
             gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 

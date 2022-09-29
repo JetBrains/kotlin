@@ -13,8 +13,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationM
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationModuleManager.CompilationModule.Type.Auxiliary
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationModuleManager.CompilationModule.Type.Main
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
+import org.jetbrains.kotlin.tooling.core.MutableExtras
 
 internal interface InternalKotlinCompilation<out T : KotlinCommonOptions> : KotlinCompilation<T> {
+    val extras: MutableExtras
+
     override val kotlinSourceSets: ObservableSet<KotlinSourceSet>
     override val allKotlinSourceSets: ObservableSet<KotlinSourceSet>
     val friendPaths: Iterable<FileCollection>

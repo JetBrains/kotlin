@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.MetadataCompilationDetails
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 interface KotlinCompilationFactory<T : KotlinCompilation<*>> : NamedDomainObjectFactory<T> {
@@ -34,15 +33,4 @@ interface KotlinCompilationFactory<T : KotlinCompilation<*>> : NamedDomainObject
 
 internal fun KotlinCompilationFactory<*>.getOrCreateDefaultSourceSet(compilationName: String): KotlinSourceSet {
     return project.kotlinExtension.sourceSets.maybeCreate(defaultSourceSetName(compilationName))
-}
-
-class KotlinCommonCompilationFactory(
-    override val target: KotlinOnlyTarget<*>
-) : KotlinCompilationFactory<KotlinCommonCompilation> {
-    override val itemClass: Class<KotlinCommonCompilation>
-        get() = KotlinCommonCompilation::class.java
-
-    override fun create(name: String): KotlinCommonCompilation = target.project.objects.newInstance(
-        KotlinCommonCompilation::class.java, MetadataCompilationDetails(target, name, getOrCreateDefaultSourceSet(name))
-    )
 }

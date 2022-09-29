@@ -65,7 +65,11 @@ open class KotlinJsTargetConfigurator :
 
             compilation.source(compilation.defaultSourceSet)
 
-            configureResourceProcessing(compilation, project.files(Callable { compilation.allKotlinSourceSets.map { it.resources } }))
+            configureResourceProcessing(
+                compilation,
+                compilation.processResourcesTaskName,
+                project.files(Callable { compilation.allKotlinSourceSets.map { it.resources } })
+            )
 
             createLifecycleTaskInternal(compilation)
         }

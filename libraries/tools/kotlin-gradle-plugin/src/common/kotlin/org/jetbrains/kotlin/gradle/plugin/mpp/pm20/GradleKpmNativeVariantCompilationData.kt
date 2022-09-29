@@ -28,10 +28,7 @@ internal class GradleKpmNativeVariantCompilationData(
     override val owner: GradleKpmNativeVariant
         get() = variant
 
-    override val compilerOptions: HasCompilerOptions<KotlinCommonCompilerOptions> = NativeCompilerOptions(
-        project,
-        variant.languageSettings
-    )
+    override val compilerOptions: HasCompilerOptions<KotlinCommonCompilerOptions> = NativeCompilerOptions(project)
 
     @Suppress("DEPRECATION")
     @Deprecated("Replaced with compilerOptions.options", replaceWith = ReplaceWith("compilerOptions.options"))

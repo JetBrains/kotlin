@@ -76,9 +76,8 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                     task.associatedJavaCompileTaskSources.from(javaTaskProvider.map { it.source })
                     task.associatedJavaCompileTaskName.value(javaTaskProvider.name)
                 }
-                task.ownModuleName.value(
-                    (compilationProjection.compilerOptions.options as CompilerJvmOptions).moduleName.convention(compilationProjection.ownModuleName)
-                )
+
+                task.ownModuleName.value(compilationProjection.ownModuleName)
             }
         }
     }
