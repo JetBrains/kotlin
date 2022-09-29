@@ -1148,7 +1148,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
         }
 
         args.friendModules = friendDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }
-        args.legacyDeprecatedNoWarn = jsLegacyNoWarn.get()
+        args.legacyDeprecatedNoWarn = true
+        args.useDeprecatedLegacyCompiler = true
 
         logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
 

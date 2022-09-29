@@ -303,6 +303,12 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var wasmEnableAsserts: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xuse-deprecated-legacy-compiler",
+        description = "Use deprecated legacy compiler without error"
+    )
+    var useDeprecatedLegacyCompiler: Boolean by FreezableVar(false)
+
+    @Argument(
         value = "-Xlegacy-deprecated-no-warn",
         description = "Disable warnings of deprecation of legacy compiler"
     )
