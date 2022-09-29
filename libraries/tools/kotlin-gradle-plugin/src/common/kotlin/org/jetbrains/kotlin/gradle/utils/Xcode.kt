@@ -11,10 +11,22 @@ import org.jetbrains.kotlin.konan.target.Architecture.ARM32
 import org.jetbrains.kotlin.konan.target.Architecture.ARM64
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.Family.*
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 
-internal object Xcode {
+
+internal val Xcode = XcodeUtils()
+
+internal class XcodeUtils private constructor() {
+
+    companion object {
+        private val current: XcodeUtils? =
+            if (HostManager.hostIsMac) XcodeUtils() else null
+
+        operator fun invoke() = current
+    }
+
     val currentVersion: String by lazy {
         val out = runCommand(listOf("/usr/bin/xcrun", "xcodebuild", "-version"))
         out.lines()[0].removePrefix("Xcode ")

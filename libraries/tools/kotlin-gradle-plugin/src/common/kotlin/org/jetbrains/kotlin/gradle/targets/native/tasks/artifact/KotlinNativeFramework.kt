@@ -125,7 +125,7 @@ internal fun KotlinNativeArtifact.registerLinkFrameworkTask(
         task.staticFramework.set(isStatic)
         if (embedBitcode != null) {
             task.embedBitcode.set(embedBitcode)
-        } else {
+        } else if (Xcode != null) {
             task.embedBitcode.set(project.provider { Xcode.defaultBitcodeEmbeddingMode(target, buildType) })
         }
         task.libraries.setFrom(project.configurations.getByName(librariesConfigurationName))
