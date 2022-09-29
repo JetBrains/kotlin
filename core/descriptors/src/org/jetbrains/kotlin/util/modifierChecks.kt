@@ -258,3 +258,4 @@ object InfixChecks : AbstractModifierChecks() {
     )
 }
 
+fun FunctionDescriptor.isValidOperator() = isOperator && OperatorChecks().check(this).isSuccess
