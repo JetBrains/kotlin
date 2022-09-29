@@ -280,7 +280,10 @@ class Framework(
      * Embed bitcode for the framework or not. See [BitcodeEmbeddingMode].
      */
     val embedBitcodeMode = project.objects.property(org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode::class.java).apply {
-        convention(project.provider { Xcode.defaultBitcodeEmbeddingMode(konanTarget, buildType) })
+        convention(project.provider {
+            Xcode?.defaultBitcodeEmbeddingMode(konanTarget, buildType)
+                ?: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE
+        })
     }
 
     @Deprecated("Use 'embedBitcodeMode' property instead.")
