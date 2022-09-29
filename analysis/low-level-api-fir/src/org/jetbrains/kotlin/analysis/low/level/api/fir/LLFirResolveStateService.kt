@@ -19,14 +19,16 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveS
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
-import org.jetbrains.kotlin.analysis.utils.caches.strongCachedValue
+import org.jetbrains.kotlin.analysis.utils.caches.getValue
+import org.jetbrains.kotlin.analysis.utils.caches.softCachedValue
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.withLock
 
 internal class LLFirResolveSessionService(project: Project) {
     private val sessionProviderStorage = LLFirSessionProviderStorage(project)
 
-    private val stateCache by strongCachedValue(
+    private val stateCache by softCachedValue(
+        project,
         project.createProjectWideOutOfBlockModificationTracker(),
         ProjectRootModificationTracker.getInstance(project),
     ) {
