@@ -189,12 +189,7 @@ class FirSignatureEnhancement(
             return original
         }
         enhanceTypeParameterBounds(firMethod.typeParameters)
-        return enhanceMethod(firMethod, original.callableId, name).also { enhancedVersion ->
-            val enhancedVersionFir = enhancedVersion.fir
-            (enhancedVersionFir.initialSignatureAttr as? FirSimpleFunction)?.let {
-                enhancedVersionFir.initialSignatureAttr = enhancedFunction(it.symbol, it.name).fir
-            }
-        }
+        return enhanceMethod(firMethod, original.callableId, name)
     }
 
     private fun enhanceMethod(
@@ -563,9 +558,17 @@ class FirEnhancedSymbolsStorage(val session: FirSession) : FirSessionComponent {
     class EnhancementSymbolsCache(cachesFactory: FirCachesFactory) {
         @OptIn(PrivateForInline::class)
         val enhancedFunctions: FirCache<FirFunctionSymbol<*>, FirFunctionSymbol<*>, Pair<FirSignatureEnhancement, Name?>> =
-            cachesFactory.createCache { original, (enhancement, name) ->
-                enhancement.enhance(original, name)
-            }
+            cachesFactory.createCacheWithPostCompute(
+                createValue = { original, (enhancement, name) ->
+                    enhancement.enhance(original, name) to enhancement
+                },
+                postCompute = { _, enhancedVersion, enhancement ->
+                    val enhancedVersionFir = enhancedVersion.fir
+                    (enhancedVersionFir.initialSignatureAttr as? FirSimpleFunction)?.let {
+                        enhancedVersionFir.initialSignatureAttr = enhancement.enhancedFunction(it.symbol, it.name).fir
+                    }
+                }
+            )
 
         @OptIn(PrivateForInline::class)
         val enhancedVariables: FirCache<FirVariableSymbol<*>, FirVariableSymbol<*>, Pair<FirSignatureEnhancement, Name>> =
