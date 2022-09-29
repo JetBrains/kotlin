@@ -1,6 +1,7 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
 // !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+// LANGUAGE: +CustomEqualsInInlineClasses
 
 @JvmInline
 value class IC1(val x: Int) {

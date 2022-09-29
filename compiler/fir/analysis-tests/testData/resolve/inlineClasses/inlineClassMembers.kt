@@ -16,8 +16,8 @@ inline class ReversedMembers(val x: Int) {
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>box<!>() {}
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>() {}
 
-    <!ILLEGAL_EQUALS_OVERRIDING_IN_INLINE_CLASS!>override fun equals(other: Any?)<!> = true
-    override fun hashCode() = 1
+    override fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>equals<!>(other: Any?) = true
+    override fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>hashCode<!>() = 1
 }
 
 inline class SecondaryConstructors(val x: Int) {

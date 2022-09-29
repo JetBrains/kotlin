@@ -179,7 +179,7 @@ abstract class AbstractModifierChecks {
     }
 }
 
-object OperatorChecks : AbstractModifierChecks() {
+class OperatorChecks(private val allowOperatorKeywordWithTypedEquals: Boolean = true) : AbstractModifierChecks() {
     override val checks = listOf(
         Checks(GET, MemberOrExtension, ValueParameterCountCheck.AtLeast(1)),
         Checks(SET, MemberOrExtension, ValueParameterCountCheck.AtLeast(2)) {
@@ -200,10 +200,10 @@ object OperatorChecks : AbstractModifierChecks() {
         Checks(EQUALS, Member) {
             fun DeclarationDescriptor.isAny() = this is ClassDescriptor && KotlinBuiltIns.isAny(this)
             ensure(containingDeclaration.isAny() || overriddenDescriptors.any { it.containingDeclaration.isAny() }
-                           || (containingDeclaration.isInlineClass() && isTypedEqualsInInlineClass())) {
+                           || (allowOperatorKeywordWithTypedEquals && containingDeclaration.isInlineClass() && isTypedEqualsInInlineClass())) {
                 buildString {
                     append("must override ''equals()'' in Any")
-                    if (containingDeclaration.isInlineClass()) {
+                    if (allowOperatorKeywordWithTypedEquals && containingDeclaration.isInlineClass()) {
                         append(" or define ''equals(other: ${containingDeclaration.name}): Boolean''")
                     }
                 }
@@ -258,4 +258,3 @@ object InfixChecks : AbstractModifierChecks() {
     )
 }
 
-fun FunctionDescriptor.isValidOperator() = isOperator && OperatorChecks.check(this).isSuccess

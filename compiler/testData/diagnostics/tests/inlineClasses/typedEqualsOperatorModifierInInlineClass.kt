@@ -1,5 +1,6 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
+// LANGUAGE: +CustomEqualsInInlineClasses
 // !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 
 @JvmInline

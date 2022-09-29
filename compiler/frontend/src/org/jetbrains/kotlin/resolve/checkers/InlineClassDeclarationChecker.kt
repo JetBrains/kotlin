@@ -157,10 +157,14 @@ object InlineClassDeclarationChecker : DeclarationChecker {
 
         fun isUntypedEquals(declaration: KtNamedFunction): Boolean = getFunctionDescriptor(declaration)?.overridesEqualsFromAny() ?: false
         fun isTypedEquals(declaration: KtNamedFunction): Boolean = getFunctionDescriptor(declaration)?.isTypedEqualsInInlineClass() ?: false
+
         fun KtClass.namedFunctions() = declarations.filterIsInstance<KtNamedFunction>()
-        declaration.namedFunctions().singleOrNull { isUntypedEquals(it) }?.apply {
-            if (declaration.namedFunctions().none { isTypedEquals(it) }) {
-                trace.report(Errors.ILLEGAL_EQUALS_OVERRIDING_IN_INLINE_CLASS.on(this@apply, descriptor.name.asString()))
+
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses)) {
+            declaration.namedFunctions().singleOrNull { isUntypedEquals(it) }?.apply {
+                if (declaration.namedFunctions().none { isTypedEquals(it) }) {
+                    trace.report(Errors.ILLEGAL_EQUALS_OVERRIDING_IN_INLINE_CLASS.on(this@apply, descriptor.name.asString()))
+                }
             }
         }
 
@@ -216,7 +220,8 @@ class InnerClassInsideInlineClass : DeclarationChecker {
 class ReservedMembersAndConstructsForInlineClass : DeclarationChecker {
 
     companion object {
-        private val reservedFunctions = setOf("box", "unbox")
+        private val boxAndUnboxNames = setOf("box", "unbox")
+        private val equalsAndHashCodeNames = setOf("equals", "hashCode")
     }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -229,7 +234,10 @@ class ReservedMembersAndConstructsForInlineClass : DeclarationChecker {
             is SimpleFunctionDescriptor -> {
                 val ktFunction = declaration as? KtFunction ?: return
                 val functionName = descriptor.name.asString()
-                if (functionName in reservedFunctions) {
+                if (functionName in boxAndUnboxNames
+                    || (functionName in equalsAndHashCodeNames
+                            && !context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses))
+                ) {
                     val nameIdentifier = ktFunction.nameIdentifier ?: return
                     context.trace.report(Errors.RESERVED_MEMBER_INSIDE_VALUE_CLASS.on(nameIdentifier, functionName))
                 }

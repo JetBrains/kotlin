@@ -32,7 +32,8 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
 
-    private val reservedFunctionNames = setOf("box", "unbox")
+    private val boxAndUnboxNames = setOf("box", "unbox")
+    private val equalsAndHashCodeNames = setOf("equals", "hashCode")
     private val javaLangFqName = FqName("java.lang")
     private val cloneableFqName = FqName("Cloneable")
 
@@ -92,7 +93,10 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                 is FirSimpleFunction -> {
                     val functionName = innerDeclaration.name.asString()
 
-                    if (functionName in reservedFunctionNames) {
+                    if (functionName in boxAndUnboxNames
+                        || (functionName in equalsAndHashCodeNames
+                                && !context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses))
+                    ) {
                         reporter.reportOn(
                             innerDeclaration.source, FirErrors.RESERVED_MEMBER_INSIDE_VALUE_CLASS, functionName, context
                         )
@@ -189,15 +193,17 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
             }
         }
 
-        val simpleFunctions = declaration.declarations.filterIsInstance<FirSimpleFunction>()
-        simpleFunctions.singleOrNull() { it.overridesEqualsFromAny() }?.apply {
-            if (declaration.symbol.isInline && simpleFunctions.none { it.isTypedEqualsInInlineClass(context.session) }) {
-                reporter.reportOn(
-                    source,
-                    FirErrors.ILLEGAL_EQUALS_OVERRIDING_IN_INLINE_CLASS,
-                    declaration.name.asString(),
-                    context
-                )
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses)) {
+            val simpleFunctions = declaration.declarations.filterIsInstance<FirSimpleFunction>()
+            simpleFunctions.singleOrNull() { it.overridesEqualsFromAny() }?.apply {
+                if (declaration.symbol.isInline && simpleFunctions.none { it.isTypedEqualsInInlineClass(context.session) }) {
+                    reporter.reportOn(
+                        source,
+                        FirErrors.ILLEGAL_EQUALS_OVERRIDING_IN_INLINE_CLASS,
+                        declaration.name.asString(),
+                        context
+                    )
+                }
             }
         }
     }

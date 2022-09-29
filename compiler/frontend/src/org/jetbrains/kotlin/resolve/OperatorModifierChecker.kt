@@ -42,7 +42,8 @@ object OperatorModifierChecker {
         if (!functionDescriptor.isOperator) return
         val modifier = declaration.modifierList?.getModifier(KtTokens.OPERATOR_KEYWORD) ?: return
 
-        val checkResult = OperatorChecks.check(functionDescriptor)
+        val checkResult =
+            OperatorChecks(languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses)).check(functionDescriptor)
         if (checkResult.isSuccess) {
             when (functionDescriptor.name) {
                 in REM_TO_MOD_OPERATION_NAMES.keys ->
