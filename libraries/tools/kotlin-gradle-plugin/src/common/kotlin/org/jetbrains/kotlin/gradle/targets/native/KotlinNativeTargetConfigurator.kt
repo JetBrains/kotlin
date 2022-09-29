@@ -669,16 +669,13 @@ class KotlinNativeTargetWithSimulatorTestsConfigurator :
 
     override fun configureTestTask(target: KotlinNativeTargetWithSimulatorTests, testTask: KotlinNativeSimulatorTest) {
         super.configureTestTask(target, testTask)
-
-        val deviceIdProvider = testTask.project.provider {
-            if (Xcode != null) {
+        if (Xcode != null) {
+            val deviceIdProvider = testTask.project.provider {
                 Xcode.getDefaultTestDeviceId(target.konanTarget)
                     ?: error("Xcode does not support simulator tests for ${target.konanTarget.name}. Check that requested SDK is installed.")
-            } else {
-                error("Xcode is not found.")
             }
+            testTask.device.set(deviceIdProvider)
         }
-        testTask.device.set(deviceIdProvider)
     }
 
     override fun createTestRun(
