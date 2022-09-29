@@ -65,7 +65,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
             if (jsSrc != null) {
                 appendLine()
                 appendLine("-- JS --")
-                appendLine(K2JSCompiler().compile(jsSrc, commonSrc, "-output", jsDest!!))
+                appendLine(K2JSCompiler().compile(jsSrc, commonSrc, "-Xuse-deprecated-legacy-compiler", "-output", jsDest!!))
             }
 
             if (common2Src != null) {

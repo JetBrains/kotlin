@@ -43,17 +43,6 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         ).run()
     }
 
-    fun testKotlinJavaScriptChangePackage() {
-        initProject(LibraryDependency.JS_STDLIB)
-        buildAllModules().assertSuccessful()
-
-        val class2Kt = File(workDir, "src/Class2.kt")
-        val newClass2KtContent = class2Kt.readText().replace("package2", "package1")
-        change(class2Kt.path, newClass2KtContent)
-        buildAllModules().assertSuccessful()
-        checkOutputFilesList(File(workDir, "out/production"))
-    }
-
     fun testJpsDaemonIC() {
         fun testImpl() {
             assertTrue("Daemon was not enabled!", isDaemonEnabled())

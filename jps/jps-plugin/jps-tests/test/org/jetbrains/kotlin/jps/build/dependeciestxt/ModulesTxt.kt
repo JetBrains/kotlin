@@ -262,7 +262,10 @@ class ModulesTxtBuilder {
                 "jvm" -> settings.compilerArguments =
                     K2JVMCompilerArguments().also { settings.targetPlatform = JvmPlatforms.defaultJvmPlatform }
                 "js" -> settings.compilerArguments =
-                    K2JSCompilerArguments().also { settings.targetPlatform = JsPlatforms.defaultJsPlatform }
+                    K2JSCompilerArguments().also {
+                        settings.targetPlatform = JsPlatforms.defaultJsPlatform
+                        it.useDeprecatedLegacyCompiler = true
+                    }
                 "native" -> settings.compilerArguments =
                     FakeK2NativeCompilerArguments().also { settings.targetPlatform = NativePlatforms.unspecifiedNativePlatform }
                 else -> {

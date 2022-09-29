@@ -5,6 +5,8 @@
     <kotlin2js src="${test.data}/root1"
                output="${temp}/out.js"
                outputPrefix="${test.data}/prefix"
-               outputPostfix="${test.data}/postfix" />
+               outputPostfix="${test.data}/postfix">
+      <compilerarg value="-Xuse-deprecated-legacy-compiler"/>
+    </kotlin2js>
   </target>
 </project>

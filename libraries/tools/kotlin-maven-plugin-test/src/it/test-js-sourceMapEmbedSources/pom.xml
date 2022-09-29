@@ -34,6 +34,9 @@
                 <configuration>
                     <sourceMap>true</sourceMap>
                     <sourceMapEmbedSources>always</sourceMapEmbedSources>
+                    <args>
+                        <arg>-Xuse-deprecated-legacy-compiler</arg>
+                    </args>
                 </configuration>
             </plugin>
         </plugins>

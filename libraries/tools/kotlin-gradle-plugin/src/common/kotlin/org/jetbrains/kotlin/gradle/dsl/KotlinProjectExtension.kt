@@ -11,7 +11,6 @@ import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
-import org.gradle.api.logging.Logger
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainSpec
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -227,31 +226,45 @@ abstract class KotlinJsProjectExtension(project: Project) :
                 KotlinJsCompilerType.LEGACY -> logger.warn(LEGACY_DEPRECATED)
                 KotlinJsCompilerType.IR -> {}
                 KotlinJsCompilerType.BOTH -> logger.warn(BOTH_DEPRECATED)
-                null -> throw GradleException(DEFAULT_WARN)
+                null -> throw GradleException(DEFAULT_COMPILER_ERROR)
             }
         }
 
         private val LEGACY_DEPRECATED =
             """
-                The Kotlin/JS Legacy compiler backend is deprecated and will be removed in a future release.
-                Please migrate your project to the new IR-based compiler (https://kotl.in/jsir)
-            """.trimIndent()
+                |
+                |==========
+                |This project currently uses the Kotlin/JS Legacy compiler backend, which has been deprecated and will be removed in a future release.
+                |
+                |Please migrate the project to the new IR-based compiler (https://kotl.in/jsir).
+                |==========
+                |
+            """.trimMargin()
 
         private val BOTH_DEPRECATED =
             """
-                Both mode is using the Kotlin/JS Legacy compiler backend, which is deprecated and will be removed in a future release.
-                Please migrate your project to the new IR-based compiler (https://kotl.in/jsir)
-            """.trimIndent()
+                |
+                |==========
+                |This project currently uses Both mode, which requires the Kotlin/JS Legacy compiler backend.
+                |This backend has been deprecated and will be removed in a future release.
+                |
+                |Please migrate the project to the new IR-based compiler (https://kotl.in/jsir).
+                |==========
+                |
+            """.trimMargin()
 
-        private val DEFAULT_WARN =
+        private val DEFAULT_COMPILER_ERROR =
             """
-                The Kotlin/JS legacy compiler is no longer default. Please specify a compiler explicitly, via:
-                - kotlin.js.compiler=ir|legacy in your gradle.properties
-                - js(IR|LEGACY) { ... } in your build file.
-
-                Note, that the legacy compiler backend is deprecated and will be removed in a future release. 
-                Using the new IR-based compiler is recommended (https://kotl.in/jsir)
-            """.trimIndent()
+                |
+                |==========
+                |This project currently uses the Kotlin/JS Legacy compiler backend, which has been deprecated and will be removed in a future release.
+                |Please migrate the project to the new IR-based compiler (https://kotl.in/jsir) by adding:
+                |- kotlin.js.compiler=ir to your gradle.properties file.
+                |- js(IR) { ... } to your build file.
+                |You can continue to use the deprecated legacy compiler in the current version of the toolchain by specifying it explicitly.
+                |==========
+                |
+            """.trimMargin()
     }
 
     @Deprecated("Use js() instead", ReplaceWith("js()"))
