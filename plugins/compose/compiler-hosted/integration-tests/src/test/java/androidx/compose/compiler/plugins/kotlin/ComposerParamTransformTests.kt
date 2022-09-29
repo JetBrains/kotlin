@@ -501,7 +501,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
                   sourceInformation(%composer, "C(Wrapper)<block(...>:Test.kt#2487m")
                   val %dirty = %changed
                   if (%changed and 0b1110 === 0) {
-                    %dirty = %dirty or if (%composer.changed(block)) 0b0100 else 0b0010
+                    %dirty = %dirty or if (%composer.changedInstance(block)) 0b0100 else 0b0010
                   }
                   if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                     if (isTraceInProgress()) {
@@ -648,7 +648,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
                   sourceInformation(%composer, "C(composeVector)<emit>:Test.kt#2487m")
                   val %dirty = %changed
                   if (%changed and 0b1110 === 0) {
-                    %dirty = %dirty or if (%composer.changed(composable)) 0b0100 else 0b0010
+                    %dirty = %dirty or if (%composer.changedInstance(composable)) 0b0100 else 0b0010
                   }
                   if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                     if (isTraceInProgress()) {
