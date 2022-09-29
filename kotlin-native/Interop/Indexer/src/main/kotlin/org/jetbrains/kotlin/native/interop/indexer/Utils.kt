@@ -27,7 +27,7 @@ import java.security.DigestInputStream
 import java.security.MessageDigest
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.fir.util.SetMultimap
 
 val CValue<CXType>.kind: CXTypeKind get() = this.useContents { kind }
 
@@ -691,7 +691,7 @@ class TURepository : Disposable {
 }
 
 class TUOptimizedIndex {
-    private val unitsByHeaderFile = MultiMap<String, CXTranslationUnit>()
+    private val unitsByHeaderFile = SetMultimap<String, CXTranslationUnit>()
 
     /**
      * Should AST file contain declarations from nested headers, this fun makes both headers to refer to PCM file.
@@ -699,7 +699,7 @@ class TUOptimizedIndex {
     internal fun processInclude(includerFilename: String, includedFilename: String) {
         if (includerFilename != includedFilename)  // this check is needed since couple of MacOS SDK headers include themselves
             unitsByHeaderFile[includerFilename].let {
-                unitsByHeaderFile.putValues(includedFilename, it)
+                unitsByHeaderFile.putAll(includedFilename, it)
             }
     }
 
@@ -707,7 +707,7 @@ class TUOptimizedIndex {
         val numTopLevelHeaders = clang_Module_getNumTopLevelHeaders(unit, info.module)
         (0 until numTopLevelHeaders).map {
             val topLevelHeader: String = clang_Module_getTopLevelHeader(unit, info.module, it)!!.canonicalPath
-            unitsByHeaderFile.putValue(topLevelHeader, unit)
+            unitsByHeaderFile.put(topLevelHeader, unit)
         }
     }
 
@@ -715,9 +715,9 @@ class TUOptimizedIndex {
      *  Gets set of units, each of them includes at least one `own header`
      */
     internal fun unitsIncludingTheseHeaders(ownHeadersCanonicalPaths: Set<String>): Set<CXTranslationUnit> {
-        return unitsByHeaderFile.entrySet().filter {
-            ownHeadersCanonicalPaths.contains(it.key)
-        }.flatMap { it.value }.toSet()
+        return unitsByHeaderFile.keys.filter {
+            ownHeadersCanonicalPaths.contains(it)
+        }.flatMap { unitsByHeaderFile[it] }.toSet()
     }
 }
 
