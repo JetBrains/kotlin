@@ -48,7 +48,7 @@ abstract class AbstractKotlinNativeCompilation(
         get() = project.nativeUseEmbeddableCompilerJar
 
     // Endorsed library controller.
-    @Deprecated("Declare dependencies explicitly please. This option is scheduled to be removed in 1.9.0")
+    @Deprecated("Please declare explicit dependency on kotlinx-cli. This option is scheduled to be removed in 1.9.0")
     override var enableEndorsedLibs: Boolean = false
 }
 
