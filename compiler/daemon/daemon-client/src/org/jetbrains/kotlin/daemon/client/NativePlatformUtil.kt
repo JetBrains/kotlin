@@ -40,19 +40,19 @@ fun launchProcessWithFallback(processBuilder: ProcessBuilder, reportingTargets: 
         NativePlatformLauncherWrapper().launch(processBuilder)
     }
     catch (e: UnsatisfiedLinkError) {
-        reportingTargets.report(DaemonReportCategory.DEBUG, "Could not start process with native process launcher, falling back to ProcessBuilder#start ($e)", reportingSource)
+        reportingTargets.report(DaemonReportCategory.EXCEPTION, "Could not start process with native process launcher, falling back to ProcessBuilder#start ($e)", reportingSource)
         null
     }
     catch (e: IOException) {
-        reportingTargets.report(DaemonReportCategory.DEBUG, "Could not start process with native process launcher, falling back to ProcessBuilder#start (${e.cause})", reportingSource)
+        reportingTargets.report(DaemonReportCategory.EXCEPTION, "Could not start process with native process launcher, falling back to ProcessBuilder#start (${e.cause})", reportingSource)
         null
     }
     catch (e: NoClassDefFoundError) {
-        reportingTargets.report(DaemonReportCategory.DEBUG, "net.rubygrapefruit.platform library is not in the classpath, falling back to ProcessBuilder#start ($e)", reportingSource)
+        reportingTargets.report(DaemonReportCategory.EXCEPTION, "net.rubygrapefruit.platform library is not in the classpath, falling back to ProcessBuilder#start ($e)", reportingSource)
         null
     }
     catch (e: ClassNotFoundException) {
-        reportingTargets.report(DaemonReportCategory.DEBUG, "net.rubygrapefruit.platform library is not in the classpath, falling back to ProcessBuilder#start ($e)", reportingSource)
+        reportingTargets.report(DaemonReportCategory.EXCEPTION, "net.rubygrapefruit.platform library is not in the classpath, falling back to ProcessBuilder#start ($e)", reportingSource)
         null
     }
         ?: processBuilder.start()
