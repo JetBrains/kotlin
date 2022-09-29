@@ -1,8 +1,12 @@
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.konan.driver.phases.LinkerPhaseInput
+import org.jetbrains.kotlin.backend.konan.driver.phases.PhaseContext
+import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
 import org.jetbrains.kotlin.konan.KonanExternalToolFailure
+import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
@@ -11,7 +15,7 @@ import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-internal fun determineLinkerOutput(context: Context): LinkerOutputKind =
+internal fun determineLinkerOutput(context: PhaseContext): LinkerOutputKind =
         when (context.config.produce) {
             CompilerOutputKind.FRAMEWORK -> {
                 val staticFramework = context.config.produceStaticFramework
@@ -75,7 +79,10 @@ internal class CacheStorage(val context: Context) {
 }
 
 // TODO: We have a Linker.kt file in the shared module.
-internal class Linker(val context: Context) {
+internal class Linker(
+        val context: PhaseContext,
+        private val input: LinkerPhaseInput,
+) {
 
     private val platform = context.config.platform
     private val config = context.config.configuration
@@ -85,16 +92,16 @@ internal class Linker(val context: Context) {
     private val optimize = context.shouldOptimize()
     private val debug = context.config.debug || context.config.lightDebug
 
-    fun link(objectFiles: List<ObjectFile>) {
-        val nativeDependencies = context.generationState.llvm.nativeDependenciesToLink
+    fun link() {
+        val nativeDependencies = input.llvm.nativeDependenciesToLink
 
         val includedBinariesLibraries = context.config.libraryToCache?.let { listOf(it.klib) }
                 ?: nativeDependencies.filterNot { context.config.cachedLibraries.isLibraryCached(it) }
         val includedBinaries = includedBinariesLibraries.map { (it as? KonanLibrary)?.includedPaths.orEmpty() }.flatten()
 
-        val libraryProvidedLinkerFlags = context.generationState.llvm.allNativeDependencies.map { it.linkerOpts }.flatten()
+        val libraryProvidedLinkerFlags = input.llvm.allNativeDependencies.map { it.linkerOpts }.flatten()
 
-        runLinker(objectFiles, includedBinaries, libraryProvidedLinkerFlags)
+        runLinker(input.objectFiles, includedBinaries, libraryProvidedLinkerFlags)
     }
 
     private fun asLinkerArgs(args: List<String>): List<String> {
@@ -117,7 +124,7 @@ internal class Linker(val context: Context) {
     private fun runLinker(objectFiles: List<ObjectFile>,
                           includedBinaries: List<String>,
                           libraryProvidedLinkerFlags: List<String>): ExecutableFile? {
-        val outputFiles = context.generationState.outputFiles
+        val outputFiles = input.outputFiles
 
         val additionalLinkerArgs: List<String>
         val executable: String
@@ -134,7 +141,7 @@ internal class Linker(val context: Context) {
             }
             executable = outputFiles.nativeBinaryFile
         } else {
-            val framework = File(context.generationState.outputFile)
+            val framework = File(input.outputFile)
             val dylibName = framework.name.removeSuffix(".framework")
             val dylibRelativePath = when (target.family) {
                 Family.IOS,
@@ -149,7 +156,6 @@ internal class Linker(val context: Context) {
             executable = dylibPath.absolutePath
         }
 
-        val needsProfileLibrary = context.coverage.enabled
         val mimallocEnabled = context.config.allocationMode == AllocationMode.MIMALLOC
 
         val linkerInput = determineLinkerInput(objectFiles, linkerOutput)
@@ -169,7 +175,7 @@ internal class Linker(val context: Context) {
                     debug = debug,
                     kind = linkerOutput,
                     outputDsymBundle = outputFiles.symbolicInfoFile,
-                    needsProfileLibrary = needsProfileLibrary,
+                    needsProfileLibrary = input.needsProfileLibrary,
                     mimallocEnabled = mimallocEnabled,
                     sanitizer = context.config.sanitizer
             )
@@ -203,7 +209,7 @@ internal class Linker(val context: Context) {
     }
 
     private fun determineLinkerInput(objectFiles: List<ObjectFile>, linkerOutputKind: LinkerOutputKind): LinkerInput {
-        val caches = determineCachesToLink(context)
+        val caches = determineCachesToLink(context, input.llvm, input.llvmModuleSpecification)
         // Since we have several linker stages that involve caching,
         // we should detect cache usage early to report errors correctly.
         val cachingInvolved = caches.static.isNotEmpty() || caches.dynamic.isNotEmpty()
@@ -213,7 +219,7 @@ internal class Linker(val context: Context) {
                 LinkerInput(objectFiles, CachesToLink(emptyList(), caches.dynamic), emptyList(), cachingInvolved)
             }
             shouldPerformPreLink(caches, linkerOutputKind) -> {
-                val preLinkResult = context.generationState.tempFiles.create("withStaticCaches", ".o").absolutePath
+                val preLinkResult = input.tempFiles.create("withStaticCaches", ".o").absolutePath
                 val preLinkCommands = linker.preLinkCommands(objectFiles + caches.static, preLinkResult)
                 LinkerInput(listOf(preLinkResult), CachesToLink(emptyList(), caches.dynamic), preLinkCommands, cachingInvolved)
             }
@@ -231,12 +237,16 @@ private class LinkerInput(
 
 private class CachesToLink(val static: List<String>, val dynamic: List<String>)
 
-private fun determineCachesToLink(context: Context): CachesToLink {
+private fun determineCachesToLink(
+        context: PhaseContext,
+        llvm: Llvm,
+        llvmModuleSpecification: LlvmModuleSpecification
+): CachesToLink {
     val staticCaches = mutableListOf<String>()
     val dynamicCaches = mutableListOf<String>()
 
-    context.generationState.llvm.allCachedBitcodeDependencies.forEach { library ->
-        val currentBinaryContainsLibrary = context.llvmModuleSpecification.containsLibrary(library)
+    llvm.allCachedBitcodeDependencies.forEach { library ->
+        val currentBinaryContainsLibrary = llvmModuleSpecification.containsLibrary(library)
         val cache = context.config.cachedLibraries.getLibraryCache(library)
                 ?: error("Library $library is expected to be cached")
 

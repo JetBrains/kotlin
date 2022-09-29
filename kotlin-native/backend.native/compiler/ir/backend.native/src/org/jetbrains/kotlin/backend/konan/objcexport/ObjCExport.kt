@@ -66,17 +66,13 @@ internal fun produceObjCExportInterface(
     return headerGenerator.buildInterface()
 }
 
-internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
+internal class ObjCExport(
+        val context: Context,
+        private val exportedInterface: ObjCExportedInterface?,
+        private val codeSpec: ObjCExportCodeSpec?
+) {
     private val target get() = context.config.target
     private val topLevelNamePrefix get() = context.objCExportTopLevelNamePrefix
-
-    private val exportedInterface: ObjCExportedInterface? = when {
-            !target.family.isAppleFamily -> null
-            context.config.produce != CompilerOutputKind.FRAMEWORK -> null
-            else -> produceObjCExportInterface(context, context.getFrontendResult() as FrontendPhaseResult.Full)
-
-        }
-    private val codeSpec = exportedInterface?.createCodeSpec(symbolTable)
 
     lateinit var namer: ObjCExportNamer
 

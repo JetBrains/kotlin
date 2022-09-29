@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.driver.phases.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.DWARF
 import org.jetbrains.kotlin.backend.konan.llvm.DebugInfo
@@ -101,7 +102,6 @@ internal class NativeGenerationState(private val context: Context) {
 
     fun printBitCode() {
         if (!llvmDelegate.isInitialized()) return
-        context.separator("BitCode:")
         LLVMDumpModule(llvm.module)
     }
 

@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.*
-import org.jetbrains.kotlin.backend.konan.KonanConfig
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.context.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.getCompilerMessageLocation
+import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
@@ -22,8 +23,10 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 
@@ -152,6 +155,36 @@ internal class PhaseEngine(
     ) {
         val input = WriteObjCFrameworkInput(objCExportedInterface, moduleDescriptor, frameworkFile)
         return this.runPhase(BasicPhaseContext(config), WriteObjCFramework, input)
+    }
+
+    fun runBackendCodegen(
+            context: Context,
+            irModule: IrModuleFragment,
+    ): IrModuleFragment {
+        return this.runPhase(context, backendCodegen, irModule)
+    }
+
+    fun produceObjectFiles(
+            config: KonanConfig,
+            bitcodeFile: BitcodeFile,
+            tempFiles: TempFiles,
+    ): List<ObjectFile> {
+        val input = ObjectFilesInput(bitcodeFile, tempFiles)
+        return this.runPhase(BasicPhaseContext(config), ObjectFilesPhase, input)
+    }
+
+    fun linkObjectFiles(
+            config: KonanConfig,
+            objectFiles: List<ObjectFile>,
+            llvm: Llvm,
+            llvmModuleSpecification: LlvmModuleSpecification,
+            needsProfileLibrary: Boolean,
+            outputFile: String,
+            outputFiles: OutputFiles,
+            tempFiles: TempFiles,
+    ) {
+        val input = LinkerPhaseInput(objectFiles, llvm, llvmModuleSpecification, needsProfileLibrary, outputFile, outputFiles, tempFiles)
+        return this.runPhase(BasicPhaseContext(config), LinkerPhase, input)
     }
 }
 

@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.backend.konan.driver
 
 import kotlinx.cinterop.usingJvmCInteropCallbacks
+import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfig
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.backend.konan.driver.phases.PhaseEngine
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
@@ -21,7 +24,7 @@ internal class DynamicCompilerDriver: CompilerDriver() {
                 return true
             }
             if (config.produce == CompilerOutputKind.FRAMEWORK) {
-                return config.omitFrameworkBinary
+                return true
             }
             return false
         }
@@ -76,5 +79,36 @@ internal class DynamicCompilerDriver: CompilerDriver() {
             engine.writeObjCFramework(config, objcInterface, frontendResult.moduleDescriptor, frameworkFile)
             return
         }
+        val (psiToIrResult, objCCodeSpec) = SymbolTableResource().use { symbolTable ->
+            val objCCodeSpec = engine.produceObjCCodeSpec(config, objcInterface, symbolTable)
+            val psiToIrResult = engine.runPsiToIr(config, frontendResult, symbolTable, isProducingLibrary = true)
+            Pair(psiToIrResult, objCCodeSpec)
+        }
+        require(psiToIrResult is PsiToIrResult.Full)
+        val context = Context(config)
+        context.populateAfterPsiToIr(psiToIrResult)
+        context.objCExport = ObjCExport(context, objcInterface, objCCodeSpec)
+        val nativeGenerationState = NativeGenerationState(context)
+        context.generationState = nativeGenerationState
+
+        // Let's "eat" Context step-by-step. We don't use it for frontend, psi2ir, and object files,
+        // but use it for lowerings and bitcode generation.
+        engine.runBackendCodegen(context, context.irModule!!)
+
+        val objectFiles = engine.produceObjectFiles(
+                config,
+                context.bitcodeFileName,
+                context.generationState.tempFiles
+        )
+        engine.linkObjectFiles(
+                config,
+                objectFiles,
+                context.generationState.llvm,
+                context.llvmModuleSpecification,
+                context.coverage.enabled,
+                context.generationState.outputFile,
+                context.generationState.outputFiles,
+                context.generationState.tempFiles,
+        )
     }
 }

@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.backend.konan
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.common.LoggingContext
+import org.jetbrains.kotlin.backend.konan.driver.phases.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.konan.target.*
 import java.io.Closeable
@@ -296,7 +297,7 @@ class LlvmOptimizationPipeline(
     }
 }
 
-internal fun RelocationModeFlags.currentRelocationMode(context: Context): RelocationModeFlags.Mode =
+internal fun RelocationModeFlags.currentRelocationMode(context: PhaseContext): RelocationModeFlags.Mode =
         when (determineLinkerOutput(context)) {
             LinkerOutputKind.DYNAMIC_LIBRARY -> dynamicLibraryRelocationMode
             LinkerOutputKind.STATIC_LIBRARY -> staticLibraryRelocationMode

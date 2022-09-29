@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.konan.driver.context.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendPhaseResult
 import org.jetbrains.kotlin.backend.konan.driver.phases.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
+import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrResult
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.llvm.CodegenClassMetadata
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
@@ -89,6 +90,19 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
             } else {
                 FrontendPhaseResult.ShouldNotGenerateCode
             }
+
+    fun populateAfterPsiToIr(
+            psiToIrResult: PsiToIrResult.Full
+    ) {
+        irModules = psiToIrResult.irModules
+        irModule = psiToIrResult.irModule
+        expectDescriptorToSymbol = psiToIrResult.expectDescriptorToSymbol
+        ir = KonanIr(this, psiToIrResult.irModule)
+        ir.symbols = psiToIrResult.symbols
+        if (psiToIrResult.irLinker is KonanIrLinker) {
+            irLinker = psiToIrResult.irLinker
+        }
+    }
 
     lateinit var objCExport: ObjCExport
 

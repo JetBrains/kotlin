@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.konan.driver.phases.PhaseContext
+import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.*
 
@@ -12,14 +14,17 @@ typealias BitcodeFile = String
 typealias ObjectFile = String
 typealias ExecutableFile = String
 
-internal class BitcodeCompiler(val context: Context) {
+internal class BitcodeCompiler(
+        private val context: PhaseContext,
+        private val tempFiles: TempFiles,
+) {
 
     private val platform = context.config.platform
     private val optimize = context.shouldOptimize()
     private val debug = context.config.debug
 
     private val overrideClangOptions =
-            context.configuration.getList(KonanConfigKeys.OVERRIDE_CLANG_OPTIONS)
+            context.config.configuration.getList(KonanConfigKeys.OVERRIDE_CLANG_OPTIONS)
 
     private fun MutableList<String>.addNonEmpty(elements: List<String>) {
         addAll(elements.filter { it.isNotEmpty() })
@@ -31,7 +36,7 @@ internal class BitcodeCompiler(val context: Context) {
                     .execute()
 
     private fun temporary(name: String, suffix: String): String =
-            context.generationState.tempFiles.create(name, suffix).absolutePath
+            tempFiles.create(name, suffix).absolutePath
 
     private fun targetTool(tool: String, vararg arg: String) {
         val absoluteToolName = if (platform.configurables is AppleConfigurables) {

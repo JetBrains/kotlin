@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendPhaseResult
+import org.jetbrains.kotlin.backend.konan.driver.phases.LinkerPhaseInput
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrInput
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrResult
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
@@ -22,6 +23,9 @@ import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SamSuperTypesChecker
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
+import org.jetbrains.kotlin.backend.konan.objcexport.createCodeSpec
+import org.jetbrains.kotlin.backend.konan.objcexport.produceObjCExportInterface
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -88,7 +92,13 @@ internal val createSymbolTablePhase = konanUnitPhase(
 
 internal val objCExportPhase = konanUnitPhase(
         op = {
-            objCExport = ObjCExport(this, symbolTable!!)
+            val exportedInterface: ObjCExportedInterface? = when {
+                !this.config.target.family.isAppleFamily -> null
+                this.config.produce != CompilerOutputKind.FRAMEWORK -> null
+                else -> produceObjCExportInterface(this, this.getFrontendResult() as FrontendPhaseResult.Full)
+            }
+            val codeSpec = exportedInterface?.createCodeSpec(symbolTable!!)
+            objCExport = ObjCExport(this, exportedInterface, codeSpec)
         },
         name = "ObjCExport",
         description = "Objective-C header generation",
@@ -114,14 +124,7 @@ internal val psiToIrPhase = konanUnitPhase(
             when (val result = this.psiToIr(input, useLinkerWhenProducingLibrary = false)) {
                 PsiToIrResult.Empty -> {}
                 is PsiToIrResult.Full -> {
-                    this.irModules = result.irModules
-                    this.irModule = result.irModule
-                    this.expectDescriptorToSymbol = result.expectDescriptorToSymbol
-                    this.ir = KonanIr(this, result.irModule)
-                    this.ir.symbols = result.symbols
-                    if (result.irLinker is KonanIrLinker) {
-                        this.irLinker = result.irLinker
-                    }
+                    this.populateAfterPsiToIr(result)
                 }
             }
             val originalBindingContext = bindingContext as? CleanableBindingContext
@@ -230,13 +233,26 @@ internal val saveAdditionalCacheInfoPhase = konanUnitPhase(
 )
 
 internal val objectFilesPhase = konanUnitPhase(
-        op = { compilerOutput = BitcodeCompiler(this).makeObjectFiles(bitcodeFileName) },
+        op = {
+            compilerOutput = BitcodeCompiler(this, this.generationState.tempFiles).makeObjectFiles(bitcodeFileName)
+        },
         name = "ObjectFiles",
         description = "Bitcode to object file"
 )
 
 internal val linkerPhase = konanUnitPhase(
-        op = { Linker(this).link(compilerOutput) },
+        op = {
+            val input = LinkerPhaseInput(
+                    compilerOutput,
+                    generationState.llvm,
+                    llvmModuleSpecification,
+                    coverage.enabled,
+                    generationState.outputFile,
+                    generationState.outputFiles,
+                    generationState.tempFiles,
+            )
+            Linker(this, input).link()
+        },
         name = "Linker",
         description = "Linker"
 )
@@ -460,7 +476,7 @@ private val bitcodePostprocessingPhase = SameTypeNamedCompilerPhase(
                 rewriteExternalCallsCheckerGlobals
 )
 
-private val backendCodegen = SameTypeNamedCompilerPhase(
+internal val backendCodegen = SameTypeNamedCompilerPhase(
         name = "Backend codegen",
         description = "Backend code generation",
         lower = entryPointPhase then

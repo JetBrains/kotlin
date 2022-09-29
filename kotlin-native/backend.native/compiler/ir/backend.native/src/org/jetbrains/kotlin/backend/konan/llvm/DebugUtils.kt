@@ -10,6 +10,7 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.reinterpret
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.driver.phases.PhaseContext
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -117,11 +118,11 @@ internal data class FileAndFolder(val file: String, val folder: String) {
     fun path() = if (this == NOFILE) file else "$folder/$file"
 }
 
-internal fun String?.toFileAndFolder(context: Context):FileAndFolder {
+internal fun String?.toFileAndFolder(context: PhaseContext):FileAndFolder {
     this ?: return FileAndFolder.NOFILE
     val file = File(this).absoluteFile
     var parent = file.parent
-    context.configuration.get(KonanConfigKeys.DEBUG_PREFIX_MAP)?.let { debugPrefixMap ->
+    context.config.configuration.get(KonanConfigKeys.DEBUG_PREFIX_MAP)?.let { debugPrefixMap ->
       for ((key, value) in debugPrefixMap) {
         if (parent.startsWith(key)) {
           parent = value + parent.removePrefix(key)
