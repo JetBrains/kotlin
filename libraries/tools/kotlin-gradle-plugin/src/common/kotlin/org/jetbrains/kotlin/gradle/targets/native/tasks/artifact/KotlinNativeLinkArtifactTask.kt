@@ -63,7 +63,7 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
     @get:Input
     var debuggable: Boolean = true
 
-    @Deprecated("Declare dependencies explicitly please. This option is scheduled to be removed in 1.9.0")
+    @Deprecated("Please declare explicit dependency on kotlinx-cli. This option is scheduled to be removed in 1.9.0")
     @get:Input
     var enableEndorsedLibs: Boolean = false
 

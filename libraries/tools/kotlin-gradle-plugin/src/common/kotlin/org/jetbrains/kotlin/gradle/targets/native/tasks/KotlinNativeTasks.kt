@@ -208,7 +208,7 @@ abstract class AbstractKotlinNativeCompile<
         get() = languageSettings.progressiveMode
     // endregion.
 
-    @Deprecated("Declare dependencies explicitly please. This option is scheduled to be removed in 1.9.0")
+    @Deprecated("Please declare explicit dependency on kotlinx-cli. This option is scheduled to be removed in 1.9.0")
     @get:Input
     val enableEndorsedLibs: Boolean by project.provider { compilation.enableEndorsedLibs }
 

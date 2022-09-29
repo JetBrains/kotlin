@@ -199,7 +199,7 @@ internal open class KotlinNativeFragmentMetadataCompilationDataImpl(
         }
 
     @Suppress("DeprecatedCallableAddReplaceWith")
-    @Deprecated("Declare dependencies explicitly please. This option is scheduled to be removed in 1.9.0")
+    @Deprecated("Please declare explicit dependency on kotlinx-cli. This option is scheduled to be removed in 1.9.0")
     override val enableEndorsedLibs: Boolean
         get() = false
 }
