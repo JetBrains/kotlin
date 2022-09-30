@@ -63,7 +63,7 @@ private fun collectDesignationPath(declaration: FirDeclaration): List<FirDeclara
             if (declaration.symbol.callableId.isLocal) return null
             if ((declaration as? FirCallableDeclaration)?.status?.visibility == Visibilities.Local) return null
             when (declaration) {
-                is FirSimpleFunction, is FirProperty, is FirField, is FirConstructor, is FirEnumEntry -> {
+                is FirSimpleFunction, is FirProperty, is FirField, is FirConstructor, is FirEnumEntry, is FirPropertyAccessor -> {
                     val klass = declaration.containingClassLookupTag() ?: return emptyList()
                     if (klass.classId.isLocal) return null
                     klass.toFirRegularClassFromSameSession(declaration.moduleData.session)
