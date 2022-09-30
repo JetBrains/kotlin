@@ -32014,6 +32014,18 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("javaRecordWithExplicitComponent.kt")
+                public void testJavaRecordWithExplicitComponent() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord/javaRecordWithExplicitComponent.kt");
+                }
+
+                @Test
+                @TestMetadata("javaRecordWithGeneric.kt")
+                public void testJavaRecordWithGeneric() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord/javaRecordWithGeneric.kt");
+                }
+
+                @Test
                 @TestMetadata("jvmRecordDescriptorStructure.kt")
                 public void testJvmRecordDescriptorStructure() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord/jvmRecordDescriptorStructure.kt");
