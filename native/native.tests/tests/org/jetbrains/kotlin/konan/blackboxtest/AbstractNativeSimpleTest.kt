@@ -25,11 +25,4 @@ abstract class AbstractNativeSimpleTest {
         val testRunner = createProperTestRunner(testRun, testRunSettings)
         testRunner.run()
     }
-
-    protected fun invokeKLibContents(klib: File): String {
-        val output = StringBuilder()
-        val lib = Library(klib.canonicalPath, null, "host")
-        lib.contents(output, false)
-        return output.toString()
-    }
 }
