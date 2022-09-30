@@ -91,7 +91,7 @@ internal class KtFirExpressionTypeProvider(
         val assignment = expression.parent as? KtBinaryExpression ?: return null
         if (assignment.operationToken !in KtTokens.ALL_ASSIGNMENTS) return null
         if (assignment.left != expression) return null
-        val setTargetArgumentParameter = fir.argumentMapping?.entries?.last()?.value ?: return null
+        val setTargetArgumentParameter = fir.resolvedArgumentMapping?.entries?.last()?.value ?: return null
         return setTargetArgumentParameter.returnTypeRef.coneType.asKtType()
     }
 
@@ -140,7 +140,7 @@ internal class KtFirExpressionTypeProvider(
             return (callee.fir as FirSimpleFunction).returnTypeRef.coneType.asKtType()
         }
 
-        val arguments = firCall.argumentMapping ?: return null
+        val arguments = firCall.resolvedArgumentMapping ?: return null
         val firParameterForExpression =
             arguments.entries.firstOrNull { (arg, _) ->
                 when (arg) {
@@ -170,7 +170,7 @@ internal class KtFirExpressionTypeProvider(
         val firCall = infixCallExpression.getOrBuildFirSafe<FirFunctionCall>(firResolveSession) ?: return null
 
         // There is only one parameter for infix functions; get its type
-        val arguments = firCall.argumentMapping ?: return null
+        val arguments = firCall.resolvedArgumentMapping ?: return null
         val firParameterForExpression = arguments.values.singleOrNull() ?: return null
         return firParameterForExpression.returnTypeRef.coneType.asKtType()
     }
