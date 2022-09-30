@@ -109,7 +109,7 @@ internal object FirAnnotationValueConverter {
                         val classSymbol = resolvedSymbol.getContainingClassSymbol(session) ?: return null
                         if ((classSymbol.fir as? FirClass)?.classKind == ClassKind.ANNOTATION_CLASS) {
                             val resultMap = mutableMapOf<Name, FirExpression>()
-                            argumentMapping?.entries?.forEach { (arg, param) ->
+                            resolvedArgumentMapping?.entries?.forEach { (arg, param) ->
                                 resultMap[param.name] = arg
                             }
                             KtAnnotationApplicationValue(
