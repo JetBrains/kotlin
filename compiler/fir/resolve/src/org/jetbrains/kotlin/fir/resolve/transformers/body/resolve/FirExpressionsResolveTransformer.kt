@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
     private inline val builtinTypes: BuiltinTypes get() = session.builtinTypes
@@ -632,9 +631,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             assignIsSuccessful && !lhsIsVar -> chooseAssign()
             !assignIsSuccessful && !operatorIsSuccessful -> {
                 // If neither candidate is successful, choose whichever is resolved, prioritizing assign
-                val isAssignResolved = assignCallReference.safeAs<FirErrorReferenceWithCandidate>()?.diagnostic !is ConeUnresolvedNameError
-                val isOperatorResolved =
-                    operatorCallReference.safeAs<FirErrorReferenceWithCandidate>()?.diagnostic !is ConeUnresolvedNameError
+                val isAssignResolved = (assignCallReference as? FirErrorReferenceWithCandidate)?.diagnostic !is ConeUnresolvedNameError
+                val isOperatorResolved = (operatorCallReference as? FirErrorReferenceWithCandidate)?.diagnostic !is ConeUnresolvedNameError
                 when {
                     isAssignResolved -> chooseAssign()
                     isOperatorResolved -> chooseOperator()

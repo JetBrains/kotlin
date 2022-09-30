@@ -40,8 +40,8 @@ import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -222,8 +221,7 @@ internal fun typeForQualifierByDeclaration(declaration: FirDeclaration, resultTy
 }
 
 private fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.getNarrowedDownSymbol(): FirBasedSymbol<*> {
-    val propertyReceiver = resolvedSymbol.safeAs<FirPropertySymbol>()
-        ?: return resolvedSymbol
+    val propertyReceiver = resolvedSymbol as? FirPropertySymbol ?: return resolvedSymbol
 
     // This can happen in case of 2 properties referencing
     // each other recursively. See: Jet81.fir.kt

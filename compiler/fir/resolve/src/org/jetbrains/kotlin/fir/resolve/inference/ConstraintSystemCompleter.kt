@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ConstraintSystemCompleter(components: BodyResolveComponents, private val context: BodyResolveContext) {
     private val inferenceComponents = components.session.inferenceComponents
@@ -409,7 +408,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
                     processBlocks = true
                 ) { candidate ->
                     candidate.postponedAtoms.forEach { atom ->
-                        notAnalyzedArguments.addIfNotNull(atom.safeAs<PostponedResolvedAtom>()?.takeUnless { it.analyzed })
+                        notAnalyzedArguments.addIfNotNull((atom as? PostponedResolvedAtom)?.takeUnless { it.analyzed })
                     }
                 }
             }

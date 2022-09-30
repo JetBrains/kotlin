@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirJvmStaticChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -216,7 +215,7 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker() {
         val containingClassSymbol = this.getContainerAt(outerLevel) ?: return false
 
         @OptIn(SymbolInternals::class)
-        val containingClass = containingClassSymbol.fir.safeAs<FirRegularClass>() ?: return false
+        val containingClass = (containingClassSymbol.fir as? FirRegularClass) ?: return false
 
         return containingClass.classKind == ClassKind.OBJECT && !containingClass.isCompanion
     }
@@ -237,7 +236,7 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker() {
 
     private fun CheckerContext.supports(feature: LanguageFeature) = session.languageVersionSettings.supportsFeature(feature)
 
-    private fun FirClassLikeSymbol<*>.isCompanion() = safeAs<FirRegularClassSymbol>()?.isCompanion == true
+    private fun FirClassLikeSymbol<*>.isCompanion() = (this as? FirRegularClassSymbol)?.isCompanion == true
 
     private fun FirDeclaration.hasAnnotationNamedAs(classId: ClassId): Boolean {
         return findAnnotation(classId) != null

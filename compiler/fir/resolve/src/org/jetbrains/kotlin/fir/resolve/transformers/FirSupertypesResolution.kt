@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FirSupertypeResolverProcessor(session: FirSession, scopeSession: ScopeSession) :
     FirTransformerBasedResolveProcessor(session, scopeSession) {
@@ -328,7 +327,7 @@ open class FirSupertypeResolverVisitor(
                     else -> scopeForLocalClass ?: return persistentListOf()
                 }
             }
-            classLikeDeclaration.safeAs<FirRegularClass>()?.isCompanion == true -> {
+            (classLikeDeclaration as? FirRegularClass)?.isCompanion == true -> {
                 val outerClassFir = classId.outerClassId?.let { getFirClassifierByFqName(classModuleSession, it) } as? FirRegularClass
                 prepareScopeForCompanion(outerClassFir ?: return persistentListOf())
             }

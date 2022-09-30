@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirJvmNameChecker : FirBasicDeclarationChecker() {
     private val NAME = Name.identifier("name")
@@ -35,7 +34,7 @@ object FirJvmNameChecker : FirBasicDeclarationChecker() {
             return
         }
 
-        val value = name.safeAs<FirConstExpression<*>>()?.value as? String ?: return
+        val value = (name as? FirConstExpression<*>)?.value as? String ?: return
 
         if (!Name.isValidIdentifier(value)) {
             reporter.reportOn(jvmName.source, FirJvmErrors.ILLEGAL_JVM_NAME, context)

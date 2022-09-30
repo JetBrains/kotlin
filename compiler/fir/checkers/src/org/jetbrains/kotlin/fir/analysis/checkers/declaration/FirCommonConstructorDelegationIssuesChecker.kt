@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirCommonConstructorDelegationIssuesChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -96,9 +95,7 @@ object FirCommonConstructorDelegationIssuesChecker : FirRegularClassChecker() {
 
     private fun FirConstructor.getDelegated(): FirConstructor? {
         this.symbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-        val delegatedConstructorSymbol = delegatedConstructor
-            ?.calleeReference.safeAs<FirResolvedNamedReference>()
-            ?.resolvedSymbol
+        val delegatedConstructorSymbol = (delegatedConstructor?.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol
         @OptIn(SymbolInternals::class)
         return delegatedConstructorSymbol?.fir as? FirConstructor
     }

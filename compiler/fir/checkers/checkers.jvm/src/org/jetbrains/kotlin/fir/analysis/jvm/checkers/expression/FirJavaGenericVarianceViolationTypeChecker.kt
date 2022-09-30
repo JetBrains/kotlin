@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
  * Checks compatibility of variance of type argument for Java collections.
@@ -55,7 +54,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
         val argumentMapping = expression.argumentMapping ?: return
         val typeArgumentMap = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
         for (i in 0 until expression.typeArguments.size) {
-            val type = expression.typeArguments[i].safeAs<FirTypeProjectionWithVariance>()?.typeRef?.coneType
+            val type = (expression.typeArguments[i] as? FirTypeProjectionWithVariance)?.typeRef?.coneType
             if (type != null) {
                 typeArgumentMap[calleeFunction.typeParameterSymbols[i]] = type
             }

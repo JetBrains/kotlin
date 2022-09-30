@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.contracts.*
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractRenderer
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 class FirRenderer(
@@ -400,7 +400,7 @@ class FirRenderer(
                 if (it !is FirResolvedTypeRef) return@filter true
                 if (!it.type.isNullable) return@filter true
                 val type = it.type as? ConeLookupTagBasedType ?: return@filter true
-                type.lookupTag.safeAs<ConeClassLikeLookupTag>()?.classId != StandardClassIds.Any
+                (type.lookupTag as? ConeClassLikeLookupTag)?.classId != StandardClassIds.Any
             }
 
             if (meaningfulBounds.isNotEmpty()) {

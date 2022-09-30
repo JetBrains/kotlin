@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirSupertypesChecker : FirClassChecker() {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -51,7 +50,7 @@ object FirSupertypesChecker : FirClassChecker() {
                 reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE, context)
                 extensionFunctionSupertypeReported = true
             }
-            val lookupTag = coneType.safeAs<ConeClassLikeType>()?.lookupTag ?: continue
+            val lookupTag = (coneType as? ConeClassLikeType)?.lookupTag ?: continue
             val superTypeSymbol = lookupTag.toSymbol(context.session)
 
             if (superTypeSymbol is FirRegularClassSymbol) {

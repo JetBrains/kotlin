@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInfix
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.calls.InferredEmptyIntersectionDiagnostic
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaReturnType
@@ -40,7 +39,6 @@ import org.jetbrains.kotlin.types.isPossiblyEmpty
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private fun ConeDiagnostic.toKtDiagnostic(
     source: KtSourceElement,
@@ -62,7 +60,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
         // See: https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-deprecated/
         FirErrors.UNRESOLVED_REFERENCE.createOn(
             source,
-            (this.candidateSymbol.safeAs<FirCallableSymbol<*>>()?.name ?: SpecialNames.NO_NAME_PROVIDED).asString()
+            ((this.candidateSymbol as? FirCallableSymbol)?.name ?: SpecialNames.NO_NAME_PROVIDED).asString()
         )
     }
 
