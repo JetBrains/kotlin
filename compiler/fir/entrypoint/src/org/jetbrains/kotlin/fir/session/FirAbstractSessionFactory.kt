@@ -91,7 +91,7 @@ abstract class FirAbstractSessionFactory {
         createProviders: (
             FirSession, FirKotlinScopeProvider, FirSymbolProvider,
             FirSwitchableExtensionDeclarationsSymbolProvider?,
-            FirDependenciesSymbolProviderImpl
+            FirDependenciesSymbolProvider
         ) -> List<FirSymbolProvider>
     ): FirSession {
         return FirCliSession(sessionProvider, FirSession.Kind.Source).apply session@{
@@ -129,11 +129,7 @@ abstract class FirAbstractSessionFactory {
             register(FirSymbolProvider::class, FirCompositeSymbolProvider(this, providers))
 
             generatedSymbolsProvider?.let { register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it) }
-
-            register(
-                FirDependenciesSymbolProvider::class,
-                dependenciesSymbolProvider
-            )
+            register(FirDependenciesSymbolProvider::class, dependenciesSymbolProvider)
         }
     }
 }

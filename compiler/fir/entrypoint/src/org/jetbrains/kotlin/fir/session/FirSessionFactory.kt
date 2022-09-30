@@ -115,7 +115,6 @@ object FirSessionFactory : FirAbstractSessionFactory() {
                     ),
                     FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
                     FirCloneableSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
-                    FirDependenciesSymbolProviderImpl(session),
                     OptionalAnnotationClassesProvider(session, dependencyList.moduleDataProvider, kotlinScopeProvider, packagePartProvider)
                 )
             }

@@ -31,7 +31,8 @@ open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirDependenc
 
 
     protected open val dependencyProviders by lazy {
-        val moduleData = session.nullableModuleData ?: return@lazy emptyList()
+        val moduleData =
+            session.nullableModuleData ?: error("FirDependenciesSymbolProvider should not be created if there are no dependencies")
         (moduleData.dependencies + moduleData.friendDependencies + moduleData.dependsOnDependencies)
             .mapNotNull { session.sessionProvider?.getSession(it) }
             .sortedBy { it.kind }
