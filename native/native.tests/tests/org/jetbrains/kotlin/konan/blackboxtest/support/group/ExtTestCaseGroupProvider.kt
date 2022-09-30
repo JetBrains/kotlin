@@ -284,6 +284,7 @@ private class ExtTestDataFile(
                     val importedFqName = importDirective.importedFqName
                     if (importedFqName == null
                         || importedFqName.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)
+                        || importedFqName.startsWith(KOTLINX_PACKAGE_NAME)
                         || importedFqName.startsWith(HELPERS_PACKAGE_NAME)
                     ) {
                         return
@@ -554,7 +555,7 @@ private class ExtTestDataFile(
         private val BOX_FUNCTION_NAME = Name.identifier("box")
         private val OPT_IN_ANNOTATION_NAME = Name.identifier("OptIn")
         private val HELPERS_PACKAGE_NAME = Name.identifier("helpers")
-        private val TYPE_OF_NAME = Name.identifier("typeOf")
+        private val KOTLINX_PACKAGE_NAME = Name.identifier("kotlinx")
 
         private val MANDATORY_SOURCE_TRANSFORMERS: ExternalSourceTransformers = listOf(DiagnosticsRemovingSourceTransformer)
     }
