@@ -39,6 +39,10 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: typeAliasWithTypeParameters.kt
     public final [IMPLICIT_TYPES_BODY_RESOLVE] typealias ResolveMe<[IMPLICIT_TYPES_BODY_RESOLVE] T : R|kotlin/Int|, [IMPLICIT_TYPES_BODY_RESOLVE] K> = R|kotlin/collections/Map<T, K>|
 
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: typeAliasWithTypeParameters.kt
+    public final [ANNOTATIONS_ARGUMENTS_MAPPING] typealias ResolveMe<[ANNOTATIONS_ARGUMENTS_MAPPING] T : R|kotlin/Int|, [ANNOTATIONS_ARGUMENTS_MAPPING] K> = R|kotlin/collections/Map<T, K>|
+
 EXPECT_ACTUAL_MATCHING:
 FILE: typeAliasWithTypeParameters.kt
     public final [EXPECT_ACTUAL_MATCHING] typealias ResolveMe<[EXPECT_ACTUAL_MATCHING] T : R|kotlin/Int|, [EXPECT_ACTUAL_MATCHING] K> = R|kotlin/collections/Map<T, K>|
