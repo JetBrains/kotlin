@@ -170,11 +170,10 @@ private fun linkAllDependencies(context: Context, generatedBitcodeFiles: List<St
     }
 }
 
-internal fun insertAliasToEntryPoint(context: Context) {
+internal fun insertAliasToEntryPoint(context: PhaseContext, module: LLVMModuleRef) {
     val nomain = context.config.configuration.get(KonanConfigKeys.NOMAIN) ?: false
     if (context.config.produce != CompilerOutputKind.PROGRAM || nomain)
         return
-    val module = context.generationState.llvm.module
     val entryPointName = context.config.entryPointName
     val entryPoint = LLVMGetNamedFunction(module, entryPointName)
             ?: error("Module doesn't contain `$entryPointName`")
@@ -224,7 +223,7 @@ internal fun produceOutput(context: Context) {
             context.bitcodeFileName = output
             // Insert `_main` after pipeline so we won't worry about optimizations
             // corrupting entry point.
-            insertAliasToEntryPoint(context)
+            insertAliasToEntryPoint(context, context.generationState.llvm.module)
             LLVMWriteBitcodeToFile(context.generationState.llvm.module, output)
         }
         CompilerOutputKind.LIBRARY -> {

@@ -35,7 +35,7 @@ internal class DynamicCompilerDriver: CompilerDriver() {
             usingNativeMemoryAllocator {
                 usingJvmCInteropCallbacks {
                     when (config.produce) {
-                        CompilerOutputKind.PROGRAM -> TODO()
+                        CompilerOutputKind.PROGRAM -> produceProgram(engine, config, environment)
                         CompilerOutputKind.DYNAMIC -> TODO()
                         CompilerOutputKind.STATIC -> TODO()
                         CompilerOutputKind.FRAMEWORK -> produceFramework(engine, config, environment)
@@ -113,6 +113,45 @@ internal class DynamicCompilerDriver: CompilerDriver() {
                 context.generationState = nativeGenerationEngine.context
                 middleEndEngine.runBackendCodegen(context.irModule!!)
                 val bitcodeFile = nativeGenerationEngine.writeBitcodeFile(nativeGenerationEngine.context.llvm.module)
+                // TODO: These two phases should not use NativeGenerationEngine. Instead, they should use their own.
+                //  Probably separate, because in the future we want linker to accumulate results.
+                val objectFiles = nativeGenerationEngine.produceObjectFiles(bitcodeFile)
+                nativeGenerationEngine.linkObjectFiles(objectFiles, context.llvmModuleSpecification, context.coverage.enabled)
+            }
+        }
+    }
+
+    private fun produceProgram(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+        val frontendResult = engine.useContext(FrontendContextImpl(config)) { frontendEngine ->
+            frontendEngine.runFrontend(environment)
+        }
+        if (frontendResult is FrontendPhaseResult.ShouldNotGenerateCode) {
+            return
+        }
+        require(frontendResult is FrontendPhaseResult.Full)
+        val psiToIrResult = run {
+            val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
+            val psiToIrContext = PsiToContextImpl(config, frontendResult.moduleDescriptor, symbolTable)
+            engine.useContext(psiToIrContext) { psiToIrEngine ->
+                psiToIrEngine.runPsiToIr(frontendResult, isProducingLibrary = false)
+            }
+        }
+        // Let's "eat" Context step-by-step. We don't use it for frontend and psi2ir,
+        // but use it for lowerings and bitcode generation for now.
+        val context = Context(config).also {
+            it.populateAfterFrontend(frontendResult)
+            it.populateAfterPsiToIr(psiToIrResult)
+            it.objCExport = ObjCExport(it, null, null)
+        }
+        engine.useContext(context) { middleEndEngine ->
+            middleEndEngine.runPhase(context, functionsWithoutBoundCheck, Unit)
+            middleEndEngine.useContext(NativeGenerationState(context)) { nativeGenerationEngine ->
+                // TODO: Drop this property, use generation state separately.
+                context.generationState = nativeGenerationEngine.context
+                middleEndEngine.runBackendCodegen(context.irModule!!)
+                val module = context.generationState.llvm.module
+                insertAliasToEntryPoint(context, module)
+                val bitcodeFile = nativeGenerationEngine.writeBitcodeFile(module)
                 // TODO: These two phases should not use NativeGenerationEngine. Instead, they should use their own.
                 //  Probably separate, because in the future we want linker to accumulate results.
                 val objectFiles = nativeGenerationEngine.produceObjectFiles(bitcodeFile)
