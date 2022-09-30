@@ -570,7 +570,7 @@ class LiveLiteralV2TransformTests : AbstractIrTransformTest() {
             keyVisitor,
             context,
             symbolRemapper,
-            ModuleMetricsImpl("temp", context)
+            ModuleMetricsImpl("temp")
         ) {
             override fun makeKeySet(): MutableSet<String> {
                 return super.makeKeySet().also { builtKeys = it }

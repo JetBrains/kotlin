@@ -19,15 +19,15 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.compiler.plugins.kotlin.lower.ClassStabilityTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunInterfaceLowering
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunctionBodyTransformer
-import androidx.compose.compiler.plugins.kotlin.lower.ComposableTargetAnnotationsTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableSymbolRemapper
+import androidx.compose.compiler.plugins.kotlin.lower.ComposableTargetAnnotationsTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerIntrinsicTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerLambdaMemoization
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerParamTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.CopyDefaultValuesFromExpectLowering
+import androidx.compose.compiler.plugins.kotlin.lower.DurableFunctionKeyTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.DurableKeyVisitor
 import androidx.compose.compiler.plugins.kotlin.lower.KlibAssignableParamTransformer
-import androidx.compose.compiler.plugins.kotlin.lower.DurableFunctionKeyTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.LiveLiteralTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.WrapJsComposableLambdaLowering
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.CreateDecoysTransformer
@@ -75,10 +75,7 @@ class ComposeIrGenerationExtension(
         val symbolRemapper = ComposableSymbolRemapper()
 
         if (metricsDestination != null || reportsDestination != null) {
-            metrics = ModuleMetricsImpl(
-                moduleFragment.name.asString(),
-                pluginContext
-            )
+            metrics = ModuleMetricsImpl(moduleFragment.name.asString())
         }
 
         ClassStabilityTransformer(
