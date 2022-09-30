@@ -26,11 +26,6 @@ abstract class AbstractNativeSimpleTest {
         testRunner.run()
     }
 
-    protected fun invokeCInterop(inputDef: File, outputLib: File, extraArgs: Array<String>) {
-        val args = arrayOf("cinterop", "-o", outputLib.canonicalPath, "-def", inputDef.canonicalPath)
-        org.jetbrains.kotlin.cli.utilities.main(args + extraArgs)
-    }
-
     protected fun invokeKLibContents(klib: File): String {
         val output = StringBuilder()
         val lib = Library(klib.canonicalPath, null, "host")

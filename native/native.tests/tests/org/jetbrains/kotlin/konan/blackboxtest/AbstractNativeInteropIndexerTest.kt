@@ -10,11 +10,13 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
-import org.junit.jupiter.api.Tag
-import org.jetbrains.kotlin.konan.blackboxtest.support.runner.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
+import org.junit.jupiter.api.Tag
+import java.io.File
 
 abstract class AbstractNativeInteropIndexerFModulesTest : AbstractNativeInteropIndexerTest() {
     override val fmodules = true
@@ -25,7 +27,7 @@ abstract class AbstractNativeInteropIndexerNoFModulesTest : AbstractNativeIntero
 }
 
 @Tag("interop-indexer")
-abstract class AbstractNativeInteropIndexerTest : AbstractNativeSimpleTest() {
+abstract class AbstractNativeInteropIndexerTest : AbstractNativeInteropIndexerBaseTest() {
     abstract val fmodules: Boolean
 
     @Synchronized
@@ -34,21 +36,18 @@ abstract class AbstractNativeInteropIndexerTest : AbstractNativeSimpleTest() {
         val testDataDir = testPathFull.parentFile.parentFile
         val includeFolder = testDataDir.resolve("include")
         val defFile = testPathFull.resolve("pod1.def")
-
-        val testBuildDir = testRunSettings.get<SimpleTestDirectories>().testBuildDir
-        val klibFile = testBuildDir.resolve("pod1.klib")
-
-        val fmodulesArgs = if (fmodules) arrayOf("-compiler-option", "-fmodules") else arrayOf()
+        val fmodulesArgs = if (fmodules) listOf("-compiler-option", "-fmodules") else listOf()
         val includeFrameworkArgs = if (testDataDir.name == "simple")
-            arrayOf("-compiler-option", "-I${includeFolder.canonicalPath}")
+            listOf("-compiler-option", "-I${includeFolder.canonicalPath}")
         else
-            arrayOf("-compiler-option", "-F${testDataDir.canonicalPath}")
+            listOf("-compiler-option", "-F${testDataDir.canonicalPath}")
 
-        invokeCInterop(defFile, klibFile, includeFrameworkArgs + fmodulesArgs)
+        val testCase: TestCase = generateCInteropTestCaseWithSingleDef(defFile, includeFrameworkArgs + fmodulesArgs)
+        val klib: KLIB = testCase.cinteropToLibrary().resultingArtifact
 
-        val contents = invokeKLibContents(klibFile)
+        val klibContents = invokeKLibContents(klib.klibFile)
 
         val expectedOutput = testPathFull.resolve("contents.gold.txt").readText()
-        assertEquals(StringUtilRt.convertLineSeparators(expectedOutput), StringUtilRt.convertLineSeparators(contents))
+        assertEquals(StringUtilRt.convertLineSeparators(expectedOutput), StringUtilRt.convertLineSeparators(klibContents))
     }
 }

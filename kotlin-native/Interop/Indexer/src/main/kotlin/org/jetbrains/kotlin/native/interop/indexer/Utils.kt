@@ -697,7 +697,7 @@ class TUOptimizedIndex {
      * Should AST file contain declarations from nested headers, this fun makes both headers to refer to PCM file.
      */
     internal fun processInclude(includerFilename: String, includedFilename: String) {
-        if (includerFilename != includedFilename)  // this check is needed since couple of MacOS SDK headers include themselves
+        if (includerFilename != includedFilename)
             unitsByHeaderFile[includerFilename].let {
                 unitsByHeaderFile.putAll(includedFilename, it)
             }
