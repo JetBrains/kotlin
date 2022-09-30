@@ -41,14 +41,14 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             """.trimIndent()
         "rem" -> {
             """
-                Calculates the remainder of truncating division of this value by the other value.
+                Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
                 
                 The result is always less than the divisor.
                 """.trimIndent()
         }
         "mod" -> {
             """
-                Calculates the remainder of flooring division of this value by the other value.
+                Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
 
                 The result is always less than the divisor.
                 

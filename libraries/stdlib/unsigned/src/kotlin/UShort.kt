@@ -123,28 +123,28 @@ public value class UShort @kotlin.internal.IntrinsicConstEvaluation @PublishedAp
     public inline operator fun div(other: ULong): ULong = this.toULong().div(other)
 
     /**
-     * Calculates the remainder of truncating division of this value by the other value.
+     * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
      * 
      * The result is always less than the divisor.
      */
     @kotlin.internal.InlineOnly
     public inline operator fun rem(other: UByte): UInt = this.toUInt().rem(other.toUInt())
     /**
-     * Calculates the remainder of truncating division of this value by the other value.
+     * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
      * 
      * The result is always less than the divisor.
      */
     @kotlin.internal.InlineOnly
     public inline operator fun rem(other: UShort): UInt = this.toUInt().rem(other.toUInt())
     /**
-     * Calculates the remainder of truncating division of this value by the other value.
+     * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
      * 
      * The result is always less than the divisor.
      */
     @kotlin.internal.InlineOnly
     public inline operator fun rem(other: UInt): UInt = this.toUInt().rem(other)
     /**
-     * Calculates the remainder of truncating division of this value by the other value.
+     * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
      * 
      * The result is always less than the divisor.
      */
@@ -181,7 +181,7 @@ public value class UShort @kotlin.internal.IntrinsicConstEvaluation @PublishedAp
     public inline fun floorDiv(other: ULong): ULong = this.toULong().floorDiv(other)
 
     /**
-     * Calculates the remainder of flooring division of this value by the other value.
+     * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
      * 
      * The result is always less than the divisor.
      * 
@@ -190,7 +190,7 @@ public value class UShort @kotlin.internal.IntrinsicConstEvaluation @PublishedAp
     @kotlin.internal.InlineOnly
     public inline fun mod(other: UByte): UByte = this.toUInt().mod(other.toUInt()).toUByte()
     /**
-     * Calculates the remainder of flooring division of this value by the other value.
+     * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
      * 
      * The result is always less than the divisor.
      * 
@@ -199,7 +199,7 @@ public value class UShort @kotlin.internal.IntrinsicConstEvaluation @PublishedAp
     @kotlin.internal.InlineOnly
     public inline fun mod(other: UShort): UShort = this.toUInt().mod(other.toUInt()).toUShort()
     /**
-     * Calculates the remainder of flooring division of this value by the other value.
+     * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
      * 
      * The result is always less than the divisor.
      * 
@@ -208,7 +208,7 @@ public value class UShort @kotlin.internal.IntrinsicConstEvaluation @PublishedAp
     @kotlin.internal.InlineOnly
     public inline fun mod(other: UInt): UInt = this.toUInt().mod(other)
     /**
-     * Calculates the remainder of flooring division of this value by the other value.
+     * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
      * 
      * The result is always less than the divisor.
      * 
