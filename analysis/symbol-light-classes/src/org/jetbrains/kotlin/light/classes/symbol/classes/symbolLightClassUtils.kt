@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiReferenceList
-import org.jetbrains.kotlin.analysis.api.KtAllowAnalysisOnEdt
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.lifetime.allowAnalysisOnEdt
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
@@ -31,11 +29,13 @@ import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.light.classes.symbol.*
+import org.jetbrains.kotlin.light.classes.symbol.allowLightClassesOnEdt
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
+import org.jetbrains.kotlin.light.classes.symbol.copy
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForProperty
+import org.jetbrains.kotlin.light.classes.symbol.mapType
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightConstructor
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightNoArgConstructor
@@ -47,8 +47,7 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import java.util.*
 
-@OptIn(KtAllowAnalysisOnEdt::class)
-internal fun createSymbolLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? = allowAnalysisOnEdt {
+internal fun createSymbolLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? = allowLightClassesOnEdt {
     val anonymousObject = classOrObject.parent as? KtObjectLiteralExpression
     if (anonymousObject != null) {
         return analyzeForLightClasses(anonymousObject) {

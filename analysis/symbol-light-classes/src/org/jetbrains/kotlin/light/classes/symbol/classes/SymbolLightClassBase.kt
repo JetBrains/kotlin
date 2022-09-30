@@ -18,14 +18,13 @@ import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.analysis.api.KtAllowAnalysisOnEdt
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.lifetime.allowAnalysisOnEdt
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.SymbolFakeFile
+import org.jetbrains.kotlin.light.classes.symbol.allowLightClassesOnEdt
 import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import javax.swing.Icon
 
@@ -34,10 +33,9 @@ abstract class SymbolLightClassBase protected constructor(
     manager: PsiManager
 ) : LightElement(manager, KotlinLanguage.INSTANCE), PsiClass, KtExtensibleLightClass {
     private class SymbolLightClassesLazyCreator(private val project: Project) : KotlinClassInnerStuffCache.LazyCreator() {
-        @OptIn(KtAllowAnalysisOnEdt::class)
         override fun <T : Any> get(initializer: () -> T, dependencies: List<Any>): Lazy<T> = object : Lazy<T> {
             private val cachedValue = PsiCachedValueImpl(PsiManager.getInstance(project)) {
-                CachedValueProvider.Result.create(allowAnalysisOnEdt(initializer), dependencies)
+                CachedValueProvider.Result.create(allowLightClassesOnEdt(initializer), dependencies)
             }
 
             override val value: T
