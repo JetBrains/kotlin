@@ -20,10 +20,9 @@ import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.library.SerializedMetadata
 
-data class SerializerInput(
+internal data class SerializerInput(
         val moduleDescriptor: ModuleDescriptor,
-        val irModule: IrModuleFragment?,
-        val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>
+        val psiToIrResult: PsiToIrResult?,
 )
 
 data class SerializerResult(
@@ -43,15 +42,16 @@ internal val SerializerPhase = object : SimpleNamedCompilerPhase<PhaseContext, S
         val relativePathBase = config.configuration.get(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES) ?: emptyList()
         val normalizeAbsolutePaths = config.configuration.get(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH) ?: false
 
-        val serializedIr = input.irModule?.let { ir ->
+        val serializedIr = if (input.psiToIrResult != null) {
+            val ir = input.psiToIrResult.irModule
             KonanIrModuleSerializer(
-                    messageLogger, ir.irBuiltins, input.expectDescriptorToSymbol,
+                    messageLogger, ir.irBuiltins, input.psiToIrResult.expectDescriptorToSymbol,
                     skipExpects = !expectActualLinker,
                     compatibilityMode = CompatibilityMode.CURRENT,
                     normalizeAbsolutePaths = normalizeAbsolutePaths,
                     sourceBaseDirs = relativePathBase,
             ).serializedIrModule(ir)
-        }
+        } else null
 
         val serializer = KlibMetadataMonolithicSerializer(
                 config.configuration.languageVersionSettings,

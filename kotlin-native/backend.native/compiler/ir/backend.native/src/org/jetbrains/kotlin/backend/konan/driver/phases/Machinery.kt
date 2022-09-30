@@ -117,10 +117,10 @@ internal class PhaseEngine(
     fun runSerializer(
             config: KonanConfig,
             moduleDescriptor: ModuleDescriptor,
-            psiToIrResult: PsiToIrResult.Full,
+            psiToIrResult: PsiToIrResult?,
     ): SerializerResult {
         val context = BasicPhaseContext(config)
-        val input = SerializerInput(moduleDescriptor, psiToIrResult.irModule, psiToIrResult.expectDescriptorToSymbol)
+        val input = SerializerInput(moduleDescriptor, psiToIrResult)
         return this.runPhase(context, SerializerPhase, input)
     }
 

@@ -251,7 +251,7 @@ internal fun PsiToIrContext.psiToIr(
         module.files.forEach { it.metadata = KonanFileMetadataSource(module as KonanIrModuleFragmentImpl) }
     }
 
-    return PsiToIrResult.Full(
+    return PsiToIrResult(
             irModules,
             mainModule,
             expectDescriptorToSymbol,

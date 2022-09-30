@@ -24,17 +24,13 @@ data class PsiToIrInput(
         val isProducingLibrary: Boolean,
 )
 
-internal sealed class PsiToIrResult {
-    object Empty : PsiToIrResult()
-
-    class Full(
-            val irModules: Map<String, IrModuleFragment>,
-            val irModule: IrModuleFragment,
-            val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
-            val symbols: KonanSymbols,
-            val irLinker: KonanIrLinker?,
-    ) : PsiToIrResult()
-}
+internal class PsiToIrResult(
+        val irModules: Map<String, IrModuleFragment>,
+        val irModule: IrModuleFragment,
+        val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
+        val symbols: KonanSymbols,
+        val irLinker: KonanIrLinker?,
+)
 
 // TODO: Consider component-based approach
 internal interface PsiToIrContext :

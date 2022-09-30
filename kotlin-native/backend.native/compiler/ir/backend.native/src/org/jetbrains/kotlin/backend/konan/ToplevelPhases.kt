@@ -121,12 +121,8 @@ internal val psiToIrPhase = konanUnitPhase(
             val frontendPhaseResult = getFrontendResult()
             require(frontendPhaseResult is FrontendPhaseResult.Full)
             val input = PsiToIrInput(frontendPhaseResult, symbolTable!!, isProducingLibrary = config.produce == CompilerOutputKind.LIBRARY)
-            when (val result = this.psiToIr(input, useLinkerWhenProducingLibrary = false)) {
-                PsiToIrResult.Empty -> {}
-                is PsiToIrResult.Full -> {
-                    this.populateAfterPsiToIr(result)
-                }
-            }
+            val psiToIrResult = this.psiToIr(input, useLinkerWhenProducingLibrary = false)
+            this.populateAfterPsiToIr(psiToIrResult)
             val originalBindingContext = bindingContext as? CleanableBindingContext
                         ?: error("BindingContext should be cleanable in K/N IR to avoid leaking memory: $bindingContext")
             originalBindingContext.clear()
@@ -459,7 +455,6 @@ internal val bitcodePhase = SameTypeNamedCompilerPhase(
                 RTTIPhase then
                 generateDebugInfoHeaderPhase then
                 escapeAnalysisPhase then
-//                localEscapeAnalysisPhase then
                 codegenPhase then
                 finalizeDebugInfoPhase then
                 cStubsPhase
@@ -483,7 +478,7 @@ internal val backendCodegen = SameTypeNamedCompilerPhase(
                 allLoweringsPhase then // Lower current module first.
                 dependenciesLowerPhase then // Then lower all libraries in topological order.
                                             // With that we guarantee that inline functions are unlowered while being inlined.
-                //dumpTestsPhase then
+                dumpTestsPhase then
                 bitcodePhase then
                 verifyBitcodePhase then
                 printBitcodePhase then
@@ -572,8 +567,6 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         // is workarounded in [FunctionReferenceLowering] by taking erasure of SAM conversion type).
         // Also see https://youtrack.jetbrains.com/issue/KT-50399 for more details.
         disable(checkSamSuperTypesPhase)
-
-        disable(localEscapeAnalysisPhase)
 
         disableIf(singleCompilation, config.producePerFileCache)
         disableUnless(umbrellaCompilation, config.producePerFileCache)

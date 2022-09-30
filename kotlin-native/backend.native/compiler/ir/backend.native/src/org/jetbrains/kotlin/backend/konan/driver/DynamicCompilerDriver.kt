@@ -19,13 +19,7 @@ import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
 
 internal class DynamicCompilerDriver: CompilerDriver() {
     companion object {
-        fun supportsConfig(config: KonanConfig): Boolean {
-            if (config.produce == CompilerOutputKind.LIBRARY) {
-                return true
-            }
-            if (config.produce == CompilerOutputKind.FRAMEWORK) {
-                return true
-            }
+        fun supportsConfig(): Boolean {
             return false
         }
     }
@@ -56,10 +50,11 @@ internal class DynamicCompilerDriver: CompilerDriver() {
             return
         }
         require(frontendResult is FrontendPhaseResult.Full)
-        val psiToIrResult = SymbolTableResource().use { symbolTable ->
-            engine.runPsiToIr(config, frontendResult, symbolTable, isProducingLibrary = true)
-        }
-        require(psiToIrResult is PsiToIrResult.Full)
+        val psiToIrResult = if (!config.metadataKlib) {
+            SymbolTableResource().use { symbolTable ->
+                engine.runPsiToIr(config, frontendResult, symbolTable, isProducingLibrary = true)
+            }
+        } else null
         val serializerResult = engine.runSerializer(config, frontendResult.moduleDescriptor, psiToIrResult)
         engine.writeKlib(config, serializerResult)
     }
@@ -84,7 +79,6 @@ internal class DynamicCompilerDriver: CompilerDriver() {
             val psiToIrResult = engine.runPsiToIr(config, frontendResult, symbolTable, isProducingLibrary = false)
             Pair(psiToIrResult, objCCodeSpec)
         }
-        require(psiToIrResult is PsiToIrResult.Full)
         val context = Context(config)
         context.populateAfterFrontend(frontendResult)
         context.populateAfterPsiToIr(psiToIrResult)

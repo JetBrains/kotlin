@@ -100,7 +100,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
     }
 
     fun populateAfterPsiToIr(
-            psiToIrResult: PsiToIrResult.Full
+            psiToIrResult: PsiToIrResult
     ) {
         irModules = psiToIrResult.irModules
         irModule = psiToIrResult.irModule

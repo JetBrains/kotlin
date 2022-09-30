@@ -65,9 +65,18 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
         }
     }
 
-    private fun pickCompilerDriver(config: KonanConfig): CompilerDriver? = when {
-        DynamicCompilerDriver.supportsConfig(config) -> DynamicCompilerDriver()
-        StaticCompilerDriver.supportsConfig() -> StaticCompilerDriver()
-        else -> null
+    private fun pickCompilerDriver(config: KonanConfig): CompilerDriver? {
+        config.configuration[KonanConfigKeys.FORCE_COMPILER_DRIVER]?.let {
+            when (it) {
+                "dynamic" -> return DynamicCompilerDriver()
+                "static" -> return StaticCompilerDriver()
+                else -> error("Unknown compiler driver. Possible values: dynamic, static")
+            }
+        }
+        return when {
+            DynamicCompilerDriver.supportsConfig() -> DynamicCompilerDriver()
+            StaticCompilerDriver.supportsConfig() -> StaticCompilerDriver()
+            else -> null
+        }
     }
 }

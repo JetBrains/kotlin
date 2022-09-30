@@ -247,15 +247,6 @@ internal val escapeAnalysisPhase = makeKonanModuleOpPhase(
         }
 )
 
-internal val localEscapeAnalysisPhase = makeKonanModuleOpPhase(
-        name = "LocalEscapeAnalysis",
-        description = "Local escape analysis",
-        prerequisite = setOf(buildDFGPhase, devirtualizationAnalysisPhase),
-        op = { context, _ ->
-            LocalEscapeAnalysis.computeLifetimes(context, context.moduleDFG!!, context.lifetimes)
-        }
-)
-
 internal val codegenPhase = makeKonanModuleOpPhase(
         name = "Codegen",
         description = "Code generation",
