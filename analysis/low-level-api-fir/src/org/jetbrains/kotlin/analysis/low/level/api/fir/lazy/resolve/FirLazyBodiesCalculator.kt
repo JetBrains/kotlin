@@ -347,4 +347,8 @@ private class FirLazyBodiesCalculatorTransformer(val contractableOnly: Boolean =
         }
         return enumEntry
     }
+
+    override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: PersistentList<FirDeclaration>): FirStatement {
+        return propertyAccessor.also { transformProperty(it.propertySymbol.fir, data) }
+    }
 }

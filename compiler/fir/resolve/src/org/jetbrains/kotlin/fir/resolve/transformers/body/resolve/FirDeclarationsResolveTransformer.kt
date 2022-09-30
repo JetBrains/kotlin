@@ -298,6 +298,12 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
     }
 
+    override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: ResolutionMode): FirStatement {
+        return propertyAccessor.also {
+            transformProperty(it.propertySymbol.fir, data)
+        }
+    }
+
     override fun transformWrappedDelegateExpression(
         wrappedDelegateExpression: FirWrappedDelegateExpression,
         data: ResolutionMode,
