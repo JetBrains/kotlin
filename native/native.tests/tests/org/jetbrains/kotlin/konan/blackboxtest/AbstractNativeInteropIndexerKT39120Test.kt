@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.runner.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 
 @Tag("interop-indexer")
-abstract class AbstractNativeInteropIndexerKT39120Test : AbstractNativeSimpleTest() {
+abstract class AbstractNativeInteropIndexerKT39120Test : AbstractNativeInteropIndexerBaseTest() {
 
     @Synchronized
     protected fun runTest(@TestDataFile testPath: String) {
@@ -26,18 +26,17 @@ abstract class AbstractNativeInteropIndexerKT39120Test : AbstractNativeSimpleTes
         val def1File = testPathFull.resolve("pod1.def")
         val def2File = testPathFull.resolve("pod2.def")
 
-        val testBuildDir = testRunSettings.get<SimpleTestDirectories>().testBuildDir
-        val klib1File = testBuildDir.resolve("pod1.klib")
-        val klib2File = testBuildDir.resolve("pod2.klib")
+        val includeFrameworkArgs = listOf("-compiler-option", "-F${testDataDir.canonicalPath}")
 
-        val includeFrameworkArgs = arrayOf("-compiler-option", "-F${testDataDir.canonicalPath}")
-        val cinterop2ExtraArgs = arrayOf("-l", klib1File.canonicalPath, "-compiler-option", "-fmodules")
+        val test1Case: TestCase = generateCInteropTestCaseWithSingleDef(def1File, includeFrameworkArgs)
+        val klib1: KLIB = test1Case.cinteropToLibrary().resultingArtifact
 
-        invokeCInterop(def1File, klib1File, includeFrameworkArgs)
-        invokeCInterop(def2File, klib2File, includeFrameworkArgs + cinterop2ExtraArgs)
+        val cinterop2ExtraArgs = listOf("-l", klib1.klibFile.canonicalPath, "-compiler-option", "-fmodules")
+        val test2Case: TestCase = generateCInteropTestCaseWithSingleDef(def2File, includeFrameworkArgs + cinterop2ExtraArgs)
+        val klib2: KLIB = test2Case.cinteropToLibrary().resultingArtifact
 
-        val contents1 = invokeKLibContents(klib1File)
-        val contents2 = invokeKLibContents(klib2File)
+        val contents1 = invokeKLibContents(klib1.klibFile)
+        val contents2 = invokeKLibContents(klib2.klibFile)
 
         val expectedEssentialOutput = testPathFull.resolve("contents.gold.txt").readText().trim()
         val essentialOutput = (contents1 + contents2).split("\n").filter {

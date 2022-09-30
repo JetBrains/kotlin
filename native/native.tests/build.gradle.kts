@@ -19,7 +19,7 @@ dependencies {
     testImplementation(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":generators:test-generator"))
     testApiJUnit5()
-    testImplementation(project(":kotlin-native:utilities:cli-runner"))
+    testImplementation(project(":kotlin-native:Interop:StubGenerator"))
     testImplementation(project(":kotlin-native:klib"))
 
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))

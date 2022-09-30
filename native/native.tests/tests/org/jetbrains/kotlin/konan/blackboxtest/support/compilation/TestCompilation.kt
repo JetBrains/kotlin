@@ -18,9 +18,14 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.util.buildArgs
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.flatMapToSet
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.mapToSet
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
+import org.jetbrains.kotlin.native.interop.gen.jvm.InternalInteropOptions
+import org.jetbrains.kotlin.native.interop.gen.jvm.interop
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File
+import kotlin.test.assertNull
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
 internal abstract class TestCompilation<A : TestCompilationArtifact> {
     abstract val result: TestCompilationResult<out A>
@@ -71,7 +76,7 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
 
     protected open fun postCompileCheck() = Unit
 
-    private fun doCompile(): TestCompilationResult.ImmediateResult<out A> {
+    protected open fun doCompile(): TestCompilationResult.ImmediateResult<out A> {
         val compilerArgs = buildArgs {
             applyCommonArgs()
             applySpecificArgs(this)
@@ -182,6 +187,73 @@ internal class LibraryCompilation(
             "-output", expectedArtifact.path
         )
         super.applySpecificArgs(argsBuilder)
+    }
+}
+
+internal class CInteropCompilation(
+    val settings: Settings,
+    freeCompilerArgs: TestCompilerArgs,
+    sourceModules: Collection<TestModule>,
+    dependencies: Iterable<TestCompilationDependency<*>>,
+    expectedArtifact: KLIB
+) : SourceBasedCompilation<KLIB>(
+    targets = settings.get(),
+    home = settings.get(),
+    classLoader = settings.get(),
+    optimizationMode = settings.get(),
+    memoryModel = settings.get(),
+    threadStateChecker = settings.get(),
+    sanitizer = settings.get(),
+    gcType = settings.get(),
+    gcScheduler = settings.get(),
+    freeCompilerArgs = freeCompilerArgs,
+    sourceModules = sourceModules,
+    dependencies = CategorizedDependencies(dependencies),
+    expectedArtifact = expectedArtifact
+) {
+    override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.defaultForTesting
+
+    override fun doCompile(): TestCompilationResult.ImmediateResult<out KLIB> {
+        val extraArgsArray = freeCompilerArgs.compilerArgs.toTypedArray()
+        val maybeCompilerArgs: Array<String>?
+
+        @OptIn(ExperimentalTime::class)
+        val duration = measureTime {
+            maybeCompilerArgs = invokeCInterop(
+                sourceModules.first().files.first().location,
+                expectedArtifact.klibFile,
+                extraArgsArray
+            )
+        }
+        assertNull(maybeCompilerArgs)  // check that compiler invocation is not needed
+
+        val dummyCompilerCall = LoggedData.CompilerCall(
+            parameters = LoggedData.CompilerParameters(home = settings.get(), compilerArgs = extraArgsArray, sourceModules = sourceModules),
+            exitCode = ExitCode.OK,
+            compilerOutput = maybeCompilerArgs?.joinToString() ?: "<empty>",
+            compilerOutputHasErrors = false,
+            duration = duration
+        )
+        return TestCompilationResult.Success(expectedArtifact, dummyCompilerCall)
+    }
+
+    private fun invokeCInterop(inputDef: File, outputLib: File, extraArgs: Array<String>): Array<String>? {
+        val args = arrayOf("-o", outputLib.canonicalPath, "-def", inputDef.canonicalPath)
+        val buildDir = org.jetbrains.kotlin.konan.file.File("${outputLib.canonicalPath}-build")
+        val generatedDir = org.jetbrains.kotlin.konan.file.File(buildDir, "kotlin")
+        val nativesDir = org.jetbrains.kotlin.konan.file.File(buildDir, "natives")
+        val manifest = org.jetbrains.kotlin.konan.file.File(buildDir, "manifest.properties")
+        val cstubsName = "cstubs"
+
+        return interop(
+            "native",
+            args + extraArgs,
+            InternalInteropOptions(generatedDir.absolutePath,
+                                   nativesDir.absolutePath, manifest.path,
+                                   cstubsName
+            ),
+            false
+        )
     }
 }
 
