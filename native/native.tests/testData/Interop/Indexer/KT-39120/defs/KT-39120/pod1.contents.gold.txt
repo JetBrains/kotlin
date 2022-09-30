@@ -1,0 +1,2 @@
+    var pod1VersionNumber: Double
+    val pod1VersionString: CArrayPointer<UByteVar /* = UByteVarOf<UByte> */> /* = CPointer<UByteVar /* = UByteVarOf<UByte> */> */

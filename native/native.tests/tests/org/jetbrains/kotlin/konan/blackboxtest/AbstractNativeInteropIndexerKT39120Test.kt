@@ -25,23 +25,31 @@ abstract class AbstractNativeInteropIndexerKT39120Test : AbstractNativeInteropIn
         val testDataDir = testPathFull.parentFile.parentFile
         val def1File = testPathFull.resolve("pod1.def")
         val def2File = testPathFull.resolve("pod2.def")
+        val golden1File = testPathFull.resolve("pod1.contents.gold.txt")
+        val golden2File = testPathFull.resolve("pod2.contents.gold.txt")
 
         val includeFrameworkArgs = listOf("-compiler-option", "-F${testDataDir.canonicalPath}")
 
         val test1Case: TestCase = generateCInteropTestCaseWithSingleDef(def1File, includeFrameworkArgs)
         val klib1: KLIB = test1Case.cinteropToLibrary().resultingArtifact
+        val contents1 = klib1.getContents()
+
+        val expectedFiltered1Output = golden1File.readText()
+        val actualFiltered1Output = filterContentsOutput(contents1, " pod.Version")
+        assertEquals(StringUtilRt.convertLineSeparators(expectedFiltered1Output), StringUtilRt.convertLineSeparators(actualFiltered1Output))
 
         val cinterop2ExtraArgs = listOf("-l", klib1.klibFile.canonicalPath, "-compiler-option", "-fmodules")
         val test2Case: TestCase = generateCInteropTestCaseWithSingleDef(def2File, includeFrameworkArgs + cinterop2ExtraArgs)
         val klib2: KLIB = test2Case.cinteropToLibrary().resultingArtifact
+        val contents2 = klib2.getContents()
 
-        val contents1 = invokeKLibContents(klib1.klibFile)
-        val contents2 = invokeKLibContents(klib2.klibFile)
-
-        val expectedEssentialOutput = testPathFull.resolve("contents.gold.txt").readText().trim()
-        val essentialOutput = (contents1 + contents2).split("\n").filter {
-            it.contains(Regex("package pod| pod.Version"))
-        }.joinToString(separator = "\n")
-        assertEquals(StringUtilRt.convertLineSeparators(expectedEssentialOutput), StringUtilRt.convertLineSeparators(essentialOutput))
+        val expectedFiltered2Output = golden2File.readText()
+        val actualFiltered2Output = filterContentsOutput(contents2, " pod.Version")
+        assertEquals(StringUtilRt.convertLineSeparators(expectedFiltered2Output), StringUtilRt.convertLineSeparators(actualFiltered2Output))
     }
+
+    private fun filterContentsOutput(contents: String, pattern: String) =
+        contents.split("\n").filter {
+            it.contains(Regex(pattern))
+        }.joinToString(separator = "\n")
 }

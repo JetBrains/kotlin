@@ -227,14 +227,14 @@ internal class CInteropCompilation(
         }
         assertNull(maybeCompilerArgs)  // check that compiler invocation is not needed
 
-        val dummyCompilerCall = LoggedData.CompilerCall(
+        val loggedCInteropCall = LoggedData.CompilerCall(
             parameters = LoggedData.CompilerParameters(home = settings.get(), compilerArgs = extraArgsArray, sourceModules = sourceModules),
-            exitCode = ExitCode.OK,
+            exitCode = ExitCode.OK,  // TODO check cinterop error behavior (for ex, def file is corrupted)
             compilerOutput = maybeCompilerArgs?.joinToString() ?: "<empty>",
             compilerOutputHasErrors = false,
             duration = duration
         )
-        return TestCompilationResult.Success(expectedArtifact, dummyCompilerCall)
+        return TestCompilationResult.Success(expectedArtifact, loggedCInteropCall)
     }
 
     private fun invokeCInterop(inputDef: File, outputLib: File, extraArgs: Array<String>): Array<String>? {
