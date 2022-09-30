@@ -41,10 +41,7 @@ abstract class FirBasedSymbol<E : FirDeclaration> {
 
     val resolvedAnnotationsWithArguments: List<FirAnnotation>
         get() {
-            // NB: annotation argument mapping (w/ vararg) are built/replaced during call completion, hence BODY_RESOLVE.
-            // TODO(KT-53371): optimize ARGUMENTS_OF_ANNOTATIONS to build annotation argument mapping too.
-            // TODO(KT-53519): Even with BODY_RESOLVE, argument mapping for annotations on [FirValueParameter] is not properly built.
-            lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+            lazyResolveToPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
             return fir.annotations
         }
 
