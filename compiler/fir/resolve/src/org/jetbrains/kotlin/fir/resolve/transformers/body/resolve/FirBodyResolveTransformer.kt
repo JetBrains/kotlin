@@ -220,7 +220,7 @@ open class FirBodyResolveTransformer(
     }
 
     override fun transformErrorAnnotationCall(errorAnnotationCall: FirErrorAnnotationCall, data: ResolutionMode): FirStatement {
-        return transformAnnotationCall(errorAnnotationCall, data)
+        return expressionsTransformer.transformErrorAnnotationCall(errorAnnotationCall, data)
     }
 
     override fun transformDelegatedConstructorCall(

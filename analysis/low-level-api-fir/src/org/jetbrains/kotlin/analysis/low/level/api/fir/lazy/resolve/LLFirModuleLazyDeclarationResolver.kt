@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 
 internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirModuleResolveComponents) {
     /**
@@ -308,10 +309,12 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                 ?: error("Container for local declaration cannot be null")
             val isLocalDeclarationResolveRequested =
                 possiblyLocalDeclaration != nonLocalDeclaration
+            val isValueParameterInsidePrimaryConstructor = firDeclarationToResolve is FirValueParameter
+                    && possiblyLocalDeclaration is KtPrimaryConstructor
 
             val declarationToResolve: FirDeclaration
 
-            if (isLocalDeclarationResolveRequested) {
+            if (isLocalDeclarationResolveRequested && !isValueParameterInsidePrimaryConstructor) {
                 val enumEntry = possiblyLocalDeclaration.getContainingEnumEntryAsMemberOfEnumEntry() ?: return
 
                 declarationToResolve = enumEntry.findSourceNonLocalFirDeclaration(

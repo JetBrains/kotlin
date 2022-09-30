@@ -68,7 +68,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
     }
 
-    private fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
+    protected fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
         transformer.firTowerDataContextCollector?.addDeclarationContext(declaration, context.towerDataContext)
         return transformer.transformDeclarationContent(declaration, data)
     }
@@ -97,7 +97,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return FirMemberTypeParameterScope(declaration)
     }
 
-    private fun doTransformTypeParameters(declaration: FirMemberDeclaration) {
+    protected fun doTransformTypeParameters(declaration: FirMemberDeclaration) {
         for (typeParameter in declaration.typeParameters) {
             typeParameter.transformChildren(transformer, ResolutionMode.ContextIndependent)
         }
@@ -1103,7 +1103,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     private val FirVariable.initializerResolved: Boolean
         get() = initializer?.typeRef is FirResolvedTypeRef
 
-    private val FirFunction.bodyResolved: Boolean
+    protected val FirFunction.bodyResolved: Boolean
         get() = body !is FirLazyBlock && body?.typeRef is FirResolvedTypeRef
 
 }
