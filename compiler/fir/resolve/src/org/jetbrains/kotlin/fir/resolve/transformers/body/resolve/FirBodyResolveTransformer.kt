@@ -282,6 +282,10 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformProperty(property, data)
     }
 
+    override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: ResolutionMode): FirStatement {
+        return declarationsTransformer.transformPropertyAccessor(propertyAccessor, data)
+    }
+
     override fun transformBackingField(
         backingField: FirBackingField,
         data: ResolutionMode
