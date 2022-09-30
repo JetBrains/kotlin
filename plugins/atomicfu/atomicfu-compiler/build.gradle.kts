@@ -29,6 +29,8 @@ val atomicfuJsClasspath by configurations.creating {
 
 val atomicfuClasspath by configurations.creating
 
+val atomicfuNativeClasspath by configurations.creating
+
 val atomicfuJsIrRuntimeForTests by configurations.creating {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
@@ -92,6 +94,7 @@ dependencies {
     atomicfuJsClasspath("org.jetbrains.kotlinx:atomicfu-js:0.17.1") { isTransitive = false }
     atomicfuJsIrRuntimeForTests(project(":kotlinx-atomicfu-runtime"))  { isTransitive = false }
     atomicfuClasspath("org.jetbrains.kotlinx:atomicfu:0.18.3") { isTransitive = false }
+    atomicfuNativeClasspath("org.jetbrains.kotlinx:atomicfu-macosx64:0.18.3") { isTransitive = false }
 
     embedded(project(":kotlinx-atomicfu-runtime")) {
         attributes {
@@ -157,4 +160,4 @@ fun Test.setUpJsIrBoxTests() {
     systemProperty("kotlin.js.test.root.out.dir", "$buildDir/")
 }
 
-val nativeBoxTest = nativeTest("nativeBoxTest", "codegen", atomicfuClasspath)
+val nativeBoxTest = nativeTest("nativeBoxTest", "codegen", atomicfuNativeClasspath)
