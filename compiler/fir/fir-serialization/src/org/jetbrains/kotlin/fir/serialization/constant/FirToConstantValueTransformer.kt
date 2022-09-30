@@ -103,7 +103,7 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
                     AnnotationValue(
                         buildAnnotationCall {
                             argumentMapping = buildAnnotationArgumentMapping {
-                                constructorCall.argumentMapping?.forEach { (firExpression, firValueParameter) ->
+                                constructorCall.resolvedArgumentMapping?.forEach { (firExpression, firValueParameter) ->
                                     mapping[firValueParameter.name] = firExpression
                                 }
                             }
