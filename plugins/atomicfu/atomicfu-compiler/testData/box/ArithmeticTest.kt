@@ -1,3 +1,5 @@
+// FREE_COMPILER_ARGS: -Xplugin=plugins/atomicfu/atomicfu-compiler/build/libs/kotlinx-atomicfu-compiler-plugin-1.8.255-SNAPSHOT.jar
+
 import kotlinx.atomicfu.*
 import kotlin.test.*
 
