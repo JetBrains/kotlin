@@ -63,7 +63,7 @@ internal fun checkDeclarationStatusIsResolved(declaration: FirMemberDeclaration)
     val status = declaration.status
     checkWithAttachmentBuilder(
         condition = status is FirResolvedDeclarationStatus,
-        message = { "Expected ${FirResolvedDeclarationStatus::class.simpleName} but ${declaration::class.simpleName} found for ${declaration::class.simpleName}" }
+        message = { "Expected ${FirResolvedDeclarationStatus::class.simpleName} but ${status::class.simpleName} found for ${declaration::class.simpleName}" }
     ) {
         withFirEntry("declaration", declaration)
     }
