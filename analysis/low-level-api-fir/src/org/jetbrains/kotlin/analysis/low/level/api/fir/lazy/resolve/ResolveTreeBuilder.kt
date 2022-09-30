@@ -33,6 +33,7 @@ internal object ResolveTreeBuilder {
         FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS -> "ArgumentsOfAnnotations"
         FirResolvePhase.CONTRACTS -> "Contracts"
         FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> "ImplicitTypes"
+        FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING -> "AnnotationsArgumentsMapping"
         FirResolvePhase.BODY_RESOLVE -> "Body"
         else -> "?"
     }
