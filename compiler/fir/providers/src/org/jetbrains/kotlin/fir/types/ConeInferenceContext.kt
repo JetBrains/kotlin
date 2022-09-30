@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.types.AbstractTypeRefiner
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeContext {
 
@@ -260,10 +259,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     ): CapturedTypeMarker {
         require(lowerType is ConeKotlinType?)
         require(constructorProjection is ConeTypeProjection)
+        @Suppress("UNCHECKED_CAST")
         return ConeCapturedType(
             captureStatus,
             lowerType,
-            constructor = ConeCapturedTypeConstructor(constructorProjection, constructorSupertypes.cast())
+            constructor = ConeCapturedTypeConstructor(constructorProjection, constructorSupertypes as List<ConeKotlinType>)
         )
     }
 
@@ -284,7 +284,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun SimpleTypeMarker.replaceArguments(newArguments: List<TypeArgumentMarker>): SimpleTypeMarker {
         require(this is ConeKotlinType)
-        return this.withArguments(newArguments.cast<List<ConeTypeProjection>>().toTypedArray())
+        @Suppress("UNCHECKED_CAST")
+        return this.withArguments((newArguments as List<ConeTypeProjection>).toTypedArray())
     }
 
     override fun SimpleTypeMarker.replaceArguments(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): SimpleTypeMarker {
@@ -506,7 +507,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun KotlinTypeMarker.extractArgumentsForFunctionalTypeOrSubtype(): List<KotlinTypeMarker> {
-        val builtInFunctionalType = getFunctionalTypeFromSupertypes().cast<ConeKotlinType>()
+        val builtInFunctionalType = getFunctionalTypeFromSupertypes() as ConeKotlinType
         return buildList {
             // excluding return type
             for (index in 0 until builtInFunctionalType.argumentsCount() - 1) {
@@ -529,7 +530,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
                 var functionalSupertype: KotlinTypeMarker? = null
                 simpleType.anySuperTypeConstructor { type ->
                     simpleType.fastCorrespondingSupertypes(type.typeConstructor())?.any { superType ->
-                        val isFunctional = superType.cast<ConeKotlinType>().isBuiltinFunctionalType(session)
+                        val isFunctional = (superType as ConeKotlinType).isBuiltinFunctionalType(session)
                         if (isFunctional)
                             functionalSupertype = superType
                         isFunctional

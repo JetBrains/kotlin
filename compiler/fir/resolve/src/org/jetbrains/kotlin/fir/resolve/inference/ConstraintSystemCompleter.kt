@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 
 class ConstraintSystemCompleter(components: BodyResolveComponents, private val context: BodyResolveContext) {
@@ -220,8 +219,9 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         resolutionContext: ResolutionContext,
         argument: PostponedAtomWithRevisableExpectedType,
     ): Boolean = with(c) {
-        val revisedExpectedType: ConeKotlinType =
-            argument.revisedExpectedType?.takeIf { it.isFunctionOrKFunctionWithAnySuspendability() }?.cast() ?: return false
+        val revisedExpectedType = argument.revisedExpectedType
+            ?.takeIf { it.isFunctionOrKFunctionWithAnySuspendability() } as ConeKotlinType?
+            ?: return false
 
         when (argument) {
             is ResolvedCallableReferenceAtom ->
