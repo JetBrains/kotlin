@@ -88,8 +88,10 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     @get:Input
     abstract val binaryOptions: MapProperty<String, String>
 
+    private val nativeBinaryOptions = PropertiesProvider(project).nativeBinaryOptions
+
     @get:Input
-    internal val allBinaryOptions get() = PropertiesProvider(project).nativeBinaryOptions + binaryOptions.get()
+    internal val allBinaryOptions: Provider<Map<String, String>> = binaryOptions.map { it + nativeBinaryOptions }
 
     override val toolOptions: CompilerCommonToolOptions = objectFactory
         .newInstance<CompilerCommonToolOptionsDefault>()
@@ -204,7 +206,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
             entryPoint = entryPoint.getOrNull(),
             embedBitcode = embedBitcode.get(),
             linkerOpts = linkerOptions.get(),
-            binaryOptions = allBinaryOptions,
+            binaryOptions = allBinaryOptions.get(),
             isStaticFramework = staticFramework.get(),
             exportLibraries = exportLibraries.klibs(),
             includeLibraries = includeLibraries.klibs(),
