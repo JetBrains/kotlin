@@ -89,6 +89,15 @@ FILE: classWithTypeParameters.kt
 
     }
 
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: classWithTypeParameters.kt
+    public final [ANNOTATIONS_ARGUMENTS_MAPPING] class ResolveMe<[ANNOTATIONS_ARGUMENTS_MAPPING] T : R|kotlin/Int|, [ANNOTATIONS_ARGUMENTS_MAPPING] K> : R|kotlin/Any| {
+        public [ANNOTATIONS_ARGUMENTS_MAPPING] [ContainingClassKey=ResolveMe] constructor<[ANNOTATIONS_ARGUMENTS_MAPPING] T : R|kotlin/Int|, [ANNOTATIONS_ARGUMENTS_MAPPING] K>(): R|ResolveMe<T, K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
 EXPECT_ACTUAL_MATCHING:
 FILE: classWithTypeParameters.kt
     public final [EXPECT_ACTUAL_MATCHING] class ResolveMe<[EXPECT_ACTUAL_MATCHING] T : R|kotlin/Int|, [EXPECT_ACTUAL_MATCHING] K> : R|kotlin/Any| {

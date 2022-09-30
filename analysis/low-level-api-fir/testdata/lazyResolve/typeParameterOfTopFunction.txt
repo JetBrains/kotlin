@@ -41,6 +41,11 @@ FILE: typeParameterOfTopFunction.kt
     public final [IMPLICIT_TYPES_BODY_RESOLVE] fun <[IMPLICIT_TYPES_BODY_RESOLVE] resolveMe> ddd(): R|kotlin/Unit| {
     }
 
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: typeParameterOfTopFunction.kt
+    public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun <[ANNOTATIONS_ARGUMENTS_MAPPING] resolveMe> ddd(): R|kotlin/Unit| {
+    }
+
 EXPECT_ACTUAL_MATCHING:
 FILE: typeParameterOfTopFunction.kt
     public final [EXPECT_ACTUAL_MATCHING] fun <[EXPECT_ACTUAL_MATCHING] resolveMe> ddd(): R|kotlin/Unit| {
