@@ -352,14 +352,7 @@ class NativeDownloadAndPlatformLibsIT : BaseGradleIT() {
                 """.trimIndent()
             )
             gradleBuildScript().let {
-                val text = it.readText()
-                    .replaceFirst(
-                        "mavenLocal()",
-                        """
-                           mavenLocal()
-                           maven("${mavenUrl()}")
-                        """.trimIndent()
-                    )
+                val text = it.readText().replaceFirst("// <MavenPlaceholder>", "maven(\"${mavenUrl()}\")")
                 it.writeText(text)
             }
 
@@ -382,6 +375,27 @@ class NativeDownloadAndPlatformLibsIT : BaseGradleIT() {
             build("assemble") {
                 assertContains("Could not find org.jetbrains.kotlin:kotlin-native")
                 assertFailed()
+            }
+        }
+    }
+
+    @Test
+    fun `download from maven specified in the build and with parameter`() {
+        with(transformNativeTestProjectWithPluginDsl("native-download-maven")) {
+            gradleProperties().appendText(
+                """
+                    kotlin.native.distribution.mavenDownloadUrl=${mavenUrl()}
+                    kotlin.native.distribution.downloadFromMaven=true
+                """.trimIndent()
+            )
+            gradleBuildScript().let {
+                val text = it.readText().replaceFirst("// <MavenPlaceholder>", "maven(\"${mavenUrl()}\")")
+                it.writeText(text)
+            }
+
+            build("assemble") {
+                assertSuccessful()
+                assertContains("Unpack Kotlin/Native compiler to ")
             }
         }
     }
