@@ -12,6 +12,9 @@ public final class C /* C*/ {
   @org.jetbrains.annotations.NotNull()
   public static final C.Companion Companion;
 
+  @org.jetbrains.annotations.NotNull()
+  public static final C.Factory Factory;
+
   @kotlin.jvm.JvmStatic()
   public static final void foo();//  foo()
 

@@ -57,7 +57,7 @@ internal class SymbolLightFieldForEnumEntry(
                 enumEntrySymbol = enumEntrySymbol,
                 enumConstant = this@SymbolLightFieldForEnumEntry,
                 enumClass = containingClass,
-                manager = manager
+                ktModule = enumEntrySymbol.getContainingModule(),
             )
         }
     }

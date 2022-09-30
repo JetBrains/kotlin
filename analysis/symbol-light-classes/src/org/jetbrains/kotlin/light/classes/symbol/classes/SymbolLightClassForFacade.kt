@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
@@ -41,8 +42,9 @@ import org.jetbrains.kotlin.psi.KtFile
 context(KtAnalysisSession)
 class SymbolLightClassForFacade(
     override val facadeClassFqName: FqName,
-    override val files: Collection<KtFile>
-) : SymbolLightClassBase(files.first().manager), KtLightClassForFacade {
+    override val files: Collection<KtFile>,
+    ktModule: KtModule,
+) : SymbolLightClassBase(ktModule, files.first().manager), KtLightClassForFacade {
 
     init {
         require(files.isNotEmpty())
@@ -159,7 +161,7 @@ class SymbolLightClassForFacade(
 
     override fun getOwnMethods() = _ownMethods
 
-    override fun copy(): SymbolLightClassForFacade = SymbolLightClassForFacade(facadeClassFqName, files)
+    override fun copy(): SymbolLightClassForFacade = SymbolLightClassForFacade(facadeClassFqName, files, ktModule)
 
     private val packageFqName: FqName = facadeClassFqName.parent()
 

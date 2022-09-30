@@ -30,7 +30,7 @@ class SymbolBasedFakeLightClass(kotlinOrigin: KtClassOrObject) :
         LightClassInheritanceHelper.getService(project).isInheritor(this, baseClass, checkDeep).ifSure { return it }
 
         val baseClassOrigin = (baseClass as? KtLightClass)?.kotlinOrigin ?: return false
-        return analyzeForLightClasses(baseClassOrigin) {
+        return analyzeForLightClasses(kotlinOrigin) {
             kotlinOrigin.checkIsInheritor(baseClassOrigin, checkDeep)
         }
     }

@@ -14,15 +14,13 @@ import com.intellij.psi.stubs.StubElement
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.light.classes.symbol.SymbolLightIdentifier
-import org.jetbrains.kotlin.light.classes.symbol.allowLightClassesOnEdt
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmStaticAnnotation
@@ -31,28 +29,43 @@ import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObjec
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForProperty
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-context(KtAnalysisSession)
-abstract class SymbolLightClassForClassOrObject(
-    private val classOrObjectSymbol: KtNamedClassOrObjectSymbol,
-    manager: PsiManager
-) : SymbolLightClassBase(manager),
+abstract class SymbolLightClassForClassOrObject(protected val classOrObject: KtClassOrObject, ktModule: KtModule) :
+    SymbolLightClassBase(ktModule, classOrObject.manager),
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
+    protected fun <T> withClassOrObjectSymbol(action: KtAnalysisSession.(KtClassOrObjectSymbol) -> T): T =
+        analyzeForLightClasses(ktModule) {
+            action(classOrObject.getClassOrObjectSymbol()!!)
+        }
 
-    override val isTopLevel: Boolean = classOrObjectSymbol.symbolKind == KtSymbolKind.TOP_LEVEL
+    protected fun <T> withNamedClassOrObjectSymbol(action: KtAnalysisSession.(KtNamedClassOrObjectSymbol) -> T): T =
+        analyzeForLightClasses(ktModule) {
+            val namedClassOrObjectSymbol = classOrObject.getNamedClassOrObjectSymbol()
+            require(namedClassOrObjectSymbol != null)
 
-    internal val isCompanionObject: Boolean
-        get() = classOrObjectSymbol.classKind == KtClassKind.COMPANION_OBJECT
+            action(namedClassOrObjectSymbol)
+        }
+
+    override val isTopLevel: Boolean get() = classOrObject.isTopLevel()
+    internal val isCompanionObject: Boolean get() = classOrObject is KtObjectDeclaration && classOrObject.isCompanion()
+    internal val isLocal: Boolean get() = classOrObject.isLocal
+    internal val isNamedObject: Boolean get() = classOrObject is KtObjectDeclaration && !classOrObject.isCompanion()
+    internal val isObject: Boolean get() = classOrObject is KtObjectDeclaration
+    internal val isInterface: Boolean get() = classOrObject is KtClass && classOrObject.isInterface()
+    internal val isAnnotation: Boolean get() = classOrObject is KtClass && classOrObject.isAnnotation()
+    internal val isEnum: Boolean get() = classOrObject is KtClass && classOrObject.isEnum()
 
     private val _isDeprecated: Boolean by lazyPub {
-        classOrObjectSymbol.hasDeprecatedAnnotation()
+        withClassOrObjectSymbol { it.hasDeprecatedAnnotation() }
     }
 
     override fun isDeprecated(): Boolean = _isDeprecated
@@ -62,7 +75,9 @@ abstract class SymbolLightClassForClassOrObject(
     abstract override fun getOwnMethods(): List<PsiMethod>
 
     private val _identifier: PsiIdentifier by lazyPub {
-        SymbolLightIdentifier(this, classOrObjectSymbol)
+        withClassOrObjectSymbol {
+            SymbolLightIdentifier(this@SymbolLightClassForClassOrObject, it)
+        }
     }
 
     override fun getNameIdentifier(): PsiIdentifier? = _identifier
@@ -72,40 +87,44 @@ abstract class SymbolLightClassForClassOrObject(
 
     private val _typeParameterList: PsiTypeParameterList? by lazyPub {
         hasTypeParameters().ifTrue {
-            SymbolLightTypeParameterList(
-                owner = this,
-                symbolWithTypeParameterList = classOrObjectSymbol,
-            )
+            withClassOrObjectSymbol {
+                SymbolLightTypeParameterList(
+                    owner = this@SymbolLightClassForClassOrObject,
+                    symbolWithTypeParameterList = it,
+                )
+            }
         }
     }
 
-    override fun hasTypeParameters(): Boolean =
-        classOrObjectSymbol.typeParameters.isNotEmpty()
+    override fun hasTypeParameters(): Boolean = classOrObject.typeParameters.isNotEmpty()
 
     override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
-    override fun getTypeParameters(): Array<PsiTypeParameter> =
-        _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
+    override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
 
     private val _ownInnerClasses: List<SymbolLightClassBase> by lazyPub {
-        classOrObjectSymbol.createInnerClasses(manager, this, kotlinOrigin)
+        withClassOrObjectSymbol {
+            it.createInnerClasses(this@SymbolLightClassForClassOrObject, classOrObject)
+        }
     }
 
     override fun getOwnInnerClasses(): List<PsiClass> = _ownInnerClasses
 
-    override fun getTextOffset(): Int = kotlinOrigin?.textOffset ?: 0
-    override fun getStartOffsetInParent(): Int = kotlinOrigin?.startOffsetInParent ?: 0
+    override fun getTextOffset(): Int = classOrObject.textOffset
+    override fun getStartOffsetInParent(): Int = classOrObject.startOffsetInParent
     override fun isWritable() = false
-    override val kotlinOrigin: KtClassOrObject? = classOrObjectSymbol.psi as? KtClassOrObject
+    override val kotlinOrigin: KtClassOrObject = classOrObject
 
-    protected fun addMethodsFromCompanionIfNeeded(result: MutableList<KtLightMethod>) {
+    protected fun addMethodsFromCompanionIfNeeded(
+        result: MutableList<KtLightMethod>,
+    ): Unit = withNamedClassOrObjectSymbol { classOrObjectSymbol ->
         classOrObjectSymbol.companionObject?.run {
             val methods = getDeclaredMemberScope().getCallableSymbols()
                 .filterIsInstance<KtFunctionSymbol>()
                 .filter { it.hasJvmStaticAnnotation() }
+
             createMethods(methods, result)
 
-            val properties = getDeclaredMemberScope().getCallableSymbols()
-                .filterIsInstance<KtPropertySymbol>()
+            val properties = getDeclaredMemberScope().getCallableSymbols().filterIsInstance<KtPropertySymbol>()
             properties.forEach { property ->
                 createPropertyAccessors(
                     result,
@@ -117,7 +136,9 @@ abstract class SymbolLightClassForClassOrObject(
         }
     }
 
-    protected fun addCompanionObjectFieldIfNeeded(result: MutableList<KtLightField>) {
+    protected fun addCompanionObjectFieldIfNeeded(
+        result: MutableList<KtLightField>,
+    ): Unit = withNamedClassOrObjectSymbol { classOrObjectSymbol ->
         classOrObjectSymbol.companionObject?.run {
             result.add(
                 SymbolLightFieldForObject(
@@ -130,25 +151,28 @@ abstract class SymbolLightClassForClassOrObject(
         }
     }
 
-    protected fun addFieldsFromCompanionIfNeeded(result: MutableList<KtLightField>) {
-        classOrObjectSymbol.companionObject?.run {
-            getDeclaredMemberScope().getCallableSymbols()
-                .filterIsInstance<KtPropertySymbol>()
-                .applyIf(isInterface) {
-                    filter { it.isConstOrJvmField }
-                }
-                .mapTo(result) {
-                    SymbolLightFieldForProperty(
-                        propertySymbol = it,
-                        fieldName = it.name.asString(),
-                        containingClass = this@SymbolLightClassForClassOrObject,
-                        lightMemberOrigin = null,
-                        isTopLevel = false,
-                        forceStatic = true,
-                        takePropertyVisibility = it.isConstOrJvmField
-                    )
-                }
-        }
+    protected fun addFieldsFromCompanionIfNeeded(
+        result: MutableList<KtLightField>,
+    ): Unit = withNamedClassOrObjectSymbol { classOrObjectSymbol ->
+        classOrObjectSymbol.companionObject
+            ?.getDeclaredMemberScope()
+            ?.getCallableSymbols()
+            ?.filterIsInstance<KtPropertySymbol>()
+            ?.applyIf(isInterface) {
+                filter { it.isConstOrJvmField }
+            }
+            ?.mapTo(result) {
+                SymbolLightFieldForProperty(
+                    propertySymbol = it,
+                    fieldName = it.name.asString(),
+                    containingClass = this@SymbolLightClassForClassOrObject,
+                    lightMemberOrigin = null,
+                    isTopLevel = false,
+                    forceStatic = true,
+                    takePropertyVisibility = it.isConstOrJvmField,
+                )
+            }
+
     }
 
     private val KtPropertySymbol.isConstOrJvmField: Boolean
@@ -157,39 +181,39 @@ abstract class SymbolLightClassForClassOrObject(
     private val KtPropertySymbol.isConst: Boolean
         get() = (this as? KtKotlinPropertySymbol)?.isConst == true
 
-    override fun getNavigationElement(): PsiElement = kotlinOrigin ?: this
+    override fun getNavigationElement(): PsiElement = classOrObject
 
     override fun isEquivalentTo(another: PsiElement?): Boolean =
         basicIsEquivalentTo(this, another) ||
                 another is PsiClass && qualifiedName != null && another.qualifiedName == qualifiedName
 
-    abstract override fun equals(other: Any?): Boolean
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
 
-    abstract override fun hashCode(): Int
+        return other?.safeAs<SymbolLightClassForClassOrObject>()?.classOrObject == classOrObject
+    }
 
-    override fun getName(): String? = allowLightClassesOnEdt { classOrObjectSymbol.name.asString() }
+    override fun hashCode(): Int = classOrObject.hashCode()
+
+    override fun getName(): String? = classOrObject.name
 
     override fun hasModifierProperty(@NonNls name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
 
-    abstract override fun isInterface(): Boolean
+    override fun isInterface(): Boolean = isInterface
+    override fun isAnnotationType(): Boolean = isAnnotation
+    override fun isEnum(): Boolean = isEnum
 
-    abstract override fun isAnnotationType(): Boolean
+    override fun isValid(): Boolean = classOrObject.isValid
 
-    abstract override fun isEnum(): Boolean
+    override fun toString() = "${this::class.java.simpleName}:${classOrObject.getDebugText()}"
 
-    override fun isValid(): Boolean = kotlinOrigin?.isValid ?: true
+    override fun getUseScope(): SearchScope = classOrObject.useScope
+    override fun getElementType(): IStubElementType<out StubElement<*>, *>? = classOrObject.elementType
+    override fun getStub(): KotlinClassOrObjectStub<out KtClassOrObject>? = classOrObject.stub
 
-    override fun toString() =
-        "${this::class.java.simpleName}:${kotlinOrigin?.getDebugText()}"
+    override val originKind: LightClassOriginKind get() = LightClassOriginKind.SOURCE
 
-    override fun getUseScope(): SearchScope = kotlinOrigin?.useScope ?: TODO()
-    override fun getElementType(): IStubElementType<out StubElement<*>, *>? = kotlinOrigin?.elementType
-    override fun getStub(): KotlinClassOrObjectStub<out KtClassOrObject>? = kotlinOrigin?.stub
-
-    override val originKind: LightClassOriginKind
-        get() = LightClassOriginKind.SOURCE
-
-    override fun getQualifiedName() = kotlinOrigin?.fqName?.asString()
+    override fun getQualifiedName() = classOrObject.fqName?.asString()
 
     override fun getInterfaces(): Array<PsiClass> = PsiClassImplUtil.getInterfaces(this)
     override fun getSuperClass(): PsiClass? = PsiClassImplUtil.getSuperClass(this)
@@ -197,16 +221,17 @@ abstract class SymbolLightClassForClassOrObject(
     override fun getSuperTypes(): Array<PsiClassType> = PsiClassImplUtil.getSuperTypes(this)
 
     override fun getContainingClass(): PsiClass? {
-        val containingBody = kotlinOrigin?.parent as? KtClassBody
+        val containingBody = classOrObject.parent as? KtClassBody
         val containingClass = containingBody?.parent as? KtClassOrObject
         containingClass?.let { return it.toLightClass() }
         return null
     }
 
     override fun getParent(): PsiElement? {
-        if (classOrObjectSymbol.safeAs<KtSymbolWithKind>()?.symbolKind == KtSymbolKind.LOCAL) {
-            return kotlinOrigin?.let(::getParentForLocalDeclaration)
+        if (isLocal) {
+            return classOrObject.let(::getParentForLocalDeclaration)
         }
+
         return containingClass ?: containingFile
     }
 

@@ -101,7 +101,7 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
     }
 
     override fun createInstanceOfLightClass(classOrObject: KtClassOrObject): KtLightClass? {
-        return createSymbolLightClassNoCache(classOrObject)
+        return createSymbolLightClassNoCache(classOrObject, classOrObject.getKtModule(project))
     }
 
     override fun createInstanceOfDecompiledLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade? {
@@ -123,8 +123,11 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
     override fun createInstanceOfLightFacade(
         facadeFqName: FqName,
         files: List<KtFile>,
-    ): KtLightClassForFacade = analyzeForLightClasses(files.first()) {
-        SymbolLightClassForFacade(facadeFqName, files)
+    ): KtLightClassForFacade {
+        val firstFile = files.first()
+        return analyzeForLightClasses(firstFile) {
+            SymbolLightClassForFacade(facadeFqName, files, firstFile.getKtModule(project))
+        }
     }
 
     override val KtModule.contentSearchScope: GlobalSearchScope get() = this.contentScope

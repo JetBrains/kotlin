@@ -5,56 +5,51 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
-import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiReferenceList
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.lifetime.isValid
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
 
-context(KtAnalysisSession)
-internal abstract class SymbolLightInterfaceOrAnnotationClass(
-    private val classOrObjectSymbol: KtNamedClassOrObjectSymbol,
-    manager: PsiManager
-) : SymbolLightClassForClassOrObject(classOrObjectSymbol, manager) {
+internal abstract class SymbolLightInterfaceOrAnnotationClass(classOrObject: KtClassOrObject, ktModule: KtModule) :
+    SymbolLightClassForClassOrObject(classOrObject, ktModule) {
 
     init {
-        require(
-            classOrObjectSymbol.classKind == KtClassKind.OBJECT ||
-                    classOrObjectSymbol.classKind == KtClassKind.INTERFACE ||
-                    classOrObjectSymbol.classKind == KtClassKind.ANNOTATION_CLASS
-        )
+        require(isInterface || isAnnotation)
     }
 
     private val _modifierList: PsiModifierList? by lazyPub {
-        val lazyModifiers = lazy {
-            buildSet {
-                add(classOrObjectSymbol.toPsiVisibilityForClass(isNested = !isTopLevel))
-                add(PsiModifier.ABSTRACT)
-                if (!isTopLevel && !classOrObjectSymbol.isInner) {
-                    add(PsiModifier.STATIC)
+        withNamedClassOrObjectSymbol { classOrObjectSymbol ->
+            val lazyModifiers = lazy {
+                buildSet {
+                    add(classOrObjectSymbol.toPsiVisibilityForClass(isNested = !isTopLevel))
+                    add(PsiModifier.ABSTRACT)
+                    if (!isTopLevel && !classOrObjectSymbol.isInner) {
+                        add(PsiModifier.STATIC)
+                    }
                 }
             }
-        }
 
-        val lazyAnnotations = lazyPub {
-            classOrObjectSymbol.computeAnnotations(
-                parent = this@SymbolLightInterfaceOrAnnotationClass,
-                nullability = NullabilityType.Unknown,
-                annotationUseSiteTarget = null,
-            )
-        }
+            val lazyAnnotations = lazyPub {
+                classOrObjectSymbol.computeAnnotations(
+                    parent = this@SymbolLightInterfaceOrAnnotationClass,
+                    nullability = NullabilityType.Unknown,
+                    annotationUseSiteTarget = null,
+                )
+            }
 
-        SymbolLightClassModifierList(this@SymbolLightInterfaceOrAnnotationClass, lazyModifiers, lazyAnnotations)
+            SymbolLightClassModifierList(this@SymbolLightInterfaceOrAnnotationClass, lazyModifiers, lazyAnnotations)
+        }
     }
+
+    override fun isInterface(): Boolean = true
+    override fun isEnum(): Boolean = false
 
     override fun getModifierList(): PsiModifierList? = _modifierList
 
@@ -68,10 +63,4 @@ internal abstract class SymbolLightInterfaceOrAnnotationClass(
     override fun getOwnFields(): List<KtLightField> = _ownFields
 
     override fun getImplementsList(): PsiReferenceList? = null
-
-    override fun isInterface(): Boolean = true
-
-    override fun isEnum(): Boolean = false
-
-    override fun isValid(): Boolean = super.isValid() && classOrObjectSymbol.isValid()
 }

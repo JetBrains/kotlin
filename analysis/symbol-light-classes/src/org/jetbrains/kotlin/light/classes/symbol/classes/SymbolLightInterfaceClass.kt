@@ -5,56 +5,46 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
-import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReferenceList
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.lifetime.isValid
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.psi.KtClassOrObject
 
-context(KtAnalysisSession)
 internal open class SymbolLightInterfaceClass(
-    private val classOrObjectSymbol: KtNamedClassOrObjectSymbol,
-    manager: PsiManager
-) : SymbolLightInterfaceOrAnnotationClass(classOrObjectSymbol, manager) {
-
+    classOrObject: KtClassOrObject,
+    ktModule: KtModule,
+) : SymbolLightInterfaceOrAnnotationClass(classOrObject, ktModule) {
     init {
-        require(classOrObjectSymbol.classKind == KtClassKind.INTERFACE)
+        require(isInterface)
     }
 
     private val _ownMethods: List<KtLightMethod> by lazyPub {
-        val result = mutableListOf<KtLightMethod>()
+        withClassOrObjectSymbol { classOrObjectSymbol ->
+            val result = mutableListOf<KtLightMethod>()
 
-        val visibleDeclarations = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
-            .filterNot { it is KtFunctionSymbol && it.visibility.isPrivateOrPrivateToThis() }
+            val visibleDeclarations = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
+                .filterNot { it is KtFunctionSymbol && it.visibility.isPrivateOrPrivateToThis() }
 
-        createMethods(visibleDeclarations, result)
-        addMethodsFromCompanionIfNeeded(result)
+            createMethods(visibleDeclarations, result)
+            addMethodsFromCompanionIfNeeded(result)
 
-        result
+            result
+        }
     }
 
     override fun getOwnMethods(): List<PsiMethod> = _ownMethods
 
-    override fun equals(other: Any?): Boolean =
-        other === this || (other is SymbolLightInterfaceClass && classOrObjectSymbol == other.classOrObjectSymbol)
-
-    override fun hashCode(): Int = classOrObjectSymbol.hashCode()
-
-    override fun isAnnotationType(): Boolean = false
-
-    override fun copy(): SymbolLightClassForClassOrObject = SymbolLightInterfaceClass(classOrObjectSymbol, manager)
+    override fun copy(): SymbolLightClassForClassOrObject = SymbolLightInterfaceClass(classOrObject, ktModule)
 
     private val _extendsList: PsiReferenceList by lazyPub {
-        createInheritanceList(forExtendsList = true, classOrObjectSymbol.superTypes)
+        withClassOrObjectSymbol { classOrObjectSymbol ->
+            createInheritanceList(forExtendsList = true, classOrObjectSymbol.superTypes)
+        }
     }
 
     override fun getExtendsList(): PsiReferenceList? = _extendsList
-
-    override fun isValid(): Boolean = super.isValid() && classOrObjectSymbol.isValid()
 }
