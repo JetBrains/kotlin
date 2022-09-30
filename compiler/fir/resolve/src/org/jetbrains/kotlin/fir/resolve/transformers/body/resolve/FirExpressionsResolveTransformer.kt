@@ -1058,14 +1058,13 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 dataFlowAnalyzer.exitAnnotation(result ?: annotationCall)
                 if (result == null) return annotationCall
                 callCompleter.completeCall(result, noExpectedType)
-                // TODO: FirBlackBoxCodegenTestGenerated.Annotations.testDelegatedPropertySetter, it fails with hard cast
-                (result.argumentList as? FirResolvedArgumentList)?.let { annotationCall.replaceArgumentMapping((it).toAnnotationArgumentMapping()) }
+                (result.argumentList as FirResolvedArgumentList).let { annotationCall.replaceArgumentMapping((it).toAnnotationArgumentMapping()) }
                 annotationCall
             }
         }
     }
 
-    private inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T {
+    protected inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T {
         enableArrayOfCallTransformation = true
         return try {
             block()

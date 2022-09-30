@@ -53,6 +53,13 @@ FILE: propertyWithTypeParameters.kt
             ^ TODO#()
         }
 
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: propertyWithTypeParameters.kt
+    public final [ANNOTATIONS_ARGUMENTS_MAPPING] val <[ANNOTATIONS_ARGUMENTS_MAPPING] T : R|kotlin/Int|, [ANNOTATIONS_ARGUMENTS_MAPPING] K> R|T|.resolveMe: R|K|
+        public [ANNOTATIONS_ARGUMENTS_MAPPING] get(): R|K| {
+            ^ TODO#()
+        }
+
 EXPECT_ACTUAL_MATCHING:
 FILE: propertyWithTypeParameters.kt
     public final [EXPECT_ACTUAL_MATCHING] val <[EXPECT_ACTUAL_MATCHING] T : R|kotlin/Int|, [EXPECT_ACTUAL_MATCHING] K> R|T|.resolveMe: R|K|
