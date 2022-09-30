@@ -1,0 +1,13 @@
+FILE fqName:<root> fileName:/recordPropertyAccess.kt
+  FUN name:test_1 visibility:public modality:FINAL <> (rec:<root>.MyRec) returnType:kotlin.Unit
+    VALUE_PARAMETER name:rec index:0 type:<root>.MyRec
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun name (): @[FlexibleNullability] kotlin.String? declared in <root>.MyRec' type=@[FlexibleNullability] kotlin.String? origin=GET_PROPERTY
+          $this: GET_VAR 'rec: <root>.MyRec declared in <root>.test_1' type=<root>.MyRec origin=null
+  FUN name:test_2 visibility:public modality:FINAL <> (rec:<root>.MyRec) returnType:kotlin.Unit
+    VALUE_PARAMETER name:rec index:0 type:<root>.MyRec
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun name (): @[FlexibleNullability] kotlin.String? declared in <root>.MyRec' type=@[FlexibleNullability] kotlin.String? origin=null
+          $this: GET_VAR 'rec: <root>.MyRec declared in <root>.test_2' type=<root>.MyRec origin=null

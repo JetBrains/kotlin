@@ -937,6 +937,22 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/ir/irText/declarations/jvmRecord")
+        @TestDataPath("$PROJECT_ROOT")
+        public class JvmRecord {
+            @Test
+            public void testAllFilesPresentInJvmRecord() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/jvmRecord"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("javaRecordComponentAccess.kt")
+            public void testJavaRecordComponentAccess() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/jvmRecord/javaRecordComponentAccess.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/ir/irText/declarations/multiplatform")
         @TestDataPath("$PROJECT_ROOT")
         public class Multiplatform {

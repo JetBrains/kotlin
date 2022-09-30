@@ -1,0 +1,24 @@
+package
+
+public fun takeAny(/*0*/ a: kotlin.Any): kotlin.Unit
+public fun takeInt(/*0*/ x: kotlin.Int): kotlin.Unit
+public fun takeString(/*0*/ s: kotlin.String): kotlin.Unit
+public fun test_1(/*0*/ mr: MyRecord<kotlin.Int>): kotlin.Unit
+public fun test_2(/*0*/ mr: MyRecord<kotlin.String>): kotlin.Unit
+public fun test_3(/*0*/ mr: MyRecord<*>): kotlin.Unit
+
+public interface MyInterface</*0*/ T : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public abstract fun x(): T!
+}
+
+/*record*/ public final class MyRecord</*0*/ T : kotlin.Any!> : java.lang.Record, MyInterface<T!> {
+    public constructor MyRecord</*0*/ T : kotlin.Any!>(/*0*/ x: T!)
+    public abstract override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+    /*record component*/ public open override /*1*/ fun x(): T!
+}
+

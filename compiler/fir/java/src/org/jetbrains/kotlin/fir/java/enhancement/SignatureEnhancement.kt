@@ -258,6 +258,8 @@ class FirSignatureEnhancement(
                 annotations += valueParameter.annotations
             }
         }
+        var isJavaRecordComponent = false
+
         val function = when (firMethod) {
             is FirJavaConstructor -> {
                 val symbol = FirConstructorSymbol(methodId)
@@ -301,6 +303,7 @@ class FirSignatureEnhancement(
                 }
             }
             is FirJavaMethod -> {
+                isJavaRecordComponent = firMethod.isJavaRecordComponent ?: false
                 FirSimpleFunctionBuilder().apply {
                     source = firMethod.source
                     moduleData = this@FirSignatureEnhancement.moduleData
@@ -321,7 +324,11 @@ class FirSignatureEnhancement(
         }.apply {
             annotations += firMethod.annotations
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(fromJava = true, session.firCachesFactory)
-        }.build()
+        }.build().apply {
+            if (isJavaRecordComponent) {
+                this.isJavaRecordComponent = true
+            }
+        }
 
         return function.symbol
     }
