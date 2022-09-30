@@ -67,6 +67,11 @@ internal object LazyTransformerFactory {
             scopeSession,
             towerDataContextCollector
         )
+        FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING -> LLFirDesignatedAnnotationArgumentsMappingTransformer(
+            designation,
+            designation.firFile.moduleData.session,
+            scopeSession,
+        )
         FirResolvePhase.BODY_RESOLVE -> LLFirDesignatedBodyResolveTransformer(
             designation,
             designation.firFile.moduleData.session,

@@ -54,7 +54,7 @@ private fun renderAnnotation(annotation: FirAnnotation, coneTypeIdeRenderer: Con
 }
 
 private fun renderAndSortAnnotationArguments(descriptor: FirAnnotation, session: FirSession): List<String> {
-    val argumentList = mapAnnotationParameters(descriptor, session).entries.map { (name, value) ->
+    val argumentList = mapAnnotationParameters(descriptor).entries.map { (name, value) ->
         "$name = ${renderConstant(value, session)}"
     }
     return argumentList.sorted()
