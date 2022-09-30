@@ -287,7 +287,13 @@ internal open class SymbolLightClass(classOrObject: KtClassOrObject, ktModule: K
                 .mapNotNullTo(result) {
                     val enumEntry = it.psiSafe<KtEnumEntry>()
                     val name = enumEntry?.name ?: return@mapNotNullTo null
-                    SymbolLightFieldForEnumEntry(enumEntry, name, this@SymbolLightClass, null)
+                    SymbolLightFieldForEnumEntry(
+                        enumEntry = enumEntry,
+                        enumEntryName = name,
+                        containingClass = this@SymbolLightClass,
+                        lightMemberOrigin = null,
+                        ktModule = ktModule,
+                    )
                 }
         }
     }

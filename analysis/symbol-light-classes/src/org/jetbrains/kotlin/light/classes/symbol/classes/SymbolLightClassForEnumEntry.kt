@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiClassImplUtil
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.lifetime.isValid
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
@@ -21,15 +18,12 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassM
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-context(KtAnalysisSession)
 internal class SymbolLightClassForEnumEntry(
-    private val enumEntrySymbol: KtEnumEntrySymbol,
     private val enumConstant: SymbolLightFieldForEnumEntry,
     private val enumClass: SymbolLightClass,
     ktModule: KtModule,
 ) : SymbolLightClassBase(ktModule, enumConstant.manager), PsiEnumConstantInitializer {
-
-    override fun getName(): String = enumEntrySymbol.name.asString()
+    override fun getName(): String = enumConstant.name
 
     override fun getBaseClassType(): PsiClassType = enumConstant.type as PsiClassType //???TODO
 
@@ -43,13 +37,11 @@ internal class SymbolLightClassForEnumEntry(
     override fun isInQualifiedNew(): Boolean = false
 
     override fun equals(other: Any?): Boolean =
-        other is SymbolLightClassForEnumEntry &&
-                this.enumEntrySymbol == other.enumEntrySymbol
+        this === other || other is SymbolLightClassForEnumEntry && this.enumConstant == other.enumConstant
 
-    override fun hashCode(): Int =
-        enumEntrySymbol.hashCode()
+    override fun hashCode(): Int = enumConstant.hashCode()
 
-    override fun copy(): PsiElement = SymbolLightClassForEnumEntry(enumEntrySymbol, enumConstant, enumClass, ktModule)
+    override fun copy(): PsiElement = SymbolLightClassForEnumEntry(enumConstant, enumClass, ktModule)
 
     override fun toString(): String = "SymbolLightClassForEnumEntry:$name"
 
@@ -85,9 +77,9 @@ internal class SymbolLightClassForEnumEntry(
     override fun isEnum(): Boolean = false
 
     private val _extendsList: PsiReferenceList? by lazyPub {
-        val mappedType =
-            enumEntrySymbol.returnType.asPsiType(this@SymbolLightClassForEnumEntry, KtTypeMappingMode.SUPER_TYPE) as? PsiClassType
-                ?: return@lazyPub null
+        val mappedType = enumConstant.withEnumEntrySymbol { symbol ->
+            symbol.returnType.asPsiType(this@SymbolLightClassForEnumEntry, KtTypeMappingMode.SUPER_TYPE) as? PsiClassType
+        } ?: return@lazyPub null
 
         KotlinSuperTypeListBuilder(
             kotlinOrigin = enumClass.kotlinOrigin.getSuperTypeList(),
@@ -119,24 +111,22 @@ internal class SymbolLightClassForEnumEntry(
 
     override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false //TODO
 
-    override val kotlinOrigin: KtClassOrObject? = enumConstant.kotlinOrigin
+    override val kotlinOrigin: KtClassOrObject = enumConstant.kotlinOrigin
 
     override val originKind: LightClassOriginKind = LightClassOriginKind.SOURCE
 
     override fun getOwnFields(): MutableList<PsiField> = mutableListOf()
 
-    override fun getOwnMethods(): MutableList<KtLightMethod> {
+    override fun getOwnMethods(): MutableList<KtLightMethod> = enumConstant.withEnumEntrySymbol { enumEntrySymbol ->
         val result = mutableListOf<KtLightMethod>()
-
         val declaredMemberScope = enumEntrySymbol.getDeclaredMemberScope()
 
         createMethods(declaredMemberScope.getCallableSymbols(), result)
         createConstructors(declaredMemberScope.getConstructors(), result)
-
-        return result
+        result
     }
 
     override fun getOwnInnerClasses(): MutableList<PsiClass> = mutableListOf()
 
-    override fun isValid(): Boolean = super.isValid() && enumEntrySymbol.isValid()
+    override fun isValid(): Boolean = enumConstant.isValid
 }
