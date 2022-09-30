@@ -241,11 +241,8 @@ internal val linkerPhase = konanUnitPhase(
         op = {
             val input = LinkerPhaseInput(
                     compilerOutput,
-                    generationState.llvm,
                     llvmModuleSpecification,
                     coverage.enabled,
-                    generationState.outputFile,
-                    generationState.outputFiles,
             )
             Linker(this.generationState, input).link()
         },

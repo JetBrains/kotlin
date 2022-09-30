@@ -15,16 +15,12 @@ import org.jetbrains.kotlin.konan.TempFiles
 
 internal interface BinaryPhasesContext : PhaseContext {
     val tempFiles: TempFiles
-}
 
-internal class BinaryPhasesContextImpl(
-        private val basicPhaseContext: BasicPhaseContext,
-        override val tempFiles: TempFiles
-) : BinaryPhasesContext, PhaseContext by basicPhaseContext {
+    val outputFile: String
 
-    override fun dispose() {
-        tempFiles.dispose()
-    }
+    val outputFiles: OutputFiles
+
+    val llvm: Llvm
 }
 
 internal data class WriteBitcodeInput(val llvmModule: LLVMModuleRef)
@@ -63,11 +59,8 @@ internal val ObjectFilesPhase = object : SimpleNamedCompilerPhase<BinaryPhasesCo
 
 internal data class LinkerPhaseInput(
         val objectFiles: List<ObjectFile>,
-        val llvm: Llvm,
         val llvmModuleSpecification: LlvmModuleSpecification,
         val needsProfileLibrary: Boolean,
-        val outputFile: String,
-        val outputFiles: OutputFiles,
 )
 
 internal val LinkerPhase = object : SimpleNamedCompilerPhase<BinaryPhasesContext, LinkerPhaseInput, Unit>(
@@ -98,12 +91,9 @@ internal fun <T: BinaryPhasesContext> PhaseEngine<T>.produceObjectFiles(
 
 internal fun <T: BinaryPhasesContext> PhaseEngine<T>.linkObjectFiles(
         objectFiles: List<ObjectFile>,
-        llvm: Llvm,
         llvmModuleSpecification: LlvmModuleSpecification,
         needsProfileLibrary: Boolean,
-        outputFile: String,
-        outputFiles: OutputFiles,
 ) {
-    val input = LinkerPhaseInput(objectFiles, llvm, llvmModuleSpecification, needsProfileLibrary, outputFile, outputFiles)
+    val input = LinkerPhaseInput(objectFiles, llvmModuleSpecification, needsProfileLibrary)
     return this.runPhase(context, LinkerPhase, input)
 }

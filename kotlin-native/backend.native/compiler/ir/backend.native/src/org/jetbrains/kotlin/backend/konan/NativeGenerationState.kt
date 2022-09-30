@@ -34,7 +34,7 @@ internal class NativeGenerationState(private val context: Context) : BinaryPhase
     override val config = context.config
 
     private val outputPath = config.cacheSupport.tryGetImplicitOutput() ?: config.outputPath
-    val outputFiles = OutputFiles(outputPath, config.target, config.produce)
+    override val outputFiles: OutputFiles = OutputFiles(outputPath, config.target, config.produce)
     override val tempFiles = run {
         val pathToTempDir = config.configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR)?.let {
             val singleFileStrategy = config.cacheSupport.libraryToCache?.strategy as? CacheDeserializationStrategy.SingleFile
@@ -44,7 +44,7 @@ internal class NativeGenerationState(private val context: Context) : BinaryPhase
         }
         TempFiles(outputFiles.outputName, pathToTempDir)
     }
-    val outputFile = outputFiles.mainFileName
+    override val outputFile: String = outputFiles.mainFileName
 
     val inlineFunctionBodies = mutableListOf<SerializedInlineFunctionReference>()
     val classFields = mutableListOf<SerializedClassFields>()
@@ -92,7 +92,7 @@ internal class NativeGenerationState(private val context: Context) : BinaryPhase
 
     val llvmImports = Llvm.ImportsImpl(context)
     val runtime by runtimeDelegate
-    val llvm by llvmDelegate
+    override val llvm: Llvm by llvmDelegate
     val debugInfo by debugInfoDelegate
     val cStubsManager = CStubsManager(config.target)
     lateinit var llvmDeclarations: LlvmDeclarations

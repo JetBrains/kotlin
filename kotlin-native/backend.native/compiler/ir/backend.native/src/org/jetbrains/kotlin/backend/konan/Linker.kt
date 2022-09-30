@@ -93,13 +93,13 @@ internal class Linker(
     private val debug = context.config.debug || context.config.lightDebug
 
     fun link() {
-        val nativeDependencies = input.llvm.nativeDependenciesToLink
+        val nativeDependencies = context.llvm.nativeDependenciesToLink
 
         val includedBinariesLibraries = context.config.libraryToCache?.let { listOf(it.klib) }
                 ?: nativeDependencies.filterNot { context.config.cachedLibraries.isLibraryCached(it) }
         val includedBinaries = includedBinariesLibraries.map { (it as? KonanLibrary)?.includedPaths.orEmpty() }.flatten()
 
-        val libraryProvidedLinkerFlags = input.llvm.allNativeDependencies.map { it.linkerOpts }.flatten()
+        val libraryProvidedLinkerFlags = context.llvm.allNativeDependencies.map { it.linkerOpts }.flatten()
 
         runLinker(input.objectFiles, includedBinaries, libraryProvidedLinkerFlags)
     }
@@ -123,8 +123,8 @@ internal class Linker(
 
     private fun runLinker(objectFiles: List<ObjectFile>,
                           includedBinaries: List<String>,
-                          libraryProvidedLinkerFlags: List<String>): ExecutableFile? {
-        val outputFiles = input.outputFiles
+                          libraryProvidedLinkerFlags: List<String>): ExecutableFile {
+        val outputFiles = context.outputFiles
 
         val additionalLinkerArgs: List<String>
         val executable: String
@@ -141,7 +141,7 @@ internal class Linker(
             }
             executable = outputFiles.nativeBinaryFile
         } else {
-            val framework = File(input.outputFile)
+            val framework = File(context.outputFile)
             val dylibName = framework.name.removeSuffix(".framework")
             val dylibRelativePath = when (target.family) {
                 Family.IOS,
@@ -209,7 +209,7 @@ internal class Linker(
     }
 
     private fun determineLinkerInput(objectFiles: List<ObjectFile>, linkerOutputKind: LinkerOutputKind): LinkerInput {
-        val caches = determineCachesToLink(context, input.llvm, input.llvmModuleSpecification)
+        val caches = determineCachesToLink(context, context.llvm, input.llvmModuleSpecification)
         // Since we have several linker stages that involve caching,
         // we should detect cache usage early to report errors correctly.
         val cachingInvolved = caches.static.isNotEmpty() || caches.dynamic.isNotEmpty()

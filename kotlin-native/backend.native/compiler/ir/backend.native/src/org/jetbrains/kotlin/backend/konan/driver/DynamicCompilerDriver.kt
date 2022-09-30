@@ -113,15 +113,10 @@ internal class DynamicCompilerDriver: CompilerDriver() {
                 context.generationState = nativeGenerationEngine.context
                 middleEndEngine.runBackendCodegen(context.irModule!!)
                 val bitcodeFile = nativeGenerationEngine.writeBitcodeFile(nativeGenerationEngine.context.llvm.module)
+                // TODO: These two phases should not use NativeGenerationEngine. Instead, they should use their own.
+                //  Probably separate, because in the future we want linker to accumulate results.
                 val objectFiles = nativeGenerationEngine.produceObjectFiles(bitcodeFile)
-                nativeGenerationEngine.linkObjectFiles(
-                        objectFiles,
-                        nativeGenerationEngine.context.llvm,
-                        context.llvmModuleSpecification,
-                        context.coverage.enabled,
-                        nativeGenerationEngine.context.outputFile,
-                        nativeGenerationEngine.context.outputFiles,
-                )
+                nativeGenerationEngine.linkObjectFiles(objectFiles, context.llvmModuleSpecification, context.coverage.enabled)
             }
         }
     }
