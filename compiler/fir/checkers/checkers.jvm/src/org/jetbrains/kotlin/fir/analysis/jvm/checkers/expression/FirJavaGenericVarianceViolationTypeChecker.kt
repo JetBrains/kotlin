@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChec
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.utils.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.argumentMapping
+import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -51,7 +51,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
         if (!calleeFunction.originalOrSelf().isJavaOrEnhancement) {
             return
         }
-        val argumentMapping = expression.argumentMapping ?: return
+        val argumentMapping = expression.resolvedArgumentMapping ?: return
         val typeArgumentMap = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
         for (i in 0 until expression.typeArguments.size) {
             val type = (expression.typeArguments[i] as? FirTypeProjectionWithVariance)?.typeRef?.coneType
