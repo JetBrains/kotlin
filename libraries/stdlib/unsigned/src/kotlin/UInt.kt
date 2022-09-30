@@ -124,28 +124,28 @@ public value class UInt @kotlin.internal.IntrinsicConstEvaluation @PublishedApi 
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is always less than the divisor.
      */
     @kotlin.internal.InlineOnly
     public inline operator fun rem(other: UByte): UInt = this.rem(other.toUInt())
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is always less than the divisor.
      */
     @kotlin.internal.InlineOnly
     public inline operator fun rem(other: UShort): UInt = this.rem(other.toUInt())
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is always less than the divisor.
      */
     @kotlin.internal.InlineOnly
     public inline operator fun rem(other: UInt): UInt = uintRemainder(this, other)
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is always less than the divisor.
      */
     @kotlin.internal.InlineOnly
@@ -153,28 +153,28 @@ public value class UInt @kotlin.internal.IntrinsicConstEvaluation @PublishedApi 
 
     /**
      * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
-     * 
+     *
      * For unsigned types, the results of flooring division and truncating division are the same.
      */
     @kotlin.internal.InlineOnly
     public inline fun floorDiv(other: UByte): UInt = this.floorDiv(other.toUInt())
     /**
      * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
-     * 
+     *
      * For unsigned types, the results of flooring division and truncating division are the same.
      */
     @kotlin.internal.InlineOnly
     public inline fun floorDiv(other: UShort): UInt = this.floorDiv(other.toUInt())
     /**
      * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
-     * 
+     *
      * For unsigned types, the results of flooring division and truncating division are the same.
      */
     @kotlin.internal.InlineOnly
     public inline fun floorDiv(other: UInt): UInt = div(other)
     /**
      * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
-     * 
+     *
      * For unsigned types, the results of flooring division and truncating division are the same.
      */
     @kotlin.internal.InlineOnly
@@ -182,36 +182,36 @@ public value class UInt @kotlin.internal.IntrinsicConstEvaluation @PublishedApi 
 
     /**
      * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is always less than the divisor.
-     * 
+     *
      * For unsigned types, the remainders of flooring division and truncating division are the same.
      */
     @kotlin.internal.InlineOnly
     public inline fun mod(other: UByte): UByte = this.mod(other.toUInt()).toUByte()
     /**
      * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is always less than the divisor.
-     * 
+     *
      * For unsigned types, the remainders of flooring division and truncating division are the same.
      */
     @kotlin.internal.InlineOnly
     public inline fun mod(other: UShort): UShort = this.mod(other.toUInt()).toUShort()
     /**
      * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is always less than the divisor.
-     * 
+     *
      * For unsigned types, the remainders of flooring division and truncating division are the same.
      */
     @kotlin.internal.InlineOnly
     public inline fun mod(other: UInt): UInt = rem(other)
     /**
      * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is always less than the divisor.
-     * 
+     *
      * For unsigned types, the remainders of flooring division and truncating division are the same.
      */
     @kotlin.internal.InlineOnly
