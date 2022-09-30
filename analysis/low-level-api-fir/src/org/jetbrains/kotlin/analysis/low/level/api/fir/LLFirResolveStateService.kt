@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
+import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
@@ -19,33 +20,23 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveS
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
-import org.jetbrains.kotlin.analysis.utils.caches.getValue
-import org.jetbrains.kotlin.analysis.utils.caches.softCachedValue
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.withLock
+import org.jetbrains.kotlin.analysis.utils.caches.SoftCachedMap
 
 internal class LLFirResolveSessionService(project: Project) {
     private val sessionProviderStorage = LLFirSessionProviderStorage(project)
 
-    private val stateCache by softCachedValue(
+    private val cache = SoftCachedMap.create<KtModule, LLFirResolvableResolveSession>(
         project,
-        project.createProjectWideOutOfBlockModificationTracker(),
-        ProjectRootModificationTracker.getInstance(project),
-    ) {
-        mutableMapOf<KtModule, LLFirResolvableResolveSession>()
-    }
-
-    private val cacheLock = ReentrantReadWriteLock()
+        SoftCachedMap.Kind.STRONG_KEYS_SOFT_VALUES,
+        listOf(
+            ProjectRootModificationTracker.getInstance(project),
+            project.createProjectWideOutOfBlockModificationTracker(),
+        )
+    )
 
     fun getFirResolveSession(module: KtModule): LLFirResolvableResolveSession {
-        cacheLock.readLock().withLock {
-            stateCache[module]?.let { return it }
-        }
-        cacheLock.writeLock().withLock {
-            stateCache[module]?.let { return it }
-            val session = createFirResolveSessionFor(module, sessionProviderStorage)
-            stateCache[module] = session
-            return session
+        return cache.getOrPut(module) {
+            createFirResolveSessionFor(module, sessionProviderStorage)
         }
     }
 

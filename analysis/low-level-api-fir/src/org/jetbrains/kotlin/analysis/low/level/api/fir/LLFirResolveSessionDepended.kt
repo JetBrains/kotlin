@@ -41,13 +41,14 @@ internal class LLFirResolveSessionDepended(
     override val useSiteKtModule: KtModule get() = originalFirResolveSession.useSiteKtModule
     override val useSiteFirSession get() = originalFirResolveSession.useSiteFirSession
 
-    private val scopeSessionProviderCache by softCachedValue(
+    private val scopeSessionProviderCache = SoftCachedMap.create<FirSession, LLFirScopeSessionProvider>(
         project,
-        PsiModificationTracker.MODIFICATION_COUNT,
-        ProjectRootModificationTracker.getInstance(project),
-    ) {
-        ConcurrentHashMap<FirSession, LLFirScopeSessionProvider>()
-    }
+        SoftCachedMap.Kind.SOFT_KEYS_SOFT_VALUES,
+        listOf(
+            PsiModificationTracker.MODIFICATION_COUNT,
+            ProjectRootModificationTracker.getInstance(project)
+        )
+    )
 
     override fun getScopeSessionFor(firSession: FirSession): ScopeSession {
         return scopeSessionProviderCache
