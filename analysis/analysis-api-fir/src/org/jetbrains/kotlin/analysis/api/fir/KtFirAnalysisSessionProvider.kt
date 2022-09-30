@@ -21,10 +21,6 @@ import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 
 @OptIn(KtAnalysisApiInternals::class)
 class KtFirAnalysisSessionProvider(project: Project) : CachingKtAnalysisSessionProvider<LLFirResolveSession>(project) {
-    override fun getFirResolveSession(contextElement: KtElement): LLFirResolveSession {
-        return contextElement.getFirResolveSession()
-    }
-
     override fun getFirResolveSession(contextSymbol: KtSymbol): LLFirResolveSession {
         return when (contextSymbol) {
             is KtFirSymbol<*> -> contextSymbol.firResolveSession
