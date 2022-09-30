@@ -42,7 +42,7 @@ public static final class Companion /* AnnoWithCompanion.Companion*/ {
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno /* Anno*/ {
-  public abstract Anno[] x();//  x()
+  public abstract Anno[] x() default {Anno(p = "a"), Anno(p = "b")};//  x()
 
   public abstract java.lang.String p() default "";//  p()
 
@@ -71,7 +71,7 @@ public abstract @interface AnnotatedAttribute /* AnnotatedAttribute*/ {
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Deprecated /* Deprecated*/ {
-  public abstract ReplaceWith replaceWith();//  replaceWith()
+  public abstract ReplaceWith replaceWith() default @ReplaceWith(expression = "");//  replaceWith()
 
   public abstract java.lang.String message();//  message()
 
