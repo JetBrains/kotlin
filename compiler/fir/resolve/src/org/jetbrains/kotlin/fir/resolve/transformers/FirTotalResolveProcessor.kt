@@ -79,6 +79,7 @@ fun FirResolvePhase.createCompilerProcessorByPhase(
         ARGUMENTS_OF_ANNOTATIONS -> FirAnnotationArgumentsResolveProcessor(session, scopeSession)
         CONTRACTS -> FirContractResolveProcessor(session, scopeSession)
         IMPLICIT_TYPES_BODY_RESOLVE -> FirImplicitTypeBodyResolveProcessor(session, scopeSession)
+        ANNOTATIONS_ARGUMENTS_MAPPING -> FirAnnotationArgumentsMappingProcessor(session, scopeSession)
         BODY_RESOLVE -> FirBodyResolveProcessor(session, scopeSession)
         EXPECT_ACTUAL_MATCHING -> FirExpectActualMatcherProcessor(session, scopeSession)
     }
