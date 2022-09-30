@@ -30404,6 +30404,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("capturedWithControlJumps.kt")
+                public void testCapturedWithControlJumps() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/variables/capturedWithControlJumps.kt");
+                }
+
+                @Test
                 @TestMetadata("doWhileWithMiddleBreak.kt")
                 public void testDoWhileWithMiddleBreak() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/variables/doWhileWithMiddleBreak.kt");
