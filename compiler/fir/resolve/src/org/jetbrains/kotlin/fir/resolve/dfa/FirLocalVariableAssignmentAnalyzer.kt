@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.referredPropertySymbol
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.resolve.dfa.FirLocalVariableAssignmentAnalyzer.Companion.MiniFlow.Companion.join
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
@@ -27,7 +26,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.popLast
  *  queries after the traversal is done.
  **/
 internal class FirLocalVariableAssignmentAnalyzer(
-    private val assignedLocalVariablesByFunction: Map<FirFunctionSymbol<*>, AssignedLocalVariables>
+    private val assignedLocalVariablesByFunction: Map<FirFunctionSymbol<*>, FunctionFork>
 ) {
     /**
      * Stack storing concurrent lambda arguments for the current visited anonymous function. For example
@@ -63,7 +62,7 @@ internal class FirLocalVariableAssignmentAnalyzer(
      */
     private val ephemeralConcurrentlyAssignedLocalVariables: MutableSet<FirProperty> = mutableSetOf()
 
-    private val functionStack = mutableListOf<AssignedLocalVariables>()
+    private val functionStack = mutableListOf<FunctionFork>()
 
     /** Checks whether the given access is an unstable access to a local variable at this moment. */
     fun isAccessToUnstableLocalVariable(qualifiedAccessExpression: FirQualifiedAccessExpression): Boolean {
@@ -76,7 +75,7 @@ internal class FirLocalVariableAssignmentAnalyzer(
         // always null and hence there is no need to check it. In addition, since multiple lambda can be passed, we accumulate the
         // effects by appending to `ephemeralConcurrentlyAssignedLocalVariables`.  After the function call is resolved,
         // `exitAnonymousFunction` will be invoked at some point to properly set up the `persistentConcurrentlyAssignedLocalVariables`.
-        assignedLocalVariablesByFunction[anonymousFunction.symbol]?.insideLocalFunction?.let {
+        assignedLocalVariablesByFunction[anonymousFunction.symbol]?.assignedInside?.let {
             ephemeralConcurrentlyAssignedLocalVariables.addAll(it)
         }
     }
@@ -98,7 +97,7 @@ internal class FirLocalVariableAssignmentAnalyzer(
         for (concurrentLambdas in concurrentLambdaArgsStack) {
             for (otherLambda in concurrentLambdas) {
                 if (otherLambda != function && otherLambda.invocationKind != EventOccurrencesRange.ZERO) {
-                    assignedLocalVariablesByFunction[otherLambda.symbol]?.insideLocalFunction?.let {
+                    assignedLocalVariablesByFunction[otherLambda.symbol]?.assignedInside?.let {
                         concurrentlyAssignedLocalVariables += it
                     }
                 }
@@ -111,11 +110,11 @@ internal class FirLocalVariableAssignmentAnalyzer(
                 // The function may be called twice concurrently in an SMT environment, which means any assignment it executes
                 // might in theory happen in between any check it does and a subsequent use of the variable. So if this function
                 // does any assignments, it cannot smartcast the target variables.
-                concurrentlyAssignedLocalVariables += it.insideLocalFunction
-                // The function may also stored and called later, so assignments done outside its scope after the definition
+                concurrentlyAssignedLocalVariables += it.assignedInside
+                // The function may also be stored and called later, so assignments done outside its scope after the definition
                 // might also have executed.
                 for (outerScope in functionStack) {
-                    concurrentlyAssignedLocalVariables += outerScope.outsideLocalFunction
+                    concurrentlyAssignedLocalVariables += outerScope.assignedLater
                 }
             }
         }
@@ -141,7 +140,7 @@ internal class FirLocalVariableAssignmentAnalyzer(
                 //    }
                 //   FE1.0 has the same behavior.
                 for (outerScope in concurrentlyAssignedLocalVariablesStack) {
-                    outerScope += it.insideLocalFunction
+                    outerScope += it.assignedInside
                 }
             }
         }
@@ -184,14 +183,9 @@ internal class FirLocalVariableAssignmentAnalyzer(
          *
          * # Note on implementation detail
          *
-         * The analyzer constructs a mini control flow graph that captures forking of execution path. Any conditional branches, declaration of
-         * lambda and local functions are forks. The mini CFG does not care about loop structures and effectively treats it as a linear sequence of
-         * statements. This is sufficient for the purpose of collecting unstable local variables. Similarly for try/catch/finally constructs.
-         *
-         * Also, for simplicity, all conditionals are treated as non-exhaustive. Hence, a fallback edge is always added along a conditional
-         * structure.
-         *
-         * While building the mini CFG, inside each node, we collect local variables that are assigned later in the execution path.
+         * The analyzer constructs a mini control flow graph that captures forking of execution path. The only information it cares about,
+         * though, is which variables are assigned in a given node or any transitive successor; thus nodes which add no extra information
+         * and have only one predecessor are elided from the resulting graph.
          *
          * For example, consider the following code.
          *
@@ -216,130 +210,201 @@ internal class FirLocalVariableAssignmentAnalyzer(
          *
          * The generated mini CFG looks like the following, with assigned local variables annotated after each node in curly brackets.
          *
-         * ┌───────┐
-         * │  if   │ {x y z a}
-         * └─┬─┬─┬─┘
-         *   │ │ │ fallback
-         *   │ │ └──────────────────────────────────────┐
-         *   │ │ false                                  │
-         *   │ └─────────────────────────┐              │
-         *   │ true                      │              │
-         * ┌─┴─────┐                 ┌───┴────┐         │
-         * │  run  │ {x z a}         │  else  │ {x y z} │
-         * │       │                 │ branch │         │
-         * └─┬───┬─┘                 └───┬────┘         │
-         *   │   │ normal execution      │              │
-         *   │   └─────────────┐         │              │
-         *   │ lambda arg      │         │              │
-         * ┌─┴──────┐      ┌───┴───┐     │              │
-         * │ lambda │ {x}  │ empty │ {z} │              │
-         * │  body  │      │       │     │              │
-         * └────────┘      └───┬───┘     │              │
-         *   ┌─────────────────┘         │              │
-         *   │ ┌─────────────────────────┘              │
-         *   │ │ ┌──────────────────────────────────────┘
-         * ┌─┴─┴─┴─┐
-         * │ after │ {z}
-         * │  if   │
-         * └───────┘
+         *     ┌───────┐
+         *     │ entry │ {x y z a}
+         *     └─┬─┬─┬─┘
+         *       │ │ │ fallback
+         *       │ │ └─────────────────────────────┐
+         *       │ │ false                         │
+         *       │ └─────────────────────────┐     │
+         *       │ true                      │     │
+         *     ┌ ┴ ─ ─ ┐                 ┌ ─ ┴ ─ ┐ │
+         *     │ then  │                 │ else  │ │
+         *     └ ┬ ─ ┬ ┘                 └ ─ ┬ ─ ┘ │
+         *       │   │ normal execution      │     │
+         *       │   └─────────────┐         │     │
+         *       │ lambda arg      │         │     │
+         *     ┌─┴──────┐      ┌───┴───┐     │     │
+         *     │ lambda │ {x}  │ empty │ {z} │     │
+         *     └────────┘      └───┬───┘     │     │
+         *       ┌─────────────────┘         │     │
+         *       │ ┌─────────────────────────┘     │
+         *       │ │ ┌─────────────────────────────┘
+         *     ┌─┴─┴─┴─┐
+         *     │ after │ {z}
+         *     │  if   │
+         *     └───────┘
          *
          * Some notes on why each node contains what it contains:
+         * - the nodes with the dashed outline and no associated set, "then" and "else", are elided, as they are neither merge points
+         *   nor do they have any useful information - we will never need to know which variables are assigned to after entering the
+         *   "else" branch, for example, because that code path will encounter no lambdas. Instead, any assignments done in elided
+         *   blocks are immediately propagated to the parents, which is why the "entry" node contains `y`.
+         *
+         * - the "lambda" and "empty" nodes are not merge points, but they are what the CFG is for: if the lambda is not called-in-place,
+         *   then all variables it assigns to cannot be smartcasted in "empty" or its successors and vice versa, as the body of the lambda
+         *   can be executed at arbitrary points on that path.
          *
          * - changes to `z` is captured and back-propagated to all earlier nodes as desired.
          *
-         * - "lambda body" node does not contain `a` because `a` is declared inside the function. Such declarations are removed in
-         *   [MiniCfgBuilder.handleFunctionFork] after the lambda function is processed. However, the parent nodes contain `a` because
+         * - "lambda body" node does not contain `a` because `a` is declared inside the function. Such declarations are removed after
+         *   the graph is constructed, as loop closure can reintroduce them at any point. However, the parent nodes contain `a` because
          *   [MiniCfgBuilder.recordAssignment] propagates `a` during traversal. The extra `a` won't do any harm since `a` can never be
-         *   referenced outside the lambda. It's possible to track the scope at each node and remove the unneeded `a` in "if" and "run"
+         *   referenced outside the lambda. It's possible to track the scope at each node and remove the unneeded `a` in "entry" and "then"
          *   nodes. But doing that seems to be more expensive than simply letting it propagate.
          *
-         * - "run" node does not contain `y` as desired since the if true and false branches are mutually exclusive.
+         * There is some liveness analysis present in this construction which errs on the conservative side: some code that is dead
+         * is considered to be live. This restricts some smart casts, which is better than the opposite (permitting unsafe smart casts
+         * if code turns out to be only mostly dead).
          *
-         * By the way, since local variables are not resolved at this point, we manually track local variable declarations and resolve them along
-         * the way so that shadowed names are handled correctly.
+         * Because names are not resolved at this point, we manually track local variable declarations and resolve them along the way
+         * so that shadowed names are handled correctly. This works because local variables at any scope have higher priority
+         * than members on implicit receivers, even if the implicit receiver is introduced by a later scope.
          */
         fun analyzeFunction(rootFunction: FirFunction): FirLocalVariableAssignmentAnalyzer {
-            return FirLocalVariableAssignmentAnalyzer(computeAssignedLocalVariables(rootFunction))
+            val data = MiniCfgBuilder.MiniCfgData()
+            MiniCfgBuilder().visitElement(rootFunction, data)
+            for (fork in data.functionForks.values) {
+                fork.assignedInside.retainAll(fork.declaredBefore)
+            }
+            return FirLocalVariableAssignmentAnalyzer(data.functionForks)
         }
 
-        /**
-         * Computes a mini CFG and returns the map tracking assigned local variables at each potentially concurrent local/lambda function.
-         */
-        private fun computeAssignedLocalVariables(firFunction: FirFunction): Map<FirFunctionSymbol<*>, AssignedLocalVariables> {
-            val startFlow = MiniFlow.start()
-            val data = MiniCfgBuilder.MiniCfgData(startFlow)
-            MiniCfgBuilder().visitElement(firFunction, data)
-            return data.localFunctionToAssignedLocalVariables
-        }
-
-        class AssignedLocalVariables(val outsideLocalFunction: Set<FirProperty>, val insideLocalFunction: Set<FirProperty>)
+        class FunctionFork(
+            val declaredBefore: Set<FirProperty>,
+            val assignedLater: Set<FirProperty>,
+            val assignedInside: MutableSet<FirProperty>,
+        )
 
         private class MiniFlow(val parents: Set<MiniFlow>) {
-            val assignedLocalVariables: MutableSet<FirProperty> = mutableSetOf()
+            val children: MutableSet<MiniFlow> = mutableSetOf()
+            val assignedLater: MutableSet<FirProperty> = mutableSetOf()
+
+            init {
+                for (parent in parents) {
+                    parent.children.add(this)
+                }
+            }
 
             fun fork(): MiniFlow = MiniFlow(setOf(this))
 
             companion object {
                 fun start() = MiniFlow(emptySet())
-                fun Set<MiniFlow>.join(): MiniFlow = MiniFlow(this)
             }
         }
-
 
         private class MiniCfgBuilder : FirVisitor<Unit, MiniCfgBuilder.MiniCfgData>() {
             override fun visitElement(element: FirElement, data: MiniCfgData) {
                 element.acceptChildren(this, data)
             }
 
-            override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: MiniCfgData) {
-                handleFunctionFork(anonymousFunction, data)
-            }
+            override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: MiniCfgData) =
+                visitFunction(anonymousFunction, data)
 
-            override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: MiniCfgData) {
-                handleFunctionFork(simpleFunction, data)
-            }
+            override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: MiniCfgData) =
+                visitFunction(simpleFunction, data)
 
-            private fun handleFunctionFork(function: FirFunction, data: MiniCfgData) {
+            override fun visitFunction(function: FirFunction, data: MiniCfgData) {
                 val currentFlow = data.flow ?: return
-                val functionFork = currentFlow.fork()
-                data.flow = functionFork
+                val freeVariables = data.variableDeclarations.flatMapTo(mutableSetOf()) { it.values }
+                val flowInto = currentFlow.fork()
+                val flowAfter = currentFlow.fork()
+                data.flow = flowInto
                 function.acceptChildren(this, data)
-
-                // Only retain local variables declared above the current scope. This way, any local variables declared inside the
-                // function will effectively be treated as distinct variables and, hence, stable (Of course, for nested lambda, things would
-                // just work because inside the lambda assigned local variables are tracked by different nodes).
-                functionFork.assignedLocalVariables.retainAll(data.variableDeclarations.flatMapTo(mutableSetOf()) { it.values })
-                // Create another fork for the normal execution
-                val normalExecution = currentFlow.fork()
-                data.localFunctionToAssignedLocalVariables[function.symbol] =
-                    AssignedLocalVariables(normalExecution.assignedLocalVariables, functionFork.assignedLocalVariables)
-                data.flow = normalExecution
+                data.flow = flowAfter
+                data.functionForks[function.symbol] =
+                    FunctionFork(freeVariables, flowAfter.assignedLater, flowInto.assignedLater)
             }
 
             override fun visitWhenExpression(whenExpression: FirWhenExpression, data: MiniCfgData) {
+                (whenExpression.subjectVariable ?: whenExpression.subject)?.accept(this, data)
                 val flow = data.flow ?: return
-                val visitor = this
-                with(whenExpression) {
-                    calleeReference.accept(visitor, data)
-                    val subjectVariable = this.subjectVariable
-                    if (subjectVariable != null) {
-                        subjectVariable.accept(visitor, data)
-                    } else {
-                        subject?.accept(visitor, data)
+                // Also collect `flow` here for the case when none of the branches execute.
+                val branches = whenExpression.branches.mapNotNullTo(mutableSetOf(flow)) {
+                    // No need to create a fork - it'll not be observed anywhere anyway.
+                    data.flow = flow
+                    it.accept(this, data)
+                    data.flow
+                }
+                data.flow = branches.join()
+            }
+
+            override fun visitTryExpression(tryExpression: FirTryExpression, data: MiniCfgData) {
+                if (data.flow == null) return
+                tryExpression.tryBlock.accept(this, data)
+                val catchFlow = data.lastLiveFlow // descendant of flow at the start
+                val returnFlows = mutableSetOf<MiniFlow>()
+                data.flow?.let(returnFlows::add)
+                val finallyFlows = tryExpression.catches.mapTo(mutableSetOf(catchFlow)) {
+                    data.flow = catchFlow
+                    it.accept(this, data)
+                    data.flow?.let(returnFlows::add)
+                    // Throwing/returning inside a catch clause goes through finally as well.
+                    data.lastLiveFlow
+                }
+                val finally = tryExpression.finallyBlock
+                if (finally != null) {
+                    data.flow = finallyFlows.join()
+                    finally.accept(this, data)
+                    if (returnFlows.isEmpty()) {
+                        data.flow = null
                     }
-                    val childFlows = branches.mapNotNull {
-                        data.flow = flow.fork()
-                        it.accept(visitor, data)
-                        data.flow
-                    }
-                    // Also collect `flow` here for the synthetic fallback flow when none of the branch executes.
-                    data.flow = (childFlows + flow).toSet().join()
+                } else {
+                    data.flow = returnFlows.join()
                 }
             }
 
+            private fun Set<MiniFlow>.join(): MiniFlow? =
+                when (size) {
+                    0 -> null
+                    1 -> single()
+                    else -> MiniFlow(this)
+                }
+
+            override fun visitWhileLoop(whileLoop: FirWhileLoop, data: MiniCfgData) {
+                // Loop entry is a merge point, so need a new node.
+                val start = data.flow?.fork() ?: return
+                data.flow = start
+                whileLoop.condition.accept(this, data)
+                if (data.flow == null) return
+                whileLoop.block.accept(this, data)
+                // There may have been a conditional break/continue before the return, or the condition
+                // may have always been false.
+                data.flow = data.lastLiveFlow // descendant of flow after condition
+                data.flow?.addBackEdgeTo(start)
+            }
+
+            override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: MiniCfgData) {
+                val start = data.flow?.fork() ?: return
+                data.flow = start
+                doWhileLoop.block.accept(this, data)
+                // Like above, there might have been a break/continue, so the fact that the block does not
+                // terminate doesn't actually mean much.
+                data.flow = data.lastLiveFlow // descendant of flow before the block
+                doWhileLoop.condition.accept(this, data)
+                data.flow?.addBackEdgeTo(start)
+            }
+
+            override fun visitBreakExpression(breakExpression: FirBreakExpression, data: MiniCfgData) {
+                visitElement(breakExpression, data)
+                // Can treat this as an unconditional return if looping constructs reset the flow anyway.
+                // TODO: check which loop this is targeting for more precise liveness analysis?
+                data.flow = null
+            }
+
+            override fun visitContinueExpression(continueExpression: FirContinueExpression, data: MiniCfgData) {
+                visitElement(continueExpression, data)
+                // Same comment as for `break`.
+                data.flow = null
+            }
+
             override fun visitReturnExpression(returnExpression: FirReturnExpression, data: MiniCfgData) {
-                super.visitReturnExpression(returnExpression, data)
-                // TODO: consider to also handle `throw`, which would require keeping track of all `try`, `catch` and `finally` constructs.
+                visitElement(returnExpression, data)
+                data.flow = null
+            }
+
+            override fun visitThrowExpression(throwExpression: FirThrowExpression, data: MiniCfgData) {
+                visitElement(throwExpression, data)
                 data.flow = null
             }
 
@@ -357,51 +422,69 @@ internal class FirLocalVariableAssignmentAnalyzer(
 
             override fun visitBlock(block: FirBlock, data: MiniCfgData) {
                 data.variableDeclarations.addLast(mutableMapOf())
-                super.visitBlock(block, data)
+                visitElement(block, data)
                 data.variableDeclarations.removeLast()
             }
 
             override fun visitProperty(property: FirProperty, data: MiniCfgData) {
-                super.visitProperty(property, data)
+                visitElement(property, data)
                 if (property.isLocal) {
                     data.variableDeclarations.last()[property.name] = property
                 }
             }
 
             override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: MiniCfgData) {
-                super.visitVariableAssignment(variableAssignment, data)
+                visitElement(variableAssignment, data)
                 if (variableAssignment.explicitReceiver != null) return
                 data.recordAssignment(variableAssignment.lValue)
             }
 
             override fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: MiniCfgData) {
-                super.visitAssignmentOperatorStatement(assignmentOperatorStatement, data)
+                visitElement(assignmentOperatorStatement, data)
                 val lhs = assignmentOperatorStatement.leftArgument as? FirQualifiedAccessExpression ?: return
                 if (lhs.explicitReceiver != null) return
                 data.recordAssignment(lhs.calleeReference)
             }
 
-            fun MiniCfgData.recordAssignment(reference: FirReference) {
+            private fun MiniCfgData.recordAssignment(reference: FirReference) {
                 val name = (reference as? FirNamedReference)?.name ?: return
-                val property = resolveLocalVariable(name) ?: return
+                val property = variableDeclarations.lastOrNull { name in it }?.get(name) ?: return
                 flow?.recordAssignment(property, mutableSetOf())
             }
 
             private fun MiniFlow.recordAssignment(property: FirProperty, visited: MutableSet<MiniFlow>) {
-                if (this in visited) return
-                visited += this
-                assignedLocalVariables += property
-                // Back-propagate the assignment to all parent flows.
+                if (!visited.add(this)) return
+                assignedLater += property
                 parents.forEach { it.recordAssignment(property, visited) }
             }
 
-            class MiniCfgData(var flow: MiniFlow?) {
-                val variableDeclarations: ArrayDeque<MutableMap<Name, FirProperty>> = ArrayDeque(listOf(mutableMapOf()))
-                val localFunctionToAssignedLocalVariables: MutableMap<FirFunctionSymbol<*>, AssignedLocalVariables> = mutableMapOf()
+            private fun MiniFlow.addBackEdgeTo(loopStart: MiniFlow) {
+                children.add(loopStart)
+                // All forks in the loop should have the same set of variables assigned later, equal to the set
+                // at the start of the loop.
+                propagateForward(loopStart.assignedLater, mutableSetOf())
+            }
 
-                fun resolveLocalVariable(name: Name): FirProperty? {
-                    return variableDeclarations.lastOrNull { name in it }?.getValue(name)
-                }
+            private fun MiniFlow.propagateForward(properties: Set<FirProperty>, visited: MutableSet<MiniFlow>) {
+                if (!visited.add(this)) return
+                assignedLater.addAll(properties)
+                children.forEach { it.propagateForward(properties, visited) }
+            }
+
+            class MiniCfgData {
+                var lastLiveFlow: MiniFlow = MiniFlow.start()
+                    private set
+
+                var flow: MiniFlow? = lastLiveFlow
+                    set(value) {
+                        if (value != null) {
+                            lastLiveFlow = value
+                        }
+                        field = value
+                    }
+
+                val variableDeclarations: ArrayDeque<MutableMap<Name, FirProperty>> = ArrayDeque(listOf(mutableMapOf()))
+                val functionForks: MutableMap<FirFunctionSymbol<*>, FunctionFork> = mutableMapOf()
             }
         }
     }
