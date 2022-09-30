@@ -28,8 +28,6 @@ import kotlin.reflect.KClass
 abstract class CachingKtAnalysisSessionProvider<State : Any>(project: Project) : KtAnalysisSessionProvider(project) {
     private val cache = KtAnalysisSessionCache(project)
 
-    protected abstract fun getFirResolveSession(contextSymbol: KtSymbol): State
-
     protected abstract fun getFirResolveSession(contextModule: KtModule): State
 
     protected abstract fun createAnalysisSession(
