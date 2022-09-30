@@ -4,7 +4,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.project
 import org.gradle.api.artifacts.Configuration
 
-enum class TestProperty(shortName: String) {
+private enum class TestProperty(shortName: String) {
     // Use a separate Gradle property to pass Kotlin/Native home to tests: "kotlin.internal.native.test.nativeHome".
     // Don't use "kotlin.native.home" and similar properties for this purpose, as these properties may have undesired
     // effect on other Gradle tasks (ex: :kotlin-native:dist) that might be executed along with test task.
