@@ -154,7 +154,7 @@ public class Long internal constructor(
     public inline operator fun div(other: Double): Double = toDouble() / other
 
     /**
-     * Calculates the remainder of truncating division of this value by the other value.
+     * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
      *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
@@ -162,7 +162,7 @@ public class Long internal constructor(
     public inline operator fun rem(other: Byte): Long = rem(other.toLong())
 
     /**
-     * Calculates the remainder of truncating division of this value by the other value.
+     * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
      *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
@@ -170,7 +170,7 @@ public class Long internal constructor(
     public inline operator fun rem(other: Short): Long = rem(other.toLong())
 
     /**
-     * Calculates the remainder of truncating division of this value by the other value.
+     * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
      *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
@@ -178,7 +178,7 @@ public class Long internal constructor(
     public inline operator fun rem(other: Int): Long = rem(other.toLong())
 
     /**
-     * Calculates the remainder of truncating division of this value by the other value.
+     * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
      *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
@@ -186,7 +186,7 @@ public class Long internal constructor(
     public operator fun rem(other: Long): Long = modulo(other)
 
     /**
-     * Calculates the remainder of truncating division of this value by the other value.
+     * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
      *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
@@ -194,7 +194,7 @@ public class Long internal constructor(
     public inline operator fun rem(other: Float): Float = toFloat() % other
 
     /**
-     * Calculates the remainder of truncating division of this value by the other value.
+     * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
      *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
