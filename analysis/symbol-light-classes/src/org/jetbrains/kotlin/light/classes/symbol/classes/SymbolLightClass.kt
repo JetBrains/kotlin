@@ -35,10 +35,7 @@ import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForClass
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
@@ -222,7 +219,7 @@ internal open class SymbolLightClass(classOrObject: KtClassOrObject, ktModule: K
             addPropertyBackingFields(result, classOrObjectSymbol)
 
             // Next, add INSTANCE field if non-local named object
-            addInstanceFieldIfNeeded(result, classOrObjectSymbol)
+            addInstanceFieldIfNeeded(result)
 
             // Last, add fields for enum entries
             addFieldsForEnumEntries(result, classOrObjectSymbol)
@@ -269,12 +266,11 @@ internal open class SymbolLightClass(classOrObject: KtClassOrObject, ktModule: K
         propertyGroups[false]?.forEach(::addPropertyBackingField)
     }
 
-    context(KtAnalysisSession)
-    private fun addInstanceFieldIfNeeded(result: MutableList<KtLightField>, classOrObjectSymbol: KtNamedClassOrObjectSymbol) {
+    private fun addInstanceFieldIfNeeded(result: MutableList<KtLightField>) {
         if (isNamedObject && !isLocal) {
             result.add(
                 SymbolLightFieldForObject(
-                    objectSymbol = classOrObjectSymbol,
+                    objectDeclaration = classOrObject as KtObjectDeclaration,
                     containingClass = this@SymbolLightClass,
                     name = JvmAbi.INSTANCE_FIELD,
                     lightMemberOrigin = null

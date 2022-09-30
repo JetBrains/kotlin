@@ -136,16 +136,14 @@ abstract class SymbolLightClassForClassOrObject(protected val classOrObject: KtC
         }
     }
 
-    protected fun addCompanionObjectFieldIfNeeded(
-        result: MutableList<KtLightField>,
-    ): Unit = withNamedClassOrObjectSymbol { classOrObjectSymbol ->
-        classOrObjectSymbol.companionObject?.run {
+    protected fun addCompanionObjectFieldIfNeeded(result: MutableList<KtLightField>) {
+        classOrObject.companionObjects.forEach {
             result.add(
                 SymbolLightFieldForObject(
-                    objectSymbol = this,
+                    objectDeclaration = it,
                     containingClass = this@SymbolLightClassForClassOrObject,
-                    name = name.asString(),
-                    lightMemberOrigin = null
+                    name = it.name ?: return@forEach,
+                    lightMemberOrigin = null,
                 )
             )
         }
