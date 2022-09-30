@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.backendCodegen
 import org.jetbrains.kotlin.backend.konan.driver.context.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.getCompilerMessageLocation
@@ -75,6 +75,8 @@ internal class PhaseEngine<T : PhaseContext>(
             val phaserState = PhaserState<Any>()
             val phaseConfig = config.dumbPhaseConfig
             val context = BasicPhaseContext(config)
+            // TODO: Get rid of when transition to the dynamic driver complete.
+            phaseConfig.konanPhasesConfig(config)
             val topLevelPhase = object : SimpleNamedCompilerPhase<PhaseContext, Any, Unit>(
                     "Compiler",
                     "The whole compilation process",

@@ -471,11 +471,11 @@ private val bitcodePostprocessingPhase = SameTypeNamedCompilerPhase(
 internal val backendCodegen = SameTypeNamedCompilerPhase(
         name = "Backend codegen",
         description = "Backend code generation",
-        lower = //entryPointPhase then
+        lower = entryPointPhase then
                 allLoweringsPhase then // Lower current module first.
                 dependenciesLowerPhase then // Then lower all libraries in topological order.
                                             // With that we guarantee that inline functions are unlowered while being inlined.
-//                dumpTestsPhase then
+                dumpTestsPhase then
                 bitcodePhase then
                 verifyBitcodePhase then
                 printBitcodePhase then
@@ -549,15 +549,15 @@ val toplevelPhase: CompilerPhase<*, Unit, Unit> = namedUnitPhase(
                 umbrellaCompilation
 )
 
-internal fun PhaseConfig.disableIf(phase: AnyNamedPhase, condition: Boolean) {
+internal fun PhaseConfigService.disableIf(phase: AnyNamedPhase, condition: Boolean) {
     if (condition) disable(phase)
 }
 
-internal fun PhaseConfig.disableUnless(phase: AnyNamedPhase, condition: Boolean) {
+internal fun PhaseConfigService.disableUnless(phase: AnyNamedPhase, condition: Boolean) {
     if (!condition) disable(phase)
 }
 
-internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
+internal fun PhaseConfigService.konanPhasesConfig(config: KonanConfig) {
     with(config.configuration) {
         // The original comment around [checkSamSuperTypesPhase] still holds, but in order to be on par with JVM_IR
         // (which doesn't report error for these corner cases), we turn off the checker for now (the problem with variances

@@ -40,6 +40,8 @@ interface PhaseConfigService {
 
     fun isVerbose(phase: AnyNamedPhase): Boolean
 
+    fun disable(phase: AnyNamedPhase)
+
     fun shouldDumpStateBefore(phase: AnyNamedPhase): Boolean
 
     fun shouldDumpStateAfter(phase: AnyNamedPhase): Boolean
@@ -64,7 +66,7 @@ interface PhaseConfigService {
  * about actual compiler pipeline.
  */
 class DumbPhaseConfig(
-    private val disabled: Set<String>,
+    disabled: Set<String>,
     private val verbose: Set<String>,
     private val toDumpStateBefore: Set<String>,
     private val toDumpStateAfter: Set<String>,
@@ -76,11 +78,17 @@ class DumbPhaseConfig(
     override val checkConditions: Boolean = false,
     override val checkStickyConditions: Boolean = false
 ) : PhaseConfigService {
+    private val disabledMut = disabled.toMutableSet()
+
     override fun isEnabled(phase: AnyNamedPhase): Boolean =
-        phase.name !in disabled
+        phase.name !in disabledMut
 
     override fun isVerbose(phase: AnyNamedPhase): Boolean =
         phase.name in verbose
+
+    override fun disable(phase: AnyNamedPhase) {
+        disabledMut += phase.name
+    }
 
     override fun shouldDumpStateBefore(phase: AnyNamedPhase): Boolean =
         phase.name in toDumpStateBefore
@@ -168,7 +176,7 @@ class PhaseConfig(
         enabledMut.add(phase)
     }
 
-    fun disable(phase: AnyNamedPhase) {
+    override fun disable(phase: AnyNamedPhase) {
         enabledMut.remove(phase)
     }
 
