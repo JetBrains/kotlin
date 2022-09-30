@@ -148,6 +148,10 @@ private class FirExpressionsResolveTransformerForSpecificAnnotations(
         return transformAnnotation(annotationCall, data)
     }
 
+    override fun transformErrorAnnotationCall(errorAnnotationCall: FirErrorAnnotationCall, data: ResolutionMode): FirStatement {
+        return transformAnnotation(errorAnnotationCall, data)
+    }
+
     override fun transformExpression(expression: FirExpression, data: ResolutionMode): FirStatement {
         return expression.transformChildren(transformer, data) as FirStatement
     }

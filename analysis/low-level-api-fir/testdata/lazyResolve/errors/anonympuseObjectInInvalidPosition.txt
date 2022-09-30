@@ -107,6 +107,24 @@ FILE: anonympuseObjectInInvalidPosition.kt
 
     }
 
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: anonympuseObjectInInvalidPosition.kt
+    private final [ANNOTATIONS_ARGUMENTS_MAPPING] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)<Unsupported LValue: NULL># = object : A<Int> {
+        private [RAW_FIR] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+            super<<implicit>>()
+        }
+
+        public? open? override [RAW_FIR] fun x(): R|kotlin/Unit| {
+        }
+
+    }
+
+        private [ANNOTATIONS_ARGUMENTS_MAPPING] get(): <ERROR TYPE REF: Wrong number of type arguments>
+    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface A<[COMPILER_REQUIRED_ANNOTATIONS] T> : R|kotlin/Any| {
+        public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun x(): R|kotlin/Unit|
+
+    }
+
 EXPECT_ACTUAL_MATCHING:
 FILE: anonympuseObjectInInvalidPosition.kt
     private final [EXPECT_ACTUAL_MATCHING] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)<Unsupported LValue: NULL># = object : A<Int> {

@@ -304,6 +304,10 @@ class FirCallCompletionResultsWriterTransformer(
         return annotationCall
     }
 
+    override fun transformErrorAnnotationCall(errorAnnotationCall: FirErrorAnnotationCall, data: ExpectedArgumentType?): FirStatement {
+        return transformAnnotationCall(errorAnnotationCall, data)
+    }
+
     private fun Candidate.handleVarargs() {
         val argumentMapping = this.argumentMapping
         val varargParameter = argumentMapping?.values?.firstOrNull { it.isVararg }

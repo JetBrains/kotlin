@@ -1,3 +1,4 @@
+// IGNORE_FIR
 annotation class ReceiverAnnotation
 @Target(AnnotationTarget.TYPE)
 annotation class ReceiverTypeAnnotation
