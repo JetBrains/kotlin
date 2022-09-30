@@ -71,7 +71,6 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
             else -> lazyResolveToPhase(FirResolvePhase.TYPES)
         }
     }
-
     override fun toString(): String = "${this::class.simpleName} $callableId"
 }
 
