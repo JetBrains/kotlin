@@ -162,7 +162,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -170,7 +170,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
     public operator fun rem(other: Byte): Int
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -178,7 +178,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
     public operator fun rem(other: Short): Int
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -186,7 +186,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
     public operator fun rem(other: Int): Int
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -194,7 +194,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
     public operator fun rem(other: Long): Long
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -202,7 +202,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
     public operator fun rem(other: Float): Float
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -497,7 +497,7 @@ public class Short private constructor() : Number(), Comparable<Short> {
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -505,7 +505,7 @@ public class Short private constructor() : Number(), Comparable<Short> {
     public operator fun rem(other: Byte): Int
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -513,7 +513,7 @@ public class Short private constructor() : Number(), Comparable<Short> {
     public operator fun rem(other: Short): Int
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -521,7 +521,7 @@ public class Short private constructor() : Number(), Comparable<Short> {
     public operator fun rem(other: Int): Int
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -529,7 +529,7 @@ public class Short private constructor() : Number(), Comparable<Short> {
     public operator fun rem(other: Long): Long
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -537,7 +537,7 @@ public class Short private constructor() : Number(), Comparable<Short> {
     public operator fun rem(other: Float): Float
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -830,7 +830,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -838,7 +838,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
     public operator fun rem(other: Byte): Int
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -846,7 +846,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
     public operator fun rem(other: Short): Int
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -854,7 +854,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
     public operator fun rem(other: Int): Int
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -862,7 +862,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
     public operator fun rem(other: Long): Long
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -870,7 +870,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
     public operator fun rem(other: Float): Float
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -1205,7 +1205,7 @@ public class Long private constructor() : Number(), Comparable<Long> {
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -1213,7 +1213,7 @@ public class Long private constructor() : Number(), Comparable<Long> {
     public operator fun rem(other: Byte): Long
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -1221,7 +1221,7 @@ public class Long private constructor() : Number(), Comparable<Long> {
     public operator fun rem(other: Short): Long
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -1229,7 +1229,7 @@ public class Long private constructor() : Number(), Comparable<Long> {
     public operator fun rem(other: Int): Long
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -1237,7 +1237,7 @@ public class Long private constructor() : Number(), Comparable<Long> {
     public operator fun rem(other: Long): Long
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -1245,7 +1245,7 @@ public class Long private constructor() : Number(), Comparable<Long> {
     public operator fun rem(other: Float): Float
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -1599,7 +1599,7 @@ public class Float private constructor() : Number(), Comparable<Float> {
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -1607,7 +1607,7 @@ public class Float private constructor() : Number(), Comparable<Float> {
     public operator fun rem(other: Byte): Float
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -1615,7 +1615,7 @@ public class Float private constructor() : Number(), Comparable<Float> {
     public operator fun rem(other: Short): Float
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -1623,7 +1623,7 @@ public class Float private constructor() : Number(), Comparable<Float> {
     public operator fun rem(other: Int): Float
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -1631,7 +1631,7 @@ public class Float private constructor() : Number(), Comparable<Float> {
     public operator fun rem(other: Long): Float
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -1639,7 +1639,7 @@ public class Float private constructor() : Number(), Comparable<Float> {
     public operator fun rem(other: Float): Float
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -1901,7 +1901,7 @@ public class Double private constructor() : Number(), Comparable<Double> {
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -1909,7 +1909,7 @@ public class Double private constructor() : Number(), Comparable<Double> {
     public operator fun rem(other: Byte): Double
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -1917,7 +1917,7 @@ public class Double private constructor() : Number(), Comparable<Double> {
     public operator fun rem(other: Short): Double
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -1925,7 +1925,7 @@ public class Double private constructor() : Number(), Comparable<Double> {
     public operator fun rem(other: Int): Double
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -1933,7 +1933,7 @@ public class Double private constructor() : Number(), Comparable<Double> {
     public operator fun rem(other: Long): Double
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
@@ -1941,7 +1941,7 @@ public class Double private constructor() : Number(), Comparable<Double> {
     public operator fun rem(other: Float): Double
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
-     * 
+     *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
     @SinceKotlin("1.1")
