@@ -14,11 +14,11 @@ class MyRec(
 )
 
 fun foo(jr: JRecord) {
-    JRecord(<!TOO_MANY_ARGUMENTS!>1<!>, <!TOO_MANY_ARGUMENTS!>""<!>)
+    JRecord(1, "")
 
-    jr.<!UNRESOLVED_REFERENCE!>x<!>()
-    jr.<!UNRESOLVED_REFERENCE!>y<!>()
+    jr.x()
+    jr.y()
 
-    jr.<!UNRESOLVED_REFERENCE!>x<!>
-    jr.<!UNRESOLVED_REFERENCE!>y<!>
+    jr.x
+    jr.y
 }

@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java
 
-import org.jetbrains.kotlin.KtFakeSourceElement
-import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
@@ -46,7 +45,6 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.types.Variance.INVARIANT
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -231,7 +229,7 @@ abstract class FirJavaFacade(
         val classIsAnnotation = javaClass.classKind == ClassKind.ANNOTATION_CLASS
         val moduleData = getModuleDataForClass(javaClass)
         return buildJavaClass {
-            source = (javaClass as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement()
+            source = javaClass.toSourceElement()
             this.moduleData = moduleData
             symbol = classSymbol
             name = javaClass.name
@@ -292,6 +290,7 @@ abstract class FirJavaFacade(
             for (javaMethod in javaClass.methods) {
                 if (javaMethod.isObjectMethodInInterface()) continue
                 val firJavaMethod = convertJavaMethodToFir(
+                    javaClass,
                     javaMethod,
                     classId,
                     javaTypeParameterStack,
@@ -360,6 +359,17 @@ abstract class FirJavaFacade(
                         moduleData = moduleData,
                     )
             }
+            if (javaClass.isRecord) {
+                createDeclarationsForJavaRecord(
+                    javaClass,
+                    classId,
+                    moduleData,
+                    javaTypeParameterStack,
+                    dispatchReceiver,
+                    classTypeParameters,
+                    declarations
+                )
+            }
         }.apply {
             if (modality == Modality.SEALED) {
                 val inheritors = javaClass.permittedTypes.mapNotNull { classifierType ->
@@ -378,6 +388,80 @@ abstract class FirJavaFacade(
                     }
                 }
             }
+
+            if (javaClass.isRecord) {
+                this.isJavaRecord = true
+            }
+        }
+    }
+
+    private fun createDeclarationsForJavaRecord(
+        javaClass: JavaClass,
+        classId: ClassId,
+        moduleData: FirModuleData,
+        javaTypeParameterStack: JavaTypeParameterStack,
+        classType: ConeClassLikeType,
+        classTypeParameters: List<FirTypeParameter>,
+        destination: MutableList<FirDeclaration>
+    ) {
+        val functionsByName = destination.filterIsInstance<FirJavaMethod>().groupBy { it.name }
+
+        for (recordComponent in javaClass.recordComponents) {
+            val name = recordComponent.name
+            if (functionsByName[name].orEmpty().any { it.valueParameters.isEmpty() }) continue
+
+            val componentId = CallableId(classId, name)
+            destination += buildJavaMethod {
+                this.moduleData = moduleData
+                source = recordComponent.toSourceElement(KtFakeSourceElementKind.JavaRecordComponentFunction)
+                symbol = FirNamedFunctionSymbol(componentId)
+                this.name = name
+                isFromSource = recordComponent.isFromSource
+                returnTypeRef = recordComponent.type.toFirJavaTypeRef(session, javaTypeParameterStack)
+                annotationBuilder = { emptyList() }
+                status = FirResolvedDeclarationStatusImpl(
+                    Visibilities.Public,
+                    Modality.FINAL,
+                    EffectiveVisibility.Public
+                )
+                dispatchReceiverType = classType
+            }.apply {
+                isJavaRecordComponent = true
+            }
+        }
+
+        destination += buildJavaConstructor {
+            source = javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitJavaRecordConstructor)
+            this.moduleData = moduleData
+            isFromSource = javaClass.isFromSource
+
+            val constructorId = CallableId(classId, classId.shortClassName)
+            symbol = FirConstructorSymbol(constructorId)
+            status = FirResolvedDeclarationStatusImpl(
+                Visibilities.Public,
+                Modality.FINAL,
+                EffectiveVisibility.Public
+            )
+            visibility = Visibilities.Public
+            isPrimary = true
+            returnTypeRef = classType.toFirResolvedTypeRef()
+            dispatchReceiverType = null
+            typeParameters += classTypeParameters.toRefs()
+            annotationBuilder = { emptyList() }
+
+            javaClass.recordComponents.mapTo(valueParameters) { component ->
+                buildJavaValueParameter {
+                    source = component.toSourceElement(KtFakeSourceElementKind.ImplicitRecordConstructorParameter)
+                    this.moduleData = moduleData
+                    isFromSource = component.isFromSource
+                    returnTypeRef = component.type.toFirJavaTypeRef(session, javaTypeParameterStack)
+                    name = component.name
+                    isVararg = component.isVararg
+                    annotationBuilder = { emptyList() }
+                }
+            }
+        }.apply {
+            containingClassForStaticMemberAttr = classType.lookupTag
         }
     }
 
@@ -393,7 +477,7 @@ abstract class FirJavaFacade(
         val returnType = javaField.type
         return when {
             javaField.isEnumEntry -> buildEnumEntry {
-                source = (javaField as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement()
+                source = javaField.toSourceElement()
                 this.moduleData = moduleData
                 symbol = FirEnumEntrySymbol(fieldId)
                 name = fieldName
@@ -416,7 +500,7 @@ abstract class FirJavaFacade(
                 containingClassForStaticMemberAttr = ConeClassLikeLookupTagImpl(classId)
             }
             else -> buildJavaField {
-                source = (javaField as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement()
+                source = javaField.toSourceElement()
                 this.moduleData = moduleData
                 symbol = FirFieldSymbol(fieldId)
                 name = fieldName
@@ -456,6 +540,7 @@ abstract class FirJavaFacade(
     }
 
     private fun convertJavaMethodToFir(
+        containingClass: JavaClass,
         javaMethod: JavaMethod,
         classId: ClassId,
         javaTypeParameterStack: JavaTypeParameterStack,
@@ -468,7 +553,7 @@ abstract class FirJavaFacade(
         val returnType = javaMethod.returnType
         return buildJavaMethod {
             this.moduleData = moduleData
-            source = (javaMethod as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement()
+            source = javaMethod.toSourceElement()
             symbol = methodSymbol
             name = methodName
             isFromSource = javaMethod.isFromSource
@@ -505,6 +590,9 @@ abstract class FirJavaFacade(
             if (javaMethod.isStatic) {
                 containingClassForStaticMemberAttr = ConeClassLikeLookupTagImpl(classId)
             }
+            if (containingClass.isRecord && valueParameters.isEmpty() && containingClass.recordComponents.any { it.name == methodName }) {
+                isJavaRecordComponent = true
+            }
         }
     }
 
@@ -514,8 +602,7 @@ abstract class FirJavaFacade(
         moduleData: FirModuleData,
     ): FirJavaValueParameter =
         buildJavaValueParameter {
-            source = (javaMethod as? JavaElementImpl<*>)?.psi
-                ?.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitJavaAnnotationConstructor)
+            source = javaMethod.toSourceElement(KtFakeSourceElementKind.ImplicitJavaAnnotationConstructor)
             this.moduleData = moduleData
             isFromSource = javaMethod.isFromSource
             returnTypeRef = firJavaMethod.returnTypeRef
@@ -536,7 +623,7 @@ abstract class FirJavaFacade(
     ): FirJavaConstructor {
         val constructorSymbol = FirConstructorSymbol(constructorId)
         return buildJavaConstructor {
-            source = (javaConstructor as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement()
+            source = javaConstructor?.toSourceElement()
             this.moduleData = moduleData
             isFromSource = javaClass.isFromSource
             symbol = constructorSymbol
@@ -559,7 +646,7 @@ abstract class FirJavaFacade(
                 type = ownerClassBuilder.buildSelfTypeRef()
             }
             dispatchReceiverType = if (isThisInner) outerClassSymbol?.defaultType() else null
-            typeParameters += classTypeParameters.map { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
+            typeParameters += classTypeParameters.toRefs()
 
             if (javaConstructor != null) {
                 this.typeParameters += javaConstructor.typeParameters.convertTypeParameters(javaTypeParameterStack, constructorSymbol, moduleData)
@@ -612,4 +699,12 @@ abstract class FirJavaFacade(
 
     private fun FqName.topLevelName() =
         asString().substringBefore(".")
+
+    private fun JavaElement.toSourceElement(sourceElementKind: KtSourceElementKind = KtRealSourceElementKind): KtSourceElement? {
+        return (this as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement(sourceElementKind)
+    }
+
+    private fun List<FirTypeParameter>.toRefs(): List<FirTypeParameterRef> {
+        return this.map { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
+    }
 }

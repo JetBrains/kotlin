@@ -131,3 +131,10 @@ val FirCallableDeclaration.propertyIfAccessor: FirCallableDeclaration
 
 val FirCallableDeclaration.propertyIfBackingField: FirCallableDeclaration
     get() = (this as? FirBackingField)?.propertySymbol?.fir ?: this
+
+private object IsJavaRecordKey : FirDeclarationDataKey()
+var FirRegularClass.isJavaRecord: Boolean? by FirDeclarationDataRegistry.data(IsJavaRecordKey)
+
+private object IsJavaRecordComponentKey : FirDeclarationDataKey()
+var FirFunction.isJavaRecordComponent: Boolean? by FirDeclarationDataRegistry.data(IsJavaRecordComponentKey)
+
