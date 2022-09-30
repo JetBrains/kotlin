@@ -27,17 +27,17 @@ internal val ProduceObjCInterfacePhase = object : SimpleNamedCompilerPhase<Phase
     }
 }
 
-internal data class ObjCCodeSpecInput(val symbolTable: SymbolTable, val objCExportedInterface: ObjCExportedInterface)
+internal data class ObjCCodeSpecInput(val objCExportedInterface: ObjCExportedInterface)
 
-internal val ProduceObjCCodeSpecPhase = object : SimpleNamedCompilerPhase<PhaseContext, ObjCCodeSpecInput, ObjCExportCodeSpec>(
+internal val ProduceObjCCodeSpecPhase = object : SimpleNamedCompilerPhase<PsiToIrContext, ObjCCodeSpecInput, ObjCExportCodeSpec>(
         "ObjCCodeSpec", "Generate Objective-C codespec"
 ) {
-    override fun outputIfNotEnabled(context: PhaseContext, input: ObjCCodeSpecInput): ObjCExportCodeSpec {
+    override fun outputIfNotEnabled(context: PsiToIrContext, input: ObjCCodeSpecInput): ObjCExportCodeSpec {
         return ObjCExportCodeSpec(emptyList(), emptyList())
     }
 
-    override fun phaseBody(context: PhaseContext, input: ObjCCodeSpecInput): ObjCExportCodeSpec {
-        return input.objCExportedInterface.createCodeSpec(input.symbolTable)
+    override fun phaseBody(context: PsiToIrContext, input: ObjCCodeSpecInput): ObjCExportCodeSpec {
+        return input.objCExportedInterface.createCodeSpec(context.symbolTable)
     }
 }
 
@@ -58,4 +58,26 @@ internal val WriteObjCFramework = object : SimpleNamedCompilerPhase<PhaseContext
         val objCExportFrameworkWriter = ObjCExportFrameworkWriter(context, input.moduleDescriptor)
         objCExportFrameworkWriter.produceFrameworkSpecific(input.objCInterface.headerLines, input.frameworkFile)
     }
+}
+
+internal fun <T: PhaseContext> PhaseEngine<T>.produceObjCExportInterface(
+        frontendResult: FrontendPhaseResult.Full,
+): ObjCExportedInterface {
+    return this.runPhase(context, ProduceObjCInterfacePhase, frontendResult)
+}
+
+internal fun <T: PsiToIrContext> PhaseEngine<T>.produceObjCCodeSpec(
+        objCExportedInterface: ObjCExportedInterface,
+): ObjCExportCodeSpec {
+    val input = ObjCCodeSpecInput(objCExportedInterface)
+    return this.runPhase(context, ProduceObjCCodeSpecPhase, input)
+}
+
+internal fun <T: PhaseContext> PhaseEngine<T>.writeObjCFramework(
+        objCExportedInterface: ObjCExportedInterface,
+        moduleDescriptor: ModuleDescriptor,
+        frameworkFile: File,
+) {
+    val input = WriteObjCFrameworkInput(objCExportedInterface, moduleDescriptor, frameworkFile)
+    return this.runPhase(context, WriteObjCFramework, input)
 }

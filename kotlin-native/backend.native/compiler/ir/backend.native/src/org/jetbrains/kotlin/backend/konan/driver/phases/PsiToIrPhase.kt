@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.resolve.CleanableBindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 data class PsiToIrInput(
         val frontendPhaseResult: FrontendPhaseResult.Full,
-        val symbolTable: SymbolTable,
         val isProducingLibrary: Boolean,
 )
 
@@ -35,6 +35,8 @@ internal class PsiToIrResult(
 // TODO: Consider component-based approach
 internal interface PsiToIrContext :
         PhaseContext {
+    val symbolTable: SymbolTable
+
     val reflectionTypes: KonanReflectionTypes
 
     val builtIns: KonanBuiltIns
@@ -49,7 +51,8 @@ internal interface PsiToIrContext :
 
 internal class PsiToContextImpl(
         config: KonanConfig,
-        private val moduleDescriptor: ModuleDescriptor
+        private val moduleDescriptor: ModuleDescriptor,
+        override val symbolTable: SymbolTable
 ) : BasicPhaseContext(config), PsiToIrContext {
     override val reflectionTypes: KonanReflectionTypes by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KonanReflectionTypes(moduleDescriptor)
@@ -70,6 +73,10 @@ internal class PsiToContextImpl(
             else -> DefaultLlvmModuleSpecification(config.cachedLibraries)
         }
     }
+
+    override fun dispose() {
+        // TODO: dispose symbol table
+    }
 }
 
 internal val PsiToIrPhase = object : SimpleNamedCompilerPhase<PsiToIrContext, PsiToIrInput, PsiToIrResult>(
@@ -82,4 +89,16 @@ internal val PsiToIrPhase = object : SimpleNamedCompilerPhase<PsiToIrContext, Ps
     override fun outputIfNotEnabled(context: PsiToIrContext, input: PsiToIrInput): PsiToIrResult {
         error("disabled")
     }
+}
+
+internal fun <T: PsiToIrContext> PhaseEngine<T>.runPsiToIr(
+        frontendResult: FrontendPhaseResult.Full,
+        isProducingLibrary: Boolean
+): PsiToIrResult {
+    val psiToIrInput = PsiToIrInput(frontendResult, isProducingLibrary)
+    val result = this.runPhase(context, PsiToIrPhase, psiToIrInput)
+    val originalBindingContext = frontendResult.bindingContext as? CleanableBindingContext
+            ?: error("BindingContext should be cleanable in K/N IR to avoid leaking memory: ${frontendResult.bindingContext}")
+    originalBindingContext.clear()
+    return result
 }

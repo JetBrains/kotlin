@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.driver.phases.BasicPhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.phases.BinaryPhasesContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.DWARF
@@ -28,12 +30,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
 
-internal class NativeGenerationState(private val context: Context) {
-    private val config = context.config
+internal class NativeGenerationState(private val context: Context) : BinaryPhasesContext, PhaseContext by context {
+    override val config = context.config
 
     private val outputPath = config.cacheSupport.tryGetImplicitOutput() ?: config.outputPath
     val outputFiles = OutputFiles(outputPath, config.target, config.produce)
-    val tempFiles = run {
+    override val tempFiles = run {
         val pathToTempDir = config.configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR)?.let {
             val singleFileStrategy = config.cacheSupport.libraryToCache?.strategy as? CacheDeserializationStrategy.SingleFile
             if (singleFileStrategy == null)
@@ -106,7 +108,7 @@ internal class NativeGenerationState(private val context: Context) {
     }
 
     private var isDisposed = false
-    fun dispose() {
+    override fun dispose() {
         if (isDisposed) return
 
         if (debugInfoDelegate.isInitialized()) {

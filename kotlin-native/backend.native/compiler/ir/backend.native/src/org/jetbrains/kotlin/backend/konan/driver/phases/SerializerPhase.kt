@@ -67,3 +67,11 @@ internal val SerializerPhase = object : SimpleNamedCompilerPhase<PhaseContext, S
     override fun outputIfNotEnabled(context: PhaseContext, input: SerializerInput): SerializerResult =
             SerializerResult(null, null, null, emptyList())
 }
+
+internal fun <T: PhaseContext> PhaseEngine<T>.runSerializer(
+        moduleDescriptor: ModuleDescriptor,
+        psiToIrResult: PsiToIrResult?,
+): SerializerResult {
+    val input = SerializerInput(moduleDescriptor, psiToIrResult)
+    return this.runPhase(context, SerializerPhase, input)
+}

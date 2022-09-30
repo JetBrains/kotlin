@@ -13,7 +13,13 @@ import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.backend.konan.driver.phases.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
+import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.konan.TempFiles
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
 
@@ -44,76 +50,79 @@ internal class DynamicCompilerDriver: CompilerDriver() {
         }
     }
 
-    private fun produceKlib(engine: PhaseEngine, config: KonanConfig, environment: KotlinCoreEnvironment) {
-        val frontendResult = engine.runFrontend(config, environment)
+    private fun produceKlib(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+        val frontendResult = engine.useContext(FrontendContextImpl(config)) { frontendEngine ->
+            frontendEngine.runFrontend(environment)
+        }
         if (frontendResult is FrontendPhaseResult.ShouldNotGenerateCode) {
             return
         }
         require(frontendResult is FrontendPhaseResult.Full)
         val psiToIrResult = if (!config.metadataKlib) {
-            SymbolTableResource().use { symbolTable ->
-                engine.runPsiToIr(config, frontendResult, symbolTable, isProducingLibrary = true)
+            val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
+            val psiToIrContext = PsiToContextImpl(config, frontendResult.moduleDescriptor, symbolTable)
+            engine.useContext(psiToIrContext) { psiToIrEngine ->
+                psiToIrEngine.runPsiToIr(frontendResult, isProducingLibrary = true)
             }
         } else null
-        val serializerResult = engine.runSerializer(config, frontendResult.moduleDescriptor, psiToIrResult)
-        engine.writeKlib(config, serializerResult)
+        engine.useContext(BasicPhaseContext(config)) { serializationEngine ->
+            val serializerResult = serializationEngine.runSerializer(frontendResult.moduleDescriptor, psiToIrResult)
+            serializationEngine.writeKlib(serializerResult)
+        }
+
     }
 
-    private fun produceFramework(engine: PhaseEngine, config: KonanConfig, environment: KotlinCoreEnvironment) {
-        val frontendResult = engine.runFrontend(config, environment)
+    private fun produceFramework(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+        val frontendResult = engine.useContext(FrontendContextImpl(config)) { frontendEngine ->
+            frontendEngine.runFrontend(environment)
+        }
         if (frontendResult is FrontendPhaseResult.ShouldNotGenerateCode) {
             return
         }
         require(frontendResult is FrontendPhaseResult.Full)
-        val objcInterface = engine.produceObjCExportInterface(config, frontendResult)
-
-        if (config.omitFrameworkBinary) {
+        val objcInterface = engine.produceObjCExportInterface(frontendResult)
+        val frameworkFile = run {
             val outputPath = config.cacheSupport.tryGetImplicitOutput() ?: config.outputPath
             val outputFiles = OutputFiles(outputPath, config.target, config.produce)
-            val frameworkFile = outputFiles.mainFile
-            engine.writeObjCFramework(config, objcInterface, frontendResult.moduleDescriptor, frameworkFile)
+            outputFiles.mainFile
+        }
+        engine.writeObjCFramework(objcInterface, frontendResult.moduleDescriptor, frameworkFile)
+        if (config.omitFrameworkBinary) {
             return
         }
-        val (psiToIrResult, objCCodeSpec) = SymbolTableResource().use { symbolTable ->
-            val objCCodeSpec = engine.produceObjCCodeSpec(config, objcInterface, symbolTable)
-            val psiToIrResult = engine.runPsiToIr(config, frontendResult, symbolTable, isProducingLibrary = false)
-            Pair(psiToIrResult, objCCodeSpec)
+        val (psiToIrResult, objCCodeSpec) = run {
+            val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
+            val psiToIrContext = PsiToContextImpl(config, frontendResult.moduleDescriptor, symbolTable)
+            engine.useContext(psiToIrContext) { psiToIrEngine ->
+                val objCCodeSpec = psiToIrEngine.produceObjCCodeSpec(objcInterface)
+                val psiToIrResult = psiToIrEngine.runPsiToIr(frontendResult, isProducingLibrary = false)
+                Pair(psiToIrResult, objCCodeSpec)
+            }
         }
-        val context = Context(config)
-        context.populateAfterFrontend(frontendResult)
-        context.populateAfterPsiToIr(psiToIrResult)
-        context.objCExport = ObjCExport(context, objcInterface, objCCodeSpec)
-
-        engine.runPhase(context, functionsWithoutBoundCheck, Unit)
-
-        val nativeGenerationState = NativeGenerationState(context)
-        context.generationState = nativeGenerationState
-
-        // Let's "eat" Context step-by-step. We don't use it for frontend, psi2ir, and object files,
+        // Let's "eat" Context step-by-step. We don't use it for frontend and psi2ir,
         // but use it for lowerings and bitcode generation for now.
-        engine.runBackendCodegen(context, context.irModule!!)
-
-        val output = context.generationState.tempFiles.nativeBinaryFileName
-        context.bitcodeFileName = output
-        // Insert `_main` after pipeline so we won't worry about optimizations
-        // corrupting entry point.
-        insertAliasToEntryPoint(context)
-        LLVMWriteBitcodeToFile(context.generationState.llvm.module, output)
-
-        val objectFiles = engine.produceObjectFiles(
-                config,
-                context.bitcodeFileName,
-                context.generationState.tempFiles
-        )
-        engine.linkObjectFiles(
-                config,
-                objectFiles,
-                context.generationState.llvm,
-                context.llvmModuleSpecification,
-                context.coverage.enabled,
-                context.generationState.outputFile,
-                context.generationState.outputFiles,
-                context.generationState.tempFiles,
-        )
+        val context = Context(config).also {
+            it.populateAfterFrontend(frontendResult)
+            it.populateAfterPsiToIr(psiToIrResult)
+            it.objCExport = ObjCExport(it, objcInterface, objCCodeSpec)
+        }
+        engine.useContext(context) { middleEndEngine ->
+            middleEndEngine.runPhase(context, functionsWithoutBoundCheck, Unit)
+            middleEndEngine.useContext(NativeGenerationState(context)) { nativeGenerationEngine ->
+                // TODO: Drop this property, use generation state separately.
+                context.generationState = nativeGenerationEngine.context
+                middleEndEngine.runBackendCodegen(context.irModule!!)
+                val bitcodeFile = nativeGenerationEngine.writeBitcodeFile(nativeGenerationEngine.context.llvm.module)
+                val objectFiles = nativeGenerationEngine.produceObjectFiles(bitcodeFile)
+                nativeGenerationEngine.linkObjectFiles(
+                        objectFiles,
+                        nativeGenerationEngine.context.llvm,
+                        context.llvmModuleSpecification,
+                        context.coverage.enabled,
+                        nativeGenerationEngine.context.outputFile,
+                        nativeGenerationEngine.context.outputFiles,
+                )
+            }
+        }
     }
 }

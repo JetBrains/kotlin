@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.checkDeclarationParents
 import org.jetbrains.kotlin.backend.common.IrValidator
 import org.jetbrains.kotlin.backend.common.IrValidatorConfig
+import org.jetbrains.kotlin.backend.common.checkDeclarationParents
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
@@ -15,9 +15,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendPhaseResult
 import org.jetbrains.kotlin.backend.konan.driver.phases.LinkerPhaseInput
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrInput
-import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrResult
-import org.jetbrains.kotlin.backend.konan.ir.KonanIr
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
@@ -26,11 +23,15 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.createCodeSpec
 import org.jetbrains.kotlin.backend.konan.objcexport.produceObjCExportInterface
-import org.jetbrains.kotlin.backend.konan.serialization.*
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
+import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
@@ -84,7 +85,7 @@ internal fun konanUnitPhase(
 
 internal val createSymbolTablePhase = konanUnitPhase(
         op = {
-            this.symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
+            this._symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
         },
         name = "CreateSymbolTable",
         description = "Create SymbolTable"
@@ -97,7 +98,7 @@ internal val objCExportPhase = konanUnitPhase(
                 this.config.produce != CompilerOutputKind.FRAMEWORK -> null
                 else -> produceObjCExportInterface(this, this.getFrontendResult() as FrontendPhaseResult.Full)
             }
-            val codeSpec = exportedInterface?.createCodeSpec(symbolTable!!)
+            val codeSpec = exportedInterface?.createCodeSpec(symbolTable)
             objCExport = ObjCExport(this, exportedInterface, codeSpec)
         },
         name = "ObjCExport",
@@ -108,7 +109,7 @@ internal val objCExportPhase = konanUnitPhase(
 internal val buildCExportsPhase = konanUnitPhase(
         op = {
             this.cAdapterGenerator = CAdapterGenerator(this).also {
-                it.buildExports(this.symbolTable!!)
+                it.buildExports(this.symbolTable)
             }
         },
         name = "BuildCExports",
@@ -120,7 +121,7 @@ internal val psiToIrPhase = konanUnitPhase(
         op = {
             val frontendPhaseResult = getFrontendResult()
             require(frontendPhaseResult is FrontendPhaseResult.Full)
-            val input = PsiToIrInput(frontendPhaseResult, symbolTable!!, isProducingLibrary = config.produce == CompilerOutputKind.LIBRARY)
+            val input = PsiToIrInput(frontendPhaseResult, isProducingLibrary = config.produce == CompilerOutputKind.LIBRARY)
             val psiToIrResult = this.psiToIr(input, useLinkerWhenProducingLibrary = false)
             this.populateAfterPsiToIr(psiToIrResult)
             val originalBindingContext = bindingContext as? CleanableBindingContext
@@ -152,7 +153,7 @@ internal val buildAdditionalCacheInfoPhase = konanUnitPhase(
 
 internal val destroySymbolTablePhase = konanUnitPhase(
         op = {
-            this.symbolTable = null // TODO: invalidate symbolTable itself.
+            this._symbolTable = null // TODO: invalidate symbolTable itself.
         },
         name = "DestroySymbolTable",
         description = "Destroy SymbolTable",
@@ -230,7 +231,7 @@ internal val saveAdditionalCacheInfoPhase = konanUnitPhase(
 
 internal val objectFilesPhase = konanUnitPhase(
         op = {
-            compilerOutput = BitcodeCompiler(this, this.generationState.tempFiles).makeObjectFiles(bitcodeFileName)
+            compilerOutput = BitcodeCompiler(this.generationState).makeObjectFiles(bitcodeFileName)
         },
         name = "ObjectFiles",
         description = "Bitcode to object file"
@@ -245,9 +246,8 @@ internal val linkerPhase = konanUnitPhase(
                     coverage.enabled,
                     generationState.outputFile,
                     generationState.outputFiles,
-                    generationState.tempFiles,
             )
-            Linker(this, input).link()
+            Linker(this.generationState, input).link()
         },
         name = "Linker",
         description = "Linker"
@@ -478,7 +478,7 @@ internal val backendCodegen = SameTypeNamedCompilerPhase(
                 allLoweringsPhase then // Lower current module first.
                 dependenciesLowerPhase then // Then lower all libraries in topological order.
                                             // With that we guarantee that inline functions are unlowered while being inlined.
-                dumpTestsPhase then
+//                dumpTestsPhase then
                 bitcodePhase then
                 verifyBitcodePhase then
                 printBitcodePhase then

@@ -14,8 +14,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysisResult
 import org.jetbrains.kotlin.backend.konan.descriptors.deepPrint
 import org.jetbrains.kotlin.backend.konan.driver.context.ConfigChecks
-import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendPhaseResult
-import org.jetbrains.kotlin.backend.konan.driver.phases.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrResult
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
@@ -44,6 +43,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -74,8 +74,11 @@ internal class NativeMapping : DefaultMapping() {
     val enumValuesCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
 }
 
-internal class Context(config: KonanConfig) : KonanBackendContext(config), ConfigChecks, PsiToIrContext {
-
+internal class Context(config: KonanConfig) :
+        KonanBackendContext(config),
+        ConfigChecks,
+        PsiToIrContext
+{
     lateinit var frontendServices: FrontendServices
     lateinit var environment: KotlinCoreEnvironment
     lateinit var bindingContext: BindingContext
@@ -118,7 +121,11 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
 
     lateinit var expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>
 
-    var symbolTable: SymbolTable? = null
+    var _symbolTable: SymbolTable? = null
+
+    override val symbolTable: SymbolTable
+        get() = _symbolTable!!
+
 
     override val builtIns: KonanBuiltIns by lazy(PUBLICATION) {
         moduleDescriptor.builtIns as KonanBuiltIns
@@ -277,6 +284,9 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
                 DefaultTargetAbiInfo()
             }
         }
+    }
+
+    override fun dispose() {
     }
 }
 

@@ -69,3 +69,9 @@ internal val WriteKlibPhase = object : SimpleNamedCompilerPhase<PhaseContext, Se
 
     }
 }
+
+internal fun <T: PhaseContext>  PhaseEngine<T>.writeKlib(
+        serializationResult: SerializerResult,
+) {
+    this.runPhase(context, WriteKlibPhase, serializationResult)
+}

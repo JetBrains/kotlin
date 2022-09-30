@@ -1,12 +1,12 @@
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.konan.driver.phases.BinaryPhasesContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.LinkerPhaseInput
 import org.jetbrains.kotlin.backend.konan.driver.phases.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
 import org.jetbrains.kotlin.konan.KonanExternalToolFailure
-import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
@@ -80,7 +80,7 @@ internal class CacheStorage(val context: Context) {
 
 // TODO: We have a Linker.kt file in the shared module.
 internal class Linker(
-        val context: PhaseContext,
+        val context: BinaryPhasesContext,
         private val input: LinkerPhaseInput,
 ) {
 
@@ -219,7 +219,7 @@ internal class Linker(
                 LinkerInput(objectFiles, CachesToLink(emptyList(), caches.dynamic), emptyList(), cachingInvolved)
             }
             shouldPerformPreLink(caches, linkerOutputKind) -> {
-                val preLinkResult = input.tempFiles.create("withStaticCaches", ".o").absolutePath
+                val preLinkResult = context.tempFiles.create("withStaticCaches", ".o").absolutePath
                 val preLinkCommands = linker.preLinkCommands(objectFiles + caches.static, preLinkResult)
                 LinkerInput(listOf(preLinkResult), CachesToLink(emptyList(), caches.dynamic), preLinkCommands, cachingInvolved)
             }

@@ -49,7 +49,7 @@ internal fun PsiToIrContext.psiToIr(
         psiToIrInput: PsiToIrInput,
         useLinkerWhenProducingLibrary: Boolean
 ): PsiToIrResult {
-    val (frontendPhaseResult, symbolTable, isProducingLibrary) = psiToIrInput
+    val (frontendPhaseResult, isProducingLibrary) = psiToIrInput
     val (moduleDescriptor, bindingContext, _, environment) = frontendPhaseResult
     // Translate AST to high level IR.
     val expectActualLinker = config.configuration[CommonConfigurationKeys.EXPECT_ACTUAL_LINKER] ?: false

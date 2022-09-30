@@ -27,10 +27,14 @@ sealed class FrontendPhaseResult() {
     ) : FrontendPhaseResult()
 }
 
-internal class FrontendContext(
+internal interface FrontendContext : PhaseContext {
+    var frontendServices: FrontendServices
+}
+
+internal class FrontendContextImpl(
         config: KonanConfig
-) : BasicPhaseContext(config) {
-    lateinit var frontendServices: FrontendServices
+) : BasicPhaseContext(config), FrontendContext {
+    override lateinit var frontendServices: FrontendServices
 }
 
 internal val FrontendPhase = object : SimpleNamedCompilerPhase<FrontendContext, KotlinCoreEnvironment, FrontendPhaseResult>(
@@ -71,4 +75,8 @@ internal val FrontendPhase = object : SimpleNamedCompilerPhase<FrontendContext, 
             FrontendPhaseResult.ShouldNotGenerateCode
         }
     }
+}
+
+internal fun <T: FrontendContext> PhaseEngine<T>.runFrontend(environment: KotlinCoreEnvironment): FrontendPhaseResult {
+    return this.runPhase(context, FrontendPhase, environment)
 }

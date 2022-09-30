@@ -8,34 +8,33 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.*
-import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.KonanConfig
+import org.jetbrains.kotlin.backend.konan.backendCodegen
 import org.jetbrains.kotlin.backend.konan.driver.context.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.getCompilerMessageLocation
-import org.jetbrains.kotlin.backend.konan.llvm.Llvm
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
-import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
-import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.konan.TempFiles
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.resolve.CleanableBindingContext
 
-// TODO: What is the difference between input and context?
-//  Don't have a good answer yet.
+/**
+ * Context is a set of resources that is shared between different phases.
+ */
 internal interface PhaseContext : LoggingContext, ConfigChecks, ErrorReportingContext {
     val messageCollector: MessageCollector
+
+    /**
+     * Called by [PhaseEngine.useContext] after action completion.
+     */
+    fun dispose()
 }
 
+/**
+ * Minimal context.
+ */
 internal open class BasicPhaseContext(
         override val config: KonanConfig,
 ) : PhaseContext {
@@ -56,24 +55,32 @@ internal open class BasicPhaseContext(
                 message, location
         )
     }
+
+    override fun dispose() {
+
+    }
 }
 
-
-
-internal class PhaseEngine(
+/**
+ * Engine is used to run compiler phases in a so-called "dynamic" driver,
+ * i.e. compiler driver that does not know sequence of events upfront.
+ */
+internal class PhaseEngine<T : PhaseContext>(
         private val phaseConfig: PhaseConfigService,
         private val phaserState: PhaserState<Any>,
+        val context: T
 ) {
     companion object {
-        fun startTopLevel(config: KonanConfig, body: (PhaseEngine) -> Unit) {
+        fun startTopLevel(config: KonanConfig, body: (PhaseEngine<PhaseContext>) -> Unit) {
             val phaserState = PhaserState<Any>()
             val phaseConfig = config.dumbPhaseConfig
-            val topLevelPhase = object: SimpleNamedCompilerPhase<PhaseContext, Any, Unit>(
+            val context = BasicPhaseContext(config)
+            val topLevelPhase = object : SimpleNamedCompilerPhase<PhaseContext, Any, Unit>(
                     "Compiler",
                     "The whole compilation process",
             ) {
                 override fun phaseBody(context: PhaseContext, input: Any) {
-                    val engine = PhaseEngine(phaseConfig, phaserState)
+                    val engine = PhaseEngine(phaseConfig, phaserState, context)
                     body(engine)
                 }
 
@@ -81,11 +88,23 @@ internal class PhaseEngine(
                     error("Compiler was disabled")
                 }
             }
-            topLevelPhase.invoke(phaseConfig, phaserState, BasicPhaseContext(config), Unit)
+            topLevelPhase.invoke(phaseConfig, phaserState, context, Unit)
         }
     }
 
-    internal fun <C : PhaseContext, Input, Output> runPhase(
+    /**
+     * Switch to a more specific phase engine.
+     */
+    inline fun <T : PhaseContext, R> useContext(newContext: T, action: (PhaseEngine<T>) -> R): R {
+        val newEngine = PhaseEngine(phaseConfig, phaserState, newContext)
+        try {
+            return action(newEngine)
+        } finally {
+            newContext.dispose()
+        }
+    }
+
+    fun <C : PhaseContext, Input, Output> runPhase(
             context: C,
             phase: NamedCompilerPhase<C, Input, Output>,
             input: Input
@@ -93,121 +112,10 @@ internal class PhaseEngine(
         // TODO: sticky postconditions
         return phase.invoke(phaseConfig, phaserState.changeType(), context, input)
     }
-
-    fun runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseResult {
-        val frontendContext = FrontendContext(config)
-        return this.runPhase(frontendContext, FrontendPhase, environment)
-    }
-
-    fun runPsiToIr(
-            config: KonanConfig,
-            frontendResult: FrontendPhaseResult.Full,
-            symbolTable: SymbolTable,
-            isProducingLibrary: Boolean
-    ): PsiToIrResult {
-        val psiToIrInput = PsiToIrInput(frontendResult, symbolTable, isProducingLibrary)
-        val context = PsiToContextImpl(config, frontendResult.moduleDescriptor)
-        val result = this.runPhase(context, PsiToIrPhase, psiToIrInput)
-        val originalBindingContext = frontendResult.bindingContext as? CleanableBindingContext
-                ?: error("BindingContext should be cleanable in K/N IR to avoid leaking memory: ${frontendResult.bindingContext}")
-        originalBindingContext.clear()
-        return result
-    }
-
-    fun runSerializer(
-            config: KonanConfig,
-            moduleDescriptor: ModuleDescriptor,
-            psiToIrResult: PsiToIrResult?,
-    ): SerializerResult {
-        val context = BasicPhaseContext(config)
-        val input = SerializerInput(moduleDescriptor, psiToIrResult)
-        return this.runPhase(context, SerializerPhase, input)
-    }
-
-    fun writeKlib(
-            config: KonanConfig,
-            serializationResult: SerializerResult,
-    ) {
-        this.runPhase(BasicPhaseContext(config), WriteKlibPhase, serializationResult)
-    }
-
-    fun produceObjCExportInterface(
-            config: KonanConfig,
-            frontendResult: FrontendPhaseResult.Full,
-    ): ObjCExportedInterface {
-        return this.runPhase(BasicPhaseContext(config), ProduceObjCInterfacePhase, frontendResult)
-    }
-
-    fun produceObjCCodeSpec(
-            config: KonanConfig,
-            objCExportedInterface: ObjCExportedInterface,
-            symbolTable: SymbolTable,
-    ): ObjCExportCodeSpec {
-        val input = ObjCCodeSpecInput(symbolTable, objCExportedInterface)
-        return this.runPhase(BasicPhaseContext(config), ProduceObjCCodeSpecPhase, input)
-    }
-
-    fun writeObjCFramework(
-            config: KonanConfig,
-            objCExportedInterface: ObjCExportedInterface,
-            moduleDescriptor: ModuleDescriptor,
-            frameworkFile: File,
-    ) {
-        val input = WriteObjCFrameworkInput(objCExportedInterface, moduleDescriptor, frameworkFile)
-        return this.runPhase(BasicPhaseContext(config), WriteObjCFramework, input)
-    }
-
-    fun runBackendCodegen(
-            context: Context,
-            irModule: IrModuleFragment,
-    ): IrModuleFragment {
-        return this.runPhase(context, backendCodegen, irModule)
-    }
-
-    fun produceObjectFiles(
-            config: KonanConfig,
-            bitcodeFile: BitcodeFile,
-            tempFiles: TempFiles,
-    ): List<ObjectFile> {
-        val input = ObjectFilesInput(bitcodeFile, tempFiles)
-        return this.runPhase(BasicPhaseContext(config), ObjectFilesPhase, input)
-    }
-
-    fun linkObjectFiles(
-            config: KonanConfig,
-            objectFiles: List<ObjectFile>,
-            llvm: Llvm,
-            llvmModuleSpecification: LlvmModuleSpecification,
-            needsProfileLibrary: Boolean,
-            outputFile: String,
-            outputFiles: OutputFiles,
-            tempFiles: TempFiles,
-    ) {
-        val input = LinkerPhaseInput(objectFiles, llvm, llvmModuleSpecification, needsProfileLibrary, outputFile, outputFiles, tempFiles)
-        return this.runPhase(BasicPhaseContext(config), LinkerPhase, input)
-    }
 }
 
-interface Resource<T> {
-    val value: T
-
-    fun close()
-}
-
-inline fun <T, R> Resource<T>.use(block: (T) -> R): R {
-    try {
-        return block(value)
-    } finally {
-        close()
-    }
-}
-
-class SymbolTableResource : Resource<SymbolTable> {
-    override val value: SymbolTable by lazy {
-        SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
-    }
-
-    override fun close() {
-        // TODO: Invalidate
-    }
+internal fun PhaseEngine<Context>.runBackendCodegen(
+        irModule: IrModuleFragment,
+): IrModuleFragment {
+    return this.runPhase(context, backendCodegen, irModule)
 }

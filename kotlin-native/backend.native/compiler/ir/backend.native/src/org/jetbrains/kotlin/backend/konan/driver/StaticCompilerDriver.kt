@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendContext
+import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendContextImpl
 import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendPhase
 import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendPhaseResult
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -41,12 +42,10 @@ internal class StaticCompilerDriver: CompilerDriver() {
 
         if (konanConfig.infoArgsOnly) return
 
-        val frontendContext = FrontendContext(konanConfig)
+        val frontendContext = FrontendContextImpl(konanConfig)
         when (val frontendResult = FrontendPhase.phaseBody(frontendContext, environment)) {
             is FrontendPhaseResult.Full -> {
-                context.moduleDescriptor = frontendResult.moduleDescriptor
-                context.bindingContext = frontendResult.bindingContext
-                context.frontendServices = frontendResult.frontendServices
+                context.populateAfterFrontend(frontendResult)
             }
             FrontendPhaseResult.ShouldNotGenerateCode -> {
                 return

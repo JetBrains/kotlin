@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.konan.driver.phases.BinaryPhasesContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.PhaseContext
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.exec.Command
@@ -15,8 +16,7 @@ typealias ObjectFile = String
 typealias ExecutableFile = String
 
 internal class BitcodeCompiler(
-        private val context: PhaseContext,
-        private val tempFiles: TempFiles,
+        private val context: BinaryPhasesContext,
 ) {
 
     private val platform = context.config.platform
@@ -36,7 +36,7 @@ internal class BitcodeCompiler(
                     .execute()
 
     private fun temporary(name: String, suffix: String): String =
-            tempFiles.create(name, suffix).absolutePath
+            context.tempFiles.create(name, suffix).absolutePath
 
     private fun targetTool(tool: String, vararg arg: String) {
         val absoluteToolName = if (platform.configurables is AppleConfigurables) {
