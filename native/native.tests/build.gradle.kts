@@ -52,7 +52,7 @@ val klibAbiTest = nativeTest("klibAbiTest", "klib-abi")
 
 // "test" task is created by convention. We can't just remove it. Let's enable it in developer's environment, so it can be used
 // to run any test from IDE or from console, but disable it at TeamCity where it is not supposed to be ever used.
-val test by nativeTest("test" /* no tags */).apply {
+val test by nativeTest("test", null /* no tags */).apply {
     if (kotlinBuildProperties.isTeamcityBuild) {
         configure { doFirst { throw GradleException("Task $path is not supposed to be executed in TeamCity environment") } }
     }

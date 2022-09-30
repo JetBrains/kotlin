@@ -2,6 +2,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.tasks.testing.Test
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.project
+import org.gradle.api.artifacts.Configuration
 
 enum class TestProperty(shortName: String) {
     // Use a separate Gradle property to pass Kotlin/Native home to tests: "kotlin.internal.native.test.nativeHome".
@@ -32,8 +33,7 @@ enum class TestProperty(shortName: String) {
     fun readGradleProperty(task: Test): String? = task.project.findProperty(propertyName)?.toString()
 }
 
-
-fun Project.nativeTest(taskName: String, vararg tags: String) = projectTest(
+fun Project.nativeTest(taskName: String, tag: String?, vararg customDependencies: Configuration) = projectTest(
     taskName,
     jUnitMode = JUnitMode.JUnit5,
     maxHeapSizeMb = 3072 // Extra heap space for Kotlin/Native compiler.
@@ -72,14 +72,20 @@ fun Project.nativeTest(taskName: String, vararg tags: String) = projectTest(
         }
 
         TestProperty.COMPILER_CLASSPATH.setUpFromGradleProperty(this) {
-            val customNativeHome = TestProperty.KOTLIN_NATIVE_HOME.readGradleProperty(this)
-            if (customNativeHome != null) {
-                file(customNativeHome).resolve("konan/lib/kotlin-native-compiler-embeddable.jar").absolutePath
-            } else {
-                val kotlinNativeCompilerEmbeddable = configurations.detachedConfiguration(dependencies.project(":kotlin-native-compiler-embeddable"))
-                dependsOn(kotlinNativeCompilerEmbeddable)
-                kotlinNativeCompilerEmbeddable.files.joinToString(";")
-            }
+            buildList {
+                val customNativeHome = TestProperty.KOTLIN_NATIVE_HOME.readGradleProperty(this@projectTest)
+                if (customNativeHome != null) {
+                    this += file(customNativeHome).resolve("konan/lib/kotlin-native-compiler-embeddable.jar")
+                } else {
+                    val kotlinNativeCompilerEmbeddable = configurations.detachedConfiguration(dependencies.project(":kotlin-native-compiler-embeddable"))
+                    dependsOn(kotlinNativeCompilerEmbeddable)
+                    this.addAll(kotlinNativeCompilerEmbeddable.files)
+                }
+                customDependencies.forEach { dependency ->
+                    dependsOn(dependency)
+                    this.addAll(dependency.files)
+                }
+            }.map { it.absoluteFile }.joinToString(";")
         }
 
         // Pass Gradle properties as JVM properties so test process can read them.
@@ -99,8 +105,10 @@ fun Project.nativeTest(taskName: String, vararg tags: String) = projectTest(
         // Pass the current Gradle task name so test can use it in logging.
         environment("GRADLE_TASK_NAME", path)
 
-        useJUnitPlatform {
-            includeTags(*tags)
+        tag?.let {
+            useJUnitPlatform {
+                includeTags(it)
+            }
         }
 
         doFirst {

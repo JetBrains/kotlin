@@ -27,7 +27,7 @@ val atomicfuJsClasspath by configurations.creating {
     }
 }
 
-val atomicfuJvmClasspath by configurations.creating
+val atomicfuClasspath by configurations.creating
 
 val atomicfuJsIrRuntimeForTests by configurations.creating {
     attributes {
@@ -73,6 +73,14 @@ dependencies {
 
     testImplementation(projectTests(":native:native.tests"))
     testImplementation(project(":native:kotlin-native-utils"))
+    // todo: remove unnecessary dependencies
+    testImplementation(project(":kotlin-compiler-runner-unshaded"))
+
+    testImplementation(commonDependency("commons-lang:commons-lang"))
+    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(projectTests(":compiler:test-infrastructure"))
+    testCompileOnly("org.jetbrains.kotlinx:atomicfu:0.17.1")
 
     testApiJUnit5()
 
@@ -82,8 +90,8 @@ dependencies {
     testRuntimeOnly(commonDependency("org.fusesource.jansi", "jansi"))
 
     atomicfuJsClasspath("org.jetbrains.kotlinx:atomicfu-js:0.17.1") { isTransitive = false }
-    atomicfuJvmClasspath("org.jetbrains.kotlinx:atomicfu:0.17.1") { isTransitive = false }
     atomicfuJsIrRuntimeForTests(project(":kotlinx-atomicfu-runtime"))  { isTransitive = false }
+    atomicfuClasspath("org.jetbrains.kotlinx:atomicfu:0.18.3") { isTransitive = false }
 
     embedded(project(":kotlinx-atomicfu-runtime")) {
         attributes {
@@ -120,7 +128,7 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     doFirst {
         systemProperty("atomicfuJsIrRuntimeForTests.classpath", atomicfuJsIrRuntimeForTests.asPath)
         systemProperty("atomicfuJs.classpath", atomicfuJsClasspath.asPath)
-        systemProperty("atomicfuJvm.classpath", atomicfuJvmClasspath.asPath)
+        systemProperty("atomicfuJvm.classpath", atomicfuClasspath.asPath)
     }
     setUpJsIrBoxTests()
 }
@@ -149,4 +157,4 @@ fun Test.setUpJsIrBoxTests() {
     systemProperty("kotlin.js.test.root.out.dir", "$buildDir/")
 }
 
-val nativeBoxTest = nativeTest("nativeBoxTest", "codegen")
+val nativeBoxTest = nativeTest("nativeBoxTest", "codegen", atomicfuClasspath)
