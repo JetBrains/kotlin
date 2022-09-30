@@ -105,16 +105,6 @@ internal abstract class AbstractLocalProcessRunner<R>(private val checks: TestRu
                             "Tested process output mismatch. See \"TEST STDOUT\" and \"EXPECTED OUTPUT DATA FILE\" below."
                         }
                     }
-//                    is TestRunCheck.KLibContentsFile -> {
-//                        val expectedOutput = check.file.readText()
-//                        val actualFilteredOutput = runResult.processOutput.stdOut.filteredOutput
-//
-//                        // Don't use verifyExpectation(expected, actual) to avoid exposing potentially large test output in exception message
-//                        // and blowing up test logs.
-//                        verifyExpectation(convertLineSeparators(expectedOutput) == convertLineSeparators(actualFilteredOutput)) {
-//                            "Tested process output mismatch. See \"TEST STDOUT\" and \"EXPECTED OUTPUT DATA FILE\" below."
-//                        }
-//                    }
                 }
             }
 
