@@ -313,11 +313,12 @@ class NativeDownloadAndPlatformLibsIT : BaseGradleIT() {
     fun `download prebuilt Native bundle with maven`() {
         with(transformNativeTestProjectWithPluginDsl("native-download-maven")) {
             gradleProperties().appendText(
-                """
-                    kotlin.native.distribution.mavenDownloadUrl=${mavenUrl()}
-                    kotlin.native.distribution.downloadFromMaven=true
-                """.trimIndent()
+                "kotlin.native.distribution.downloadFromMaven=true"
             )
+            gradleBuildScript().let {
+                val text = it.readText().replaceFirst("// <MavenPlaceholder>", "maven(\"${mavenUrl()}\")")
+                it.writeText(text)
+            }
             build("assemble") {
                 assertSuccessful()
                 assertContains("Unpack Kotlin/Native compiler to ")
@@ -330,35 +331,16 @@ class NativeDownloadAndPlatformLibsIT : BaseGradleIT() {
     fun `download light Native bundle with maven`() {
         with(transformNativeTestProjectWithPluginDsl("native-download-maven")) {
             gradleProperties().appendText(
-                """
-                    kotlin.native.distribution.mavenDownloadUrl=${mavenUrl()}
-                    kotlin.native.distribution.downloadFromMaven=true
-                """.trimIndent()
-            )
-            build("assemble", "-Pkotlin.native.distribution.type=light") {
-                assertSuccessful()
-                assertContains("Unpack Kotlin/Native compiler to ")
-                assertContains("Generate platform libraries for ")
-            }
-        }
-    }
-
-    @Test
-    fun `download from maven specified in the build`() {
-        with(transformNativeTestProjectWithPluginDsl("native-download-maven")) {
-            gradleProperties().appendText(
-                """
-                    kotlin.native.distribution.downloadFromMaven=true
-                """.trimIndent()
+                "kotlin.native.distribution.downloadFromMaven=true"
             )
             gradleBuildScript().let {
                 val text = it.readText().replaceFirst("// <MavenPlaceholder>", "maven(\"${mavenUrl()}\")")
                 it.writeText(text)
             }
-
-            build("assemble") {
+            build("assemble", "-Pkotlin.native.distribution.type=light") {
                 assertSuccessful()
                 assertContains("Unpack Kotlin/Native compiler to ")
+                assertContains("Generate platform libraries for ")
             }
         }
     }
@@ -375,27 +357,6 @@ class NativeDownloadAndPlatformLibsIT : BaseGradleIT() {
             build("assemble") {
                 assertContains("Could not find org.jetbrains.kotlin:kotlin-native")
                 assertFailed()
-            }
-        }
-    }
-
-    @Test
-    fun `download from maven specified in the build and with parameter`() {
-        with(transformNativeTestProjectWithPluginDsl("native-download-maven")) {
-            gradleProperties().appendText(
-                """
-                    kotlin.native.distribution.mavenDownloadUrl=${mavenUrl()}
-                    kotlin.native.distribution.downloadFromMaven=true
-                """.trimIndent()
-            )
-            gradleBuildScript().let {
-                val text = it.readText().replaceFirst("// <MavenPlaceholder>", "maven(\"${mavenUrl()}\")")
-                it.writeText(text)
-            }
-
-            build("assemble") {
-                assertSuccessful()
-                assertContains("Unpack Kotlin/Native compiler to ")
             }
         }
     }
