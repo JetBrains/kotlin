@@ -227,7 +227,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         // var someProperty: SomeType
         //     get() = delegate.getValue(thisRef, kProperty: KProperty0/1/2<..., SomeType>)
         //     set() = delegate.getValue(thisRef, kProperty: KProperty0/1/2<..., SomeType>, value)
-        val propertyReferenceAccess = argumentMapping?.keys?.toList()?.getOrNull(1) as? FirCallableReferenceAccess ?: return
+        val propertyReferenceAccess = resolvedArgumentMapping?.keys?.toList()?.getOrNull(1) as? FirCallableReferenceAccess ?: return
         val typeRef = propertyReferenceAccess.typeRef
         if (typeRef is FirResolvedTypeRef && property.returnTypeRef is FirResolvedTypeRef) {
             val typeArguments = (typeRef.type as ConeClassLikeType).typeArguments
