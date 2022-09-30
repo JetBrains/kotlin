@@ -459,7 +459,7 @@ internal val bitcodePhase = SameTypeNamedCompilerPhase(
                 RTTIPhase then
                 generateDebugInfoHeaderPhase then
                 escapeAnalysisPhase then
-                localEscapeAnalysisPhase then
+//                localEscapeAnalysisPhase then
                 codegenPhase then
                 finalizeDebugInfoPhase then
                 cStubsPhase
@@ -479,11 +479,11 @@ private val bitcodePostprocessingPhase = SameTypeNamedCompilerPhase(
 internal val backendCodegen = SameTypeNamedCompilerPhase(
         name = "Backend codegen",
         description = "Backend code generation",
-        lower = entryPointPhase then
+        lower = //entryPointPhase then
                 allLoweringsPhase then // Lower current module first.
                 dependenciesLowerPhase then // Then lower all libraries in topological order.
                                             // With that we guarantee that inline functions are unlowered while being inlined.
-                dumpTestsPhase then
+                //dumpTestsPhase then
                 bitcodePhase then
                 verifyBitcodePhase then
                 printBitcodePhase then

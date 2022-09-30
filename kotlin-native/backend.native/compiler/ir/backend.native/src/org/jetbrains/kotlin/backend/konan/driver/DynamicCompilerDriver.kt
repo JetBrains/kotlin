@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.backend.konan.driver
 
 import kotlinx.cinterop.usingJvmCInteropCallbacks
+import llvm.LLVMWriteBitcodeToFile
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.backend.konan.driver.phases.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
@@ -81,19 +81,30 @@ internal class DynamicCompilerDriver: CompilerDriver() {
         }
         val (psiToIrResult, objCCodeSpec) = SymbolTableResource().use { symbolTable ->
             val objCCodeSpec = engine.produceObjCCodeSpec(config, objcInterface, symbolTable)
-            val psiToIrResult = engine.runPsiToIr(config, frontendResult, symbolTable, isProducingLibrary = true)
+            val psiToIrResult = engine.runPsiToIr(config, frontendResult, symbolTable, isProducingLibrary = false)
             Pair(psiToIrResult, objCCodeSpec)
         }
         require(psiToIrResult is PsiToIrResult.Full)
         val context = Context(config)
+        context.populateAfterFrontend(frontendResult)
         context.populateAfterPsiToIr(psiToIrResult)
         context.objCExport = ObjCExport(context, objcInterface, objCCodeSpec)
+
+        engine.runPhase(context, functionsWithoutBoundCheck, Unit)
+
         val nativeGenerationState = NativeGenerationState(context)
         context.generationState = nativeGenerationState
 
         // Let's "eat" Context step-by-step. We don't use it for frontend, psi2ir, and object files,
-        // but use it for lowerings and bitcode generation.
+        // but use it for lowerings and bitcode generation for now.
         engine.runBackendCodegen(context, context.irModule!!)
+
+        val output = context.generationState.tempFiles.nativeBinaryFileName
+        context.bitcodeFileName = output
+        // Insert `_main` after pipeline so we won't worry about optimizations
+        // corrupting entry point.
+        insertAliasToEntryPoint(context)
+        LLVMWriteBitcodeToFile(context.generationState.llvm.module, output)
 
         val objectFiles = engine.produceObjectFiles(
                 config,

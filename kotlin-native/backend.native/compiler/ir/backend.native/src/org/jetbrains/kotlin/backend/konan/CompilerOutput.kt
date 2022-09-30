@@ -170,7 +170,7 @@ private fun linkAllDependencies(context: Context, generatedBitcodeFiles: List<St
     }
 }
 
-private fun insertAliasToEntryPoint(context: Context) {
+internal fun insertAliasToEntryPoint(context: Context) {
     val nomain = context.config.configuration.get(KonanConfigKeys.NOMAIN) ?: false
     if (context.config.produce != CompilerOutputKind.PROGRAM || nomain)
         return

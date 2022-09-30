@@ -91,6 +91,14 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
                 FrontendPhaseResult.ShouldNotGenerateCode
             }
 
+    fun populateAfterFrontend(
+            frontendPhaseResult: FrontendPhaseResult.Full
+    ) {
+        frontendServices = frontendPhaseResult.frontendServices
+        environment = frontendPhaseResult.environment
+        moduleDescriptor = frontendPhaseResult.moduleDescriptor
+    }
+
     fun populateAfterPsiToIr(
             psiToIrResult: PsiToIrResult.Full
     ) {
@@ -246,6 +254,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
         when {
             config.produce.isCache ->
                 CacheLlvmModuleSpecification(this, config.cachedLibraries, config.libraryToCache!!)
+
             else -> DefaultLlvmModuleSpecification(config.cachedLibraries)
         }
     }
@@ -259,9 +268,11 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
             config.target == KonanTarget.MINGW_X64 -> {
                 WindowsX64TargetAbiInfo()
             }
+
             !config.target.family.isAppleFamily && config.target.architecture == Architecture.ARM64 -> {
                 AAPCS64TargetAbiInfo()
             }
+
             else -> {
                 DefaultTargetAbiInfo()
             }
