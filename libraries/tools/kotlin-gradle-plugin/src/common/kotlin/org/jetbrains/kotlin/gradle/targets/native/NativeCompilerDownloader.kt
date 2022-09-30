@@ -108,37 +108,22 @@ class NativeCompilerDownloader(
         }
     }
 
-    private fun setupMavenRepo(repoUrl: String): ArtifactRepository {
-        return project.repositories.maven { repo ->
-            repo.setUrl(repoUrl)
-            repo.metadataSources {
-                it.artifact()
-            }
-        }
-    }
-
     private fun removeRepo(repo: ArtifactRepository) {
         project.repositories.remove(repo)
     }
 
-    private fun downloadAndExtract() {
-        val repoUrl = if (kotlinProperties.nativeDownloadFromMaven) {
-            kotlinProperties.nativeMavenDownloadUrl
-        } else {
-            buildString {
-                append("${kotlinProperties.nativeBaseDownloadUrl}/")
-                append(if (compilerVersion.meta == MetaVersion.DEV) "dev/" else "releases/")
-                append("$compilerVersion/")
-                append(simpleOsName)
-            }
+    private val repoUrl by lazy {
+        buildString {
+            append("${kotlinProperties.nativeBaseDownloadUrl}/")
+            append(if (compilerVersion.meta == MetaVersion.DEV) "dev/" else "releases/")
+            append("$compilerVersion/")
+            append(simpleOsName)
         }
+    }
 
-        val repo = if (repoUrl != null) {
-            if (kotlinProperties.nativeDownloadFromMaven) {
-                setupMavenRepo(repoUrl)
-            } else {
-                setupRepo(repoUrl)
-            }
+    private fun downloadAndExtract() {
+        val repo = if (!kotlinProperties.nativeDownloadFromMaven) {
+            setupRepo(repoUrl)
         } else null
 
         val compilerDependency = if (kotlinProperties.nativeDownloadFromMaven) {
