@@ -63,12 +63,6 @@ inline val FirCall.resolvedArgumentMapping: Map<FirExpression, FirValueParameter
         else -> null
     }
 
-inline val FirCall.argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>?
-    get() = when (val argumentList = argumentList) {
-        is FirResolvedArgumentList -> argumentList.mapping
-        else -> null
-    }
-
 fun FirExpression.toResolvedCallableReference(): FirResolvedNamedReference? {
     return toReference()?.resolved
 }

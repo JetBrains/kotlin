@@ -450,7 +450,7 @@ internal class KtFirCallResolver(
                 val argumentMapping = if (candidate is Candidate) {
                     candidate.argumentMapping
                 } else {
-                    fir.argumentMapping
+                    fir.resolvedArgumentMapping
                 }
                 val argumentMappingWithoutExtensionReceiver =
                     if (firstArgIsExtensionReceiver) {
@@ -1102,7 +1102,7 @@ internal class KtFirCallResolver(
     }
 
     private fun FirCall.createArgumentMapping(signatureOfCallee: KtFunctionLikeSignature<*>): LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>> {
-        return argumentMapping?.entries.createArgumentMapping(signatureOfCallee)
+        return resolvedArgumentMapping?.entries.createArgumentMapping(signatureOfCallee)
     }
 
     private fun Iterable<MutableMap.MutableEntry<FirExpression, FirValueParameter>>?.createArgumentMapping(
