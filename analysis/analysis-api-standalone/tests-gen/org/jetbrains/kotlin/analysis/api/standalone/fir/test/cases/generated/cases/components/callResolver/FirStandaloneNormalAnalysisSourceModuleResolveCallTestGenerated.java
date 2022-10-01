@@ -853,4 +853,32 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
             runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/assignments/insidePlusAssignTarget.kt");
         }
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/nonCalls")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NonCalls {
+        @Test
+        public void testAllFilesPresentInNonCalls() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/nonCalls"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
+        }
+
+        @Test
+        @TestMetadata("ifExpression.kt")
+        public void testIfExpression() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/nonCalls/ifExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("literalExpression.kt")
+        public void testLiteralExpression() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/nonCalls/literalExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("whenExpression.kt")
+        public void testWhenExpression() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/nonCalls/whenExpression.kt");
+        }
+    }
 }

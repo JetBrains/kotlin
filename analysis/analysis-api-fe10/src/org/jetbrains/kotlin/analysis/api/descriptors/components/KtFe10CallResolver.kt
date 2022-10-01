@@ -145,7 +145,7 @@ internal class KtFe10CallResolver(
         get() = analysisSession.token
 
     override fun resolveCall(psi: KtElement): KtCallInfo? = with(analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)) {
-        if (psi.isNotResolvable()) return null
+        if (!canBeResolvedAsCall(psi)) return null
 
         val parentBinaryExpression = psi.parentOfType<KtBinaryExpression>()
         val lhs = KtPsiUtil.deparenthesize(parentBinaryExpression?.left)
@@ -177,7 +177,7 @@ internal class KtFe10CallResolver(
 
     override fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo> =
         with(analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)) {
-            if (psi.isNotResolvable()) return emptyList()
+            if (!canBeResolvedAsCall(psi)) return emptyList()
 
             val resolvedKtCallInfo = resolveCall(psi)
             val bestCandidateDescriptors =
