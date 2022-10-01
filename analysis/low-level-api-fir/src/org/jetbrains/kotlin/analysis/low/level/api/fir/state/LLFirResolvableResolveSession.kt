@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableM
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -125,7 +126,11 @@ internal abstract class LLFirResolvableResolveSession(
             is FirDeclaration -> fir
             is FirAnonymousFunctionExpression -> fir.anonymousFunction
             is FirAnonymousObjectExpression -> fir.anonymousObject
-            else -> error("FirDeclaration was not found for\n${ktDeclaration.getElementTextInContext()}")
+            else -> errorWithFirSpecificEntries(
+                "FirDeclaration was not found for ${ktDeclaration::class}, fir is ${fir?.let { it::class }}",
+                fir = fir,
+                psi = ktDeclaration,
+            )
         }
         return firDeclaration.symbol
     }
