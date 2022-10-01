@@ -86,18 +86,20 @@ internal class KtFirCallResolver(
         result
     }
 
-    override fun resolveCall(psi: KtElement): KtCallInfo? = wrapError(psi) {
-        val ktCallInfos = getCallInfo(psi) { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
-            listOfNotNull(
-                toKtCallInfo(
-                    psiToResolve,
-                    resolveCalleeExpressionOfFunctionCall,
-                    resolveFragmentOfCall
+    override fun resolveCall(psi: KtElement): KtCallInfo? {
+        return wrapError(psi) {
+            val ktCallInfos = getCallInfo(psi) { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
+                listOfNotNull(
+                    toKtCallInfo(
+                        psiToResolve,
+                        resolveCalleeExpressionOfFunctionCall,
+                        resolveFragmentOfCall
+                    )
                 )
-            )
+            }
+            check(ktCallInfos.size <= 1) { "Should only return 1 KtCallInfo" }
+            ktCallInfos.singleOrNull()
         }
-        check(ktCallInfos.size <= 1) { "Should only return 1 KtCallInfo" }
-        ktCallInfos.singleOrNull()
     }
 
     private inline fun <T> getCallInfo(
@@ -108,7 +110,7 @@ internal class KtFirCallResolver(
             resolveFragmentOfCall: Boolean
         ) -> List<T>
     ): List<T> {
-        if (psi.isNotResolvable()) return emptyList()
+        if (!canBeResolvedAsCall(psi)) return emptyList()
 
         val containingCallExpressionForCalleeExpression = psi.getContainingCallExpressionForCalleeExpression()
         val containingBinaryExpressionForLhs = psi.getContainingBinaryExpressionForIncompleteLhs()
