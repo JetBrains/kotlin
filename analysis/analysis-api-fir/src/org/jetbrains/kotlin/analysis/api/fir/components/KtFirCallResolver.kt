@@ -86,18 +86,30 @@ internal class KtFirCallResolver(
         result
     }
 
-    override fun resolveCall(psi: KtElement): KtCallInfo? = wrapError(psi) {
-        val ktCallInfos = getCallInfo(psi) { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
-            listOfNotNull(
-                toKtCallInfo(
-                    psiToResolve,
-                    resolveCalleeExpressionOfFunctionCall,
-                    resolveFragmentOfCall
+    override fun resolveCall(psi: KtElement): KtCallInfo? {
+        if (!canBeResolvedAsCall(psi)) return null
+        return wrapError(psi) {
+            val ktCallInfos = getCallInfo(psi) { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
+                listOfNotNull(
+                    toKtCallInfo(
+                        psiToResolve,
+                        resolveCalleeExpressionOfFunctionCall,
+                        resolveFragmentOfCall
+                    )
                 )
-            )
+            }
+            check(ktCallInfos.size <= 1) { "Should only return 1 KtCallInfo" }
+            ktCallInfos.singleOrNull()
         }
-        check(ktCallInfos.size <= 1) { "Should only return 1 KtCallInfo" }
-        ktCallInfos.singleOrNull()
+    }
+
+    private fun canBeResolvedAsCall(psi: KtElement): Boolean = when(psi) {
+        is KtCallElement -> true
+        is KtDotQualifiedExpression -> true
+        is KtNameReferenceExpression -> true
+        is KtOperationExpression -> true
+        is KtArrayAccessExpression -> true
+        else -> false
     }
 
     private inline fun <T> getCallInfo(
