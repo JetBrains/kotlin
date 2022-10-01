@@ -16,8 +16,8 @@ public interface AbstractSegment {
 @kotlin.Metadata
 public final class DPoint {
     // source: 'overrides_inlineClass.kt'
-    private field x: double
-    private field y: double
+    private final field field-0: double
+    private final field field-1: double
     private synthetic method <init>(p0: double, p1: double): void
     public synthetic final static method box-impl(p0: double, p1: double): DPoint
     public final static method constructor-impl(p0: double, p1: double): void
@@ -25,23 +25,25 @@ public final class DPoint {
     public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
     public synthetic bridge method getX(): java.lang.Object
-    public final method getX-3cLST_U(): double
+    public method getX-3cLST_U(): double
+    public static method getX-impl(p0: double, p1: double): double
     public synthetic bridge method getY(): java.lang.Object
-    public final method getY-3cLST_U(): double
+    public method getY-3cLST_U(): double
+    public static method getY-impl(p0: double, p1: double): double
     public method hashCode(): int
     public static method hashCode-impl(p0: double, p1: double): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double): java.lang.String
-    public synthetic final method unbox-impl0(): double
-    public synthetic final method unbox-impl1(): double
+    public synthetic final method unbox-impl-0(): double
+    public synthetic final method unbox-impl-1(): double
 }
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class DPointWithInterface {
     // source: 'overrides_inlineClass.kt'
-    private field x: double
-    private field y: double
+    private final field field-0: double
+    private final field field-1: double
     private synthetic method <init>(p0: double, p1: double): void
     public synthetic final static method box-impl(p0: double, p1: double): DPointWithInterface
     public final static method constructor-impl(p0: double, p1: double): void
@@ -55,8 +57,8 @@ public final class DPointWithInterface {
     public static @org.jetbrains.annotations.NotNull method getSomethingMFVC-impl(p0: double, p1: double): DPoint
     public method getSomethingRegular(): int
     public static method getSomethingRegular-impl(p0: double, p1: double): int
-    public final method getX-3cLST_U(): double
-    public final method getY-3cLST_U(): double
+    public final static method getX-impl(p0: double, p1: double): double
+    public final static method getY-impl(p0: double, p1: double): double
     public method hashCode(): int
     public static method hashCode-impl(p0: double, p1: double): int
     public synthetic bridge method setSomethingGeneric(p0: java.lang.Object): void
@@ -68,40 +70,40 @@ public final class DPointWithInterface {
     public static method setSomethingRegular-impl(p0: double, p1: double, p2: int): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double): java.lang.String
-    public synthetic final method unbox-impl0(): double
-    public synthetic final method unbox-impl1(): double
+    public synthetic final method unbox-impl-0(): double
+    public synthetic final method unbox-impl-1(): double
 }
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class DSegment {
     // source: 'overrides_inlineClass.kt'
-    private field p1$x: double
-    private field p1$y: double
-    private field p2$x: double
-    private field p2$y: double
+    private final field field-0-0: double
+    private final field field-0-1: double
+    private final field field-1-0: double
+    private final field field-1-1: double
     private synthetic method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic final static method box-impl(p0: double, p1: double, p2: double, p3: double): DSegment
     public final static method constructor-impl(p0: double, p1: double, p2: double, p3: double): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: double, p1: double, p2: double, p3: double, p4: java.lang.Object): boolean
     public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double, p4: double, p5: double, p6: double, p7: double): boolean
-    public final method getP1$x-3cLST_U(): double
-    public final method getP1$y-3cLST_U(): double
-    public final @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public @org.jetbrains.annotations.NotNull method getP1(): DPoint
     public synthetic bridge method getP1(): java.lang.Object
-    public final method getP2$x-3cLST_U(): double
-    public final method getP2$y-3cLST_U(): double
-    public final @org.jetbrains.annotations.NotNull method getP2(): DPoint
+    public static @org.jetbrains.annotations.NotNull method getP1-impl(p0: double, p1: double, p2: double, p3: double): DPoint
+    public @org.jetbrains.annotations.NotNull method getP2(): DPoint
     public synthetic bridge method getP2(): java.lang.Object
+    public static @org.jetbrains.annotations.NotNull method getP2-impl(p0: double, p1: double, p2: double, p3: double): DPoint
     public method hashCode(): int
     public static method hashCode-impl(p0: double, p1: double, p2: double, p3: double): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double, p2: double, p3: double): java.lang.String
-    public synthetic final method unbox-impl0(): double
-    public synthetic final method unbox-impl1(): double
-    public synthetic final method unbox-impl2(): double
-    public synthetic final method unbox-impl3(): double
+    public synthetic final method unbox-impl-0(): DPoint
+    public synthetic final method unbox-impl-0-0(): double
+    public synthetic final method unbox-impl-0-1(): double
+    public synthetic final method unbox-impl-1(): DPoint
+    public synthetic final method unbox-impl-1-0(): double
+    public synthetic final method unbox-impl-1-1(): double
 }
 
 @kotlin.Metadata
@@ -130,22 +132,23 @@ public final class GenericFakeOverride {
     public synthetic bridge method setP(p0: java.lang.Object): void
     public method setP1(@org.jetbrains.annotations.NotNull p0: DPoint): void
     public synthetic bridge method setP1(p0: java.lang.Object): void
+    public final inner class GenericMFVCHolderWithImpls$DefaultImpls
 }
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class GenericFakeOverrideMFVC {
     // source: 'overrides_inlineClass.kt'
-    private field field1: double
-    private field field2: double
+    private final field field-0: double
+    private final field field-1: double
     private synthetic method <init>(p0: double, p1: double): void
     public synthetic final static method box-impl(p0: double, p1: double): GenericFakeOverrideMFVC
     public final static method constructor-impl(p0: double, p1: double): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
-    public final method getField1-3cLST_U(): double
-    public final method getField2-3cLST_U(): double
+    public final static method getField1-impl(p0: double, p1: double): double
+    public final static method getField2-impl(p0: double, p1: double): double
     public @org.jetbrains.annotations.NotNull method getP(): DPoint
     public synthetic bridge method getP(): java.lang.Object
     public static @org.jetbrains.annotations.NotNull method getP-impl(p0: double, p1: double): DPoint
@@ -162,24 +165,25 @@ public final class GenericFakeOverrideMFVC {
     public static method setP1-sUp7gFk(p0: double, p1: double, p2: double, p3: double): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double): java.lang.String
-    public synthetic final method unbox-impl0(): double
-    public synthetic final method unbox-impl1(): double
+    public synthetic final method unbox-impl-0(): double
+    public synthetic final method unbox-impl-1(): double
+    public final inner class GenericMFVCHolderWithImpls$DefaultImpls
 }
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class GenericFakeOverrideMFVCWithMFVCUpperBound {
     // source: 'overrides_inlineClass.kt'
-    private field field1: double
-    private field field2: double
+    private final field field-0: double
+    private final field field-1: double
     private synthetic method <init>(p0: double, p1: double): void
     public synthetic final static method box-impl(p0: double, p1: double): GenericFakeOverrideMFVCWithMFVCUpperBound
     public final static method constructor-impl(p0: double, p1: double): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
-    public final method getField1-3cLST_U(): double
-    public final method getField2-3cLST_U(): double
+    public final static method getField1-impl(p0: double, p1: double): double
+    public final static method getField2-impl(p0: double, p1: double): double
     public @org.jetbrains.annotations.NotNull method getP(): DPoint
     public static @org.jetbrains.annotations.NotNull method getP-impl(p0: double, p1: double): DPoint
     public @org.jetbrains.annotations.NotNull method getP1(): DPoint
@@ -192,8 +196,9 @@ public final class GenericFakeOverrideMFVCWithMFVCUpperBound {
     public static method setP1-sUp7gFk(p0: double, p1: double, p2: double, p3: double): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double): java.lang.String
-    public synthetic final method unbox-impl0(): double
-    public synthetic final method unbox-impl1(): double
+    public synthetic final method unbox-impl-0(): double
+    public synthetic final method unbox-impl-1(): double
+    public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
 }
 
 @kotlin.Metadata
@@ -204,6 +209,7 @@ public final class GenericFakeOverrideWithMFVCUpperBound {
     public @org.jetbrains.annotations.NotNull method getP1(): DPoint
     public method setP-sUp7gFk(p0: double, p1: double): void
     public method setP1-sUp7gFk(p0: double, p1: double): void
+    public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
 }
 
 @kotlin.Metadata
@@ -239,7 +245,11 @@ public interface GenericMFVCHolderWithImpls {
 public interface GenericMFVCHolderWithMFVCUpperBound {
     // source: 'overrides_inlineClass.kt'
     public abstract @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public synthetic abstract method getP-0(): double
+    public synthetic abstract method getP-1(): double
     public abstract @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public synthetic abstract method getP1-0(): double
+    public synthetic abstract method getP1-1(): double
     public abstract method setP-sUp7gFk(p0: double, p1: double): void
     public abstract method setP1-sUp7gFk(p0: double, p1: double): void
 }
@@ -248,7 +258,11 @@ public interface GenericMFVCHolderWithMFVCUpperBound {
 public final class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls {
     // source: 'overrides_inlineClass.kt'
     public static @org.jetbrains.annotations.NotNull method getP(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): DPoint
+    public synthetic static method getP-0(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): double
+    public synthetic static method getP-1(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): double
     public static @org.jetbrains.annotations.NotNull method getP1(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): DPoint
+    public synthetic static method getP1-0(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): double
+    public synthetic static method getP1-1(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): double
     public static method setP-sUp7gFk(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: double, p2: double): void
     public static method setP1-sUp7gFk(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: double, p2: double): void
     public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
@@ -258,7 +272,11 @@ public final class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls {
 public interface GenericMFVCHolderWithMFVCUpperBoundWithImpls {
     // source: 'overrides_inlineClass.kt'
     public abstract @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public synthetic abstract method getP-0(): double
+    public synthetic abstract method getP-1(): double
     public abstract @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public synthetic abstract method getP1-0(): double
+    public synthetic abstract method getP1-1(): double
     public abstract method setP-sUp7gFk(p0: double, p1: double): void
     public abstract method setP1-sUp7gFk(p0: double, p1: double): void
     public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
@@ -299,8 +317,8 @@ final class Overrides_inlineClassKt$box$1 {
 final class Overrides_inlineClassKt$box$10 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$10
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
@@ -311,8 +329,8 @@ final class Overrides_inlineClassKt$box$10 {
 final class Overrides_inlineClassKt$box$100 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPointWithInterface$x: double
-    synthetic final field $tmp1_dPointWithInterface$y: double
+    synthetic final field $dPointWithInterface-field-0: double
+    synthetic final field $dPointWithInterface-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$100
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -323,8 +341,8 @@ final class Overrides_inlineClassKt$box$100 {
 final class Overrides_inlineClassKt$box$101 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPointWithInterface$x: double
-    synthetic final field $tmp1_dPointWithInterface$y: double
+    synthetic final field $dPointWithInterface-field-0: double
+    synthetic final field $dPointWithInterface-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$101
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -335,8 +353,8 @@ final class Overrides_inlineClassKt$box$101 {
 final class Overrides_inlineClassKt$box$102 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPointWithInterface$x: double
-    synthetic final field $tmp1_dPointWithInterface$y: double
+    synthetic final field $dPointWithInterface-field-0: double
+    synthetic final field $dPointWithInterface-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$102
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -347,8 +365,8 @@ final class Overrides_inlineClassKt$box$102 {
 final class Overrides_inlineClassKt$box$103 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPointWithInterface$x: double
-    synthetic final field $tmp1_dPointWithInterface$y: double
+    synthetic final field $dPointWithInterface-field-0: double
+    synthetic final field $dPointWithInterface-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$103
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Integer
@@ -359,8 +377,8 @@ final class Overrides_inlineClassKt$box$103 {
 final class Overrides_inlineClassKt$box$104 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPointWithInterface$x: double
-    synthetic final field $tmp1_dPointWithInterface$y: double
+    synthetic final field $dPointWithInterface-field-0: double
+    synthetic final field $dPointWithInterface-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$104
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -371,10 +389,10 @@ final class Overrides_inlineClassKt$box$104 {
 final class Overrides_inlineClassKt$box$105 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_dPointWithInterface$x: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_dPointWithInterface$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPointWithInterface-field-0: double
+    synthetic final field $dPointWithInterface-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$105
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -385,10 +403,10 @@ final class Overrides_inlineClassKt$box$105 {
 final class Overrides_inlineClassKt$box$106 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_dPointWithInterface$x: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_dPointWithInterface$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPointWithInterface-field-0: double
+    synthetic final field $dPointWithInterface-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$106
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -399,8 +417,8 @@ final class Overrides_inlineClassKt$box$106 {
 final class Overrides_inlineClassKt$box$107 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPointWithInterface$x: double
-    synthetic final field $tmp1_dPointWithInterface$y: double
+    synthetic final field $dPointWithInterface-field-0: double
+    synthetic final field $dPointWithInterface-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$107
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -411,8 +429,8 @@ final class Overrides_inlineClassKt$box$107 {
 final class Overrides_inlineClassKt$box$108 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPointWithInterface$x: double
-    synthetic final field $tmp1_dPointWithInterface$y: double
+    synthetic final field $dPointWithInterface-field-0: double
+    synthetic final field $dPointWithInterface-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$108
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -423,10 +441,10 @@ final class Overrides_inlineClassKt$box$108 {
 final class Overrides_inlineClassKt$box$109 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_dPointWithInterface$x: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_dPointWithInterface$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPointWithInterface-field-0: double
+    synthetic final field $dPointWithInterface-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$109
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -449,10 +467,10 @@ final class Overrides_inlineClassKt$box$11 {
 final class Overrides_inlineClassKt$box$110 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_dPointWithInterface$x: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_dPointWithInterface$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPointWithInterface-field-0: double
+    synthetic final field $dPointWithInterface-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$110
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -463,10 +481,10 @@ final class Overrides_inlineClassKt$box$110 {
 final class Overrides_inlineClassKt$box$111 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_dPointWithInterface$x: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_dPointWithInterface$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPointWithInterface-field-0: double
+    synthetic final field $dPointWithInterface-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$111
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -477,8 +495,8 @@ final class Overrides_inlineClassKt$box$111 {
 final class Overrides_inlineClassKt$box$112 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPointWithInterface$x: double
-    synthetic final field $tmp1_dPointWithInterface$y: double
+    synthetic final field $dPointWithInterface-field-0: double
+    synthetic final field $dPointWithInterface-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$112
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -489,10 +507,10 @@ final class Overrides_inlineClassKt$box$112 {
 final class Overrides_inlineClassKt$box$113 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_dPointWithInterface$x: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_dPointWithInterface$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $dPointWithInterface-field-0: double
+    synthetic final field $dPointWithInterface-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$113
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -503,8 +521,8 @@ final class Overrides_inlineClassKt$box$113 {
 final class Overrides_inlineClassKt$box$114 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dSegment$p1$x: double
-    synthetic final field $tmp1_dSegment$p1$y: double
+    synthetic final field $dSegment-field-0-0: double
+    synthetic final field $dSegment-field-0-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$114
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -515,8 +533,8 @@ final class Overrides_inlineClassKt$box$114 {
 final class Overrides_inlineClassKt$box$115 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp2_dSegment$p2$x: double
-    synthetic final field $tmp3_dSegment$p2$y: double
+    synthetic final field $dSegment-field-1-0: double
+    synthetic final field $dSegment-field-1-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$115
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -539,7 +557,7 @@ final class Overrides_inlineClassKt$box$116 {
 final class Overrides_inlineClassKt$box$117 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
+    synthetic final field $dPoint-field-0: double
     inner (anonymous) class Overrides_inlineClassKt$box$117
     method <init>(p0: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -562,7 +580,7 @@ final class Overrides_inlineClassKt$box$118 {
 final class Overrides_inlineClassKt$box$119 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dSegment$p1$x: double
+    synthetic final field $dSegment-field-0-0: double
     inner (anonymous) class Overrides_inlineClassKt$box$119
     method <init>(p0: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -573,8 +591,8 @@ final class Overrides_inlineClassKt$box$119 {
 final class Overrides_inlineClassKt$box$12 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$12
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
@@ -597,7 +615,7 @@ final class Overrides_inlineClassKt$box$120 {
 final class Overrides_inlineClassKt$box$121 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_otherDPoint$x: double
+    synthetic final field $otherDPoint-field-0: double
     inner (anonymous) class Overrides_inlineClassKt$box$121
     method <init>(p0: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -620,7 +638,7 @@ final class Overrides_inlineClassKt$box$122 {
 final class Overrides_inlineClassKt$box$123 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp2_dSegment$p2$x: double
+    synthetic final field $dSegment-field-1-0: double
     inner (anonymous) class Overrides_inlineClassKt$box$123
     method <init>(p0: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -643,7 +661,7 @@ final class Overrides_inlineClassKt$box$124 {
 final class Overrides_inlineClassKt$box$125 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$125
     method <init>(p0: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -666,7 +684,7 @@ final class Overrides_inlineClassKt$box$126 {
 final class Overrides_inlineClassKt$box$127 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp1_dSegment$p1$y: double
+    synthetic final field $dSegment-field-0-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$127
     method <init>(p0: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -689,7 +707,7 @@ final class Overrides_inlineClassKt$box$128 {
 final class Overrides_inlineClassKt$box$129 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp1_otherDPoint$y: double
+    synthetic final field $otherDPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$129
     method <init>(p0: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -724,7 +742,7 @@ final class Overrides_inlineClassKt$box$130 {
 final class Overrides_inlineClassKt$box$131 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp3_dSegment$p2$y: double
+    synthetic final field $dSegment-field-1-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$131
     method <init>(p0: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -735,10 +753,10 @@ final class Overrides_inlineClassKt$box$131 {
 final class Overrides_inlineClassKt$box$132 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dSegment$p1$x: double
-    synthetic final field $tmp1_dSegment$p1$y: double
-    synthetic final field $tmp2_dSegment$p2$x: double
-    synthetic final field $tmp3_dSegment$p2$y: double
+    synthetic final field $dSegment-field-0-0: double
+    synthetic final field $dSegment-field-0-1: double
+    synthetic final field $dSegment-field-1-0: double
+    synthetic final field $dSegment-field-1-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$132
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -749,10 +767,10 @@ final class Overrides_inlineClassKt$box$132 {
 final class Overrides_inlineClassKt$box$133 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dSegment$p1$x: double
-    synthetic final field $tmp1_dSegment$p1$y: double
-    synthetic final field $tmp2_dSegment$p2$x: double
-    synthetic final field $tmp3_dSegment$p2$y: double
+    synthetic final field $dSegment-field-0-0: double
+    synthetic final field $dSegment-field-0-1: double
+    synthetic final field $dSegment-field-1-0: double
+    synthetic final field $dSegment-field-1-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$133
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -775,10 +793,10 @@ final class Overrides_inlineClassKt$box$134 {
 final class Overrides_inlineClassKt$box$135 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dSegment$p1$x: double
-    synthetic final field $tmp1_dSegment$p1$y: double
-    synthetic final field $tmp2_dSegment$p2$x: double
-    synthetic final field $tmp3_dSegment$p2$y: double
+    synthetic final field $dSegment-field-0-0: double
+    synthetic final field $dSegment-field-0-1: double
+    synthetic final field $dSegment-field-1-0: double
+    synthetic final field $dSegment-field-1-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$135
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -801,10 +819,10 @@ final class Overrides_inlineClassKt$box$136 {
 final class Overrides_inlineClassKt$box$137 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dSegment$p1$x: double
-    synthetic final field $tmp1_dSegment$p1$y: double
-    synthetic final field $tmp2_dSegment$p2$x: double
-    synthetic final field $tmp3_dSegment$p2$y: double
+    synthetic final field $dSegment-field-0-0: double
+    synthetic final field $dSegment-field-0-1: double
+    synthetic final field $dSegment-field-1-0: double
+    synthetic final field $dSegment-field-1-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$137
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -827,10 +845,10 @@ final class Overrides_inlineClassKt$box$138 {
 final class Overrides_inlineClassKt$box$139 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dSegment$p1$x: double
-    synthetic final field $tmp1_dSegment$p1$y: double
-    synthetic final field $tmp2_dSegment$p2$x: double
-    synthetic final field $tmp3_dSegment$p2$y: double
+    synthetic final field $dSegment-field-0-0: double
+    synthetic final field $dSegment-field-0-1: double
+    synthetic final field $dSegment-field-1-0: double
+    synthetic final field $dSegment-field-1-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$139
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -841,10 +859,10 @@ final class Overrides_inlineClassKt$box$139 {
 final class Overrides_inlineClassKt$box$14 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_otherDPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_otherDPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $otherDPoint-field-0: double
+    synthetic final field $otherDPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$14
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
@@ -867,10 +885,10 @@ final class Overrides_inlineClassKt$box$140 {
 final class Overrides_inlineClassKt$box$141 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dSegment$p1$x: double
-    synthetic final field $tmp1_dSegment$p1$y: double
-    synthetic final field $tmp2_dSegment$p2$x: double
-    synthetic final field $tmp3_dSegment$p2$y: double
+    synthetic final field $dSegment-field-0-0: double
+    synthetic final field $dSegment-field-0-1: double
+    synthetic final field $dSegment-field-1-0: double
+    synthetic final field $dSegment-field-1-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$141
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -893,10 +911,10 @@ final class Overrides_inlineClassKt$box$15 {
 final class Overrides_inlineClassKt$box$16 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_otherDPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_otherDPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $otherDPoint-field-0: double
+    synthetic final field $otherDPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$16
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
@@ -919,10 +937,10 @@ final class Overrides_inlineClassKt$box$17 {
 final class Overrides_inlineClassKt$box$18 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_otherDPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_otherDPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $otherDPoint-field-0: double
+    synthetic final field $otherDPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$18
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
@@ -945,8 +963,8 @@ final class Overrides_inlineClassKt$box$19 {
 final class Overrides_inlineClassKt$box$2 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$2
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -957,10 +975,10 @@ final class Overrides_inlineClassKt$box$2 {
 final class Overrides_inlineClassKt$box$20 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_otherDPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_otherDPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $otherDPoint-field-0: double
+    synthetic final field $otherDPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$20
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
@@ -971,8 +989,8 @@ final class Overrides_inlineClassKt$box$20 {
 final class Overrides_inlineClassKt$box$21 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$21
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Integer
@@ -983,8 +1001,8 @@ final class Overrides_inlineClassKt$box$21 {
 final class Overrides_inlineClassKt$box$22 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$22
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Integer
@@ -1007,7 +1025,7 @@ final class Overrides_inlineClassKt$box$23 {
 final class Overrides_inlineClassKt$box$24 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
+    synthetic final field $dPoint-field-0: double
     inner (anonymous) class Overrides_inlineClassKt$box$24
     method <init>(p0: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1029,8 +1047,8 @@ final class Overrides_inlineClassKt$box$25 {
 final class Overrides_inlineClassKt$box$26 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$26
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Object
@@ -1052,7 +1070,7 @@ final class Overrides_inlineClassKt$box$27 {
 final class Overrides_inlineClassKt$box$28 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$28
     method <init>(p0: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1086,8 +1104,8 @@ final class Overrides_inlineClassKt$box$3 {
 final class Overrides_inlineClassKt$box$30 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$30
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Object
@@ -1196,8 +1214,8 @@ final class Overrides_inlineClassKt$box$39 {
 final class Overrides_inlineClassKt$box$4 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$4
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1208,9 +1226,9 @@ final class Overrides_inlineClassKt$box$4 {
 final class Overrides_inlineClassKt$box$40 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     synthetic final field $realOverride: RealOverride
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
     inner (anonymous) class Overrides_inlineClassKt$box$40
     method <init>(p0: RealOverride, p1: double, p2: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1221,9 +1239,9 @@ final class Overrides_inlineClassKt$box$40 {
 final class Overrides_inlineClassKt$box$41 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     synthetic final field $realOverride: RealOverride
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
     inner (anonymous) class Overrides_inlineClassKt$box$41
     method <init>(p0: RealOverride, p1: double, p2: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1234,9 +1252,9 @@ final class Overrides_inlineClassKt$box$41 {
 final class Overrides_inlineClassKt$box$42 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     synthetic final field $realOverride: RealOverride
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
     inner (anonymous) class Overrides_inlineClassKt$box$42
     method <init>(p0: RealOverride, p1: double, p2: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1247,9 +1265,9 @@ final class Overrides_inlineClassKt$box$42 {
 final class Overrides_inlineClassKt$box$43 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     synthetic final field $realOverride: RealOverride
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
     inner (anonymous) class Overrides_inlineClassKt$box$43
     method <init>(p0: RealOverride, p1: double, p2: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1260,9 +1278,9 @@ final class Overrides_inlineClassKt$box$43 {
 final class Overrides_inlineClassKt$box$44 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     synthetic final field $realOverride: RealOverride
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
     inner (anonymous) class Overrides_inlineClassKt$box$44
     method <init>(p0: RealOverride, p1: double, p2: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1273,9 +1291,9 @@ final class Overrides_inlineClassKt$box$44 {
 final class Overrides_inlineClassKt$box$45 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     synthetic final field $realOverride: RealOverride
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
     inner (anonymous) class Overrides_inlineClassKt$box$45
     method <init>(p0: RealOverride, p1: double, p2: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1286,9 +1304,9 @@ final class Overrides_inlineClassKt$box$45 {
 final class Overrides_inlineClassKt$box$46 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     synthetic final field $realOverride: RealOverride
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
     inner (anonymous) class Overrides_inlineClassKt$box$46
     method <init>(p0: RealOverride, p1: double, p2: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1299,9 +1317,9 @@ final class Overrides_inlineClassKt$box$46 {
 final class Overrides_inlineClassKt$box$47 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     synthetic final field $realOverride: RealOverride
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
     inner (anonymous) class Overrides_inlineClassKt$box$47
     method <init>(p0: RealOverride, p1: double, p2: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1456,8 +1474,8 @@ final class Overrides_inlineClassKt$box$59 {
 final class Overrides_inlineClassKt$box$6 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$6
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
@@ -1468,9 +1486,9 @@ final class Overrides_inlineClassKt$box$6 {
 final class Overrides_inlineClassKt$box$60 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     synthetic final field $genericFakeOverride: GenericFakeOverride
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
     inner (anonymous) class Overrides_inlineClassKt$box$60
     method <init>(p0: GenericFakeOverride, p1: double, p2: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1481,9 +1499,9 @@ final class Overrides_inlineClassKt$box$60 {
 final class Overrides_inlineClassKt$box$61 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     synthetic final field $genericFakeOverride: GenericFakeOverride
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
     inner (anonymous) class Overrides_inlineClassKt$box$61
     method <init>(p0: GenericFakeOverride, p1: double, p2: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1494,9 +1512,9 @@ final class Overrides_inlineClassKt$box$61 {
 final class Overrides_inlineClassKt$box$62 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     synthetic final field $genericFakeOverride: GenericFakeOverride
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
     inner (anonymous) class Overrides_inlineClassKt$box$62
     method <init>(p0: GenericFakeOverride, p1: double, p2: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1507,9 +1525,9 @@ final class Overrides_inlineClassKt$box$62 {
 final class Overrides_inlineClassKt$box$63 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     synthetic final field $genericFakeOverride: GenericFakeOverride
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
     inner (anonymous) class Overrides_inlineClassKt$box$63
     method <init>(p0: GenericFakeOverride, p1: double, p2: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1520,9 +1538,9 @@ final class Overrides_inlineClassKt$box$63 {
 final class Overrides_inlineClassKt$box$64 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
     inner (anonymous) class Overrides_inlineClassKt$box$64
     method <init>(p0: ReifiedFakeOverride, p1: double, p2: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1533,9 +1551,9 @@ final class Overrides_inlineClassKt$box$64 {
 final class Overrides_inlineClassKt$box$65 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
     inner (anonymous) class Overrides_inlineClassKt$box$65
     method <init>(p0: ReifiedFakeOverride, p1: double, p2: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1546,9 +1564,9 @@ final class Overrides_inlineClassKt$box$65 {
 final class Overrides_inlineClassKt$box$66 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
     inner (anonymous) class Overrides_inlineClassKt$box$66
     method <init>(p0: ReifiedFakeOverride, p1: double, p2: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1559,9 +1577,9 @@ final class Overrides_inlineClassKt$box$66 {
 final class Overrides_inlineClassKt$box$67 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
     inner (anonymous) class Overrides_inlineClassKt$box$67
     method <init>(p0: ReifiedFakeOverride, p1: double, p2: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1572,9 +1590,9 @@ final class Overrides_inlineClassKt$box$67 {
 final class Overrides_inlineClassKt$box$68 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
     inner (anonymous) class Overrides_inlineClassKt$box$68
     method <init>(p0: GenericFakeOverrideWithMFVCUpperBound, p1: double, p2: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1585,9 +1603,9 @@ final class Overrides_inlineClassKt$box$68 {
 final class Overrides_inlineClassKt$box$69 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
     inner (anonymous) class Overrides_inlineClassKt$box$69
     method <init>(p0: GenericFakeOverrideWithMFVCUpperBound, p1: double, p2: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1610,9 +1628,9 @@ final class Overrides_inlineClassKt$box$7 {
 final class Overrides_inlineClassKt$box$70 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
     inner (anonymous) class Overrides_inlineClassKt$box$70
     method <init>(p0: GenericFakeOverrideWithMFVCUpperBound, p1: double, p2: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1623,9 +1641,9 @@ final class Overrides_inlineClassKt$box$70 {
 final class Overrides_inlineClassKt$box$71 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
     inner (anonymous) class Overrides_inlineClassKt$box$71
     method <init>(p0: GenericFakeOverrideWithMFVCUpperBound, p1: double, p2: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1636,8 +1654,8 @@ final class Overrides_inlineClassKt$box$71 {
 final class Overrides_inlineClassKt$box$72 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_genericFakeOverrideMFVC$field1: double
-    synthetic final field $tmp1_genericFakeOverrideMFVC$field2: double
+    synthetic final field $genericFakeOverrideMFVC-field-0: double
+    synthetic final field $genericFakeOverrideMFVC-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$72
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1648,8 +1666,8 @@ final class Overrides_inlineClassKt$box$72 {
 final class Overrides_inlineClassKt$box$73 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_genericFakeOverrideMFVC$field1: double
-    synthetic final field $tmp1_genericFakeOverrideMFVC$field2: double
+    synthetic final field $genericFakeOverrideMFVC-field-0: double
+    synthetic final field $genericFakeOverrideMFVC-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$73
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1660,8 +1678,8 @@ final class Overrides_inlineClassKt$box$73 {
 final class Overrides_inlineClassKt$box$74 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_genericFakeOverrideMFVC$field1: double
-    synthetic final field $tmp1_genericFakeOverrideMFVC$field2: double
+    synthetic final field $genericFakeOverrideMFVC-field-0: double
+    synthetic final field $genericFakeOverrideMFVC-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$74
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1672,8 +1690,8 @@ final class Overrides_inlineClassKt$box$74 {
 final class Overrides_inlineClassKt$box$75 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_genericFakeOverrideMFVC$field1: double
-    synthetic final field $tmp1_genericFakeOverrideMFVC$field2: double
+    synthetic final field $genericFakeOverrideMFVC-field-0: double
+    synthetic final field $genericFakeOverrideMFVC-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$75
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1684,8 +1702,8 @@ final class Overrides_inlineClassKt$box$75 {
 final class Overrides_inlineClassKt$box$76 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_reifiedFakeOverrideMFVC$field1: double
-    synthetic final field $tmp1_reifiedFakeOverrideMFVC$field2: double
+    synthetic final field $reifiedFakeOverrideMFVC-field-0: double
+    synthetic final field $reifiedFakeOverrideMFVC-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$76
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1696,8 +1714,8 @@ final class Overrides_inlineClassKt$box$76 {
 final class Overrides_inlineClassKt$box$77 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_reifiedFakeOverrideMFVC$field1: double
-    synthetic final field $tmp1_reifiedFakeOverrideMFVC$field2: double
+    synthetic final field $reifiedFakeOverrideMFVC-field-0: double
+    synthetic final field $reifiedFakeOverrideMFVC-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$77
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1708,8 +1726,8 @@ final class Overrides_inlineClassKt$box$77 {
 final class Overrides_inlineClassKt$box$78 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_reifiedFakeOverrideMFVC$field1: double
-    synthetic final field $tmp1_reifiedFakeOverrideMFVC$field2: double
+    synthetic final field $reifiedFakeOverrideMFVC-field-0: double
+    synthetic final field $reifiedFakeOverrideMFVC-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$78
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1720,8 +1738,8 @@ final class Overrides_inlineClassKt$box$78 {
 final class Overrides_inlineClassKt$box$79 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_reifiedFakeOverrideMFVC$field1: double
-    synthetic final field $tmp1_reifiedFakeOverrideMFVC$field2: double
+    synthetic final field $reifiedFakeOverrideMFVC-field-0: double
+    synthetic final field $reifiedFakeOverrideMFVC-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$79
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1732,8 +1750,8 @@ final class Overrides_inlineClassKt$box$79 {
 final class Overrides_inlineClassKt$box$8 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$8
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Boolean
@@ -1744,8 +1762,8 @@ final class Overrides_inlineClassKt$box$8 {
 final class Overrides_inlineClassKt$box$80 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_genericFakeOverrideMFVCWithMFVCUpperBound$field1: double
-    synthetic final field $tmp1_genericFakeOverrideMFVCWithMFVCUpperBound$field2: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-0: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$80
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1756,8 +1774,8 @@ final class Overrides_inlineClassKt$box$80 {
 final class Overrides_inlineClassKt$box$81 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_genericFakeOverrideMFVCWithMFVCUpperBound$field1: double
-    synthetic final field $tmp1_genericFakeOverrideMFVCWithMFVCUpperBound$field2: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-0: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$81
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1768,8 +1786,8 @@ final class Overrides_inlineClassKt$box$81 {
 final class Overrides_inlineClassKt$box$82 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_genericFakeOverrideMFVCWithMFVCUpperBound$field1: double
-    synthetic final field $tmp1_genericFakeOverrideMFVCWithMFVCUpperBound$field2: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-0: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$82
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1780,8 +1798,8 @@ final class Overrides_inlineClassKt$box$82 {
 final class Overrides_inlineClassKt$box$83 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_genericFakeOverrideMFVCWithMFVCUpperBound$field1: double
-    synthetic final field $tmp1_genericFakeOverrideMFVCWithMFVCUpperBound$field2: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-0: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$83
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1792,10 +1810,10 @@ final class Overrides_inlineClassKt$box$83 {
 final class Overrides_inlineClassKt$box$84 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_genericFakeOverrideMFVC$field1: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_genericFakeOverrideMFVC$field2: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $genericFakeOverrideMFVC-field-0: double
+    synthetic final field $genericFakeOverrideMFVC-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$84
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1806,10 +1824,10 @@ final class Overrides_inlineClassKt$box$84 {
 final class Overrides_inlineClassKt$box$85 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_genericFakeOverrideMFVC$field1: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_genericFakeOverrideMFVC$field2: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $genericFakeOverrideMFVC-field-0: double
+    synthetic final field $genericFakeOverrideMFVC-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$85
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1820,10 +1838,10 @@ final class Overrides_inlineClassKt$box$85 {
 final class Overrides_inlineClassKt$box$86 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_genericFakeOverrideMFVC$field1: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_genericFakeOverrideMFVC$field2: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $genericFakeOverrideMFVC-field-0: double
+    synthetic final field $genericFakeOverrideMFVC-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$86
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1834,10 +1852,10 @@ final class Overrides_inlineClassKt$box$86 {
 final class Overrides_inlineClassKt$box$87 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_genericFakeOverrideMFVC$field1: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_genericFakeOverrideMFVC$field2: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $genericFakeOverrideMFVC-field-0: double
+    synthetic final field $genericFakeOverrideMFVC-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$87
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1848,10 +1866,10 @@ final class Overrides_inlineClassKt$box$87 {
 final class Overrides_inlineClassKt$box$88 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_reifiedFakeOverrideMFVC$field1: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_reifiedFakeOverrideMFVC$field2: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $reifiedFakeOverrideMFVC-field-0: double
+    synthetic final field $reifiedFakeOverrideMFVC-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$88
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1862,10 +1880,10 @@ final class Overrides_inlineClassKt$box$88 {
 final class Overrides_inlineClassKt$box$89 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_reifiedFakeOverrideMFVC$field1: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_reifiedFakeOverrideMFVC$field2: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $reifiedFakeOverrideMFVC-field-0: double
+    synthetic final field $reifiedFakeOverrideMFVC-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$89
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1888,10 +1906,10 @@ final class Overrides_inlineClassKt$box$9 {
 final class Overrides_inlineClassKt$box$90 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_reifiedFakeOverrideMFVC$field1: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_reifiedFakeOverrideMFVC$field2: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $reifiedFakeOverrideMFVC-field-0: double
+    synthetic final field $reifiedFakeOverrideMFVC-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$90
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1902,10 +1920,10 @@ final class Overrides_inlineClassKt$box$90 {
 final class Overrides_inlineClassKt$box$91 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_reifiedFakeOverrideMFVC$field1: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_reifiedFakeOverrideMFVC$field2: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $reifiedFakeOverrideMFVC-field-0: double
+    synthetic final field $reifiedFakeOverrideMFVC-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$91
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1916,10 +1934,10 @@ final class Overrides_inlineClassKt$box$91 {
 final class Overrides_inlineClassKt$box$92 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_genericFakeOverrideMFVCWithMFVCUpperBound$field1: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_genericFakeOverrideMFVCWithMFVCUpperBound$field2: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-0: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$92
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1930,10 +1948,10 @@ final class Overrides_inlineClassKt$box$92 {
 final class Overrides_inlineClassKt$box$93 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_genericFakeOverrideMFVCWithMFVCUpperBound$field1: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_genericFakeOverrideMFVCWithMFVCUpperBound$field2: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-0: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$93
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1944,10 +1962,10 @@ final class Overrides_inlineClassKt$box$93 {
 final class Overrides_inlineClassKt$box$94 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_genericFakeOverrideMFVCWithMFVCUpperBound$field1: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_genericFakeOverrideMFVCWithMFVCUpperBound$field2: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-0: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$94
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1958,10 +1976,10 @@ final class Overrides_inlineClassKt$box$94 {
 final class Overrides_inlineClassKt$box$95 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp0_genericFakeOverrideMFVCWithMFVCUpperBound$field1: double
-    synthetic final field $tmp1_dPoint$y: double
-    synthetic final field $tmp1_genericFakeOverrideMFVCWithMFVCUpperBound$field2: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-0: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$95
     method <init>(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -1972,8 +1990,8 @@ final class Overrides_inlineClassKt$box$95 {
 final class Overrides_inlineClassKt$box$96 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPointWithInterface$x: double
-    synthetic final field $tmp1_dPointWithInterface$y: double
+    synthetic final field $dPointWithInterface-field-0: double
+    synthetic final field $dPointWithInterface-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$96
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1984,8 +2002,8 @@ final class Overrides_inlineClassKt$box$96 {
 final class Overrides_inlineClassKt$box$97 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPointWithInterface$x: double
-    synthetic final field $tmp1_dPointWithInterface$y: double
+    synthetic final field $dPointWithInterface-field-0: double
+    synthetic final field $dPointWithInterface-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$97
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -1996,8 +2014,8 @@ final class Overrides_inlineClassKt$box$97 {
 final class Overrides_inlineClassKt$box$98 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPointWithInterface$x: double
-    synthetic final field $tmp1_dPointWithInterface$y: double
+    synthetic final field $dPointWithInterface-field-0: double
+    synthetic final field $dPointWithInterface-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$98
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Integer
@@ -2008,8 +2026,8 @@ final class Overrides_inlineClassKt$box$98 {
 final class Overrides_inlineClassKt$box$99 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPointWithInterface$x: double
-    synthetic final field $tmp1_dPointWithInterface$y: double
+    synthetic final field $dPointWithInterface-field-0: double
+    synthetic final field $dPointWithInterface-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$99
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.Integer
@@ -2020,8 +2038,8 @@ final class Overrides_inlineClassKt$box$99 {
 final class Overrides_inlineClassKt$box$dPointLam$1 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$dPointLam$1
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -2056,8 +2074,8 @@ final class Overrides_inlineClassKt$box$lam1$1 {
 final class Overrides_inlineClassKt$box$lam10$1 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$lam10$1
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -2080,8 +2098,8 @@ final class Overrides_inlineClassKt$box$lam11$1 {
 final class Overrides_inlineClassKt$box$lam12$1 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$lam12$1
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -2104,8 +2122,8 @@ final class Overrides_inlineClassKt$box$lam13$1 {
 final class Overrides_inlineClassKt$box$lam14$1 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$lam14$1
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -2128,8 +2146,8 @@ final class Overrides_inlineClassKt$box$lam15$1 {
 final class Overrides_inlineClassKt$box$lam16$1 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$lam16$1
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -2152,8 +2170,8 @@ final class Overrides_inlineClassKt$box$lam17$1 {
 final class Overrides_inlineClassKt$box$lam18$1 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$lam18$1
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -2176,8 +2194,8 @@ final class Overrides_inlineClassKt$box$lam19$1 {
 final class Overrides_inlineClassKt$box$lam2$1 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$lam2$1
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -2212,8 +2230,8 @@ final class Overrides_inlineClassKt$box$lam3$1 {
 final class Overrides_inlineClassKt$box$lam4$1 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$lam4$1
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -2236,8 +2254,8 @@ final class Overrides_inlineClassKt$box$lam5$1 {
 final class Overrides_inlineClassKt$box$lam6$1 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$lam6$1
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -2260,8 +2278,8 @@ final class Overrides_inlineClassKt$box$lam7$1 {
 final class Overrides_inlineClassKt$box$lam8$1 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_dPoint$x: double
-    synthetic final field $tmp1_dPoint$y: double
+    synthetic final field $dPoint-field-0: double
+    synthetic final field $dPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$lam8$1
     method <init>(p0: double, p1: double): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -2284,8 +2302,8 @@ final class Overrides_inlineClassKt$box$lam9$1 {
 final class Overrides_inlineClassKt$box$otherDPointLam$1 {
     // source: 'overrides_inlineClass.kt'
     enclosing method Overrides_inlineClassKt.box()Ljava/lang/String;
-    synthetic final field $tmp0_otherDPoint$x: double
-    synthetic final field $tmp1_otherDPoint$y: double
+    synthetic final field $otherDPoint-field-0: double
+    synthetic final field $otherDPoint-field-1: double
     inner (anonymous) class Overrides_inlineClassKt$box$otherDPointLam$1
     method <init>(p0: double, p1: double): void
     public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
@@ -2467,16 +2485,18 @@ public final class Overrides_inlineClassKt {
 @kotlin.Metadata
 public final class RealOverride {
     // source: 'overrides_inlineClass.kt'
-    private field p$x: double
-    private field p$y: double
+    private field p-0: double
+    private field p-1: double
     private method <init>(p0: double, p1: double): void
     public synthetic method <init>(p0: double, p1: double, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public final method getP$x-3cLST_U(): double
-    public final method getP$y-3cLST_U(): double
     public @org.jetbrains.annotations.NotNull method getP(): DPoint
     public synthetic bridge method getP(): java.lang.Object
+    public synthetic method getP-0(): double
+    public synthetic method getP-1(): double
     public @org.jetbrains.annotations.NotNull method getP1(): DPoint
     public synthetic bridge method getP1(): java.lang.Object
+    public synthetic method getP1-0(): double
+    public synthetic method getP1-1(): double
     public synthetic bridge method setP(p0: java.lang.Object): void
     public method setP-sUp7gFk(p0: double, p1: double): void
     public synthetic bridge method setP1(p0: java.lang.Object): void
@@ -2491,22 +2511,23 @@ public final class ReifiedFakeOverride {
     public @org.jetbrains.annotations.NotNull method getP1(): DPoint
     public method setP-sUp7gFk(p0: double, p1: double): void
     public method setP1-sUp7gFk(p0: double, p1: double): void
+    public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
 }
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class ReifiedFakeOverrideMFVC {
     // source: 'overrides_inlineClass.kt'
-    private field field1: double
-    private field field2: double
+    private final field field-0: double
+    private final field field-1: double
     private synthetic method <init>(p0: double, p1: double): void
     public synthetic final static method box-impl(p0: double, p1: double): ReifiedFakeOverrideMFVC
     public final static method constructor-impl(p0: double, p1: double): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
-    public final method getField1-3cLST_U(): double
-    public final method getField2-3cLST_U(): double
+    public final static method getField1-impl(p0: double, p1: double): double
+    public final static method getField2-impl(p0: double, p1: double): double
     public @org.jetbrains.annotations.NotNull method getP(): DPoint
     public static @org.jetbrains.annotations.NotNull method getP-impl(p0: double, p1: double): DPoint
     public @org.jetbrains.annotations.NotNull method getP1(): DPoint
@@ -2519,15 +2540,20 @@ public final class ReifiedFakeOverrideMFVC {
     public static method setP1-sUp7gFk(p0: double, p1: double, p2: double, p3: double): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double): java.lang.String
-    public synthetic final method unbox-impl0(): double
-    public synthetic final method unbox-impl1(): double
+    public synthetic final method unbox-impl-0(): double
+    public synthetic final method unbox-impl-1(): double
+    public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface ReifiedMFVCHolder {
     // source: 'overrides_inlineClass.kt'
     public abstract @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public synthetic abstract method getP-0(): double
+    public synthetic abstract method getP-1(): double
     public abstract @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public synthetic abstract method getP1-0(): double
+    public synthetic abstract method getP1-1(): double
     public abstract method setP-sUp7gFk(p0: double, p1: double): void
     public abstract method setP1-sUp7gFk(p0: double, p1: double): void
 }
@@ -2536,7 +2562,11 @@ public interface ReifiedMFVCHolder {
 public final class ReifiedMFVCHolderWithImpls$DefaultImpls {
     // source: 'overrides_inlineClass.kt'
     public static @org.jetbrains.annotations.NotNull method getP(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls): DPoint
+    public synthetic static method getP-0(p0: ReifiedMFVCHolderWithImpls): double
+    public synthetic static method getP-1(p0: ReifiedMFVCHolderWithImpls): double
     public static @org.jetbrains.annotations.NotNull method getP1(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls): DPoint
+    public synthetic static method getP1-0(p0: ReifiedMFVCHolderWithImpls): double
+    public synthetic static method getP1-1(p0: ReifiedMFVCHolderWithImpls): double
     public static method setP-sUp7gFk(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: double, p2: double): void
     public static method setP1-sUp7gFk(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: double, p2: double): void
     public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
@@ -2546,7 +2576,11 @@ public final class ReifiedMFVCHolderWithImpls$DefaultImpls {
 public interface ReifiedMFVCHolderWithImpls {
     // source: 'overrides_inlineClass.kt'
     public abstract @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public synthetic abstract method getP-0(): double
+    public synthetic abstract method getP-1(): double
     public abstract @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public synthetic abstract method getP1-0(): double
+    public synthetic abstract method getP1-1(): double
     public abstract method setP-sUp7gFk(p0: double, p1: double): void
     public abstract method setP1-sUp7gFk(p0: double, p1: double): void
     public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
@@ -2557,6 +2591,8 @@ public interface SomePointInterface {
     // source: 'overrides_inlineClass.kt'
     public abstract method getSomethingGeneric(): java.lang.Object
     public abstract @org.jetbrains.annotations.NotNull method getSomethingMFVC(): DPoint
+    public synthetic abstract method getSomethingMFVC-0(): double
+    public synthetic abstract method getSomethingMFVC-1(): double
     public abstract method getSomethingRegular(): int
     public abstract method setSomethingGeneric(p0: java.lang.Object): void
     public abstract method setSomethingMFVC-sUp7gFk(p0: double, p1: double): void
@@ -2567,7 +2603,11 @@ public interface SomePointInterface {
 public interface SomePointInterfaceWithMFVCBound {
     // source: 'overrides_inlineClass.kt'
     public abstract @org.jetbrains.annotations.NotNull method getSomethingGeneric(): DPoint
+    public synthetic abstract method getSomethingGeneric-0(): double
+    public synthetic abstract method getSomethingGeneric-1(): double
     public abstract @org.jetbrains.annotations.NotNull method getSomethingMFVC(): DPoint
+    public synthetic abstract method getSomethingMFVC-0(): double
+    public synthetic abstract method getSomethingMFVC-1(): double
     public abstract method getSomethingRegular(): int
     public abstract method setSomethingGeneric-sUp7gFk(p0: double, p1: double): void
     public abstract method setSomethingMFVC-sUp7gFk(p0: double, p1: double): void
