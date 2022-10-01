@@ -108,7 +108,7 @@ abstract class MemoizedValueClassAbstractReplacements(protected val irFactory: I
 
     abstract val replaceOverriddenSymbols: (IrSimpleFunction) -> List<IrSimpleFunctionSymbol>
 
-    abstract val getReplacementRegularClassConstructor: (IrConstructor) -> IrConstructor?
+    abstract val getReplacementForRegularClassConstructor: (IrConstructor) -> IrConstructor?
 
     protected fun computeOverrideReplacement(function: IrSimpleFunction): IrSimpleFunction =
         getReplacementFunction(function) ?: function.also {

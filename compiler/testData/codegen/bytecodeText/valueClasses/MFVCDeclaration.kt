@@ -41,28 +41,27 @@ fun functionWithoutBoxes(x: D, y: D) {
 // 2 public final static constructor-impl\(IILjava/lang/String;\)V
 // 2 INVOKESTATIC D.constructor-impl \(IILjava/lang/String;\)V
 // 2 INVOKESTATIC C.constructor-impl \(IILjava/lang/String;\)V
-// 1 public final getX\(\)LC;
-// 1 public final getX\$x\(\)I
-// 1 public final getX\$y-\w*\(\)I
-// 1 public final getX\$z\(\)Ljava/lang/String;
+// 1 public final static getX-impl\(.+\)LC;
+// 1 public final synthetic unbox-impl-0-0\(\)I
+// 1 public final synthetic unbox-impl-0-1\(\)I
+// 1 public final synthetic unbox-impl-0-2\(\)Ljava/lang/String;
 // 2 private synthetic <init>\(IILjava/lang/String;\)V
 // 1 public final static synthetic box-impl\(IILjava/lang/String;\)LD;
 // 1 public final static synthetic box-impl\(IILjava/lang/String;\)LC;
-// 2 public final synthetic unbox-impl0\(\)I
-// 2 public final synthetic unbox-impl1\(\)I
-// 2 public final synthetic unbox-impl2\(\)Ljava/lang/String;
-// 1 private I x\$x
-// 1 private I x\$y
-// 1 private Ljava/lang/String; x\$z
-// 0 private LC; x
-// 3 private I x
-// 1 private I y
-// 1 private Ljava/lang/String; z
+// 1 public final synthetic unbox-impl-0\(\)I
+// 1 public final synthetic unbox-impl-1\(\)I
+// 1 public final synthetic unbox-impl-2\(\)Ljava/lang/String;
+// 1 private final I field-0-0\n
+// 1 private final I field-0-1\n
+// 1 private final Ljava/lang/String; field-0-2\n
+// 0 private final LC; (field.*)x\n
+// 1 private final I x\n
+// 1 private final I field-0\n
+// 1 private final I field-1\n
+// 1 private final Ljava/lang/String; field-2\n
 // 1 INVOKESPECIAL C.<init> \(IILjava/lang/String;\)V
 // 1 INVOKESPECIAL D.<init> \(IILjava/lang/String;\)V
 // 1 INVOKESTATIC D.box-impl \(IILjava/lang/String;\)LD;
-// 1 INVOKESTATIC D.box-impl \(IILjava/lang/String;\)LD;\n    ARETURN
-// 1 INVOKESTATIC C.box-impl \(IILjava/lang/String;\)LC;
-// 1 INVOKESTATIC C.box-impl \(IILjava/lang/String;\)LC;\n    ARETURN
+// 2 INVOKESTATIC C.box-impl \(IILjava/lang/String;\)LC;
 // 1 public final static functionWithoutBoxes-GPBa7dw\(IILjava/lang/String;IILjava/lang/String;\)V
 // 0 functionWithoutBoxes.*(\n {3}.*)*(\n {4}(NEW [ABCD]|.*(box|[ABCD]\.<init>|LA;|LB;|LC;|LD;)))
