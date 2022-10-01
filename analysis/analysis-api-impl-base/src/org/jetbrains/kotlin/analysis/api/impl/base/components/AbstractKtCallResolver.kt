@@ -45,17 +45,19 @@ abstract class AbstractKtCallResolver : KtCallResolver() {
         return KtPsiUtil.deparenthesize(safeQualifiedExpression.receiverExpression) == KtPsiUtil.deparenthesize(this)
     }
 
+    protected fun canBeResolvedAsCall(ktElement: KtElement): Boolean = when (ktElement) {
+        is KtBinaryExpression -> ktElement.operationToken !in nonCallBinaryOperator
+        is KtOperationReferenceExpression -> ktElement.operationSignTokenType !in nonCallBinaryOperator
+        is KtCallElement -> true
+        is KtConstructorCalleeExpression -> true
+        is KtDotQualifiedExpression -> true
+        is KtNameReferenceExpression -> true
+        is KtOperationExpression -> true
+        is KtArrayAccessExpression -> true
+        else -> false
+    }
+
     protected companion object {
         private val nonCallBinaryOperator: Set<KtSingleValueToken> = setOf(KtTokens.ELVIS, KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ)
-
-        /**
-         * We don't want to resolve the operators from the [AbstractKtCallResolver.nonCallBinaryOperator] list, because it's either
-         * not possible or not desirable.
-         */
-        fun KtElement.isNotResolvable(): Boolean {
-            return this is KtBinaryExpression && operationToken in nonCallBinaryOperator ||
-                    this is KtOperationReferenceExpression && operationSignTokenType in nonCallBinaryOperator
-        }
-
     }
 }
