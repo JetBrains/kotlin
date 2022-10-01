@@ -164,14 +164,12 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
 
 private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     component("callResolver", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
-        group(filter = { it.analysisApiMode == AnalysisApiMode.Standalone }) {
-            test(AbstractResolveCallTest::class) {
-                when (it.analysisApiMode) {
-                    AnalysisApiMode.Ide ->
-                        model("resolveCall")
-                    AnalysisApiMode.Standalone ->
-                        model("resolveCall", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
-                }
+        test(AbstractResolveCallTest::class) {
+            when (it.analysisApiMode) {
+                AnalysisApiMode.Ide ->
+                    model("resolveCall")
+                AnalysisApiMode.Standalone ->
+                    model("resolveCall", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
             }
         }
 
