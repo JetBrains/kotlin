@@ -31,8 +31,6 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
 
     abstract fun IrClass.isSpecificLoweringLogicApplicable(): Boolean
 
-    abstract fun IrFunction.isFieldGetterToRemove(): Boolean
-
     abstract override fun visitClassNew(declaration: IrClass): IrStatement
 
     abstract fun handleSpecificNewClass(declaration: IrClass)
@@ -46,7 +44,7 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
 
         if (replacement == null) {
             if (function is IrConstructor) {
-                val constructorReplacement = replacements.getReplacementRegularClassConstructor(function)
+                val constructorReplacement = replacements.getReplacementForRegularClassConstructor(function)
                 if (constructorReplacement != null) {
                     addBindingsFor(function, constructorReplacement)
                     return transformFlattenedConstructor(function, constructorReplacement)
@@ -107,7 +105,7 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
             it.transformChildrenVoid()
             it.defaultValue?.patchDeclarationParents(replacement)
         }
-        allScopes.push(createScope(function))
+        allScopes.push(createScope(replacement))
         replacement.body = function.body?.transform(this, null)?.patchDeclarationParents(replacement)
         allScopes.pop()
         replacement.copyAttributes(function)
@@ -127,7 +125,9 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
             if (suffix != null && target.name.asString().endsWith(suffix))
                 return super.visitReturn(expression)
 
-            replacements.getReplacementFunction(target)?.let {
+            replacements.run {
+                getReplacementFunction(target) ?: if (target is IrConstructor) getReplacementForRegularClassConstructor(target) else null
+            }?.let {
                 return context.createIrBuilder(it.symbol, expression.startOffset, expression.endOffset).irReturn(
                     expression.value.transform(this, null)
                 )
@@ -145,12 +145,12 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
         }
     }
 
-    override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
+    final override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
         visitStatementContainer(expression)
         return expression
     }
 
-    override fun visitBlockBody(body: IrBlockBody): IrBody {
+    final override fun visitBlockBody(body: IrBlockBody): IrBody {
         visitStatementContainer(body)
         return body
     }
@@ -164,6 +164,8 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
 
     protected abstract fun addBindingsFor(original: IrFunction, replacement: IrFunction)
 
+    protected enum class SpecificMangle { Inline, MultiField }
+    protected abstract val specificMangle: SpecificMangle
     private fun createBridgeFunction(
         function: IrSimpleFunction,
         replacement: IrSimpleFunction
@@ -173,9 +175,10 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
             replacement,
             when {
                 // If the original function has signature which need mangling we still need to replace it with a mangled version.
-                (!function.isFakeOverride || function.findInterfaceImplementation(context.state.jvmDefaultMode) != null) &&
-                        function.signatureRequiresMangling() ->
-                    replacement.name
+                (!function.isFakeOverride || function.findInterfaceImplementation(context.state.jvmDefaultMode) != null) && when (specificMangle) {
+                    SpecificMangle.Inline -> function.signatureRequiresMangling(includeInline = true, includeMFVC = false)
+                    SpecificMangle.MultiField -> function.signatureRequiresMangling(includeInline = false, includeMFVC = true)
+                } -> replacement.name
                 // Since we remove the corresponding property symbol from the bridge we need to resolve getter/setter
                 // names at this point.
                 replacement.isGetter ->
