@@ -124,6 +124,10 @@ internal class KtFe10CallResolver(
             Errors.UNRESOLVED_REFERENCE,
         )
 
+        private val syntaxErrors = setOf(
+            Errors.ASSIGNMENT_IN_EXPRESSION_CONTEXT,
+        )
+
         val diagnosticWithResolvedCallsAtPosition1 = setOf(
             Errors.OVERLOAD_RESOLUTION_AMBIGUITY,
             Errors.NONE_APPLICABLE,
@@ -640,6 +644,7 @@ internal class KtFe10CallResolver(
         diagnostics: Diagnostics = context.diagnostics
     ) = diagnostics.firstOrNull { diagnostic ->
         if (diagnostic.severity != Severity.ERROR) return@firstOrNull false
+        if (diagnostic.factory in syntaxErrors) return@firstOrNull true
         val isResolutionError = diagnostic.factory in resolutionFailureErrors
         val isCallArgError = diagnostic.factory in callArgErrors
         val reportedPsi = diagnostic.psiElement

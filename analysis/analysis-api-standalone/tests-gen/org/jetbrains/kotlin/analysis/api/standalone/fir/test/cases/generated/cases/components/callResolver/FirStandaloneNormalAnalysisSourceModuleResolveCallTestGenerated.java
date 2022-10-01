@@ -855,6 +855,22 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InvalidCode {
+        @Test
+        public void testAllFilesPresentInInvalidCode() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
+        }
+
+        @Test
+        @TestMetadata("getterAssignment.kt")
+        public void testGetterAssignment() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/getterAssignment.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/nonCalls")
     @TestDataPath("$PROJECT_ROOT")
     public class NonCalls {
