@@ -227,6 +227,11 @@ val MfvcNodeInstance.size: Int
 
 fun IrContainerExpression.unwrap(): IrExpression = statements.singleOrNull() as? IrExpression ?: this
 
+/**
+ * Creates a variable and doesn't add it to a container. It saves the variable with given saveVariable.
+ *
+ * It may be used when the variable will be used outside the current container so the declaration is added later when all usages are known.
+ */
 fun IrBuilderWithScope.savableStandaloneVariable(
     type: IrType,
     name: String? = null,
@@ -257,6 +262,11 @@ fun IrBuilderWithScope.savableStandaloneVariable(
     return variable
 }
 
+/**
+ * Creates a variable and doesn't add it to a container. It saves the variable with given saveVariable. It adds irSet-based initialization.
+ *
+ * It may be used when the variable will be used outside the current container so the declaration is added later when all usages are known.
+ */
 fun <T : IrElement> IrStatementsBuilder<T>.savableStandaloneVariableWithSetter(
     expression: IrExpression,
     name: String? = null,
