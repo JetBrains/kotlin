@@ -83,7 +83,9 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
     override fun IrClass.isSpecificLoweringLogicApplicable(): Boolean = isSingleFieldValueClass
 
-    override fun IrFunction.isFieldGetterToRemove(): Boolean = isInlineClassFieldGetter
+    override val specificMangle: SpecificMangle
+        get() = SpecificMangle.Inline
+
     override fun visitClassNew(declaration: IrClass): IrStatement {
         // The arguments to the primary constructor are in scope in the initializers of IrFields.
 
@@ -113,7 +115,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         val irConstructor = declaration.primaryConstructor!!
         // The field getter is used by reflection and cannot be removed here unless it is internal.
         declaration.declarations.removeIf {
-            it == irConstructor || (it is IrFunction && it.isFieldGetterToRemove() && !it.visibility.isPublicAPI)
+            it == irConstructor || (it is IrFunction && it.isInlineClassFieldGetter && !it.visibility.isPublicAPI)
         }
         buildPrimaryInlineClassConstructor(declaration, irConstructor)
         buildBoxFunction(declaration)

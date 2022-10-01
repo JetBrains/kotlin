@@ -157,7 +157,7 @@ val IrFunction.isInlineClassFieldGetter: Boolean
     get() = (parent as? IrClass)?.isSingleFieldValueClass == true && this is IrSimpleFunction && extensionReceiverParameter == null &&
             correspondingPropertySymbol?.let { it.owner.getter == this && it.owner.name == parentAsClass.inlineClassFieldName } == true
 
-val IrFunction.isMultiFieldValueClassOriginalFieldGetter: Boolean
+val IrFunction.isMultiFieldValueClassFieldGetter: Boolean
     get() = (parent as? IrClass)?.isMultiFieldValueClass == true && this is IrSimpleFunction && extensionReceiverParameter == null &&
             correspondingPropertySymbol?.let {
                 val multiFieldValueClassRepresentation = parentAsClass.multiFieldValueClassRepresentation
