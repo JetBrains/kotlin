@@ -42,9 +42,6 @@ val jvmMultiFieldValueClassPhase = makeIrFilePhase(
 )
 
 private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmValueClassAbstractLowering(context) {
-    /**
-     * The class is used to get replacing expression and MFVC instance if present for the given old value declaration.
-     */
     private sealed class MfvcNodeInstanceAccessor {
         abstract val instance: MfvcNodeInstance
         abstract operator fun get(name: Name): MfvcNodeInstanceAccessor?
@@ -60,6 +57,9 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         }
     }
 
+    /**
+     * The class is used to get replacing expression and MFVC instance if present for the given old value declaration.
+     */
     private inner class ValueDeclarationRemapper {
 
         private val expression2MfvcNodeInstanceAccessor = mutableMapOf<IrExpression, MfvcNodeInstanceAccessor>()
@@ -103,6 +103,9 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             }.also { expression2MfvcNodeInstanceAccessor[it] = MfvcNodeInstanceAccessor.Setter(instance, values!!) }
         }
 
+        /**
+         * @param safe whether protect from partial (because of a potential exception) initialization or not
+         */
         private fun IrBlockBuilder.makeFlattenedExpressionsWithGivenSafety(
             node: MfvcNode, safe: Boolean, expression: IrExpression
         ) = if (safe) {
@@ -416,7 +419,6 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         }
 
     override fun createBridgeBody(source: IrSimpleFunction, target: IrSimpleFunction, original: IrFunction, inverted: Boolean) {
-
         allScopes.push(createScope(source))
         source.body = context.createIrBuilder(source.symbol, source.startOffset, source.endOffset).run {
             val sourceExplicitParameters = source.explicitParameters
@@ -666,6 +668,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                 val rightNode = if (rightArgument.type.needsMfvcFlattening()) replacements.getRootMfvcNode(rightClass) else null
                 if (leftNode != null) {
                     if (rightNode != null) {
+                        // both are unboxed
                         val leftExpressions = flattenExpression(leftArgument)
                         require((leftExpressions.size > 1) == leftArgument.type.needsMfvcFlattening()) {
                             "Illegal flattening of ${leftArgument.dump()}\n\n${leftExpressions.joinToString("\n") { it.dump() }}"
@@ -685,6 +688,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                             arguments.forEachIndexed { index, argument -> putValueArgument(index, argument) }
                         }
                     } else {
+                        // left one is unboxed, right is not
                         val equals = leftClass.functions.single { it.name.asString() == "equals" && it.overriddenSymbols.isNotEmpty() }
                         +irCall(equals).apply {
                             copyTypeArgumentsFrom(expression)
@@ -693,7 +697,9 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                         }.transform(this@JvmMultiFieldValueClassLowering, null)
                     }
                 } else if (rightNode != null) {
+                    // left one is boxed, right one is unboxed
                     if (leftArgument.isNullConst()) {
+                        // left argument is always null, right one is unboxed
                         val hasPureFlattenedGetters = rightNode.mapLeaves { it.hasPureUnboxMethod }.all { it }
                         if (hasPureFlattenedGetters) {
                             val rightExpressions = flattenExpression(rightArgument)
@@ -706,6 +712,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                         }
                         +irFalse()
                     } else if (leftArgument.type.erasedUpperBound == rightArgument.type.erasedUpperBound && leftArgument.type.isNullable()) {
+                        // left argument can be unboxed if it is not null, right one is unboxed
                         +irBlock {
                             val leftValue = irTemporary(leftArgument)
                             +irIfNull(context.irBuiltIns.booleanType, irGet(leftValue), irFalse(), irBlock {
@@ -719,9 +726,11 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                             })
                         }.transform(this@JvmMultiFieldValueClassLowering, null)
                     } else {
+                        // right one is unboxed but left one is boxed and no intrinsics can be used
                         return super.visitCall(expression)
                     }
                 } else {
+                    // both are boxed
                     return super.visitCall(expression)
                 }
             }
@@ -788,6 +797,21 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         return newArguments
     }
 
+    /**
+     * Inlines initialization of variables when possible and returns their values
+     *
+     * Example:
+     * Before:
+     * val a = 2
+     * val b = 3
+     * val c = b + 1
+     * [a, b, c]
+     *
+     * After:
+     * val a = 2
+     * val b = 3
+     * [a, b, b + 1]
+     */
     fun IrBuilderWithScope.removeExtraSetVariablesFromExpressionList(
         block: IrContainerExpression,
         variables: List<IrVariable>
@@ -874,7 +898,9 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
 
     private fun getCurrentScopeSymbol() = (currentScope!!.irElement as IrSymbolOwner).symbol
 
-    // expression takes not transformed first argument
+    /**
+     * Takes not transformed expression and returns its flattened transformed representation (expressions)
+     */
     fun IrBlockBuilder.flattenExpression(expression: IrExpression): List<IrExpression> {
         if (!expression.type.needsMfvcFlattening()) {
             return listOf(expression.transform(this@JvmMultiFieldValueClassLowering, null))
@@ -899,6 +925,9 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         return expressions
     }
 
+    /**
+     * Takes not transformed expression and initialized given MfvcNodeInstance with transformed version of it
+     */
     fun IrBlockBuilder.flattenExpressionTo(expression: IrExpression, instance: MfvcNodeInstance) {
         val rootNode = replacements.getRootMfvcNode(
             if (expression is IrConstructorCall) expression.symbol.owner.constructedClass else expression.type.erasedUpperBound
@@ -965,14 +994,18 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
     private fun hasAccessToPrivateMembersOf(parent: IrClass): Boolean =
         currentScope?.irElement?.let { hasAccessToPrivateMembersOf(it, parent) } == true
 
+    /**
+     * Removes boxing when the result is not used
+     */
     fun IrBody.removeAllExtraBoxes() {
+        // data is whether the expression result is used
         accept(object : IrElementVisitor<Unit, Boolean> {
             override fun visitElement(element: IrElement, data: Boolean) {
-                element.acceptChildren(this, true)
+                element.acceptChildren(this, true) // uses what is inside
             }
 
             override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Boolean) {
-                expression.acceptChildren(this, data)
+                expression.acceptChildren(this, data) // type operator calls are transparent
             }
 
             private tailrec fun getFunctionCallOrNull(statement: IrStatement): IrCall? = when (statement) {
@@ -981,8 +1014,10 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                 else -> null
             }
 
+            // inner functions will be handled separately, no need to do it now
             override fun visitFunction(declaration: IrFunction, data: Boolean) = Unit
 
+            // inner classes will be handled separately, no need to do it now
             override fun visitClass(declaration: IrClass, data: Boolean) = Unit
 
             override fun visitContainerExpression(expression: IrContainerExpression, data: Boolean) {
@@ -1017,6 +1052,9 @@ private sealed class BlockOrBody {
     data class Block(val block: IrBlock) : BlockOrBody()
 }
 
+/**
+ * Finds the most narrow block or body which contains all usages of each of the given variables
+ */
 private fun findNearestBlocksForVariables(variables: Set<IrVariable>, body: IrBody): Map<IrVariable, BlockOrBody?> {
     val variableUsages = mutableMapOf<BlockOrBody, MutableSet<IrVariable>>()
     val childrenBlocks = mutableMapOf<BlockOrBody, MutableList<BlockOrBody>>()
@@ -1084,6 +1122,10 @@ private fun IrStatement.containsUsagesOf(variablesSet: Set<IrVariable>): Boolean
     return used
 }
 
+/**
+ * Adds declrations of the variables to the most narrow possible block or body.
+ * It adds them before the first usage within the block and inlines initialization of them when possible.
+ */
 fun IrBody.makeBodyWithAddedVariables(
     context: JvmBackendContext,
     variables: Set<IrVariable>,
