@@ -252,7 +252,7 @@ class MemoizedInlineClassReplacements(
         name = InlineClassAbi.mangledNameFor(function, mangleReturnTypes, useOldManglingScheme)
     }
 
-    override val getReplacementRegularClassConstructor: (IrConstructor) -> IrConstructor? = alwaysNull()
+    override val getReplacementForRegularClassConstructor: (IrConstructor) -> IrConstructor? = alwaysNull()
 
     override val replaceOverriddenSymbols: (IrSimpleFunction) -> List<IrSimpleFunctionSymbol> =
         storageManager.createMemoizedFunction { irSimpleFunction ->

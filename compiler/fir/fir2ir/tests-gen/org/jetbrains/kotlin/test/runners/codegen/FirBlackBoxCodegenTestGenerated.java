@@ -50184,9 +50184,9 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
-        @TestMetadata("MFVCFieldInitializationOrder.kt")
-        public void testMFVCFieldInitializationOrder() throws Exception {
-            runTest("compiler/testData/codegen/box/valueClasses/MFVCFieldInitializationOrder.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        @TestMetadata("MfvcFieldInitializationOrder.kt")
+        public void testMfvcFieldInitializationOrder() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/MfvcFieldInitializationOrder.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @Test

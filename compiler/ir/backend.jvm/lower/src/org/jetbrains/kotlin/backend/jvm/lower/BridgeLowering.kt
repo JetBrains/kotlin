@@ -11,11 +11,9 @@ import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.RegularMapping
-import org.jetbrains.kotlin.backend.jvm.SpecialBridge
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -623,8 +621,8 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         target: IrSimpleFunction,
         superQualifierSymbol: IrClassSymbol? = null
     ) =
-        irCastIfNeeded(
-            irCall(target, origin = IrStatementOrigin.BRIDGE_DELEGATION, superQualifierSymbol = superQualifierSymbol).apply {
+        irCastIfNeeded(irBlock {
+            +irReturn(irCall(target, origin = IrStatementOrigin.BRIDGE_DELEGATION, superQualifierSymbol = superQualifierSymbol).apply {
 
                 val targetStructure = run {
                     val mfvcOrOriginal =
@@ -656,7 +654,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                                 bridgeStructure.size == targetStructure.size &&
                                 (targetStructure zip bridgeStructure).none { (targetParameter, bridgeParameter) ->
                                     targetParameter is MultiFieldValueClassMapping && bridgeParameter is MultiFieldValueClassMapping &&
-                                            targetParameter.declarations != bridgeParameter.declarations
+                                            targetParameter.rootMfvcNode != bridgeParameter.rootMfvcNode
                                 }) { "Incompatible structures: $bridgeStructure and $targetStructure" }
 
                 fun irGetOrCast(bridgeParameter: IrValueParameter, targetParameter: IrValueParameter) =
@@ -678,7 +676,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                     when (targetRemappedParameter) {
                         is MultiFieldValueClassMapping -> when (bridgeRemappedParameter) {
                             is MultiFieldValueClassMapping -> {
-                                require(bridgeRemappedParameter.declarations == targetRemappedParameter.declarations) {
+                                require(bridgeRemappedParameter.rootMfvcNode == targetRemappedParameter.rootMfvcNode) {
                                     "Incompatible parameters: $bridgeRemappedParameter, $targetRemappedParameter"
                                 }
                                 repeat(bridgeRemappedParameter.valueParameters.size) {
@@ -687,34 +685,35 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                                     putArgument(targetParameter, irGetOrCast(bridgeParameter, targetParameter))
                                 }
                             }
+
                             is RegularMapping, null -> {
                                 val bridgeParameter = bridgeExplicitParameters[bridgeIndex++]
-                                val newArguments = targetRemappedParameter.declarations.unboxMethods.map { unboxFunction ->
-                                    irCall(unboxFunction).apply {
-                                        val targetParameterType = targetRemappedParameter.declarations.valueClass.defaultType
-                                        dispatchReceiver = irCastIfNeeded(irGet(bridgeParameter), targetParameterType)
-                                    }
-                                }
+                                val targetParameterType = targetRemappedParameter.rootMfvcNode.mfvc.defaultType
+                                val instance = targetRemappedParameter.rootMfvcNode.createInstanceFromBox(
+                                    this@irBlock,
+                                    irCastIfNeeded(irGet(bridgeParameter), targetParameterType),
+                                    hasAccessToPrivateMembersOf(target, targetRemappedParameter.rootMfvcNode.mfvc)
+                                ) { error("Not applicable") }
+                                val newArguments = instance.makeFlattenedGetterExpressions()
                                 for (newArgument in newArguments) {
                                     putArgument(targetExplicitParameters[targetIndex++], newArgument)
                                 }
                             }
                         }
+
                         is RegularMapping, null -> {
                             val targetParameter = targetExplicitParameters[targetIndex]
                             when (bridgeRemappedParameter) {
                                 is MultiFieldValueClassMapping -> {
-                                    val count = bridgeRemappedParameter.declarations.fields.size
-                                    val boxCall = irCall(bridgeRemappedParameter.declarations.boxMethod).apply {
-                                        bridgeRemappedParameter.boxedType.arguments.forEachIndexed { index, argument ->
-                                            putTypeArgument(index, argument.typeOrNull)
-                                        }
-                                        for (i in 0 until count) {
-                                            putValueArgument(i, irGet(bridgeExplicitParameters[bridgeIndex++]))
-                                        }
+                                    val valueArguments = List(bridgeRemappedParameter.rootMfvcNode.leavesCount) {
+                                        irGet(bridgeExplicitParameters[bridgeIndex++])
                                     }
+                                    val boxCall = bridgeRemappedParameter.rootMfvcNode.makeBoxedExpression(
+                                        this@irBlock, bridgeRemappedParameter.typeArguments, valueArguments
+                                    )
                                     putArgument(targetParameter, irCastIfNeeded(boxCall, targetParameter.type.upperBound))
                                 }
+
                                 is RegularMapping, null -> {
                                     val bridgeParameter = bridgeExplicitParameters[bridgeIndex++]
                                     putArgument(targetParameter, irGetOrCast(bridgeParameter, targetParameter))
@@ -734,9 +733,8 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                 require((bridgeStructure == null || structureIndex == bridgeStructure.size)) {
                     "Invalid structure index $structureIndex for $bridgeStructure"
                 }
-            },
-            bridge.returnType.upperBound
-        )
+            })
+        }.unwrap(), bridge.returnType.upperBound)
 
     private fun IrBuilderWithScope.irCastIfNeeded(expression: IrExpression, to: IrType): IrExpression =
         if (expression.type == to || to.isAny() || to.isNullableAny()) expression else irImplicitCast(expression, to)
