@@ -202,51 +202,59 @@ open class RawFirBuilder(
 
         // Here we accept lambda as receiver to prevent expression calculation in stub mode
         private fun (() -> KtExpression?).toFirExpression(errorReason: String): FirExpression =
-            with(this()) {
-                convertSafe() ?: buildErrorExpression(
-                    this?.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
-                )
-            }
+            this().toFirExpression(errorReason)
 
         private fun KtElement?.toFirExpression(
             errorReason: String,
             kind: DiagnosticKind = DiagnosticKind.ExpressionExpected
         ): FirExpression {
-            val result = this.convertSafe<FirExpression>()
+            if (this == null) {
+                return buildErrorExpression(source = null, ConeSimpleDiagnostic(errorReason, kind))
+            }
 
-            if (result != null) {
-                if (this == null) {
-                    return result
-                }
-
-                val callExpressionCallee = (this as? KtCallExpression)?.calleeExpression?.unwrapParenthesesLabelsAndAnnotations()
-
-                if (this is KtNameReferenceExpression ||
-                    this is KtConstantExpression ||
-                    (this is KtCallExpression && callExpressionCallee !is KtLambdaExpression) ||
-                    getQualifiedExpressionForSelector() == null
-                ) {
-                    return result
-                }
-
-                return buildErrorExpression {
-                    source = callExpressionCallee?.toFirSourceElement() ?: toFirSourceElement()
-                    diagnostic =
-                        ConeSimpleDiagnostic(
-                            "The expression cannot be a selector (occur after a dot)",
-                            if (callExpressionCallee == null) DiagnosticKind.IllegalSelector else DiagnosticKind.NoReceiverAllowed
-                        )
-                    expression = result
+            val result = when (val fir = convertElement(this)) {
+                is FirExpression -> fir
+                else -> {
+                    return buildErrorExpression {
+                        nonExpressionElement = fir
+                        diagnostic = ConeSimpleDiagnostic(errorReason, kind)
+                        source = toFirSourceElement()
+                    }
                 }
             }
 
-            return buildErrorExpression(
-                this?.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, kind),
-            )
+
+            val callExpressionCallee = (this as? KtCallExpression)?.calleeExpression?.unwrapParenthesesLabelsAndAnnotations()
+
+            if (this is KtNameReferenceExpression ||
+                this is KtConstantExpression ||
+                (this is KtCallExpression && callExpressionCallee !is KtLambdaExpression) ||
+                getQualifiedExpressionForSelector() == null
+            ) {
+                return result
+            }
+
+            return buildErrorExpression {
+                source = callExpressionCallee?.toFirSourceElement() ?: toFirSourceElement()
+                diagnostic =
+                    ConeSimpleDiagnostic(
+                        "The expression cannot be a selector (occur after a dot)",
+                        if (callExpressionCallee == null) DiagnosticKind.IllegalSelector else DiagnosticKind.NoReceiverAllowed
+                    )
+                expression = result
+            }
         }
 
-        private inline fun KtExpression.toFirStatement(errorReasonLazy: () -> String): FirStatement =
-            convertSafe() ?: buildErrorExpression(this.toFirSourceElement(), ConeSimpleDiagnostic(errorReasonLazy(), DiagnosticKind.Syntax))
+        private inline fun KtExpression.toFirStatement(errorReasonLazy: () -> String): FirStatement {
+            return when (val fir = convertElement(this)) {
+                is FirStatement -> fir
+                else -> buildErrorExpression {
+                    nonExpressionElement = fir
+                    diagnostic = ConeSimpleDiagnostic(errorReasonLazy(), DiagnosticKind.Syntax)
+                    source = toFirSourceElement()
+                }
+            }
+        }
 
         private fun KtExpression.toFirStatement(): FirStatement =
             convert()

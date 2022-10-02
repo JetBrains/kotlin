@@ -1001,6 +1001,7 @@ class FirRenderer(
 
         override fun visitErrorExpression(errorExpression: FirErrorExpression) {
             print("ERROR_EXPR(${errorExpression.diagnostic.reason})")
+            errorExpression.nonExpressionElement?.accept(visitor)
         }
 
         override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
