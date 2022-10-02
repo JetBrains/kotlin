@@ -5796,15 +5796,15 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         }
 
         @Test
-        @TestMetadata("MFVCDeclaration.kt")
-        public void testMFVCDeclaration() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/valueClasses/MFVCDeclaration.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        @TestMetadata("mfvcDeclaration.kt")
+        public void testMfvcDeclaration() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/valueClasses/mfvcDeclaration.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @Test
-        @TestMetadata("MFVCReassignments.kt")
-        public void testMFVCReassignments() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/valueClasses/MFVCReassignments.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        @TestMetadata("mfvcReassignments.kt")
+        public void testMfvcReassignments() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/valueClasses/mfvcReassignments.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @Test
