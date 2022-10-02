@@ -1,6 +1,6 @@
 @kotlin.Metadata
 public final class A {
-    // source: 'MfvcFieldInitializationOrder.kt'
+    // source: 'mfvcFieldInitializationOrder.kt'
     private field x-0: double
     private field x-1: double
     public method <init>(p0: double, p1: double): void
@@ -12,7 +12,7 @@ public final class A {
 
 @kotlin.Metadata
 public final class B {
-    // source: 'MfvcFieldInitializationOrder.kt'
+    // source: 'mfvcFieldInitializationOrder.kt'
     private field a-0: double
     private field a-1: double
     private final field b-0: double
@@ -35,7 +35,7 @@ public final class B {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class DPoint {
-    // source: 'MfvcFieldInitializationOrder.kt'
+    // source: 'mfvcFieldInitializationOrder.kt'
     private final field field-0: double
     private final field field-1: double
     private synthetic method <init>(p0: double, p1: double): void
@@ -56,6 +56,6 @@ public final class DPoint {
 
 @kotlin.Metadata
 public final class MfvcFieldInitializationOrderKt {
-    // source: 'MfvcFieldInitializationOrder.kt'
+    // source: 'mfvcFieldInitializationOrder.kt'
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

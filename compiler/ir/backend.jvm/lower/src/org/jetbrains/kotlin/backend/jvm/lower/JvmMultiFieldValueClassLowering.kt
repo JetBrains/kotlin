@@ -131,7 +131,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             val typeArguments = makeTypeArgumentsFromField(expression)
             var instance: ReceiverBasedMfvcNodeInstance? = null
             return scope.irBlock {
-                instance = node.createInstanceFromBox(this, typeArguments, expression.receiver, true, ::variablesSaver)
+                instance = node.createInstanceFromBox(this, typeArguments, expression.receiver, AccessType.AlwaysPrivate, ::variablesSaver)
                 +instance!!.makeGetterExpression()
             }.also { expression2MfvcNodeInstanceAccessor[it] = MfvcNodeInstanceAccessor.Getter(instance!!) }
         }
@@ -144,7 +144,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             var instance: ReceiverBasedMfvcNodeInstance? = null
             var values: List<IrExpression>? = null
             return scope.irBlock {
-                instance = node.createInstanceFromBox(this, typeArguments, expression.receiver, true, ::variablesSaver)
+                instance = node.createInstanceFromBox(this, typeArguments, expression.receiver, AccessType.AlwaysPrivate, ::variablesSaver)
                 values = makeFlattenedExpressionsWithGivenSafety(node, safe, expression.value)
                 instance!!.addSetterStatements(this, values!!)
             }.also { expression2MfvcNodeInstanceAccessor[it] = MfvcNodeInstanceAccessor.Setter(instance!!, values!!) }
@@ -153,12 +153,19 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         fun makeReplacement(scope: IrBuilderWithScope, expression: IrCall): IrExpression? {
             val function = expression.symbol.owner
             val property = function.property?.takeIf { function.isGetter } ?: return null
-            expression.dispatchReceiver?.get(property.name)?.let { return it }
+            val dispatchReceiver = expression.dispatchReceiver
+            dispatchReceiver?.get(property.name)?.let { return it }
             val node = replacements.getMfvcPropertyNode(property) ?: return null
             val typeArguments = makeTypeArgumentsFromFunction(expression)
             var instance: ReceiverBasedMfvcNodeInstance? = null
             return scope.irBlock {
-                instance = node.createInstanceFromBox(this, typeArguments, expression.dispatchReceiver, false, ::variablesSaver)
+                // Optimization: pure function access to leaf can be replaced with field access if the field itself is accessible
+                val accessType = when {
+                    !node.hasPureUnboxMethod -> AccessType.AlwaysPublic
+                    dispatchReceiver == null -> AccessType.PrivateWhenNoBox
+                    else -> getOptimizedPublicAccess(dispatchReceiver.type.erasedUpperBound)
+                }
+                instance = node.createInstanceFromBox(this, typeArguments, dispatchReceiver, accessType, ::variablesSaver)
                 +instance!!.makeGetterExpression()
             }.also { expression2MfvcNodeInstanceAccessor[it] = MfvcNodeInstanceAccessor.Getter(instance!!) }
         }
@@ -502,7 +509,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                                     val receiver = sourceExplicitParameters[flattenedSourceIndex++]
                                     val rootNode = remappedTargetParameter.rootMfvcNode
                                     val instance = rootNode.createInstanceFromBox(
-                                        this@irBlock, irGet(receiver), hasAccessToPrivateMembersOf(rootNode.mfvc), ::variablesSaver
+                                        this@irBlock, irGet(receiver), getOptimizedPublicAccess(rootNode.mfvc), ::variablesSaver,
                                     )
                                     val flattenedExpressions = instance.makeFlattenedGetterExpressions()
                                     for (expression in flattenedExpressions) {
@@ -982,17 +989,14 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             }
         }
         val expressionInstance = flattenedExpressionInstance ?: rootNode.createInstanceFromBox(
-            this,
-            transformedExpression,
-            hasAccessToPrivateMembersOf(rootNode.mfvc),
-            ::variablesSaver,
+            this, transformedExpression, getOptimizedPublicAccess(rootNode.mfvc), ::variablesSaver,
         )
         require(expressionInstance.size == instance.size) { "Incompatible assignment sizes: ${expressionInstance.size}, ${instance.size}" }
         instance.addSetterStatements(this, expressionInstance.makeFlattenedGetterExpressions())
     }
 
-    private fun hasAccessToPrivateMembersOf(parent: IrClass): Boolean =
-        currentScope?.irElement?.let { hasAccessToPrivateMembersOf(it, parent) } == true
+    private fun getOptimizedPublicAccess(parent: IrClass): AccessType =
+        currentScope?.irElement?.let { getOptimizedPublicAccess(it, parent) } ?: AccessType.AlwaysPublic
 
     /**
      * Removes boxing when the result is not used
@@ -1123,7 +1127,7 @@ private fun IrStatement.containsUsagesOf(variablesSet: Set<IrVariable>): Boolean
 }
 
 /**
- * Adds declrations of the variables to the most narrow possible block or body.
+ * Adds declarations of the variables to the most narrow possible block or body.
  * It adds them before the first usage within the block and inlines initialization of them when possible.
  */
 fun IrBody.makeBodyWithAddedVariables(
