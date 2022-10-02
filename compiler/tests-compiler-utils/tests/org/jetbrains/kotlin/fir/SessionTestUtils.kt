@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.fir.session.FirSessionFactory
+import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -31,7 +31,7 @@ fun createSessionForTests(
     moduleName: String = "TestModule",
     friendsPaths: List<Path> = emptyList(),
     languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
-): FirSession = FirSessionFactory.createSessionWithDependencies(
+): FirSession = FirSessionFactoryHelper.createSessionWithDependencies(
     Name.identifier(moduleName),
     JvmPlatforms.unspecifiedJvmPlatform,
     JvmPlatformAnalyzerServices,
@@ -59,7 +59,7 @@ fun createSessionForTests(
     friendsPaths: List<Path> = emptyList(),
     getPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
 ): FirSession {
-    return FirSessionFactory.createSessionWithDependencies(
+    return FirSessionFactoryHelper.createSessionWithDependencies(
         Name.identifier(moduleName),
         JvmPlatforms.unspecifiedJvmPlatform,
         JvmPlatformAnalyzerServices,
