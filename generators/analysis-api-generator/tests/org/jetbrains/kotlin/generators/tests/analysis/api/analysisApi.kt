@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typePro
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractHasCommonSubtypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceResolveTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.scopes.*
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSingleSymbolByPsi
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByPsiTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByReferenceTest
@@ -108,6 +109,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
     group("symbols", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
         test(AbstractSymbolByPsiTest::class) {
             model("symbolByPsi")
+        }
+
+        test(AbstractSingleSymbolByPsi::class) {
+            model("singleSymbolByPsi")
         }
 
         test(

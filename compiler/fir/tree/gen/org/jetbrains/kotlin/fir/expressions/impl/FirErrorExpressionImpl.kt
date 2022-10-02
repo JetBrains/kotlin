@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -27,6 +28,7 @@ internal class FirErrorExpressionImpl(
     override val annotations: MutableList<FirAnnotation>,
     override val diagnostic: ConeDiagnostic,
     override var expression: FirExpression?,
+    override var nonExpressionElement: FirElement?,
 ) : FirErrorExpression() {
     override var typeRef: FirTypeRef = FirErrorTypeRefImpl(source, null, ConeStubDiagnostic(diagnostic), false)
 
@@ -34,12 +36,14 @@ internal class FirErrorExpressionImpl(
         typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         expression?.accept(visitor, data)
+        nonExpressionElement?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorExpressionImpl {
         typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         expression = expression?.transform(transformer, data)
+        nonExpressionElement = nonExpressionElement?.transform(transformer, data)
         return this
     }
 
