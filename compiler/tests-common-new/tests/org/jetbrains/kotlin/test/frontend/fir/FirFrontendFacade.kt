@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
-import org.jetbrains.kotlin.fir.session.FirSessionFactory
+import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
 import org.jetbrains.kotlin.ir.backend.js.resolverLogger
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -117,7 +117,7 @@ class FirFrontendFacade(
                 val projectFileSearchScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
                 val packagePartProvider = projectEnvironment.getPackagePartProvider(projectFileSearchScope)
 
-                FirSessionFactory.createLibrarySession(
+                FirJvmSessionFactory.createLibrarySession(
                     moduleName,
                     moduleInfoProvider.firSessionProvider,
                     dependencyList,
@@ -162,7 +162,7 @@ class FirFrontendFacade(
 
         val session = when {
             isCommonOrJvm -> {
-                FirSessionFactory.createModuleBasedSession(
+                FirJvmSessionFactory.createModuleBasedSession(
                     mainModuleData,
                     moduleInfoProvider.firSessionProvider,
                     PsiBasedProjectFileSearchScope(TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles)),

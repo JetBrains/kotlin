@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 
-object FirSessionFactory : FirAbstractSessionFactory() {
+object FirJvmSessionFactory : FirAbstractSessionFactory() {
     fun createLibrarySession(
         mainModuleName: Name,
         sessionProvider: FirProjectSessionProvider,
