@@ -58,7 +58,7 @@ import org.jetbrains.kotlin.fir.pipeline.convertToIr
 import org.jetbrains.kotlin.fir.pipeline.runCheckers
 import org.jetbrains.kotlin.fir.pipeline.runResolution
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.session.FirSessionFactory
+import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
@@ -397,7 +397,7 @@ fun createSession(
                 precompiledBinariesFileScope?.let { librariesScope -= it }
             }
 
-    return FirSessionFactory.createSessionWithDependencies(
+    return FirSessionFactoryHelper.createSessionWithDependencies(
         Name.identifier(name),
         platform,
         analyzerServices,

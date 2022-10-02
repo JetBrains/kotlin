@@ -24,9 +24,8 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
-import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithAttributes
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
-import org.jetbrains.kotlin.fir.session.FirSessionFactory
+import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.isExtensionFunctionAnnotationCall
@@ -79,7 +78,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     }
 
     protected fun KtFile.toFirFile(bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL): FirFile {
-        val session = FirSessionFactory.createEmptySession()
+        val session = FirSessionFactoryHelper.createEmptySession()
         return RawFirBuilder(
             session,
             StubFirScopeProvider,

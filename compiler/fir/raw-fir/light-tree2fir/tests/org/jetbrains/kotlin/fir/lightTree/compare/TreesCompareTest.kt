@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.lightTree.walkTopDown
 import org.jetbrains.kotlin.fir.lightTree.walkTopDownWithTestData
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
-import org.jetbrains.kotlin.fir.session.FirSessionFactory
+import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.readSourceFileWithMapping
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
@@ -60,7 +60,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
 
     private fun compareAll() {
         val lightTreeConverter = LightTree2Fir(
-            session = FirSessionFactory.createEmptySession(),
+            session = FirSessionFactoryHelper.createEmptySession(),
             scopeProvider = StubFirScopeProvider,
             diagnosticsReporter = null
         )
@@ -86,7 +86,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
 
     fun testCompareDiagnostics() {
         val lightTreeConverter = LightTree2Fir(
-            session = FirSessionFactory.createEmptySession(),
+            session = FirSessionFactoryHelper.createEmptySession(),
             scopeProvider = StubFirScopeProvider,
             diagnosticsReporter = null
         )
