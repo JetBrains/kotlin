@@ -41,6 +41,7 @@ class FirRenderer(
     override val resolvePhaseRenderer: FirResolvePhaseRenderer? = null,
     override val typeRenderer: ConeTypeRenderer = ConeTypeRendererForDebugging(),
     override val valueParameterRenderer: FirValueParameterRenderer = FirValueParameterRenderer(),
+    override val errorExpressionRenderer: FirErrorExpressionRenderer = FirErrorExpressionOnlyErrorRenderer(),
 ) : FirRendererComponents {
 
     override val visitor = Visitor()
@@ -75,6 +76,7 @@ class FirRenderer(
         typeRenderer.builder = builder
         typeRenderer.idRenderer = idRenderer
         valueParameterRenderer.components = this
+        errorExpressionRenderer.components = this
     }
 
     fun renderElementAsString(element: FirElement): String {
@@ -1000,7 +1002,7 @@ class FirRenderer(
         }
 
         override fun visitErrorExpression(errorExpression: FirErrorExpression) {
-            print("ERROR_EXPR(${errorExpression.diagnostic.reason})")
+            errorExpressionRenderer.renderErrorExpression(errorExpression)
         }
 
         override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
