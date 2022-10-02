@@ -692,7 +692,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                                 val instance = targetRemappedParameter.rootMfvcNode.createInstanceFromBox(
                                     this@irBlock,
                                     irCastIfNeeded(irGet(bridgeParameter), targetParameterType),
-                                    hasAccessToPrivateMembersOf(target, targetRemappedParameter.rootMfvcNode.mfvc)
+                                    getOptimizedPublicAccess(target, targetRemappedParameter.rootMfvcNode.mfvc)
                                 ) { error("Not applicable") }
                                 val newArguments = instance.makeFlattenedGetterExpressions()
                                 for (newArgument in newArguments) {

@@ -471,16 +471,17 @@ private fun getOverriddenNode(replacements: MemoizedMultiFieldValueClassReplacem
         .firstOrNull { !it.owner.isFakeOverride }
         ?.let { replacements.getMfvcPropertyNode(it.owner.correspondingPropertySymbol!!.owner) }
 
-fun hasAccessToPrivateMembersOf(currentElement: IrElement?, parent: IrClass): Boolean {
-    val declaration = currentElement as? IrDeclaration ?: return false
+fun getOptimizedPublicAccess(currentElement: IrElement?, parent: IrClass): AccessType {
+    val declaration = currentElement as? IrDeclaration ?: return AccessType.AlwaysPublic
     for (cur in declaration.parents.filterIsInstance<IrClass>()) {
         return when {
-            cur == parent -> true
+            cur == parent -> AccessType.PrivateWhenNoBox
             cur.isInner -> continue
-            else -> false
+            cur.isCompanion -> continue
+            else -> AccessType.AlwaysPublic
         }
     }
-    return false
+    return AccessType.AlwaysPublic
 }
 
 private fun IrProperty.getterIfDeclared(parent: IrDeclarationContainer): IrSimpleFunction? = getter?.takeIf { it in parent.declarations }
