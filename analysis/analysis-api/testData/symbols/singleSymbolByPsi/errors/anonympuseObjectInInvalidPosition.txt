@@ -1,0 +1,13 @@
+KtAnonymousObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: null
+  classKind: ANONYMOUS_OBJECT
+  name: null
+  origin: SOURCE
+  superTypes: [
+    A<kotlin/Int>
+  ]
+  symbolKind: LOCAL
+  typeParameters: []
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

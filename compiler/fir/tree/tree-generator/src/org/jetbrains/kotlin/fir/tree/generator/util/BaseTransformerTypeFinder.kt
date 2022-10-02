@@ -19,6 +19,7 @@ fun detectBaseTransformerTypes(builder: AbstractFirTreeBuilder) {
                 is FieldList -> field.baseType as AbstractElement
                 else -> throw IllegalArgumentException()
             }
+            if (fieldElement == AbstractFirTreeBuilder.baseFirElement) continue
             usedAsFieldType[fieldElement] = true
         }
     }

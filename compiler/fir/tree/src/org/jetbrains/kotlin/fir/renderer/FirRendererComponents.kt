@@ -23,4 +23,5 @@ internal interface FirRendererComponents {
     val resolvePhaseRenderer: FirResolvePhaseRenderer?
     val typeRenderer: ConeTypeRenderer
     val valueParameterRenderer: FirValueParameterRenderer
+    val errorExpressionRenderer: FirErrorExpressionRenderer
 }
