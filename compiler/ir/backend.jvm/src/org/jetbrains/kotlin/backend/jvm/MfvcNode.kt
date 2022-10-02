@@ -33,7 +33,7 @@ sealed interface MfvcNode {
         scope: IrBlockBuilder,
         typeArguments: TypeArguments,
         receiver: IrExpression?,
-        isPrivateAccess: Boolean,
+        accessType: AccessType,
         saveVariable: (IrVariable) -> Unit,
     ): ReceiverBasedMfvcNodeInstance
 }
@@ -41,10 +41,10 @@ sealed interface MfvcNode {
 fun MfvcNode.createInstanceFromBox(
     scope: IrBlockBuilder,
     receiver: IrExpression,
-    isPrivateAccess: Boolean,
+    accessType: AccessType,
     saveVariable: (IrVariable) -> Unit
 ) =
-    createInstanceFromBox(scope, makeTypeArgumentsFromType(receiver.type as IrSimpleType), receiver, isPrivateAccess, saveVariable)
+    createInstanceFromBox(scope, makeTypeArgumentsFromType(receiver.type as IrSimpleType), receiver, accessType, saveVariable)
 
 fun MfvcNode.createInstanceFromValueDeclarationsAndBoxType(
     scope: IrBuilderWithScope, type: IrSimpleType, name: Name, saveVariable: (IrVariable) -> Unit,
@@ -314,10 +314,10 @@ class LeafMfvcNode(
         scope: IrBlockBuilder,
         typeArguments: TypeArguments,
         receiver: IrExpression?,
-        isPrivateAccess: Boolean,
+        accessType: AccessType,
         saveVariable: (IrVariable) -> Unit,
     ) = ReceiverBasedMfvcNodeInstance(
-        scope, this, typeArguments, receiver, field?.let(::listOf), unboxMethod, isPrivateAccess, saveVariable
+        scope, this, typeArguments, receiver, field?.let(::listOf), unboxMethod, accessType, saveVariable
     )
 
     override fun toString(): String = "$fullFieldName: ${type.render()}"
@@ -364,10 +364,10 @@ class IntermediateMfvcNode(
         scope: IrBlockBuilder,
         typeArguments: TypeArguments,
         receiver: IrExpression?,
-        isPrivateAccess: Boolean,
+        accessType: AccessType,
         saveVariable: (IrVariable) -> Unit,
     ) = ReceiverBasedMfvcNodeInstance(
-        scope, this, typeArguments, receiver, fields, unboxMethod, isPrivateAccess, saveVariable
+        scope, this, typeArguments, receiver, fields, unboxMethod, accessType, saveVariable
     )
 
     override fun toString(): String =
@@ -460,9 +460,9 @@ class RootMfvcNode internal constructor(
         scope: IrBlockBuilder,
         typeArguments: TypeArguments,
         receiver: IrExpression?,
-        isPrivateAccess: Boolean,
+        accessType: AccessType,
         saveVariable: (IrVariable) -> Unit,
-    ) = ReceiverBasedMfvcNodeInstance(scope, this, typeArguments, receiver, fields, null, isPrivateAccess, saveVariable)
+    ) = ReceiverBasedMfvcNodeInstance(scope, this, typeArguments, receiver, fields, null, accessType, saveVariable)
 
     override fun toString(): String =
         "${type.render()}\n${subnodes.joinToString("\n").prependIndent("    ")}"

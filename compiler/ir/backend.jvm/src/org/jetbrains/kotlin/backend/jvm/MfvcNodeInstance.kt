@@ -142,6 +142,8 @@ fun IrExpression?.isRepeatableSetter(): Boolean = when (this) {
 
 fun IrExpression?.isRepeatableAccessor(): Boolean = isRepeatableGetter() || isRepeatableSetter()
 
+enum class AccessType { AlwaysPublic, PrivateWhenNoBox, AlwaysPrivate }
+
 class ReceiverBasedMfvcNodeInstance(
     override val scope: IrBlockBuilder,
     override val node: MfvcNode,
@@ -149,7 +151,7 @@ class ReceiverBasedMfvcNodeInstance(
     receiver: IrExpression?,
     val fields: List<IrField>?,
     val unboxMethod: IrSimpleFunction?,
-    val isPrivateAccess: Boolean,
+    val accessType: AccessType,
     private val saveVariable: (IrVariable) -> Unit,
 ) : MfvcNodeInstance {
     override val type: IrSimpleType = makeTypeFromMfvcNodeAndTypeArguments(node, typeArguments)
@@ -169,7 +171,9 @@ class ReceiverBasedMfvcNodeInstance(
     override fun makeFlattenedGetterExpressions(): List<IrExpression> = when (node) {
         is LeafMfvcNode -> listOf(makeGetterExpression())
         is MfvcNodeWithSubnodes -> when {
-            node is IntermediateMfvcNode && isPrivateAccess && fields != null -> fields.map { scope.irGetField(makeReceiverCopy(), it) }
+            node is IntermediateMfvcNode && canUsePrivateAccessFor(node) && fields != null ->
+                fields.map { scope.irGetField(makeReceiverCopy(), it) }
+
             node is IntermediateMfvcNode && !node.hasPureUnboxMethod -> {
                 val value = makeGetterExpression()
                 val asVariable = scope.savableStandaloneVariableWithSetter(
@@ -180,7 +184,7 @@ class ReceiverBasedMfvcNodeInstance(
                 )
                 val root = node.rootNode
                 val variableInstance =
-                    root.createInstanceFromBox(scope, typeArguments, scope.irGet(asVariable), isPrivateAccess = false, saveVariable)
+                    root.createInstanceFromBox(scope, typeArguments, scope.irGet(asVariable), accessType, saveVariable)
                 variableInstance.makeFlattenedGetterExpressions()
             }
 
@@ -190,8 +194,8 @@ class ReceiverBasedMfvcNodeInstance(
 
     override fun makeGetterExpression(): IrExpression = with(scope) {
         when {
-            node is LeafMfvcNode && isPrivateAccess && fields != null -> irGetField(makeReceiverCopy(), fields.single())
-            node is IntermediateMfvcNode && isPrivateAccess && fields != null -> node.makeBoxedExpression(
+            node is LeafMfvcNode && canUsePrivateAccessFor(node) && fields != null -> irGetField(makeReceiverCopy(), fields.single())
+            node is IntermediateMfvcNode && accessType == AccessType.AlwaysPrivate && fields != null -> node.makeBoxedExpression(
                 this, typeArguments, fields.map { irGetField(makeReceiverCopy(), it) }
             )
             unboxMethod != null -> irCall(unboxMethod).apply {
@@ -210,9 +214,12 @@ class ReceiverBasedMfvcNodeInstance(
         }
     }
 
+    private fun canUsePrivateAccessFor(node: NameableMfvcNode) =
+        node.hasPureUnboxMethod && accessType == AccessType.PrivateWhenNoBox || accessType == AccessType.AlwaysPrivate
+
     override fun get(name: Name): ReceiverBasedMfvcNodeInstance? {
         val (newNode, _) = node.getSubnodeAndIndices(name) ?: return null
-        return newNode.createInstanceFromBox(scope, typeArguments, makeReceiverCopy(), isPrivateAccess, saveVariable)
+        return newNode.createInstanceFromBox(scope, typeArguments, makeReceiverCopy(), accessType, saveVariable)
     }
 
     override fun makeStatements(values: List<IrExpression>): List<IrStatement> {
