@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.parseKotlinSourceSetMetadataFromJs
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.targets.native.internal.MissingNativeStdlibWarning.NO_NATIVE_STDLIB_PROPERTY_WARNING
 import org.jetbrains.kotlin.gradle.targets.native.internal.MissingNativeStdlibWarning.NO_NATIVE_STDLIB_WARNING
+import org.jetbrains.kotlin.gradle.utils.XcodeUtils
 
 fun parseKotlinSourceSetMetadataFromJson(json: String): KotlinProjectStructureMetadata? = parseKotlinSourceSetMetadataFromJson(json)
 
@@ -27,3 +28,4 @@ const val NO_NATIVE_STDLIB_PROPERTY_WARNING = NO_NATIVE_STDLIB_PROPERTY_WARNING
 
 val KOTLIN_12X_MPP_DEPRECATION_WARNING = KOTLIN_12X_MPP_DEPRECATION_WARNING
 
+val Xcode = XcodeUtils.Companion.INSTANCE
