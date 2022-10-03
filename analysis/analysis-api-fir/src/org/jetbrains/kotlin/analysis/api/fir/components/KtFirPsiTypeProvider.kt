@@ -107,6 +107,9 @@ private fun ConeKotlinType.simplifyType(
             ?: currentType
 
     } while (oldType !== currentType)
+    if (typeArguments.isNotEmpty()) {
+        currentType = currentType.withArguments { it.replaceType(it.type?.simplifyType(session, useSitePosition)) }
+    }
     return currentType
 }
 
