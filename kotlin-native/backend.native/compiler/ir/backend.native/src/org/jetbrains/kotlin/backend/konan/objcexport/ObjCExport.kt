@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys.Companion.BUNDLE_ID
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
+import org.jetbrains.kotlin.backend.konan.getExportedDependencies
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceFile
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.createTempFile
@@ -34,41 +37,42 @@ internal class ObjCExportedInterface(
         val mapper: ObjCExportMapper
 )
 
-// TODO: Replace Context with a more lightweight class.
-internal fun produceObjCExportInterface(context: Context): ObjCExportedInterface {
-    require(context.config.target.family.isAppleFamily)
-    require(context.config.produce == CompilerOutputKind.FRAMEWORK)
-
-    val topLevelNamePrefix = context.objCExportTopLevelNamePrefix
-
-    // TODO: emit RTTI to the same modules as classes belong to.
-    //   Not possible yet, since ObjCExport translates the entire "world" API at once
-    //   and can't do this per-module, e.g. due to global name conflict resolution.
-
-    val unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport
-    val mapper = ObjCExportMapper(context.frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
-    val moduleDescriptors = listOf(context.moduleDescriptor) + context.getExportedDependencies()
-    val objcGenerics = context.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
-    val namer = ObjCExportNamerImpl(
-            moduleDescriptors.toSet(),
-            context.moduleDescriptor.builtIns,
-            mapper,
-            topLevelNamePrefix,
-            local = false,
-            objcGenerics = objcGenerics
-    )
-    val headerGenerator = ObjCExportHeaderGeneratorImpl(context, moduleDescriptors, mapper, namer, objcGenerics)
-    headerGenerator.translateModule()
-    return headerGenerator.buildInterface()
-}
-
-internal class ObjCExport(
-        val context: Context,
-        private val exportedInterface: ObjCExportedInterface?,
-        private val codeSpec: ObjCExportCodeSpec?
-) {
+internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
     private val target get() = context.config.target
     private val topLevelNamePrefix get() = context.objCExportTopLevelNamePrefix
+
+    private val exportedInterface = produceInterface()
+    private val codeSpec = exportedInterface?.createCodeSpec(symbolTable)
+
+    private fun produceInterface(): ObjCExportedInterface? {
+        if (!target.family.isAppleFamily) return null
+
+        // TODO: emit RTTI to the same modules as classes belong to.
+        //   Not possible yet, since ObjCExport translates the entire "world" API at once
+        //   and can't do this per-module, e.g. due to global name conflict resolution.
+
+        val produceFramework = context.config.produce == CompilerOutputKind.FRAMEWORK
+
+        return if (produceFramework) {
+            val unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport
+            val mapper = ObjCExportMapper(context.frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
+            val moduleDescriptors = listOf(context.moduleDescriptor) + context.getExportedDependencies()
+            val objcGenerics = context.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
+            val namer = ObjCExportNamerImpl(
+                    moduleDescriptors.toSet(),
+                    context.moduleDescriptor.builtIns,
+                    mapper,
+                    topLevelNamePrefix,
+                    local = false,
+                    objcGenerics = objcGenerics
+            )
+            val headerGenerator = ObjCExportHeaderGeneratorImpl(context, moduleDescriptors, mapper, namer, objcGenerics)
+            headerGenerator.translateModule()
+            headerGenerator.buildInterface()
+        } else {
+            null
+        }
+    }
 
     lateinit var namer: ObjCExportNamer
 
