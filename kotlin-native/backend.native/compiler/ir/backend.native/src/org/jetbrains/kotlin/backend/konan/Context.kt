@@ -212,24 +212,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         println("\n\n--- ${title} ----------------------\n")
     }
 
-    fun verifyDescriptors() {
-        // TODO: Nothing here for now.
-    }
-
-    fun printDescriptors() {
-        if (!::moduleDescriptor.isInitialized)
-            return
-
-        separator("Descriptors:")
-        moduleDescriptor.deepPrint()
-    }
-
-    fun printIr() {
-        if (irModule == null) return
-        separator("IR:")
-        irModule!!.accept(DumpIrTreeVisitor(out), "")
-    }
-
     fun verifyBitCode() {
         if (::generationState.isInitialized)
             generationState.verifyBitCode()
@@ -240,28 +222,13 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
             generationState.printBitCode()
     }
 
-    fun verify() {
-        verifyDescriptors()
-        verifyBitCode()
-    }
-
-    fun print() {
-        printDescriptors()
-        printIr()
-        printBitCode()
-    }
-
     fun shouldExportKDoc() = config.configuration.getBoolean(KonanConfigKeys.EXPORT_KDOC)
 
     fun shouldVerifyBitCode() = config.configuration.getBoolean(KonanConfigKeys.VERIFY_BITCODE)
 
     fun shouldPrintBitCode() = config.configuration.getBoolean(KonanConfigKeys.PRINT_BITCODE)
 
-    fun shouldPrintLocations() = config.configuration.getBoolean(KonanConfigKeys.PRINT_LOCATIONS)
-
     fun shouldPrintFiles() = config.configuration.getBoolean(KonanConfigKeys.PRINT_FILES)
-
-    fun shouldProfilePhases() = config.phaseConfig.needProfiling
 
     fun shouldContainDebugInfo() = config.debug
     fun shouldContainLocationDebugInfo() = shouldContainDebugInfo() || config.lightDebug
@@ -283,7 +250,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     }
 
     var moduleDFG: ModuleDFG? = null
-    var externalModulesDFG: ExternalModulesDFG? = null
     val lifetimes = mutableMapOf<IrElement, Lifetime>()
     var devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult? = null
 
