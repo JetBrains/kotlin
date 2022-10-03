@@ -26,7 +26,6 @@ interface MfvcNodeInstance {
     val node: MfvcNode
     val typeArguments: TypeArguments
     val type: IrSimpleType
-    val initializationStatements: List<IrStatement>
 
     fun makeFlattenedGetterExpressions(): List<IrExpression>
     fun makeGetterExpression(): IrExpression
@@ -56,7 +55,6 @@ class ValueDeclarationMfvcNodeInstance(
     override val node: MfvcNode,
     override val typeArguments: TypeArguments,
     val valueDeclarations: List<IrValueDeclaration>,
-    override val initializationStatements: List<IrStatement>,
 ) : MfvcNodeInstance {
     init {
         require(valueDeclarations.size == size) { "Expected value declarations list of size $size but got of size ${valueDeclarations.size}" }
@@ -73,7 +71,7 @@ class ValueDeclarationMfvcNodeInstance(
 
     override fun get(name: Name): ValueDeclarationMfvcNodeInstance? {
         val (newNode, indices) = node.getSubnodeAndIndices(name) ?: return null
-        return ValueDeclarationMfvcNodeInstance(scope, newNode, typeArguments, valueDeclarations.slice(indices), initializationStatements)
+        return ValueDeclarationMfvcNodeInstance(scope, newNode, typeArguments, valueDeclarations.slice(indices))
     }
 
     override fun makeStatements(values: List<IrExpression>): List<IrStatement> {
@@ -86,7 +84,6 @@ internal class ExpressionCopierImpl(
     expression: IrExpression?,
     private val scope: IrBlockBuilder,
     private val saveVariable: (IrVariable) -> Unit,
-    private val saveReceiverSetter: (IrSetValue) -> Unit
 ) {
     private sealed interface CopyableExpression {
         fun makeExpression(scope: IrBuilderWithScope): IrExpression
@@ -109,7 +106,6 @@ internal class ExpressionCopierImpl(
                 origin = IrDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE,
                 saveVariable = saveVariable,
                 isTemporary = true,
-                saveSetter = saveReceiverSetter,
             )
         )
 
@@ -156,10 +152,7 @@ class ReceiverBasedMfvcNodeInstance(
 ) : MfvcNodeInstance {
     override val type: IrSimpleType = makeTypeFromMfvcNodeAndTypeArguments(node, typeArguments)
 
-    override val initializationStatements: List<IrStatement> = mutableListOf()
-    private val receiverCopier = ExpressionCopierImpl(
-        receiver, scope, saveVariable, saveReceiverSetter = { (initializationStatements as MutableList).add(it) }
-    )
+    private val receiverCopier = ExpressionCopierImpl(receiver, scope, saveVariable)
 
     private fun makeReceiverCopy() = receiverCopier.makeCopy()
 
@@ -280,8 +273,7 @@ fun <T : IrElement> IrStatementsBuilder<T>.savableStandaloneVariableWithSetter(
     isMutable: Boolean = false,
     origin: IrDeclarationOrigin,
     isTemporary: Boolean = origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-    saveSetter: (IrSetValue) -> Unit = {},
     saveVariable: (IrVariable) -> Unit,
 ) = savableStandaloneVariable(expression.type, name, isMutable, origin, isTemporary, saveVariable).also {
-    +irSet(it, expression).also(saveSetter)
+    +irSet(it, expression)
 }
