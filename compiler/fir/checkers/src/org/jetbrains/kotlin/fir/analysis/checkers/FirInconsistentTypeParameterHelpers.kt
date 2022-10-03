@@ -69,11 +69,9 @@ private fun buildDeepSubstitutionMultimap(
             for (index in 0 until count) {
                 val typeArgument = typeArguments[index]
 
-                val substitutedArgument = ConeSubstitutorByMap(substitution, session).substituteArgument(
-                    typeArgument,
-                    classSymbol.toLookupTag(),
-                    index
-                ) ?: typeArgument
+                val substitutedArgument = ConeSubstitutorByMap(substitution, session)
+                    .substituteArgument(typeArgument, index)
+                    ?: typeArgument
                 val substitutedType = substitutedArgument.type ?: continue
 
                 val typeParameterSymbol = typeParameterSymbols[index]
