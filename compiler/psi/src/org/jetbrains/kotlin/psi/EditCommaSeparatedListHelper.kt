@@ -45,7 +45,7 @@ object EditCommaSeparatedListHelper {
                 list.add(item) as TItem
             }
         } else {
-            var comma = KtPsiFactory(list).createComma()
+            var comma = KtPsiFactory(list.project).createComma()
             return if (anchor != null) {
                 comma = list.addAfter(comma, anchor)
                 list.addAfter(item, comma) as TItem

@@ -22,7 +22,7 @@ private fun KtModifierListOwner.addModifierList(newModifierList: KtModifierList)
 }
 
 private fun createModifierList(text: String, owner: KtModifierListOwner): KtModifierList {
-    return owner.addModifierList(KtPsiFactory(owner).createModifierList(text))
+    return owner.addModifierList(KtPsiFactory(owner.project).createModifierList(text))
 }
 
 fun KtModifierListOwner.setModifierList(newModifierList: KtModifierList) {
@@ -55,7 +55,7 @@ fun addAnnotationEntry(owner: KtModifierListOwner, annotationEntry: KtAnnotation
 internal fun addModifier(modifierList: KtModifierList, modifier: KtModifierKeywordToken) {
     if (modifierList.hasModifier(modifier)) return
 
-    val newModifier = KtPsiFactory(modifierList).createModifier(modifier)
+    val newModifier = KtPsiFactory(modifierList.project).createModifier(modifier)
     val modifierToReplace = MODIFIERS_TO_REPLACE[modifier]
         ?.mapNotNull { modifierList.getModifier(it) }
         ?.firstOrNull()
@@ -113,7 +113,7 @@ fun removeModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken)
 
         val lastChild = it.lastChild
         if (lastChild is PsiComment) {
-            it.addAfter(KtPsiFactory(owner).createNewLine(), lastChild)
+            it.addAfter(KtPsiFactory(owner.project).createNewLine(), lastChild)
         }
     }
 }

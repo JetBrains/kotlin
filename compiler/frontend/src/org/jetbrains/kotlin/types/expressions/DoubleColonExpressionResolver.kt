@@ -271,7 +271,7 @@ class DoubleColonExpressionResolver(
     private fun KtQualifiedExpression.buildNewExpressionForReservedGenericPropertyCallChainResolution(): KtExpression? {
         val parts = this.getQualifierChainParts()?.map { it.getQualifiedNameStringPart() ?: return null } ?: return null
         val qualifiedExpressionText = parts.joinToString(separator = ".")
-        return KtPsiFactory(this, markGenerated = false).createExpression(qualifiedExpressionText)
+        return KtPsiFactory(project, markGenerated = false).createExpression(qualifiedExpressionText)
     }
 
     private fun resolveReservedExpressionOnLHS(expression: KtExpression, c: ExpressionTypingContext): DoubleColonLHS.Expression? {
