@@ -26,6 +26,7 @@ public final class Internal {
     public final static @org.jetbrains.annotations.NotNull field Companion: Internal$Companion
     private final field field-0: int
     private final field field-1: int
+    private static field x: int
     static method <clinit>(): void
     private synthetic method <init>(p0: int, p1: int): void
     public synthetic final static method access$getX$cp(): int
@@ -228,6 +229,7 @@ public final class Public {
     public final static @org.jetbrains.annotations.NotNull field Companion: Public$Companion
     private final field field-0: int
     private final field field-1: int
+    private static field x: int
     static method <clinit>(): void
     private synthetic method <init>(p0: int, p1: int): void
     public synthetic final static method access$getX$cp(): int

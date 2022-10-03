@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isMultiFieldValueClassType
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.IrBlockBuilder
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -61,13 +60,13 @@ fun MfvcNode.createInstanceFromValueDeclarations(
             saveVariable = saveVariable
         )
     }
-    return ValueDeclarationMfvcNodeInstance(scope, this, typeArguments, valueDeclarations, listOf())
+    return ValueDeclarationMfvcNodeInstance(scope, this, typeArguments, valueDeclarations)
 }
 
 fun MfvcNode.createInstanceFromValueDeclarationsAndBoxType(
-    scope: IrBuilderWithScope, type: IrSimpleType, fieldValues: List<IrValueDeclaration>, initializationStatements: List<IrStatement>
+    scope: IrBuilderWithScope, type: IrSimpleType, fieldValues: List<IrValueDeclaration>
 ): ValueDeclarationMfvcNodeInstance =
-    ValueDeclarationMfvcNodeInstance(scope, this, makeTypeArgumentsFromType(type), fieldValues, initializationStatements)
+    ValueDeclarationMfvcNodeInstance(scope, this, makeTypeArgumentsFromType(type), fieldValues)
 
 fun makeTypeArgumentsFromType(type: IrSimpleType): TypeArguments {
     if (type.classifierOrNull !is IrClassSymbol) return mapOf()
