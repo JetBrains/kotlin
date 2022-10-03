@@ -109,12 +109,6 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     }
 
     @Test
-    @TestMetadata("delegatedProperty.kt")
-    public void testDelegatedProperty() throws Exception {
-        runTest("compiler/testData/asJava/lightClasses/delegatedProperty.kt");
-    }
-
-    @Test
     @TestMetadata("Delegation.kt")
     public void testDelegation() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Delegation.kt");

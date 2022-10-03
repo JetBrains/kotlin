@@ -265,6 +265,18 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     }
 
     @Test
+    @TestMetadata("typealiasInAnnotation.kt")
+    public void testTypealiasInAnnotation() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/typealiasInAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("typealiasInTypeArguments.kt")
+    public void testTypealiasInTypeArguments() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/typealiasInTypeArguments.kt");
+    }
+
+    @Test
     @TestMetadata("unresolvedWithAliasedImport.kt")
     public void testUnresolvedWithAliasedImport() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/unresolvedWithAliasedImport.kt");
