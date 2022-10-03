@@ -11,6 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.logging.Logger
 import java.io.File
 
 interface KotlinDependencyHandler {
@@ -68,18 +69,45 @@ interface KotlinDependencyHandler {
     fun platform(notation: Any, configureAction: Action<in Dependency>): Dependency =
         project.dependencies.platform(notation, configureAction)
 
+    @Deprecated("Dukat integration is in redesigning process. Now it does not work.")
     fun npm(
         name: String,
         version: String,
+        generateExternals: Boolean
+    ): Dependency {
+        warnNpmGenerateExternals(project.logger)
+        return npm(name, version)
+    }
+
+    fun npm(
+        name: String,
+        version: String
     ): Dependency
 
     fun npm(
         name: String,
         directory: File,
+        generateExternals: Boolean
+    ): Dependency {
+        warnNpmGenerateExternals(project.logger)
+        return npm(name, directory)
+    }
+
+    fun npm(
+        name: String,
+        directory: File
     ): Dependency
 
     fun npm(
         directory: File,
+        generateExternals: Boolean
+    ): Dependency {
+        warnNpmGenerateExternals(project.logger)
+        return npm(directory)
+    }
+
+    fun npm(
+        directory: File
     ): Dependency
 
     fun devNpm(
@@ -99,15 +127,41 @@ interface KotlinDependencyHandler {
     fun optionalNpm(
         name: String,
         version: String,
+        generateExternals: Boolean
+    ): Dependency {
+        warnNpmGenerateExternals(project.logger)
+        return optionalNpm(name, version)
+    }
+
+    fun optionalNpm(
+        name: String,
+        version: String
     ): Dependency
 
     fun optionalNpm(
         name: String,
         directory: File,
+        generateExternals: Boolean
+    ): Dependency {
+        warnNpmGenerateExternals(project.logger)
+        return optionalNpm(name, directory)
+    }
+
+    fun optionalNpm(
+        name: String,
+        directory: File
     ): Dependency
 
     fun optionalNpm(
         directory: File,
+        generateExternals: Boolean
+    ): Dependency {
+        warnNpmGenerateExternals(project.logger)
+        return optionalNpm(directory)
+    }
+
+    fun optionalNpm(
+        directory: File
     ): Dependency
 
     fun peerNpm(
@@ -127,4 +181,17 @@ interface HasKotlinDependencies {
 
     val relatedConfigurationNames: List<String>
         get() = listOf(apiConfigurationName, implementationConfigurationName, compileOnlyConfigurationName, runtimeOnlyConfigurationName)
+}
+
+internal fun warnNpmGenerateExternals(logger: Logger) {
+    logger.warn(
+        """
+                |
+                |==========
+                |Please note, Dukat integration in Gradle plugin does not work now.
+                |It is in redesigning process.
+                |==========
+                |
+                """.trimMargin()
+    )
 }
