@@ -373,11 +373,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val ignoreTcsmOverflow: Boolean
         get() = booleanProperty(IGNORE_TCSM_OVERFLOW) ?: false
 
-    /**
-     * Automaticaly discover external .d.ts declarations
-     */
-    val jsDiscoverTypes: Boolean?
-        get() = booleanProperty("kotlin.js.experimental.discoverTypes")
+    val errorJsGenerateExternals: Boolean?
+        get() = booleanProperty("kotlin.js.generate.externals")
 
     /**
      * Use Kotlin/JS backend compiler type
