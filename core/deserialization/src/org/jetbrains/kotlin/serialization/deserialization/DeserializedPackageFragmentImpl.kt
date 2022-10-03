@@ -38,7 +38,7 @@ abstract class DeserializedPackageFragmentImpl(
     protected val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)
 
     override val classDataFinder =
-        ProtoBasedClassDataFinder(proto, nameResolver, metadataVersion, classSource = { containerSource ?: SourceElement.NO_SOURCE })
+        ProtoBasedClassDataFinder(proto, nameResolver, metadataVersion) { containerSource ?: SourceElement.NO_SOURCE }
 
     // Temporary storage: until `initialize` is called
     private var _proto: ProtoBuf.PackageFragment? = proto

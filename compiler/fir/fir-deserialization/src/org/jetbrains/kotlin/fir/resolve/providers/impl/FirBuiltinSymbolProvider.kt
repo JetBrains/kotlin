@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.getName
@@ -60,15 +59,10 @@ open class FirBuiltinSymbolProvider(
         val streamProvider = { path: String -> classLoader?.getResourceAsStream(path) ?: ClassLoader.getSystemResourceAsStream(path) }
         val packageFqNames = StandardClassIds.builtInsPackages
 
-        val platformDependentClassesFilter = when {
-            !moduleData.platform.isJvm() -> { klass: ClassId -> klass != StandardClassIds.Cloneable }
-            else -> { _: ClassId -> true }
-        }
-
         return packageFqNames.map { fqName ->
             val resourcePath = BuiltInSerializerProtocol.getBuiltInsFilePath(fqName)
             val inputStream = streamProvider(resourcePath) ?: throw IllegalStateException("Resource not found in classpath: $resourcePath")
-            BuiltInsPackageFragment(inputStream, fqName, moduleData, kotlinScopeProvider, platformDependentClassesFilter)
+            BuiltInsPackageFragment(inputStream, fqName, moduleData, kotlinScopeProvider)
         }
     }
 
@@ -109,7 +103,6 @@ open class FirBuiltinSymbolProvider(
     private class BuiltInsPackageFragment(
         stream: InputStream, val fqName: FqName, val moduleData: FirModuleData,
         val kotlinScopeProvider: FirKotlinScopeProvider,
-        platformDependentClassesFilter: (ClassId) -> Boolean = { true },
     ) {
 
         private val binaryVersionAndPackageFragment = BinaryVersionAndPackageFragment.createFromStream(stream)
@@ -119,11 +112,7 @@ open class FirBuiltinSymbolProvider(
 
         private val nameResolver = NameResolverImpl(packageProto.strings, packageProto.qualifiedNames)
 
-        val classDataFinder = ProtoBasedClassDataFinder(
-            packageProto, nameResolver, version,
-            classSource = { SourceElement.NO_SOURCE },
-            platformDependentClassesFilter,
-        )
+        val classDataFinder = ProtoBasedClassDataFinder(packageProto, nameResolver, version) { SourceElement.NO_SOURCE }
 
         private val memberDeserializer by lazy {
             FirDeserializationContext.createForPackage(

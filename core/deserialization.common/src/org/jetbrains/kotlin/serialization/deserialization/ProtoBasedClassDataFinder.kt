@@ -26,13 +26,12 @@ class ProtoBasedClassDataFinder(
     proto: ProtoBuf.PackageFragment,
     private val nameResolver: NameResolver,
     private val metadataVersion: BinaryVersion,
-    private val classSource: (ClassId) -> SourceElement = { SourceElement.NO_SOURCE },
-    platformDependentClassesFilter: (ClassId) -> Boolean = { true },
+    private val classSource: (ClassId) -> SourceElement = { SourceElement.NO_SOURCE }
 ) : ClassDataFinder {
     private val classIdToProto =
-        proto.class_List
-            .associateBy { klass -> nameResolver.getClassId(klass.fqName) }
-            .filterKeys(platformDependentClassesFilter)
+        proto.class_List.associateBy { klass ->
+            nameResolver.getClassId(klass.fqName)
+        }
 
     val allClassIds: Collection<ClassId> get() = classIdToProto.keys
 
