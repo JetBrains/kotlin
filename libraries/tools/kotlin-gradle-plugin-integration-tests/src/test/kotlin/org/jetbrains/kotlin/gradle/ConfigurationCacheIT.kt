@@ -9,7 +9,6 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
-import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.DisplayName
@@ -209,39 +208,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
                 executedTaskNames = listOf(":compileKotlin")
             )
         }
-    }
-
-    @JsGradlePluginTests
-    @DisplayName("works with Dukat")
-    @GradleTest
-    fun testConfigurationCacheDukatSrc(gradleVersion: GradleVersion) {
-        testConfigurationCacheDukat(gradleVersion)
-    }
-
-    @JsGradlePluginTests
-    @DisplayName("works with Dukat binaries")
-    @GradleTest
-    fun testConfigurationCacheDukatBinaries(gradleVersion: GradleVersion) {
-        testConfigurationCacheDukat(gradleVersion) {
-            gradleProperties.modify {
-                """
-                
-                ${ExternalsOutputFormat.externalsOutputFormatProperty}=${ExternalsOutputFormat.BINARY}
-                """.trimIndent()
-            }
-        }
-    }
-
-    private fun testConfigurationCacheDukat(
-        gradleVersion: GradleVersion,
-        configure: TestProject.() -> Unit = {}
-    ) = project("dukat-integration/both", gradleVersion) {
-        buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-        configure(this)
-        testConfigurationCacheOf(
-            "irGenerateExternalsIntegrated",
-            executedTaskNames = listOf(":irGenerateExternalsIntegrated")
-        )
     }
 
     @MppGradlePluginTests
