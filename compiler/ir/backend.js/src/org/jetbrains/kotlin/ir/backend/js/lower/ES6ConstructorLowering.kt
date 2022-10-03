@@ -100,6 +100,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : BodyLoweringPass
 
     /**
      * constructor(args, box) {
+     *   super(..)
      *   var currBox = box || {}
      *
      *   //1. Base class isExternal or array/string

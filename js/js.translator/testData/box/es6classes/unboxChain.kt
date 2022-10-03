@@ -1,4 +1,4 @@
-// ES_CLASSES
+// ES6_MODE
 // EXPECTED_REACHABLE_NODES: 1371
 inline class I1(val a: Int)
 inline class I2(val i: I1)

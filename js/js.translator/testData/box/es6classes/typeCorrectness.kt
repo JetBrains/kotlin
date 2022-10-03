@@ -1,4 +1,4 @@
-// ES_CLASSES
+// ES6_MODE
 // EXPECTED_REACHABLE_NODES: 1358
 open class A(var value: Int)
 

@@ -262,6 +262,12 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     )
     var strictImplicitExportType: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xes-next",
+        description = "Generated JavaScript will use new ES2015+ features like ES classes."
+    )
+    var useEsNext: Boolean by FreezableVar(false)
+
     @GradleOption(
         value = DefaultValues.BooleanTrueDefault::class,
         gradleInputType = GradleInputTypes.INPUT

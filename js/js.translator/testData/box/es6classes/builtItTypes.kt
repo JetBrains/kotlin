@@ -1,4 +1,4 @@
-// ES_CLASSES
+// ES6_MODE
 // EXPECTED_REACHABLE_NODES: 1331
 fun box(): String {
     val s = String()
