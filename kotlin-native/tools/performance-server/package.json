@@ -6,7 +6,6 @@
     "start": "node server/app.js"
   },
   "dependencies": {
-    "aws-sdk": "~2.1134.0",
     "body-parser": "~1.20.0",
     "debug": "~4.3.4",
     "ejs": "~3.1.7",

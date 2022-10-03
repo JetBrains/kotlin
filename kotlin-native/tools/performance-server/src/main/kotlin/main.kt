@@ -4,6 +4,8 @@
  */
 
 import org.jetbrains.network.*
+import org.jetbrains.elastic.*
+
 
 external fun require(module: String): dynamic
 
@@ -33,18 +35,19 @@ fun main() {
         println("App listening on port " + port + "!")
     })
 
-    val connector = if (process.env.LOCAL_AWS != null && process.env.LOCAL_AWS != kotlin.js.undefined) {
-        println("Using local aws instance")
-        UrlNetworkConnector("http://localhost", 9200)
-    } else {
-        val host = process.env.AWS_HOST
-        val region = process.env.AWS_REGION
-        if (host !is String) throw IllegalStateException("AWS_HOST env variable is not defined")
-        if (region !is String) throw IllegalStateException("AWS_REGION env variable is not defined")
-        AWSNetworkConnector(
-                host, region
-        )
-    }
+    val elasticHost = process.env.ELASTIC_HOST as Any?
+    val elasticPort = (process.env.ELASTIC_PORT as Any?)?.takeIf { it != kotlin.js.undefined }
+    val elasticUsername = (process.env.ELASTIC_USER as Any?)?.takeIf { it != kotlin.js.undefined }
+    val elasticPassword = (process.env.ELASTIC_PASSWORD as Any?)?.takeIf { it != kotlin.js.undefined }
+    if (elasticHost !is String) throw IllegalStateException("ELASTIC_HOST env variable is not defined")
+    if (elasticPort !is String?) throw IllegalStateException("ELASTIC_PORT env variable is not defined")
+    if (elasticUsername !is String) throw IllegalStateException("ELASTIC_USER env variable is not defined")
+    if (elasticPassword !is String) throw IllegalStateException("ELASTIC_PASSWORD env variable is not defined")
+    val connector = ElasticSearchConnector(
+            UrlNetworkConnector(elasticHost, elasticPort?.toInt()),
+            elasticUsername,
+            elasticPassword
+    )
 
     app.use("/", router(connector))
 }

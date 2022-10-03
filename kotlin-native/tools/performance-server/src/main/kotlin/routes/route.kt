@@ -9,8 +9,8 @@ import kotlin.js.Date
 import kotlin.js.Promise
 import org.jetbrains.database.*
 import org.jetbrains.report.json.*
-import org.jetbrains.elastic.*
 import org.jetbrains.network.*
+import org.jetbrains.elastic.*
 import org.jetbrains.buildInfo.Build
 import org.jetbrains.analyzer.*
 import org.jetbrains.report.*
@@ -221,10 +221,9 @@ fun urlParameterToBaseFormat(value: dynamic) =
         value.toString().replace("_", " ")
 
 // Routing of requests to current server.
-fun router(networkConnector: NetworkConnector) {
+fun router(connector: ElasticSearchConnector) {
     val express = require("express")
     val router = express.Router()
-    val connector = ElasticSearchConnector(networkConnector)
     val benchmarksDispatcher = BenchmarksIndexesDispatcher(connector, "target",
             listOf("Linux", "Mac OS X", "Windows 10", "Mac OS X Arm64")
     )
