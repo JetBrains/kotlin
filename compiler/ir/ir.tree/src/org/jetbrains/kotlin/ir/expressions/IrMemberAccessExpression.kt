@@ -38,6 +38,8 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
     protected abstract val argumentsByParameterIndex: Array<IrExpression?>
     open val valueArgumentsCount: Int get() = argumentsByParameterIndex.size
 
+    var contextReceivers: List<IrExpression> = emptyList()
+
     fun getValueArgument(index: Int): IrExpression? {
         if (index >= valueArgumentsCount) {
             throw AssertionError("$this: No such value argument slot: $index")
@@ -68,6 +70,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         dispatchReceiver?.accept(visitor, data)
+        contextReceivers.forEach { it.accept(visitor, data) }
         extensionReceiver?.accept(visitor, data)
         if (valueArgumentsCount > 0) {
             argumentsByParameterIndex.forEach { it?.accept(visitor, data) }
@@ -76,6 +79,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         dispatchReceiver = dispatchReceiver?.transform(transformer, data)
+        contextReceivers = contextReceivers.map { it.transform(transformer, data) }
         extensionReceiver = extensionReceiver?.transform(transformer, data)
         if (valueArgumentsCount > 0) {
             argumentsByParameterIndex.forEachIndexed { i, irExpression ->

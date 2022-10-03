@@ -96,18 +96,10 @@ class Fir2IrLazyConstructor(
 
     override var extensionReceiverParameter: IrValueParameter? = null
 
-    override var contextReceiverParametersCount: Int = fir.contextReceivers.size
-
     override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
         declarationStorage.enterScope(this)
 
         buildList {
-            declarationStorage.addContextReceiverParametersTo(
-                fir.contextReceivers,
-                this@Fir2IrLazyConstructor,
-                this@buildList,
-            )
-
             fir.valueParameters.mapIndexedTo(this) { index, valueParameter ->
                 declarationStorage.createIrParameter(
                     valueParameter, index,
@@ -116,6 +108,22 @@ class Fir2IrLazyConstructor(
                     this.parent = this@Fir2IrLazyConstructor
                 }
             }
+        }.apply {
+            declarationStorage.leaveScope(this@Fir2IrLazyConstructor)
+        }
+    }
+
+    override var contextReceiverParameters: List<IrValueParameter> by lazyVar(lock) {
+        val contextReceivers = fir.contextReceivers
+        if (contextReceivers.isEmpty()) return@lazyVar emptyList()
+        declarationStorage.enterScope(this)
+
+        buildList {
+            declarationStorage.addContextReceiverParametersTo(
+                contextReceivers,
+                this@Fir2IrLazyConstructor,
+                this@buildList,
+            )
         }.apply {
             declarationStorage.leaveScope(this@Fir2IrLazyConstructor)
         }

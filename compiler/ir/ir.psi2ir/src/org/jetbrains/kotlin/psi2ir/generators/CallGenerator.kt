@@ -193,7 +193,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                 startOffset, endOffset, returnType, constructorSymbol, descriptor.typeParametersCount, descriptor.valueParameters.size
             )
             context.callToSubstitutedDescriptorMap[irCall] = constructorDescriptor
-            addParametersToCall(startOffset, endOffset, call, irCall, irCall.type, emptyList())
+            addParametersToCall(startOffset, endOffset, call, irCall, irCall.type)
         }
     }
 
@@ -330,9 +330,9 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         putTypeArguments(call.typeArguments) { it.toIrType() }
         dispatchReceiver = dispatchReceiverValue?.load()
         extensionReceiver = extensionReceiverValue?.load()
-        val contextReceivers = contextReceiverValues.map { it.load() }
+        contextReceivers = contextReceiverValues.map { it.load() }
         contextReceiversCount = contextReceivers.size
-        return addParametersToCall(startOffset, endOffset, call, this, type, contextReceivers)
+        return addParametersToCall(startOffset, endOffset, call, this, type)
     }
 
     internal fun generateFunctionCall(
@@ -435,18 +435,14 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         endOffset: Int,
         call: CallBuilder,
         irCall: IrFunctionAccessExpression,
-        irResultType: IrType,
-        contextReceivers: List<IrExpression>
+        irResultType: IrType
     ): IrExpression =
         if (call.isValueArgumentReorderingRequired()) {
             generateCallWithArgumentReordering(irCall, startOffset, endOffset, call, irResultType)
         } else {
-            for ((index, valueArgument) in contextReceivers.withIndex()) {
-                irCall.putValueArgument(index, valueArgument)
-            }
             val valueArguments = call.getValueArgumentsInParameterOrder()
             for ((index, valueArgument) in valueArguments.withIndex()) {
-                irCall.putValueArgument(index + contextReceivers.size, valueArgument)
+                irCall.putValueArgument(index, valueArgument)
             }
             irCall
         }
@@ -468,6 +464,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
 
         irCall.dispatchReceiver = irCall.dispatchReceiver?.freeze("\$this")
         irCall.extensionReceiver = irCall.extensionReceiver?.freeze("\$receiver")
+        irCall.contextReceivers = irCall.contextReceivers.mapIndexed { index, value -> value.freeze("\$contextReceiver$index") }
 
         val resolvedCall = call.original
         val valueParameters = resolvedCall.resultingDescriptor.valueParameters

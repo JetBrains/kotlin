@@ -69,7 +69,6 @@ internal class ImplementedFakeOverrideCopier(
             containerSource = declaration.containerSource,
         ).apply {
             overriddenSymbols = declaration.overriddenSymbols.map { symbolRemapper.getReferencedFunction(it) as IrSimpleFunctionSymbol }
-            contextReceiverParametersCount = declaration.contextReceiverParametersCount
             copyAttributes(declaration)
             transformAnnotations(this)
             copyTypeParametersFrom(declaration)
@@ -78,6 +77,7 @@ internal class ImplementedFakeOverrideCopier(
                 extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()
                 returnType = typeRemapper.remapType(declaration.returnType)
                 valueParameters = declaration.valueParameters.transform()
+                contextReceiverParameters = declaration.contextReceiverParameters.transform()
                 body = factory.createBlockBody(
                     declaration.body?.startOffset ?: declaration.startOffset,
                     declaration.body?.endOffset ?: declaration.endOffset

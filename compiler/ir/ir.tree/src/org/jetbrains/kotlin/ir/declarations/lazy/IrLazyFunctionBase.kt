@@ -34,17 +34,20 @@ interface IrLazyFunctionBase : IrLazyDeclarationBase, IrTypeParametersContainer 
 
     fun createValueParameters(): List<IrValueParameter> =
         typeTranslator.buildWithScope(this) {
-            val result = arrayListOf<IrValueParameter>()
-            descriptor.contextReceiverParameters.mapIndexedTo(result) { i, contextReceiverParameter ->
-                factory.createValueParameter(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrValueParameterSymbolImpl(contextReceiverParameter),
-                    Name.identifier("contextReceiverParameter$i"), i, contextReceiverParameter.type.toIrType(),
-                    null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
-                ).apply { parent = this@IrLazyFunctionBase }
-            }
-            descriptor.valueParameters.mapTo(result) {
+            descriptor.valueParameters.map {
                 stubGenerator.generateValueParameterStub(it, it.index + descriptor.contextReceiverParameters.size)
                     .apply { parent = this@IrLazyFunctionBase }
+            }
+        }
+
+    fun createContextReceivers(): List<IrValueParameter> =
+        typeTranslator.buildWithScope(this) {
+            descriptor.contextReceiverParameters.mapIndexed { i, contextReceiverParameter ->
+                factory.createValueParameter(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrValueParameterSymbolImpl(contextReceiverParameter),
+                    Name.identifier("contextReceiverParameter$i"), -1, contextReceiverParameter.type.toIrType(),
+                    null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
+                ).apply { parent = this@IrLazyFunctionBase }
             }
         }
 

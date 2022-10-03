@@ -500,8 +500,10 @@ class ExpressionCodegen(
             callGenerator.genValueAndPut(irParameter, arg, parameterType, this, data)
         }
 
-        val contextReceivers = callee.valueParameters.subList(0, callee.contextReceiverParametersCount)
-        contextReceivers.forEachIndexed(::handleValueParameter)
+        expression.contextReceivers.zip(callee.contextReceiverParameters).mapIndexed { index, (value, parameter) ->
+            val type = callable.signature.valueParameters[index].asmType
+            callGenerator.genValueAndPut(parameter, value, type, this, data)
+        }
 
         expression.extensionReceiver?.let { receiver ->
             val type = callable.signature.valueParameters.singleOrNull { it.kind == JvmMethodParameterKind.RECEIVER }?.asmType
@@ -509,9 +511,9 @@ class ExpressionCodegen(
             callGenerator.genValueAndPut(callee.extensionReceiverParameter!!, receiver, type, this, data)
         }
 
-        callGenerator.beforeValueParametersStart(callee.contextReceiverParametersCount)
-        callee.valueParameters.subList(callee.contextReceiverParametersCount, callee.valueParameters.size)
-            .forEachIndexed { i, valueParameter -> handleValueParameter(i + contextReceivers.size, valueParameter) }
+        callGenerator.beforeValueParametersStart(0)
+        callee.valueParameters
+            .forEachIndexed { i, valueParameter -> handleValueParameter(i, valueParameter) }
 
         expression.markLineNumber(true)
 
@@ -545,14 +547,17 @@ class ExpressionCodegen(
                 // don't generate redundant UNIT/pop instructions
                 unitValue
             }
+
             callee.parentAsClass.isAnnotationClass && callable.asmMethod.returnType == AsmTypes.JAVA_CLASS_TYPE -> {
                 wrapJavaClassIntoKClass(mv)
                 MaterialValue(this, AsmTypes.K_CLASS_TYPE, expression.type)
             }
+
             callee.parentAsClass.isAnnotationClass && callable.asmMethod.returnType == AsmTypes.JAVA_CLASS_ARRAY_TYPE -> {
                 wrapJavaClassesIntoKClasses(mv)
                 MaterialValue(this, AsmTypes.K_CLASS_ARRAY_TYPE, expression.type)
             }
+
             unboxedInlineClassIrType != null && !irFunction.isNonBoxingSuspendDelegation() ->
                 MaterialValue(this, unboxedInlineClassIrType.asmType, unboxedInlineClassIrType).apply {
                     if (!irFunction.shouldContainSuspendMarkers()) {
@@ -561,8 +566,10 @@ class ExpressionCodegen(
                     }
                     mv.checkcast(type)
                 }
-            callee.resultIsActuallyAny(null) == true ->
+
+            callee.returnResultIsActuallyAny() == true ->
                 MaterialValue(this, callable.asmMethod.returnType, context.irBuiltIns.anyNType)
+
             else ->
                 MaterialValue(this, callable.asmMethod.returnType, callable.returnType)
         }
@@ -685,23 +692,37 @@ class ExpressionCodegen(
     // some other reason, and thus `Result` is actually `Any?`. TODO: do this stuff at IR level?
     val IrValueDeclaration.realType: IrType
         get() = parent.let { parent ->
+
             val isBoxedResult = this is IrValueParameter && parent is IrSimpleFunction &&
                     parent.dispatchReceiverParameter != this &&
                     (parent.parent as? IrClass)?.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME &&
-                    parent.resultIsActuallyAny(index) == true
+                    parent.resultIsActuallyAny(this) == true
             return if (isBoxedResult) context.irBuiltIns.anyNType else type
         }
 
-    // Argument: null for return value, -1 for extension receiver, >= 0 for value parameter.
-    //           (It does not make sense to check the dispatch receiver.)
+    private fun IrSimpleFunction.resultIsActuallyAny(valueParameter: IrValueParameter): Boolean? {
+        // Just an optimization
+        if (!valueParameter.type.eraseTypeParameters().isKotlinResult()) return null
+
+        val parameterIndex = valueParameter.index.takeIf { it != -1 }
+        val contextReceiverIndex =
+            if (parameterIndex == null) contextReceiverParameters.indexOf(valueParameter).takeIf { it != -1 } else null
+
+        return resultIsActuallyAny {
+            when {
+                parameterIndex != null -> it.valueParameters[parameterIndex].type
+                contextReceiverIndex != null -> it.contextReceiverParameters[contextReceiverIndex].type
+                else -> it.extensionReceiverParameter!!.type
+            }
+        }
+    }
+    private fun IrSimpleFunction.returnResultIsActuallyAny(): Boolean? = resultIsActuallyAny { it.returnType }
+
+    // Argument: computation of the type of signature part being checked right now
     // Return: null if this is not a `Result<T>` type at all, false if this is an unboxed `Result<T>`,
     //         true if this is a `Result<T>` overriding `Any?` and so it is boxed.
-    private fun IrSimpleFunction.resultIsActuallyAny(index: Int?): Boolean? {
-        val type = when {
-            index == null -> returnType
-            index < 0 -> extensionReceiverParameter!!.type
-            else -> valueParameters[index].type
-        }
+    private fun IrSimpleFunction.resultIsActuallyAny(computeSignaturePartType: (IrSimpleFunction) -> IrType): Boolean? {
+        val type = computeSignaturePartType(this)
         if (!type.eraseTypeParameters().isKotlinResult()) return null
         // If there's a bridge, it will unbox `Result` along with transforming all other arguments.
         // Otherwise, we need to treat `Result` as boxed if it overrides a non-`Result` or boxed `Result` type.
@@ -711,7 +732,7 @@ class ExpressionCodegen(
         val parent = this.parent
         return parent is IrClass &&
                 overriddenSymbols.any {
-                    methodSignatureMapper.mapAsmMethod(it.owner) == signature && it.owner.resultIsActuallyAny(index) != false
+                    methodSignatureMapper.mapAsmMethod(it.owner) == signature && it.owner.resultIsActuallyAny(computeSignaturePartType) != false
                 }
     }
 
@@ -891,7 +912,7 @@ class ExpressionCodegen(
         val asmType = if (this == irFunction) signature.returnType else methodSignatureMapper.mapReturnType(this)
         val irType = when {
             this is IrConstructor -> context.irBuiltIns.unitType
-            this is IrSimpleFunction && resultIsActuallyAny(null) == true -> context.irBuiltIns.anyNType
+            this is IrSimpleFunction && returnResultIsActuallyAny() == true -> context.irBuiltIns.anyNType
             else -> returnType
         }
         return asmType to irType

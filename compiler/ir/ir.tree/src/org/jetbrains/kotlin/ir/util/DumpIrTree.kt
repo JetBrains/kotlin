@@ -145,11 +145,7 @@ class DumpIrTreeVisitor(
             declaration.typeParameters.dumpElements()
             declaration.dispatchReceiverParameter?.accept(this, "\$this")
 
-            val contextReceiverParametersCount = declaration.contextReceiverParametersCount
-            if (contextReceiverParametersCount > 0) {
-                printer.println("contextReceiverParametersCount: $contextReceiverParametersCount")
-            }
-
+            declaration.contextReceiverParameters.dumpElements()
             declaration.extensionReceiverParameter?.accept(this, "\$receiver")
             declaration.valueParameters.dumpElements()
             declaration.body?.accept(this, "")

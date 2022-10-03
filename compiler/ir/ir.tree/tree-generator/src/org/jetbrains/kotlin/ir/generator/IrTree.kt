@@ -240,8 +240,7 @@ object IrTree : AbstractTreeBuilder() {
         +field("dispatchReceiverParameter", valueParameter, mutable = true, nullable = true, isChild = true)
         +field("extensionReceiverParameter", valueParameter, mutable = true, nullable = true, isChild = true)
         +listField("valueParameters", valueParameter, mutability = Var, isChild = true)
-        // The first `contextReceiverParametersCount` value parameters are context receivers.
-        +field("contextReceiverParametersCount", int, mutable = true)
+        +listField("contextReceiverParameters", valueParameter, mutability = Var, isChild = true)
         +field("body", body, mutable = true, nullable = true, isChild = true)
     }
     val constructor: ElementConfig by element(Declaration) {

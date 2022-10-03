@@ -207,7 +207,7 @@ public class KtTestUtil {
     }
 
     public static File getAnnotationsJar() {
-        return new File(getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/annotations.jar");
+        return new File("/Users/Denis.Zharkov/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIC/2022.1/c91a19824ffcb28872ecd2761c83b250f703ff21/ideaIC-2022.1/lib/app.jar");
     }
 
     public static void mkdirs(@NotNull File file) {

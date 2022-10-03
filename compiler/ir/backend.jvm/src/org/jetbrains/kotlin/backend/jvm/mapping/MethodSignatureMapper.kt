@@ -241,8 +241,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
         sw.writeParametersStart()
 
-        val contextReceivers = function.valueParameters.subList(0, function.contextReceiverParametersCount)
-        for (contextReceiver in contextReceivers) {
+        for (contextReceiver in function.contextReceiverParameters) {
             writeParameter(sw, JvmMethodParameterKind.CONTEXT_RECEIVER, contextReceiver.type, function)
         }
 
@@ -251,9 +250,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             writeParameter(sw, JvmMethodParameterKind.RECEIVER, receiverParameter.type, function)
         }
 
-        val regularValueParameters =
-            function.valueParameters.subList(function.contextReceiverParametersCount, function.valueParameters.size)
-        for (parameter in regularValueParameters) {
+        for (parameter in function.valueParameters) {
             val kind = when (parameter.origin) {
                 JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> JvmMethodParameterKind.OUTER
                 JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER -> JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL

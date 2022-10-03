@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.initialSignatureAttr
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -61,18 +64,10 @@ class Fir2IrLazySimpleFunction(
         }
     }
 
-    override var contextReceiverParametersCount: Int = fir.contextReceiversForFunctionOrContainingProperty().size
-
     override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
         declarationStorage.enterScope(this)
 
         buildList {
-            declarationStorage.addContextReceiverParametersTo(
-                fir.contextReceiversForFunctionOrContainingProperty(),
-                this@Fir2IrLazySimpleFunction,
-                this@buildList,
-            )
-
             fir.valueParameters.mapIndexedTo(this) { index, valueParameter ->
                 declarationStorage.createIrParameter(
                     valueParameter, index, skipDefaultParameter = isFakeOverride
@@ -80,6 +75,22 @@ class Fir2IrLazySimpleFunction(
                     this.parent = this@Fir2IrLazySimpleFunction
                 }
             }
+        }.apply {
+            declarationStorage.leaveScope(this@Fir2IrLazySimpleFunction)
+        }
+    }
+
+    override var contextReceiverParameters: List<IrValueParameter> by lazyVar(lock) {
+        val contextReceivers = fir.contextReceiversForFunctionOrContainingProperty()
+        if (contextReceivers.isEmpty()) return@lazyVar emptyList()
+        declarationStorage.enterScope(this)
+
+        buildList {
+            declarationStorage.addContextReceiverParametersTo(
+                contextReceivers,
+                this@Fir2IrLazySimpleFunction,
+                this@buildList,
+            )
         }.apply {
             declarationStorage.leaveScope(this@Fir2IrLazySimpleFunction)
         }
