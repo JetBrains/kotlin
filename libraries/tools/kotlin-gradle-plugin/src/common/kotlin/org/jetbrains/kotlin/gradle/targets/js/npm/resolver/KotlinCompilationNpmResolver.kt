@@ -398,7 +398,6 @@ internal class KotlinCompilationNpmResolver(
     ) : Serializable {
         private val projectPackagesDir by lazy { compilationResolver.nodeJs_.projectPackagesDir }
         private val rootDir by lazy { compilationResolver.nodeJs_.rootProject.rootDir }
-        private val dukatPackageVersion by lazy { compilationResolver.nodeJs_.versions.dukat }
 
         @Transient
         internal lateinit var compilationResolver: KotlinCompilationNpmResolver
