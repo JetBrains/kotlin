@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.closestPubliclyAccessibleContainer
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.isNativeObject
-import org.jetbrains.kotlin.fir.analysis.checkers.isPredefinedObject
+import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
+import org.jetbrains.kotlin.fir.analysis.js.checkers.isPredefinedObject
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.declaration.FirJsExternalChecker.DEFINED_EXTERNALLY_PROPERTY_NAMES
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess

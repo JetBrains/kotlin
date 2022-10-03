@@ -668,10 +668,6 @@ fun FirCallableSymbol<*>.directOverriddenCallables(context: CheckerContext) =
 
 fun FirBasedSymbol<*>.isEffectivelyExternal(context: CheckerContext) = isEffectivelyExternal(context.session)
 
-fun FirBasedSymbol<*>.isNativeObject(context: CheckerContext) = isNativeObject(context.session)
-
-fun FirBasedSymbol<*>.isPredefinedObject(context: CheckerContext) = isPredefinedObject(context.session)
-
 val CheckerContext.closestPubliclyAccessibleContainer get() = containingDeclarations.takeWhile { it.isPubliclyAccessible }.lastOrNull()
 
 val CheckerContext.isTopLevel get() = containingDeclarations.lastOrNull() is FirFile

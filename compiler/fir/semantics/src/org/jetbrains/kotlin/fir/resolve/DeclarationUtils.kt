@@ -125,45 +125,6 @@ fun FirBasedSymbol<*>.isEffectivelyExternal(session: FirSession): Boolean {
     return getContainingClassSymbol(session)?.isEffectivelyExternal(session) == true
 }
 
-fun FirBasedSymbol<*>.isNativeObject(session: FirSession): Boolean {
-    if (hasAnnotationOrInsideAnnotatedClass(JsNative, session) || isEffectivelyExternal(session)) {
-        return true
-    }
-
-    if (this is FirPropertyAccessorSymbol) {
-        val property = propertySymbol ?: error("Should've had a property")
-        return property.hasAnnotationOrInsideAnnotatedClass(JsNative, session)
-    }
-
-    return if (this is FirAnonymousInitializerSymbol) {
-        getContainingClassSymbol(session)?.isNativeObject(session) == true
-    } else {
-        false
-    }
-}
-
 fun FirBasedSymbol<*>.isEffectivelyExternalMember(session: FirSession): Boolean {
     return fir is FirMemberDeclaration && isEffectivelyExternal(session)
-}
-
-val PREDEFINED_ANNOTATIONS = setOf(JsLibrary, JsNative, JsNativeInvoke, JsNativeGetter, JsNativeSetter)
-
-private val FirBasedSymbol<*>.isExpect
-    get() = when (this) {
-        is FirCallableSymbol<*> -> isExpect
-        is FirClassSymbol<*> -> isExpect
-        else -> false
-    }
-
-fun FirBasedSymbol<*>.isPredefinedObject(session: FirSession): Boolean {
-    if (fir is FirMemberDeclaration && isExpect) return true
-    if (isEffectivelyExternalMember(session)) return true
-
-    for (annotation in PREDEFINED_ANNOTATIONS) {
-        if (hasAnnotationOrInsideAnnotatedClass(annotation, session)) {
-            return true
-        }
-    }
-
-    return false
 }
