@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest
 
-import org.jetbrains.kotlin.cli.klib.Library
 import org.jetbrains.kotlin.konan.blackboxtest.support.NativeSimpleTestSupport
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.SimpleTestRunProvider
@@ -13,7 +12,6 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunners.createProperTestRunner
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.SimpleTestRunSettings
 import org.junit.jupiter.api.extension.ExtendWith
-import java.io.File
 
 @ExtendWith(NativeSimpleTestSupport::class)
 abstract class AbstractNativeSimpleTest {
