@@ -109,6 +109,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         runTest("compiler/testData/asJava/lightClasses/DollarsInNameNoPackage.kt");
     }
 
+    @TestMetadata("EnumEntry.kt")
+    public void testEnumEntry() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/EnumEntry.kt");
+    }
+
     @TestMetadata("ExtendingInterfaceWithDefaultImpls.kt")
     public void testExtendingInterfaceWithDefaultImpls() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/ExtendingInterfaceWithDefaultImpls.kt");

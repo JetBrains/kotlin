@@ -11,6 +11,7 @@ import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiReferenceList
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
@@ -229,8 +230,8 @@ internal open class SymbolLightClass(classOrObject: KtClassOrObject, ktModule: K
     }
 
     context(KtAnalysisSession)
-    protected fun addPropertyBackingFields(result: MutableList<KtLightField>, classOrObjectSymbol: KtNamedClassOrObjectSymbol) {
-        val propertySymbols = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
+    protected fun addPropertyBackingFields(result: MutableList<KtLightField>, symbolWithMembers: KtSymbolWithMembers) {
+        val propertySymbols = symbolWithMembers.getDeclaredMemberScope().getCallableSymbols()
             .filterIsInstance<KtPropertySymbol>()
             .applyIf(isCompanionObject) {
                 // All fields for companion object of classes are generated to the containing class

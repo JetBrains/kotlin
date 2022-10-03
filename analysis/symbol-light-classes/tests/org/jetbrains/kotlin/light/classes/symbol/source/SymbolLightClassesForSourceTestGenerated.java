@@ -121,6 +121,12 @@ public class SymbolLightClassesForSourceTestGenerated extends AbstractSymbolLigh
     }
 
     @Test
+    @TestMetadata("EnumEntry.kt")
+    public void testEnumEntry() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/EnumEntry.kt");
+    }
+
+    @Test
     @TestMetadata("ExtendingInterfaceWithDefaultImpls.kt")
     public void testExtendingInterfaceWithDefaultImpls() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/ExtendingInterfaceWithDefaultImpls.kt");
