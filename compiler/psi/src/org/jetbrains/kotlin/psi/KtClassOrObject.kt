@@ -53,7 +53,7 @@ abstract class KtClassOrObject :
             return EditCommaSeparatedListHelper.addItem(it, superTypeListEntries, superTypeListEntry)
         }
 
-        val psiFactory = KtPsiFactory(this)
+        val psiFactory = KtPsiFactory(project)
         val specifierListToAdd = psiFactory.createSuperTypeCallEntry("A()").replace(superTypeListEntry).parent
         val colon = addBefore(psiFactory.createColon(), getBody())
         return (addAfter(specifierListToAdd, colon) as KtSuperTypeList).entries.first()
@@ -202,7 +202,7 @@ abstract class KtClassOrObject :
 fun KtClassOrObject.getOrCreateBody(): KtClassBody {
     getBody()?.let { return it }
 
-    val newBody = KtPsiFactory(this).createEmptyClassBody()
+    val newBody = KtPsiFactory(project).createEmptyClassBody()
     if (this is KtEnumEntry) return addAfter(newBody, initializerList ?: nameIdentifier) as KtClassBody
     return add(newBody) as KtClassBody
 }

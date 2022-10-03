@@ -548,7 +548,7 @@ fun isDoubleColonReceiver(expression: KtExpression) =
 fun KtFunctionLiteral.getOrCreateParameterList(): KtParameterList {
     valueParameterList?.let { return it }
 
-    val psiFactory = KtPsiFactory(this)
+    val psiFactory = KtPsiFactory(project)
 
     val anchor = lBrace
     val newParameterList = addAfter(psiFactory.createLambdaParameterList("x"), anchor) as KtParameterList
@@ -589,7 +589,7 @@ fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> {
 fun KtCallExpression.getOrCreateValueArgumentList(): KtValueArgumentList {
     valueArgumentList?.let { return it }
     return addAfter(
-        KtPsiFactory(this).createCallArguments("()"),
+        KtPsiFactory(project).createCallArguments("()"),
         typeArgumentList ?: calleeExpression,
     ) as KtValueArgumentList
 }
@@ -598,7 +598,7 @@ fun KtCallExpression.addTypeArgument(typeArgument: KtTypeProjection) {
     if (typeArgumentList != null) {
         typeArgumentList?.addArgument(typeArgument)
     } else {
-        addAfter(KtPsiFactory(this).createTypeArguments("<${typeArgument.text}>"), calleeExpression)
+        addAfter(KtPsiFactory(project).createTypeArguments("<${typeArgument.text}>"), calleeExpression)
     }
 }
 

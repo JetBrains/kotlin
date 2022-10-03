@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Set;
 
-import static org.jetbrains.kotlin.psi.KtPsiFactoryKt.KtPsiFactory;
-
 abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends KtDeclarationStub<T> implements KtNamedDeclaration {
     public KtNamedDeclarationStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
@@ -99,8 +97,7 @@ abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends
             }
         }
 
-        PsiElement newIdentifier =
-                KtPsiFactory(this).createNameIdentifierIfPossible(KtPsiUtilKt.quoteIfNeeded(name));
+        PsiElement newIdentifier = new KtPsiFactory(getProject()).createNameIdentifierIfPossible(KtPsiUtilKt.quoteIfNeeded(name));
         if (newIdentifier != null) {
             KtPsiUtilKt.astReplace(identifier, newIdentifier);
         }

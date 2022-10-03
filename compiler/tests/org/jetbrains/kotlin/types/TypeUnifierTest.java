@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
+import org.jetbrains.kotlin.psi.KtPsiFactory;
 import org.jetbrains.kotlin.psi.KtTypeProjection;
 import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.TypeResolver;
@@ -206,8 +206,7 @@ public class TypeUnifierTest extends KotlinTestWithEnvironment {
                 }
         );
 
-        KtTypeProjection projection = KtPsiFactoryKt
-                .KtPsiFactory(getProject()).createTypeArguments("<" + typeStr + ">").getArguments().get(0);
+        KtTypeProjection projection = new KtPsiFactory(getProject()).createTypeArguments("<" + typeStr + ">").getArguments().get(0);
 
         KtTypeReference typeReference = projection.getTypeReference();
         assert typeReference != null;

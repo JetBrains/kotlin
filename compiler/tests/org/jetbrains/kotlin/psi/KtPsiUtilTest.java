@@ -86,7 +86,7 @@ public class KtPsiUtilTest extends KotlinTestWithEnvironment {
 
     public void testIsLocalClass() throws IOException {
         String text = FileUtil.loadFile(new File(KtTestUtil.getTestDataPathBase() + "/psiUtil/isLocalClass.kt"), true);
-        KtClass aClass = KtPsiFactoryKt.KtPsiFactory(getProject()).createClass(text);
+        KtClass aClass = new KtPsiFactory(getProject()).createClass(text);
 
         @SuppressWarnings("unchecked")
         Collection<KtClassOrObject> classOrObjects = PsiTreeUtil.collectElementsOfType(aClass, KtClassOrObject.class);
@@ -123,7 +123,7 @@ public class KtPsiUtilTest extends KotlinTestWithEnvironment {
 
     private ImportPath getImportPathFromParsed(String text) {
         KtImportDirective importDirective =
-                PsiTreeUtil.findChildOfType(KtPsiFactoryKt.KtPsiFactory(getProject()).createFile(text), KtImportDirective.class);
+                PsiTreeUtil.findChildOfType(new KtPsiFactory(getProject()).createFile(text), KtImportDirective.class);
 
         assertNotNull("At least one import directive is expected", importDirective);
 
