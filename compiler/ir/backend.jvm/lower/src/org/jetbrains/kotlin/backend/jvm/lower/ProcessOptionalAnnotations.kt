@@ -23,9 +23,17 @@ class ProcessOptionalAnnotations(private val context: JvmBackendContext) : FileL
     override fun lower(irFile: IrFile) {
         for (declaration in irFile.declarations) {
             if (declaration !is IrClass || !declaration.isOptionalAnnotationClass) continue
-            // TODO FirMetadataSource.Class
-            val metadataSource = (declaration.metadata as? DescriptorMetadataSource.Class)?.descriptor ?: continue
-            context.state.factory.packagePartRegistry.optionalAnnotations += metadataSource
+            declaration.registerOptionalAnnotations()
+        }
+    }
+
+    private fun IrClass.registerOptionalAnnotations() {
+        // TODO FirMetadataSource.Class
+        val metadataSource = (metadata as? DescriptorMetadataSource.Class)?.descriptor ?: return
+        context.state.factory.packagePartRegistry.optionalAnnotations += metadataSource
+
+        declarations.forEach {
+            if (it is IrClass && it.isOptionalAnnotationClass) it.registerOptionalAnnotations()
         }
     }
 }

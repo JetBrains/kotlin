@@ -89,13 +89,8 @@ public class PackageCodegenImpl implements PackageCodegen {
 
         for (KtDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof KtClassOrObject) {
-                ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, declaration);
                 if (PsiUtilsKt.hasExpectModifier(declaration)) {
-                    if (descriptor != null && OptionalAnnotationUtil.shouldGenerateExpectClass(descriptor)) {
-                        assert OptionalAnnotationUtil.isOptionalAnnotationClass(descriptor) :
-                                "Expect class should be generated only if it's an optional annotation: " + descriptor;
-                        state.getFactory().getPackagePartRegistry().getOptionalAnnotations().add(descriptor);
-                    }
+                    addDescriptorToOptionalAnnotationsIfNeeded((KtClassOrObject) declaration, state);
                     continue;
                 }
 
@@ -117,6 +112,27 @@ public class PackageCodegenImpl implements PackageCodegen {
                 CodegenUtilKt.sortTopLevelClassesAndPrepareContextForSealedClasses(classOrObjects, context, state);
         for (KtClassOrObject classOrObject : sortedClasses) {
             MemberCodegen.genClassOrObject(context, classOrObject, state, null);
+        }
+    }
+
+    private static void addDescriptorToOptionalAnnotationsIfNeeded(@NotNull KtClassOrObject declaration, @NotNull GenerationState state) {
+        ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, declaration);
+        if (descriptor == null || !OptionalAnnotationUtil.shouldGenerateExpectClass(descriptor)) {
+            return;
+        }
+
+        assert OptionalAnnotationUtil.isOptionalAnnotationClass(descriptor) :
+                "Expect class should be generated only if it's an optional annotation: " + descriptor;
+
+        state.getFactory().getPackagePartRegistry().getOptionalAnnotations().add(descriptor);
+
+        KtClassBody body = declaration.getBody();
+
+        if (body != null) {
+            for (KtDeclaration childDeclaration : body.getDeclarations()) {
+                if (!(childDeclaration instanceof KtClassOrObject)) continue;
+                addDescriptorToOptionalAnnotationsIfNeeded((KtClassOrObject) childDeclaration, state);
+            }
         }
     }
 
