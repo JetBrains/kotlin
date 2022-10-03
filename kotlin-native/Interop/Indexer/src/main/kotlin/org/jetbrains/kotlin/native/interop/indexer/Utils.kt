@@ -27,7 +27,6 @@ import java.security.DigestInputStream
 import java.security.MessageDigest
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import org.jetbrains.kotlin.fir.util.SetMultimap
 
 val CValue<CXType>.kind: CXTypeKind get() = this.useContents { kind }
 
@@ -698,7 +697,7 @@ class TUOptimizedIndex {
      */
     internal fun processInclude(includerFilename: String, includedFilename: String) {
         if (includerFilename != includedFilename)
-            unitsByHeaderFile[includerFilename].let {
+            unitsByHeaderFile[includerFilename]?.let {
                 unitsByHeaderFile.putAll(includedFilename, it)
             }
     }
@@ -715,9 +714,9 @@ class TUOptimizedIndex {
      *  Gets set of units, each of them includes at least one `own header`
      */
     internal fun unitsIncludingTheseHeaders(ownHeadersCanonicalPaths: Set<String>): Set<CXTranslationUnit> {
-        return unitsByHeaderFile.keys.filter {
-            ownHeadersCanonicalPaths.contains(it)
-        }.flatMap { unitsByHeaderFile[it] }.toSet()
+        return unitsByHeaderFile.entries().filter {
+            ownHeadersCanonicalPaths.contains(it.key)
+        }.flatMap { it.value }.toSet()
     }
 }
 
