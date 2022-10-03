@@ -99,6 +99,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DelegatedNested.kt");
     }
 
+    @TestMetadata("delegatedProperty.kt")
+    public void testDelegatedProperty() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/delegatedProperty.kt");
+    }
+
     @TestMetadata("Delegation.kt")
     public void testDelegation() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Delegation.kt");
