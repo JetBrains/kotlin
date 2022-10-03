@@ -83,7 +83,7 @@ class JsIrBackendFacade(
         val perModule = JsEnvironmentConfigurationDirectives.PER_MODULE in module.directives
         val runNewIr2Js = JsEnvironmentConfigurationDirectives.RUN_NEW_IR_2_JS in module.directives
         val keep = module.directives[JsEnvironmentConfigurationDirectives.KEEP].toSet()
-        val es6Mode = JsEnvironmentConfigurationDirectives.ES_CLASSES in module.directives
+        val es6Mode = JsEnvironmentConfigurationDirectives.ES6_MODE in module.directives
 
         val granularity = when {
             !firstTimeCompilation -> JsGenerationGranularity.WHOLE_PROGRAM

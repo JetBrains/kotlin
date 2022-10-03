@@ -227,6 +227,7 @@ class CompilerArgumentsContentProspectorTest {
             K2JSCompilerArguments::irOnly,
             K2JSCompilerArguments::irPerModule,
             K2JSCompilerArguments::generateDts,
+            K2JSCompilerArguments::useEsNext,
             K2JSCompilerArguments::typedArrays,
             K2JSCompilerArguments::friendModulesDisabled,
             K2JSCompilerArguments::metadataOnly,

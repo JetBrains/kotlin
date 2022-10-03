@@ -37,6 +37,11 @@ internal class JsUsefulDeclarationProcessor(
 
         override fun visitCall(expression: IrCall, data: IrDeclaration) {
             super.visitCall(expression, data)
+
+            if (expression.superQualifierSymbol != null) {
+                context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(expression.symbol.owner, "access to super type")
+            }
+
             when (expression.symbol) {
                 context.intrinsics.jsBoxIntrinsic -> {
                     val inlineClass = context.inlineClassesUtils.getInlinedClass(expression.getTypeArgument(0)!!)!!
@@ -163,18 +168,23 @@ internal class JsUsefulDeclarationProcessor(
         if (!irClass.isExpect && !irClass.isExternal && !irClass.defaultType.isAny()) {
             context.intrinsics.setMetadataForSymbol.owner.enqueue(irClass, "metadata")
 
-            if (context.es6mode) return
+
+            if (irClass.isInterface && irClass.declarations.any { it is IrFunction && it.isReal && it.body != null }) {
+                context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(irClass, "interface default implementation")
+            }
+
+            if (context.es6mode) return;
 
             if (!irClass.isInterface) {
-                context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(irClass, "class metadata")
+                context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(irClass, "class prototype access")
             }
 
             if (irClass.superTypes.any { !it.isInterface() }) {
-                context.intrinsics.jsObjectCreateSymbol.owner.enqueue(irClass, "class metadata")
+                context.intrinsics.jsObjectCreateSymbol.owner.enqueue(irClass, "class inheritance code")
             }
 
             if (irClass.isInner || irClass.isObject) {
-                context.intrinsics.jsDefinePropertySymbol.owner.enqueue(irClass, "class metadata")
+                context.intrinsics.jsDefinePropertySymbol.owner.enqueue(irClass, "object lazy initialization")
             }
         }
     }

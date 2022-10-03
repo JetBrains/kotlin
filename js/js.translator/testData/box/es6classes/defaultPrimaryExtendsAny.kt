@@ -1,4 +1,4 @@
-// ES_CLASSES
+// ES6_MODE
 // EXPECTED_REACHABLE_NODES: 1347
 var sideEffect = ""
 

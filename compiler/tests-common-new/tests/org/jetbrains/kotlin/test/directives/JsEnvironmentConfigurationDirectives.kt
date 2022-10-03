@@ -230,7 +230,7 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val ES_CLASSES by directive(
+    val ES6_MODE by directive(
         description = "",
         applicability = DirectiveApplicability.Global
     )
