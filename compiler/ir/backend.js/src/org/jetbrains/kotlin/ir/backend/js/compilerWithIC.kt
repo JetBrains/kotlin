@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaserState
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsCodegenExtension
 import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
@@ -44,6 +45,7 @@ fun compileWithIC(
     lowerPerModule: Boolean = false,
     safeExternalBoolean: Boolean = false,
     safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
+    extensions: List<IrToJsCodegenExtension> = emptyList(),
 ): List<JsIrFragmentAndBinaryAst> {
     val irBuiltIns = mainModule.irBuiltins
     val symbolTable = (irBuiltIns as IrBuiltInsOverDescriptors).symbolTable
@@ -80,7 +82,11 @@ fun compileWithIC(
 
     lowerPreservingTags(allModules, context, PhaseConfig(jsPhases), symbolTable.irFactory.stageController as WholeWorldStageController)
 
-    val transformer = IrModuleToJsTransformerTmp(context, mainArguments)
+    val transformer = IrModuleToJsTransformerTmp(
+        context,
+        mainArguments,
+        extensions = extensions,
+    )
     return transformer.generateBinaryAst(filesToLower, allModules)
 }
 

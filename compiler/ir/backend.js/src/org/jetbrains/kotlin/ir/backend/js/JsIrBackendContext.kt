@@ -371,7 +371,7 @@ class JsIrBackendContext(
     internal fun getProperty(fqName: FqName): PropertyDescriptor =
         findProperty(module.getPackage(fqName.parent()).memberScope, fqName.shortName()).single()
 
-    internal fun getIrClass(fqName: FqName): IrClassSymbol = symbolTable.referenceClass(getClass(fqName))
+    fun getIrClass(fqName: FqName): IrClassSymbol = symbolTable.referenceClass(getClass(fqName))
 
     internal fun getJsInternalFunction(name: String): SimpleFunctionDescriptor =
         findFunctions(internalPackage.memberScope, Name.identifier(name)).singleOrNull() ?: error("Internal function '$name' not found")

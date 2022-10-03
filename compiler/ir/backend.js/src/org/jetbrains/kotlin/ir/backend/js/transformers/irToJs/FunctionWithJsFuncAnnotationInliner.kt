@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsCodegenExtension
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -29,7 +30,8 @@ class FunctionWithJsFuncAnnotationInliner(private val jsFuncCall: IrCall, privat
 
     private fun collectReplacementsForCall(): Map<JsName, JsExpression> {
         val translatedArguments = Array(jsFuncCall.valueArgumentsCount) {
-            jsFuncCall.getValueArgument(it)!!.accept(IrElementToJsExpressionTransformer(), context)
+            jsFuncCall.getValueArgument(it)!!
+                .acceptWithPlugins(IrElementToJsExpressionTransformer(context.staticContext.extensions), context)
         }
         return function.parameters
             .mapIndexed { i, param -> param.name to translatedArguments[i] }

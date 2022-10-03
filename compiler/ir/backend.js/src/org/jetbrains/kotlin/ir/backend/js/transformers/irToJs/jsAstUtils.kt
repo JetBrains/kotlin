@@ -41,7 +41,7 @@ fun jsUndefined(context: IrNamer, backendContext: JsIrBackendContext): JsExpress
 }
 
 fun jsVar(name: JsName, initializer: IrExpression?, context: JsGenerationContext): JsVars {
-    val jsInitializer = initializer?.accept(IrElementToJsExpressionTransformer(), context)
+    val jsInitializer = initializer?.acceptWithPlugins(IrElementToJsExpressionTransformer(context.staticContext.extensions), context)
     return JsVars(JsVars.JsVar(name, jsInitializer))
 }
 
@@ -52,10 +52,10 @@ fun <T : JsNode> IrWhen.toJsNode(
     implicitElse: T? = null
 ): T? =
     branches.foldRight(implicitElse) { br, n ->
-        val body = br.result.accept(tr, data)
+        val body = br.result.acceptWithPlugins(tr, data)
         if (isElseBranch(br)) body
         else {
-            val condition = br.condition.accept(IrElementToJsExpressionTransformer(), data)
+            val condition = br.condition.acceptWithPlugins(IrElementToJsExpressionTransformer(data.staticContext.extensions), data)
             node(condition, body, n)
         }
     }
@@ -116,7 +116,9 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
     val functionContext = context.newDeclaration(declaration, localNameGenerator)
 
     val functionParams = declaration.valueParameters.map { functionContext.getNameForValueDeclaration(it) }
-    val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
+    val body = declaration.body?.acceptWithPlugins(
+        IrElementToJsStatementTransformer(context.staticContext.extensions), functionContext
+    ) as? JsBlock ?: JsBlock()
 
     val function = JsFunction(emptyScope, body, "member function ${name ?: "annon"}")
 
@@ -156,8 +158,8 @@ fun translateCall(
         return it(expression, context)
     }
 
-    val jsDispatchReceiver = expression.dispatchReceiver?.accept(transformer, context)
-    val jsExtensionReceiver = expression.extensionReceiver?.accept(transformer, context)
+    val jsDispatchReceiver = expression.dispatchReceiver?.acceptWithPlugins(transformer, context)
+    val jsExtensionReceiver = expression.extensionReceiver?.acceptWithPlugins(transformer, context)
     val arguments = translateCallArguments(expression, context, transformer)
 
     // Transform external and interface's property accessor call
@@ -389,7 +391,7 @@ fun translateCallArguments(
                     it.symbol.owner.correspondingPropertySymbol == context.staticContext.backendContext.intrinsics.void
         }
         .map {
-            it?.accept(transformer, context)
+            it?.acceptWithPlugins(transformer, context)
         }
         .mapIndexed { index, result ->
             val isEmptyExternalVararg = validWithNullArgs &&

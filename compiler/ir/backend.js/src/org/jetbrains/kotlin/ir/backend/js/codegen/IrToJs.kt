@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.LoweredIr
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity.*
 import org.jetbrains.kotlin.ir.backend.js.export.*
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsCodegenExtension
 import org.jetbrains.kotlin.ir.backend.js.lower.JsCodeOutliningLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrFileToJsTransformer
@@ -47,6 +48,7 @@ class IrToJs(
     private val granularity: JsGenerationGranularity,
     private val mainModuleName: String,
     private val options: JsGenerationOptions,
+    private val extensions: List<IrToJsCodegenExtension> = emptyList(),
 ) {
     val indexFileName = "index.${options.jsExtension}"
 
@@ -165,7 +167,8 @@ class IrToJs(
         val staticContext = JsStaticContext(
             backendContext = backendContext,
             irNamer = nameGenerator,
-            globalNameScope = nameGenerator.staticNames
+            globalNameScope = nameGenerator.staticNames,
+            extensions = extensions,
         )
 
         val declarationStatements: List<JsStatement> = unit.packageFragments.flatMap {

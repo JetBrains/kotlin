@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.backend.js.export.ExportModelGenerator
 import org.jetbrains.kotlin.ir.backend.js.export.ExportModelToJsStatements
 import org.jetbrains.kotlin.ir.backend.js.export.ExportedModule
 import org.jetbrains.kotlin.ir.backend.js.export.toTypeScript
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsCodegenExtension
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -43,7 +44,8 @@ class IrModuleToJsTransformer(
     private val multiModule: Boolean = false,
     private val relativeRequirePath: Boolean = false,
     private val moduleToName: Map<IrModuleFragment, String> = emptyMap(),
-    private val removeUnusedAssociatedObjects: Boolean = true
+    private val removeUnusedAssociatedObjects: Boolean = true,
+    private val extensions: List<IrToJsCodegenExtension> = emptyList(),
 ) {
     private val generateRegionComments = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
 
@@ -145,7 +147,8 @@ class IrModuleToJsTransformer(
         val staticContext = JsStaticContext(
             backendContext = backendContext,
             irNamer = nameGenerator,
-            globalNameScope = namer.globalNames
+            globalNameScope = namer.globalNames,
+            extensions = extensions,
         )
 
         val polyfillStatements = generatePolyfillStatements(modules)

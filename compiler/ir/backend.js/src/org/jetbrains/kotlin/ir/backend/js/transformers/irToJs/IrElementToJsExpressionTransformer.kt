@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsCodegenExtension
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsCodegenExtensionContext
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
@@ -15,10 +17,16 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.js.backend.ast.*
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext> {
+class IrElementToJsExpressionTransformer(extensions: List<IrToJsCodegenExtension>) :
+    BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext>
+{
+    override val plugins = extensions.mapNotNull {
+        it.createIrElementToJsExpressionTransformer(IrToJsCodegenExtensionContext())
+    }
 
     private fun JsGenerationContext.isClassInlineLike(irClass: IrClass) =
         staticContext.backendContext.inlineClassesUtils.isClassInlineLike(irClass)
@@ -27,25 +35,25 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val size = expression.statements.size
         if (size == 0) TODO("Empty IrComposite is not supported")
 
-        val first = expression.statements[0].accept(this, data)
+        val first = expression.statements[0].acceptWithPlugins(this, data)
         if (size == 1) return first
 
         return expression.statements.fold(first) { left, right ->
-            JsBinaryOperation(JsBinaryOperator.COMMA, left, right.accept(this, data))
+            JsBinaryOperation(JsBinaryOperator.COMMA, left, right.acceptWithPlugins(this, data))
         }
     }
 
     override fun visitVararg(expression: IrVararg, context: JsGenerationContext): JsExpression {
         assert(expression.elements.none { it is IrSpreadElement })
-        return JsArrayLiteral(expression.elements.map { it.accept(this, context) }).withSource(expression, context)
+        return JsArrayLiteral(expression.elements.map { it.acceptWithPlugins(this, context) }).withSource(expression, context)
     }
 
     override fun visitExpressionBody(body: IrExpressionBody, context: JsGenerationContext): JsExpression =
-        body.expression.accept(this, context)
+        body.expression.acceptWithPlugins(this, context)
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, context: JsGenerationContext): JsExpression {
         val irFunction = expression.function
-        return irFunction.accept(IrFunctionToJsTransformer(), context).apply { name = null }
+        return irFunction.acceptWithPlugins(IrFunctionToJsTransformer(context.staticContext.extensions), context).apply { name = null }
     }
 
     override fun visitConst(expression: IrConst<*>, context: JsGenerationContext): JsExpression {
@@ -77,7 +85,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
         val firstArgument = expression.arguments.firstOrNull()
         val (head, tail) = if (firstArgument?.type?.isString() == true) {
-            Pair(firstArgument.accept(this, context), expression.arguments.asSequence().drop(1))
+            Pair(firstArgument.acceptWithPlugins(this, context), expression.arguments.asSequence().drop(1))
         } else {
             Pair(JsStringLiteral(""), expression.arguments.asSequence())
         }
@@ -86,7 +94,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             JsBinaryOperation(
                 JsBinaryOperator.ADD,
                 jsExpr,
-                irExpr.accept(this, context)
+                irExpr.acceptWithPlugins(this, context)
             )
         }
     }
@@ -103,7 +111,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                 "${field.render()} in non-external class ${fieldParent.render()}"
             }
 
-            val receiver = expression.receiver?.accept(this, context)
+            val receiver = expression.receiver?.acceptWithPlugins(this, context)
                 ?: compilationException(
                     "Expect expression.receiver to not be null",
                     expression
@@ -112,10 +120,10 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         }
 
         if (fieldParent is IrClass && context.isClassInlineLike(fieldParent)) {
-            return expression.receiver!!.accept(this, context).withSource(expression, context)
+            return expression.receiver!!.acceptWithPlugins(this, context).withSource(expression, context)
         }
         val fieldName = context.getNameForField(field)
-        return jsElementAccess(fieldName, expression.receiver?.accept(this, context)).withSource(expression, context)
+        return jsElementAccess(fieldName, expression.receiver?.acceptWithPlugins(this, context)).withSource(expression, context)
     }
 
     override fun visitGetValue(expression: IrGetValue, context: JsGenerationContext): JsExpression {
@@ -137,15 +145,15 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     override fun visitSetField(expression: IrSetField, context: JsGenerationContext): JsExpression {
         val field = expression.symbol.owner
         val fieldName = context.getNameForField(field)
-        val dest = jsElementAccess(fieldName.ident, expression.receiver?.accept(this, context))
-        val source = expression.value.accept(this, context)
+        val dest = jsElementAccess(fieldName.ident, expression.receiver?.acceptWithPlugins(this, context))
+        val source = expression.value.acceptWithPlugins(this, context)
         return jsAssignment(dest, source).withSource(expression, context)
     }
 
     override fun visitSetValue(expression: IrSetValue, context: JsGenerationContext): JsExpression {
         val field = expression.symbol.owner
         val ref = JsNameRef(context.getNameForValueDeclaration(field))
-        val value = expression.value.accept(this, context)
+        val value = expression.value.acceptWithPlugins(this, context)
         return JsBinaryOperation(JsBinaryOperator.ASG, ref, value).withSource(expression, context)
     }
 
@@ -205,6 +213,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                     )
                 }
             }
+
             else -> {
                 val ref = context.getNameForClass(klass).makeRef()
                 JsNew(ref, arguments)
@@ -234,7 +243,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: JsGenerationContext): JsExpression {
         return when (expression.operator) {
-            IrTypeOperator.REINTERPRET_CAST -> expression.argument.accept(this, data)
+            IrTypeOperator.REINTERPRET_CAST -> expression.argument.acceptWithPlugins(this, data)
             else -> compilationException(
                 "All type operator calls except REINTERPRET_CAST should be lowered at this point",
                 expression
@@ -243,7 +252,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: JsGenerationContext): JsExpression =
-        jsElementAccess(expression.memberName, expression.receiver.accept(this, data)).withSource(expression, data)
+        jsElementAccess(expression.memberName, expression.receiver.acceptWithPlugins(this, data)).withSource(expression, data)
 
     override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: JsGenerationContext): JsExpression =
         when (expression.operator) {
@@ -285,12 +294,12 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             IrDynamicOperator.DIVEQ -> binaryOperation(JsBinaryOperator.ASG_DIV, expression, data)
             IrDynamicOperator.MODEQ -> binaryOperation(JsBinaryOperator.ASG_MOD, expression, data)
 
-            IrDynamicOperator.ARRAY_ACCESS -> JsArrayAccess(expression.left.accept(this, data), expression.right.accept(this, data))
+            IrDynamicOperator.ARRAY_ACCESS -> JsArrayAccess(expression.left.acceptWithPlugins(this, data), expression.right.acceptWithPlugins(this, data))
 
             IrDynamicOperator.INVOKE ->
                 JsInvocation(
-                    expression.receiver.accept(this, data),
-                    expression.arguments.map { it.accept(this, data) }
+                    expression.receiver.acceptWithPlugins(this, data),
+                    expression.arguments.map { it.acceptWithPlugins(this, data) }
                 )
 
             else -> compilationException(
@@ -314,20 +323,20 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     private fun prefixOperation(operator: JsUnaryOperator, expression: IrDynamicOperatorExpression, data: JsGenerationContext) =
         JsPrefixOperation(
             operator,
-            expression.receiver.accept(this, data)
+            expression.receiver.acceptWithPlugins(this, data)
         )
 
     private fun postfixOperation(operator: JsUnaryOperator, expression: IrDynamicOperatorExpression, data: JsGenerationContext) =
         JsPostfixOperation(
             operator,
-            expression.receiver.accept(this, data)
+            expression.receiver.acceptWithPlugins(this, data)
         )
 
     private fun binaryOperation(operator: JsBinaryOperator, expression: IrDynamicOperatorExpression, data: JsGenerationContext) =
         JsBinaryOperation(
             operator,
-            expression.left.accept(this, data),
-            expression.right.accept(this, data)
+            expression.left.acceptWithPlugins(this, data),
+            expression.right.acceptWithPlugins(this, data)
         )
 
     private fun IrValueDeclaration.isThisReceiver(): Boolean = this !is IrVariable && when (val p = parent) {

@@ -79,6 +79,7 @@ import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsCodegenExtension
 import org.jetbrains.kotlin.js.translate.extensions.JsSyntheticTranslateExtension
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
@@ -635,6 +636,7 @@ class KotlinCoreEnvironment private constructor(
             DeclarationAttributeAltererExtension.registerExtensionPoint(project)
             PreprocessedVirtualFileFactoryExtension.registerExtensionPoint(project)
             JsSyntheticTranslateExtension.registerExtensionPoint(project)
+            IrToJsCodegenExtension.registerExtensionPoint(project)
             CompilerConfigurationExtension.registerExtensionPoint(project)
             CollectAdditionalSourcesExtension.registerExtensionPoint(project)
             ProcessSourcesBeforeCompilingExtension.registerExtensionPoint(project)

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsCodegenExtension
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrFragmentAndBinaryAst
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
@@ -31,7 +32,8 @@ fun interface CacheExecutor {
         configuration: CompilerConfiguration,
         dirtyFiles: Collection<IrFile>,
         exportedDeclarations: Set<FqName>,
-        mainArguments: List<String>?
+        mainArguments: List<String>?,
+        extensions: List<IrToJsCodegenExtension>,
     ): List<JsIrFragmentAndBinaryAst>
 }
 
@@ -53,6 +55,7 @@ class CacheUpdater(
     private val compilerConfiguration: CompilerConfiguration,
     private val irFactory: () -> IrFactory,
     private val mainArguments: List<String>?,
+    private val extensions: List<IrToJsCodegenExtension>,
     private val executor: CacheExecutor
 ) {
     private val signatureHashCalculator = IdSignatureHashCalculator()
@@ -612,7 +615,8 @@ class CacheUpdater(
                 } ?: emptyList()
             },
             exportedDeclarations = emptySet(),
-            mainArguments = mainArguments
+            mainArguments = mainArguments,
+            extensions = extensions,
         )
         eventCallback("updated files processing (lowering)")
 
@@ -668,7 +672,8 @@ fun buildCacheForModuleFiles(
     configuration: CompilerConfiguration,
     dirtyFiles: Collection<IrFile>,
     exportedDeclarations: Set<FqName>,
-    mainArguments: List<String>?
+    mainArguments: List<String>?,
+    extensions: List<IrToJsCodegenExtension> = emptyList(),
 ): List<JsIrFragmentAndBinaryAst> {
     return compileWithIC(
         mainModule = mainModule,
@@ -678,5 +683,6 @@ fun buildCacheForModuleFiles(
         irLinker = irLinker,
         mainArguments = mainArguments,
         exportedDeclarations = exportedDeclarations,
+        extensions = extensions,
     )
 }

@@ -22,9 +22,6 @@ internal open class KotlinJsIrLinkConfig(
 
     init {
         configureTask { task ->
-            // Link tasks are not affected by compiler plugin, so set to empty
-            task.pluginClasspath.setFrom(objectFactory.fileCollection())
-
             task.dependsOn(compilation.compileTaskProvider)
             task.dependsOn(compilation.output.classesDirs)
             task.entryModule.fileProvider(

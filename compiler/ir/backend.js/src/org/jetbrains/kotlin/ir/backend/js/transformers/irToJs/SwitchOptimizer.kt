@@ -129,8 +129,8 @@ class SwitchOptimizer(private val context: JsGenerationContext, private val isEx
 
     private fun buildJsSwitch(switch: SwitchData): JsStatement {
 
-        val exprTransformer = IrElementToJsExpressionTransformer()
-        val stmtTransformer = IrElementToJsStatementTransformer()
+        val exprTransformer = IrElementToJsExpressionTransformer(context.staticContext.extensions)
+        val stmtTransformer = IrElementToJsStatementTransformer(context.staticContext.extensions)
 
         val jsExpr = context.getNameForValueDeclaration(switch.subject.owner).makeRef()
 
@@ -138,19 +138,19 @@ class SwitchOptimizer(private val context: JsGenerationContext, private val isEx
 
         for (case in switch.cases) {
             val jsCase = if (case is SwitchBranchData.SwitchCaseData) {
-                jsCases += case.cases.map { JsCase().apply { caseExpression = it.accept(exprTransformer, context) } }
+                jsCases += case.cases.map { JsCase().apply { caseExpression = it.acceptWithPlugins(exprTransformer, context) } }
                 jsCases.last()
             } else {
                 JsDefault().also { jsCases += it }
             }
 
             val lastStatement = if (isExpression) {
-                val expression = case.body.accept(exprTransformer, context).makeStmt()
+                val expression = case.body.acceptWithPlugins(exprTransformer, context).makeStmt()
                 val lastStatement = lastStatementTransformer(expression)
                 jsCase.statements += lastStatement
                 lastStatement
             } else {
-                val jsBody = case.body.accept(stmtTransformer, context).asBlock()
+                val jsBody = case.body.acceptWithPlugins(stmtTransformer, context).asBlock()
                 var lastStatement = jsBody.statements.lastOrNull()
 
                 if (lastStatement != null) {

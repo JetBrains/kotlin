@@ -206,7 +206,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(intrinsics.jsBind) { call, context: JsGenerationContext ->
                 val receiver = call.getValueArgument(0)!!
-                val jsReceiver = receiver.accept(IrElementToJsExpressionTransformer(), context)
+                val jsReceiver = receiver.accept(IrElementToJsExpressionTransformer(context.staticContext.extensions), context)
                 val jsBindTarget = when (val target = call.getValueArgument(1)!!) {
                     is IrFunctionReference -> {
                         val superClass = call.superQualifierSymbol!!
@@ -214,7 +214,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                         val superName = context.getNameForClass(superClass.owner).makeRef()
                         JsNameRef(functionName, prototypeOf(superName, context.staticContext))
                     }
-                    is IrFunctionExpression -> target.accept(IrElementToJsExpressionTransformer(), context)
+                    is IrFunctionExpression -> target.accept(IrElementToJsExpressionTransformer(context.staticContext.extensions), context)
                     else -> compilationException(
                         "The 'target' argument of 'jsBind' must be either IrFunctionReference or IrFunctionExpression",
                         call
@@ -226,7 +226,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(intrinsics.jsContexfulRef) { call, context: JsGenerationContext ->
                 val receiver = call.getValueArgument(0)!!
-                val jsReceiver = receiver.accept(IrElementToJsExpressionTransformer(), context)
+                val jsReceiver = receiver.accept(IrElementToJsExpressionTransformer(context.staticContext.extensions), context)
                 val target = call.getValueArgument(1) as IrRawFunctionReference
                 val jsTarget = context.getNameForMemberFunction(target.symbol.owner as IrSimpleFunction)
 
@@ -261,7 +261,8 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
                 val jsInvokeFunName = context.getNameForMemberFunction(invokeFun)
 
-                val jsExtensionReceiver = call.extensionReceiver?.accept(IrElementToJsExpressionTransformer(), context)!!
+                val jsExtensionReceiver =
+                    call.extensionReceiver?.accept(IrElementToJsExpressionTransformer(context.staticContext.extensions), context)!!
                 val args = translateCallArguments(call, context)
 
                 JsInvocation(JsNameRef(jsInvokeFunName, jsExtensionReceiver), args)
@@ -279,7 +280,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 }
 
 private fun translateCallArguments(expression: IrCall, context: JsGenerationContext): List<JsExpression> {
-    return translateCallArguments(expression, context, IrElementToJsExpressionTransformer(), false)
+    return translateCallArguments(expression, context, IrElementToJsExpressionTransformer(context.staticContext.extensions), false)
 }
 
 private fun MutableMap<IrSymbol, IrCallTransformer>.add(functionSymbol: IrSymbol, t: IrCallTransformer) {

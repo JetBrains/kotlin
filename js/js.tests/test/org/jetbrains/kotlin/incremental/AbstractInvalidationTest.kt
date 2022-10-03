@@ -259,6 +259,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                     compilerConfiguration = configuration,
                     irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
                     mainArguments = null,
+                    extensions = emptyList(),
                     executor = ::executorWithBoxExport
                 )
 

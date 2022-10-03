@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.ir.backend.js.utils.isTheLastReturnStatementIn
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsCodegenExtension
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsCodegenExtensionContext
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -22,17 +24,23 @@ import org.jetbrains.kotlin.ir.util.constructedClassType
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.js.backend.ast.*
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
+class IrElementToJsStatementTransformer(extensions: List<IrToJsCodegenExtension> = emptyList()) :
+    BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext>
+{
+    override val plugins = extensions.mapNotNull {
+        it.createIrElementToJsStatementTransformer(IrToJsCodegenExtensionContext())
+    }
 
     override fun visitFunction(declaration: IrFunction, data: JsGenerationContext): JsStatement {
         error("All functions must be already lowered")
     }
 
     override fun visitBlockBody(body: IrBlockBody, context: JsGenerationContext): JsStatement {
-        return JsBlock(body.statements.map { it.accept(this, context) })
+        return JsBlock(body.statements.map { it.acceptWithPlugins(this, context) })
     }
 
     override fun visitBlock(expression: IrBlock, context: JsGenerationContext): JsStatement {
@@ -40,7 +48,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
             context.newFile(it.owner.file, context.currentFunction, context.localNames)
         } ?: context
 
-        val statements = expression.statements.map { it.accept(this, newContext) }
+        val statements = expression.statements.map { it.acceptWithPlugins(this, newContext) }
 
         return if (expression is IrReturnableBlock) {
             val label = context.getNameForReturnableBlock(expression)
@@ -65,17 +73,17 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitComposite(expression: IrComposite, context: JsGenerationContext): JsStatement {
-        return JsBlock(expression.statements.map { it.accept(this, context) })
+        return JsBlock(expression.statements.map { it.acceptWithPlugins(this, context) })
     }
 
     override fun visitExpression(expression: IrExpression, context: JsGenerationContext): JsStatement {
-        return expression.accept(IrElementToJsExpressionTransformer(), context).makeStmt()
+        return expression.acceptWithPlugins(IrElementToJsExpressionTransformer(context.staticContext.extensions), context).makeStmt()
     }
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, context: JsGenerationContext): JsStatement {
         // If IrFunctionExpression is not used (i. e. the function expression is also a statement),
         // the generated function cannot be anonymous, so we don't erase its name, unlike in IrElementToJsExpressionTransformer
-        return expression.function.accept(IrFunctionToJsTransformer(), context).makeStmt()
+        return expression.function.acceptWithPlugins(IrFunctionToJsTransformer(context.staticContext.extensions), context).makeStmt()
     }
 
     override fun visitBreak(jump: IrBreak, context: JsGenerationContext): JsStatement {
@@ -95,13 +103,13 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
             SwitchOptimizer(context, isExpression = true, stmtTransformer).tryOptimize(this)?.let { return it }
         }
 
-        return transformer(accept(IrElementToJsExpressionTransformer(), context))
+        return transformer(acceptWithPlugins(IrElementToJsExpressionTransformer(context.staticContext.extensions), context))
     }
 
     override fun visitSetField(expression: IrSetField, context: JsGenerationContext): JsStatement {
         val fieldName = context.getNameForField(expression.symbol.owner)
-        val expressionTransformer = IrElementToJsExpressionTransformer()
-        val dest = jsElementAccess(fieldName, expression.receiver?.accept(expressionTransformer, context))
+        val expressionTransformer = IrElementToJsExpressionTransformer(context.staticContext.extensions)
+        val dest = jsElementAccess(fieldName, expression.receiver?.acceptWithPlugins(expressionTransformer, context))
         return expression.value.maybeOptimizeIntoSwitch(context) { jsAssignment(dest, it).withSource(expression, context).makeStmt() }
     }
 
@@ -155,7 +163,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         if (expression.symbol.owner.constructedClassType.isAny()) {
             return JsEmpty
         }
-        return expression.accept(IrElementToJsExpressionTransformer(), context).makeStmt()
+        return expression.acceptWithPlugins(IrElementToJsExpressionTransformer(context.staticContext.extensions), context).makeStmt()
     }
 
     override fun visitCall(expression: IrCall, data: JsGenerationContext): JsStatement {
@@ -165,7 +173,10 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         if (data.checkIfJsCode(expression.symbol) || data.checkIfHasAssociatedJsCode(expression.symbol)) {
             return JsCallTransformer(expression, data).generateStatement()
         }
-        return translateCall(expression, data, IrElementToJsExpressionTransformer()).withSource(expression, data).makeStmt()
+        return translateCall(expression, data, IrElementToJsExpressionTransformer(data.staticContext.extensions)).withSource(
+            expression,
+            data
+        ).makeStmt()
     }
 
     private fun IrFunctionSymbol.isUnitInstanceFunction(context: JsGenerationContext): Boolean {
@@ -181,15 +192,15 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
 
     override fun visitTry(aTry: IrTry, context: JsGenerationContext): JsStatement {
 
-        val jsTryBlock = aTry.tryResult.accept(this, context).asBlock()
+        val jsTryBlock = aTry.tryResult.acceptWithPlugins(this, context).asBlock()
 
         val jsCatch = aTry.catches.singleOrNull()?.let {
             val name = context.getNameForValueDeclaration(it.catchParameter)
-            val jsCatchBlock = it.result.accept(this, context)
+            val jsCatchBlock = it.result.acceptWithPlugins(this, context)
             JsCatch(emptyScope, name.ident, jsCatchBlock)
         }
 
-        val jsFinallyBlock = aTry.finallyExpression?.accept(this, context)?.asBlock()
+        val jsFinallyBlock = aTry.finallyExpression?.acceptWithPlugins(this, context)?.asBlock()
 
         return JsTry(jsTryBlock, jsCatch, jsFinallyBlock)
     }
@@ -201,16 +212,20 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     override fun visitWhileLoop(loop: IrWhileLoop, context: JsGenerationContext): JsStatement {
         //TODO what if body null?
         val label = context.getNameForLoop(loop)
-        val loopStatement = JsWhile(loop.condition.accept(IrElementToJsExpressionTransformer(), context),
-                                    loop.body?.accept(this, context) ?: JsEmpty)
+        val loopStatement = JsWhile(
+            loop.condition.acceptWithPlugins(IrElementToJsExpressionTransformer(context.staticContext.extensions), context),
+            loop.body?.acceptWithPlugins(this, context) ?: JsEmpty
+        )
         return label?.let { JsLabel(it, loopStatement) } ?: loopStatement
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, context: JsGenerationContext): JsStatement {
         //TODO what if body null?
         val label = context.getNameForLoop(loop)
-        val loopStatement =
-            JsDoWhile(loop.condition.accept(IrElementToJsExpressionTransformer(), context), loop.body?.accept(this, context) ?: JsEmpty)
+        val loopStatement = JsDoWhile(
+            loop.condition.acceptWithPlugins(IrElementToJsExpressionTransformer(context.staticContext.extensions), context),
+            loop.body?.acceptWithPlugins(this, context) ?: JsEmpty
+        )
         return label?.let { JsLabel(it, loopStatement) } ?: loopStatement
     }
 }

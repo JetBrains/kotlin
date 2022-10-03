@@ -5,16 +5,25 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsCodegenExtension
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsCodegenExtensionContext
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-class IrFunctionToJsTransformer : BaseIrElementToJsNodeTransformer<JsFunction, JsGenerationContext> {
+class IrFunctionToJsTransformer(extensions: List<IrToJsCodegenExtension>) :
+    BaseIrElementToJsNodeTransformer<JsFunction, JsGenerationContext>
+{
+    override val plugins = extensions.mapNotNull {
+        it.createIrFunctionTransformer(IrToJsCodegenExtensionContext())
+    }
+
     override fun visitSimpleFunction(declaration: IrSimpleFunction, context: JsGenerationContext): JsFunction {
         val parentClass = declaration.parent as? IrClass
         val isInterfaceDefaultImpl = parentClass?.isInterface ?: false

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.export.*
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsCodegenExtension
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.backend.js.utils.serialization.JsIrAstSerializer
@@ -89,6 +90,7 @@ class IrModuleToJsTransformerTmp(
     private val mainArguments: List<String>?,
     private val moduleToName: Map<IrModuleFragment, String> = emptyMap(),
     private val removeUnusedAssociatedObjects: Boolean = true,
+    private val extensions: List<IrToJsCodegenExtension> = emptyList(),
 ) {
     private val generateRegionComments = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
 
@@ -228,7 +230,8 @@ class IrModuleToJsTransformerTmp(
         val staticContext = JsStaticContext(
             backendContext = backendContext,
             irNamer = nameGenerator,
-            globalNameScope = globalNameScope
+            globalNameScope = globalNameScope,
+            extensions = extensions,
         )
 
         val result = JsIrProgramFragment(file.fqName.asString()).apply {

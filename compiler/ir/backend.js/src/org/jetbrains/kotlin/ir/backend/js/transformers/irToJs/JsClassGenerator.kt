@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.export.isAllowedFakeOverriddenDeclaration
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenExported
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsCodegenExtension
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.*
@@ -49,7 +50,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
         if (!es6mode) maybeGeneratePrimaryConstructor()
 
-        val transformer = IrDeclarationToJsTransformer()
+        val transformer = IrDeclarationToJsTransformer(context.staticContext.extensions)
 
         // Properties might be lowered out of classes
         // We'll use IrSimpleFunction::correspondingProperty to collect them into set
@@ -67,7 +68,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             when (declaration) {
                 is IrConstructor -> {
                     if (es6mode) {
-                        declaration.accept(IrFunctionToJsTransformer(), context).let {
+                        declaration.acceptWithPlugins(IrFunctionToJsTransformer(context.staticContext.extensions), context).let {
                             //HACK: add superCall to Error
                             if ((baseClass?.classifierOrNull?.owner as? IrClass)?.symbol === context.staticContext.backendContext.throwableClass) {
                                 it.body.statements.add(0, JsInvocation(JsNameRef("super")).makeStmt())
@@ -78,9 +79,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                             }
                         }
                     } else {
-                        classBlock.statements += declaration.accept(transformer, context)
+                        classBlock.statements += declaration.acceptWithPlugins(transformer, context)
                     }
                 }
+
                 is IrSimpleFunction -> {
                     properties.addIfNotNull(declaration.correspondingPropertySymbol?.owner)
 
@@ -263,7 +265,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         val memberRef = jsElementAccess(memberName.ident, classPrototypeRef)
 
         if (declaration.isReal && declaration.body != null) {
-            val translatedFunction: JsFunction = declaration.accept(IrFunctionToJsTransformer(), context)
+            val translatedFunction: JsFunction =
+                declaration.acceptWithPlugins(IrFunctionToJsTransformer(context.staticContext.extensions), context)
             assert(!declaration.isStaticMethodOfClass)
 
             if (irClass.isInterface) {
@@ -329,7 +332,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         val associatedObjects = generateAssociatedObjects()
         val suspendArity = generateSuspendArity()
 
-        val undefined = context.staticContext.backendContext.getVoid().accept(IrElementToJsExpressionTransformer(), context)
+        val undefined = context.staticContext.backendContext.getVoid()
+            .acceptWithPlugins(IrElementToJsExpressionTransformer(context.staticContext.extensions), context)
 
         return JsInvocation(
             JsNameRef(context.getNameForStaticFunction(setMetadataFor)),

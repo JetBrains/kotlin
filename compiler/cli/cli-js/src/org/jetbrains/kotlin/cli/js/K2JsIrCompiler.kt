@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsCodegenExtension
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -118,7 +119,12 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         private fun makeJsCodeGeneratorAndDts(): Pair<JsCodeGenerator, String> {
             val ir = lowerIr()
-            val transformer = IrModuleToJsTransformerTmp(ir.context, mainCallArguments, ir.moduleFragmentToUniqueName)
+            val transformer = IrModuleToJsTransformerTmp(
+                ir.context,
+                mainCallArguments,
+                moduleToName = ir.moduleFragmentToUniqueName,
+                extensions = IrToJsCodegenExtension.getInstances(module.project)
+            )
 
             val mode = TranslationMode.fromFlags(arguments.irDce, arguments.irPerModule, arguments.irMinimizedMemberNames)
             return transformer.makeJsCodeGeneratorAndDts(ir.allModules, mode)
@@ -139,7 +145,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 dceJs = arguments.irDce,
                 multiModule = arguments.irPerModule,
                 relativeRequirePath = true,
-                moduleToName = ir.moduleFragmentToUniqueName
+                moduleToName = ir.moduleFragmentToUniqueName,
+                extensions = IrToJsCodegenExtension.getInstances(module.project)
             )
 
             val result = transformer.generateModule(ir.allModules)
@@ -294,6 +301,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 compilerConfiguration = configurationJs,
                 irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
                 mainArguments = mainCallArguments,
+                extensions = IrToJsCodegenExtension.getInstances(projectJs),
                 executor = ::buildCacheForModuleFiles
             )
 
