@@ -20,8 +20,8 @@ object FirJsDynamicDeclarationChecker : FirClassChecker() {
         for ((_, delegate) in declaration.collectSupertypesWithDelegates()) {
             if (delegate == null) continue
 
-            if (delegate.initializer?.typeRef?.coneType is ConeDynamicType) {
-                reporter.reportOn(delegate.initializer?.source, FirJsErrors.DELEGATION_BY_DYNAMIC, context)
+            if (delegate.resolvedInitializerType is ConeDynamicType) {
+                reporter.reportOn(delegate.initializerSource, FirJsErrors.DELEGATION_BY_DYNAMIC, context)
             }
         }
     }
