@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -111,6 +110,8 @@ fun IrMemberAccessExpression<*>.getArgumentsWithIr(): List<Pair<IrValueParameter
     dispatchReceiver?.let { arg ->
         irFunction.dispatchReceiverParameter?.let { parameter -> res += (parameter to arg) }
     }
+
+    irFunction.contextReceiverParameters.zip(contextReceivers) { param, arg -> res += param to arg }
 
     extensionReceiver?.let { arg ->
         irFunction.extensionReceiverParameter?.let { parameter -> res += (parameter to arg) }
@@ -231,9 +232,9 @@ val IrDeclarationContainer.properties: Sequence<IrProperty>
 
 fun IrFunction.addExplicitParametersTo(parametersList: MutableList<IrValueParameter>) {
     parametersList.addIfNotNull(dispatchReceiverParameter)
-    parametersList.addAll(valueParameters.take(contextReceiverParametersCount))
+    parametersList.addAll(contextReceiverParameters)
     parametersList.addIfNotNull(extensionReceiverParameter)
-    parametersList.addAll(valueParameters.drop(contextReceiverParametersCount))
+    parametersList.addAll(valueParameters)
 }
 
 private fun Boolean.toInt(): Int = if (this) 1 else 0
@@ -805,6 +806,7 @@ fun IrFunction.copyReceiverParametersFrom(from: IrFunction, substitutionMap: Map
         }
     }
     extensionReceiverParameter = from.extensionReceiverParameter?.copyTo(this)
+    contextReceiverParameters = from.contextReceiverParameters.map { it.copyTo(this) }
 }
 
 fun IrFunction.copyValueParametersFrom(from: IrFunction, substitutionMap: Map<IrTypeParameterSymbol, IrType>) {

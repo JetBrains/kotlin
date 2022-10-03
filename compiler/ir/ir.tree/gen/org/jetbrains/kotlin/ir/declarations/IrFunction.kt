@@ -41,7 +41,7 @@ abstract class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration,
 
     abstract var valueParameters: List<IrValueParameter>
 
-    abstract var contextReceiverParametersCount: Int
+    abstract var contextReceiverParameters: List<IrValueParameter>
 
     abstract var body: IrBody?
 
@@ -50,6 +50,7 @@ abstract class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration,
         dispatchReceiverParameter?.accept(visitor, data)
         extensionReceiverParameter?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
+        contextReceiverParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
     }
 
@@ -58,6 +59,7 @@ abstract class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration,
         dispatchReceiverParameter = dispatchReceiverParameter?.transform(transformer, data)
         extensionReceiverParameter = extensionReceiverParameter?.transform(transformer, data)
         valueParameters = valueParameters.transformIfNeeded(transformer, data)
+        contextReceiverParameters = contextReceiverParameters.transformIfNeeded(transformer, data)
         body = body?.transform(transformer, data)
     }
 }

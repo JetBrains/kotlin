@@ -291,7 +291,6 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                 )
             }.apply {
                 metadata = DescriptorMetadataSource.Function(it.descriptor)
-                contextReceiverParametersCount = ktContextReceiversElements.size
             }
         }.buildWithScope { irConstructor ->
             generateValueParameterDeclarations(irConstructor, ktParametersElement, null, ktContextReceiversElements)
@@ -331,15 +330,19 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val bodyGenerator = createBodyGenerator(irFunction.symbol)
 
         val contextReceiverParametersCount = functionDescriptor.contextReceiverParameters.size
-        irFunction.contextReceiverParametersCount = contextReceiverParametersCount
-        irFunction.valueParameters += functionDescriptor.contextReceiverParameters.mapIndexed { i, contextReceiver ->
-            declareParameter(contextReceiver, ktContextReceiverParameterElements.getOrNull(i) ?: ktParameterOwner, irFunction, null, i)
+        irFunction.contextReceiverParameters = functionDescriptor.contextReceiverParameters.mapIndexed { i, contextReceiver ->
+            declareParameter(
+                contextReceiver,
+                ktContextReceiverParameterElements.getOrNull(i) ?: ktParameterOwner,
+                irFunction,
+                name = null, index = null,
+            )
         }
 
         // Declare all the value parameters up first.
         irFunction.valueParameters += functionDescriptor.valueParameters.mapIndexed { i, valueParameterDescriptor ->
             val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
-            declareParameter(valueParameterDescriptor, ktParameter, irFunction, null, i + contextReceiverParametersCount)
+            declareParameter(valueParameterDescriptor, ktParameter, irFunction, null, i)
         }
         // Only after value parameters have been declared, generate default values. This ensures
         // that forward references to other parameters works in default value lambdas. For example:

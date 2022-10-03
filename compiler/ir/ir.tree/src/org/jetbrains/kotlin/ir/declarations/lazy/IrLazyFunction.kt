@@ -71,7 +71,9 @@ class IrLazyFunction(
         if (tryLoadIr()) valueParameters else createValueParameters()
     }
 
-    override var contextReceiverParametersCount: Int = descriptor.contextReceiverParameters.size
+    override var contextReceiverParameters: List<IrValueParameter> by lazyVar(stubGenerator.lock) {
+        if (tryLoadIr()) contextReceiverParameters else createContextReceivers()
+    }
 
     override var metadata: MetadataSource?
         get() = null

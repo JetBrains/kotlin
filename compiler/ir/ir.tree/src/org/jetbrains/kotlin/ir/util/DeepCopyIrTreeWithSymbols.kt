@@ -190,7 +190,6 @@ open class DeepCopyIrTreeWithSymbols(
             overriddenSymbols = declaration.overriddenSymbols.map {
                 symbolRemapper.getReferencedFunction(it) as IrSimpleFunctionSymbol
             }
-            contextReceiverParametersCount = declaration.contextReceiverParametersCount
             copyAttributes(declaration)
             transformFunctionChildren(declaration)
         }
@@ -221,6 +220,7 @@ open class DeepCopyIrTreeWithSymbols(
                 extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()
                 returnType = typeRemapper.remapType(declaration.returnType)
                 valueParameters = declaration.valueParameters.transform()
+                contextReceiverParameters = declaration.contextReceiverParameters.transform()
                 body = declaration.body?.transform()
             }
         }

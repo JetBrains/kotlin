@@ -326,13 +326,10 @@ class Fir2IrDeclarationStorage(
         } else if (function != null) {
             val contextReceivers = function.contextReceiversForFunctionOrContainingProperty()
 
-            contextReceiverParametersCount = contextReceivers.size
             valueParameters = buildList {
-                addContextReceiverParametersTo(contextReceivers, parent, this)
-
                 function.valueParameters.mapIndexedTo(this) { index, valueParameter ->
                     createIrParameter(
-                        valueParameter, index + contextReceiverParametersCount,
+                        valueParameter, index,
                         useStubForDefaultValueStub = function !is FirConstructor || containingClass?.name != Name.identifier("Enum"),
                         typeContext,
                         skipDefaultParameter = isFakeOverride
@@ -341,6 +338,11 @@ class Fir2IrDeclarationStorage(
                     }
                 }
             }
+
+            contextReceiverParameters = buildList {
+                addContextReceiverParametersTo(contextReceivers, parent, this)
+            }
+
         }
         with(classifierStorage) {
             val thisOrigin = IrDeclarationOrigin.DEFINED
@@ -1131,7 +1133,7 @@ class Fir2IrDeclarationStorage(
         return contextReceiver.convertWithOffsets { startOffset, endOffset ->
             irFactory.createValueParameter(
                 startOffset, endOffset, IrDeclarationOrigin.DEFINED, IrValueParameterSymbolImpl(),
-                Name.identifier("_context_receiver_$index"), index, type,
+                Name.identifier("_context_receiver_$index"), -1, type,
                 null,
                 isCrossinline = false, isNoinline = false,
                 isHidden = false, isAssignable = false

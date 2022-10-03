@@ -595,7 +595,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(
     newFunction.returnType = returnType.remapTypeParameters(classIfConstructor, newFunction.classIfConstructor)
     newFunction.dispatchReceiverParameter = dispatchReceiverParameter?.copyTo(newFunction)
     newFunction.extensionReceiverParameter = extensionReceiverParameter?.copyTo(newFunction)
-    newFunction.contextReceiverParametersCount = contextReceiverParametersCount
+    newFunction.contextReceiverParameters = contextReceiverParameters.map { it.copyTo(newFunction) }
 
     newFunction.valueParameters = valueParameters.map {
         val newType = it.type.remapTypeParameters(classIfConstructor, newFunction.classIfConstructor)

@@ -176,7 +176,9 @@ class MemoizedInlineClassReplacements(
                 // The function's name will be mangled, so preserve the old receiver name.
                 this, index = -1, name = Name.identifier(function.extensionReceiverName(context.state))
             )
-            contextReceiverParametersCount = function.contextReceiverParametersCount
+            contextReceiverParameters = function.contextReceiverParameters.map { parameter ->
+                parameter.copyTo(this, index = -1, defaultValue = null)
+            }
             valueParameters = function.valueParameters.mapIndexed { index, parameter ->
                 parameter.copyTo(this, index = index, defaultValue = null).also {
                     // Assuming that constructors and non-override functions are always replaced with the unboxed
@@ -198,8 +200,8 @@ class MemoizedInlineClassReplacements(
                     type = function.parentAsClass.defaultType, origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
                 )
             }
-            if (function.contextReceiverParametersCount != 0) {
-                function.valueParameters.take(function.contextReceiverParametersCount).forEachIndexed { i, contextReceiver ->
+            if (function.contextReceiverParameters.isNotEmpty()) {
+                function.contextReceiverParameters.forEachIndexed { i, contextReceiver ->
                     newValueParameters += contextReceiver.copyTo(
                         this, index = newValueParameters.size, name = Name.identifier("contextReceiver$i"),
                         origin = IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER
@@ -212,7 +214,7 @@ class MemoizedInlineClassReplacements(
                     origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
                 )
             }
-            for (parameter in function.valueParameters.drop(function.contextReceiverParametersCount)) {
+            for (parameter in function.valueParameters) {
                 newValueParameters += parameter.copyTo(this, index = newValueParameters.size, defaultValue = null).also {
                     // See comment next to a similar line above.
                     it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)

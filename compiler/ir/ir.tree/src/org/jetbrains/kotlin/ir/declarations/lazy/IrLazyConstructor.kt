@@ -55,8 +55,7 @@ class IrLazyConstructor(
     }
 
     override var valueParameters: List<IrValueParameter> by lazyVar(stubGenerator.lock) { createValueParameters() }
-
-    override var contextReceiverParametersCount: Int = descriptor.contextReceiverParameters.size
+    override var contextReceiverParameters: List<IrValueParameter> by lazyVar(stubGenerator.lock) { createContextReceivers() }
 
     override var metadata: MetadataSource?
         get() = null

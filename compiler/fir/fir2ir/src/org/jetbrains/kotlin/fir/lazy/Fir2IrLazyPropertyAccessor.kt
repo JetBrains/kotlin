@@ -72,10 +72,8 @@ class Fir2IrLazyPropertyAccessor(
         }
     }
 
-    override var contextReceiverParametersCount: Int = fir.contextReceiversForFunctionOrContainingProperty().size
-
     override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
-        if (!isSetter && contextReceiverParametersCount == 0) emptyList()
+        if (!isSetter) emptyList()
         else {
             declarationStorage.enterScope(this)
 
@@ -102,6 +100,22 @@ class Fir2IrLazyPropertyAccessor(
             }.apply {
                 declarationStorage.leaveScope(this@Fir2IrLazyPropertyAccessor)
             }
+        }
+    }
+
+    override var contextReceiverParameters: List<IrValueParameter> by lazyVar(lock) {
+        val contextReceivers = fir.contextReceiversForFunctionOrContainingProperty()
+        if (contextReceivers.isEmpty()) return@lazyVar emptyList()
+        declarationStorage.enterScope(this)
+
+        buildList {
+            declarationStorage.addContextReceiverParametersTo(
+                contextReceivers,
+                this@Fir2IrLazyPropertyAccessor,
+                this@buildList,
+            )
+        }.apply {
+            declarationStorage.leaveScope(this@Fir2IrLazyPropertyAccessor)
         }
     }
 
