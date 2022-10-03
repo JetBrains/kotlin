@@ -44,9 +44,9 @@ class PhaseConfig(
     val toDumpStateAfter: Set<AnyNamedPhase> = emptySet(),
     override val dumpToDirectory: String? = null,
     override val dumpOnlyFqName: String? = null,
-    val toValidateStateBefore: Set<AnyNamedPhase> = emptySet(),
-    val toValidateStateAfter: Set<AnyNamedPhase> = emptySet(),
-    val namesOfElementsExcludedFromDumping: Set<String> = emptySet(),
+    private val toValidateStateBefore: Set<AnyNamedPhase> = emptySet(),
+    private val toValidateStateAfter: Set<AnyNamedPhase> = emptySet(),
+    private val namesOfElementsExcludedFromDumping: Set<String> = emptySet(),
     override val needProfiling: Boolean = false,
     override val checkConditions: Boolean = false,
     override val checkStickyConditions: Boolean = false

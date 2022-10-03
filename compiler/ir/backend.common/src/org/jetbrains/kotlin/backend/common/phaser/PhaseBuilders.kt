@@ -17,7 +17,7 @@ private class CompositePhase<Context : CommonBackendContext, Input, Output>(
     val phases: List<CompilerPhase<Context, Any?, Any?>>
 ) : CompilerPhase<Context, Input, Output> {
 
-    override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output {
+    override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Input>, context: Context, input: Input): Output {
         @Suppress("UNCHECKED_CAST") var currentState = phaserState as PhaserState<Any?>
         var result = phases.first().invoke(phaseConfig, currentState, context, input)
         for ((previous, next) in phases.zip(phases.drop(1))) {
@@ -65,7 +65,7 @@ fun <Context : CommonBackendContext, Element : IrElement> makeCustomPhase(
 private class CustomPhaseAdapter<Context : CommonBackendContext, Element>(
     private val op: (Context, Element) -> Unit
 ) : SameTypeCompilerPhase<Context, Element> {
-    override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Element>, context: Context, input: Element): Element {
+    override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Element>, context: Context, input: Element): Element {
         op(context, input)
         return input
     }
@@ -92,7 +92,7 @@ fun <Context : CommonBackendContext> namedOpUnitPhase(
     name, description, prerequisite,
     nlevels = 0,
     lower = object : SameTypeCompilerPhase<Context, Unit> {
-        override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
+        override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
             context.op()
         }
     }
@@ -116,7 +116,7 @@ fun <Context : CommonBackendContext> makeIrFilePhase(
 private class FileLoweringPhaseAdapter<Context : CommonBackendContext>(
     private val lowering: (Context) -> FileLoweringPass
 ) : SameTypeCompilerPhase<Context, IrFile> {
-    override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrFile>, context: Context, input: IrFile): IrFile {
+    override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<IrFile>, context: Context, input: IrFile): IrFile {
         lowering(context).lower(input)
         return input
     }
@@ -141,7 +141,7 @@ private class ModuleLoweringPhaseAdapter<Context : CommonBackendContext>(
     private val lowering: (Context) -> FileLoweringPass
 ) : SameTypeCompilerPhase<Context, IrModuleFragment> {
     override fun invoke(
-        phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment
+        phaseConfig: PhaseConfigurationService, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment
     ): IrModuleFragment {
         lowering(context).lower(input)
         return input
@@ -151,17 +151,17 @@ private class ModuleLoweringPhaseAdapter<Context : CommonBackendContext>(
 @Suppress("unused") // Used in kotlin-native
 fun <Context : CommonBackendContext, Input> unitSink(): CompilerPhase<Context, Input, Unit> =
     object : CompilerPhase<Context, Input, Unit> {
-        override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input) {}
+        override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Input>, context: Context, input: Input) {}
     }
 
 // Intermediate phases to change the object of transformations
 @Suppress("unused") // Used in kotlin-native
 fun <Context : CommonBackendContext, OldData, NewData> takeFromContext(op: (Context) -> NewData): CompilerPhase<Context, OldData, NewData> =
     object : CompilerPhase<Context, OldData, NewData> {
-        override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<OldData>, context: Context, input: OldData) = op(context)
+        override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<OldData>, context: Context, input: OldData) = op(context)
     }
 
 fun <Context : CommonBackendContext, OldData, NewData> transform(op: (OldData) -> NewData): CompilerPhase<Context, OldData, NewData> =
     object : CompilerPhase<Context, OldData, NewData> {
-        override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<OldData>, context: Context, input: OldData) = op(input)
+        override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<OldData>, context: Context, input: OldData) = op(input)
     }

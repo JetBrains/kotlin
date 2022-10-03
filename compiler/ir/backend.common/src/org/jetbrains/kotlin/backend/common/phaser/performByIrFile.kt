@@ -43,7 +43,7 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
     private val copyBeforeLowering: Boolean,
 ) : SameTypeCompilerPhase<Context, IrModuleFragment> {
     override fun invoke(
-        phaseConfig: PhaseConfig,
+        phaseConfig: PhaseConfigurationService,
         phaserState: PhaserState<IrModuleFragment>,
         context: Context,
         input: IrModuleFragment
@@ -56,7 +56,7 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
     }
 
     private fun invokeSequential(
-        phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment
+        phaseConfig: PhaseConfigurationService, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment
     ): IrModuleFragment {
         for (irFile in input.files) {
             try {
@@ -74,7 +74,7 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
     }
 
     private fun invokeParallel(
-        phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment, nThreads: Int
+        phaseConfig: PhaseConfigurationService, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment, nThreads: Int
     ): IrModuleFragment {
         if (input.files.isEmpty()) return input
 

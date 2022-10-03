@@ -48,7 +48,7 @@ private fun makeCustomWasmModulePhase(
         prerequisite = prerequisite,
         lower = object : SameTypeCompilerPhase<WasmBackendContext, Iterable<IrModuleFragment>> {
             override fun invoke(
-                phaseConfig: PhaseConfig,
+                phaseConfig: PhaseConfigurationService,
                 phaserState: PhaserState<Iterable<IrModuleFragment>>,
                 context: WasmBackendContext,
                 input: Iterable<IrModuleFragment>
