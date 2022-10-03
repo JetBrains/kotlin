@@ -756,7 +756,7 @@ private fun filterHeadersByName(
 ) {
     val topLevelFiles = mutableSetOf<CXFile>()
     var mainFile: CXFile? = null
-    val translationUnits = LinkedList<CXTranslationUnit>().apply { addLast(translationUnit) }
+    val translationUnits = mutableListOf(translationUnit)
 
 
     // The *name* of the header here is the path relative to the include path element., e.g. `curl/curl.h`.
@@ -875,16 +875,16 @@ private fun filterHeadersByPredefined(
     })
 }
 
-private fun processImportAST(info: CXIdxImportedASTFileInfo, tuRepository: TURepository, translationUnits: LinkedList<CXTranslationUnit>, index: CXIndex) {
+private fun processImportAST(info: CXIdxImportedASTFileInfo, tuRepository: TURepository, translationUnits: MutableList<CXTranslationUnit>, index: CXIndex) {
     tuRepository.cache.put(index, info)?.also {
         tuRepository.headerUsage.processTopHeaders(it, info)
         if (!translationUnits.contains(it))
-            translationUnits.addLast(it)
+            translationUnits.add(it)
     }
 }
 
 private fun indexMutatingTUList(
-        translationUnits: LinkedList<CXTranslationUnit>,
+        translationUnits: MutableList<CXTranslationUnit>,
         index: CXIndex,
         indexer: Indexer
 ) {

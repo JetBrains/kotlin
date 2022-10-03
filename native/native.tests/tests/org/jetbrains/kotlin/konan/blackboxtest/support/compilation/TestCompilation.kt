@@ -227,6 +227,9 @@ internal class CInteropCompilation(
         }
         assertNull(maybeCompilerArgs)  // check that compiler invocation is not needed
 
+        // TODO  Actual compiler output is not included now into `compilerOutput` and `compilerOutputHasErrors`
+        // TODO  since there is no technical ability to extract them from C-interop tool invocation at the moment.
+        // TODO  This should be fixed in the future
         val loggedCInteropCall = LoggedData.CompilerCall(
             parameters = LoggedData.CompilerParameters(home = settings.get(), compilerArgs = extraArgsArray, sourceModules = sourceModules),
             exitCode = ExitCode.OK,  // TODO check cinterop error behavior (for ex, def file is corrupted)
