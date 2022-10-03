@@ -156,7 +156,6 @@ val unzipJsShell by task<Copy> {
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
 val typescriptTestsDir = testDataDir.resolve("typescript-export")
 
-
 val installTsDependencies = task<NpmTask>("installTsDependencies") {
     workingDir.set(testDataDir)
     args.set(listOf("install"))

@@ -240,6 +240,14 @@ public external interface JsClass<T : kotlin.Any> {
 @kotlin.SinceKotlin(version = "1.3")
 public final annotation class JsExport : kotlin.Annotation {
     public constructor JsExport()
+
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR})
+    @kotlin.SinceKotlin(version = "1.8")
+    public final annotation class Ignore : kotlin.Annotation {
+        public constructor Ignore()
+    }
 }
 
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)

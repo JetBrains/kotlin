@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.js.PredefinedAnnotation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtAnnotationEntry;
@@ -41,6 +42,7 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.isEf
 public final class AnnotationsUtils {
     public static final FqName JS_NAME = new FqName("kotlin.js.JsName");
     private static final FqName JS_EXPORT = new FqName("kotlin.js.JsExport");
+    private static final FqName JS_EXPORT_IGNORE = new FqName("kotlin.js.JsExport.Ignore");
     public static final FqName JS_MODULE_ANNOTATION = new FqName("kotlin.js.JsModule");
     private static final FqName JS_NON_MODULE_ANNOTATION = new FqName("kotlin.js.JsNonModule");
     public static final FqName JS_QUALIFIER_ANNOTATION = new FqName("kotlin.js.JsQualifier");
@@ -122,6 +124,7 @@ public final class AnnotationsUtils {
             if (memberDescriptor.getVisibility() != DescriptorVisibilities.PUBLIC) return false;
         }
 
+        if (hasAnnotationOrInsideAnnotatedClass(descriptor, JS_EXPORT_IGNORE)) return false;
         if (hasAnnotationOrInsideAnnotatedClass(descriptor, JS_EXPORT)) return true;
 
         if (CollectionsKt.any(getContainingFileAnnotations(bindingContext, descriptor), annotation ->

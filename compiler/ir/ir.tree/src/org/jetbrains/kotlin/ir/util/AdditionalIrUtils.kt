@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrClassPublicSymbolImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -89,11 +90,17 @@ val IrClass.packageFqName: FqName?
     get() = symbol.signature?.packageFqName() ?: parent.getPackageFragment()?.fqName
 
 fun IrDeclarationWithName.hasEqualFqName(fqName: FqName): Boolean =
-    name == fqName.shortName() && when (val parent = parent) {
+    symbol.hasEqualFqName(fqName) || name == fqName.shortName() && when (val parent = parent) {
         is IrPackageFragment -> parent.fqName == fqName.parent()
         is IrDeclarationWithName -> parent.hasEqualFqName(fqName.parent())
         else -> false
     }
+
+fun IrSymbol.hasEqualFqName(fqName: FqName): Boolean {
+    return this is IrClassPublicSymbolImpl && with(signature as? IdSignature.CommonSignature ?: return false) {
+        FqName("$packageFqName.$declarationFqName") == fqName
+    }
+}
 
 fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
     any { it.annotationClass.hasEqualFqName(fqName) }

@@ -190,7 +190,18 @@ public annotation class JsQualifier(val value: String)
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, PROPERTY, FUNCTION, FILE)
 @SinceKotlin("1.3")
-public actual annotation class JsExport
+public actual annotation class JsExport {
+    /*
+    * The annotation prevents exporting the annotated member of an exported class.
+    * This annotation is experimental, meaning that the restrictions mentioned above are subject to change.
+    */
+    @ExperimentalJsExport
+    @Retention(AnnotationRetention.BINARY)
+    @Target(CLASS, PROPERTY, FUNCTION, CONSTRUCTOR)
+    @SinceKotlin("1.8")
+    public actual annotation class Ignore
+}
+
 
 /**
  * Forces a top-level property to be initialized eagerly, opposed to lazily on the first access to file and/or property.
