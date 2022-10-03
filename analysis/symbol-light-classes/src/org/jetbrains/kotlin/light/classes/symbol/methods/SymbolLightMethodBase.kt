@@ -43,7 +43,7 @@ internal abstract class SymbolLightMethodBase(
 
     override fun getReturnTypeElement(): PsiTypeElement? = null
 
-    override fun setName(p0: String): PsiElement = cannotModify()
+    override fun setName(name: String): PsiElement = cannotModify()
 
     override fun isVarArgs() = PsiImplUtil.isVarArgs(this)
 
