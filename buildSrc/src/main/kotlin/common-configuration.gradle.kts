@@ -171,6 +171,7 @@ fun Project.configureKotlinCompilationOptions() {
         )
 
         val projectsWithEnabledContextReceivers: List<String> by rootProject.extra
+        val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib: List<String> by rootProject.extra
 
         @Suppress("SuspiciousCollectionReassignment", "DEPRECATION")
         tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile>().configureEach {
@@ -195,6 +196,9 @@ fun Project.configureKotlinCompilationOptions() {
                 }
                 if (project.path in projectsWithEnabledContextReceivers) {
                     freeCompilerArgs += "-Xcontext-receivers"
+                }
+                if (project.path in projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib) {
+                    freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction"
                 }
 
                 if (project.path == ":kotlin-util-klib") {

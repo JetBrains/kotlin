@@ -91,9 +91,26 @@ fun <T> sequenceOfLazyValues(vararg elements: () -> T): Sequence<T> = elements.a
 
 fun <T1, T2> Pair<T1, T2>.swap(): Pair<T2, T1> = Pair(second, first)
 
+@RequiresOptIn(
+    message ="""
+        Usage of this function is unsafe because it does not have native compiler support
+         This means that compiler won't report UNCHECKED_CAST, CAST_NEVER_SUCCEED or similar
+         diagnostics in case of error cast (which can happen immediately or after some
+         refactoring of class hierarchy)
+        Consider using regular `as` and `as?`
+    """,
+    level = RequiresOptIn.Level.ERROR
+)
+annotation class UnsafeCastFunction
+
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+@UnsafeCastFunction
 inline fun <reified T : Any> Any?.safeAs(): @kotlin.internal.NoInfer T? = this as? T
+
+@UnsafeCastFunction
 inline fun <reified T : Any> Any?.cast(): T = this as T
+
+@UnsafeCastFunction
 inline fun <reified T : Any> Any?.assertedCast(message: () -> String): T = this as? T ?: throw AssertionError(message())
 
 fun <T : Any> constant(calculator: () -> T): T {

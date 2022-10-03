@@ -52,6 +52,7 @@ compileKotlin {
                 "-Xno-optimized-callable-references",
                 "-Xno-kotlin-nothing-value-exception",
                 "-opt-in=kotlin.RequiresOptIn",
+                "-opt-in=org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction",
                 "-Xno-new-java-annotation-targets",
         ]
         moduleName = "kotlin-reflection"

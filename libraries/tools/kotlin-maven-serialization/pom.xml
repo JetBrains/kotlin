@@ -86,6 +86,7 @@
                         <arg>-Xjvm-default=enable</arg>
                         <arg>-opt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI</arg>
                         <arg>-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi</arg>
+                        <arg>-opt-in=org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction</arg>
                         <arg>-Xcontext-receivers</arg>
                     </args>
                 </configuration>
