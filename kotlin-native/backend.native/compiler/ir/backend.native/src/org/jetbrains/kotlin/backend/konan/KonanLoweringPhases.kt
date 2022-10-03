@@ -40,22 +40,22 @@ private fun makeKonanFileLoweringPhase(
         lowering: (Context) -> FileLoweringPass,
         name: String,
         description: String,
-        prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet()
+        prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet()
 ) = makeIrFilePhase(lowering, name, description, prerequisite, actions = filePhaseActions)
 
 private fun makeKonanModuleLoweringPhase(
         lowering: (Context) -> FileLoweringPass,
         name: String,
         description: String,
-        prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet()
+        prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet()
 ) = makeIrModulePhase(lowering, name, description, prerequisite, actions = modulePhaseActions)
 
 internal fun makeKonanFileOpPhase(
         op: (Context, IrFile) -> Unit,
         name: String,
         description: String,
-        prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet()
-) = NamedCompilerPhase(
+        prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet()
+) = SameTypeNamedCompilerPhase(
         name, description, prerequisite, nlevels = 0,
         lower = object : SameTypeCompilerPhase<Context, IrFile> {
             override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<IrFile>, context: Context, input: IrFile): IrFile {
@@ -70,8 +70,8 @@ internal fun makeKonanModuleOpPhase(
         op: (Context, IrModuleFragment) -> Unit,
         name: String,
         description: String,
-        prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet()
-) = NamedCompilerPhase(
+        prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet()
+) = SameTypeNamedCompilerPhase(
         name, description, prerequisite, nlevels = 0,
         lower = object : SameTypeCompilerPhase<Context, IrModuleFragment> {
             override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {
