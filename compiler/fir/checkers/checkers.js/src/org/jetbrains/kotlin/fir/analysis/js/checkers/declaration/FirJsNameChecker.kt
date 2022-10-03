@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenFunctions
+import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenCallables
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
@@ -32,7 +32,7 @@ object FirJsNameChecker : FirBasicDeclarationChecker() {
             reporter.reportOn(jsNameSource, FirJsErrors.JS_NAME_PROHIBITED_FOR_NAMED_NATIVE, context)
         }
 
-        if (declaration is FirCallableDeclaration && declaration.symbol.directOverriddenFunctions(context).isNotEmpty()) {
+        if (declaration is FirCallableDeclaration && declaration.symbol.directOverriddenCallables(context).isNotEmpty()) {
             reporter.reportOn(jsNameSource, FirJsErrors.JS_NAME_PROHIBITED_FOR_OVERRIDE, context)
         }
 

@@ -815,7 +815,7 @@ fun FirBasedSymbol<*>.getContainingClassSymbol(session: FirSession): FirClassLik
 
 fun FirDeclaration.getContainingClassSymbol(session: FirSession) = symbol.getContainingClassSymbol(session)
 
-fun FirPropertySymbol.directOverriddenFunctions(session: FirSession, scopeSession: ScopeSession): List<FirPropertySymbol> {
+fun FirPropertySymbol.directOverriddenProperties(session: FirSession, scopeSession: ScopeSession): List<FirPropertySymbol> {
     val classSymbol = getContainingClassSymbol(session) as? FirClassSymbol ?: return emptyList()
     val scope = classSymbol.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
 
@@ -831,8 +831,8 @@ fun FirNamedFunctionSymbol.directOverriddenFunctions(session: FirSession, scopeS
     return scope.getDirectOverriddenFunctions(this, true)
 }
 
-fun FirCallableSymbol<*>.directOverriddenFunctions(session: FirSession, scopeSession: ScopeSession) = when (this) {
-    is FirPropertySymbol -> directOverriddenFunctions(session, scopeSession)
+fun FirCallableSymbol<*>.directOverriddenCallables(session: FirSession, scopeSession: ScopeSession) = when (this) {
+    is FirPropertySymbol -> directOverriddenProperties(session, scopeSession)
     is FirNamedFunctionSymbol -> directOverriddenFunctions(session, scopeSession)
     else -> emptyList()
 }

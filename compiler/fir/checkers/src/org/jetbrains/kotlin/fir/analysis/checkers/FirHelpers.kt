@@ -660,7 +660,11 @@ fun getActualTargetList(annotated: FirDeclaration): AnnotationTargetList {
 
 private typealias TargetLists = AnnotationTargetLists
 
-fun FirCallableSymbol<*>.directOverriddenFunctions(context: CheckerContext) = directOverriddenFunctions(context.session, context.sessionHolder.scopeSession)
+fun FirNamedFunctionSymbol.directOverriddenFunctions(context: CheckerContext) =
+    directOverriddenFunctions(context.session, context.sessionHolder.scopeSession)
+
+fun FirCallableSymbol<*>.directOverriddenCallables(context: CheckerContext) =
+    directOverriddenCallables(context.session, context.sessionHolder.scopeSession)
 
 fun FirBasedSymbol<*>.isEffectivelyExternal(context: CheckerContext) = isEffectivelyExternal(context.session)
 
@@ -675,7 +679,7 @@ val CheckerContext.isTopLevel get() = containingDeclarations.lastOrNull() is Fir
 fun FirFunctionSymbol<*>.isOverridingExternalWithOptionalParams(context: CheckerContext): Boolean {
     if (!isSubstitutionOrIntersectionOverride && modality == Modality.ABSTRACT) return false
 
-    val overridden = directOverriddenFunctions(context).mapNotNull { it as? FirFunctionSymbol<*> }
+    val overridden = (this as? FirNamedFunctionSymbol)?.directOverriddenFunctions(context) ?: return false
 
     for (overriddenFunction in overridden.filter { it.isEffectivelyExternal(context) }) {
         if (overriddenFunction.valueParameterSymbols.any { it.hasDefaultValue }) return true
