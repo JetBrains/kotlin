@@ -334,7 +334,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
     }
 
     private fun wrapWhenEntryExpressionsAsSpecialCallArguments(expression: KtWhenExpression): List<KtExpression> {
-        val psiFactory = KtPsiFactory(expression)
+        val psiFactory = KtPsiFactory(expression.project)
         return expression.entries.mapNotNull { whenEntry ->
             whenEntry.expression?.let { psiFactory.wrapInABlockWrapper(it) }
         }

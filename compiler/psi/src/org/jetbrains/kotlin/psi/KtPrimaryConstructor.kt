@@ -34,7 +34,7 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
     override fun getContainingClassOrObject() = parent as KtClassOrObject
 
     private fun getOrCreateConstructorKeyword(): PsiElement {
-        return getConstructorKeyword() ?: addBefore(KtPsiFactory(this).createConstructorKeyword(), valueParameterList!!)
+        return getConstructorKeyword() ?: addBefore(KtPsiFactory(project).createConstructorKeyword(), valueParameterList!!)
     }
 
     fun removeRedundantConstructorKeywordAndSpace() {
@@ -53,7 +53,7 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
             }
         } else {
             if (modifier == KtTokens.PUBLIC_KEYWORD) return
-            val newModifierList = KtPsiFactory(this).createModifierList(modifier)
+            val newModifierList = KtPsiFactory(project).createModifierList(modifier)
             addBefore(newModifierList, getOrCreateConstructorKeyword())
         }
     }

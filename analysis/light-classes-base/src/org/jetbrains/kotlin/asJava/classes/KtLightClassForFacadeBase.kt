@@ -146,7 +146,7 @@ abstract class KtLightClassForFacadeBase constructor(
                     continue
                 }
 
-                val psiFactory = KtPsiFactory(this)
+                val psiFactory = KtPsiFactory(project)
                 val annotationText = "${JVM_NAME_SHORT}(\"$name\")"
                 val newFileAnnotationList = psiFactory.createFileAnnotationListWithAnnotation(annotationText)
                 val annotationList = file.fileAnnotationList

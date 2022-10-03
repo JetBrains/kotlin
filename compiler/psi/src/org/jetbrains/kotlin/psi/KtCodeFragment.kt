@@ -151,7 +151,7 @@ abstract class KtCodeFragment(
 
     fun importsAsImportList(): KtImportList? {
         if (imports.isNotEmpty() && context != null) {
-            return KtPsiFactory(this).createAnalyzableFile("imports_for_codeFragment.kt", imports.joinToString("\n"), context).importList
+            return KtPsiFactory.contextual(context).createFile("imports_for_codeFragment.kt", imports.joinToString("\n")).importList
         }
         return null
     }
