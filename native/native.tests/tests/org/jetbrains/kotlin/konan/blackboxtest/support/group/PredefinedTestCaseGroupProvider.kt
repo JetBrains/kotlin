@@ -69,7 +69,7 @@ internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) 
                     ignoredTests = predefinedTestCase.ignoredTests.toSet()
                 )
             )
-            testCase.initialize(null)
+            testCase.initialize(null, null)
 
             TestCaseGroup.Default(disabledTestCaseIds = emptySet(), testCases = listOf(testCase))
         }

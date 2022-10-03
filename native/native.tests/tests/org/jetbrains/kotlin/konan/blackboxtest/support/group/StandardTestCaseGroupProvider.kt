@@ -219,7 +219,10 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             else
                 WithTestRunnerExtras(runnerType = parseTestRunner(registeredDirectives, location))
         )
-        testCase.initialize(findSharedModule = null)
+        testCase.initialize(
+            givenModules = settings.get<CustomKlibs>().klibs.mapToSet(TestModule::Given),
+            findSharedModule = null
+        )
 
         return testCase
     }

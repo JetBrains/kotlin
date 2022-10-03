@@ -116,7 +116,7 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
             extras = DEFAULT_EXTRAS
         ).apply {
-            initialize(null)
+            initialize(null, null)
         }
     }
 

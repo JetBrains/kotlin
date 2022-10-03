@@ -119,7 +119,7 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
         checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
         extras = DEFAULT_EXTRAS
     ).apply {
-        initialize(null)
+        initialize(null, null)
     }
 
     private fun createLibraryDependencies(klibFiles: Iterable<File>): Iterable<TestCompilationDependency<KLIB>> =

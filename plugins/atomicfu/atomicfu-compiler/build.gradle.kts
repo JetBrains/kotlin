@@ -29,7 +29,7 @@ val atomicfuJsClasspath by configurations.creating {
 
 val atomicfuClasspath by configurations.creating
 
-val atomicfuNativeClasspath by configurations.creating
+val atomicfuNativeKlib by configurations.creating
 
 val atomicfuJsIrRuntimeForTests by configurations.creating {
     attributes {
@@ -94,7 +94,7 @@ dependencies {
     atomicfuJsClasspath("org.jetbrains.kotlinx:atomicfu-js:0.17.1") { isTransitive = false }
     atomicfuJsIrRuntimeForTests(project(":kotlinx-atomicfu-runtime"))  { isTransitive = false }
     atomicfuClasspath("org.jetbrains.kotlinx:atomicfu:0.18.3") { isTransitive = false }
-    atomicfuNativeClasspath("org.jetbrains.kotlinx:atomicfu-macosx64:0.18.3") { isTransitive = false }
+    atomicfuNativeKlib("org.jetbrains.kotlinx:atomicfu-macosx64:0.18.3") { isTransitive = false } // TODO: this dependency should be declared in target-neutral way (how?)
 
     embedded(project(":kotlinx-atomicfu-runtime")) {
         attributes {
@@ -160,4 +160,9 @@ fun Test.setUpJsIrBoxTests() {
     systemProperty("kotlin.js.test.root.out.dir", "$buildDir/")
 }
 
-val nativeBoxTest = nativeTest("nativeBoxTest", "codegen", atomicfuNativeClasspath)
+val nativeBoxTest = nativeTest(
+    taskName = "nativeBoxTest",
+    tag = "codegen",
+    customDependencies = listOf(atomicfuClasspath),
+    customKlibDependencies = listOf(atomicfuNativeKlib)
+)
