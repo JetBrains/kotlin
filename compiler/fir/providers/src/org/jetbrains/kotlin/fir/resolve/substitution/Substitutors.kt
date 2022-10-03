@@ -59,7 +59,6 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
 
     private fun ConeKotlinType.substituteRecursive(): ConeKotlinType? {
         return when (this) {
-            is ConeErrorType -> return null
             is ConeClassLikeType -> this.substituteArguments()
             is ConeLookupTagBasedType -> return null
             is ConeFlexibleType -> this.substituteBounds()?.let {
@@ -131,11 +130,9 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
         return null
     }
 
-    private fun ConeKotlinType.substituteArguments(): ConeKotlinType? {
+    private fun ConeClassLikeType.substituteArguments(): ConeKotlinType? {
         val newArguments by lazy { arrayOfNulls<ConeTypeProjection>(typeArguments.size) }
         var initialized = false
-
-        require(this is ConeClassLikeType) { "Unknown type to substitute: $this, ${this::class}" }
 
         for ((index, typeArgument) in this.typeArguments.withIndex()) {
             newArguments[index] = substituteArgument(typeArgument, index)?.also {
@@ -155,6 +152,12 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
                     lookupTag,
                     newArguments as Array<ConeTypeProjection>,
                     nullability.isNullable,
+                    attributes
+                )
+                is ConeErrorType -> ConeErrorType(
+                    diagnostic,
+                    isUninferredParameter,
+                    newArguments as Array<ConeTypeProjection>,
                     attributes
                 )
                 else -> error("Unknown class-like type to substitute: $this, ${this::class}")
