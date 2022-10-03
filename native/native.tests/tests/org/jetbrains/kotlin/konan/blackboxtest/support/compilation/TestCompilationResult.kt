@@ -15,10 +15,10 @@ internal sealed interface TestCompilationResult<A : TestCompilationArtifact> {
 
     sealed interface Failure : ImmediateResult<Nothing>
 
-    data class Success<A : TestCompilationArtifact>(val resultingArtifact: A, override val loggedData: LoggedData.CompilerCall) :
+    data class Success<A : TestCompilationArtifact>(val resultingArtifact: A, override val loggedData: LoggedData.CompilationToolCall) :
         ImmediateResult<A>
 
-    data class CompilerFailure(override val loggedData: LoggedData.CompilerCall) : Failure
+    data class CompilerFailure(override val loggedData: LoggedData.CompilationToolCall) : Failure
     data class UnexpectedFailure(override val loggedData: LoggedData.CompilerCallUnexpectedFailure) : Failure
     data class DependencyFailures(val causes: Set<Failure>) : TestCompilationResult<Nothing>
 

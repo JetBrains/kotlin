@@ -42,10 +42,12 @@ abstract class AbstractNativeInteropIndexerTest : AbstractNativeInteropIndexerBa
             listOf("-compiler-option", "-F${testDataDir.canonicalPath}")
 
         val testCase: TestCase = generateCInteropTestCaseWithSingleDef(defFile, includeFrameworkArgs + fmodulesArgs)
-        val klib: KLIB = testCase.cinteropToLibrary().resultingArtifact
-        val klibContents = klib.getContents()
+        val testCompilationResult = testCase.cinteropToLibrary()
+        val klibContents = testCompilationResult.resultingArtifact.getContents()
 
         val expectedContents = goldenFile.readText()
-        assertEquals(StringUtilRt.convertLineSeparators(expectedContents), StringUtilRt.convertLineSeparators(klibContents))
+        assertEquals(StringUtilRt.convertLineSeparators(expectedContents), StringUtilRt.convertLineSeparators(klibContents)) {
+            "Test failed. CInterop compilation result was: $testCompilationResult"
+        }
     }
 }

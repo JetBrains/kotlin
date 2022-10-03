@@ -81,8 +81,36 @@ internal abstract class LoggedData {
         }
     }
 
-    class CompilerCall(
-        private val parameters: CompilerParameters,
+    class CInteropParameters(
+        private val extraArgs: Array<String>,
+        private val sourceModules: Collection<TestModule>,
+        private val environment: JVMEnvironment = JVMEnvironment() // Capture environment.
+    ) : LoggedData() {
+        private val testDataFiles: List<File>
+            get() = buildList {
+                sourceModules.forEach { module ->
+                    if (module !is TestModule.Exclusive) return@forEach
+                    this += module.testCase.id.safeAs<TestCaseId.TestDataFile>()?.file ?: return@forEach
+                }
+                sort()
+            }
+
+        override fun computeText() = buildString {
+            appendArguments("CINTEROP INVOCATION EXTRA ARGUMENTS:", extraArgs.toList())
+            appendLine()
+            appendLine(environment)
+
+            val testDataFiles = testDataFiles
+            if (testDataFiles.isNotEmpty()) {
+                appendLine()
+                appendList("TEST DATA FILES (COMPILED TOGETHER):", testDataFiles)
+            }
+        }
+    }
+
+    class CompilationToolCall(
+        private val toolName: String,
+        private val parameters: LoggedData,
         private val exitCode: ExitCode,
         private val compilerOutput: String,
         private val compilerOutputHasErrors: Boolean,
@@ -96,16 +124,16 @@ internal abstract class LoggedData {
 
             return buildString {
                 if (problems.isNotEmpty()) {
-                    appendLine("COMPILATION PROBLEMS:")
+                    appendLine("$toolName PROBLEMS:")
                     problems.forEach(::appendLine)
                     appendLine()
                 }
 
-                appendLine("COMPILER CALL:")
+                appendLine("$toolName CALL:")
                 appendLine("- Exit code: ${exitCode.code} (${exitCode.name})")
                 appendDuration(duration)
                 appendLine()
-                appendPotentiallyLargeOutput(compilerOutput, "RAW COMPILER OUTPUT", truncateLargeOutput = false)
+                appendPotentiallyLargeOutput(compilerOutput, "RAW $toolName OUTPUT", truncateLargeOutput = false)
                 appendLine()
                 appendLine(parameters)
             }
@@ -115,7 +143,7 @@ internal abstract class LoggedData {
     class CompilerCallUnexpectedFailure(parameters: CompilerParameters, throwable: Throwable) : UnexpectedFailure(parameters, throwable)
 
     class TestRunParameters(
-        private val compilerCall: CompilerCall,
+        private val compilationToolCall: CompilationToolCall,
         private val testCaseId: TestCaseId?,
         private val runArgs: Iterable<String>,
         private val runParameters: List<TestRunParameter>?
@@ -145,7 +173,7 @@ internal abstract class LoggedData {
                 appendLine(expectedOutputDataFile)
                 appendLine()
             }
-            appendLine(compilerCall)
+            appendLine(compilationToolCall)
         }
     }
 
