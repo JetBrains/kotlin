@@ -99,15 +99,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     val phaseConfig = config.phaseConfig
 
-    private val packageScope by lazy { builtIns.builtInsModule.getPackage(KonanFqNames.internalPackageName).memberScope }
-
-    val nativePtr by lazy { packageScope.getContributedClassifier(NATIVE_PTR_NAME) as ClassDescriptor }
-    val nonNullNativePtr by lazy { packageScope.getContributedClassifier(NON_NULL_NATIVE_PTR_NAME) as ClassDescriptor }
-    val getNativeNullPtr  by lazy { packageScope.getContributedFunctions("getNativeNullPtr").single() }
-    val immutableBlobOf by lazy {
-        builtIns.builtInsModule.getPackage(KonanFqNames.packageName).memberScope.getContributedFunctions("immutableBlobOf").single()
-    }
-
     val innerClassesSupport by lazy { InnerClassesSupport(mapping, irFactory) }
     val bridgesSupport by lazy { BridgesSupport(mapping, irBuiltIns, irFactory) }
     val inlineFunctionsSupport by lazy { InlineFunctionsSupport(mapping) }
@@ -329,12 +320,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         }
     }
 }
-
-private fun MemberScope.getContributedClassifier(name: String) =
-        this.getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
-
-private fun MemberScope.getContributedFunctions(name: String) =
-        this.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
 
 internal class ContextLogger(val context: LoggingContext) {
     operator fun String.unaryPlus() = context.log { this }
