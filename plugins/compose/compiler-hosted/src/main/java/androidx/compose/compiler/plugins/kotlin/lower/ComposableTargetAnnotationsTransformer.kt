@@ -287,7 +287,7 @@ class ComposableTargetAnnotationsTransformer(
         val owner = currentOwner
         if (
             owner == null || (
-                    !expression.isTransformedComposableCall() &&
+                    !expression.isComposableCall() &&
                     !expression.hasComposableArguments()
                 ) || when (expression.symbol.owner.fqNameWhenAvailable) {
                     ComposeFqNames.getCurrentComposerFullName,

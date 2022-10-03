@@ -19,8 +19,6 @@ object ComposeWritableSlices {
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val INFERRED_COMPOSABLE_LITERAL: WritableSlice<KtLambdaExpression, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
-    val IS_COMPOSABLE_CALL: WritableSlice<IrAttributeContainer, Boolean> =
-        BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val IS_SYNTHETIC_COMPOSABLE_CALL: WritableSlice<IrFunctionAccessExpression, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val IS_STATIC_FUNCTION_EXPRESSION: WritableSlice<IrExpression, Boolean> =
