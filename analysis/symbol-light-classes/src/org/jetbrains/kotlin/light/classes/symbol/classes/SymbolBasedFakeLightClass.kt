@@ -12,11 +12,7 @@ import org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
-//TODO Make fake class symbol based
-
-class SymbolBasedFakeLightClass(kotlinOrigin: KtClassOrObject) :
-    KtFakeLightClass(kotlinOrigin) {
-
+class SymbolBasedFakeLightClass(kotlinOrigin: KtClassOrObject) : KtFakeLightClass(kotlinOrigin) {
     override fun copy(): KtFakeLightClass = SymbolBasedFakeLightClass(kotlinOrigin)
 
     private val _containingClass: KtFakeLightClass? by lazy {
