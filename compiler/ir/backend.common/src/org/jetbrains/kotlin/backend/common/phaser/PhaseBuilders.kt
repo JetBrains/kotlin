@@ -23,7 +23,7 @@ private class CompositePhase<Context : CommonBackendContext, Input, Output>(
         for ((previous, next) in phases.zip(phases.drop(1))) {
             if (next !is SameTypeCompilerPhase<*, *>) {
                 // Discard `stickyPostconditions`, they are useless since data type is changing.
-                currentState = currentState.changeType()
+                currentState = currentState.changePhaserStateType()
             }
             currentState.stickyPostconditions.addAll(previous.stickyPostconditions)
             result = next.invoke(phaseConfig, currentState, context, result)
@@ -32,7 +32,7 @@ private class CompositePhase<Context : CommonBackendContext, Input, Output>(
         return result as Output
     }
 
-    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *>>> =
+    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, AbstractNamedCompilerPhase<Context, *, *>>> =
         phases.flatMap { it.getNamedSubphases(startDepth) }
 
     override val stickyPostconditions get() = phases.last().stickyPostconditions
@@ -51,14 +51,14 @@ fun <Context : CommonBackendContext, Element : IrElement> makeCustomPhase(
     op: (Context, Element) -> Unit,
     name: String,
     description: String,
-    prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
+    prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet(),
     preconditions: Set<Checker<Element>> = emptySet(),
     postconditions: Set<Checker<Element>> = emptySet(),
     stickyPostconditions: Set<Checker<Element>> = emptySet(),
     actions: Set<Action<Element, Context>> = setOf(defaultDumper, validationAction),
     nlevels: Int = 1
-): NamedCompilerPhase<Context, Element> =
-    NamedCompilerPhase(
+): SameTypeNamedCompilerPhase<Context, Element> =
+    SameTypeNamedCompilerPhase(
         name, description, prerequisite, CustomPhaseAdapter(op), preconditions, postconditions, stickyPostconditions, actions, nlevels,
     )
 
@@ -74,11 +74,11 @@ private class CustomPhaseAdapter<Context : CommonBackendContext, Element>(
 fun <Context : CommonBackendContext> namedUnitPhase(
     name: String,
     description: String,
-    prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
+    prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet(),
     nlevels: Int = 1,
     lower: CompilerPhase<Context, Unit, Unit>
-): NamedCompilerPhase<Context, Unit> =
-    NamedCompilerPhase(
+): SameTypeNamedCompilerPhase<Context, Unit> =
+    SameTypeNamedCompilerPhase(
         name, description, prerequisite, lower, nlevels = nlevels
     )
 
@@ -86,9 +86,9 @@ fun <Context : CommonBackendContext> namedUnitPhase(
 fun <Context : CommonBackendContext> namedOpUnitPhase(
     name: String,
     description: String,
-    prerequisite: Set<NamedCompilerPhase<Context, *>>,
+    prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>>,
     op: Context.() -> Unit
-): NamedCompilerPhase<Context, Unit> = namedUnitPhase(
+): SameTypeNamedCompilerPhase<Context, Unit> = namedUnitPhase(
     name, description, prerequisite,
     nlevels = 0,
     lower = object : SameTypeCompilerPhase<Context, Unit> {
@@ -102,13 +102,13 @@ fun <Context : CommonBackendContext> makeIrFilePhase(
     lowering: (Context) -> FileLoweringPass,
     name: String,
     description: String,
-    prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
+    prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet(),
     preconditions: Set<Checker<IrFile>> = emptySet(),
     postconditions: Set<Checker<IrFile>> = emptySet(),
     stickyPostconditions: Set<Checker<IrFile>> = emptySet(),
     actions: Set<Action<IrFile, Context>> = setOf(defaultDumper, validationAction)
-): NamedCompilerPhase<Context, IrFile> =
-    NamedCompilerPhase(
+): SameTypeNamedCompilerPhase<Context, IrFile> =
+    SameTypeNamedCompilerPhase(
         name, description, prerequisite, FileLoweringPhaseAdapter(lowering), preconditions, postconditions, stickyPostconditions, actions,
         nlevels = 0,
     )
@@ -126,13 +126,13 @@ fun <Context : CommonBackendContext> makeIrModulePhase(
     lowering: (Context) -> FileLoweringPass,
     name: String,
     description: String,
-    prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
+    prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet(),
     preconditions: Set<Checker<IrModuleFragment>> = emptySet(),
     postconditions: Set<Checker<IrModuleFragment>> = emptySet(),
     stickyPostconditions: Set<Checker<IrModuleFragment>> = emptySet(),
     actions: Set<Action<IrModuleFragment, Context>> = setOf(defaultDumper, validationAction)
-): NamedCompilerPhase<Context, IrModuleFragment> =
-    NamedCompilerPhase(
+): SameTypeNamedCompilerPhase<Context, IrModuleFragment> =
+    SameTypeNamedCompilerPhase(
         name, description, prerequisite, ModuleLoweringPhaseAdapter(lowering), preconditions, postconditions, stickyPostconditions, actions,
         nlevels = 0,
     )
