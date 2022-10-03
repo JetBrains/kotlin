@@ -1,4 +1,4 @@
-// ES_CLASSES
+// ES6_MODE
 // IGNORE_BACKEND: JS
 
 open external class E(x: Int, y: Int) {

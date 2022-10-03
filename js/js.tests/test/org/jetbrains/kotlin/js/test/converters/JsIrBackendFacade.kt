@@ -75,7 +75,7 @@ class JsIrBackendFacade(
         val splitPerFile = JsEnvironmentConfigurationDirectives.SPLIT_PER_FILE in module.directives
         val perModule = JsEnvironmentConfigurationDirectives.PER_MODULE in module.directives
         val keep = module.directives[JsEnvironmentConfigurationDirectives.KEEP].toSet()
-        val es6Mode = JsEnvironmentConfigurationDirectives.ES_CLASSES in module.directives
+        val es6Mode = JsEnvironmentConfigurationDirectives.ES6_MODE in module.directives
 
         val granularity = when {
             !firstTimeCompilation -> JsGenerationGranularity.WHOLE_PROGRAM

@@ -1,4 +1,4 @@
-// ES_CLASSES
+// ES6_MODE
 // IGNORE_BACKEND: JS
 
 var sideEffect = ""

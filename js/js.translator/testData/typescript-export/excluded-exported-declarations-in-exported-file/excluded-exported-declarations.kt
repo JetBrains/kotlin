@@ -14,18 +14,18 @@
 package foo
 
 
-@JsExport.Ignore
+.Ignore
 val baz: String = "Baz"
 
 
-@JsExport.Ignore
+.Ignore
 fun inter(): String = "inter"
 
 
-@JsExport.Ignore
+.Ignore
 class NotExportableNestedInsideInterface
 
-@JsExport.Ignore
+.Ignore
 
 object Comanion {
     val foo: String ="FOO"
@@ -37,27 +37,27 @@ val foo: String = "Foo"
 
 fun bar() = "Bar"
 
-@JsExport.Ignore
+.Ignore
 
 inline fun <A, reified B> A.notExportableReified(): Boolean = this is B
 
-@JsExport.Ignore
+.Ignore
 
 suspend fun notExportableSuspend(): String = "SuspendResult"
 
 
-@JsExport.Ignore
+.Ignore
 fun notExportableReturn(): List<String> = listOf("1", "2")
 
 
-@JsExport.Ignore
+.Ignore
 val String.notExportableExentsionProperty: String
     get() = "notExportableExentsionProperty"
 
 
-@JsExport.Ignore
+.Ignore
 annotation class NotExportableAnnotation
 
 
-@JsExport.Ignore
+.Ignore
 value class NotExportableInlineClass(val value: Int)

@@ -1,4 +1,4 @@
-// ES_CLASSES
+// ES6_MODE
 // EXPECTED_REACHABLE_NODES: 1343
 abstract class A {
     abstract fun foo(): String
