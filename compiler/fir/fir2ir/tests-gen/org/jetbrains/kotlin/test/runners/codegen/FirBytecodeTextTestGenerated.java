@@ -5824,6 +5824,12 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         public void testRegularClassWithMFVC() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/valueClasses/regularClassWithMFVC.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
+
+        @Test
+        @TestMetadata("tryExpressions.kt")
+        public void testTryExpressions() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/valueClasses/tryExpressions.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
     }
 
     @Nested
