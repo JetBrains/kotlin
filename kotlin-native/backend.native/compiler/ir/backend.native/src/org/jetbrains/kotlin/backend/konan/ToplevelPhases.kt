@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SamSuperTypesChecker
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
-import org.jetbrains.kotlin.backend.konan.objcexport.createCodeSpec
-import org.jetbrains.kotlin.backend.konan.objcexport.produceObjCExportInterface
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -88,13 +86,7 @@ internal val createSymbolTablePhase = konanUnitPhase(
 
 internal val objCExportPhase = konanUnitPhase(
         op = {
-            val objcInterface = when {
-                !config.target.family.isAppleFamily -> null
-                config.produce != CompilerOutputKind.FRAMEWORK -> null
-                else -> produceObjCExportInterface(this)
-            }
-            val codeSpec = objcInterface?.createCodeSpec(symbolTable!!)
-            objCExport = ObjCExport(this, objcInterface, codeSpec)
+            objCExport = ObjCExport(this, symbolTable!!)
         },
         name = "ObjCExport",
         description = "Objective-C header generation",
