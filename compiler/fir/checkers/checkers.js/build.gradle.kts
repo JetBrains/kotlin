@@ -6,7 +6,6 @@ plugins {
 }
 
 dependencies {
-//    api(project(":compiler:tests-common-new"))
     api(project(":compiler:fir:checkers"))
     api(project(":compiler:fir:js"))
 
