@@ -97,7 +97,7 @@ class Fir2IrConverter(
         }
 
         if (irGenerationExtensions.isNotEmpty()) {
-            val pluginContext = Fir2IrPluginContext(components)
+            val pluginContext = Fir2IrPluginContext(components, irModuleFragment.descriptor)
             for (extension in irGenerationExtensions) {
                 extension.generate(irModuleFragment, pluginContext)
             }
