@@ -42,15 +42,15 @@ class PhaseConfig(
     val verbose: Set<AnyNamedPhase> = emptySet(),
     val toDumpStateBefore: Set<AnyNamedPhase> = emptySet(),
     val toDumpStateAfter: Set<AnyNamedPhase> = emptySet(),
-    val dumpToDirectory: String? = null,
-    val dumpOnlyFqName: String? = null,
+    override val dumpToDirectory: String? = null,
+    override val dumpOnlyFqName: String? = null,
     val toValidateStateBefore: Set<AnyNamedPhase> = emptySet(),
     val toValidateStateAfter: Set<AnyNamedPhase> = emptySet(),
     val namesOfElementsExcludedFromDumping: Set<String> = emptySet(),
-    val needProfiling: Boolean = false,
-    val checkConditions: Boolean = false,
-    val checkStickyConditions: Boolean = false
-) {
+    override val needProfiling: Boolean = false,
+    override val checkConditions: Boolean = false,
+    override val checkStickyConditions: Boolean = false
+) : PhaseConfigurationService {
     fun toBuilder() = PhaseConfigBuilder(compoundPhase).also {
         it.enabled.addAll(initiallyEnabled)
         it.verbose.addAll(verbose)
@@ -65,6 +65,24 @@ class PhaseConfig(
         it.checkConditions = checkConditions
         it.checkStickyConditions = checkStickyConditions
     }
+
+    override fun isEnabled(phase: AnyNamedPhase): Boolean =
+        phase in enabled
+
+    override fun isVerbose(phase: AnyNamedPhase): Boolean =
+        phase in verbose
+
+    override fun shouldDumpStateBefore(phase: AnyNamedPhase): Boolean =
+        phase in toDumpStateBefore
+
+    override fun shouldDumpStateAfter(phase: AnyNamedPhase): Boolean =
+        phase in toDumpStateAfter
+
+    override fun shouldValidateStateBefore(phase: AnyNamedPhase): Boolean =
+        phase in toValidateStateBefore
+
+    override fun shouldValidateStateAfter(phase: AnyNamedPhase): Boolean =
+        phase in toValidateStateAfter
 
     private val enabledMut = initiallyEnabled.toMutableSet()
 
@@ -90,7 +108,7 @@ class PhaseConfig(
         enabledMut.add(phase)
     }
 
-    fun disable(phase: AnyNamedPhase) {
+    override fun disable(phase: AnyNamedPhase) {
         enabledMut.remove(phase)
     }
 
