@@ -34,15 +34,16 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class Fir2IrPluginContext(private val components: Fir2IrComponents) : IrPluginContext {
+class Fir2IrPluginContext(
+    private val components: Fir2IrComponents,
+    descriptor: ModuleDescriptor
+) : IrPluginContext {
     companion object {
         private const val ERROR_MESSAGE = "This API is not supported for K2"
     }
 
     @ObsoleteDescriptorBasedAPI
-    @FirIncompatiblePluginAPI
-    override val moduleDescriptor: ModuleDescriptor
-        get() = error(ERROR_MESSAGE)
+    override val moduleDescriptor: ModuleDescriptor = descriptor
 
     @ObsoleteDescriptorBasedAPI
     @FirIncompatiblePluginAPI
