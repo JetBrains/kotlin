@@ -58,7 +58,7 @@ abstract class KtLightMethodImpl protected constructor(
 
         val nameExpression = jvmNameAnnotation?.let { JvmFileClassUtil.getLiteralStringEntryFromAnnotation(it) }
         if (nameExpression != null) {
-            nameExpression.replace(KtPsiFactory(this).createLiteralStringTemplateEntry(name))
+            nameExpression.replace(KtPsiFactory(project).createLiteralStringTemplateEntry(name))
         } else {
             val toRename = kotlinOrigin as? PsiNamedElement ?: cannotModify()
             toRename.setName(newNameForOrigin)

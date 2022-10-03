@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl;
-import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
-import org.jetbrains.kotlin.psi.KtTypeReference;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.TypeResolver;
@@ -532,7 +529,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
 
     private void assertType(String expression, KotlinType expectedType) {
         Project project = getProject();
-        KtExpression ktExpression = KtPsiFactoryKt.KtPsiFactory(project).createExpression(expression);
+        KtExpression ktExpression = new KtPsiFactory(project).createExpression(expression);
         KotlinType type = expressionTypingServices.getType(
                 scopeWithImports, ktExpression, TypeUtils.NO_EXPECTED_TYPE,
                 DataFlowInfoFactory.EMPTY, InferenceSession.Companion.getDefault(),
@@ -562,7 +559,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
 
     private void assertType(LexicalScope scope, String expression, String expectedTypeStr) {
         Project project = getProject();
-        KtExpression ktExpression = KtPsiFactoryKt.KtPsiFactory(project).createExpression(expression);
+        KtExpression ktExpression = new KtPsiFactory(project).createExpression(expression);
         KotlinType type = expressionTypingServices.getType(
                 scope, ktExpression, TypeUtils.NO_EXPECTED_TYPE,
                 DataFlowInfoFactory.EMPTY, InferenceSession.Companion.getDefault(),
@@ -585,7 +582,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
     }
 
     private KotlinType makeType(LexicalScope scope, String typeStr) {
-        KtTypeReference typeReference = KtPsiFactoryKt.KtPsiFactory(getProject()).createType(typeStr);
+        KtTypeReference typeReference = new KtPsiFactory(getProject()).createType(typeStr);
         return typeResolver.resolveTypeWithPossibleIntersections(scope, typeReference, DummyTraces.DUMMY_TRACE);
     }
 }

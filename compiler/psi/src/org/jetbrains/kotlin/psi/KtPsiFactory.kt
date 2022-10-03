@@ -21,14 +21,19 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.checkWithAttachment
 
 @JvmOverloads
-fun KtPsiFactory(project: Project?, markGenerated: Boolean = true): KtPsiFactory = KtPsiFactory(project!!, markGenerated)
+@JvmName("KtPsiFactory")
+@Suppress("FunctionName", "unused")
+@Deprecated("Use 'KtPsiFactory' constructor instead", level = DeprecationLevel.HIDDEN)
+fun KtPsiFactoryOld(project: Project?, markGenerated: Boolean = true): KtPsiFactory = KtPsiFactory(project!!, markGenerated)
 
 @JvmOverloads
-fun KtPsiFactory(elementForProject: PsiElement, markGenerated: Boolean = true): KtPsiFactory =
+@JvmName("KtPsiFactory")
+@Suppress("FunctionName", "unused")
+@Deprecated("Use 'KtPsiFactory' constructor instead", level = DeprecationLevel.HIDDEN)
+fun KtPsiFactoryOld(elementForProject: PsiElement, markGenerated: Boolean = true): KtPsiFactory =
     KtPsiFactory(elementForProject.project, markGenerated)
 
 private const val DO_NOT_ANALYZE_NOTIFICATION = "This file was created by KtPsiFactory and should not be analyzed\n" +
@@ -43,7 +48,25 @@ var KtFile.analysisContext: PsiElement? by UserDataProperty(Key.create("ANALYSIS
  * to be inserted in the user source code (this ensures that the elements will be formatted correctly). In other cases, `markGenerated`
  * should be false, which saves time and memory.
  */
-class KtPsiFactory @JvmOverloads constructor(private val project: Project, val markGenerated: Boolean = true) {
+class KtPsiFactory private constructor(
+    private val project: Project,
+    private val markGenerated: Boolean,
+    private val context: PsiElement?
+) {
+    companion object {
+        @JvmStatic
+        @JvmOverloads
+        fun contextual(context: PsiElement, markGenerated: Boolean = true): KtPsiFactory {
+            return KtPsiFactory(context.project, markGenerated, context)
+        }
+    }
+
+    @JvmOverloads
+    constructor(project: Project, markGenerated: Boolean = true) : this(project, markGenerated, context = null)
+
+    @JvmOverloads
+    @Deprecated("Use 'KtPsiFactory(project, markGenerated)' or 'KtPsiFactory.contextual(context, markGenerated)' instead")
+    constructor(element: KtElement, markGenerated: Boolean = true) : this(element.project, markGenerated, context = null)
 
     fun createValKeyword(): PsiElement {
         val property = createProperty("val x = 1")
@@ -217,17 +240,24 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     fun createFile(@NonNls fileName: String, @NonNls text: String): KtFile {
         val file = doCreateFile(fileName, text)
 
-        file.doNotAnalyze = DO_NOT_ANALYZE_NOTIFICATION
+        val analysisContext = this@KtPsiFactory.context
+        if (analysisContext != null) {
+            file.analysisContext = analysisContext
+        } else {
+            file.doNotAnalyze = DO_NOT_ANALYZE_NOTIFICATION
+        }
 
         return file
     }
 
+    @Deprecated("Call 'createFile()' on a contextual 'KtPsiFactory' instead")
     fun createAnalyzableFile(@NonNls fileName: String, @NonNls text: String, contextToAnalyzeIn: PsiElement): KtFile {
         val file = doCreateFile(fileName, text)
         file.analysisContext = contextToAnalyzeIn
         return file
     }
 
+    @Deprecated("Call 'createPhysicalFile() on a contextual 'KtPsiFactory' instead")
     fun createFileWithLightClassSupport(@NonNls fileName: String, @NonNls text: String, contextToAnalyzeIn: PsiElement): KtFile {
         val file = createPhysicalFile(fileName, text)
         file.analysisContext = contextToAnalyzeIn
@@ -235,13 +265,10 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     }
 
     fun createPhysicalFile(@NonNls fileName: String, @NonNls text: String): KtFile {
-        return PsiFileFactory.getInstance(project).createFileFromText(
-            fileName,
-            KotlinFileType.INSTANCE,
-            text,
-            LocalTimeCounter.currentTime(),
-            true
-        ) as KtFile
+        val time = LocalTimeCounter.currentTime()
+        val file = PsiFileFactory.getInstance(project).createFileFromText(fileName, KotlinFileType.INSTANCE, text, time, true) as KtFile
+        file.analysisContext = this@KtPsiFactory.context
+        return file
     }
 
     fun createProperty(
