@@ -420,7 +420,10 @@ class IrToJs(
 }
 
 private val IrModuleFragment.jsModuleName: String
-    get() = name.asString().dropWhile { it == '<' }.dropLastWhile { it == '>' }
+    get() = name.asString()
+        .replace("[.:@]".toRegex(), "_")
+        .dropWhile { it == '<' }
+        .dropLastWhile { it == '>' }
 
 private fun List<JsStatement>.toJsCodeString(): String =
     JsCompositeBlock(this).toString()
