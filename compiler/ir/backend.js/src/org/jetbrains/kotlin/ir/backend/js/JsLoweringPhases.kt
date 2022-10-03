@@ -52,7 +52,7 @@ private fun makeCustomJsModulePhase(
     prerequisite = prerequisite,
     lower = object : SameTypeCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>> {
         override fun invoke(
-            phaseConfig: PhaseConfig,
+            phaseConfig: PhaseConfigurationService,
             phaserState: PhaserState<Iterable<IrModuleFragment>>,
             context: JsIrBackendContext,
             input: Iterable<IrModuleFragment>

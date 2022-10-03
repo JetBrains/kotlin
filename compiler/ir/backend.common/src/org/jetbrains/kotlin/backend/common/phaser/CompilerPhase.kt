@@ -28,7 +28,7 @@ inline fun <R, D> PhaserState<D>.downlevel(nlevels: Int, block: () -> R): R {
 }
 
 interface CompilerPhase<in Context : CommonBackendContext, Input, Output> {
-    fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output
+    fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Input>, context: Context, input: Input): Output
 
     fun getNamedSubphases(startDepth: Int = 0): List<Pair<Int, NamedCompilerPhase<Context, *>>> = emptyList()
 
@@ -52,7 +52,7 @@ typealias AnyNamedPhase = NamedCompilerPhase<*, *>
 enum class BeforeOrAfter { BEFORE, AFTER }
 
 data class ActionState(
-    val config: PhaseConfig,
+    val config: PhaseConfigurationService,
     val phase: AnyNamedPhase,
     val phaseCount: Int,
     val beforeOrAfter: BeforeOrAfter
@@ -77,8 +77,8 @@ class NamedCompilerPhase<in Context : CommonBackendContext, Data>(
     private val actions: Set<Action<Data, Context>> = emptySet(),
     private val nlevels: Int = 0
 ) : SameTypeCompilerPhase<Context, Data> {
-    override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Data>, context: Context, input: Data): Data {
-        if (this !in phaseConfig.enabled) {
+    override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Data>, context: Context, input: Data): Data {
+        if (!phaseConfig.isEnabled(this)) {
             return input
         }
 
@@ -86,7 +86,7 @@ class NamedCompilerPhase<in Context : CommonBackendContext, Data>(
             "Lowering $name: phases ${(prerequisite - phaserState.alreadyDone).map { it.name }} are required, but not satisfied"
         }
 
-        context.inVerbosePhase = this in phaseConfig.verbose
+        context.inVerbosePhase = phaseConfig.isVerbose(this)
 
         runBefore(phaseConfig, phaserState, context, input)
         val output = if (phaseConfig.needProfiling) {
@@ -104,7 +104,7 @@ class NamedCompilerPhase<in Context : CommonBackendContext, Data>(
         return output
     }
 
-    private fun runBefore(phaseConfig: PhaseConfig, phaserState: PhaserState<Data>, context: Context, input: Data) {
+    private fun runBefore(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Data>, context: Context, input: Data) {
         val state = ActionState(phaseConfig, this, phaserState.phaseCount, BeforeOrAfter.BEFORE)
         for (action in actions) action(state, input, context)
 
@@ -113,7 +113,7 @@ class NamedCompilerPhase<in Context : CommonBackendContext, Data>(
         }
     }
 
-    private fun runAfter(phaseConfig: PhaseConfig, phaserState: PhaserState<Data>, context: Context, output: Data) {
+    private fun runAfter(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Data>, context: Context, output: Data) {
         val state = ActionState(phaseConfig, this, phaserState.phaseCount, BeforeOrAfter.AFTER)
         for (action in actions) action(state, output, context)
 
@@ -126,7 +126,7 @@ class NamedCompilerPhase<in Context : CommonBackendContext, Data>(
         }
     }
 
-    private fun runAndProfile(phaseConfig: PhaseConfig, phaserState: PhaserState<Data>, context: Context, source: Data): Data {
+    private fun runAndProfile(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Data>, context: Context, source: Data): Data {
         var result: Data? = null
         val msec = measureTimeMillis {
             result = phaserState.downlevel(nlevels) {

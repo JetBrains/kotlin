@@ -303,7 +303,7 @@ internal val dependenciesLowerPhase = NamedCompilerPhase(
         description = "Lower library's IR",
         prerequisite = emptySet(),
         lower = object : CompilerPhase<Context, IrModuleFragment, IrModuleFragment> {
-            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {
+            override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {
                 val files = mutableListOf<IrFile>()
                 files += input.files
                 input.files.clear()
@@ -341,7 +341,7 @@ internal val umbrellaCompilation = NamedCompilerPhase(
         description = "A batched compilation with shared FE and ME phases",
         prerequisite = emptySet(),
         lower = object : CompilerPhase<Context, Unit, Unit> {
-            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
+            override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
                 val module = context.irModules.values.single()
 
                 val files = module.files.toList()
@@ -440,7 +440,7 @@ internal val createGenerationStatePhase = namedUnitPhase(
         name = "CreateGenerationState",
         description = "Create generation state",
         lower = object : CompilerPhase<Context, Unit, Unit> {
-            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
+            override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
                 context.generationState = NativeGenerationState(context)
             }
         }
@@ -450,7 +450,7 @@ internal val disposeGenerationStatePhase = namedUnitPhase(
         name = "DisposeGenerationState",
         description = "Dispose generation state",
         lower = object : CompilerPhase<Context, Unit, Unit> {
-            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
+            override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
                 context.disposeGenerationState()
             }
         }
