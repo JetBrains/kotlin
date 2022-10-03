@@ -76,18 +76,4 @@ class KotlinJsIrLibraryGradlePluginIT : KGPBaseTest() {
             }
         }
     }
-
-    @DisplayName("publish sources jar task should also include dukat outputs")
-    @GradleTest
-    fun testPublishSourcesJarTaskShouldAlsoIncludeDukatTaskOutputs(gradleVersion: GradleVersion) {
-        project("js-library-ir", gradleVersion) {
-            build("jsSourcesJar") {
-                val sourcesJarFilePath = "build/libs/js-library-ir-js-sources.jar"
-                assertFileInProjectExists(sourcesJarFilePath)
-                ZipFile(projectPath.resolve(sourcesJarFilePath).toFile()).use {
-                    assertNotNull(it.getEntry("jsMain/index.module_decamelize.kt"))
-                }
-            }
-        }
-    }
 }
