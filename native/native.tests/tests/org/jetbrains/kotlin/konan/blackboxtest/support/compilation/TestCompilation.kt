@@ -93,15 +93,15 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
                 kotlinNativeClassLoader = classLoader.classLoader
             )
 
-            val loggedCompilerCall =
-                LoggedData.CompilerCall(loggedCompilerParameters, exitCode, compilerOutput, compilerOutputHasErrors, duration)
+            val loggedCompilationToolCall =
+                LoggedData.CompilationToolCall("COMPILER", loggedCompilerParameters, exitCode, compilerOutput, compilerOutputHasErrors, duration)
 
             val result = if (exitCode != ExitCode.OK || compilerOutputHasErrors)
-                TestCompilationResult.CompilerFailure(loggedCompilerCall)
+                TestCompilationResult.CompilerFailure(loggedCompilationToolCall)
             else
-                TestCompilationResult.Success(expectedArtifact, loggedCompilerCall)
+                TestCompilationResult.Success(expectedArtifact, loggedCompilationToolCall)
 
-            loggedCompilerCall to result
+            loggedCompilationToolCall to result
         } catch (unexpectedThrowable: Throwable) {
             val loggedFailure = LoggedData.CompilerCallUnexpectedFailure(loggedCompilerParameters, unexpectedThrowable)
             val result = TestCompilationResult.UnexpectedFailure(loggedFailure)
@@ -230,9 +230,10 @@ internal class CInteropCompilation(
         // TODO  Actual compiler output is not included now into `compilerOutput` and `compilerOutputHasErrors`
         // TODO  since there is no technical ability to extract them from C-interop tool invocation at the moment.
         // TODO  This should be fixed in the future
-        val loggedCInteropCall = LoggedData.CompilerCall(
-            parameters = LoggedData.CompilerParameters(home = settings.get(), compilerArgs = extraArgsArray, sourceModules = sourceModules),
-            exitCode = ExitCode.OK,  // TODO check cinterop error behavior (for ex, def file is corrupted)
+        val loggedCInteropCall = LoggedData.CompilationToolCall(
+            toolName = "CINTEROP",
+            parameters = LoggedData.CInteropParameters(extraArgs = extraArgsArray, sourceModules = sourceModules),
+            exitCode = ExitCode.OK,
             compilerOutput = maybeCompilerArgs?.joinToString() ?: "<empty>",
             compilerOutputHasErrors = false,
             duration = duration

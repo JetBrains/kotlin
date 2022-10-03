@@ -25,7 +25,7 @@ internal class LocalTestRunner(private val testRun: TestRun) : AbstractLocalProc
         get() = if (testRun.runParameters.has<TestRunParameter.WithTCTestLogger>()) TCTestOutputFilter else TestOutputFilter.NO_FILTERING
 
     override fun getLoggedParameters() = LoggedData.TestRunParameters(
-        compilerCall = executable.loggedCompilerCall,
+        compilationToolCall = executable.loggedCompilationToolCall,
         testCaseId = testRun.testCaseId,
         runArgs = programArgs,
         runParameters = testRun.runParameters

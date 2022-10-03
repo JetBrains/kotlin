@@ -20,7 +20,7 @@ internal class LocalTestNameExtractor(
     override val outputFilter get() = TestOutputFilter.NO_FILTERING
 
     override fun getLoggedParameters() = LoggedData.TestRunParameters(
-        compilerCall = executable.loggedCompilerCall,
+        compilationToolCall = executable.loggedCompilationToolCall,
         testCaseId = null,
         runArgs = programArgs,
         runParameters = null
