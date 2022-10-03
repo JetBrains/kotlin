@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.phaser
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.LoggingContext
 import kotlin.system.measureTimeMillis
 
 class PhaserState<Data>(
@@ -27,7 +27,7 @@ inline fun <R, D> PhaserState<D>.downlevel(nlevels: Int, block: () -> R): R {
     return result
 }
 
-interface CompilerPhase<in Context : CommonBackendContext, Input, Output> {
+interface CompilerPhase<in Context : LoggingContext, Input, Output> {
     fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Input>, context: Context, input: Input): Output
 
     fun getNamedSubphases(startDepth: Int = 0): List<Pair<Int, NamedCompilerPhase<Context, *>>> = emptyList()
@@ -36,13 +36,13 @@ interface CompilerPhase<in Context : CommonBackendContext, Input, Output> {
     val stickyPostconditions: Set<Checker<Output>> get() = emptySet()
 }
 
-fun <Context : CommonBackendContext, Input, Output> CompilerPhase<Context, Input, Output>.invokeToplevel(
+fun <Context : LoggingContext, Input, Output> CompilerPhase<Context, Input, Output>.invokeToplevel(
     phaseConfig: PhaseConfig,
     context: Context,
     input: Input
 ): Output = invoke(phaseConfig, PhaserState(), context, input)
 
-interface SameTypeCompilerPhase<in Context : CommonBackendContext, Data> : CompilerPhase<Context, Data, Data>
+interface SameTypeCompilerPhase<in Context : LoggingContext, Data> : CompilerPhase<Context, Data, Data>
 
 // A failing checker should just throw an exception.
 typealias Checker<Data> = (Data) -> Unit
@@ -66,7 +66,7 @@ infix operator fun <Data, Context> Action<Data, Context>.plus(other: Action<Data
         other(phaseState, data, context)
     }
 
-class NamedCompilerPhase<in Context : CommonBackendContext, Data>(
+class NamedCompilerPhase<in Context : LoggingContext, Data>(
     val name: String,
     val description: String,
     val prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
