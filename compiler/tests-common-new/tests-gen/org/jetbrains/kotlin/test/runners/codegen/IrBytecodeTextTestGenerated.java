@@ -5790,6 +5790,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("conditionalExpressions.kt")
+        public void testConditionalExpressions() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/valueClasses/conditionalExpressions.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
         @TestMetadata("equalsBoxTest.kt")
         public void testEqualsBoxTest() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/valueClasses/equalsBoxTest.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
