@@ -50220,6 +50220,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("tryExpressions.kt")
+        public void testTryExpressions() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/tryExpressions.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
         @TestMetadata("visibility.kt")
         public void testVisibility() throws Exception {
             runTest("compiler/testData/codegen/box/valueClasses/visibility.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());

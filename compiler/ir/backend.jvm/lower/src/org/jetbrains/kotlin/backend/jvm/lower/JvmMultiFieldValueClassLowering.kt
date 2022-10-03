@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
@@ -1002,11 +1003,18 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         }
         if (expression is IrWhen) {
             for (branch in expression.branches) {
-                branch.condition = branch.condition.transform(this@JvmMultiFieldValueClassLowering, null)
+                branch.condition = branch.condition.transform(lowering, null)
                 branch.result = irBlock {
                     flattenExpressionTo(branch.result, instance)
-                }
+                }.unwrap()
             }
+            +expression
+            return
+        }
+        if (expression is IrTry) {
+            expression.tryResult = irBlock { flattenExpressionTo(expression.tryResult, instance) }.unwrap()
+            expression.catches.replaceAll { irCatch(it.catchParameter, irBlock { flattenExpressionTo(it.result, instance) }.unwrap()) }
+            expression.finallyExpression = expression.finallyExpression?.transform(lowering, null)
             +expression
             return
         }
@@ -1082,6 +1090,16 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
 
             override fun visitWhen(expression: IrWhen, data: Boolean) {
                 expression.acceptChildren(this, data) // when's are transparent
+            }
+
+            override fun visitCatch(aCatch: IrCatch, data: Boolean) {
+                aCatch.acceptChildren(this, data) // catches are transparent
+            }
+
+            override fun visitTry(aTry: IrTry, data: Boolean) {
+                aTry.tryResult.accept(this, data)
+                aTry.catches.forEach { it.accept(this, data) }
+                aTry.finallyExpression?.accept(this, false)
             }
 
             override fun visitBranch(branch: IrBranch, data: Boolean) {
