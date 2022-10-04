@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import java.io.File
 
@@ -15,6 +16,7 @@ data class SourceMapsInfo(
     val sourceRoots: List<String>,
     val outputDir: File?,
     val sourceMapContentEmbedding: SourceMapSourceEmbedding,
+    val namesPolicy: SourceMapNamesPolicy,
 ) {
     companion object {
         fun from(configuration: CompilerConfiguration): SourceMapsInfo? =
@@ -24,6 +26,7 @@ data class SourceMapsInfo(
                     configuration.get(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, emptyList()),
                     configuration.get(JSConfigurationKeys.OUTPUT_DIR),
                     configuration.get(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, SourceMapSourceEmbedding.INLINING),
+                    configuration.get(JSConfigurationKeys.SOURCEMAP_NAMES_POLICY, SourceMapNamesPolicy.SIMPLE_NAMES)
                 )
             } else {
                 null

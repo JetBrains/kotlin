@@ -97,6 +97,19 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
         get() = options.sourceMapEmbedSources.orNull.sourceMapEmbedSourcesKotlinOption
         set(value) = options.sourceMapEmbedSources.set(value.sourceMapEmbedSourcesCompilerOption)
 
+    private val kotlin.String?.sourceMapNamesPolicyCompilerOption get() = this?.let { org.jetbrains.kotlin.gradle.dsl.JsSourceMapNamesPolicy.fromPolicy(it) }
+
+    private val org.jetbrains.kotlin.gradle.dsl.JsSourceMapNamesPolicy?.sourceMapNamesPolicyKotlinOption get() = this?.policy
+
+    /**
+     * How to map generated names to original names (IR backend only)
+     * Possible values: "no", "simple-names", "fully-qualified-names"
+     * Default value: null
+     */
+    var sourceMapNamesPolicy: kotlin.String?
+        get() = options.sourceMapNamesPolicy.orNull.sourceMapNamesPolicyKotlinOption
+        set(value) = options.sourceMapNamesPolicy.set(value.sourceMapNamesPolicyCompilerOption)
+
     /**
      * Add the specified prefix to paths in the source map
      * Default value: null

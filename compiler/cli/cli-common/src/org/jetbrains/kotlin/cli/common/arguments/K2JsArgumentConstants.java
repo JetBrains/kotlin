@@ -30,6 +30,10 @@ public interface K2JsArgumentConstants {
     String SOURCE_MAP_SOURCE_CONTENT_NEVER = "never";
     String SOURCE_MAP_SOURCE_CONTENT_INLINING = "inlining";
 
+    String SOURCE_MAP_NAMES_POLICY_NO = "no";
+    String SOURCE_MAP_NAMES_POLICY_SIMPLE_NAMES = "simple-names";
+    String SOURCE_MAP_NAMES_POLICY_FQ_NAMES = "fully-qualified-names";
+
     String RUNTIME_DIAGNOSTIC_LOG = "log";
     String RUNTIME_DIAGNOSTIC_EXCEPTION = "exception";
 }
