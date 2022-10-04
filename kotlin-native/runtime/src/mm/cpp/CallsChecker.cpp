@@ -272,6 +272,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "madvise",
         "_aligned_free",
         "_aligned_malloc",
+        "sched_yield",
 };
 
 namespace {
