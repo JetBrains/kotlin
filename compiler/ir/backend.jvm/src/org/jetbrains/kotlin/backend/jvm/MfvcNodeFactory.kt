@@ -231,7 +231,8 @@ fun createIntermediateMfvcNode(
     val unboxMethod = if (useOldGetter) oldGetter!! else makeUnboxMethod(
         context, fullMethodName, type, parent, overriddenNode, static, defaultMethodsImplementationSourceNode, oldGetter, modality
     ) { receiver ->
-        val valueArguments = subnodes.flatMap { it.fields!! }.map { field -> irGetField(if (field.isStatic) null else irGet(receiver!!), field) }
+        val valueArguments = subnodes.flatMap { it.fields!! }
+            .map { field -> irGetField(if (field.isStatic) null else irGet(receiver!!), field) }
         rootNode.makeBoxedExpression(this, typeArguments, valueArguments)
     }
 
@@ -244,7 +245,7 @@ fun collectPropertiesAfterLowering(irClass: IrClass) = LinkedHashSet<IrProperty>
     for (element in irClass.declarations) {
         if (element is IrField) {
             element.correspondingPropertySymbol?.owner?.let { add(it) }
-        } else if (element is IrSimpleFunction) {
+        } else if (element is IrSimpleFunction && element.extensionReceiverParameter == null && element.contextReceiverParametersCount == 0) {
             element.correspondingPropertySymbol?.owner?.let { add(it) }
         }
     }
@@ -387,9 +388,7 @@ private fun makeMfvcPrimaryConstructor(
     origin = JvmLoweredDeclarationOrigin.SYNTHETIC_MULTI_FIELD_VALUE_CLASS_MEMBER
     returnType = oldPrimaryConstructor.returnType
 }.apply {
-    require(oldPrimaryConstructor.typeParameters.isEmpty()) {
-        "Constructors do not support type parameters yet"
-    }
+    require(oldPrimaryConstructor.typeParameters.isEmpty()) { "Constructors do not support type parameters yet" }
     this.parent = mfvc
     val parameters = leaves.map { addValueParameter(it.fullFieldName, it.type) }
     val irConstructor = this@apply
