@@ -37,7 +37,7 @@ internal open class KotlinJvmPlugin(
         private const val targetName = "" // use empty suffix for the task names
     }
 
-    override fun buildSourceSetProcessor(project: Project, compilation: AbstractKotlinCompilation<*>) =
+    override fun buildSourceSetProcessor(project: Project, compilation: KotlinCompilation<*>) =
         Kotlin2JvmSourceSetProcessor(tasksProvider, KotlinCompilationProjection(compilation))
 
     override fun apply(project: Project) {
