@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.dsl.JsMainFunctionExecutionMode
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode
+import org.jetbrains.kotlin.gradle.dsl.JsSourceMapNamesPolicy
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion as KotlinVersionDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget as JvmTargetDsl
 import kotlin.reflect.KType
@@ -115,6 +116,23 @@ open class DefaultValues(
         """.trimIndent(),
         toKotlinOptionConverterProp = """
         this?.mode
+        """.trimIndent()
+    )
+
+    object JsSourceMapNamesPolicies : DefaultValues(
+        "null",
+        typeOf<JsSourceMapNamesPolicy?>(),
+        typeOf<String?>(),
+        possibleValues = listOf(
+            K2JsArgumentConstants.SOURCE_MAP_NAMES_POLICY_NO,
+            K2JsArgumentConstants.SOURCE_MAP_NAMES_POLICY_SIMPLE_NAMES,
+            K2JsArgumentConstants.SOURCE_MAP_NAMES_POLICY_FQ_NAMES,
+        ).map { "\"$it\"" },
+        fromKotlinOptionConverterProp = """
+        this?.let { ${typeOf<JsSourceMapNamesPolicy>()}.fromPolicy(it) }
+        """.trimIndent(),
+        toKotlinOptionConverterProp = """
+        this?.policy
         """.trimIndent()
     )
 

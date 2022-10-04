@@ -77,6 +77,15 @@ interface KotlinJsCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommon
     val sourceMapEmbedSources: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode>
 
     /**
+     * How to map generated names to original names (IR backend only)
+     * Possible values: "no", "simple-names", "fully-qualified-names"
+     * Default value: null
+     */
+    @get:org.gradle.api.tasks.Optional
+    @get:org.gradle.api.tasks.Input
+    val sourceMapNamesPolicy: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.JsSourceMapNamesPolicy>
+
+    /**
      * Add the specified prefix to paths in the source map
      * Default value: null
      */

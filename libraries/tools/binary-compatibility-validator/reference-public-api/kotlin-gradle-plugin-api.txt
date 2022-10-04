@@ -64,6 +64,20 @@ public final class org/jetbrains/kotlin/gradle/dsl/JsSourceMapEmbedMode$Companio
 	public final fun fromMode (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapEmbedMode;
 }
 
+public final class org/jetbrains/kotlin/gradle/dsl/JsSourceMapNamesPolicy : java/lang/Enum {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapNamesPolicy$Companion;
+	public static final field SOURCE_MAP_NAMES_POLICY_FQ_NAMES Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapNamesPolicy;
+	public static final field SOURCE_MAP_NAMES_POLICY_NO Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapNamesPolicy;
+	public static final field SOURCE_MAP_NAMES_POLICY_SIMPLE_NAMES Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapNamesPolicy;
+	public final fun getPolicy ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapNamesPolicy;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapNamesPolicy;
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/JsSourceMapNamesPolicy$Companion {
+	public final fun fromPolicy (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JsSourceMapNamesPolicy;
+}
+
 public final class org/jetbrains/kotlin/gradle/dsl/JvmTarget : java/lang/Enum {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget$Companion;
 	public static final field JVM_10 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
@@ -233,6 +247,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsCompiler
 	public abstract fun getOutputFile ()Lorg/gradle/api/provider/Property;
 	public abstract fun getSourceMap ()Lorg/gradle/api/provider/Property;
 	public abstract fun getSourceMapEmbedSources ()Lorg/gradle/api/provider/Property;
+	public abstract fun getSourceMapNamesPolicy ()Lorg/gradle/api/provider/Property;
 	public abstract fun getSourceMapPrefix ()Lorg/gradle/api/provider/Property;
 	public abstract fun getTarget ()Lorg/gradle/api/provider/Property;
 	public abstract fun getTypedArrays ()Lorg/gradle/api/provider/Property;
@@ -277,6 +292,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions 
 	public abstract fun getOutputFile ()Ljava/lang/String;
 	public abstract fun getSourceMap ()Z
 	public abstract fun getSourceMapEmbedSources ()Ljava/lang/String;
+	public abstract fun getSourceMapNamesPolicy ()Ljava/lang/String;
 	public abstract fun getSourceMapPrefix ()Ljava/lang/String;
 	public abstract fun getTarget ()Ljava/lang/String;
 	public abstract fun getTypedArrays ()Z
@@ -289,6 +305,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions 
 	public abstract fun setOutputFile (Ljava/lang/String;)V
 	public abstract fun setSourceMap (Z)V
 	public abstract fun setSourceMapEmbedSources (Ljava/lang/String;)V
+	public abstract fun setSourceMapNamesPolicy (Ljava/lang/String;)V
 	public abstract fun setSourceMapPrefix (Ljava/lang/String;)V
 	public abstract fun setTarget (Ljava/lang/String;)V
 	public abstract fun setTypedArrays (Z)V
@@ -308,6 +325,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions$DefaultImpls 
 	public static fun getOutputFile (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
 	public static fun getSourceMap (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun getSourceMapEmbedSources (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
+	public static fun getSourceMapNamesPolicy (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
 	public static fun getSourceMapPrefix (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
 	public static fun getSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun getTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
@@ -327,6 +345,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions$DefaultImpls 
 	public static fun setOutputFile (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
 	public static fun setSourceMap (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 	public static fun setSourceMapEmbedSources (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
+	public static fun setSourceMapNamesPolicy (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
 	public static fun setSourceMapPrefix (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
 	public static fun setSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 	public static fun setTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V

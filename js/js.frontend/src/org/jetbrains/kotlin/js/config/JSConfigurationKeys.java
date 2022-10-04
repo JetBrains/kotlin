@@ -38,6 +38,9 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<SourceMapSourceEmbedding> SOURCE_MAP_EMBED_SOURCES =
             CompilerConfigurationKey.create("embed source files into source map");
 
+    public static final CompilerConfigurationKey<SourceMapNamesPolicy> SOURCEMAP_NAMES_POLICY = CompilerConfigurationKey.create(
+            "a policy to generate a mapping from generated identifiers to their corresponding original names");
+
     public static final CompilerConfigurationKey<Boolean> META_INFO =
             CompilerConfigurationKey.create("generate .meta.js and .kjsm files");
 

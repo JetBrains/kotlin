@@ -101,6 +101,36 @@ internal fun generateJsSourceMapEmbedMode(
     }
 }
 
+internal fun generateJsSourceMapNamesPolicy(
+    apiDir: File,
+    filePrinter: (targetFile: File, Printer.() -> Unit) -> Unit
+) {
+    val jsSourceMapNamesPolicyFqName = FqName("org.jetbrains.kotlin.gradle.dsl.JsSourceMapNamesPolicy")
+    filePrinter(fileFromFqName(apiDir, jsSourceMapNamesPolicyFqName)) {
+        generateDeclaration("enum class", jsSourceMapNamesPolicyFqName, afterType = "(val policy: String)") {
+            val modes = hashMapOf(
+                K2JsArgumentConstants::SOURCE_MAP_NAMES_POLICY_NO.name to K2JsArgumentConstants.SOURCE_MAP_NAMES_POLICY_NO,
+                K2JsArgumentConstants::SOURCE_MAP_NAMES_POLICY_SIMPLE_NAMES.name to K2JsArgumentConstants.SOURCE_MAP_NAMES_POLICY_SIMPLE_NAMES,
+                K2JsArgumentConstants::SOURCE_MAP_NAMES_POLICY_FQ_NAMES.name to K2JsArgumentConstants.SOURCE_MAP_NAMES_POLICY_FQ_NAMES,
+            )
+
+            for ((key, value) in modes) {
+                println("$key(\"$value\"),")
+            }
+            println(";")
+
+            println()
+            println("companion object {")
+            withIndent {
+                println("fun fromPolicy(policy: String): JsSourceMapNamesPolicy =")
+                println("    JsSourceMapNamesPolicy.values().firstOrNull { it.policy == policy }")
+                println("        ?: throw IllegalArgumentException(\"Unknown JS source map names policy: ${'$'}policy\")")
+            }
+            println("}")
+        }
+    }
+}
+
 internal fun generateJsDiagnosticMode(
     apiDir: File,
     filePrinter: (targetFile: File, Printer.() -> Unit) -> Unit

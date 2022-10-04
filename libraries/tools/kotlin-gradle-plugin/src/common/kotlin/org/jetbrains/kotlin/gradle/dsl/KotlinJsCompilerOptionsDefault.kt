@@ -37,6 +37,9 @@ internal abstract class KotlinJsCompilerOptionsDefault @javax.inject.Inject cons
     override val sourceMapEmbedSources: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode> =
         objectFactory.property(org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode::class.java)
 
+    override val sourceMapNamesPolicy: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.JsSourceMapNamesPolicy> =
+        objectFactory.property(org.jetbrains.kotlin.gradle.dsl.JsSourceMapNamesPolicy::class.java)
+
     override val sourceMapPrefix: org.gradle.api.provider.Property<kotlin.String> =
         objectFactory.property(kotlin.String::class.java)
 
@@ -57,6 +60,7 @@ internal abstract class KotlinJsCompilerOptionsDefault @javax.inject.Inject cons
         args.outputFile = outputFile.orNull
         args.sourceMap = sourceMap.get()
         args.sourceMapEmbedSources = sourceMapEmbedSources.orNull?.mode
+        args.sourceMapNamesPolicy = sourceMapNamesPolicy.orNull?.policy
         args.sourceMapPrefix = sourceMapPrefix.orNull
         args.target = target.get()
         args.typedArrays = typedArrays.get()
@@ -73,6 +77,7 @@ internal abstract class KotlinJsCompilerOptionsDefault @javax.inject.Inject cons
         args.outputFile = null
         args.sourceMap = false
         args.sourceMapEmbedSources = null
+        args.sourceMapNamesPolicy = null
         args.sourceMapPrefix = null
         args.target = "v5"
         args.typedArrays = true

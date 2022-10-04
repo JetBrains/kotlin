@@ -97,6 +97,17 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var sourceMapEmbedSources: String? by NullableStringFreezableVar(null)
 
     @GradleOption(
+        value = DefaultValues.JsSourceMapNamesPolicies::class,
+        gradleInputType = GradleInputTypes.INPUT
+    )
+    @Argument(
+        value = "-source-map-names-policy",
+        valueDescription = "{no|simple-names|fully-qualified-names}",
+        description = "How to map generated names to original names (IR backend only)"
+    )
+    var sourceMapNamesPolicy: String? by NullableStringFreezableVar(null)
+
+    @GradleOption(
         value = DefaultValues.BooleanTrueDefault::class,
         gradleInputType = GradleInputTypes.INPUT
     )

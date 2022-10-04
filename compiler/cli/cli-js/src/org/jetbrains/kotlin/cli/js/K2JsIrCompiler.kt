@@ -576,9 +576,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         else
             SourceMapSourceEmbedding.INLINING
         if (sourceMapContentEmbedding == null) {
-            val message = "Unknown source map source embedding mode: " + sourceMapEmbedContentString + ". Valid values are: " +
-                    StringUtil.join(sourceMapContentEmbeddingMap.keys, ", ")
-            messageCollector.report(ERROR, message, null)
+            messageCollector.report(
+                ERROR,
+                "Unknown source map source embedding mode: $sourceMapEmbedContentString. Valid values are: ${sourceMapContentEmbeddingMap.keys.joinToString()}"
+            )
             sourceMapContentEmbedding = SourceMapSourceEmbedding.INLINING
         }
         configuration.put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, sourceMapContentEmbedding)
@@ -586,6 +587,20 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         if (!arguments.sourceMap && sourceMapEmbedContentString != null) {
             messageCollector.report(WARNING, "source-map-embed-sources argument has no effect without source map", null)
         }
+
+        val sourceMapNamesPolicyString = arguments.sourceMapNamesPolicy
+        var sourceMapNamesPolicy: SourceMapNamesPolicy? = if (sourceMapNamesPolicyString != null)
+            sourceMapNamesPolicyMap[sourceMapNamesPolicyString]
+        else
+            SourceMapNamesPolicy.SIMPLE_NAMES
+        if (sourceMapNamesPolicy == null) {
+            messageCollector.report(
+                ERROR,
+                "Unknown source map names policy: $sourceMapNamesPolicyString. Valid values are: ${sourceMapNamesPolicyMap.keys.joinToString()}"
+            )
+            sourceMapNamesPolicy = SourceMapNamesPolicy.SIMPLE_NAMES
+        }
+        configuration.put(JSConfigurationKeys.SOURCEMAP_NAMES_POLICY, sourceMapNamesPolicy)
 
         configuration.put(JSConfigurationKeys.PRINT_REACHABILITY_INFO, arguments.irDcePrintReachabilityInfo)
         configuration.put(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR, arguments.fakeOverrideValidator)
@@ -613,6 +628,12 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS to SourceMapSourceEmbedding.ALWAYS,
             K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER to SourceMapSourceEmbedding.NEVER,
             K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING to SourceMapSourceEmbedding.INLINING
+        )
+
+        private val sourceMapNamesPolicyMap = mapOf(
+            K2JsArgumentConstants.SOURCE_MAP_NAMES_POLICY_NO to SourceMapNamesPolicy.NO,
+            K2JsArgumentConstants.SOURCE_MAP_NAMES_POLICY_SIMPLE_NAMES to SourceMapNamesPolicy.SIMPLE_NAMES,
+            K2JsArgumentConstants.SOURCE_MAP_NAMES_POLICY_FQ_NAMES to SourceMapNamesPolicy.FULLY_QUALIFIED_NAMES
         )
 
         @JvmStatic
