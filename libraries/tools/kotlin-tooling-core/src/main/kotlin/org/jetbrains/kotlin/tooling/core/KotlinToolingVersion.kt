@@ -11,8 +11,20 @@ import java.io.Serializable
 import java.util.*
 
 fun KotlinToolingVersion(kotlinVersionString: String): KotlinToolingVersion {
-    return KotlinToolingVersionOrNull(kotlinVersionString)
-        ?: throw IllegalArgumentException("Invalid Kotlin version: $kotlinVersionString")
+    fun throwInvalid(reason: String): Nothing = throw IllegalArgumentException("Invalid Kotlin version: $kotlinVersionString ($reason)")
+
+    val baseVersion = kotlinVersionString.split("-", limit = 2)[0]
+    val classifier = kotlinVersionString.split("-", limit = 2).getOrNull(1)
+
+    val baseVersionSplit = baseVersion.split(".")
+    if (!(baseVersionSplit.size == 2 || baseVersionSplit.size == 3)) throwInvalid("Expected 2 or 3 '.' separated parts")
+
+    return KotlinToolingVersion(
+        major = baseVersionSplit[0].toIntOrNull() ?: throwInvalid("Failed parsing major version"),
+        minor = baseVersionSplit[1].toIntOrNull() ?: throwInvalid("Failed parsing minor version"),
+        patch = baseVersionSplit.getOrNull(2)?.let { it.toIntOrNull() ?: throwInvalid("Failed parsing patch version") } ?: 0,
+        classifier = classifier
+    )
 }
 
 fun KotlinToolingVersion(kotlinVersion: KotlinVersion, classifier: String? = null): KotlinToolingVersion {
@@ -20,18 +32,11 @@ fun KotlinToolingVersion(kotlinVersion: KotlinVersion, classifier: String? = nul
 }
 
 fun KotlinToolingVersionOrNull(kotlinVersionString: String): KotlinToolingVersion? {
-    val baseVersion = kotlinVersionString.split("-", limit = 2)[0]
-    val classifier = kotlinVersionString.split("-", limit = 2).getOrNull(1)
-
-    val baseVersionSplit = baseVersion.split(".")
-    if (!(baseVersionSplit.size == 2 || baseVersionSplit.size == 3)) return null
-
-    return KotlinToolingVersion(
-        major = baseVersionSplit[0].toIntOrNull() ?: return null,
-        minor = baseVersionSplit[1].toIntOrNull() ?: return null,
-        patch = baseVersionSplit.getOrNull(2)?.let { it.toIntOrNull() ?: return null } ?: 0,
-        classifier = classifier
-    )
+    return try {
+        KotlinToolingVersion(kotlinVersionString)
+    } catch (t: IllegalArgumentException) {
+        null
+    }
 }
 
 class KotlinToolingVersion(

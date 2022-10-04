@@ -222,7 +222,7 @@ class KotlinToolingVersionTest {
         assertBuildNumber(510, "1.6.20-pub-myWildcard1-510")
         assertBuildNumber(510, "1.6.20-some-510")
         assertBuildNumber(510, "1.6.20-aaa-a2-a3-510")
-        assertBuildNumber(null,"1.6.20-dev-myWildcard510")
+        assertBuildNumber(null, "1.6.20-dev-myWildcard510")
 
         /* dev with - in wildcards */
         assertBuildNumber(510, "1.6.20-dev-google-pr-510")
@@ -314,8 +314,10 @@ class KotlinToolingVersionTest {
     fun illegalVersionString() {
         assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("x") }
         assertFailsWith<IllegalArgumentException> { KotlinToolingVersion("1.6.20.1") }
+        assertNull(KotlinToolingVersionOrNull(""))
         assertNull(KotlinToolingVersionOrNull("x"))
         assertNull(KotlinToolingVersionOrNull("1.6.20.1"))
+        assertNull(KotlinToolingVersionOrNull("1.6.20-x"))
     }
 
     private fun assertBuildNumber(buildNumber: Int?, version: String, message: String? = null) {
@@ -332,7 +334,10 @@ class KotlinToolingVersionTest {
                 "Parsing maturity is expected to be failed for `$version`${message?.let { ". $it" } ?: ""}") {
                 KotlinToolingVersion(version)
             }
-            assertTrue("maturity" in exception.message.orEmpty().toLowerCase(), "Expected 'maturity' issue mentioned in error message")
+            assertTrue(
+                "maturity" in exception.message.orEmpty().toLowerCase(),
+                "Expected 'maturity' issue mentioned in error message. Found: ${exception.message}"
+            )
         } else {
             assertEquals(maturity, KotlinToolingVersion(version).maturity, message)
         }
