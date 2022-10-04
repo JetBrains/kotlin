@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.sourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.utils.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
@@ -24,6 +21,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
+import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -119,6 +117,7 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
     val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
 
     val function = JsFunction(emptyScope, body, "member function ${name ?: "annon"}")
+        .withSource(declaration, context, useNameOf = declaration)
 
     function.name = name
 
@@ -522,15 +521,17 @@ object JsAstUtils {
     }
 }
 
-internal fun <T : JsNode> T.withSource(node: IrElement, context: JsGenerationContext, originalName: String? = null): T {
-    addSourceInfoIfNeed(node, context, originalName)
+internal fun <T : JsNode> T.withSource(node: IrElement, context: JsGenerationContext, useNameOf: IrDeclarationWithName? = null): T {
+    addSourceInfoIfNeed(node, context, useNameOf)
     return this
 }
 
 @Suppress("NOTHING_TO_INLINE")
-private inline fun <T : JsNode> T.addSourceInfoIfNeed(node: IrElement, context: JsGenerationContext, originalName: String?) {
+private inline fun <T : JsNode> T.addSourceInfoIfNeed(node: IrElement, context: JsGenerationContext, useNameOf: IrDeclarationWithName?) {
 
     val sourceMapsInfo = context.staticContext.backendContext.sourceMapsInfo ?: return
+
+    val originalName = useNameOf?.originalNameForUseInSourceMap(sourceMapsInfo.namesPolicy)
 
     val location = context.getLocationForIrElement(node, originalName) ?: return
 
@@ -578,4 +579,23 @@ fun IrElement.getSourceInfo(fileEntry: IrFileEntry): JsLocation? {
     val startLine = fileEntry.getLineNumber(startOffset)
     val startColumn = fileEntry.getColumnNumber(startOffset)
     return JsLocation(path, startLine, startColumn)
+}
+
+/**
+ * Returns a name of the original Kotlin declaration, or null, if it is a compiler generated declaration.
+ */
+private fun IrDeclarationWithName.originalNameForUseInSourceMap(policy: SourceMapNamesPolicy): String? {
+    if (policy == SourceMapNamesPolicy.NO) return null
+    when (this) {
+        is IrField -> correspondingPropertySymbol?.let {
+            return it.owner.originalNameForUseInSourceMap(policy)
+        }
+
+        is IrFunction -> if (policy == SourceMapNamesPolicy.FULLY_QUALIFIED_NAMES) {
+            fqNameWhenAvailable?.let {
+                return it.asString()
+            }
+        }
+    }
+    return name.asString()
 }

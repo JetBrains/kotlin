@@ -45,4 +45,4 @@ fun baz(v:(() -> Unit)) {
 // test.kt:5 box
 // test.kt:6 box
 // test3.kt:14 baz
-// test1.kt:8 box$lambda_0
+// test1.kt:8 box$lambda

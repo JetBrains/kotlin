@@ -4,4 +4,4 @@ fun box() {
 }
 
 // LINES(JS):    1 4 2 2 3 3
-// LINES(JS_IR):     2 2 3 3
+// LINES(JS_IR): 1   2 2 3 3

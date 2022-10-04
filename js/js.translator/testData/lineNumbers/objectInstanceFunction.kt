@@ -5,4 +5,4 @@ fun foo() {
 }
 
 // LINES(JS):    1 1 * 1 1 1 1 1 1 3 5 4 4
-// LINES(JS_IR):                       4 4
+// LINES(JS_IR): 1   *             3   4 4
