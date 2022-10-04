@@ -99,8 +99,7 @@ private:
     // Returns `true` if GC has happened, and `false` if not (because someone else has suspended the threads).
     bool PerformFullGC() noexcept;
 
-    size_t epoch_ = 0;
-    uint64_t lastGCTimestampUs_ = 0;
+    uint64_t epoch_ = 0;
 
     mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory_;
     GCScheduler& gcScheduler_;

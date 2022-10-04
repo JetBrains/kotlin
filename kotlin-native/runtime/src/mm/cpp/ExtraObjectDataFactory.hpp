@@ -53,6 +53,7 @@ public:
     void ClearForTests() noexcept { extraObjects_.ClearForTests(); }
 
     size_t GetSizeUnsafe() noexcept { return extraObjects_.GetSizeUnsafe(); }
+    size_t GetTotalObjectsSizeUnsafe() noexcept { return extraObjects_.GetSizeUnsafe() * sizeof(ExtraObjectData); }
 
     // requires LockForIter
     void EraseAndAdvance(Iterator &it) { extraObjects_.EraseAndAdvance(it); }

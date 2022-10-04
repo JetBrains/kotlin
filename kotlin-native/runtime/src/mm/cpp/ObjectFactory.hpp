@@ -145,6 +145,7 @@ public:
 
             last_ = nodePtr;
             ++size_;
+            totalObjectsSizeBytes_ += Node::GetSizeForDataSize(dataSize);
             RuntimeAssert(root_ != nullptr, "Must not be empty");
             AssertCorrect();
             return *nodePtr;
@@ -181,7 +182,9 @@ public:
             owner_.last_ = last_;
             last_ = nullptr;
             owner_.size_ += size_;
+            owner_.totalObjectsSizeBytes_ += totalObjectsSizeBytes_;
             size_ = 0;
+            totalObjectsSizeBytes_ = 0;
 
             RuntimeAssert(root_ == nullptr, "Must be empty");
             AssertCorrect();
@@ -216,6 +219,7 @@ public:
         unique_ptr<Node> root_;
         Node* last_ = nullptr;
         size_t size_ = 0;
+        size_t totalObjectsSizeBytes_ = 0;
     };
 
     class Iterator {
@@ -348,13 +352,13 @@ public:
         Iterator begin() noexcept { return Iterator(nullptr, owner_.root_.get()); }
         Iterator end() noexcept { return Iterator(owner_.last_, nullptr); }
 
-        void EraseAndAdvance(Iterator& iterator) noexcept {
-            auto result = owner_.ExtractUnsafe(iterator.previousNode_);
+        void EraseAndAdvance(Iterator& iterator, size_t objectedSize) noexcept {
+            auto result = owner_.ExtractUnsafe(iterator.previousNode_, objectedSize);
             iterator.node_ = result.second;
         }
 
-        void MoveAndAdvance(Consumer& consumer, Iterator& iterator) noexcept {
-            auto result = owner_.ExtractUnsafe(iterator.previousNode_);
+        void MoveAndAdvance(Consumer& consumer, Iterator& iterator, size_t objectSize) noexcept {
+            auto result = owner_.ExtractUnsafe(iterator.previousNode_, objectSize);
             iterator.node_ = result.second;
             consumer.Insert(std::move(result.first));
         }
@@ -373,40 +377,32 @@ public:
     Iterable LockForIter() noexcept { return Iterable(*this); }
 
     size_t GetSizeUnsafe() const noexcept { return size_; }
+    size_t GetTotalObjectsSizeUnsafe() const noexcept { return totalObjectsSizeBytes_; }
 
     void ClearForTests() {
         root_.reset();
         last_ = nullptr;
         size_ = 0;
+        totalObjectsSizeBytes_ = 0;
     }
 
 private:
     // Expects `mutex_` to be held by the current thread.
-    std::pair<unique_ptr<Node>, Node*> ExtractUnsafe(Node* previousNode) noexcept {
+    std::pair<unique_ptr<Node>, Node*> ExtractUnsafe(Node* previousNode, size_t objectSize) noexcept {
         RuntimeAssert(root_ != nullptr, "Must not be empty");
         AssertCorrectUnsafe();
 
-        if (previousNode == nullptr) {
-            // Extracting the root.
-            auto node = std::move(root_);
-            root_ = std::move(node->next_);
-            if (!root_) {
-                last_ = nullptr;
-            }
-            --size_;
-            AssertCorrectUnsafe();
-            return {std::move(node), root_.get()};
-        }
-
-        auto node = std::move(previousNode->next_);
-        previousNode->next_ = std::move(node->next_);
-        if (!previousNode->next_) {
+        unique_ptr<Node> &pointerToNext = (previousNode == nullptr) ? root_ : previousNode->next_;
+        auto node = std::move(pointerToNext);
+        pointerToNext = std::move(node->next_);
+        if (!pointerToNext) {
             last_ = previousNode;
         }
         --size_;
+        totalObjectsSizeBytes_ -= objectSize;
 
         AssertCorrectUnsafe();
-        return {std::move(node), previousNode->next_.get()};
+        return {std::move(node), pointerToNext.get()};
     }
 
     // Expects `mutex_` to be held by the current thread.
@@ -422,6 +418,7 @@ private:
     unique_ptr<Node> root_;
     Node* last_ = nullptr;
     size_t size_ = 0;
+    size_t totalObjectsSizeBytes_ = 0;
     SpinLock<MutexThreadStateHandling::kIgnore> mutex_;
 };
 
@@ -656,10 +653,12 @@ public:
         Iterator begin() noexcept { return Iterator(iter_.begin()); }
         Iterator end() noexcept { return Iterator(iter_.end()); }
 
-        void EraseAndAdvance(Iterator& iterator) noexcept { iter_.EraseAndAdvance(iterator.iterator_); }
+        void EraseAndAdvance(Iterator& iterator) noexcept {
+            iter_.EraseAndAdvance(iterator.iterator_, GetAllocatedHeapSize(iterator->GetObjHeader()));
+        }
 
         void MoveAndAdvance(FinalizerQueue& queue, Iterator& iterator) noexcept {
-            iter_.MoveAndAdvance(queue.consumer_, iterator.iterator_);
+            iter_.MoveAndAdvance(queue.consumer_, iterator.iterator_, GetAllocatedHeapSize(iterator->GetObjHeader()));
         }
 
     private:
@@ -672,7 +671,8 @@ public:
     // Lock ObjectFactory for safe iteration.
     Iterable LockForIter() noexcept { return Iterable(*this); }
 
-    size_t GetSizeUnsafe() const noexcept { return storage_.GetSizeUnsafe(); }
+    size_t GetObjectsCountUnsafe() const noexcept { return storage_.GetSizeUnsafe(); }
+    size_t GetTotalObjectsSizeUnsafe() const noexcept { return storage_.GetTotalObjectsSizeUnsafe(); }
 
     void ClearForTests() { storage_.ClearForTests(); }
 

@@ -174,13 +174,19 @@ public:
         return testing::UnorderedElementsAreArray(objects);
     }
 
-    gc::MarkStats Mark(std::initializer_list<std::reference_wrapper<BaseObject>> graySet) {
+    gc::MemoryUsage Mark(std::initializer_list<std::reference_wrapper<BaseObject>> graySet) {
         std_support::vector<ObjHeader*> objects;
         for (auto& object : graySet) ScopedMarkTraits::enqueue(objects, object.get().GetObjHeader());
-        return gc::Mark<ScopedMarkTraits>(objects);
+        auto handle = gc::GCHandle::create(epoch_++);
+        gc::Mark<ScopedMarkTraits>(handle, objects);
+        handle.finished();
+        return handle.getMarked();
     }
 
+    ~MarkAndSweepUtilsMarkTest() { mm::GlobalData::Instance().gc().ClearForTests(); }
+
 private:
+    uint64_t epoch_ = 0;
     kotlin::ScopedMemoryInit memoryInit;
     ScopedMarkTraits markTraits_;
 };
@@ -196,8 +202,8 @@ size_t GetObjectsSize(std::initializer_list<std::reference_wrapper<BaseObject>> 
 #define EXPECT_MARKED(stats, ...) \
     do { \
         std::initializer_list<std::reference_wrapper<BaseObject>> objects = {__VA_ARGS__}; \
-        EXPECT_THAT(stats.aliveHeapSet, objects.size()); \
-        EXPECT_THAT(stats.aliveHeapSetBytes, GetObjectsSize(objects)); \
+        EXPECT_THAT(stats.objectsCount, objects.size()); \
+        EXPECT_THAT(stats.totalObjectsSize, GetObjectsSize(objects)); \
         EXPECT_THAT(marked(), MarkedMatcher(objects)); \
     } while (false)
 

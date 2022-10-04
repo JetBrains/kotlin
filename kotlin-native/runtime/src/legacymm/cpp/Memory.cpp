@@ -3516,6 +3516,9 @@ void Kotlin_native_internal_GC_collect(KRef) {
 #endif
 }
 
+extern "C" void Kotlin_Internal_GC_GCInfoBuilder_Fill(KRef builder, int id) {
+}
+
 void Kotlin_native_internal_GC_collectCyclic(KRef) {
 #if USE_CYCLIC_GC
   if (g_hasCyclicCollector)
@@ -3862,3 +3865,5 @@ void kotlin::StartFinalizerThreadIfNeeded() noexcept {}
 bool kotlin::FinalizersThreadIsRunning() noexcept {
     return false;
 }
+
+

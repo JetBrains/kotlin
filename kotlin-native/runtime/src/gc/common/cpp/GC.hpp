@@ -58,6 +58,11 @@ public:
 
     static size_t GetAllocatedHeapSize(ObjHeader* object) noexcept;
 
+    size_t GetHeapObjectsCountUnsafe() const noexcept;
+    size_t GetTotalHeapObjectsSizeUnsafe() const noexcept;
+    size_t GetExtraObjectsCountUnsafe() const noexcept;
+    size_t GetTotalExtraObjectsSizeUnsafe() const noexcept;
+
     gc::GCSchedulerConfig& gcSchedulerConfig() noexcept;
 
     void ClearForTests() noexcept;

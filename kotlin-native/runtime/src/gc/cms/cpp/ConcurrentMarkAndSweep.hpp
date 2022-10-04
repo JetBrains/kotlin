@@ -18,6 +18,7 @@
 #include "Utils.hpp"
 #include "GCState.hpp"
 #include "std_support/Memory.hpp"
+#include "GCStatistics.hpp"
 
 namespace kotlin {
 
@@ -114,25 +115,22 @@ public:
     void StopFinalizerThreadIfRunning() noexcept;
     bool FinalizersThreadIsRunning() noexcept;
     void SetMarkingBehaviorForTests(MarkingBehavior markingBehavior) noexcept;
-    void SetMarkingRequested() noexcept;
+    void SetMarkingRequested(uint64_t epoch) noexcept;
     void WaitForThreadsReadyToMark() noexcept;
-    void CollectRootSetAndStartMarking() noexcept;
+    void CollectRootSetAndStartMarking(GCHandle gcHandle) noexcept;
 
 private:
     // Returns `true` if GC has happened, and `false` if not (because someone else has suspended the threads).
     bool PerformFullGC(int64_t epoch) noexcept;
-    void MergeMarkStats(MarkStats stats) noexcept;
 
     mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory_;
     GCScheduler& gcScheduler_;
 
-    uint64_t lastGCTimestampUs_ = 0;
     GCStateHolder state_;
     ScopedThread gcThread_;
     std_support::unique_ptr<FinalizerProcessor> finalizerProcessor_;
 
     MarkQueue markQueue_;
-    MarkStats lastGCMarkStats_;
     MarkingBehavior markingBehavior_;
 };
 

@@ -6,25 +6,15 @@
 #include "Logging.hpp"
 
 #include <array>
-#if __has_include(<optional>)
-#include <optional>
-#elif __has_include(<experimental/optional>)
-// TODO: Remove when wasm32 is gone.
-#include <experimental/optional>
-namespace std {
-template <typename T>
-using optional = std::experimental::optional<T>;
-inline constexpr auto nullopt = std::experimental::nullopt;
-} // namespace std
-#else
-#error "No <optional>"
-#endif
+
+
 
 #include "Format.h"
 #include "KAssert.h"
 #include "Porting.h"
 #include "std_support/Map.hpp"
 #include "std_support/String.hpp"
+#include "std_support/Optional.hpp"
 
 using namespace kotlin;
 
@@ -115,7 +105,7 @@ private:
 
 class StderrLogger : public logging::internal::Logger {
 public:
-    void Log(logging::Level level, std_support::span<const char* const> tags, std::string_view message) const noexcept override {
+    NO_EXTERNAL_CALLS_CHECK void Log(logging::Level level, std_support::span<const char* const> tags, std::string_view message) const noexcept override {
         konan::consoleErrorUtf8(message.data(), message.size());
     }
 };

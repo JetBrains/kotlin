@@ -9,6 +9,7 @@
 #include "ExtraObjectData.hpp"
 #include "FinalizerHooks.hpp"
 #include "GlobalData.hpp"
+#include "GCStatistics.hpp"
 #include "Logging.hpp"
 #include "Memory.h"
 #include "ObjectOps.hpp"
@@ -88,18 +89,15 @@ struct MarkStats {
 };
 
 template <typename Traits>
-MarkStats Mark(typename Traits::MarkQueue& markQueue) noexcept {
-    MarkStats stats;
-    stats.rootSetSize = markQueue.size();
-    auto timeStart = konan::getTimeMicros();
+void Mark(GCHandle handle, typename Traits::MarkQueue& markQueue) noexcept {
+    auto markHandle = handle.mark();
     while (!Traits::isEmpty(markQueue)) {
         ObjHeader* top = Traits::dequeue(markQueue);
 
         RuntimeAssert(!isNullOrMarker(top), "Got invalid reference %p in mark queue", top);
         RuntimeAssert(top->heap(), "Got non-heap reference %p in mark queue, permanent=%d stack=%d", top, top->permanent(), top->local());
 
-        stats.aliveHeapSet++;
-        stats.aliveHeapSetBytes += mm::GetAllocatedHeapSize(top);
+        markHandle.addObject(mm::GetAllocatedHeapSize(top));
 
         Traits::processInMark(markQueue, top);
 
@@ -112,14 +110,12 @@ MarkStats Mark(typename Traits::MarkQueue& markQueue) noexcept {
             }
         }
     }
-    auto timeEnd = konan::getTimeMicros();
-    RuntimeLogDebug({kTagGC}, "Marked %zu objects in %" PRIu64 " microseconds in thread %d", stats.aliveHeapSet, timeEnd - timeStart, konan::currentThreadId());
-    return stats;
 }
 
 template <typename Traits>
-void SweepExtraObjects(typename Traits::ExtraObjectsFactory& objectFactory) noexcept {
+void SweepExtraObjects(GCHandle handle, typename Traits::ExtraObjectsFactory& objectFactory) noexcept {
     objectFactory.ProcessDeletions();
+    auto sweepHandle = handle.sweepExtraObjects();
     auto iter = objectFactory.LockForIter();
     for (auto it = iter.begin(); it != iter.end();) {
         auto &extraObject = *it;
@@ -140,8 +136,9 @@ void SweepExtraObjects(typename Traits::ExtraObjectsFactory& objectFactory) noex
 }
 
 template <typename Traits>
-typename Traits::ObjectFactory::FinalizerQueue Sweep(typename Traits::ObjectFactory::Iterable& objectFactoryIter) noexcept {
+typename Traits::ObjectFactory::FinalizerQueue Sweep(GCHandle handle, typename Traits::ObjectFactory::Iterable& objectFactoryIter) noexcept {
     typename Traits::ObjectFactory::FinalizerQueue finalizerQueue;
+    auto sweepHandle = handle.sweep();
 
     for (auto it = objectFactoryIter.begin(); it != objectFactoryIter.end();) {
         if (Traits::TryResetMark(*it)) {
@@ -160,64 +157,60 @@ typename Traits::ObjectFactory::FinalizerQueue Sweep(typename Traits::ObjectFact
 }
 
 template <typename Traits>
-typename Traits::ObjectFactory::FinalizerQueue Sweep(typename Traits::ObjectFactory& objectFactory) noexcept {
+typename Traits::ObjectFactory::FinalizerQueue Sweep(GCHandle handle, typename Traits::ObjectFactory& objectFactory) noexcept {
     auto iter = objectFactory.LockForIter();
-    return Sweep<Traits>(iter);
+    return Sweep<Traits>(handle, iter);
 }
 
 template <typename Traits>
-void collectRootSetForThread(typename Traits::MarkQueue& markQueue, mm::ThreadData& thread) {
+void collectRootSetForThread(GCHandle gcHandle, typename Traits::MarkQueue& markQueue, mm::ThreadData& thread) {
+    auto handle = gcHandle.collectThreadRoots(thread);
     thread.gc().OnStoppedForGC();
-    size_t stack = 0;
-    size_t tls = 0;
     // TODO: Remove useless mm::ThreadRootSet abstraction.
     for (auto value : mm::ThreadRootSet(thread)) {
         if (internal::collectRoot<Traits>(markQueue, value.object)) {
             switch (value.source) {
                 case mm::ThreadRootSet::Source::kStack:
-                    ++stack;
+                    handle.addStackRoot();
                     break;
                 case mm::ThreadRootSet::Source::kTLS:
-                    ++tls;
+                    handle.addThreadLocalRoot();
                     break;
             }
         }
     }
-    RuntimeLogDebug({kTagGC}, "Collected root set for thread stack=%zu tls=%zu", stack, tls);
 }
 
 template <typename Traits>
-void collectRootSetGlobals(typename Traits::MarkQueue& markQueue) noexcept {
+void collectRootSetGlobals(GCHandle gcHandle, typename Traits::MarkQueue& markQueue) noexcept {
+    auto handle = gcHandle.collectGlobalRoots();
     mm::StableRefRegistry::Instance().ProcessDeletions();
-    size_t global = 0;
-    size_t stableRef = 0;
     // TODO: Remove useless mm::GlobalRootSet abstraction.
     for (auto value : mm::GlobalRootSet()) {
         if (internal::collectRoot<Traits>(markQueue, value.object)) {
             switch (value.source) {
                 case mm::GlobalRootSet::Source::kGlobal:
-                    ++global;
+                    handle.addGlobalRoot();
                     break;
                 case mm::GlobalRootSet::Source::kStableRef:
-                    ++stableRef;
+                    handle.addStableRoot();
                     break;
             }
         }
     }
-    RuntimeLogDebug({kTagGC}, "Collected global root set global=%zu stableRef=%zu", global, stableRef);
 }
 
 // TODO: This needs some tests now.
 template <typename Traits, typename F>
-void collectRootSet(typename Traits::MarkQueue& markQueue, F&& filter) noexcept {
+void collectRootSet(GCHandle handle, typename Traits::MarkQueue& markQueue, F&& filter) noexcept {
     Traits::clear(markQueue);
     for (auto& thread : mm::GlobalData::Instance().threadRegistry().LockForIter()) {
         if (!filter(thread))
             continue;
         thread.Publish();
-        collectRootSetForThread<Traits>(markQueue, thread);
+        collectRootSetForThread<Traits>(handle, markQueue, thread);
     }
-    collectRootSetGlobals<Traits>(markQueue);
+    collectRootSetGlobals<Traits>(handle, markQueue);
 }
 
 } // namespace gc

@@ -1172,7 +1172,7 @@ TEST_P(ConcurrentMarkAndSweepTest, MutatorsCanMarkOwnLocals) {
 
     std_support::vector<std::future<void>> gcFutures(kDefaultThreadCount);
 
-    mm::GlobalData::Instance().gc().impl().gc().SetMarkingRequested();
+    mm::GlobalData::Instance().gc().impl().gc().SetMarkingRequested(0);
 
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         gcFutures[i] = mutators[i]
@@ -1181,7 +1181,7 @@ TEST_P(ConcurrentMarkAndSweepTest, MutatorsCanMarkOwnLocals) {
 
     if (GetParam() == gc::ConcurrentMarkAndSweep::kMarkOwnStack) {
         mm::GlobalData::Instance().gc().impl().gc().WaitForThreadsReadyToMark();
-        mm::GlobalData::Instance().gc().impl().gc().CollectRootSetAndStartMarking();
+        mm::GlobalData::Instance().gc().impl().gc().CollectRootSetAndStartMarking(gc::GCHandle::createFakeForTests());
     }
 
     for (int i = 0; i < kDefaultThreadCount; ++i) {
