@@ -408,7 +408,6 @@ internal val bitcodePhase = NamedCompilerPhase(
                 RTTIPhase then
                 generateDebugInfoHeaderPhase then
                 escapeAnalysisPhase then
-                localEscapeAnalysisPhase then
                 codegenPhase then
                 finalizeDebugInfoPhase then
                 cStubsPhase
@@ -527,8 +526,6 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         // is workarounded in [FunctionReferenceLowering] by taking erasure of SAM conversion type).
         // Also see https://youtrack.jetbrains.com/issue/KT-50399 for more details.
         disable(checkSamSuperTypesPhase)
-
-        disable(localEscapeAnalysisPhase)
 
         disableIf(singleCompilation, config.producePerFileCache)
         disableUnless(umbrellaCompilation, config.producePerFileCache)
