@@ -115,8 +115,8 @@ class CounterIterator : Iterator<Int> {
 
 }
 
-operator fun Counter.iterator(<this>: CounterConfig): CounterIterator {
-  return with<CounterConfig, CounterIterator>(receiver = <this>, block = local fun CounterConfig.<anonymous>(): CounterIterator {
+operator fun Counter.iterator(_context_receiver_0: CounterConfig): CounterIterator {
+  return with<CounterConfig, CounterIterator>(receiver = _context_receiver_0, block = local fun CounterConfig.<anonymous>(): CounterIterator {
     return CounterIterator(<this> = $this$with, counter = <this>)
   }
 )
@@ -126,7 +126,7 @@ fun box(): String {
   var result: Int = 0
   with<CounterConfig, Unit>(receiver = CounterConfig(), block = local fun CounterConfig.<anonymous>() {
     { // BLOCK
-      val tmp0_iterator: CounterIterator = Counter().iterator(<this> = $this$with)
+      val tmp0_iterator: CounterIterator = Counter().iterator(_context_receiver_0 = $this$with)
       while (tmp0_iterator.hasNext()) { // BLOCK
         val i: Int = tmp0_iterator.next()
         { // BLOCK

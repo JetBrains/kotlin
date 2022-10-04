@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.*;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.NameUtils;
 import org.jetbrains.kotlin.name.StandardClassIds;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ContextClassReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ContextReceiver;
@@ -231,11 +232,13 @@ public class DescriptorFactory {
             @NotNull CallableDescriptor owner,
             @Nullable KotlinType receiverParameterType,
             @Nullable Name customLabelName,
-            @NotNull Annotations annotations
+            @NotNull Annotations annotations,
+            int index
     ) {
         return receiverParameterType == null
                ? null
-               : new ReceiverParameterDescriptorImpl(owner, new ContextReceiver(owner, receiverParameterType, customLabelName, null), annotations);
+               : new ReceiverParameterDescriptorImpl(owner, new ContextReceiver(owner, receiverParameterType, customLabelName, null), annotations,
+                                                     NameUtils.contextReceiverName(index));
     }
 
     @Nullable

@@ -240,13 +240,14 @@ class FunctionDescriptorResolver(
                 functionDescriptor, it, splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER)
             )
         }
-        val contextReceiverDescriptors = contextReceiverTypes.mapNotNull { contextReceiver ->
+        val contextReceiverDescriptors = contextReceiverTypes.mapIndexedNotNull { index, contextReceiver ->
             val splitter = AnnotationSplitter(storageManager, contextReceiver.type.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
             DescriptorFactory.createContextReceiverParameterForCallable(
                 functionDescriptor,
                 contextReceiver.type,
                 contextReceiver.label,
                 splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER),
+                index
             )
         }
 

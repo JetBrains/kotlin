@@ -61,4 +61,8 @@ object NameUtils {
     fun propertyDelegateName(propertyName: Name): Name {
         return Name.identifier("${propertyName.asString()}\$delegate")
     }
+
+    @JvmStatic
+    fun contextReceiverName(index: Int): Name =
+        Name.identifier("_context_receiver_$index")
 }

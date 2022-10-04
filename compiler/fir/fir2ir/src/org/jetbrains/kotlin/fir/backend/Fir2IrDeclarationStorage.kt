@@ -1157,7 +1157,7 @@ class Fir2IrDeclarationStorage(
         return contextReceiver.convertWithOffsets { startOffset, endOffset ->
             irFactory.createValueParameter(
                 startOffset, endOffset, IrDeclarationOrigin.DEFINED, IrValueParameterSymbolImpl(),
-                Name.identifier("_context_receiver_$index"), index, type,
+                NameUtils.contextReceiverName(index), index, type,
                 null,
                 isCrossinline = false, isNoinline = false,
                 isHidden = false, isAssignable = false
