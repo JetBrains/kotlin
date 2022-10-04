@@ -188,9 +188,9 @@ class ReceiverBasedMfvcNodeInstance(
     override fun makeGetterExpression(): IrExpression = with(scope) {
         when {
             node is LeafMfvcNode && canUsePrivateAccessFor(node) && fields != null -> irGetField(makeReceiverCopy(), fields.single())
-            node is IntermediateMfvcNode && accessType == AccessType.AlwaysPrivate && fields != null -> node.makeBoxedExpression(
-                this, typeArguments, fields.map { irGetField(makeReceiverCopy(), it) }
-            )
+            node is IntermediateMfvcNode && accessType == AccessType.AlwaysPrivate && fields != null ->
+                node.makeBoxedExpression(this, typeArguments, fields.map { irGetField(makeReceiverCopy(), it) })
+
             unboxMethod != null -> irCall(unboxMethod).apply {
                 val dispatchReceiverParameter = unboxMethod.dispatchReceiverParameter
                 if (dispatchReceiverParameter != null) {
@@ -225,7 +225,7 @@ class ReceiverBasedMfvcNodeInstance(
 val MfvcNodeInstance.size: Int
     get() = node.leavesCount
 
-fun IrContainerExpression.unwrap(): IrExpression = statements.singleOrNull() as? IrExpression ?: this
+fun IrContainerExpression.unwrapBlock(): IrExpression = statements.singleOrNull() as? IrExpression ?: this
 
 /**
  * Creates a variable and doesn't add it to a container. It saves the variable with given saveVariable.

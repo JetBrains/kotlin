@@ -95,6 +95,7 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
         val superClassType = superMethod.parentAsClass.defaultType
         val defaultImplFun = context.cachedDeclarations.getDefaultImplsFunction(superMethod)
         val classStartOffset = classOverride.parentAsClass.startOffset
+        val backendContext = context
         context.createIrBuilder(irFunction.symbol, classStartOffset, classStartOffset).apply {
             irFunction.body = irBlockBody {
                 +irReturn(
@@ -107,18 +108,18 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
                         irFunction.dispatchReceiverParameter?.let {
                             putValueArgument(0, irGet(it).reinterpretAsDispatchReceiverOfType(superClassType))
                         }
-                        val lowering = this@InheritedDefaultMethodsOnClassesLowering
-                        val mfvcOrOriginal = lowering.context.inlineClassReplacements.originalFunctionForMethodReplacement[classOverride]
+                        val mfvcOrOriginal = backendContext.inlineClassReplacements.originalFunctionForMethodReplacement[classOverride]
                             ?: classOverride
-                        val bindingNewFunctionToParameterTemplateStructure = lowering.context.multiFieldValueClassReplacements
+                        val bindingNewFunctionToParameterTemplateStructure = backendContext.multiFieldValueClassReplacements
                             .bindingNewFunctionToParameterTemplateStructure
                         val structure = bindingNewFunctionToParameterTemplateStructure[mfvcOrOriginal]?.let { structure ->
-                            val errorMessage = { "Bad parameters structure: $structure" }
-                            require(structure.sumOf { it.valueParameters.size } == classOverride.explicitParametersCount) { errorMessage() }
+                            require(structure.sumOf { it.valueParameters.size } == classOverride.explicitParametersCount) {
+                                "Bad parameters structure: $structure"
+                            }
                             if (defaultImplFun.explicitParametersCount == irFunction.explicitParametersCount) {
                                 null
                             } else {
-                                require(structure.size == defaultImplFun.explicitParametersCount) { errorMessage() }
+                                require(structure.size == defaultImplFun.explicitParametersCount) { "Bad parameters structure: $structure" }
                                 structure
                             }
                         }
@@ -127,7 +128,7 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
                         }
                         val sourceFullValueParameterList = irFunction.fullValueParameterList
                         if (structure == null) {
-                            sourceFullValueParameterList.forEachIndexed { index, parameter ->
+                            for ((index, parameter) in sourceFullValueParameterList.withIndex()) {
                                 putValueArgument(1 + index, irGet(parameter))
                             }
                         } else {
@@ -135,7 +136,7 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
                             for (i in 1 until structure.size) {
                                 when (val remappedParameter = structure[i]) {
                                     is MultiFieldValueClassMapping -> {
-                                        val valueArguments = (0 until remappedParameter.valueParameters.size).map {
+                                        val valueArguments = remappedParameter.valueParameters.indices.map {
                                             irGet(sourceFullValueParameterList[flattenedIndex++])
                                         }
                                         val boxedExpression = remappedParameter.rootMfvcNode.makeBoxedExpression(
