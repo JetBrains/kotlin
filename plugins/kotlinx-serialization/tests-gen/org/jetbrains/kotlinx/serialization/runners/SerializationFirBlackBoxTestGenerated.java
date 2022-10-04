@@ -46,6 +46,18 @@ public class SerializationFirBlackBoxTestGenerated extends AbstractSerialization
         }
 
         @Test
+        @TestMetadata("genericBaseClassMultiple.kt")
+        public void testGenericBaseClassMultiple() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/boxIr/genericBaseClassMultiple.kt");
+        }
+
+        @Test
+        @TestMetadata("genericBaseClassSimple.kt")
+        public void testGenericBaseClassSimple() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/boxIr/genericBaseClassSimple.kt");
+        }
+
+        @Test
         @TestMetadata("generics.kt")
         public void testGenerics() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/boxIr/generics.kt");
