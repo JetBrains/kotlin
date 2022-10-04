@@ -121,7 +121,7 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
         get() = target.disambiguationClassifier + name
 }
 
-// TODO NOW: Revisit/Remove?
+@Deprecated("Scheduled for removal with Kotlin 1.9")
 interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptionsDeprecated> : KotlinCompilation<T> {
     override val runtimeDependencyConfigurationName: String
 
@@ -132,7 +132,7 @@ interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptionsDeprecated> : 
 }
 
 @Deprecated("Scheduled for removal with Kotlin 1.9")
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // kept for compatibility
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "deprecation") // kept for compatibility
 val <T : KotlinCommonOptionsDeprecated> KotlinCompilation<T>.runtimeDependencyConfigurationName: String?
     get() = (this as? KotlinCompilationToRunnableFiles<T>)?.runtimeDependencyConfigurationName
 

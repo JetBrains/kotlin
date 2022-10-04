@@ -6,7 +6,6 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
@@ -24,10 +22,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import javax.inject.Inject
 
 open class KotlinJvmCompilation @Inject internal constructor(
-    private val compilation: KotlinCompilationImpl
-) : InternalKotlinCompilation<KotlinJvmOptions> by compilation.castKotlinOptionsType(),
-    KotlinCompilationWithResources<KotlinJvmOptions>,
-    KotlinCompilationToRunnableFiles<KotlinJvmOptions> {
+    compilation: KotlinCompilationImpl
+) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilation),
+    KotlinCompilationWithResources<KotlinJvmOptions> {
 
     override val target: KotlinJvmTarget = compilation.target as KotlinJvmTarget
 
@@ -58,16 +55,8 @@ open class KotlinJvmCompilation @Inject internal constructor(
             project.tasks.withType(JavaCompile::class.java).named(javaSourceSet.compileJavaTaskName)
         } else null
 
-    override val runtimeDependencyConfigurationName: String
-        get() = compilation.runtimeDependencyConfigurationName ?: error("Missing 'runtimeDependencyConfigurationName'")
-
-    override var runtimeDependencyFiles: FileCollection = compilation.runtimeDependencyFiles ?: error("Missing 'runtimeDependencyFiles'")
-
     override val processResourcesTaskName: String
         get() = compilation.processResourcesTaskName ?: error("Missing 'processResourcesTaskName'")
-
-    override val relatedConfigurationNames: List<String>
-        get() = compilation.relatedConfigurationNames
 }
 
 //TODO SEB: Find a good spot for this function

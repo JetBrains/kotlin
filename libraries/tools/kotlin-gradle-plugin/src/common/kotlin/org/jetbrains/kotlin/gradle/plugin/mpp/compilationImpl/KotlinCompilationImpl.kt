@@ -224,4 +224,8 @@ internal class KotlinCompilationImpl @Inject constructor(
     }
 
     //endregion
+
+    override fun toString(): String {
+        return "compilation '$name' ($target)"
+    }
 }
