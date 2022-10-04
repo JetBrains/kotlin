@@ -1387,7 +1387,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
     @GradleTest
     fun testFailingWithYarnLockUpdate(gradleVersion: GradleVersion) {
         project("kotlin-js-yarn-lock-project", gradleVersion) {
-            build("compileKotlinJs") {
+            build(STORE_YARN_LOCK_NAME) {
                 assertTasksExecuted(":$STORE_YARN_LOCK_NAME")
             }
 
@@ -1402,7 +1402,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                         """.trimIndent()
             }
 
-            buildAndFail("compileKotlinJs") {
+            buildAndFail(STORE_YARN_LOCK_NAME) {
                 assertTasksFailed(":$STORE_YARN_LOCK_NAME")
             }
 
@@ -1420,12 +1420,12 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                         """.trimIndent()
             }
 
-            buildAndFail("compileKotlinJs") {
+            buildAndFail(STORE_YARN_LOCK_NAME) {
                 assertTasksFailed(":$STORE_YARN_LOCK_NAME")
             }
 
             // yarn.lock was not updated
-            buildAndFail("compileKotlinJs") {
+            buildAndFail(STORE_YARN_LOCK_NAME) {
                 assertTasksFailed(":$STORE_YARN_LOCK_NAME")
             }
 
@@ -1444,7 +1444,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                         """.trimIndent()
             }
 
-            build("compileKotlinJs") {
+            build(STORE_YARN_LOCK_NAME) {
                 assertTasksExecuted(":$STORE_YARN_LOCK_NAME")
 
                 assertOutputContains(YARN_LOCK_MISMATCH_MESSAGE)
@@ -1468,7 +1468,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                         """.trimIndent()
             }
 
-            build("compileKotlinJs") {
+            build(STORE_YARN_LOCK_NAME) {
                 assertTasksExecuted(":$STORE_YARN_LOCK_NAME")
 
                 assertOutputDoesNotContain(YARN_LOCK_MISMATCH_MESSAGE)
@@ -1496,7 +1496,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                         """.trimIndent()
             }
 
-            build("compileKotlinJs") {
+            build(STORE_YARN_LOCK_NAME) {
                 assertTasksExecuted(":$STORE_YARN_LOCK_NAME")
 
                 assertOutputDoesNotContain(YARN_LOCK_MISMATCH_MESSAGE)
@@ -1518,12 +1518,12 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                         """.trimIndent()
             }
 
-            buildAndFail("compileKotlinJs") {
+            buildAndFail(STORE_YARN_LOCK_NAME) {
                 assertTasksFailed(":$STORE_YARN_LOCK_NAME")
             }
 
             //yarn.lock was updated
-            build("compileKotlinJs") {
+            build(STORE_YARN_LOCK_NAME) {
                 assertTasksExecuted(":$STORE_YARN_LOCK_NAME")
             }
 
@@ -1540,7 +1540,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                 assertTasksUpToDate(":clean")
             }
 
-            buildAndFail("compileKotlinJs") {
+            buildAndFail(STORE_YARN_LOCK_NAME) {
                 assertTasksFailed(":$STORE_YARN_LOCK_NAME")
             }
 
