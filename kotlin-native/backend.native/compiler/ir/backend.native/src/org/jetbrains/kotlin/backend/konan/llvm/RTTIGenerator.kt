@@ -260,7 +260,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 llvmDeclarations.writableTypeInfoGlobal?.pointer,
                 associatedObjects = genAssociatedObjects(irClass),
                 processObjectInMark = when {
-                    irClass.symbol == context.ir.symbols.array -> constPointer(context.llvm.Kotlin_processArrayInMark.llvmValue)
+                    irClass.symbol == context.ir.symbols.array -> constPointer(llvm.Kotlin_processArrayInMark.llvmValue)
                     else -> genProcessObjectInMark(bodyType)
                 }
         )
@@ -488,11 +488,11 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         return when {
             indicesOfObjectFields.isEmpty() -> {
                 // TODO: Try to generate it here instead of importing from the runtime.
-                constPointer(context.llvm.Kotlin_processEmptyObjectInMark.llvmValue)
+                constPointer(llvm.Kotlin_processEmptyObjectInMark.llvmValue)
             }
             else -> {
                 // TODO: specialize for "small" objects
-                constPointer(context.llvm.Kotlin_processObjectInMark.llvmValue)
+                constPointer(llvm.Kotlin_processObjectInMark.llvmValue)
             }
         }
     }
