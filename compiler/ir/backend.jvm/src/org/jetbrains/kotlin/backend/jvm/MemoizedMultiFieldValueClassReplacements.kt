@@ -224,7 +224,8 @@ class MemoizedMultiFieldValueClassReplacements(
                         function.isStaticValueClassReplacement ||
                         function.origin == IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER && function.isAccessor ||
                         function.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
-                        function.origin.isSynthetic && function.origin != IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION -> null
+                        function.origin.isSynthetic && function.origin != IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION ||
+                        function.isMultiFieldValueClassFieldGetter -> null
 
                 function.parent.safeAs<IrClass>()?.isMultiFieldValueClass == true -> when {
                     function.isRemoveAtSpecialBuiltinStub() ->
@@ -279,6 +280,7 @@ class MemoizedMultiFieldValueClassReplacements(
             when {
                 parent !is IrClass -> null
                 property.isFakeOverride -> null
+                property.getter.let { it != null && (it.contextReceiverParametersCount > 0 || it.extensionReceiverParameter != null) } -> null
                 useRootNode(parent, property) -> null
                 property.run { backingField?.type ?: getter?.returnType }?.needsMfvcFlattening() != true -> null
                 else -> createIntermediateNodeForMfvcPropertyOfRegularClass(parent, context, property)
