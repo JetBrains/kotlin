@@ -306,7 +306,9 @@ class KotlinMetadataTargetConfigurator :
                 defaultSourceSet = sourceSet
             )
 
-            else -> KotlinCommonCompilationFactory(target)
+            else -> KotlinCommonCompilationFactory(
+                target = target, defaultSourceSet = sourceSet
+            )
         }
 
         return compilationFactory.create(compilationName).apply {

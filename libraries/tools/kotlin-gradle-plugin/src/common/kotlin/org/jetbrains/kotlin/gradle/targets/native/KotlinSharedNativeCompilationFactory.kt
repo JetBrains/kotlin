@@ -41,9 +41,7 @@ open class KotlinSharedNativeCompilationFactory internal constructor(
             Metadata compilations are created *because* of a pre-existing SourceSet.
             We therefore can create the container inline
              */
-            compilationSourceSetsContainerFactory = KotlinCompilationImplFactory.KotlinCompilationSourceSetsContainerFactory { _, _ ->
-                KotlinCompilationSourceSetsContainer(defaultSourceSet)
-            }
+            compilationSourceSetsContainerFactory = { _, _ -> KotlinCompilationSourceSetsContainer(defaultSourceSet) }
         )
 ) : KotlinCompilationFactory<KotlinSharedNativeCompilation> {
 
