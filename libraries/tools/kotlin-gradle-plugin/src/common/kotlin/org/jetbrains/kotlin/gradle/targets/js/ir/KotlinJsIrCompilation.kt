@@ -9,6 +9,4 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import javax.inject.Inject
 
-open class KotlinJsIrCompilation @Inject internal constructor(
-    compilation: KotlinCompilationImpl
-) : KotlinJsCompilation(compilation)
+open class KotlinJsIrCompilation @Inject internal constructor(compilation: KotlinCompilationImpl) : KotlinJsCompilation(compilation)
