@@ -11,35 +11,56 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.getJavaTaskProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.AndroidCompilationDetails
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import javax.inject.Inject
 
-abstract class KotlinJvmAndroidCompilation @Inject internal constructor(
-    final override val compilationDetails: AndroidCompilationDetails
-) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilationDetails) {
+open class KotlinJvmAndroidCompilation @Inject internal constructor(
+    private val compilation: KotlinCompilationImpl,
+    val androidVariant: BaseVariant
+) : InternalKotlinCompilation<KotlinJvmOptions> by compilation.castKotlinOptionsType(),
+    KotlinCompilationToRunnableFiles<KotlinJvmOptions> {
 
-    val androidVariant: BaseVariant = compilationDetails.androidVariant
+    override val target: KotlinAndroidTarget = compilation.target as KotlinAndroidTarget
+
+    override val compilerOptions: HasCompilerOptions<CompilerJvmOptions> =
+        compilation.compilerOptions.castCompilerOptionsType()
 
     internal val testedVariantArtifacts: Property<FileCollection> =
-        compilationDetails.target.project.objects.property(FileCollection::class.java)
+        compilation.project.objects.property(FileCollection::class.java)
 
     @Suppress("DEPRECATION")
     @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
     override val compileKotlinTask: org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-        get() = super.compileKotlinTask as org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+        get() = compilation.compileKotlinTask as org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
     @Suppress("UNCHECKED_CAST", "DEPRECATION")
     @Deprecated("Replaced with compileTaskProvider", replaceWith = ReplaceWith("compileTaskProvider"))
     override val compileKotlinTaskProvider: TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
-        get() = super.compileKotlinTaskProvider as TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
+        get() = compilation.compileKotlinTaskProvider as TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
 
     @Suppress("UNCHECKED_CAST")
-    override val compileTaskProvider: TaskProvider<out KotlinCompilationTask<KotlinJvmCompilerOptions>>
-        get() = super.compileTaskProvider as TaskProvider<KotlinCompilationTask<KotlinJvmCompilerOptions>>
+    override val compileTaskProvider: TaskProvider<out KotlinCompilationTask<CompilerJvmOptions>>
+        get() = compilation.compileTaskProvider as TaskProvider<KotlinCompilationTask<CompilerJvmOptions>>
 
     val compileJavaTaskProvider: TaskProvider<out JavaCompile>
         get() = androidVariant.getJavaTaskProvider()
+
+    override val runtimeDependencyConfigurationName: String
+        get() = compilation.runtimeDependencyConfigurationName ?: error("Missing 'runtimeDependencyConfigurationName'")
+
+    override var runtimeDependencyFiles: FileCollection = compilation.runtimeDependencyFiles ?: error("Missing 'runtimeDependencyFiles'")
+
+    override val relatedConfigurationNames: List<String>
+        get() = compilation.relatedConfigurationNames + listOf(
+            "${androidVariant.name}ApiElements",
+            "${androidVariant.name}RuntimeElements",
+            androidVariant.compileConfiguration.name,
+            androidVariant.runtimeConfiguration.name
+        )
 }

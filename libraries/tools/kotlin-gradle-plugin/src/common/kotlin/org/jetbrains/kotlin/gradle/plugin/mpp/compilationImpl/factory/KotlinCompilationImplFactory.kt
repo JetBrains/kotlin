@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationModuleManager.CompilationModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 
 internal class KotlinCompilationImplFactory(
     private val compilerOptionsFactory: CompilerOptionsFactory,
@@ -40,7 +42,13 @@ internal class KotlinCompilationImplFactory(
         DefaultKotlinCompilationTaskNamesContainerFactory,
 
     private val processResourcesTaskNameFactory: ProcessResourcesTaskNameFactory =
-        DefaultProcessResourcesTaskNameFactory
+        DefaultProcessResourcesTaskNameFactory,
+
+    private val preConfigureAction: PreConfigure =
+        EmptyPreConfigure,
+
+    private val postConfigureAction: PostConfigure =
+        DefaultKotlinCompilationPostConfigure
 ) {
     fun interface CompilationModuleFactory {
         fun create(target: KotlinTarget, compilationName: String): CompilationModule
@@ -72,9 +80,25 @@ internal class KotlinCompilationImplFactory(
         fun create(target: KotlinTarget, compilationName: String): Options
     }
 
+    fun interface PreConfigure {
+        fun configure(compilation: KotlinCompilationImpl)
+
+        companion object {
+            fun composite(vararg elements: PreConfigure?): PreConfigure = CompositePreConfigure(listOfNotNull(*elements))
+        }
+    }
+
+    fun interface PostConfigure {
+        fun configure(compilation: InternalKotlinCompilation<*>)
+
+        companion object {
+            fun composite(vararg elements: PostConfigure?): PostConfigure = CompositePostConfigure(listOfNotNull(*elements))
+        }
+    }
+
     fun create(target: KotlinTarget, compilationName: String): KotlinCompilationImpl {
         val options = compilerOptionsFactory.create(target, compilationName)
-        return KotlinCompilationImpl(
+        val compilation = KotlinCompilationImpl(
             KotlinCompilationImpl.Params(
                 target = target,
                 compilationModule = compilationModuleFactory.create(target, compilationName),
@@ -90,5 +114,40 @@ internal class KotlinCompilationImplFactory(
                 compilationSourceSetInclusion = compilationSourceSetInclusion
             )
         )
+
+        preConfigureAction.configure(compilation)
+
+        /* Wire up post-configure action: Release reference once executed */
+        var postConfigureAction: PostConfigure? = this.postConfigureAction
+        target.compilations.whenObjectAdded { added ->
+            if (added.compilationName == compilationName) {
+                postConfigureAction?.configure(added.internal)
+                postConfigureAction = null
+            }
+        }
+
+        return compilation
+    }
+
+}
+
+private class CompositePreConfigure(
+    private val elements: List<KotlinCompilationImplFactory.PreConfigure>
+) : KotlinCompilationImplFactory.PreConfigure {
+    override fun configure(compilation: KotlinCompilationImpl) {
+        elements.forEach { element -> element.configure(compilation) }
     }
 }
+
+private class CompositePostConfigure(
+    private val elements: List<KotlinCompilationImplFactory.PostConfigure>
+) : KotlinCompilationImplFactory.PostConfigure {
+    override fun configure(compilation: InternalKotlinCompilation<*>) {
+        elements.forEach { element -> element.configure(compilation) }
+    }
+}
+
+private object EmptyPreConfigure : KotlinCompilationImplFactory.PreConfigure {
+    override fun configure(compilation: KotlinCompilationImpl) = Unit
+}
+

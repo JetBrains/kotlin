@@ -34,8 +34,13 @@ internal interface InternalKotlinCompilation<out T : KotlinCommonOptions> : Kotl
     override val runtimeDependencyFiles: FileCollection? get() = null
     override val runtimeDependencyConfigurationName: String? get() = null
     val processResourcesTaskName: String? get() = null
-
 }
+
+internal inline val <reified T : KotlinCommonOptions> InternalKotlinCompilation<T>.decoratorInstance: InternalKotlinCompilation<T>
+    get() = target.compilations.getByName(compilationName).internal.castKotlinOptionsType()
+
+internal inline val <reified T : KotlinCommonOptions> InternalKotlinCompilation<T>.decoratorInstanceOrNull: InternalKotlinCompilation<T>?
+    get() = target.compilations.findByName(compilationName)?.internal?.castKotlinOptionsType()
 
 internal val <T : KotlinCommonOptions> KotlinCompilation<T>.internal: InternalKotlinCompilation<T>
     get() = (this as? InternalKotlinCompilation<T>) ?: throw IllegalArgumentException(

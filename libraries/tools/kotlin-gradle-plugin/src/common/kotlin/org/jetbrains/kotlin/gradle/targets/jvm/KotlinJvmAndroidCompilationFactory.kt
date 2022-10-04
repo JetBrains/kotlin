@@ -7,28 +7,32 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import com.android.build.gradle.api.BaseVariant
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.AndroidCompilationDetails
-import org.jetbrains.kotlin.gradle.plugin.sources.android.kotlinAndroidSourceSetLayout
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.AndroidKotlinCompilationAssociator
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.AndroidCompilationSourceSetsContainerFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmCompilerOptionsFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 
-class KotlinJvmAndroidCompilationFactory(
+class KotlinJvmAndroidCompilationFactory internal constructor(
     override val target: KotlinAndroidTarget,
     private val variant: BaseVariant,
+    private val compilationImplFactory: KotlinCompilationImplFactory = KotlinCompilationImplFactory(
+        compilerOptionsFactory = JvmCompilerOptionsFactory,
+        compilationFriendPathsResolver = DefaultKotlinCompilationFriendPathsResolver(
+            friendArtifactResolver = DefaultKotlinCompilationFriendPathsResolver.FriendArtifactResolver.composite(
+                DefaultKotlinCompilationFriendPathsResolver.DefaultFriendArtifactResolver,
+                DefaultKotlinCompilationFriendPathsResolver.AdditionalAndroidFriendArtifactResolver
+            )
+        ),
+        compilationAssociator = AndroidKotlinCompilationAssociator,
+        compilationSourceSetsContainerFactory = AndroidCompilationSourceSetsContainerFactory(target, variant)
+    )
 ) : KotlinCompilationFactory<KotlinJvmAndroidCompilation> {
 
     override val itemClass: Class<KotlinJvmAndroidCompilation>
         get() = KotlinJvmAndroidCompilation::class.java
 
-
-    override fun defaultSourceSetName(compilationName: String): String {
-        return project.kotlinAndroidSourceSetLayout.naming.defaultKotlinSourceSetName(target, variant)
-            ?: super.defaultSourceSetName(compilationName)
-    }
-
     override fun create(name: String): KotlinJvmAndroidCompilation {
-        lateinit var result: KotlinJvmAndroidCompilation
-        val details = AndroidCompilationDetails(target, name, getOrCreateDefaultSourceSet(name), variant) { result }
-        result = project.objects.newInstance(KotlinJvmAndroidCompilation::class.java, details)
-        return result
+        return project.objects.newInstance(itemClass, compilationImplFactory.create(target, name), variant)
     }
-
 }
