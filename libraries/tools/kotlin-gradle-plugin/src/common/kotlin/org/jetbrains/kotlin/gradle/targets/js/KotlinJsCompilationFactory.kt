@@ -6,28 +6,23 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.JsCompilationDetails
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JsCompilationSourceSetsContainerFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JsCompilerOptionsFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JsKotlinCompilationDependencyConfigurationsFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 
-class KotlinJsCompilationFactory(
+class KotlinJsCompilationFactory internal constructor(
     override val target: KotlinOnlyTarget<KotlinJsCompilation>,
+    private val compilationImplFactory: KotlinCompilationImplFactory = KotlinCompilationImplFactory(
+        compilerOptionsFactory = JsCompilerOptionsFactory,
+        compilationSourceSetsContainerFactory = JsCompilationSourceSetsContainerFactory,
+        compilationDependencyConfigurationsFactory = JsKotlinCompilationDependencyConfigurationsFactory
+    )
 ) : KotlinCompilationFactory<KotlinJsCompilation> {
     override val itemClass: Class<KotlinJsCompilation>
         get() = KotlinJsCompilation::class.java
 
-    override fun defaultSourceSetName(compilationName: String): String {
-        val classifier = if (target is KotlinJsTarget && target.irTarget != null)
-            target.disambiguationClassifierInPlatform
-        else target.disambiguationClassifier
-
-        return lowerCamelCaseName(
-            classifier,
-            compilationName
-        )
-    }
-
     override fun create(name: String): KotlinJsCompilation = target.project.objects.newInstance(
-        KotlinJsCompilation::class.java, JsCompilationDetails(target, name, getOrCreateDefaultSourceSet(name))
+        itemClass, compilationImplFactory.create(target, name)
     )
 }

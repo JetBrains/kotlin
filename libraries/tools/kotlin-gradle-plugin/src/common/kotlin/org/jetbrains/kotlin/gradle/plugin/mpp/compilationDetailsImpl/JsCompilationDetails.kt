@@ -40,7 +40,7 @@ internal open class JsCompilationDetails(
 
     internal abstract class JsCompilationDependenciesHolder @Inject constructor(
         val target: KotlinTarget,
-        val compilationPurpose: String
+        val compilationName: String
     ) : HasKotlinDependencies {
         override val apiConfigurationName: String
             get() = disambiguateNameInPlatform(API)
@@ -64,7 +64,7 @@ internal open class JsCompilationDetails(
         private fun disambiguateNameInPlatform(simpleName: String): String {
             return lowerCamelCaseName(
                 disambiguationClassifierInPlatform,
-                compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+                compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
                 "compilation",
                 simpleName
             )

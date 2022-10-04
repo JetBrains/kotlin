@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.JsIrCompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import javax.inject.Inject
 
-abstract class KotlinJsIrCompilation @Inject internal constructor(
-    compilationDetails: JsIrCompilationDetails
-) : KotlinJsCompilation(compilationDetails)
+open class KotlinJsIrCompilation @Inject internal constructor(
+    compilation: KotlinCompilationImpl
+) : KotlinJsCompilation(compilation)

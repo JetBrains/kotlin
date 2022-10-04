@@ -27,7 +27,7 @@ open class KotlinSharedNativeCompilationFactory internal constructor(
             compilationAssociator = NativeKotlinCompilationAssociator,
 
             compilationSourceSetInclusion = DefaultKotlinCompilationSourceSetInclusion(
-                DefaultKotlinCompilationSourceSetInclusion.AddSourcesToCompileTask.Native
+                DefaultKotlinCompilationSourceSetInclusion.NativeAddSourcesToCompileTask
             ),
 
             compilationFriendPathsResolver = DefaultKotlinCompilationFriendPathsResolver(
