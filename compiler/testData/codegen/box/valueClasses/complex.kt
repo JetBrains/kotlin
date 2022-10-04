@@ -21,7 +21,7 @@ value class D(val x: C) {
     constructor(x: Int, y: UInt, z: Int) : this(C(x, B(y), z.toString()))
 
     init {
-        println(x.x)
+        supply(x.x)
     }
 }
 
@@ -46,18 +46,18 @@ interface Base3 {
 value class R<T : Any>(val x: Int, val y: UInt, override val z: E, val t: A<T>) : Base1, Base3
 
 fun <T : List<Int>> f(r: R<T>) {
-    println(r)
-    println(r.x)
-    println(r.y)
-    println(r.z)
-    println(r.t)
-    println(r.t.x)
-    println(r.z.x)
-    println(r.z.x.x)
-    println(r.z.x.x.x)
-    println(r.z.x.x.y)
-    println(r.z.x.x.z)
-    println(r.z.x.x.y.x)
+    supply(r)
+    supply(r.x)
+    supply(r.y)
+    supply(r.z)
+    supply(r.t)
+    supply(r.t.x)
+    supply(r.z.x)
+    supply(r.z.x.x)
+    supply(r.z.x.x.x)
+    supply(r.z.x.x.y)
+    supply(r.z.x.x.z)
+    supply(r.z.x.x.y.x)
 }
 
 fun g(e: E) {
@@ -71,19 +71,19 @@ fun <T : List<Int>> h(r: R<T>) {
     D(C(2, B(3U), ""))
     val x = D(C(2, B(3U), ""))
     var y = D(C(4, B(5U), "1"))
-    println(y)
+    supply(y)
     y = D(C(6, B(7U), "2"))
     y = D(6, 7U, 2)
     y = inlined(6, 7U, 2)
     y = notInlined(6, 7U, 2)
-    println(y)
+    supply(y)
 }
 
 fun h1() {
     var y = inlined(1, 2U, 3) // todo fix box
-    println(y)
+    supply(y)
     y = inlined(4, 5U, 6)
-    println(y)
+    supply(y)
 }
 
 interface Base1 {
@@ -118,22 +118,22 @@ class NotInlined(override var l: R<List<Int>>, var y: Int) : Base1, Base2, Base4
 
     var withNonTrivialSettersWithBF: R<List<Int>> = l
         get() {
-            println("1")
+            supply("1")
             field
             field.t
             field == field
             return field
         }
         set(value) {
-            println("3")
+            supply("3")
             field = value
             field = field
-            println("4")
+            supply("4")
         }
 
     val withNonTrivialGettersWithBF: R<List<Int>> = l
         get() {
-            println("1")
+            supply("1")
             field
             field.t
             field == field
@@ -146,7 +146,7 @@ fun testVars(x: NotInlined) {
     var y = x.l
     y.toString()
     y = x.l
-    println(y)
+    supply(y)
     x.l = x.l
     x.l = R<List<Int>>(x.l.x, x.l.y, x.l.z, x.l.t)
 }
@@ -155,7 +155,7 @@ fun reuseBoxed(list: MutableList<R<List<Int>>>) {
     list.add(list.last())
 }
 
-fun supply(x: Boolean) {}
+fun supply(x: Any) {}
 
 fun equalsChecks1(x: A<List<Int>>) {}
 fun equalsChecks(left: R<List<Int>>, right: R<List<Int>>) {

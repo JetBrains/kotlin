@@ -41,10 +41,10 @@ public final class Internal {
     public static method equals-impl(p0: int, p1: int, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
     public final static @org.jetbrains.annotations.NotNull method getT(): Internal
+    public final method getX$main(): int
     public final static method getX(): int
-    public final static method getX-impl$main(p0: int, p1: int): int
+    public final method getY$main(): int
     public final static method getY(): int
-    public final static method getY-impl$main(p0: int, p1: int): int
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int): int
     public final static method setX(p0: int): void
@@ -67,7 +67,7 @@ public final class InternalInternal {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
-    public final static @org.jetbrains.annotations.NotNull method getValue-impl$main(p0: int, p1: int): Internal
+    public final @org.jetbrains.annotations.NotNull method getValue$main(): Internal
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -89,7 +89,7 @@ public final class InternalPrivate {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
-    public final static @org.jetbrains.annotations.NotNull method getValue-impl$main(p0: int, p1: int): Private
+    public final @org.jetbrains.annotations.NotNull method getValue$main(): Private
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -111,7 +111,7 @@ public final class InternalPublic {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
-    public final static @org.jetbrains.annotations.NotNull method getValue-impl$main(p0: int, p1: int): Public
+    public final @org.jetbrains.annotations.NotNull method getValue$main(): Public
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -243,8 +243,8 @@ public final class Public {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
-    public final static method getX-impl(p0: int, p1: int): int
-    public final static method getY-impl(p0: int, p1: int): int
+    public final method getX(): int
+    public final method getY(): int
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -266,7 +266,7 @@ public final class PublicInternal {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
-    public final static @org.jetbrains.annotations.NotNull method getValue-impl(p0: int, p1: int): Internal
+    public final @org.jetbrains.annotations.NotNull method getValue(): Internal
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -288,7 +288,7 @@ public final class PublicPrivate {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
-    public final static @org.jetbrains.annotations.NotNull method getValue-impl(p0: int, p1: int): Private
+    public final @org.jetbrains.annotations.NotNull method getValue(): Private
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -310,7 +310,7 @@ public final class PublicPublic {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
-    public final static @org.jetbrains.annotations.NotNull method getValue-impl(p0: int, p1: int): Public
+    public final @org.jetbrains.annotations.NotNull method getValue(): Public
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
