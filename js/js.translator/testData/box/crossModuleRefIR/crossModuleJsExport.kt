@@ -7,6 +7,7 @@
 // MODULE: lib0
 // FILE: lib0.kt
 
+@JsExport
 class Dep {
     fun bee() = "beedep"
 }
@@ -77,9 +78,7 @@ function box() {
 
     if (typeof dex !== "object") return "fail: " + dex;
 
-    // Note: the code below fails in j2v8 but works in Firefox. It should double-checked once test infra migrate from j2v8 to smth else
-    // Corresponding issue: KT-41294
-//    if (dex.bee() != "beedep") return "fail beedep";
+    if (dex.bee() != "beedep") return "fail beedep";
 
     if (main.test() !== "OK") return "fail 1";
 
