@@ -22,7 +22,7 @@ open class KotlinNativeCompilationFactory internal constructor(
             compilerOptionsFactory = NativeCompilerOptionsFactory,
             compilationAssociator = NativeKotlinCompilationAssociator,
             compilationSourceSetInclusion = DefaultKotlinCompilationSourceSetInclusion(
-                DefaultKotlinCompilationSourceSetInclusion.AddSourcesToCompileTask.Native
+                DefaultKotlinCompilationSourceSetInclusion.NativeAddSourcesToCompileTask
             ),
         )
 ) : KotlinCompilationFactory<KotlinNativeCompilation> {

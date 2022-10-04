@@ -23,34 +23,8 @@ internal interface KotlinCompilationSourceSetInclusion {
 }
 
 internal class DefaultKotlinCompilationSourceSetInclusion(
-    private val addSourcesToCompileTask: AddSourcesToCompileTask = AddSourcesToCompileTask.Default
+    private val addSourcesToCompileTask: AddSourcesToCompileTask = DefaultAddSourcesToCompileTask
 ) : KotlinCompilationSourceSetInclusion {
-
-    interface AddSourcesToCompileTask {
-        fun addSources(compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>)
-
-        object Default : AddSourcesToCompileTask {
-            override fun addSources(
-                compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>
-            ) {
-                addSourcesToKotlinCompileTask(
-                    compilation.project,
-                    compilation.compileKotlinTaskName,
-                    sourceSet.customSourceFilesExtensions,
-                    addAsCommonSources,
-                    { sourceSet.kotlin }
-                )
-            }
-        }
-
-        object Native : AddSourcesToCompileTask {
-            override fun addSources(compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) {
-                addSourcesToKotlinNativeCompileTask(
-                    compilation.project, compilation.compileKotlinTaskName, { sourceSet.kotlin }, addAsCommonSources
-                )
-            }
-        }
-    }
 
     override fun include(compilation: InternalKotlinCompilation<*>, sourceSet: KotlinSourceSet) {
         /* Check if the source set was already included */
@@ -110,4 +84,44 @@ internal class DefaultKotlinCompilationSourceSetInclusion(
         val InternalKotlinCompilation<*>.includedSourceSets: MutableSet<KotlinSourceSet>
             get() = extras.getOrPut(includedSourceSetsKey, { hashSetOf() })
     }
+
+
+    fun interface AddSourcesToCompileTask {
+        fun addSources(compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>)
+
+        companion object {
+            fun composite(vararg elements: AddSourcesToCompileTask?): AddSourcesToCompileTask =
+                CompositeAddSourcesToCompileTask(listOfNotNull(*elements))
+        }
+    }
+
+    private class CompositeAddSourcesToCompileTask(private val children: List<AddSourcesToCompileTask>) : AddSourcesToCompileTask {
+        override fun addSources(compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) {
+            return children.forEach { child -> child.addSources(compilation, sourceSet, addAsCommonSources) }
+        }
+    }
+
+    object NativeAddSourcesToCompileTask : AddSourcesToCompileTask {
+        override fun addSources(compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) =
+            addSourcesToKotlinNativeCompileTask(
+                project = compilation.project,
+                taskName = compilation.compileKotlinTaskName,
+                sourceFiles = { sourceSet.kotlin },
+                addAsCommonSources = addAsCommonSources
+            )
+    }
+
+    object DefaultAddSourcesToCompileTask : AddSourcesToCompileTask {
+        override fun addSources(
+            compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>
+        ) = addSourcesToKotlinCompileTask(
+            project = compilation.project,
+            taskName = compilation.compileKotlinTaskName,
+            sourceFileExtensions = sourceSet.customSourceFilesExtensions,
+            addAsCommonSources = addAsCommonSources,
+            sources = { sourceSet.kotlin }
+        )
+    }
+
+
 }

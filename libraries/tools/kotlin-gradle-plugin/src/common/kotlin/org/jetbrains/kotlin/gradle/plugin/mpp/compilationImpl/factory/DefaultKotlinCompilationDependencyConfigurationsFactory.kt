@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationDependencyConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationDependencyConfigurationsContainer
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.*
 
 internal sealed class DefaultKotlinCompilationDependencyConfigurationsFactory :
@@ -39,56 +41,71 @@ internal object NativeKotlinCompilationDependencyConfigurationsFactory :
     }
 }
 
+internal object JsKotlinCompilationDependencyConfigurationsFactory :
+    KotlinCompilationImplFactory.KotlinCompilationDependencyConfigurationsFactory {
+
+    override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationDependencyConfigurationsContainer {
+        return KotlinCompilationDependencyConfigurationsContainer(
+            target, compilationName, withRuntime = true,
+            configurationNamePrefix = lowerCamelCaseName(
+                target.disambiguationClassifierInPlatform, compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }
+            )
+        )
+    }
+
+    private val KotlinTarget.disambiguationClassifierInPlatform: String?
+        get() = when (this) {
+            is KotlinJsTarget -> disambiguationClassifierInPlatform
+            is KotlinJsIrTarget -> disambiguationClassifierInPlatform
+            else -> error("Unexpected target type of $this")
+        }
+}
+
 private fun KotlinCompilationDependencyConfigurationsContainer(
     target: KotlinTarget, compilationName: String, withRuntime: Boolean,
+    configurationNamePrefix: String = lowerCamelCaseName(
+        target.disambiguationClassifier, compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+    ),
     compileClasspathConfigurationSuffix: String = "compileClasspath",
     runtimeClasspathConfigurationSuffix: String = "runtimeClasspath"
 ): KotlinCompilationDependencyConfigurationsContainer {
-    val compilation = "${target.disambiguationClassifier}/$compilationName"
-    val prefix = lowerCamelCaseName(
-        target.disambiguationClassifier,
-        compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
-        "compilation"
-    )
+    val compilationCoordinates = "${target.disambiguationClassifier}/$compilationName"
+    val compilation = "compilation"
 
-    val apiConfiguration = target.project.configurations.maybeCreate(lowerCamelCaseName(prefix, API)).apply {
+    fun name(vararg parts: String) = lowerCamelCaseName(configurationNamePrefix, *parts)
+
+    val apiConfiguration = target.project.configurations.maybeCreate(name(compilation, API)).apply {
         isVisible = false
         isCanBeConsumed = false
         isCanBeResolved = false
-        description = "API dependencies for $compilation"
+        description = "API dependencies for $compilationCoordinates"
     }
 
-    val implementationConfiguration = target.project.configurations.maybeCreate(lowerCamelCaseName(prefix, IMPLEMENTATION)).apply {
+    val implementationConfiguration = target.project.configurations.maybeCreate(name(compilation, IMPLEMENTATION)).apply {
         extendsFrom(apiConfiguration)
         isVisible = false
         isCanBeConsumed = false
         isCanBeResolved = false
-        description = "Implementation only dependencies for $compilation."
+        description = "Implementation only dependencies for $compilationCoordinates."
     }
 
-    val compileOnlyConfiguration = target.project.configurations.maybeCreate(lowerCamelCaseName(prefix, COMPILE_ONLY)).apply {
+    val compileOnlyConfiguration = target.project.configurations.maybeCreate(name(compilation, COMPILE_ONLY)).apply {
         isCanBeConsumed = false
         setupAsLocalTargetSpecificConfigurationIfSupported(target)
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
         isVisible = false
         isCanBeResolved = false
-        description = "Compile only dependencies for $compilation."
+        description = "Compile only dependencies for $compilationCoordinates."
     }
 
-    val runtimeOnlyConfiguration = target.project.configurations.maybeCreate(lowerCamelCaseName(prefix, RUNTIME_ONLY)).apply {
+    val runtimeOnlyConfiguration = target.project.configurations.maybeCreate(name(compilation, RUNTIME_ONLY)).apply {
         isVisible = false
         isCanBeConsumed = false
         isCanBeResolved = false
-        description = "Runtime only dependencies for $compilation."
+        description = "Runtime only dependencies for $compilationCoordinates."
     }
 
-    val compileDependencyConfiguration = target.project.configurations.maybeCreate(
-        lowerCamelCaseName(
-            target.disambiguationClassifier,
-            compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
-            compileClasspathConfigurationSuffix
-        )
-    ).apply {
+    val compileDependencyConfiguration = target.project.configurations.maybeCreate(name(compileClasspathConfigurationSuffix)).apply {
         extendsFrom(compileOnlyConfiguration, implementationConfiguration)
         usesPlatformOf(target)
         isVisible = false
@@ -97,15 +114,11 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         if (target.platformType != KotlinPlatformType.androidJvm) {
             attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
         }
-        description = "Compile classpath for $compilation."
+        description = "Compile classpath for $compilationCoordinates."
     }
 
     val runtimeDependencyConfiguration = if (withRuntime) target.project.configurations.maybeCreate(
-        lowerCamelCaseName(
-            target.disambiguationClassifier,
-            compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
-            runtimeClasspathConfigurationSuffix
-        )
+        name(runtimeClasspathConfigurationSuffix)
     ).apply {
         extendsFrom(runtimeOnlyConfiguration, implementationConfiguration)
         usesPlatformOf(target)
@@ -116,7 +129,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         if (target.platformType != KotlinPlatformType.androidJvm) {
             attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
         }
-        description = "Runtime classpath of $compilation."
+        description = "Runtime classpath of $compilationCoordinates."
     } else null
 
     return DefaultKotlinCompilationDependencyConfigurationsContainer(
