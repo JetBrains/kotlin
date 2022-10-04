@@ -9,9 +9,10 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.DecoratedKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationModuleManager.CompilationModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.decoratedInstance
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 
 internal class KotlinCompilationImplFactory(
@@ -89,7 +90,7 @@ internal class KotlinCompilationImplFactory(
     }
 
     fun interface PostConfigure {
-        fun configure(compilation: InternalKotlinCompilation<*>)
+        fun configure(compilation: DecoratedKotlinCompilation<*>)
 
         companion object {
             fun composite(vararg elements: PostConfigure?): PostConfigure = CompositePostConfigure(listOfNotNull(*elements))
@@ -121,7 +122,7 @@ internal class KotlinCompilationImplFactory(
         var postConfigureAction: PostConfigure? = this.postConfigureAction
         target.compilations.whenObjectAdded { added ->
             if (added.compilationName == compilationName) {
-                postConfigureAction?.configure(added.internal)
+                postConfigureAction?.configure(added.internal.decoratedInstance)
                 postConfigureAction = null
             }
         }
@@ -142,7 +143,7 @@ private class CompositePreConfigure(
 private class CompositePostConfigure(
     private val elements: List<KotlinCompilationImplFactory.PostConfigure>
 ) : KotlinCompilationImplFactory.PostConfigure {
-    override fun configure(compilation: InternalKotlinCompilation<*>) {
+    override fun configure(compilation: DecoratedKotlinCompilation<*>) {
         elements.forEach { element -> element.configure(compilation) }
     }
 }
@@ -150,4 +151,3 @@ private class CompositePostConfigure(
 private object EmptyPreConfigure : KotlinCompilationImplFactory.PreConfigure {
     override fun configure(compilation: KotlinCompilationImpl) = Unit
 }
-
