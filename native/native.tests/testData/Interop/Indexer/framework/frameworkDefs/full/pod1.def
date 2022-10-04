@@ -1,2 +1,2 @@
-language = Objective-C
+language = C
 headers=pod1/pod1-umbrella.h
