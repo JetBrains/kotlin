@@ -71,7 +71,7 @@ class CommonizeNativeDistributionTest {
     fun `commonize - apple platforms`() {
         assumeTrue("Test is only supported on macos", HostManager.hostIsMac)
         val iosTarget = CommonizerTarget(IOS_ARM64, IOS_X64, IOS_SIMULATOR_ARM64)
-        val watchosTarget = CommonizerTarget(WATCHOS_ARM64, WATCHOS_X64, WATCHOS_SIMULATOR_ARM64)
+        val watchosTarget = CommonizerTarget(WATCHOS_ARM64, WATCHOS_X64, WATCHOS_SIMULATOR_ARM64, WATCHOS_DEVICE_ARM64)
         val macosTarget = CommonizerTarget(MACOS_X64, MACOS_ARM64)
         val appleTarget = SharedCommonizerTarget(iosTarget.konanTargets + watchosTarget.konanTargets + macosTarget.konanTargets)
 
