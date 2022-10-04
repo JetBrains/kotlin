@@ -632,3 +632,20 @@ void kotlin::StartFinalizerThreadIfNeeded() noexcept {
 bool kotlin::FinalizersThreadIsRunning() noexcept {
     return mm::GlobalData::Instance().gc().FinalizersThreadIsRunning();
 }
+
+RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processObjectInMark(void* state, ObjHeader* object) {
+    gc::GC::processObjectInMark(state, object);
+}
+
+RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processArrayInMark(void* state, ObjHeader* object) {
+    gc::GC::processArrayInMark(state, object->array());
+}
+
+RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processFieldInMark(void* state, ObjHeader* field) {
+    gc::GC::processFieldInMark(state, field);
+}
+
+RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processEmptyObjectInMark(void* state, ObjHeader* object) {
+    // Empty object. Nothing to do.
+    // TODO: Try to generate it in the code generator.
+}

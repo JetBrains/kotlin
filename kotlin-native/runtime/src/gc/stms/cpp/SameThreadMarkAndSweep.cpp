@@ -22,32 +22,6 @@ using namespace kotlin;
 
 namespace {
 
-struct MarkTraits {
-    using MarkQueue = gc::SameThreadMarkAndSweep::MarkQueue;
-
-    static bool isEmpty(const MarkQueue& queue) noexcept {
-        return queue.empty();
-    }
-
-    static void clear(MarkQueue& queue) noexcept {
-        queue.clear();
-    }
-
-    static ObjHeader* dequeue(MarkQueue& queue) noexcept {
-        auto& top = queue.front();
-        queue.pop_front();
-        auto node = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(top);
-        return node->GetObjHeader();
-    }
-
-    static void enqueue(MarkQueue& queue, ObjHeader* object) noexcept {
-        auto& objectData = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(object).ObjectData();
-        if (objectData.color() == gc::SameThreadMarkAndSweep::ObjectData::Color::kBlack) return;
-        objectData.setColor(gc::SameThreadMarkAndSweep::ObjectData::Color::kBlack);
-        queue.push_front(objectData);
-    }
-};
-
 struct SweepTraits {
     using ObjectFactory = mm::ObjectFactory<gc::SameThreadMarkAndSweep>;
     using ExtraObjectsFactory = mm::ExtraObjectDataFactory;
@@ -154,7 +128,7 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
 
         RuntimeLogInfo(
                 {kTagGC}, "Started GC epoch %zu. Time since last GC %" PRIu64 " microseconds", epoch_, timeStartUs - lastGCTimestampUs_);
-        gc::collectRootSet<MarkTraits>(markQueue_, [] (mm::ThreadData&) { return true; });
+        gc::collectRootSet<internal::MarkTraits>(markQueue_, [](mm::ThreadData&) { return true; });
         auto timeRootSetUs = konan::getTimeMicros();
         // Can be unsafe, because we've stopped the world.
         auto objectsCountBefore = objectFactory_.GetSizeUnsafe();
@@ -162,7 +136,7 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
         RuntimeLogInfo(
                 {kTagGC}, "Collected root set of size %zu in %" PRIu64 " microseconds", markQueue_.size(),
                 timeRootSetUs - timeSuspendUs);
-        auto markStats = gc::Mark<MarkTraits>(markQueue_);
+        auto markStats = gc::Mark<internal::MarkTraits>(markQueue_);
         auto timeMarkUs = konan::getTimeMicros();
         RuntimeLogDebug({kTagGC}, "Marked %zu objects in %" PRIu64 " microseconds", markStats.aliveHeapSet, timeMarkUs - timeRootSetUs);
         scheduler.gcData().UpdateAliveSetBytes(markStats.aliveHeapSetBytes);

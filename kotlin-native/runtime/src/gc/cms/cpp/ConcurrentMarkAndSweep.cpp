@@ -28,31 +28,6 @@ namespace {
     [[clang::no_destroy]] std::condition_variable markingCondVar;
     [[clang::no_destroy]] std::atomic<bool> markingRequested = false;
 
-struct MarkTraits {
-    using MarkQueue = gc::ConcurrentMarkAndSweep::MarkQueue;
-
-    static bool isEmpty(const MarkQueue& queue) noexcept {
-        return queue.empty();
-    }
-
-    static void clear(MarkQueue& queue) noexcept {
-        queue.clear();
-    }
-
-    static ObjHeader* dequeue(MarkQueue& queue) noexcept {
-        auto& top = queue.front();
-        queue.pop_front();
-        auto node = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(top);
-        return node->GetObjHeader();
-    }
-
-    static void enqueue(MarkQueue& queue, ObjHeader* object) noexcept {
-        auto& objectData = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(object).ObjectData();
-        if (!objectData.atomicSetToBlack()) return;
-        queue.push_front(objectData);
-    }
-};
-
 struct SweepTraits {
     using ObjectFactory = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>;
     using ExtraObjectsFactory = mm::ExtraObjectDataFactory;
@@ -106,8 +81,8 @@ NO_EXTERNAL_CALLS_CHECK void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendFo
     lock.unlock();
     RuntimeLogDebug({kTagGC}, "Parallel marking in thread %d", konan::currentThreadId());
     MarkQueue markQueue;
-    gc::collectRootSetForThread<MarkTraits>(markQueue, threadData_);
-    MarkStats stats = gc::Mark<MarkTraits>(markQueue);
+    gc::collectRootSetForThread<internal::MarkTraits>(markQueue, threadData_);
+    MarkStats stats = gc::Mark<internal::MarkTraits>(markQueue);
     gc_.MergeMarkStats(stats);
 }
 
@@ -185,7 +160,7 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     // Can be unsafe, because we've stopped the world.
     auto objectsCountBefore = objectFactory_.GetSizeUnsafe();
 
-    auto markStats = gc::Mark<MarkTraits>(markQueue_);
+    auto markStats = gc::Mark<internal::MarkTraits>(markQueue_);
     MergeMarkStats(markStats);
 
     RuntimeLogDebug({kTagGC}, "Waiting for marking in threads");
@@ -272,7 +247,8 @@ void gc::ConcurrentMarkAndSweep::WaitForThreadsReadyToMark() noexcept {
 NO_EXTERNAL_CALLS_CHECK void gc::ConcurrentMarkAndSweep::CollectRootSetAndStartMarking() noexcept {
         std::unique_lock lock(markingMutex);
         markingRequested = false;
-        gc::collectRootSet<MarkTraits>(markQueue_, [](mm::ThreadData& thread) { return !thread.gc().impl().gc().marking_.load(); });
+        gc::collectRootSet<internal::MarkTraits>(
+                markQueue_, [](mm::ThreadData& thread) { return !thread.gc().impl().gc().marking_.load(); });
         RuntimeLogDebug({kTagGC}, "Requesting marking in threads");
         markingCondVar.notify_all();
 }

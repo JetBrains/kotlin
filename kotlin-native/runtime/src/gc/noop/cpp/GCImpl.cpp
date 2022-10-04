@@ -76,3 +76,12 @@ void gc::GC::StopFinalizerThreadIfRunning() noexcept {}
 bool gc::GC::FinalizersThreadIsRunning() noexcept {
     return false;
 }
+
+// static
+ALWAYS_INLINE void gc::GC::processObjectInMark(void* state, ObjHeader* object) noexcept {}
+
+// static
+ALWAYS_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) noexcept {}
+
+// static
+ALWAYS_INLINE void gc::GC::processFieldInMark(void* state, ObjHeader* field) noexcept {}

@@ -145,6 +145,14 @@ public:
         }
     }
 
+    static void processInMark(MarkQueue& markQueue, ObjHeader* object) noexcept {
+        if (object->type_info() == theArrayTypeInfo) {
+            gc::internal::processArrayInMark<ScopedMarkTraits>(static_cast<void*>(&markQueue), object->array());
+        } else {
+            gc::internal::processObjectInMark<ScopedMarkTraits>(static_cast<void*>(&markQueue), object);
+        }
+    }
+
 private:
     static ScopedMarkTraits* instance_;
 

@@ -22,6 +22,56 @@
 namespace kotlin {
 namespace gc {
 
+namespace internal {
+
+template <typename Traits>
+void processFieldInMark(void* state, ObjHeader* field) noexcept {
+    auto& markQueue = *static_cast<typename Traits::MarkQueue*>(state);
+    if (field->heap()) {
+        Traits::enqueue(markQueue, field);
+    }
+}
+
+template <typename Traits>
+void processObjectInMark(void* state, ObjHeader* object) noexcept {
+    auto* typeInfo = object->type_info();
+    RuntimeAssert(typeInfo != theArrayTypeInfo, "Must not be an array of objects");
+    for (int i = 0; i < typeInfo->objOffsetsCount_; ++i) {
+        auto* field = *reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(object) + typeInfo->objOffsets_[i]);
+        if (!field) continue;
+        processFieldInMark<Traits>(state, field);
+    }
+}
+
+template <typename Traits>
+void processArrayInMark(void* state, ArrayHeader* array) noexcept {
+    RuntimeAssert(array->type_info() == theArrayTypeInfo, "Must be an array of objects");
+    auto* begin = ArrayAddressOfElementAt(array, 0);
+    auto* end = ArrayAddressOfElementAt(array, array->count_);
+    for (auto* it = begin; it != end; ++it) {
+        auto* field = *it;
+        if (!field) continue;
+        processFieldInMark<Traits>(state, field);
+    }
+}
+
+template <typename Traits>
+bool collectRoot(typename Traits::MarkQueue& markQueue, ObjHeader* object) noexcept {
+    if (isNullOrMarker(object))
+        return false;
+
+    if (object->heap()) {
+        Traits::enqueue(markQueue, object);
+    } else {
+        // Each permanent and stack object has own entry in the root set, so it's okay to only process objects in heap.
+        Traits::processInMark(markQueue, object);
+        RuntimeAssert(!object->has_meta_object(), "Non-heap object %p may not have an extra object data", object);
+    }
+    return true;
+}
+
+} // namespace internal
+
 struct MarkStats {
     // How many objects are alive.
     size_t aliveHeapSet = 0;
@@ -51,11 +101,7 @@ MarkStats Mark(typename Traits::MarkQueue& markQueue) noexcept {
         stats.aliveHeapSet++;
         stats.aliveHeapSetBytes += mm::GetAllocatedHeapSize(top);
 
-        traverseReferredObjects(top, [&](ObjHeader* field) noexcept {
-            if (field->heap()) {
-                Traits::enqueue(markQueue, field);
-            }
-        });
+        Traits::processInMark(markQueue, top);
 
         if (auto* extraObjectData = mm::ExtraObjectData::Get(top)) {
             if (auto weakCounter = extraObjectData->GetWeakReferenceCounter()) {
@@ -124,20 +170,9 @@ void collectRootSetForThread(typename Traits::MarkQueue& markQueue, mm::ThreadDa
     thread.gc().OnStoppedForGC();
     size_t stack = 0;
     size_t tls = 0;
+    // TODO: Remove useless mm::ThreadRootSet abstraction.
     for (auto value : mm::ThreadRootSet(thread)) {
-        auto* object = value.object;
-        if (!isNullOrMarker(object)) {
-            if (object->heap()) {
-                Traits::enqueue(markQueue, object);
-            } else {
-                traverseReferredObjects(object, [&](ObjHeader* field) noexcept {
-                    // Each permanent and stack object has own entry in the root set.
-                    if (field->heap()) {
-                        Traits::enqueue(markQueue, field);
-                    }
-                });
-                RuntimeAssert(!object->has_meta_object(), "Non-heap object %p may not have an extra object data", object);
-            }
+        if (internal::collectRoot<Traits>(markQueue, value.object)) {
             switch (value.source) {
                 case mm::ThreadRootSet::Source::kStack:
                     ++stack;
@@ -156,20 +191,9 @@ void collectRootSetGlobals(typename Traits::MarkQueue& markQueue) noexcept {
     mm::StableRefRegistry::Instance().ProcessDeletions();
     size_t global = 0;
     size_t stableRef = 0;
+    // TODO: Remove useless mm::GlobalRootSet abstraction.
     for (auto value : mm::GlobalRootSet()) {
-        auto* object = value.object;
-        if (!isNullOrMarker(object)) {
-            if (object->heap()) {
-                Traits::enqueue(markQueue, object);
-            } else {
-                traverseReferredObjects(object, [&](ObjHeader* field) noexcept {
-                    // Each permanent and stack object has own entry in the root set.
-                    if (field->heap()) {
-                        Traits::enqueue(markQueue, field);
-                    }
-                });
-                RuntimeAssert(!object->has_meta_object(), "Non-heap object %p may not have an extra object data", object);
-            }
+        if (internal::collectRoot<Traits>(markQueue, value.object)) {
             switch (value.source) {
                 case mm::GlobalRootSet::Source::kGlobal:
                     ++global;
