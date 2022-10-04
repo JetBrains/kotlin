@@ -258,6 +258,7 @@ enum class LanguageFeature(
     RangeUntilOperator(KOTLIN_1_8), // KT-15613
     GenericInlineClassParameter(sinceVersion = KOTLIN_1_8, kind = UNSTABLE_FEATURE), // KT-32162
     LightweightLambdas(KOTLIN_1_8, defaultState = State.DISABLED),
+    CustomEqualsInInlineClasses(KOTLIN_1_8, kind = UNSTABLE_FEATURE), // KT-24874
 
     // 1.9
 
@@ -284,7 +285,6 @@ enum class LanguageFeature(
     DataObjects(KOTLIN_1_9), // KT-4107
     ProhibitAccessToEnumCompanionMembersInEnumConstructorCall(KOTLIN_1_9, kind = BUG_FIX), // KT-49110
     ReferencesToSyntheticJavaProperties(KOTLIN_1_9), // KT-8575
-    CustomEqualsInInlineClasses(KOTLIN_1_9, kind = UNSTABLE_FEATURE), // KT-24874
 
     // Disabled for indefinite time. See KT-53751
     IgnoreNullabilityForErasedValueParameters(sinceVersion = null, kind = BUG_FIX),
