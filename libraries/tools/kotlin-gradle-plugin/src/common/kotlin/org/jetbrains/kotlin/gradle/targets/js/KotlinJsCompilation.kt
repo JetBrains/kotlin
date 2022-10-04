@@ -9,7 +9,6 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
-import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -22,9 +21,8 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import javax.inject.Inject
 
 open class KotlinJsCompilation @Inject internal constructor(
-    private val compilation: KotlinCompilationImpl
-) : InternalKotlinCompilation<KotlinJsOptions> by compilation.castKotlinOptionsType(),
-    KotlinCompilationToRunnableFiles<KotlinJsOptions> {
+    compilation: KotlinCompilationImpl
+) : AbstractKotlinCompilationToRunnableFiles<KotlinJsOptions>(compilation) {
 
     @Suppress("UNCHECKED_CAST")
     final override val compilerOptions: HasCompilerOptions<CompilerJsOptions>
@@ -67,14 +65,6 @@ open class KotlinJsCompilation @Inject internal constructor(
     @Suppress("UNCHECKED_CAST")
     override val compileTaskProvider: TaskProvider<Kotlin2JsCompile>
         get() = compilation.compileTaskProvider as TaskProvider<Kotlin2JsCompile>
-
-    override val runtimeDependencyConfigurationName: String
-        get() = compilation.runtimeDependencyConfigurationName ?: error("Missing 'runtimeDependencyConfigurationName'")
-
-    override var runtimeDependencyFiles: FileCollection = compilation.runtimeDependencyFiles ?: error("Missing 'runtimeDependencyFiles'")
-
-    override val relatedConfigurationNames: List<String>
-        get() = compilation.relatedConfigurationNames
 
     internal val packageJsonHandlers = mutableListOf<PackageJson.() -> Unit>()
 

@@ -14,17 +14,15 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.getJavaTaskProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import javax.inject.Inject
 
 open class KotlinJvmAndroidCompilation @Inject internal constructor(
-    private val compilation: KotlinCompilationImpl,
+    compilation: KotlinCompilationImpl,
     val androidVariant: BaseVariant
-) : InternalKotlinCompilation<KotlinJvmOptions> by compilation.castKotlinOptionsType(),
-    KotlinCompilationToRunnableFiles<KotlinJvmOptions> {
+) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilation) {
 
     override val target: KotlinAndroidTarget = compilation.target as KotlinAndroidTarget
 
@@ -50,11 +48,6 @@ open class KotlinJvmAndroidCompilation @Inject internal constructor(
 
     val compileJavaTaskProvider: TaskProvider<out JavaCompile>
         get() = androidVariant.getJavaTaskProvider()
-
-    override val runtimeDependencyConfigurationName: String
-        get() = compilation.runtimeDependencyConfigurationName ?: error("Missing 'runtimeDependencyConfigurationName'")
-
-    override var runtimeDependencyFiles: FileCollection = compilation.runtimeDependencyFiles ?: error("Missing 'runtimeDependencyFiles'")
 
     override val relatedConfigurationNames: List<String>
         get() = compilation.relatedConfigurationNames + listOf(

@@ -3,24 +3,25 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 
-abstract class AbstractKotlinCompilationToRunnableFiles<T : KotlinCommonOptions>(
-    override val compilationDetails: CompilationDetailsWithRuntime<T>,
-) : AbstractKotlinCompilation<T>(compilationDetails),
-    KotlinCompilationToRunnableFiles<T> {
+@Deprecated("Use KotlinCompilation<T> instead")
+abstract class AbstractKotlinCompilationToRunnableFiles<T : KotlinCommonOptions>
+internal constructor(compilation: KotlinCompilationImpl) : AbstractKotlinCompilation<T>(compilation), KotlinCompilationToRunnableFiles<T> {
 
-    final override val runtimeDependencyConfigurationName: String get() = compilationDetails.runtimeDependencyFilesHolder.dependencyConfigurationName
-    final override var runtimeDependencyFiles: FileCollection
-        get() = compilationDetails.runtimeDependencyFilesHolder.dependencyFiles
-        set(value) {
-            compilationDetails.runtimeDependencyFilesHolder.dependencyFiles = value
-        }
+    final override val runtimeDependencyConfigurationName: String
+        get() = compilation.runtimeDependencyConfigurationName ?: error("$compilation: Missing 'runtimeDependencyConfigurationName'")
+
+    final override var runtimeDependencyFiles: FileCollection =
+        compilation.runtimeDependencyFiles ?: error("$compilation: Missing 'runtimeDependencyFiles'")
 
     override val relatedConfigurationNames: List<String>
-        get() = super<AbstractKotlinCompilation>.relatedConfigurationNames + runtimeDependencyConfigurationName
+        get() = compilation.relatedConfigurationNames
 }

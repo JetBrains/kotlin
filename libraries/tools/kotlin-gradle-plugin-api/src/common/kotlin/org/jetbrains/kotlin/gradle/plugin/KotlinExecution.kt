@@ -39,6 +39,7 @@ interface CompilationExecutionSource<CompilationType : KotlinCompilation<*>> : E
     val compilation: CompilationType
 }
 
+@Suppress("deprecation")
 interface CompilationExecutionSourceSupport<in T : KotlinCompilationToRunnableFiles<*>> {
     /**
      * Select a compilation to run the execution from.
