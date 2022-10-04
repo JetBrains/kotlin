@@ -17855,6 +17855,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("illegalEqualsOverridingInInlineClass.kt")
+            public void testIllegalEqualsOverridingInInlineClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/illegalEqualsOverridingInInlineClass.kt");
+            }
+
+            @Test
             @TestMetadata("inlineClassCanImplementInterfaceByDelegation.kt")
             public void testInlineClassCanImplementInterfaceByDelegation() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassCanImplementInterfaceByDelegation.kt");
@@ -17960,6 +17966,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             @TestMetadata("synchronizedForbidden.kt")
             public void testSynchronizedForbidden() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/synchronizedForbidden.kt");
+            }
+
+            @Test
+            @TestMetadata("typedEqualsOperatorModifierInInlineClass.kt")
+            public void testTypedEqualsOperatorModifierInInlineClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/typedEqualsOperatorModifierInInlineClass.kt");
             }
 
             @Test
