@@ -38,6 +38,7 @@ internal object AppleSdk {
                     when (arch) {
                         "armv7k" -> KonanTarget.WATCHOS_ARM32
                         "arm64_32" -> KonanTarget.WATCHOS_ARM64
+                        "arm64" -> KonanTarget.WATCHOS_DEVICE_ARM64
                         else -> throw UnknownArchitectureException(platform, arch)
                     }
                 })
