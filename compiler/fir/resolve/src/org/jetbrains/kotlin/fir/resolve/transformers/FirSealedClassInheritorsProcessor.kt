@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.setSealedClassInheritors
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.forEachWrappingFileAnalysisError
+import org.jetbrains.kotlin.fir.forEachWrappingFileAnalysisException
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -39,8 +39,8 @@ class FirSealedClassInheritorsProcessor(
     override fun process(files: Collection<FirFile>) {
         val sealedClassInheritorsMap = mutableMapOf<FirRegularClass, MutableList<ClassId>>()
         val inheritorsCollector = InheritorsCollector(session)
-        files.forEachWrappingFileAnalysisError { it.accept(inheritorsCollector, sealedClassInheritorsMap) }
-        files.forEachWrappingFileAnalysisError { it.transformSingle(InheritorsTransformer(sealedClassInheritorsMap), null) }
+        files.forEachWrappingFileAnalysisException { it.accept(inheritorsCollector, sealedClassInheritorsMap) }
+        files.forEachWrappingFileAnalysisException { it.transformSingle(InheritorsTransformer(sealedClassInheritorsMap), null) }
     }
 
     class InheritorsCollector(val session: FirSession) : FirDefaultVisitor<Unit, MutableMap<FirRegularClass, MutableList<ClassId>>>() {

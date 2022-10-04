@@ -337,7 +337,7 @@ class FirCheckersRunnerTransformer(private val diagnosticCollector: AbstractDiag
     }
 
     override fun transformFile(file: FirFile, data: Nothing?) = file.also {
-        withFileAnalysisErrorWrapping(file) {
+        withFileAnalysisExceptionWrapping(file) {
             val reporter = DiagnosticReporterFactory.createPendingReporter()
             diagnosticCollector.collectDiagnostics(file, reporter)
         }

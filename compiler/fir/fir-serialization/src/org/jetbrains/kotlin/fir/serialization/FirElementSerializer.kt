@@ -67,7 +67,7 @@ class FirElementSerializer private constructor(
 ) {
     private val contractSerializer = FirContractSerializer()
 
-    fun packagePartProto(packageFqName: FqName, file: FirFile): ProtoBuf.Package.Builder {
+    fun packagePartProto(packageFqName: FqName, file: FirFile): ProtoBuf.Package.Builder = whileAnalysing(file) {
         val builder = ProtoBuf.Package.newBuilder()
 
         for (declaration in file.declarations) {
@@ -84,10 +84,10 @@ class FirElementSerializer private constructor(
         typeTable.serialize()?.let { builder.typeTable = it }
         versionRequirementTable?.serialize()?.let { builder.versionRequirementTable = it }
 
-        return builder
+        builder
     }
 
-    fun classProto(klass: FirClass): ProtoBuf.Class.Builder {
+    fun classProto(klass: FirClass): ProtoBuf.Class.Builder = whileAnalysing(klass) {
         val builder = ProtoBuf.Class.newBuilder()
 
         val regularClass = klass as? FirRegularClass
@@ -211,7 +211,7 @@ class FirElementSerializer private constructor(
         typeTable.serialize()?.let { builder.typeTable = it }
         versionRequirementTable.serialize()?.let { builder.versionRequirementTable = it }
 
-        return builder
+        builder
     }
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -248,8 +248,8 @@ class FirElementSerializer private constructor(
                     useSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER && isSetter
         }
 
-    fun propertyProto(property: FirProperty): ProtoBuf.Property.Builder? {
-        if (!extension.shouldSerializeProperty(property)) return null
+    fun propertyProto(property: FirProperty): ProtoBuf.Property.Builder? = whileAnalysing(property) {
+        if (!extension.shouldSerializeProperty(property)) return@whileAnalysing null
 
         val builder = ProtoBuf.Property.newBuilder()
 
@@ -352,11 +352,11 @@ class FirElementSerializer private constructor(
 
         extension.serializeProperty(property, builder, versionRequirementTable, local)
 
-        return builder
+        builder
     }
 
-    fun functionProto(function: FirFunction): ProtoBuf.Function.Builder? {
-        if (!extension.shouldSerializeFunction(function)) return null
+    fun functionProto(function: FirFunction): ProtoBuf.Function.Builder? = whileAnalysing(function) {
+        if (!extension.shouldSerializeFunction(function)) return@whileAnalysing null
 
         val builder = ProtoBuf.Function.newBuilder()
         val simpleFunction = function as? FirSimpleFunction
@@ -445,11 +445,11 @@ class FirElementSerializer private constructor(
             }
         }
 
-        return builder
+        builder
     }
 
-    private fun typeAliasProto(typeAlias: FirTypeAlias): ProtoBuf.TypeAlias.Builder? {
-        if (!extension.shouldSerializeTypeAlias(typeAlias)) return null
+    private fun typeAliasProto(typeAlias: FirTypeAlias): ProtoBuf.TypeAlias.Builder? = whileAnalysing(typeAlias) {
+        if (!extension.shouldSerializeTypeAlias(typeAlias)) return@whileAnalysing null
 
         val builder = ProtoBuf.TypeAlias.newBuilder()
         val local = createChildSerializer(typeAlias)
@@ -492,17 +492,17 @@ class FirElementSerializer private constructor(
 
         extension.serializeTypeAlias(typeAlias, builder)
 
-        return builder
+        builder
     }
 
-    private fun enumEntryProto(enumEntry: FirEnumEntry): ProtoBuf.EnumEntry.Builder {
+    private fun enumEntryProto(enumEntry: FirEnumEntry): ProtoBuf.EnumEntry.Builder = whileAnalysing(enumEntry) {
         val builder = ProtoBuf.EnumEntry.newBuilder()
         builder.name = getSimpleNameIndex(enumEntry.name)
         extension.serializeEnumEntry(enumEntry, builder)
-        return builder
+        builder
     }
 
-    private fun constructorProto(constructor: FirConstructor): ProtoBuf.Constructor.Builder {
+    private fun constructorProto(constructor: FirConstructor): ProtoBuf.Constructor.Builder = whileAnalysing(constructor) {
         val builder = ProtoBuf.Constructor.newBuilder()
 
         val local = createChildSerializer(constructor)
@@ -535,13 +535,13 @@ class FirElementSerializer private constructor(
 
         extension.serializeConstructor(constructor, builder, local)
 
-        return builder
+        builder
     }
 
     private fun valueParameterProto(
         parameter: FirValueParameter,
         additionalAnnotations: List<FirAnnotation> = emptyList()
-    ): ProtoBuf.ValueParameter.Builder {
+    ): ProtoBuf.ValueParameter.Builder = whileAnalysing(parameter) {
         val builder = ProtoBuf.ValueParameter.newBuilder()
 
         val declaresDefaultValue = parameter.defaultValue != null // TODO: || parameter.isActualParameterWithAnyExpectedDefault
@@ -575,10 +575,10 @@ class FirElementSerializer private constructor(
 
         extension.serializeValueParameter(parameter, builder)
 
-        return builder
+        builder
     }
 
-    private fun typeParameterProto(typeParameter: FirTypeParameter): ProtoBuf.TypeParameter.Builder {
+    private fun typeParameterProto(typeParameter: FirTypeParameter): ProtoBuf.TypeParameter.Builder = whileAnalysing(typeParameter) {
         val builder = ProtoBuf.TypeParameter.newBuilder()
 
         builder.id = getTypeParameterId(typeParameter)
@@ -596,7 +596,7 @@ class FirElementSerializer private constructor(
         extension.serializeTypeParameter(typeParameter, builder)
 
         val upperBounds = typeParameter.bounds
-        if (upperBounds.size == 1 && upperBounds.single() is FirImplicitNullableAnyTypeRef) return builder
+        if (upperBounds.size == 1 && upperBounds.single() is FirImplicitNullableAnyTypeRef) return@whileAnalysing builder
 
         for (upperBound in upperBounds) {
             if (useTypeTable()) {
@@ -606,7 +606,7 @@ class FirElementSerializer private constructor(
             }
         }
 
-        return builder
+        builder
     }
 
     fun typeId(typeRef: FirTypeRef): Int {

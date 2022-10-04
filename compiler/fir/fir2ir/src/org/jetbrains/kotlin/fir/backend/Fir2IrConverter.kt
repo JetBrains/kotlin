@@ -89,7 +89,7 @@ class Fir2IrConverter(
         //   5. Body processing
         //   If we encounter local class / anonymous object here, then we perform all (1)-(5) stages immediately
         delegatedMemberGenerator.generateBodies()
-        allFirFiles.forEachWrappingFileAnalysisError { it.accept(fir2irVisitor, null) }
+        allFirFiles.forEachWrappingFileAnalysisException { it.accept(fir2irVisitor, null) }
 
         if (irGenerationExtensions.isNotEmpty()) {
             val pluginContext = Fir2IrPluginContext(components)
