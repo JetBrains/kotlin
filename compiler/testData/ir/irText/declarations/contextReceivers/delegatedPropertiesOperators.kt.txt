@@ -15,16 +15,16 @@ class Delegate {
     get
     set
 
-  operator fun getValue(<this>: Int, thisRef: Any?, property: KProperty<*>): String {
+  operator fun getValue(_context_receiver_0: Int, thisRef: Any?, property: KProperty<*>): String {
     { // BLOCK
-      <set-operationScore>(<set-?> = <get-operationScore>().plus(other = <this>))
+      <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
     }
     return <this>.<get-delegateValue>()
   }
 
-  operator fun setValue(<this>: Int, thisRef: Any?, property: KProperty<*>, value: String) {
+  operator fun setValue(_context_receiver_0: Int, thisRef: Any?, property: KProperty<*>, value: String) {
     { // BLOCK
-      <set-operationScore>(<set-?> = <get-operationScore>().plus(other = <this>))
+      <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
     }
     <this>.<set-delegateValue>(<set-?> = value)
   }
@@ -43,10 +43,10 @@ class Result {
   var s: String /* by */
     field = Delegate()
     get(): String {
-      return <this>.#s$delegate.getValue(<this> = <this>.#contextReceiverField0, thisRef = <this>, property = Result::s)
+      return <this>.#s$delegate.getValue(_context_receiver_0 = <this>.#contextReceiverField0, thisRef = <this>, property = Result::s)
     }
     set(<set-?>: String) {
-      return <this>.#s$delegate.setValue(<this> = <this>.#contextReceiverField0, thisRef = <this>, property = Result::s, value = <set-?>)
+      return <this>.#s$delegate.setValue(_context_receiver_0 = <this>.#contextReceiverField0, thisRef = <this>, property = Result::s, value = <set-?>)
     }
 
 }

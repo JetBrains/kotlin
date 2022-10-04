@@ -101,4 +101,8 @@ object SpecialNames {
     fun isSafeIdentifier(name: Name): Boolean {
         return name.asString().isNotEmpty() && !name.isSpecial
     }
+
+    @JvmStatic
+    fun contextReceiverName(index: Int): Name =
+        Name.identifier("_context_receiver_$index")
 }
