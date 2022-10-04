@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
@@ -311,7 +312,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             val invokeSuspendMethod = buildInvokeSuspendMethod(superInvokeSuspendFunction, coroutineClass)
 
             var coroutineFactoryConstructor: IrConstructor? = null
-            val createMethod: IrSimpleFunction?
+            val ignoredParentSymbols = mutableListOf<IrSymbol>()
             if (functionReference != null) {
                 // Suspend lambda - create factory methods.
                 coroutineFactoryConstructor = buildFactoryConstructor(boundFunctionParameters!!)
@@ -320,26 +321,29 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                     .atMostOne { it.name == CREATE_IDENTIFIER && it.valueParameters.size == unboundFunctionParameters!!.size + 1 }
                     ?.symbol
 
-                createMethod = buildCreateMethod(
+                val createMethod = buildCreateMethod(
                     unboundArgs = unboundFunctionParameters!!,
                     superFunctionSymbol = createFunctionSymbol,
                     coroutineConstructor = coroutineConstructor
                 )
 
-                val suspendInvokeFunction =
-                    suspendFunctionClass!!.simpleFunctions().single { it.name == OperatorNameConventions.INVOKE }.let {
-                        context.mapping.functionWithContinuationsToSuspendFunctions[it] ?: it
-                    }
+                val transformedSuspendInvokeFunction = suspendFunctionClass!!.simpleFunctions().single { it.name == OperatorNameConventions.INVOKE }
+                val originalSuspendInvokeFunction = context.mapping.functionWithContinuationsToSuspendFunctions[transformedSuspendInvokeFunction] ?: transformedSuspendInvokeFunction
+
+                ignoredParentSymbols.add(transformedSuspendInvokeFunction.symbol)
 
                 buildInvokeMethod(
-                    functionInvokeFunction = suspendInvokeFunction,
+                    functionInvokeFunction = originalSuspendInvokeFunction,
                     createFunction = createMethod,
                     stateMachineFunction = invokeSuspendMethod,
                 )
             }
 
             coroutineClass.superTypes += superTypes
-            coroutineClass.addFakeOverrides(context.typeSystem)
+            coroutineClass.addFakeOverrides(
+                context.typeSystem,
+                ignoredParentSymbols = ignoredParentSymbols
+            )
 
             initializeStateMachine(coroutineConstructors, coroutineClassThis)
 
