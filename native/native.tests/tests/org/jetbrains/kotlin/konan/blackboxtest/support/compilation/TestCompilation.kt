@@ -18,14 +18,9 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.util.buildArgs
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.flatMapToSet
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.mapToSet
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
-import org.jetbrains.kotlin.native.interop.gen.jvm.InternalInteropOptions
-import org.jetbrains.kotlin.native.interop.gen.jvm.interop
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File
-import kotlin.test.assertNull
-import kotlin.time.ExperimentalTime
-import kotlin.time.measureTime
 
 internal abstract class TestCompilation<A : TestCompilationArtifact> {
     abstract val result: TestCompilationResult<out A>
@@ -187,77 +182,6 @@ internal class LibraryCompilation(
             "-output", expectedArtifact.path
         )
         super.applySpecificArgs(argsBuilder)
-    }
-}
-
-internal class CInteropCompilation(
-    val settings: Settings,
-    freeCompilerArgs: TestCompilerArgs,
-    sourceModules: Collection<TestModule>,
-    dependencies: Iterable<TestCompilationDependency<*>>,
-    expectedArtifact: KLIB
-) : SourceBasedCompilation<KLIB>(
-    targets = settings.get(),
-    home = settings.get(),
-    classLoader = settings.get(),
-    optimizationMode = settings.get(),
-    memoryModel = settings.get(),
-    threadStateChecker = settings.get(),
-    sanitizer = settings.get(),
-    gcType = settings.get(),
-    gcScheduler = settings.get(),
-    freeCompilerArgs = freeCompilerArgs,
-    sourceModules = sourceModules,
-    dependencies = CategorizedDependencies(dependencies),
-    expectedArtifact = expectedArtifact
-) {
-    override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.defaultForTesting
-
-    override fun doCompile(): TestCompilationResult.ImmediateResult<out KLIB> {
-        val extraArgsArray = freeCompilerArgs.compilerArgs.toTypedArray()
-        val maybeCompilerArgs: Array<String>?
-
-        @OptIn(ExperimentalTime::class)
-        val duration = measureTime {
-            maybeCompilerArgs = invokeCInterop(
-                sourceModules.first().files.first().location,
-                expectedArtifact.klibFile,
-                extraArgsArray
-            )
-        }
-        assertNull(maybeCompilerArgs)  // check that compiler invocation is not needed
-
-        // TODO  Actual compiler output is not included now into `compilerOutput` and `compilerOutputHasErrors`
-        // TODO  since there is no technical ability to extract them from C-interop tool invocation at the moment.
-        // TODO  This should be fixed in the future
-        val loggedCInteropCall = LoggedData.CompilationToolCall(
-            toolName = "CINTEROP",
-            parameters = LoggedData.CInteropParameters(extraArgs = extraArgsArray, sourceModules = sourceModules),
-            exitCode = ExitCode.OK,
-            compilerOutput = maybeCompilerArgs?.joinToString() ?: "<empty>",
-            compilerOutputHasErrors = false,
-            duration = duration
-        )
-        return TestCompilationResult.Success(expectedArtifact, loggedCInteropCall)
-    }
-
-    private fun invokeCInterop(inputDef: File, outputLib: File, extraArgs: Array<String>): Array<String>? {
-        val args = arrayOf("-o", outputLib.canonicalPath, "-def", inputDef.canonicalPath)
-        val buildDir = org.jetbrains.kotlin.konan.file.File("${outputLib.canonicalPath}-build")
-        val generatedDir = org.jetbrains.kotlin.konan.file.File(buildDir, "kotlin")
-        val nativesDir = org.jetbrains.kotlin.konan.file.File(buildDir, "natives")
-        val manifest = org.jetbrains.kotlin.konan.file.File(buildDir, "manifest.properties")
-        val cstubsName = "cstubs"
-
-        return interop(
-            "native",
-            args + extraArgs,
-            InternalInteropOptions(generatedDir.absolutePath,
-                                   nativesDir.absolutePath, manifest.path,
-                                   cstubsName
-            ),
-            false
-        )
     }
 }
 

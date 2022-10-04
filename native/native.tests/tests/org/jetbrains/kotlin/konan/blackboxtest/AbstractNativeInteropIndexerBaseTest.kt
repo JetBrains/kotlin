@@ -16,19 +16,6 @@ import java.io.File
 abstract class AbstractNativeInteropIndexerBaseTest : AbstractNativeSimpleTest() {
     private val buildDir: File get() = testRunSettings.get<SimpleTestDirectories>().testBuildDir
 
-    internal fun TestCase.cinteropToLibrary(vararg dependencies: TestCompilationDependency<*>): TestCompilationResult.Success<out KLIB> {
-        val compilation = CInteropCompilation(
-            settings = testRunSettings,
-            freeCompilerArgs = freeCompilerArgs,
-            sourceModules = modules,
-            dependencies = dependencies.toList(),
-            expectedArtifact = toLibraryArtifact()
-        )
-        return compilation.result.assertSuccess()
-    }
-
-    private fun TestCase.toLibraryArtifact() = KLIB(buildDir.resolve(modules.first().name + ".klib"))
-
     internal fun generateCInteropTestCaseWithSingleDef(defFile: File, extraArgs: List<String>): TestCase {
         val moduleName: String = defFile.name
         val module = TestModule.Exclusive(moduleName, emptySet(), emptySet())
