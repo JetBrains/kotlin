@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.llvm.objc
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
 
 /**
  * This class provides methods to generate Objective-C RTTI and other data.
@@ -75,18 +74,14 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
         val globalName = prefix + name
 
         // TODO: refactor usages and use [Global] class.
-        val llvmGlobal = LLVMGetNamedGlobal(llvm.module, globalName) ?:
-                codegen.importGlobal(globalName, classObjectType, CurrentKlibModuleOrigin)
+        val llvmGlobal = LLVMGetNamedGlobal(llvm.module, globalName)
+                ?: codegen.importObjCGlobal(globalName, classObjectType)
 
         return constPointer(llvmGlobal)
     }
 
     private val emptyCache = constPointer(
-            codegen.importGlobal(
-                    "_objc_empty_cache",
-                    codegen.runtime.objCCache,
-                    CurrentKlibModuleOrigin
-            )
+            codegen.importObjCGlobal("_objc_empty_cache", codegen.runtime.objCCache)
     )
 
     fun emitEmptyClass(name: String, superName: String) {

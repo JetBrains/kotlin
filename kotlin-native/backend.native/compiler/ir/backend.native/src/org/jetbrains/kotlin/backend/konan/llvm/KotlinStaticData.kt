@@ -104,9 +104,8 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
             UniqueKind.EMPTY_ARRAY -> context.ir.symbols.array.owner
         }
         return if (isExternal(descriptor)) {
-            constPointer(importGlobal(
-                    kind.llvmName, runtime.objHeaderType, origin = descriptor.llvmSymbolOrigin
-            ))
+            constPointer(
+                    importGlobal(kind.llvmName, runtime.objHeaderType, generationState.computeOrigin(descriptor)))
         } else {
             generationState.llvmDeclarations.forUnique(kind).pointer
         }

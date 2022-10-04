@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.FqName
 
 internal class RTTIGenerator(override val generationState: NativeGenerationState) : ContextUtils {
 
@@ -147,10 +146,8 @@ internal class RTTIGenerator(override val generationState: NativeGenerationState
         staticData.kotlinStringLiteral(string)
     }
 
-    private val EXPORT_TYPE_INFO_FQ_NAME = FqName.fromSegments(listOf("kotlin", "native", "internal", "ExportTypeInfo"))
-
     private fun exportTypeInfoIfRequired(irClass: IrClass, typeInfoGlobal: LLVMValueRef?) {
-        val annotation = irClass.annotations.findAnnotation(EXPORT_TYPE_INFO_FQ_NAME)
+        val annotation = irClass.annotations.findAnnotation(RuntimeNames.exportTypeInfoAnnotation)
         if (annotation != null) {
             val name = annotation.getAnnotationStringValue()!!
             // TODO: use LLVMAddAlias.

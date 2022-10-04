@@ -60,7 +60,7 @@ internal val NativeGenerationState.shouldDefineCachedBoxes: Boolean
 
 internal val NativeGenerationState.shouldLinkRuntimeNativeLibraries: Boolean
     get() = producedLlvmModuleContainsStdlib &&
-            cacheDeserializationStrategy?.contains(KonanFqNames.packageName, "Runtime.kt") != false
+            cacheDeserializationStrategy?.contains(KonanFqNames.internalPackageName, "Runtime.kt") != false
 
 val KonanConfig.involvesLinkStage: Boolean
     get() = when (this.produce) {

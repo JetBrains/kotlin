@@ -11,11 +11,17 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.driver.runPhaseInParentContext
 import org.jetbrains.kotlin.backend.konan.llvm.linkBitcodeDependenciesPhase
 import org.jetbrains.kotlin.backend.konan.llvm.printBitcodePhase
+import org.jetbrains.kotlin.backend.konan.llvm.standardLlvmSymbolsOrigin
 import org.jetbrains.kotlin.backend.konan.llvm.verifyBitcodePhase
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.path
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.library.metadata.CompiledKlibFileOrigin
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 
 internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
     val frontendOutput = useContext(FrontendContextImpl(config)) { it.runFrontend(environment) }
@@ -57,6 +63,14 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
     }
 }
 
+private fun isReferencedByNativeRuntime(declarations: List<IrDeclaration>): Boolean =
+        declarations.any {
+            it.hasAnnotation(RuntimeNames.exportTypeInfoAnnotation)
+                    || it.hasAnnotation(RuntimeNames.exportForCppRuntime)
+        } || declarations.any {
+            it is IrClass && isReferencedByNativeRuntime(it.declarations)
+        }
+
 internal fun PhaseEngine<out Context>.processModuleFragments(
         input: IrModuleFragment,
         action: (NativeGenerationState, IrModuleFragment) -> Unit
@@ -66,20 +80,34 @@ internal fun PhaseEngine<out Context>.processModuleFragments(
 
     val files = module.files.toList()
     module.files.clear()
-    val functionInterfaceFiles = files.filter { it.isFunctionInterfaceFile }
+
+    val stdlibIsBeingCached = module.descriptor == context.stdlibModule
+    val functionInterfaceFiles = files.takeIf { stdlibIsBeingCached }
+            ?.filter { it.isFunctionInterfaceFile }.orEmpty()
+    val filesReferencedByNativeRuntime = files.takeIf { stdlibIsBeingCached }
+            ?.filter { isReferencedByNativeRuntime(it.declarations) }.orEmpty()
 
     for (file in files) {
         if (file.isFunctionInterfaceFile) continue
 
-        context.generationState = NativeGenerationState(
+        val generationState = NativeGenerationState(
                 context.config,
                 context,
                 CacheDeserializationStrategy.SingleFile(file.path, file.fqName.asString())
         )
+        context.generationState = generationState
 
         module.files += file
-        if (context.generationState.shouldDefineFunctionClasses)
+        if (generationState.shouldDefineFunctionClasses)
             module.files += functionInterfaceFiles
+
+        if (generationState.shouldLinkRuntimeNativeLibraries) {
+            val stdlib = (context.standardLlvmSymbolsOrigin as DeserializedKlibModuleOrigin).library
+            filesReferencedByNativeRuntime.forEach {
+                generationState.llvmImports.add(
+                        CompiledKlibFileOrigin.CertainFile(stdlib, it.fqName.asString(), it.path))
+            }
+        }
 
         action(context.generationState, input)
 

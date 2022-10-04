@@ -12,13 +12,14 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
+import org.jetbrains.kotlin.library.metadata.CompiledKlibFileOrigin
+import org.jetbrains.kotlin.library.metadata.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.isThrowable
-import org.jetbrains.kotlin.library.metadata.CompiledKlibModuleOrigin
 
 /**
  * Add attributes to LLVM function declaration and its invocation.
@@ -156,14 +157,14 @@ internal class LlvmFunctionProto(
         returnType: LlvmRetType,
         parameterTypes: List<LlvmParamType> = emptyList(),
         functionAttributes: List<LlvmFunctionAttribute> = emptyList(),
-        val origin: CompiledKlibModuleOrigin,
+        val origin: CompiledKlibFileOrigin,
         isVararg: Boolean = false,
         val independent: Boolean = false,
 ) : LlvmFunctionSignature(returnType, parameterTypes, isVararg, functionAttributes) {
     constructor(
             name: String,
             signature: LlvmFunctionSignature,
-            origin: CompiledKlibModuleOrigin,
+            origin: CompiledKlibFileOrigin,
             independent: Boolean = false,
     ) : this(name, signature.returnType, signature.parameterTypes, signature.functionAttributes, origin, signature.isVararg, independent)
 
@@ -172,7 +173,7 @@ internal class LlvmFunctionProto(
             returnType = contextUtils.getLlvmFunctionReturnType(irFunction),
             parameterTypes = contextUtils.getLlvmFunctionParameterTypes(irFunction),
             functionAttributes = inferFunctionAttributes(contextUtils, irFunction),
-            origin = irFunction.llvmSymbolOrigin,
+            origin = contextUtils.generationState.computeOrigin(irFunction),
             independent = irFunction.hasAnnotation(RuntimeNames.independent)
     )
 }

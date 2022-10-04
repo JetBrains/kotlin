@@ -125,7 +125,7 @@ class CacheSupport(
         val libraryToAddToCacheFile = File(it)
         val libraryToAddToCache = getLibrary(libraryToAddToCacheFile)
         val libraryCache = cachedLibraries.getLibraryCache(libraryToAddToCache)
-        if (libraryCache != null && libraryCache.granularity == CachedLibraries.Granularity.MODULE)
+        if (libraryCache is CachedLibraries.Cache.Monolithic)
             null
         else {
             val filesToCache = configuration.get(KonanConfigKeys.FILES_TO_CACHE)
@@ -183,7 +183,7 @@ class CacheSupport(
         // Ensure not making cache for libraries that are already cached:
         libraryToCache?.klib?.let {
             val cache = cachedLibraries.getLibraryCache(it)
-            if (cache != null && cache.granularity == CachedLibraries.Granularity.MODULE) {
+            if (cache is CachedLibraries.Cache.Monolithic) {
                 configuration.reportCompilationError("can't cache library '${it.libraryName}' " +
                         "that is already cached in '${cache.path}'")
             }

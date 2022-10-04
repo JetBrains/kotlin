@@ -12,12 +12,17 @@ import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.library.metadata.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.SyntheticModulesOrigin
 import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.CompiledKlibFileOrigin
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 internal interface LlvmImports {
-    fun add(origin: CompiledKlibModuleOrigin, onlyBitcode: Boolean = false)
+    data class LibraryFile(val library: KotlinLibrary, val fqName: String, val filePath: String)
+
+    fun add(origin: CompiledKlibFileOrigin, onlyBitcode: Boolean = false)
     fun bitcodeIsUsed(library: KonanLibrary): Boolean
     fun nativeDependenciesAreUsed(library: KonanLibrary): Boolean
+    fun usedBitcode(): List<LibraryFile>
 }
 
 internal val DeclarationDescriptor.llvmSymbolOrigin: CompiledKlibModuleOrigin

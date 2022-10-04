@@ -69,6 +69,7 @@ internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = m
         returnType = boxedType
     }.also { function ->
         function.parent = parent
+        function.attributeOwnerId = inlinedClass // To be able to get the file.
 
         function.addValueParameter {
             startOffset = inlinedClass.startOffset
@@ -103,6 +104,7 @@ internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction =
         returnType = unboxedType
     }.also { function ->
         function.parent = parent
+        function.attributeOwnerId = inlinedClass // To be able to get the file.
 
         function.addValueParameter {
             startOffset = inlinedClass.startOffset

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_FUNCTION_CLASS
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.ir.IrElement
@@ -21,32 +22,49 @@ internal class CacheInfoBuilder(
         private val moduleDeserializer: KonanIrLinker.KonanPartialModuleDeserializer,
         private val irModule: IrModuleFragment
 ) {
-    fun build() = irModule.acceptChildrenVoid(object : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
+    fun build() = irModule.files.forEach { irFile ->
+        var hasEagerlyInitializedProperties = false
 
-        override fun visitClass(declaration: IrClass) {
-            declaration.acceptChildrenVoid(this)
-
-            if (!declaration.isInterface && !declaration.isLocal
-                    && declaration.isExported && declaration.origin != DECLARATION_ORIGIN_FUNCTION_CLASS
-            ) {
-                val declaredFields = generationState.context.getLayoutBuilder(declaration).getDeclaredFields()
-                generationState.classFields.add(moduleDeserializer.buildClassFields(declaration, declaredFields))
+        irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
             }
-        }
 
-        override fun visitFunction(declaration: IrFunction) {
-            // Don't need to visit the children here: classes would be all local and wouldn't be handled anyway,
-            // as for functions - both their callees will be handled and inline bodies will be built for the top function.
+            override fun visitClass(declaration: IrClass) {
+                declaration.acceptChildrenVoid(this)
 
-            if (!declaration.isFakeOverride && declaration.isInline && declaration.isExported) {
-                generationState.inlineFunctionBodies.add(moduleDeserializer.buildInlineFunctionReference(declaration))
-                trackCallees(declaration)
+                if (!declaration.isInterface && !declaration.isLocal
+                        && declaration.isExported && declaration.origin != DECLARATION_ORIGIN_FUNCTION_CLASS
+                ) {
+                    val declaredFields = generationState.context.getLayoutBuilder(declaration).getDeclaredFields()
+                    generationState.classFields.add(moduleDeserializer.buildClassFields(declaration, declaredFields))
+                }
             }
-        }
-    })
+
+            override fun visitFunction(declaration: IrFunction) {
+                // Don't need to visit the children here: classes would be all local and wouldn't be handled anyway,
+                // as for functions - both their callees will be handled and inline bodies will be built for the top function.
+
+                if (!declaration.isFakeOverride && declaration.isInline && declaration.isExported) {
+                    generationState.inlineFunctionBodies.add(moduleDeserializer.buildInlineFunctionReference(declaration))
+                    trackCallees(declaration)
+                }
+            }
+
+            override fun visitProperty(declaration: IrProperty) {
+                declaration.acceptChildrenVoid(this)
+
+                if (declaration.parent == irFile
+                        && declaration.hasAnnotation(KonanFqNames.eagerInitialization)
+                ) {
+                    hasEagerlyInitializedProperties = true
+                }
+            }
+        })
+
+        if (hasEagerlyInitializedProperties)
+            generationState.eagerInitializedFiles.add(moduleDeserializer.buildEagerInitializedFile(irFile))
+    }
 
     private val IrDeclaration.isExported
         get() = with(KonanManglerIr) { isExported(compatibleMode = moduleDeserializer.compatibilityMode.oldSignatures) }

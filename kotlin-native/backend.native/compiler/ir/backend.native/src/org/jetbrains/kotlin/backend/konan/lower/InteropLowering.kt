@@ -543,7 +543,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
     ): IrExpression = generateWithStubs(call) {
         if (method.parent !is IrClass) {
             // Category-provided.
-            generationState.llvmImports.add(method.llvmSymbolOrigin)
+            generationState.llvmImports.add(generationState.computeOrigin(method))
         }
 
         this.generateObjCCall(
@@ -617,7 +617,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
             // handled in CodeGeneratorVisitor.callVirtual.
             val useKotlinDispatch = isInteropStubsFile &&
                     (builder.scope.scopeOwnerSymbol.owner as? IrAnnotationContainer)
-                            ?.hasAnnotation(FqName("kotlin.native.internal.ExportForCppRuntime")) == true
+                            ?.hasAnnotation(RuntimeNames.exportForCppRuntime) == true
 
             if (!useKotlinDispatch) {
                 val arguments = callee.valueParameters.map { expression.getValueArgument(it.index) }
@@ -1011,7 +1011,7 @@ private class InteropTransformer(
     private fun generateCCall(expression: IrCall): IrExpression {
         val function = expression.symbol.owner
 
-        generationState.llvmImports.add(function.llvmSymbolOrigin)
+        generationState.llvmImports.add(generationState.computeOrigin(function))
         val exceptionMode = ForeignExceptionMode.byValue(
                 function.konanLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
         )
