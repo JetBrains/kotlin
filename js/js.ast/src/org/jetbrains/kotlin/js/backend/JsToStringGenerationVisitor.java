@@ -655,7 +655,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitFunction(@NotNull JsFunction x) {
-        pushSourceInfo(x.getSource());
         printCommentsBeforeNode(x);
 
         p.print(CHARS_FUNCTION);
@@ -664,7 +663,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         printFunction(x);
 
         printCommentsAfterNode(x);
-        popSourceInfo();
     }
 
     // name(<params>) { <body> }
@@ -673,10 +671,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             nameOf(x);
         }
 
+        pushSourceInfo(x.getSource());
         leftParen();
         boolean notFirst = false;
-        for (Object element : x.getParameters()) {
-            JsParameter param = (JsParameter) element;
+        for (JsParameter param : x.getParameters()) {
             notFirst = sepCommaOptSpace(notFirst);
             accept(param);
         }
@@ -688,6 +686,8 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         sourceLocationConsumer.pushSourceInfo(null);
         printJsBlock(x.getBody(), true, x.getBody().getSource());
         sourceLocationConsumer.popSourceInfo();
+
+        popSourceInfo();
 
         needSemi = true;
     }

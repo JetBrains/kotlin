@@ -5,4 +5,4 @@ fun box(x: Int): String {
 }
 
 // LINES(JS):    1 5 2 2 3 4
-// LINES(JS_IR):     2 2 3 4
+// LINES(JS_IR): 1   2 2 3 4

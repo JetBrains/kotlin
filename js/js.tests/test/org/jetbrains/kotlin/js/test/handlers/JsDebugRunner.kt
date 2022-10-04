@@ -122,10 +122,14 @@ class JsDebugRunner(testServices: TestServices) : AbstractJsArtifactsCollector(t
         topMostCallFrame: Debugger.CallFrame,
         loggedItems: MutableList<SteppingTestLoggedData>
     ) {
-        sourceMap.getSourceLineForGeneratedLocation(topMostCallFrame.location)?.let { (sourceFile, sourceLine) ->
+        val originalFunctionName = topMostCallFrame.functionLocation?.let {
+            sourceMap.getSourceLineForGeneratedLocation(it)?.name
+        }
+        sourceMap.getSourceLineForGeneratedLocation(topMostCallFrame.location)?.let { (_, sourceFile, sourceLine, _, _) ->
+            if (sourceFile == null || sourceLine < 0) return@let
             val testFileName = testFileNameFromMappedLocation(sourceFile, sourceLine) ?: return
             val expectation =
-                formatAsSteppingTestExpectation(testFileName, sourceLine + 1, topMostCallFrame.functionName, false)
+                formatAsSteppingTestExpectation(testFileName, sourceLine + 1, originalFunctionName ?: topMostCallFrame.functionName, false)
             loggedItems.add(SteppingTestLoggedData(sourceLine + 1, false, expectation))
         }
     }
@@ -176,13 +180,11 @@ class JsDebugRunner(testServices: TestServices) : AbstractJsArtifactsCollector(t
      * Maps [location] in the generated JavaScript file to the corresponding location in a source file.
      * @return The source file path (as specified in the source map) and the line number in that source file.
      */
-    private fun SourceMap.getSourceLineForGeneratedLocation(location: Debugger.Location): Pair<String, Int>? {
-
-        fun SourceMapSegment.sourceFileAndLine() = sourceFileName!! to sourceLineNumber
+    private fun SourceMap.getSourceLineForGeneratedLocation(location: Debugger.Location): SourceMapSegment? {
 
         val group = groups.getOrNull(location.lineNumber)?.takeIf { it.segments.isNotEmpty() } ?: return null
-        val columnNumber = location.columnNumber ?: return group.segments[0].sourceFileAndLine()
-        val segment = if (columnNumber <= group.segments[0].generatedColumnNumber) {
+        val columnNumber = location.columnNumber ?: return group.segments[0]
+        return if (columnNumber <= group.segments[0].generatedColumnNumber) {
             group.segments[0]
         } else {
             val candidateIndex = group.segments.indexOfFirst {
@@ -195,7 +197,6 @@ class JsDebugRunner(testServices: TestServices) : AbstractJsArtifactsCollector(t
             else
                 group.segments[candidateIndex - 1]
         }
-        return segment?.sourceFileAndLine()
     }
 
     /**

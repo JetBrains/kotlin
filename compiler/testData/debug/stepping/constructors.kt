@@ -188,7 +188,7 @@ class O<T>(i: T) {
 // EXPECTATIONS JS_IR
 // test.kt:4 box
 // test.kt:5 box
-// test.kt:20 C
+// test.kt:20 <init>
 // test.kt:6 box
 // test.kt:22 D_init_$Init$
 // test.kt:7 box
@@ -200,10 +200,10 @@ class O<T>(i: T) {
 // test.kt:33 G_init_$Init$
 // test.kt:34 G_init_$Init$
 // test.kt:10 box
-// test.kt:39 J
+// test.kt:39 <init>
 // test.kt:11 box
-// test.kt:42 K
-// test.kt:44 K
+// test.kt:42 <init>
+// test.kt:44 <init>
 // test.kt:12 box
 // test.kt:48 L_init_$Init$
 // test.kt:53 L

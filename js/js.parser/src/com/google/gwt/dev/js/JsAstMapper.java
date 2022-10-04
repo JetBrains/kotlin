@@ -1132,6 +1132,15 @@ public class JsAstMapper {
         if (astNode == null) return null;
 
         CodePosition location = node.getPosition();
+        // For functions, consider their location to be at the opening parenthesis.
+        if (node.getType() == TokenStream.FUNCTION) {
+            Node c = node.getFirstChild();
+            while (c != null && c.getType() != TokenStream.LP)
+                c = c.getNext();
+            if (c != null && c.getPosition() != null)
+                location = c.getPosition();
+        }
+
         if (location != null) {
             JsLocation jsLocation = new JsLocation(fileName, location.getLine(), location.getOffset());
             if (astNode instanceof SourceInfoAwareJsNode) {
