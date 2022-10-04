@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.commonizer
 
 import kotlinx.metadata.klib.ChunkedKlibModuleFragmentWriteStrategy
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.Status
+import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.core.CommonizationVisitor
 import org.jetbrains.kotlin.commonizer.mergedtree.CirClassifierIndex
 import org.jetbrains.kotlin.commonizer.mergedtree.CirCommonizedClassifierNodes
@@ -56,7 +57,7 @@ internal fun commonizeTarget(
         val classifiers = CirKnownClassifiers(
             classifierIndices = availableTrees.mapValue(::CirClassifierIndex),
             targetDependencies = availableTrees.mapValue(CirTreeRoot::dependencies),
-            commonizedNodes = CirCommonizedClassifierNodes.default(),
+            commonizedNodes = CirCommonizedClassifierNodes.default(allowedDuplicates = allowedDuplicates),
             commonDependencies = parameters.dependencyClassifiers(output)
         )
 
@@ -97,4 +98,38 @@ internal fun serializeTarget(
         )
     }
     parameters.resultsConsumer.targetConsumed(parameters, outputTarget)
+}
+
+// iOS, tvOS, watchOS SDKs from Xcode 14 moved some declarations from CoreGraphics to CoreFoundation (CFCGTypes.h).
+// Unfortunately (1), for Kotlin/Native cinterop this is a breaking change, so CFCGTypes platform library with `platform.CoreGraphics`
+// package was introduced to mitigate this problem.
+// Unfortunately (2), macOS SDK does not have this change and commonizer fails on commonizing (macOS, *OS),
+// because it was written in assumption that different platform klibs contain different packages.
+// We workaround this problem by allowing some classifiers to clash in `CirCommonizedClassifierNodes`.
+// Fortunately (1), macOS SDK from Xcode 14.1 should have CFCGTypes.h, so this hack can be removed soon.
+// TODO: Remove hack after Xcode 14.1.
+private val allowedDuplicates = run {
+    val cfcgTypesClassifiers = setOf(
+        "platform/CoreGraphics/CGAffineTransform",
+        "platform/CoreGraphics/CGAffineTransform.Companion",
+        "platform/CoreGraphics/CGFloat",
+        "platform/CoreGraphics/CGFloatVar",
+        "platform/CoreGraphics/CGPoint",
+        "platform/CoreGraphics/CGPoint.Companion",
+        "platform/CoreGraphics/CGRect",
+        "platform/CoreGraphics/CGRect.Companion",
+        "platform/CoreGraphics/CGRectEdge",
+        "platform/CoreGraphics/CGRectEdge.CGRectMaxXEdge",
+        "platform/CoreGraphics/CGRectEdge.CGRectMaxYEdge",
+        "platform/CoreGraphics/CGRectEdge.CGRectMinXEdge",
+        "platform/CoreGraphics/CGRectEdge.CGRectMinYEdge",
+        "platform/CoreGraphics/CGRectEdge.Companion",
+        "platform/CoreGraphics/CGRectEdge.Var",
+        "platform/CoreGraphics/CGRectEdge.Var.Companion",
+        "platform/CoreGraphics/CGSize",
+        "platform/CoreGraphics/CGSize.Companion",
+        "platform/CoreGraphics/CGVector",
+        "platform/CoreGraphics/CGVector.Companion",
+    )
+    cfcgTypesClassifiers.map { CirEntityId.create(it) }.toSet()
 }

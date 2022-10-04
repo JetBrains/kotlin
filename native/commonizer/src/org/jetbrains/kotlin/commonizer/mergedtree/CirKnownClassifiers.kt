@@ -29,7 +29,7 @@ interface CirCommonizedClassifierNodes {
     fun addTypeAliasNode(typeAliasId: CirEntityId, node: CirTypeAliasNode)
 
     companion object {
-        fun default() = object : CirCommonizedClassifierNodes {
+        fun default(allowedDuplicates: Set<CirEntityId> = setOf()) = object : CirCommonizedClassifierNodes {
             private val classNodes = THashMap<CirEntityId, CirClassNode>()
             private val typeAliases = THashMap<CirEntityId, CirTypeAliasNode>()
 
@@ -38,12 +38,12 @@ interface CirCommonizedClassifierNodes {
 
             override fun addClassNode(classId: CirEntityId, node: CirClassNode) {
                 val oldNode = classNodes.put(classId, node)
-                check(oldNode == null) { "Rewriting class node $classId" }
+                check(oldNode == null || classId in allowedDuplicates) { "Rewriting class node $classId" }
             }
 
             override fun addTypeAliasNode(typeAliasId: CirEntityId, node: CirTypeAliasNode) {
                 val oldNode = typeAliases.put(typeAliasId, node)
-                check(oldNode == null) { "Rewriting type alias node $typeAliasId" }
+                check(oldNode == null || typeAliasId in allowedDuplicates) { "Rewriting type alias node $typeAliasId" }
             }
         }
     }
