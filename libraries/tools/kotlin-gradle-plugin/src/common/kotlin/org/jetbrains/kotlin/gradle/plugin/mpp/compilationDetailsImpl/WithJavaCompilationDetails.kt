@@ -28,7 +28,7 @@ internal class WithJavaCompilationDetails<T : KotlinCommonOptions, CO : Compiler
     val javaSourceSet: SourceSet
         get() = compilation.javaSourceSet
 
-    override val output: KotlinCompilationOutput by lazy { KotlinWithJavaCompilationOutput(compilation) }
+    override val output: KotlinCompilationOutput = KotlinWithJavaCompilationOutput(compilation.javaSourceSet)
 
     override val compileDependencyFilesHolder: GradleKpmDependencyFilesHolder
         get() = object : GradleKpmDependencyFilesHolder {

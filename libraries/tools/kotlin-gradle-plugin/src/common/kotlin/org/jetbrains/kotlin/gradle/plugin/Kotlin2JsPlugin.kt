@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 
@@ -26,7 +25,7 @@ internal open class Kotlin2JsPlugin(
 
     override fun buildSourceSetProcessor(
         project: Project,
-        compilation: AbstractKotlinCompilation<*>
+        compilation: KotlinCompilation<*>
     ): KotlinSourceSetProcessor<*> =
         Kotlin2JsSourceSetProcessor(tasksProvider, KotlinCompilationProjection(compilation))
 
