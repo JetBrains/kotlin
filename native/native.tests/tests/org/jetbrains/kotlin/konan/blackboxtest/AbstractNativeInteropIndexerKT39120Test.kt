@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.junit.jupiter.api.Tag
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.*
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 
 @Tag("interop-indexer")
@@ -21,6 +22,8 @@ abstract class AbstractNativeInteropIndexerKT39120Test : AbstractNativeInteropIn
 
     @Synchronized
     protected fun runTest(@TestDataFile testPath: String) {
+        if (!HostManager.host.family.isAppleFamily) return  // KT-39120 is about Objective-C, so under Apple hosts only
+
         val testPathFull = getAbsoluteFile(testPath)
         val testDataDir = testPathFull.parentFile.parentFile
         val def1File = testPathFull.resolve("pod1.def")
