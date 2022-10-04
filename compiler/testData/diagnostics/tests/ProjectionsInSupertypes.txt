@@ -1,5 +1,7 @@
 package
 
+public val x: A<*>
+
 public interface A</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -29,3 +31,4 @@ public interface Test : A<in kotlin.Int>, B<out kotlin.Int>, C<*>?, D<kotlin.Int
     public open override /*4*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*4*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
