@@ -235,7 +235,7 @@ open class FatFrameworkTask : DefaultTask() {
             MACOS_X64, MACOS_ARM64 -> "MacOSX"
             IOS_ARM32, IOS_ARM64, IOS_X64, IOS_SIMULATOR_ARM64 -> "iPhoneOS"
             TVOS_ARM64, TVOS_X64, TVOS_SIMULATOR_ARM64 -> "AppleTVOS"
-            WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X86, WATCHOS_X64, WATCHOS_SIMULATOR_ARM64 -> "WatchOS"
+            WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X86, WATCHOS_X64, WATCHOS_SIMULATOR_ARM64, WATCHOS_DEVICE_ARM64 -> "WatchOS"
             else -> error("Fat frameworks are not supported for platform `${target.visibleName}`")
         }
 
@@ -420,7 +420,7 @@ open class FatFrameworkTask : DefaultTask() {
     companion object {
         private val supportedTargets = listOf(
             IOS_ARM32, IOS_ARM64, IOS_X64,
-            WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X86, WATCHOS_X64,
+            WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X86, WATCHOS_X64, WATCHOS_DEVICE_ARM64,
             TVOS_ARM64, TVOS_X64,
             MACOS_X64, MACOS_ARM64
         )
