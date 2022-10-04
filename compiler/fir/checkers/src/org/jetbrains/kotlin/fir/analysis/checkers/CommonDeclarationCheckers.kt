@@ -90,6 +90,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirMemberPropertiesChecker,
             FirImplementationMismatchChecker,
             FirTypeParametersInObjectChecker,
+            FirSupertypesChecker,
         )
 
     override val regularClassCheckers: Set<FirRegularClassChecker>
@@ -101,7 +102,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirDelegationSuperCallInEnumConstructorChecker,
             FirDelegationInInterfaceSyntaxChecker,
             FirEnumClassSimpleChecker,
-            FirSupertypesChecker,
             FirLocalEntityNotAllowedChecker,
             FirManyCompanionObjectsChecker,
             FirMethodOfAnyImplementedInInterfaceChecker,
