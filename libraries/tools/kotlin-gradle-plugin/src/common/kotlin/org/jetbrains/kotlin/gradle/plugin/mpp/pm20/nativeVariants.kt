@@ -512,6 +512,45 @@ abstract class GradleKpmWatchosSimulatorArm64Variant @Inject constructor(
     }
 }
 
+abstract class GradleKpmWatchosDeviceArm64Variant @Inject constructor(
+    containingModule: GradleKpmModule,
+    fragmentName: String,
+    dependencyConfigurations: GradleKpmFragmentDependencyConfigurations,
+    compileDependencyConfiguration: Configuration,
+    apiElementsConfiguration: Configuration,
+    hostSpecificMetadataElementsConfiguration: Configuration?
+) : GradleKpmNativeVariantInternal(
+    containingModule = containingModule,
+    fragmentName = fragmentName,
+    konanTarget = KonanTarget.WATCHOS_DEVICE_ARM64,
+    dependencyConfigurations = dependencyConfigurations,
+    compileDependencyConfiguration = compileDependencyConfiguration,
+    apiElementsConfiguration = apiElementsConfiguration,
+    hostSpecificMetadataElementsConfiguration = hostSpecificMetadataElementsConfiguration
+) {
+    companion object {
+        val constructor = GradleKpmNativeVariantConstructor(
+            KonanTarget.WATCHOS_DEVICE_ARM64,
+            GradleKpmWatchosDeviceArm64Variant::class.java
+        ) { containingModule: GradleKpmModule,
+            fragmentName: String,
+            dependencyConfigurations: GradleKpmFragmentDependencyConfigurations,
+            compileDependencyConfiguration: Configuration,
+            apiElementsConfiguration: Configuration,
+            hostSpecificMetadataElementsConfiguration: Configuration? ->
+            containingModule.project.objects.newInstance(
+                GradleKpmWatchosDeviceArm64Variant::class.java,
+                containingModule,
+                fragmentName,
+                dependencyConfigurations,
+                compileDependencyConfiguration,
+                apiElementsConfiguration,
+                hostSpecificMetadataElementsConfiguration
+            )
+        }
+    }
+}
+
 abstract class GradleKpmTvosArm64Variant @Inject constructor(
     containingModule: GradleKpmModule,
     fragmentName: String,
@@ -1033,6 +1072,7 @@ internal val allKpmNativeVariantConstructors = listOf(
     GradleKpmWatchosX86Variant.constructor,
     GradleKpmWatchosX64Variant.constructor,
     GradleKpmWatchosSimulatorArm64Variant.constructor,
+    GradleKpmWatchosDeviceArm64Variant.constructor,
     GradleKpmTvosArm64Variant.constructor,
     GradleKpmTvosX64Variant.constructor,
     GradleKpmTvosSimulatorArm64Variant.constructor,
@@ -1062,6 +1102,7 @@ internal fun kpmNativeVariantClass(konanTarget: KonanTarget): Class<out GradleKp
     KonanTarget.WATCHOS_X86 -> GradleKpmWatchosX86Variant::class.java
     KonanTarget.WATCHOS_X64 -> GradleKpmWatchosX64Variant::class.java
     KonanTarget.WATCHOS_SIMULATOR_ARM64 -> GradleKpmWatchosSimulatorArm64Variant::class.java
+    KonanTarget.WATCHOS_DEVICE_ARM64 -> GradleKpmWatchosDeviceArm64Variant::class.java
     KonanTarget.TVOS_ARM64 -> GradleKpmTvosArm64Variant::class.java
     KonanTarget.TVOS_X64 -> GradleKpmTvosX64Variant::class.java
     KonanTarget.TVOS_SIMULATOR_ARM64 -> GradleKpmTvosSimulatorArm64Variant::class.java
