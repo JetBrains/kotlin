@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.native.internal
 
-import kotlin.time.Duration
+import kotlin.native.internal.gc.GCInfo
+import kotlin.time.*
 import kotlin.time.Duration.Companion.microseconds
 
 /**
@@ -275,6 +276,18 @@ object GC {
     @GCUnsafeCall("Kotlin_native_internal_GC_detectCycles")
     @Deprecated("No-op in modern GC implementation")
     external fun detectCycles(): Array<Any>?
+
+    /**
+     * Returns statistics of the last finished garbage collection run.
+     * This information is supposed to be used for testing and debugging purposes only
+     *
+     * Can return null, if there was no garbage collection runs yet.
+     *
+     * Legacy MM: Always returns null
+     */
+    @ExperimentalStdlibApi
+    val lastGCInfo: GCInfo?
+        get() = GCInfo.lastGCInfo
 
     /**
      * Deprecated and unused. Always returns null.

@@ -3427,6 +3427,12 @@ standaloneTest("leakMemoryWithTestRunner") {
     }
 }
 
+standaloneTest("gcStats") {
+    source = "runtime/memory/gcStats.kt"
+    flags = ['-tr', "-Xbinary=gcSchedulerType=disabled"]
+    enabled = isExperimentalMM
+}
+
 standaloneTest("stress_gc_allocations") {
     // TODO: Support obtaining peak RSS on more platforms.
     enabled = (project.testTarget != "wasm32") &&
