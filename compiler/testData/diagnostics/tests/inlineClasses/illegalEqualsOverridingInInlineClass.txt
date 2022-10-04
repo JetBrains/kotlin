@@ -1,0 +1,26 @@
+package
+
+@kotlin.jvm.JvmInline public final value class IC1 {
+    public constructor IC1(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.jvm.JvmInline public final value class IC2 {
+    public constructor IC2(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.jvm.JvmInline public final value class IC3 {
+    public constructor IC3(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public final fun equals(/*0*/ other: IC3): kotlin.Boolean
+    public open override /*1*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}

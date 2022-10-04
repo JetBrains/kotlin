@@ -14475,6 +14475,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFunctionInvokeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
+        @TestMetadata("inlineClassHashCodeOverride.kt")
+        public void testInlineClassHashCodeOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassHashCodeOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
         @TestMetadata("inlineClassInInitBlock.kt")
         public void testInlineClassInInitBlock() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassInInitBlock.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
