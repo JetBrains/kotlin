@@ -50,26 +50,6 @@ internal object DefaultKotlinCompilationAssociator : KotlinCompilationAssociator
             second.runtimeOnlyConfigurationName
         )
     }
-
-    /**
-     * Adds `allDependencies` of configurations mentioned in `configurationNames` to configuration named [this] in
-     * a lazy manner
-     */
-    private fun String.addAllDependenciesFromOtherConfigurations(project: Project, vararg configurationNames: String) {
-        project.configurations.named(this).configure { receiverConfiguration ->
-            receiverConfiguration.dependencies.addAllLater(
-                project.objects.listProperty(Dependency::class.java).apply {
-                    set(
-                        project.provider {
-                            configurationNames
-                                .map { project.configurations.getByName(it) }
-                                .flatMap { it.allDependencies }
-                        }
-                    )
-                }
-            )
-        }
-    }
 }
 
 internal object NativeKotlinCompilationAssociator : KotlinCompilationAssociator {
@@ -96,4 +76,44 @@ internal object JvmKotlinCompilationAssociator : KotlinCompilationAssociator {
     }
 }
 
+/*
+* Example of how multiplatform dependencies from common would get to Android test classpath:
+* commonMainImplementation -> androidDebugImplementation -> debugImplementation -> debugAndroidTestCompileClasspath
+* After the fix for KT-35916 MPP compilation configurations receive a 'compilation' postfix for disambiguation.
+* androidDebugImplementation remains a source set configuration, but no longer contains compilation dependencies.
+* Therefore, it doesn't get dependencies from common source sets.
+* We now explicitly add associate compilation dependencies to the Kotlin test compilation configurations (test classpaths).
+* This helps, because the Android test classpath configurations extend from the Kotlin test compilations' directly.
+*/
+internal object AndroidKotlinCompilationAssociator : KotlinCompilationAssociator {
+    override fun associate(target: KotlinTarget, first: InternalKotlinCompilation<*>, second: InternalKotlinCompilation<*>) {
+        target.project.kotlinCompilationModuleManager.unionModules(first.compilationModule, second.compilationModule)
+        first.compileDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
+            target.project,
+            second.apiConfigurationName,
+            second.implementationConfigurationName,
+            second.compileOnlyConfigurationName
+        )
+    }
 
+}
+
+/**
+ * Adds `allDependencies` of configurations mentioned in `configurationNames` to configuration named [this] in
+ * a lazy manner
+ */
+private fun String.addAllDependenciesFromOtherConfigurations(project: Project, vararg configurationNames: String) {
+    project.configurations.named(this).configure { receiverConfiguration ->
+        receiverConfiguration.dependencies.addAllLater(
+            project.objects.listProperty(Dependency::class.java).apply {
+                set(
+                    project.provider {
+                        configurationNames
+                            .map { project.configurations.getByName(it) }
+                            .flatMap { it.allDependencies }
+                    }
+                )
+            }
+        )
+    }
+}

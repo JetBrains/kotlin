@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithClosure
-import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
@@ -87,6 +85,12 @@ internal class DefaultKotlinCompilationFriendPathsResolver(
             return compilation.project.files(
                 friendSourceSets.mapNotNull { compilation.project.getMetadataCompilationForSourceSet(it)?.output?.classesDirs }
             )
+        }
+    }
+
+    object AdditionalAndroidFriendArtifactResolver : FriendArtifactResolver {
+        override fun resolveFriendArtifacts(compilation: InternalKotlinCompilation<*>): FileCollection {
+            return compilation.project.files((compilation.decoratorInstance as KotlinJvmAndroidCompilation).testedVariantArtifacts)
         }
     }
 }
