@@ -58,6 +58,7 @@ private val nativeTargetsWithSimulatorTests =
         KonanTarget.WATCHOS_X86,
         KonanTarget.WATCHOS_X64,
         KonanTarget.WATCHOS_SIMULATOR_ARM64,
+        KonanTarget.WATCHOS_DEVICE_ARM64,
 
         KonanTarget.TVOS_X64,
         KonanTarget.TVOS_SIMULATOR_ARM64
