@@ -3796,6 +3796,22 @@ CODEGEN_INLINE_POLICY RUNTIME_NOTHROW void Kotlin_mm_safePointWhileLoopBody() {
     // no-op, used by the new MM only.
 }
 
+RUNTIME_NOTHROW ALWAYS_INLINE void Kotlin_processObjectInMark(void* state, ObjHeader* object) {
+    // no-op, used by the new MM only.
+}
+
+RUNTIME_NOTHROW ALWAYS_INLINE void Kotlin_processArrayInMark(void* state, ObjHeader* object) {
+    // no-op, used by the new MM only.
+}
+
+RUNTIME_NOTHROW ALWAYS_INLINE void Kotlin_processFieldInMark(void* state, ObjHeader* field) {
+    // no-op, used by the new MM only.
+}
+
+RUNTIME_NOTHROW ALWAYS_INLINE void Kotlin_processEmptyObjectInMark(void* state, ObjHeader* object) {
+    // no-op, used by the new MM only.
+}
+
 } // extern "C"
 
 #if !KONAN_NO_EXCEPTIONS

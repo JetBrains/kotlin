@@ -98,7 +98,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             flags: Int,
             classId: Int,
             writableTypeInfo: ConstPointer?,
-            associatedObjects: ConstPointer?) :
+            associatedObjects: ConstPointer?,
+            processObjectInMark: ConstPointer?) :
 
             Struct(
                     runtime.typeInfoType,
@@ -134,7 +135,9 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
                     *listOfNotNull(writableTypeInfo).toTypedArray(),
 
-                    associatedObjects
+                    associatedObjects,
+
+                    processObjectInMark,
             )
 
     private fun kotlinStringLiteral(string: String?): ConstPointer = if (string == null) {
@@ -255,7 +258,11 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 flagsFromClass(irClass) or reflectionInfo.reflectionFlags,
                 context.getLayoutBuilder(irClass).classId,
                 llvmDeclarations.writableTypeInfoGlobal?.pointer,
-                associatedObjects = genAssociatedObjects(irClass)
+                associatedObjects = genAssociatedObjects(irClass),
+                processObjectInMark = when {
+                    irClass.symbol == context.ir.symbols.array -> constPointer(context.llvm.Kotlin_processArrayInMark.llvmValue)
+                    else -> genProcessObjectInMark(bodyType)
+                }
         )
 
         val typeInfoGlobalValue = if (!irClass.typeInfoHasVtableAttached) {
@@ -271,14 +278,17 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         exportTypeInfoIfRequired(irClass, irClass.llvmTypeInfoPtr)
     }
 
-    private fun getObjOffsets(bodyType: LLVMTypeRef): List<Int32> =
+    private fun getIndicesOfObjectFields(bodyType: LLVMTypeRef) : List<Int> =
             getStructElements(bodyType).mapIndexedNotNull { index, type ->
-                if (isObjectType(type)) {
-                    LLVMOffsetOfElement(llvmTargetData, bodyType, index)
-                } else {
-                    null
+                index.takeIf {
+                    isObjectType(type)
                 }
-            }.map { Int32(it.toInt()) }
+            }
+
+    private fun getObjOffsets(bodyType: LLVMTypeRef): List<Int32> =
+            getIndicesOfObjectFields(bodyType).map { index ->
+                Int32(LLVMOffsetOfElement(llvmTargetData, bodyType, index).toInt())
+            }
 
     fun vtable(irClass: IrClass): ConstArray {
         // TODO: compile-time resolution limits binary compatibility.
@@ -473,6 +483,20 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         )
     }
 
+    private fun genProcessObjectInMark(classType: LLVMTypeRef) : ConstPointer {
+        val indicesOfObjectFields = getIndicesOfObjectFields(classType)
+        return when {
+            indicesOfObjectFields.isEmpty() -> {
+                // TODO: Try to generate it here instead of importing from the runtime.
+                constPointer(context.llvm.Kotlin_processEmptyObjectInMark.llvmValue)
+            }
+            else -> {
+                // TODO: specialize for "small" objects
+                constPointer(context.llvm.Kotlin_processObjectInMark.llvmValue)
+            }
+        }
+    }
+
     // TODO: extract more code common with generate().
     fun generateSyntheticInterfaceImpl(
             irClass: IrClass,
@@ -545,7 +569,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 flags = flagsFromClass(irClass) or (if (immutable) TF_IMMUTABLE else 0),
                 classId = typeHierarchyInfo.classIdLo,
                 writableTypeInfo = writableTypeInfo,
-                associatedObjects = null
+                associatedObjects = null,
+                processObjectInMark = genProcessObjectInMark(bodyType),
               ), vtable)
 
         typeInfoWithVtableGlobal.setInitializer(typeInfoWithVtable)

@@ -66,6 +66,10 @@ public:
     void StopFinalizerThreadIfRunning() noexcept;
     bool FinalizersThreadIsRunning() noexcept;
 
+    static void processObjectInMark(void* state, ObjHeader* object) noexcept;
+    static void processArrayInMark(void* state, ArrayHeader* array) noexcept;
+    static void processFieldInMark(void* state, ObjHeader* field) noexcept;
+
 private:
     std_support::unique_ptr<Impl> impl_;
 };

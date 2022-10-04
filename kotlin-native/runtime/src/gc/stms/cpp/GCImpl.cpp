@@ -6,6 +6,7 @@
 #include "GCImpl.hpp"
 
 #include "GC.hpp"
+#include "MarkAndSweepUtils.hpp"
 #include "std_support/Memory.hpp"
 
 using namespace kotlin;
@@ -87,4 +88,19 @@ void gc::GC::StopFinalizerThreadIfRunning() noexcept {}
 
 bool gc::GC::FinalizersThreadIsRunning() noexcept {
     return false;
+}
+
+// static
+ALWAYS_INLINE void gc::GC::processObjectInMark(void* state, ObjHeader* object) noexcept {
+    gc::internal::processObjectInMark<gc::internal::MarkTraits>(state, object);
+}
+
+// static
+ALWAYS_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) noexcept {
+    gc::internal::processArrayInMark<gc::internal::MarkTraits>(state, array);
+}
+
+// static
+ALWAYS_INLINE void gc::GC::processFieldInMark(void* state, ObjHeader* field) noexcept {
+    gc::internal::processFieldInMark<gc::internal::MarkTraits>(state, field);
 }
