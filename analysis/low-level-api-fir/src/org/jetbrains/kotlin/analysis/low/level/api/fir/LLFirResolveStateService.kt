@@ -27,6 +27,7 @@ internal class LLFirResolveSessionService(project: Project) {
 
     private val cache = SoftCachedMap.create<KtModule, LLFirResolvableResolveSession>(
         project,
+        SoftCachedMap.Kind.STRONG_KEYS_SOFT_VALUES,
         listOf(
             ProjectRootModificationTracker.getInstance(project),
             project.createProjectWideOutOfBlockModificationTracker(),

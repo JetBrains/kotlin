@@ -22,19 +22,29 @@ public abstract class SoftCachedMap<K : Any, V : Any> {
     public companion object {
         public fun <K : Any, V : Any> create(
             project: Project,
+            kind: Kind,
             trackers: List<Any>
         ): SoftCachedMap<K, V> = when {
-            trackers.isEmpty() -> SoftCachedMapWithoutTrackers()
-            else -> SoftCachedMapWithTrackers(project, trackers.toTypedArray())
+            trackers.isEmpty() -> SoftCachedMapWithoutTrackers(kind)
+            else -> SoftCachedMapWithTrackers(project, kind, trackers.toTypedArray())
         }
+    }
+
+    public enum class Kind {
+        SOFT_KEYS_SOFT_VALUES,
+        STRONG_KEYS_SOFT_VALUES
     }
 }
 
 private class SoftCachedMapWithTrackers<K : Any, V : Any>(
     private val project: Project,
+    kind: Kind,
     private val trackers: Array<Any>
 ) : SoftCachedMap<K, V>() {
-    private val cache = ConcurrentHashMap<K, CachedValue<V>>()
+    private val cache = when (kind) {
+        Kind.SOFT_KEYS_SOFT_VALUES -> ContainerUtil.createConcurrentSoftMap<K, CachedValue<V>>()
+        Kind.STRONG_KEYS_SOFT_VALUES -> ConcurrentHashMap<K, CachedValue<V>>()
+    }
 
     override fun clear() {
         cache.clear()
@@ -49,8 +59,11 @@ private class SoftCachedMapWithTrackers<K : Any, V : Any>(
     }
 }
 
-private class SoftCachedMapWithoutTrackers<K : Any, V : Any> : SoftCachedMap<K, V>() {
-    private val cache = ContainerUtil.createConcurrentSoftMap<K, V>()
+private class SoftCachedMapWithoutTrackers<K : Any, V : Any>(kind: Kind) : SoftCachedMap<K, V>() {
+    private val cache = when (kind) {
+        Kind.SOFT_KEYS_SOFT_VALUES -> ContainerUtil.createConcurrentSoftKeySoftValueMap<K, V>()
+        Kind.STRONG_KEYS_SOFT_VALUES -> ContainerUtil.createSoftValueMap<K, V>()
+    }
 
     override fun clear() {
         cache.clear()

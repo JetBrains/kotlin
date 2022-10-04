@@ -53,6 +53,7 @@ abstract class CachingKtAnalysisSessionProvider<State : Any>(project: Project) :
 private class KtAnalysisSessionCache(project: Project) {
     private val cache = SoftCachedMap.create<Pair<KtModule, KClass<out KtLifetimeToken>>, KtAnalysisSession>(
         project,
+        SoftCachedMap.Kind.STRONG_KEYS_SOFT_VALUES,
         listOf(
             PsiModificationTracker.MODIFICATION_COUNT,
             ProjectRootModificationTracker.getInstance(project),

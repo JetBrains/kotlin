@@ -43,6 +43,7 @@ internal class LLFirResolveSessionDepended(
 
     private val scopeSessionProviderCache = SoftCachedMap.create<FirSession, LLFirScopeSessionProvider>(
         project,
+        SoftCachedMap.Kind.SOFT_KEYS_SOFT_VALUES,
         listOf(
             PsiModificationTracker.MODIFICATION_COUNT,
             ProjectRootModificationTracker.getInstance(project)
