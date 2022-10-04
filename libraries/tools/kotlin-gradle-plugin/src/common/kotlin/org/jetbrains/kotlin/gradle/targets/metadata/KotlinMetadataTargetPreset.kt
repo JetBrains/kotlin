@@ -26,8 +26,11 @@ class KotlinMetadataTargetPreset(
             override val itemClass: Class<KotlinCompilation<*>>
                 get() = KotlinCompilation::class.java
 
-            override fun create(name: String): AbstractKotlinCompilation<*> = when (name) {
-                KotlinCompilation.MAIN_COMPILATION_NAME -> KotlinCommonCompilationFactory(forTarget).create(name)
+            override fun create(name: String): InternalKotlinCompilation<*> = when (name) {
+                KotlinCompilation.MAIN_COMPILATION_NAME -> KotlinCommonCompilationFactory(
+                    forTarget, getOrCreateDefaultSourceSet(name)
+                ).create(name)
+
                 else -> error("Can't create custom metadata compilations by name")
             }
         }
