@@ -557,7 +557,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/CInteropSetti
 	public abstract fun defFile (Ljava/lang/Object;)V
 	public abstract fun extraOpts (Ljava/util/List;)V
 	public abstract fun extraOpts ([Ljava/lang/Object;)V
-	public abstract fun getCompilation ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/pm20/KotlinCompilationData;
 	public abstract fun getDependencyConfigurationName ()Ljava/lang/String;
 	public abstract fun getDependencyFiles ()Lorg/gradle/api/file/FileCollection;
 	public abstract fun header (Ljava/lang/Object;)V
@@ -699,7 +698,10 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompila
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getOutput ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationOutput;
 	public abstract fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
+	public abstract fun getProject ()Lorg/gradle/api/Project;
 	public abstract fun getRelatedConfigurationNames ()Ljava/util/List;
+	public abstract fun getRuntimeDependencyConfigurationName ()Ljava/lang/String;
+	public abstract fun getRuntimeDependencyFiles ()Lorg/gradle/api/file/FileCollection;
 	public abstract fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 	public abstract fun kotlinOptions (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun kotlinOptions (Lorg/gradle/api/Action;)V
