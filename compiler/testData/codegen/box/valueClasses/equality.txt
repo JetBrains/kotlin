@@ -18,15 +18,15 @@ public final class A {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String, p10: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, p16: java.lang.String, p17: int, p18: int, p19: java.lang.String): boolean
-    public final static method getF1-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, @org.jetbrains.annotations.NotNull p6: java.lang.String, p7: int, p8: int, @org.jetbrains.annotations.NotNull p9: java.lang.String): int
-    public final static method getF2-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, @org.jetbrains.annotations.NotNull p6: java.lang.String, p7: int, p8: int, @org.jetbrains.annotations.NotNull p9: java.lang.String): int
-    public final static @org.jetbrains.annotations.NotNull method getF3-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, @org.jetbrains.annotations.NotNull p6: java.lang.String, p7: int, p8: int, @org.jetbrains.annotations.NotNull p9: java.lang.String): F3
-    public final static method getF4-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, @org.jetbrains.annotations.NotNull p6: java.lang.String, p7: int, p8: int, @org.jetbrains.annotations.NotNull p9: java.lang.String): int
-    public final static method getF5-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, @org.jetbrains.annotations.NotNull p6: java.lang.String, p7: int, p8: int, @org.jetbrains.annotations.NotNull p9: java.lang.String): int
-    public final static @org.jetbrains.annotations.NotNull method getF6-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, @org.jetbrains.annotations.NotNull p6: java.lang.String, p7: int, p8: int, @org.jetbrains.annotations.NotNull p9: java.lang.String): java.lang.String
-    public final static method getF7-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, @org.jetbrains.annotations.NotNull p6: java.lang.String, p7: int, p8: int, @org.jetbrains.annotations.NotNull p9: java.lang.String): int
-    public final static method getF8-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, @org.jetbrains.annotations.NotNull p6: java.lang.String, p7: int, p8: int, @org.jetbrains.annotations.NotNull p9: java.lang.String): int
-    public final static @org.jetbrains.annotations.NotNull method getF9-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, @org.jetbrains.annotations.NotNull p6: java.lang.String, p7: int, p8: int, @org.jetbrains.annotations.NotNull p9: java.lang.String): java.lang.String
+    public final method getF1-DbFnDB4(): int
+    public final method getF2-ejSTSP4(): int
+    public final @org.jetbrains.annotations.NotNull method getF3(): F3
+    public final method getF4-4yoqybc(): int
+    public final method getF5-z3qHWqM(): int
+    public final @org.jetbrains.annotations.NotNull method getF6-OgMO970(): java.lang.String
+    public final method getF7(): int
+    public final method getF8-pVg5ArA(): int
+    public final @org.jetbrains.annotations.NotNull method getF9(): java.lang.String
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -74,8 +74,8 @@ public final class B {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, p16: java.lang.String, p17: int, p18: int, p19: java.lang.String, p20: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, p16: java.lang.String, p17: int, p18: int, p19: java.lang.String, p20: int, p21: int, p22: int, p23: int, p24: int, p25: int, p26: java.lang.String, p27: int, p28: int, p29: java.lang.String, p30: int, p31: int, p32: int, p33: int, p34: int, p35: int, p36: java.lang.String, p37: int, p38: int, p39: java.lang.String): boolean
-    public final static @org.jetbrains.annotations.NotNull method getA1-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, @org.jetbrains.annotations.NotNull p6: java.lang.String, p7: int, p8: int, @org.jetbrains.annotations.NotNull p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, @org.jetbrains.annotations.NotNull p16: java.lang.String, p17: int, p18: int, @org.jetbrains.annotations.NotNull p19: java.lang.String): A
-    public final static @org.jetbrains.annotations.NotNull method getA2-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, @org.jetbrains.annotations.NotNull p6: java.lang.String, p7: int, p8: int, @org.jetbrains.annotations.NotNull p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, @org.jetbrains.annotations.NotNull p16: java.lang.String, p17: int, p18: int, @org.jetbrains.annotations.NotNull p19: java.lang.String): A
+    public final @org.jetbrains.annotations.NotNull method getA1(): A
+    public final @org.jetbrains.annotations.NotNull method getA2(): A
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, p16: java.lang.String, p17: int, p18: int, p19: java.lang.String): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -162,8 +162,8 @@ public final class F3 {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
-    public final static method getX-impl(p0: int, p1: int): int
-    public final static method getY-impl(p0: int, p1: int): int
+    public final method getX-DbFnDB4(): int
+    public final method getY-ejSTSP4(): int
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String

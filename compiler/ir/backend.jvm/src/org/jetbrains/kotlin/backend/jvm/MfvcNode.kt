@@ -79,16 +79,6 @@ fun makeTypeArgumentsFromType(type: IrSimpleType): TypeArguments {
 
 }
 
-private fun <Scope, IrElement, Instance> MfvcNode.createInstanceFromBoxTypeImpl(
-    scope: Scope,
-    boxType: IrSimpleType,
-    fieldValues: List<IrElement>,
-    gen: (Scope, MfvcNode, TypeArguments, List<IrElement>) -> Instance
-): Instance {
-    val typeArguments = makeTypeArgumentsFromType(boxType)
-    return gen(scope, this, typeArguments, fieldValues)
-}
-
 sealed interface NameableMfvcNode : MfvcNode {
     val namedNodeImpl: NameableMfvcNodeImpl
 }
@@ -265,12 +255,6 @@ private fun requireSameClasses(vararg classes: IrClass?) {
     val notNulls = classes.filterNotNull()
     require(notNulls.zipWithNext { a, b -> a == b }.all { it }) {
         "Found different classes: ${notNulls.joinToString("\n") { it.render() }}"
-    }
-}
-
-private fun requireSameTypes(vararg types: List<IrType>) {
-    require(types.asList().zipWithNext { a, b -> a == b }.all { it }) {
-        "Found different types: ${types.joinToString("\n") { list -> list.map { it.render() }.toString() }}"
     }
 }
 
