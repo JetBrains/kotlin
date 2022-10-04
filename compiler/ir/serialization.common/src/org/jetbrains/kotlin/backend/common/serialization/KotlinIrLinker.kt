@@ -113,31 +113,21 @@ abstract class KotlinIrLinker(
     }
 
     private fun findDeserializedDeclarationForSymbol(symbol: IrSymbol): DeclarationDescriptor? {
-
-        if (symbol in triedToDeserializeDeclarationForSymbol) {
-            return null
-        }
-        triedToDeserializeDeclarationForSymbol.add(symbol)
-
-        if (!symbol.hasDescriptor) return null
-        val descriptor = symbol.descriptor
+        if (!triedToDeserializeDeclarationForSymbol.add(symbol)) return null
+        val descriptor = if (symbol.hasDescriptor) symbol.descriptor else return null
 
         val moduleDeserializer = resolveModuleDeserializer(descriptor.module, symbol.signature)
-
         moduleDeserializer.declareIrSymbol(symbol)
 
         deserializeAllReachableTopLevels()
-        if (!symbol.isBound) return null
-        return descriptor
+
+        return if (symbol.isBound) descriptor else null
     }
 
     protected open fun platformSpecificSymbol(symbol: IrSymbol): Boolean = false
 
     private fun tryResolveCustomDeclaration(symbol: IrSymbol): IrDeclaration? {
-        if (!symbol.hasDescriptor) return null
-
-        val descriptor = symbol.descriptor
-
+        val descriptor = if (symbol.hasDescriptor) symbol.descriptor else return null
         if (descriptor is CallableMemberDescriptor) {
             if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
                 // skip fake overrides
