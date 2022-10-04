@@ -30,7 +30,6 @@ import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.internal.reorderPluginClasspathDependencies
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
@@ -107,10 +106,6 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         val project = target.project
 
         target.compilations.all { compilation ->
-            compilation.internal.allKotlinSourceSets.forAll { sourceSet ->
-                sourceSet.internal.compilations.add(compilation)
-            }
-
             defineConfigurationsForCompilation(compilation)
 
             compilation.internal.processResourcesTaskName?.let { processResourcesTaskName ->
