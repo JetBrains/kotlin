@@ -5,29 +5,25 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.JsIrCompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
-import org.jetbrains.kotlin.gradle.plugin.mpp.getOrCreateDefaultSourceSet
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JsCompilerOptionsFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JsIrCompilationSourceSetsContainerFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JsKotlinCompilationDependencyConfigurationsFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 
-class KotlinJsIrCompilationFactory(
-    override val target: KotlinJsIrTarget
+class KotlinJsIrCompilationFactory internal constructor(
+    override val target: KotlinOnlyTarget<KotlinJsIrCompilation>,
+    private val compilationImplFactory: KotlinCompilationImplFactory = KotlinCompilationImplFactory(
+        compilerOptionsFactory = JsCompilerOptionsFactory,
+        compilationSourceSetsContainerFactory = JsIrCompilationSourceSetsContainerFactory,
+        compilationDependencyConfigurationsFactory = JsKotlinCompilationDependencyConfigurationsFactory
+    )
 ) : KotlinCompilationFactory<KotlinJsIrCompilation> {
     override val itemClass: Class<KotlinJsIrCompilation>
         get() = KotlinJsIrCompilation::class.java
 
-    override fun defaultSourceSetName(compilationName: String): String {
-        return lowerCamelCaseName(
-            if (target.mixedMode)
-                target.disambiguationClassifierInPlatform
-            else
-                target.disambiguationClassifier,
-            compilationName
-        )
-    }
-
-    override fun create(name: String): KotlinJsIrCompilation =
-        target.project.objects.newInstance(
-            KotlinJsIrCompilation::class.java, JsIrCompilationDetails(target, name, getOrCreateDefaultSourceSet(name))
-        )
+    override fun create(name: String): KotlinJsIrCompilation = target.project.objects.newInstance(
+        itemClass, compilationImplFactory.create(target, name)
+    )
 }
