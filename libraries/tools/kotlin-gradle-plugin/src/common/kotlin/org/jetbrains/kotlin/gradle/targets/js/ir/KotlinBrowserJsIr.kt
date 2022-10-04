@@ -13,7 +13,6 @@ import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.distsDirectory
@@ -23,14 +22,13 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDceDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
-import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
@@ -42,14 +40,10 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     KotlinJsIrSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
 
-    private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+    private val nodeJs = project.rootProject.kotlinNodeJsExtension
 
     private val webpackTaskConfigurations: MutableList<Action<KotlinWebpack>> = mutableListOf()
     private val runTaskConfigurations: MutableList<Action<KotlinWebpack>> = mutableListOf()
-
-    private val propertiesProvider = PropertiesProvider(project)
-    private val webpackMajorVersion
-        get() = propertiesProvider.webpackMajorVersion
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
@@ -110,9 +104,6 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     override fun configureRun(
         compilation: KotlinJsIrCompilation
     ) {
-        val project = compilation.target.project
-        val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
-
         val commonRunTask = registerSubTargetTask<Task>(disambiguateCamelCased(RUN_TASK_NAME)) {}
 
         compilation.binaries
@@ -134,10 +125,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     task.dependsOn(binary.linkSyncTask)
                     task.outputDirectory.convention(distsDirectory).finalizeValueOnRead()
 
-                    webpackMajorVersion.choose(
-                        { task.args.add(0, "serve") },
-                        { task.bin = "webpack-dev-server/bin/webpack-dev-server.js" }
-                    )()
+                    task.args.add(0, "serve")
                     task.description = "start ${mode.name.toLowerCaseAsciiOnly()} webpack dev server"
 
                     val openValue = if (compilation.platformType == KotlinPlatformType.wasm) {
@@ -156,29 +144,19 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                         true
                     }
 
-                    webpackMajorVersion.choose(
-                        {
-                            task.devServer = KotlinWebpackConfig.DevServer(
-                                open = openValue,
-                                static = mutableListOf(
-                                    "./kotlin",
-                                    compilation.output.resourcesDir.canonicalPath,
-                                ),
-                                client = KotlinWebpackConfig.DevServer.Client(
-                                    KotlinWebpackConfig.DevServer.Client.Overlay(
-                                        errors = true,
-                                        warnings = false
-                                    )
-                                )
+                    task.devServer = KotlinWebpackConfig.DevServer(
+                        open = openValue,
+                        static = mutableListOf(
+                            "./kotlin",
+                            compilation.output.resourcesDir.canonicalPath
+                        ),
+                        client = KotlinWebpackConfig.DevServer.Client(
+                            KotlinWebpackConfig.DevServer.Client.Overlay(
+                                errors = true,
+                                warnings = false
                             )
-                        },
-                        {
-                            task.devServer = KotlinWebpackConfig.DevServer(
-                                open = true,
-                                contentBase = mutableListOf(compilation.output.resourcesDir.canonicalPath)
-                            )
-                        }
-                    )()
+                        )
+                    )
 
 
                     task.doNotTrackStateCompat("Tracked by external webpack tool")
@@ -205,7 +183,6 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         compilation: KotlinJsIrCompilation
     ) {
         val project = compilation.target.project
-        val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
         val processResourcesTask = target.project.tasks.named(compilation.processResourcesTaskName)
 

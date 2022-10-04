@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWebpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl
 import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
-import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import java.io.File
@@ -49,6 +48,8 @@ data class KotlinWebpackConfig(
     @get:NormalizeLineEndings
     @get:InputDirectory
     var configDirectory: File? = null,
+    @Internal
+    var reportEvaluatedConfigFile: File? = null,
     @Input
     @Optional
     var devServer: DevServer? = null,
@@ -72,9 +73,7 @@ data class KotlinWebpackConfig(
     @Optional
     var progressReporterPathFilter: File? = null,
     @Input
-    var resolveFromModulesFirst: Boolean = false,
-    @Input
-    val webpackMajorVersion: WebpackMajorVersion = WebpackMajorVersion.V5
+    var resolveFromModulesFirst: Boolean = false
 ) : WebpackRulesDsl {
 
     @get:Input
@@ -94,36 +93,23 @@ data class KotlinWebpackConfig(
 
     fun getRequiredDependencies(versions: NpmVersions) =
         mutableSetOf<RequiredKotlinJsDependency>().also {
-            it.add(versions.kotlinJsTestRunner)
             it.add(
-                webpackMajorVersion.choose(
-                    versions.webpack,
-                    versions.webpack4
-                )
+                versions.webpack
             )
             it.add(
-                webpackMajorVersion.choose(
-                    versions.webpackCli,
-                    versions.webpackCli3
-                )
+                versions.webpackCli
             )
             it.add(versions.formatUtil)
 
             if (sourceMaps) {
                 it.add(
-                    webpackMajorVersion.choose(
-                        versions.sourceMapLoader,
-                        versions.sourceMapLoader1
-                    )
+                    versions.sourceMapLoader
                 )
             }
 
             if (devServer != null) {
                 it.add(
-                    webpackMajorVersion.choose(
-                        versions.webpackDevServer,
-                        versions.webpackDevServer3
-                    )
+                    versions.webpackDevServer
                 )
             }
 
@@ -294,16 +280,8 @@ data class KotlinWebpackConfig(
                         enforce: "pre"
                 });
                 config.devtool = ${devtool?.let { "'$it'" } ?: false};
-                ${
-                webpackMajorVersion.choose(
-                    "config.ignoreWarnings = [/Failed to parse source map/]",
-                    """
-                config.stats = config.stats || {}
-                Object.assign(config.stats, config.stats, {
-                    warningsFilter: [/Failed to parse source map/]
-                })
-                """
-                )
+            ${
+                "config.ignoreWarnings = [/Failed to parse source map/]"
             }
                 
             """.trimIndent()

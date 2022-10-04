@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 
 interface RequiresNpmDependencies {
     val compilation: KotlinJsCompilation
-    val nodeModulesRequired: Boolean
     val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
 
     @Internal

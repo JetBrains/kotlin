@@ -53,45 +53,6 @@ internal fun checkGradleCompatibility(
 internal val AbstractArchiveTask.archivePathCompatible: File
     get() = archiveFile.get().asFile
 
-internal class ArchiveOperationsCompat(@Transient private val project: Project) : Serializable {
-    private val archiveOperations: Any? = try {
-        (project as ProjectInternal).services.get(ArchiveOperations::class.java)
-    } catch (e: NoClassDefFoundError) {
-        // Gradle version < 6.6
-        null
-    }
-
-    fun zipTree(obj: Any): FileTree {
-        return when (archiveOperations) {
-            is ArchiveOperations -> archiveOperations.zipTree(obj)
-            else -> project.zipTree(obj)
-        }
-    }
-
-    fun tarTree(obj: Any): FileTree {
-        return when (archiveOperations) {
-            is ArchiveOperations -> archiveOperations.tarTree(obj)
-            else -> project.tarTree(obj)
-        }
-    }
-}
-
-internal class FileSystemOperationsCompat(@Transient private val project: Project) : Serializable {
-    private val fileSystemOperations: Any? = try {
-        (project as ProjectInternal).services.get(FileSystemOperations::class.java)
-    } catch (e: NoClassDefFoundError) {
-        // Gradle version < 6.0
-        null
-    }
-
-    fun copy(action: (CopySpec) -> Unit): WorkResult? {
-        return when (fileSystemOperations) {
-            is FileSystemOperations -> fileSystemOperations.copy(action)
-            else -> project.copy(action)
-        }
-    }
-}
-
 // Gradle dropped out getOwnerBuildOperationId. Workaround to build correct plugin for Gradle < 6.8
 // See https://github.com/gradle/gradle/commit/0296f4441ae69ad608cfef6a90fef3fdf314fa2c
 internal interface LegacyTestDescriptorInternal : TestDescriptor {

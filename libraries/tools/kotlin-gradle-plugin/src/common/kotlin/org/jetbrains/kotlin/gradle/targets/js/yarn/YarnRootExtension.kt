@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.PlatformHelper
 import org.gradle.api.Action
-import org.gradle.api.Incubating
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.File
 
 open class YarnRootExtension(
-    @Transient
     val project: Project
 ) : ConfigurationPhaseAware<YarnEnv>() {
     init {
@@ -60,7 +58,7 @@ open class YarnRootExtension(
             .withType(RootPackageJsonTask::class.java)
             .named(RootPackageJsonTask.NAME)
 
-    var resolutions: MutableList<YarnResolution> = mutableListOf()
+    var resolutions: MutableList<YarnResolution> by Property(mutableListOf())
 
     fun resolution(path: String, configure: Action<YarnResolution>) {
         resolutions.add(
@@ -73,21 +71,6 @@ open class YarnRootExtension(
         resolution(path, Action {
             it.include(version)
         })
-    }
-
-    @Incubating
-    fun disableGranularWorkspaces() {
-        val packageJsonUmbrella = NodeJsRootPlugin.apply(project)
-            .packageJsonUmbrellaTaskProvider
-
-        rootPackageJsonTaskProvider.configure {
-            it.dependsOn(packageJsonUmbrella)
-        }
-
-        project.allprojects
-            .forEach {
-                it.tasks.implementing(RequiresNpmDependencies::class).all {}
-            }
     }
 
     override fun finalizeConfiguration(): YarnEnv {
@@ -116,18 +99,8 @@ open class YarnRootExtension(
             yarnLockMismatchReport = yarnLockMismatchReport,
             reportNewYarnLock = reportNewYarnLock,
             yarnLockAutoReplace = yarnLockAutoReplace,
+            yarnResolutions = resolutions
         )
-    }
-
-    internal fun executeSetup() {
-        NodeJsRootPlugin.apply(project).executeSetup()
-
-        if (!download) return
-
-        val yarnSetupTask = yarnSetupTaskProvider.get()
-        yarnSetupTask.actions.forEach {
-            it.execute(yarnSetupTask)
-        }
     }
 
     companion object {

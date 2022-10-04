@@ -457,19 +457,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = this.booleanProperty("$jsCompilerProperty.publish.attribute") ?: true
 
     /**
-     * Use Webpack 4 for compatibility
-     */
-    val webpackMajorVersion: WebpackMajorVersion
-        get() = this.property(WebpackMajorVersion.webpackMajorVersion)?.let { WebpackMajorVersion.byArgument(it) }
-            ?.also { version ->
-                if (!WebpackMajorVersion.webpackVersionWarning && version != WebpackMajorVersion.DEFAULT) {
-                    WebpackMajorVersion.webpackVersionWarning = true
-                    project.logger.warn(WebpackMajorVersion.warningMessage)
-                }
-            }
-            ?: WebpackMajorVersion.DEFAULT
-
-    /**
      * Use Kotlin/JS backend compiler type
      */
     val jsGenerateExecutableDefault: Boolean

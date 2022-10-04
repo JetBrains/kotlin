@@ -1575,6 +1575,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
         project("kotlin-js-browser-project", gradleVersion) {
             buildGradleKts.modify { originalScript ->
                 buildString {
+                    append("import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager")
                     append(originalScript)
                     append(
                         """
@@ -1583,7 +1584,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                         |    val nodejs = the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>()
                         |    tasks.named<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>("kotlinNpmInstall") {
                         |        doFirst {
-                        |            nodejs.npmResolutionManager.state = 
+                        |            project.rootProject.kotlinNpmResolutionManager.get().state = 
                         |            org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager.ResolutionState.Error(GradleException("someSpecialException"))
                         |        }
                         |    }
