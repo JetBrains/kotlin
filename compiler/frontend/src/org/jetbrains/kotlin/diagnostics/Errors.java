@@ -428,6 +428,8 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> VALUE_CLASS_CANNOT_BE_CLONEABLE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INLINE_CLASS_DEPRECATED = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtContextReceiverList> INLINE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<KtDeclaration, String> INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS =
+            DiagnosticFactory1.create(WARNING, DECLARATION_SIGNATURE);
 
     // Result class
 

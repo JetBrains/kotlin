@@ -1397,6 +1397,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED by error<KtParameter>()
 
         val REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE by warning<KtElement>(PositioningStrategy.SUSPEND_MODIFIER)
+
+        val INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS by warning<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE) {
+            parameter<String>("className")
+        }
     }
 
     val IMPORTS by object : DiagnosticGroup("Imports") {
