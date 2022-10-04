@@ -38,7 +38,7 @@ internal abstract class AbstractKotlinPlugin(
 
     internal abstract fun buildSourceSetProcessor(
         project: Project,
-        compilation: AbstractKotlinCompilation<*>
+        compilation: KotlinCompilation<*>
     ): KotlinSourceSetProcessor<*>
 
     override fun apply(project: Project) {
@@ -150,7 +150,7 @@ internal abstract class AbstractKotlinPlugin(
 
         fun configureTarget(
             target: KotlinWithJavaTarget<*, *>,
-            buildSourceSetProcessor: (AbstractKotlinCompilation<*>) -> KotlinSourceSetProcessor<*>
+            buildSourceSetProcessor: (KotlinCompilation<*>) -> KotlinSourceSetProcessor<*>
         ) {
             setUpJavaSourceSets(target)
             configureSourceSetDefaults(target, buildSourceSetProcessor)
@@ -179,7 +179,6 @@ internal abstract class AbstractKotlinPlugin(
             javaSourceSets.all { javaSourceSet ->
                 val kotlinCompilation =
                     compilationsUnderConstruction[javaSourceSet.name] ?: kotlinTarget.compilations.maybeCreate(javaSourceSet.name)
-                (kotlinCompilation as? KotlinWithJavaCompilation<*, *>)?.javaSourceSet = javaSourceSet
 
                 if (duplicateJavaSourceSetsAsKotlinSourceSets) {
                     val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinCompilation.name)
@@ -198,7 +197,6 @@ internal abstract class AbstractKotlinPlugin(
             kotlinTarget.compilations.all { kotlinCompilation ->
                 val sourceSetName = kotlinCompilation.name
                 compilationsUnderConstruction[sourceSetName] = kotlinCompilation
-                (kotlinCompilation as? KotlinWithJavaCompilation<*, *>)?.javaSourceSet = javaSourceSets.maybeCreate(sourceSetName)
 
                 // Another Kotlin source set following the other convention, named according to the compilation, not the Java source set:
                 val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinCompilation.defaultSourceSetName)
@@ -250,7 +248,7 @@ internal abstract class AbstractKotlinPlugin(
 
         private fun configureSourceSetDefaults(
             kotlinTarget: KotlinWithJavaTarget<*, *>,
-            buildSourceSetProcessor: (AbstractKotlinCompilation<*>) -> KotlinSourceSetProcessor<*>
+            buildSourceSetProcessor: (KotlinCompilation<*>) -> KotlinSourceSetProcessor<*>
         ) {
             kotlinTarget.compilations.all { compilation ->
                 AbstractKotlinTargetConfigurator.defineConfigurationsForCompilation(compilation)

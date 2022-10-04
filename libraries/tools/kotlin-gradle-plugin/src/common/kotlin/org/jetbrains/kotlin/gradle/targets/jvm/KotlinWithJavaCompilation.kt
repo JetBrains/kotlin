@@ -3,49 +3,51 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
+@file:Suppress("PackageDirectoryMismatch", "UNCHECKED_CAST") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationDetailsImpl.WithJavaCompilationDetails
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.named
 import javax.inject.Inject
 
-abstract class KotlinWithJavaCompilation<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> @Inject constructor(
-    target: KotlinWithJavaTarget<KotlinOptionsType, CO>,
-    name: String,
-    override val defaultSourceSet: KotlinSourceSet,
-    compilerOptions: HasCompilerOptions<CO>,
-    kotlinOptions: KotlinOptionsType
-) : AbstractKotlinCompilationToRunnableFiles<KotlinOptionsType>(
-    WithJavaCompilationDetails<KotlinOptionsType, CO>(target, name, defaultSourceSet, { compilerOptions }, { kotlinOptions })
-), KotlinCompilationWithResources<KotlinOptionsType> {
-    lateinit var javaSourceSet: SourceSet
+open class KotlinWithJavaCompilation<KotlinOptionsType : KotlinCommonOptions, CO : CompilerCommonOptions> @Inject internal constructor(
+    private val compilation: KotlinCompilationImpl,
+    val javaSourceSet: SourceSet,
+) : InternalKotlinCompilation<KotlinOptionsType> by compilation as InternalKotlinCompilation<KotlinOptionsType>,
+    KotlinCompilationWithResources<KotlinOptionsType>,
+    KotlinCompilationToRunnableFiles<KotlinOptionsType> {
+
+    @Suppress("UNCHECKED_CAST")
+    override val compilerOptions: HasCompilerOptions<CO> =
+        compilation.compilerOptions as HasCompilerOptions<CO>
+
+    @Suppress("UNCHECKED_CAST")
+    override val kotlinOptions: KotlinOptionsType
+        get() = compilation.kotlinOptions as KotlinOptionsType
+
+    val compileJavaTaskProvider: TaskProvider<out JavaCompile>
+        get() = target.project.tasks.withType(JavaCompile::class.java).named(javaSourceSet.compileJavaTaskName)
+
+    override val runtimeDependencyConfigurationName: String
+        get() = compilation.runtimeDependencyConfigurationName ?: error("Missing 'runtimeDependencyConfigurationName'")
+
+    override var runtimeDependencyFiles: FileCollection = compilation.runtimeDependencyFiles ?: error("Missing 'runtimeDependencyFiles'")
 
     override val processResourcesTaskName: String
-        get() = javaSourceSet.processResourcesTaskName
+        get() = compilation.processResourcesTaskName ?: error("Missing 'processResourcesTaskName'")
 
-    override val runtimeOnlyConfigurationName: String
-        get() = javaSourceSet.runtimeOnlyConfigurationName
-
-    override val implementationConfigurationName: String
-        get() = javaSourceSet.implementationConfigurationName
-
-    override val apiConfigurationName: String
-        get() = javaSourceSet.apiConfigurationName
-
-    override val compileOnlyConfigurationName: String
-        get() = javaSourceSet.compileOnlyConfigurationName
-
-    override val compileAllTaskName: String
-        get() = javaSourceSet.classesTaskName
+    override val relatedConfigurationNames: List<String>
+        get() = compilation.relatedConfigurationNames
 
     fun source(javaSourceSet: SourceSet) {
         with(target.project) {
@@ -56,7 +58,4 @@ abstract class KotlinWithJavaCompilation<KotlinOptionsType : KotlinCommonOptions
             }
         }
     }
-
-    val compileJavaTaskProvider: TaskProvider<out JavaCompile>
-        get() = target.project.tasks.withType(JavaCompile::class.java).named(javaSourceSet.compileJavaTaskName)
 }
