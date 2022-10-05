@@ -20,7 +20,7 @@ val FirCallableDeclaration.irName: Name
                 isSetter -> "<set-"
                 else -> error("unknown property accessor kind $this")
             }
-            Name.special(prefix + propertySymbol!!.fir.name + ">")
+            Name.special(prefix + propertySymbol.fir.name + ">")
         }
         else -> SpecialNames.ANONYMOUS
     }

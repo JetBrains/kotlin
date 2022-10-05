@@ -184,7 +184,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
                     && isSetter
                     && context.containingDeclarations.size >= 2
                     && context.containingDeclarations.asReversed()[1] is FirClass
-                    && propertySymbol?.isOverride == true -> findPropertyAccessorVisibility(this, context)
+                    && propertySymbol.isOverride -> findPropertyAccessorVisibility(this, context)
 
             this is FirPropertyAccessor -> {
                 context.findClosest<FirProperty>()?.visibility ?: Visibilities.DEFAULT_VISIBILITY
@@ -234,7 +234,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
 
     private fun findPropertyAccessorVisibility(accessor: FirPropertyAccessor, context: CheckerContext): Visibility {
         val containingClass = context.findClosestClassOrObject()?.symbol ?: return Visibilities.Public
-        val propertySymbol = accessor.propertySymbol ?: return Visibilities.Public
+        val propertySymbol = accessor.propertySymbol
 
         val scope = containingClass.unsubstitutedScope(
             context.sessionHolder.session,
