@@ -56,6 +56,7 @@ fun MappedByteBuffer.contentsToByteArray(
 
             result
         }
+
         ZipEntryDescription.CompressionKind.PLAIN -> compressed.copyOf(zipEntryDescription.compressedSize)
     }
 }
@@ -81,9 +82,9 @@ fun MappedByteBuffer.parseCentralDirectory(): List<ZipEntryDescription> {
 
         val compressedSize = getInt(currentOffset + 20)
         val uncompressedSize = getInt(currentOffset + 24)
-        val fileNameLength = getUnsignedShort(currentOffset + 28).toInt()
-        val extraLength = getUnsignedShort(currentOffset + 30).toInt()
-        val fileCommentLength = getUnsignedShort(currentOffset + 32).toInt()
+        val fileNameLength = getUnsignedShort(currentOffset + 28)
+        val extraLength = getUnsignedShort(currentOffset + 30)
+        val fileCommentLength = getUnsignedShort(currentOffset + 32)
 
         val offsetOfFileData = getInt(currentOffset + 42)
 
@@ -103,7 +104,7 @@ fun MappedByteBuffer.parseCentralDirectory(): List<ZipEntryDescription> {
         // We support version needed to extract 10 and 20. However, there are zip
         // files in the eco-system with entries with invalid version to extract
         // of 0. Therefore, we just check that the version is between 0 and 20.
-        require(0 <= versionNeededToExtract && versionNeededToExtract <= 20) {
+        require(versionNeededToExtract in 0..20) {
             "Unexpected versionNeededToExtract ($versionNeededToExtract) at $name"
         }
 
