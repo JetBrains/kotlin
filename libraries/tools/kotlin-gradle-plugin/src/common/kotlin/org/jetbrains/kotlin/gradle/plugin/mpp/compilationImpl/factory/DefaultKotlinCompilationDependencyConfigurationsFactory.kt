@@ -52,9 +52,12 @@ internal object JsKotlinCompilationDependencyConfigurationsFactory :
     KotlinCompilationImplFactory.KotlinCompilationDependencyConfigurationsFactory {
 
     override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationDependencyConfigurationsContainer {
+        val defaultNaming = ConfigurationNaming.Default(target, compilationName)
         return KotlinCompilationDependencyConfigurationsContainer(
             target, compilationName, withRuntime = true,
-            naming = ConfigurationNaming.Js(target, compilationName)
+            naming = ConfigurationNaming.Js(target, compilationName),
+            compileClasspathConfigurationName = defaultNaming.name(compileClasspath),
+            runtimeClasspathConfigurationName = defaultNaming.name(runtimeClasspath)
         )
     }
 }
@@ -105,6 +108,8 @@ private fun interface ConfigurationNaming {
 }
 
 private const val compilation = "compilation"
+private const val compileClasspath = "compileClasspath"
+private const val runtimeClasspath = "runtimeClasspath"
 
 private fun KotlinCompilationDependencyConfigurationsContainer(
     target: KotlinTarget, compilationName: String, withRuntime: Boolean,
@@ -113,8 +118,8 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
     implementationConfigurationName: String = naming.name(compilation, IMPLEMENTATION),
     compileOnlyConfigurationName: String = naming.name(compilation, COMPILE_ONLY),
     runtimeOnlyConfigurationName: String = naming.name(compilation, RUNTIME_ONLY),
-    compileClasspathConfigurationName: String = naming.name("compileClasspath"),
-    runtimeClasspathConfigurationName: String = naming.name("runtimeClasspath")
+    compileClasspathConfigurationName: String = naming.name(compileClasspath),
+    runtimeClasspathConfigurationName: String = naming.name(runtimeClasspath)
 ): KotlinCompilationDependencyConfigurationsContainer {
     val compilationCoordinates = "${target.disambiguationClassifier}/$compilationName"
 
