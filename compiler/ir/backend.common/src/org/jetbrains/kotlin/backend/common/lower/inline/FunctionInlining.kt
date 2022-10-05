@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun IrValueParameter.isInlineParameter(type: IrType = this.type) =
@@ -132,7 +133,8 @@ class FunctionInlining(
         return inliner.inline()
     }
 
-    private val IrFunction.needsInlining get() = this.isInline && !this.isExternal
+    private val IrFunction.needsInlining get() =
+        (this.isInline || hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)) && !this.isExternal
 
     private inner class Inliner(
         val callSite: IrFunctionAccessExpression,

@@ -5,10 +5,16 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.backend.common.lower.StringTrimLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.FoldConstantLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.CopyInlineFunctionBodyLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.CollectSingleCallInlinableFunctions
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.CollectPotentiallyInlinableFunctions
+import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.backend.common.phaser.*
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.backend.common.lower.inline.*
+import org.jetbrains.kotlin.ir.backend.js.dce.eliminateDeadDeclarations
 
 private val computeStringTrimPhase = makeJsModulePhase(
     ::StringTrimLowering,
@@ -28,10 +34,64 @@ private val foldConstantLoweringPhase = makeBodyLoweringPhase(
     description = "[Optimization] Constant Folding",
 )
 
+private val collectSingleCallInlinableFunctions = makeBodyLoweringPhase(
+    ::CollectSingleCallInlinableFunctions,
+    name = "CollectSingleCallInlinableFunctions",
+    description = "[Optimization] Collect single call inlinable functions",
+)
+
+private val collectPotentiallyInlinableFunctionsLoweringPhase = makeBodyLoweringPhase(
+    ::CollectPotentiallyInlinableFunctions,
+    name = "CollectPotentiallyInlinableFunctions",
+    description = "[Optimization] Collect potentially inlinable functions",
+    prerequisite = setOf(collectSingleCallInlinableFunctions)
+)
+
+private val functionInliningPhase = makeBodyLoweringPhase(
+    { FunctionInlining(it, it.innerClassesSupport) },
+    name = "FunctionInliningPhase",
+    description = "Perform function inlining",
+    prerequisite = setOf(collectPotentiallyInlinableFunctionsLoweringPhase)
+)
+
+private val copyInlineFunctionBodyLoweringPhase = makeDeclarationTransformerPhase(
+    ::CopyInlineFunctionBodyLowering,
+    name = "CopyInlineFunctionBody",
+    description = "Copy inline function body",
+    prerequisite = setOf(functionInliningPhase)
+)
+
+private val returnableBlockLoweringPhase = makeBodyLoweringPhase(
+    ::JsReturnableBlockLowering,
+    name = "JsReturnableBlockLowering",
+    description = "Introduce temporary variable for result and change returnable block's type to Unit",
+    prerequisite = setOf(functionInliningPhase)
+)
+
+private val blockDecomposerLoweringPhase = makeBodyLoweringPhase(
+    ::JsBlockDecomposerLowering,
+    name = "BlockDecomposerLowering",
+    description = "Transform statement-like-expression nodes into pure-statement to make it easily transform into JS",
+    prerequisite = setOf(returnableBlockLoweringPhase)
+)
+
+
+private val objectUsageLoweringPhase = makeBodyLoweringPhase(
+    ::SimplifiedObjectUsageLowering,
+    name = "ObjectUsageLowering",
+    description = "Transform IrGetObjectValue into instance generator call"
+)
+
 private val jsMainOptimizations = NamedCompilerPhase(
     name = "IrOptimizations",
     description = "IR lowerings with one-time optimizations before main optimization loop",
-    lower = foldConstantLoweringPhase.modulePhase
+    lower = foldConstantLoweringPhase.modulePhase then
+            collectSingleCallInlinableFunctions then
+            collectPotentiallyInlinableFunctionsLoweringPhase then
+            functionInliningPhase then
+            returnableBlockLoweringPhase then
+            blockDecomposerLoweringPhase then
+            objectUsageLoweringPhase
 )
 
 private val validateIrAfterLowering = makeCustomJsModulePhase(
@@ -55,10 +115,15 @@ fun runOptimizationsLoop(
     // Run prefix optimizations
     jsPrefixOptimizations.invokeToplevel(PhaseConfig(jsPrefixOptimizations), context, modules)
 
-    for (i in 0 until MAX_NUMBER_OF_OPTIMIZATION_ITERATIONS) {
+//    for (i in 0 until MAX_NUMBER_OF_OPTIMIZATION_ITERATIONS) {
         jsMainOptimizations.invokeToplevel(PhaseConfig(jsMainOptimizations), context, modules)
-    }
+        eliminateDeadDeclarations(modules, context)
+//    }
 
     // Run postfix optimizations with validations
     jsPostfixOptimizations.invokeToplevel(PhaseConfig(jsPostfixOptimizations), context, modules)
 }
+
+infix fun Lowering.then(other: Lowering) = modulePhase then other.modulePhase
+infix fun CompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>, Iterable<IrModuleFragment>>.then(other: Lowering) =
+    this then other.modulePhase

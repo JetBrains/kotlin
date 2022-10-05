@@ -321,6 +321,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsFunAnnotationSymbol = context.symbolTable.referenceClass(context.getJsInternalClass("JsFun"))
     val jsNameAnnotationSymbol = context.symbolTable.referenceClass(context.getJsInternalClass("JsName"))
 
+    val inlineOnly = context.symbolTable.referenceClass(context.getInternalClass("InlineOnly"))
     val jsImplicitExportAnnotationSymbol = context.symbolTable.referenceClass(context.getJsInternalClass("JsImplicitExport"))
 
     // TODO move CharSequence-related stiff to IntrinsifyCallsLowering

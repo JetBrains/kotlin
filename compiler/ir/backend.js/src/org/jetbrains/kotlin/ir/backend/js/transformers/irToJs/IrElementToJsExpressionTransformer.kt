@@ -152,7 +152,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, context: JsGenerationContext): JsExpression {
         val classNameRef = context.getNameForConstructor(expression.symbol.owner).makeRef()
         val callFuncRef = JsNameRef(Namer.CALL_FUNCTION, classNameRef)
-        val fromPrimary = context.currentFunction is IrConstructor
+        val fromPrimary = context.currentFunction is IrConstructor || context.currentFunction?.dispatchReceiverParameter?.isThisReceiver() == true
         val thisRef =
             if (fromPrimary) JsThisRef() else context.getNameForValueDeclaration(context.currentFunction!!.valueParameters.last()).makeRef()
         val arguments = translateCallArguments(expression, context, this)

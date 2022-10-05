@@ -79,6 +79,18 @@ class ObjectDeclarationLowering(
     }
 }
 
+class SimplifiedObjectUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
+                val obj: IrClass = expression.symbol.owner
+                if (obj.isEffectivelyExternal()) return expression
+                return JsIrBuilder.buildCall(context.getOrCreateGetInstanceFunction(obj).symbol)
+            }
+        })
+    }
+}
+
 class ObjectUsageLowering(
     val context: JsCommonBackendContext
 ) : BodyLoweringPass {

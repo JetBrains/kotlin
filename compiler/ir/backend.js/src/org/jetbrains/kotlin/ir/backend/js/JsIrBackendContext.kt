@@ -142,6 +142,7 @@ class JsIrBackendContext(
         private val REFLECT_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("reflect"))
         private val JS_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("js"))
         private val ENUMS_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("enums"))
+        private val KOTLIN_INTERNAL_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("internal"))
         private val JS_POLYFILLS_PACKAGE = JS_PACKAGE_FQNAME.child(Name.identifier("polyfill"))
         private val JS_INTERNAL_PACKAGE_FQNAME = JS_PACKAGE_FQNAME.child(Name.identifier("internal"))
 
@@ -151,6 +152,7 @@ class JsIrBackendContext(
     }
 
     private val internalPackage = module.getPackage(JS_PACKAGE_FQNAME)
+    private val kotlinInternalPackage = module.getPackage(KOTLIN_INTERNAL_FQNAME)
 
     val dynamicType: IrDynamicType = IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
     val intrinsics: JsIntrinsics = JsIntrinsics(irBuiltIns, this)
@@ -359,6 +361,9 @@ class JsIrBackendContext(
 
     internal fun getJsInternalClass(name: String): ClassDescriptor =
         findClass(internalPackage.memberScope, Name.identifier(name))
+
+    internal fun getInternalClass(name: String): ClassDescriptor =
+        findClass(kotlinInternalPackage.memberScope, Name.identifier(name))
 
     internal fun getClass(fqName: FqName): ClassDescriptor =
         findClass(module.getPackage(fqName.parent()).memberScope, fqName.shortName())

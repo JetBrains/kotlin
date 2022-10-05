@@ -96,7 +96,7 @@ class IrModuleToJsTransformerTmp(
     private val moduleKind = backendContext.configuration[JSConfigurationKeys.MODULE_KIND]!!
     private val sourceMapInfo = SourceMapsInfo.from(backendContext.configuration)
 
-    private class IrAndExportedDeclarations(val fragment: IrModuleFragment, val files: List<Pair<IrFile, List<ExportedDeclaration>>>)
+    private class IrAndExportedDeclarations(var fragment: IrModuleFragment, val files: List<Pair<IrFile, List<ExportedDeclaration>>>)
 
     private fun List<IrAndExportedDeclarations>.flatExportedDeclarations(): List<ExportedDeclaration> {
         return this.flatMap { data -> data.files.flatMap { it.second } }

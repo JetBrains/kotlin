@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFr
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
-import org.jetbrains.kotlin.backend.common.lower.optimizations.FoldConstantLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.lower.*
@@ -101,7 +100,7 @@ class ModuleLowering(
     override val modulePhase: NamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>>
 ) : Lowering(name)
 
-private fun makeDeclarationTransformerPhase(
+fun makeDeclarationTransformerPhase(
     lowering: (JsIrBackendContext) -> DeclarationTransformer,
     name: String,
     description: String,
@@ -708,7 +707,7 @@ private val blockDecomposerLoweringPhase = makeBodyLoweringPhase(
     ::JsBlockDecomposerLowering,
     name = "BlockDecomposerLowering",
     description = "Transform statement-like-expression nodes into pure-statement to make it easily transform into JS",
-    prerequisite = setOf(typeOperatorLoweringPhase, suspendFunctionsLoweringPhase)
+    prerequisite = setOf(typeOperatorLoweringPhase, suspendFunctionsLoweringPhase, returnableBlockLoweringPhase)
 )
 
 private val jsClassUsageInReflectionPhase = makeBodyLoweringPhase(
