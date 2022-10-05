@@ -22,8 +22,8 @@ import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.analysis.Stability
-import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
+import androidx.compose.compiler.plugins.kotlin.analysis.stabilityOf
 import androidx.compose.compiler.plugins.kotlin.irTrace
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
@@ -130,12 +130,12 @@ import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
-import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.getPrimitiveArrayElementType
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isCrossinline
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isNoinline
@@ -169,20 +169,6 @@ abstract class AbstractComposeLowering(
         )
 
     protected val builtIns = context.irBuiltIns
-
-    protected val stabilityInferencer = StabilityInferencer(context)
-
-    fun stabilityOf(expr: IrExpression) = stabilityInferencer.stabilityOf(expr)
-    fun stabilityOf(type: IrType) = stabilityInferencer.stabilityOf(type)
-    fun stabilityOf(cls: IrClass) = stabilityInferencer.stabilityOf(cls)
-
-    fun IrAnnotationContainer.hasStableMarker(): Boolean = with(stabilityInferencer) {
-        hasStableMarker()
-    }
-
-    fun IrAnnotationContainer.hasStableAnnotation(): Boolean = with(stabilityInferencer) {
-        hasStableAnnotation()
-    }
 
     private val _composerIrClass =
         context.referenceClass(ComposeFqNames.Composer)?.owner
@@ -1070,7 +1056,7 @@ abstract class AbstractComposeLowering(
             // type of that object is Stable. (`Modifier` for instance is a common example)
             is IrGetObjectValue -> {
                 if (symbol.owner.isCompanion) true
-                else stabilityOf(symbol.owner).knownStable()
+                else stabilityOf(type).knownStable()
             }
             is IrConstructorCall -> isStatic()
             is IrCall -> isStatic()
@@ -1130,8 +1116,8 @@ abstract class AbstractComposeLowering(
                     return true
                 }
 
-                val getterIsStable = prop.hasStableAnnotation() ||
-                    function.hasStableAnnotation()
+                val getterIsStable = prop.hasAnnotation(ComposeFqNames.Stable) ||
+                    function.hasAnnotation(ComposeFqNames.Stable)
 
                 if (
                     getterIsStable &&
@@ -1161,7 +1147,7 @@ abstract class AbstractComposeLowering(
                 // immutable operations so the overall result is static if the operands are
                 // also static
                 val isStableOperator = fqName.topLevelName() == "kotlin" ||
-                    function.hasStableAnnotation()
+                    function.hasAnnotation(ComposeFqNames.Stable)
 
                 val typeIsStable = stabilityOf(type).knownStable()
                 if (!typeIsStable) return false
@@ -1198,7 +1184,7 @@ abstract class AbstractComposeLowering(
                 }
                 // normal function call. If the function is marked as Stable and the result
                 // is Stable, then the static-ness of it is the static-ness of its arguments
-                val isStable = symbol.owner.hasStableAnnotation()
+                val isStable = symbol.owner.hasAnnotation(ComposeFqNames.Stable)
                 if (!isStable) return false
 
                 val typeIsStable = stabilityOf(type).knownStable()

@@ -16,7 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
+import androidx.compose.compiler.plugins.kotlin.analysis.stabilityOf
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -1196,8 +1196,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
         )
         val irModule = JvmCompilation().compile(files)
         val irClass = irModule.files.last().declarations.first() as IrClass
-        val classStability = StabilityInferencer(pluginContext!!)
-            .stabilityOf(irClass.defaultType as IrType)
+        val classStability = stabilityOf(irClass.defaultType as IrType)
 
         assertEquals(
             stability,
@@ -1215,8 +1214,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
     ) {
         val irModule = buildModule(externalSrc, classDefSrc, dumpClasses)
         val irClass = irModule.files.last().declarations.first() as IrClass
-        val classStability = StabilityInferencer(pluginContext!!)
-            .stabilityOf(irClass.defaultType as IrType)
+        val classStability = stabilityOf(irClass.defaultType as IrType)
 
         assertEquals(
             stability,
@@ -1253,7 +1251,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             is IrExpression -> lastStatement
             else -> error("unexpected statement: $lastStatement")
         }
-        val exprStability = StabilityInferencer(pluginContext!!).stabilityOf(irExpr)
+        val exprStability = stabilityOf(irExpr)
 
         assertEquals(
             stability,
