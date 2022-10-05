@@ -47,7 +47,7 @@ internal class KtFirPropertyGetterSymbol(
     override val isOverride: Boolean
         get() = withValidityAssertion {
             if (firSymbol.isOverride) return@withValidityAssertion true
-            return firSymbol.fir.propertySymbol?.isOverride == true
+            return firSymbol.fir.propertySymbol.isOverride
         }
 
     override val hasBody: Boolean get() = withValidityAssertion { firSymbol.fir.body != null }

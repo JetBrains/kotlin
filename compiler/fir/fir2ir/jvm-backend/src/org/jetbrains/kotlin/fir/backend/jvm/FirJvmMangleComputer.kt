@@ -355,7 +355,7 @@ open class FirJvmMangleComputer(
             // No need to distinguish between the accessor and its delegate.
             visitSimpleFunction(propertyAccessor.delegate, data)
         } else {
-            propertyAccessor.mangleFunction(isCtor = false, propertyAccessor.isStatic, propertyAccessor.propertySymbol!!.fir)
+            propertyAccessor.mangleFunction(isCtor = false, propertyAccessor.isStatic, propertyAccessor.propertySymbol.fir)
         }
     }
 

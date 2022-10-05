@@ -42,7 +42,7 @@ abstract class FirPropertyAccessor : FirFunction(), FirContractDescriptionOwner,
     abstract override val body: FirBlock?
     abstract override val contractDescription: FirContractDescription
     abstract override val symbol: FirPropertyAccessorSymbol
-    abstract val propertySymbol: FirPropertySymbol?
+    abstract val propertySymbol: FirPropertySymbol
     abstract val isGetter: Boolean
     abstract val isSetter: Boolean
     abstract override val annotations: List<FirAnnotation>

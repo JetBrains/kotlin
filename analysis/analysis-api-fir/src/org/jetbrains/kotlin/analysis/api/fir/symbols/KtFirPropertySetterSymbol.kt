@@ -51,7 +51,7 @@ internal class KtFirPropertySetterSymbol(
     override val isOverride: Boolean
         get() = withValidityAssertion {
             if (firSymbol.isOverride) return true
-            val propertySymbol = firSymbol.fir.propertySymbol ?: return@withValidityAssertion false
+            val propertySymbol = firSymbol.fir.propertySymbol
             if (!propertySymbol.isOverride) return false
             val session = firResolveSession.useSiteFirSession
             val containingClassScope = firSymbol.dispatchReceiverType?.scope(
