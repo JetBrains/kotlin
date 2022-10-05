@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.fir.createSessionForTests
+import org.jetbrains.kotlin.fir.FirTestSessionFactoryHelper
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -132,7 +132,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
 
         val scope = GlobalSearchScope.filesScope(project, virtualFiles)
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
-        val session = createSessionForTests(
+        val session = FirTestSessionFactoryHelper.createSessionForTests(
             environment.toAbstractProjectEnvironment(),
             scope.toAbstractProjectFileSearchScope()
         )
