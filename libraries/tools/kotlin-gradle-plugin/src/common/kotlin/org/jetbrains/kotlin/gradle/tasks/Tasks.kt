@@ -72,6 +72,7 @@ import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.utils.JsLibraryUtils
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
+import java.nio.file.Files.*
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
@@ -203,12 +204,12 @@ abstract class GradleCompileTaskProvider @Inject constructor(
         .property(project.rootProject.projectDir)
 
     @get:Internal
-    val rootDir: Provider<File> = objectFactory
-        .property(project.rootProject.rootDir)
+    val projectCacheDir: Provider<File> = objectFactory
+        .property(gradle.projectCacheDir)
 
     @get:Internal
     val sessionsDir: Provider<File> = objectFactory
-        .property(GradleCompilerRunner.sessionsDir(project.rootProject.buildDir))
+        .property(GradleCompilerRunner.sessionsDir(gradle.projectCacheDir))
 
     @get:Internal
     val projectName: Provider<String> = objectFactory

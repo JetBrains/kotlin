@@ -14,13 +14,13 @@ import org.gradle.api.services.BuildServiceParameters
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
+import org.jetbrains.kotlin.gradle.utils.projectCacheDir
 import java.io.File
 
 internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBuildServices.Parameters>, AutoCloseable {
 
     interface Parameters : BuildServiceParameters {
-        var buildDir: File
-        var rootDir: File
+        var projectCacheDir: File
     }
 
     private val log = Logging.getLogger(this.javaClass)
@@ -63,7 +63,7 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
     }
 
     override fun close() {
-        buildHandler.buildFinished(parameters.buildDir, parameters.rootDir)
+        buildHandler.buildFinished(parameters.projectCacheDir)
         log.kotlinDebug(DISPOSE_MESSAGE)
 
         TaskLoggers.clear()
@@ -80,8 +80,7 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
                 "kotlin-build-service-${KotlinGradleBuildServices::class.java.canonicalName}_${KotlinGradleBuildServices::class.java.classLoader.hashCode()}",
                 KotlinGradleBuildServices::class.java
             ) { service ->
-                service.parameters.rootDir = gradle.rootProject.rootDir
-                service.parameters.buildDir = gradle.rootProject.buildDir
+                service.parameters.projectCacheDir = gradle.projectCacheDir
             }
 
     }

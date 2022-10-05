@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.compilerRunner.DELETED_SESSION_FILE_PREFIX
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
@@ -33,24 +32,24 @@ internal class KotlinGradleFinishBuildHandler {
         startMemory = getUsedMemoryKb()
     }
 
-    fun buildFinished(rootProjectBuildDir: File, rootProjectRootDir: File) {
+    fun buildFinished(projectCacheDir: File) {
         TaskLoggers.clear()
         TaskExecutionResults.clear()
 
         GradleCompilerRunner.clearBuildModulesInfo()
 
-        val sessionsDir = GradleCompilerRunner.sessionsDir(rootProjectBuildDir)
+        val sessionsDir = GradleCompilerRunner.sessionsDir(projectCacheDir)
         if (sessionsDir.exists()) {
             val sessionFiles = sessionsDir.listFiles()
 
             // it is expected that only one session file per build exists
             // afaik is is not possible to run multiple gradle builds in one project since gradle locks some dirs
             if (sessionFiles.size > 1) {
-                log.warn("w: Detected multiple Kotlin daemon sessions at ${sessionsDir.relativeOrCanonical(rootProjectRootDir)}")
+                log.warn("w: Detected multiple Kotlin daemon sessions at ${sessionsDir.relativeOrCanonical(projectCacheDir)}")
             }
             for (file in sessionFiles) {
                 file.delete()
-                log.kotlinDebug { DELETED_SESSION_FILE_PREFIX + file.relativeOrCanonical(rootProjectRootDir) }
+                log.kotlinDebug { DELETED_SESSION_FILE_PREFIX + file.relativeOrCanonical(projectCacheDir) }
             }
         }
 
@@ -62,11 +61,6 @@ internal class KotlinGradleFinishBuildHandler {
             // but on subsequent runs in the daemon it should be rather small, then the classes are actually reused by the daemon (see above)
             log.lifecycle("[KOTLIN][PERF] Used memory after build: $endMem kb (difference since build start: ${"%+d".format(endMem - startMem)} kb)")
         }
-    }
-
-    fun buildFinished(gradle: Gradle) {
-        buildFinished(gradle.rootProject.buildDir, gradle.rootProject.rootDir)
-        gradle.removeListener(this)
     }
 
     internal fun getUsedMemoryKb(): Long? {
