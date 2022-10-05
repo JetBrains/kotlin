@@ -1,0 +1,11 @@
+package
+
+public fun foo(/*0*/ x: JavaClass<in kotlin.CharSequence>, /*1*/ l: kotlin.collections.MutableList<out kotlin.CharSequence>): kotlin.Unit
+
+public interface JavaClass</*0*/ E : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun getFoo(): (kotlin.collections.MutableList<out E!>..kotlin.collections.List<E!>?)
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun setFoo(/*0*/ l: (kotlin.collections.MutableList<out E!>..kotlin.collections.List<E!>?)): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

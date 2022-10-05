@@ -20,7 +20,7 @@ public class Wrapper<W> {
 
 fun foo(container: Container<*>, wrapper: Wrapper<String>) {
     container.w = <!TYPE_MISMATCH!>wrapper<!>
-    container.wrapper = wrapper
+    <!SYNTHETIC_SETTER_PROJECTED_OUT!>container.wrapper<!> = wrapper
     container.setWrapper(<!TYPE_MISMATCH!>wrapper<!>)
 }
 
@@ -42,16 +42,16 @@ fun dif(container: Container<String>, wrapper: Wrapper<Int>) {
 }
 
 fun out(container: Container<out Any>, wrapper: Wrapper<String>) {
-    container.wrapper = wrapper
+    <!SYNTHETIC_SETTER_PROJECTED_OUT!>container.wrapper<!> = wrapper
     container.setWrapper(<!TYPE_MISMATCH!>wrapper<!>)
 }
 
 fun inn(container: Container<in String>, wrapper: Wrapper<Any>) {
-    container.wrapper = wrapper
+    <!SYNTHETIC_SETTER_PROJECTED_OUT!>container.wrapper<!> = wrapper
     container.setWrapper(<!TYPE_MISMATCH!>wrapper<!>)
 }
 
 fun <T> generic(container: Container<out T>, wrapper: Wrapper<out T>) {
-    container.wrapper = wrapper
+    <!SYNTHETIC_SETTER_PROJECTED_OUT!>container.wrapper<!> = wrapper
     container.setWrapper(<!TYPE_MISMATCH!>wrapper<!>)
 }
