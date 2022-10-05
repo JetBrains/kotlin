@@ -184,7 +184,7 @@ open class FatFrameworkTask : DefaultTask() {
             Architecture.ARM32 -> AppleArchitecture.ARM32
             Architecture.MIPS32,
             Architecture.MIPSEL32,
-            Architecture.WASM32 -> error("Fat frameworks are not supported for target $this")
+            Architecture.WASM32 -> error("Fat frameworks are not supported for target `$name`")
         }
 
     // region DSL methods.
