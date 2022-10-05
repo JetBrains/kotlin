@@ -36,7 +36,7 @@ class XcodeUtils private constructor() {
         val osRegex = "-- .* --".toRegex()
         val deviceRegex = """[0-9A-F]{8}-([0-9A-F]{4}-){3}[0-9A-F]{12}""".toRegex()
 
-        val out = runCommand(listOf("/usr/bin/xcrun", "simctl", "list"))
+        val out = runCommand(listOf("/usr/bin/xcrun", "simctl", "list", "devices", "available"))
 
         val result = mutableMapOf<String, String>()
         var os: String? = null
