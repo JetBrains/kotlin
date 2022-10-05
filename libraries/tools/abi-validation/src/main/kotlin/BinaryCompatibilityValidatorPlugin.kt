@@ -199,15 +199,18 @@ private fun Project.configureKotlinCompilation(
                 files(provider<Any> { if (isEnabled) compilation.compileDependencyFiles else emptyList<Any>() })
         }
         outputApiDir = apiBuildDir.get()
-        ignoredPackages = extension.ignoredPackages
-        ignoredClasses = extension.ignoredClasses
-        nonPublicMarkers = extension.nonPublicMarkers
     }
     configureCheckTasks(apiBuildDir, apiBuild, extension, targetConfig, commonApiDump, commonApiCheck)
 }
 
 val Project.sourceSets: SourceSetContainer
     get() = convention.getPlugin(JavaPluginConvention::class.java).sourceSets
+
+internal val Project.apiValidationExtensionOrNull: ApiValidationExtension?
+    get() =
+        generateSequence(this) { it.parent }
+            .map { it.extensions.findByType(ApiValidationExtension::class.java) }
+            .firstOrNull { it != null }
 
 fun apiCheckEnabled(projectName: String, extension: ApiValidationExtension): Boolean =
     projectName !in extension.ignoredProjects && !extension.validationDisabled
@@ -227,9 +230,6 @@ private fun Project.configureApiTasks(
         inputClassesDirs = files(provider<Any> { if (isEnabled) sourceSet.output.classesDirs else emptyList<Any>() })
         inputDependencies = files(provider<Any> { if (isEnabled) sourceSet.output.classesDirs else emptyList<Any>() })
         outputApiDir = apiBuildDir.get()
-        ignoredPackages = extension.ignoredPackages
-        ignoredClasses = extension.ignoredClasses
-        nonPublicMarkers = extension.nonPublicMarkers
     }
 
     configureCheckTasks(apiBuildDir, apiBuild, extension, targetConfig)

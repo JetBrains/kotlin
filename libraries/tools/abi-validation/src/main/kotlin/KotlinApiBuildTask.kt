@@ -16,6 +16,8 @@ import javax.inject.Inject
 open class KotlinApiBuildTask @Inject constructor(
 ) : DefaultTask() {
 
+    private val extension = project.apiValidationExtensionOrNull
+
     @InputFiles
     @Optional
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -33,14 +35,23 @@ open class KotlinApiBuildTask @Inject constructor(
     @OutputDirectory
     lateinit var outputApiDir: File
 
+    private var _ignoredPackages: Set<String>? = null
     @get:Input
-    var ignoredPackages : Set<String> = emptySet()
+    var ignoredPackages : Set<String>
+        get() = _ignoredPackages ?: extension?.ignoredPackages ?: emptySet()
+        set(value) { _ignoredPackages = value }
 
+    private var _nonPublicMarkes: Set<String>? = null
     @get:Input
-    var nonPublicMarkers : Set<String> = emptySet()
+    var nonPublicMarkers : Set<String>
+        get() = _nonPublicMarkes ?: extension?.nonPublicMarkers ?: emptySet()
+        set(value) { _nonPublicMarkes = value }
 
+    private var _ignoredClasses: Set<String>? = null
     @get:Input
-    var ignoredClasses : Set<String> = emptySet()
+    var ignoredClasses : Set<String>
+        get() = _ignoredClasses ?: extension?.ignoredClasses ?: emptySet()
+        set(value) { _ignoredClasses = value }
 
     @get:Internal
     internal val projectName = project.name
