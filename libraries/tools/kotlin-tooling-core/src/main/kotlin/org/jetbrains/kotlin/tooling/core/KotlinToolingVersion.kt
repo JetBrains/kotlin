@@ -11,18 +11,22 @@ import java.io.Serializable
 import java.util.*
 
 fun KotlinToolingVersion(kotlinVersionString: String): KotlinToolingVersion {
-    fun throwInvalid(reason: String): Nothing = throw IllegalArgumentException("Invalid Kotlin version: $kotlinVersionString ($reason)")
-
     val baseVersion = kotlinVersionString.split("-", limit = 2)[0]
     val classifier = kotlinVersionString.split("-", limit = 2).getOrNull(1)
 
     val baseVersionSplit = baseVersion.split(".")
-    if (!(baseVersionSplit.size == 2 || baseVersionSplit.size == 3)) throwInvalid("Expected 2 or 3 '.' separated parts")
+
+    val majorVersion = baseVersionSplit[0].toIntOrNull()
+    val minorVersion = baseVersionSplit.getOrNull(1)?.toIntOrNull()
+
+    if (majorVersion == null || minorVersion == null) {
+        throw IllegalArgumentException("Invalid Kotlin version: $kotlinVersionString (Failed parsing major/minor version)")
+    }
 
     return KotlinToolingVersion(
-        major = baseVersionSplit[0].toIntOrNull() ?: throwInvalid("Failed parsing major version"),
-        minor = baseVersionSplit[1].toIntOrNull() ?: throwInvalid("Failed parsing minor version"),
-        patch = baseVersionSplit.getOrNull(2)?.let { it.toIntOrNull() ?: throwInvalid("Failed parsing patch version") } ?: 0,
+        major = majorVersion,
+        minor = minorVersion,
+        patch = baseVersionSplit.getOrNull(2)?.toIntOrNull() ?: 0,
         classifier = classifier
     )
 }
@@ -31,6 +35,10 @@ fun KotlinToolingVersion(kotlinVersion: KotlinVersion, classifier: String? = nul
     return KotlinToolingVersion(kotlinVersion.major, kotlinVersion.minor, kotlinVersion.patch, classifier)
 }
 
+@Deprecated(
+    "Use KotlinToolingVersion instead. Scheduled for removal with Kotlin 1.9",
+    replaceWith = ReplaceWith("KotlinToolingVersion(kotlinVersionString)")
+)
 fun KotlinToolingVersionOrNull(kotlinVersionString: String): KotlinToolingVersion? {
     return try {
         KotlinToolingVersion(kotlinVersionString)
@@ -59,8 +67,7 @@ class KotlinToolingVersion(
             classifier.matches(Regex("""beta(\d*)?(-release)?(-?\d+)?""")) -> Maturity.BETA
             classifier.matches(Regex("""alpha(\d*)?(-release)?(-?\d+)?""")) -> Maturity.ALPHA
             classifier.matches(Regex("""m\d+(-release)?(-\d+)?""")) -> Maturity.MILESTONE
-            classifier.matches(Regex("""([a-zA-Z]{3,})(-[a-zA-Z]\w*)*(-\d+)?""")) -> Maturity.DEV
-            else -> throw IllegalArgumentException("Can't infer maturity of KotlinVersion $this")
+            else -> Maturity.DEV
         }
     }
 
