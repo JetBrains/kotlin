@@ -47,7 +47,11 @@ object JsExternalChecker : DeclarationChecker {
                 descriptor.isInline -> "inline class"
                 descriptor.isValue -> "value class"
                 descriptor.isFun -> "fun interface"
-                DescriptorUtils.isAnnotationClass(descriptor) -> "annotation class"
+                DescriptorUtils.isAnnotationClass(descriptor) -> {
+                    //"annotation class"
+                    // TODO(lit) if it hasAnnotation("JsDecorator")
+                    null
+                }
                 else -> null
             }
 
