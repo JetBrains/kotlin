@@ -3,10 +3,6 @@
 
 // FILE: main.kt
 
-// to stdlib
-annotation class JsDecorator
-annotation class JsTemplateStringTag
-
 // ~Lit
 open class LitElement
 
