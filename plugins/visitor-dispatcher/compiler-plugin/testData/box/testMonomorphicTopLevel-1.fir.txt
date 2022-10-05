@@ -1,0 +1,34 @@
+FILE: testMonomorphicTopLevel-1.kt
+    public abstract class A1 : R|kotlin/Any| {
+        public constructor(): R|A1| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B1 : R|A1| {
+        public constructor(): R|B1| {
+            super<R|A1|>()
+        }
+
+    }
+    public final class C1 : R|A1| {
+        public constructor(): R|C1| {
+            super<R|A1|>()
+        }
+
+    }
+    public abstract interface A2 : R|kotlin/Any| {
+    }
+    public abstract interface B2 : R|A2| {
+    }
+    public final class C2 : R|A2| {
+        public constructor(): R|C2| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun <@R|org/jetbrains/kotlin/specialization/Monomorphic|() T1 : R|A1|, @R|org/jetbrains/kotlin/specialization/Monomorphic|() T2 : R|A2|> testCartesianProduct(): R|kotlin/Unit| {
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

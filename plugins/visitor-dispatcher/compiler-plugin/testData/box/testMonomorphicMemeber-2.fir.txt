@@ -1,0 +1,44 @@
+FILE: testMonomorphicMemeber-2.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+    }
+    public abstract class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract fun <@R|org/jetbrains/kotlin/specialization/Monomorphic|() T : R|A|> monomorphic(x: R|T|): R|T|
+
+        public abstract fun notMonomorphic(): R|kotlin/Unit|
+
+    }
+    public final class Derived : R|Base| {
+        public constructor(): R|Derived| {
+            super<R|Base|>()
+        }
+
+        public final override fun <@R|org/jetbrains/kotlin/specialization/Monomorphic|() T : R|A|> monomorphic(x: R|T|): R|T| {
+            ^monomorphic R|<local>/x|
+        }
+
+        public final override fun notMonomorphic(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun <@R|org/jetbrains/kotlin/specialization/Monomorphic|() T1 : R|A|, @R|org/jetbrains/kotlin/specialization/Monomorphic|() T2 : R|Base|> test(a: R|T1|, base: R|T2|): R|kotlin/Unit| {
+        R|<local>/base|.R|/Base.notMonomorphic|()
+        R|<local>/base|.R|/Base.monomorphic|<R|T1|>(R|<local>/a|)
+    }
+    public final fun box(): R|kotlin/String| {
+        R|/test|<R|B|, R|Derived|>(R|/B.B|(), R|/Derived.Derived|())
+        ^box String(OK)
+    }

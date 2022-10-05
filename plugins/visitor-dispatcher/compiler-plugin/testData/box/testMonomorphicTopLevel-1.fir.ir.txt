@@ -1,0 +1,151 @@
+FILE fqName:<root> fileName:/testMonomorphicTopLevel-1.kt
+  CLASS CLASS name:A1 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A1
+    CONSTRUCTOR visibility:public <> () returnType:<root>.A1 [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A1 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:B1 modality:FINAL visibility:public superTypes:[<root>.A1]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B1
+    CONSTRUCTOR visibility:public <> () returnType:<root>.B1 [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A1'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B1 modality:FINAL visibility:public superTypes:[<root>.A1]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.A1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.A1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.A1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:C1 modality:FINAL visibility:public superTypes:[<root>.A1]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C1
+    CONSTRUCTOR visibility:public <> () returnType:<root>.C1 [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A1'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C1 modality:FINAL visibility:public superTypes:[<root>.A1]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.A1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.A1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.A1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS INTERFACE name:A2 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A2
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS INTERFACE name:B2 modality:ABSTRACT visibility:public superTypes:[<root>.A2]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B2
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.A2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.A2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.A2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:C2 modality:FINAL visibility:public superTypes:[<root>.A2]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C2
+    CONSTRUCTOR visibility:public <> () returnType:<root>.C2 [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C2 modality:FINAL visibility:public superTypes:[<root>.A2]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.A2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.A2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.A2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:testCartesianProduct visibility:public modality:FINAL <T1, T2> () returnType:kotlin.Unit
+    TYPE_PARAMETER name:T1 index:0 variance: superTypes:[<root>.A1] reified:false
+      annotations:
+        Monomorphic
+    TYPE_PARAMETER name:T2 index:1 variance: superTypes:[<root>.A2] reified:false
+      annotations:
+        Monomorphic
+    BLOCK_BODY
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
+  FUN name:testCartesianProduct|T1=B1, T2=B2| visibility:public modality:FINAL <T1, T2> () returnType:kotlin.Unit
+    TYPE_PARAMETER name:T1 index:0 variance: superTypes:[<root>.A1] reified:false
+      annotations:
+        Monomorphic
+    TYPE_PARAMETER name:T2 index:1 variance: superTypes:[<root>.A2] reified:false
+      annotations:
+        Monomorphic
+    BLOCK_BODY
+  FUN name:testCartesianProduct|T1=B1, T2=C2| visibility:public modality:FINAL <T1, T2> () returnType:kotlin.Unit
+    TYPE_PARAMETER name:T1 index:0 variance: superTypes:[<root>.A1] reified:false
+      annotations:
+        Monomorphic
+    TYPE_PARAMETER name:T2 index:1 variance: superTypes:[<root>.A2] reified:false
+      annotations:
+        Monomorphic
+    BLOCK_BODY
+  FUN name:testCartesianProduct|T1=C1, T2=B2| visibility:public modality:FINAL <T1, T2> () returnType:kotlin.Unit
+    TYPE_PARAMETER name:T1 index:0 variance: superTypes:[<root>.A1] reified:false
+      annotations:
+        Monomorphic
+    TYPE_PARAMETER name:T2 index:1 variance: superTypes:[<root>.A2] reified:false
+      annotations:
+        Monomorphic
+    BLOCK_BODY
+  FUN name:testCartesianProduct|T1=C1, T2=C2| visibility:public modality:FINAL <T1, T2> () returnType:kotlin.Unit
+    TYPE_PARAMETER name:T1 index:0 variance: superTypes:[<root>.A1] reified:false
+      annotations:
+        Monomorphic
+    TYPE_PARAMETER name:T2 index:1 variance: superTypes:[<root>.A2] reified:false
+      annotations:
+        Monomorphic
+    BLOCK_BODY

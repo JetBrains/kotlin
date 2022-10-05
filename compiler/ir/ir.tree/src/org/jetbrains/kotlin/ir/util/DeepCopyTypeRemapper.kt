@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 
-class DeepCopyTypeRemapper(
+open class DeepCopyTypeRemapper(
     private val symbolRemapper: SymbolRemapper
 ) : TypeRemapper {
 

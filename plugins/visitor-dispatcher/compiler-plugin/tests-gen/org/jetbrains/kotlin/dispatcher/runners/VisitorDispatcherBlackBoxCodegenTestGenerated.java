@@ -36,4 +36,28 @@ public class VisitorDispatcherBlackBoxCodegenTestGenerated extends AbstractVisit
     public void tesWithKind() throws Exception {
         runTest("plugins/visitor-dispatcher/compiler-plugin/testData/box/testWithKind.kt");
     }
+
+    @Test
+    @TestMetadata("testMonomorphicTopLevel-1.kt")
+    public void testMonomorphicTopLevel1() throws Exception {
+        runTest("plugins/visitor-dispatcher/compiler-plugin/testData/box/testMonomorphicTopLevel-1.kt");
+    }
+
+    @Test
+    @TestMetadata("testMonomorphicTopLevel-2.kt")
+    public void testMonomorphicTopLevel2() throws Exception {
+        runTest("plugins/visitor-dispatcher/compiler-plugin/testData/box/testMonomorphicTopLevel-2.kt");
+    }
+
+    @Test
+    @TestMetadata("testMonomorphicMemeber-1.kt")
+    public void testMonomorphicMemeber1() throws Exception {
+        runTest("plugins/visitor-dispatcher/compiler-plugin/testData/box/testMonomorphicMemeber-1.kt");
+    }
+
+    @Test
+    @TestMetadata("testMonomorphicMemeber-2.kt")
+    public void testMonomorphicMemeber2() throws Exception {
+        runTest("plugins/visitor-dispatcher/compiler-plugin/testData/box/testMonomorphicMemeber-2.kt");
+    }
 }

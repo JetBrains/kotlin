@@ -566,8 +566,8 @@ open class DeepCopyIrTreeWithSymbols(
         }
     }
 
-    private fun shallowCopyCall(expression: IrCall): IrCall {
-        val newCallee = symbolRemapper.getReferencedSimpleFunction(expression.symbol)
+    protected fun shallowCopyCall(expression: IrCall, withSpecificSymbol: IrSimpleFunctionSymbol? = null) : IrCall {
+        val newCallee = withSpecificSymbol ?: symbolRemapper.getReferencedSimpleFunction(expression.symbol)
         return IrCallImpl(
             expression.startOffset, expression.endOffset,
             expression.type.remapType(),
@@ -587,7 +587,7 @@ open class DeepCopyIrTreeWithSymbols(
             extensionReceiver = original.extensionReceiver?.transform()
         }
 
-    private fun <T : IrMemberAccessExpression<*>> T.transformValueArguments(original: T) {
+    protected fun <T : IrMemberAccessExpression<*>> T.transformValueArguments(original: T) {
         transformReceiverArguments(original)
         for (i in 0 until original.valueArgumentsCount) {
             putValueArgument(i, original.getValueArgument(i)?.transform())

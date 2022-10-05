@@ -1,0 +1,139 @@
+FILE fqName:<root> fileName:/testMonomorphicTopLevel-2.kt
+  CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+    CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[kotlin.Any]'
+    FUN name:f visibility:public modality:ABSTRACT <> ($this:<root>.A) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.A
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.A]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+    CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.A]'
+    FUN name:f visibility:public modality:FINAL <> ($this:<root>.B) returnType:kotlin.Unit
+      overridden:
+        public abstract fun f (): kotlin.Unit declared in <root>.A
+      $this: VALUE_PARAMETER name:<this> type:<root>.B
+      BLOCK_BODY
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.A
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.A
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.A
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:testId visibility:public modality:FINAL <T> (x:T of <root>.testId) returnType:T of <root>.testId
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.A] reified:false
+      annotations:
+        Monomorphic
+    VALUE_PARAMETER name:x index:0 type:T of <root>.testId
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testId <T> (x: T of <root>.testId): T of <root>.testId declared in <root>'
+        GET_VAR 'x: T of <root>.testId declared in <root>.testId' type=T of <root>.testId origin=null
+  FUN name:testRefinementOfMemberCallWithMonomorphicType visibility:public modality:FINAL <T> (x:T of <root>.testRefinementOfMemberCallWithMonomorphicType) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.A] reified:false
+      annotations:
+        Monomorphic
+    VALUE_PARAMETER name:x index:0 type:T of <root>.testRefinementOfMemberCallWithMonomorphicType
+    BLOCK_BODY
+      CALL 'public abstract fun f (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+        $this: GET_VAR 'x: T of <root>.testRefinementOfMemberCallWithMonomorphicType declared in <root>.testRefinementOfMemberCallWithMonomorphicType' type=T of <root>.testRefinementOfMemberCallWithMonomorphicType origin=null
+  FUN name:testRefinementOfMonomorphicFunction visibility:public modality:FINAL <T1> (x:T1 of <root>.testRefinementOfMonomorphicFunction) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T1 index:0 variance: superTypes:[<root>.A] reified:false
+      annotations:
+        Monomorphic
+    VALUE_PARAMETER name:x index:0 type:T1 of <root>.testRefinementOfMonomorphicFunction
+    BLOCK_BODY
+      CALL 'public final fun monomorphicCallee <T2, T3> (x: T2 of <root>.monomorphicCallee, y: T3 of <root>.monomorphicCallee): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        <T2>: T1 of <root>.testRefinementOfMonomorphicFunction
+        <T3>: T1 of <root>.testRefinementOfMonomorphicFunction
+        x: GET_VAR 'x: T1 of <root>.testRefinementOfMonomorphicFunction declared in <root>.testRefinementOfMonomorphicFunction' type=T1 of <root>.testRefinementOfMonomorphicFunction origin=null
+        y: GET_VAR 'x: T1 of <root>.testRefinementOfMonomorphicFunction declared in <root>.testRefinementOfMonomorphicFunction' type=T1 of <root>.testRefinementOfMonomorphicFunction origin=null
+  FUN name:monomorphicCallee visibility:public modality:FINAL <T2, T3> (x:T2 of <root>.monomorphicCallee, y:T3 of <root>.monomorphicCallee) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T2 index:0 variance: superTypes:[<root>.A] reified:false
+      annotations:
+        Monomorphic
+    TYPE_PARAMETER name:T3 index:1 variance: superTypes:[<root>.A] reified:false
+      annotations:
+        Monomorphic
+    VALUE_PARAMETER name:x index:0 type:T2 of <root>.monomorphicCallee
+    VALUE_PARAMETER name:y index:1 type:T3 of <root>.monomorphicCallee
+    BLOCK_BODY
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun testId|T=B| <T> (x: <root>.B): <root>.B declared in <root>' type=<root>.B origin=null
+          <T>: <root>.B
+          x: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
+      CALL 'public final fun testRefinementOfMemberCallWithMonomorphicType|T=B| <T> (x: <root>.B): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        <T>: <root>.B
+        x: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
+      CALL 'public final fun testRefinementOfMonomorphicFunction|T1=B| <T1> (x: <root>.B): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        <T1>: <root>.B
+        x: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
+      CALL 'public final fun monomorphicCallee|T2=B, T3=B| <T2, T3> (x: <root>.B, y: <root>.B): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        <T2>: <root>.B
+        <T3>: <root>.B
+        x: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
+        y: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
+  FUN name:testId|T=B| visibility:public modality:FINAL <T> (x:<root>.B) returnType:<root>.B
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.A] reified:false
+      annotations:
+        Monomorphic
+    VALUE_PARAMETER name:x index:0 type:<root>.B
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testId|T=B| <T> (x: <root>.B): <root>.B declared in <root>'
+        GET_VAR 'x: <root>.B declared in <root>.testId|T=B|' type=<root>.B origin=null
+  FUN name:testRefinementOfMemberCallWithMonomorphicType|T=B| visibility:public modality:FINAL <T> (x:<root>.B) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.A] reified:false
+      annotations:
+        Monomorphic
+    VALUE_PARAMETER name:x index:0 type:<root>.B
+    BLOCK_BODY
+      CALL 'public final fun f (): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
+        $this: GET_VAR 'x: <root>.B declared in <root>.testRefinementOfMemberCallWithMonomorphicType|T=B|' type=<root>.B origin=null
+  FUN name:testRefinementOfMonomorphicFunction|T1=B| visibility:public modality:FINAL <T1> (x:<root>.B) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T1 index:0 variance: superTypes:[<root>.A] reified:false
+      annotations:
+        Monomorphic
+    VALUE_PARAMETER name:x index:0 type:<root>.B
+    BLOCK_BODY
+      CALL 'public final fun monomorphicCallee|T2=B, T3=B| <T2, T3> (x: <root>.B, y: <root>.B): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        <T2>: <root>.B
+        <T3>: <root>.B
+        x: GET_VAR 'x: <root>.B declared in <root>.testRefinementOfMonomorphicFunction|T1=B|' type=<root>.B origin=null
+        y: GET_VAR 'x: <root>.B declared in <root>.testRefinementOfMonomorphicFunction|T1=B|' type=<root>.B origin=null
+  FUN name:monomorphicCallee|T2=B, T3=B| visibility:public modality:FINAL <T2, T3> (x:<root>.B, y:<root>.B) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T2 index:0 variance: superTypes:[<root>.A] reified:false
+      annotations:
+        Monomorphic
+    TYPE_PARAMETER name:T3 index:1 variance: superTypes:[<root>.A] reified:false
+      annotations:
+        Monomorphic
+    VALUE_PARAMETER name:x index:0 type:<root>.B
+    VALUE_PARAMETER name:y index:1 type:<root>.B
+    BLOCK_BODY

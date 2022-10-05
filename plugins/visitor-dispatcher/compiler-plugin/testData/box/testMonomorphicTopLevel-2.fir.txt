@@ -1,0 +1,36 @@
+FILE: testMonomorphicTopLevel-2.kt
+    public abstract class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract fun f(): R|kotlin/Unit|
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        public final override fun f(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun <@R|org/jetbrains/kotlin/specialization/Monomorphic|() T : R|A|> testId(x: R|T|): R|T| {
+        ^testId R|<local>/x|
+    }
+    public final fun <@R|org/jetbrains/kotlin/specialization/Monomorphic|() T : R|A|> testRefinementOfMemberCallWithMonomorphicType(x: R|T|): R|kotlin/Unit| {
+        R|<local>/x|.R|/A.f|()
+    }
+    public final fun <@R|org/jetbrains/kotlin/specialization/Monomorphic|() T1 : R|A|> testRefinementOfMonomorphicFunction(x: R|T1|): R|kotlin/Unit| {
+        R|/monomorphicCallee|<R|T1|, R|T1|>(R|<local>/x|, R|<local>/x|)
+    }
+    public final fun <@R|org/jetbrains/kotlin/specialization/Monomorphic|() T2 : R|A|, @R|org/jetbrains/kotlin/specialization/Monomorphic|() T3 : R|A|> monomorphicCallee(x: R|T2|, y: R|T3|): R|kotlin/Unit| {
+    }
+    public final fun box(): R|kotlin/String| {
+        R|/testId|<R|B|>(R|/B.B|())
+        R|/testRefinementOfMemberCallWithMonomorphicType|<R|B|>(R|/B.B|())
+        R|/testRefinementOfMonomorphicFunction|<R|B|>(R|/B.B|())
+        R|/monomorphicCallee|<R|B|, R|B|>(R|/B.B|(), R|/B.B|())
+        ^box String(OK)
+    }

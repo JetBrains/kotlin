@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.name.FqName
 
 fun <T> IrConstructorCall.getConstValueArgument(idx: Int, kind: IrConstKind<T>): T {
     val arg = (getValueArgument(idx) as? IrConst<*>) ?: throw IllegalStateException("Argument of ${this.symbol.owner.name} is not const expr")
@@ -61,7 +63,15 @@ fun IrSimpleFunction.getMainOverriddenSequence(): Sequence<IrSimpleFunction> {
     }
 }
 
+fun IrSimpleFunction.getTopmostBaseFunction(): IrSimpleFunction {
+    return getMainOverriddenSequence().lastOrNull() ?: this
+}
+
 fun IrDeclaration.isGeneratedBy(key: GeneratedDeclarationKey): Boolean {
     val origin = origin
     return origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == key
+}
+
+fun IrSimpleFunction.fqName(): FqName {
+    return parent.kotlinFqName.child(name)
 }
