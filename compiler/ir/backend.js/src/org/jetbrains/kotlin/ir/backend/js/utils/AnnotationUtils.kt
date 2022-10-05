@@ -32,6 +32,7 @@ object JsAnnotations {
     val jsFunFqn = FqName("kotlin.js.JsFun")
     val JsPolyfillFqn = FqName("kotlin.js.JsPolyfill")
     val MetaClass = FqName("kotlin.js.MetaClass")
+    val JsDecorator = FqName("kotlin.js.JsDecorator")
 }
 
 @Suppress("UNCHECKED_CAST")

@@ -1,3 +1,4 @@
+import kotlinx.browser.window
 import lit.*
 
 /*
@@ -17,15 +18,23 @@ fun html(s: String): Any {
     return html(t)
 }
 
+fun html(s: String, raw: String): Any {
+    val t = arrayOf(s)
+    t.asDynamic().raw = raw
+    return html(t)
+}
 @CustomElement("simple-greeting")
 class SimpleGreeting : LitElement() {
     @Property()
-    val name = "Somebody"
+    var name = "Somebody"
 
     override fun render(): Any {
         println("1")
-        return html("It works!")
-//        return html("<p>Hello, $name! $name</p>")
+//        return html("It works!")
+        window.setTimeout({
+            name = "Lit"
+        }, 3000)
+        return html("<p>Hello, $name! $name</p>", "<p>Hello, \$name! \$name</p>")
 //        html(["<p>Hello, ","!</p>"], name, name)
     }
 
