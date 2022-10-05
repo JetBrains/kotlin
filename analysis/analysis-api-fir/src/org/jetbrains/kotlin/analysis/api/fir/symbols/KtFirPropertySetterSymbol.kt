@@ -68,7 +68,13 @@ internal class KtFirPropertySetterSymbol(
     override val modality: Modality get() = withValidityAssertion { firSymbol.modalityOrFinal }
     override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
-    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, firResolveSession.useSiteFirSession, token) }
+    override val annotationsList by cached {
+        KtFirAnnotationListForDeclaration.create(
+            firSymbol,
+            firResolveSession.useSiteFirSession,
+            token,
+        )
+    }
 
     /**
      * Returns [CallableId] of the delegated Java method if the corresponding property of this setter is a synthetic Java property.
@@ -89,7 +95,7 @@ internal class KtFirPropertySetterSymbol(
 
     override val returnType: KtType get() = withValidityAssertion { firSymbol.returnType(builder) }
     override val receiverType: KtType? get() = withValidityAssertion { firSymbol.receiverType(builder) }
-    
+
 
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { firSymbol.fir.getHasStableParameterNames(firSymbol.moduleData.session) }
