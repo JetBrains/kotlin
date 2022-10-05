@@ -13,14 +13,21 @@ import java.util.List;
 public final class JsInvocation extends JsExpression.JsExpressionHasArguments {
     @NotNull
     private JsExpression qualifier;
+    private final boolean isStringTagCall;
 
-    public JsInvocation(@NotNull JsExpression qualifier, @NotNull List<? extends JsExpression> arguments) {
+    public JsInvocation(@NotNull JsExpression qualifier, @NotNull List<? extends JsExpression> arguments, boolean isStringTagCall) {
         super(new SmartList<JsExpression>(arguments));
         this.qualifier = qualifier;
+        this.isStringTagCall = isStringTagCall;
     }
 
+    public JsInvocation(@NotNull JsExpression qualifier, @NotNull List<? extends JsExpression> arguments) {
+        this(qualifier, arguments, false);
+    }
+
+
     public JsInvocation(@NotNull JsExpression qualifier, JsExpression... arguments) {
-        this(qualifier, new SmartList<JsExpression>(arguments));
+        this(qualifier, new SmartList<JsExpression>(arguments), false);
     }
 
     @NotNull
@@ -63,6 +70,10 @@ public final class JsInvocation extends JsExpression.JsExpressionHasArguments {
     public JsInvocation deepCopy() {
         JsExpression qualifierCopy = AstUtil.deepCopy(qualifier);
         List<JsExpression> argumentsCopy = AstUtil.deepCopy(arguments);
-        return new JsInvocation(qualifierCopy, argumentsCopy).withMetadataFrom(this);
+        return new JsInvocation(qualifierCopy, argumentsCopy, isStringTagCall).withMetadataFrom(this);
+    }
+
+    public boolean isStringTagCall() {
+        return isStringTagCall;
     }
 }

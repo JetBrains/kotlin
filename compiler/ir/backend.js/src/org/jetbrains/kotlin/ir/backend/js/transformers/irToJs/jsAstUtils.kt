@@ -287,7 +287,8 @@ fun translateCall(
             }
         }
     } else {
-        JsInvocation(ref, listOfNotNull(jsExtensionReceiver) + arguments)
+        val isStringTag = expression.symbol.owner.hasAnnotation(JsAnnotations.JsTemplateStringTag)
+        JsInvocation(ref, listOfNotNull(jsExtensionReceiver) + arguments, isStringTag)
     }
 }
 

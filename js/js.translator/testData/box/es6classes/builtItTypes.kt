@@ -28,7 +28,9 @@ class SimpleGreeting : LitElement() {
     val name = "Somebody"
 
     fun render() {
-        return html("<p>Hello, $name! $name</p>")
+        return html("""
+            <p>Hello, $name! $name</p>
+            """)
 //        html(["<p>Hello, ","!</p>"], name, name)
     }
 
