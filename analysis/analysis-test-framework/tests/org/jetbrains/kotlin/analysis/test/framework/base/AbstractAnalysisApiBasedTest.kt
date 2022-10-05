@@ -135,7 +135,9 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
             return
         }
 
-        if (configurator.frontendKind == FrontendKind.Fe10 && isFe10DisabledForTheTest()) {
+        if (configurator.frontendKind == FrontendKind.Fe10 && isFe10DisabledForTheTest() ||
+            configurator.frontendKind == FrontendKind.Fir && isFirDisabledForTheTest()
+        ) {
             return
         }
 
@@ -170,6 +172,9 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
     private fun isFe10DisabledForTheTest(): Boolean =
         AnalysisApiTestDirectives.IGNORE_FE10 in testServices.moduleStructure.allDirectives
+
+    private fun isFirDisabledForTheTest(): Boolean =
+        AnalysisApiTestDirectives.IGNORE_FIR in testServices.moduleStructure.allDirectives
 
     protected fun <R> analyseForTest(contextElement: KtElement, action: KtAnalysisSession.() -> R): R {
         return if (configurator.analyseInDependentSession) {
