@@ -49,6 +49,10 @@ fun box(): String {
 
 function customElement() {
     console.log("customElement: ", arguments);
+    return (a) => {
+        console.log("customElement lambda: ", arguments);
+        return a
+    }
 }
 
 function property() {

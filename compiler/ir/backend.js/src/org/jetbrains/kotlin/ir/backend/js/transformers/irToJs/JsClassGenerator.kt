@@ -205,31 +205,33 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
         classModel.preDeclarationBlock.statements += generateSetMetadataCall()
 
-        for (annotation in irClass.annotations) {
-            val parentAsClass = annotation.symbol.owner.parentAsClass
-            if (!parentAsClass.hasAnnotation(FqName("kotlin.js.JsDecorator"))) continue
+        if (es6mode) {
+            for (annotation in irClass.annotations) {
+                val parentAsClass = annotation.symbol.owner.parentAsClass
+                if (!parentAsClass.hasAnnotation(FqName("kotlin.js.JsDecorator"))) continue
 
-            val annClassNameRef = context.getNameForClass(parentAsClass).makeRef()
+                val annClassNameRef = context.getNameForClass(parentAsClass).makeRef()
 
-            val assignment = JsAstUtils.assignment(
-                classNameRef,
-                /*TODO(lit) use ?? opertor instead*/
-                JsAstUtils.or(
-                    JsInvocation(
-                        annClassNameRef,
-                        classNameRef,
-                        JsObjectLiteral(
-                            listOf(
-                                JsPropertyInitializer(JsStringLiteral("kind"), JsStringLiteral("class")),
-                                JsPropertyInitializer(JsStringLiteral("name"), JsStringLiteral(classNameRef.ident)),
+                val assignment = JsAstUtils.assignment(
+                    classNameRef,
+                    /*TODO(lit) use ?? opertor instead*/
+                    JsAstUtils.or(
+                        JsInvocation(
+                            JsInvocation(annClassNameRef, translateCallArguments(annotation, context, IrElementToJsExpressionTransformer())),
+                            classNameRef,
+                            JsObjectLiteral(
+                                listOf(
+                                    JsPropertyInitializer(JsStringLiteral("kind"), JsStringLiteral("class")),
+                                    JsPropertyInitializer(JsStringLiteral("name"), JsStringLiteral(classNameRef.ident)),
+                                )
                             )
-                        )
-                    ),
-                    classNameRef
+                        ),
+                        classNameRef
+                    )
                 )
-            )
 
-            classModel.preDeclarationBlock.statements += assignment.makeStmt()
+                classModel.preDeclarationBlock.statements += assignment.makeStmt()
+            }
         }
 
         context.staticContext.classModels[irClass.symbol] = classModel
