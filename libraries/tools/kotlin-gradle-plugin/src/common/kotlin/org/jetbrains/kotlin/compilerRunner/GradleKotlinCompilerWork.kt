@@ -41,10 +41,10 @@ internal class ProjectFilesForCompilation(
     val buildDir: File
 ) : Serializable {
     //TODO
-    constructor(logger: Logger, projectDir:File, buildDir: File, prjectName: String, projectRootDir: File, sessionDir: File) : this(
+    constructor(logger: Logger, projectDir:File, buildDir: File, prjectName: String, projectCacheDirProvider: File, sessionDir: File) : this(
         projectRootFile = projectDir,
         clientIsAliveFlagFile = GradleCompilerRunner.getOrCreateClientFlagFile(logger, prjectName),
-        sessionFlagFile = GradleCompilerRunner.getOrCreateSessionFlagFile(logger, sessionDir, projectRootDir),
+        sessionFlagFile = GradleCompilerRunner.getOrCreateSessionFlagFile(logger, sessionDir, projectCacheDirProvider),
         buildDir = buildDir
     )
 
