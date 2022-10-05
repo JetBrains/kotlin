@@ -212,3 +212,9 @@ public actual annotation class JsExport {
 @SinceKotlin("1.6")
 @Deprecated("This annotation is a temporal migration assistance and may be removed in the future releases, please consider filing an issue about the case where it is needed")
 public annotation class EagerInitialization
+
+annotation class JsDecorator
+
+annotation class JsTemplateStringTag
+
+annotation class JsStatic
