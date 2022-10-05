@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.dispatcher.ir.generators
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.common.AbstractFunctionBodyGenerator
 import org.jetbrains.kotlin.dispatcher.common.FqnUtils
 import org.jetbrains.kotlin.dispatcher.fir.AddGetKindFunctionExtension
 import org.jetbrains.kotlin.dispatcher.ir.*

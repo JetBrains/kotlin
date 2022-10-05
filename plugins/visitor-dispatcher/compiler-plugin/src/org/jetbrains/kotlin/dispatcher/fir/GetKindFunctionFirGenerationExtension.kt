@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.dispatcher.fir
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.common.AbstractMemberGenerationFirExtension
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
