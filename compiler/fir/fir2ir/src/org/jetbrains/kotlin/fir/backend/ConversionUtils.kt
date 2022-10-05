@@ -82,7 +82,7 @@ internal fun <T : IrElement> FirQualifiedAccess.convertWithOffsets(
 ): T {
     val psi = calleeReference.psi
     if (psi is PsiCompiledElement) return f(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-    val startOffset = psi?.startOffsetSkippingComments ?: calleeReference.source ?.startOffset ?: UNDEFINED_OFFSET
+    val startOffset = psi?.startOffsetSkippingComments ?: calleeReference.source?.startOffset ?: UNDEFINED_OFFSET
     val endOffset = source?.endOffset ?: UNDEFINED_OFFSET
     return f(startOffset, endOffset)
 }
@@ -137,6 +137,7 @@ fun FirClassifierSymbol<*>.toSymbol(
         is FirTypeParameterSymbol -> {
             classifierStorage.getIrTypeParameterSymbol(this, typeContext)
         }
+
         is FirTypeAliasSymbol -> {
             handleAnnotations?.invoke(fir.expandedTypeRef.annotations)
             val coneClassLikeType = fir.expandedTypeRef.coneType as ConeClassLikeType
@@ -144,9 +145,11 @@ fun FirClassifierSymbol<*>.toSymbol(
                 ?.toSymbol(typeContext, handleAnnotations)
                 ?: classifierStorage.getIrClassSymbolForNotFoundClass(coneClassLikeType.lookupTag)
         }
+
         is FirClassSymbol -> {
             classifierStorage.getIrClassSymbol(this)
         }
+
         else -> error("Unknown symbol: $this")
     }
 }
@@ -166,6 +169,7 @@ private fun FirBasedSymbol<*>.toSymbolForCall(
         isDelegate,
         isReference
     )
+
     is FirClassifierSymbol<*> -> toSymbol()
     else -> error("Unknown symbol: $this")
 }
@@ -188,6 +192,7 @@ fun FirReference.toSymbolForCall(
                 isDelegate,
                 isReference
             )
+
         is FirErrorNamedReference ->
             candidateSymbol?.toSymbolForCall(
                 dispatchReceiver,
@@ -196,6 +201,7 @@ fun FirReference.toSymbolForCall(
                 isDelegate,
                 isReference
             )
+
         is FirThisReference -> {
             when (val boundSymbol = boundSymbol) {
                 is FirClassSymbol<*> -> classifierStorage.getIrClassSymbol(boundSymbol).owner.thisReceiver?.symbol
@@ -204,9 +210,11 @@ fun FirReference.toSymbolForCall(
                     val property = declarationStorage.getIrPropertySymbol(boundSymbol).owner as? IrProperty
                     property?.let { conversionScope.parentAccessorOfPropertyFromStack(it) }?.symbol
                 }
+
                 else -> null
             }
         }
+
         else -> null
     }
 }
@@ -230,6 +238,7 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
                 null
             }
         }
+
         else -> {
             val coneType = dispatchReceiver.typeRef.coneType
             dispatchReceiver.typeRef.coneType.findClassRepresentation(coneType, declarationStorage.session)
@@ -256,6 +265,7 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
                 } ?: declarationStorage.getIrPropertySymbol(this)
             }
         }
+
         is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(this, dispatchReceiverLookupTag)
         is FirPropertySymbol -> declarationStorage.getIrPropertySymbol(this, dispatchReceiverLookupTag)
         is FirFieldSymbol -> declarationStorage.getIrFieldSymbol(this)
@@ -271,6 +281,7 @@ fun FirConstExpression<*>.getIrConstKind(): IrConstKind<*> = when (kind) {
         val type = typeRef.coneTypeUnsafe<ConeIntegerLiteralType>()
         type.getApproximatedType().toConstKind()!!.toIrConstKind()
     }
+
     else -> kind.toIrConstKind()
 }
 
@@ -513,31 +524,37 @@ private val nameToOperationConventionOrigin = mutableMapOf(
     OperatorNameConventions.CONTAINS to IrStatementOrigin.IN,
 )
 
-internal fun FirReference.statementOrigin(): IrStatementOrigin? {
-    return when (this) {
-        is FirPropertyFromParameterResolvedNamedReference -> IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
-        is FirResolvedNamedReference -> when (val symbol = resolvedSymbol) {
-            is FirSyntheticPropertySymbol -> IrStatementOrigin.GET_PROPERTY
-            is FirNamedFunctionSymbol -> when {
-                symbol.callableId.isInvoke() ->
-                    IrStatementOrigin.INVOKE
-                source?.elementType == KtNodeTypes.FOR && symbol.callableId.isIteratorNext() ->
-                    IrStatementOrigin.FOR_LOOP_NEXT
-                source?.elementType == KtNodeTypes.FOR && symbol.callableId.isIteratorHasNext() ->
-                    IrStatementOrigin.FOR_LOOP_HAS_NEXT
-                source?.elementType == KtNodeTypes.FOR && symbol.callableId.isIterator() ->
-                    IrStatementOrigin.FOR_LOOP_ITERATOR
-                source?.elementType == KtNodeTypes.OPERATION_REFERENCE ->
-                    nameToOperationConventionOrigin[symbol.callableId.callableName]
-                source?.kind is KtFakeSourceElementKind.DesugaredComponentFunctionCall ->
-                    IrStatementOrigin.COMPONENT_N.withIndex(name.asString().removePrefix(DATA_CLASS_COMPONENT_PREFIX).toInt())
-                else ->
-                    null
-            }
-            else -> null
+internal fun FirReference.statementOrigin(): IrStatementOrigin? = when (this) {
+    is FirPropertyFromParameterResolvedNamedReference -> IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
+    is FirResolvedNamedReference -> when (val symbol = resolvedSymbol) {
+        is FirSyntheticPropertySymbol -> IrStatementOrigin.GET_PROPERTY
+        is FirNamedFunctionSymbol -> when {
+            symbol.callableId.isInvoke() ->
+                IrStatementOrigin.INVOKE
+
+            source?.elementType == KtNodeTypes.FOR && symbol.callableId.isIteratorNext() ->
+                IrStatementOrigin.FOR_LOOP_NEXT
+
+            source?.elementType == KtNodeTypes.FOR && symbol.callableId.isIteratorHasNext() ->
+                IrStatementOrigin.FOR_LOOP_HAS_NEXT
+
+            source?.elementType == KtNodeTypes.FOR && symbol.callableId.isIterator() ->
+                IrStatementOrigin.FOR_LOOP_ITERATOR
+
+            source?.elementType == KtNodeTypes.OPERATION_REFERENCE ->
+                nameToOperationConventionOrigin[symbol.callableId.callableName]
+
+            source?.kind is KtFakeSourceElementKind.DesugaredComponentFunctionCall ->
+                IrStatementOrigin.COMPONENT_N.withIndex(name.asString().removePrefix(DATA_CLASS_COMPONENT_PREFIX).toInt())
+
+            else ->
+                null
         }
+
         else -> null
     }
+
+    else -> null
 }
 
 context(Fir2IrComponents)
@@ -631,7 +648,7 @@ fun Fir2IrComponents.computeValueClassRepresentation(klass: FirRegularClass): Va
     require((klass.valueClassRepresentation != null) == klass.isInline)
     return klass.valueClassRepresentation?.mapUnderlyingType {
         with(typeConverter) {
-            it.toIrType() as? IrSimpleType?: error("Value class underlying type is not a simple type: ${klass.render()}")
+            it.toIrType() as? IrSimpleType ?: error("Value class underlying type is not a simple type: ${klass.render()}")
         }
     }
 }
