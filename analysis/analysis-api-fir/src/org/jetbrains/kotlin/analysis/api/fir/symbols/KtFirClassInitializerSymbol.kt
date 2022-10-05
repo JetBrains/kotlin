@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassInitializerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
@@ -25,6 +26,7 @@ internal class KtFirClassInitializerSymbol(
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
     override fun createPointer(): KtSymbolPointer<KtSymbol> = withValidityAssertion {
+        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         TODO("Figure out how to create such a pointer. Should we give an index to class initializers?")
     }
 
