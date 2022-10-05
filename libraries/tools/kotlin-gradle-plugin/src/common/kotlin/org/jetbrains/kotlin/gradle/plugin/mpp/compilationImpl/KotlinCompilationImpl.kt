@@ -61,7 +61,7 @@ internal class KotlinCompilationImpl @Inject constructor(
 
     val sourceSets get() = params.sourceSets
 
-    val dependencyConfigurations: KotlinCompilationDependencyConfigurationsContainer
+    override val configurations: KotlinCompilationDependencyConfigurationsContainer
         get() = params.dependencyConfigurations
 
     override val compilationName: String
@@ -106,26 +106,26 @@ internal class KotlinCompilationImpl @Inject constructor(
     //region Dependency Configuration Management
 
     override val apiConfigurationName: String
-        get() = dependencyConfigurations.apiConfiguration.name
+        get() = configurations.apiConfiguration.name
 
     override val implementationConfigurationName: String
-        get() = dependencyConfigurations.implementationConfiguration.name
+        get() = configurations.implementationConfiguration.name
 
     override val compileOnlyConfigurationName: String
-        get() = dependencyConfigurations.compileOnlyConfiguration.name
+        get() = configurations.compileOnlyConfiguration.name
 
     override val runtimeOnlyConfigurationName: String
-        get() = dependencyConfigurations.runtimeOnlyConfiguration.name
+        get() = configurations.runtimeOnlyConfiguration.name
 
     override val compileDependencyConfigurationName: String
-        get() = dependencyConfigurations.compileDependencyConfiguration.name
+        get() = configurations.compileDependencyConfiguration.name
 
     override val runtimeDependencyConfigurationName: String?
-        get() = dependencyConfigurations.runtimeDependencyConfiguration?.name
+        get() = configurations.runtimeDependencyConfiguration?.name
 
-    override var compileDependencyFiles: FileCollection = dependencyConfigurations.compileDependencyConfiguration
+    override var compileDependencyFiles: FileCollection = configurations.compileDependencyConfiguration
 
-    override var runtimeDependencyFiles: FileCollection? = dependencyConfigurations.runtimeDependencyConfiguration
+    override var runtimeDependencyFiles: FileCollection? = configurations.runtimeDependencyConfiguration
 
     override val relatedConfigurationNames: List<String> = listOfNotNull(
         apiConfigurationName,
@@ -137,11 +137,11 @@ internal class KotlinCompilationImpl @Inject constructor(
     )
 
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit) {
-        HasKotlinDependencies(project, dependencyConfigurations).dependencies(configure)
+        HasKotlinDependencies(project, configurations).dependencies(configure)
     }
 
     override fun dependencies(configure: Action<KotlinDependencyHandler>) {
-        HasKotlinDependencies(project, dependencyConfigurations).dependencies(configure)
+        HasKotlinDependencies(project, configurations).dependencies(configure)
     }
 
     //endregion
