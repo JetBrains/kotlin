@@ -223,6 +223,7 @@ open class FirJvmMangleComputer(
                         mangleType(tBuilder, type.fullyExpandedType(session))
                         return
                     }
+
                     is FirClassSymbol -> symbol.fir.accept(copy(MangleMode.FQNAME), false)
                     is FirTypeParameterSymbol -> tBuilder.mangleTypeParameterReference(symbol.fir)
                     // This is performed for a case with invisible class-like symbol in fake override
@@ -255,9 +256,11 @@ open class FirJvmMangleComputer(
                     tBuilder.appendSignature(MangleConstant.ENHANCED_NULLABILITY_MARK)
                 }
             }
+
             is ConeRawType -> {
                 mangleType(tBuilder, type.lowerBound)
             }
+
             is ConeFlexibleType -> {
                 with(session.typeContext) {
                     // Need to reproduce type approximation done for flexible types in TypeTranslator.
@@ -273,17 +276,21 @@ open class FirJvmMangleComputer(
                     } else mangleType(tBuilder, upper)
                 }
             }
+
             is ConeDefinitelyNotNullType -> {
                 // E.g. not-null type parameter in Java
                 mangleType(tBuilder, type.original)
             }
+
             is ConeCapturedType -> {
                 mangleType(tBuilder, type.lowerType ?: type.constructor.supertypes!!.first())
             }
+
             is ConeIntersectionType -> {
                 // TODO: add intersectionTypeApproximation
                 mangleType(tBuilder, type.intersectedTypes.first())
             }
+
             else -> error("Unexpected type $type")
         }
     }
