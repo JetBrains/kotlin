@@ -85,11 +85,13 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                         }
                     }
                 }
+
                 is FirRegularClass -> {
                     if (innerDeclaration.isInner) {
                         reporter.reportOn(innerDeclaration.source, FirErrors.INNER_CLASS_INSIDE_VALUE_CLASS, context)
                     }
                 }
+
                 is FirSimpleFunction -> {
                     val functionName = innerDeclaration.name.asString()
 
@@ -102,6 +104,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                         )
                     }
                 }
+
                 is FirField -> {
                     if (innerDeclaration.isSynthetic) {
                         val symbol = innerDeclaration.initializer?.toResolvedCallableSymbol()
@@ -118,6 +121,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                         )
                     }
                 }
+
                 is FirProperty -> {
                     if (innerDeclaration.isRelatedToParameter(primaryConstructorParametersByName[innerDeclaration.name])) {
                         primaryConstructorPropertiesByName[innerDeclaration.name] = innerDeclaration
@@ -140,6 +144,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                         }
                     }
                 }
+
                 else -> {}
             }
         }
