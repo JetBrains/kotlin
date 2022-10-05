@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationContext) {
@@ -203,6 +205,36 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         }
 
         classModel.preDeclarationBlock.statements += generateSetMetadataCall()
+
+        for (annotation in irClass.annotations) {
+            val parentAsClass = annotation.symbol.owner.parentAsClass
+            if (!parentAsClass.hasAnnotation(FqName.topLevel(Name.identifier("JsDecorator")))) continue
+
+            val annClassNameRef = context.getNameForClass(parentAsClass).makeRef()
+
+            val assignment = JsAstUtils.assignment(
+                classNameRef,
+                /*TODO use ?? opertor instead*/
+                JsAstUtils.or(
+                    JsInvocation(
+                        annClassNameRef,
+                        classNameRef,
+                        JsObjectLiteral(
+                            listOf(
+                                JsPropertyInitializer(JsStringLiteral("kind"), JsStringLiteral("class")),
+                                JsPropertyInitializer(JsStringLiteral("name"), JsStringLiteral(classNameRef.ident)),
+                            )
+                        )
+                    ),
+                    classNameRef
+                )
+            )
+
+            classModel.preDeclarationBlock.statements += assignment.makeStmt()
+        }
+
+
+//        classModel.preDeclarationBlock.statements +=
 
         context.staticContext.classModels[irClass.symbol] = classModel
 
