@@ -214,7 +214,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
             val assignment = JsAstUtils.assignment(
                 classNameRef,
-                /*TODO use ?? opertor instead*/
+                /*TODO(lit) use ?? opertor instead*/
                 JsAstUtils.or(
                     JsInvocation(
                         annClassNameRef,

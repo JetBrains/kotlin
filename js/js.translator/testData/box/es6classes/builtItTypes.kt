@@ -1,26 +1,30 @@
 // ES6_MODE
 // EXPECTED_REACHABLE_NODES: 1331
 
+// FILE: main.kt
 
+// to stdlib
+annotation class JsDecorator
+annotation class JsTemplateStringTag
+
+// ~Lit
 open class LitElement
 
-annotation class JsDecorator
-
+// user code
 @JsDecorator
 @JsName("customElement")
-external annotation class external (val tagName: String)
+external annotation class CustomElement(val tagName: String)
 
 @JsDecorator
 @JsName("property")
 external annotation class Property(/*val options: PropertyDeclaration? = null*/)
 annotation class JsStatic
-annotation class JsStringLiterl
 
-@JsStringLiterl
+@JsTemplateStringTag
 fun html(s: String) {}
 // Array<String>, vararg others: Any?
 
-@JsStringLiterl
+@JsTemplateStringTag
 fun css(s: String): String = s
 
 @CustomElement("simple-greeting")
@@ -30,7 +34,7 @@ class SimpleGreeting : LitElement() {
 
     fun render() {
         return html("<p>Hello, $name! $name</p>")
-        html(["<p>Hello, ","!</p>"], name, name)
+//        html(["<p>Hello, ","!</p>"], name, name)
     }
 
     companion object {
