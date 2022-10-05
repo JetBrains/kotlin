@@ -208,13 +208,13 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         if (es6mode) {
             for (annotation in irClass.annotations) {
                 val parentAsClass = annotation.symbol.owner.parentAsClass
-                if (!parentAsClass.hasAnnotation(FqName("kotlin.js.JsDecorator"))) continue
+                if (!parentAsClass.hasAnnotation(JsAnnotations.JsDecorator)) continue
 
                 val annClassNameRef = context.getNameForClass(parentAsClass).makeRef()
 
                 val assignment = JsAstUtils.assignment(
                     classNameRef,
-                    /*TODO(lit) use ?? opertor instead*/
+                    /*TODO(lit) use ?? operator instead*/
                     JsAstUtils.or(
                         JsInvocation(
                             JsInvocation(annClassNameRef, translateCallArguments(annotation, context, IrElementToJsExpressionTransformer())),
@@ -231,6 +231,36 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 )
 
                 classModel.preDeclarationBlock.statements += assignment.makeStmt()
+            }
+
+            for (declaration in irClass.declarations) {
+                if (declaration !is IrField) continue
+
+                val property = declaration.correspondingPropertySymbol?.owner ?: continue
+                for (annotation in property.annotations) {
+                    val parentAsClass = annotation.symbol.owner.parentAsClass
+                    if (!parentAsClass.hasAnnotation(JsAnnotations.JsDecorator)) continue
+
+                    val annClassNameRef = context.getNameForClass(parentAsClass).makeRef()
+
+                    val fieldNameRef = context.getNameForMemberField(declaration).makeRef()
+
+                    val newVar = JsAstUtils.newVar(
+                        JsName("__$$" + classNameRef.ident + "_" + fieldNameRef.ident + "_initializer__k$", true),
+                        /*TODO(lit) use ?? operator instead*/
+//                        JsAstUtils.or(
+                            JsInvocation(
+                                JsInvocation(annClassNameRef, translateCallArguments(annotation, context, IrElementToJsExpressionTransformer())),
+                                classPrototypeRef,
+                                JsStringLiteral(fieldNameRef.ident)
+                            )
+//                            ,
+//                            JsThrow(JsStringLiteral("Ooops!")) // TODO(lit) fix it
+//                        )
+                    )
+
+                    classModel.preDeclarationBlock.statements += newVar
+                }
             }
         }
 

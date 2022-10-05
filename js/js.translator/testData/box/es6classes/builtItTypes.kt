@@ -57,4 +57,8 @@ function customElement() {
 
 function property() {
     console.log("property: ", arguments);
+    return (a) => {
+        console.log("property lambda: ", arguments);
+        return a
+    }
 }
