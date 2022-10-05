@@ -12,30 +12,29 @@ fun main() {
 
 fun greet() = "world"
 
-fun html(s: String): Any {
-    val t = arrayOf(s)
-    t.asDynamic().raw = t
-    return html(t)
-}
-
-fun html(s: String, raw: String): Any {
-    val t = arrayOf(s)
-    t.asDynamic().raw = raw
-    return html(t)
-}
 @CustomElement("simple-greeting")
 class SimpleGreeting : LitElement() {
     @Property()
     var name = "Somebody"
 
+    @Property()
+    var count = 0
+
     override fun render(): Any {
-        println("1")
-//        return html("It works!")
+        println("!render")
         window.setTimeout({
             name = "Lit"
         }, 3000)
-        return html("<p>Hello, $name! $name</p>", "<p>Hello, \$name! \$name</p>")
-//        html(["<p>Hello, ","!</p>"], name, name)
+
+        return html("""
+            <p>Hello, $name! <div> AAA $name <div></p>
+            <button @click=${::click}>click count: ${count}</button>
+            """) // TODO(lit) can't use `.trimIndent()`
+    }
+
+    fun click() {
+        println("!click")
+        count++;
     }
 
     companion object {

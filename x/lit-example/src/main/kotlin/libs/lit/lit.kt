@@ -7,13 +7,14 @@
 @file:JsNonModule
 package lit
 
-//@JsTemplateStringTag
-//external fun html(s: String): Any
-// TODO(lit) replace with proper version
-external fun html(s: Array<String>): Any
+import org.intellij.lang.annotations.Language
 
 @JsTemplateStringTag
-external fun css(s: String): String
+
+external fun html(@Language("HTML") s: String): Any
+
+@JsTemplateStringTag
+external fun css(@Language("CSS") s: String): String
 
 open external class LitElement {
     open fun render(): Any // `TemplateResult`?

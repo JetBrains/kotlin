@@ -4,17 +4,14 @@
 
 package org.jetbrains.kotlin.js.backend;
 
-import com.intellij.openapi.util.text.StringUtil;
+import gnu.trove.THashSet;
 import kotlin.text.StringsKt;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
-import org.jetbrains.kotlin.js.backend.ast.JsDoubleLiteral;
-import org.jetbrains.kotlin.js.backend.ast.JsIntLiteral;
 import org.jetbrains.kotlin.js.backend.ast.JsVars.JsVar;
 import org.jetbrains.kotlin.js.common.IdentifierPolicyKt;
 import org.jetbrains.kotlin.js.util.TextOutput;
-import gnu.trove.THashSet;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -58,7 +55,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     private final List<Object> sourceInfoStack = new ArrayList<>();
 
     public static CharSequence javaScriptString(String value) {
-        return javaScriptString(value, false);
+        return javaScriptString(value, null);
     }
 
     /**
@@ -68,25 +65,34 @@ public class JsToStringGenerationVisitor extends JsVisitor {
      * which one is used less inside the string.
      */
     @SuppressWarnings({"ConstantConditions", "UnnecessaryFullyQualifiedName", "JavadocReference"})
-    public static CharSequence javaScriptString(CharSequence chars, boolean forceDoubleQuote) {
+    private static CharSequence javaScriptString(CharSequence chars, @Nullable Character quoteChar_) {
         int n = chars.length();
-        int quoteCount = 0;
-        int aposCount = 0;
 
-        for (int i = 0; i < n; i++) {
-            switch (chars.charAt(i)) {
-                case '"':
-                    ++quoteCount;
-                    break;
-                case '\'':
-                    ++aposCount;
-                    break;
+        char quoteChar;
+
+        if (quoteChar_ == null) {
+
+            int quoteCount = 0;
+            int aposCount = 0;
+
+            for (int i = 0; i < n; i++) {
+                switch (chars.charAt(i)) {
+                    case '"':
+                        ++quoteCount;
+                        break;
+                    case '\'':
+                        ++aposCount;
+                        break;
+                }
             }
+
+            quoteChar = (quoteCount < aposCount) ? '"' : '\'';
+        } else {
+            quoteChar = quoteChar_;
         }
 
         StringBuilder result = new StringBuilder(n + 16);
 
-        char quoteChar = (quoteCount < aposCount || forceDoubleQuote) ? '"' : '\'';
         result.append(quoteChar);
 
         for (int i = 0; i < n; i++) {
@@ -814,6 +820,23 @@ public class JsToStringGenerationVisitor extends JsVisitor {
               : statement;
     }
 
+    private void printAsJsStringTemplate(JsExpression expression) {
+        if (expression instanceof JsStringLiteral) {
+            CharSequence str = javaScriptString(((JsStringLiteral) expression).getValue(), '`');
+            p.print(str.subSequence(1, str.length() - 1));
+        } else if (expression instanceof JsBinaryOperation) {
+            JsBinaryOperation binaryOperation = (JsBinaryOperation) expression;
+            assert binaryOperation.getOperator() == JsBinaryOperator.ADD;
+
+            printAsJsStringTemplate(binaryOperation.getArg1());
+            printAsJsStringTemplate(binaryOperation.getArg2());
+        } else {
+            p.print("${");
+            accept(expression);
+            p.print("}");
+        }
+    }
+
     @Override
     public void visitInvocation(@NotNull JsInvocation invocation) {
         pushSourceInfo(invocation.getSource());
@@ -821,9 +844,18 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         printPair(invocation, invocation.getQualifier());
 
-        leftParen();
-        printExpressions(invocation.getArguments());
-        rightParen();
+        if (invocation.isStringTagCall()) {
+            assert invocation.getArguments().size() == 1;
+            JsExpression expression = invocation.getArguments().get(0);
+
+            p.print('`');
+            printAsJsStringTemplate(expression);
+            p.print('`');
+        } else {
+            leftParen();
+            printExpressions(invocation.getArguments());
+            rightParen();
+        }
 
         printCommentsAfterNode(invocation);
         popSourceInfo();
