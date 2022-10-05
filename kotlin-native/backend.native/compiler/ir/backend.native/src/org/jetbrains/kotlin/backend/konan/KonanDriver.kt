@@ -6,24 +6,17 @@
 package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
-import kotlinx.cinterop.usingJvmCInteropCallbacks
-import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
-import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.backend.konan.driver.CompilerDriver
+import org.jetbrains.kotlin.backend.konan.driver.DynamicCompilerDriver
+import org.jetbrains.kotlin.backend.konan.driver.StaticCompilerDriver
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, val configuration: CompilerConfiguration) {
     fun run() {
@@ -43,12 +36,9 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
             configuration.put(KonanConfigKeys.FILES_TO_CACHE, fileNames)
         }
 
-        KonanConfig(project, configuration).runTopLevelPhases()
-    }
-
-    private fun KonanConfig.runTopLevelPhases() {
-        ensureModuleName(this)
-        runTopLevelPhases(this, environment)
+        val konanConfig = KonanConfig(project, configuration)
+        ensureModuleName(konanConfig)
+        pickCompilerDriver().run(konanConfig, environment)
     }
 
     private fun ensureModuleName(config: KonanConfig) {
@@ -62,62 +52,13 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
             }
         }
     }
-}
 
-private fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironment) {
-
-    val config = konanConfig.configuration
-
-    val targets = konanConfig.targetManager
-    if (config.get(KonanConfigKeys.LIST_TARGETS) ?: false) {
-        targets.list()
-    }
-
-    val context = Context(konanConfig)
-    context.environment = environment
-    context.phaseConfig.konanPhasesConfig(konanConfig) // TODO: Wrong place to call it
-
-    if (konanConfig.infoArgsOnly) return
-
-    if (!context.frontendPhase()) return
-
-    usingNativeMemoryAllocator {
-        usingJvmCInteropCallbacks {
-            try {
-                toplevelPhase.cast<CompilerPhase<Context, Unit, Unit>>().invokeToplevel(context.phaseConfig, context, Unit)
-            } finally {
-                context.disposeGenerationState()
-            }
+    private fun pickCompilerDriver(): CompilerDriver {
+        // Dynamic driver is WIP, so it might not support all possible configurations.
+        return if (DynamicCompilerDriver.supportsConfig()) {
+            DynamicCompilerDriver()
+        } else {
+            StaticCompilerDriver()
         }
     }
-}
-
-// returns true if should generate code.
-internal fun Context.frontendPhase(): Boolean {
-    lateinit var analysisResult: AnalysisResult
-
-    do {
-        val analyzerWithCompilerReport = AnalyzerWithCompilerReport(
-                messageCollector,
-                environment.configuration.languageVersionSettings,
-                environment.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-        )
-
-        // Build AST and binding info.
-        analyzerWithCompilerReport.analyzeAndReport(environment.getSourceFiles()) {
-            TopDownAnalyzerFacadeForKonan.analyzeFiles(environment.getSourceFiles(), this)
-        }
-        if (analyzerWithCompilerReport.hasErrors()) {
-            throw KonanCompilationException()
-        }
-        analysisResult = analyzerWithCompilerReport.analysisResult
-        if (analysisResult is AnalysisResult.RetryWithAdditionalRoots) {
-            environment.addKotlinSourceRoots(analysisResult.additionalKotlinRoots)
-        }
-    } while(analysisResult is AnalysisResult.RetryWithAdditionalRoots)
-
-    moduleDescriptor = analysisResult.moduleDescriptor
-    bindingContext = analysisResult.bindingContext
-
-    return analysisResult.shouldGenerateCode
 }
