@@ -38,7 +38,7 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
 
         val konanConfig = KonanConfig(project, configuration)
         ensureModuleName(konanConfig)
-        pickCompilerDriver().run(konanConfig, environment)
+        pickCompilerDriver(konanConfig).run(konanConfig, environment)
     }
 
     private fun ensureModuleName(config: KonanConfig) {
@@ -53,7 +53,14 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
         }
     }
 
-    private fun pickCompilerDriver(): CompilerDriver {
+    private fun pickCompilerDriver(config: KonanConfig): CompilerDriver {
+        config.configuration[KonanConfigKeys.FORCE_COMPILER_DRIVER]?.let {
+            return when (it) {
+                "dynamic" -> DynamicCompilerDriver()
+                "static" -> StaticCompilerDriver()
+                else -> error("Unknown compiler driver. Possible values: dynamic, static")
+            }
+        }
         // Dynamic driver is WIP, so it might not support all possible configurations.
         return if (DynamicCompilerDriver.supportsConfig()) {
             DynamicCompilerDriver()
