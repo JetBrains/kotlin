@@ -107,6 +107,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 ),
                 granularity = granularity,
                 icCompatibleIr2Js = arguments.irNewIr2Js,
+                es6mode = arguments.useEsNext,
             )
         }
 
