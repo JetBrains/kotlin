@@ -16,8 +16,8 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 abstract class AbstractMetricsTransformTest : ComposeIrTransformTest() {
     override val metricsDestination: String?
@@ -27,7 +27,7 @@ abstract class AbstractMetricsTransformTest : ComposeIrTransformTest() {
         module: IrModuleFragment,
         context: IrPluginContext
     ) {
-        extension!!.metrics = ModuleMetricsImpl(module.name.asString(), context)
+        extension!!.metrics = ModuleMetricsImpl(module.name.asString())
         super.postProcessingStep(module, context)
     }
 

@@ -17,17 +17,20 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.lower.dumpSrc
+import java.io.File
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
+import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -52,6 +55,7 @@ import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.psi.KtFile
@@ -62,10 +66,6 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.io.File
-import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
-import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
-import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 
 @Suppress("LeakingThis")
 abstract class ComposeIrTransformTest : AbstractIrTransformTest() {
@@ -78,9 +78,6 @@ abstract class ComposeIrTransformTest : AbstractIrTransformTest() {
     open val metricsDestination: String? get() = null
 
     protected var extension: ComposeIrGenerationExtension? = null
-    // Some tests require the plugin context in order to perform assertions, for example, a
-    // context is required to determine the stability of a type using the StabilityInferencer.
-    var pluginContext: IrPluginContext? = null
 
     override fun setUp() {
         super.setUp()
@@ -100,7 +97,6 @@ abstract class ComposeIrTransformTest : AbstractIrTransformTest() {
         module: IrModuleFragment,
         context: IrPluginContext
     ) {
-        pluginContext = context
         extension!!.generate(
             module,
             context
@@ -108,7 +104,6 @@ abstract class ComposeIrTransformTest : AbstractIrTransformTest() {
     }
 
     override fun tearDown() {
-        pluginContext = null
         extension = null
         super.tearDown()
     }
@@ -520,6 +515,11 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
                 expectDescriptorToSymbol = null
             )
             irLinker.postProcess()
+
+            // See JvmIrCodegenFactory. This is necessary to avoid unbound symbols when inspecting
+            // lazy declarations in `irModuleFragment`.
+            stubGenerator.unboundSymbolGeneration = true
+
             return irModuleFragment
         }
     }
