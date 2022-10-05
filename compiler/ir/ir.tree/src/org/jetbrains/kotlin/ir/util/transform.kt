@@ -36,6 +36,10 @@ fun <T : IrElement, D> MutableList<T>.transformInPlace(transformer: IrElementTra
     }
 }
 
+interface Notifier {
+    fun notifyAboutChanges(): Unit
+}
+
 /**
  * Transforms a mutable list in place.
  * Each element `it` is replaced with a result of `transformation(it)`,
@@ -47,6 +51,22 @@ inline fun <T> MutableList<T>.transformFlat(transformation: (T) -> List<T>?) {
         val item = get(i)
 
         i = replaceInPlace(transformation(item), i)
+    }
+}
+
+
+/**
+ * The same method as `transformFlat` but also, notify about changes
+ */
+inline fun <T> MutableList<T>.transformFlatWithNotification(
+    notifier: Notifier? = null,
+    transformation: (T) -> List<T>?
+) {
+    var i = 0
+    while (i < size) {
+        val item = get(i)
+
+        i = replaceInPlace(transformation(item), i, notifier)
     }
 }
 
@@ -69,7 +89,11 @@ inline fun <T, reified S : T> MutableList<T>.transformSubsetFlat(transformation:
     }
 }
 
-@PublishedApi internal fun <T> MutableList<T>.replaceInPlace(transformed: List<T>?, atIndex: Int): Int {
+@PublishedApi internal fun <T> MutableList<T>.replaceInPlace(
+    transformed: List<T>?,
+    atIndex: Int,
+    notifier: Notifier? = null
+): Int {
     var i = atIndex
     when (transformed?.size) {
         null -> i++
@@ -81,7 +105,11 @@ inline fun <T, reified S : T> MutableList<T>.transformSubsetFlat(transformation:
             removeAt(i)
         }
     }
-    return i
+    return i.also {
+        if (notifier != null && transformed != null) {
+           notifier.notifyAboutChanges()
+        }
+    }
 }
 
 /**

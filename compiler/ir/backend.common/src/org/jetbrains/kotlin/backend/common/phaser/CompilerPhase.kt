@@ -36,6 +36,10 @@ interface CompilerPhase<in Context : CommonBackendContext, Input, Output> {
     val stickyPostconditions: Set<Checker<Output>> get() = emptySet()
 }
 
+interface RepeatableCompilerPhase<in Context : CommonBackendContext, Input, Output> : CompilerPhase<Context, Input, Output> {
+    val changesAppeared: Boolean
+}
+
 fun <Context : CommonBackendContext, Input, Output> CompilerPhase<Context, Input, Output>.invokeToplevel(
     phaseConfig: PhaseConfig,
     context: Context,
@@ -66,7 +70,7 @@ infix operator fun <Data, Context> Action<Data, Context>.plus(other: Action<Data
         other(phaseState, data, context)
     }
 
-class NamedCompilerPhase<in Context : CommonBackendContext, Data>(
+open class NamedCompilerPhase<in Context : CommonBackendContext, Data>(
     val name: String,
     val description: String,
     val prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
@@ -142,4 +146,25 @@ class NamedCompilerPhase<in Context : CommonBackendContext, Data>(
         listOf(startDepth to this) + lower.getNamedSubphases(startDepth + nlevels)
 
     override fun toString() = "Compiler Phase @$name"
+}
+
+open class RepeatableNamedCompilerPhase<in Context : CommonBackendContext, Data>(
+    name: String,
+    description: String,
+    prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
+    private val lower: RepeatableCompilerPhase<Context, Data, Data>,
+    preconditions: Set<Checker<Data>> = emptySet(),
+    postconditions: Set<Checker<Data>> = emptySet(),
+) : RepeatableCompilerPhase<Context, Data, Data>, NamedCompilerPhase<Context, Data>(name, description, prerequisite, lower, preconditions, postconditions) {
+    final override var changesAppeared: Boolean = false
+
+    override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Data>, context: Context, input: Data): Data {
+        return super.invoke(phaseConfig, phaserState, context, input).also {
+            if (lower.changesAppeared) {
+                changesAppeared = true
+            }
+        }
+    }
+
+    fun reset() { changesAppeared = false }
 }

@@ -29,7 +29,7 @@ private fun DeclarationContainerLoweringPass.runOnFilesPostfix(files: Iterable<I
 
 private fun ClassLoweringPass.runOnFilesPostfix(moduleFragment: IrModuleFragment) = moduleFragment.files.forEach { runOnFilePostfix(it) }
 
-private fun makeJsModulePhase(
+fun makeJsModulePhase(
     lowering: (JsIrBackendContext) -> FileLoweringPass,
     name: String,
     description: String,
@@ -41,7 +41,7 @@ private fun makeJsModulePhase(
     prerequisite = prerequisite
 )
 
-private fun makeCustomJsModulePhase(
+fun makeCustomJsModulePhase(
     op: (JsIrBackendContext, IrModuleFragment) -> Unit,
     description: String,
     name: String,
@@ -108,7 +108,7 @@ private fun makeDeclarationTransformerPhase(
     prerequisite: Set<Lowering> = emptySet()
 ) = DeclarationLowering(name, description, prerequisite.map { it.modulePhase }.toSet(), lowering)
 
-private fun makeBodyLoweringPhase(
+fun makeBodyLoweringPhase(
     lowering: (JsIrBackendContext) -> BodyLoweringPass,
     name: String,
     description: String,
@@ -431,19 +431,6 @@ private val booleanPropertyInExternalLowering = makeBodyLoweringPhase(
     name = "BooleanPropertyInExternalLowering",
     description = "Lowering which wrap boolean in external declarations with Boolean() call and add diagnostic for such cases"
 )
-
-private val foldConstantLoweringPhase = makeBodyLoweringPhase(
-    { FoldConstantLowering(it, true) },
-    name = "FoldConstantLowering",
-    description = "[Optimization] Constant Folding",
-    prerequisite = setOf(propertyAccessorInlinerLoweringPhase)
-)
-
-private val computeStringTrimPhase = makeJsModulePhase(
-    ::StringTrimLowering,
-    name = "StringTrimLowering",
-    description = "Compute trimIndent and trimMargin operations on constant strings"
-).toModuleLowering()
 
 private val localDelegatedPropertiesLoweringPhase = makeBodyLoweringPhase(
     { LocalDelegatedPropertiesLowering() },
@@ -885,8 +872,6 @@ val loweringList = listOf<Lowering>(
     propertyAccessorInlinerLoweringPhase,
     copyPropertyAccessorBodiesLoweringPass,
     booleanPropertyInExternalLowering,
-    foldConstantLoweringPhase,
-    computeStringTrimPhase,
     privateMembersLoweringPhase,
     privateMemberUsagesLoweringPhase,
     defaultArgumentStubGeneratorPhase,

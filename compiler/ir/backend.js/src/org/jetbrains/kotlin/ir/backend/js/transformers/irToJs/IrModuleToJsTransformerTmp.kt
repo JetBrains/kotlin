@@ -144,6 +144,7 @@ class IrModuleToJsTransformerTmp(
 
         if (modes.any { it.dce }) {
             eliminateDeadDeclarations(modules, backendContext, removeUnusedAssociatedObjects)
+            runOptimizationsLoop(modules, backendContext)
         }
 
         modes.filter { it.dce }.forEach {
