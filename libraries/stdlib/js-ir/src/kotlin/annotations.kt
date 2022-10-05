@@ -6,4 +6,7 @@
 package kotlin.js
 
 annotation class JsDecorator
+
 annotation class JsTemplateStringTag
+
+annotation class JsStatic

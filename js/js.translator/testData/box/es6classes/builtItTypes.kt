@@ -14,7 +14,6 @@ external annotation class CustomElement(val tagName: String)
 @JsDecorator
 @JsName("property")
 external annotation class Property(/*val options: PropertyDeclaration? = null*/)
-annotation class JsStatic
 
 @JsTemplateStringTag
 fun html(s: String) {}
