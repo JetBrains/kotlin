@@ -42,6 +42,8 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<KtAnnotationEntry> JVM_SYNTHETIC_ON_DELEGATE = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory1<KtExpression, DeclarationDescriptor> SYNTHETIC_SETTER_PROJECTED_OUT = DiagnosticFactory1.create(WARNING);
+
     DiagnosticFactory0<KtAnnotationEntry> STRICTFP_ON_CLASS = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<KtAnnotationEntry> VOLATILE_ON_VALUE = DiagnosticFactory0.create(ERROR);

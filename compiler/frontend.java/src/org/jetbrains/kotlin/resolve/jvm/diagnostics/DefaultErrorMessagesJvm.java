@@ -143,6 +143,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(INAPPLICABLE_JVM_FIELD_WARNING, "{0}. This warning will become an error in further releases", STRING);
 
         MAP.put(JVM_SYNTHETIC_ON_DELEGATE, "'@JvmSynthetic' annotation cannot be used on delegated properties");
+        MAP.put(SYNTHETIC_SETTER_PROJECTED_OUT, "Use of setter for ''{0}'' is unsafe due to the type projection in receiver." +
+                                                " Workaround: use explicit cast on receiver. See https://youtrack.jetbrains.com/issue/KT-54309", NAME);
 
         MAP.put(STRICTFP_ON_CLASS, "'@Strictfp' annotation on classes is unsupported yet");
 

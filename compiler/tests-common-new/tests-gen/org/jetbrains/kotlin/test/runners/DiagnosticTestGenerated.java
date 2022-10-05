@@ -808,6 +808,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("syntheticSetFalsePositive.kt")
+        public void testSyntheticSetFalsePositive() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/syntheticSetFalsePositive.kt");
+        }
+
+        @Test
         @TestMetadata("tailRecBasic.kt")
         public void testTailRecBasic() throws Exception {
             runTest("compiler/testData/diagnostics/tests/tailRecBasic.kt");
