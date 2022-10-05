@@ -4,13 +4,17 @@
  */
 
 @file:JsModule("lit")
+@file:JsNonModule
 package lit
 
-@JsTemplateStringTag
-external fun html(s: String)
-// Array<String>, vararg others: Any?
+//@JsTemplateStringTag
+//external fun html(s: String): Any
+// TODO(lit) replace with proper version
+external fun html(s: Array<String>): Any
 
 @JsTemplateStringTag
 external fun css(s: String): String
 
-open external class LitElement
+open external class LitElement {
+    open fun render(): Any // `TemplateResult`?
+}

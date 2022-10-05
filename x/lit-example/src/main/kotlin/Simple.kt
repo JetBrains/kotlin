@@ -11,13 +11,21 @@ fun main() {
 
 fun greet() = "world"
 
+fun html(s: String): Any {
+    val t = arrayOf(s)
+    t.asDynamic().raw = t
+    return html(t)
+}
+
 @CustomElement("simple-greeting")
 class SimpleGreeting : LitElement() {
     @Property()
     val name = "Somebody"
 
-    fun render() {
-        return html("<p>Hello, $name! $name</p>")
+    override fun render(): Any {
+        println("1")
+        return html("It works!")
+//        return html("<p>Hello, $name! $name</p>")
 //        html(["<p>Hello, ","!</p>"], name, name)
     }
 

@@ -4,6 +4,7 @@
  */
 
 @file:JsModule("lit/decorators.js")
+@file:JsNonModule
 package lit
 
 @JsDecorator
