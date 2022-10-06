@@ -1,5 +1,6 @@
 plugins {
-    kotlin("js") version "1.8.255-SNAPSHOT"
+//    kotlin("js") version "1.8.255-SNAPSHOT"
+    kotlin("js") version "1.8.20-dev-728"
 }
 
 group = "me.user"
@@ -8,6 +9,7 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenLocal()
     mavenCentral()
+    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
 }
 
 dependencies {
