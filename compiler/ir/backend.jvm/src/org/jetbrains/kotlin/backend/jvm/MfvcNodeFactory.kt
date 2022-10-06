@@ -236,8 +236,9 @@ fun createIntermediateMfvcNode(
         rootNode.makeBoxedExpression(this, typeArguments, valueArguments)
     }
 
+    val hasPureUnboxMethod = defaultMethodsImplementationSourceNode.isPure() && subnodes.all { it.hasPureUnboxMethod }
     return IntermediateMfvcNode(
-        type, rootPropertyName, nameParts, subnodes, unboxMethod, defaultMethodsImplementationSourceNode.isPure(), rootNode
+        type, rootPropertyName, nameParts, subnodes, unboxMethod, hasPureUnboxMethod, rootNode
     )
 }
 

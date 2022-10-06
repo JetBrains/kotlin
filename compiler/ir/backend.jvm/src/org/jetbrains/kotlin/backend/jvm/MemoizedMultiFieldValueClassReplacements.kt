@@ -224,9 +224,10 @@ class MemoizedMultiFieldValueClassReplacements(
                         function.isStaticValueClassReplacement ||
                         function.origin == IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER && function.isAccessor ||
                         function.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
-                        function.origin.isSynthetic && function.origin != IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION ||
-                        function.isMultiFieldValueClassFieldGetter -> null
+                        function.origin.isSynthetic && function.origin != IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION -> null
 
+                // Do not check for overridden symbols because it makes previously overriding function not overriding would break a code.
+                function.isMultiFieldValueClassFieldGetter -> makeMultiFieldValueClassFieldGetterReplacement(function)
                 function.parent.safeAs<IrClass>()?.isMultiFieldValueClass == true -> when {
                     function.isRemoveAtSpecialBuiltinStub() ->
                         null
@@ -249,6 +250,16 @@ class MemoizedMultiFieldValueClassReplacements(
                 else -> null
             }
         }
+
+    private fun makeMultiFieldValueClassFieldGetterReplacement(function: IrFunction): IrSimpleFunction {
+        require(function is IrSimpleFunction && function.isMultiFieldValueClassFieldGetter) { "Illegal function:\n${function.dump()}" }
+        val replacement = getMfvcPropertyNode(function.correspondingPropertySymbol!!.owner)!!.unboxMethod
+        originalFunctionForMethodReplacement[replacement] = function
+        val templateParameters = listOf(RemappedParameter.RegularMapping(replacement.dispatchReceiverParameter!!))
+        bindingNewFunctionToParameterTemplateStructure[replacement] = templateParameters
+        bindingOldFunctionToParameterTemplateStructure[function] = templateParameters
+        return replacement
+    }
 
     override val getReplacementForRegularClassConstructor: (IrConstructor) -> IrConstructor? =
         storageManager.createMemoizedFunctionWithNullableValues { constructor ->
