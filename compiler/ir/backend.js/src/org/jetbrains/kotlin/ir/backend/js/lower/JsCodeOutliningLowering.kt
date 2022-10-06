@@ -164,7 +164,7 @@ private class JsCodeOutlineTransformer(
                 type = local.type
             }
         }
-        outlinedFunction.addEffectsAnnotation(SideEffects.READWRITE, backendContext)
+        outlinedFunction.addEffectsAnnotation(SideEffects.ReadWrite, backendContext)
 
         // Building JS Ast function
         val lastStatement = jsStatements.findLast { it !is JsSingleLineComment && it !is JsMultiLineComment }
