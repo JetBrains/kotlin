@@ -15,6 +15,7 @@ interface KotlinArtifact : Named, ExtensionAware {
     val artifactName: String
     val modules: Set<Any>
     val taskName: String
+    val outDir: String
     fun registerAssembleTask(project: Project)
 }
 

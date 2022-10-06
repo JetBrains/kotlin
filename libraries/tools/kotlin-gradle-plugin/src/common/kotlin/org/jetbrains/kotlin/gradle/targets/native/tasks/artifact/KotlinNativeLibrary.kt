@@ -67,6 +67,7 @@ class KotlinNativeLibraryImpl(
     private val kind = if (isStatic) NativeOutputKind.STATIC else NativeOutputKind.DYNAMIC
     override fun getName() = lowerCamelCaseName(artifactName, kind.taskNameClassifier, "Library", target.presetName)
     override val taskName = lowerCamelCaseName("assemble", name)
+    override val outDir = "out/${kind.visibleName}"
 
     override fun registerAssembleTask(project: Project) {
         val resultTask = project.registerTask<Task>(taskName) { task ->
@@ -84,6 +85,7 @@ class KotlinNativeLibraryImpl(
                 listOf(target, kind.compilerOutputKind)
             ) { task ->
                 task.description = "Assemble ${kind.description} '$artifactName' for a target '${target.name}'."
+                task.destinationDir.set(project.buildDir.resolve("$outDir/${target.visibleName}/${buildType.visibleName}"))
                 task.enabled = target.enabledOnCurrentHost
                 task.baseName.set(artifactName)
                 task.optimized.set(buildType.optimized)

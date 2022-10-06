@@ -78,6 +78,8 @@ class KotlinNativeFatFrameworkImpl(
 ) : KotlinNativeFatFramework, ExtensionAware by extensions {
     override fun getName() = lowerCamelCaseName(artifactName, "FatFramework")
     override val taskName = lowerCamelCaseName("assemble", name)
+    override val outDir
+        get() = "out/fatframework"
 
     override fun registerAssembleTask(project: Project) {
         val parentTask = project.registerTask<Task>(taskName) {
@@ -91,7 +93,7 @@ class KotlinNativeFatFrameworkImpl(
                 lowerCamelCaseName("assemble", artifactName, buildType.visibleName, "FatFramework")
             ) {
                 it.baseName = artifactName
-                it.destinationDir = project.buildDir.resolve("out/fatframework/${buildType.getName()}")
+                it.destinationDir = project.buildDir.resolve("$outDir/${buildType.getName()}")
             }
             parentTask.dependsOn(fatTask)
 

@@ -72,6 +72,7 @@ class KotlinNativeFrameworkImpl(
     private val kind = NativeOutputKind.FRAMEWORK
     override fun getName() = lowerCamelCaseName(artifactName, kind.taskNameClassifier, target.presetName)
     override val taskName = lowerCamelCaseName("assemble", name)
+    override val outDir = "out/${kind.visibleName}"
 
     override fun registerAssembleTask(project: Project) {
         val resultTask = project.registerTask<Task>(taskName) { task ->
@@ -105,11 +106,11 @@ internal fun KotlinNativeArtifact.registerLinkFrameworkTask(
     librariesConfigurationName: String,
     exportConfigurationName: String,
     embedBitcode: BitcodeEmbeddingMode?,
-    outDirName: String = "out",
+    outDirName: String = outDir,
     taskNameSuffix: String = ""
 ): TaskProvider<KotlinNativeLinkArtifactTask> {
     val kind = NativeOutputKind.FRAMEWORK
-    val destinationDir = project.buildDir.resolve("$outDirName/${kind.visibleName}/${target.visibleName}/${buildType.visibleName}")
+    val destinationDir = project.buildDir.resolve("$outDirName/${target.visibleName}/${buildType.visibleName}")
     val resultTask = project.registerTask<KotlinNativeLinkArtifactTask>(
         lowerCamelCaseName("assemble", name, buildType.visibleName, kind.taskNameClassifier, target.presetName, taskNameSuffix),
         listOf(target, kind.compilerOutputKind)

@@ -78,6 +78,8 @@ class KotlinNativeXCFrameworkImpl(
 ) : KotlinNativeXCFramework, ExtensionAware by extensions {
     override fun getName() = lowerCamelCaseName(artifactName, "XCFramework")
     override val taskName = lowerCamelCaseName("assemble", name)
+    override val outDir: String
+        get() = "out/xcframework"
 
     override fun registerAssembleTask(project: Project) {
         val parentTask = project.registerTask<Task>(taskName) {
@@ -120,7 +122,7 @@ class KotlinNativeXCFrameworkImpl(
             }
             holder.task.configure {
                 it.fromFrameworkDescriptors(frameworkDescriptors)
-                it.outputDir = project.buildDir.resolve("out/xcframework")
+                it.outputDir = project.buildDir.resolve(outDir)
             }
         }
     }

@@ -143,6 +143,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptJavacOption 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinArtifact : org/gradle/api/Named, org/gradle/api/plugins/ExtensionAware {
 	public abstract fun getArtifactName ()Ljava/lang/String;
 	public abstract fun getModules ()Ljava/util/Set;
+	public abstract fun getOutDir ()Ljava/lang/String;
 	public abstract fun getTaskName ()Ljava/lang/String;
 	public abstract fun registerAssembleTask (Lorg/gradle/api/Project;)V
 }
