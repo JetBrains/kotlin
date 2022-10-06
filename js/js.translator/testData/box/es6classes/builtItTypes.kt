@@ -33,6 +33,8 @@ external annotation class PropertyDeclaration(
 @Suppress("WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER")
 external annotation class Property3(
     @JsOptionsLiteralParameter val attribute: Boolean = true,
+    @JsName("attribute")
+    @JsOptionsLiteralParameter val attributeName: String = "",
 //    val converter:
     @JsOptionsLiteralParameter val noAccessor: Boolean = true,
     @JsOptionsLiteralParameter val reflect: Boolean = true,
@@ -55,7 +57,7 @@ class SimpleGreeting : LitElement() {
 //        attribute = false
 //    ))
     @Property3(
-        attribute = false
+        attributeName = "aaa"
     )
     val name = "Somebody"
 
