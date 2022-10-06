@@ -1,0 +1,217 @@
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class A {
+    // source: 'equality.kt'
+    private final field field-0: int
+    private final field field-1: int
+    private final field field-2-0: int
+    private final field field-2-1: int
+    private final field field-3: int
+    private final field field-4: int
+    private final @org.jetbrains.annotations.NotNull field field-5: java.lang.String
+    private final field field-6: int
+    private final field field-7: int
+    private final @org.jetbrains.annotations.NotNull field field-8: java.lang.String
+    private synthetic method <init>(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String): void
+    public synthetic final static method box-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String): A
+    public final static method constructor-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, @org.jetbrains.annotations.NotNull p6: java.lang.String, p7: int, p8: int, @org.jetbrains.annotations.NotNull p9: java.lang.String): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String, p10: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, p16: java.lang.String, p17: int, p18: int, p19: java.lang.String): boolean
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String): java.lang.String
+    public synthetic final method unbox-impl-0(): int
+    public synthetic final method unbox-impl-1(): int
+    public synthetic final method unbox-impl-2(): F3
+    public synthetic final method unbox-impl-2-0(): int
+    public synthetic final method unbox-impl-2-1(): int
+    public synthetic final method unbox-impl-3(): int
+    public synthetic final method unbox-impl-4(): int
+    public synthetic final method unbox-impl-5(): java.lang.String
+    public synthetic final method unbox-impl-6(): int
+    public synthetic final method unbox-impl-7(): int
+    public synthetic final method unbox-impl-8(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class B {
+    // source: 'equality.kt'
+    private final field field-0-0: int
+    private final field field-0-1: int
+    private final field field-0-2-0: int
+    private final field field-0-2-1: int
+    private final field field-0-3: int
+    private final field field-0-4: int
+    private final @org.jetbrains.annotations.NotNull field field-0-5: java.lang.String
+    private final field field-0-6: int
+    private final field field-0-7: int
+    private final @org.jetbrains.annotations.NotNull field field-0-8: java.lang.String
+    private final field field-1-0: int
+    private final field field-1-1: int
+    private final field field-1-2-0: int
+    private final field field-1-2-1: int
+    private final field field-1-3: int
+    private final field field-1-4: int
+    private final @org.jetbrains.annotations.NotNull field field-1-5: java.lang.String
+    private final field field-1-6: int
+    private final field field-1-7: int
+    private final @org.jetbrains.annotations.NotNull field field-1-8: java.lang.String
+    private synthetic method <init>(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, p16: java.lang.String, p17: int, p18: int, p19: java.lang.String): void
+    public synthetic final static method box-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, p16: java.lang.String, p17: int, p18: int, p19: java.lang.String): B
+    public final static method constructor-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, @org.jetbrains.annotations.NotNull p6: java.lang.String, p7: int, p8: int, @org.jetbrains.annotations.NotNull p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, @org.jetbrains.annotations.NotNull p16: java.lang.String, p17: int, p18: int, @org.jetbrains.annotations.NotNull p19: java.lang.String): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, p16: java.lang.String, p17: int, p18: int, p19: java.lang.String, p20: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, p16: java.lang.String, p17: int, p18: int, p19: java.lang.String, p20: int, p21: int, p22: int, p23: int, p24: int, p25: int, p26: java.lang.String, p27: int, p28: int, p29: java.lang.String, p30: int, p31: int, p32: int, p33: int, p34: int, p35: int, p36: java.lang.String, p37: int, p38: int, p39: java.lang.String): boolean
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, p16: java.lang.String, p17: int, p18: int, p19: java.lang.String): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, @org.jetbrains.annotations.NotNull p6: java.lang.String, p7: int, p8: int, @org.jetbrains.annotations.NotNull p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, @org.jetbrains.annotations.NotNull p16: java.lang.String, p17: int, p18: int, @org.jetbrains.annotations.NotNull p19: java.lang.String): java.lang.String
+    public synthetic final method unbox-impl-0(): A
+    public synthetic final method unbox-impl-0-0(): int
+    public synthetic final method unbox-impl-0-1(): int
+    public synthetic final method unbox-impl-0-2(): F3
+    public synthetic final method unbox-impl-0-2-0(): int
+    public synthetic final method unbox-impl-0-2-1(): int
+    public synthetic final method unbox-impl-0-3(): int
+    public synthetic final method unbox-impl-0-4(): int
+    public synthetic final method unbox-impl-0-5(): java.lang.String
+    public synthetic final method unbox-impl-0-6(): int
+    public synthetic final method unbox-impl-0-7(): int
+    public synthetic final method unbox-impl-0-8(): java.lang.String
+    public synthetic final method unbox-impl-1(): A
+    public synthetic final method unbox-impl-1-0(): int
+    public synthetic final method unbox-impl-1-1(): int
+    public synthetic final method unbox-impl-1-2(): F3
+    public synthetic final method unbox-impl-1-2-0(): int
+    public synthetic final method unbox-impl-1-2-1(): int
+    public synthetic final method unbox-impl-1-3(): int
+    public synthetic final method unbox-impl-1-4(): int
+    public synthetic final method unbox-impl-1-5(): java.lang.String
+    public synthetic final method unbox-impl-1-6(): int
+    public synthetic final method unbox-impl-1-7(): int
+    public synthetic final method unbox-impl-1-8(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class EqualityKt {
+    // source: 'equality.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class F1 {
+    // source: 'equality.kt'
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): F1
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class F2 {
+    // source: 'equality.kt'
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): F2
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getX-pVg5ArA(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class F3 {
+    // source: 'equality.kt'
+    private final field field-0: int
+    private final field field-1: int
+    private synthetic method <init>(p0: int, p1: int): void
+    public synthetic final static method box-impl(p0: int, p1: int): F3
+    public final static method constructor-impl(p0: int, p1: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: int, p2: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int, p1: int): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: int, p1: int): java.lang.String
+    public synthetic final method unbox-impl-0(): int
+    public synthetic final method unbox-impl-1(): int
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class F4 {
+    // source: 'equality.kt'
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): F4
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class F5 {
+    // source: 'equality.kt'
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): F5
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getX-pVg5ArA(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class F6 {
+    // source: 'equality.kt'
+    private final @org.jetbrains.annotations.NotNull field x: java.lang.String
+    private synthetic method <init>(p0: java.lang.String): void
+    public synthetic final static method box-impl(p0: java.lang.String): F6
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.String, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.String, p1: java.lang.String): boolean
+    public final @org.jetbrains.annotations.NotNull method getX(): java.lang.String
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.String): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: java.lang.String): java.lang.String
+    public synthetic final method unbox-impl(): java.lang.String
+}
