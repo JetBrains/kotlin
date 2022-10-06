@@ -4,7 +4,7 @@
 }
 
 public final class SimpleTypeParameterAnnotation : R|kotlin/Any| {
-    public final fun <T> foo(x: R|T|): R|kotlin/Unit|
+    public final fun <@R|test/A|() T> foo(x: R|T|): R|kotlin/Unit|
 
     public constructor(): R|test/SimpleTypeParameterAnnotation|
 
