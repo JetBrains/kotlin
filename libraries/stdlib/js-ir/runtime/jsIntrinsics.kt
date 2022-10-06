@@ -16,9 +16,11 @@ import kotlin.internal.Effects
 internal annotation class JsIntrinsic
 
 @JsIntrinsic
+@Effects(Effect.READNONE) // Assuming that if valueOf is called, it is also READNONE.
 internal fun jsEqeq(a: Any?, b: Any?): Boolean
 
 @JsIntrinsic
+@Effects(Effect.READNONE) // Assuming that if valueOf is called, it is also READNONE.
 internal fun jsNotEq(a: Any?, b: Any?): Boolean
 
 @JsIntrinsic

@@ -782,7 +782,7 @@ private val implicitlyExportedDeclarationsMarkingLowering = makeDeclarationTrans
 
 
 private val cleanupLoweringPhase = makeBodyLoweringPhase(
-    { CleanupLowering() },
+    ::CleanupLowering,
     name = "CleanupLowering",
     description = "Clean up IR before codegen"
 )

@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.cleanup
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.SideEffects
 import org.jetbrains.kotlin.backend.common.ir.computeEffects
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -19,10 +21,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-class CleanupLowering : BodyLoweringPass {
+class CleanupLowering(val context: CommonBackendContext) : BodyLoweringPass {
 
     private val blockRemover = BlockRemover()
-    private val codeCleaner = CodeCleaner()
+    private val codeCleaner = CodeCleaner(context)
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         // TODO: merge passes together
@@ -60,7 +62,7 @@ private class BlockRemover : IrElementVisitorVoid {
     }
 }
 
-private class CodeCleaner : IrElementVisitorVoid {
+private class CodeCleaner(val context: CommonBackendContext) : IrElementVisitorVoid {
 
     private val functionSideEffectMemoizer = mutableMapOf<IrFunctionSymbol, SideEffects>()
 
@@ -68,7 +70,12 @@ private class CodeCleaner : IrElementVisitorVoid {
         var unreachable = false
         for (statement in statements) {
             if (statement is IrFunctionAccessExpression) {
-                val functionSideEffect = statement.symbol.owner.computeEffects(true, functionSideEffectMemoizer)
+                val functionSideEffect = statement.symbol.owner.computeEffects(true, functionSideEffectMemoizer, context).let {
+                    if (it == SideEffects.ALMOST_PURE_SINGLETON_CONSTRUCTOR && statement !is IrConstructorCall)
+                        SideEffects.READNONE
+                    else it
+                }
+
                 if (functionSideEffect <= SideEffects.READONLY) {
                     for (i in 0 until statement.valueArgumentsCount) {
                         add(statement.getValueArgument(i)!!)
@@ -96,12 +103,12 @@ private class CodeCleaner : IrElementVisitorVoid {
     }
 
     private fun IrStatementContainer.cleanUpStatements() {
-        var previousStatementCount = Int.MAX_VALUE
+        var previousStatements: List<IrStatement> = emptyList()
         var hasProgress = true
         while (hasProgress) {
             val cleanedUp = cleanUpStatementsSinglePass(statements)
-            hasProgress = cleanedUp.size < previousStatementCount
-            previousStatementCount = cleanedUp.size
+            hasProgress = cleanedUp != previousStatements
+            previousStatements = cleanedUp
             statements.clear()
             statements += cleanedUp
         }

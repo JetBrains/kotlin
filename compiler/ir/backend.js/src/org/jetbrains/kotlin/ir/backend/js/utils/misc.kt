@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isMethodOfAny
 import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun TODO(element: IrElement): Nothing = TODO(element::class.java.simpleName + " is not supported yet here")
@@ -72,16 +71,6 @@ fun IrDeclaration.hasStaticDispatch() = when (this) {
     is IrField -> isStatic
     else -> true
 }
-
-val IrValueDeclaration.isDispatchReceiver: Boolean
-    get() {
-        val parent = this.parent
-        if (parent is IrClass)
-            return true
-        if (parent is IrFunction && parent.dispatchReceiverParameter == this)
-            return true
-        return false
-    }
 
 fun IrBody.prependFunctionCall(
     call: IrCall
