@@ -124,6 +124,7 @@ private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackend
     addIfNotNull(context.intrinsics.void.owner.backingField)
     addAll(context.testFunsPerFile.values)
     addAll(context.additionalExportedDeclarations)
+    add(context.intrinsics.jsPrototypeOfSymbol.owner)
 }
 
 internal fun RuntimeDiagnostic.unreachableDeclarationMethod(context: JsIrBackendContext) =
