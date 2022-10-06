@@ -38,8 +38,6 @@ public final class DPoint {
     public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
     public final static method getCounter(): int
-    public final method getX(): double
-    public final method getY(): double
     public method hashCode(): int
     public static method hashCode-impl(p0: double, p1: double): int
     public final static method setCounter(p0: int): void
