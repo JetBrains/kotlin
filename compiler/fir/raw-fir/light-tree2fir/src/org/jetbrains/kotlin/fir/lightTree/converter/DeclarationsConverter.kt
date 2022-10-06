@@ -1935,7 +1935,7 @@ class DeclarationsConverter(
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source
             name = identifier.nameAsSafeName()
-            symbol = FirTypeParameterSymbol()
+            symbol = FirTypeParameterSymbol(name)
             containingDeclarationSymbol = containingSymbol
             variance = typeParameterModifiers.getVariance()
             isReified = typeParameterModifiers.hasReified()

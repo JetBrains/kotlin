@@ -699,7 +699,7 @@ open class RawFirBuilder(
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
                 name = parameterName
-                symbol = FirTypeParameterSymbol()
+                symbol = FirTypeParameterSymbol(name)
                 containingDeclarationSymbol = declarationSymbol
                 variance = parameter.variance
                 isReified = parameter.hasModifier(REIFIED_KEYWORD)

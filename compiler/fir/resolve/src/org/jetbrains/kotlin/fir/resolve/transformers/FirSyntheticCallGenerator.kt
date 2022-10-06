@@ -236,13 +236,14 @@ class FirSyntheticCallGenerator(
     )
 
     private fun generateSyntheticSelectTypeParameter(functionSymbol: FirSyntheticFunctionSymbol): Pair<FirTypeParameter, FirResolvedTypeRef> {
-        val typeParameterSymbol = FirTypeParameterSymbol()
+        val name = Name.identifier("K")
+        val typeParameterSymbol = FirTypeParameterSymbol(name)
         val typeParameter =
             buildTypeParameter {
                 moduleData = session.moduleData
                 origin = FirDeclarationOrigin.Library
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                name = Name.identifier("K")
+                this.name = name
                 symbol = typeParameterSymbol
                 containingDeclarationSymbol = functionSymbol
                 variance = Variance.INVARIANT

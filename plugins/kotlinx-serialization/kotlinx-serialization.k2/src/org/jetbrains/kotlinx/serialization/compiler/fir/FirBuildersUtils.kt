@@ -56,7 +56,7 @@ fun newSimpleTypeParameter(firSession: FirSession, containingDeclarationSymbol: 
     resolvePhase = FirResolvePhase.BODY_RESOLVE
     variance = Variance.INVARIANT
     this.name = name
-    symbol = FirTypeParameterSymbol()
+    symbol = FirTypeParameterSymbol(name)
     this.containingDeclarationSymbol = containingDeclarationSymbol
     isReified = false
     addDefaultBoundIfNecessary()

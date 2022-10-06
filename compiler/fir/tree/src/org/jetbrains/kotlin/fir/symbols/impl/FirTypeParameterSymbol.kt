@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
-class FirTypeParameterSymbol : FirClassifierSymbol<FirTypeParameter>() {
-    val name: Name
-        get() = fir.name
-
+class FirTypeParameterSymbol(val name: Name) : FirClassifierSymbol<FirTypeParameter>() {
     private val lookupTag = ConeTypeParameterLookupTag(this)
 
     override fun toLookupTag(): ConeTypeParameterLookupTag = lookupTag

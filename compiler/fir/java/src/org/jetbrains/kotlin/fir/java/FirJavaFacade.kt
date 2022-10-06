@@ -105,7 +105,7 @@ abstract class FirJavaFacade(
             origin = javaOrigin(isFromSource)
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             name = this@toFirTypeParameter.name
-            symbol = FirTypeParameterSymbol()
+            symbol = FirTypeParameterSymbol(name)
             variance = INVARIANT
             isReified = false
             javaTypeParameterStack.addParameter(this@toFirTypeParameter, symbol)

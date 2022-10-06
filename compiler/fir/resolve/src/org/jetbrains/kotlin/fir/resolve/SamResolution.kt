@@ -152,7 +152,7 @@ class FirSamResolverImpl(
                 origin = FirDeclarationOrigin.SamConstructor
                 resolvePhase = FirResolvePhase.DECLARATIONS
                 name = declaredTypeParameter.name
-                this.symbol = FirTypeParameterSymbol()
+                this.symbol = FirTypeParameterSymbol(name)
                 variance = Variance.INVARIANT
                 isReified = false
                 annotations += declaredTypeParameter.annotations
