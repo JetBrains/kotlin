@@ -93,6 +93,7 @@ fun nativeTest(taskName: String, vararg tags: String) = projectTest(
         // Such tests are successfully compiled in old test infra with the default 1 MB stack just by accident. New test infra requires ~55
         // additional stack frames more compared to the old one because of another launcher, etc. and it turns out this is not enough.
         jvmArgs("-Xss2m")
+        jvmArgs("-verbose:class")
 
         val availableCpuCores: Int = Runtime.getRuntime().availableProcessors()
         if (!kotlinBuildProperties.isTeamcityBuild
