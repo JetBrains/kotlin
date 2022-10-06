@@ -816,8 +816,17 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             CoreApplicationEnvironment.registerApplicationDynamicExtensionPoint(TreeCopyHandler.EP_NAME.name, TreeCopyHandler::class.java)
 
             val project = environment.project as MockProject
-            project.registerService(PomModel::class.java, PomModelImpl::class.java)
-            project.registerService(TreeAspect::class.java)
+            try {
+                project.registerService(PomModel::class.java, PomModelImpl::class.java)
+                project.registerService(TreeAspect::class.java)
+            } catch (ex: Throwable) {
+                val currentClassLoader = this::class.java.classLoader
+                println("CURRENT CLASS: ${currentClassLoader.name} of parent ${currentClassLoader.parent.name}")
+                val mockProjectClassLoader = project::class.java.classLoader
+                println("MockProject CLASS: ${mockProjectClassLoader.name}")
+                println("CODE LOCATION: ${project::class.java.protectionDomain.codeSource.location}")
+                throw ex
+            }
 
             return KtPsiFactory(environment.project)
         }

@@ -10,7 +10,7 @@ project.configureJvmToolchain(JdkMajorVersion.JDK_11_0)
 dependencies {
     testImplementation(kotlinStdlib())
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testImplementation(intellijCore()) { isTransitive = false }
+    testImplementation(intellijCore())
     testImplementation(commonDependency("commons-lang:commons-lang"))
     testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     testImplementation(project(":kotlin-compiler-runner-unshaded"))
