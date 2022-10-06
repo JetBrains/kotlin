@@ -158,18 +158,10 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitCall(expression: IrCall, data: JsGenerationContext): JsStatement {
-        if (expression.symbol.isUnitInstanceFunction(data)) {
-            return JsEmpty
-        }
         if (data.checkIfJsCode(expression.symbol) || data.checkIfHasAssociatedJsCode(expression.symbol)) {
             return JsCallTransformer(expression, data).generateStatement()
         }
         return translateCall(expression, data, IrElementToJsExpressionTransformer()).withSource(expression, data).makeStmt()
-    }
-
-    private fun IrFunctionSymbol.isUnitInstanceFunction(context: JsGenerationContext): Boolean {
-        return owner.origin === JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION &&
-                owner.returnType.classifierOrNull === context.staticContext.backendContext.irBuiltIns.unitClass
     }
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, context: JsGenerationContext): JsStatement {

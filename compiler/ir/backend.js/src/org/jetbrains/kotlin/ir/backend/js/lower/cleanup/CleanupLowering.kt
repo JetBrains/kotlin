@@ -89,7 +89,7 @@ private class CodeCleaner(val context: CommonBackendContext) : IrElementVisitorV
                 statement is IrExpression && (statement.computeEffects(
                     true,
                     functionSideEffectMemoizer
-                ) <= SideEffects.READONLY) -> false // FIXME: Only do this in production mode
+                ) <= SideEffects.READONLY) -> false
                 unreachable -> false
                 else -> {
                     unreachable = statement.doesNotReturn()
@@ -103,6 +103,7 @@ private class CodeCleaner(val context: CommonBackendContext) : IrElementVisitorV
     }
 
     private fun IrStatementContainer.cleanUpStatements() {
+        // FIXME: Only do this in production mode
         var previousStatements: List<IrStatement> = emptyList()
         var hasProgress = true
         while (hasProgress) {
