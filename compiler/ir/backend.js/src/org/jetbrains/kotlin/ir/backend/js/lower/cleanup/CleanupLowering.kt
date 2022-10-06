@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.ir.SideEffects
 import org.jetbrains.kotlin.backend.common.ir.computeEffects
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -70,13 +69,10 @@ private class CodeCleaner(val context: CommonBackendContext) : IrElementVisitorV
         var unreachable = false
         for (statement in statements) {
             if (statement is IrFunctionAccessExpression) {
-                val functionSideEffect = statement.symbol.owner.computeEffects(true, functionSideEffectMemoizer, context).let {
-                    if (it == SideEffects.ALMOST_PURE_SINGLETON_CONSTRUCTOR && statement !is IrConstructorCall)
-                        SideEffects.READNONE
-                    else it
-                }
+                val functionSideEffect = statement.symbol.owner.computeEffects(true, functionSideEffectMemoizer, context)
 
-                if (functionSideEffect <= SideEffects.READONLY) {
+                if (functionSideEffect.isAtMost(SideEffects.ReadOnly)) {
+                    // Eliminate the call but keep the arguments, they can have effects.
                     for (i in 0 until statement.valueArgumentsCount) {
                         add(statement.getValueArgument(i)!!)
                     }
@@ -89,7 +85,7 @@ private class CodeCleaner(val context: CommonBackendContext) : IrElementVisitorV
                 statement is IrExpression && (statement.computeEffects(
                     true,
                     functionSideEffectMemoizer
-                ) <= SideEffects.READONLY) -> false
+                ).isAtMost(SideEffects.ReadOnly)) -> false
                 unreachable -> false
                 else -> {
                     unreachable = statement.doesNotReturn()
