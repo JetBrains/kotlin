@@ -39,6 +39,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsEqeqeq = getInternalFunction("jsEqeqeq")
     val jsNotEqeq = getInternalFunction("jsNotEqeq")
 
+    val jsIsUndefined = getInternalFunction("isUndefined")
+
     val jsGt = getInternalFunction("jsGt")
     val jsGtEq = getInternalFunction("jsGtEq")
     val jsLt = getInternalFunction("jsLt")

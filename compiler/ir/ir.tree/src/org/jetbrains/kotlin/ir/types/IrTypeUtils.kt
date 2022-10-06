@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.types
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.impl.IrUnionType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
@@ -48,6 +49,7 @@ fun IrType.isNullable(): Boolean =
         }
         is IrDynamicType -> true
         is IrErrorType -> this.isMarkedNullable
+        is IrUnionType -> types.any { it.isNullable() }
         else -> false
     }
 

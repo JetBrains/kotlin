@@ -74,6 +74,26 @@ class ReturnTypeIsNotInitializedException(function: IrFunction) : IllegalStateEx
     "Return type is not initialized for function '${function.name}'"
 )
 
+class IrUnionType(types: Set<IrType>, override val annotations: List<IrConstructorCall> = emptyList()) : IrType() {
+    val types = types.flatten()
+
+    private fun Set<IrType>.flatten(): Set<IrType> {
+        return flatMap {
+            if (it is IrUnionType) {
+                it.types.flatten()
+            } else {
+                listOf(it)
+            }
+        }.toSet()
+    }
+
+    override fun equals(other: Any?): Boolean =
+        other is IrUnionType &&
+                types == other.types
+
+    override fun hashCode(): Int =
+        types.fold(0) { a, b -> a xor b.hashCode() }
+}
 
 // Please note this type is not denotable which means it could only exist inside type system
 class IrCapturedType(

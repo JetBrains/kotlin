@@ -132,7 +132,7 @@ fun IrMemberAccessExpression<*>.putValueArgument(valueParameterDescriptor: Value
 }
 
 @ObsoleteDescriptorBasedAPI
-inline fun <T : IrMemberAccessExpression<*>> T.mapTypeParameters(transform: (TypeParameterDescriptor) -> IrType) : T =
+inline fun <T : IrMemberAccessExpression<*>> T.mapTypeParameters(transform: (TypeParameterDescriptor) -> IrType): T =
     apply {
         val descriptor = symbol.descriptor as CallableDescriptor
         descriptor.typeParameters.forEach {

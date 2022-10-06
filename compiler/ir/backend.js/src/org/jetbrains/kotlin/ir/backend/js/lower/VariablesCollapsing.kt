@@ -56,13 +56,13 @@ private class VariablesCollapsingLoweringVisitor(val context: JsIrBackendContext
     }
 
     override fun visitGetField(expression: IrGetField): IrExpression {
-        return expression.collapse(context).apply {
+        return expression.collapse(context).run {
             super.visitExpression(this)
         }
     }
 
     override fun visitGetValue(expression: IrGetValue): IrExpression {
-        return expression.collapse(context).apply {
+        return expression.collapse(context).run {
             super.visitExpression(this)
         }
     }

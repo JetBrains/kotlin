@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.ir.backend.js.lower.inline
 
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.backend.js.DeclarationLowering
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
@@ -21,12 +23,23 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 
-class CollectSingleCallInlinableFunctions(context: JsIrBackendContext) : BodyLoweringPass {
-    private val transformer = CollectSingleCallInlinableFunctionsVisitor(context)
+class CollectSingleCallInlinableFunctions(val context: JsIrBackendContext) : DeclarationTransformer {
+    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        if (declaration is IrSimpleFunction && declaration.isInlinable() && declaration.calledOnce()) {
+            declaration.markAsInlinable(context)
+        }
 
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transformChildrenVoid(transformer)
+        return null
     }
+
+    private fun IrSimpleFunction.calledOnce(): Boolean {
+        return context.optimizations.functionUsages[symbol]?.size == 1
+    }
+
+    private fun IrSimpleFunction.isInlinable(): Boolean {
+        return !isExternal && !isExpect && body != null && isReal
+    }
+
 }
 
 class CollectPotentiallyInlinableFunctions(context: JsIrBackendContext) : BodyLoweringPass {
@@ -34,39 +47,6 @@ class CollectPotentiallyInlinableFunctions(context: JsIrBackendContext) : BodyLo
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(transformer)
-    }
-}
-
-private class CollectSingleCallInlinableFunctionsVisitor(val context: JsIrBackendContext) : IrElementTransformerVoid() {
-    private val functionsBlackList = mutableSetOf<IrSimpleFunctionSymbol>()
-    private val functionWhichCouldBeInlinedBecauseOfSingleCall = mutableSetOf<IrSimpleFunctionSymbol>()
-
-    override fun visitCall(expression: IrCall): IrExpression {
-        val symbol = expression.symbol
-
-        if (expression.isInlinable()) {
-            if (symbol in functionWhichCouldBeInlinedBecauseOfSingleCall) {
-                functionsBlackList.add(symbol)
-                symbol.owner.unmarkAsInlinable()
-                functionWhichCouldBeInlinedBecauseOfSingleCall.remove(symbol)
-            } else if (symbol !in functionsBlackList) {
-                symbol.owner.markAsInlinable(context)
-                functionWhichCouldBeInlinedBecauseOfSingleCall.add(symbol)
-            }
-        }
-
-        return super.visitCall(expression)
-    }
-
-    private fun IrCall.isInlinable(): Boolean {
-        return !symbol.owner.isExternal &&
-                !symbol.owner.isExpect &&
-                symbol.owner.body != null && symbol.owner.isReal &&
-                (dispatchReceiver?.type?.classifierOrNull?.owner as? IrDeclaration)?.isEffectivelyExternal() != true
-    }
-
-    private fun IrSimpleFunction.unmarkAsInlinable() {
-        annotations = annotations.filter { !it.isAnnotationWithEqualFqName(INLINE_ONLY_ANNOTATION_FQ_NAME) }
     }
 }
 

@@ -49,6 +49,7 @@ private class CollectSimpleVariablesVisitor(val context: JsIrBackendContext) : I
 
     override fun visitSetValue(expression: IrSetValue): IrExpression {
         val symbol = expression.symbol as? IrVariableSymbol ?: return super.visitSetValue(expression)
+
         val collapsableElement = CollapsableElements.CollapsableValue(symbol)
 
         if (symbol in simpleVariables) {

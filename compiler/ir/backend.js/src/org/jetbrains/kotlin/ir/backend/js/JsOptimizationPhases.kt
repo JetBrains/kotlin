@@ -40,10 +40,23 @@ private val jsSpecificConstantFoldingLoweringPhase = makeBodyLoweringPhase(
     description = "[Optimization] Constant Folding for JS",
 )
 
-private val collectSingleCallInlinableFunctionsLoweringPhase = makeBodyLoweringPhase(
+private val speculationLoweringPhase = makeBodyLoweringPhase(
+    ::SpeculationLowering,
+    name = "SpeculationLowering",
+    description = "[Optimization] Speculate on some values and types",
+)
+
+private val collectFunctionUsagesLoweringPhase = makeBodyLoweringPhase(
+    ::CollectFunctionUsagesLowering,
+    name = "CollectFunctionUsagesLowering",
+    description = "[Analysis] Collect information about functions call",
+)
+
+private val collectSingleCallInlinableFunctionsLoweringPhase = makeDeclarationTransformerPhase(
     ::CollectSingleCallInlinableFunctions,
     name = "CollectSingleCallInlinableFunctions",
     description = "[Optimization] Collect single call inlinable functions",
+    prerequisite = setOf(collectFunctionUsagesLoweringPhase)
 )
 
 private val collectPotentiallyInlinableFunctionsLoweringPhase = makeBodyLoweringPhase(
@@ -52,6 +65,14 @@ private val collectPotentiallyInlinableFunctionsLoweringPhase = makeBodyLowering
     description = "[Optimization] Collect potentially inlinable functions",
     prerequisite = setOf(collectSingleCallInlinableFunctionsLoweringPhase)
 )
+
+private val functionSpecializationLoweringPhase = makeDeclarationTransformerPhase(
+    ::FunctionSpecializationLowering,
+    name = "FunctionSpecializationLowering",
+    description = "[Optimization] Speculate with time of parameters",
+    prerequisite = setOf(collectFunctionUsagesLoweringPhase, speculationLoweringPhase)
+)
+
 
 private val functionInliningPhase = makeBodyLoweringPhase(
     { FunctionInlining(it, it.innerClassesSupport) },
@@ -118,11 +139,19 @@ private val unfoldBlocksLowering = makeBodyLoweringPhase(
     description = "[Optimization] Remove nested blocks",
 )
 
+private val cleanOptimizationContextLoweringPhase = makeCustomJsModulePhase(
+    { context, _ -> context.optimizations.reset() },
+    name = "CleanOptimizationContextLowerinPhase",
+    description = "[Analysis] Remove collected analytic",
+)
 
 private val jsMainOptimizations = NamedCompilerPhase(
     name = "IrOptimizations",
     description = "IR lowerings with one-time optimizations before main optimization loop",
-    lower = collectSingleCallInlinableFunctionsLoweringPhase then
+    lower = speculationLoweringPhase then
+            collectFunctionUsagesLoweringPhase then
+            functionSpecializationLoweringPhase then
+            collectSingleCallInlinableFunctionsLoweringPhase then
             collectPotentiallyInlinableFunctionsLoweringPhase then
             functionInliningPhase then
             copyInlineFunctionBodyLoweringPhase then
@@ -135,7 +164,8 @@ private val jsMainOptimizations = NamedCompilerPhase(
             foldConstantLoweringPhase then
             removeUnreachableStatementsLowering then
             objectUsageLoweringPhase then
-            unfoldBlocksLowering
+            unfoldBlocksLowering then
+            cleanOptimizationContextLoweringPhase
 )
 
 const val MAX_NUMBER_OF_OPTIMIZATION_ITERATIONS = 1
