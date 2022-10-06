@@ -1,0 +1,9 @@
+package test
+
+public final class Convert</*0*/ @test.Schema T, /*1*/ C> {
+    /*primary*/ public constructor Convert</*0*/ @test.Schema T, /*1*/ C>()
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) public final annotation class Schema : kotlin.Annotation {
+    /*primary*/ public constructor Schema()
+}
