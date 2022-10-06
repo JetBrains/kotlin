@@ -46,6 +46,16 @@ fun IrSimpleFunction.addExtensionReceiver(type: IrType, origin: IrDeclarationOri
         }
     }
 
+val IrValueDeclaration.isDispatchReceiver: Boolean
+    get() {
+        val parent = this.parent
+        if (parent is IrClass)
+            return true
+        if (parent is IrFunction && parent.dispatchReceiverParameter == this)
+            return true
+        return false
+    }
+
 fun CommonBackendContext.createArrayOfExpression(
     startOffset: Int, endOffset: Int,
     arrayElementType: IrType,

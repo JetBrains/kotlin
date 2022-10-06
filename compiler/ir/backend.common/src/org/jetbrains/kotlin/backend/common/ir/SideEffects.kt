@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -38,9 +38,15 @@ enum class SideEffects {
     READONLY,
 
     /**
+     * A special kind of effect. Used to mark singleton initializers that are otherwise would be considered [READWRITE],
+     * but don't have any effects except saving the instance to a global variable.
+     */
+    ALMOST_PURE_SINGLETON_CONSTRUCTOR,
+
+    /**
      * Can arbitrarily alter the global state.
      */
-    READWRITE
+    READWRITE,
 }
 
 private val effectsAnnotationFqName = FqName("kotlin.internal.Effects")
@@ -55,6 +61,9 @@ fun IrFunction.getDeclaredEffects(): SideEffects? {
 }
 
 fun IrFunction.addEffectsAnnotation(effects: SideEffects, context: CommonBackendContext) {
+    if (effects == SideEffects.ALMOST_PURE_SINGLETON_CONSTRUCTOR) {
+        error("${SideEffects.ALMOST_PURE_SINGLETON_CONSTRUCTOR.name} cannot be set via an annotation!")
+    }
     val annotationClassSymbol = context.getClassSymbol(effectsAnnotationFqName)
     val enumClassSymbol = context.getClassSymbol(effectEnumFqName)
     val constructorSymbol = annotationClassSymbol.constructors.single()
@@ -69,19 +78,31 @@ fun IrFunction.addEffectsAnnotation(effects: SideEffects, context: CommonBackend
 
 typealias FunctionSideEffectMemoizer = MutableMap<IrFunctionSymbol, SideEffects>
 
-// TODO: support more cases like built-in operator call and so on
 fun IrExpression?.computeEffects(
     anyVariableReadIsPure: Boolean,
-    memoizer: FunctionSideEffectMemoizer = mutableMapOf()
+    memoizer: FunctionSideEffectMemoizer = mutableMapOf(),
+    context: CommonBackendContext? = null,
 ): SideEffects =
-    this?.accept(EffectAnalyzer(anyVariableReadIsPure, memoizer), Unit) ?: SideEffects.READNONE
+    this?.accept(EffectAnalyzer(anyVariableReadIsPure, memoizer, context), Unit) ?: SideEffects.READNONE
 
 fun IrFunction.computeEffects(
     anyVariableReadIsPure: Boolean,
-    memoizer: FunctionSideEffectMemoizer = mutableMapOf()
-): SideEffects = computeEffectsImpl(EffectAnalyzer(anyVariableReadIsPure, memoizer))
+    memoizer: FunctionSideEffectMemoizer = mutableMapOf(),
+    context: CommonBackendContext? = null,
+): SideEffects {
+    val analyzer = EffectAnalyzer(anyVariableReadIsPure, memoizer, context)
+    analyzer.callStack.push(symbol)
+    return computeEffectsImpl(analyzer)
+}
 
-private fun IrFunction.computeEffectsImpl(analyzer: EffectAnalyzer) = analyzer.memoizer.getOrPut(symbol) {
+private fun IrFunction.computeEffectsImpl(
+    analyzer: EffectAnalyzer,
+) = analyzer.memoizer.getOrPut(symbol) {
+    if (analyzer.context != null && this is IrConstructor) {
+        if (symbol.owner.constructedClass.symbol == analyzer.context.irBuiltIns.anyClass) {
+            return@getOrPut SideEffects.READNONE
+        }
+    }
     getDeclaredEffects()
         ?: body?.accept(analyzer, Unit)
         ?: SideEffects.READWRITE
@@ -99,11 +120,12 @@ private inline fun <T> Iterable<T>.maxEffect(computeEffects: (T) -> SideEffects)
 }
 
 private class EffectAnalyzer(
-    private val anyVariableReadIsPure: Boolean,
+    val anyVariableReadIsPure: Boolean,
     val memoizer: FunctionSideEffectMemoizer,
+    val context: CommonBackendContext?,
 ) : IrElementVisitor<SideEffects, Unit> {
 
-    private val callStack = mutableListOf<IrFunctionSymbol>()
+    val callStack = mutableListOf<IrFunctionSymbol>()
 
     private fun <T : IrElement> Iterable<T>.maxEffectWithThis(): SideEffects {
         return maxEffect { it.accept(this@EffectAnalyzer, Unit) }
@@ -182,16 +204,33 @@ private class EffectAnalyzer(
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Unit): SideEffects {
-        // TODO: We can do better
-        return if (expression.type.isUnit()) SideEffects.READNONE else SideEffects.READWRITE
+        return expression.symbol.owner.primaryConstructor?.accept(this, data) ?: SideEffects.READNONE
     }
 
     override fun visitGetField(expression: IrGetField, data: Unit): SideEffects {
         if (!expression.symbol.owner.isFinal && !anyVariableReadIsPure) {
             return SideEffects.READWRITE
         }
-        // FIXME: Verify correctness for null receiver
-        return expression.receiver?.accept(this, data) ?: SideEffects.READNONE
+        return expression.receiver?.accept(this, data) ?: SideEffects.READONLY
+    }
+
+    override fun visitSetField(expression: IrSetField, data: Unit): SideEffects {
+        val valueEffect = expression.value.accept(this, data)
+        if (valueEffect == SideEffects.READWRITE) return SideEffects.READWRITE
+
+        val constructorSymbol = callStack.lastOrNull() as? IrConstructorSymbol? ?: return SideEffects.READWRITE
+
+        if (expression.symbol.owner.origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE) {
+            return SideEffects.ALMOST_PURE_SINGLETON_CONSTRUCTOR
+        }
+
+        // If we are in a constructor, and we're setting a constructed instance's field, treat it as a READNONE operation.
+        val receiver = expression.receiver as? IrGetValue ?: return SideEffects.READWRITE
+        val valueParameter = receiver.symbol.owner as? IrValueParameter ?: return SideEffects.READWRITE
+        if (!valueParameter.isDispatchReceiver) return SideEffects.READWRITE
+        val assignmentEffect =
+            if (valueParameter.parent == constructorSymbol.owner.constructedClass) SideEffects.READNONE else SideEffects.READWRITE
+        return maxOf(valueEffect, assignmentEffect)
     }
 
     override fun visitVararg(expression: IrVararg, data: Unit): SideEffects {
