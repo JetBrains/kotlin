@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 @ExperimentalKotlinGradlePluginApi
-interface KotlinTargetHierarchyDescriptor : (KotlinTargetHierarchyBuilder) -> Unit {
+interface KotlinTargetHierarchyDescriptor {
+    fun describe(builder: KotlinTargetHierarchyBuilder)
     fun extend(describe: KotlinTargetHierarchyBuilder.() -> Unit): KotlinTargetHierarchyDescriptor
 }
 
@@ -32,5 +33,5 @@ private class KotlinTargetHierarchyDescriptorImpl(
         }
     }
 
-    override fun invoke(p1: KotlinTargetHierarchyBuilder) = p1.describe()
+    override fun describe(builder: KotlinTargetHierarchyBuilder) = builder.describe()
 }

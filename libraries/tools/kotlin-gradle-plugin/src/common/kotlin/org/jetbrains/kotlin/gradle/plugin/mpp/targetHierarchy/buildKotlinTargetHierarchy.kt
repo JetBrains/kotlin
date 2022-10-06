@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.tooling.core.closure
 
 internal fun KotlinTargetHierarchyDescriptor.buildKotlinTargetHierarchy(compilation: KotlinCompilation<*>): KotlinTargetHierarchy {
     val context = KotlinTargetHierarchyBuilderImplContext(compilation)
-    this(context.getOrCreateBuilder(KotlinTargetHierarchy.Node.Root))
+    describe(context.getOrCreateBuilder(KotlinTargetHierarchy.Node.Root))
     return context.build(KotlinTargetHierarchy.Node.Root)
 }
 
