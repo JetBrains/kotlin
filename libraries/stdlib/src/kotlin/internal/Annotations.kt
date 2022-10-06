@@ -48,6 +48,16 @@ internal annotation class OnlyInputTypes
 @Retention(AnnotationRetention.BINARY)
 internal annotation class InlineOnly
 
+internal enum class Effect {
+    READNONE,
+    READONLY,
+    READWRITE,
+}
+
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class Effects(val effect: Effect)
+
 /**
  * Specifies that this declaration can have dynamic receiver type.
  */

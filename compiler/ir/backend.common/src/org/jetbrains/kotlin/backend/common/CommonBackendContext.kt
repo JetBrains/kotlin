@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 interface LoggingContext {
@@ -51,10 +52,6 @@ interface CommonBackendContext : BackendContext, LoggingContext {
         functionSymbolMap: MutableMap<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>
     ) {}
 
-    fun isSideEffectFree(call: IrCall): Boolean {
-        return false
-    }
-
     val preferJavaLikeCounterLoop: Boolean
         get() = false
 
@@ -75,6 +72,10 @@ interface CommonBackendContext : BackendContext, LoggingContext {
      */
     val inlineClassesUtils: InlineClassesUtils
         get() = DefaultInlineClassesUtils
+
+    fun getClassSymbol(fqName: FqName): IrClassSymbol {
+        TODO("Must be overridden in subclasses")
+    }
 }
 
 /**

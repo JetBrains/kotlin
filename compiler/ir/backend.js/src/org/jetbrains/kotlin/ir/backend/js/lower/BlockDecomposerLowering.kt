@@ -530,7 +530,7 @@ class BlockDecomposerTransformer(
                     compositesLeft == 0 -> value
                     index == 0 && dontDetachFirstArgument -> value
                     value == null -> value
-                    value.isPure(anyVariable = false, context = context) -> value
+                    value.isPure(anyVariableReadIsPure = false, context = context) -> value
                     else -> {
                         // TODO: do not wrap if value is pure (const, variable, etc)
                         val irVar = makeTempVar(value.type, value)

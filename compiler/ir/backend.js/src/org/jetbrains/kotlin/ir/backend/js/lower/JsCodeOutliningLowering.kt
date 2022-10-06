@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.ir.SideEffects
+import org.jetbrains.kotlin.backend.common.ir.addEffectsAnnotation
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -162,6 +164,7 @@ private class JsCodeOutlineTransformer(
                 type = local.type
             }
         }
+        outlinedFunction.addEffectsAnnotation(SideEffects.READWRITE, backendContext)
 
         // Building JS Ast function
         val lastStatement = jsStatements.findLast { it !is JsSingleLineComment && it !is JsMultiLineComment }

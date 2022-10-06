@@ -324,7 +324,6 @@ fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
         it.symbol.owner.parentAsClass.symbol == symbol
     }
 
-
 val IrConstructor.constructedClassType get() = (parent as IrClass).thisReceiver?.type!!
 
 fun IrFunction.isFakeOverriddenFromAny(): Boolean {
