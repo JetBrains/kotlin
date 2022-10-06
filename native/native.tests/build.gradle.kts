@@ -19,11 +19,12 @@ dependencies {
     testImplementation(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":generators:test-generator"))
     testApiJUnit5()
-    testImplementation(project(":kotlin-native:Interop:StubGenerator"))
-    testImplementation(project(":kotlin-native:klib"))
-
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+
+    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+        testImplementation(project(":kotlin-native:Interop:StubGenerator"))
+        testImplementation(project(":kotlin-native:klib"))
+    }
 }
 
 val generationRoot = projectDir.resolve("tests-gen")
@@ -113,18 +114,20 @@ fun nativeTest(taskName: String, vararg tags: String) = projectTest(
         TestProperty.COMPILER_CLASSPATH.setUpFromGradleProperty(this) {
             val customNativeHome = TestProperty.KOTLIN_NATIVE_HOME.readGradleProperty(this)
             if (customNativeHome != null) {
-                println("HOME: CUSTOM_HOME")
-                file(customNativeHome).resolve("konan/lib/kotlin-native-compiler-embeddable.jar").absolutePath
+                file(customNativeHome).run {
+                    val embeddableJar = resolve("konan/lib/kotlin-native-compiler-embeddable.jar").absolutePath
+                    val troveJar = resolve("konan/lib/trove4j.jar").absolutePath
+                    troveJar + File.pathSeparatorChar.toString() + embeddableJar
+                }
             } else {
-                println("HOME: DEFAULT")
-                val kotlinNativeCompilerEmbeddable = configurations.detachedConfiguration(dependencies.project(":kotlin-native-compiler-embeddable"))
+                val kotlinNativeCompilerEmbeddable = configurations.detachedConfiguration(
+                    dependencies.project(":kotlin-native-compiler-embeddable"),
+                    dependencies.module(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+                )
                 dependsOn(kotlinNativeCompilerEmbeddable)
                 kotlinNativeCompilerEmbeddable.files.joinToString(";")
             }
         }
-
-        println("TEST CLASSPATH:")
-        classpath.files.forEach(::println)
 
         // Pass Gradle properties as JVM properties so test process can read them.
         TestProperty.TEST_TARGET.setUpFromGradleProperty(this)

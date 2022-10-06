@@ -30,10 +30,9 @@ application {
 dependencies {
     implementation(project(":kotlin-native:Interop:Indexer"))
     implementation(project(":kotlin-native:utilities:basic-utils"))
-    implementation(project(path = ":kotlin-native:endorsedLibraries:kotlinx.cli", configuration = "jvmRuntimeElements")) { isTransitive = false }
+    implementation(project(path = ":kotlin-native:endorsedLibraries:kotlinx.cli", configuration = "jvmRuntimeElements"))
 
     api(project(":kotlin-stdlib"))
-//    api(project(path = ":kotlin-compiler", configuration = "runtimeElements"))
     implementation(project(":kotlinx-metadata-klib"))
     implementation(project(":native:kotlin-native-utils"))
     implementation(project(":compiler:util"))
