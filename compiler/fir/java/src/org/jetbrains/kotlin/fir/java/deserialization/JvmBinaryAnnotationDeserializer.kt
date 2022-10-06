@@ -52,6 +52,11 @@ class JvmBinaryAnnotationDeserializer(
         return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 
+    override fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation> {
+        val annotations = typeParameterProto.getExtension(JvmProtoBuf.typeParameterAnnotation).orEmpty()
+        return annotations.map { deserializeAnnotation(it, nameResolver) }
+    }
+
     override fun loadConstructorAnnotations(
         containerSource: DeserializedContainerSource?,
         constructorProto: ProtoBuf.Constructor,
