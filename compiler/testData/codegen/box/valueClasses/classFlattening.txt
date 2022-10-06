@@ -85,9 +85,6 @@ public final class GreaterMfvc {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: int, p6: java.lang.String, p7: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String, p10: int, p11: int, p12: int, p13: java.lang.String): boolean
-    public final @org.jetbrains.annotations.NotNull method getX(): SimpleMfvc
-    public final method getY-fhib4bs(): int
-    public final @org.jetbrains.annotations.NotNull method getZ(): SimpleMfvc
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: int, p6: java.lang.String): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -167,9 +164,6 @@ public final class SimpleMfvc {
     private final static method getPrivate2-sUp7gFk(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
     private final static method getPrivate2-sUp7gFk(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): SimpleMfvc
     private final static method getPrivate4-sUp7gFk(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
-    public final method getX-pVg5ArA(): int
-    public final method getY-fhib4bs(): int
-    public final @org.jetbrains.annotations.NotNull method getZ(): java.lang.String
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int, p2: java.lang.String): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String

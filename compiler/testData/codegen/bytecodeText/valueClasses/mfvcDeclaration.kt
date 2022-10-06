@@ -49,7 +49,7 @@ fun functionWithoutBoxes(x: D, y: D) {
 // 2 public final static constructor-impl\(IILjava/lang/String;\)V
 // 2 INVOKESTATIC D.constructor-impl \(IILjava/lang/String;\)V
 // 2 INVOKESTATIC C.constructor-impl \(IILjava/lang/String;\)V
-// 1 public final getX\(\)LC;
+// 0 public final getX\(\)LC;
 // 1 public final synthetic unbox-impl-0-0\(\)I
 // 1 public final synthetic unbox-impl-0-1\(\)I
 // 1 public final synthetic unbox-impl-0-2\(\)Ljava/lang/String;
@@ -70,7 +70,7 @@ fun functionWithoutBoxes(x: D, y: D) {
 // 1 INVOKESPECIAL C.<init> \(IILjava/lang/String;\)V
 // 1 INVOKESPECIAL D.<init> \(IILjava/lang/String;\)V
 // 2 INVOKESTATIC D.box-impl \(IILjava/lang/String;\)LD;
-// 3 INVOKESTATIC C.box-impl \(IILjava/lang/String;\)LC;
+// 2 INVOKESTATIC C.box-impl \(IILjava/lang/String;\)LC;
 // 1 public final static functionWithoutBoxes-GPBa7dw\(IILjava/lang/String;IILjava/lang/String;\)V
 // 0 functionWithoutBoxes.*(\n {3}.*)*(\n {4}(NEW [ABCD]|.*(box|[ABCD]\.<init>|LA;|LB;|LC;|LD;)))
 // 1 privateAccess.*(\n   .+)*(\n    GETFIELD Regular\.x-0-0 : I)(\n   .+)*(\n    INVOKEVIRTUAL Regular\.getX-0 \(\)LC;)(\n   .+)*(\n    INVOKESPECIAL Regular\.getX \(\)LD;)

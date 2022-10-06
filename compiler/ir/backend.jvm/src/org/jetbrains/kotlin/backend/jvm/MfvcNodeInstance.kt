@@ -22,27 +22,26 @@ import org.jetbrains.kotlin.ir.util.substitute
 import org.jetbrains.kotlin.name.Name
 
 interface MfvcNodeInstance {
-    val scope: IrBuilderWithScope
     val node: MfvcNode
     val typeArguments: TypeArguments
     val type: IrSimpleType
 
-    fun makeFlattenedGetterExpressions(): List<IrExpression>
-    fun makeGetterExpression(): IrExpression
+    fun makeFlattenedGetterExpressions(scope: IrBlockBuilder): List<IrExpression>
+    fun makeGetterExpression(scope: IrBuilderWithScope): IrExpression
     operator fun get(name: Name): MfvcNodeInstance?
-    fun makeStatements(values: List<IrExpression>): List<IrStatement>
+    fun makeStatements(scope: IrBuilderWithScope, values: List<IrExpression>): List<IrStatement>
 }
 
 private fun makeTypeFromMfvcNodeAndTypeArguments(node: MfvcNode, typeArguments: TypeArguments) =
     node.type.substitute(typeArguments) as IrSimpleType
 
 fun MfvcNodeInstance.addSetterStatements(scope: IrBlockBuilder, values: List<IrExpression>) = with(scope) {
-    for (statement in makeStatements(values)) {
+    for (statement in makeStatements(this, values)) {
         +statement
     }
 }
 
-fun MfvcNodeInstance.makeSetterExpressions(values: List<IrExpression>): IrExpression = scope.irBlock {
+fun MfvcNodeInstance.makeSetterExpressions(scope: IrBuilderWithScope, values: List<IrExpression>): IrExpression = scope.irBlock {
     addSetterStatements(this, values)
 }
 
@@ -51,7 +50,6 @@ private fun MfvcNodeInstance.checkValuesCount(values: List<IrExpression>) {
 }
 
 class ValueDeclarationMfvcNodeInstance(
-    override val scope: IrBuilderWithScope,
     override val node: MfvcNode,
     override val typeArguments: TypeArguments,
     val valueDeclarations: List<IrValueDeclaration>,
@@ -62,19 +60,21 @@ class ValueDeclarationMfvcNodeInstance(
 
     override val type: IrSimpleType = makeTypeFromMfvcNodeAndTypeArguments(node, typeArguments)
 
-    override fun makeFlattenedGetterExpressions(): List<IrExpression> = valueDeclarations.map { scope.irGet(it) }
+    override fun makeFlattenedGetterExpressions(scope: IrBlockBuilder): List<IrExpression> =
+        makeFlattenedGetterExpressions(scope as IrBuilderWithScope)
+    private fun makeFlattenedGetterExpressions(scope: IrBuilderWithScope): List<IrExpression> = valueDeclarations.map { scope.irGet(it) }
 
-    override fun makeGetterExpression(): IrExpression = when (node) {
-        is LeafMfvcNode -> makeFlattenedGetterExpressions().single()
-        is MfvcNodeWithSubnodes -> node.makeBoxedExpression(scope, typeArguments, makeFlattenedGetterExpressions())
+    override fun makeGetterExpression(scope: IrBuilderWithScope): IrExpression = when (node) {
+        is LeafMfvcNode -> makeFlattenedGetterExpressions(scope).single()
+        is MfvcNodeWithSubnodes -> node.makeBoxedExpression(scope, typeArguments, makeFlattenedGetterExpressions(scope))
     }
 
     override fun get(name: Name): ValueDeclarationMfvcNodeInstance? {
         val (newNode, indices) = node.getSubnodeAndIndices(name) ?: return null
-        return ValueDeclarationMfvcNodeInstance(scope, newNode, typeArguments, valueDeclarations.slice(indices))
+        return ValueDeclarationMfvcNodeInstance(newNode, typeArguments, valueDeclarations.slice(indices))
     }
 
-    override fun makeStatements(values: List<IrExpression>): List<IrStatement> {
+    override fun makeStatements(scope: IrBuilderWithScope, values: List<IrExpression>): List<IrStatement> {
         checkValuesCount(values)
         return valueDeclarations.zip(values) { declaration, value -> scope.irSet(declaration, value) }
     }
@@ -141,7 +141,7 @@ fun IrExpression?.isRepeatableAccessor(): Boolean = isRepeatableGetter() || isRe
 enum class AccessType { AlwaysPublic, PrivateWhenNoBox, AlwaysPrivate }
 
 class ReceiverBasedMfvcNodeInstance(
-    override val scope: IrBlockBuilder,
+    private val scope: IrBlockBuilder,
     override val node: MfvcNode,
     override val typeArguments: TypeArguments,
     receiver: IrExpression?,
@@ -161,14 +161,14 @@ class ReceiverBasedMfvcNodeInstance(
         require(node is RootMfvcNode == (unboxMethod == null)) { "Only root node has node getter" }
     }
 
-    override fun makeFlattenedGetterExpressions(): List<IrExpression> = when (node) {
-        is LeafMfvcNode -> listOf(makeGetterExpression())
+    override fun makeFlattenedGetterExpressions(scope: IrBlockBuilder): List<IrExpression> = when (node) {
+        is LeafMfvcNode -> listOf(makeGetterExpression(scope))
         is MfvcNodeWithSubnodes -> when {
             node is IntermediateMfvcNode && canUsePrivateAccessFor(node) && fields != null ->
                 fields.map { scope.irGetField(makeReceiverCopy(), it) }
 
             node is IntermediateMfvcNode && !node.hasPureUnboxMethod -> {
-                val value = makeGetterExpression()
+                val value = makeGetterExpression(scope)
                 val asVariable = scope.savableStandaloneVariableWithSetter(
                     value,
                     origin = IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_PARAMETER,
@@ -178,14 +178,14 @@ class ReceiverBasedMfvcNodeInstance(
                 val root = node.rootNode
                 val variableInstance =
                     root.createInstanceFromBox(scope, typeArguments, scope.irGet(asVariable), accessType, saveVariable)
-                variableInstance.makeFlattenedGetterExpressions()
+                variableInstance.makeFlattenedGetterExpressions(scope)
             }
 
-            else -> node.subnodes.flatMap { get(it.name)!!.makeFlattenedGetterExpressions() }
+            else -> node.subnodes.flatMap { get(it.name)!!.makeFlattenedGetterExpressions(scope) }
         }
     }
 
-    override fun makeGetterExpression(): IrExpression = with(scope) {
+    override fun makeGetterExpression(scope: IrBuilderWithScope): IrExpression = with(scope) {
         when {
             node is LeafMfvcNode && canUsePrivateAccessFor(node) && fields != null -> irGetField(makeReceiverCopy(), fields.single())
             node is IntermediateMfvcNode && accessType == AccessType.AlwaysPrivate && fields != null ->
@@ -215,7 +215,7 @@ class ReceiverBasedMfvcNodeInstance(
         return newNode.createInstanceFromBox(scope, typeArguments, makeReceiverCopy(), accessType, saveVariable)
     }
 
-    override fun makeStatements(values: List<IrExpression>): List<IrStatement> {
+    override fun makeStatements(scope: IrBuilderWithScope, values: List<IrExpression>): List<IrStatement> {
         checkValuesCount(values)
         require(fields != null) { "$node is immutable as it has custom getter and so no backing fields" }
         return fields.zip(values) { field, expr -> scope.irSetField(makeReceiverCopy(), field, expr) }

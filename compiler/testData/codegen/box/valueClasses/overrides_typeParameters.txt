@@ -53,8 +53,6 @@ public final class GenericFakeOverrideMFVC {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
-    public final method getField1(): java.lang.Object
-    public final method getField2(): java.lang.Object
     public @org.jetbrains.annotations.NotNull method getP(): XPoint
     public synthetic bridge method getP(): java.lang.Object
     public static @org.jetbrains.annotations.NotNull method getP-impl(p0: java.lang.Object, p1: java.lang.Object): XPoint
@@ -88,8 +86,6 @@ public final class GenericFakeOverrideMFVCWithMFVCUpperBound {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
-    public final method getField1(): java.lang.Object
-    public final method getField2(): java.lang.Object
     public @org.jetbrains.annotations.NotNull method getP(): XPoint
     public static @org.jetbrains.annotations.NotNull method getP-impl(p0: java.lang.Object, p1: java.lang.Object): XPoint
     public @org.jetbrains.annotations.NotNull method getP1(): XPoint
@@ -2417,8 +2413,6 @@ public final class ReifiedFakeOverrideMFVC {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
-    public final method getField1(): java.lang.Object
-    public final method getField2(): java.lang.Object
     public @org.jetbrains.annotations.NotNull method getP(): XPoint
     public static @org.jetbrains.annotations.NotNull method getP-impl(p0: java.lang.Object, p1: java.lang.Object): XPoint
     public @org.jetbrains.annotations.NotNull method getP1(): XPoint
@@ -2566,8 +2560,6 @@ public final class XPointWithInterface {
     public static @org.jetbrains.annotations.NotNull method getSomethingMFVC-impl(p0: java.lang.Object, p1: java.lang.Object): XPoint
     public method getSomethingRegular(): int
     public static method getSomethingRegular-impl(p0: java.lang.Object, p1: java.lang.Object): int
-    public final method getX(): java.lang.Object
-    public final method getY(): java.lang.Object
     public method hashCode(): int
     public static method hashCode-impl(p0: java.lang.Object, p1: java.lang.Object): int
     public synthetic bridge method setSomethingGeneric(p0: java.lang.Object): void

@@ -117,9 +117,6 @@ public final class C {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, p2: java.lang.String, p3: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): boolean
-    public final method getX(): int
-    public final method getY-GsR9Xnw(): int
-    public final @org.jetbrains.annotations.NotNull method getZ(): java.lang.String
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int, p2: java.lang.String): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -132,11 +129,14 @@ public final class C {
 @kotlin.Metadata
 public final class ComplexKt {
     // source: 'complex.kt'
+    private final static @org.jetbrains.annotations.NotNull field lines: java.util.List
+    static method <clinit>(): void
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method equalsChecks-GPBa7dw(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List, p6: int, p7: int, p8: int, p9: int, @org.jetbrains.annotations.NotNull p10: java.lang.String, @org.jetbrains.annotations.NotNull p11: java.util.List): void
     public final static method equalsChecks1-iUtXLc0(@org.jetbrains.annotations.NotNull p0: java.util.List): void
     public final static method f-sUp7gFk(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
     public final static method g-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
+    public final static @org.jetbrains.annotations.NotNull method getLines(): java.util.List
     public final static method h-sUp7gFk(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
     public final static method h1(): void
     public final static @org.jetbrains.annotations.NotNull method inlined-OsBMiQA(p0: int, p1: int, p2: int): D
@@ -160,7 +160,6 @@ public final class D {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, p2: java.lang.String, p3: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): boolean
-    public final @org.jetbrains.annotations.NotNull method getX(): C
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int, p2: java.lang.String): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -185,7 +184,6 @@ public final class E {
     public static method equals-impl(p0: int, p1: int, p2: java.lang.String, p3: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): boolean
     public final static @org.jetbrains.annotations.NotNull method getWithNonTrivialSetters-impl(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): D
-    public final @org.jetbrains.annotations.NotNull method getX(): D
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int, p2: java.lang.String): int
     public final static method setWithNonTrivialSetters-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String, p3: int, p4: int, @org.jetbrains.annotations.NotNull p5: java.lang.String): void
@@ -296,9 +294,6 @@ public final class R {
     public static @org.jetbrains.annotations.NotNull method getFakeOverrideMFVC-impl(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): R
     public method getFakeOverrideRegular(): int
     public static method getFakeOverrideRegular-impl(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): int
-    public final @org.jetbrains.annotations.NotNull method getT-GKOAj6k(): java.util.List
-    public final method getX(): int
-    public final method getY-pVg5ArA(): int
     public @org.jetbrains.annotations.NotNull method getZ(): E
     public synthetic bridge method getZ-0(): D
     public synthetic bridge method getZ-0-0(): C
