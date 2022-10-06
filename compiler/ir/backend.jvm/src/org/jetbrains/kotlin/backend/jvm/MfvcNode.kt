@@ -60,13 +60,13 @@ fun MfvcNode.createInstanceFromValueDeclarations(
             saveVariable = saveVariable
         )
     }
-    return ValueDeclarationMfvcNodeInstance(scope, this, typeArguments, valueDeclarations)
+    return ValueDeclarationMfvcNodeInstance(this, typeArguments, valueDeclarations)
 }
 
 fun MfvcNode.createInstanceFromValueDeclarationsAndBoxType(
-    scope: IrBuilderWithScope, type: IrSimpleType, fieldValues: List<IrValueDeclaration>
+    type: IrSimpleType, fieldValues: List<IrValueDeclaration>
 ): ValueDeclarationMfvcNodeInstance =
-    ValueDeclarationMfvcNodeInstance(scope, this, makeTypeArgumentsFromType(type), fieldValues)
+    ValueDeclarationMfvcNodeInstance(this, makeTypeArgumentsFromType(type), fieldValues)
 
 fun makeTypeArgumentsFromType(type: IrSimpleType): TypeArguments {
     if (type.classifierOrNull !is IrClassSymbol) return mapOf()

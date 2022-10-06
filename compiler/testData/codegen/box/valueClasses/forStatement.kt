@@ -1,5 +1,3 @@
-// https://youtrack.jetbrains.com/issue/KT-52236/Different-modality-in-psi-and-fir
-// CHECK_BYTECODE_LISTING
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
 // WORKS_WHEN_VALUE_CLASS
