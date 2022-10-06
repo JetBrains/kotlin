@@ -35,17 +35,7 @@ class FirClassSubstitutionScope(
     private val dispatchReceiverTypeForSubstitutedMembers: ConeClassLikeType,
     private val skipPrivateMembers: Boolean,
     private val makeExpect: Boolean = false
-) : FirTypeScope() {
-    companion object {
-        private val FirVariableSymbol<*>.isOverridable: Boolean
-            get() = when (this) {
-                is FirPropertySymbol,
-                is FirFieldSymbol,
-                is FirSyntheticPropertySymbol -> true
-                else -> false
-            }
-    }
-
+) : FirTypeScope(), FirSubstitutionOverrideScope {
     private val substitutionOverrideCache = session.substitutionOverrideStorage.substitutionOverrideCacheByScope.getValue(key, null)
     private val newOwnerClassId = dispatchReceiverTypeForSubstitutedMembers.lookupTag.classId
 
@@ -86,7 +76,7 @@ class FirClassSubstitutionScope(
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         return useSiteMemberScope.processPropertiesByName(name) process@{ original ->
-            val symbol = if (original.isOverridable) {
+            val symbol = if (original is FirPropertySymbol || original is FirFieldSymbol) {
                 substitutionOverrideCache.overridesForVariables.getValue(original, this)
             } else {
                 original
@@ -121,7 +111,7 @@ class FirClassSubstitutionScope(
         return substitutor.substituteOrNull(this) as ConeSimpleKotlinType?
     }
 
-    fun createSubstitutionOverrideFunction(original: FirNamedFunctionSymbol): FirNamedFunctionSymbol {
+    override fun createSubstitutionOverride(original: FirNamedFunctionSymbol): FirNamedFunctionSymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
         val member = original.fir
         if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
@@ -178,7 +168,7 @@ class FirClassSubstitutionScope(
         )
     }
 
-    fun createSubstitutionOverrideConstructor(original: FirConstructorSymbol): FirConstructorSymbol {
+    override fun createSubstitutionOverride(original: FirConstructorSymbol): FirConstructorSymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
         val constructor = original.fir
 
@@ -221,7 +211,12 @@ class FirClassSubstitutionScope(
         ).symbol
     }
 
-    fun createSubstitutionOverrideProperty(original: FirPropertySymbol): FirPropertySymbol {
+    override fun createSubstitutionOverride(original: FirPropertySymbol): FirPropertySymbol {
+        // TODO: this code was unreachable for a while - is it needed?
+        // if (original is FirSyntheticPropertySymbol) {
+        //     return createSubstitutionOverrideSyntheticProperty(original)
+        // }
+
         if (substitutor == ConeSubstitutor.Empty) return original
         val member = original.fir
         if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
@@ -307,7 +302,7 @@ class FirClassSubstitutionScope(
         )
     }
 
-    fun createSubstitutionOverrideField(original: FirFieldSymbol): FirFieldSymbol {
+    override fun createSubstitutionOverride(original: FirFieldSymbol): FirFieldSymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
         val member = original.fir
         if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
@@ -320,7 +315,7 @@ class FirClassSubstitutionScope(
         return FirFakeOverrideGenerator.createSubstitutionOverrideField(session, member, original, newReturnType, newOwnerClassId)
     }
 
-    fun createSubstitutionOverrideSyntheticProperty(original: FirSyntheticPropertySymbol): FirSyntheticPropertySymbol {
+    private fun createSubstitutionOverrideSyntheticProperty(original: FirSyntheticPropertySymbol): FirSyntheticPropertySymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
         val member = original.fir as FirSyntheticProperty
         if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
@@ -382,6 +377,13 @@ class FirClassSubstitutionScope(
     }
 }
 
+interface FirSubstitutionOverrideScope {
+    fun createSubstitutionOverride(original: FirConstructorSymbol): FirConstructorSymbol
+    fun createSubstitutionOverride(original: FirNamedFunctionSymbol): FirNamedFunctionSymbol
+    fun createSubstitutionOverride(original: FirPropertySymbol): FirPropertySymbol
+    fun createSubstitutionOverride(original: FirFieldSymbol): FirFieldSymbol
+}
+
 class FirSubstitutionOverrideStorage(val session: FirSession) : FirSessionComponent {
     private val cachesFactory = session.firCachesFactory
 
@@ -389,20 +391,19 @@ class FirSubstitutionOverrideStorage(val session: FirSession) : FirSessionCompon
         cachesFactory.createCache { _ -> SubstitutionOverrideCache(session.firCachesFactory) }
 
     class SubstitutionOverrideCache(cachesFactory: FirCachesFactory) {
-        val overridesForFunctions: FirCache<FirNamedFunctionSymbol, FirNamedFunctionSymbol, FirClassSubstitutionScope> =
-            cachesFactory.createCache { original, scope -> scope.createSubstitutionOverrideFunction(original) }
-        val overridesForConstructors: FirCache<FirConstructorSymbol, FirConstructorSymbol, FirClassSubstitutionScope> =
-            cachesFactory.createCache { original, scope -> scope.createSubstitutionOverrideConstructor(original) }
-        val overridesForVariables: FirCache<FirVariableSymbol<*>, FirVariableSymbol<*>, FirClassSubstitutionScope> =
+        val overridesForFunctions: FirCache<FirNamedFunctionSymbol, FirNamedFunctionSymbol, FirSubstitutionOverrideScope> =
+            cachesFactory.createCache { original, scope -> scope.createSubstitutionOverride(original) }
+        val overridesForConstructors: FirCache<FirConstructorSymbol, FirConstructorSymbol, FirSubstitutionOverrideScope> =
+            cachesFactory.createCache { original, scope -> scope.createSubstitutionOverride(original) }
+        val overridesForVariables: FirCache<FirVariableSymbol<*>, FirVariableSymbol<*>, FirSubstitutionOverrideScope> =
             cachesFactory.createCache { original, scope ->
                 when (original) {
-                    is FirPropertySymbol -> scope.createSubstitutionOverrideProperty(original)
-                    is FirFieldSymbol -> scope.createSubstitutionOverrideField(original)
-                    is FirSyntheticPropertySymbol -> scope.createSubstitutionOverrideSyntheticProperty(original)
+                    is FirPropertySymbol -> scope.createSubstitutionOverride(original)
+                    is FirFieldSymbol -> scope.createSubstitutionOverride(original)
                     else -> error("symbol $original is not overridable")
                 }
             }
     }
 }
 
-private val FirSession.substitutionOverrideStorage: FirSubstitutionOverrideStorage by FirSession.sessionComponentAccessor()
+val FirSession.substitutionOverrideStorage: FirSubstitutionOverrideStorage by FirSession.sessionComponentAccessor()

@@ -23558,6 +23558,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaVisibility/package"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
+            @TestMetadata("inheritedPackageStaticField.kt")
+            public void testInheritedPackageStaticField() throws Exception {
+                runTest("compiler/testData/codegen/box/javaVisibility/package/inheritedPackageStaticField.kt");
+            }
+
             @TestMetadata("kt2781.kt")
             public void testKt2781() throws Exception {
                 runTest("compiler/testData/codegen/box/javaVisibility/package/kt2781.kt");

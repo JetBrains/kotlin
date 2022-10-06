@@ -6,24 +6,37 @@
 package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
+import org.jetbrains.kotlin.fir.originalOrSelf
+import org.jetbrains.kotlin.fir.resolve.ScopeSessionKey
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.isStatic
+import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
+import org.jetbrains.kotlin.fir.scopes.impl.FirSubstitutionOverrideScope
+import org.jetbrains.kotlin.fir.scopes.impl.substitutionOverrideStorage
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addIfNotNull
+
+data class JavaClassStaticUseSiteScopeKey(val classId: ClassId) :
+    ScopeSessionKey<Nothing, Nothing>()
 
 class JavaClassStaticUseSiteScope internal constructor(
-    session: FirSession,
+    private val session: FirSession,
+    private val owner: ConeClassLikeLookupTag,
     private val declaredMemberScope: FirContainingNamesAwareScope,
     private val superClassScope: FirContainingNamesAwareScope,
     private val superTypesScopes: List<FirContainingNamesAwareScope>,
     javaTypeParameterStack: JavaTypeParameterStack,
-) : FirContainingNamesAwareScope() {
+) : FirContainingNamesAwareScope(), FirSubstitutionOverrideScope {
     private val functions = hashMapOf<Name, Collection<FirNamedFunctionSymbol>>()
     private val properties = hashMapOf<Name, Collection<FirVariableSymbol<*>>>()
     private val overrideChecker = JavaOverrideChecker(session, javaTypeParameterStack, baseScopes = null, considerReturnTypeKinds = false)
+
+    private val substitutionCache =
+        session.substitutionOverrideStorage.substitutionOverrideCacheByScope
+            .getValue(JavaClassStaticUseSiteScopeKey(owner.classId), null)
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         functions.getOrPut(name) {
@@ -32,25 +45,18 @@ class JavaClassStaticUseSiteScope internal constructor(
     }
 
     private fun computeFunctions(name: Name): MutableList<FirNamedFunctionSymbol> {
-        val superClassSymbols = mutableListOf<FirNamedFunctionSymbol>()
-        superClassScope.processFunctionsByName(name) {
-            superClassSymbols.addIfNotNull(it as? FirNamedFunctionSymbol)
+        val declaredMembers = mutableListOf<FirNamedFunctionSymbol>()
+        declaredMemberScope.processFunctionsByName(name) l@{
+            if (!it.isStatic) return@l
+            declaredMembers.add(it)
         }
 
-        val result = mutableListOf<FirNamedFunctionSymbol>()
-
-        declaredMemberScope.processFunctionsByName(name) l@{ functionSymbol ->
-            if (!functionSymbol.isStatic) return@l
-
-            result.add(functionSymbol)
-            superClassSymbols.removeAll { superClassSymbol ->
-                overrideChecker.isOverriddenFunction(functionSymbol.fir, superClassSymbol.fir)
-            }
+        val all = declaredMembers.toMutableList()
+        superClassScope.processFunctionsByName(name) l@{
+            if (!it.isStatic || declaredMembers.any { override -> overrideChecker.isOverriddenFunction(override.fir, it.fir) }) return@l
+            all.add(substitutionCache.overridesForFunctions.getValue(it, this))
         }
-
-        result += superClassSymbols
-
-        return result
+        return all
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
@@ -60,7 +66,7 @@ class JavaClassStaticUseSiteScope internal constructor(
 
     }
 
-    private fun computeProperties(name: Name): MutableList<FirVariableSymbol<*>> {
+    private fun computeProperties(name: Name): Collection<FirVariableSymbol<*>> {
         val result: MutableList<FirVariableSymbol<*>> = mutableListOf()
         declaredMemberScope.processPropertiesByName(name) l@{ propertySymbol ->
             if (!propertySymbol.isStatic) return@l
@@ -69,15 +75,44 @@ class JavaClassStaticUseSiteScope internal constructor(
 
         if (result.isNotEmpty()) return result
 
+        val seen: MutableSet<FirVariableSymbol<*>> = mutableSetOf()
         for (superTypesScope in superTypesScopes) {
             superTypesScope.processPropertiesByName(name) l@{ propertySymbol ->
-                if (!propertySymbol.isStatic) return@l
-                result.add(propertySymbol)
+                if (!propertySymbol.isStatic || !seen.add(propertySymbol.originalOrSelf())) return@l
+
+                if (propertySymbol is FirPropertySymbol || propertySymbol is FirFieldSymbol) {
+                    result.add(substitutionCache.overridesForVariables.getValue(propertySymbol, this))
+                } else {
+                    result.add(propertySymbol)
+                }
             }
         }
 
         return result
     }
+
+    override fun createSubstitutionOverride(original: FirConstructorSymbol): FirConstructorSymbol =
+        throw AssertionError("constructors cannot be static")
+
+    override fun createSubstitutionOverride(original: FirNamedFunctionSymbol): FirNamedFunctionSymbol {
+        val symbol = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(original, owner.classId)
+        return FirFakeOverrideGenerator.createSubstitutionOverrideFunction(session, symbol, original.fir, null).also {
+            it.fir.containingClassForStaticMemberAttr = owner
+        }
+    }
+
+    override fun createSubstitutionOverride(original: FirPropertySymbol): FirPropertySymbol {
+        val symbol = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(original, owner.classId)
+        return FirFakeOverrideGenerator.createSubstitutionOverrideProperty(session, symbol, original.fir, null).also {
+            it.fir.containingClassForStaticMemberAttr = owner
+        }
+    }
+
+    override fun createSubstitutionOverride(original: FirFieldSymbol): FirFieldSymbol =
+        FirFakeOverrideGenerator.createSubstitutionOverrideField(
+            // In Java classes, field initializers refer to the ConstantValue JVM attribute, so they're safe to copy.
+            session, original.fir, original, null, owner.classId, withInitializer = true
+        ).also { it.fir.containingClassForStaticMemberAttr = owner }
 
     override fun getCallableNames(): Set<Name> {
         return buildSet {

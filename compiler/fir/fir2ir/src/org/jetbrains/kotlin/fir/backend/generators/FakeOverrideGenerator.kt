@@ -176,7 +176,7 @@ class FakeOverrideGenerator(
     }
 
     private fun FirCallableSymbol<*>.shouldHaveComputedBaseSymbolsForClass(classLookupTag: ConeClassLikeLookupTag): Boolean =
-        fir.origin.fromSupertypes && dispatchReceiverClassOrNull() == classLookupTag
+        fir.origin.fromSupertypes && containingClassLookupTag() == classLookupTag
 
     private inline fun <reified D : FirCallableDeclaration, reified S : FirCallableSymbol<D>, reified I : IrDeclaration> createFakeOverriddenIfNeeded(
         klass: FirClass,

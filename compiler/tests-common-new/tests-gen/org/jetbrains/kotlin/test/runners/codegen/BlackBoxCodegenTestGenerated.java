@@ -27865,6 +27865,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("inheritedPackageStaticField.kt")
+            public void testInheritedPackageStaticField() throws Exception {
+                runTest("compiler/testData/codegen/box/javaVisibility/package/inheritedPackageStaticField.kt");
+            }
+
+            @Test
             @TestMetadata("kt2781.kt")
             public void testKt2781() throws Exception {
                 runTest("compiler/testData/codegen/box/javaVisibility/package/kt2781.kt");

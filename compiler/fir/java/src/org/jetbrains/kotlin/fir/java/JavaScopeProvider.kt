@@ -141,6 +141,7 @@ object JavaScopeProvider : FirScopeProvider() {
                 klass.symbol,
                 JavaClassStaticUseSiteScope(
                     useSiteSession,
+                    klass.symbol.toLookupTag(),
                     declaredMemberScope = declaredScope,
                     superClassScope, superTypesScopes,
                     klass.javaTypeParameterStack
