@@ -198,7 +198,7 @@ val IrProperty.isSimpleProperty: Boolean
         val setterFun = setter
         return !isFakeOverride &&
                 !isLateinit &&
-                modality === Modality.FINAL &&
+                (modality === Modality.FINAL || parentClassOrNull?.modality == Modality.FINAL) &&
                 (getterFun == null || getterFun.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) &&
                 (setterFun == null || setterFun.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR)
     }

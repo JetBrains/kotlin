@@ -156,6 +156,7 @@ class JsIrBackendContext(
 
     val dynamicType: IrDynamicType = IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
     val intrinsics: JsIntrinsics = JsIntrinsics(irBuiltIns, this)
+    val optimizations = OptimizationsContext()
 
     override val reflectionSymbols: ReflectionSymbols get() = intrinsics.reflectionSymbols
 

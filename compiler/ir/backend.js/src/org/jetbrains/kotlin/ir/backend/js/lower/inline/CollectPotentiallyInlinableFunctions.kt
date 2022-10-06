@@ -94,12 +94,6 @@ private class CollectPotentiallyInlinableFunctionsVisitor(val context: JsIrBacke
         return this == null || (this is IrGetField && !symbol.owner.isEffectivelyExternal())
     }
 
-    private val IrCall.valueArguments: Sequence<IrExpression?>
-        get() = sequence {
-            for (position in 0 until valueArgumentsCount) {
-                yield(getValueArgument(position))
-            }
-        }
 }
 
 private fun IrSimpleFunction.markAsInlinable(context: JsIrBackendContext) {
@@ -109,3 +103,9 @@ private fun IrSimpleFunction.markAsInlinable(context: JsIrBackendContext) {
     annotations += context.createIrBuilder(symbol).irCall(inlineOnly)
 }
 
+val IrCall.valueArguments: Sequence<IrExpression?>
+    get() = sequence {
+        for (position in 0 until valueArgumentsCount) {
+            yield(getValueArgument(position))
+        }
+    }

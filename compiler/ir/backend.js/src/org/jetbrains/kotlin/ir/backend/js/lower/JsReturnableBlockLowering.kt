@@ -12,12 +12,14 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irComposite
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 /**
  * Wraps returnable blocks with returns to composite and replaces returns with assignment to temporary variable + `return Unit`,
@@ -59,10 +61,13 @@ class JsReturnableBlockTransformer(val context: CommonBackendContext) : IrElemen
     private val unitType = context.irBuiltIns.unitType
     private val unitValue get() = IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, unitType, context.irBuiltIns.unitClass)
 
+    private val defaultArgumentsResolutionRemover = DefaultArgumentsResolutionRemoverVisitor(context)
+
     override fun visitBlock(expression: IrBlock): IrExpression {
         if (expression !is IrReturnableBlock) return super.visitBlock(expression)
 
         expression.transformChildrenVoid()
+        expression.transformChildren(defaultArgumentsResolutionRemover, null)
 
         val variable = map.remove(expression.symbol) ?: return expression
 
@@ -90,6 +95,19 @@ class JsReturnableBlockTransformer(val context: CommonBackendContext) : IrElemen
         return builder.at(UNDEFINED_OFFSET, UNDEFINED_OFFSET).irComposite {
             +at(expression).irSet(variable.symbol, expression.value)
             +at(UNDEFINED_OFFSET, UNDEFINED_OFFSET).irReturn(unitValue)
+        }
+    }
+}
+
+class DefaultArgumentsResolutionRemoverVisitor(val context: CommonBackendContext) : IrElementTransformerVoid() {
+    private val unitType = context.irBuiltIns.unitType
+    private val unitValue get() = IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, unitType, context.irBuiltIns.unitClass)
+
+    override fun visitSetValue(expression: IrSetValue): IrExpression {
+        return if (expression.origin == JsStatementOrigins.DEFAULT_ARGUMENT_RESOLUTION) {
+            unitValue
+        } else {
+            super.visitSetValue(expression)
         }
     }
 }

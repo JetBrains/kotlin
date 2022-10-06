@@ -368,8 +368,8 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             accept(stmt);
             if (needSemi) {
                 semi();
+                newlineOpt();
             }
-            newlineOpt();
         }
         p.indentOut();
         needSemi = false;
@@ -532,6 +532,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitEmpty(@NotNull JsEmpty x) {
+        needSemi = false;
     }
 
     @Override

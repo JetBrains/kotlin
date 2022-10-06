@@ -34,7 +34,13 @@ private val foldConstantLoweringPhase = makeBodyLoweringPhase(
     description = "[Optimization] Constant Folding",
 )
 
-private val collectSingleCallInlinableFunctions = makeBodyLoweringPhase(
+private val jsSpecificConstantFoldingLoweringPhase = makeBodyLoweringPhase(
+    ::JsSpecificConstantFoldingLowering,
+    name = "JsSpecificConstantFoldingLowering",
+    description = "[Optimization] Constant Folding for JS",
+)
+
+private val collectSingleCallInlinableFunctionsLoweringPhase = makeBodyLoweringPhase(
     ::CollectSingleCallInlinableFunctions,
     name = "CollectSingleCallInlinableFunctions",
     description = "[Optimization] Collect single call inlinable functions",
@@ -44,7 +50,7 @@ private val collectPotentiallyInlinableFunctionsLoweringPhase = makeBodyLowering
     ::CollectPotentiallyInlinableFunctions,
     name = "CollectPotentiallyInlinableFunctions",
     description = "[Optimization] Collect potentially inlinable functions",
-    prerequisite = setOf(collectSingleCallInlinableFunctions)
+    prerequisite = setOf(collectSingleCallInlinableFunctionsLoweringPhase)
 )
 
 private val functionInliningPhase = makeBodyLoweringPhase(
@@ -75,6 +81,12 @@ private val blockDecomposerLoweringPhase = makeBodyLoweringPhase(
     prerequisite = setOf(returnableBlockLoweringPhase)
 )
 
+private val compositeToBlockLoweringPhase = makeBodyLoweringPhase(
+    { CompositeToBlockLowering() },
+    name = "CompositeToBlockLowering",
+    description = "Transform all composites into blocks",
+    prerequisite = setOf(blockDecomposerLoweringPhase)
+)
 
 private val objectUsageLoweringPhase = makeBodyLoweringPhase(
     ::SimplifiedObjectUsageLowering,
@@ -82,31 +94,51 @@ private val objectUsageLoweringPhase = makeBodyLoweringPhase(
     description = "Transform IrGetObjectValue into instance generator call"
 )
 
+private val collectSimpleVariablesLoweringPhase = makeBodyLoweringPhase(
+    ::CollectSimpleVariables,
+    name = "CollectSimpleVariables",
+    description = "[Optimization] Collect simple variables to collapse",
+)
+
+private val variablesCollapsingLoweringPhase = makeBodyLoweringPhase(
+    ::VariablesCollapsingLowering,
+    name = "VariablesCollapsingLowering",
+    description = "[Optimization] Collapse simple variables",
+)
+
+private val removeUnreachableStatementsLowering = makeBodyLoweringPhase(
+    ::RemoveUnreachableStatementsLowering,
+    name = "RemoveUnreachableStatementsLowering",
+    description = "[Optimization] Remove unreachable statements",
+)
+
+private val unfoldBlocksLowering = makeBodyLoweringPhase(
+    ::UnfoldBlocksLowering,
+    name = "UnfoldBlocksLowering",
+    description = "[Optimization] Remove nested blocks",
+)
+
+
 private val jsMainOptimizations = NamedCompilerPhase(
     name = "IrOptimizations",
     description = "IR lowerings with one-time optimizations before main optimization loop",
-    lower = foldConstantLoweringPhase.modulePhase then
-            collectSingleCallInlinableFunctions then
+    lower = collectSingleCallInlinableFunctionsLoweringPhase then
             collectPotentiallyInlinableFunctionsLoweringPhase then
             functionInliningPhase then
+            copyInlineFunctionBodyLoweringPhase then
             returnableBlockLoweringPhase then
             blockDecomposerLoweringPhase then
-            objectUsageLoweringPhase
+//            compositeToBlockLoweringPhase then
+            collectSimpleVariablesLoweringPhase then
+            variablesCollapsingLoweringPhase then
+            jsSpecificConstantFoldingLoweringPhase then
+            foldConstantLoweringPhase then
+            removeUnreachableStatementsLowering then
+            objectUsageLoweringPhase then
+            unfoldBlocksLowering
 )
 
-private val validateIrAfterLowering = makeCustomJsModulePhase(
-    { context, module -> validationCallback(context, module) },
-    name = "ValidateIrAfterLowering",
-    description = "Validate IR after lowering"
-).toModuleLowering()
-
-private val jsPostfixOptimizations = NamedCompilerPhase(
-    name = "IrOptimizationPostifx",
-    description = "IR lowerings with one-time optimizations after main optimization loop",
-    lower = validateIrAfterLowering.modulePhase
-)
-
-const val MAX_NUMBER_OF_OPTIMIZATION_ITERATIONS = 10
+const val MAX_NUMBER_OF_OPTIMIZATION_ITERATIONS = 1
 
 fun runOptimizationsLoop(
     modules: Iterable<IrModuleFragment>,
@@ -115,13 +147,10 @@ fun runOptimizationsLoop(
     // Run prefix optimizations
     jsPrefixOptimizations.invokeToplevel(PhaseConfig(jsPrefixOptimizations), context, modules)
 
-//    for (i in 0 until MAX_NUMBER_OF_OPTIMIZATION_ITERATIONS) {
+    for (i in 0 until MAX_NUMBER_OF_OPTIMIZATION_ITERATIONS) {
         jsMainOptimizations.invokeToplevel(PhaseConfig(jsMainOptimizations), context, modules)
         eliminateDeadDeclarations(modules, context)
-//    }
-
-    // Run postfix optimizations with validations
-    jsPostfixOptimizations.invokeToplevel(PhaseConfig(jsPostfixOptimizations), context, modules)
+    }
 }
 
 infix fun Lowering.then(other: Lowering) = modulePhase then other.modulePhase

@@ -20,4 +20,5 @@ interface JsStatementOrigins {
     object COROUTINE_SWITCH : IrStatementOriginImpl("COROUTINE_SWITCH")
     object CLASS_REFERENCE : IrStatementOriginImpl("CLASS_REFERENCE")
     object IMPLEMENTATION_DELEGATION_CALL : IrStatementOriginImpl("IMPLEMENTATION_DELEGATION_CALL")
+    object DEFAULT_ARGUMENT_RESOLUTION : IrStatementOriginImpl("DEFAULT_ARGUMENT_RESOLUTION")
 }

@@ -57,7 +57,7 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
         defaultExpression: IrExpression?,
     ): IrSetValue? {
         return createDefaultResolutionExpression(defaultExpression, parameter)?.let {
-            JsIrBuilder.buildSetValue(parameter.symbol, it)
+            JsIrBuilder.buildSetValue(parameter.symbol, it, JsStatementOrigins.DEFAULT_ARGUMENT_RESOLUTION)
         }
     }
 

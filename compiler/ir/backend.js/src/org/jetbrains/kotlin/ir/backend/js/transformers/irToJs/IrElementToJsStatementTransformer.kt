@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.utils.isTheLastReturnStatementIn
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
