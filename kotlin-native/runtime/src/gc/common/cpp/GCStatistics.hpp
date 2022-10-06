@@ -23,6 +23,7 @@ struct MemoryUsage {
 };
 
 class GCHandle {
+public:
     class GCStageScopeUsTimer {
     protected:
         uint64_t startTime_ = konan::getTimeMicros();
@@ -86,6 +87,7 @@ class GCHandle {
         }
     };
 
+private:
     uint64_t epoch_;
     explicit GCHandle(uint64_t epoch) : epoch_(epoch) {}
 

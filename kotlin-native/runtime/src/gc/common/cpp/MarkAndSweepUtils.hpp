@@ -29,7 +29,7 @@ template <typename Traits>
 void processFieldInMark(void* state, ObjHeader* field) noexcept {
     auto& markQueue = *static_cast<typename Traits::MarkQueue*>(state);
     if (field->heap()) {
-        Traits::enqueue(markQueue, field);
+        Traits::tryEnqueue(markQueue, field);
     }
 }
 
@@ -62,7 +62,7 @@ bool collectRoot(typename Traits::MarkQueue& markQueue, ObjHeader* object) noexc
         return false;
 
     if (object->heap()) {
-        Traits::enqueue(markQueue, object);
+        Traits::tryEnqueue(markQueue, object);
     } else {
         // Each permanent and stack object has own entry in the root set, so it's okay to only process objects in heap.
         Traits::processInMark(markQueue, object);
@@ -71,43 +71,38 @@ bool collectRoot(typename Traits::MarkQueue& markQueue, ObjHeader* object) noexc
     return true;
 }
 
-} // namespace internal
-
-struct MarkStats {
-    // How many objects are alive.
-    size_t aliveHeapSet = 0;
-    // How many objects are alive in bytes. Note: this does not include overhead of malloc/mimalloc itself.
-    size_t aliveHeapSetBytes = 0;
-    // How many roots are were marked.
-    size_t rootSetSize = 0;
-
-    void merge(MarkStats other) {
-        aliveHeapSet += other.aliveHeapSet;
-        aliveHeapSetBytes += other.aliveHeapSetBytes;
-        rootSetSize += other.rootSetSize;
+// TODO: Consider making it noinline to keep loop in `Mark` small.
+template <typename Traits>
+void processExtraObjectData(GCHandle::GCMarkScope& markHandle, typename Traits::MarkQueue& markQueue, mm::ExtraObjectData& extraObjectData, ObjHeader* object) noexcept {
+    if (auto weakCounter = extraObjectData.GetWeakReferenceCounter()) {
+        RuntimeAssert(
+                weakCounter->heap(), "Weak counter must be a heap object. object=%p counter=%p permanent=%d local=%d", object, weakCounter,
+                weakCounter->permanent(), weakCounter->local());
+        // Do not schedule WeakReferenceCounter but process it right away.
+        // This will skip markQueue interaction.
+        if (Traits::tryMark(weakCounter)) {
+            markHandle.addObject(mm::GetAllocatedHeapSize(weakCounter));
+            // WeakReferenceCounter is empty, but keeping this just in case.
+            Traits::processInMark(markQueue, weakCounter);
+        }
     }
-};
+}
+
+} // namespace internal
 
 template <typename Traits>
 void Mark(GCHandle handle, typename Traits::MarkQueue& markQueue) noexcept {
     auto markHandle = handle.mark();
-    while (!Traits::isEmpty(markQueue)) {
-        ObjHeader* top = Traits::dequeue(markQueue);
-
-        RuntimeAssert(!isNullOrMarker(top), "Got invalid reference %p in mark queue", top);
-        RuntimeAssert(top->heap(), "Got non-heap reference %p in mark queue, permanent=%d stack=%d", top, top->permanent(), top->local());
-
+    while (ObjHeader* top = Traits::tryDequeue(markQueue)) {
+        // TODO: Consider moving it to the sweep phase to make this loop more tight.
+        //       This, however, requires care with scheduler interoperation.
         markHandle.addObject(mm::GetAllocatedHeapSize(top));
 
         Traits::processInMark(markQueue, top);
 
+        // TODO: Consider moving it before processInMark to make the latter something of a tail call.
         if (auto* extraObjectData = mm::ExtraObjectData::Get(top)) {
-            if (auto weakCounter = extraObjectData->GetWeakReferenceCounter()) {
-                RuntimeAssert(
-                        weakCounter->heap(), "Weak counter must be a heap object. object=%p counter=%p permanent=%d local=%d", top,
-                        weakCounter, weakCounter->permanent(), weakCounter->local());
-                Traits::enqueue(markQueue, weakCounter);
-            }
+            internal::processExtraObjectData<Traits>(markHandle, markQueue, *extraObjectData, top);
         }
     }
 }

@@ -31,14 +31,12 @@ struct SweepTraits {
         auto *baseObject = object.GetBaseObject();
         if (!baseObject->heap()) return true;
         auto& objectData = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(baseObject).ObjectData();
-        return objectData.color() == gc::SameThreadMarkAndSweep::ObjectData::Color::kBlack;
+        return objectData.marked();
     }
 
     static bool TryResetMark(ObjectFactory::NodeRef node) noexcept {
         auto& objectData = node.ObjectData();
-        if (objectData.color() == gc::SameThreadMarkAndSweep::ObjectData::Color::kWhite) return false;
-        objectData.setColor(gc::SameThreadMarkAndSweep::ObjectData::Color::kWhite);
-        return true;
+        return objectData.tryResetMark();
     }
 };
 

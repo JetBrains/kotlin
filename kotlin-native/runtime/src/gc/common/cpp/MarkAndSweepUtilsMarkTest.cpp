@@ -124,25 +124,28 @@ public:
 
     const std_support::unordered_set<ObjHeader*>& marked() const { return marked_; }
 
-    static bool isEmpty(const MarkQueue& queue) noexcept {
-        return queue.empty();
-    }
-
     static void clear(MarkQueue& queue) noexcept {
         queue.clear();
     }
 
-    static ObjHeader* dequeue(MarkQueue& queue) noexcept {
+    static ObjHeader* tryDequeue(MarkQueue& queue) noexcept {
+        if (queue.empty()) return nullptr;
         auto top = queue.back();
         queue.pop_back();
         return top;
     }
 
-    static void enqueue(MarkQueue& queue, ObjHeader* object) noexcept {
+    static bool tryEnqueue(MarkQueue& queue, ObjHeader* object) noexcept {
         auto result = instance_->marked_.insert(object);
         if (result.second) {
             queue.push_back(object);
         }
+        return result.second;
+    }
+
+    static bool tryMark(ObjHeader* object) noexcept {
+        auto result = instance_->marked_.insert(object);
+        return result.second;
     }
 
     static void processInMark(MarkQueue& markQueue, ObjHeader* object) noexcept {
@@ -176,7 +179,7 @@ public:
 
     gc::MemoryUsage Mark(std::initializer_list<std::reference_wrapper<BaseObject>> graySet) {
         std_support::vector<ObjHeader*> objects;
-        for (auto& object : graySet) ScopedMarkTraits::enqueue(objects, object.get().GetObjHeader());
+        for (auto& object : graySet) ScopedMarkTraits::tryEnqueue(objects, object.get().GetObjHeader());
         auto handle = gc::GCHandle::create(epoch_++);
         gc::Mark<ScopedMarkTraits>(handle, objects);
         handle.finished();

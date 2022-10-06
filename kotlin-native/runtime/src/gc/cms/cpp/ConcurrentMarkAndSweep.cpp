@@ -38,14 +38,12 @@ struct SweepTraits {
         auto *baseObject = object.GetBaseObject();
         if (!baseObject->heap()) return true;
         auto& objectData = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(baseObject).ObjectData();
-        return objectData.color() == gc::ConcurrentMarkAndSweep::ObjectData::Color::kBlack;
+        return objectData.marked();
     }
 
     static bool TryResetMark(ObjectFactory::NodeRef node) noexcept {
         auto& objectData = node.ObjectData();
-        if (objectData.color() == gc::ConcurrentMarkAndSweep::ObjectData::Color::kWhite) return false;
-        objectData.setColor(gc::ConcurrentMarkAndSweep::ObjectData::Color::kWhite);
-        return true;
+        return objectData.tryResetMark();
     }
 };
 
