@@ -1045,10 +1045,9 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetH
 	public abstract fun anyTvos ()V
 	public abstract fun anyWatchos ()V
 	public abstract fun common (Lkotlin/jvm/functions/Function1;)V
-	public abstract fun excludeCompilationIf (Lkotlin/jvm/functions/Function1;)V
-	public abstract fun filterCompilations (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun excludeCompilation (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun group (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
-	public abstract fun includeCompilationIf (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun includeCompilation (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun iosArm32 ()V
 	public abstract fun iosArm64 ()V
 	public abstract fun iosSimulatorArm64 ()V
@@ -1077,7 +1076,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetH
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder$DefaultImpls {
 	public static fun common (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder;Lkotlin/jvm/functions/Function1;)V
-	public static fun filterCompilations (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun group$default (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 }
 
@@ -1121,9 +1119,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargets
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetsContainerWithPresets : org/jetbrains/kotlin/gradle/plugin/KotlinTargetsContainer {
 	public abstract fun getPresets ()Lorg/gradle/api/NamedDomainObjectCollection;
-}
-
-public abstract interface annotation class org/jetbrains/kotlin/gradle/plugin/KotlinTargetsDsl : java/lang/annotation/Annotation {
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTestRun : org/jetbrains/kotlin/gradle/plugin/KotlinExecution {
