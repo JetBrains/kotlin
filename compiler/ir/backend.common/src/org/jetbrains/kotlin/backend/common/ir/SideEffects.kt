@@ -67,16 +67,27 @@ fun IrFunction.addEffectsAnnotation(effects: SideEffects, context: CommonBackend
     }
 }
 
+typealias FunctionSideEffectMemoizer = MutableMap<IrFunctionSymbol, SideEffects>
+
 // TODO: support more cases like built-in operator call and so on
 fun IrExpression?.computeEffects(
     anyVariableReadIsPure: Boolean,
-    context: CommonBackendContext? = null
-): SideEffects = this?.accept(EffectAnalyzer(anyVariableReadIsPure, context), Unit) ?: SideEffects.READNONE
+    memoizer: FunctionSideEffectMemoizer = mutableMapOf()
+): SideEffects =
+    this?.accept(EffectAnalyzer(anyVariableReadIsPure, memoizer), Unit) ?: SideEffects.READNONE
 
-fun IrExpression?.isPure(
+fun IrFunction.computeEffects(
     anyVariableReadIsPure: Boolean,
-    context: CommonBackendContext? = null
-) = computeEffects(anyVariableReadIsPure, context) == SideEffects.READNONE
+    memoizer: FunctionSideEffectMemoizer = mutableMapOf()
+): SideEffects = computeEffectsImpl(EffectAnalyzer(anyVariableReadIsPure, memoizer))
+
+private fun IrFunction.computeEffectsImpl(analyzer: EffectAnalyzer) = analyzer.memoizer.getOrPut(symbol) {
+    getDeclaredEffects()
+        ?: body?.accept(analyzer, Unit)
+        ?: SideEffects.READWRITE
+}
+
+fun IrExpression?.isPure(anyVariableReadIsPure: Boolean) = computeEffects(anyVariableReadIsPure) == SideEffects.READNONE
 
 private inline fun <T> Iterable<T>.maxEffect(computeEffects: (T) -> SideEffects): SideEffects {
     return maxOfOrNull {
@@ -89,7 +100,7 @@ private inline fun <T> Iterable<T>.maxEffect(computeEffects: (T) -> SideEffects)
 
 private class EffectAnalyzer(
     private val anyVariableReadIsPure: Boolean,
-    private val context: CommonBackendContext? = null
+    val memoizer: FunctionSideEffectMemoizer,
 ) : IrElementVisitor<SideEffects, Unit> {
 
     private val callStack = mutableListOf<IrFunctionSymbol>()
@@ -167,35 +178,7 @@ private class EffectAnalyzer(
         return if (expression.operator !in setOf(IrTypeOperator.INSTANCEOF, IrTypeOperator.REINTERPRET_CAST, IrTypeOperator.NOT_INSTANCEOF))
             SideEffects.READWRITE
         else
-            expression.argument.computeEffects(anyVariableReadIsPure, context)
-    }
-
-    override fun visitCall(expression: IrCall, data: Unit): SideEffects {
-        val function = expression.symbol.owner
-
-        if (callStack.contains(function.symbol)) {
-            // Consider recursive calls non-pure
-            // A more precise analysis can be done, but for now wi stick with tis.
-            return SideEffects.READWRITE
-        }
-
-        callStack.push(function.symbol)
-
-        try {
-            // TODO: Handle recursion
-            val functionSideEffects = function.getDeclaredEffects()
-                ?: function.body?.accept(this, data)
-                ?: SideEffects.READWRITE
-            if (functionSideEffects == SideEffects.READWRITE) return SideEffects.READWRITE
-
-            val argComputationSideEffects = (0 until expression.valueArgumentsCount).maxEffect {
-                expression.getValueArgument(it)!!.accept(this, data)
-            }
-
-            return maxOf(functionSideEffects, argComputationSideEffects)
-        } finally {
-            callStack.pop()
-        }
+            expression.argument.computeEffects(anyVariableReadIsPure)
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Unit): SideEffects {
@@ -207,17 +190,40 @@ private class EffectAnalyzer(
         if (!expression.symbol.owner.isFinal && !anyVariableReadIsPure) {
             return SideEffects.READWRITE
         }
-        return expression.receiver.computeEffects(anyVariableReadIsPure)
+        // FIXME: Verify correctness for null receiver
+        return expression.receiver?.accept(this, data) ?: SideEffects.READNONE
     }
 
     override fun visitVararg(expression: IrVararg, data: Unit): SideEffects {
         return expression.elements.maxEffect {
-            (it as? IrExpression)?.computeEffects(anyVariableReadIsPure, context) ?: SideEffects.READWRITE
+            (it as? IrExpression)?.accept(this, data) ?: SideEffects.READWRITE
         }
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: Unit): SideEffects {
-        return SideEffects.READNONE
+        val function = expression.symbol.owner
+
+        if (callStack.contains(function.symbol)) {
+            // Consider recursive calls non-pure
+            // A more precise analysis can be done, but for now we stick with this.
+            return SideEffects.READWRITE
+        }
+
+        callStack.push(function.symbol)
+
+        try {
+            val functionSideEffects = function.computeEffectsImpl(this)
+
+            if (functionSideEffects == SideEffects.READWRITE) return SideEffects.READWRITE
+
+            val argComputationSideEffects = (0 until expression.valueArgumentsCount).maxEffect {
+                expression.getValueArgument(it)!!.accept(this, data)
+            }
+
+            return maxOf(functionSideEffects, argComputationSideEffects)
+        } finally {
+            callStack.pop()
+        }
     }
 
     override fun visitContainerExpression(expression: IrContainerExpression, data: Unit): SideEffects {

@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.backend.common.ir.SideEffects
 import org.jetbrains.kotlin.backend.common.ir.computeEffects
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -62,25 +62,49 @@ private class BlockRemover : IrElementVisitorVoid {
 
 private class CodeCleaner : IrElementVisitorVoid {
 
-    private fun IrStatementContainer.cleanUpStatements() {
-        var unreachable = false
+    private val functionSideEffectMemoizer = mutableMapOf<IrFunctionSymbol, SideEffects>()
 
-        val newStatements = statements.filter {
-            when {
-                it is IrReturn -> true
-                it is IrBreakContinue -> true
-                it is IrExpression && (it.computeEffects(true) <= SideEffects.READONLY) -> false // FIXME: Only do this in production mode
+    private fun cleanUpStatementsSinglePass(statements: List<IrStatement>): List<IrStatement> = buildList {
+        var unreachable = false
+        for (statement in statements) {
+            if (statement is IrFunctionAccessExpression) {
+                val functionSideEffect = statement.symbol.owner.computeEffects(true, functionSideEffectMemoizer)
+                if (functionSideEffect <= SideEffects.READONLY) {
+                    for (i in 0 until statement.valueArgumentsCount) {
+                        add(statement.getValueArgument(i)!!)
+                    }
+                    continue
+                }
+            }
+            val keep = when {
+                statement is IrReturn -> true
+                statement is IrBreakContinue -> true
+                statement is IrExpression && (statement.computeEffects(
+                    true,
+                    functionSideEffectMemoizer
+                ) <= SideEffects.READONLY) -> false // FIXME: Only do this in production mode
                 unreachable -> false
                 else -> {
-                    unreachable = it.doesNotReturn()
+                    unreachable = statement.doesNotReturn()
                     true
                 }
             }
+
+            if (keep)
+                add(statement)
         }
+    }
 
-        statements.clear()
-
-        statements += newStatements
+    private fun IrStatementContainer.cleanUpStatements() {
+        var previousStatementCount = Int.MAX_VALUE
+        var hasProgress = true
+        while (hasProgress) {
+            val cleanedUp = cleanUpStatementsSinglePass(statements)
+            hasProgress = cleanedUp.size < previousStatementCount
+            previousStatementCount = cleanedUp.size
+            statements.clear()
+            statements += cleanedUp
+        }
     }
 
     // Checks if it is safe to assume the statement doesn't return (e.g. throws an exception or loops infinitely)
