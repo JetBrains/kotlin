@@ -173,6 +173,15 @@ class BuildReportsIT : KGPBaseTest() {
     @GradleTest
     fun testErrorsFileSmokeTest(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
+
+            val lookupsTab = projectPath.resolve("build/kotlin/compileKotlin/cacheable/caches-jvm/lookups/lookups.tab")
+            buildGradle.appendText("""
+                tasks.named("compileKotlin") {
+                    doLast {
+                        new File("${lookupsTab.toUri().path}").write("Invalid contents")
+                    }
+                }
+            """.trimIndent())
             build("compileKotlin") {
                 assertTrue { projectPath.resolve(".gradle/build_errors").listDirectoryEntries().isEmpty() }
             }
@@ -182,6 +191,21 @@ class BuildReportsIT : KGPBaseTest() {
                 val buildErrorDir = projectPath.resolve(".gradle/build_errors").toFile()
                 val files = buildErrorDir.listFiles()
                 assertTrue { files?.first()?.exists() ?: false }
+            }
+        }
+    }
+
+    @DisplayName("Error file should not contain compilation exceptions")
+    @GradleTest
+    fun testErrorsFileWithCompilationError(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            build("compileKotlin") {
+                assertTrue { projectPath.resolve(".gradle/build_errors").listDirectoryEntries().isEmpty() }
+            }
+            val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
+            kotlinFile.modify { it.replace("ArrayList","skjfghsjk") }
+            buildAndFail("compileKotlin") {
+                assertTrue { projectPath.resolve(".gradle/build_errors").listDirectoryEntries().isEmpty() }
             }
         }
     }

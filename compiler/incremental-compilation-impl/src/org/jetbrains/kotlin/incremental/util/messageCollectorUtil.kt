@@ -8,10 +8,10 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 
 public fun MessageCollector.reportException(e: Throwable, location: ExceptionLocation) {
-    report(severity = CompilerMessageSeverity.EXCEPTION, message = "$location failed:${e.message}\n${e.stackTraceToString()}")
+    report(severity = CompilerMessageSeverity.EXCEPTION, message = "${location.readableName} failed: ${e.message}\n${e.stackTraceToString()}")
 }
 
-public enum class ExceptionLocation(val readablename: String) {
+public enum class ExceptionLocation(val readableName: String) {
     INCREMENTAL_COMPILATION("Incremental compilation"),
     DAEMON("Daemon compilation"),
     OUT_OF_PROCESS_COMPILATION("Out of process compilation")

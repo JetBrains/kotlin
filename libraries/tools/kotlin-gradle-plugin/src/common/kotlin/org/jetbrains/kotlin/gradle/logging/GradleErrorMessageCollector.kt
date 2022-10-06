@@ -11,7 +11,11 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import java.io.File
 import java.io.FileWriter
 
-class GradleErrorMessageCollector(private val delegate: MessageCollector? = null) : MessageCollector {
+class GradleErrorMessageCollector(
+    private val delegate: MessageCollector? = null,
+    private val acceptableMessageSeverity: List<CompilerMessageSeverity> = listOf(CompilerMessageSeverity.EXCEPTION)
+) : MessageCollector {
+
     private val errors = ArrayList<String>()
 
     override fun clear() {
@@ -26,7 +30,7 @@ class GradleErrorMessageCollector(private val delegate: MessageCollector? = null
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
         delegate?.report(severity, message, location)
 
-        if (severity in listOf(CompilerMessageSeverity.ERROR, CompilerMessageSeverity.EXCEPTION)) {
+        if (severity in acceptableMessageSeverity) {
             synchronized(errors) {
                 errors.add(message)
             }
