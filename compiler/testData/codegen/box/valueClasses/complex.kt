@@ -61,6 +61,7 @@ fun <T : List<Int>> f(r: R<T>) {
 }
 
 fun g(e: E) {
+    supply(e)
 }
 
 fun <T : List<Int>> h(r: R<T>) {
@@ -155,7 +156,11 @@ fun reuseBoxed(list: MutableList<R<List<Int>>>) {
     list.add(list.last())
 }
 
-fun supply(x: Any) {}
+val lines = mutableListOf<String>()
+
+fun supply(x: Any) {
+    lines.add(x.toString())
+}
 
 fun equalsChecks1(x: A<List<Int>>) {}
 fun equalsChecks(left: R<List<Int>>, right: R<List<Int>>) {
@@ -175,4 +180,125 @@ fun equalsChecks(left: R<List<Int>>, right: R<List<Int>>) {
 
 // todo add default parameters
 
-fun box() = "OK"
+fun box(): String {
+    supply("#1")
+    require(inlined(1, 2U, 3) == D(C(1, B(2U), "3")))
+    supply("#2")
+    require(notInlined(1, 2U, 3) == D(C(1, B(2U), "3")))
+    supply("#3")
+    val e = E(D(3, 4U, 5))
+    supply("#4")
+    val r = R(1, 2U, e, A(listOf(listOf(6))))
+    supply("#5")
+    f(r)
+    supply("#6")
+    g(e)
+    supply("#7")
+    h(r)
+    supply("#8")
+    h1()
+    supply("#9")
+    val ni = NotInlined(r, 7)
+    supply("#10")
+    ni.withNonTrivialGettersWithBF
+    supply("#11")
+    ni.withNonTrivialSettersWithBF = ni.withNonTrivialSettersWithBF
+    supply("#12")
+    supply(ni.toString())
+    supply("#13")
+    testVars(ni)
+    supply("#14")
+    reuseBoxed(mutableListOf(r))
+    supply("#15")
+    equalsChecks(r, r)
+    supply("#16")
+    equalsChecks1(A(listOf(listOf())))
+    supply("#17")
+
+    val log = lines.joinToString("\n")
+    val expectedLog =
+        """
+        #1
+        1
+        1
+        #2
+        1
+        1
+        #3
+        3
+        #4
+        #5
+        R(x=1, y=2, z=E(x=D(x=C(x=3, y=B(x=4), z=5))), t=A(x=[[6]]))
+        1
+        2
+        E(x=D(x=C(x=3, y=B(x=4), z=5)))
+        A(x=[[6]])
+        [[6]]
+        D(x=C(x=3, y=B(x=4), z=5))
+        C(x=3, y=B(x=4), z=5)
+        3
+        B(x=4)
+        5
+        4
+        #6
+        E(x=D(x=C(x=3, y=B(x=4), z=5)))
+        #7
+        E(x=D(x=C(x=3, y=B(x=4), z=5)))
+        R(x=1, y=2, z=E(x=D(x=C(x=3, y=B(x=4), z=5))), t=A(x=[[6]]))
+        1
+        2
+        E(x=D(x=C(x=3, y=B(x=4), z=5)))
+        A(x=[[6]])
+        [[6]]
+        D(x=C(x=3, y=B(x=4), z=5))
+        C(x=3, y=B(x=4), z=5)
+        3
+        B(x=4)
+        5
+        4
+        2
+        2
+        4
+        D(x=C(x=4, y=B(x=5), z=1))
+        6
+        6
+        6
+        6
+        D(x=C(x=6, y=B(x=7), z=2))
+        #8
+        1
+        D(x=C(x=1, y=B(x=2), z=3))
+        4
+        D(x=C(x=4, y=B(x=5), z=6))
+        #9
+        #10
+        1
+        #11
+        1
+        3
+        4
+        #12
+        R(x=1, y=2, z=E(x=D(x=C(x=3, y=B(x=4), z=5))), t=A(x=[[6]]))5
+        #13
+        R(x=1, y=2, z=E(x=D(x=C(x=3, y=B(x=4), z=5))), t=A(x=[[6]]))
+        #14
+        #15
+        true
+        true
+        true
+        true
+        false
+        false
+        false
+        false
+        false
+        false
+        true
+        true
+        #16
+        #17
+        """.trimIndent()
+    require(log == expectedLog) { log }
+    
+    return "OK"
+}
