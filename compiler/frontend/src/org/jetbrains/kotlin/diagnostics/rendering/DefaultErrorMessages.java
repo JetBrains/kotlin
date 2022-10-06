@@ -461,6 +461,16 @@ public class DefaultErrorMessages {
 
 
         MAP.put(RESOLUTION_TO_PRIVATE_CONSTRUCTOR_OF_SEALED_CLASS, "The private constructor of a sealed class will become inaccessible here in future. See https://youtrack.jetbrains.com/issue/KT-44866 for details");
+        MAP.put(
+                TYPE_MISMATCH_WARNING_FOR_INCORRECT_CAPTURE_APPROXIMATION,
+                "Type mismatch: inferred type is {1} but {0} was expected. This warning will be an error soon. See https://youtrack.jetbrains.com/issue/KT-49404 for details",
+                RENDER_TYPE, RENDER_TYPE
+        );
+        MAP.put(
+                RECEIVER_TYPE_MISMATCH_WARNING_FOR_INCORRECT_CAPTURE_APPROXIMATION,
+                "Extension receiver type mismatch: inferred type is {1} but {0} was expected. This warning will be an error soon. See https://youtrack.jetbrains.com/issue/KT-49404 for details",
+                RENDER_TYPE, RENDER_TYPE
+        );
         MAP.put(LOCAL_EXTENSION_PROPERTY, "Local extension properties are not allowed");
         MAP.put(LOCAL_VARIABLE_WITH_GETTER, "Local variables are not allowed to have getters");
         MAP.put(LOCAL_VARIABLE_WITH_SETTER, "Local variables are not allowed to have setters");
