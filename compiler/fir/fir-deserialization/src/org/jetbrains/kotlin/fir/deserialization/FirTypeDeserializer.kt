@@ -76,6 +76,7 @@ class FirTypeDeserializer(
                     this.containingDeclarationSymbol = containingSymbol ?: error("Top-level type parameter ???")
                     variance = proto.variance.convertVariance()
                     isReified = proto.reified
+                    annotations += annotationDeserializer.loadTypeParameterAnnotations(proto, nameResolver)
                 }
                 result[proto.id] = symbol
             }

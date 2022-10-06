@@ -172,6 +172,9 @@ abstract class AbstractAnnotationDeserializer(
 
     abstract fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation>
 
+    open fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver) =
+        emptyList<FirAnnotation>()
+
     fun deserializeAnnotation(
         proto: ProtoBuf.Annotation,
         nameResolver: NameResolver,
