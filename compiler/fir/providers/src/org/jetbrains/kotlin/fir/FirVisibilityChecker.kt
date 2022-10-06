@@ -87,7 +87,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default
     ): Boolean {
         if (!isSpecificDeclarationVisible(
-                declaration,
+                if (declaration is FirCallableDeclaration) declaration.originalOrSelf() else declaration,
                 session,
                 useSiteFile,
                 containingDeclarations,
