@@ -28,26 +28,15 @@ fun FirVisibilityChecker.isVisible(
     declaration: FirMemberDeclaration,
     callInfo: CallInfo,
     dispatchReceiverValue: ReceiverValue?
-): Boolean {
-    if (declaration is FirCallableDeclaration && (declaration.isIntersectionOverride || declaration.isSubstitutionOverride)) {
-        @Suppress("UNCHECKED_CAST")
-        return isVisible(declaration.originalIfFakeOverride() as FirMemberDeclaration, callInfo, dispatchReceiverValue)
-    }
-
-    val useSiteFile = callInfo.containingFile
-    val containingDeclarations = callInfo.containingDeclarations
-    val session = callInfo.session
-
-    return isVisible(
+): Boolean =
+    isVisible(
         declaration,
-        session,
-        useSiteFile,
-        containingDeclarations,
+        callInfo.session,
+        callInfo.containingFile,
+        callInfo.containingDeclarations,
         dispatchReceiverValue,
         callInfo.callSite is FirVariableAssignment
     )
-
-}
 
 fun FirVisibilityChecker.isVisible(
     declaration: FirMemberDeclaration,
@@ -66,14 +55,7 @@ fun FirVisibilityChecker.isVisible(
 
     val backingField = declaration.getBackingFieldIfApplicable()
     if (backingField != null) {
-        candidate.hasVisibleBackingField = isVisible(
-            backingField,
-            callInfo.session,
-            callInfo.containingFile,
-            callInfo.containingDeclarations,
-            candidate.dispatchReceiverValue,
-            candidate.callInfo.callSite is FirVariableAssignment,
-        )
+        candidate.hasVisibleBackingField = isVisible(backingField, callInfo, candidate.dispatchReceiverValue)
     }
 
     return true
