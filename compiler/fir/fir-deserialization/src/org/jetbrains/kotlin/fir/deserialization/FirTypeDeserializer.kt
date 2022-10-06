@@ -64,7 +64,7 @@ class FirTypeDeserializer(
             for (proto in typeParameterProtos) {
                 if (!proto.hasId()) continue
                 val name = nameResolver.getName(proto.name)
-                val symbol = FirTypeParameterSymbol().also {
+                val symbol = FirTypeParameterSymbol(name).also {
                     typeParameterNames[name.asString()] = it
                 }
                 builders += FirTypeParameterBuilder().apply {

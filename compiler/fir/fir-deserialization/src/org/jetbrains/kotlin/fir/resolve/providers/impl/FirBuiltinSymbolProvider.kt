@@ -227,7 +227,7 @@ private class SyntheticFunctionalInterfaceCache(private val moduleData: FirModul
                                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                                 origin = FirDeclarationOrigin.BuiltIns
                                 name = Name.identifier("P$it")
-                                symbol = FirTypeParameterSymbol()
+                                symbol = FirTypeParameterSymbol(name)
                                 containingDeclarationSymbol = this@symbol
                                 variance = Variance.IN_VARIANCE
                                 isReified = false
@@ -241,7 +241,7 @@ private class SyntheticFunctionalInterfaceCache(private val moduleData: FirModul
                             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                             origin = FirDeclarationOrigin.BuiltIns
                             name = Name.identifier("R")
-                            symbol = FirTypeParameterSymbol()
+                            symbol = FirTypeParameterSymbol(name)
                             containingDeclarationSymbol = this@symbol
                             variance = Variance.OUT_VARIANCE
                             isReified = false

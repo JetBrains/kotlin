@@ -548,7 +548,7 @@ object FirFakeOverrideGenerator {
                 origin = FirDeclarationOrigin.SubstitutionOverride
                 resolvePhase = FirResolvePhase.DECLARATIONS
                 name = typeParameter.name
-                symbol = FirTypeParameterSymbol()
+                symbol = FirTypeParameterSymbol(name)
                 variance = typeParameter.variance
                 isReified = typeParameter.isReified
                 annotations += typeParameter.annotations

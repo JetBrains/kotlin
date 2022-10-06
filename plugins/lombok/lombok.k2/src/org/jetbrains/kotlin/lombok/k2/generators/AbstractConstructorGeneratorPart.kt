@@ -71,7 +71,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                 val classTypeParameterSymbols = classSymbol.fir.typeParameters.map { it.symbol }
                 classTypeParameterSymbols.mapTo(typeParameters) {
                     buildTypeParameterCopy(it.fir) {
-                        symbol = FirTypeParameterSymbol()
+                        symbol = FirTypeParameterSymbol(it.fir.name)
                         containingDeclarationSymbol = methodSymbol
                     }
                 }
