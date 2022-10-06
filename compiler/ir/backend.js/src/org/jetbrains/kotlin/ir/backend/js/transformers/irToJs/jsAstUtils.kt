@@ -416,7 +416,7 @@ fun translateCallArguments(
         val arguments2 = originalArguments.mapIndexed { i, e -> if (i in optionsParameters) null else e }.toMutableList()
 
         arguments2[size - optionsParameters.size] = JsObjectLiteral(optionsArguments.mapIndexedNotNull() { i, e ->
-            e?.let { JsPropertyInitializer(JsStringLiteral(optionsParameters[i]!!.name.asString()), it) }
+            e?.let { JsPropertyInitializer(JsStringLiteral(optionsParameters[i]!!.let { it.getJsName() ?: it.name.asString() }), it) }
         }, true)
 
         arguments2
