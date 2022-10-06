@@ -10,6 +10,7 @@ import com.google.gson.JsonObject
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.util.zip.ZipFile
 import kotlin.io.path.reader
@@ -31,6 +32,7 @@ class KotlinJsIrLibraryGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("simple binary library")
     @GradleTest
+    @Disabled
     fun testSimpleJsBinaryLibrary(gradleVersion: GradleVersion) {
         project("simple-js-library", gradleVersion) {
             build("build") {
