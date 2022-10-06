@@ -143,15 +143,16 @@ private object Checks {
         }
     }
 
-    private val kPropertyType = ConeClassLikeTypeImpl(
-        ConeClassLikeLookupTagImpl(StandardClassIds.KProperty),
-        arrayOf(ConeStarProjection),
-        isNullable = false
-    )
-
     val isKProperty = full("second parameter must be of type KProperty<*> or its supertype") { ctx, function ->
         val paramType = function.valueParameters[1].returnTypeRef.coneType
-        paramType.isSupertypeOf(ctx.session.typeContext, kPropertyType)
+        paramType.isSupertypeOf(
+            ctx.session.typeContext,
+            ConeClassLikeTypeImpl(
+                ConeClassLikeLookupTagImpl(StandardClassIds.KProperty),
+                arrayOf(ConeStarProjection),
+                isNullable = false
+            )
+        )
     }
 
 }
