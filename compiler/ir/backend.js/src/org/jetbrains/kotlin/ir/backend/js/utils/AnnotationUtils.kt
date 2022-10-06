@@ -34,6 +34,8 @@ object JsAnnotations {
     val MetaClass = FqName("kotlin.js.MetaClass")
     val JsDecorator = FqName("kotlin.js.JsDecorator")
     val JsTemplateStringTag = FqName("kotlin.js.JsTemplateStringTag")
+    val JsOptionsLiteralParameter = FqName("kotlin.js.JsOptionsLiteralParameter")
+//    val JsObjectLiteral = FqName("kotlin.js.JsObjectLiteral")
 }
 
 @Suppress("UNCHECKED_CAST")

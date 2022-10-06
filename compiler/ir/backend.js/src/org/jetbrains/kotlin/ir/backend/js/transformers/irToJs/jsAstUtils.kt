@@ -378,10 +378,15 @@ fun translateCallArguments(
 ): List<JsExpression> {
     val size = expression.valueArgumentsCount
 
-    val varargParameterIndex = expression.symbol.owner.realOverrideTarget.varargParameterIndex()
+    val target = expression.symbol.owner.realOverrideTarget
+
+    val varargParameterIndex = target.varargParameterIndex()
+
+    val optionsParameters = target.valueParameters.mapIndexedNotNull { i, p -> if (p.hasAnnotation(JsAnnotations.JsOptionsLiteralParameter)) i to p else null }.toMap()
+//    val optionsArguments = ArrayList<JsExpression>(optionsParameters.size)
 
     val isValidForMemberAccessToHaveNullArg = expression.validWithNullArgs()
-    val arguments = (0 until size)
+    val originalArguments = (0 until size)
         .mapTo(ArrayList(size)) { index ->
             val couldArgumentBeNull = expression.couldArgumentBeNull(index)
             expression.getValueArgument(index).checkOnNullability(couldArgumentBeNull || isValidForMemberAccessToHaveNullArg)
@@ -404,8 +409,22 @@ fun translateCallArguments(
                 null
             } else result
         }
-        .dropLastWhile { it == null }
-        .map { it ?: jsUndefined(context, context.staticContext.backendContext) }
+
+    val arguments3 = if (optionsParameters.isNotEmpty()) {
+        val optionsArguments = optionsParameters.keys.map { originalArguments[it] }
+
+        val arguments2 = originalArguments.mapIndexed { i, e -> if (i in optionsParameters) null else e }.toMutableList()
+
+        arguments2[size - optionsParameters.size] = JsObjectLiteral(optionsArguments.mapIndexedNotNull() { i, e ->
+            e?.let { JsPropertyInitializer(JsStringLiteral(optionsParameters[i]!!.name.asString()), it) }
+        }, true)
+
+        arguments2
+    } else {
+        originalArguments
+    }
+
+    val arguments = arguments3.dropLastWhile { it == null }.map { it ?: jsUndefined(context, context.staticContext.backendContext) }
 
     check(!expression.symbol.isSuspend) { "Suspend functions should be lowered" }
     return arguments

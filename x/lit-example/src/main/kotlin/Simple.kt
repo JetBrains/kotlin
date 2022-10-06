@@ -20,6 +20,34 @@ class SimpleGreeting : LitElement() {
     @Property()
     var count = 0
 
+    @Property2(
+        PropertyDeclaration(
+            attribute = true,
+            state = false
+        )
+    )
+    var count2 = 0
+
+    @Property3(
+        attribute = true,
+        state = false
+    )
+    var count3 = 0
+
+    @Property4(
+        PropertyDeclaration(
+            attribute = true,
+            state = false
+        )
+    )
+    var count4_1 = 0
+
+    @Property4(
+        attribute = true,
+        state = false
+    )
+    var count4_2 = 0
+
     override fun render(): Any {
         println("!render")
         window.setTimeout({

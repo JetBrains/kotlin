@@ -218,3 +218,7 @@ annotation class JsDecorator
 annotation class JsTemplateStringTag
 
 annotation class JsStatic
+
+//annotation class JsObjectLiteral
+
+annotation class JsOptionsLiteralParameter
