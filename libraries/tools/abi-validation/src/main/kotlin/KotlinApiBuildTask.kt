@@ -62,10 +62,10 @@ open class KotlinApiBuildTask @Inject constructor(
         outputApiDir.mkdirs()
 
         val inputClassesDirs = inputClassesDirs
-        if (listOfNotNull(inputClassesDirs, inputJar.orNull).size != 1) {
-            throw GradleException("KotlinApiBuildTask should have either inputClassesDirs, or inputJar properties set")
-        }
         val signatures = when {
+            // inputJar takes precedence if specified
+            inputJar.isPresent ->
+                JarFile(inputJar.get().asFile).use { it.loadApiFromJvmClasses() }
             inputClassesDirs != null ->
                 inputClassesDirs.asFileTree.asSequence()
                     .filter {
@@ -73,11 +73,8 @@ open class KotlinApiBuildTask @Inject constructor(
                     }
                     .map { it.inputStream() }
                     .loadApiFromJvmClasses()
-            inputJar.isPresent ->
-                JarFile(inputJar.get().asFile)
-                    .loadApiFromJvmClasses()
             else ->
-                error("Unreachable")
+                throw GradleException("KotlinApiBuildTask should have either inputClassesDirs, or inputJar property set")
         }
 
 
