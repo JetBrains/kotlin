@@ -95,12 +95,12 @@ class KotlinTargetHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("androidNativeMain", "appleMain", "linuxMain", "windowsMain"),
+            stringSetOf("androidNativeMain", "appleMain", "linuxMain", "mingwMain"),
             kotlin.dependingSourceSetNames("nativeMain")
         )
 
         assertEquals(
-            stringSetOf("androidNativeTest", "appleTest", "linuxTest", "windowsTest"),
+            stringSetOf("androidNativeTest", "appleTest", "linuxTest", "mingwTest"),
             kotlin.dependingSourceSetNames("nativeTest")
         )
 

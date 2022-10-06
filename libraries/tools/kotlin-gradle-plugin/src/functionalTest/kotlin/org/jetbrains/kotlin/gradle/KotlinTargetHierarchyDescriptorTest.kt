@@ -27,8 +27,8 @@ class KotlinTargetHierarchyDescriptorTest {
     fun `test - simple descriptor`() {
         val descriptor = KotlinTargetHierarchyDescriptor {
             common {
-                if (target.name == "a") group("groupA")
-                if (target.name == "b") group("groupB")
+                group("groupA") { includeCompilation { it.target.name == "a" } }
+                group("groupB") { includeCompilation { it.target.name == "b" } }
             }
         }
 
