@@ -10,11 +10,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
 
 internal val naturalKotlinTargetHierarchy = KotlinTargetHierarchyDescriptor {
+    /* natural hierarchy is only applied to default 'main'/'test' compilations (by default) */
+    filterCompilations { compilation -> compilation.isMain() || compilation.isTest() }
+
     common {
         group("native") {
             anyNative()
-            /* natural hierarchy is only defined for main and test default compilations, by default */
-            excludeCompilation { compilation -> !(compilation.isMain() || compilation.isTest()) }
 
             group("apple") {
                 anyApple()

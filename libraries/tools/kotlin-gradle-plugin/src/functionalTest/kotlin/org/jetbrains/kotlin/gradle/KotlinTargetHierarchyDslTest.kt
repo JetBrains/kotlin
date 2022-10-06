@@ -186,7 +186,13 @@ class KotlinTargetHierarchyDslTest {
         }
 
         kotlin.apply {
-            targetHierarchy.apply(descriptor) { group("base") { group("extension") } }
+            targetHierarchy.apply(descriptor) {
+                group("base") {
+                    group("extension") {
+                        linuxX64()
+                    }
+                }
+            }
             linuxX64()
         }
 
@@ -207,7 +213,6 @@ class KotlinTargetHierarchyDslTest {
         )
     }
 
-
     @Test
     fun `test - hierarchy set - extend - with new root`() {
         val descriptor = KotlinTargetHierarchyDescriptor {
@@ -219,7 +224,11 @@ class KotlinTargetHierarchyDslTest {
         kotlin.apply {
             targetHierarchy.apply(descriptor) {
                 group("newRoot") {
-                    group("base") { group("extension") }
+                    group("base") {
+                        group("extension") {
+                            linuxX64()
+                        }
+                    }
                 }
             }
             linuxX64()
