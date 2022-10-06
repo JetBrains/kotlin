@@ -22,7 +22,11 @@ import java.util.Arrays;
  * Kotlin clients should be able to instantiate annotation directly and therefore should not use this class.
  */
 @SuppressWarnings("ClassExplicitlyAnnotation")
-@kotlin.Deprecated(message = "Kotlin clients should instantiate Metadata annotation directly", replaceWith = @ReplaceWith(expression = "Metadata", imports = {}), level = DeprecationLevel.ERROR)
+@kotlin.Deprecated(
+        message = "Kotlin clients should instantiate Metadata annotation directly",
+        replaceWith = @ReplaceWith(expression = "Metadata", imports = {}),
+        level = DeprecationLevel.WARNING
+)
 public final class KotlinClassHeader implements Metadata {
     private final int k;
     @NotNull private final int[] mv;
@@ -42,6 +46,14 @@ public final class KotlinClassHeader implements Metadata {
      * @param extraInt        see {@link Metadata#xi()}
      */
     @SuppressWarnings("SSBasedInspection")
+    @kotlin.Deprecated(
+            message = "Kotlin clients should instantiate Metadata annotation directly",
+            replaceWith = @ReplaceWith(
+                    expression = "kotlinx.metadata.jvm.Metadata(kind, metadataVersion, data1, data2, extraString, packageName, extraInt)",
+                    imports = {}
+            ),
+            level = DeprecationLevel.WARNING
+    )
     public KotlinClassHeader(
             @Nullable Integer kind,
             @Nullable int[] metadataVersion,
