@@ -46,58 +46,6 @@ fun IrSimpleFunction.addExtensionReceiver(type: IrType, origin: IrDeclarationOri
         }
     }
 
-// TODO: support more cases like built-in operator call and so on
-fun IrExpression?.isPure(
-    anyVariable: Boolean,
-    checkFields: Boolean = true,
-    context: CommonBackendContext? = null
-): Boolean {
-    if (this == null) return true
-
-    fun IrExpression.isPureImpl(): Boolean {
-        return when (this) {
-            is IrConst<*> -> true
-            is IrGetValue -> {
-                if (anyVariable) return true
-                val valueDeclaration = symbol.owner
-                if (valueDeclaration is IrVariable) !valueDeclaration.isVar
-                else true
-            }
-            is IrTypeOperatorCall ->
-                (
-                        operator == IrTypeOperator.INSTANCEOF ||
-                                operator == IrTypeOperator.REINTERPRET_CAST ||
-                                operator == IrTypeOperator.NOT_INSTANCEOF
-                        ) && argument.isPure(anyVariable, checkFields, context)
-            is IrCall -> if (context?.isSideEffectFree(this) == true) {
-                for (i in 0 until valueArgumentsCount) {
-                    val valueArgument = getValueArgument(i)
-                    if (!valueArgument.isPure(anyVariable, checkFields, context)) return false
-                }
-                true
-            } else false
-            is IrGetObjectValue -> type.isUnit()
-            is IrVararg -> elements.all { (it as? IrExpression)?.isPure(anyVariable, checkFields, context) == true }
-            else -> false
-        }
-    }
-
-    if (isPureImpl()) return true
-
-    if (!checkFields) return false
-
-    if (this is IrGetField) {
-        if (!symbol.owner.isFinal) {
-            if (!anyVariable) {
-                return false
-            }
-        }
-        return receiver.isPure(anyVariable)
-    }
-
-    return false
-}
-
 fun CommonBackendContext.createArrayOfExpression(
     startOffset: Int, endOffset: Int,
     arrayElementType: IrType,

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.cleanup
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.SideEffects
+import org.jetbrains.kotlin.backend.common.ir.computeEffects
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.backend.common.ir.isPure
@@ -65,8 +67,10 @@ private class CodeCleaner : IrElementVisitorVoid {
 
         val newStatements = statements.filter {
             when {
+                it is IrReturn -> true
+                it is IrBreakContinue -> true
+                it is IrExpression && (it.computeEffects(true) <= SideEffects.READONLY) -> false // FIXME: Only do this in production mode
                 unreachable -> false
-                it is IrExpression && it.isPure(true) -> false
                 else -> {
                     unreachable = it.doesNotReturn()
                     true

@@ -100,11 +100,6 @@ class JsIrBackendContext(
 
     override var inVerbosePhase: Boolean = false
 
-    override fun isSideEffectFree(call: IrCall): Boolean =
-        call.symbol in intrinsics.primitiveToLiteralConstructor.values ||
-                call.symbol == intrinsics.arrayLiteral ||
-                call.symbol == intrinsics.arrayConcat
-
     val devMode = configuration[JSConfigurationKeys.DEVELOPER_MODE] ?: false
     val errorPolicy = configuration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
 
@@ -372,6 +367,10 @@ class JsIrBackendContext(
         findProperty(module.getPackage(fqName.parent()).memberScope, fqName.shortName()).single()
 
     internal fun getIrClass(fqName: FqName): IrClassSymbol = symbolTable.referenceClass(getClass(fqName))
+
+    override fun getClassSymbol(fqName: FqName): IrClassSymbol {
+        return getIrClass(fqName)
+    }
 
     internal fun getJsInternalFunction(name: String): SimpleFunctionDescriptor =
         findFunctions(internalPackage.memberScope, Name.identifier(name)).singleOrNull() ?: error("Internal function '$name' not found")

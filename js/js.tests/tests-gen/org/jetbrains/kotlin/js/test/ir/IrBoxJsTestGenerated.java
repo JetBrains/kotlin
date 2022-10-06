@@ -8898,6 +8898,22 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     }
 
     @Nested
+    @TestMetadata("js/js.translator/testData/box/optimizations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Optimizations {
+        @Test
+        public void testAllFilesPresentInOptimizations() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/optimizations"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @Test
+        @TestMetadata("sideEffectAnalysis.kt")
+        public void testSideEffectAnalysis() throws Exception {
+            runTest("js/js.translator/testData/box/optimizations/sideEffectAnalysis.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("js/js.translator/testData/box/package")
     @TestDataPath("$PROJECT_ROOT")
     public class Package {

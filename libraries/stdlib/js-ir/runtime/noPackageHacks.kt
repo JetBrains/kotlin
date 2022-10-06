@@ -1,3 +1,6 @@
+import kotlin.internal.Effect
+import kotlin.internal.Effects
+
 /*
  * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
@@ -6,6 +9,7 @@
 /** Concat regular Array's and TypedArray's into an Array.
  */
 @PublishedApi
+@Effects(Effect.READONLY)
 internal fun <T> arrayConcat(vararg args: T): T {
     val len = args.size
     val typed = js("Array(len)").unsafeCast<Array<T>>()

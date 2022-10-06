@@ -202,7 +202,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 newStatements: MutableList<IrStatement>,
                 declaration: IrDeclarationParent
             ): () -> IrExpression {
-                return if (value.isPure(anyVariable = true, checkFields = false)) {
+                return if (value.isPure(anyVariableReadIsPure = true)) {
                     { value.deepCopyWithSymbols() }
                 } else {
                     val varDeclaration = JsIrBuilder.buildVar(value.type, declaration, initializer = value)

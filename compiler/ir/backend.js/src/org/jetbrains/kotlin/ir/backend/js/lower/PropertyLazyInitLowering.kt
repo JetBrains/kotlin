@@ -184,7 +184,7 @@ private fun createIrSetField(field: IrField, expression: IrExpression): IrSetFie
 private fun allFieldsInFilePure(fieldToInitializer: Collection<IrExpression>): Boolean =
     fieldToInitializer
         .all { expression ->
-            expression.isPure(anyVariable = true)
+            expression.isPure(anyVariableReadIsPure = true)
         }
 
 class RemoveInitializersForLazyProperties(
