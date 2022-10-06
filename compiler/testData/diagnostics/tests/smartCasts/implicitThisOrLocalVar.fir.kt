@@ -1,16 +1,16 @@
 class Box(var item: String?)
 
-fun <T> take(it: T) {}
+fun expectString(it: String) {}
 
 fun Box.test() {
     val other = Box("")
     myRun {
         if (item != null) {
-            take<String>(<!SMARTCAST_IMPOSSIBLE!>item<!>)
+            expectString(<!SMARTCAST_IMPOSSIBLE!>item<!>)
             other.item = null
-            take<String>(<!SMARTCAST_IMPOSSIBLE!>item<!>)
+            expectString(<!SMARTCAST_IMPOSSIBLE!>item<!>)
             this.item = null
-            take<String>(<!ARGUMENT_TYPE_MISMATCH!>item<!>)
+            expectString(<!ARGUMENT_TYPE_MISMATCH!>item<!>)
         }
     }
 
@@ -18,7 +18,7 @@ fun Box.test() {
     myRun {
         if (item != null) {
             this.item = null
-            take<String>(item)
+            expectString(item)
         }
     }
 }

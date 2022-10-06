@@ -1,7 +1,7 @@
 package
 
+public fun expectString(/*0*/ it: kotlin.String): kotlin.Unit
 public fun myRun(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
-public fun </*0*/ T> take(/*0*/ it: T): kotlin.Unit
 public fun Box.test(): kotlin.Unit
 
 public final class Box {
