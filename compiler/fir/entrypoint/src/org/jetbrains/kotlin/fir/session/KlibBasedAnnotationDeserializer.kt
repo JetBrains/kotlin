@@ -24,4 +24,9 @@ class KlibBasedAnnotationDeserializer(
         val annotations = typeProto.getExtension(KlibMetadataProtoBuf.typeAnnotation).orEmpty()
         return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
+
+    override fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation> {
+        val annotations = typeParameterProto.getExtension(KlibMetadataProtoBuf.typeParameterAnnotation).orEmpty()
+        return annotations.map { deserializeAnnotation(it, nameResolver) }
+    }
 }
