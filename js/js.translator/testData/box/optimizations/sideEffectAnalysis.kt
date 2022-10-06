@@ -13,14 +13,24 @@ fun id(x: Int): Int {
     return x
 }
 
+fun effectful(x: Int): Int {
+    callCounter += 1
+    return x
+}
+
+// Effectively pure function
 fun mySum(a: Int, b: Int) = id(a) + id(b)
 
 fun box(): String {
     id(42) // Unused value, the call should be eliminated
     assertEquals(0, callCounter)
 
-    mySum(id(1), id(2))
-
+    mySum(id(1), id(2)) // Unused value, the call should be eliminated
     assertEquals(0, callCounter)
+
+    // Call to mySum should be eliminated, but calls to effectful shouldn't be
+    mySum(effectful(1), effectful(2))
+
+    assertEquals(2, callCounter)
     return "OK"
 }

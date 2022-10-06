@@ -609,7 +609,7 @@ class FunctionInlining(
                 // Arguments may reference the previous ones - substitute them.
                 val variableInitializer = argument.argumentExpression.transform(substitutor, data = null)
 
-                val argumentExtracted = !argument.argumentExpression.isPure(false, context = context)
+                val argumentExtracted = !argument.argumentExpression.isPure(false)
 
                 if (!argumentExtracted) {
                     substituteMap[argument.parameter] = variableInitializer
