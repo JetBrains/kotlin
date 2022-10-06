@@ -22,7 +22,7 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
  * Represents the parsed metadata of a Kotlin JVM class file.
  *
  * To create an instance of [KotlinClassMetadata], first obtain an instance of [Metadata] annotation on a class file, and then call [KotlinClassMetadata.read].
- * [Metadata] annotation can be obtained either via reflection or created from data from a binary class file, using its constructor or helper function.
+ * [Metadata] annotation can be obtained either via reflection or created from data from a binary class file, using its constructor or helper function [kotlinx.metadata.jvm.Metadata].
  */
 sealed class KotlinClassMetadata(val header: Metadata) {
     /**
