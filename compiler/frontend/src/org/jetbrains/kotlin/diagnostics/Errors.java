@@ -891,8 +891,8 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> RESOLUTION_TO_PRIVATE_CONSTRUCTOR_OF_SEALED_CLASS = DiagnosticFactory0.create(WARNING);
 
-    DiagnosticFactory2<PsiElement, KotlinType, KotlinType> TYPE_MISMATCH_WARNING_FOR_INCORRECT_CAPTURE_APPROXIMATION = DiagnosticFactory2.create(WARNING);
-    DiagnosticFactory2<PsiElement, KotlinType, KotlinType> RECEIVER_TYPE_MISMATCH_WARNING_FOR_INCORRECT_CAPTURE_APPROXIMATION = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<PsiElement, KotlinType, KotlinType> TYPE_MISMATCH_WARNING_FOR_INCORRECT_CAPTURE_APPROXIMATION = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<PsiElement, KotlinType, KotlinType> RECEIVER_TYPE_MISMATCH_WARNING_FOR_INCORRECT_CAPTURE_APPROXIMATION = DiagnosticFactory2.create(ERROR);
 
     // Type inference
 
