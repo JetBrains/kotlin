@@ -10,26 +10,42 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
 
 internal val naturalKotlinTargetHierarchy = KotlinTargetHierarchyDescriptor {
-    if (!compilation.isMain() && !compilation.isTest()) {
-        /* This hierarchy is only defined for default 'main' and 'test' compilations */
-        return@KotlinTargetHierarchyDescriptor
-    }
-
     common {
-        if (isNative) {
-            group("native") {
-                if (isApple) {
-                    group("apple") {
-                        if (isIos) group("ios")
-                        if (isTvos) group("tvos")
-                        if (isWatchos) group("watchos")
-                        if (isMacos) group("macos")
-                    }
+        group("native") {
+            anyNative()
+            /* natural hierarchy is only defined for main and test default compilations, by default */
+            excludeCompilation { compilation -> !(compilation.isMain() || compilation.isTest()) }
+
+            group("apple") {
+                anyApple()
+
+                group("ios") {
+                    anyIos()
                 }
 
-                if (isLinux) group("linux")
-                if (isWindows) group("windows")
-                if (isAndroidNative) group("androidNative")
+                group("tvos") {
+                    anyTvos()
+                }
+
+                group("watchos") {
+                    anyWatchos()
+                }
+
+                group("macos") {
+                    anyMacos()
+                }
+            }
+
+            group("linux") {
+                anyLinux()
+            }
+
+            group("mingw") {
+                anyMingw()
+            }
+
+            group("androidNative") {
+                anyAndroidNative()
             }
         }
     }

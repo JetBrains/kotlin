@@ -29,16 +29,27 @@ private fun applyKotlinTargetHierarchy(
     compilation: KotlinCompilation<*>,
     sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
 ): KotlinSourceSet? {
-    val sharedSourceSetName = hierarchy.node.sharedSourceSetName(compilation) ?: return null
-    val sharedSourceSet = sourceSets.maybeCreate(sharedSourceSetName)
+    val sharedSourceSet = createSharedSourceSetOrNull(sourceSets, hierarchy.node, compilation)
 
-    hierarchy.children
+    val childSourceSets = hierarchy.children
         .mapNotNull { childHierarchy -> applyKotlinTargetHierarchy(childHierarchy, compilation, sourceSets) }
-        .forEach { childSourceSet -> childSourceSet.dependsOn(sharedSourceSet) }
 
-    if (hierarchy.children.isEmpty()) {
+    if (sharedSourceSet == null) return null
+
+    if (hierarchy.children.isNotEmpty()) {
+        childSourceSets.forEach { childSourceSet -> childSourceSet.dependsOn(sharedSourceSet) }
+    } else {
         compilation.defaultSourceSet.dependsOn(sharedSourceSet)
     }
 
     return sharedSourceSet
+}
+
+private fun createSharedSourceSetOrNull(
+    sourceSets: NamedDomainObjectContainer<KotlinSourceSet>,
+    node: KotlinTargetHierarchy.Node,
+    compilation: KotlinCompilation<*>,
+): KotlinSourceSet? {
+    val sharedSourceSetName = node.sharedSourceSetName(compilation) ?: return null
+    return sourceSets.maybeCreate(sharedSourceSetName)
 }

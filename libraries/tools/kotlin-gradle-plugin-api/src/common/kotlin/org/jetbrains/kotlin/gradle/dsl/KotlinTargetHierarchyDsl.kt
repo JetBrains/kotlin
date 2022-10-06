@@ -52,7 +52,7 @@ interface KotlinTargetHierarchyDsl {
      *         +----------------------+--------------------+-----------------------+
      *         |                      |                    |                       |
      *
-     *       apple                  linux              windows              androidNative
+     *       apple                  linux                mingw              androidNative
      *
      *         |
      *  +-----------+------------+------------+
@@ -67,11 +67,10 @@ interface KotlinTargetHierarchyDsl {
      * ```kotlin
      * kotlin {
      *     targets.hierarchy.default { target ->
-     *         if(target.isNative) {
-     *             group("native") { // <- we can re-declare already existing groups and connect children to it!
-     *                 if(target.isLinux || target.isApple) {
-     *                     group("unixLike")
-     *                 }
+     *         group("native") { // <- we can re-declare already existing groups and connect children to it!
+     *             group("unixLike") {
+     *                 anyLinux()
+     *                 anyApple()
      *             }
      *         }
      *     }
