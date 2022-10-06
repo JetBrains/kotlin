@@ -11,8 +11,11 @@ interface KotlinTargetHierarchyBuilder {
     fun group(name: String, build: KotlinTargetHierarchyBuilder.() -> Unit = {})
 
     /* low-level APIs */
-    fun includeCompilation(predicate: (KotlinCompilation<*>) -> Boolean)
-    fun excludeCompilation(predicate: (KotlinCompilation<*>) -> Boolean)
+    fun includeCompilationIf(predicate: (KotlinCompilation<*>) -> Boolean)
+    fun excludeCompilationIf(predicate: (KotlinCompilation<*>) -> Boolean)
+
+    fun filterCompilations(predicate: (KotlinCompilation<*>) -> Boolean) =
+        excludeCompilationIf { !predicate(it) }
 
     /* Convenient groups */
     fun anyNative()

@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.KotlinTargetHierar
 import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.KotlinTargetHierarchy.Node
 import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.buildKotlinTargetHierarchy
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertSame
+import kotlin.test.*
 
 class KotlinTargetHierarchyDescriptorTest {
 
@@ -27,8 +25,8 @@ class KotlinTargetHierarchyDescriptorTest {
     fun `test - simple descriptor`() {
         val descriptor = KotlinTargetHierarchyDescriptor {
             common {
-                group("groupA") { includeCompilation { it.target.name == "a" } }
-                group("groupB") { includeCompilation { it.target.name == "b" } }
+                group("groupA") { includeCompilationIf { it.target.name == "a" } }
+                group("groupB") { includeCompilationIf { it.target.name == "b" } }
             }
         }
 
@@ -54,8 +52,8 @@ class KotlinTargetHierarchyDescriptorTest {
             descriptor.buildKotlinTargetHierarchy(targetB.compilations.main)
         )
 
-        assertEquals(
-            hierarchy { group("common") },
+        /* targetC is not mentioned in hierarchy description */
+        assertNull(
             descriptor.buildKotlinTargetHierarchy(targetC.compilations.main)
         )
     }
@@ -64,7 +62,9 @@ class KotlinTargetHierarchyDescriptorTest {
     fun `test - extend`() {
         val descriptor = KotlinTargetHierarchyDescriptor { group("base") }.extend {
             group("base") {
-                group("extension")
+                group("extension") {
+                    includeCompilationIf { true }
+                }
             }
         }
 
@@ -84,7 +84,9 @@ class KotlinTargetHierarchyDescriptorTest {
         val descriptor = KotlinTargetHierarchyDescriptor { group("base") }.extend {
             group("newRoot") {
                 group("base") {
-                    group("extension")
+                    group("extension") {
+                        includeCompilationIf { true }
+                    }
                 }
             }
         }
@@ -108,19 +110,23 @@ class KotlinTargetHierarchyDescriptorTest {
             .extend {
                 group("newRoot1") {
                     group("base") {
-                        group("extension1")
+                        group("extension1") {
+                            includeCompilationIf { true }
+                        }
                     }
                 }
             }
             .extend {
                 group("newRoot2") {
                     group("base") {
-                        group("extension2")
+                        group("extension2") {
+                            includeCompilationIf { true }
+                        }
                     }
                 }
             }
 
-        val hierarchy = descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.main)
+        val hierarchy = assertNotNull(descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.main))
 
         assertEquals(
             hierarchy {

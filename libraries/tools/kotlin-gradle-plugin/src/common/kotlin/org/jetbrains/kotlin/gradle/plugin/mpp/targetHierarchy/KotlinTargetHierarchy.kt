@@ -7,10 +7,14 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.tooling.core.withClosure
 
 internal data class KotlinTargetHierarchy(
     val node: Node, val children: Set<KotlinTargetHierarchy> = emptySet()
 ) {
+
+    val childrenClosure: Set<KotlinTargetHierarchy> =
+        children.withClosure<KotlinTargetHierarchy> { it.children }
 
     sealed class Node {
         abstract fun sharedSourceSetName(compilation: KotlinCompilation<*>): String?

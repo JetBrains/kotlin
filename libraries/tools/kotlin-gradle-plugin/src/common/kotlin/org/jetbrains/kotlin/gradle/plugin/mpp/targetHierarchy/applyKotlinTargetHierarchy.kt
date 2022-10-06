@@ -17,8 +17,8 @@ internal fun applyKotlinTargetHierarchy(
     targets
         .matching { target -> target.platformType != KotlinPlatformType.common }
         .all { target ->
-            target.compilations.all { compilation ->
-                val hierarchy = hierarchyDescriptor.buildKotlinTargetHierarchy(compilation)
+            target.compilations.all forCompilation@{ compilation ->
+                val hierarchy = hierarchyDescriptor.buildKotlinTargetHierarchy(compilation) ?: return@forCompilation
                 applyKotlinTargetHierarchy(hierarchy, compilation, sourceSets)
             }
         }

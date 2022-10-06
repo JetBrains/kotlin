@@ -1029,31 +1029,60 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetE
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder {
+	public abstract fun android ()V
+	public abstract fun androidNativeArm32 ()V
+	public abstract fun androidNativeArm64 ()V
+	public abstract fun androidNativeX64 ()V
+	public abstract fun androidNativeX86 ()V
+	public abstract fun anyAndroidNative ()V
+	public abstract fun anyApple ()V
+	public abstract fun anyIos ()V
+	public abstract fun anyJs ()V
+	public abstract fun anyLinux ()V
+	public abstract fun anyMacos ()V
+	public abstract fun anyMingw ()V
+	public abstract fun anyNative ()V
+	public abstract fun anyTvos ()V
+	public abstract fun anyWatchos ()V
 	public abstract fun common (Lkotlin/jvm/functions/Function1;)V
-	public abstract fun getCompilation ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;
-	public abstract fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
+	public abstract fun excludeCompilationIf (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun filterCompilations (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun group (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
-	public abstract fun isAndroidJvm ()Z
-	public abstract fun isAndroidNative ()Z
-	public abstract fun isApple ()Z
-	public abstract fun isIos ()Z
-	public abstract fun isJs ()Z
-	public abstract fun isJsLegacy ()Z
-	public abstract fun isJvm ()Z
-	public abstract fun isLinux ()Z
-	public abstract fun isMacos ()Z
-	public abstract fun isNative ()Z
-	public abstract fun isTvos ()Z
-	public abstract fun isWatchos ()Z
-	public abstract fun isWindows ()Z
+	public abstract fun includeCompilationIf (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun iosArm32 ()V
+	public abstract fun iosArm64 ()V
+	public abstract fun iosSimulatorArm64 ()V
+	public abstract fun iosX64 ()V
+	public abstract fun jvm ()V
+	public abstract fun linuxArm32Hfp ()V
+	public abstract fun linuxArm64 ()V
+	public abstract fun linuxMips32 ()V
+	public abstract fun linuxMipsel32 ()V
+	public abstract fun linuxX64 ()V
+	public abstract fun macosArm64 ()V
+	public abstract fun macosX64 ()V
+	public abstract fun mingwX64 ()V
+	public abstract fun mingwX86 ()V
+	public abstract fun tvosArm64 ()V
+	public abstract fun tvosSimulatorArm64 ()V
+	public abstract fun tvosX64 ()V
+	public abstract fun wasm32 ()V
+	public abstract fun watchosArm32 ()V
+	public abstract fun watchosArm64 ()V
+	public abstract fun watchosDeviceArm64 ()V
+	public abstract fun watchosSimulatorArm64 ()V
+	public abstract fun watchosX64 ()V
+	public abstract fun watchosX86 ()V
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder$DefaultImpls {
 	public static fun common (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder;Lkotlin/jvm/functions/Function1;)V
+	public static fun filterCompilations (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun group$default (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyDescriptor : kotlin/jvm/functions/Function1 {
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyDescriptor {
+	public abstract fun describe (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder;)V
 	public abstract fun extend (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyDescriptor;
 }
 
@@ -1092,6 +1121,9 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargets
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetsContainerWithPresets : org/jetbrains/kotlin/gradle/plugin/KotlinTargetsContainer {
 	public abstract fun getPresets ()Lorg/gradle/api/NamedDomainObjectCollection;
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/gradle/plugin/KotlinTargetsDsl : java/lang/annotation/Annotation {
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTestRun : org/jetbrains/kotlin/gradle/plugin/KotlinExecution {
