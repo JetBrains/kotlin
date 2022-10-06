@@ -50,6 +50,6 @@ fun test4() {
             return
         }
         x = null
-        lambda?.invoke()
+        lambda<!UNNECESSARY_SAFE_CALL!>?.<!>invoke()
     }
 }

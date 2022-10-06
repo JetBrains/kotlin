@@ -253,10 +253,6 @@ internal class FirLocalVariableAssignmentAnalyzer(
          *   referenced outside the lambda. It's possible to track the scope at each node and remove the unneeded `a` in "entry" and "then"
          *   nodes. But doing that seems to be more expensive than simply letting it propagate.
          *
-         * There is some liveness analysis present in this construction which errs on the conservative side: some code that is dead
-         * is considered to be live. This restricts some smart casts, which is better than the opposite (permitting unsafe smart casts
-         * if code turns out to be only mostly dead).
-         *
          * Because names are not resolved at this point, we manually track local variable declarations and resolve them along the way
          * so that shadowed names are handled correctly. This works because local variables at any scope have higher priority
          * than members on implicit receivers, even if the implicit receiver is introduced by a later scope.
@@ -277,14 +273,7 @@ internal class FirLocalVariableAssignmentAnalyzer(
         )
 
         private class MiniFlow(val parents: Set<MiniFlow>) {
-            val children: MutableSet<MiniFlow> = mutableSetOf()
             val assignedLater: MutableSet<FirProperty> = mutableSetOf()
-
-            init {
-                for (parent in parents) {
-                    parent.children.add(this)
-                }
-            }
 
             fun fork(): MiniFlow = MiniFlow(setOf(this))
 
@@ -305,10 +294,9 @@ internal class FirLocalVariableAssignmentAnalyzer(
                 visitFunction(simpleFunction, data)
 
             override fun visitFunction(function: FirFunction, data: MiniCfgData) {
-                val currentFlow = data.flow ?: return
                 val freeVariables = data.variableDeclarations.flatMapTo(mutableSetOf()) { it.values }
-                val flowInto = currentFlow.fork()
-                val flowAfter = currentFlow.fork()
+                val flowInto = data.flow.fork()
+                val flowAfter = data.flow.fork()
                 data.flow = flowInto
                 function.acceptChildren(this, data)
                 data.flow = flowAfter
@@ -318,95 +306,50 @@ internal class FirLocalVariableAssignmentAnalyzer(
 
             override fun visitWhenExpression(whenExpression: FirWhenExpression, data: MiniCfgData) {
                 (whenExpression.subjectVariable ?: whenExpression.subject)?.accept(this, data)
-                val flow = data.flow ?: return
+                val flow = data.flow
                 // Also collect `flow` here for the case when none of the branches execute.
-                val branches = whenExpression.branches.mapNotNullTo(mutableSetOf(flow)) {
+                data.flow = whenExpression.branches.mapTo(mutableSetOf(flow)) {
                     // No need to create a fork - it'll not be observed anywhere anyway.
                     data.flow = flow
                     it.accept(this, data)
                     data.flow
-                }
-                data.flow = branches.join()
+                }.join()
             }
 
             override fun visitTryExpression(tryExpression: FirTryExpression, data: MiniCfgData) {
-                if (data.flow == null) return
                 tryExpression.tryBlock.accept(this, data)
-                val catchFlow = data.lastLiveFlow // descendant of flow at the start
-                val returnFlows = mutableSetOf<MiniFlow>()
-                data.flow?.let(returnFlows::add)
-                val finallyFlows = tryExpression.catches.mapTo(mutableSetOf(catchFlow)) {
-                    data.flow = catchFlow
+                val flow = data.flow
+                data.flow = tryExpression.catches.mapTo(mutableSetOf(flow)) {
+                    data.flow = flow
                     it.accept(this, data)
-                    data.flow?.let(returnFlows::add)
-                    // Throwing/returning inside a catch clause goes through finally as well.
-                    data.lastLiveFlow
-                }
-                val finally = tryExpression.finallyBlock
-                if (finally != null) {
-                    data.flow = finallyFlows.join()
-                    finally.accept(this, data)
-                    if (returnFlows.isEmpty()) {
-                        data.flow = null
-                    }
-                } else {
-                    data.flow = returnFlows.join()
-                }
+                    data.flow
+                }.join()
+                tryExpression.finallyBlock?.accept(this, data)
             }
 
-            private fun Set<MiniFlow>.join(): MiniFlow? =
-                when (size) {
-                    0 -> null
-                    1 -> single()
-                    else -> MiniFlow(this)
-                }
+            private fun Set<MiniFlow>.join(): MiniFlow =
+                singleOrNull() ?: MiniFlow(this)
 
             override fun visitWhileLoop(whileLoop: FirWhileLoop, data: MiniCfgData) {
                 // Loop entry is a merge point, so need a new node.
-                val start = data.flow?.fork() ?: return
+                val start = data.flow.fork()
                 data.flow = start
                 whileLoop.condition.accept(this, data)
-                if (data.flow == null) return
                 whileLoop.block.accept(this, data)
-                // There may have been a conditional break/continue before the return, or the condition
-                // may have always been false.
-                data.flow = data.lastLiveFlow // descendant of flow after condition
-                data.flow?.addBackEdgeTo(start)
+                data.flow.addBackEdgeTo(start)
             }
 
             override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: MiniCfgData) {
-                val start = data.flow?.fork() ?: return
-                data.flow = start
+                val start = data.flow.fork()
                 doWhileLoop.block.accept(this, data)
-                // Like above, there might have been a break/continue, so the fact that the block does not
-                // terminate doesn't actually mean much.
-                data.flow = data.lastLiveFlow // descendant of flow before the block
                 doWhileLoop.condition.accept(this, data)
-                data.flow?.addBackEdgeTo(start)
+                data.flow.addBackEdgeTo(start)
             }
 
-            override fun visitBreakExpression(breakExpression: FirBreakExpression, data: MiniCfgData) {
-                visitElement(breakExpression, data)
-                // Can treat this as an unconditional return if looping constructs reset the flow anyway.
-                // TODO: check which loop this is targeting for more precise liveness analysis?
-                data.flow = null
-            }
-
-            override fun visitContinueExpression(continueExpression: FirContinueExpression, data: MiniCfgData) {
-                visitElement(continueExpression, data)
-                // Same comment as for `break`.
-                data.flow = null
-            }
-
-            override fun visitReturnExpression(returnExpression: FirReturnExpression, data: MiniCfgData) {
-                visitElement(returnExpression, data)
-                data.flow = null
-            }
-
-            override fun visitThrowExpression(throwExpression: FirThrowExpression, data: MiniCfgData) {
-                visitElement(throwExpression, data)
-                data.flow = null
-            }
+            // TODO: liveness analysis - return/throw/break/continue terminate the flow.
+            //   This is somewhat problematic though because try-catch and loops can restore it.
+            //   It is not possible to implement liveness analysis partially - otherwise combinations of
+            //   control flow structures can cause incorrect smartcasts.
 
             override fun visitFunctionCall(functionCall: FirFunctionCall, data: MiniCfgData) {
                 val visitor = this
@@ -449,40 +392,23 @@ internal class FirLocalVariableAssignmentAnalyzer(
             private fun MiniCfgData.recordAssignment(reference: FirReference) {
                 val name = (reference as? FirNamedReference)?.name ?: return
                 val property = variableDeclarations.lastOrNull { name in it }?.get(name) ?: return
-                flow?.recordAssignment(property, mutableSetOf())
+                flow.recordAssignments(setOf(property), mutableSetOf())
             }
 
-            private fun MiniFlow.recordAssignment(property: FirProperty, visited: MutableSet<MiniFlow>) {
+            private fun MiniFlow.recordAssignments(properties: Set<FirProperty>, visited: MutableSet<MiniFlow>) {
                 if (!visited.add(this)) return
-                assignedLater += property
-                parents.forEach { it.recordAssignment(property, visited) }
+                assignedLater += properties
+                parents.forEach { it.recordAssignments(properties, visited) }
             }
 
             private fun MiniFlow.addBackEdgeTo(loopStart: MiniFlow) {
-                children.add(loopStart)
                 // All forks in the loop should have the same set of variables assigned later, equal to the set
                 // at the start of the loop.
-                propagateForward(loopStart.assignedLater, mutableSetOf())
-            }
-
-            private fun MiniFlow.propagateForward(properties: Set<FirProperty>, visited: MutableSet<MiniFlow>) {
-                if (!visited.add(this)) return
-                assignedLater.addAll(properties)
-                children.forEach { it.propagateForward(properties, visited) }
+                recordAssignments(loopStart.assignedLater, mutableSetOf())
             }
 
             class MiniCfgData {
-                var lastLiveFlow: MiniFlow = MiniFlow.start()
-                    private set
-
-                var flow: MiniFlow? = lastLiveFlow
-                    set(value) {
-                        if (value != null) {
-                            lastLiveFlow = value
-                        }
-                        field = value
-                    }
-
+                var flow: MiniFlow = MiniFlow.start()
                 val variableDeclarations: ArrayDeque<MutableMap<Name, FirProperty>> = ArrayDeque(listOf(mutableMapOf()))
                 val functionForks: MutableMap<FirFunctionSymbol<*>, FunctionFork> = mutableMapOf()
             }
