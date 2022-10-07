@@ -219,6 +219,16 @@ typealias ScriptCompilationConfigurationResult = ResultWithDiagnostics<ScriptCom
 
 val ScriptCompilationConfigurationKeys.resolvedImportScripts by PropertiesCollection.key<List<SourceCode>>(isTransient = true)
 
+// left for binary compatibility with Kotlin Notebook plugin
+fun refineScriptCompilationConfiguration(
+    script: SourceCode,
+    definition: ScriptDefinition,
+    project: Project,
+    providedConfiguration: ScriptCompilationConfiguration? = null,
+): ScriptCompilationConfigurationResult {
+    return refineScriptCompilationConfiguration(script, definition, project, providedConfiguration, null)
+}
+
 @Suppress("DEPRECATION")
 fun refineScriptCompilationConfiguration(
     script: SourceCode,
