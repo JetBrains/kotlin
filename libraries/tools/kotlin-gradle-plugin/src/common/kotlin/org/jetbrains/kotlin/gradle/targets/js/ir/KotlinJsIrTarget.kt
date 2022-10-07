@@ -384,4 +384,17 @@ constructor(
         sourceMap = true
         sourceMapEmbedSources = "never"
     }
+
+    override fun generateTypeScriptDefinitions() {
+        compilations
+            .all {
+                binaries
+                    .withType(JsIrBinary::class.java)
+                    .all {
+                        it.linkTask.configure { linkTask ->
+                            linkTask.compilerOptions.freeCompilerArgs.add(GENERATE_D_TS)
+                        }
+                    }
+            }
+    }
 }
