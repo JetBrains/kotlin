@@ -5,16 +5,15 @@ class Foo<T : Any> {
 
 fun <T : Any> myBuilder(block: Foo<T>.() -> Unit) : Foo<T> = Foo<T>().apply(block)
 
-fun main() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>myBuilder<!> {
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!> = "some string"
-    }
-
+fun main(arg: Any) {
     val x = 57
     val value = myBuilder {
         doSmthng("one ")
-        a = 57
-        a = x
+        a = <!TYPE_MISMATCH!>57<!>
+        a = <!TYPE_MISMATCH!>x<!>
+        if (arg is String) {
+            a = arg
+        }
     }
     println(value.a?.count { it in 'l' .. 'q' })
 }
