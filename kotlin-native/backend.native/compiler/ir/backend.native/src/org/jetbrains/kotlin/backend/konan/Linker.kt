@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.uniqueName
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 internal fun determineLinkerOutput(context: Context): LinkerOutputKind =
         when (context.config.produce) {
@@ -56,11 +55,11 @@ internal class CacheStorage(val context: Context) {
     private fun saveCacheBitcodeDependencies() {
         val bitcodeDependencies = context.config.resolvedLibraries
                 .getFullList(TopologicalLibraryOrder)
+                .map { it as KonanLibrary }
                 .filter {
-                    require(it is KonanLibrary)
                     context.generationState.llvmImports.bitcodeIsUsed(it)
                             && it != context.config.cacheSupport.libraryToCache?.klib // Skip loops.
-                }.cast<List<KonanLibrary>>()
+                }
         outputFiles.bitcodeDependenciesFile!!.writeLines(bitcodeDependencies.map { it.uniqueName })
     }
 
