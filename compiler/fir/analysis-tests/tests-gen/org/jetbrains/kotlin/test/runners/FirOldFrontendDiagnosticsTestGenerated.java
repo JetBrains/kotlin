@@ -35725,6 +35725,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("unsafeAssignment.kt")
+            public void testUnsafeAssignment() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/unsafeAssignment.kt");
+            }
+
+            @Test
             @TestMetadata("useInferenceInformationFromExtension.kt")
             public void testUseInferenceInformationFromExtension() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/useInferenceInformationFromExtension.kt");
