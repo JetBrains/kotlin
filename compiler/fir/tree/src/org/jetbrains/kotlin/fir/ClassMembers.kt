@@ -19,11 +19,14 @@ fun FirCallableSymbol<*>.dispatchReceiverTypeOrNull(): ConeKotlinType? =
 fun FirCallableSymbol<*>.dispatchReceiverClassOrNull(): ConeClassLikeLookupTag? =
     fir.dispatchReceiverClassOrNull()
 
-fun FirCallableDeclaration.dispatchReceiverClassOrNull(): ConeClassLikeLookupTag? {
-    if (dispatchReceiverType is ConeIntersectionType && isIntersectionOverride) return symbol.baseForIntersectionOverride!!.fir.dispatchReceiverClassOrNull()
+fun FirCallableDeclaration.dispatchReceiverClassTypeOrNull(): ConeClassLikeType? =
+    if (dispatchReceiverType is ConeIntersectionType && isIntersectionOverride)
+        baseForIntersectionOverride!!.dispatchReceiverClassTypeOrNull()
+    else
+        dispatchReceiverType as? ConeClassLikeType
 
-    return (dispatchReceiverType as? ConeClassLikeType)?.lookupTag
-}
+fun FirCallableDeclaration.dispatchReceiverClassOrNull(): ConeClassLikeLookupTag? =
+    dispatchReceiverClassTypeOrNull()?.lookupTag
 
 fun FirCallableSymbol<*>.containingClassLookupTag(): ConeClassLikeLookupTag? = fir.containingClassLookupTag()
 fun FirCallableDeclaration.containingClassLookupTag(): ConeClassLikeLookupTag? {
