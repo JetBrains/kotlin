@@ -117,11 +117,8 @@ fun IrType.defaultValue(startOffset: Int, endOffset: Int, context: JvmBackendCon
     }
 }
 
-fun IrType.isInlineClassType(): Boolean = erasedUpperBound.isSingleFieldValueClass
-
-fun IrType.isMultiFieldValueClassType(): Boolean = erasedUpperBound.isMultiFieldValueClass
-
-fun IrType.isValueClassType(): Boolean = erasedUpperBound.isValue
+fun IrType.isInlineClassType(): Boolean =
+    erasedUpperBound.isSingleFieldValueClass
 
 val IrType.upperBound: IrType
     get() = erasedUpperBound.symbol.starProjectedType

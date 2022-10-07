@@ -50172,69 +50172,9 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
-        @TestMetadata("complex.kt")
-        public void testComplex() throws Exception {
-            runTest("compiler/testData/codegen/box/valueClasses/complex.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-        }
-
-        @Test
-        @TestMetadata("conditionalExpressions.kt")
-        public void testConditionalExpressions() throws Exception {
-            runTest("compiler/testData/codegen/box/valueClasses/conditionalExpressions.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-        }
-
-        @Test
         @TestMetadata("equality.kt")
         public void testEquality() throws Exception {
             runTest("compiler/testData/codegen/box/valueClasses/equality.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-        }
-
-        @Test
-        @TestMetadata("forStatement.kt")
-        public void testForStatement() throws Exception {
-            runTest("compiler/testData/codegen/box/valueClasses/forStatement.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-        }
-
-        @Test
-        @TestMetadata("mfvcFieldInitializationOrder.kt")
-        public void testMfvcFieldInitializationOrder() throws Exception {
-            runTest("compiler/testData/codegen/box/valueClasses/mfvcFieldInitializationOrder.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-        }
-
-        @Test
-        @TestMetadata("overrides.kt")
-        public void testOverrides() throws Exception {
-            runTest("compiler/testData/codegen/box/valueClasses/overrides.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-        }
-
-        @Test
-        @TestMetadata("overrides_inlineClass.kt")
-        public void testOverrides_inlineClass() throws Exception {
-            runTest("compiler/testData/codegen/box/valueClasses/overrides_inlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-        }
-
-        @Test
-        @TestMetadata("overrides_typeParameters.kt")
-        public void testOverrides_typeParameters() throws Exception {
-            runTest("compiler/testData/codegen/box/valueClasses/overrides_typeParameters.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-        }
-
-        @Test
-        @TestMetadata("throwingMFVCReassignments.kt")
-        public void testThrowingMFVCReassignments() throws Exception {
-            runTest("compiler/testData/codegen/box/valueClasses/throwingMFVCReassignments.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-        }
-
-        @Test
-        @TestMetadata("tryExpressions.kt")
-        public void testTryExpressions() throws Exception {
-            runTest("compiler/testData/codegen/box/valueClasses/tryExpressions.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-        }
-
-        @Test
-        @TestMetadata("visibility.kt")
-        public void testVisibility() throws Exception {
-            runTest("compiler/testData/codegen/box/valueClasses/visibility.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
     }
 
