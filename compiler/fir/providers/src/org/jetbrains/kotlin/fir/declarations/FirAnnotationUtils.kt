@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -223,3 +224,6 @@ fun hasLowPriorityAnnotation(annotations: List<FirAnnotation>) = annotations.any
     val lookupTag = it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return@any false
     lookupTag.classId == LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID
 }
+
+fun FirAnnotation.fullyExpandedClassId(useSiteSession: FirSession): ClassId? =
+    coneClassLikeType?.fullyExpandedType(useSiteSession)?.classId

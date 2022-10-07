@@ -2908,6 +2908,12 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = PositionedValueArgumentForJavaAnnotation::class
     }
 
+    abstract class RedundantRepeatableAnnotation : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = RedundantRepeatableAnnotation::class
+        abstract val kotlinRepeatable: FqName
+        abstract val javaRepeatable: FqName
+    }
+
     abstract class LocalJvmRecord : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = LocalJvmRecord::class
     }

@@ -185,7 +185,8 @@ fun checkRepeatedAnnotation(
 
     for (annotation in annotations) {
         val useSiteTarget = annotation.useSiteTarget ?: annotationContainer?.getDefaultUseSiteTarget(annotation, context)
-        val existingTargetsForAnnotation = annotationsMap.getOrPut(annotation.annotationTypeRef.coneType) { arrayListOf() }
+        val expandedType = annotation.annotationTypeRef.coneType.fullyExpandedType(context.session)
+        val existingTargetsForAnnotation = annotationsMap.getOrPut(expandedType) { arrayListOf() }
 
         checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, context, reporter)
         existingTargetsForAnnotation.add(useSiteTarget)

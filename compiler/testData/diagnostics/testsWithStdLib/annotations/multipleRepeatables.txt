@@ -1,0 +1,64 @@
+package
+
+@kotlin.annotation.Repeatable @java.lang.annotation.Repeatable(value = AContainer::class) public final annotation class A : kotlin.Annotation {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class AContainer : kotlin.Annotation {
+    public constructor AContainer(/*0*/ value: kotlin.Array<A>)
+    public final val value: kotlin.Array<A>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Repeatable @kotlin.jvm.JvmRepeatable /* = java.lang.annotation.Repeatable */(value = BContainer::class) public final annotation class B : kotlin.Annotation {
+    public constructor B()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class BContainer : kotlin.Annotation {
+    public constructor BContainer(/*0*/ value: kotlin.Array<B>)
+    public final val value: kotlin.Array<B>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Repeatable @kotlin.annotation.Repeatable @kotlin.jvm.JvmRepeatable /* = java.lang.annotation.Repeatable */(value = CContainer::class) @java.lang.annotation.Repeatable(value = CContainer::class) public final annotation class C : kotlin.Annotation {
+    public constructor C()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class CContainer : kotlin.Annotation {
+    public constructor CContainer(/*0*/ value: kotlin.Array<C>)
+    public final val value: kotlin.Array<C>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@AlphaRepeatable /* = kotlin.annotation.Repeatable */ @BetaRepeatable /* = java.lang.annotation.Repeatable */(value = DContainer::class) public final annotation class D : kotlin.Annotation {
+    public constructor D()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class DContainer : kotlin.Annotation {
+    public constructor DContainer(/*0*/ value: kotlin.Array<D>)
+    public final val value: kotlin.Array<D>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias AlphaRepeatable = kotlin.annotation.Repeatable
+public typealias BetaRepeatable = kotlin.jvm.JvmRepeatable
+

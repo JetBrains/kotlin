@@ -90,6 +90,3 @@ internal fun mapAnnotationParameters(annotation: FirAnnotation, session: FirSess
 
     return resultMap
 }
-
-internal fun FirAnnotation.fullyExpandedClassId(useSiteSession: FirSession): ClassId? =
-    coneClassLikeType?.fullyExpandedType(useSiteSession)?.classId
