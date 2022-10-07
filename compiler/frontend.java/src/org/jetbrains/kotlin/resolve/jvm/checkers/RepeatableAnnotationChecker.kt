@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.descriptors.annotations.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -72,6 +69,15 @@ class RepeatableAnnotationChecker(
                 when {
                     javaRepeatable != null -> checkJavaRepeatableAnnotationDeclaration(javaRepeatable, annotationClass, trace)
                     kotlinRepeatable != null -> checkKotlinRepeatableAnnotationDeclaration(kotlinRepeatable, annotationClass, trace)
+                }
+                if (javaRepeatable != null && kotlinRepeatable != null) {
+                    trace.report(
+                        ErrorsJvm.REDUNDANT_REPEATABLE_ANNOTATION.on(
+                            kotlinRepeatable.entry,
+                            kotlinRepeatable.descriptor.abbreviationFqName ?: FqName.ROOT,
+                            javaRepeatable.descriptor.abbreviationFqName ?: FqName.ROOT,
+                        )
+                    )
                 }
             }
         }

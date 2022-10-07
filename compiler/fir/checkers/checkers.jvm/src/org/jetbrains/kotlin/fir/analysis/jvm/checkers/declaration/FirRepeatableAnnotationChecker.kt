@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclaratio
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationRetention
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isJvm6
 import org.jetbrains.kotlin.fir.declarations.*
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -51,7 +53,8 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
             val annotationClass = session.symbolProvider.getClassLikeSymbolByClassId(annotationClassId) ?: continue
 
             val useSiteTarget = annotation.useSiteTarget
-            val existingTargetsForAnnotation = annotationsMap.getOrPut(annotation.annotationTypeRef.coneType) { arrayListOf() }
+            val expandedType = annotation.annotationTypeRef.coneType.fullyExpandedType(context.session)
+            val existingTargetsForAnnotation = annotationsMap.getOrPut(expandedType) { arrayListOf() }
             val duplicateAnnotation = useSiteTarget in existingTargetsForAnnotation ||
                     existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) }
 

@@ -4178,6 +4178,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.REDUNDANT_REPEATABLE_ANNOTATION) { firDiagnostic ->
+        RedundantRepeatableAnnotationImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.LOCAL_JVM_RECORD) { firDiagnostic ->
         LocalJvmRecordImpl(
             firDiagnostic as KtPsiDiagnostic,

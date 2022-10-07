@@ -3514,6 +3514,13 @@ internal class PositionedValueArgumentForJavaAnnotationImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.PositionedValueArgumentForJavaAnnotation(), KtAbstractFirDiagnostic<KtExpression>
 
+internal class RedundantRepeatableAnnotationImpl(
+    override val kotlinRepeatable: FqName,
+    override val javaRepeatable: FqName,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.RedundantRepeatableAnnotation(), KtAbstractFirDiagnostic<KtAnnotationEntry>
+
 internal class LocalJvmRecordImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

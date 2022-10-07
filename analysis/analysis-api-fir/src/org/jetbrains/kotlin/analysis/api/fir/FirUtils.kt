@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir
 
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.fir.annotations.fullyExpandedClassId
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClassId
 import org.jetbrains.kotlin.analysis.api.fir.annotations.mapAnnotationParameters
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol

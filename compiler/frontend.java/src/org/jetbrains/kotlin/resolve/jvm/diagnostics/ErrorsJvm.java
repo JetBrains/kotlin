@@ -210,6 +210,8 @@ public interface ErrorsJvm {
     DiagnosticFactoryForDeprecation0<PsiElement> ENUM_DECLARING_CLASS_DEPRECATED =
             DiagnosticFactoryForDeprecation0.create(LanguageFeature.ProhibitEnumDeclaringClass);
 
+    DiagnosticFactory2<KtAnnotationEntry, FqName, FqName> REDUNDANT_REPEATABLE_ANNOTATION = DiagnosticFactory2.create(WARNING);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {

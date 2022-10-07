@@ -34867,6 +34867,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("multipleRepeatables.kt")
+            public void testMultipleRepeatables() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/multipleRepeatables.kt");
+            }
+
+            @Test
             @TestMetadata("qualifiedCallValue.kt")
             public void testQualifiedCallValue() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/qualifiedCallValue.kt");
