@@ -185,4 +185,10 @@ object PathUtil {
     @JvmStatic
     fun getJdkClassesRoots(jdkHome: File): List<File> =
             JavaSdkUtil.getJdkClassesRoots(jdkHome, false)
+
+    @JvmStatic
+    fun getJdkClassesRootsFromJdkOrJre(javaRoot: File): List<File> {
+        val isJdk = File(javaRoot, "jre/lib").exists()
+        return JavaSdkUtil.getJdkClassesRoots(javaRoot, !isJdk)
+    }
 }
