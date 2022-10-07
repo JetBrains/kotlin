@@ -15,7 +15,7 @@ class CustomAnnotationTypeAttribute(val annotations: List<FirAnnotation>) : Cone
     override fun intersect(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute? = null
 
     override fun add(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute {
-        if (other == null) return this
+        if (other == null || other === this) return this
         return CustomAnnotationTypeAttribute(annotations + other.annotations)
     }
 
