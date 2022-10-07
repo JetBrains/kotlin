@@ -106,6 +106,12 @@ public class SerializationFirBlackBoxTestGenerated extends AbstractSerialization
         }
 
         @Test
+        @TestMetadata("serialInfo.kt")
+        public void testSerialInfo() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/boxIr/serialInfo.kt");
+        }
+
+        @Test
         @TestMetadata("serializableOnPropertyType.kt")
         public void testSerializableOnPropertyType() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/boxIr/serializableOnPropertyType.kt");

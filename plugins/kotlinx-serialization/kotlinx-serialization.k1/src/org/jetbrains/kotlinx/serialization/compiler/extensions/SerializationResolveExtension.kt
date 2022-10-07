@@ -24,14 +24,13 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 open class SerializationResolveExtension @JvmOverloads constructor(val metadataPlugin: SerializationDescriptorSerializerPlugin? = null) : SyntheticResolveExtension {
     override fun getSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> = when {
-        thisDescriptor.isSerialInfoAnnotation && thisDescriptor.platform?.isJvm() == true -> listOf(SerialEntityNames.IMPL_NAME)
         (thisDescriptor.shouldHaveGeneratedSerializer) && !thisDescriptor.hasCompanionObjectAsSerializer ->
             listOf(SerialEntityNames.SERIALIZER_CLASS_NAME)
         else -> listOf()
     }
 
     override fun getPossibleSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name>? {
-        return listOf(SerialEntityNames.IMPL_NAME, SerialEntityNames.SERIALIZER_CLASS_NAME)
+        return listOf(SerialEntityNames.SERIALIZER_CLASS_NAME)
     }
 
     override fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> = when {
@@ -73,9 +72,7 @@ open class SerializationResolveExtension @JvmOverloads constructor(val metadataP
         declarationProvider: ClassMemberDeclarationProvider,
         result: MutableSet<ClassDescriptor>
     ) {
-        if (thisDescriptor.isSerialInfoAnnotation && name == SerialEntityNames.IMPL_NAME)
-            result.add(KSerializerDescriptorResolver.addSerialInfoImplClass(thisDescriptor, declarationProvider, ctx))
-        else if (thisDescriptor.shouldHaveGeneratedSerializer && name == SerialEntityNames.SERIALIZER_CLASS_NAME &&
+        if (thisDescriptor.shouldHaveGeneratedSerializer && name == SerialEntityNames.SERIALIZER_CLASS_NAME &&
             result.none { it.name == SerialEntityNames.SERIALIZER_CLASS_NAME }
         )
             result.add(KSerializerDescriptorResolver.addSerializerImplClass(thisDescriptor, declarationProvider, ctx))
@@ -88,7 +85,6 @@ open class SerializationResolveExtension @JvmOverloads constructor(val metadataP
         else null
 
     override fun addSyntheticSupertypes(thisDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) {
-        KSerializerDescriptorResolver.addSerialInfoSuperType(thisDescriptor, supertypes)
         KSerializerDescriptorResolver.addSerializerSupertypes(thisDescriptor, supertypes)
         KSerializerDescriptorResolver.addSerializerFactorySuperType(thisDescriptor, supertypes)
     }
@@ -125,7 +121,6 @@ open class SerializationResolveExtension @JvmOverloads constructor(val metadataP
         fromSupertypes: ArrayList<PropertyDescriptor>,
         result: MutableSet<PropertyDescriptor>
     ) {
-        KSerializerDescriptorResolver.generateDescriptorsForAnnotationImpl(thisDescriptor, fromSupertypes, result)
         KSerializerDescriptorResolver.generateSerializerProperties(thisDescriptor, fromSupertypes, name, result)
     }
 }
