@@ -209,9 +209,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(EXPORT_KDOC, arguments.exportKDoc)
 
                 put(PRINT_IR, arguments.printIr)
-                put(PRINT_IR_WITH_DESCRIPTORS, arguments.printIrWithDescriptors)
-                put(PRINT_DESCRIPTORS, arguments.printDescriptors)
-                put(PRINT_LOCATIONS, arguments.printLocations)
                 put(PRINT_BITCODE, arguments.printBitCode)
                 put(CHECK_EXTERNAL_CALLS, arguments.checkExternalCalls)
                 put(PRINT_FILES, arguments.printFiles)
@@ -222,12 +219,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     put(VERIFY_COMPILER, arguments.verifyCompiler == "true")
                 put(VERIFY_IR, arguments.verifyIr)
                 put(VERIFY_BITCODE, arguments.verifyBitCode)
-
-                put(ENABLED_PHASES,
-                        arguments.enablePhases.toNonNullList())
-                put(DISABLED_PHASES,
-                        arguments.disablePhases.toNonNullList())
-                put(LIST_PHASES, arguments.listPhases)
 
                 put(ENABLE_ASSERTIONS, arguments.enableAssertions)
 
