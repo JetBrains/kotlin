@@ -39,9 +39,9 @@ class CommonizerHierarchicalIT : BaseGradleIT() {
             }
 
             if (Os.canCompileWindows) {
-                build(":p1:compileWindowsMainKotlinMetadata") {
+                build(":p1:compileMingwMainKotlinMetadata") {
                     assertSuccessful()
-                    assertFileExists("p1/build/classes/kotlin/metadata/windowsMain/klib/p1_windowsMain.klib")
+                    assertFileExists("p1/build/classes/kotlin/metadata/mingwMain/klib/p1_mingwMain.klib")
                 }
             }
 
@@ -57,6 +57,12 @@ class CommonizerHierarchicalIT : BaseGradleIT() {
                 build(":p1:compileNativeMainKotlinMetadata") {
                     assertSuccessful()
                     assertFileExists("p1/build/classes/kotlin/metadata/nativeMain/klib/p1_nativeMain.klib")
+                    assertNoDuplicateLibraryWarning()
+                }
+
+                build(":p1:compileConcurrentMainKotlinMetadata") {
+                    assertSuccessful()
+                    assertFileExists("p1/build/classes/kotlin/metadata/concurrentMain/default")
                     assertNoDuplicateLibraryWarning()
                 }
             }
@@ -87,10 +93,10 @@ class CommonizerHierarchicalIT : BaseGradleIT() {
             }
 
             if (Os.canCompileWindows) {
-                build(":p1:windowsX64MainKlibrary", ":p1:windowsX86MainKlibrary") {
+                build(":p1:mingwX64MainKlibrary", ":p1:mingwX86MainKlibrary") {
                     assertSuccessful()
-                    assertFileExists("p1/build/classes/kotlin/windowsX64/main/klib/p1.klib")
-                    assertFileExists("p1/build/classes/kotlin/windowsX86/main/klib/p1.klib")
+                    assertFileExists("p1/build/classes/kotlin/mingwX64/main/klib/p1.klib")
+                    assertFileExists("p1/build/classes/kotlin/mingwX86/main/klib/p1.klib")
                     assertNoDuplicateLibraryWarning()
                 }
             }
@@ -167,7 +173,7 @@ class CommonizerHierarchicalIT : BaseGradleIT() {
         private val os = OperatingSystem.current()
         val canCompileApple get() = os.isMacOsX
         val canCompileLinux get() = os.isLinux || os.isMacOsX
-        val canCompileWindows get() = os.isWindows
+        val canCompileWindows get() = os.isWindows || os.isMacOsX
     }
 
     private fun CompiledProject.assertNoDuplicateLibraryWarning() = assertNotContains("library included more than once")
