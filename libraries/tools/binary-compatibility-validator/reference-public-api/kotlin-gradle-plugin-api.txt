@@ -1121,6 +1121,9 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargets
 	public abstract fun getPresets ()Lorg/gradle/api/NamedDomainObjectCollection;
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/gradle/plugin/KotlinTargetsDsl : java/lang/annotation/Annotation {
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTestRun : org/jetbrains/kotlin/gradle/plugin/KotlinExecution {
 	public abstract fun filter (Lgroovy/lang/Closure;)V
 	public abstract fun filter (Lkotlin/jvm/functions/Function1;)V

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
 
+@KotlinTargetsDsl
 interface KotlinTargetsContainer {
     val targets: NamedDomainObjectCollection<KotlinTarget>
 }

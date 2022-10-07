@@ -4,6 +4,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
+@KotlinTargetsDsl
 @ExperimentalKotlinGradlePluginApi
 interface KotlinTargetHierarchyBuilder {
     /* Declaring groups */
