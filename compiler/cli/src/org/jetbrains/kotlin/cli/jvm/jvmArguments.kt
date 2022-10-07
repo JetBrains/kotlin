@@ -161,10 +161,12 @@ fun CompilerConfiguration.configureJdkHome(arguments: K2JVMCompilerArguments): B
             messageCollector.report(ERROR, "JDK home directory does not exist: $jdkHome")
             return false
         }
-
         messageCollector.report(LOGGING, "Using JDK home directory $jdkHome")
-
         put(JVMConfigurationKeys.JDK_HOME, jdkHome)
+    } else {
+        val javaHome = File(System.getProperty("java.home"))
+        messageCollector.report(LOGGING, "Using JDK home inferred from java.home: $javaHome")
+        put(JVMConfigurationKeys.JDK_HOME, javaHome)
     }
 
     return true
