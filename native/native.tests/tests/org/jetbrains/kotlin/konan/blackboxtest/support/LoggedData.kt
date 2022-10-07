@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.runner.get
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.SafeEnvVars
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.SafeProperties
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
@@ -64,7 +63,7 @@ internal abstract class LoggedData {
             get() = buildList {
                 sourceModules.forEach { module ->
                     if (module !is TestModule.Exclusive) return@forEach
-                    this += module.testCase.id.safeAs<TestCaseId.TestDataFile>()?.file ?: return@forEach
+                    this += (module.testCase.id as? TestCaseId.TestDataFile)?.file ?: return@forEach
                 }
                 sort()
             }

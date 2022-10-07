@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
-import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -83,7 +81,7 @@ private object NativeTestSupport {
                 computeNativeClassLoader(),
                 computeBaseDirs()
             )
-        }.cast()
+        } as TestProcessSettings
 
     private fun computeNativeHome(): KotlinNativeHome = KotlinNativeHome(File(ProcessLevelProperty.KOTLIN_NATIVE_HOME.readValue()))
 
@@ -318,7 +316,7 @@ private object NativeTestSupport {
             }
 
             TestClassSettings(parent = testProcessSettings, settings)
-        }.cast()
+        } as TestClassSettings
 
     private fun computeTestConfiguration(enclosingTestClass: Class<*>): ComputedTestConfiguration {
         val findTestConfiguration: Class<*>.() -> ComputedTestConfiguration? = {
@@ -423,7 +421,7 @@ private object NativeTestSupport {
                 parent = getOrCreateTestProcessSettings(),
                 buildList { addCommonTestClassSettingsTo(enclosingTestClass, this) }
             )
-        }.cast()
+        } as SimpleTestClassSettings
 
     /*************** Test run settings (for black box tests only) ***************/
 
@@ -435,7 +433,8 @@ private object NativeTestSupport {
             parent = getOrCreateTestClassSettings(),
             listOfNotNull(
                 testInstances,
-                ExternalSourceTransformersProvider::class to testInstances.enclosingTestInstance.safeAs<ExternalSourceTransformersProvider>()
+                (testInstances.enclosingTestInstance as? ExternalSourceTransformersProvider)
+                    ?.let { ExternalSourceTransformersProvider::class to it }
             )
         )
     }
@@ -478,7 +477,7 @@ private object NativeTestSupport {
         root.getStore(NAMESPACE).getOrComputeIfAbsent(testClassKeyFor<TestRunProvider>()) {
             val testCaseGroupProvider = createTestCaseGroupProvider(getOrCreateTestClassSettings().get())
             TestRunProvider(testCaseGroupProvider)
-        }.cast()
+        } as TestRunProvider
 
     private fun createTestCaseGroupProvider(computedTestConfiguration: ComputedTestConfiguration): TestCaseGroupProvider {
         val (testConfiguration: TestConfiguration, testConfigurationAnnotation: Annotation) = computedTestConfiguration
@@ -498,7 +497,7 @@ private object NativeTestSupport {
             }
         }
 
-        return constructor.call(*arguments.toTypedArray()).cast()
+        return constructor.call(*arguments.toTypedArray())
     }
 
     private fun KParameter.hasTypeOf(clazz: KClass<*>): Boolean = (type.classifier as? KClass<*>)?.qualifiedName == clazz.qualifiedName
