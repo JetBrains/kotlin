@@ -366,7 +366,6 @@ interface IrBuilderWithPluginContext {
         annotations.mapNotNull { annotationCall ->
             val annotationClass = annotationCall.symbol.owner.parentAsClass
             if (!annotationClass.isSerialInfoAnnotation) return@mapNotNull null
-
             annotationCall.deepCopyWithVariables()
         }
 
