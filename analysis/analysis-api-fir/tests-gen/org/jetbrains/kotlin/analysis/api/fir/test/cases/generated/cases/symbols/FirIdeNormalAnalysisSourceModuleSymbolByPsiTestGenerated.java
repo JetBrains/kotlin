@@ -221,6 +221,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("propertyWithAnnotations.kt")
+    public void testPropertyWithAnnotations() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/propertyWithAnnotations.kt");
+    }
+
+    @Test
     @TestMetadata("topLevelFunctions.kt")
     public void testTopLevelFunctions() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/topLevelFunctions.kt");
