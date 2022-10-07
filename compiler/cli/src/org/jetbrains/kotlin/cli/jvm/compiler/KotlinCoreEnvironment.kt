@@ -350,7 +350,7 @@ class KotlinCoreEnvironment private constructor(
 
     fun updateClasspath(contentRoots: List<ContentRoot>): List<File>? {
         // TODO: add new Java modules to CliJavaModuleResolver
-        val newRoots = classpathRootsResolver.convertClasspathRoots(contentRoots).roots
+        val newRoots = classpathRootsResolver.convertClasspathRoots(contentRoots).roots - initialRoots
 
         if (packagePartProviders.isEmpty()) {
             initialRoots.addAll(newRoots)
