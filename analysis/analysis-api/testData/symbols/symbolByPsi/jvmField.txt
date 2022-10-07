@@ -1,0 +1,71 @@
+KtKotlinPropertySymbol:
+  annotationsList: [
+    kotlin/jvm/JvmField()
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: /jvmField
+  contextReceivers: []
+  getter: KtPropertyGetterSymbol(<getter>)
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: true
+  initializer: KtConstantInitializerValue(2)
+  isConst: false
+  isDelegatedProperty: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: false
+  modality: FINAL
+  name: jvmField
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Long
+  setter: KtPropertySetterSymbol(<setter>)
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: jvmField
+  javaSetterName: jvmField
+  setterDeprecationStatus: null
+
+KtKotlinPropertySymbol:
+  annotationsList: [
+    kotlin/jvm/JvmField()
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: /jvmFieldOnField
+  contextReceivers: []
+  getter: KtPropertyGetterSymbol(<getter>)
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: true
+  initializer: KtConstantInitializerValue(4)
+  isConst: false
+  isDelegatedProperty: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: false
+  modality: FINAL
+  name: jvmFieldOnField
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Int
+  setter: KtPropertySetterSymbol(<setter>)
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: jvmFieldOnField
+  javaSetterName: jvmFieldOnField
+  setterDeprecationStatus: null

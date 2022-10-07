@@ -13,7 +13,12 @@ lateinit var lateinitVariable: String
 var variableWithBackingField: Long = 4
     get() = field
 
+@set:JvmName("customPrivateSetter")
 var privateSetter = ""
+    private set
+
+var jvmNameOnSetter = ""
+    @JvmName("customPrivateSetter")
     private set
 
 @get:JvmName("myCustomGetter")
