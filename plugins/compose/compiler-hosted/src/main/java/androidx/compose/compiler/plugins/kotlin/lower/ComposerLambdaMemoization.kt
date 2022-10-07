@@ -16,7 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
-import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
+import androidx.compose.compiler.plugins.kotlin.ComposeCallableIds
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
@@ -283,11 +283,6 @@ private class ClassContext(override val declaration: IrClass) : DeclarationConte
     }
 }
 
-const val COMPOSABLE_LAMBDA = "composableLambda"
-const val COMPOSABLE_LAMBDA_N = "composableLambdaN"
-const val COMPOSABLE_LAMBDA_INSTANCE = "composableLambdaInstance"
-const val COMPOSABLE_LAMBDA_N_INSTANCE = "composableLambdaNInstance"
-
 class ComposerLambdaMemoization(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
@@ -393,9 +388,7 @@ class ComposerLambdaMemoization(
     }
 
     private fun irCurrentComposer(): IrExpression {
-        val currentComposerSymbol = getTopLevelPropertyGetter(
-            ComposeFqNames.fqNameFor("currentComposer")
-        )
+        val currentComposerSymbol = getTopLevelPropertyGetter(ComposeCallableIds.currentComposer)
 
         return IrCallImpl(
             UNDEFINED_OFFSET,
@@ -720,13 +713,13 @@ class ComposerLambdaMemoization(
         val restartFunctionFactory =
             if (useComposableFactory)
                 if (useComposableLambdaN)
-                    COMPOSABLE_LAMBDA_N
-                else COMPOSABLE_LAMBDA
+                    ComposeCallableIds.composableLambdaN
+                else ComposeCallableIds.composableLambda
             else if (useComposableLambdaN)
-                COMPOSABLE_LAMBDA_N_INSTANCE
-            else COMPOSABLE_LAMBDA_INSTANCE
+                ComposeCallableIds.composableLambdaNInstance
+            else ComposeCallableIds.composableLambdaInstance
         val restartFactorySymbol =
-            getTopLevelFunction(ComposeFqNames.internalFqNameFor(restartFunctionFactory))
+            getTopLevelFunction(restartFunctionFactory)
         val irBuilder = DeclarationIrBuilder(
             context,
             symbol = declarationContext.symbol,
@@ -815,9 +808,7 @@ class ComposerLambdaMemoization(
         // Otherwise memoize the expression based on the stable captured values
         val rememberParameterCount = captures.size + 1 // One additional parameter for the lambda
         val declaration = functionContext.declaration
-        val rememberFunctions = getTopLevelFunctions(
-            ComposeFqNames.fqNameFor("remember")
-        ).map { it.owner }
+        val rememberFunctions = getTopLevelFunctions(ComposeCallableIds.remember).map { it.owner }
 
         val directRememberFunction = // Exclude the varargs version
             rememberFunctions.singleOrNull {

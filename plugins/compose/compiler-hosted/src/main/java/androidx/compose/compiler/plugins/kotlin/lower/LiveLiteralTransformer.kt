@@ -16,7 +16,8 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
-import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
+import androidx.compose.compiler.plugins.kotlin.ComposeCallableIds
+import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
@@ -170,19 +171,17 @@ open class LiveLiteralTransformer(
     }
 
     private val liveLiteral =
-        getInternalFunction("liveLiteral")
-    private val derivedStateOf =
-        getTopLevelFunction(ComposeFqNames.fqNameFor("derivedStateOf"))
+        getTopLevelFunction(ComposeCallableIds.liveLiteral)
     private val isLiveLiteralsEnabled =
-        getInternalProperty("isLiveLiteralsEnabled")
+        getTopLevelPropertyGetter(ComposeCallableIds.isLiveLiteralsEnabled)
     private val liveLiteralInfoAnnotation =
-        getInternalClass("LiveLiteralInfo")
+        getTopLevelClass(ComposeClassIds.LiveLiteralInfo)
     private val liveLiteralFileInfoAnnotation =
-        getInternalClass("LiveLiteralFileInfo")
+        getTopLevelClass(ComposeClassIds.LiveLiteralFileInfo)
     private val stateInterface =
-        getTopLevelClass(ComposeFqNames.fqNameFor("State"))
+        getTopLevelClass(ComposeClassIds.State)
     private val NoLiveLiteralsAnnotation =
-        getTopLevelClass(ComposeFqNames.fqNameFor("NoLiveLiterals"))
+        getTopLevelClass(ComposeClassIds.NoLiveLiterals)
 
     private fun IrAnnotationContainer.hasNoLiveLiteralsAnnotation(): Boolean = annotations.any {
         it.symbol.owner == NoLiveLiteralsAnnotation.owner.primaryConstructor

@@ -87,6 +87,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -439,7 +440,7 @@ class ComposerParamTransformer(
     }
 
     private fun jvmNameAnnotation(name: String): IrConstructorCall {
-        val jvmName = getTopLevelClass(DescriptorUtils.JVM_NAME)
+        val jvmName = getTopLevelClass(StandardClassIds.Annotations.JvmName)
         val ctor = jvmName.constructors.first { it.owner.isPrimary }
         val type = jvmName.createType(false, emptyList())
         return IrConstructorCallImpl(

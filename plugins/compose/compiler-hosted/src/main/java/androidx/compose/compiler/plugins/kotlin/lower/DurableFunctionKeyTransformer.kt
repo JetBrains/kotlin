@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
+import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices.DURABLE_FUNCTION_KEY
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices.DURABLE_FUNCTION_KEYS
@@ -150,9 +151,9 @@ class DurableFunctionKeyTransformer(
     var currentKeys = mutableListOf<KeyInfo>()
 
     private val keyMetaAnnotation =
-        getInternalClassOrNull("FunctionKeyMeta")
+        getTopLevelClassOrNull(ComposeClassIds.FunctionKeyMeta)
     private val metaClassAnnotation =
-        getInternalClassOrNull("FunctionKeyMetaClass")
+        getTopLevelClassOrNull(ComposeClassIds.FunctionKeyMetaClass)
 
     private fun irKeyMetaAnnotation(
         key: KeyInfo
