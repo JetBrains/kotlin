@@ -1,8 +1,10 @@
+import TestProperty.*
 import org.gradle.api.GradleException
-import org.gradle.api.tasks.testing.Test
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.project
+import java.io.File
 
 private enum class TestProperty(shortName: String) {
     // Use a separate Gradle property to pass Kotlin/Native home to tests: "kotlin.internal.native.test.nativeHome".
@@ -24,19 +26,55 @@ private enum class TestProperty(shortName: String) {
     EXECUTION_TIMEOUT("executionTimeout"),
     SANITIZER("sanitizer");
 
-    private val propertyName = "kotlin.internal.native.test.$shortName"
+    val fullName = "kotlin.internal.native.test.$shortName"
+}
 
-    fun setUpFromGradleProperty(task: Test, defaultValue: () -> String? = { null }) {
-        val propertyValue = readGradleProperty(task) ?: defaultValue()
-        if (propertyValue != null) task.systemProperty(propertyName, propertyValue)
+private sealed class ComputedTestProperty {
+    abstract val name: String
+    abstract val value: String?
+
+    class Normal(override val name: String, override val value: String?) : ComputedTestProperty()
+    class Lazy(override val name: String, private val lazyValue: kotlin.Lazy<String?>) : ComputedTestProperty() {
+        override val value get() = lazyValue.value
+    }
+}
+
+private class ComputedTestProperties(private val task: Test) {
+    private val computedProperties = arrayListOf<ComputedTestProperty>()
+
+    fun Project.compute(property: TestProperty, defaultValue: () -> String? = { null }) {
+        val gradleValue = readFromGradle(property)
+        computedProperties += ComputedTestProperty.Normal(property.fullName, gradleValue ?: defaultValue())
     }
 
-    fun readGradleProperty(task: Test): String? = task.project.findProperty(propertyName)?.toString()
+    fun Project.computeLazy(property: TestProperty, defaultLazyValue: () -> Lazy<String?>) {
+        val gradleValue = readFromGradle(property)
+        computedProperties += if (gradleValue != null)
+            ComputedTestProperty.Normal(property.fullName, gradleValue)
+        else
+            ComputedTestProperty.Lazy(property.fullName, defaultLazyValue())
+    }
+
+    fun lazyClassPath(builder: MutableList<File>.() -> Unit): Lazy<String?> = lazy(LazyThreadSafetyMode.NONE) {
+        buildList(builder).takeIf { it.isNotEmpty() }?.joinToString(File.pathSeparator) { it.absolutePath }
+    }
+
+    fun Project.readFromGradle(property: TestProperty): String? = findProperty(property.fullName)?.toString()
+
+    fun resolveAndApplyToTask() {
+        computedProperties.forEach { computedProperty ->
+            task.systemProperty(computedProperty.name, computedProperty.value ?: return@forEach)
+        }
+    }
 }
+
+private fun Test.ComputedTestProperties(init: ComputedTestProperties.() -> Unit): ComputedTestProperties =
+    ComputedTestProperties(this).apply { init() }
 
 fun Project.nativeTest(
     taskName: String,
     tag: String?,
+    requirePlatformLibs: Boolean = false,
     customDependencies: List<Configuration> = emptyList(),
     customKlibDependencies: List<Configuration> = emptyList()
 ) = projectTest(
@@ -71,49 +109,61 @@ fun Project.nativeTest(
             jvmArgs("-XX:TieredStopAtLevel=1") // Disable C2 if there are more than 4 CPUs at the host machine.
         }
 
-        TestProperty.KOTLIN_NATIVE_HOME.setUpFromGradleProperty(this) {
-            val testTarget = TestProperty.TEST_TARGET.readGradleProperty(this)
-            dependsOn(if (testTarget != null) ":kotlin-native:${testTarget}CrossDist" else ":kotlin-native:dist")
-            project(":kotlin-native").projectDir.resolve("dist").absolutePath
-        }
-
-        TestProperty.COMPILER_CLASSPATH.setUpFromGradleProperty(this) {
-            buildList {
-                val customNativeHome = TestProperty.KOTLIN_NATIVE_HOME.readGradleProperty(this@projectTest)
-                if (customNativeHome != null) {
-                    this += file(customNativeHome).resolve("konan/lib/kotlin-native-compiler-embeddable.jar")
+        // Compute test properties in advance. Make sure that the necessary dependencies are settled.
+        // But do not resolve any configurations until the execution phase.
+        val computedTestProperties = ComputedTestProperties {
+            compute(KOTLIN_NATIVE_HOME) {
+                val testTarget = readFromGradle(TEST_TARGET)
+                if (testTarget != null) {
+                    dependsOn(":kotlin-native:${testTarget}CrossDist")
+                    if (requirePlatformLibs) dependsOn(":kotlin-native:${testTarget}PlatformLibs")
                 } else {
-                    val kotlinNativeCompilerEmbeddable = configurations.detachedConfiguration(dependencies.project(":kotlin-native-compiler-embeddable"))
-                    dependsOn(kotlinNativeCompilerEmbeddable)
-                    this.addAll(kotlinNativeCompilerEmbeddable.files)
+                    dependsOn(":kotlin-native:dist")
+                    if (requirePlatformLibs) dependsOn(":kotlin-native:distPlatformLibs")
                 }
-                customDependencies.forEach { dependency ->
-                    dependsOn(dependency)
-                    this.addAll(dependency.files)
+                project(":kotlin-native").projectDir.resolve("dist").absolutePath
+            }
+
+            computeLazy(COMPILER_CLASSPATH) {
+                val customNativeHome = readFromGradle(KOTLIN_NATIVE_HOME)
+
+                val kotlinNativeCompilerEmbeddable = if (customNativeHome == null)
+                    configurations.detachedConfiguration(dependencies.project(":kotlin-native-compiler-embeddable"))
+                        .also { dependsOn(it) }
+                else
+                    null
+
+                customDependencies.forEach(::dependsOn)
+
+                lazyClassPath {
+                    if (customNativeHome == null)
+                        addAll(kotlinNativeCompilerEmbeddable!!.files)
+                    else
+                        this += file(customNativeHome).resolve("konan/lib/kotlin-native-compiler-embeddable.jar")
+
+                    customDependencies.flatMapTo(this) { it.files }
                 }
-            }.map { it.absoluteFile }.joinToString(";")
-        }
+            }
 
-        TestProperty.CUSTOM_KLIBS.setUpFromGradleProperty(this) {
-            customKlibDependencies.flatMap { dependency ->
-                dependsOn(dependency)
-                dependency.files
-            }.map { it.absoluteFile }.joinToString(";")
-        }
+            computeLazy(CUSTOM_KLIBS) {
+                customKlibDependencies.forEach(::dependsOn)
+                lazyClassPath { customKlibDependencies.flatMapTo(this) { it.files } }
+            }
 
-        // Pass Gradle properties as JVM properties so test process can read them.
-        TestProperty.TEST_TARGET.setUpFromGradleProperty(this)
-        TestProperty.TEST_MODE.setUpFromGradleProperty(this)
-        TestProperty.FORCE_STANDALONE.setUpFromGradleProperty(this)
-        TestProperty.COMPILE_ONLY.setUpFromGradleProperty(this)
-        TestProperty.OPTIMIZATION_MODE.setUpFromGradleProperty(this)
-        TestProperty.MEMORY_MODEL.setUpFromGradleProperty(this)
-        TestProperty.USE_THREAD_STATE_CHECKER.setUpFromGradleProperty(this)
-        TestProperty.GC_TYPE.setUpFromGradleProperty(this)
-        TestProperty.GC_SCHEDULER.setUpFromGradleProperty(this)
-        TestProperty.CACHE_MODE.setUpFromGradleProperty(this)
-        TestProperty.EXECUTION_TIMEOUT.setUpFromGradleProperty(this)
-        TestProperty.SANITIZER.setUpFromGradleProperty(this)
+            // Pass Gradle properties as JVM properties so test process can read them.
+            compute(TEST_TARGET)
+            compute(TEST_MODE)
+            compute(FORCE_STANDALONE)
+            compute(COMPILE_ONLY)
+            compute(OPTIMIZATION_MODE)
+            compute(MEMORY_MODEL)
+            compute(USE_THREAD_STATE_CHECKER)
+            compute(GC_TYPE)
+            compute(GC_SCHEDULER)
+            compute(CACHE_MODE)
+            compute(EXECUTION_TIMEOUT)
+            compute(SANITIZER)
+        }
 
         // Pass the current Gradle task name so test can use it in logging.
         environment("GRADLE_TASK_NAME", path)
@@ -134,6 +184,10 @@ fun Project.nativeTest(
                     }
                 }
             )
+
+            // Compute lazy properties and apply them all as JVM process properties.
+            // This forces to resolve the necessary configurations.
+            computedTestProperties.resolveAndApplyToTask()
         }
     } else
         doFirst {

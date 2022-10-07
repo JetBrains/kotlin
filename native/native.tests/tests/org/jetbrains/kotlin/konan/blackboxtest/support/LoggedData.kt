@@ -82,13 +82,15 @@ internal abstract class LoggedData {
         }
     }
 
-    class CompilerCall(
+    abstract class CompilerCall : LoggedData()
+
+    class RealCompilerCall(
         private val parameters: CompilerParameters,
         private val exitCode: ExitCode,
         private val compilerOutput: String,
         private val compilerOutputHasErrors: Boolean,
         private val duration: Duration
-    ) : LoggedData() {
+    ) : CompilerCall() {
         override fun computeText(): String {
             val problems = listOfNotNull(
                 "- Non-zero exit code".takeIf { exitCode != ExitCode.OK },
@@ -111,6 +113,10 @@ internal abstract class LoggedData {
                 appendLine(parameters)
             }
         }
+    }
+
+    class NoopCompilerCall(val artifactFile: File) : CompilerCall() {
+        override fun computeText() = "No compiler call performed for external (given) artifact $artifactFile"
     }
 
     class CompilerCallUnexpectedFailure(parameters: CompilerParameters, throwable: Throwable) : UnexpectedFailure(parameters, throwable)

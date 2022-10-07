@@ -1,7 +1,9 @@
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
+import org.jetbrains.kotlin.konan.target.HostManager
 
 description = "Atomicfu Compiler Plugin"
 
@@ -11,6 +13,9 @@ plugins {
 }
 
 project.configureJvmToolchain(JdkMajorVersion.JDK_11)
+
+// WARNING: Native target is host-dependent. Re-running the same build on another host OS may bring to a different result.
+val nativeTargetName = HostManager.host.name
 
 val antLauncherJar by configurations.creating
 val testJsRuntime by configurations.creating {
@@ -31,6 +36,9 @@ val atomicfuClasspath by configurations.creating
 
 val atomicfuNativeKlib by configurations.creating {
     attributes {
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+        // WARNING: Native target is host-dependent. Re-running the same build on another host OS may bring to a different result.
+        attribute(KotlinNativeTarget.konanTargetAttribute, nativeTargetName)
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
         attribute(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget.konanTargetAttribute, org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_X64.toString())
@@ -79,8 +87,11 @@ dependencies {
     testApi(commonDependency("junit:junit"))
     testApi(project(":kotlin-test:kotlin-test-jvm"))
 
+    // Dependencies for Kotlin/Native test infra:
     testImplementation(projectTests(":native:native.tests"))
     testImplementation(project(":native:kotlin-native-utils"))
+    testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
+
     // todo: remove unnecessary dependencies
     testImplementation(project(":kotlin-compiler-runner-unshaded"))
 
@@ -169,6 +180,7 @@ fun Test.setUpJsIrBoxTests() {
 val nativeBoxTest = nativeTest(
     taskName = "nativeBoxTest",
     tag = "codegen",
+    requirePlatformLibs = true,
     customDependencies = listOf(atomicfuClasspath),
     customKlibDependencies = listOf(atomicfuNativeKlib)
 )
