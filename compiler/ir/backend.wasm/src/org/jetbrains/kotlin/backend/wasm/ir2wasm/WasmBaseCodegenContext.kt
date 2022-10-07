@@ -18,6 +18,8 @@ interface WasmBaseCodegenContext {
     val scratchMemAddr: WasmSymbol<Int>
     val scratchMemSizeInBytes: Int
 
+    val stringPoolSize: WasmSymbol<Int>
+
     fun referenceFunction(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunction>
     fun referenceGlobalField(irField: IrFieldSymbol): WasmSymbol<WasmGlobal>
     fun referenceGlobalVTable(irClass: IrClassSymbol): WasmSymbol<WasmGlobal>
@@ -34,7 +36,7 @@ interface WasmBaseCodegenContext {
     fun referenceClassId(irClass: IrClassSymbol): WasmSymbol<Int>
     fun referenceInterfaceId(irInterface: IrClassSymbol): WasmSymbol<Int>
 
-    fun referenceStringLiteral(string: String): WasmSymbol<Int>
+    fun referenceStringLiteralAddressAndId(string: String): Pair<WasmSymbol<Int>, WasmSymbol<Int>>
 
     fun transformType(irType: IrType): WasmType
     fun transformFieldType(irType: IrType): WasmType

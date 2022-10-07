@@ -12,30 +12,19 @@ import kotlin.math.min
  * The `String` class represents character strings. All string literals in Kotlin programs, such as `"abc"`, are
  * implemented as instances of this class.
  */
-public class String private constructor(
+public class String internal @WasmPrimitiveConstructor constructor(
     private var leftIfInSum: String?,
+    public override val length: Int,
     private var _chars: WasmCharArray,
 ) : Comparable<String>, CharSequence {
     public companion object {}
-
-    internal constructor(chars: WasmCharArray) : this(null, chars) { }
 
     /**
      * Returns a string obtained by concatenating this string with the string representation of the given [other] object.
      */
     public operator fun plus(other: Any?): String {
-        val right = if (other is String) other else other.toString()
-        return String(this, right.chars)
-    }
-
-    public override val length: Int get() {
-        var currentLeftString = leftIfInSum
-        var currentLength = _chars.len()
-        while (currentLeftString != null) {
-            currentLength += currentLeftString._chars.len()
-            currentLeftString = currentLeftString.leftIfInSum
-        }
-        return currentLength
+        val right = other.toString()
+        return String(this, this.length + right.length, right.chars)
     }
 
     /**
@@ -45,11 +34,8 @@ public class String private constructor(
      * where the behavior is unspecified.
      */
     public override fun get(index: Int): Char {
-        if (index < 0) throw IndexOutOfBoundsException()
-        val folded = chars
-        val length = folded.len()
-        if (index >= length) throw IndexOutOfBoundsException()
-        return folded.get(index)
+        rangeCheck(index, this.length)
+        return chars.get(index)
     }
 
     internal fun foldChars() {
@@ -79,59 +65,80 @@ public class String private constructor(
 
     public override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
         val actualStartIndex = startIndex.coerceAtLeast(0)
-        val thisChars = chars
-        val actualEndIndex = endIndex.coerceAtMost(thisChars.len())
-        val newCharsLen = actualEndIndex - actualStartIndex
-        val newChars = WasmCharArray(newCharsLen)
-        copyWasmArray(thisChars, newChars, actualStartIndex, 0, newCharsLen)
-        return String(newChars)
+        val actualEndIndex = endIndex.coerceAtMost(this.length)
+        val newLength = actualEndIndex - actualStartIndex
+        if (newLength <= 0) return ""
+        val newChars = WasmCharArray(newLength)
+        copyWasmArray(chars, newChars, actualStartIndex, 0, newLength)
+        return newChars.createString()
     }
 
     public override fun compareTo(other: String): Int {
+        if (this === other) return 0
         val thisChars = this.chars
         val otherChars = other.chars
-
         val thisLength = thisChars.len()
         val otherLength = otherChars.len()
-        val len = min(thisLength, otherLength)
+        val minimumLength = if (thisLength < otherLength) thisLength else otherLength
 
-        for (i in 0 until len) {
-            val l = thisChars.get(i)
-            val r = otherChars.get(i)
-            if (l != r)
-                return l - r
+        repeat(minimumLength) {
+            val l = thisChars.get(it)
+            val r = otherChars.get(it)
+            if (l != r) return l - r
         }
         return thisLength - otherLength
     }
 
-    public override fun equals(other: Any?): Boolean =
-        other != null &&
-        other is String &&
-        (this.length == other.length) &&
-        this.compareTo(other) == 0
+    public override fun equals(other: Any?): Boolean {
+        if (other == null) return false
+        if (other === this) return true
+        val otherString = other as? String ?: return false
+
+        val thisLength = this.length
+        val otherLength = otherString.length
+        if (thisLength != otherLength) return false
+
+        val thisHash = this._hashCode
+        val otherHash = other._hashCode
+        if (thisHash != otherHash && thisHash != 0 && otherHash != 0) return false
+
+        val thisChars = this.chars
+        val otherChars = other.chars
+        repeat(thisLength) {
+            if (thisChars.get(it) != otherChars.get(it)) return false
+        }
+        return true
+    }
 
     public override fun toString(): String = this
 
     public override fun hashCode(): Int {
         if (_hashCode != 0) return _hashCode
-        val thisChars = chars
-        val thisLength = thisChars.len()
+        val thisLength = this.length
         if (thisLength == 0) return 0
 
+        val thisChars = chars
         var hash = 0
-        var i = 0
-        while (i < thisLength) {
-            hash = 31 * hash + thisChars.get(i).toInt()
-            i++
+        repeat(thisLength) {
+            hash = (hash shl 5) - hash + thisChars.get(it).toInt()
         }
-
         _hashCode = hash
         return _hashCode
     }
 }
 
-internal fun stringLiteral(startAddr: Int, length: Int): String {
-    val array = WasmCharArray(length)
-    unsafeRawMemoryToWasmCharArray(startAddr, 0, length, array)
-    return String(array)
+internal inline fun WasmCharArray.createString(): String =
+    String(null, this.len(), this)
+
+internal fun stringLiteral(poolId: Int, startAddress: Int, length: Int, hashCode: Int): String {
+    val cached = stringPool[poolId]
+    if (cached !== null) {
+        return cached
+    }
+    val chars = WasmCharArray(length)
+    unsafeRawMemoryToWasmCharArray(startAddress, 0, length, chars)
+    val newString = String(null, length, chars)
+    newString._hashCode = hashCode
+    stringPool[poolId] = newString
+    return newString
 }

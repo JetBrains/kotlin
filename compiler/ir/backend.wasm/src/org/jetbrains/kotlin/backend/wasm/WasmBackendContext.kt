@@ -63,7 +63,9 @@ class WasmBackendContext(
 
     override val internalPackageFqn = FqName("kotlin.wasm")
 
-    private val internalPackageFragmentDescriptor = EmptyPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.wasm.internal"))
+    val kotlinWasmInternalPackageFqn = internalPackageFqn.child(Name.identifier("internal"))
+
+    private val internalPackageFragmentDescriptor = EmptyPackageFragmentDescriptor(builtIns.builtInsModule, kotlinWasmInternalPackageFqn)
     // TODO: Merge with JS IR Backend context lazy file
     val internalPackageFragment by lazy {
         IrFileImpl(object : IrFileEntry {

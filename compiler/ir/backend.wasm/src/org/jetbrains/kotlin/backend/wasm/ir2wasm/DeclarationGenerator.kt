@@ -372,13 +372,19 @@ class DeclarationGenerator(
         //TODO("FqName for inner classes could be invalid due to topping it out from outer class")
         val packageName = if (fqnShouldBeEmitted) classMetadata.klass.kotlinFqName.parentOrNull()?.asString() ?: "" else ""
         val simpleName = classMetadata.klass.kotlinFqName.shortName().asString()
+
+        val (packageNameAddress, packageNamePoolId) = context.referenceStringLiteralAddressAndId(packageName)
+        val (simpleNameAddress, simpleNamePoolId) = context.referenceStringLiteralAddressAndId(simpleName)
+
         val typeInfo = ConstantDataStruct(
             name = "TypeInfo",
             elements = listOf(
                 ConstantDataIntField("TypePackageNameLength", packageName.length),
-                ConstantDataIntField("TypePackageNamePtr", context.referenceStringLiteral(packageName)),
+                ConstantDataIntField("TypePackageNameId", packageNamePoolId),
+                ConstantDataIntField("TypePackageNamePtr", packageNameAddress),
                 ConstantDataIntField("TypeNameLength", simpleName.length),
-                ConstantDataIntField("TypeNamePtr", context.referenceStringLiteral(simpleName))
+                ConstantDataIntField("TypeNameId", simpleNamePoolId),
+                ConstantDataIntField("TypeNamePtr", simpleNameAddress)
             )
         )
 
@@ -424,8 +430,8 @@ class DeclarationGenerator(
 
         val initValue: IrExpression? = declaration.initializer?.expression
         if (initValue != null) {
-            check(initValue is IrConst<*> && initValue.kind !is IrConstKind.String && initValue.kind !is IrConstKind.Null) {
-                "Static field initializer should be non-string const or null"
+            check(initValue is IrConst<*> && initValue.kind !is IrConstKind.String) {
+                "Static field initializer should be string or const"
             }
             generateConstExpression(initValue, wasmExpressionGenerator, context)
         } else {
@@ -481,8 +487,12 @@ fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder,
         is IrConstKind.Float -> body.buildConstF32(kind.valueOf(expression))
         is IrConstKind.Double -> body.buildConstF64(kind.valueOf(expression))
         is IrConstKind.String -> {
-            body.buildConstI32Symbol(context.referenceStringLiteral(kind.valueOf(expression)))
-            body.buildConstI32(kind.valueOf(expression).length)
+            val stringValue = kind.valueOf(expression)
+            val (literalAddress, literalPoolId) = context.referenceStringLiteralAddressAndId(stringValue)
+            body.buildConstI32Symbol(literalPoolId)
+            body.buildConstI32Symbol(literalAddress)
+            body.buildConstI32(stringValue.length)
+            body.buildConstI32(stringValue.hashCode())
             body.buildCall(context.referenceFunction(context.backendContext.wasmSymbols.stringGetLiteral))
         }
         else -> error("Unknown constant kind")
