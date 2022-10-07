@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.backend.jvm.ir
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
-import org.jetbrains.kotlin.backend.jvm.*
+import org.jetbrains.kotlin.backend.jvm.CachedFieldsForObjectInstances
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.ASSERTIONS_DISABLED_FIELD_NAME
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -243,9 +246,6 @@ fun IrSimpleFunction.copyCorrespondingPropertyFrom(source: IrSimpleFunction) {
 fun IrProperty.needsAccessor(accessor: IrSimpleFunction): Boolean = when {
     // Properties in annotation classes become abstract methods named after the property.
     (parent as? IrClass)?.kind == ClassKind.ANNOTATION_CLASS -> true
-    // Multi-field value class getters must always be added. Getters for properties of MFVC itself follow general rules.
-    accessor.isGetter && accessor.contextReceiverParametersCount == 0 && accessor.extensionReceiverParameter == null &&
-            !accessor.parent.let { it is IrClass && it.isMultiFieldValueClass } && accessor.returnType.needsMfvcFlattening() -> true
     // @JvmField properties have no getters/setters
     resolveFakeOverride()?.backingField?.hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME) == true -> false
     // We do not produce default accessors for private fields
@@ -255,13 +255,6 @@ fun IrProperty.needsAccessor(accessor: IrSimpleFunction): Boolean = when {
 val IrDeclaration.isStaticInlineClassReplacement: Boolean
     get() = origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
             || origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR
-
-val IrDeclaration.isStaticMultiFieldValueClassReplacement: Boolean
-    get() = origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT
-            || origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR
-
-val IrDeclaration.isStaticValueClassReplacement: Boolean
-    get() = isStaticMultiFieldValueClassReplacement || isStaticInlineClassReplacement
 
 // On the IR backend we represent raw types as star projected types with a special synthetic annotation.
 // See `TypeTranslator.translateTypeAnnotations`.
@@ -312,7 +305,7 @@ val IrClass.isSyntheticSingleton: Boolean
 
 fun IrSimpleFunction.suspendFunctionOriginal(): IrSimpleFunction =
     if (isSuspend &&
-        !isStaticValueClassReplacement &&
+        !isStaticInlineClassReplacement &&
         !isOrOverridesDefaultParameterStub() &&
         parentAsClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS
     )
