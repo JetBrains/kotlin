@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.library.SearchPathResolver
 import org.jetbrains.kotlin.library.isInterop
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 internal fun Context.getExportedDependencies(): List<ModuleDescriptor> = getDescriptorsFromLibraries((config.resolve.exportedLibraries + config.resolve.includedLibraries).toSet())
 internal fun Context.getIncludedLibraryDescriptors(): List<ModuleDescriptor> = getDescriptorsFromLibraries(config.resolve.includedLibraries.toSet())
@@ -165,7 +164,7 @@ private fun getFeaturedLibraries(
     val remainingFeaturedLibraries = featuredLibraryFiles.toMutableSet()
     val result = mutableListOf<KonanLibrary>()
     //TODO: please add type checks before cast.
-    val libraries = resolvedLibraries.getFullList(null).cast<List<KonanLibrary>>()
+    val libraries = resolvedLibraries.getFullList(null).map { it as KonanLibrary }
 
     for (library in libraries) {
         val libraryFile = library.libraryFile
