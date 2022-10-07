@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.util
 import jetbrains.buildServer.messages.serviceMessages.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestName
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
-import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TCTestReportParseState as State
 import java.text.ParseException
 
@@ -160,7 +158,7 @@ private class TCTestMessageParserCallback : ServiceMessageParserCallback {
 
     fun finish() {
         // The last test state is "TestStarted" this likely means that the test process terminated during test execution (SIGSEGV, etc).
-        state.safeAs<State.TestStarted>()?.let { failedTests += it.testName }
+        (state as? State.TestStarted)?.let { failedTests += it.testName }
     }
 }
 
@@ -181,6 +179,6 @@ private sealed interface TCTestReportParseState {
 }
 
 private inline val State.testSuite: State.TestSuiteStarted
-    get() = if (this is State.TestSuiteStarted) this else cast<State.TestState>().testSuite
+    get() = if (this is State.TestSuiteStarted) this else (this as State.TestState).testSuite
 
 private inline val BaseTestMessage.simpleTestName get() = testName
