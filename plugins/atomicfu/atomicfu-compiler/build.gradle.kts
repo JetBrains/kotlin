@@ -32,6 +32,8 @@ val atomicfuClasspath by configurations.creating
 val atomicfuNativeKlib by configurations.creating {
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+        attribute(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget.konanTargetAttribute, org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_X64.toString())
     }
 }
 
