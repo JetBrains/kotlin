@@ -6,7 +6,7 @@ KtFileSymbol:
   deprecationStatus: null
 
 CALLABLE NAMES:
-[function, functionWithDefault, testVal, initializedVariable, unitializedVariable, lateinitVariable, variableWithBackingField, privateSetter, customGetter, jvmNameOnGetter, propertyWithReceiver, propertyWithGenericReceiver, constant, jvmField]
+[function, functionWithDefault, testVal, initializedVariable, unitializedVariable, lateinitVariable, variableWithBackingField, privateSetter, jvmNameOnSetter, customGetter, jvmNameOnGetter, propertyWithReceiver, propertyWithGenericReceiver, constant, jvmField]
 
 CALLABLE SYMBOLS:
 KtFunctionSymbol:
@@ -261,7 +261,40 @@ KtKotlinPropertySymbol:
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getPrivateSetter
-  javaSetterName: setPrivateSetter
+  javaSetterName: customPrivateSetter
+  setterDeprecationStatus: null
+
+KtKotlinPropertySymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /jvmNameOnSetter
+  contextReceivers: []
+  getter: KtPropertyGetterSymbol(<getter>)
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: true
+  initializer: null
+  isConst: false
+  isDelegatedProperty: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: false
+  modality: FINAL
+  name: jvmNameOnSetter
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/String
+  setter: KtPropertySetterSymbol(<setter>)
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getJvmNameOnSetter
+  javaSetterName: customPrivateSetter
   setterDeprecationStatus: null
 
 KtKotlinPropertySymbol:
@@ -460,8 +493,8 @@ KtKotlinPropertySymbol:
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
-  javaGetterName: getJvmField
-  javaSetterName: setJvmField
+  javaGetterName: jvmField
+  javaSetterName: jvmField
   setterDeprecationStatus: null
 
 CLASSIFIER NAMES:
