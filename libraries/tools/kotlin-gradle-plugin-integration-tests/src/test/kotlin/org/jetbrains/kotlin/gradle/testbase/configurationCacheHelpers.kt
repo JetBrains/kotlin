@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.BaseGradleIT
 import java.net.URI
 import java.nio.file.Path
 import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.exists
 import kotlin.io.path.name
 import kotlin.test.fail
 
@@ -71,7 +72,8 @@ private fun copyReportToTempDir(htmlReportFile: Path): Path =
 private val GradleProject.configurationCacheReportFile
     get() = projectPath
         .resolve("build")
-        .findInPath("configuration-cache-report.html")
+        .takeIf { it.exists() }
+        ?.findInPath("configuration-cache-report.html")
         ?.let { copyReportToTempDir(it) }
 
 private val Path.asClickableFileUrl
