@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.driver
 
 import kotlinx.cinterop.usingJvmCInteropCallbacks
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 /**
  * Static compiler uses statically-defined compilation pipeline and a single Context during whole compilation.
@@ -46,7 +44,7 @@ internal class StaticCompilerDriver : CompilerDriver() {
         usingNativeMemoryAllocator {
             usingJvmCInteropCallbacks {
                 try {
-                    toplevelPhase.cast<CompilerPhase<Context, Unit, Unit>>().invokeToplevel(context.phaseConfig, context, Unit)
+                    toplevelPhase.invokeToplevel(context.phaseConfig, context, Unit)
                 } finally {
                     context.disposeGenerationState()
                 }

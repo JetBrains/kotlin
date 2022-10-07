@@ -500,14 +500,17 @@ private val singleCompilation = NamedCompilerPhase(
         lower = entireBackend
 )
 
-// Have to hide Context as type parameter in order to expose toplevelPhase outside of this module.
-val toplevelPhase: CompilerPhase<*, Unit, Unit> = namedUnitPhase(
+internal val toplevelPhase: CompilerPhase<Context, Unit, Unit> = namedUnitPhase(
         name = "Compiler",
         description = "The whole compilation process",
         lower = middleEnd then
                 singleCompilation then
                 umbrellaCompilation
 )
+
+// Have to hide Context as type parameter in order to expose toplevelPhase outside of this module.
+val toplevelPhaseErased: CompilerPhase<*, Unit, Unit>
+    get() = toplevelPhase
 
 internal fun PhaseConfig.disableIf(phase: AnyNamedPhase, condition: Boolean) {
     if (condition) disable(phase)
