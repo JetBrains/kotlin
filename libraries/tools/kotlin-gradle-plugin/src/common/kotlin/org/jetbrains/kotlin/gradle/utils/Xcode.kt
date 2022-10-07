@@ -38,12 +38,17 @@ class XcodeUtils private constructor() {
 
         val out = runCommand(listOf("/usr/bin/xcrun", "simctl", "list", "devices", "available"))
 
-        val result = mutableMapOf<String, String>()
-        var os: String? = null
+        val result = mutableMapOf<Family, String>()
+        var os: Family? = null
         out.lines().forEach { s ->
             val osFound = osRegex.find(s)?.value
             if (osFound != null) {
-                os = osFound.split(" ")[1]
+                val osName = osFound.split(" ")[1]
+                os = try {
+                    Family.valueOf(osName.toUpperCaseAsciiOnly())
+                } catch (e: Exception) {
+                    null
+                }
             } else {
                 val currentOs = os
                 if (currentOs != null) {
@@ -55,10 +60,7 @@ class XcodeUtils private constructor() {
                 }
             }
         }
-
-        result.entries.associate { (osName, deviceId) ->
-            Family.valueOf(osName.toUpperCaseAsciiOnly()) to deviceId
-        }
+        result
     }
 
     fun getDefaultTestDeviceId(target: KonanTarget): String? = defaultTestDevices[target.family]
