@@ -61,10 +61,11 @@ class ResolvedAtomCompleter(
     private val moduleDescriptor: ModuleDescriptor,
     private val dataFlowValueFactory: DataFlowValueFactory,
     private val typeApproximator: TypeApproximator,
-    private val missingSupertypesResolver: MissingSupertypesResolver
+    private val missingSupertypesResolver: MissingSupertypesResolver,
+    private val callComponents: KotlinCallComponents,
 ) {
     private val topLevelCallCheckerContext = CallCheckerContext(
-        topLevelCallContext, deprecationResolver, moduleDescriptor, missingSupertypesResolver
+        topLevelCallContext, deprecationResolver, moduleDescriptor, missingSupertypesResolver, callComponents,
     )
     private val topLevelTrace = topLevelCallCheckerContext.trace
 
@@ -186,7 +187,8 @@ class ResolvedAtomCompleter(
                 resolutionContextForPartialCall.replaceBindingTrace(topLevelTrace),
                 deprecationResolver,
                 moduleDescriptor,
-                missingSupertypesResolver
+                missingSupertypesResolver,
+                callComponents,
             )
         else
             topLevelCallCheckerContext
