@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmAwareTargetConfigura
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
+import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropApiElementsKlibArtifact
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCInteropApiElementsConfiguration
@@ -44,10 +45,8 @@ import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.Xcode
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotlinTargetConfigurator<T>(
@@ -601,25 +600,26 @@ abstract class KotlinNativeTargetWithTestsConfigurator<
 
     abstract fun isTestTaskEnabled(target: TargetType): Boolean
 
-    protected open fun configureTestTask(target: TargetType, testTask: TaskType) {
-        testTask.group = LifecycleBasePlugin.VERIFICATION_GROUP
-        testTask.description = "Executes Kotlin/Native unit tests for target ${target.name}."
-        testTask.targetName = target.name
+    protected open fun configureTestTask(target: TargetType, testTask: TaskProvider<TaskType>) {
+        testTask.configure {
+            it.group = LifecycleBasePlugin.VERIFICATION_GROUP
+            it.description = "Executes Kotlin/Native unit tests for target ${target.name}."
+            it.targetName = target.name
 
-        testTask.enabled = isTestTaskEnabled(target)
+            it.enabled = isTestTaskEnabled(target)
 
-        testTask.workingDir = target.project.projectDir.absolutePath
+            it.workingDir = target.project.projectDir.absolutePath
 
-        testTask.configureConventions()
+            it.configureConventions()
+        }
     }
 
     protected open fun configureTestRun(target: TargetType, testRun: AbstractKotlinNativeTestRun<TaskType>) {
         with(testRun) {
             val project = target.project
 
-            val testTaskOrProvider = project.registerTask(testTaskName, testTaskClass) { testTask ->
-                configureTestTask(target, testTask)
-            }
+            val testTaskOrProvider = project.registerTask(testTaskName, testTaskClass)
+            configureTestTask(target, testTaskOrProvider)
 
             executionTask = testTaskOrProvider
 
@@ -667,15 +667,10 @@ class KotlinNativeTargetWithSimulatorTestsConfigurator :
     override fun isTestTaskEnabled(target: KotlinNativeTargetWithSimulatorTests): Boolean =
         HostManager.hostIsMac && HostManager.host.architecture == target.konanTarget.architecture
 
-    override fun configureTestTask(target: KotlinNativeTargetWithSimulatorTests, testTask: KotlinNativeSimulatorTest) {
+    override fun configureTestTask(target: KotlinNativeTargetWithSimulatorTests, testTask: TaskProvider<KotlinNativeSimulatorTest>) {
         super.configureTestTask(target, testTask)
-        if (Xcode != null) {
-            val deviceIdProvider = testTask.project.provider {
-                Xcode.getDefaultTestDeviceId(target.konanTarget)
-                    ?: error("Xcode does not support simulator tests for ${target.konanTarget.name}. Check that requested SDK is installed.")
-            }
-            testTask.device.set(deviceIdProvider)
-        }
+        val deviceIdProvider = target.project.getDefaultXcodeTestDeviceId(target.konanTarget)
+        testTask.configure { it.device.set(deviceIdProvider) }
     }
 
     override fun createTestRun(

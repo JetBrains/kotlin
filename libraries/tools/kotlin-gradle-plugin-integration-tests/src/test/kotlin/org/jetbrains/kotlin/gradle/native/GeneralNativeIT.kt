@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_DI
 import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX
 import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_PROPERTY_WARNING
 import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_WARNING
-import org.jetbrains.kotlin.gradle.internals.Xcode
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
@@ -374,7 +373,8 @@ class GeneralNativeIT : BaseGradleIT() {
             frameworkPaths.forEach { assertFileExists(it) }
 
             assertTrue(fileInWorkingDir(headerPaths[0]).readText().contains("+ (int32_t)exported"))
-            val xcodeMajorVersion = Xcode!!.currentVersion.split(".")[0].toInt()
+            val xcodeVersionString = fileInWorkingDir("build/xcode/version").readText()
+            val xcodeMajorVersion = xcodeVersionString.split(".")[0].toInt()
 
             // Check that by default release frameworks have bitcode embedded.
             withNativeCommandLineArguments(":linkMainReleaseFrameworkIos") { arguments ->
