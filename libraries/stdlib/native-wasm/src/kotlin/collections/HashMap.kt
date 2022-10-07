@@ -178,7 +178,19 @@ actual class HashMap<K, V> private constructor(
     }
 
     private fun ensureExtraCapacity(n: Int) {
-        ensureCapacity(length + n)
+        if (shouldCompact(extraCapacity = n)) {
+            rehash(hashSize)
+        } else {
+            ensureCapacity(length + n)
+        }
+    }
+
+    private fun shouldCompact(extraCapacity: Int): Boolean {
+        val spareCapacity = this.capacity - length
+        val gaps = length - size
+        return spareCapacity < extraCapacity                // there is no room for extraCapacity entries
+                && gaps + spareCapacity >= extraCapacity    // removing gaps prevents capacity expansion
+                && gaps >= this.capacity / 4                // at least 25% of current capacity is occupied by gaps
     }
 
     private fun ensureCapacity(capacity: Int) {
@@ -191,8 +203,6 @@ actual class HashMap<K, V> private constructor(
             presenceArray = presenceArray.copyOf(newSize)
             val newHashSize = computeHashSize(newSize)
             if (newHashSize > hashSize) rehash(newHashSize)
-        } else if (length + capacity - _size > this.capacity) {
-            rehash(hashSize)
         }
     }
 

@@ -3,8 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+
 package test.collections
 
+import kotlin.collections.builders.MapBuilder
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.Test
@@ -36,5 +39,17 @@ class MapBuilderTest {
             assertFails { putAll(giantMap) }
             assertEquals(builderSize, size)
         }
+    }
+
+    // KT-53310
+    @Test
+    fun reclaimStorage() {
+        val builder = MapBuilder<Int, Int>()
+        val initialCapacity = builder.capacity
+        repeat(20) {
+            builder[it] = it
+            builder.remove(it)
+        }
+        assertEquals(initialCapacity, builder.capacity)
     }
 }

@@ -10,11 +10,17 @@ import java.io.InvalidObjectException
 import java.io.NotSerializableException
 
 internal class MapBuilder<K, V> private constructor(
+    // keys in insert order
     private var keysArray: Array<K>,
-    private var valuesArray: Array<V>?, // allocated only when actually used, always null in pure HashSet
+    // values in insert order, allocated only when actually used, always null in pure HashSet
+    private var valuesArray: Array<V>?,
+    // hash of a key by its index, -1 if a key at that index was removed
     private var presenceArray: IntArray,
+    // (index + 1) of a key by its hash, 0 if there is no key with that hash, -1 if collision chain continues to the hash-1
     private var hashArray: IntArray,
+    // max length of a collision chain
     private var maxProbeDistance: Int,
+    // index of the next key to be inserted
     private var length: Int
 ) : MutableMap<K, V>, Serializable {
     private var hashShift: Int = computeShift(hashSize)
@@ -165,7 +171,8 @@ internal class MapBuilder<K, V> private constructor(
 
     // ---------------------------- private ----------------------------
 
-    private val capacity: Int get() = keysArray.size
+    // Declared internal for testing
+    internal val capacity: Int get() = keysArray.size
     private val hashSize: Int get() = hashArray.size
 
     internal fun checkIsMutable() {
@@ -173,7 +180,19 @@ internal class MapBuilder<K, V> private constructor(
     }
 
     private fun ensureExtraCapacity(n: Int) {
-        ensureCapacity(length + n)
+        if (shouldCompact(extraCapacity = n)) {
+            rehash(hashSize)
+        } else {
+            ensureCapacity(length + n)
+        }
+    }
+
+    private fun shouldCompact(extraCapacity: Int): Boolean {
+        val spareCapacity = this.capacity - length
+        val gaps = length - size
+        return spareCapacity < extraCapacity                // there is no room for extraCapacity entries
+                && gaps + spareCapacity >= extraCapacity    // removing gaps prevents capacity expansion
+                && gaps >= this.capacity / 4                // at least 25% of current capacity is occupied by gaps
     }
 
     private fun ensureCapacity(capacity: Int) {
@@ -186,8 +205,6 @@ internal class MapBuilder<K, V> private constructor(
             presenceArray = presenceArray.copyOf(newSize)
             val newHashSize = computeHashSize(newSize)
             if (newHashSize > hashSize) rehash(newHashSize)
-        } else if (length + capacity - size > this.capacity) {
-            rehash(hashSize)
         }
     }
 
