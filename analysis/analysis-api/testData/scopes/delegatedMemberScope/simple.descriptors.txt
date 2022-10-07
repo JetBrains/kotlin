@@ -2,10 +2,10 @@ KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /I.zoo
   contextReceivers: []
-  getter: null
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: false
-  hasGetter: false
-  hasSetter: false
+  hasGetter: true
+  hasSetter: true
   initializer: null
   isConst: false
   isDelegatedProperty: false
@@ -20,7 +20,7 @@ KtKotlinPropertySymbol:
   origin: DELEGATED
   receiverType: kotlin/Int
   returnType: kotlin/Unit
-  setter: null
+  setter: KtPropertySetterSymbol(<setter>)
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
@@ -59,40 +59,6 @@ KtFunctionSymbol:
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtKotlinPropertySymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /I.foo
-  contextReceivers: []
-  getter: null
-  hasBackingField: false
-  hasGetter: false
-  hasSetter: false
-  initializer: null
-  isConst: false
-  isDelegatedProperty: false
-  isExtension: false
-  isFromPrimaryConstructor: false
-  isLateInit: false
-  isOverride: false
-  isStatic: false
-  isVal: true
-  modality: OPEN
-  name: foo
-  origin: DELEGATED
-  receiverType: null
-  returnType: kotlin/Int
-  setter: null
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  visibility: Public
-  getDispatchReceiver(): A
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-  getterDeprecationStatus: null
-  javaGetterName: getFoo
-  javaSetterName: null
-  setterDeprecationStatus: null
-
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /I.smth
@@ -122,12 +88,46 @@ KtFunctionSymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  callableIdIfNonLocal: /I.foo
+  contextReceivers: []
+  getter: KtPropertyGetterSymbol(<getter>)
+  hasBackingField: false
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isConst: false
+  isDelegatedProperty: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: OPEN
+  name: foo
+  origin: DELEGATED
+  receiverType: null
+  returnType: kotlin/Int
+  setter: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getDispatchReceiver(): A
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getFoo
+  javaSetterName: null
+  setterDeprecationStatus: null
+
+KtKotlinPropertySymbol:
+  annotationsList: []
   callableIdIfNonLocal: /I.bar
   contextReceivers: []
-  getter: null
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: false
-  hasGetter: false
-  hasSetter: false
+  hasGetter: true
+  hasSetter: true
   initializer: null
   isConst: false
   isDelegatedProperty: false
@@ -142,7 +142,7 @@ KtKotlinPropertySymbol:
   origin: DELEGATED
   receiverType: null
   returnType: kotlin/Long
-  setter: null
+  setter: KtPropertySetterSymbol(<setter>)
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
@@ -158,9 +158,9 @@ KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /I.doo
   contextReceivers: []
-  getter: null
+  getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: false
-  hasGetter: false
+  hasGetter: true
   hasSetter: false
   initializer: null
   isConst: false
