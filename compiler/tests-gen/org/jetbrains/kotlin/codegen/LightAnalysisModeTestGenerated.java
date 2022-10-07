@@ -23577,6 +23577,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             public void testPackageProperty() throws Exception {
                 runTest("compiler/testData/codegen/box/javaVisibility/package/packageProperty.kt");
             }
+
+            @TestMetadata("publicInterfaceImplementedByPackagePrivateClass.kt")
+            public void testPublicInterfaceImplementedByPackagePrivateClass() throws Exception {
+                runTest("compiler/testData/codegen/box/javaVisibility/package/publicInterfaceImplementedByPackagePrivateClass.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/javaVisibility/protectedAndPackage")

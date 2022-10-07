@@ -28721,6 +28721,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             public void testPackageProperty() throws Exception {
                 runTest("compiler/testData/codegen/box/javaVisibility/package/packageProperty.kt");
             }
+
+            @Test
+            @TestMetadata("publicInterfaceImplementedByPackagePrivateClass.kt")
+            public void testPublicInterfaceImplementedByPackagePrivateClass() throws Exception {
+                runTest("compiler/testData/codegen/box/javaVisibility/package/publicInterfaceImplementedByPackagePrivateClass.kt");
+            }
         }
 
         @Nested

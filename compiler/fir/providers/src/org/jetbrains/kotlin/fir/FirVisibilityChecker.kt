@@ -148,9 +148,12 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     ): FirClassLikeDeclaration? {
         return when (this) {
             is FirCallableDeclaration -> {
-                if (dispatchReceiverValue != null && dispatchReceiverType != null) {
-                    dispatchReceiverValue.type.findClassRepresentation(dispatchReceiverType!!, session)?.toSymbol(session)?.fir?.let {
-                        return it
+                if (dispatchReceiverValue != null) {
+                    val baseReceiverType = dispatchReceiverClassTypeOrNull()
+                    if (baseReceiverType != null) {
+                        dispatchReceiverValue.type.findClassRepresentation(baseReceiverType, session)?.toSymbol(session)?.fir?.let {
+                            return it
+                        }
                     }
                 }
 
