@@ -1,0 +1,20 @@
+@PropertyAnnotation
+var prop: kotlin.Int
+  @GetAnnotation
+  get()
+  @SetAnnotation
+  set(@SetparamAnnotation value: kotlin.Int)
+
+val lazyProperty: kotlin.Int
+
+annotation class PropertyAnnotation
+
+annotation class FieldAnnotation
+
+annotation class GetAnnotation
+
+annotation class SetAnnotation
+
+annotation class SetparamAnnotation
+
+annotation class DelegateAnnotation
