@@ -25,6 +25,9 @@ class WasmModuleCodegenContextImpl(
     override val scratchMemAddr: WasmSymbol<Int>
         get() = wasmFragment.scratchMemAddr
 
+    override val stringPoolSize: WasmSymbol<Int>
+        get() = wasmFragment.stringPoolSize
+
     override val scratchMemSizeInBytes: Int
         get() = wasmFragment.scratchMemSizeInBytes
 
@@ -58,8 +61,10 @@ class WasmModuleCodegenContextImpl(
         return with(typeTransformer) { irType.toWasmBlockResultType() }
     }
 
-    override fun referenceStringLiteral(string: String): WasmSymbol<Int> {
-        return wasmFragment.stringLiteralId.reference(string)
+    override fun referenceStringLiteralAddressAndId(string: String): Pair<WasmSymbol<Int>, WasmSymbol<Int>> {
+        val address = wasmFragment.stringLiteralAddress.reference(string)
+        val id = wasmFragment.stringLiteralPoolId.reference(string)
+        return address to id
     }
 
     override fun generateTypeInfo(irClass: IrClassSymbol, typeInfo: ConstantDataElement) {

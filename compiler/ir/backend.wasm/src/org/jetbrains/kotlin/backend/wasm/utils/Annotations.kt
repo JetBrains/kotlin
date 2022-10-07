@@ -29,6 +29,9 @@ fun IrAnnotationContainer.hasWasmNoOpCastAnnotation(): Boolean =
 fun IrAnnotationContainer.hasWasmAutoboxedAnnotation(): Boolean =
     hasAnnotation(FqName("kotlin.wasm.internal.WasmAutoboxed"))
 
+fun IrAnnotationContainer.hasWasmPrimitiveConstructorAnnotation(): Boolean =
+    hasAnnotation(FqName("kotlin.wasm.internal.WasmPrimitiveConstructor"))
+
 class WasmArrayInfo(val klass: IrClass, val isNullable: Boolean) {
     val type = klass.defaultType.let { if (isNullable) it.makeNullable() else it }
 }

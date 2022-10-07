@@ -81,3 +81,11 @@ internal class Void private constructor()
 @WasmOp(WasmOp.DROP)
 internal fun consumeAnyIntoVoid(a: Any?): Void =
     implementedAsIntrinsic
+
+@ExcludedFromCodegen
+internal fun stringGetPoolSize(): Int =
+    implementedAsIntrinsic
+
+// This initializer is a special case in FieldInitializersLowering
+@EagerInitialization
+internal val stringPool: Array<String?> = arrayOfNulls(stringGetPoolSize())

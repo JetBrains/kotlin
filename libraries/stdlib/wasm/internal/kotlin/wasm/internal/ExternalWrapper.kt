@@ -9,7 +9,7 @@ import kotlin.wasm.internal.reftypes.anyref
 
 internal external interface ExternalInterfaceType
 
-internal class JsExternalBox(val ref: ExternalInterfaceType) {
+internal class JsExternalBox @WasmPrimitiveConstructor constructor(val ref: ExternalInterfaceType) {
     override fun toString(): String =
         externrefToString(ref)
 
@@ -20,8 +20,13 @@ internal class JsExternalBox(val ref: ExternalInterfaceType) {
             false
         }
 
-    override fun hashCode(): Int =
-        externrefHashCode(ref)
+    override fun hashCode(): Int {
+        var hashCode = _hashCode
+        if (hashCode != 0) return hashCode
+        hashCode = externrefHashCode(ref)
+        _hashCode = hashCode
+        return hashCode
+    }
 }
 
 //language=js
@@ -218,7 +223,7 @@ internal fun jsToKotlinStringAdapter(x: ExternalInterfaceType): String {
     val stringLength = stringLength(x)
     val dstArray = WasmCharArray(stringLength)
     if (stringLength == 0) {
-        return String(dstArray)
+        return dstArray.createString()
     }
     val maxStringLength = unsafeGetScratchRawMemorySize() / CHAR_SIZE_BYTES
 
@@ -233,7 +238,7 @@ internal fun jsToKotlinStringAdapter(x: ExternalInterfaceType): String {
 
     jsExportStringToWasm(x, srcStartIndex, stringLength - srcStartIndex, memBuffer)
     unsafeRawMemoryToWasmCharArray(memBuffer, srcStartIndex, stringLength - srcStartIndex, dstArray)
-    return String(dstArray)
+    return dstArray.createString()
 }
 
 

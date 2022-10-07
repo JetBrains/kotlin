@@ -36,7 +36,9 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
         ReferencableElements<IrClassSymbol, Int>()
     val interfaceId =
         ReferencableElements<IrClassSymbol, Int>()
-    val stringLiteralId =
+    val stringLiteralAddress =
+        ReferencableElements<String, Int>()
+    val stringLiteralPoolId =
         ReferencableElements<String, Int>()
 
     private val tagFuncType = WasmFunctionType(
@@ -61,6 +63,8 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
 
     val scratchMemAddr = WasmSymbol<Int>()
     val scratchMemSizeInBytes = 65_536
+
+    val stringPoolSize = WasmSymbol<Int>()
 
     open class ReferencableElements<Ir, Wasm : Any> {
         val unbound = mutableMapOf<Ir, WasmSymbol<Wasm>>()
@@ -92,7 +96,6 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
         val wasmToIr = mutableMapOf<Wasm, Ir>()
     }
 
-    @OptIn(ExperimentalUnsignedTypes::class)
     fun linkWasmCompiledFragments(): WasmModule {
         bind(functions.unbound, functions.defined)
         bind(globalFields.unbound, globalFields.defined)
@@ -123,13 +126,16 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
 
         val stringDataSectionStart = currentDataSectionAddress
         val stringDataSectionBytes = mutableListOf<Byte>()
-        val stringAddrs = mutableMapOf<String, Int>()
-        for (str in stringLiteralId.unbound.keys) {
-            val constData = ConstantDataCharArray("string_literal", str.toCharArray())
+        var stringLiteralCount = 0
+        for ((string, symbol) in stringLiteralAddress.unbound) {
+            val constData = ConstantDataCharArray("string_literal", string.toCharArray())
             stringDataSectionBytes += constData.toBytes().toList()
-            stringAddrs[str] = currentDataSectionAddress
+            symbol.bind(currentDataSectionAddress)
+            stringLiteralPoolId.reference(string).bind(stringLiteralCount)
             currentDataSectionAddress += constData.sizeInBytes
+            stringLiteralCount++
         }
+        stringPoolSize.bind(stringLiteralCount)
 
         // Reserve some memory to pass complex exported types (like strings). It's going to be accessible through 'unsafeGetScratchRawMemory'
         // runtime call from stdlib.
@@ -138,7 +144,6 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
         currentDataSectionAddress += scratchMemSizeInBytes
 
         bind(classIds.unbound, klassIds)
-        bind(stringLiteralId.unbound, stringAddrs)
         interfaceId.unbound.onEachIndexed { index, entry -> entry.value.bind(index) }
 
         val data = typeInfo.buildData(address = { klassIds.getValue(it) }) +
