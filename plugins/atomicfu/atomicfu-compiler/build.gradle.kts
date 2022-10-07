@@ -175,6 +175,7 @@ fun Test.setUpJsIrBoxTests() {
 val nativeBoxTest = nativeTest(
     taskName = "nativeBoxTest",
     tag = "codegen",
+    requirePlatformLibs = true,
     customDependencies = listOf(atomicfuClasspath),
     customKlibDependencies = listOf(atomicfuNativeKlib)
 )
