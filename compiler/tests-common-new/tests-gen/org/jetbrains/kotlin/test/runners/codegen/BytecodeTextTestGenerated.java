@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test.runners.codegen;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
-import org.jetbrains.kotlin.test.utils.TransformersFunctions;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -5453,16 +5452,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("whenByUnsigned.kt")
         public void testWhenByUnsigned() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/whenByUnsigned.kt");
-        }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/codegen/bytecodeText/valueClasses")
-    @TestDataPath("$PROJECT_ROOT")
-    public class ValueClasses {
-        @Test
-        public void testAllFilesPresentInValueClasses() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
     }
 
