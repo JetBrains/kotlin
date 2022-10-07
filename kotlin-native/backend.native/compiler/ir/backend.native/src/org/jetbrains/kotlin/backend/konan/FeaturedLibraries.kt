@@ -16,11 +16,20 @@ import org.jetbrains.kotlin.library.SearchPathResolver
 import org.jetbrains.kotlin.library.isInterop
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 
-internal fun Context.getExportedDependencies(): List<ModuleDescriptor> = getDescriptorsFromLibraries((config.resolve.exportedLibraries + config.resolve.includedLibraries).toSet())
-internal fun Context.getIncludedLibraryDescriptors(): List<ModuleDescriptor> = getDescriptorsFromLibraries(config.resolve.includedLibraries.toSet())
+internal fun Context.getExportedDependencies(): List<ModuleDescriptor> =
+        moduleDescriptor.getExportedDependencies(config)
 
-private fun Context.getDescriptorsFromLibraries(libraries: Set<KonanLibrary>) =
-    moduleDescriptor.allDependencyModules.filter {
+internal fun ModuleDescriptor.getExportedDependencies(konanConfig: KonanConfig): List<ModuleDescriptor> =
+        getDescriptorsFromLibraries((konanConfig.resolve.exportedLibraries + konanConfig.resolve.includedLibraries).toSet())
+
+internal fun Context.getIncludedLibraryDescriptors(): List<ModuleDescriptor> =
+        moduleDescriptor.getIncludedLibraryDescriptors(config)
+
+internal fun ModuleDescriptor.getIncludedLibraryDescriptors(konanConfig: KonanConfig): List<ModuleDescriptor> =
+        getDescriptorsFromLibraries(konanConfig.resolve.includedLibraries.toSet())
+
+private fun ModuleDescriptor.getDescriptorsFromLibraries(libraries: Set<KonanLibrary>) =
+    allDependencyModules.filter {
         when (val origin = it.klibModuleOrigin) {
             CurrentKlibModuleOrigin, SyntheticModulesOrigin -> false
             is DeserializedKlibModuleOrigin -> origin.library in libraries
