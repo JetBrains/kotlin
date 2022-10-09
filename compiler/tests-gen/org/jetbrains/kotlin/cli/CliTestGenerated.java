@@ -237,6 +237,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/compatqualWrong.args");
         }
 
+        @TestMetadata("conflictingJvmDeclarations.args")
+        public void testConflictingJvmDeclarations() throws Exception {
+            runTest("compiler/testData/cli/jvm/conflictingJvmDeclarations.args");
+        }
+
         @TestMetadata("conflictingOverloads.args")
         public void testConflictingOverloads() throws Exception {
             runTest("compiler/testData/cli/jvm/conflictingOverloads.args");
