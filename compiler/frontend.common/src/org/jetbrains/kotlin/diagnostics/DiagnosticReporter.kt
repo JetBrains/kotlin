@@ -38,6 +38,10 @@ open class KtDiagnosticReporterWithContext(
 ) : DiagnosticReporter() {
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) = diagnosticReporter.report(diagnostic, context)
 
+    override fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext?) {
+        diagnosticReporter.checkAndCommitReportsOn(element, context)
+    }
+
     open fun at(sourceElement: AbstractKtSourceElement?, containingFilePath: String): DiagnosticContextImpl =
         DiagnosticContextImpl(sourceElement, containingFilePath)
 
@@ -79,6 +83,13 @@ open class KtDiagnosticReporterWithContext(
             positioningStrategy: AbstractSourceElementPositioningStrategy? = null
         ) {
             sourceElement?.let { report(factory.on(it, a1, a2, positioningStrategy), this) }
+        }
+
+        fun <A : Any> reportAndCommit(factory: KtDiagnosticFactory1<A>, a: A) {
+            sourceElement?.let {
+                reportOn(it, factory, a, this)
+                checkAndCommitReportsOn(it, this)
+            }
         }
 
         override fun equals(other: Any?): Boolean {
