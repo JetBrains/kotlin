@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 import org.jetbrains.kotlin.ideaExt.idea
+import java.util.Properties
 
 plugins {
     kotlin("jvm")
@@ -319,10 +320,18 @@ fun Test.setUpBoxTests() {
     systemProperty("overwrite.output", project.providers.gradleProperty("overwrite.output")
         .forUseAtConfigurationTime().orNull ?: "false")
 
-    val prefixForPpropertiesToForward = "fd."
-    for ((key, value) in properties) {
-        if (key.startsWith(prefixForPpropertiesToForward)) {
-            systemProperty(key.substring(prefixForPpropertiesToForward.length), value!!)
+    val localProperties = Properties().apply {
+        project.file("local.properties").takeIf { it.isFile }?.inputStream()?.use {
+            load(it)
+        }
+    }
+
+    val allProperties = properties + localProperties
+
+    val prefixForPropertiesToForward = "fd."
+    for ((key, value) in allProperties) {
+        if (key is String && key.startsWith(prefixForPropertiesToForward)) {
+            systemProperty(key.substring(prefixForPropertiesToForward.length), value!!)
         }
     }
 }
