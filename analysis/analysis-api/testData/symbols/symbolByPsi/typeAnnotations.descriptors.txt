@@ -173,7 +173,26 @@ KtFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(arg)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: arg
+      origin: SOURCE
+      receiverType: null
+      returnType: [
+        Anno2()
+          psi: KtAnnotationEntry
+      ] @R|Anno2|()  I
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
   getDispatchReceiver(): X
@@ -184,7 +203,24 @@ KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /X.x
   contextReceivers: []
-  getter: KtPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverType: null
+    returnType: ERROR_TYPE
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: true
   hasGetter: true
   hasSetter: false

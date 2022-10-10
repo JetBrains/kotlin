@@ -40,7 +40,23 @@ KtFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(a)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: true
+      name: a
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
@@ -88,7 +104,23 @@ KtFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(b)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: true
+      name: b
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Float?
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
@@ -136,7 +168,23 @@ KtFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(c)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: true
+      name: c
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Any
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
@@ -184,7 +232,23 @@ KtFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(d)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: true
+      name: d
+      origin: SOURCE
+      receiverType: null
+      returnType: ERROR_TYPE
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"

@@ -1,26 +1,26 @@
 KtKotlinPropertySymbol:
   annotationsList: []
-  callableIdIfNonLocal: /I.foo
+  callableIdIfNonLocal: /A.i
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
     callableIdIfNonLocal: null
     contextReceivers: []
     hasBody: false
-    hasStableParameterNames: false
-    isDefault: false
+    hasStableParameterNames: true
+    isDefault: true
     isExtension: false
     isInline: false
     isOverride: false
-    modality: OPEN
-    origin: DELEGATED
+    modality: FINAL
+    origin: SOURCE
     receiverType: null
-    returnType: kotlin/Int
+    returnType: ERROR_TYPE
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
-  hasBackingField: false
+  hasBackingField: true
   hasGetter: true
   hasSetter: false
   initializer: null
@@ -32,9 +32,9 @@ KtKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
-  modality: OPEN
-  name: foo
-  origin: DELEGATED
+  modality: FINAL
+  name: i
+  origin: SOURCE
   receiverType: null
   returnType: kotlin/Int
   setter: null
@@ -45,6 +45,35 @@ KtKotlinPropertySymbol:
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
-  javaGetterName: getFoo
+  javaGetterName: getI
   javaSetterName: null
   setterDeprecationStatus: null
+
+KtClassInitializerSymbol:
+  origin: SOURCE
+  symbolKind: CLASS_MEMBER
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: A
+  classKind: CLASS
+  companionObject: null
+  contextReceivers: []
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: A
+  origin: SOURCE
+  superTypes: [
+    kotlin/Any
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

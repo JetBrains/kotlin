@@ -11,7 +11,23 @@ KtSamConstructorSymbol:
   symbolKind: SAM_CONSTRUCTOR
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(function)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: function
+      origin: SAM_CONSTRUCTOR
+      receiverType: null
+      returnType: kotlin/Function0<kotlin/Unit>
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -20,7 +20,23 @@ KtFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(x)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: x
+      origin: PLUGIN
+      receiverType: null
+      returnType: test/FirstTarget
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
   getDispatchReceiver(): test/Serializer
@@ -49,7 +65,23 @@ KtFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(x)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: x
+      origin: PLUGIN
+      receiverType: null
+      returnType: test/SecondTarget
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
   getDispatchReceiver(): test/Serializer
@@ -78,7 +110,23 @@ KtFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(other)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: other
+      origin: LIBRARY
+      receiverType: null
+      returnType: kotlin/Any?
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Any

@@ -79,15 +79,64 @@ KtFunctionSymbol:
     KtTypeParameterSymbol(Y)
   ]
   valueParameters: [
-    KtValueParameterSymbol(x)
-    KtValueParameterSymbol(y)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: x
+      origin: SOURCE
+      receiverType: null
+      returnType: X
+      symbolKind: LOCAL
+      typeParameters: []
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: y
+      origin: SOURCE
+      receiverType: null
+      returnType: Y
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
 KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /Outer.A.map
   contextReceivers: []
-  getter: KtPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/collections/Map<X, O>
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -131,7 +180,23 @@ KtFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(other)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: other
+      origin: LIBRARY
+      receiverType: null
+      returnType: kotlin/Any?
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
 KtFunctionSymbol:

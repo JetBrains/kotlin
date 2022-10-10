@@ -20,8 +20,40 @@ KtFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(p1)
-    KtValueParameterSymbol(p2)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: p1
+      origin: LIBRARY
+      receiverType: null
+      returnType: P1
+      symbolKind: LOCAL
+      typeParameters: []
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: p2
+      origin: LIBRARY
+      receiverType: null
+      returnType: P2
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Function2<P1, P2, R>
@@ -50,7 +82,23 @@ KtFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(other)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: other
+      origin: LIBRARY
+      receiverType: null
+      returnType: kotlin/Any?
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Any

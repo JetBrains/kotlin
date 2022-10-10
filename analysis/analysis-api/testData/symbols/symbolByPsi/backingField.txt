@@ -51,13 +51,45 @@ KtPropertySetterSymbol:
   isOverride: false
   modality: FINAL
   origin: SOURCE
-  parameter: KtValueParameterSymbol(value)
+  parameter: KtValueParameterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    generatedPrimaryConstructorProperty: null
+    hasDefaultValue: false
+    isCrossinline: false
+    isExtension: false
+    isImplicitLambdaParameter: false
+    isNoinline: false
+    isVararg: false
+    name: value
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/Int
+    symbolKind: LOCAL
+    typeParameters: []
   receiverType: null
   returnType: kotlin/Unit
   symbolKind: ACCESSOR
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(value)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: value
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
@@ -67,7 +99,24 @@ KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /p
   contextReceivers: []
-  getter: KtPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: true
+    hasStableParameterNames: true
+    isDefault: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/Int
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -85,7 +134,59 @@ KtKotlinPropertySymbol:
   origin: SOURCE
   receiverType: null
   returnType: kotlin/Int
-  setter: KtPropertySetterSymbol(<setter>)
+  setter: KtPropertySetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: true
+    hasStableParameterNames: true
+    isDefault: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    parameter: KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: value
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
+    receiverType: null
+    returnType: kotlin/Unit
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: [
+      KtValueParameterSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: null
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isCrossinline: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVararg: false
+        name: value
+        origin: SOURCE
+        receiverType: null
+        returnType: kotlin/Int
+        symbolKind: LOCAL
+        typeParameters: []
+    ]
+    visibility: Public
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public

@@ -1,6 +1,6 @@
 KtKotlinPropertySymbol:
   annotationsList: []
-  callableIdIfNonLocal: /A.x
+  callableIdIfNonLocal: /Foo.p
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
@@ -23,7 +23,7 @@ KtKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtConstantInitializerValue(10)
+  initializer: KtConstantInitializerValue(null)
   isConst: false
   isDelegatedProperty: false
   isExtension: false
@@ -33,98 +33,105 @@ KtKotlinPropertySymbol:
   isStatic: false
   isVal: true
   modality: FINAL
-  name: x
+  name: p
   origin: SOURCE
   receiverType: null
-  returnType: kotlin/Int
+  returnType: dynamic
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): A
+  getDispatchReceiver(): Foo
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
-  javaGetterName: getX
+  javaGetterName: getP
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtPropertyGetterSymbol:
+KtValueParameterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   contextReceivers: []
-  hasBody: true
-  hasStableParameterNames: true
-  isDefault: false
+  generatedPrimaryConstructorProperty: null
+  hasDefaultValue: false
+  isCrossinline: false
   isExtension: false
-  isInline: false
-  isOverride: false
-  modality: FINAL
+  isImplicitLambdaParameter: false
+  isNoinline: false
+  isVararg: false
+  name: p
   origin: SOURCE
-  receiverType: kotlin/Int
-  returnType: kotlin/Int
-  symbolKind: ACCESSOR
+  receiverType: null
+  returnType: dynamic
+  symbolKind: LOCAL
   typeParameters: []
-  valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtKotlinPropertySymbol:
+KtAnonymousFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /A.y
+  callableIdIfNonLocal: null
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
-    contextReceivers: []
-    hasBody: true
-    hasStableParameterNames: true
-    isDefault: false
-    isExtension: false
-    isInline: false
-    isOverride: false
-    modality: FINAL
-    origin: SOURCE
-    receiverType: kotlin/Int
-    returnType: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
-    valueParameters: []
-    visibility: Public
-  hasBackingField: false
-  hasGetter: true
-  hasSetter: false
-  initializer: null
-  isConst: false
-  isDelegatedProperty: false
-  isExtension: true
-  isFromPrimaryConstructor: false
-  isLateInit: false
-  isOverride: false
-  isStatic: false
-  isVal: true
-  modality: FINAL
-  name: y
+  hasStableParameterNames: true
+  isExtension: false
   origin: SOURCE
-  receiverType: kotlin/Int
-  returnType: kotlin/Int
-  setter: null
-  symbolKind: CLASS_MEMBER
+  receiverType: null
+  returnType: dynamic
+  symbolKind: LOCAL
   typeParameters: []
-  visibility: Public
-  getDispatchReceiver(): A
+  valueParameters: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
-  javaGetterName: getY
-  javaSetterName: null
-  setterDeprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /Foo.f
+  contextReceivers: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: f
+  origin: SOURCE
+  receiverType: null
+  returnType: dynamic
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: p
+      origin: SOURCE
+      receiverType: null
+      returnType: dynamic
+      symbolKind: LOCAL
+      typeParameters: []
+  ]
+  visibility: Public
+  getDispatchReceiver(): Foo
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: A
+  classIdIfNonLocal: Foo
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -134,7 +141,7 @@ KtNamedClassOrObjectSymbol:
   isInline: false
   isInner: false
   modality: FINAL
-  name: A
+  name: Foo
   origin: SOURCE
   superTypes: [
     kotlin/Any

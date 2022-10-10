@@ -34,7 +34,7 @@ KtFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: element
-      origin: LIBRARY
+      origin: SOURCE
       receiverType: null
       returnType: T
       symbolKind: LOCAL
@@ -111,7 +111,7 @@ KtFunctionSymbol:
       isNoinline: false
       isVararg: true
       name: elements
-      origin: LIBRARY
+      origin: SOURCE
       receiverType: null
       returnType: T
       symbolKind: LOCAL

@@ -1,13 +1,50 @@
+FILE SYMBOL:
+KtFileSymbol:
+  annotationsList: []
+  origin: SOURCE
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+CALLABLE NAMES:
+[test, testVal]
+
+CALLABLE SYMBOLS:
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /test
+  contextReceivers: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: test
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Int
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
 KtKotlinPropertySymbol:
   annotationsList: []
-  callableIdIfNonLocal: /A.x
+  callableIdIfNonLocal: /testVal
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
     callableIdIfNonLocal: null
     contextReceivers: []
     hasBody: false
-    hasStableParameterNames: true
+    hasStableParameterNames: false
     isDefault: true
     isExtension: false
     isInline: false
@@ -15,7 +52,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverType: null
-    returnType: ERROR_TYPE
+    returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -23,7 +60,7 @@ KtKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtConstantInitializerValue(10)
+  initializer: KtConstantInitializerValue(2)
   isConst: false
   isDelegatedProperty: false
   isExtension: false
@@ -33,98 +70,28 @@ KtKotlinPropertySymbol:
   isStatic: false
   isVal: true
   modality: FINAL
-  name: x
+  name: testVal
   origin: SOURCE
   receiverType: null
   returnType: kotlin/Int
   setter: null
-  symbolKind: CLASS_MEMBER
+  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
-  javaGetterName: getX
+  javaGetterName: getTestVal
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtPropertyGetterSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  contextReceivers: []
-  hasBody: true
-  hasStableParameterNames: true
-  isDefault: false
-  isExtension: false
-  isInline: false
-  isOverride: false
-  modality: FINAL
-  origin: SOURCE
-  receiverType: kotlin/Int
-  returnType: kotlin/Int
-  symbolKind: ACCESSOR
-  typeParameters: []
-  valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): A
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
+CLASSIFIER NAMES:
+[C, I]
 
-KtKotlinPropertySymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /A.y
-  contextReceivers: []
-  getter: KtPropertyGetterSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
-    contextReceivers: []
-    hasBody: true
-    hasStableParameterNames: true
-    isDefault: false
-    isExtension: false
-    isInline: false
-    isOverride: false
-    modality: FINAL
-    origin: SOURCE
-    receiverType: kotlin/Int
-    returnType: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
-    valueParameters: []
-    visibility: Public
-  hasBackingField: false
-  hasGetter: true
-  hasSetter: false
-  initializer: null
-  isConst: false
-  isDelegatedProperty: false
-  isExtension: true
-  isFromPrimaryConstructor: false
-  isLateInit: false
-  isOverride: false
-  isStatic: false
-  isVal: true
-  modality: FINAL
-  name: y
-  origin: SOURCE
-  receiverType: kotlin/Int
-  returnType: kotlin/Int
-  setter: null
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  visibility: Public
-  getDispatchReceiver(): A
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-  getterDeprecationStatus: null
-  javaGetterName: getY
-  javaSetterName: null
-  setterDeprecationStatus: null
-
+CLASSIFIER SYMBOLS:
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: A
+  classIdIfNonLocal: C
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -134,7 +101,30 @@ KtNamedClassOrObjectSymbol:
   isInline: false
   isInner: false
   modality: FINAL
-  name: A
+  name: C
+  origin: SOURCE
+  superTypes: [
+    kotlin/Any
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: I
+  classKind: INTERFACE
+  companionObject: null
+  contextReceivers: []
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: ABSTRACT
+  name: I
   origin: SOURCE
   superTypes: [
     kotlin/Any
