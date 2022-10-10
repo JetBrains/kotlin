@@ -21,10 +21,7 @@ import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
 import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
-import org.jetbrains.kotlin.gradle.dsl.CompilerCommonToolOptions
-import org.jetbrains.kotlin.gradle.dsl.CompilerCommonToolOptionsDefault
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
-import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -50,7 +47,7 @@ constructor(
     private val objectFactory: ObjectFactory,
     private val execOperations: ExecOperations
 ) : AbstractKotlinCompileTool<StubK2NativeCompilerArguments>(objectFactory),
-    KotlinToolTask<CompilerCommonToolOptions> {
+    KotlinToolTask<KotlinCommonCompilerToolOptions> {
     @Deprecated("Visibility will be lifted to private in the future releases")
     @get:Internal
     val compilation: KotlinNativeCompilation
@@ -58,8 +55,8 @@ constructor(
 
     private val runnerSettings = KotlinNativeCompilerRunner.Settings.fromProject(project)
 
-    final override val toolOptions: CompilerCommonToolOptions = objectFactory
-        .newInstance<CompilerCommonToolOptionsDefault>()
+    final override val toolOptions: KotlinCommonCompilerToolOptions = objectFactory
+        .newInstance<KotlinCommonCompilerToolOptionsDefault>()
         .apply {
             freeCompilerArgs.addAll(PropertiesProvider(project).nativeLinkArgs)
         }
@@ -137,7 +134,7 @@ constructor(
     )
     @get:Internal
     val kotlinOptions: KotlinCommonToolOptions = object : KotlinCommonToolOptions {
-        override val options: CompilerCommonToolOptions
+        override val options: KotlinCommonCompilerToolOptions
             get() = toolOptions
     }
 

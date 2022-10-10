@@ -34,11 +34,11 @@ import javax.inject.Inject
 
 @CacheableTask
 abstract class KotlinCompileCommon @Inject constructor(
-    override val compilerOptions: CompilerMultiplatformCommonOptions,
+    override val compilerOptions: KotlinMultiplatformCommonCompilerOptions,
     workerExecutor: WorkerExecutor,
     objectFactory: ObjectFactory
 ) : AbstractKotlinCompile<K2MetadataCompilerArguments>(objectFactory, workerExecutor),
-    KotlinCompilationTask<CompilerMultiplatformCommonOptions>,
+    KotlinCompilationTask<KotlinMultiplatformCommonCompilerOptions>,
     KotlinCommonCompile {
 
     init {
@@ -66,7 +66,7 @@ abstract class KotlinCompileCommon @Inject constructor(
         K2MetadataCompilerArguments()
 
     override fun setupCompilerArgs(args: K2MetadataCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        (compilerOptions as CompilerMultiplatformCommonOptionsDefault).fillDefaultValues(args)
+        (compilerOptions as KotlinMultiplatformCommonCompilerOptionsDefault).fillDefaultValues(args)
         super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
         args.moduleName = this@KotlinCompileCommon.moduleName.get()
@@ -87,7 +87,7 @@ abstract class KotlinCompileCommon @Inject constructor(
             refinesPaths = refinesMetadataPaths.map { it.absolutePath }.toTypedArray()
         }
 
-        (compilerOptions as CompilerMultiplatformCommonOptionsDefault).fillCompilerArguments(args)
+        (compilerOptions as KotlinMultiplatformCommonCompilerOptionsDefault).fillCompilerArguments(args)
 
         if (additionalFreeCompilerArgs.isNotEmpty()) {
             args.freeArgs = compilerOptions.freeCompilerArgs.get().union(additionalFreeCompilerArgs).toList()

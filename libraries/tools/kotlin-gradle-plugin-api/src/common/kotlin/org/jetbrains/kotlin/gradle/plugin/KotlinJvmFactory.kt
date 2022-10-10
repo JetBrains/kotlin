@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KaptExtensionConfig
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsDeprecated
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtensionConfig
@@ -36,7 +36,7 @@ interface KotlinJvmFactory {
     )
     fun createKotlinJvmOptions(): KotlinJvmOptionsDeprecated
 
-    fun createCompilerJvmOptions(): CompilerJvmOptions
+    fun createCompilerJvmOptions(): KotlinJvmCompilerOptions
 
     /** Creates a Kotlin compile task. */
     fun registerKotlinJvmCompileTask(taskName: String): TaskProvider<out KotlinJvmCompile>

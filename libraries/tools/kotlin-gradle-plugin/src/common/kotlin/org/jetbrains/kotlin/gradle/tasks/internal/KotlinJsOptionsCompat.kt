@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 @Suppress("DEPRECATION")
 class KotlinJsOptionsCompat(
     private val task: () -> Kotlin2JsCompile,
-    override val options: CompilerJsOptions
+    override val options: KotlinJsCompilerOptions
 ) : KotlinJsOptions {
     override var freeCompilerArgs: List<String>
         get() = if (isTaskExecuting) {

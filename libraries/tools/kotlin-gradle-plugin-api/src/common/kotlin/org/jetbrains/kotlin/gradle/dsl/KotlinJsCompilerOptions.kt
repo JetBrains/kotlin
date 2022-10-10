@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-interface CompilerJsOptions : org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions {
+interface KotlinJsCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions {
 
     /**
      * Disable internal declaration export

@@ -128,17 +128,17 @@ internal open class KotlinCommonFragmentMetadataCompilationDataImpl(
                             mapTo(hashSetOf()) { it.platformType }.size > 1
                 }
 
-    override val compilerOptions: HasCompilerOptions<CompilerMultiplatformCommonOptions> =
-        object : HasCompilerOptions<CompilerMultiplatformCommonOptions> {
-            override val options: CompilerMultiplatformCommonOptions =
-                project.objects.newInstance(CompilerMultiplatformCommonOptionsDefault::class.java)
+    override val compilerOptions: HasCompilerOptions<KotlinMultiplatformCommonCompilerOptions> =
+        object : HasCompilerOptions<KotlinMultiplatformCommonCompilerOptions> {
+            override val options: KotlinMultiplatformCommonCompilerOptions =
+                project.objects.newInstance(KotlinMultiplatformCommonCompilerOptionsDefault::class.java)
         }
 
 
     @Suppress("DEPRECATION")
     @Deprecated("Replaced with compilerOptions.options", replaceWith = ReplaceWith("compilerOptions.options"))
     override val kotlinOptions: KotlinMultiplatformCommonOptions = object : KotlinMultiplatformCommonOptions {
-        override val options: CompilerMultiplatformCommonOptions
+        override val options: KotlinMultiplatformCommonCompilerOptions
             get() = compilerOptions.options
     }
 }
@@ -177,7 +177,7 @@ internal open class KotlinNativeFragmentMetadataCompilationDataImpl(
     override val isActive: Boolean
         get() = fragment.isNativeShared() && fragment.containingVariants.count() > 1
 
-    override val compilerOptions: HasCompilerOptions<CompilerCommonOptions> = NativeCompilerOptions(
+    override val compilerOptions: HasCompilerOptions<KotlinCommonCompilerOptions> = NativeCompilerOptions(
         project,
         languageSettings
     )
@@ -185,7 +185,7 @@ internal open class KotlinNativeFragmentMetadataCompilationDataImpl(
     @Suppress("DEPRECATION")
     @Deprecated("Replaced with compilerOptions.options", replaceWith = ReplaceWith("compilerOptions.options"))
     override val kotlinOptions: KotlinCommonOptions = object : KotlinCommonOptions {
-        override val options: CompilerCommonOptions
+        override val options: KotlinCommonCompilerOptions
             get() = compilerOptions.options
     }
 

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-interface CompilerJsDceOptions : org.jetbrains.kotlin.gradle.dsl.CompilerCommonToolOptions {
+interface KotlinJsDceCompilerToolOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptions {
 
     /**
      * Development mode: don't strip out any code, just copy dependencies

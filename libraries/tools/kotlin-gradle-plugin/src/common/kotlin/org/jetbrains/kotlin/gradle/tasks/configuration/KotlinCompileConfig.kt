@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.tasks.configuration
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.internal.transforms.ClasspathEntrySnapshotTransform
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
@@ -76,7 +76,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                     task.associatedJavaCompileTaskName.value(javaTaskProvider.name)
                 }
                 task.ownModuleName.value(
-                    (compilation.compilerOptions.options as CompilerJvmOptions).moduleName.convention(compilation.ownModuleName)
+                    (compilation.compilerOptions.options as KotlinJvmCompilerOptions).moduleName.convention(compilation.ownModuleName)
                 )
             }
         }

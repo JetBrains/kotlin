@@ -10,7 +10,6 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptionsDefault
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask
 import org.jetbrains.kotlin.gradle.tasks.*
@@ -42,15 +41,15 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
         return myProject.configurations.getByName(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
     }
 
-    override fun createCompilerJvmOptions(): CompilerJvmOptions {
-        return myProject.objects.newInstance(CompilerJvmOptionsDefault::class.java)
+    override fun createCompilerJvmOptions(): KotlinJvmCompilerOptions {
+        return myProject.objects.newInstance(KotlinJvmCompilerOptionsDefault::class.java)
     }
 
     @Suppress("DEPRECATION")
     @Deprecated("Replaced by compilerJvmOptions", replaceWith = ReplaceWith("createCompilerJvmOptions()"))
     override fun createKotlinJvmOptions(): KotlinJvmOptions {
         return object : KotlinJvmOptions {
-            override val options: CompilerJvmOptions = createCompilerJvmOptions()
+            override val options: KotlinJvmCompilerOptions = createCompilerJvmOptions()
         }
     }
 

@@ -163,27 +163,27 @@ abstract class KotlinSingleTargetExtension<TARGET : KotlinTarget>(project: Proje
 abstract class KotlinSingleJavaTargetExtension(project: Project) : KotlinSingleTargetExtension<KotlinWithJavaTarget<*, *>>(project)
 
 abstract class KotlinJvmProjectExtension(project: Project) : KotlinSingleJavaTargetExtension(project) {
-    override lateinit var target: KotlinWithJavaTarget<KotlinJvmOptions, CompilerJvmOptions>
+    override lateinit var target: KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>
         internal set
 
-    open fun target(body: KotlinWithJavaTarget<KotlinJvmOptions, CompilerJvmOptions>.() -> Unit) = target.run(body)
+    open fun target(body: KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>.() -> Unit) = target.run(body)
 }
 
 abstract class Kotlin2JsProjectExtension(project: Project) : KotlinSingleJavaTargetExtension(project) {
-    private lateinit var _target: KotlinWithJavaTarget<KotlinJsOptions, CompilerJsOptions>
+    private lateinit var _target: KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>
 
-    override val target: KotlinWithJavaTarget<KotlinJsOptions, CompilerJsOptions>
+    override val target: KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>
         get() {
             if (!::_target.isInitialized) throw IllegalStateException("Extension target is not initialized!")
 
             return _target
         }
 
-    internal fun setTarget(target: KotlinWithJavaTarget<KotlinJsOptions, CompilerJsOptions>) {
+    internal fun setTarget(target: KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>) {
         _target = target
     }
 
-    open fun target(body: KotlinWithJavaTarget<KotlinJsOptions, CompilerJsOptions>.() -> Unit) = target.run(body)
+    open fun target(body: KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>.() -> Unit) = target.run(body)
 }
 
 abstract class KotlinJsProjectExtension(project: Project) :
@@ -380,11 +380,11 @@ abstract class KotlinJsProjectExtension(project: Project) :
 }
 
 abstract class KotlinCommonProjectExtension(project: Project) : KotlinSingleJavaTargetExtension(project) {
-    override lateinit var target: KotlinWithJavaTarget<KotlinMultiplatformCommonOptions, CompilerMultiplatformCommonOptions>
+    override lateinit var target: KotlinWithJavaTarget<KotlinMultiplatformCommonOptions, KotlinMultiplatformCommonCompilerOptions>
         internal set
 
     open fun target(
-        body: KotlinWithJavaTarget<KotlinMultiplatformCommonOptions, CompilerMultiplatformCommonOptions>.() -> Unit
+        body: KotlinWithJavaTarget<KotlinMultiplatformCommonOptions, KotlinMultiplatformCommonCompilerOptions>.() -> Unit
     ) = target.run(body)
 }
 

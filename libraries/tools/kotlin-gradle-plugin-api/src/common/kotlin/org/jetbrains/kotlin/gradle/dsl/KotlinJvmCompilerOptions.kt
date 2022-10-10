@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-interface CompilerJvmOptions : org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions {
+interface KotlinJvmCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions {
 
     /**
      * Generate metadata for Java 1.8 reflection on method parameters

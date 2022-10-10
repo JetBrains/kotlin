@@ -13,15 +13,14 @@ import org.gradle.api.file.Directory
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
 import java.io.File
 import javax.inject.Inject
 
-abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions, CO : CompilerCommonOptions> @Inject constructor(
+abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> @Inject constructor(
     project: Project,
     override val platformType: KotlinPlatformType,
     override val targetName: String,

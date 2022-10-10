@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-internal abstract class CompilerCommonToolOptionsDefault @javax.inject.Inject constructor(
+internal abstract class KotlinCommonCompilerToolOptionsDefault @javax.inject.Inject constructor(
     objectFactory: org.gradle.api.model.ObjectFactory
-) : org.jetbrains.kotlin.gradle.dsl.CompilerCommonToolOptions {
+) : org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptions {
 
     override val allWarningsAsErrors: org.gradle.api.provider.Property<kotlin.Boolean> =
         objectFactory.property(kotlin.Boolean::class.java).convention(false)
