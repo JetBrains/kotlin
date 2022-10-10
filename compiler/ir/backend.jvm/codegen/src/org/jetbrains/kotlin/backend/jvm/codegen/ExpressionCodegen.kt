@@ -1225,9 +1225,7 @@ class ExpressionCodegen(
 
             val catchResult = catchBody.accept(this, catchBlockInfo)
             if (savedValue != null) {
-                if (catchResult.irType != context.irBuiltIns.nothingNType) {
-                    catchResult.materializeAt(tryAsmType, aTry.type, true)
-                }
+                catchResult.materializeAt(tryAsmType, aTry.type, true)
                 mv.store(savedValue, tryAsmType)
             } else {
                 catchResult.discard()
