@@ -42,7 +42,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverType: null
-    returnType: ERROR_TYPE
+    returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -107,7 +107,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverType: null
-    returnType: ERROR_TYPE
+    returnType: java/lang/Runnable
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []

@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade
+import org.jetbrains.kotlin.analysis.api.descriptors.annotations.KtFe10AnnotationsList
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktModality
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
@@ -20,16 +21,13 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktSym
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktVisibility
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -41,9 +39,9 @@ class KtFe10PsiDefaultPropertySetterSymbol(
     private val propertyPsi: KtProperty,
     override val analysisContext: Fe10AnalysisContext
 ) : KtPropertySetterSymbol(), KtFe10Symbol {
-    private val descriptor: PropertyDescriptor? by cached {
+    private val descriptor: PropertySetterDescriptor? by cached {
         val bindingContext = analysisContext.analyze(propertyPsi, Fe10AnalysisFacade.AnalysisMode.PARTIAL)
-        bindingContext[BindingContext.VARIABLE, psi] as? PropertyDescriptor
+        (bindingContext[BindingContext.VARIABLE, propertyPsi] as? PropertyDescriptor)?.setter
     }
 
     override val origin: KtSymbolOrigin
@@ -65,7 +63,7 @@ class KtFe10PsiDefaultPropertySetterSymbol(
         get() = withValidityAssertion { false }
 
     override val parameter: KtValueParameterSymbol by cached {
-        DefaultKtValueParameterSymbol(propertyPsi, descriptor, analysisContext)
+        DefaultKtValueParameterSymbol(propertyPsi, descriptor?.valueParameters?.firstOrNull(), analysisContext)
     }
 
     override val valueParameters: List<KtValueParameterSymbol>
@@ -98,7 +96,9 @@ class KtFe10PsiDefaultPropertySetterSymbol(
         get() = withValidityAssertion { propertyPsi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }
 
     override val annotationsList: KtAnnotationsList
-        get() = withValidityAssertion { KtEmptyAnnotationsList(token) }
+        get() = withValidityAssertion {
+            descriptor?.let { KtFe10AnnotationsList.create(it.annotations, token) } ?: KtEmptyAnnotationsList(token)
+        }
 
     override fun createPointer(): KtSymbolPointer<KtPropertySetterSymbol> = withValidityAssertion {
         return KtFe10NeverRestoringSymbolPointer()
@@ -106,7 +106,7 @@ class KtFe10PsiDefaultPropertySetterSymbol(
 
     private class DefaultKtValueParameterSymbol(
         private val propertyPsi: KtProperty,
-        private val descriptor: PropertyDescriptor?,
+        private val descriptor: ValueParameterDescriptor?,
         override val analysisContext: Fe10AnalysisContext
     ) : KtValueParameterSymbol(), KtFe10Symbol {
         override val hasDefaultValue: Boolean
@@ -128,7 +128,7 @@ class KtFe10PsiDefaultPropertySetterSymbol(
             get() = withValidityAssertion { Name.identifier("value") }
 
         override val returnType: KtType
-            get() = withValidityAssertion { descriptor?.type?.toKtType(analysisContext) ?: createErrorType() }
+            get() = withValidityAssertion { descriptor?.returnType?.toKtType(analysisContext) ?: createErrorType() }
 
         override val origin: KtSymbolOrigin
             get() = withValidityAssertion { propertyPsi.ktSymbolOrigin }
@@ -137,7 +137,9 @@ class KtFe10PsiDefaultPropertySetterSymbol(
             get() = withValidityAssertion { null }
 
         override val annotationsList: KtAnnotationsList
-            get() = withValidityAssertion { KtEmptyAnnotationsList(token) }
+            get() = withValidityAssertion {
+                descriptor?.let { KtFe10AnnotationsList.create(it.annotations, token) } ?: KtEmptyAnnotationsList(token)
+            }
 
         override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> = withValidityAssertion {
             return KtFe10NeverRestoringSymbolPointer()

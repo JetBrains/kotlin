@@ -3,7 +3,10 @@ KtKotlinPropertySymbol:
   callableIdIfNonLocal: /Foo.i
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
-    annotationsList: []
+    annotationsList: [
+      kotlin/jvm/JvmName(name = "getMyI")
+        psi: KtAnnotationEntry
+    ]
     callableIdIfNonLocal: null
     contextReceivers: []
     hasBody: false
@@ -15,7 +18,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverType: null
-    returnType: ERROR_TYPE
+    returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -38,7 +41,10 @@ KtKotlinPropertySymbol:
   receiverType: null
   returnType: kotlin/Int
   setter: KtPropertySetterSymbol:
-    annotationsList: []
+    annotationsList: [
+      kotlin/jvm/JvmName(name = "setMyI")
+        psi: KtAnnotationEntry
+    ]
     callableIdIfNonLocal: null
     contextReceivers: []
     hasBody: false
@@ -63,7 +69,7 @@ KtKotlinPropertySymbol:
       name: value
       origin: SOURCE
       receiverType: null
-      returnType: ERROR_TYPE
+      returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
     receiverType: null
@@ -85,7 +91,7 @@ KtKotlinPropertySymbol:
         name: value
         origin: SOURCE
         receiverType: null
-        returnType: ERROR_TYPE
+        returnType: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []
     ]
