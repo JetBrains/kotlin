@@ -17,6 +17,7 @@ fun updateCompilerXml() {
     val modulesExcludedFromJps = listOf(
         "buildSrc",
         "native/commonizer",
+        "plugins/atomicfu/atomicfu-runtime",
         "libraries/tools/atomicfu",
         "libraries/tools/binary-compatibility-validator",
         "libraries/tools/dukat",
