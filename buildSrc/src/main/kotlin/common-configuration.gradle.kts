@@ -157,11 +157,13 @@ fun Project.configureKotlinCompilationOptions() {
             ":kotlin-native:klib",
             // Requires serialization plugin
             ":js:js.tests",
-            // ISE "Cannot serialize error type: ERROR CLASS: Cannot calculate return type (local class/object?)" (KT-54212)
+            // ISE "Expected FirResolvedTypeRef with ConeKotlinType but was FirImplicitTypeRefImpl <implicit>"
+            // from Platform.kt serialization (looks as related to KT-54212)
+            // Workaround: set all types explicitly in Configurables interface
             ":kotlin-native-shared",
-            // ISE "Fake override should have at least one overridden descriptor",
+            // Same as kotlin-native-shared ^
             ":kotlin-native:Interop:StubGenerator",
-            // Overload resolution ambiguity between candidates
+            // Exception in Task :kotlin-native:backend.native:genEnvInteropStubs (see comments in KT-54209)
             ":kotlin-native:backend.native",
         )
 
