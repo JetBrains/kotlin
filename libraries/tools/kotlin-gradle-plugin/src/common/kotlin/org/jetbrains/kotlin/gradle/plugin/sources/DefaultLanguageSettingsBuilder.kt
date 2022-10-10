@@ -11,7 +11,7 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
@@ -102,7 +102,7 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
 
 internal fun applyLanguageSettingsToCompilerOptions(
     languageSettingsBuilder: LanguageSettings,
-    compilerOptions: CompilerCommonOptions
+    compilerOptions: KotlinCommonCompilerOptions
 ) = with(compilerOptions) {
     languageVersion.convention(languageSettingsBuilder.languageVersion?.let { KotlinVersion.fromVersion(it) })
     apiVersion.convention(languageSettingsBuilder.apiVersion?.let { KotlinVersion.fromVersion(it) })

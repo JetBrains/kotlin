@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 @Suppress("DEPRECATION")
 class KotlinMultiplatformCommonOptionsCompat(
     private val task: () -> KotlinCompileCommon,
-    override val options: CompilerMultiplatformCommonOptions
+    override val options: KotlinMultiplatformCommonCompilerOptions
 ) : KotlinMultiplatformCommonOptions {
 
     override var freeCompilerArgs: List<String>

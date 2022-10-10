@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.cli.common.arguments.DevModeOverwritingStrategies
 import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments
 import org.jetbrains.kotlin.cli.js.dce.K2JSDce
 import org.jetbrains.kotlin.compilerRunner.runToolInSeparateProcess
-import org.jetbrains.kotlin.gradle.dsl.CompilerJsDceOptions
-import org.jetbrains.kotlin.gradle.dsl.CompilerJsDceOptionsDefault
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceCompilerToolOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceCompilerToolOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceOptions
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
@@ -43,7 +43,7 @@ import javax.inject.Inject
 abstract class KotlinJsDce @Inject constructor(
     objectFactory: ObjectFactory
 ) : AbstractKotlinCompileTool<K2JSDceArguments>(objectFactory),
-    KotlinToolTask<CompilerJsDceOptions>,
+    KotlinToolTask<KotlinJsDceCompilerToolOptions>,
     KotlinJsDce {
 
     init {
@@ -53,12 +53,12 @@ abstract class KotlinJsDce @Inject constructor(
         include("js".fileExtensionCasePermutations().map { "**/*.$it" })
     }
 
-    override val toolOptions: CompilerJsDceOptions = objectFactory.newInstance<CompilerJsDceOptionsDefault>()
+    override val toolOptions: KotlinJsDceCompilerToolOptions = objectFactory.newInstance<KotlinJsDceCompilerToolOptionsDefault>()
 
     override fun createCompilerArgs(): K2JSDceArguments = K2JSDceArguments()
 
     override fun setupCompilerArgs(args: K2JSDceArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        (toolOptions as CompilerJsDceOptionsDefault).fillCompilerArguments(args)
+        (toolOptions as KotlinJsDceCompilerToolOptionsDefault).fillCompilerArguments(args)
         args.declarationsToKeep = keep.toTypedArray()
     }
 
@@ -70,7 +70,7 @@ abstract class KotlinJsDce @Inject constructor(
     @Suppress("DEPRECATION")
     @get:Internal
     override val dceOptions: KotlinJsDceOptions = object : KotlinJsDceOptions {
-        override val options: CompilerJsDceOptions
+        override val options: KotlinJsDceCompilerToolOptions
             get() = toolOptions
     }
 

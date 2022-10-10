@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.Action
 import org.gradle.api.Task
 import org.gradle.api.tasks.Nested
-import org.jetbrains.kotlin.gradle.dsl.CompilerCommonToolOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptions
 
-interface KotlinToolTask<out TO : CompilerCommonToolOptions> : Task {
+interface KotlinToolTask<out TO : KotlinCommonCompilerToolOptions> : Task {
     @get:Nested
     val toolOptions: TO
 

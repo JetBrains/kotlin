@@ -63,7 +63,7 @@ class KotlinNativeFrameworkImpl(
     @Suppress("DEPRECATION")
     @Deprecated("Replaced by compilerOptionsConfigure", replaceWith = ReplaceWith("compilerOptionsConfigure"))
     override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
-    override val toolOptionsConfigure: CompilerCommonToolOptions.() -> Unit,
+    override val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
     override val target: KonanTarget,
     override val embedBitcode: BitcodeEmbeddingMode?,

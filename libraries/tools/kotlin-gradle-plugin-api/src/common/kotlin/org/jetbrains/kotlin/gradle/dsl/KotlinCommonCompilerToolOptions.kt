@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-interface CompilerCommonToolOptions {
+interface KotlinCommonCompilerToolOptions {
 
     /**
      * Report an error if there are any warnings

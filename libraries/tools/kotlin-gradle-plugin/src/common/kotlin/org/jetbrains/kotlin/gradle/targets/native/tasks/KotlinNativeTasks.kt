@@ -306,7 +306,7 @@ constructor(
     private val execOperations: ExecOperations
 ) : AbstractKotlinNativeCompile<KotlinCommonOptions, KotlinNativeCompilationData<*>, StubK2NativeCompilerArguments>(objectFactory),
     KotlinCompile<KotlinCommonOptions>,
-    KotlinCompilationTask<CompilerCommonOptions> {
+    KotlinCompilationTask<KotlinCommonCompilerOptions> {
 
     @get:Input
     override val outputKind = LIBRARY
@@ -373,7 +373,7 @@ constructor(
     // endregion.
 
     // region Kotlin options.
-    override val compilerOptions: CompilerCommonOptions  = compilation.compilerOptions.options
+    override val compilerOptions: KotlinCommonCompilerOptions  = compilation.compilerOptions.options
 
     @Deprecated(
         message = "Replaced with compilerOptions",
@@ -381,7 +381,7 @@ constructor(
     )
     @Suppress("DEPRECATION")
     override val kotlinOptions: KotlinCommonOptions = object : KotlinCommonOptions {
-        override val options: CompilerCommonOptions
+        override val options: KotlinCommonCompilerOptions
             get() = compilerOptions
     }
 
@@ -678,7 +678,7 @@ internal class CacheBuilder(
         val gradleUserHomeDir: File,
         val binary: NativeBinary,
         val konanTarget: KonanTarget,
-        val toolOptions: CompilerCommonToolOptions,
+        val toolOptions: KotlinCommonCompilerToolOptions,
         val externalDependenciesArgs: List<String>
     ) {
         val rootCacheDirectory get() = getRootCacheDirectory(
@@ -693,7 +693,7 @@ internal class CacheBuilder(
                 project: Project,
                 binary: NativeBinary,
                 konanTarget: KonanTarget,
-                toolOptions: CompilerCommonToolOptions,
+                toolOptions: KotlinCommonCompilerToolOptions,
                 externalDependenciesArgs: List<String>
             ): Settings {
                 val konanCacheKind = project.getKonanCacheKind(konanTarget)

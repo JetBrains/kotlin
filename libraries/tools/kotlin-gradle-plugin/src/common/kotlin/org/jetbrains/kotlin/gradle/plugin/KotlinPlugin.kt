@@ -179,7 +179,7 @@ internal class Kotlin2JvmSourceSetProcessor(
         return tasksProvider.registerKotlinJVMTask(
             project,
             taskName,
-            kotlinCompilation.compilerOptions.options as CompilerJvmOptions,
+            kotlinCompilation.compilerOptions.options as KotlinJvmCompilerOptions,
             configAction
         )
     }
@@ -241,7 +241,7 @@ internal class Kotlin2JsSourceSetProcessor(
         return tasksProvider.registerKotlinJSTask(
             project,
             taskName,
-            kotlinCompilation.compilerOptions.options as CompilerJsOptions,
+            kotlinCompilation.compilerOptions.options as KotlinJsCompilerOptions,
             configAction
         )
     }
@@ -278,7 +278,7 @@ internal class KotlinJsIrSourceSetProcessor(
         return tasksProvider.registerKotlinJSTask(
             project,
             taskName,
-            kotlinCompilation.compilerOptions.options as CompilerJsOptions,
+            kotlinCompilation.compilerOptions.options as KotlinJsCompilerOptions,
             configAction
         )
     }
@@ -340,7 +340,7 @@ internal class KotlinCommonSourceSetProcessor(
         return tasksProvider.registerKotlinCommonTask(
             project,
             taskName,
-            kotlinCompilation.compilerOptions.options as CompilerMultiplatformCommonOptions,
+            kotlinCompilation.compilerOptions.options as KotlinMultiplatformCommonCompilerOptions,
             configAction
         )
     }
@@ -594,17 +594,17 @@ internal open class KotlinPlugin(
             KotlinPlatformType.jvm,
             targetName,
             {
-                object : HasCompilerOptions<CompilerJvmOptions> {
-                    override val options: CompilerJvmOptions =
-                        project.objects.newInstance(CompilerJvmOptionsDefault::class.java)
+                object : HasCompilerOptions<KotlinJvmCompilerOptions> {
+                    override val options: KotlinJvmCompilerOptions =
+                        project.objects.newInstance(KotlinJvmCompilerOptionsDefault::class.java)
                 }
             },
-            { compilerOptions: CompilerJvmOptions ->
+            { compilerOptions: KotlinJvmCompilerOptions ->
                 object : KotlinJvmOptions {
-                    override val options: CompilerJvmOptions get() = compilerOptions
+                    override val options: KotlinJvmCompilerOptions get() = compilerOptions
                 }
             }
-        ) as KotlinWithJavaTarget<KotlinJvmOptions, CompilerJvmOptions>)
+        ) as KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>)
             .apply {
                 disambiguationClassifier = null // don't add anything to the task names
             }
@@ -646,18 +646,18 @@ internal open class KotlinCommonPlugin(
             KotlinPlatformType.common,
             targetName,
             {
-                object : HasCompilerOptions<CompilerMultiplatformCommonOptions> {
-                    override val options: CompilerMultiplatformCommonOptions =
-                        project.objects.newInstance(CompilerMultiplatformCommonOptionsDefault::class.java)
+                object : HasCompilerOptions<KotlinMultiplatformCommonCompilerOptions> {
+                    override val options: KotlinMultiplatformCommonCompilerOptions =
+                        project.objects.newInstance(KotlinMultiplatformCommonCompilerOptionsDefault::class.java)
                 }
             },
-            { compilerOptions: CompilerMultiplatformCommonOptions ->
+            { compilerOptions: KotlinMultiplatformCommonCompilerOptions ->
                 object : KotlinMultiplatformCommonOptions {
-                    override val options: CompilerMultiplatformCommonOptions
+                    override val options: KotlinMultiplatformCommonCompilerOptions
                         get() = compilerOptions
                 }
             }
-        ) as KotlinWithJavaTarget<KotlinMultiplatformCommonOptions, CompilerMultiplatformCommonOptions>
+        ) as KotlinWithJavaTarget<KotlinMultiplatformCommonOptions, KotlinMultiplatformCommonCompilerOptions>
         (project.kotlinExtension as KotlinCommonProjectExtension).target = target
 
         super.apply(project)
@@ -690,18 +690,18 @@ internal open class Kotlin2JsPlugin(
             KotlinPlatformType.js,
             targetName,
             {
-                object : HasCompilerOptions<CompilerJsOptions> {
-                    override val options: CompilerJsOptions =
-                        project.objects.newInstance(CompilerJsOptionsDefault::class.java)
+                object : HasCompilerOptions<KotlinJsCompilerOptions> {
+                    override val options: KotlinJsCompilerOptions =
+                        project.objects.newInstance(KotlinJsCompilerOptionsDefault::class.java)
                 }
             },
-            { compilerOptions: CompilerJsOptions ->
+            { compilerOptions: KotlinJsCompilerOptions ->
                 object : KotlinJsOptions {
-                    override val options: CompilerJsOptions
+                    override val options: KotlinJsCompilerOptions
                         get() = compilerOptions
                 }
             }
-        ) as KotlinWithJavaTarget<KotlinJsOptions, CompilerJsOptions>
+        ) as KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>
 
         (project.kotlinExtension as Kotlin2JsProjectExtension).setTarget(target)
         super.apply(project)
