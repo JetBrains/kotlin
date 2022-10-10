@@ -1,3 +1,5 @@
+// !LANGUAGE: -ReferencesToSyntheticJavaProperties
+
 // FILE: Customer.java
 public class Customer {
     private String name;

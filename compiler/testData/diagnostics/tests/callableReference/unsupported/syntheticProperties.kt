@@ -1,3 +1,5 @@
+// !LANGUAGE: -ReferencesToSyntheticJavaProperties
+
 // FILE: Customer.java
 public class Customer {
     private String name;
@@ -16,4 +18,4 @@ public class Customer {
 }
 
 // FILE: test.kt
-val customerName = Customer::<!UNSUPPORTED!>name<!>
+val customerName = Customer::<!UNSUPPORTED_FEATURE!>name<!>
