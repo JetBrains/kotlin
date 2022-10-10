@@ -156,7 +156,7 @@ kotlin {
                 }
             }
         }
-        fromPreset(presets.js, 'js') {
+        fromPreset(presets.jsIr, 'js') {
             compilations.main.kotlinOptions {
                 main = "noCall"
             }
@@ -184,7 +184,7 @@ kotlin {
         }
     }
 
-    js {
+    js(IR) {
         browser {
             distribution {
                 directory = new File("$projectDir/web/")
