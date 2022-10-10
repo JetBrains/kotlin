@@ -201,9 +201,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val enableKotlinToolingMetadataArtifact: Boolean
         get() = booleanProperty("kotlin.mpp.enableKotlinToolingMetadataArtifact") ?: true
 
-    val mppStabilityNoWarn: Boolean?
-        get() = booleanProperty(KotlinMultiplatformPlugin.STABILITY_NOWARN_FLAG)
-
     val mppEnableOptimisticNumberCommonization: Boolean
         get() = booleanProperty(KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION) ?: true
 
