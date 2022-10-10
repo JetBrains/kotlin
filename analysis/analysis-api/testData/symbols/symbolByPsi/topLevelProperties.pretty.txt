@@ -1,3 +1,5 @@
 val x: kotlin.Int
 
 val kotlin.Int.y: kotlin.Int
+
+var kotlin.Short.get: kotlin.Long

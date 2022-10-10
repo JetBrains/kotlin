@@ -61,7 +61,7 @@ KtPropertyGetterSymbol:
   isOverride: false
   modality: FINAL
   origin: SOURCE
-  receiverType: null
+  receiverType: kotlin/Int
   returnType: kotlin/Int
   symbolKind: ACCESSOR
   typeParameters: []
@@ -86,7 +86,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiverType: kotlin/Int
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
