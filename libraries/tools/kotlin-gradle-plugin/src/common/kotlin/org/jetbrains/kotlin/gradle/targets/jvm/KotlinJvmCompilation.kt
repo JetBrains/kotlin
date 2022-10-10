@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
@@ -25,8 +24,8 @@ abstract class KotlinJvmCompilation @Inject constructor(
     override val target: KotlinJvmTarget get() = compilationDetails.target as KotlinJvmTarget
 
     @Suppress("UNCHECKED_CAST")
-    override val compilerOptions: HasCompilerOptions<CompilerJvmOptions>
-        get() = super.compilerOptions as HasCompilerOptions<CompilerJvmOptions>
+    override val compilerOptions: HasCompilerOptions<KotlinJvmCompilerOptions>
+        get() = super.compilerOptions as HasCompilerOptions<KotlinJvmCompilerOptions>
 
     override val processResourcesTaskName: String
         get() = disambiguateName("processResources")
@@ -42,8 +41,8 @@ abstract class KotlinJvmCompilation @Inject constructor(
         get() = super.compileKotlinTask as org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
     @Suppress("UNCHECKED_CAST")
-    override val compileTaskProvider: TaskProvider<out KotlinCompilationTask<CompilerJvmOptions>>
-        get() = super.compileTaskProvider as TaskProvider<KotlinCompilationTask<CompilerJvmOptions>>
+    override val compileTaskProvider: TaskProvider<out KotlinCompilationTask<KotlinJvmCompilerOptions>>
+        get() = super.compileTaskProvider as TaskProvider<KotlinCompilationTask<KotlinJvmCompilerOptions>>
 
     val compileJavaTaskProvider: TaskProvider<out JavaCompile>?
         get() = if (target.withJavaEnabled) {

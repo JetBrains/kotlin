@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-internal abstract class CompilerCommonOptionsDefault @javax.inject.Inject constructor(
+internal abstract class KotlinCommonCompilerOptionsDefault @javax.inject.Inject constructor(
     objectFactory: org.gradle.api.model.ObjectFactory
-) : org.jetbrains.kotlin.gradle.dsl.CompilerCommonToolOptionsDefault(objectFactory), org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions {
+) : org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptionsDefault(objectFactory), org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions {
 
     override val apiVersion: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.KotlinVersion> =
         objectFactory.property(org.jetbrains.kotlin.gradle.dsl.KotlinVersion::class.java)

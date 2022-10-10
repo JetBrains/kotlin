@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks
 
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
-import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.CompilerCommonToolOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -35,7 +35,7 @@ internal fun buildKotlinNativeKlibCompilerArgs(
 
     languageSettings: LanguageSettings,
     enableEndorsedLibs: Boolean,
-    compilerOptions: CompilerCommonOptions,
+    compilerOptions: KotlinCommonCompilerOptions,
     compilerPlugins: List<CompilerPluginData>,
 
     moduleName: String,
@@ -81,7 +81,7 @@ internal fun buildKotlinNativeBinaryLinkerArgs(
     friendModules: List<File>,
 
     enableEndorsedLibs: Boolean,
-    toolOptions: CompilerCommonToolOptions,
+    toolOptions: KotlinCommonCompilerToolOptions,
     compilerPlugins: List<CompilerPluginData>,
 
     processTests: Boolean,
@@ -138,7 +138,7 @@ private fun buildKotlinNativeMainArgs(
 internal fun buildKotlinNativeCompileCommonArgs(
     enableEndorsedLibs: Boolean,
     languageSettings: LanguageSettings,
-    compilerOptions: CompilerCommonOptions,
+    compilerOptions: KotlinCommonCompilerOptions,
     compilerPlugins: List<CompilerPluginData>
 ): List<String> = mutableListOf<String>().apply {
     add("-Xmulti-platform")
@@ -166,7 +166,7 @@ internal fun buildKotlinNativeCompileCommonArgs(
 
 internal fun buildKotlinNativeCommonArgs(
     enableEndorsedLibs: Boolean,
-    toolOptions: CompilerCommonToolOptions,
+    toolOptions: KotlinCommonCompilerToolOptions,
     compilerPlugins: List<CompilerPluginData>
 ): List<String> = mutableListOf<String>().apply {
     add("-Xmulti-platform")

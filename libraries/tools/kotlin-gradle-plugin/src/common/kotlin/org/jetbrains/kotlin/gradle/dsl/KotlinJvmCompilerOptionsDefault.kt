@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-internal abstract class CompilerJvmOptionsDefault @javax.inject.Inject constructor(
+internal abstract class KotlinJvmCompilerOptionsDefault @javax.inject.Inject constructor(
     objectFactory: org.gradle.api.model.ObjectFactory
-) : org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptionsDefault(objectFactory), org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions {
+) : org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsDefault(objectFactory), org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions {
 
     override val javaParameters: org.gradle.api.provider.Property<kotlin.Boolean> =
         objectFactory.property(kotlin.Boolean::class.java).convention(false)

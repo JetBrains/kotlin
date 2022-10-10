@@ -20,9 +20,7 @@ import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
-import org.jetbrains.kotlin.gradle.dsl.CompilerCommonToolOptions
-import org.jetbrains.kotlin.gradle.dsl.CompilerCommonToolOptionsDefault
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
@@ -43,7 +41,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     private val execOperations: ExecOperations,
     private val projectLayout: ProjectLayout
 ) : DefaultTask(),
-    KotlinToolTask<CompilerCommonToolOptions> {
+    KotlinToolTask<KotlinCommonCompilerToolOptions> {
 
     @get:Input
     abstract val baseName: Property<String>
@@ -94,8 +92,8 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     @get:Input
     internal val allBinaryOptions: Provider<Map<String, String>> = binaryOptions.map { it + nativeBinaryOptions }
 
-    override val toolOptions: CompilerCommonToolOptions = objectFactory
-        .newInstance<CompilerCommonToolOptionsDefault>()
+    override val toolOptions: KotlinCommonCompilerToolOptions = objectFactory
+        .newInstance<KotlinCommonCompilerToolOptionsDefault>()
         .apply {
             freeCompilerArgs.addAll(PropertiesProvider(project).nativeLinkArgs)
         }
@@ -107,7 +105,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     )
     @get:Internal
     val kotlinOptions = object : KotlinCommonToolOptions {
-        override val options: CompilerCommonToolOptions
+        override val options: KotlinCommonCompilerToolOptions
             get() = toolOptions
     }
 

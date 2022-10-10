@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-interface CompilerCommonOptions : org.jetbrains.kotlin.gradle.dsl.CompilerCommonToolOptions {
+interface KotlinCommonCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptions {
 
     /**
      * Allow using declarations only from the specified version of bundled libraries

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
-import org.jetbrains.kotlin.gradle.dsl.CompilerJsOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -89,7 +89,7 @@ open class KotlinJsIrTargetConfigurator() :
         }
     }
 
-    private fun CompilerJsOptions.configureOptions() {
+    private fun KotlinJsCompilerOptions.configureOptions() {
         moduleKind.set(JsModuleKind.MODULE_UMD)
         sourceMap.set(true)
         sourceMapEmbedSources.set(JsSourceMapEmbedMode.SOURCE_MAP_SOURCE_CONTENT_NEVER)

@@ -10,8 +10,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.CompilerJsOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.JsBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import javax.inject.Inject
 
 abstract class KotlinJsCompilation @Inject internal constructor(
@@ -33,8 +31,8 @@ abstract class KotlinJsCompilation @Inject internal constructor(
     final override val target: KotlinTarget get() = super.target
 
     @Suppress("UNCHECKED_CAST")
-    final override val compilerOptions: HasCompilerOptions<CompilerJsOptions>
-        get() = super.compilerOptions as HasCompilerOptions<CompilerJsOptions>
+    final override val compilerOptions: HasCompilerOptions<KotlinJsCompilerOptions>
+        get() = super.compilerOptions as HasCompilerOptions<KotlinJsCompilerOptions>
 
     private val kotlinProperties = PropertiesProvider(target.project)
 

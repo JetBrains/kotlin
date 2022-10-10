@@ -62,10 +62,10 @@ internal class AndroidProjectHandler(
 
         applyKotlinAndroidSourceSetLayout(kotlinAndroidTarget)
 
-        val androidExtensionCompilerOptions = project.objects.newInstance<CompilerJvmOptionsDefault>()
+        val androidExtensionCompilerOptions = project.objects.newInstance<KotlinJvmCompilerOptionsDefault>()
         androidExtensionCompilerOptions.noJdk.value(true).finalizeValueOnRead()
         @Suppress("DEPRECATION") val kotlinOptions = object : KotlinJvmOptions {
-            override val options: CompilerJvmOptions
+            override val options: KotlinJvmCompilerOptions
                 get() = androidExtensionCompilerOptions
         }
         ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
@@ -89,7 +89,7 @@ internal class AndroidProjectHandler(
                 setUpDependencyResolution(variant, compilation)
                 project.wireExtensionOptionsToCompilation(
                     androidExtensionCompilerOptions,
-                    compilation.compilerOptions.options as CompilerJvmOptions
+                    compilation.compilerOptions.options as KotlinJvmCompilerOptions
                 )
 
                 preprocessVariant(variant, compilation, project, kotlinConfigurationTools.kotlinTasksProvider)
@@ -119,8 +119,8 @@ internal class AndroidProjectHandler(
     }
 
     private fun Project.wireExtensionOptionsToCompilation(
-        extensionCompilerOptions: CompilerJvmOptions,
-        compilationCompilerOptions: CompilerJvmOptions
+        extensionCompilerOptions: KotlinJvmCompilerOptions,
+        compilationCompilerOptions: KotlinJvmCompilerOptions
     ) {
         // CompilerCommonToolOptions
         compilationCompilerOptions.allWarningsAsErrors.convention(extensionCompilerOptions.allWarningsAsErrors)
@@ -237,7 +237,7 @@ internal class AndroidProjectHandler(
         tasksProvider.registerKotlinJVMTask(
             project,
             compilation.compileKotlinTaskName,
-            compilation.compilerOptions.options as CompilerJvmOptions,
+            compilation.compilerOptions.options as KotlinJvmCompilerOptions,
             configAction
         )
 
