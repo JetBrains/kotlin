@@ -16,14 +16,28 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower.decoys
 
+import androidx.compose.compiler.plugins.kotlin.ComposeCallableIds
+import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 
-object DecoyFqNames {
-    val Decoy = ComposeFqNames.internalFqNameFor("Decoy")
-    val DecoyImplementation = ComposeFqNames.internalFqNameFor("DecoyImplementation")
+object DecoyClassIds {
+    val Decoy = ComposeClassIds.internalClassIdFor("Decoy")
+    val DecoyImplementation = ComposeClassIds.internalClassIdFor("DecoyImplementation")
     val DecoyImplementationDefaultsBitMask =
-        ComposeFqNames.internalFqNameFor("DecoyImplementationDefaultsBitMask")
-    val CurrentComposerIntrinsic =
-        ComposeFqNames.fqNameFor("\$get-currentComposer\$\$composable")
+        ComposeClassIds.internalClassIdFor("DecoyImplementationDefaultsBitMask")
+}
+
+object DecoyCallableIds {
+    val illegalDecoyCallException =
+        ComposeCallableIds.internalTopLevelCallableId("illegalDecoyCallException")
+}
+
+object DecoyFqNames {
+    val Decoy = DecoyClassIds.Decoy.asSingleFqName()
+    val DecoyImplementation = DecoyClassIds.DecoyImplementation.asSingleFqName()
+    val DecoyImplementationDefaultsBitMask =
+        DecoyClassIds.DecoyImplementationDefaultsBitMask.asSingleFqName()
+
+    val CurrentComposerIntrinsic = ComposeFqNames.fqNameFor("\$get-currentComposer\$\$composable")
     val key = ComposeFqNames.fqNameFor("key\$composable")
 }
