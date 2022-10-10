@@ -825,7 +825,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
                 val mockProjectClassLoader = project::class.java.classLoader
                 println("MockProject CLASS: ${mockProjectClassLoader.name}")
                 println("CODE LOCATION: ${project::class.java.protectionDomain.codeSource.location}")
-                throw ex
+                throw RuntimeException(project::class.java.protectionDomain.codeSource.location.toString(), ex)
             }
 
             return KtPsiFactory(environment.project)
