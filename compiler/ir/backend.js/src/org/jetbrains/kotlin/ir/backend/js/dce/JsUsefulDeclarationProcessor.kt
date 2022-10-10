@@ -196,7 +196,7 @@ internal class JsUsefulDeclarationProcessor(
             irFunction.parentClassOrNull?.takeIf { it.isInterface }?.enqueue(irFunction, "interface default method is used")
         }
 
-        val property = irFunction.correspondingPropertySymbol?.owner?.takeIf { !context.es6mode } ?: return
+        val property = irFunction.correspondingPropertySymbol?.owner ?: return
 
         if (property.isExported(context) || property.isOverriddenExternal()) {
             context.intrinsics.jsDefinePropertySymbol.owner.enqueue(irFunction, "property for export")

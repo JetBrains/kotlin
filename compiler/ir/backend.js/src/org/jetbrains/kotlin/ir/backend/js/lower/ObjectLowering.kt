@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -39,8 +41,7 @@ class ObjectDeclarationLowering(
      * If the object being lowered is nested inside an enum class, we want to also initialize the enum entries when initializing the object.
      */
     private var IrClass.initEntryInstancesFun: IrSimpleFunction? by context.mapping.enumClassToInitEntryInstancesFun
-
-    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration !is IrClass || declaration.kind != ClassKind.OBJECT || declaration.isEffectivelyExternal())
             return null
 
@@ -67,7 +68,7 @@ class ObjectDeclarationLowering(
                 if (initEntryInstancesFun != null)
                     +irCall(initEntryInstancesFun)
                 +irIfThen(
-                    irEqualsNull(irGetField(null, instanceField)),
+                    checkNullability(instanceField),
                     // Instance field initialized inside constructor
                     irCallConstructor(primaryConstructor.symbol, emptyList())
                 )
@@ -76,6 +77,16 @@ class ObjectDeclarationLowering(
         }
 
         return listOf(declaration, instanceField, getInstanceFun)
+    }
+
+    private fun IrBuilderWithScope.checkNullability(field: IrField): IrExpression {
+        val context = this@ObjectDeclarationLowering.context
+        val fieldGetExpr = irGetField(null, field)
+        return if (context.es6mode && context is JsIrBackendContext) {
+            irEqeqeq(fieldGetExpr, context.getVoid())
+        } else {
+            irEqualsNull(fieldGetExpr)
+        }
     }
 }
 
@@ -93,10 +104,16 @@ class ObjectUsageLowering(
                 val initInstanceField = context.createIrBuilder(container.symbol).buildStatement(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                     irSetField(null, instanceField, irGet(irClass.thisReceiver!!))
                 }
-                if (context.es6mode) {
+                if (context.es6mode && context is JsIrBackendContext) {
+                    val setToNull = JsIrBuilder.buildSetField(
+                        instanceField.symbol,
+                        null,
+                        JsIrBuilder.buildNull(context.dynamicType),
+                        context.dynamicType
+                    )
                     //find `superCall` and put after
                     (irBody as IrBlockBody).statements.transformFlat {
-                        if (it is IrDelegatingConstructorCall) listOf(it, initInstanceField)
+                        if (it is IrDelegatingConstructorCall) listOf(setToNull, it, initInstanceField)
                         else if (it is IrVariable && it.origin === ES6_THIS_VARIABLE_ORIGIN) {
                             initInstanceField.value = JsIrBuilder.buildGetValue(it.symbol)
                             listOf(it, initInstanceField)
