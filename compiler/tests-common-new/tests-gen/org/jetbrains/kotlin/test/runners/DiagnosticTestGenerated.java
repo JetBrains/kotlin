@@ -29700,6 +29700,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("capturedSpecificity.kt")
+                public void testCapturedSpecificity() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/capturedSpecificity.kt");
+                }
+
+                @Test
                 @TestMetadata("conflictTypeParameters.kt")
                 public void testConflictTypeParameters() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/conflictTypeParameters.kt");
