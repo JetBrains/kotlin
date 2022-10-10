@@ -6,8 +6,8 @@
 fun call(c: Any) {}
 
 fun test() {
-    JavaClass::<!UNSUPPORTED!>foo<!>
-    call(JavaClass::<!UNSUPPORTED!>foo<!>)
+    JavaClass::<!UNSUPPORTED_FEATURE!>foo<!>
+    call(JavaClass::<!UNSUPPORTED_FEATURE!>foo<!>)
 }
 
 // FILE: JavaClass.java

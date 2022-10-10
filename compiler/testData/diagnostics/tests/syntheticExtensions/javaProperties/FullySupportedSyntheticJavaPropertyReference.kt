@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +ReferencesToSyntheticJavaProperties
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
@@ -6,8 +7,8 @@
 fun call(c: Any) {}
 
 fun test() {
-    JavaClass::<!CALLABLE_REFERENCE_TO_JAVA_SYNTHETIC_PROPERTY!>foo<!>
-    call(JavaClass::<!CALLABLE_REFERENCE_TO_JAVA_SYNTHETIC_PROPERTY!>foo<!>)
+    JavaClass::foo
+    call(JavaClass::foo)
 }
 
 // FILE: JavaClass.java
