@@ -112,10 +112,7 @@ FILE: secondaryConstructor.kt
     public final [CONTRACTS] fun receive([CONTRACTS] value: R|A|): R|kotlin/Unit| {
     }
     public final [STATUS] class A : R|kotlin/Any| {
-        public [STATUS] [ContainingClassKey=A] constructor([STATUS] x: R|kotlin/Int|): R|A| {
-            super<R|kotlin/Any|>()
-            [RAW_FIR] lval a: <implicit> = x#
-        }
+        public [STATUS] [ContainingClassKey=A] constructor([RAW_FIR] x: R|kotlin/Int|): R|A| { LAZY_BLOCK }
 
     }
 
