@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
+import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.FunctionMetrics
 import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
@@ -142,6 +143,8 @@ import org.jetbrains.kotlin.ir.util.isNoinline
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -171,7 +174,7 @@ abstract class AbstractComposeLowering(
     protected val builtIns = context.irBuiltIns
 
     private val _composerIrClass =
-        context.referenceClass(ComposeFqNames.Composer)?.owner
+        context.referenceClass(ComposeClassIds.Composer)?.owner
             ?: error("Cannot find the Composer class in the classpath")
 
     // this ensures that composer always references up-to-date composer class symbol
@@ -192,46 +195,31 @@ abstract class AbstractComposeLowering(
         return symbolRemapper.getReferencedConstructor(symbol)
     }
 
-    fun getTopLevelClass(fqName: FqName): IrClassSymbol {
-        return getTopLevelClassOrNull(fqName) ?: error("Class not found in the classpath: $fqName")
+    fun getTopLevelClass(classId: ClassId): IrClassSymbol {
+        return getTopLevelClassOrNull(classId)
+            ?: error("Class not found in the classpath: ${classId.asSingleFqName()}")
     }
 
-    fun getTopLevelClassOrNull(fqName: FqName): IrClassSymbol? {
-        return context.referenceClass(fqName)
+    fun getTopLevelClassOrNull(classId: ClassId): IrClassSymbol? {
+        return context.referenceClass(classId)
     }
 
-    fun getTopLevelFunction(fqName: FqName): IrFunctionSymbol {
-        return getTopLevelFunctionOrNull(fqName)
-            ?: error("Function not found in the classpath: $fqName")
+    fun getTopLevelFunction(callableId: CallableId): IrSimpleFunctionSymbol {
+        return getTopLevelFunctionOrNull(callableId)
+            ?: error("Function not found in the classpath: ${callableId.asSingleFqName()}")
     }
 
-    fun getTopLevelFunctionOrNull(fqName: FqName): IrFunctionSymbol? {
-        return context.referenceFunctions(fqName).firstOrNull()
+    fun getTopLevelFunctionOrNull(callableId: CallableId): IrSimpleFunctionSymbol? {
+        return context.referenceFunctions(callableId).firstOrNull()
     }
 
-    fun getTopLevelFunctions(fqName: FqName): List<IrSimpleFunctionSymbol> {
-        return context.referenceFunctions(fqName).toList()
+    fun getTopLevelFunctions(callableId: CallableId): List<IrSimpleFunctionSymbol> {
+        return context.referenceFunctions(callableId).toList()
     }
 
-    fun getInternalFunction(name: String) = getTopLevelFunction(
-        ComposeFqNames.internalFqNameFor(name)
-    )
-
-    fun getInternalProperty(name: String) = getTopLevelPropertyGetter(
-        ComposeFqNames.internalFqNameFor(name)
-    )
-
-    fun getInternalClass(name: String) = getTopLevelClass(
-        ComposeFqNames.internalFqNameFor(name)
-    )
-
-    fun getInternalClassOrNull(name: String) = getTopLevelClassOrNull(
-        ComposeFqNames.internalFqNameFor(name)
-    )
-
-    fun getTopLevelPropertyGetter(fqName: FqName): IrFunctionSymbol {
-        val propertySymbol = context.referenceProperties(fqName).firstOrNull()
-            ?: error("Property was not found $fqName")
+    fun getTopLevelPropertyGetter(callableId: CallableId): IrFunctionSymbol {
+        val propertySymbol = context.referenceProperties(callableId).firstOrNull()
+            ?: error("Property was not found ${callableId.asSingleFqName()}")
         return symbolRemapper.getReferencedFunction(
             propertySymbol.owner.getter!!.symbol
         )
@@ -1281,8 +1269,10 @@ fun ValueParameterDescriptor.isComposerParam(): Boolean =
     name == KtxNameConventions.COMPOSER_PARAMETER &&
         type.constructor.declarationDescriptor?.fqNameSafe == ComposeFqNames.Composer
 
+// FIXME: There is a `functionN` factory in `IrBuiltIns`, but it currently produces unbound symbols.
+//        We can switch to this and remove this function once KT-54230 is fixed.
 fun IrPluginContext.function(arity: Int): IrClassSymbol =
-    referenceClass(FqName("kotlin.Function$arity"))!!
+    referenceClass(ClassId(FqName("kotlin"), Name.identifier("Function$arity")))!!
 
 val DeclarationDescriptorWithSource.startOffset: Int? get() =
     (this.source as? PsiSourceElement)?.psi?.startOffset
