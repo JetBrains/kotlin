@@ -174,16 +174,16 @@ KtKotlinPropertySymbol:
     annotationsList: []
     callableIdIfNonLocal: null
     contextReceivers: []
-    hasBody: true
+    hasBody: false
     hasStableParameterNames: true
-    isDefault: false
+    isDefault: true
     isExtension: false
     isInline: false
     isOverride: false
     modality: FINAL
     origin: SOURCE
     receiverType: null
-    returnType: MyColor
+    returnType: ERROR_TYPE
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -249,7 +249,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverType: null
-    returnType: kotlin/Lazy<MyColor>
+    returnType: ERROR_TYPE
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -300,7 +300,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverType: null
-    returnType: MyColor
+    returnType: ERROR_TYPE
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []

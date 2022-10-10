@@ -173,7 +173,23 @@ KtFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(element)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: element
+      origin: LIBRARY
+      receiverType: null
+      returnType: E
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
 KtFunctionSymbol:
@@ -198,7 +214,23 @@ KtFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(elements)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: elements
+      origin: LIBRARY
+      receiverType: null
+      returnType: kotlin/collections/Collection<E>
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
 KtFunctionSymbol:
@@ -223,7 +255,23 @@ KtFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(index)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: index
+      origin: LIBRARY
+      receiverType: null
+      returnType: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
 KtFunctionSymbol:
@@ -248,7 +296,23 @@ KtFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(element)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: element
+      origin: LIBRARY
+      receiverType: null
+      returnType: E
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
 KtFunctionSymbol:
@@ -319,7 +383,23 @@ KtFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(element)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: element
+      origin: LIBRARY
+      receiverType: null
+      returnType: E
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
 KtFunctionSymbol:
@@ -367,7 +447,23 @@ KtFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(index)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: index
+      origin: LIBRARY
+      receiverType: null
+      returnType: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
 KtFunctionSymbol:
@@ -392,15 +488,64 @@ KtFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(fromIndex)
-    KtValueParameterSymbol(toIndex)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: fromIndex
+      origin: LIBRARY
+      receiverType: null
+      returnType: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: toIndex
+      origin: LIBRARY
+      receiverType: null
+      returnType: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
 KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/collections/List.size
   contextReceivers: []
-  getter: KtPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: ABSTRACT
+    origin: LIBRARY
+    receiverType: null
+    returnType: kotlin/Int
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -444,7 +589,23 @@ KtFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(other)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: other
+      origin: LIBRARY
+      receiverType: null
+      returnType: kotlin/Any?
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
 KtFunctionSymbol:

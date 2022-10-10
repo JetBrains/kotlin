@@ -14,7 +14,23 @@ KtConstructorSymbol:
     KtTypeParameterSymbol(E)
   ]
   valueParameters: [
-    KtValueParameterSymbol(c)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: c
+      origin: JAVA
+      receiverType: null
+      returnType: ft<kotlin/collections/MutableCollection<out ft<E & Any, E?>>, kotlin/collections/Collection<out ft<E & Any, E?>>?>
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
   getContainingModule: KtSdkModule "SDK jdk"

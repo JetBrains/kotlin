@@ -134,13 +134,15 @@ public object DebugSymbolRenderer {
             }
         }
 
+        if (symbol is KtPropertyGetterSymbol || symbol is KtPropertySetterSymbol || symbol is KtValueParameterSymbol) {
+            renderSymbol(symbol)
+            return
+        }
+
         append(getSymbolApiClass(symbol).simpleName)
         append("(")
         when (symbol) {
             is KtClassLikeSymbol -> renderId(symbol.classIdIfNonLocal, symbol)
-            is KtValueParameterSymbol -> renderValue(symbol.name)
-            is KtPropertyGetterSymbol -> append("<getter>")
-            is KtPropertySetterSymbol -> append("<setter>")
             is KtCallableSymbol -> renderId(symbol.callableIdIfNonLocal, symbol)
             is KtNamedSymbol -> renderValue(symbol.name)
             else -> error("Unsupported symbol ${symbol::class.java.name}")

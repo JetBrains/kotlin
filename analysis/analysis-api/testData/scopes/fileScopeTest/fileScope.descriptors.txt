@@ -60,7 +60,23 @@ KtFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(par1)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: par1
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
@@ -70,7 +86,24 @@ KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /testVal
   contextReceivers: []
-  getter: KtPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: false
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/Int
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -103,7 +136,24 @@ KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /initializedVariable
   contextReceivers: []
-  getter: KtPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: false
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/Int
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -121,7 +171,59 @@ KtKotlinPropertySymbol:
   origin: SOURCE
   receiverType: null
   returnType: kotlin/Int
-  setter: KtPropertySetterSymbol(<setter>)
+  setter: KtPropertySetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: false
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    parameter: KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: value
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
+    receiverType: null
+    returnType: kotlin/Unit
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: [
+      KtValueParameterSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: null
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isCrossinline: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVararg: false
+        name: value
+        origin: SOURCE
+        receiverType: null
+        returnType: kotlin/Int
+        symbolKind: LOCAL
+        typeParameters: []
+    ]
+    visibility: Public
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
@@ -136,7 +238,24 @@ KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /unitializedVariable
   contextReceivers: []
-  getter: KtPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: false
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/Long
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -154,7 +273,59 @@ KtKotlinPropertySymbol:
   origin: SOURCE
   receiverType: null
   returnType: kotlin/Long
-  setter: KtPropertySetterSymbol(<setter>)
+  setter: KtPropertySetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: false
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    parameter: KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: value
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Long
+      symbolKind: LOCAL
+      typeParameters: []
+    receiverType: null
+    returnType: kotlin/Unit
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: [
+      KtValueParameterSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: null
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isCrossinline: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVararg: false
+        name: value
+        origin: SOURCE
+        receiverType: null
+        returnType: kotlin/Long
+        symbolKind: LOCAL
+        typeParameters: []
+    ]
+    visibility: Public
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
@@ -169,7 +340,24 @@ KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /lateinitVariable
   contextReceivers: []
-  getter: KtPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: false
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/String
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -187,7 +375,59 @@ KtKotlinPropertySymbol:
   origin: SOURCE
   receiverType: null
   returnType: kotlin/String
-  setter: KtPropertySetterSymbol(<setter>)
+  setter: KtPropertySetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: false
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    parameter: KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: value
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/String
+      symbolKind: LOCAL
+      typeParameters: []
+    receiverType: null
+    returnType: kotlin/Unit
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: [
+      KtValueParameterSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: null
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isCrossinline: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVararg: false
+        name: value
+        origin: SOURCE
+        receiverType: null
+        returnType: kotlin/String
+        symbolKind: LOCAL
+        typeParameters: []
+    ]
+    visibility: Public
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
@@ -202,7 +442,24 @@ KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /variableWithBackingField
   contextReceivers: []
-  getter: KtPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: true
+    hasStableParameterNames: false
+    isDefault: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/Long
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -220,7 +477,59 @@ KtKotlinPropertySymbol:
   origin: SOURCE
   receiverType: null
   returnType: kotlin/Long
-  setter: KtPropertySetterSymbol(<setter>)
+  setter: KtPropertySetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: false
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    parameter: KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: value
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Long
+      symbolKind: LOCAL
+      typeParameters: []
+    receiverType: null
+    returnType: kotlin/Unit
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: [
+      KtValueParameterSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: null
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isCrossinline: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVararg: false
+        name: value
+        origin: SOURCE
+        receiverType: null
+        returnType: kotlin/Long
+        symbolKind: LOCAL
+        typeParameters: []
+    ]
+    visibility: Public
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
@@ -235,7 +544,24 @@ KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /privateSetter
   contextReceivers: []
-  getter: KtPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: false
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/String
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -253,7 +579,62 @@ KtKotlinPropertySymbol:
   origin: SOURCE
   receiverType: null
   returnType: kotlin/String
-  setter: KtPropertySetterSymbol(<setter>)
+  setter: KtPropertySetterSymbol:
+    annotationsList: [
+      kotlin/jvm/JvmName(name = "customPrivateSetter")
+        psi: KtAnnotationEntry
+    ]
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: false
+    isDefault: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    parameter: KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: value
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/String
+      symbolKind: LOCAL
+      typeParameters: []
+    receiverType: null
+    returnType: kotlin/Unit
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: [
+      KtValueParameterSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: null
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isCrossinline: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVararg: false
+        name: value
+        origin: SOURCE
+        receiverType: null
+        returnType: kotlin/String
+        symbolKind: LOCAL
+        typeParameters: []
+    ]
+    visibility: Private
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
@@ -268,7 +649,24 @@ KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /jvmNameOnSetter
   contextReceivers: []
-  getter: KtPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: false
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/String
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -286,7 +684,62 @@ KtKotlinPropertySymbol:
   origin: SOURCE
   receiverType: null
   returnType: kotlin/String
-  setter: KtPropertySetterSymbol(<setter>)
+  setter: KtPropertySetterSymbol:
+    annotationsList: [
+      kotlin/jvm/JvmName(name = "customPrivateSetter")
+        psi: KtAnnotationEntry
+    ]
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: false
+    isDefault: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    parameter: KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: value
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/String
+      symbolKind: LOCAL
+      typeParameters: []
+    receiverType: null
+    returnType: kotlin/Unit
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: [
+      KtValueParameterSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: null
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isCrossinline: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVararg: false
+        name: value
+        origin: SOURCE
+        receiverType: null
+        returnType: kotlin/String
+        symbolKind: LOCAL
+        typeParameters: []
+    ]
+    visibility: Private
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
@@ -301,7 +754,27 @@ KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /customGetter
   contextReceivers: []
-  getter: KtPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol:
+    annotationsList: [
+      kotlin/jvm/JvmName(name = "myCustomGetter")
+        psi: KtAnnotationEntry
+    ]
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: true
+    hasStableParameterNames: false
+    isDefault: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/Int
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -334,7 +807,27 @@ KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /jvmNameOnGetter
   contextReceivers: []
-  getter: KtPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol:
+    annotationsList: [
+      kotlin/jvm/JvmName(name = "myCustomGetter")
+        psi: KtAnnotationEntry
+    ]
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: true
+    hasStableParameterNames: false
+    isDefault: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/Int
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -367,7 +860,24 @@ KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /propertyWithReceiver
   contextReceivers: []
-  getter: KtPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: true
+    hasStableParameterNames: false
+    isDefault: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverType: kotlin/Int
+    returnType: kotlin/Int
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -400,7 +910,24 @@ KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /propertyWithGenericReceiver
   contextReceivers: []
-  getter: KtPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: true
+    hasStableParameterNames: false
+    isDefault: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverType: T
+    returnType: kotlin/Int
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -435,7 +962,24 @@ KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /constant
   contextReceivers: []
-  getter: KtPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: false
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/Int
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -468,7 +1012,24 @@ KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /jvmField
   contextReceivers: []
-  getter: KtPropertyGetterSymbol(<getter>)
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: false
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/Long
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -486,7 +1047,59 @@ KtKotlinPropertySymbol:
   origin: SOURCE
   receiverType: null
   returnType: kotlin/Long
-  setter: KtPropertySetterSymbol(<setter>)
+  setter: KtPropertySetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: false
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    parameter: KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: value
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Long
+      symbolKind: LOCAL
+      typeParameters: []
+    receiverType: null
+    returnType: kotlin/Unit
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: [
+      KtValueParameterSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: null
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isCrossinline: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVararg: false
+        name: value
+        origin: SOURCE
+        receiverType: null
+        returnType: kotlin/Long
+        symbolKind: LOCAL
+        typeParameters: []
+    ]
+    visibility: Public
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public

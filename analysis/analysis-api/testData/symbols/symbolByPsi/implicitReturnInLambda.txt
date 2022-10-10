@@ -45,7 +45,23 @@ KtAnonymousFunctionSymbol:
   symbolKind: LOCAL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(a)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: a
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -112,7 +128,23 @@ KtAnonymousFunctionSymbol:
   symbolKind: LOCAL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(a)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: a
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -159,7 +191,23 @@ KtAnonymousFunctionSymbol:
   symbolKind: LOCAL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(it)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: true
+      isNoinline: false
+      isVararg: false
+      name: it
+      origin: SOURCE_MEMBER_GENERATED
+      receiverType: null
+      returnType: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -232,7 +280,23 @@ KtFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(lmbd)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: lmbd
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Function1<kotlin/Int, kotlin/Int>
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   visibility: Private
   getContainingModule: KtSourceModule "Sources of main"
