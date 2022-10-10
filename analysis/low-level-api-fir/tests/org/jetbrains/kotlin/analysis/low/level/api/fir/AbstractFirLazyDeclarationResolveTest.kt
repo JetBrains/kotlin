@@ -39,9 +39,9 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
         val visitor = object : FirVisitorVoid() {
             var result: FirDeclaration? = null
             override fun visitElement(element: FirElement) {
-                if (result != null) return
+                if (result != null || element !is FirDeclaration) return
                 val declaration = element.realPsi as? KtDeclaration
-                if (element is FirDeclaration && declaration != null && declaration.name?.decapitalizeAsciiOnly() == "resolveMe") {
+                if (declaration != null && declaration.name?.decapitalizeAsciiOnly() == "resolveMe") {
                     result = element
                     return
                 }

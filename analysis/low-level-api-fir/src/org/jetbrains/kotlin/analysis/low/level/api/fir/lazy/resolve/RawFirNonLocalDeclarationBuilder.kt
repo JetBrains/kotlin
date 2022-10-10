@@ -77,6 +77,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     private val functionsToRebind: Set<FirFunction>? = null,
     private val replacementApplier: RawFirReplacement.Applier? = null
 ) : RawFirNonLocalBuilder<FirDeclaration>(session, baseScopeProvider, originalDeclaration) {
+    private var containingClass: FirRegularClass? = null
 
     companion object {
         fun buildWithReplacement(
@@ -213,9 +214,24 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             val params = extractContructorConversionParams(classOrObject)
             return constructor.toFirConstructor(params.superType, params.selfType, classOrObject, params.typeParameters)
         }
+
+        override fun visitEnumEntry(enumEntry: KtEnumEntry, data: Unit?): FirElement {
+            val owner = containingClass!!
+            val classOrObject = owner.psi as KtClassOrObject
+            val primaryConstructor = classOrObject.primaryConstructor
+            val ownerClassHasDefaultConstructor =
+                primaryConstructor?.valueParameters?.isEmpty() ?: classOrObject.secondaryConstructors.let { constructors ->
+                    constructors.isEmpty() || constructors.any { it.valueParameters.isEmpty() }
+                }
+            val typeParameters = ArrayList<FirTypeParameterRef>()
+            context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
+            val selfType = classOrObject.toDelegatedSelfType(typeParameters, FirRegularClassSymbol(context.currentClassId))
+            return enumEntry.toFirEnumEntry(selfType, ownerClassHasDefaultConstructor)
+        }
     }
 
     override fun process(containingClass: FirRegularClass?): FirDeclaration {
+        this.containingClass = containingClass
         val visitor = VisitorWithReplacement()
         return when (declarationToBuild) {
             is KtProperty -> {

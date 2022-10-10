@@ -85,6 +85,21 @@ internal object FirLazyBodiesCalculator {
         }
     }
 
+    fun calculateLazyInitializerForEnumEntry(designation: FirDeclarationDesignation) {
+        val enumEntry = designation.declaration as FirEnumEntry
+        if (enumEntry.initializer !is FirLazyExpression) return
+        val newEntry = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
+            session = enumEntry.moduleData.session,
+            scopeProvider = enumEntry.moduleData.session.kotlinScopeProvider,
+            designation = designation,
+            rootNonLocalDeclaration = enumEntry.psi as KtEnumEntry,
+        ) as FirEnumEntry
+        enumEntry.apply {
+            replaceInitializer(newEntry.initializer)
+            replaceAnnotations(annotations, newEntry.annotations)
+        }
+    }
+
     fun calculateLazyBodyForPrimaryConstructor(designation: FirDeclarationDesignation) {
         val primaryConstructor = designation.declaration as FirPrimaryConstructor
         require(primaryConstructor.isPrimary)
@@ -305,5 +320,13 @@ private class FirLazyBodiesCalculatorTransformer(val contractableOnly: Boolean =
             FirLazyBodiesCalculator.calculateLazyBodyForProperty(designation)
         }
         return property
+    }
+
+    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: PersistentList<FirDeclaration>): FirStatement {
+        if (!contractableOnly && enumEntry.initializer is FirLazyExpression) {
+            val designation = FirDeclarationDesignation(data, enumEntry)
+            FirLazyBodiesCalculator.calculateLazyInitializerForEnumEntry(designation)
+        }
+        return enumEntry
     }
 }
