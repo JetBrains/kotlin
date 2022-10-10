@@ -7,6 +7,6 @@ const val a = <!EVALUATED: `Some string with not zero length!!!`!>append(StringB
 const val b = <!WAS_NOT_EVALUATED: `
 Exception java.lang.IndexOutOfBoundsException: start -1, end 0, s.length() 3
 	at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:539)
-	at java.lang.StringBuilder.append(StringBuilder.java:175)
+	at java.lang.StringBuilder.append(StringBuilder.java:180)
 	at ExceptionFromWrapperKt.append(exceptionFromWrapper.kt:3)
 	at ExceptionFromWrapperKt.<clinit>(exceptionFromWrapper.kt:7)`!>append(StringBuilder("Some string with not zero length"), "!!!", -1, 0)<!>
