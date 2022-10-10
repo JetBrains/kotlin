@@ -10,7 +10,7 @@ external fun require(module: String): dynamic
 external val process: dynamic
 external val __dirname: dynamic
 
-fun main(args: Array<String>) {
+fun main() {
     println("Server Starting!")
 
     val express = require("express")
@@ -28,7 +28,7 @@ fun main(args: Array<String>) {
     app.set("view engine", "ejs")
     app.use(express.static("ui"))
 
-    val server = http.createServer(app)
+    http.createServer(app)
     app.listen(port, {
         println("App listening on port " + port + "!")
     })

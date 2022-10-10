@@ -51,7 +51,7 @@ repositories {
 apply plugin: 'kotlin-multiplatform'
 
 kotlin {
-    js {
+    js(IR) {
         browser {
             binaries.executable()
             distribution {
