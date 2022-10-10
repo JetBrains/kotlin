@@ -238,6 +238,8 @@ internal class CInteropCompilation(
             compilerOutputHasErrors = false,
             duration = duration
         )
+        expectedArtifact.logFile.writeText(loggedCInteropCall.toString())
+
         return TestCompilationResult.Success(expectedArtifact, loggedCInteropCall)
     }
 

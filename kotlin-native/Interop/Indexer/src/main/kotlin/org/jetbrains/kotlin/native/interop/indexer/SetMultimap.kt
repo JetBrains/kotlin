@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.native.interop.indexer
 
 /**
  * Own implementation of SetMultiMap. The reason to provide own implementation, and not to re-use from IntelliJ core or compiler.fir.cones:
- * to break classpath compile/run inconsistency for `core-impl` module.
+ * not to introduce extra module dependencies, including possible classpath compile/run inconsistency for `core-impl` module.
  */
 class SetMultimap<K, V> {
     private val map: MutableMap<K, MutableCollection<V>> = hashMapOf()
