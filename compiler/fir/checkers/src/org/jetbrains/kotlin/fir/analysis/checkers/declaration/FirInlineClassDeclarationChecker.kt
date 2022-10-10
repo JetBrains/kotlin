@@ -52,6 +52,8 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
             reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_FINAL, context)
         }
 
+        // TODO check absence of context receivers when FIR infrastructure is ready
+
         for (supertypeEntry in declaration.superTypeRefs) {
             if (supertypeEntry.toRegularClassSymbol(context.session)?.isInterface != true) {
                 reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES, context)
