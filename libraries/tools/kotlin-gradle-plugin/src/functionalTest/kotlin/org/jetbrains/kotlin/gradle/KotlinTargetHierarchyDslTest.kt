@@ -11,8 +11,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyDescriptor
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.buildKotlinTargetHierarchy
+import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.naturalKotlinTargetHierarchy
+import kotlin.test.*
 
 class KotlinTargetHierarchyDslTest {
 
@@ -175,6 +176,20 @@ class KotlinTargetHierarchyDslTest {
             setOf(commonMain, commonTest, nativeMain, nativeTest, linuxMain, linuxTest, linuxX64Main, linuxX64Test),
             kotlin.sourceSets.toSet()
         )
+    }
+
+    @Test
+    fun `test - hierarchy default - is only applied to main and test compilations`() {
+        assertNotNull(naturalKotlinTargetHierarchy.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.main))
+        assertNotNull(naturalKotlinTargetHierarchy.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.test))
+        assertNull(naturalKotlinTargetHierarchy.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("custom")))
+
+        kotlin.targetHierarchy.default()
+        kotlin.linuxX64().compilations.maybeCreate("custom").defaultSourceSet.let { customSourceSet ->
+            if (customSourceSet.dependsOn.isNotEmpty()) {
+                fail("Expected no dependsOn SourceSets for $customSourceSet (${customSourceSet.dependsOn})")
+            }
+        }
     }
 
     @Test
