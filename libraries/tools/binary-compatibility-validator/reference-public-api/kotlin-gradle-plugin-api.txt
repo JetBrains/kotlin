@@ -1029,6 +1029,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetE
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder {
+	public abstract fun addCompilations (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun android ()V
 	public abstract fun androidNativeArm32 ()V
 	public abstract fun androidNativeArm64 ()V
@@ -1045,9 +1046,8 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetH
 	public abstract fun anyTvos ()V
 	public abstract fun anyWatchos ()V
 	public abstract fun common (Lkotlin/jvm/functions/Function1;)V
-	public abstract fun excludeCompilation (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun filterCompilations (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun group (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
-	public abstract fun includeCompilation (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun iosArm32 ()V
 	public abstract fun iosArm64 ()V
 	public abstract fun iosSimulatorArm64 ()V
@@ -1062,6 +1062,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetH
 	public abstract fun macosX64 ()V
 	public abstract fun mingwX64 ()V
 	public abstract fun mingwX86 ()V
+	public abstract fun removeCompilations (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun tvosArm64 ()V
 	public abstract fun tvosSimulatorArm64 ()V
 	public abstract fun tvosX64 ()V
@@ -1076,6 +1077,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetH
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder$DefaultImpls {
 	public static fun common (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder;Lkotlin/jvm/functions/Function1;)V
+	public static fun filterCompilations (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun group$default (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 }
 
