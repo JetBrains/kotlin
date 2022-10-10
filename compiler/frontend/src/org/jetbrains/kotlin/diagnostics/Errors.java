@@ -933,8 +933,6 @@ public interface Errors {
     DiagnosticFactory0<KtExpression> NULLABLE_TYPE_IN_CLASS_LITERAL_LHS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtExpression, KotlinType> EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS = DiagnosticFactory1.create(ERROR);
 
-    DiagnosticFactory0<PsiElement> CALLABLE_REFERENCE_TO_JAVA_SYNTHETIC_PROPERTY = DiagnosticFactory0.create(WARNING);
-
     DiagnosticFactory0<PsiElement> ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE = DiagnosticFactory0.create(ERROR);
 
     // Destructuring-declarations

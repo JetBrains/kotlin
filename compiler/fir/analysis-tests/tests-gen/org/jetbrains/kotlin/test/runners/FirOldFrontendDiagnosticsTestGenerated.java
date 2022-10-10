@@ -31530,6 +31530,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("FullySupportedSyntheticJavaPropertyReference.kt")
+                public void testFullySupportedSyntheticJavaPropertyReference() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/FullySupportedSyntheticJavaPropertyReference.kt");
+                }
+
+                @Test
                 @TestMetadata("GenericClass.kt")
                 public void testGenericClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/GenericClass.kt");
@@ -31629,12 +31635,6 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 @TestMetadata("OverrideGetterOnly.kt")
                 public void testOverrideGetterOnly() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/OverrideGetterOnly.kt");
-                }
-
-                @Test
-                @TestMetadata("PartiallySupportedSyntheticJavaPropertyReference.kt")
-                public void testPartiallySupportedSyntheticJavaPropertyReference() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/PartiallySupportedSyntheticJavaPropertyReference.kt");
                 }
 
                 @Test
