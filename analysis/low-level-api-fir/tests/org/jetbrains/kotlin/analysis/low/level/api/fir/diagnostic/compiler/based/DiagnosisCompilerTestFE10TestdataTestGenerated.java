@@ -33939,6 +33939,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("packagePrivateStatic.kt")
+            public void testPackagePrivateStatic() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/packagePrivateStatic.kt");
+            }
+
+            @Test
             @TestMetadata("privateCompanionInSuperClass.kt")
             public void testPrivateCompanionInSuperClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/privateCompanionInSuperClass.kt");
