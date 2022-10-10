@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.io.ObjectInputStream
-import kotlin.io.path.exists
-import kotlin.io.path.listDirectoryEntries
-import kotlin.io.path.name
-import kotlin.io.path.notExists
+import kotlin.io.path.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -94,6 +91,33 @@ class BuildReportsIT : KGPBaseTest() {
             assertTrue { report.contains("Compiler code analysis:") }
             assertTrue { report.contains("Compiler code generation:") }
             assertTrue { report.contains("Compiler initialization time:") }
+        }
+    }
+
+    @DisplayName("validation")
+    @GradleTest
+    fun testSingleBuildMetricsFileValidation(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            buildAndFail(
+                "compileKotlin", "-Pkotlin.build.report.output=SINGLE_FILE",
+            ) {
+                assertOutputContains("Can't configure single file report: 'kotlin.build.report.single_file' property is mandatory")
+            }
+        }
+    }
+
+    @DisplayName("deprecated property")
+    @GradleTest
+    fun testDeprecatedAndNewSingleBuildMetricsFile(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            val newMetricsPath = projectPath.resolve("metrics.bin")
+            val deprecatedMetricsPath = projectPath.resolve("deprecated_metrics.bin")
+            build(
+                "compileKotlin", "-Pkotlin.build.report.single_file=${newMetricsPath.pathString}",
+                "-Pkotlin.internal.single.build.metrics.file=${deprecatedMetricsPath.pathString}"
+            )
+            assertTrue { deprecatedMetricsPath.exists() }
+            assertTrue { newMetricsPath.notExists() }
         }
     }
 
