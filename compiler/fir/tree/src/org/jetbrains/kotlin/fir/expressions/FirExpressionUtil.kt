@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.TransformData
 import org.jetbrains.kotlin.fir.visitors.transformInplace

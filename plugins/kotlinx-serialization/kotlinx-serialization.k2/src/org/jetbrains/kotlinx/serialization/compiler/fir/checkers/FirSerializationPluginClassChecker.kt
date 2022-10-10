@@ -49,7 +49,7 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
             checkCorrectTransientAnnotationIsUsed(classSymbol, properties.serializableProperties, reporter)
             checkTransients(classSymbol, reporter)
             analyzePropertiesSerializers(classSymbol, properties.serializableProperties, reporter)
-            checkInheritedAnnotations(classSymbol, reporter)
+            checkInheritedAnnotations(classSymbol, context, reporter)
 
             checkVersions(classSymbol, reporter)
         }
@@ -75,11 +75,11 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
 
     context(CheckerContext)
     @Suppress("IncorrectFormatting") // KTIJ-22227
-    private fun checkInheritedAnnotations(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {
+    private fun checkInheritedAnnotations(classSymbol: FirClassSymbol<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         fun annotationsFilter(annotations: List<FirAnnotation>): List<Pair<ClassId, FirAnnotation>> {
             return annotations
                 .filter { it.annotationTypeRef.toRegularClassSymbol(session)?.isInheritableSerialInfoAnnotation == true }
-                .mapNotNull { annotation -> annotation.classId?.let { it to annotation } }
+                .mapNotNull { annotation -> annotation.fullyExpandedClassId(context.session)?.let { it to annotation } }
         }
 
         val annotationByClassId = buildMap {

@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.declarations.getAnnotationsByClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.abbreviatedClassId
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
@@ -144,7 +144,8 @@ class Fir2IrTypeConverter(
                 }
 
                 for (attributeAnnotation in attributes.customAnnotations) {
-                    if (annotations.any { it.abbreviatedClassId == attributeAnnotation.abbreviatedClassId }) continue
+                    val expandedAttributeAnnotation = attributeAnnotation.fullyExpandedClassId(session)
+                    if (annotations.any { it.fullyExpandedClassId(session) == expandedAttributeAnnotation }) continue
                     typeAnnotations += callGenerator.convertToIrConstructorCall(attributeAnnotation) as? IrConstructorCall ?: continue
                 }
                 val expandedType = fullyExpandedType(session)

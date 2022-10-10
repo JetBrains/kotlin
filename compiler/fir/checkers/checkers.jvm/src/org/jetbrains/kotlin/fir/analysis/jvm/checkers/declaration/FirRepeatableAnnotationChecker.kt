@@ -46,7 +46,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
 
         val session = context.session
         for (annotation in annotations) {
-            val classId = annotation.abbreviatedClassId ?: continue
+            val classId = annotation.fullyExpandedClassId(context.session) ?: continue
             val annotationClassId = annotation.toAnnotationClassId() ?: continue
             if (annotationClassId.isLocal) continue
             val annotationClass = session.symbolProvider.getClassLikeSymbolByClassId(annotationClassId) ?: continue
@@ -68,7 +68,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
                     // on the same element.
                     // See https://docs.oracle.com/javase/specs/jls/se16/html/jls-9.html#jls-9.7.5.
                     val explicitContainer = annotationClass.resolveContainerAnnotation()
-                    if (explicitContainer != null && annotations.any { it.abbreviatedClassId == explicitContainer }) {
+                    if (explicitContainer != null && annotations.any { it.fullyExpandedClassId(context.session) == explicitContainer }) {
                         reporter.reportOn(
                             annotation.source,
                             FirJvmErrors.REPEATED_ANNOTATION_WITH_CONTAINER,

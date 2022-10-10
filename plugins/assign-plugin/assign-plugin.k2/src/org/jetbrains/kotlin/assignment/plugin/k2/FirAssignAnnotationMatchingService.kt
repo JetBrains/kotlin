@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
-import org.jetbrains.kotlin.fir.expressions.classId
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent
 import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent.Factory
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -40,10 +40,10 @@ internal class FirAssignAnnotationMatchingService(
     }
 
     private fun FirRegularClassSymbol.annotated(): Boolean {
-        if (this.annotations.any { it.classId in annotationClassIds }) return true
+        if (this.annotations.any { it.fullyExpandedClassId(session) in annotationClassIds }) return true
         return resolvedSuperTypeRefs.any {
             val symbol = it.type.fullyExpandedType(session).toRegularClassSymbol(session) ?: return@any false
-            symbol.annotations.any { it.classId in annotationClassIds }
+            symbol.annotations.any { it.fullyExpandedClassId(session) in annotationClassIds }
         }
     }
 }

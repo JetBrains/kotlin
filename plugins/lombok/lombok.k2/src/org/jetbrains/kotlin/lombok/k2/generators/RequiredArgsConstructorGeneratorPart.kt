@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.lombok.k2.generators
 
 import com.intellij.psi.PsiField
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.expressions.classId
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.RequiredArgsC
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.psi
 
-class RequiredArgsConstructorGeneratorPart(session: FirSession) : AbstractConstructorGeneratorPart<RequiredArgsConstructor>(session) {
+class RequiredArgsConstructorGeneratorPart(
+    private val session: FirSession,
+) : AbstractConstructorGeneratorPart<RequiredArgsConstructor>(session) {
     override fun getConstructorInfo(classSymbol: FirClassSymbol<*>): RequiredArgsConstructor? {
         return lombokService.getRequiredArgsConstructor(classSymbol)
             ?: lombokService.getData(classSymbol)?.asRequiredArgsConstructor()
@@ -33,6 +35,6 @@ class RequiredArgsConstructorGeneratorPart(session: FirSession) : AbstractConstr
         val hasInitializer = (source?.psi as? PsiField)?.hasInitializer() ?: false
         if (hasInitializer) return false
         if (isVal) return true
-        return annotations.any { it.classId?.asSingleFqName() in LombokNames.NON_NULL_ANNOTATIONS }
+        return annotations.any { it.fullyExpandedClassId(session)?.asSingleFqName() in LombokNames.NON_NULL_ANNOTATIONS }
     }
 }
