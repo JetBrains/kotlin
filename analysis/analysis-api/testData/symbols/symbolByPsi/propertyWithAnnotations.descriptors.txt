@@ -121,7 +121,10 @@ KtKotlinPropertySymbol:
   callableIdIfNonLocal: /prop
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
-    annotationsList: []
+    annotationsList: [
+      GetAnnotation()
+        psi: KtAnnotationEntry
+    ]
     callableIdIfNonLocal: null
     contextReceivers: []
     hasBody: false
@@ -133,7 +136,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverType: null
-    returnType: ERROR_TYPE
+    returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -156,7 +159,10 @@ KtKotlinPropertySymbol:
   receiverType: null
   returnType: kotlin/Int
   setter: KtPropertySetterSymbol:
-    annotationsList: []
+    annotationsList: [
+      SetAnnotation()
+        psi: KtAnnotationEntry
+    ]
     callableIdIfNonLocal: null
     contextReceivers: []
     hasBody: false
@@ -168,7 +174,10 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     parameter: KtValueParameterSymbol:
-      annotationsList: []
+      annotationsList: [
+        SetparamAnnotation()
+          psi: KtAnnotationEntry
+      ]
       callableIdIfNonLocal: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
@@ -181,7 +190,7 @@ KtKotlinPropertySymbol:
       name: value
       origin: SOURCE
       receiverType: null
-      returnType: ERROR_TYPE
+      returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
     receiverType: null
@@ -190,7 +199,10 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: [
       KtValueParameterSymbol:
-        annotationsList: []
+        annotationsList: [
+          SetparamAnnotation()
+            psi: KtAnnotationEntry
+        ]
         callableIdIfNonLocal: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
@@ -203,7 +215,7 @@ KtKotlinPropertySymbol:
         name: value
         origin: SOURCE
         receiverType: null
-        returnType: ERROR_TYPE
+        returnType: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []
     ]
@@ -273,7 +285,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverType: null
-    returnType: ERROR_TYPE
+    returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []

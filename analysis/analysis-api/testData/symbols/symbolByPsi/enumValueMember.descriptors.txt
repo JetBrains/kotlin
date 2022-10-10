@@ -159,7 +159,7 @@ KtKotlinPropertySymbol:
     modality: ABSTRACT
     origin: SOURCE
     receiverType: null
-    returnType: ERROR_TYPE
+    returnType: kotlin/String
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []

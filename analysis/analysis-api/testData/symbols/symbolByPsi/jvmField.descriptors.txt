@@ -15,7 +15,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverType: null
-    returnType: ERROR_TYPE
+    returnType: kotlin/Long
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -63,7 +63,7 @@ KtKotlinPropertySymbol:
       name: value
       origin: SOURCE
       receiverType: null
-      returnType: ERROR_TYPE
+      returnType: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
     receiverType: null
@@ -85,7 +85,7 @@ KtKotlinPropertySymbol:
         name: value
         origin: SOURCE
         receiverType: null
-        returnType: ERROR_TYPE
+        returnType: kotlin/Long
         symbolKind: LOCAL
         typeParameters: []
     ]
@@ -117,7 +117,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverType: null
-    returnType: ERROR_TYPE
+    returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -165,7 +165,7 @@ KtKotlinPropertySymbol:
       name: value
       origin: SOURCE
       receiverType: null
-      returnType: ERROR_TYPE
+      returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
     receiverType: null
@@ -187,7 +187,7 @@ KtKotlinPropertySymbol:
         name: value
         origin: SOURCE
         receiverType: null
-        returnType: ERROR_TYPE
+        returnType: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []
     ]

@@ -216,7 +216,10 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverType: null
-    returnType: ERROR_TYPE
+    returnType: [
+      Anno4()
+        psi: KtAnnotationEntry
+    ] @R|Anno4|()  I
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
