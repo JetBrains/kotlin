@@ -115,13 +115,13 @@ class VersionChecker(val context: IrPluginContext) {
         // version checker accesses bodies of the functions that are not deserialized in KLIB
         if (!context.platform.isJvm()) return
 
-        val versionClass = context.referenceClass(ComposeFqNames.ComposeVersion)
+        val versionClass = context.referenceClass(ComposeClassIds.ComposeVersion)
         if (versionClass == null) {
             // If the version class isn't present, it likely means that compose runtime isn't on the
             // classpath anywhere. But also for dev03-dev15 there wasn't any ComposeVersion class at
             // all, so we check for the presence of the Composer class here to try and check for the
             // case that an older version of Compose runtime is available.
-            val composerClass = context.referenceClass(ComposeFqNames.Composer)
+            val composerClass = context.referenceClass(ComposeClassIds.Composer)
             if (composerClass != null) {
                 outdatedRuntimeWithUnknownVersionNumber()
             } else {

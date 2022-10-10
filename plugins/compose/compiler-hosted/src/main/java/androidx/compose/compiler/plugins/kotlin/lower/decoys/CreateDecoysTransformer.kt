@@ -100,18 +100,18 @@ class CreateDecoysTransformer(
     private val originalFunctions: MutableMap<IrFunction, IrDeclarationParent> = mutableMapOf()
 
     private val decoyAnnotation by lazy {
-        getTopLevelClass(DecoyFqNames.Decoy).owner
+        getTopLevelClass(DecoyClassIds.Decoy).owner
     }
 
     private val decoyImplementationAnnotation by lazy {
-        getTopLevelClass(DecoyFqNames.DecoyImplementation).owner
+        getTopLevelClass(DecoyClassIds.DecoyImplementation).owner
     }
 
     private val decoyImplementationDefaultsBitmaskAnnotation =
-        getTopLevelClass(DecoyFqNames.DecoyImplementationDefaultsBitMask).owner
+        getTopLevelClass(DecoyClassIds.DecoyImplementationDefaultsBitMask).owner
 
     private val decoyStub by lazy {
-        getInternalFunction("illegalDecoyCallException").owner
+        getTopLevelFunction(DecoyCallableIds.illegalDecoyCallException).owner
     }
 
     override fun lower(module: IrModuleFragment) {
