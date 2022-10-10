@@ -44,8 +44,7 @@ sealed class SideEffects(val level: Int, val name: String) {
      * [otherwise] is the effects that a function would have if we removed all the [AlmostPureSingletonConstructor] effects from it.
      */
     data class AlmostPureSingletonConstructor(val otherwise: SideEffects) :
-        SideEffects(2 + otherwise.level, "ALMOST_PURE_SINGLETON_CONSTRUCTOR")
-    {
+        SideEffects(2 + otherwise.level, "ALMOST_PURE_SINGLETON_CONSTRUCTOR") {
         init {
             require(otherwise !is AlmostPureSingletonConstructor)
         }
@@ -57,6 +56,8 @@ sealed class SideEffects(val level: Int, val name: String) {
     object ReadWrite : SideEffects(Int.MAX_VALUE, "READWRITE")
 
     fun isAtMost(other: SideEffects) = level <= other.level
+
+    override fun toString() = name
 
     companion object {
         fun valueOf(s: String) = when (s) {

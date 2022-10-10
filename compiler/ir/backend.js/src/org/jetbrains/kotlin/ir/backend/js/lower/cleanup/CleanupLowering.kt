@@ -68,6 +68,10 @@ private class CodeCleaner(val context: CommonBackendContext) : IrElementVisitorV
     private fun cleanUpStatementsSinglePass(statements: List<IrStatement>): List<IrStatement> = buildList {
         var unreachable = false
         for (statement in statements) {
+            if (statement is IrDelegatingConstructorCall) {
+                add(statement)
+                continue
+            }
             if (statement is IrFunctionAccessExpression) {
                 val functionSideEffect = statement.symbol.owner.computeEffects(true, functionSideEffectMemoizer, context)
 
@@ -84,7 +88,8 @@ private class CodeCleaner(val context: CommonBackendContext) : IrElementVisitorV
                 statement is IrBreakContinue -> true
                 statement is IrExpression && (statement.computeEffects(
                     true,
-                    functionSideEffectMemoizer
+                    functionSideEffectMemoizer,
+                    context
                 ).isAtMost(SideEffects.ReadOnly)) -> false
                 unreachable -> false
                 else -> {
