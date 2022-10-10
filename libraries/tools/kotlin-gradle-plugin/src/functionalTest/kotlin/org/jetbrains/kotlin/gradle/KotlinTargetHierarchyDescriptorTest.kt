@@ -189,6 +189,54 @@ class KotlinTargetHierarchyDescriptorTest {
             cycleStack
         )
     }
+
+    @Test
+    fun `test - filterCompilations`() {
+        val descriptor = KotlinTargetHierarchyDescriptor {
+            filterCompilations { it.name in setOf("a", "b") }
+            common {
+                group("x") {
+                    includeCompilationIf { true }
+                }
+            }
+        }
+
+        assertEquals(
+            hierarchy {
+                group("common") {
+                    group("x")
+                }
+            },
+            descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("a"))
+        )
+
+        assertEquals(
+            descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("a")),
+            descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("b"))
+        )
+
+        assertNull(
+            descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("c"))
+        )
+    }
+
+    @Test
+    fun `test - filterCompilations - include them again`() {
+        val descriptor = KotlinTargetHierarchyDescriptor {
+            includeCompilationIf { true }
+            filterCompilations { it.name == "a" }
+        }
+
+        assertNotNull(descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("a")))
+        assertNull(descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("b")))
+
+        val extended = descriptor.extend {
+            includeCompilationIf { true } // <- adds all compilations back again!
+        }
+
+        assertNull(descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("b")))
+        assertNotNull(extended.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("b")))
+    }
 }
 
 private class TestHierarchyBuilder(private val node: Node) {
