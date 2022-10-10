@@ -592,16 +592,6 @@ public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|j
 
 }
 
-@R|kotlin/RequiresOptIn|(level = R|kotlin/RequiresOptIn.Level.ERROR|()) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) @R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|(), R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|(), R|kotlin/annotation/AnnotationTarget.PROPERTY|(), R|kotlin/annotation/AnnotationTarget.FIELD|(), R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|(), R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|(), R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|(), R|kotlin/annotation/AnnotationTarget.FUNCTION|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|(), R|kotlin/annotation/AnnotationTarget.TYPEALIAS|())) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.3)) public final annotation class ExperimentalStdlibApi : R|kotlin/Annotation| {
-    public constructor(): R|kotlin/ExperimentalStdlibApi|
-
-}
-
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|())) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) @R|kotlin/SinceKotlin|(version = String(1.8)) public final annotation class ExperimentalSubclassOptIn : R|kotlin/Annotation| {
-    public constructor(): R|kotlin/ExperimentalSubclassOptIn|
-
-}
-
 @R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|())) @R|kotlin/annotation/MustBeDocumented|() public final annotation class ExtensionFunctionType : R|kotlin/Annotation| {
     public constructor(): R|kotlin/ExtensionFunctionType|
 
@@ -1117,14 +1107,6 @@ public abstract class Number : R|kotlin/Any|, R|java/io/Serializable| {
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|(), R|kotlin/annotation/AnnotationTarget.PROPERTY|(), R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|(), R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|(), R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|(), R|kotlin/annotation/AnnotationTarget.FUNCTION|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|(), R|kotlin/annotation/AnnotationTarget.EXPRESSION|(), R|kotlin/annotation/AnnotationTarget.FILE|(), R|kotlin/annotation/AnnotationTarget.TYPEALIAS|())) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.SOURCE|()) @R|kotlin/SinceKotlin|(version = String(1.3)) public final annotation class OptIn : R|kotlin/Annotation| {
-    public final val markerClass: R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|
-        public get(): R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|
-
-    public constructor(vararg markerClass: R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|): R|kotlin/OptIn|
-
-}
-
 @R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|())) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class ParameterName : R|kotlin/Annotation| {
     public final val name: R|kotlin/String|
         public get(): R|kotlin/String|
@@ -1146,33 +1128,6 @@ public abstract class Number : R|kotlin/Any|, R|java/io/Serializable| {
         public get(): R|kotlin/Array<out kotlin/String>|
 
     public constructor(expression: R|kotlin/String|, vararg imports: R|kotlin/Array<out kotlin/String>|): R|kotlin/ReplaceWith|
-
-}
-
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|())) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) @R|kotlin/SinceKotlin|(version = String(1.3)) public final annotation class RequiresOptIn : R|kotlin/Annotation| {
-    public final enum class Level : R|kotlin/Enum<kotlin/RequiresOptIn.Level>| {
-        public final static fun valueOf(value: R|kotlin/String|): R|kotlin/RequiresOptIn.Level| {
-        }
-
-        public final static fun values(): R|kotlin/Array<kotlin/RequiresOptIn.Level>| {
-        }
-
-        public final static val entries: R|kotlin/enums/EnumEntries<kotlin/RequiresOptIn.Level>|
-            public get(): R|kotlin/enums/EnumEntries<kotlin/RequiresOptIn.Level>|
-
-        private constructor(): R|kotlin/RequiresOptIn.Level|
-
-        public final static enum entry WARNING: R|kotlin/RequiresOptIn.Level|
-        public final static enum entry ERROR: R|kotlin/RequiresOptIn.Level|
-    }
-
-    public final val level: R|kotlin/RequiresOptIn.Level|
-        public get(): R|kotlin/RequiresOptIn.Level|
-
-    public final val message: R|kotlin/String|
-        public get(): R|kotlin/String|
-
-    public constructor(message: R|kotlin/String| = STUB, level: R|kotlin/RequiresOptIn.Level| = STUB): R|kotlin/RequiresOptIn|
 
 }
 
@@ -1360,14 +1315,6 @@ public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSe
         public get(): R|kotlin/Int|
 
     public constructor(): R|kotlin/String|
-
-}
-
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|())) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) @R|kotlin/SinceKotlin|(version = String(1.8)) @R|kotlin/ExperimentalSubclassOptIn|() public final annotation class SubclassOptInRequired : R|kotlin/Annotation| {
-    public final val markerClass: R|kotlin/reflect/KClass<out kotlin/Annotation>|
-        public get(): R|kotlin/reflect/KClass<out kotlin/Annotation>|
-
-    public constructor(markerClass: R|kotlin/reflect/KClass<out kotlin/Annotation>|): R|kotlin/SubclassOptInRequired|
 
 }
 
