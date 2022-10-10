@@ -97,7 +97,8 @@ open class PodInstallTask : CocoapodsTask() {
                                returnCode,
                                output,
                                project,
-                               frameworkName.get())
+                               frameworkName.get()
+                           )
                        },
                        exceptionHandler = { e: IOException ->
                            CocoapodsErrorHandlingUtil.handle(e, podInstallCommand)
@@ -236,6 +237,20 @@ open class PodGenTask : CocoapodsTask() {
                 }
             }.forEach { appendLine("\t$it") }
             appendLine("end\n")
+            //disable signing for all synthetic pods KT-54314
+            append(
+                """
+                post_install do |installer|
+                  installer.pods_project.targets.each do |target|
+                    target.build_configurations.each do |config|
+                      config.build_settings['EXPANDED_CODE_SIGN_IDENTITY'] = ""
+                      config.build_settings['CODE_SIGNING_REQUIRED'] = "NO"
+                      config.build_settings['CODE_SIGNING_ALLOWED'] = "NO"
+                    end
+                  end
+                end
+                """.trimIndent()
+            )
         }
 }
 
