@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
+import androidx.compose.compiler.plugins.kotlin.ComposeCallableIds
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.FunctionMetrics
 import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
@@ -609,52 +610,40 @@ class ComposableFunctionBodyTransformer(
     }
 
     private val sourceInformationFunction by guardedLazy {
-        getTopLevelFunctions(
-            ComposeFqNames.fqNameFor(KtxNameConventions.SOURCEINFORMATION)
-        ).map { it.owner }.first()
+        getTopLevelFunction(ComposeCallableIds.sourceInformation).owner
     }
 
     private val sourceInformationMarkerStartFunction by guardedLazy {
-        getTopLevelFunctions(
-            ComposeFqNames.fqNameFor(KtxNameConventions.SOURCEINFORMATIONMARKERSTART)
-        ).map { it.owner }.first()
+        getTopLevelFunction(ComposeCallableIds.sourceInformationMarkerStart).owner
     }
 
     private val isTraceInProgressFunction by guardedLazy {
-        getTopLevelFunctions(
-            ComposeFqNames.fqNameFor(KtxNameConventions.IS_TRACE_IN_PROGRESS)
-        ).map { it.owner }.singleOrNull {
-            it.valueParameters.isEmpty()
-        }
+        getTopLevelFunctions(ComposeCallableIds.isTraceInProgress).singleOrNull {
+            it.owner.valueParameters.isEmpty()
+        }?.owner
     }
 
     private val traceEventStartFunction by guardedLazy {
-        getTopLevelFunctions(
-            ComposeFqNames.fqNameFor(KtxNameConventions.TRACE_EVENT_START)
-        ).map { it.owner }.singleOrNull {
-            it.valueParameters.map { p -> p.type } == listOf(
+        getTopLevelFunctions(ComposeCallableIds.traceEventStart).singleOrNull {
+            it.owner.valueParameters.map { p -> p.type } == listOf(
                 context.irBuiltIns.intType,
                 context.irBuiltIns.intType,
                 context.irBuiltIns.intType,
                 context.irBuiltIns.stringType
             )
-        }
+        }?.owner
     }
 
     private val traceEventEndFunction by guardedLazy {
-        getTopLevelFunctions(
-            ComposeFqNames.fqNameFor(KtxNameConventions.TRACE_EVENT_END)
-        ).map { it.owner }.singleOrNull {
-            it.valueParameters.isEmpty()
-        }
+        getTopLevelFunctions(ComposeCallableIds.traceEventEnd).singleOrNull {
+            it.owner.valueParameters.isEmpty()
+        }?.owner
     }
 
     private val traceEventMarkersEnabled get() = traceEventEndFunction != null
 
     private val sourceInformationMarkerEndFunction by guardedLazy {
-        getTopLevelFunctions(
-            ComposeFqNames.fqNameFor(KtxNameConventions.SOURCEINFORMATIONMARKEREND)
-        ).map { it.owner }.first()
+        getTopLevelFunction(ComposeCallableIds.sourceInformationMarkerEnd).owner
     }
 
     private val IrType.arguments: List<IrTypeArgument>
@@ -702,9 +691,9 @@ class ComposableFunctionBodyTransformer(
     }
 
     private val cacheFunction by guardedLazy {
-        getTopLevelFunctions(ComposeFqNames.fqNameFor("cache")).map { it.owner }.first {
-            it.valueParameters.size == 2 && it.extensionReceiverParameter != null
-        }
+        getTopLevelFunctions(ComposeCallableIds.cache).first {
+            it.owner.valueParameters.size == 2 && it.owner.extensionReceiverParameter != null
+        }.owner
     }
 
     private var currentScope: Scope = Scope.RootScope()

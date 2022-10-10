@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
+import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
@@ -102,13 +103,13 @@ class ComposableTargetAnnotationsTransformer(
     metrics: ModuleMetrics
 ) : AbstractComposeLowering(context, symbolRemapper, metrics) {
     private val ComposableTargetClass = symbolRemapper.getReferencedClassOrNull(
-        getTopLevelClassOrNull(ComposeFqNames.ComposableTarget)
+        getTopLevelClassOrNull(ComposeClassIds.ComposableTarget)
     )
     private val ComposableOpenTargetClass = symbolRemapper.getReferencedClassOrNull(
-        getTopLevelClassOrNull(ComposeFqNames.ComposableOpenTarget)
+        getTopLevelClassOrNull(ComposeClassIds.ComposableOpenTarget)
     )
     private val ComposableInferredTargetClass = symbolRemapper.getReferencedClassOrNull(
-        getTopLevelClassOrNull(ComposeFqNames.ComposableInferredTarget)
+        getTopLevelClassOrNull(ComposeClassIds.ComposableInferredTarget)
     )
 
     /**
