@@ -189,8 +189,7 @@ constructor(
 
     @Suppress("DEPRECATION")
     @get:Input
-    val target: String
-        get() = compilation.konanTarget.name
+    val target: String = compilation.konanTarget.name
 
     @Deprecated("Use 'embedBitcodeMode' provider instead.", ReplaceWith("embedBitcodeMode.get()"))
     @get:Internal
@@ -285,7 +284,7 @@ constructor(
 
     @Suppress("DEPRECATION")
     @get:Input
-    val enableEndorsedLibs: Boolean get() = compilation.enableEndorsedLibs
+    val enableEndorsedLibs: Boolean by lazy { compilation.enableEndorsedLibs }
 
     @Internal
     val compilerPluginOptions = CompilerPluginOptions()
