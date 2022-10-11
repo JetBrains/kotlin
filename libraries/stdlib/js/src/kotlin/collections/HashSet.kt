@@ -1,91 +1,92 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-/*
- * Based on GWT HashSet
- * Copyright 2008 Google Inc.
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package kotlin.collections
 
-/**
- * The implementation of the [MutableSet] interface, backed by a [HashMap] instance.
- */
-// Classes that extend HashSet and implement `build()` (freezing) operation
-// have to make sure mutating methods check `checkIsMutable`.
-public actual open class HashSet<E> : AbstractMutableSet<E>, MutableSet<E> {
+actual open class HashSet<E> internal constructor(
+    val backing: HashMap<E, *>
+) : MutableSet<E>, AbstractMutableSet<E>() {
 
-    internal val map: HashMap<E, Any>
+    actual constructor() : this(HashMap<E, Nothing>())
 
-    /**
-     * Constructs a new empty [HashSet].
-     */
-    actual constructor() {
-        map = HashMap<E, Any>()
-    }
-
-    /**
-     * Constructs a new [HashSet] filled with the elements of the specified collection.
-     */
-    actual constructor(elements: Collection<E>) {
-        map = HashMap<E, Any>(elements.size)
-        addAll(elements)
-    }
-
-    /**
-     * Constructs a new empty [HashSet].
-     *
-     * @param  initialCapacity the initial capacity (ignored)
-     * @param  loadFactor      the load factor (ignored)
-     *
-     * @throws IllegalArgumentException if the initial capacity or load factor are negative
-     */
-    actual constructor(initialCapacity: Int, loadFactor: Float) {
-        map = HashMap<E, Any>(initialCapacity, loadFactor)
-    }
+    actual constructor(initialCapacity: Int, loadFactor: Float) : this(HashMap<E, Nothing>(initialCapacity))
 
     actual constructor(initialCapacity: Int) : this(initialCapacity, 0.0f)
 
-    /**
-     * Protected constructor to specify the underlying map. This is used by
-     * LinkedHashSet.
-
-     * @param map underlying map to use.
-     */
-    internal constructor(map: HashMap<E, Any>) {
-        this.map = map
+    actual constructor(elements: Collection<E>) : this(elements.size) {
+        this.addAll(elements)
     }
 
-    actual override fun add(element: E): Boolean {
-        val old = map.put(element, this)
-        return old == null
+    actual override val size: Int get() = backing.size
+    actual override fun isEmpty(): Boolean = backing.isEmpty()
+    actual override fun contains(element: E): Boolean = backing.containsKey(element)
+    actual override fun clear() = backing.clear()
+    actual override fun add(element: E): Boolean = backing.addKey(element) >= 0
+    actual override fun remove(element: E): Boolean = backing.removeKey(element) >= 0
+    actual override fun iterator(): MutableIterator<E> = backing.keysIterator()
+
+    actual override fun containsAll(elements: Collection<E>): Boolean {
+        val it = elements.iterator()
+        while (it.hasNext()) {
+            if (!contains(it.next()))
+                return false
+        }
+        return true
     }
 
-    actual override fun clear() {
-        map.clear()
+    actual override fun addAll(elements: Collection<E>): Boolean {
+        val it = elements.iterator()
+        var updated = false
+        while (it.hasNext()) {
+            if (add(it.next()))
+                updated = true
+        }
+        return updated
     }
 
-//    public override fun clone(): Any {
-//        return HashSet<E>(this)
-//    }
+    override fun equals(other: Any?): Boolean {
+        return other === this ||
+                (other is Set<*>) &&
+                contentEquals(
+                    @Suppress("UNCHECKED_CAST") (other as Set<E>))
+    }
 
-    actual override operator fun contains(element: E): Boolean = map.containsKey(element)
+    override fun hashCode(): Int {
+        var result = 0
+        val it = iterator()
+        while (it.hasNext()) {
+            result += it.next()!!.hashCode()
+        }
+        return result
+    }
 
-    actual override fun isEmpty(): Boolean = map.isEmpty()
+//    override fun toString(): String = collectionToString()
 
-    actual override fun iterator(): MutableIterator<E> = map.keys.iterator()
+    // ---------------------------- private ----------------------------
 
-    actual override fun remove(element: E): Boolean = map.remove(element) != null
-
-    actual override val size: Int get() = map.size
-
+    private fun contentEquals(other: Set<E>): Boolean = size == other.size && containsAll(other)
 }
 
-/**
- * Creates a new instance of the specialized implementation of [HashSet] with the specified [String] elements,
- * which elements the keys as properties of JS object without hashing them.
- */
+// This hash set keeps insertion order.
+actual typealias LinkedHashSet<V> = HashSet<V>
+
 public fun stringSetOf(vararg elements: String): HashSet<String> {
-    return HashSet(stringMapOf<Any>()).apply { addAll(elements) }
+    return HashSet<String>().apply { addAll(elements) }
+}
+
+public fun linkedStringSetOf(vararg elements: String): LinkedHashSet<String> {
+    return LinkedHashSet<String>().apply { addAll(elements) }
 }

@@ -91,14 +91,14 @@ public fun <T> setOf(element: T): Set<T> = hashSetOf(element)
 @SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
 internal actual inline fun <E> buildSetInternal(builderAction: MutableSet<E>.() -> Unit): Set<E> {
-    return LinkedHashSet<E>().apply(builderAction).build()
+    return LinkedHashSet<E>().apply(builderAction)//.build()
 }
 
 @PublishedApi
 @SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
 internal actual inline fun <E> buildSetInternal(capacity: Int, builderAction: MutableSet<E>.() -> Unit): Set<E> {
-    return LinkedHashSet<E>(capacity).apply(builderAction).build()
+    return LinkedHashSet<E>(capacity).apply(builderAction)//.build()
 }
 
 
@@ -112,14 +112,14 @@ public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = hashMapOf(pair)
 @SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
 internal actual inline fun <K, V> buildMapInternal(builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
-    return LinkedHashMap<K, V>().apply(builderAction).build()
+    return LinkedHashMap<K, V>().apply(builderAction)//.build()
 }
 
 @PublishedApi
 @SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
 internal actual inline fun <K, V> buildMapInternal(capacity: Int, builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
-    return LinkedHashMap<K, V>(capacity).apply(builderAction).build()
+    return LinkedHashMap<K, V>(capacity).apply(builderAction)//.build()
 }
 
 
