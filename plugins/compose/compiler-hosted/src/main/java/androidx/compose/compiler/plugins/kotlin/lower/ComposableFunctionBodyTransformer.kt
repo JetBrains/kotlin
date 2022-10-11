@@ -617,6 +617,15 @@ class ComposableFunctionBodyTransformer(
         getTopLevelFunction(ComposeCallableIds.sourceInformationMarkerStart).owner
     }
 
+    private val updateChangedFlagsFunction: IrSimpleFunction? by guardedLazy {
+        getTopLevelFunctionOrNull(
+            ComposeCallableIds.updateChangedFlags
+        )?.let {
+            val owner = it.owner
+            if (owner.valueParameters.size == 1) owner else null
+        }
+    }
+
     private val isTraceInProgressFunction by guardedLazy {
         getTopLevelFunctions(ComposeCallableIds.isTraceInProgress).singleOrNull {
             it.owner.valueParameters.isEmpty()
@@ -4292,12 +4301,20 @@ class ComposableFunctionBodyTransformer(
                 fn.putValueArgument(
                     startIndex + index,
                     if (index == 0) {
-                        irOr(irGet(param), irConst(if (lowBit) 0b1 else 0b0))
+                        irUpdateChangedFlags(irOr(irGet(param), irConst(if (lowBit) 0b1 else 0b0)))
                     } else {
-                        irGet(param)
+                        irUpdateChangedFlags(irGet(param))
                     }
                 )
             }
+        }
+
+        private fun irUpdateChangedFlags(expression: IrExpression): IrExpression {
+            return updateChangedFlagsFunction?.let {
+                irCall(it).also {
+                    it.putValueArgument(0, expression)
+                }
+            } ?: expression
         }
 
         override fun irShiftBits(fromSlot: Int, toSlot: Int): IrExpression {

@@ -83,7 +83,7 @@ class StabilityPropagationTransformTests : ComposeIrTransformTest() {
             %composer.skipToGroupEnd()
           }
           %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-            Test(x, %composer, %changed or 0b0001)
+            Test(x, %composer, updateChangedFlags(%changed or 0b0001))
           }
         }
         """
@@ -122,7 +122,7 @@ class StabilityPropagationTransformTests : ComposeIrTransformTest() {
                 traceEventEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(x, %composer, %changed or 0b0001)
+                Test(x, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -156,7 +156,7 @@ class StabilityPropagationTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Example(%composer, %changed or 0b0001)
+                Example(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
