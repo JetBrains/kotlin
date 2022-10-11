@@ -95,7 +95,7 @@ abstract class AbstractFirNativeDiagnosticsTest : AbstractDiagnosticsNativeTestB
                 ::FirDumpHandler,
                 ::FirCfgDumpHandler,
                 ::FirCfgConsistencyHandler,
-                ::FirNoImplicitTypesHandler,
+                ::FirResolvedTypesVerifier,
                 ::FirScopeDumpHandler,
             )
         }
