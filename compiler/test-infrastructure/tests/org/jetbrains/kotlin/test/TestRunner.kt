@@ -119,7 +119,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         filteredFailedAssertions.firstIsInstanceOrNull<WrappedException.FromFacade>()?.let {
             throw it
         }
-        services.assertions.assertAll(filteredFailedAssertions)
+        services.assertions.failAll(filteredFailedAssertions)
     }
 
     /*

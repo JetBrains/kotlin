@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.js.test.ir
 
-import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.js.test.AbstractJsBlackBoxCodegenTestBase
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
@@ -22,14 +21,12 @@ import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
-import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.runners.codegen.commonClassicFrontendHandlersForCodegenTest
 import org.jetbrains.kotlin.test.services.JsLibraryProvider
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -38,7 +35,6 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.utils.isDirectiveDefined
-import java.io.File
 import java.lang.Boolean.getBoolean
 
 abstract class AbstractJsIrTest(
@@ -246,7 +242,7 @@ open class AbstractFirJsTest : AbstractKotlinCompilerWithTargetBackendTest(Targe
                 ::FirDumpHandler,
                 ::FirCfgDumpHandler,
                 ::FirCfgConsistencyHandler,
-                ::FirNoImplicitTypesHandler,
+                ::FirResolvedTypesVerifier,
             )
         }
 

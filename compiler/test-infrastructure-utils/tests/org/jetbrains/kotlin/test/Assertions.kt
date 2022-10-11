@@ -49,7 +49,12 @@ abstract class Assertions {
         return collection.joinToString("\n")
     }
 
-    abstract fun assertAll(exceptions: List<Throwable>)
+    abstract fun failAll(exceptions: List<Throwable>)
+    abstract fun assertAll(conditions: List<() -> Unit>)
+
+    fun assertAll(vararg conditions: () -> Unit) {
+        assertAll(conditions.toList())
+    }
 
     abstract fun fail(message: () -> String): Nothing
 }
