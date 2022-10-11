@@ -62,7 +62,6 @@ import org.jetbrains.kotlin.types.error.ErrorScope
 import org.jetbrains.kotlin.types.error.ThrowingScope
 import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 import org.jetbrains.kotlin.types.typeUtil.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.math.min
 
 class TypeResolver(
@@ -416,7 +415,7 @@ class TypeResolver(
                 for (parametersGroup in parametersByName.values) {
                     if (parametersGroup.size < 2) continue
                     for (parameter in parametersGroup) {
-                        val ktParameter = parameter.source.getPsi()?.safeAs<KtParameter>() ?: continue
+                        val ktParameter = (parameter.source.getPsi() as? KtParameter) ?: continue
                         c.trace.report(DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE.on(ktParameter))
                     }
                 }

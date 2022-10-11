@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinConstraintSystemCompleter(
     private val resultTypeResolver: ResultTypeResolver,
@@ -291,8 +289,8 @@ class KotlinConstraintSystemCompleter(
         argument: PostponedAtomWithRevisableExpectedType,
         diagnosticsHolder: KotlinDiagnosticsHolder
     ): Boolean = with(c) {
-        val revisedExpectedType: UnwrappedType =
-            argument.revisedExpectedType?.takeIf { it.isFunctionOrKFunctionWithAnySuspendability() }?.cast() ?: return false
+        val revisedExpectedType: UnwrappedType = argument.revisedExpectedType
+            ?.takeIf { it.isFunctionOrKFunctionWithAnySuspendability() } as UnwrappedType? ?: return false
 
         when (argument) {
             is PostponedCallableReferenceAtom ->
@@ -488,7 +486,7 @@ class KotlinConstraintSystemCompleter(
     companion object {
         fun getOrderedNotAnalyzedPostponedArguments(topLevelAtoms: List<ResolvedAtom>): List<PostponedResolvedAtom> {
             fun ResolvedAtom.process(to: MutableList<PostponedResolvedAtom>) {
-                to.addIfNotNull(this.safeAs<PostponedResolvedAtom>()?.takeUnless { it.analyzed })
+                to.addIfNotNull((this as? PostponedResolvedAtom)?.takeUnless { it.analyzed })
 
                 if (analyzed) {
                     subResolvedAtoms?.forEach { it.process(to) }

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.org.objectweb.asm.Type
 
 internal class LightClassDataProviderForClassOrObject(
@@ -29,7 +28,7 @@ internal class LightClassDataProviderForClassOrObject(
     private fun computeLightClassData(): Diagnostics {
         val file = classOrObject.containingKtFile
         val packageFqName = file.packageFqName
-        val cliSupport = LightClassGenerationSupport.getInstance(classOrObject.project).cast<CliLightClassGenerationSupport>()
+        val cliSupport = LightClassGenerationSupport.getInstance(classOrObject.project) as CliLightClassGenerationSupport
 
         //force resolve companion for light class generation
         cliSupport.traceHolder.bindingContext.get(BindingContext.CLASS, classOrObject)?.companionObjectDescriptor

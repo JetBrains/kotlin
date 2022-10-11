@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -270,7 +269,7 @@ class DeprecationResolver(
                 languageVersionSettings.apiVersion < ApiVersion.KOTLIN_1_3
 
     private fun getDeprecationFromUserData(target: DeclarationDescriptor): DescriptorBasedDeprecationInfo? =
-        target.safeAs<CallableDescriptor>()?.getUserData(DEPRECATED_FUNCTION_KEY)
+        (target as? CallableDescriptor)?.getUserData(DEPRECATED_FUNCTION_KEY)
 
     private fun getDeprecationByVersionRequirement(target: DeclarationDescriptor): List<DeprecatedByVersionRequirement> {
         fun createVersion(version: String): MavenComparableVersion? = try {

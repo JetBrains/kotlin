@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.util.isInfixCall
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.serialization.deserialization.KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object LambdaWithSuspendModifierCallChecker : CallChecker {
 
@@ -23,7 +21,7 @@ object LambdaWithSuspendModifierCallChecker : CallChecker {
         val descriptor = resolvedCall.candidateDescriptor
         val call = resolvedCall.call
         val calleeName = call.referencedName()
-        val variableCalleeName = resolvedCall.safeAs<VariableAsFunctionResolvedCall>()?.variableCall?.call?.referencedName()
+        val variableCalleeName = (resolvedCall as? VariableAsFunctionResolvedCall)?.variableCall?.call?.referencedName()
 
         if (calleeName != "suspend" && variableCalleeName != "suspend" && descriptor.name.asString() != "suspend") return
 
@@ -48,22 +46,19 @@ object LambdaWithSuspendModifierCallChecker : CallChecker {
         }
     }
 
-    private fun Call.hasFormOfSuspendModifierForLambdaOrFun() =
+    private fun Call.hasFormOfSuspendModifierForLambdaOrFun(): Boolean =
         !isCallableReference()
                 && typeArguments.isEmpty()
                 && (hasNoArgumentListButDanglingLambdas() || isInfixWithRightLambda() || isInfixWithRightFun())
 
-    private fun Call.referencedName() =
-        calleeExpression?.safeAs<KtSimpleNameExpression>()?.getReferencedName()
+    private fun Call.referencedName(): String? = (calleeExpression as? KtSimpleNameExpression)?.getReferencedName()
 
-    private fun Call.hasNoArgumentListButDanglingLambdas() =
+    private fun Call.hasNoArgumentListButDanglingLambdas(): Boolean =
         valueArgumentList?.leftParenthesis == null && functionLiteralArguments.isNotEmpty()
 
-    private fun Call.isInfixWithRightLambda() =
-        isInfixCall(this)
-                && callElement.safeAs<KtBinaryExpression>()?.right is KtLambdaExpression
+    private fun Call.isInfixWithRightLambda(): Boolean =
+        isInfixCall(this) && (callElement as? KtBinaryExpression)?.right is KtLambdaExpression
 
-    private fun Call.isInfixWithRightFun() =
-        isInfixCall(this)
-                && callElement.safeAs<KtBinaryExpression>()?.right is KtNamedFunction
+    private fun Call.isInfixWithRightFun(): Boolean =
+        isInfixCall(this) && (callElement as? KtBinaryExpression)?.right is KtNamedFunction
 }

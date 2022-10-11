@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.types.typeUtil.constituentTypes
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isArrayOfNothing
 import org.jetbrains.kotlin.types.typeUtil.isNothing
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class DeclarationsCheckerBuilder(
     private val descriptorResolver: DescriptorResolver,
@@ -415,7 +414,7 @@ class DeclarationsChecker(
                 declaration
             }
 
-            if (descriptor.containingDeclaration.safeAs<MemberDescriptor>()?.isInlineOnly() == true) return
+            if ((descriptor.containingDeclaration as? MemberDescriptor)?.isInlineOnly() == true) return
 
             trace.report(BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER.on(reportOn))
         }

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.CastImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class NewResolvedCallImpl<D : CallableDescriptor>(
     override val resolvedCallAtom: ResolvedCallAtom,
@@ -228,7 +227,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
                 else -> null
             } as? ArgumentConstraintPositionImpl ?: return@forEach
 
-            val argument = position.argument.safeAs<PSIKotlinCallArgument>()?.valueArgument ?: return@forEach
+            val argument = (position.argument as? PSIKotlinCallArgument)?.valueArgument ?: return@forEach
             result += argument to it
         }
 

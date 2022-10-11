@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaAnnota
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.*
 import java.lang.reflect.Array
 
@@ -66,7 +65,7 @@ internal class AnnotationsAndParameterCollectorMethodVisitor(
 
     override fun visitAnnotationDefault(): AnnotationVisitor =
         BinaryJavaAnnotationVisitor(context, signatureParser) {
-            member.safeAs<BinaryJavaMethod>()?.annotationParameterDefaultValue = it
+            (member as? BinaryJavaMethod)?.annotationParameterDefaultValue = it
         }
 
     override fun visitParameter(name: String?, access: Int) {
@@ -114,7 +113,7 @@ internal class AnnotationsAndParameterCollectorMethodVisitor(
             }
 
         val (annotationOwner, isFreshlySupportedAnnotation) = when (typeReference.sort) {
-            TypeReference.METHOD_RETURN -> getTargetType(member.safeAs<BinaryJavaMethod>()?.returnType ?: return null)
+            TypeReference.METHOD_RETURN -> getTargetType((member as? BinaryJavaMethod)?.returnType ?: return null)
             TypeReference.METHOD_TYPE_PARAMETER -> member.typeParameters[typeReference.typeParameterIndex] to true
             TypeReference.METHOD_FORMAL_PARAMETER -> getTargetType(member.valueParameters[typeReference.formalParameterIndex].type)
             TypeReference.METHOD_TYPE_PARAMETER_BOUND -> getTargetType(
@@ -215,7 +214,7 @@ class BinaryJavaAnnotation private constructor(
     }
 
     override val classId: ClassId
-        get() = classifierResolutionResult.classifier.safeAs<JavaClass>()?.classId
+        get() = (classifierResolutionResult.classifier as? JavaClass)?.classId
             ?: ClassId.topLevel(FqName(classifierResolutionResult.qualifiedName))
 
     override fun resolve() = classifierResolutionResult.classifier as? JavaClass

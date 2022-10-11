@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 
 // resolved call
@@ -279,11 +278,11 @@ fun ResolvedCall<*>.getFirstArgumentExpression(): KtExpression? =
     valueArgumentsByIndex?.run { get(0).arguments[0].getArgumentExpression() }
 
 fun ResolvedCall<*>.getReceiverExpression(): KtExpression? =
-    extensionReceiver.safeAs<ExpressionReceiver>()?.expression ?: dispatchReceiver.safeAs<ExpressionReceiver>()?.expression
+    (extensionReceiver as? ExpressionReceiver)?.expression ?: (dispatchReceiver as? ExpressionReceiver)?.expression
 
 val KtLambdaExpression.isTrailingLambdaOnNewLIne
     get(): Boolean {
-        parent?.safeAs<KtLambdaArgument>()?.let { lambdaArgument ->
+        (parent as? KtLambdaArgument)?.let { lambdaArgument ->
             var prevSibling = lambdaArgument.prevSibling
 
             while (prevSibling != null && prevSibling !is KtElement) {

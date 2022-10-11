@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private val javaLangCloneable = FqNameUnsafe("java.lang.Cloneable")
 
@@ -92,7 +91,7 @@ object InlineClassDeclarationChecker : DeclarationChecker {
         }
 
         var baseParametersOk = true
-        val baseParameterTypes = descriptor.safeAs<ClassDescriptor>()?.defaultType?.substitutedUnderlyingTypes() ?: emptyList()
+        val baseParameterTypes = (descriptor as? ClassDescriptor)?.defaultType?.substitutedUnderlyingTypes() ?: emptyList()
 
         for ((baseParameter, baseParameterType) in primaryConstructor.valueParameters zip baseParameterTypes) {
             if (!isParameterAcceptableForInlineClass(baseParameter)) {

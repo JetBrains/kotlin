@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.types.model.requireOrDescribe
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.defaultProjections
 import org.jetbrains.kotlin.types.typeUtil.isDefaultBound
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.util.*
 
 open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystemBuilderImpl.Mode.INFERENCE) : ConstraintSystem.Builder {
@@ -432,8 +431,10 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
                 get() = SimpleClassicTypeSystemContext
             var counter = 0
 
-            override fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>) =
-                registerTypeVariables(CallHandle.NONE, typeParameters.cast())
+            override fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutor {
+                @Suppress("UNCHECKED_CAST")
+                return registerTypeVariables(CallHandle.NONE, typeParameters as Collection<TypeParameterDescriptor>)
+            }
 
             override fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker) {
                 requireOrDescribe(subType is UnwrappedType, subType)

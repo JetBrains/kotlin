@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isUnresolvedType
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 object ErrorUtils {
     val errorModule: ModuleDescriptor = ErrorModuleDescriptor
@@ -110,6 +109,6 @@ object ErrorUtils {
 
     fun unresolvedTypeAsItIs(type: KotlinType): String {
         assert(isUnresolvedType(type))
-        return type.constructor.cast<ErrorTypeConstructor>().getParam(0)
+        return (type.constructor as ErrorTypeConstructor).getParam(0)
     }
 }

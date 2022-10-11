@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.*
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 
 class ExpectedActualDeclarationChecker(
@@ -196,7 +195,7 @@ class ExpectedActualDeclarationChecker(
     private fun reportMissingActualModifier(actual: MemberDescriptor, reportOn: KtNamedDeclaration?, trace: BindingTrace) {
         if (actual.isActual) return
         @Suppress("NAME_SHADOWING")
-        val reportOn = reportOn ?: actual.source.safeAs<KotlinSourceElement>()?.psi.safeAs<KtNamedDeclaration>() ?: return
+        val reportOn = reportOn ?: (actual.source as? KotlinSourceElement)?.psi as? KtNamedDeclaration ?: return
 
         if (requireActualModifier(actual)) {
             trace.report(Errors.ACTUAL_MISSING.on(reportOn))
@@ -222,11 +221,10 @@ class ExpectedActualDeclarationChecker(
         }
     }
 
-    private fun sourceFile(descriptor: MemberDescriptor): File? =
-        descriptor.source
-            .containingFile
-            .safeAs<PsiSourceFile>()
-            ?.run { VfsUtilCore.virtualToIoFile(psiFile.virtualFile) }
+    private fun sourceFile(descriptor: MemberDescriptor): File? {
+        val containingFile = descriptor.source.containingFile as? PsiSourceFile ?: return null
+        return VfsUtilCore.virtualToIoFile(containingFile.psiFile.virtualFile)
+    }
 
     private fun checkActualDeclarationHasExpected(
         reportOn: KtNamedDeclaration,

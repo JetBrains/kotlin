@@ -240,7 +240,7 @@ class ResolvedAtomCompleter(
                 ?: return (subResolvedAtoms!!.single() as ResolvedLambdaAtom).isCoercedToUnit
             val returnTypes =
                 resultArgumentsInfo.nonErrorArguments.map {
-                    val type = it.safeAs<SimpleKotlinCallArgument>()?.receiver?.receiverValue?.type ?: return@map null
+                    val type = (it as? SimpleKotlinCallArgument)?.receiver?.receiverValue?.type ?: return@map null
                     val unwrappedType = when (type) {
                         is WrappedType -> type.unwrap()
                         is UnwrappedType -> type
