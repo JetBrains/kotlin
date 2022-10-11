@@ -206,7 +206,7 @@ KtNamedClassOrObjectSymbol:
   superTypes: [
     kotlin/Any
   ]
-  symbolKind: CLASS_MEMBER
+  symbolKind: LOCAL
   typeParameters: [
     KtTypeParameterSymbol(T4)
   ]
