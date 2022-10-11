@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -22,10 +21,8 @@ internal class LLFirDesignatedGeneratedCompanionObjectResolveTransformer(
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.declaration.resolvePhase >= FirResolvePhase.COMPANION_GENERATION) return
 
-        ResolveTreeBuilder.resolvePhase(designation.declaration, FirResolvePhase.COMPANION_GENERATION) {
-            phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.COMPANION_GENERATION) {
-                designation.declaration.transform<FirDeclaration, Nothing?>(transformer, null)
-            }
+        phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.COMPANION_GENERATION) {
+            designation.declaration.transform<FirDeclaration, Nothing?>(transformer, null)
         }
 
         LLFirLazyTransformer.updatePhaseDeep(designation.declaration, FirResolvePhase.COMPANION_GENERATION)

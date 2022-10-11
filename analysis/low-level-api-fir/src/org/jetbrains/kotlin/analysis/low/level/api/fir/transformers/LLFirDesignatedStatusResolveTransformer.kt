@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StatusComputationSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeclarationStatusIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
@@ -42,12 +41,10 @@ internal class LLFirDesignatedStatusResolveTransformer(
         designation.declaration.checkPhase(FirResolvePhase.TYPES)
 
         val transformer = FirDesignatedStatusResolveTransformerForIDE()
-        ResolveTreeBuilder.resolvePhase(designation.declaration, FirResolvePhase.STATUS) {
-            phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.STATUS) {
-                designation.firFile.transform<FirElement, FirResolvedDeclarationStatus?>(transformer, null)
-            }
+        phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.STATUS) {
+            designation.firFile.transform<FirElement, FirResolvedDeclarationStatus?>(transformer, null)
         }
-
+        
         transformer.designationTransformer.ensureDesignationPassed()
         updatePhaseDeep(designation.declaration, FirResolvePhase.STATUS)
         checkIsResolved(designation.declaration)

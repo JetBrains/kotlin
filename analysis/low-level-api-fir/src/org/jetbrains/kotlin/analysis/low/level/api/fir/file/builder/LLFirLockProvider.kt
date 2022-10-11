@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.lockWithPCECheck
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
@@ -19,14 +18,12 @@ internal class LLFirLockProvider {
     private val globalLock = ReentrantLock()
 
     inline fun <R> withWriteLock(@Suppress("UNUSED_PARAMETER") key: FirFile, action: () -> R): R {
-        val startTime = System.currentTimeMillis()
-        return globalLock.withLock { ResolveTreeBuilder.lockNode(startTime, action) }
+        return globalLock.withLock { action() }
     }
 
 
     inline fun <R> withWriteLockPCECheck(@Suppress("UNUSED_PARAMETER") key: FirFile, lockingIntervalMs: Long, action: () -> R): R {
-        val startTime = System.currentTimeMillis()
-        return globalLock.lockWithPCECheck(lockingIntervalMs) { ResolveTreeBuilder.lockNode(startTime, action) }
+        return globalLock.lockWithPCECheck(lockingIntervalMs) { action() }
     }
 }
 

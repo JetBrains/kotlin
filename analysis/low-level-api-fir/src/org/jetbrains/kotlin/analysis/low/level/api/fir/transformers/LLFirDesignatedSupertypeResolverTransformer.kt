@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.runCustomResolveUnderLock
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirModuleLazyDeclarationResolver
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
@@ -145,12 +144,10 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
             FirDeclarationDesignationWithFile(targetPath, resolvableTarget, designation.firFile)
         } else designation
 
-        ResolveTreeBuilder.resolvePhase(designation.declaration, FirResolvePhase.SUPER_TYPES) {
-            phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.SUPER_TYPES) {
-                val collected = collect(targetDesignation)
-                supertypeComputationSession.breakLoops(session)
-                apply(collected)
-            }
+        phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.SUPER_TYPES) {
+            val collected = collect(targetDesignation)
+            supertypeComputationSession.breakLoops(session)
+            apply(collected)
         }
 
         updatePhaseDeep(designation.declaration, FirResolvePhase.SUPER_TYPES)
