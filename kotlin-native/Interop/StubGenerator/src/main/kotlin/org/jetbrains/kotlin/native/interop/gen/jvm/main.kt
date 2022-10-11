@@ -105,9 +105,9 @@ private fun List<String>?.isTrue(): Boolean {
     return this?.last() == "true"
 }
 
-private fun runCmd(command: Array<String>, verbose: Boolean = false) {
+private fun runCmd(command: Array<String>, verbose: Boolean = false, redirectInputFile: File? = null) {
     if (verbose) println("COMMAND: " + command.joinToString(" "))
-    Command(*command).getOutputLines(true).let { lines ->
+    Command(command.toList(), redirectInputFile = redirectInputFile).getOutputLines(true).let { lines ->
         if (verbose) lines.forEach(::println)
     }
 }
@@ -385,8 +385,8 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
         KotlinPlatform.NATIVE -> {
             val outLib = File(nativeLibsDir, "$libName.bc")
             val compilerCmd = arrayOf(compiler, *compilerArgs,
-                    "-emit-llvm", "-c", outCFile.absolutePath, "-o", outLib.absolutePath)
-            runCmd(compilerCmd, verbose)
+                    "-emit-llvm", "-x", "c", "-c", "-", "-o", outLib.absolutePath)
+            runCmd(compilerCmd, verbose, redirectInputFile = File(outCFile.absolutePath))
             outLib.absolutePath
         }
     }
