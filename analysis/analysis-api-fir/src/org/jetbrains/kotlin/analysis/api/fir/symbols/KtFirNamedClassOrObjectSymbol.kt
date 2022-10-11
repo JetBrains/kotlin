@@ -27,8 +27,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -44,7 +46,7 @@ internal class KtFirNamedClassOrObjectSymbol(
     override val name: Name get() = withValidityAssertion { firSymbol.name }
 
     override val classIdIfNonLocal: ClassId?
-        get() = withValidityAssertion { firSymbol.classId.takeUnless { it.isLocal } }
+        get() = withValidityAssertion { firSymbol.getClassIdIfNonLocal() }
 
     /* FirRegularClass modality is not modified by STATUS, so it can be taken from RAW */
     override val modality: Modality
@@ -102,6 +104,11 @@ internal class KtFirNamedClassOrObjectSymbol(
     override val symbolKind: KtSymbolKind
         get() = withValidityAssertion {
             when {
+                // TODO: hack should be dropped after KT-54390
+                firSymbol.isLocal && (firSymbol.fir.getContainingDeclaration(firResolveSession.useSiteFirSession) as? FirClass)?.let { clazz ->
+                    clazz.declarations.none { it === firSymbol.fir }
+                } == true -> KtSymbolKind.LOCAL
+
                 firSymbol.classId.isNestedClass -> KtSymbolKind.CLASS_MEMBER
                 firSymbol.isLocal -> KtSymbolKind.LOCAL
                 else -> KtSymbolKind.TOP_LEVEL
