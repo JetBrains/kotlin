@@ -41,6 +41,7 @@ val atomicfuNativeKlib by configurations.creating {
         attribute(KotlinNativeTarget.konanTargetAttribute, nativeTargetName)
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+        // todo: don't add platform specific attribute
         attribute(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget.konanTargetAttribute, org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_X64.toString())
     }
 }
@@ -99,7 +100,7 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":compiler:test-infrastructure"))
-    testCompileOnly("org.jetbrains.kotlinx:atomicfu:0.17.1")
+    testCompileOnly("org.jetbrains.kotlinx:atomicfu:0.17.1") // todo: do not hardcode atomicfu version
 
     testApiJUnit5()
 
