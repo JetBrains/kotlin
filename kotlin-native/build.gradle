@@ -78,7 +78,7 @@ ext {
             KonanTarget.LINUX_MIPSEL32.INSTANCE
     ]
 
-    kotlinCompilerModule= [path: ":kotlin-compiler", configuration: "runtimeElements"]
+    kotlinCompilerModule = project(":kotlin-compiler")
     kotlinStdLibModule= project(":kotlin-stdlib")
     kotlinScriptRuntimeModule= project(":kotlin-script-runtime")
     kotlinUtilKliMetadatabModule= project(":kotlin-util-klib-metadata")
