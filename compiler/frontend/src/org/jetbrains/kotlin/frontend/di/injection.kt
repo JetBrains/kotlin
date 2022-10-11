@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
+import org.jetbrains.kotlin.container.useInstanceIfNotNull
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.resolve.checkers.OptInUsageChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.isTypeRefinementEnabled
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
+import org.jetbrains.kotlin.resolve.scopes.optimization.OptimizingOptions
 import org.jetbrains.kotlin.types.KotlinTypeRefinerImpl
 import org.jetbrains.kotlin.types.checker.KotlinTypePreparator
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
@@ -58,7 +60,8 @@ fun StorageComponentContainer.configureModule(
     analyzerServices: PlatformDependentAnalyzerServices,
     trace: BindingTrace,
     languageVersionSettings: LanguageVersionSettings,
-    sealedProvider: SealedClassInheritorsProvider = CliSealedClassInheritorsProvider
+    sealedProvider: SealedClassInheritorsProvider = CliSealedClassInheritorsProvider,
+    optimizingOptions: OptimizingOptions? = null,
 ) {
     useInstance(sealedProvider)
     useInstance(moduleContext)
@@ -68,6 +71,8 @@ fun StorageComponentContainer.configureModule(
     useInstance(moduleContext.module.builtIns)
     useInstance(trace)
     useInstance(languageVersionSettings)
+
+    useInstanceIfNotNull(optimizingOptions)
 
     useInstance(platform)
     useInstance(analyzerServices)
@@ -179,8 +184,9 @@ fun createContainerForLazyBodyResolve(
     mainFunctionDetectorFactory: MainFunctionDetector.Factory,
     sealedProvider: SealedClassInheritorsProvider,
     controlFlowInformationProviderFactory: ControlFlowInformationProvider.Factory,
+    optimizingOptions: OptimizingOptions? = null
 ): StorageComponentContainer = createContainer("LazyBodyResolve", analyzerServices) {
-    configureModule(moduleContext, platform, analyzerServices, bindingTrace, languageVersionSettings, sealedProvider)
+    configureModule(moduleContext, platform, analyzerServices, bindingTrace, languageVersionSettings, sealedProvider, optimizingOptions)
     useInstance(mainFunctionDetectorFactory)
     useInstance(kotlinCodeAnalyzer)
     useInstance(kotlinCodeAnalyzer.fileScopeProvider)

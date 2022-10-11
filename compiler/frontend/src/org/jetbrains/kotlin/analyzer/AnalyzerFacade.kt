@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.SealedClassInheritorsProvider
+import org.jetbrains.kotlin.resolve.scopes.optimization.OptimizingOptions
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 
@@ -134,6 +135,7 @@ abstract class ResolverForModuleFactory {
         resolverForProject: ResolverForProject<M>,
         languageVersionSettings: LanguageVersionSettings,
         sealedInheritorsProvider: SealedClassInheritorsProvider,
+        resolveOptimizingOptions: OptimizingOptions? = null,
     ): ResolverForModule
 }
 
