@@ -101,7 +101,12 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 
         if (skipCheckForContainingClassVisibility) return true
 
-        val parentClass = declaration.containingNonLocalClass(session, dispatchReceiver) ?: return true
+        val parentClass = declaration.containingNonLocalClass(
+            session,
+            dispatchReceiver,
+            containingDeclarations,
+            supertypeSupplier
+        ) ?: return true
         return generateSequence(parentClass) { it.containingNonLocalClass(session) }.all { parent ->
             isSpecificDeclarationVisible(
                 parent,
@@ -137,7 +142,9 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 
     private fun FirMemberDeclaration.containingNonLocalClass(
         session: FirSession,
-        dispatchReceiverValue: ReceiverValue?
+        dispatchReceiverValue: ReceiverValue?,
+        containingUseSiteDeclarations: List<FirDeclaration>,
+        supertypeSupplier: SupertypeSupplier
     ): FirClassLikeDeclaration? {
         return when (this) {
             is FirCallableDeclaration -> {
@@ -147,7 +154,17 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                     }
                 }
 
-                this.containingClass()?.toSymbol(session)?.fir
+                val containingLookupTag = this.containingClass()
+                val containingClass = containingLookupTag?.toSymbol(session)?.fir
+
+                if (isStatic && containingClass != null) {
+                    containingUseSiteDeclarations.firstNotNullOfOrNull {
+                        if (it !is FirClass) return@firstNotNullOfOrNull null
+                        it.takeIf { it.isSubClass(containingLookupTag, session, supertypeSupplier) }
+                    }?.let { return it }
+                }
+
+                containingClass
             }
             is FirClassLikeDeclaration -> containingNonLocalClass(session)
         }
