@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
+import org.jetbrains.kotlin.resolve.scopes.optimization.OptimizingOptions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class JvmPlatformParameters(
@@ -62,7 +63,8 @@ class JvmResolverForModuleFactory(
         moduleContent: ModuleContent<M>,
         resolverForProject: ResolverForProject<M>,
         languageVersionSettings: LanguageVersionSettings,
-        sealedInheritorsProvider: SealedClassInheritorsProvider
+        sealedInheritorsProvider: SealedClassInheritorsProvider,
+        resolveOptimizingOptions: OptimizingOptions?
     ): ResolverForModule {
         val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
@@ -119,7 +121,8 @@ class JvmResolverForModuleFactory(
             packagePartProvider,
             languageVersionSettings,
             sealedInheritorsProvider = sealedInheritorsProvider,
-            useBuiltInsProvider = platformParameters.useBuiltinsProviderForModule(moduleInfo)
+            useBuiltInsProvider = platformParameters.useBuiltinsProviderForModule(moduleInfo),
+            optimizingOptions = resolveOptimizingOptions,
         )
 
         val providersForModule = arrayListOf(

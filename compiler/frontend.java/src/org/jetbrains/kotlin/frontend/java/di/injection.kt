@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.jvm.multiplatform.OptionalAnnotationPackageFragmentProvider
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
+import org.jetbrains.kotlin.resolve.scopes.optimization.OptimizingOptions
 
 fun createContainerForLazyResolveWithJava(
     jvmPlatform: TargetPlatform,
@@ -71,11 +72,12 @@ fun createContainerForLazyResolveWithJava(
     configureJavaClassFinder: (StorageComponentContainer.() -> Unit)? = null,
     javaClassTracker: JavaClassesTracker? = null,
     implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter? = null,
-    sealedInheritorsProvider: SealedClassInheritorsProvider = CliSealedClassInheritorsProvider
+    sealedInheritorsProvider: SealedClassInheritorsProvider = CliSealedClassInheritorsProvider,
+    optimizingOptions: OptimizingOptions? = null,
 ): StorageComponentContainer = createContainer("LazyResolveWithJava", JvmPlatformAnalyzerServices) {
     configureModule(
         moduleContext, jvmPlatform, JvmPlatformAnalyzerServices, bindingTrace, languageVersionSettings,
-        sealedInheritorsProvider
+        sealedInheritorsProvider, optimizingOptions
     )
 
     configureIncrementalCompilation(lookupTracker, expectActualTracker, inlineConstTracker, enumWhenTracker)
