@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
-import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.backend.jvm.ir.extensionReceiverName
-import org.jetbrains.kotlin.backend.jvm.ir.findSuperDeclaration
-import org.jetbrains.kotlin.backend.jvm.ir.isStaticValueClassReplacement
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
+import org.jetbrains.kotlin.ir.builders.irExprBody
+import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -44,29 +44,34 @@ class MemoizedMultiFieldValueClassReplacements(
         targetFunction: IrFunction,
         originWhenFlattened: IrDeclarationOrigin,
     ): RemappedParameter {
+        val oldParam = this
         if (!type.needsMfvcFlattening()) return RemappedParameter.RegularMapping(
             targetFunction.addValueParameter {
-                updateFrom(this@grouped)
-                this.name = this@grouped.name
+                updateFrom(oldParam)
+                this.name = oldParam.name
                 index = targetFunction.valueParameters.size
             }.apply {
-                copyAnnotationsFrom(this@grouped)
+                defaultValue = oldParam.defaultValue
+                copyAnnotationsFrom(oldParam)
             }
         )
-        val rootMfvcNode = this@MemoizedMultiFieldValueClassReplacements.getRootMfvcNode(type.erasedUpperBound)!!
-        require(!hasDefaultValue()) { "Default parameters values are not supported for multi-field value classes" }
+        val rootMfvcNode = this@MemoizedMultiFieldValueClassReplacements.getRootMfvcNode(type.erasedUpperBound)
+        defaultValue?.expression?.let { oldMfvcDefaultArguments.putIfAbsent(this, it) }
         val newType = type.substitute(substitutionMap) as IrSimpleType
         val localSubstitutionMap = makeTypeArgumentsFromType(newType)
         val valueParameters = rootMfvcNode.mapLeaves { leaf ->
             targetFunction.addValueParameter {
-                updateFrom(this@grouped)
-                this.name = Name.identifier("${name ?: this@grouped.name}-${leaf.fullFieldName}")
+                updateFrom(oldParam)
+                this.name = Name.identifier("${name ?: oldParam.name}-${leaf.fullFieldName}")
                 type = leaf.type.substitute(localSubstitutionMap)
                 origin = originWhenFlattened
                 index = targetFunction.valueParameters.size
-            }.apply {
-                defaultValue = null
-                copyAnnotationsFrom(this@grouped)
+                isAssignable = isAssignable || oldParam.defaultValue != null
+            }.also { newParam ->
+                newParam.defaultValue = oldParam.defaultValue?.let {
+                    context.createJvmIrBuilder(targetFunction.symbol).run { irExprBody(irGet(newParam)) }
+                }
+                require(oldParam.annotations.isEmpty()) { "Annotations are not supported for MFVC parameters" }
             }
         }
         return MultiFieldValueClassMapping(rootMfvcNode, newType, valueParameters)
@@ -78,6 +83,9 @@ class MemoizedMultiFieldValueClassReplacements(
         targetFunction: IrFunction,
         originWhenFlattened: IrDeclarationOrigin,
     ): List<RemappedParameter> = map { it.grouped(name, substitutionMap, targetFunction, originWhenFlattened) }
+
+
+    val oldMfvcDefaultArguments = ConcurrentHashMap<IrValueParameter, IrExpression>()
 
     private fun buildReplacement(
         function: IrFunction,

@@ -89,7 +89,7 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
 
     private fun transformFlattenedConstructor(function: IrConstructor, replacement: IrConstructor): List<IrDeclaration>? {
         replacement.valueParameters.forEach {
-            it.transformChildrenVoid()
+            visitParameter(it)
             it.defaultValue?.patchDeclarationParents(replacement)
         }
         allScopes.push(createScope(function))
@@ -106,9 +106,18 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
 
     protected abstract fun transformSecondaryConstructorFlat(constructor: IrConstructor, replacement: IrSimpleFunction): List<IrDeclaration>
 
+    open fun visitParameter(parameter: IrValueParameter) {
+        parameter.transformChildrenVoid()
+    }
+
+    final override fun visitValueParameterNew(declaration: IrValueParameter): IrStatement {
+        visitParameter(declaration)
+        return declaration
+    }
+
     private fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
         replacement.valueParameters.forEach {
-            it.transformChildrenVoid()
+            visitParameter(it)
             it.defaultValue?.patchDeclarationParents(replacement)
         }
         allScopes.push(createScope(replacement))
@@ -184,7 +193,11 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
             function,
             replacement,
             when {
-                function.isTypedEquals() -> InlineClassAbi.mangledNameFor(function, mangleReturnTypes = false, useOldMangleRules = false)
+                function.isValueClassTypedEquals -> InlineClassAbi.mangledNameFor(
+                    function,
+                    mangleReturnTypes = false,
+                    useOldMangleRules = false
+                )
                 // If the original function has signature which need mangling we still need to replace it with a mangled version.
                 (!function.isFakeOverride || function.findInterfaceImplementation(context.state.jvmDefaultMode) != null) && when (specificMangle) {
                     SpecificMangle.Inline -> function.signatureRequiresMangling(includeInline = true, includeMFVC = false)

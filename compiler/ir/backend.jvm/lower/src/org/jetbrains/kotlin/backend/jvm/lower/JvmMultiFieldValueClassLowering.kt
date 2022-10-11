@@ -606,17 +606,49 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                 .zipWithNext { start: Int, finish: Int -> replacement.explicitParameters.slice(start until finish) }
         )
         for (i in old2newList.indices) {
-            val (param, newParamList) = old2newList[i]
+            val (oldParameter, newParamList) = old2newList[i]
             when (val structure = parametersStructure[i]) {
+                is RegularMapping -> valueDeclarationsRemapper.registerReplacement(oldParameter, newParamList.single())
                 is MultiFieldValueClassMapping -> {
                     val mfvcNodeInstance = structure.rootMfvcNode.createInstanceFromValueDeclarationsAndBoxType(
                         structure.boxedType, newParamList
                     )
-                    valueDeclarationsRemapper.registerReplacement(param, mfvcNodeInstance)
+                    valueDeclarationsRemapper.registerReplacement(oldParameter, mfvcNodeInstance)
                 }
-
-                is RegularMapping -> valueDeclarationsRemapper.registerReplacement(param, newParamList.single())
             }
+        }
+
+        withinScope(replacement) {
+            addDefaultArgumentsIfNeeded(replacement, old2newList, parametersStructure)
+        }
+    }
+
+    private fun addDefaultArgumentsIfNeeded(
+        replacement: IrFunction,
+        old2newList: List<Pair<IrValueParameter, List<IrValueParameter>>>,
+        parametersStructure: List<RemappedParameter>
+    ) {
+        for (i in old2newList.indices) {
+            val (param, newParamList) = old2newList[i]
+            val defaultValue = replacements.oldMfvcDefaultArguments[param] ?: continue
+            val structure = parametersStructure[i]
+            if (structure is MultiFieldValueClassMapping) {
+                newParamList[0].defaultValue = with(context.createJvmIrBuilder(replacement.symbol)) {
+                    irExprBody(irBlock {
+                        val mfvcNodeInstance = structure.rootMfvcNode.createInstanceFromValueDeclarationsAndBoxType(
+                            param.type as IrSimpleType, newParamList
+                        )
+                        flattenExpressionTo(defaultValue, mfvcNodeInstance)
+                        +irGet(newParamList[0])
+                    })
+                }
+            }
+        }
+    }
+
+    override fun visitParameter(parameter: IrValueParameter) {
+        if (parameter.origin != IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_PARAMETER) {
+            super.visitParameter(parameter)
         }
     }
 
@@ -1033,12 +1065,14 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             if (constructor.isPrimary && constructor.constructedClass.isMultiFieldValueClass &&
                 constructor.origin != JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR
             ) {
-                val oldArguments = List(expression.valueArgumentsCount) { expression.getValueArgument(it) }
+                val oldArguments = List(expression.valueArgumentsCount) {
+                    expression.getValueArgument(it) ?: error("Default arguments for MFVC primary constructors are not yet supported")
+                }
                 require(rootNode.subnodes.size == oldArguments.size) {
                     "Old ${constructor.render()} must have ${rootNode.subnodes.size} arguments but got ${oldArguments.size}"
                 }
                 for ((subnode, argument) in rootNode.subnodes zip oldArguments) {
-                    argument?.let { flattenExpressionTo(it, instance[subnode.name]!!) }
+                    flattenExpressionTo(argument, instance[subnode.name]!!)
                 }
                 +irCall(rootNode.primaryConstructorImpl).apply {
                     copyTypeArgumentsFrom(expression)
@@ -1143,18 +1177,26 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
 }
 
 private sealed class BlockOrBody {
-    data class Body(val body: IrBody) : BlockOrBody()
-    data class Block(val block: IrBlock) : BlockOrBody()
+    abstract val element: IrElement
+
+    data class Body(val body: IrBody) : BlockOrBody() {
+        override val element get() = body
+    }
+
+    data class Block(val block: IrBlock) : BlockOrBody() {
+        override val element get() = block
+    }
 }
 
 /**
  * Finds the most narrow block or body which contains all usages of each of the given variables
  */
-private fun findNearestBlocksForVariables(variables: Set<IrVariable>, body: IrBody): Map<IrVariable, BlockOrBody?> {
+private fun findNearestBlocksForVariables(variables: Set<IrVariable>, body: BlockOrBody): Map<IrVariable, BlockOrBody?> {
+    if (variables.isEmpty()) return mapOf()
     val variableUsages = mutableMapOf<BlockOrBody, MutableSet<IrVariable>>()
     val childrenBlocks = mutableMapOf<BlockOrBody, MutableList<BlockOrBody>>()
 
-    body.acceptVoid(object : IrElementVisitorVoid {
+    body.element.acceptVoid(object : IrElementVisitorVoid {
         private val stack = mutableListOf<BlockOrBody>()
         override fun visitElement(element: IrElement) {
             element.acceptChildren(this, null)
@@ -1168,7 +1210,7 @@ private fun findNearestBlocksForVariables(variables: Set<IrVariable>, body: IrBo
         }
 
         override fun visitBlock(expression: IrBlock) {
-            childrenBlocks.getOrPut(currentStackElement()!!) { mutableListOf() }.add(Block(expression))
+            currentStackElement()?.let { childrenBlocks.getOrPut(it) { mutableListOf() }.add(Block(expression)) }
             stack.add(Block(expression))
             super.visitBlock(expression)
             require(stack.removeLast() == Block(expression)) { "Invalid stack" }
@@ -1195,7 +1237,7 @@ private fun findNearestBlocksForVariables(variables: Set<IrVariable>, body: IrBo
         }
     }
 
-    return variables.associateWith { dfs(BlockOrBody.Body(body), it) }
+    return variables.associateWith { dfs(body, it) }
 }
 
 private fun IrStatement.containsUsagesOf(variablesSet: Set<IrVariable>): Boolean {
@@ -1217,20 +1259,20 @@ private fun IrStatement.containsUsagesOf(variablesSet: Set<IrVariable>): Boolean
     return used
 }
 
+private fun IrBody.makeBodyWithAddedVariables(context: JvmBackendContext, variables: Set<IrVariable>, symbol: IrSymbol) =
+    BlockOrBody.Body(this).makeBodyWithAddedVariables(context, variables, symbol) as IrBody
+
 /**
  * Adds declarations of the variables to the most narrow possible block or body.
  * It adds them before the first usage within the block and inlines initialization of them when possible.
  */
-fun IrBody.makeBodyWithAddedVariables(
-    context: JvmBackendContext,
-    variables: Set<IrVariable>,
-    symbol: IrSymbol
-): IrBody {
+private fun BlockOrBody.makeBodyWithAddedVariables(context: JvmBackendContext, variables: Set<IrVariable>, symbol: IrSymbol): IrElement {
+    if (variables.isEmpty()) return element
     val nearestBlocks = findNearestBlocksForVariables(variables, this)
     val containingVariables: Map<BlockOrBody, List<IrVariable>> = nearestBlocks.entries
         .mapNotNull { (k, v) -> if (v != null) k to v else null }
         .groupBy({ (_, v) -> v }, { (k, _) -> k })
-    return transform(object : IrElementTransformerVoid() {
+    return element.transform(object : IrElementTransformerVoid() {
         private fun getFlattenedStatements(container: IrStatementContainer): Sequence<IrStatement> = sequence {
             for (statement in container.statements) {
                 if (statement is IrStatementContainer) {
@@ -1306,12 +1348,11 @@ fun IrBody.makeBodyWithAddedVariables(
         override fun visitExpressionBody(body: IrExpressionBody): IrBody {
             val lowering = this
             containingVariables[BlockOrBody.Body(body)]?.takeIf { it.isNotEmpty() }?.let { bodyVars ->
-                val blockBody = context.createJvmIrBuilder(symbol).irBlockBody {
-                    +irReturn(body.expression.transform(lowering, null))
+                return with(context.createJvmIrBuilder(symbol)) {
+                    val blockBody = irBlock { +body.expression.transform(lowering, null) }
+                    replaceSetVariableWithInitialization(bodyVars, blockBody)
+                    irExprBody(blockBody)
                 }
-                blockBody.transformChildrenVoid()
-                replaceSetVariableWithInitialization(bodyVars, blockBody)
-                return blockBody
             }
             return super.visitExpressionBody(body)
         }
