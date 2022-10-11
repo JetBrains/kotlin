@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
@@ -126,7 +127,7 @@ open class LazyImportResolver<I : KtImportInfo>(
         return importedScopesProvider(directive) ?: ImportingScope.Empty
     }
 
-    val allNames: Set<Name>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    val allNames: Set<Name>? by components.storageManager.createNullableLazyValue {
         indexedImports.imports.asIterable().flatMapToNullable(THashSet()) { getImportScope(it).computeImportedNames() }
     }
 
