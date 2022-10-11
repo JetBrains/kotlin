@@ -90,7 +90,7 @@ open class PodInstallTask : CocoapodsTask() {
             val podInstallCommand = listOf("pod", "install")
 
             runCommand(podInstallCommand,
-                       project.logger,
+                       logger,
                        errorHandler = { returnCode, output, _ ->
                            CocoapodsErrorHandlingUtil.handlePodInstallError(
                                podInstallCommand.joinToString(" "),
