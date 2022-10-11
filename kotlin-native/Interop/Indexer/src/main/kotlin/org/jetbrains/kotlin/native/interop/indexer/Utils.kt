@@ -537,7 +537,12 @@ internal interface Indexer {
     fun indexDeclaration(info: CXIdxDeclInfo) {}
 }
 
-internal fun indexTranslationUnit(index: CXIndex, translationUnit: CXTranslationUnit, options: Int, indexer: Indexer) {
+internal fun interface IndexerFactory {
+    fun newInstance(tu: CXTranslationUnit): Indexer
+}
+
+internal fun indexTranslationUnit(index: CXIndex, translationUnit: CXTranslationUnit, options: Int, indexerFactory: IndexerFactory) {
+    val indexer = indexerFactory.newInstance(translationUnit)
     val indexerStableRef = StableRef.create(indexer)
     try {
         val clientData = indexerStableRef.asCPointer()
@@ -692,14 +697,8 @@ class TURepository : Disposable {
 class TUOptimizedIndex {
     private val unitsByHeaderFile = SetMultimap<String, CXTranslationUnit>()
 
-    /**
-     * Should AST file contain declarations from nested headers, this fun makes both headers to refer to PCM file.
-     */
-    internal fun processInclude(includerFilename: String, includedFilename: String) {
-        if (includerFilename != includedFilename)
-            unitsByHeaderFile[includerFilename]?.let {
-                unitsByHeaderFile.putAll(includedFilename, it)
-            }
+    internal fun processInclude(unit: CXTranslationUnit, includedFilename: String) {
+        unitsByHeaderFile.put(includedFilename, unit)
     }
 
     internal fun processTopHeaders(unit: CXTranslationUnit, info: CXIdxImportedASTFileInfo) {
@@ -761,63 +760,65 @@ private fun filterHeadersByName(
     // The *name* of the header here is the path relative to the include path element., e.g. `curl/curl.h`.
     val headerToName = mutableMapOf<String, String>()
 
-    indexMutatingTUList(translationUnits, index, object : Indexer {
-        override fun enteredMainFile(file: CXFile) {
-            mainFile = file
-            allHeaders += file
-        }
-
-        override fun ppIncludedFile(info: CXIdxIncludedFileInfo) {
-            val includeLocation = clang_indexLoc_getCXSourceLocation(info.hashLoc.readValue())
-            val file = info.file!!
-
-            allHeaders += file
-
-            if (clang_Location_isFromMainFile(includeLocation) != 0) {
-                topLevelFiles.add(file)
+    indexMutatingTUList(translationUnits, index) { unit: CXTranslationUnit ->
+        object : Indexer {
+            override fun enteredMainFile(file: CXFile) {
+                mainFile = file
+                allHeaders += file
             }
 
-            val name = info.filename!!.toKString()
-            val headerName = if (info.isAngled != 0) {
-                // If the header is included with `#include <$name>`, then `name` is probably
-                // the path relative to the include path element.
-                name
-            } else if (includeLocation.getContainingFile() == null) {
-                name // containingFile is null when one module imports another via AST file
-            } else {
-                // If it is included with `#include "$name"`, then `name` can also be the path relative to the includer.
-                val includerFile = includeLocation.getContainingFile()!!
-                val includerName = headerToName[includerFile.canonicalPath] ?: ""
-                val includerPath = includerFile.path
-                tuRepository.headerUsage.processInclude(includerFile.canonicalPath, file.canonicalPath)
+            override fun ppIncludedFile(info: CXIdxIncludedFileInfo) {
+                val includeLocation = clang_indexLoc_getCXSourceLocation(info.hashLoc.readValue())
+                val file = info.file!!
 
-                val resolvedSibling = Paths.get(includerPath).resolveSibling(name).toString()
-                if (clang_getFile(translationUnit, resolvedSibling)?.canonicalPath == file.canonicalPath) {
-                    // included file is accessible from the includer by `name` used as relative path, so
-                    // `name` seems to be relative to the includer:
-                    Paths.get(includerName).resolveSibling(name).normalize().toString()
-                } else {
+                allHeaders += file
+
+                if (clang_Location_isFromMainFile(includeLocation) != 0) {
+                    topLevelFiles.add(file)
+                }
+
+                val name = info.filename!!.toKString()
+                val headerName = if (info.isAngled != 0) {
+                    // If the header is included with `#include <$name>`, then `name` is probably
+                    // the path relative to the include path element.
                     name
+                } else if (includeLocation.getContainingFile() == null) {
+                    name // containingFile is null when one module imports another via AST file
+                } else {
+                    // If it is included with `#include "$name"`, then `name` can also be the path relative to the includer.
+                    val includerFile = includeLocation.getContainingFile()!!
+                    val includerName = headerToName[includerFile.canonicalPath] ?: ""
+                    val includerPath = includerFile.path
+
+                    val resolvedSibling = Paths.get(includerPath).resolveSibling(name).toString()
+                    if (clang_getFile(translationUnit, resolvedSibling)?.canonicalPath == file.canonicalPath) {
+                        // included file is accessible from the includer by `name` used as relative path, so
+                        // `name` seems to be relative to the includer:
+                        Paths.get(includerName).resolveSibling(name).normalize().toString()
+                    } else {
+                        name
+                    }
+                }
+
+                if (includeLocation.getContainingFile() != null) {
+                    // headerToName is stored only for known containing file of include location, which does not happen inside imported AST file.
+                    // Right before AST import, `ppIncludedFile` receives included source file in `info.file`, and another source as include location in `info.hashLoc`
+                    // Inside AST import, `ppIncludedFile` is called again for the same included source file,
+                    //   though include location is not a source, but `.m` file, and its `getContainingFile()` is null
+                    // So include location makes sense only the first
+                    headerToName[file.canonicalPath] = headerName
+                }
+                if (!filter.policy.excludeUnused(headerName)) {
+                    ownHeaders.add(file)
+                    tuRepository.headerUsage.processInclude(unit, file.canonicalPath)
                 }
             }
 
-            if (includeLocation.getContainingFile() != null) {
-                // headerToName is stored only for known containing file of include location, which does not happen inside imported AST file.
-                // Right before AST import, `ppIncludedFile` receives included source file in `info.file`, and another source as include location in `info.hashLoc`
-                // Inside AST import, `ppIncludedFile` is called again for the same included source file,
-                //   though include location is not a source, but `.m` file, and its `getContainingFile()` is null
-                // So include location makes sense only the first
-                headerToName[file.canonicalPath] = headerName
-            }
-            if (!filter.policy.excludeUnused(headerName)) {
-                ownHeaders.add(file)
+            override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
+                processImportAST(info, tuRepository, translationUnits, index)
             }
         }
-
-        override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
-            processImportAST(info, tuRepository, translationUnits, index)
-        }
-    })
+    }
 
     if (filter.excludeDepdendentModules) {
         ModulesMap(compilation, translationUnit).use { modulesMap ->
@@ -849,29 +850,28 @@ private fun filterHeadersByPredefined(
 ) {
     val translationUnits = LinkedList<CXTranslationUnit>().apply { addLast(translationUnit) }
     // Note: suboptimal but simple.
-    indexMutatingTUList(translationUnits, index, object : Indexer {
-        override fun enteredMainFile(file: CXFile) {
-            ownHeaders += file
-            allHeaders += file
-        }
-
-        override fun ppIncludedFile(info: CXIdxIncludedFileInfo) {
-            val file = info.file
-            allHeaders += file
-            val includeLocation = clang_indexLoc_getCXSourceLocation(info.hashLoc.readValue())
-            includeLocation.getContainingFile()?.let {
-                tuRepository.headerUsage.processInclude(it.canonicalPath, file!!.canonicalPath)
-            }
-            if (file?.canonicalPath in filter.headers) {
+    indexMutatingTUList(translationUnits, index) { unit: CXTranslationUnit ->
+        object : Indexer {
+            override fun enteredMainFile(file: CXFile) {
                 ownHeaders += file
+                allHeaders += file
             }
-        }
 
-        override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
-            processImportAST(info, tuRepository, translationUnits, index)
-        }
+            override fun ppIncludedFile(info: CXIdxIncludedFileInfo) {
+                val file = info.file
+                allHeaders += file
+                if (file?.canonicalPath in filter.headers) {
+                    ownHeaders += file
+                    tuRepository.headerUsage.processInclude(unit, file!!.canonicalPath)
+                }
+            }
 
-    })
+            override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
+                processImportAST(info, tuRepository, translationUnits, index)
+            }
+
+        }
+    }
 }
 
 private fun processImportAST(info: CXIdxImportedASTFileInfo, tuRepository: TURepository, translationUnits: MutableList<CXTranslationUnit>, index: CXIndex) {
@@ -885,11 +885,11 @@ private fun processImportAST(info: CXIdxImportedASTFileInfo, tuRepository: TURep
 private fun indexMutatingTUList(
         translationUnits: MutableList<CXTranslationUnit>,
         index: CXIndex,
-        indexer: Indexer
+        indexerFactory: IndexerFactory
 ) {
     var curUnitIndex = 0
     while (curUnitIndex < translationUnits.size) {
-        indexTranslationUnit(index, translationUnits[curUnitIndex++], 0, indexer)
+        indexTranslationUnit(index, translationUnits[curUnitIndex++], 0, indexerFactory)
     }
 }
 
