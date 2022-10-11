@@ -262,17 +262,15 @@ object LowLevelFirApiFacadeForResolveOnAir {
                 declaration = copiedFirDeclaration,
                 firFile = originalFirFile
             )
-            ResolveTreeBuilder.resolveEnsure(onAirDesignation.declaration, FirResolvePhase.BODY_RESOLVE) {
-                val resolvableSession = onAirDesignation.declaration.llFirResolvableSession
-                    ?: error("Expected resolvable session")
-                resolvableSession.moduleComponents.firModuleLazyDeclarationResolver
-                    .runLazyDesignatedOnAirResolveToBodyWithoutLock(
-                        designation = onAirDesignation,
-                        checkPCE = true,
-                        onAirCreatedDeclaration = onAirCreatedDeclaration,
-                        towerDataContextCollector = collector,
-                    )
-            }
+            val resolvableSession = onAirDesignation.declaration.llFirResolvableSession
+                ?: error("Expected resolvable session")
+            resolvableSession.moduleComponents.firModuleLazyDeclarationResolver
+                .runLazyDesignatedOnAirResolveToBodyWithoutLock(
+                    designation = onAirDesignation,
+                    checkPCE = true,
+                    onAirCreatedDeclaration = onAirCreatedDeclaration,
+                    towerDataContextCollector = collector,
+                )
             copiedFirDeclaration
         }
 

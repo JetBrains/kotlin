@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.fir.FirElement
@@ -42,10 +41,8 @@ internal class LLFirDesignatedTypeResolverTransformer(
         if (designation.declaration.resolvePhase >= FirResolvePhase.TYPES) return
         designation.declaration.checkPhase(FirResolvePhase.SUPER_TYPES)
 
-        ResolveTreeBuilder.resolvePhase(designation.declaration, FirResolvePhase.TYPES) {
-            phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.TYPES) {
-                designation.firFile.transform<FirFile, Any?>(this, null)
-            }
+        phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.TYPES) {
+            designation.firFile.transform<FirFile, Any?>(this, null)
         }
 
         declarationTransformer.ensureDesignationPassed()

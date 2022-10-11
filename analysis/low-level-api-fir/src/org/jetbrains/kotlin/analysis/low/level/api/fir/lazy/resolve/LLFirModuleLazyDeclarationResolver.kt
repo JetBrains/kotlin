@@ -132,15 +132,13 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
             if (toPhase == FirResolvePhase.IMPORTS) return
             if (firFile.resolvePhase >= toPhase) return
             moduleComponents.globalResolveComponents.lockProvider.runCustomResolveUnderLock(firFile, checkPCE) {
-                ResolveTreeBuilder.resolveEnsure(firFile, toPhase) {
-                    lazyResolveFileDeclarationWithoutLock(
-                        firFile = firFile,
-                        toPhase = toPhase,
-                        collector = collector,
-                        scopeSession = scopeSession,
-                        checkPCE = checkPCE,
-                    )
-                }
+                lazyResolveFileDeclarationWithoutLock(
+                    firFile = firFile,
+                    toPhase = toPhase,
+                    collector = collector,
+                    scopeSession = scopeSession,
+                    checkPCE = checkPCE,
+                )
             }
         } catch (e: Throwable) {
             rethrowWithDetails(e, firFile, fromPhase, toPhase)
@@ -345,15 +343,13 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         }
 
         moduleComponents.globalResolveComponents.lockProvider.runCustomResolveUnderLock(designation.firFile, checkPCE) {
-            ResolveTreeBuilder.resolveEnsure(designation.declaration, neededPhase) {
-                runLazyDesignatedResolveWithoutLock(
-                    designation = designation,
-                    scopeSession = scopeSession,
-                    toPhase = neededPhase,
-                    checkPCE = checkPCE,
-                )
-                designation.declaration
-            }
+            runLazyDesignatedResolveWithoutLock(
+                designation = designation,
+                scopeSession = scopeSession,
+                toPhase = neededPhase,
+                checkPCE = checkPCE,
+            )
+            designation.declaration
         }
     }
 
