@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
@@ -680,8 +682,34 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-        // todo implement
-        return super.visitFunctionReference(expression)
+        val function = expression.symbol.owner
+        val replacement = function.let {
+            replacements.run {
+                getReplacementFunction(it) ?: if (it is IrConstructor) getReplacementForRegularClassConstructor(it) else null
+            }
+        } ?: return super.visitFunctionReference(expression)
+        return if (function is IrConstructor && function.isPrimary && function.constructedClass.isMultiFieldValueClass) {
+            expression.run {
+                IrConstructorCallImpl(
+                    startOffset, endOffset, type, function.symbol, typeArgumentsCount, typeArgumentsCount, valueArgumentsCount, origin
+                )
+            }.transform(this, null)
+        } else {
+            context.createJvmIrBuilder(getCurrentScopeSymbol()).irBlock {
+                expression.run {
+                    IrFunctionReferenceImpl(
+                        startOffset,
+                        endOffset,
+                        type,
+                        replacement.symbol,
+                        function.typeParameters.size,
+                        replacement.valueParameters.size,
+                        reflectionTarget,
+                        origin
+                    )
+                }.apply { buildReplacement(function, expression, replacement) }.copyAttributes(expression)
+            }.unwrapBlock()
+        }
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
@@ -1057,7 +1085,12 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         }
         if (expression is IrTry) {
             expression.tryResult = irBlock { flattenExpressionTo(expression.tryResult, instance) }.unwrapBlock()
-            expression.catches.replaceAll { irCatch(it.catchParameter, irBlock { flattenExpressionTo(it.result, instance) }.unwrapBlock()) }
+            expression.catches.replaceAll {
+                irCatch(
+                    it.catchParameter,
+                    irBlock { flattenExpressionTo(it.result, instance) }.unwrapBlock()
+                )
+            }
             expression.finallyExpression = expression.finallyExpression?.transform(lowering, null)
             +expression
             return
