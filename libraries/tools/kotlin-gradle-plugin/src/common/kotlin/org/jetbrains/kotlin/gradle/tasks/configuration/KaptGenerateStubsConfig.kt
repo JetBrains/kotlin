@@ -31,13 +31,17 @@ import java.util.concurrent.ConcurrentHashMap
 
 internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStubsTask> {
 
-    constructor(compilation: KotlinCompilationData<*>, kotlinTaskProvider: TaskProvider<KotlinCompile>) : super(compilation) {
+    constructor(
+        compilation: KotlinCompilationData<*>,
+        kotlinTaskProvider: TaskProvider<KotlinCompile>,
+        kaptClassesDir: File,
+    ) : super(compilation) {
         configureFromExtension(project.extensions.getByType(KaptExtension::class.java))
         configureTask { task ->
             val kotlinCompileTask = kotlinTaskProvider.get()
             task.useModuleDetection.value(kotlinCompileTask.useModuleDetection).disallowChanges()
             task.moduleName.value(kotlinCompileTask.moduleName).disallowChanges()
-            task.libraries.from({ kotlinCompileTask.libraries })
+            task.libraries.from({ kotlinCompileTask.libraries - project.files(kaptClassesDir) })
             task.compileKotlinArgumentsContributor.set(providers.provider { kotlinCompileTask.compilerArgumentsContributor })
             task.pluginOptions.addAll(kotlinCompileTask.pluginOptions)
             // KotlinCompile will also have as input output from KaptGenerateStubTask and KaptTask

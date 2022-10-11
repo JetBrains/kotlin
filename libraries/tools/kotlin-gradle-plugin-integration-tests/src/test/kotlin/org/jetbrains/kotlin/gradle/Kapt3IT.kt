@@ -812,6 +812,38 @@ open class Kapt3IT : Kapt3BaseIT() {
         }
     }
 
+    @DisplayName("KT33847: Kapt does not included Filer-generated class files on compilation classpath")
+    @GradleTest
+    open fun testKt33847(gradleVersion: GradleVersion) {
+        project("kt33847".withPrefix, gradleVersion) {
+
+            build("build") {
+                val processorSubproject = subProject("processor")
+                processorSubproject
+                    .assertFileInProjectExists("build/tmp/kapt3/classes/main/META-INF/services/javax.annotation.processing.Processor")
+
+                val processorJar = processorSubproject.projectPath.resolve("build/libs/processor.jar")
+                assertFileExists(processorJar)
+
+                ZipFile(processorJar.toFile()).use { zip ->
+                    assert(zip.getEntry("META-INF/services/javax.annotation.processing.Processor") != null) {
+                        "Generated annotation processor jar file does not contain processor service entry!"
+                    }
+                }
+
+                assertTasksExecuted(
+                    ":api:compileKotlin",
+                    ":processor:compileKotlin",
+                    ":library:kaptGenerateStubsKotlin",
+                    ":library:kaptKotlin",
+                    ":library:compileKotlin",
+                    ":app:compileKotlin",
+                )
+                assertKaptSuccessful()
+            }
+        }
+    }
+
     @DisplayName("Dependency on kapt module should not resolve all configurations")
     @GradleTest
     fun testDependencyOnKaptModule(gradleVersion: GradleVersion) {
