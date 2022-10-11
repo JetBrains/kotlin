@@ -722,18 +722,12 @@ class TUOptimizedIndex {
 class TUCache : Disposable {
     private val unitByBinaryFile = mutableMapOf<String, CXTranslationUnit>()
 
-    /**
-     * Returns:
-     * - created unit, in case it was not in cache
-     * - null, in case unit is already in the cache
-     */
-    internal fun put(index: CXIndex, info: CXIdxImportedASTFileInfo): CXTranslationUnit? {
+    internal fun putOrGet(index: CXIndex, info: CXIdxImportedASTFileInfo): CXTranslationUnit {
         val canonicalPath: String = info.file!!.canonicalPath
-        if (unitByBinaryFile.contains(canonicalPath)) {
-            return null
-        }
-        return clang_createTranslationUnit(index, canonicalPath)?.also { unit ->
-            unitByBinaryFile[canonicalPath] = unit
+        return unitByBinaryFile.getOrElse(canonicalPath) {
+            clang_createTranslationUnit(index, canonicalPath)!!.also { unit ->
+                unitByBinaryFile[canonicalPath] = unit
+            }
         }
     }
 
@@ -875,10 +869,11 @@ private fun filterHeadersByPredefined(
 }
 
 private fun processImportAST(info: CXIdxImportedASTFileInfo, tuRepository: TURepository, translationUnits: MutableList<CXTranslationUnit>, index: CXIndex) {
-    tuRepository.cache.put(index, info)?.also {
-        tuRepository.headerUsage.processTopHeaders(it, info)
-        if (!translationUnits.contains(it))
-            translationUnits.add(it)
+    tuRepository.cache.putOrGet(index, info).also { unit ->
+        if (!translationUnits.contains(unit)) {
+            translationUnits.add(unit)
+            tuRepository.headerUsage.processTopHeaders(unit, info)
+        }
     }
 }
 
