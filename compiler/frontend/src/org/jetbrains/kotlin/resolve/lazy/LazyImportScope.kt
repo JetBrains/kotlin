@@ -223,7 +223,7 @@ class LazyImportScope(
     override val parent: ImportingScope?,
     private val importResolver: LazyImportResolver<*>,
     private val secondaryImportResolver: LazyImportResolver<*>?,
-    private val filteringKind: LazyImportScope.FilteringKind,
+    private val filteringKind: FilteringKind,
     private val debugName: String
 ) : ImportingScope {
 
