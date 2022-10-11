@@ -67,6 +67,7 @@ afterEvaluate {
         t.dependsOn(":compose:compiler:compiler:embeddedPlugin")
 
         maxHeapSize("1024m")
+        t.jvmArgs += ["--add-opens=jdk.jdi/com.sun.tools.jdi=ALL-UNNAMED"]
     }
 }
 
