@@ -26,3 +26,6 @@ internal actual inline fun <E> buildSetInternal(builderAction: MutableSet<E>.() 
 internal actual inline fun <E> buildSetInternal(capacity: Int, builderAction: MutableSet<E>.() -> Unit): Set<E> {
     return HashSet<E>(capacity).apply(builderAction).build()
 }
+
+// This hash set keeps insertion order.
+actual typealias LinkedHashSet<V> = HashSet<V>

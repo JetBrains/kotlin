@@ -108,3 +108,8 @@ public actual open class UninitializedPropertyAccessException : RuntimeException
     public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
     public actual constructor(cause: Throwable?) : super(cause)
 }
+
+public open class OutOfMemoryError : Error {
+    public constructor() : super()
+    public constructor(message: String?) : super(message)
+}

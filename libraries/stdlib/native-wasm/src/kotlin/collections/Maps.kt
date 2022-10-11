@@ -43,3 +43,6 @@ internal actual fun mapCapacity(expectedSize: Int) = expectedSize
  */
 @SinceKotlin("1.9")
 public actual fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = hashMapOf(pair)
+
+// This hash map keeps insertion order.
+actual typealias LinkedHashMap<K, V> = HashMap<K, V>

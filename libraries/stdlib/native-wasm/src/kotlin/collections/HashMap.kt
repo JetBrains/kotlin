@@ -16,7 +16,7 @@ actual class HashMap<K, V> private constructor(
         private var hashArray: IntArray,
         private var maxProbeDistance: Int,
         private var length: Int
-) : MutableMap<K, V> {
+) : AbstractMutableMap<K, V>(), MutableMap<K, V> {
     private var hashShift: Int = computeShift(hashSize)
 
     private var _size: Int = 0
@@ -730,6 +730,3 @@ internal class HashMapEntrySet<K, V> internal constructor(
 
     override fun iterator(): MutableIterator<MutableMap.MutableEntry<K, V>> = backing.entriesIterator()
 }
-
-// This hash map keeps insertion order.
-actual typealias LinkedHashMap<K, V> = HashMap<K, V>

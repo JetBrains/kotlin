@@ -2432,6 +2432,12 @@ public final annotation class OptionalExpectation : kotlin.Annotation {
     public constructor OptionalExpectation()
 }
 
+/*∆*/ public open class OutOfMemoryError : kotlin.Error {
+/*∆*/     public constructor OutOfMemoryError()
+/*∆*/
+/*∆*/     public constructor OutOfMemoryError(message: kotlin.String?)
+/*∆*/ }
+/*∆*/
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION})
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
 @kotlin.SinceKotlin(version = "1.4")

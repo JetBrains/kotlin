@@ -50,11 +50,31 @@ val commonMainSources by task<Sync> {
 }
 
 val jsMainSources by task<Sync> {
+    val hashMapSource = "libraries/stdlib/native-wasm/src/kotlin/collections/HashMap.kt"
+    val hashSetSource = "libraries/stdlib/native-wasm/src/kotlin/collections/HashSet.kt"
+
+    val hashMapOpenAddressingImpl = listOf(
+        hashMapSource,
+        hashSetSource,
+        "libraries/stdlib/native-wasm/src/kotlin/collections/AbstractMutableMap.kt",
+        "libraries/stdlib/native-wasm/src/kotlin/collections/AbstractMutableSet.kt",
+        "libraries/stdlib/wasm/stubs/native"
+    )
+
     val sources = listOf(
         "core/builtins/src/kotlin/",
         "libraries/stdlib/js/src/",
-        "libraries/stdlib/js/runtime/"
-    ) + unimplementedNativeBuiltIns
+        "libraries/stdlib/js/runtime/",
+    ) + hashMapOpenAddressingImpl + unimplementedNativeBuiltIns
+
+    val hashMapLegacyImplExclude = listOf(
+        "libraries/stdlib/js/src/kotlin/collections/AbstractMutableMap.kt",
+        "libraries/stdlib/js/src/kotlin/collections/HashMap.kt",
+        "libraries/stdlib/js/src/kotlin/collections/LinkedHashMap.kt",
+        "libraries/stdlib/js/src/kotlin/collections/AbstractMutableSet.kt",
+        "libraries/stdlib/js/src/kotlin/collections/HashSet.kt",
+        "libraries/stdlib/js/src/kotlin/collections/LinkedHashSet.kt"
+    )
 
     val excluded = listOf(
         // stdlib/js/src/generated is used exclusively for current `js-v1` backend.
@@ -65,8 +85,8 @@ val jsMainSources by task<Sync> {
         "libraries/stdlib/js/src/kotlinx",
 
         // JS-specific optimized version of emptyArray() already defined
-        "core/builtins/src/kotlin/ArrayIntrinsics.kt"
-    )
+        "core/builtins/src/kotlin/ArrayIntrinsics.kt",
+    ) + hashMapLegacyImplExclude
 
     sources.forEach { path ->
         from("$rootDir/$path") {
@@ -87,6 +107,14 @@ val jsMainSources by task<Sync> {
             val file = File("$buildDir/jsMainSources/$path")
             val sourceCode = builtInsHeader + file.readText()
             file.writeText(sourceCode)
+        }
+
+        for (sourcePath in listOf(hashMapSource, hashSetSource)) {
+            val sourceFile = File("$buildDir/jsMainSources/$sourcePath")
+            val className = sourceFile.nameWithoutExtension
+            var code = sourceFile.readText().replace("actual class $className", "actual open class $className")
+            code = code.replace("\n.+FreezingIsDeprecated.*\n".toRegex(), "\n")
+            sourceFile.writeText(code)
         }
     }
 }

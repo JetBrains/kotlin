@@ -100,7 +100,12 @@ val jsMainSources by task<Sync> {
                 "libraries/stdlib/js/src/kotlin/browser/**",
                 "libraries/stdlib/js/src/kotlinx/dom/**",
                 "libraries/stdlib/js/src/kotlinx/browser/**",
-                "libraries/stdlib/js/src/kotlin/enums/**"
+                "libraries/stdlib/js/src/kotlin/enums/**",
+                "libraries/stdlib/native-wasm/src/kotlin/collections/HashMap.kt",
+                "libraries/stdlib/native-wasm/src/kotlin/collections/HashSet.kt",
+                "libraries/stdlib/native-wasm/src/kotlin/collections/AbstractMutableMap.kt",
+                "libraries/stdlib/native-wasm/src/kotlin/collections/AbstractMutableSet.kt",
+                "libraries/stdlib/wasm/stubs/**"
             )
         )
         fullJsMainSources.outputs.files.singleFile
@@ -112,7 +117,8 @@ val jsMainSources by task<Sync> {
                 listOf(
                     "collectionsHacks.kt",
                     "generated/**",
-                    "kotlin/text/**"
+                    "kotlin/text/**",
+                    "kotlin/collections/**"
                 )
             )
             into("libraries/stdlib/js-ir/$jsIrSrcDir")

@@ -10402,7 +10402,7 @@ public open class HashMap<K, V> : kotlin.collections.AbstractMutableMap<K, V>, k
     public open override fun remove(key: K): V?
 }
 
-public open class HashSet<E> : kotlin.collections.AbstractMutableSet<E>, kotlin.collections.MutableSet<E> {
+/*∆*/ public open class HashSet<E> : kotlin.collections.AbstractMutableSet<E>, kotlin.collections.MutableSet<E> {
     public constructor HashSet<E>()
 
     public constructor HashSet<E>(initialCapacity: kotlin.Int)
@@ -10490,20 +10490,20 @@ public open class LinkedHashMap<K, V> : kotlin.collections.HashMap<K, V>, kotlin
     public constructor LinkedHashMap<K, V>(initialCapacity: kotlin.Int, loadFactor: kotlin.Float)
 
     public constructor LinkedHashMap<K, V>(original: kotlin.collections.Map<out K, V>)
-
-    public open override val size: kotlin.Int { get; }
-
-    public open override fun clear(): kotlin.Unit
-
-    public open override fun containsKey(key: K): kotlin.Boolean
-
-    public open override fun containsValue(value: V): kotlin.Boolean
-
-    public open override operator fun get(key: K): V?
-
-    public open override fun put(key: K, value: V): V?
-
-    public open override fun remove(key: K): V?
+/*∆*/ 
+/*∆*/     public open override val size: kotlin.Int { get; }
+/*∆*/ 
+/*∆*/     public open override fun clear(): kotlin.Unit
+/*∆*/ 
+/*∆*/     public open override fun containsKey(key: K): kotlin.Boolean
+/*∆*/ 
+/*∆*/     public open override fun containsValue(value: V): kotlin.Boolean
+/*∆*/ 
+/*∆*/     public open override operator fun get(key: K): V?
+/*∆*/ 
+/*∆*/     public open override fun put(key: K, value: V): V?
+/*∆*/ 
+/*∆*/     public open override fun remove(key: K): V?
 }
 
 public open class LinkedHashSet<E> : kotlin.collections.HashSet<E>, kotlin.collections.MutableSet<E> {

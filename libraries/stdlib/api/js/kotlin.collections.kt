@@ -10086,6 +10086,7 @@ public abstract class AbstractMutableList<E> : kotlin.collections.AbstractMutabl
     public open override fun subList(fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.collections.MutableList<E>
 }
 
+/*∆*/ @kotlin.SinceKotlin(version = "1.1")
 public abstract class AbstractMutableMap<K, V> : kotlin.collections.AbstractMap<K, V>, kotlin.collections.MutableMap<K, V> {
     protected constructor AbstractMutableMap<K, V>()
 
@@ -10102,9 +10103,12 @@ public abstract class AbstractMutableMap<K, V> : kotlin.collections.AbstractMap<
     public open override fun remove(key: K): V?
 }
 
+/*∆*/ @kotlin.SinceKotlin(version = "1.1")
 public abstract class AbstractMutableSet<E> : kotlin.collections.AbstractMutableCollection<E>, kotlin.collections.MutableSet<E> {
     protected constructor AbstractMutableSet<E>()
 
+/*∆*/     public abstract override fun add(element: E): kotlin.Boolean
+/*∆*/
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
     public open override fun hashCode(): kotlin.Int
@@ -10299,22 +10303,36 @@ public open class HashMap<K, V> : kotlin.collections.AbstractMutableMap<K, V>, k
 
     public open override val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>> { get; }
 
+/*∆*/     public open override val keys: kotlin.collections.MutableSet<K> { get; }
+/*∆*/
     public open override val size: kotlin.Int { get; }
 
+/*∆*/     public open override val values: kotlin.collections.MutableCollection<V> { get; }
+/*∆*/
     public open override fun clear(): kotlin.Unit
 
     public open override fun containsKey(key: K): kotlin.Boolean
 
     public open override fun containsValue(value: V): kotlin.Boolean
 
+/*∆*/     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+/*∆*/
     public open override operator fun get(key: K): V?
 
+/*∆*/     public open override fun hashCode(): kotlin.Int
+/*∆*/
+/*∆*/     public open override fun isEmpty(): kotlin.Boolean
+/*∆*/
     public open override fun put(key: K, value: V): V?
 
+/*∆*/     public open override fun putAll(from: kotlin.collections.Map<out K, V>): kotlin.Unit
+/*∆*/
     public open override fun remove(key: K): V?
+/*∆*/
+/*∆*/     public open override fun toString(): kotlin.String
 }
 
-public open class HashSet<E> : kotlin.collections.AbstractMutableSet<E>, kotlin.collections.MutableSet<E> {
+/*∆*/ public open class HashSet<E> : kotlin.collections.MutableSet<E>, kotlin.native.internal.KonanSet<E>, kotlin.collections.AbstractMutableSet<E> {
     public constructor HashSet<E>()
 
     public constructor HashSet<E>(initialCapacity: kotlin.Int)
@@ -10327,15 +10345,23 @@ public open class HashSet<E> : kotlin.collections.AbstractMutableSet<E>, kotlin.
 
     public open override fun add(element: E): kotlin.Boolean
 
+/*∆*/     public open override fun addAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
+/*∆*/
     public open override fun clear(): kotlin.Unit
 
     public open override operator fun contains(element: E): kotlin.Boolean
 
+/*∆*/     public open override fun getElement(element: E): E?
+/*∆*/
     public open override fun isEmpty(): kotlin.Boolean
 
     public open override operator fun iterator(): kotlin.collections.MutableIterator<E>
 
     public open override fun remove(element: E): kotlin.Boolean
+/*∆*/
+/*∆*/     public open override fun removeAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
+/*∆*/
+/*∆*/     public open override fun retainAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 }
 
 public final data class IndexedValue<out T> {
@@ -10384,20 +10410,6 @@ public open class LinkedHashMap<K, V> : kotlin.collections.HashMap<K, V>, kotlin
     public constructor LinkedHashMap<K, V>(initialCapacity: kotlin.Int, loadFactor: kotlin.Float)
 
     public constructor LinkedHashMap<K, V>(original: kotlin.collections.Map<out K, V>)
-
-    public open override val size: kotlin.Int { get; }
-
-    public open override fun clear(): kotlin.Unit
-
-    public open override fun containsKey(key: K): kotlin.Boolean
-
-    public open override fun containsValue(value: V): kotlin.Boolean
-
-    public open override operator fun get(key: K): V?
-
-    public open override fun put(key: K, value: V): V?
-
-    public open override fun remove(key: K): V?
 }
 
 public open class LinkedHashSet<E> : kotlin.collections.HashSet<E>, kotlin.collections.MutableSet<E> {

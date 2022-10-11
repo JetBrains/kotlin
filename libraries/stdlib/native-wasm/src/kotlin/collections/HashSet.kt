@@ -84,6 +84,3 @@ actual class HashSet<E> internal constructor(
         return super.retainAll(elements)
     }
 }
-
-// This hash set keeps insertion order.
-actual typealias LinkedHashSet<V> = HashSet<V>
