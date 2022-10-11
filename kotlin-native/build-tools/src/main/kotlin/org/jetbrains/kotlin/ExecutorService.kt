@@ -273,7 +273,7 @@ private fun simulator(project: Project): ExecutorService = object : ExecutorServ
         val default = project.findProperty("iosDevice")?.toString() ?: when (target.family) {
             Family.TVOS -> "Apple TV 4K"
             Family.IOS -> "iPhone 11"
-            Family.WATCHOS -> "Apple Watch Series 6 - 40mm"
+            Family.WATCHOS -> "Apple Watch Series 6 (40mm)"
             else -> error("Unexpected simulation target: $target")
         }
 
