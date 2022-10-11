@@ -782,7 +782,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                A(y, %composer, %changed or 0b0001, %default)
+                A(y, %composer, updateChangedFlags(%changed or 0b0001), %default)
               }
             }
         """
@@ -894,7 +894,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
                 traceEventEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                A(y, %composer, %changed or 0b0001)
+                A(y, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -933,7 +933,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
                 traceEventEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                A(y, %composer, %changed or 0b0001)
+                A(y, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -985,7 +985,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                B(value, %composer, %changed or 0b0001)
+                B(value, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -1006,7 +1006,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
                 traceEventEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                X(items, itemContent, %composer, %changed or 0b0001)
+                X(items, itemContent, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -1021,7 +1021,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
                 traceEventEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                C(items, %composer, %changed or 0b0001)
+                C(items, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             internal object ComposableSingletons%TestKt {
@@ -1098,7 +1098,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
                 traceEventEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                A(y, x, %composer, %changed or 0b0001)
+                A(y, x, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -1113,7 +1113,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
                 traceEventEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                B(x, %composer, %changed or 0b0001)
+                B(x, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -1151,7 +1151,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
                 traceEventEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                A(y, x, %composer, %changed or 0b0001)
+                A(y, x, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -1166,7 +1166,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
                 traceEventEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                B(x, %composer, %changed or 0b0001)
+                B(x, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """

@@ -92,6 +92,7 @@ object ComposeCallableIds {
         topLevelCallableId(KtxNameConventions.SOURCEINFORMATIONMARKERSTART)
     val traceEventEnd = topLevelCallableId(KtxNameConventions.TRACE_EVENT_END)
     val traceEventStart = topLevelCallableId(KtxNameConventions.TRACE_EVENT_START)
+    val updateChangedFlags = topLevelCallableId(KtxNameConventions.UPDATE_CHANGED_FLAGS)
 }
 
 object ComposeFqNames {
@@ -123,7 +124,20 @@ object ComposeFqNames {
     val StableMarker = fqNameFor("StableMarker")
     val Stable = fqNameFor("Stable")
     val Composer = ComposeClassIds.Composer.asSingleFqName()
+    val ComposeVersion = fqNameFor("ComposeVersion")
+    val Package = FqName(root)
     val StabilityInferred = ComposeClassIds.StabilityInferred.asSingleFqName()
+
+    fun makeComposableAnnotation(module: ModuleDescriptor): AnnotationDescriptor =
+        object : AnnotationDescriptor {
+            override val type: KotlinType
+                get() = module.findClassAcrossModuleDependencies(
+                    ClassId.topLevel(Composable)
+                )!!.defaultType
+            override val allValueArguments: Map<Name, ConstantValue<*>> get() = emptyMap()
+            override val source: SourceElement get() = SourceElement.NO_SOURCE
+            override fun toString() = "[@Composable]"
+        }
 }
 
 private fun makeComposableAnnotation(module: ModuleDescriptor): AnnotationDescriptor =
