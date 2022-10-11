@@ -384,8 +384,11 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
             kotlinCompilation.output.classesDirs.from(taskProvider.flatMap { it.classesDir })
 
-            kotlinCompilation.compileKotlinTaskProvider.configure {
-                (it as AbstractKotlinCompileTool<*>).setSource(sourcesOutputDir, kotlinSourcesOutputDir)
+            kotlinCompilation.compileTaskProvider.configure { task ->
+                with(task as AbstractKotlinCompile<*>) {
+                    setSource(sourcesOutputDir, kotlinSourcesOutputDir)
+                    libraries.from(classesOutputDir)
+                }
             }
         }
         taskConfigAction.configureTask { task ->
@@ -424,7 +427,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         val kaptTaskName = getKaptTaskName("kaptGenerateStubs")
         val kaptTaskProvider = project.registerTask<KaptGenerateStubsTask>(kaptTaskName)
 
-        val taskConfig = KaptGenerateStubsConfig(kotlinCompilation, kotlinCompile)
+        val taskConfig = KaptGenerateStubsConfig(kotlinCompilation, kotlinCompile, classesOutputDir)
         taskConfig.configureTask {
             it.stubsDir.set(getKaptStubsDir())
             it.destinationDirectory.set(getKaptIncrementalDataDir())

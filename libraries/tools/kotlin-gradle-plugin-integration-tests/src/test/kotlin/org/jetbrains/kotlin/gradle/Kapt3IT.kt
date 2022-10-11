@@ -90,6 +90,10 @@ class Kapt3ClassLoadersCacheIT : Kapt3IT() {
     override fun testChangesToKaptConfigurationDoNotTriggerStubGeneration(gradleVersion: GradleVersion) {
     }
 
+    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    override fun testKt33847(gradleVersion: GradleVersion) {
+    }
+
     override fun testAnnotationProcessorAsFqName(gradleVersion: GradleVersion) {
         project("annotationProcessorAsFqName".withPrefix, gradleVersion) {
             //classloaders caching is not compatible with includeCompileClasspath
@@ -808,6 +812,38 @@ open class Kapt3IT : Kapt3BaseIT() {
             build("build") {
                 assertTasksUpToDate(":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin")
                 assertTasksExecuted(":app:kaptGenerateStubsKotlin", ":app:kaptKotlin")
+            }
+        }
+    }
+
+    @DisplayName("KT33847: Kapt does not included Filer-generated class files on compilation classpath")
+    @GradleTest
+    open fun testKt33847(gradleVersion: GradleVersion) {
+        project("kt33847".withPrefix, gradleVersion) {
+
+            build("build") {
+                val processorSubproject = subProject("processor")
+                processorSubproject
+                    .assertFileInProjectExists("build/tmp/kapt3/classes/main/META-INF/services/javax.annotation.processing.Processor")
+
+                val processorJar = processorSubproject.projectPath.resolve("build/libs/processor.jar")
+                assertFileExists(processorJar)
+
+                ZipFile(processorJar.toFile()).use { zip ->
+                    assert(zip.getEntry("META-INF/services/javax.annotation.processing.Processor") != null) {
+                        "Generated annotation processor jar file does not contain processor service entry!"
+                    }
+                }
+
+                assertTasksExecuted(
+                    ":api:compileKotlin",
+                    ":processor:compileKotlin",
+                    ":library:kaptGenerateStubsKotlin",
+                    ":library:kaptKotlin",
+                    ":library:compileKotlin",
+                    ":app:compileKotlin",
+                )
+                assertKaptSuccessful()
             }
         }
     }
