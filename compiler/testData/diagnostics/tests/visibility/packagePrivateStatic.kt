@@ -1,9 +1,11 @@
-// ISSUE: KT-54125
+// FIR_IDENTICAL
+// ISSUE: KT-53441
 // FILE: foo/Base.java
 package foo;
 
 class Base {
     protected static void foo() {}
+    protected void bar() {}
 }
 
 // FILE: foo/Derived.java
@@ -19,5 +21,6 @@ import foo.Derived
 class Impl : Derived() {
     fun test() {
         foo()
+        bar()
     }
 }
