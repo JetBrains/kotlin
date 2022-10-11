@@ -19,5 +19,5 @@ dependencies {
         isTransitive = false
     }
 
-    embedded(project(":kotlin-gradle-compiler-types"))
+    embedded(project(":kotlin-gradle-compiler-types")) { isTransitive = false }
 }
