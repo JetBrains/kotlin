@@ -71,7 +71,7 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%this%, %composer, %changed or 0b0001)
+                Test(%this%, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -109,7 +109,7 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                A(%this%, %this%, %composer, %changed or 0b0001)
+                A(%this%, %this%, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -127,7 +127,7 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                B(%this%, %this%, %this%, %composer, %changed or 0b0001)
+                B(%this%, %this%, %this%, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -165,7 +165,7 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                A(%this%, %this%, %composer, %changed or 0b0001)
+                A(%this%, %this%, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -183,7 +183,7 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                B(%this%, %this%, %this%, %composer, %changed or 0b0001)
+                B(%this%, %this%, %this%, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -228,7 +228,7 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                A(%this%, %this%, a, %composer, %changed or 0b0001, %default)
+                A(%this%, %this%, a, %composer, updateChangedFlags(%changed or 0b0001), %default)
               }
             }
             @Composable
@@ -252,7 +252,7 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                B(%this%, %this%, %this%, a, b, c, %composer, %changed or 0b0001, %default)
+                B(%this%, %this%, %this%, a, b, c, %composer, updateChangedFlags(%changed or 0b0001), %default)
               }
             }
             @Composable
@@ -284,7 +284,7 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                C(%this%, a, bar, %composer, %changed or 0b0001, %default)
+                C(%this%, a, bar, %composer, updateChangedFlags(%changed or 0b0001), %default)
               }
             }
         """
@@ -324,7 +324,7 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
             %composer.skipToGroupEnd()
           }
           %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-            B(%this%, %this%, %this%, a, b, c, %composer, %changed or 0b0001, %default)
+            B(%this%, %this%, %this%, a, b, c, %composer, updateChangedFlags(%changed or 0b0001), %default)
           }
         }
         """
@@ -371,7 +371,7 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(foo, %composer, %changed or 0b0001)
+                Test(foo, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -428,7 +428,7 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(foo, %composer, %changed or 0b0001)
+                Test(foo, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -474,7 +474,7 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(foo, %composer, %changed or 0b0001)
+                Test(foo, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -518,7 +518,7 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%this%, %this%, %this%, %this%, %this%, %this%, %this%, %this%, %this%, %this%, %this%, %this%, %composer, %changed or 0b0001, %changed1)
+                Test(%this%, %this%, %this%, %this%, %this%, %this%, %this%, %this%, %this%, %this%, %this%, %this%, %composer, updateChangedFlags(%changed or 0b0001), updateChangedFlags(%changed1))
               }
             }
         """
@@ -558,7 +558,7 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%this%, a, b, %composer, %changed or 0b0001)
+                Test(%this%, a, b, %composer, updateChangedFlags(%changed or 0b0001))
               }
             }
         """
@@ -613,7 +613,7 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Parent(%composer, %changed or 0b0001)
+                Parent(%composer, updateChangedFlags(%changed or 0b0001))
               }
             }
             @Composable
@@ -657,7 +657,7 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%this%, a, b, %composer, %changed or 0b0001, %default)
+                Test(%this%, a, b, %composer, updateChangedFlags(%changed or 0b0001), %default)
               }
             }
         """
