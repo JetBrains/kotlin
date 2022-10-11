@@ -623,6 +623,7 @@ open class SerializerIrGenerator(
                 else -> SerializerIrGenerator(irClass, context, metadataPlugin)
             }
             generator.generate()
+            irClass.origin = SERIALIZATION_PLUGIN_ORIGIN
             irClass.addDefaultConstructorIfAbsent(context)
             irClass.patchDeclarationParents(irClass.parent)
         }
