@@ -23,4 +23,5 @@ dependencies {
     implementation project(':kotlin-native:Interop:StubGenerator')
     implementation project(':kotlin-native:klib')
     implementation project(":kotlin-native:utilities:basic-utils")
+    implementation project(path: ":kotlin-native:endorsedLibraries:kotlinx.cli", configuration: "jvmRuntimeElements")
 }
