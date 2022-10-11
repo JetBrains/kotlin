@@ -8,7 +8,7 @@ plugins {
 }
 
 dependencies {
-    embedded(project(":kotlin-assignment-compiler-plugin"))
+    embedded(project(":kotlin-assignment-compiler-plugin")) { isTransitive = false }
 }
 
 sourceSets {
