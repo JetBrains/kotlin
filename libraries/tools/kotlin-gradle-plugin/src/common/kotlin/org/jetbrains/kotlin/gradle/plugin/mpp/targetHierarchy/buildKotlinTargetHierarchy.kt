@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy
 
 import org.gradle.api.InvalidUserCodeException
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyBuilder
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyDescriptor
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.konan.target.Family
@@ -120,7 +118,15 @@ private class KotlinTargetHierarchyBuilderImpl(
 
     override fun anyJs() = addTargets { it is KotlinJsTargetDsl }
 
-    override fun jvm() = addTargets { it is KotlinJvmTarget }
+    override fun jvm() = addTargets {
+        it is KotlinJvmTarget ||
+                /*
+                Handle older KotlinWithJavaTarget correctly:
+                KotlinWithJavaTarget is also registered as the target in Kotlin2JsProjectExtension
+                using KotlinPlatformType.js instead of jvm.
+                 */
+                (it is KotlinWithJavaTarget<*, *> && it.platformType == KotlinPlatformType.jvm)
+    }
 
     override fun android() = addTargets { it is KotlinAndroidTarget }
 
