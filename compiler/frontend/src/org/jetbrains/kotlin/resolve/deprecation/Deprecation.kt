@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal sealed class DeprecatedByAnnotation(
     val annotation: AnnotationDescriptor,
@@ -27,12 +26,12 @@ internal sealed class DeprecatedByAnnotation(
     override val propagatesToOverrides: Boolean
 ) : DescriptorBasedDeprecationInfo() {
     override val message: String?
-        get() = annotation.argumentValue("message")?.safeAs<StringValue>()?.value
+        get() = (annotation.argumentValue("message") as? StringValue)?.value
 
     internal val replaceWithValue: String?
         get() {
-            val replaceWithAnnotation = annotation.argumentValue(Deprecated::replaceWith.name)?.safeAs<AnnotationValue>()?.value
-            return replaceWithAnnotation?.argumentValue(ReplaceWith::expression.name)?.safeAs<StringValue>()?.value
+            val replaceWithAnnotation = (annotation.argumentValue(Deprecated::replaceWith.name) as? AnnotationValue)?.value
+            return (replaceWithAnnotation?.argumentValue(ReplaceWith::expression.name) as? StringValue)?.value
         }
 
     class StandardDeprecated(
@@ -41,7 +40,7 @@ internal sealed class DeprecatedByAnnotation(
         propagatesToOverrides: Boolean
     ) : DeprecatedByAnnotation(annotation, target, propagatesToOverrides) {
         override val deprecationLevel: DeprecationLevelValue
-            get() = when (annotation.argumentValue("level")?.safeAs<EnumValue>()?.enumEntryName?.asString()) {
+            get() = when ((annotation.argumentValue("level") as? EnumValue)?.enumEntryName?.asString()) {
                 "WARNING" -> WARNING
                 "ERROR" -> ERROR
                 "HIDDEN" -> HIDDEN

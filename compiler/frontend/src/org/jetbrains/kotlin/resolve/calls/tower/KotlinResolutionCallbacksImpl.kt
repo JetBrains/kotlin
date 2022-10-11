@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 data class LambdaContextInfo(
     var typeInfo: KotlinTypeInfo? = null,
@@ -310,7 +309,7 @@ class KotlinResolutionCallbacksImpl(
         val returnType = descriptor.returnType ?: return false
         if (!isPrimitiveTypeOrNullablePrimitiveType(returnType) || !isPrimitiveTypeOrNullablePrimitiveType(expectedType)) return false
 
-        val callElement = resolvedAtom.atom.psiKotlinCall.psiCall.callElement.safeAs<KtExpression>() ?: return false
+        val callElement = (resolvedAtom.atom.psiKotlinCall.psiCall.callElement as? KtExpression) ?: return false
         val expression = findCommonParent(callElement, resolvedAtom.atom.psiKotlinCall.explicitReceiver)
 
         val temporaryBindingTrace = TemporaryBindingTrace.create(
@@ -327,7 +326,7 @@ class KotlinResolutionCallbacksImpl(
 
     override fun getExpectedTypeFromAsExpressionAndRecordItInTrace(resolvedAtom: ResolvedCallAtom): UnwrappedType? {
         val candidateDescriptor = resolvedAtom.candidateDescriptor as? FunctionDescriptor ?: return null
-        val call = resolvedAtom.atom.safeAs<PSIKotlinCall>()?.psiCall ?: return null
+        val call = (resolvedAtom.atom as? PSIKotlinCall)?.psiCall ?: return null
 
         if (call.typeArgumentList != null || !candidateDescriptor.isFunctionForExpectTypeFromCastFeature()) return null
         val binaryParent = call.calleeExpression?.getBinaryWithTypeParent() ?: return null

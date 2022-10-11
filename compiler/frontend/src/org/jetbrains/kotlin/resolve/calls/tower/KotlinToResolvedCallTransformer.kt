@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinToResolvedCallTransformer(
     private val callCheckers: Iterable<CallChecker>,
@@ -170,7 +169,7 @@ class KotlinToResolvedCallTransformer(
     ): NewAbstractResolvedCall<D> {
         val result = transformToResolvedCall<D>(candidate, trace, substitutor, diagnostics)
         val psiKotlinCall = candidate.atom.psiKotlinCall
-        val tracing = psiKotlinCall.safeAs<PSIKotlinCallForInvoke>()?.baseCall?.tracingStrategy ?: psiKotlinCall.tracingStrategy
+        val tracing = (psiKotlinCall as? PSIKotlinCallForInvoke)?.baseCall?.tracingStrategy ?: psiKotlinCall.tracingStrategy
 
         tracing.bindReference(trace, result)
         tracing.bindResolvedCall(trace, result)
@@ -393,7 +392,7 @@ class KotlinToResolvedCallTransformer(
     }
 
     private fun createTypeForConvertableConstant(constant: CompileTimeConstant<*>): SimpleType? {
-        val value = constant.getValue(TypeUtils.NO_EXPECTED_TYPE).safeAs<Number>()?.toLong() ?: return null
+        val value = (constant.getValue(TypeUtils.NO_EXPECTED_TYPE) as? Number)?.toLong() ?: return null
         val typeConstructor = IntegerLiteralTypeConstructor(value, moduleDescriptor, constant.parameters)
         return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
             TypeAttributes.Empty, typeConstructor, emptyList(), false,
@@ -462,8 +461,8 @@ class KotlinToResolvedCallTransformer(
     }
 
     internal fun bind(trace: BindingTrace, resolvedCall: ResolvedCall<*>) {
-        resolvedCall.safeAs<NewAbstractResolvedCall<*>>()?.let { bind(trace, it) }
-        resolvedCall.safeAs<NewVariableAsFunctionResolvedCallImpl>()?.let { bind(trace, it) }
+        (resolvedCall as? NewAbstractResolvedCall<*>)?.let { bind(trace, it) }
+        (resolvedCall as? NewVariableAsFunctionResolvedCallImpl)?.let { bind(trace, it) }
     }
 
     fun reportDiagnostics(

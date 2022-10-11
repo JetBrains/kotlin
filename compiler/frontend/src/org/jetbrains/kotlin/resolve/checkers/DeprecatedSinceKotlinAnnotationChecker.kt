@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.deprecation.getSinceVersion
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object DeprecatedSinceKotlinAnnotationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -91,7 +90,7 @@ object DeprecatedSinceKotlinAnnotationChecker : DeclarationChecker {
         context: DeclarationCheckerContext,
         reportOn: PsiElement
     ) {
-        val argumentValue = argumentValue(name).safeAs<StringValue>()?.value
+        val argumentValue = (argumentValue(name) as? StringValue)?.value
         if (argumentValue != null && (parsedVersion == null || !argumentValue.matches(RequireKotlinConstants.VERSION_REGEX))) {
             context.trace.reportDiagnosticOnce(
                 Errors.ILLEGAL_KOTLIN_VERSION_STRING_VALUE.on(

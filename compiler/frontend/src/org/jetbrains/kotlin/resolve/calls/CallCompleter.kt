@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.ErrorScopeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 class CallCompleter(
@@ -113,7 +112,7 @@ class CallCompleter(
         missingSupertypesResolver: MissingSupertypesResolver
     ) {
         val call = context.call
-        val explicitReceiver = call.explicitReceiver.safeAs<ReceiverValue>() ?: return
+        val explicitReceiver = call.explicitReceiver as? ReceiverValue ?: return
 
         MissingDependencySupertypeChecker.checkSupertypes(
             explicitReceiver.type, call.callElement, context.trace, missingSupertypesResolver
@@ -329,7 +328,7 @@ class CallCompleter(
     }
 
     private fun createTypeForConvertableConstant(constant: CompileTimeConstant<*>): SimpleType? {
-        val value = constant.getValue(TypeUtils.NO_EXPECTED_TYPE).safeAs<Number>()?.toLong() ?: return null
+        val value = (constant.getValue(TypeUtils.NO_EXPECTED_TYPE) as? Number)?.toLong() ?: return null
         val typeConstructor = IntegerValueTypeConstructor(value, moduleDescriptor, constant.parameters)
         return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
             TypeAttributes.Empty, typeConstructor, emptyList(), false,

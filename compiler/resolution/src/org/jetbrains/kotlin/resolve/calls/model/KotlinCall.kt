@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
 interface KotlinCall : ResolutionAtom {
@@ -42,8 +41,8 @@ fun KotlinCall.checkCallInvariants() {
         "Lambda argument or callable reference is not allowed as explicit receiver: $explicitReceiver"
     }
 
-    explicitReceiver.safeAs<SimpleKotlinCallArgument>()?.checkReceiverInvariants()
-    dispatchReceiverForInvokeExtension.safeAs<SimpleKotlinCallArgument>()?.checkReceiverInvariants()
+    (explicitReceiver as? SimpleKotlinCallArgument)?.checkReceiverInvariants()
+    (dispatchReceiverForInvokeExtension as? SimpleKotlinCallArgument)?.checkReceiverInvariants()
 
     when (callKind) {
         KotlinCallKind.FUNCTION, KotlinCallKind.INVOKE -> {
