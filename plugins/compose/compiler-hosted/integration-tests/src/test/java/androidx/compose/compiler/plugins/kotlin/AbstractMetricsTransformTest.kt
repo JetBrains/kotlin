@@ -16,31 +16,20 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-
-abstract class AbstractMetricsTransformTest : ComposeIrTransformTest() {
-    override val metricsDestination: String?
-        get() = null
-
-    override fun postProcessingStep(
-        module: IrModuleFragment,
-        context: IrPluginContext
-    ) {
-        extension!!.metrics = ModuleMetricsImpl(module.name.asString())
-        super.postProcessingStep(module, context)
-    }
-
-    fun verifyMetrics(
+abstract class AbstractMetricsTransformTest : AbstractIrTransformTest() {
+    private fun verifyMetrics(
         source: String,
-        compilation: Compilation = JvmCompilation(),
         verify: ModuleMetrics.() -> Unit
     ) {
         val files = listOf(
             sourceFile("Test.kt", source.replace('%', '$')),
         )
-        compilation.compile(files)
-        extension!!.metrics.verify()
+
+        val extension = createComposeIrGenerationExtension()
+        val metrics = ModuleMetricsImpl(TEST_MODULE_NAME)
+        extension.metrics = metrics
+        compileToIrWithExtension(files, extension)
+        metrics.verify()
     }
 
     fun assertClasses(
@@ -101,10 +90,5 @@ abstract class AbstractMetricsTransformTest : ComposeIrTransformTest() {
                 .trimIndent()
                 .trimTrailingWhitespacesAndAddNewlineAtEOF(),
         )
-    }
-
-    override fun tearDown() {
-        extension!!.metrics = EmptyModuleMetrics
-        super.tearDown()
     }
 }

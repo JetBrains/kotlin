@@ -26,7 +26,7 @@ import org.junit.Test
  * The Android Studio debugger searches for `ComposableSingletons` classes by name.
  * Any changes to the naming scheme have to be reflected in the Android Studio code.
  */
-class LambdaMemoizationRegressionTests : ComposeIrTransformTest() {
+class LambdaMemoizationRegressionTests : AbstractIrTransformTest() {
     @Test
     fun testNestedComposableSingletonsClass() = verifyComposeIrTransform(
         """

@@ -134,7 +134,6 @@ import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getArguments
-import org.jetbrains.kotlin.ir.util.getPrimitiveArrayElementType
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isCrossinline
@@ -788,26 +787,25 @@ abstract class AbstractComposeLowering(
         null
     )
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     protected fun irForLoop(
         elementType: IrType,
         subject: IrExpression,
         loopBody: (IrValueDeclaration) -> IrExpression
     ): IrStatement {
-        val primitiveType = subject.type.getPrimitiveArrayElementType()
-        val iteratorSymbol = primitiveType?.let {
-            context.symbols.primitiveIteratorsByType[it]
-        } ?: context.symbols.iterator
-        val unitType = context.irBuiltIns.unitType
-
         val getIteratorFunction = subject.type.classOrNull!!.owner.functions
             .single { it.name.asString() == "iterator" }
 
-        val iteratorType = iteratorSymbol.typeWith(elementType)
+        val iteratorSymbol = getIteratorFunction.returnType.classOrNull!!
+        val iteratorType = if (iteratorSymbol.owner.typeParameters.isNotEmpty()) {
+            iteratorSymbol.typeWith(elementType)
+        } else {
+            iteratorSymbol.defaultType
+        }
+
         val nextSymbol = iteratorSymbol.owner.functions
-            .single { it.descriptor.name.asString() == "next" }
+            .single { it.name.asString() == "next" }
         val hasNextSymbol = iteratorSymbol.owner.functions
-            .single { it.descriptor.name.asString() == "hasNext" }
+            .single { it.name.asString() == "hasNext" }
 
         val call = IrCallImpl(
             UNDEFINED_OFFSET,
@@ -829,14 +827,14 @@ abstract class AbstractComposeLowering(
             origin = IrDeclarationOrigin.FOR_LOOP_ITERATOR
         )
         return irBlock(
-            type = unitType,
+            type = builtIns.unitType,
             origin = IrStatementOrigin.FOR_LOOP,
             statements = listOf(
                 iteratorVar,
                 IrWhileLoopImpl(
                     UNDEFINED_OFFSET,
                     UNDEFINED_OFFSET,
-                    unitType,
+                    builtIns.unitType,
                     IrStatementOrigin.FOR_LOOP_INNER_WHILE
                 ).apply {
                     val loopVar = irTemporary(
@@ -862,7 +860,7 @@ abstract class AbstractComposeLowering(
                         dispatchReceiver = irGet(iteratorVar)
                     )
                     body = irBlock(
-                        type = unitType,
+                        type = builtIns.unitType,
                         origin = IrStatementOrigin.FOR_LOOP_INNER_WHILE,
                         statements = listOf(
                             loopVar,
