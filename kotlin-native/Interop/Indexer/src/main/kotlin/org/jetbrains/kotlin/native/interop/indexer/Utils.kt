@@ -679,7 +679,7 @@ internal fun getHeadersAndUnits(
             filterHeadersByName(library, filter, index, translationUnit, ownTranslationUnits, ownHeaders, allHeaders, tuCache)
 
         is NativeLibraryHeaderFilter.Predefined ->
-            filterHeadersByPredefined(filter, index, translationUnit, ownTranslationUnits, ownHeaders, allHeaders, tuCache)
+            filterHeadersByPredefined(filter, index, translationUnit, ownHeaders, allHeaders, tuCache)
     }
 
     ownHeaders.removeAll { library.headerExclusionPolicy.excludeAll(getHeaderId(library, it)) }
@@ -812,14 +812,13 @@ private fun filterHeadersByPredefined(
         filter: NativeLibraryHeaderFilter.Predefined,
         index: CXIndex,
         translationUnit: CXTranslationUnit,
-        ownTranslationUnits: MutableSet<CXTranslationUnit>,
         ownHeaders: MutableSet<CXFile?>,
         allHeaders: MutableSet<CXFile?>,
         tuCache: TUCache
 ) {
     val translationUnits = LinkedList<CXTranslationUnit>().apply { addLast(translationUnit) }
     // Note: suboptimal but simple.
-    indexMutatingTUList(translationUnits, index) { unit: CXTranslationUnit ->
+    indexMutatingTUList(translationUnits, index) {
         object : Indexer {
             override fun enteredMainFile(file: CXFile) {
                 ownHeaders += file
@@ -831,7 +830,6 @@ private fun filterHeadersByPredefined(
                 allHeaders += file
                 if (file?.canonicalPath in filter.headers) {
                     ownHeaders += file
-                    ownTranslationUnits += unit
                 }
             }
 
