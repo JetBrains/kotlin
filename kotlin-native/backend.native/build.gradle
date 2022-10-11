@@ -103,17 +103,17 @@ configurations {
 }
 
 dependencies {
-    trove4j_jar "org.jetbrains.intellij.deps:trove4j:1.0.20181211@jar"
-    kotlin_compiler_jar project(kotlinCompilerModule)
+    kotlin_compiler_jar kotlinCompilerModule
     kotlin_stdlib_jar kotlinStdLibModule
     use(DependenciesKt) {
+        trove4j_jar commonDependency("org.jetbrains.intellij.deps:trove4j")
         kotlin_reflect_jar commonDependency("org.jetbrains.kotlin:kotlin-reflect")
     }
     kotlin_script_runtime_jar project(":kotlin-script-runtime")
 
     compilerApi project(":kotlin-native:utilities:basic-utils")
 
-    compilerApi project(kotlinCompilerModule)
+    compilerImplementation project(":kotlin-compiler")
     compilerApi project(":native:kotlin-native-utils")
     compilerApi project(":core:descriptors")
     compilerApi project(":compiler:ir.tree")

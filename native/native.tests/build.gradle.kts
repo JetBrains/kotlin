@@ -111,9 +111,16 @@ fun nativeTest(taskName: String, vararg tags: String) = projectTest(
         TestProperty.COMPILER_CLASSPATH.setUpFromGradleProperty(this) {
             val customNativeHome = TestProperty.KOTLIN_NATIVE_HOME.readGradleProperty(this)
             if (customNativeHome != null) {
-                file(customNativeHome).resolve("konan/lib/kotlin-native-compiler-embeddable.jar").absolutePath
+                file(customNativeHome).run {
+                    val embeddableJar = resolve("konan/lib/kotlin-native-compiler-embeddable.jar").absolutePath
+                    val troveJar = resolve("konan/lib/trove4j.jar").absolutePath
+                    troveJar + File.pathSeparatorChar.toString() + embeddableJar
+                }
             } else {
-                val kotlinNativeCompilerEmbeddable = configurations.detachedConfiguration(dependencies.project(":kotlin-native-compiler-embeddable"))
+                val kotlinNativeCompilerEmbeddable = configurations.detachedConfiguration(
+                    dependencies.project(":kotlin-native-compiler-embeddable"),
+                    dependencies.module(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+                )
                 dependsOn(kotlinNativeCompilerEmbeddable)
                 kotlinNativeCompilerEmbeddable.files.joinToString(";")
             }
