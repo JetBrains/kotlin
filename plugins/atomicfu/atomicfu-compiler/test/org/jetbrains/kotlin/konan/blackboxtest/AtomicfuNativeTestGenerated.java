@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.konan.blackboxtest;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Tag;
-import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseExtTestCaseGroupProvider;
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
@@ -22,8 +22,8 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box")
 @TestDataPath("$PROJECT_ROOT")
 @Tag("codegen")
-@UseExtTestCaseGroupProvider()
-public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
+@UseStandardTestCaseGroupProvider()
+public class AtomicfuNativeTestGenerated extends AbstractNativeBlackBoxTest {
     @Test
     public void testAllFilesPresentInBox() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);

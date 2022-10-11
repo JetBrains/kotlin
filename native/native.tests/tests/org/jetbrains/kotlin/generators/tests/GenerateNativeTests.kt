@@ -52,9 +52,9 @@ fun main() {
 
         // Atomicfu compiler plugin native tests.
         testGroup("plugins/atomicfu/atomicfu-compiler/test", "plugins/atomicfu/atomicfu-compiler/testData") {
-            testClass<AbstractNativeCodegenBoxTest>(
+            testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "AtomicfuNativeTestGenerated",
-                annotations = listOf(codegen(), provider<UseExtTestCaseGroupProvider>())
+                annotations = listOf(codegen(), provider<UseStandardTestCaseGroupProvider>())
             ) {
                 model("box", targetBackend = TargetBackend.NATIVE)
             }
