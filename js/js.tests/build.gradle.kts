@@ -199,7 +199,7 @@ fun generateJsExportOnFileTestFor(dir: String): Task = task<Copy>("generate-js-e
                     .also { isFirstLine = false }
 
                 it.contains("// FILE") -> "$it\n\n@file:JsExport"
-                else -> it.replace("@JsExport", "")
+                else -> it.replace("@JsExport(?!.)".toRegex(), "")
             }
         }
     }
