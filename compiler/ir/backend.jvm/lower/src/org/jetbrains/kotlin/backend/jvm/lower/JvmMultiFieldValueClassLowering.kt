@@ -201,7 +201,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                 else -> when (val lastExpression = expression.statements.lastOrNull()) {
                     is IrExpression -> irContainer(expression) {
                         val inner = handleSavedExpression(lastExpression, handler) ?: return null
-                        for (oldStatement in expression.statements.dropLast(1)) {
+                        for (oldStatement in expression.statements.subListWithoutLast(1)) {
                             +oldStatement
                         }
                         +inner
@@ -227,7 +227,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             expression: IrExpression,
             handler: IrBlockBuilder.(values: List<IrExpression>) -> IrExpression
         ): IrExpression? =
-            scope.handleSavedExpression(expression) { irBlock { +handler(it.instance.makeFlattenedGetterExpressions(this)) } }
+            scope.handleSavedExpression(expression) { irBlock { +handler(it.instance.makeFlattenedGetterExpressions(this)) }.unwrapBlock() }
 
         fun registerReplacement(expression: IrExpression, instance: MfvcNodeInstance) {
             expression2MfvcNodeInstanceAccessor[expression] = MfvcNodeInstanceAccessor.Getter(instance)
@@ -302,8 +302,10 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
 
         val fieldsToRemove = propertiesReplacement.keys.mapNotNull { oldBackingFields[it] }.toSet()
 
-        val newDeclarations = makeNewDeclarationsForRegularClass(fieldsToRemove, propertiesReplacement, irClass)
-        irClass.declarations.replaceAll(newDeclarations)
+        if (fieldsToRemove.isNotEmpty() || propertiesReplacement.isNotEmpty()) {
+            val newDeclarations = makeNewDeclarationsForRegularClass(fieldsToRemove, propertiesReplacement, irClass)
+            irClass.declarations.replaceAll(newDeclarations)
+        }
     }
 
     private fun collectRegularClassMfvcPropertiesReplacement(properties: LinkedHashSet<IrProperty>) =
@@ -703,7 +705,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
 
             replacement != null -> context.createIrBuilder(currentScope.symbol).irBlock {
                 buildReplacement(function, expression, replacement)
-            }
+            }.unwrapBlock()
 
             else -> {
                 val newConstructor = (function as? IrConstructor)
@@ -711,7 +713,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                     ?: return super.visitFunctionAccess(expression)
                 context.createIrBuilder(currentScope.symbol).irBlock {
                     buildReplacement(function, expression, newConstructor)
-                }
+                }.unwrapBlock()
             }
         }
     }
@@ -732,7 +734,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                 with(valueDeclarationsRemapper) {
                     addReplacement(expression) ?: return expression
                 }
-            }
+            }.unwrapBlock()
         }
         if (expression.isSpecializedMFVCEqEq) {
             return context.createIrBuilder(getCurrentScopeSymbol()).irBlock {
@@ -809,7 +811,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                     // both are boxed
                     return super.visitCall(expression)
                 }
-            }
+            }.unwrapBlock()
         }
         return super.visitCall(expression)
     }
@@ -953,7 +955,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         with(valueDeclarationsRemapper) {
             return context.createIrBuilder(expression.symbol).irBlock {
                 addReplacement(expression) ?: return expression
-            }
+            }.unwrapBlock()
         }
     }
 
@@ -963,7 +965,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             return context.createIrBuilder(getCurrentScopeSymbol()).irBlock {
                 addReplacement(expression, safe = expression.origin != UNSAFE_MFVC_SET_ORIGIN)
                     ?: return expression.also { it.value = it.value.transform(this@JvmMultiFieldValueClassLowering, null) }
-            }
+            }.unwrapBlock()
         }
     }
 
@@ -977,7 +979,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             addReplacement(expression, safe = expression.origin != UNSAFE_MFVC_SET_ORIGIN)
                 ?: return super.visitSetValue(expression)
         }
-    }
+    }.unwrapBlock()
 
     override fun visitVariable(declaration: IrVariable): IrStatement {
         val initializer = declaration.initializer
@@ -992,7 +994,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                 initializer?.let {
                     flattenExpressionTo(it, instance)
                 }
-            }
+            }.unwrapBlock()
         }
         return super.visitVariable(declaration)
     }
@@ -1021,7 +1023,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         }
         val expressions = removeExtraSetVariablesFromExpressionList(block, variables)
         if (block.statements.isNotEmpty()) {
-            +block
+            +block.unwrapBlock()
         }
         return expressions
     }
@@ -1156,12 +1158,12 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             }
 
             private fun handleStatementContainer(expression: IrStatementContainer, resultIsUsed: Boolean) {
-                for (statement in expression.statements.dropLast(1)) {
+                for (statement in expression.statements.subListWithoutLast(1)) {
                     statement.accept(this, false)
                 }
                 expression.statements.lastOrNull()?.accept(this, resultIsUsed)
                 val statementsToRemove = mutableSetOf<IrStatement>()
-                for (statement in expression.statements.dropLast(if (resultIsUsed) 1 else 0)) {
+                for (statement in expression.statements.subListWithoutLast(if (resultIsUsed) 1 else 0)) {
                     val call = getFunctionCallOrNull(statement) ?: continue
                     val node = replacements.getRootMfvcNode(call.type.erasedUpperBound) ?: continue
                     if (node.boxMethod == call.symbol.owner &&
@@ -1175,6 +1177,9 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         }, false)
     }
 }
+
+// like dropLast but creates a view to the original list instead of copying content of it
+private fun <T> List<T>.subListWithoutLast(n: Int) = if (size > n) subList(0, size - n) else emptyList()
 
 private sealed class BlockOrBody {
     abstract val element: IrElement
