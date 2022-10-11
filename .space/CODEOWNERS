@@ -32,8 +32,6 @@
 /analysis/low-level-api-fir/tests/org/jetbrains/kotlin/analysis/low/level/api/fir/diagnostic/compiler/based/DiagnosisCompilerTestFE10TestdataTestGenerated.java "Kotlin Compiler Core"
 /analysis/low-level-api-fir/tests/org/jetbrains/kotlin/analysis/low/level/api/fir/diagnostic/compiler/based/FirIdeSpecTest.java "Kotlin Compiler Core"
 
-# UNKNOWN: /android-studio/
-
 # UNKNOWN: /annotations/
 
 /ant/ "Kotlin Build Tools"
