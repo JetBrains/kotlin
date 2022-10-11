@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirModuleLazyDeclarationResolver
 
 internal object LazyTransformerFactory {
@@ -17,7 +18,7 @@ internal object LazyTransformerFactory {
         phase: FirResolvePhase,
         designation: FirDeclarationDesignationWithFile,
         scopeSession: ScopeSession,
-        lazyDeclarationResolver: LLFirModuleLazyDeclarationResolver,
+        lockProvider: LLFirLockProvider,
         towerDataContextCollector: FirTowerDataContextCollector?,
         firProviderInterceptor: FirProviderInterceptor?,
         checkPCE: Boolean,
@@ -31,8 +32,7 @@ internal object LazyTransformerFactory {
             designation = designation,
             session = designation.firFile.moduleData.session,
             scopeSession = scopeSession,
-            firLazyDeclarationResolver = lazyDeclarationResolver,
-            lockProvider = lazyDeclarationResolver.moduleComponents.globalResolveComponents.lockProvider,
+            lockProvider = lockProvider,
             firProviderInterceptor = firProviderInterceptor,
             checkPCE = checkPCE,
         )

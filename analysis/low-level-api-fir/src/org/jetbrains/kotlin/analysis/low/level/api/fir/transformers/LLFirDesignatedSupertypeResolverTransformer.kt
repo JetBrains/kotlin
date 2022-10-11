@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockPro
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.runCustomResolveUnderLock
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirModuleLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
@@ -32,7 +33,6 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
     private val designation: FirDeclarationDesignationWithFile,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
-    private val firLazyDeclarationResolver: LLFirModuleLazyDeclarationResolver,
     private val lockProvider: LLFirLockProvider,
     private val firProviderInterceptor: FirProviderInterceptor?,
     private val checkPCE: Boolean,
@@ -80,14 +80,17 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
             for (nowVisit in toVisit) {
                 if (checkPCE) checkCanceled()
                 val resolver = DesignatedFirSupertypeResolverVisitor(nowVisit)
-                lockProvider.runCustomResolveUnderLock(nowVisit.firFile, checkPCE) {
-                    firLazyDeclarationResolver.lazyResolveFileDeclaration(
-                        firFile = nowVisit.firFile,
-                        toPhase = FirResolvePhase.IMPORTS,
-                        scopeSession = scopeSession,
-                        checkPCE = true,
-                    )
-                    nowVisit.firFile.accept(resolver, null)
+                val session = nowVisit.firFile.llFirResolvableSession
+                if (session != null) {
+                    lockProvider.runCustomResolveUnderLock(nowVisit.firFile, checkPCE) {
+                        session.moduleComponents.firModuleLazyDeclarationResolver.lazyResolveFileDeclaration(
+                            firFile = nowVisit.firFile,
+                            toPhase = FirResolvePhase.IMPORTS,
+                            scopeSession = scopeSession,
+                            checkPCE = checkPCE,
+                        )
+                        nowVisit.firFile.accept(resolver, null)
+                    }
                 }
                 resolver.declarationTransformer.ensureDesignationPassed()
                 visited[nowVisit.declaration] = nowVisit
