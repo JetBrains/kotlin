@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.statements
 import org.junit.Test
 
-class ClassStabilityTransformTests : ComposeIrTransformTest() {
+class ClassStabilityTransformTests : AbstractIrTransformTest() {
 
     @Test
     fun testEmptyClassIsStable() = assertStability(
@@ -1194,7 +1194,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
         val files = listOf(
             sourceFile("Test.kt", source.replace('%', '$'))
         )
-        val irModule = JvmCompilation().compile(files)
+        val irModule = compileToIr(files)
         val irClass = irModule.files.last().declarations.first() as IrClass
         val classStability = stabilityOf(irClass.defaultType as IrType)
 
@@ -1287,6 +1287,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             $externalSrc
         """.trimIndent()
 
+        val classesDirectory = tmpDir("kotlin-classes")
         classLoader(dependencySrc, dependencyFileName, dumpClasses)
             .allGeneratedFiles
             .also {
@@ -1316,7 +1317,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
         val files = listOf(
             sourceFile("Test.kt", source.replace('%', '$'))
         )
-        return JvmCompilation().compile(files)
+        return compileToIr(files, additionalPaths = listOf(classesDirectory))
     }
 
     private fun assertTransform(

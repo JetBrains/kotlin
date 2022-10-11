@@ -16,15 +16,11 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import androidx.compose.compiler.plugins.kotlin.lower.DurableKeyVisitor
-import androidx.compose.compiler.plugins.kotlin.lower.LiveLiteralTransformer
-import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.junit.Test
 
-class LiveLiteralV2TransformTests : AbstractIrTransformTest() {
+class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
+    override val liveLiteralsV2Enabled: Boolean
+        get() = true
 
     fun testSiblingCallArgs() = assertNoDuplicateKeys(
         """
@@ -373,7 +369,7 @@ class LiveLiteralV2TransformTests : AbstractIrTransformTest() {
                 val tmp0 = State%Int%fun-bar%class-%no-name-provided%%fun-a
                 return if (tmp0 == null) {
                   val tmp1 = liveLiteral("Int%fun-bar%class-%no-name-provided%%fun-a", Int%fun-bar%class-%no-name-provided%%fun-a)
-                  <set-State%Int%fun-bar%class-%no-name-provided%%fun-a>(tmp1)
+                  State%Int%fun-bar%class-%no-name-provided%%fun-a = tmp1
                   tmp1
                 } else {
                   tmp0
@@ -426,7 +422,7 @@ class LiveLiteralV2TransformTests : AbstractIrTransformTest() {
                 val tmp0 = State%Int%arg-0%call-print%fun-A
                 return if (tmp0 == null) {
                   val tmp1 = liveLiteral("Int%arg-0%call-print%fun-A", Int%arg-0%call-print%fun-A)
-                  <set-State%Int%arg-0%call-print%fun-A>(tmp1)
+                  State%Int%arg-0%call-print%fun-A = tmp1
                   tmp1
                 } else {
                   tmp0
@@ -443,7 +439,7 @@ class LiveLiteralV2TransformTests : AbstractIrTransformTest() {
                 val tmp0 = State%String%arg-0%call-print-1%fun-A
                 return if (tmp0 == null) {
                   val tmp1 = liveLiteral("String%arg-0%call-print-1%fun-A", String%arg-0%call-print-1%fun-A)
-                  <set-State%String%arg-0%call-print-1%fun-A>(tmp1)
+                  State%String%arg-0%call-print-1%fun-A = tmp1
                   tmp1
                 } else {
                   tmp0
@@ -460,7 +456,7 @@ class LiveLiteralV2TransformTests : AbstractIrTransformTest() {
                 val tmp0 = State%Boolean%cond%if%fun-A
                 return if (tmp0 == null) {
                   val tmp1 = liveLiteral("Boolean%cond%if%fun-A", Boolean%cond%if%fun-A)
-                  <set-State%Boolean%cond%if%fun-A>(tmp1)
+                  State%Boolean%cond%if%fun-A = tmp1
                   tmp1
                 } else {
                   tmp0
@@ -477,7 +473,7 @@ class LiveLiteralV2TransformTests : AbstractIrTransformTest() {
                 val tmp0 = State%Int%%this%call-plus%arg-0%call-print%branch%if%fun-A
                 return if (tmp0 == null) {
                   val tmp1 = liveLiteral("Int%%this%call-plus%arg-0%call-print%branch%if%fun-A", Int%%this%call-plus%arg-0%call-print%branch%if%fun-A)
-                  <set-State%Int%%this%call-plus%arg-0%call-print%branch%if%fun-A>(tmp1)
+                  State%Int%%this%call-plus%arg-0%call-print%branch%if%fun-A = tmp1
                   tmp1
                 } else {
                   tmp0
@@ -494,7 +490,7 @@ class LiveLiteralV2TransformTests : AbstractIrTransformTest() {
                 val tmp0 = State%Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A
                 return if (tmp0 == null) {
                   val tmp1 = liveLiteral("Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A", Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A)
-                  <set-State%Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A>(tmp1)
+                  State%Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A = tmp1
                   tmp1
                 } else {
                   tmp0
@@ -511,7 +507,7 @@ class LiveLiteralV2TransformTests : AbstractIrTransformTest() {
                 val tmp0 = State%Boolean%cond%if-1%fun-A
                 return if (tmp0 == null) {
                   val tmp1 = liveLiteral("Boolean%cond%if-1%fun-A", Boolean%cond%if-1%fun-A)
-                  <set-State%Boolean%cond%if-1%fun-A>(tmp1)
+                  State%Boolean%cond%if-1%fun-A = tmp1
                   tmp1
                 } else {
                   tmp0
@@ -528,7 +524,7 @@ class LiveLiteralV2TransformTests : AbstractIrTransformTest() {
                 val tmp0 = State%Float%arg-0%call-print%branch%if-1%fun-A
                 return if (tmp0 == null) {
                   val tmp1 = liveLiteral("Float%arg-0%call-print%branch%if-1%fun-A", Float%arg-0%call-print%branch%if-1%fun-A)
-                  <set-State%Float%arg-0%call-print%branch%if-1%fun-A>(tmp1)
+                  State%Float%arg-0%call-print%branch%if-1%fun-A = tmp1
                   tmp1
                 } else {
                   tmp0
@@ -545,7 +541,7 @@ class LiveLiteralV2TransformTests : AbstractIrTransformTest() {
                 val tmp0 = State%Int%arg-0%call-print-2%fun-A
                 return if (tmp0 == null) {
                   val tmp1 = liveLiteral("Int%arg-0%call-print-2%fun-A", Int%arg-0%call-print-2%fun-A)
-                  <set-State%Int%arg-0%call-print-2%fun-A>(tmp1)
+                  State%Int%arg-0%call-print-2%fun-A = tmp1
                   tmp1
                 } else {
                   tmp0
@@ -554,98 +550,5 @@ class LiveLiteralV2TransformTests : AbstractIrTransformTest() {
               }
             }
         """
-    )
-
-    private var builtKeys = mutableSetOf<String>()
-
-    override fun postProcessingStep(
-        module: IrModuleFragment,
-        context: IrPluginContext
-    ) {
-        val symbolRemapper = DeepCopySymbolRemapper()
-        val keyVisitor = DurableKeyVisitor(builtKeys)
-        val transformer = object : LiveLiteralTransformer(
-            true,
-            true,
-            keyVisitor,
-            context,
-            symbolRemapper,
-            ModuleMetricsImpl("temp")
-        ) {
-            override fun makeKeySet(): MutableSet<String> {
-                return super.makeKeySet().also { builtKeys = it }
-            }
-        }
-        transformer.lower(module)
-    }
-
-    // since the lowering will throw an exception if duplicate keys are found, all we have to do
-    // is run the lowering
-    private fun assertNoDuplicateKeys(@Language("kotlin") src: String) {
-        JvmCompilation().compile(
-            listOf(
-                sourceFile("Test.kt", src.replace('%', '$'))
-            )
-        )
-    }
-
-    // For a given src string, a
-    private fun assertKeys(vararg keys: String, makeSrc: () -> String) {
-        builtKeys = mutableSetOf()
-        JvmCompilation().compile(
-            listOf(
-                sourceFile("Test.kt", makeSrc().replace('%', '$'))
-            )
-        )
-        assertEquals(
-            keys.toList().sorted().joinToString(separator = ",\n") {
-                "\"${it.replace('$', '%')}\""
-            },
-            builtKeys.toList().sorted().joinToString(separator = ",\n") {
-                "\"${it.replace('$', '%')}\""
-            }
-        )
-    }
-
-    // test: have two src strings (before/after) and assert that the keys of the params didn't change
-    private fun assertDurableChange(before: String, after: String) {
-        JvmCompilation().compile(
-            listOf(
-                sourceFile("Test.kt", before.replace('%', '$'))
-            )
-        )
-        val beforeKeys = builtKeys
-
-        builtKeys = mutableSetOf()
-
-        JvmCompilation().compile(
-            listOf(
-                sourceFile("Test.kt", after.replace('%', '$'))
-            )
-        )
-        val afterKeys = builtKeys
-
-        assertEquals(
-            beforeKeys.toList().sorted().joinToString(separator = "\n"),
-            afterKeys.toList().sorted().joinToString(separator = "\n")
-        )
-    }
-
-    private fun assertTransform(
-        unchecked: String,
-        checked: String,
-        expectedTransformed: String,
-        dumpTree: Boolean = false
-    ) = verifyComposeIrTransform(
-        """
-            import androidx.compose.runtime.Composable
-            $checked
-        """.trimIndent(),
-        expectedTransformed,
-        """
-            import androidx.compose.runtime.Composable
-            $unchecked
-        """.trimIndent(),
-        dumpTree = dumpTree
     )
 }

@@ -43,8 +43,10 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
@@ -127,6 +129,22 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
                 }
             }
         }
+    }
+
+    override fun visitWhen(expression: IrWhen): IrWhen {
+        if (expression is IrIfThenElseImpl) {
+            return IrIfThenElseImpl(
+                expression.startOffset,
+                expression.endOffset,
+                expression.type.remapType(),
+                mapStatementOrigin(expression.origin),
+            ).also {
+                expression.branches.mapTo(it.branches) { branch ->
+                    branch.transform()
+                }
+            }.copyAttributes(expression)
+        }
+        return super.visitWhen(expression)
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrConstructorCall {
