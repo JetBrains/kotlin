@@ -13,7 +13,7 @@ dependencies {
     compileOnly(project(":kotlin-gradle-plugin"))
     compileOnly(project(":kotlin-compiler-embeddable"))
 
-    embedded(project(":kotlinx-atomicfu-compiler-plugin"))
+    embedded(project(":kotlinx-atomicfu-compiler-plugin")) { isTransitive = false }
 }
 
 gradlePlugin {
