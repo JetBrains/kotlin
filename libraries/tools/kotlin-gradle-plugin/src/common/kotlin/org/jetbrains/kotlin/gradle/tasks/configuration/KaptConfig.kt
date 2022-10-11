@@ -63,7 +63,7 @@ internal open class KaptConfig<TASK : KaptTask>(
 
     internal constructor(kotlinCompileTask: KotlinCompile, ext: KaptExtension) : this(kotlinCompileTask.project, ext) {
         configureTask { task ->
-            task.classpath.from(kotlinCompileTask.libraries)
+            task.classpath.from(kotlinCompileTask.libraries - project.files(task.classesDir))
             task.compiledSources.from(
                 kotlinCompileTask.destinationDirectory,
                 Callable { kotlinCompileTask.javaOutputDir.takeIf { it.isPresent } })
