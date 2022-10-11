@@ -1,3 +1,3 @@
-fun foo() = "bar" + my.cinterop.foo()
+fun foo() = "bar" //+ my.cinterop.foo()
 
 fun main() = println(foo())
