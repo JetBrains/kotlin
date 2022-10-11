@@ -36,6 +36,8 @@ sealed class JsIrBinary(
 
     val linkTaskName: String = linkTaskName()
 
+    var generateTs: Boolean = false
+
     val linkTask: TaskProvider<KotlinJsIrLink>
         get() = target.project.tasks
             .withType(KotlinJsIrLink::class.java)
