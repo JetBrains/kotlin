@@ -187,7 +187,11 @@ data class ConeDefinitelyNotNullType(val original: ConeSimpleKotlinType) : ConeS
 class ConeRawType(
     lowerBound: ConeSimpleKotlinType,
     upperBound: ConeSimpleKotlinType
-) : ConeFlexibleType(lowerBound, upperBound), RawTypeMarker
+) : ConeFlexibleType(lowerBound, upperBound), RawTypeMarker {
+    init {
+        require(upperBound is ConeClassLikeType)
+    }
+}
 
 /*
  * Contract of the intersection type: it is flat. It means that
