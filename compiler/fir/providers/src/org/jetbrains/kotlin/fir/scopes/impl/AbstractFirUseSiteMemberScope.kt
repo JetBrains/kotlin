@@ -130,7 +130,7 @@ abstract class AbstractFirUseSiteMemberScope(
              *
              * TODO: is it enough to check only one function?
              */
-            mostSpecific
+            keySymbol
         } else {
             chosenSymbol
         }
