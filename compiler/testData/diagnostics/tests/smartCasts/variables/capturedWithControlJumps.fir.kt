@@ -1,4 +1,5 @@
 // ISSUE: KT-50092
+// SKIP_TXT
 
 fun test1() {
     var x: String? = "..."
@@ -52,4 +53,16 @@ fun test4() {
         x = null
         lambda<!UNNECESSARY_SAFE_CALL!>?.<!>invoke()
     }
+}
+
+fun test5() {
+    var lambda: (() -> Int)? = null
+    for (i in 1..2) {
+        lambda = {
+            var x: String?
+            x = ""
+            x.length // ok
+        }
+    }
+    lambda?.invoke()
 }
