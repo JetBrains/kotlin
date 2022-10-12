@@ -60,6 +60,13 @@ private fun expandMacros(
         // or function-like construction (e.g. #define FOO throw()) but such a function is undeclared.
         compilerArgs += "-Werror=implicit-function-declaration"
 
+        // Some predefined macros expand to contextual values that won't make sense to expose in Kotlin properties.
+        // We instead redefined them to string values of the macro name.
+        compilerArgs += "-Wno-builtin-macro-redefined"
+        val predefinedMacros = listOf("__DATE__", "__TIME__", "__TIMESTAMP__", "__FILE__", "__FILE_NAME__", "__BASE_FILE__", "__LINE__")
+        predefinedMacros.forEach {
+            compilerArgs += "-D${it}=\"${it}\""
+        }
         // Ensure libclang reports all errors:
         compilerArgs += "-ferror-limit=0"
 
