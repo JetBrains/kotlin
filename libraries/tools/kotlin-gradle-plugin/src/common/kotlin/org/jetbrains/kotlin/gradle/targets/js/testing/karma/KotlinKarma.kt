@@ -146,7 +146,7 @@ class KotlinKarma(
                     {
                         type: 'kotlin-test-js-runner/tc-log-appender.js',
                         //default layout
-                        layout: { type: 'pattern', pattern: '%[%d{DATE}:%p [%c]: %]%m' }
+                        layout: { type: 'pattern', pattern: '%[%d{DATETIME}:%p [%c]: %]%m' }
                     }
                 ]
             """.trimIndent()
@@ -241,6 +241,7 @@ class KotlinKarma(
     }
 
     private fun useWebpack() {
+        config.frameworks.add("webpack")
         requiredDependencies.add(versions.karmaWebpack)
         requiredDependencies.add(
             webpackMajorVersion.choose(
@@ -353,26 +354,6 @@ class KotlinKarma(
         }
     }
 
-    private fun createAdapterJs(
-        file: String,
-        debug: Boolean
-    ): File {
-        val adapterJs = npmProject.dir.resolve("adapter-browser.js")
-        adapterJs.printWriter().use { writer ->
-            val karmaRunner = npmProject.require("kotlin-test-js-runner/kotlin-test-karma-runner.js")
-            // It is necessary for debugger attaching (--inspect-brk analogue)
-            if (debug) {
-                writer.println("debugger;")
-            }
-
-            writer.println("require(${karmaRunner.jsQuoted()})")
-
-            writer.println("module.exports = require(${file.jsQuoted()})")
-        }
-
-        return adapterJs
-    }
-
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
         forkOptions: ProcessForkOptions,
@@ -381,9 +362,8 @@ class KotlinKarma(
     ): TCServiceMessagesTestExecutionSpec {
         val file = task.inputFileProperty.get().asFile.toString()
 
-        val adapterJs = createAdapterJs(file, debug)
-
-        config.files.add(adapterJs.canonicalPath)
+        config.files.add(npmProject.require("kotlin-test-js-runner/kotlin-test-karma-runner.js"))
+        config.files.add(file)
 
         if (debug) {
             config.singleRun = false
