@@ -1,0 +1,9 @@
+KtReceiverParameterSymbol:
+  origin: SOURCE
+  owningCallableSymbol: KtFunctionSymbol(/foo)
+  type: [
+    ReceiverAnnotation()
+      psi: KtAnnotationEntry
+    ReceiverTypeAnnotation()
+      psi: KtAnnotationEntry
+  ] @RECEIVER:R|ReceiverAnnotation|()  @R|ReceiverTypeAnnotation|()  kotlin/Int
