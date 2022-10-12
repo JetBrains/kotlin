@@ -402,7 +402,7 @@ abstract class BenchmarkTemplate(
 
     companion object {
         private const val STEP_SEPARATOR = "###############"
-        private const val GRADLE_PROFILER_VERSION = "0.18.0"
+        private const val GRADLE_PROFILER_VERSION = "0.19.0"
         private const val GRADLE_PROFILER_URL: String =
             "https://repo1.maven.org/maven2/org/gradle/profiler/gradle-profiler/$GRADLE_PROFILER_VERSION/gradle-profiler-$GRADLE_PROFILER_VERSION.zip"
 
