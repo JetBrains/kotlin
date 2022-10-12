@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
@@ -31,8 +30,7 @@ import java.util.concurrent.ConcurrentHashMap
 class MemoizedMultiFieldValueClassReplacements(
     irFactory: IrFactory,
     context: JvmBackendContext
-) : MemoizedValueClassAbstractReplacements(irFactory, context) {
-    private val storageManager = LockBasedStorageManager("multi-field-value-class-replacements")
+) : MemoizedValueClassAbstractReplacements(irFactory, context, LockBasedStorageManager("multi-field-value-class-replacements")) {
 
     val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
     val originalFunctionForMethodReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
@@ -224,7 +222,7 @@ class MemoizedMultiFieldValueClassReplacements(
     /**
      * Get a function replacement for a function or a constructor.
      */
-    override val getReplacementFunction: (IrFunction) -> IrSimpleFunction? =
+    override val getReplacementFunctionImpl: (IrFunction) -> IrSimpleFunction? =
         storageManager.createMemoizedFunctionWithNullableValues { function ->
             when {
                 (function.isLocal && function is IrSimpleFunction && function.overriddenSymbols.isEmpty()) ||
@@ -259,6 +257,13 @@ class MemoizedMultiFieldValueClassReplacements(
             }
         }
 
+    override fun quickCheckIfFunctionIsNotApplicable(function: IrFunction): Boolean = !(
+            function.parent.let { it is IrClass && it.isMultiFieldValueClass } ||
+                    function.dispatchReceiverParameter?.type?.needsMfvcFlattening() == true ||
+                    function.extensionReceiverParameter?.type?.needsMfvcFlattening() == true ||
+                    function.valueParameters.any { it.type.needsMfvcFlattening() }
+            )
+
     private fun makeMultiFieldValueClassFieldGetterReplacement(function: IrFunction): IrSimpleFunction {
         require(function is IrSimpleFunction && function.isMultiFieldValueClassFieldGetter) { "Illegal function:\n${function.dump()}" }
         val replacement = getMfvcPropertyNode(function.correspondingPropertySymbol!!.owner)!!.unboxMethod
@@ -269,48 +274,51 @@ class MemoizedMultiFieldValueClassReplacements(
         return replacement
     }
 
-    override val getReplacementForRegularClassConstructor: (IrConstructor) -> IrConstructor? =
+    private val getReplacementForRegularClassConstructorImpl: (IrConstructor) -> IrConstructor? =
         storageManager.createMemoizedFunctionWithNullableValues { constructor ->
             when {
-                constructor.constructedClass.isMultiFieldValueClass -> null
-                constructor.isFromJava() -> null
-                constructor.fullValueParameterList.any { it.type.needsMfvcFlattening() } ->
-                    createConstructorReplacement(constructor)
-
-                else -> null
+                constructor.isFromJava() -> null //is recursive so run once
+                else -> createConstructorReplacement(constructor)
             }
         }
 
-
-    override val replaceOverriddenSymbols: (IrSimpleFunction) -> List<IrSimpleFunctionSymbol> =
-        storageManager.createMemoizedFunction { irSimpleFunction ->
-            irSimpleFunction.overriddenSymbols.map {
-                computeOverrideReplacement(it.owner).symbol
-            }
-        }
-
-    val getRootMfvcNode: (IrClass) -> RootMfvcNode? = storageManager.createMemoizedFunctionWithNullableValues {
-        if (it.defaultType.needsMfvcFlattening()) getRootNode(context, it) else null
+    override fun getReplacementForRegularClassConstructor(constructor: IrConstructor): IrConstructor? = when {
+        constructor.constructedClass.isMultiFieldValueClass -> null
+        constructor.valueParameters.none { it.type.needsMfvcFlattening() } -> null
+        else -> getReplacementForRegularClassConstructorImpl(constructor)
     }
 
-    val getRegularClassMfvcPropertyNode: (IrProperty) -> IntermediateMfvcNode? =
-        storageManager.createMemoizedFunctionWithNullableValues { property: IrProperty ->
-            val parent = property.parent
-            when {
-                parent !is IrClass -> null
-                property.isFakeOverride -> null
-                property.getter.let { it != null && (it.contextReceiverParametersCount > 0 || it.extensionReceiverParameter != null) } -> null
-                useRootNode(parent, property) -> null
-                property.run { backingField?.type ?: getter?.returnType }?.needsMfvcFlattening() != true -> null
-                else -> createIntermediateNodeForMfvcPropertyOfRegularClass(parent, context, property)
-            }
+    val getRootMfvcNode: (IrClass) -> RootMfvcNode = storageManager.createMemoizedFunction {
+        require(it.defaultType.needsMfvcFlattening()) { it.defaultType.render() }
+        getRootNode(context, it)
+    }
+
+    fun getRootMfvcNodeOrNull(irClass: IrClass): RootMfvcNode? =
+        if (irClass.defaultType.needsMfvcFlattening()) getRootMfvcNode(irClass) else null
+
+    private val getRegularClassMfvcPropertyNodeImpl: (IrProperty) -> IntermediateMfvcNode =
+        storageManager.createMemoizedFunction { property: IrProperty ->
+            val parent = property.parentAsClass
+            createIntermediateNodeForMfvcPropertyOfRegularClass(parent, context, property)
         }
+
+    fun getRegularClassMfvcPropertyNode(property: IrProperty): IntermediateMfvcNode? {
+        val parent = property.parent
+        return when {
+            property.run { backingField?.type ?: getter?.returnType }?.needsMfvcFlattening() != true -> null
+            parent !is IrClass -> null
+            property.isFakeOverride -> null
+            property.getter.let { it != null && (it.contextReceiverParametersCount > 0 || it.extensionReceiverParameter != null) } -> null
+            useRootNode(parent, property) -> null
+            else -> getRegularClassMfvcPropertyNodeImpl(property)
+        }
+    }
 
     fun getMfvcPropertyNode(property: IrProperty): NameableMfvcNode? {
         val parent = property.parent
         return when {
             parent !is IrClass -> null
-            useRootNode(parent, property) -> getRootMfvcNode(parent)!![property.name]
+            useRootNode(parent, property) -> getRootMfvcNode(parent)[property.name]
             else -> getRegularClassMfvcPropertyNode(property)
         }
     }

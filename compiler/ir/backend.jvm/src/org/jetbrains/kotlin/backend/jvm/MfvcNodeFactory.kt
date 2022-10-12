@@ -188,7 +188,7 @@ fun createIntermediateMfvcNode(
     val representation = valueClass.multiFieldValueClassRepresentation!!
 
     val replacements = context.multiFieldValueClassReplacements
-    val rootNode = replacements.getRootMfvcNode(valueClass)!!
+    val rootNode = replacements.getRootMfvcNode(valueClass)
 
     val oldField = oldGetter?.correspondingPropertySymbol?.owner?.backingField
 
