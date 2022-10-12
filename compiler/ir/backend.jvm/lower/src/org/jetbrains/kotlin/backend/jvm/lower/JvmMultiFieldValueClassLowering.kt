@@ -60,6 +60,8 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         }
     }
 
+    private val boxUsageGenerated = mutableSetOf<IrDeclaration>()
+
     /**
      * The class is used to get replacing expression and MFVC instance if present for the given old value declaration.
      */
@@ -87,9 +89,13 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             oldValueSymbol2NewValueSymbol[expression.symbol]?.let { return irGet(it.owner) }
             val instance = oldSymbol2MfvcNodeInstance[expression.symbol] ?: return null
             val res = instance.makeGetterExpression(this)
+            boxUsageGenerated.add(irCurrentScope)
             expression2MfvcNodeInstanceAccessor[res] = MfvcNodeInstanceAccessor.Getter(instance)
             return res
         }
+
+        private val irCurrentScope
+            get() = currentScope!!.irElement as IrDeclaration
 
         private fun splitExpressions(expressions: List<IrExpression>): Pair<List<IrExpression>, List<IrExpression>> {
             val repeatable = expressions.takeLastWhile { it.isRepeatableGetter() }
@@ -135,6 +141,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             val instance: ReceiverBasedMfvcNodeInstance =
                 node.createInstanceFromBox(this, typeArguments, expression.receiver, AccessType.AlwaysPrivate, ::variablesSaver)
             val getterExpression = instance.makeGetterExpression(this)
+            boxUsageGenerated.add(irCurrentScope)
             expression2MfvcNodeInstanceAccessor[getterExpression] = MfvcNodeInstanceAccessor.Getter(instance)
             +getterExpression
             return getterExpression
@@ -170,6 +177,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             val instance: ReceiverBasedMfvcNodeInstance =
                 node.createInstanceFromBox(this, typeArguments, dispatchReceiver, accessType, ::variablesSaver)
             val getterExpression = instance.makeGetterExpression(this)
+            boxUsageGenerated.add(irCurrentScope)
             expression2MfvcNodeInstanceAccessor[getterExpression] = MfvcNodeInstanceAccessor.Getter(instance)
             +getterExpression
             return getterExpression
@@ -217,8 +225,10 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         fun IrExpression.get(scope: IrBuilderWithScope, name: Name): IrExpression? = scope.handleSavedExpression(this) { accessor ->
             val newAccessor = accessor[name] ?: return@handleSavedExpression null
             val expression = when (newAccessor) {
-                is MfvcNodeInstanceAccessor.Getter -> newAccessor.instance.makeGetterExpression(scope)
                 is MfvcNodeInstanceAccessor.Setter -> newAccessor.instance.makeSetterExpressions(scope, newAccessor.values)
+                is MfvcNodeInstanceAccessor.Getter -> newAccessor.instance.makeGetterExpression(scope).also {
+                    boxUsageGenerated.add(irCurrentScope)
+                }
             }
             expression2MfvcNodeInstanceAccessor[expression] = newAccessor
             expression
@@ -279,11 +289,19 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                     when (replacingDeclaration) {
                         is IrFunction -> replacingDeclaration.body = replacingDeclaration.body?.makeBodyWithAddedVariables(
                             context, variablesToAdd[replacingDeclaration] ?: emptySet(), replacingDeclaration.symbol
-                        )?.apply { removeAllExtraBoxes() }
+                        )?.apply {
+                            if (replacingDeclaration in boxUsageGenerated) {
+                                removeAllExtraBoxes()
+                            }
+                        }
 
                         is IrAnonymousInitializer -> replacingDeclaration.body = replacingDeclaration.body.makeBodyWithAddedVariables(
                             context, variablesToAdd[replacingDeclaration.parent] ?: emptySet(), replacingDeclaration.symbol
-                        ).apply { removeAllExtraBoxes() } as IrBlockBody
+                        ).apply {
+                            if (replacingDeclaration in boxUsageGenerated) {
+                                removeAllExtraBoxes()
+                            }
+                        } as IrBlockBody
 
                         else -> Unit
                     }
@@ -726,6 +744,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                     )
                     flattenExpressionTo(expression, instance)
                     val getterExpression = instance.makeGetterExpression(this)
+                    boxUsageGenerated.add(currentScope)
                     valueDeclarationsRemapper.registerReplacement(getterExpression, instance)
                     +getterExpression
                 }

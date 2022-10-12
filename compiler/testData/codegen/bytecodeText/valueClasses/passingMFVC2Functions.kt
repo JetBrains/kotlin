@@ -37,6 +37,13 @@ fun testIgnoredBoxed() {
     returnBoxed()
 }
 
+object Init {
+    init {
+        DPoint(1.0, 2.0)
+        DPoint(1.0, 2.0)
+    }
+}
+
 // 1 testFlattened2Boxed\(\)V(\n {3}.*)*((\n {3}.*box-impl .*)(\n {3}.*)*){1}
 // 0 testFlattened2Boxed\(\)V(\n {3}.*)*((\n {3}.*box-impl.*)(\n {3}.*)*){2}
 // 0 testBoxed2Boxed\(\)V(\n {3}.*)*((\n {3}.*(box-impl|DSTORE|DLOAD).*)(\n {3}.*)*){1}
@@ -48,3 +55,4 @@ fun testIgnoredBoxed() {
 // 0 testBoxed2Flattened\(\)V(\n {3}.*)*((\n {3}.*unbox-impl.*)(\n {3}.*)*){3}
 // 0 testIgnoredFlattened\(\)V(\n {3}.*)*((\n {3}.*box-impl.*)(\n {3}.*)*){1}
 // 0 testIgnoredBoxed\(\)V(\n {3}.*)*((\n {3}.*box-impl.*)(\n {3}.*)*){1}
+// 0 Init.*((\n {1}.*)*(\n {1}.*box-impl.*)){1}
