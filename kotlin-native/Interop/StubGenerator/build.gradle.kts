@@ -33,7 +33,7 @@ dependencies {
     api(project(path = ":kotlin-native:endorsedLibraries:kotlinx.cli", configuration = "jvmRuntimeElements"))
 
     api(project(":kotlin-stdlib"))
-    api(project(path = ":kotlin-compiler", configuration = "runtimeElements"))
+//    api(project(path = ":kotlin-compiler", configuration = "runtimeElements"))
     api(project(":kotlinx-metadata-klib"))
     api(project(":native:kotlin-native-utils"))
     implementation(project(":compiler:util"))

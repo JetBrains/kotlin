@@ -137,7 +137,7 @@
     public protected *;
 }
 
--keep class com.intellij.mock.* { *; }
+#-keep class com.intellij.mock.* { *; }
 
 # This is needed so that the platform code which parses XML wouldn't fail, see KT-16968
 # This API is used from org.jdom.input.SAXBuilder via reflection.
