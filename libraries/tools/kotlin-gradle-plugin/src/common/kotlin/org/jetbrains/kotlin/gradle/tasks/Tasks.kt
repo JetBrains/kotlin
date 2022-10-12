@@ -552,8 +552,6 @@ abstract class KotlinCompile @Inject constructor(
         compilerOptions.verbose.convention(logger.isDebugEnabled)
     }
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Replaced by compilerOptions input", replaceWith = ReplaceWith("compilerOptions"))
     final override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsCompat(
         { this },
         compilerOptions
@@ -953,8 +951,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
         }
     }
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Replaced by compilerOptions input", replaceWith = ReplaceWith("compilerOptions"))
     override val kotlinOptions: KotlinJsOptions = KotlinJsOptionsCompat(
         { this },
         compilerOptions

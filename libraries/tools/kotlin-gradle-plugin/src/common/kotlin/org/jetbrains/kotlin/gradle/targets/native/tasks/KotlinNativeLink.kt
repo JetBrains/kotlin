@@ -122,35 +122,21 @@ constructor(
     @Suppress("unused", "UNCHECKED_CAST")
     @Deprecated(
         "Use toolOptions.freeCompilerArgs",
-        replaceWith = ReplaceWith("toolOptions.freeCompilerArgs")
+        replaceWith = ReplaceWith("toolOptions.freeCompilerArgs.get()")
     )
     @get:Internal
     val additionalCompilerOptions: Provider<Collection<String>> = toolOptions.freeCompilerArgs as Provider<Collection<String>>
 
-    @Suppress("DEPRECATION")
-    @Deprecated(
-        message = "Replaced with toolOptions",
-        replaceWith = ReplaceWith("toolOptions")
-    )
     @get:Internal
     val kotlinOptions: KotlinCommonToolOptions = object : KotlinCommonToolOptions {
         override val options: KotlinCommonCompilerToolOptions
             get() = toolOptions
     }
 
-    @Suppress("DEPRECATION")
-    @Deprecated(
-        message = "Replaced with toolOptions()",
-        replaceWith = ReplaceWith("toolOptions(fn)")
-    )
     fun kotlinOptions(fn: KotlinCommonToolOptions.() -> Unit) {
         kotlinOptions.fn()
     }
 
-    @Deprecated(
-        message = "Replaced with toolOptions()",
-        replaceWith = ReplaceWith("toolOptions(fn)")
-    )
     fun kotlinOptions(fn: Closure<*>) {
         @Suppress("DEPRECATION")
         fn.delegate = kotlinOptions

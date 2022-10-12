@@ -484,8 +484,8 @@ private fun Printer.generateDeprecatedInterface(
     parentType: FqName? = null,
 ) {
     val afterType = parentType?.let { " : $it" }
+    // Add @Deprecated annotation back once proper migration to compilerOptions will be supported
     val modifier = """
-    @Deprecated("Use ${compilerOptionType.shortName()} instead", level = DeprecationLevel.WARNING)
     interface
     """.trimIndent()
     generateDeclaration(modifier, type, afterType = afterType) {
