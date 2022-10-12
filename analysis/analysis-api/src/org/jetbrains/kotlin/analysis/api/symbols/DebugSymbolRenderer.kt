@@ -134,7 +134,7 @@ public object DebugSymbolRenderer {
             }
         }
 
-        if (symbol is KtPropertyGetterSymbol || symbol is KtPropertySetterSymbol || symbol is KtValueParameterSymbol) {
+        if (symbol is KtPropertyGetterSymbol || symbol is KtPropertySetterSymbol || symbol is KtValueParameterSymbol || symbol is KtPropertySymbol) {
             renderSymbol(symbol)
             return
         }

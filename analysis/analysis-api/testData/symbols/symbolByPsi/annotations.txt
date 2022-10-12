@@ -2,7 +2,49 @@ KtValueParameterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   contextReceivers: []
-  generatedPrimaryConstructorProperty: KtKotlinPropertySymbol(/Anno.param1)
+  generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
+    annotationsList: []
+    callableIdIfNonLocal: /Anno.param1
+    contextReceivers: []
+    getter: KtPropertyGetterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      hasBody: false
+      hasStableParameterNames: true
+      isDefault: true
+      isExtension: false
+      isInline: false
+      isOverride: false
+      modality: FINAL
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/String
+      symbolKind: ACCESSOR
+      typeParameters: []
+      valueParameters: []
+      visibility: Public
+    hasBackingField: true
+    hasGetter: true
+    hasSetter: false
+    initializer: KtNonConstantInitializerValue(val param1: String)
+    isConst: false
+    isDelegatedProperty: false
+    isExtension: false
+    isFromPrimaryConstructor: true
+    isLateInit: false
+    isOverride: false
+    isStatic: false
+    isVal: true
+    modality: FINAL
+    name: param1
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/String
+    setter: null
+    symbolKind: CLASS_MEMBER
+    typeParameters: []
+    visibility: Public
   hasDefaultValue: false
   isCrossinline: false
   isExtension: false
@@ -22,7 +64,49 @@ KtValueParameterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   contextReceivers: []
-  generatedPrimaryConstructorProperty: KtKotlinPropertySymbol(/Anno.param2)
+  generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
+    annotationsList: []
+    callableIdIfNonLocal: /Anno.param2
+    contextReceivers: []
+    getter: KtPropertyGetterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      hasBody: false
+      hasStableParameterNames: true
+      isDefault: true
+      isExtension: false
+      isInline: false
+      isOverride: false
+      modality: FINAL
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Int
+      symbolKind: ACCESSOR
+      typeParameters: []
+      valueParameters: []
+      visibility: Public
+    hasBackingField: true
+    hasGetter: true
+    hasSetter: false
+    initializer: KtNonConstantInitializerValue(val param2: Int)
+    isConst: false
+    isDelegatedProperty: false
+    isExtension: false
+    isFromPrimaryConstructor: true
+    isLateInit: false
+    isOverride: false
+    isStatic: false
+    isVal: true
+    modality: FINAL
+    name: param2
+    origin: SOURCE
+    receiverType: null
+    returnType: kotlin/Int
+    setter: null
+    symbolKind: CLASS_MEMBER
+    typeParameters: []
+    visibility: Public
   hasDefaultValue: false
   isCrossinline: false
   isExtension: false
@@ -56,7 +140,49 @@ KtConstructorSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
       contextReceivers: []
-      generatedPrimaryConstructorProperty: KtKotlinPropertySymbol(/Anno.param1)
+      generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
+        annotationsList: []
+        callableIdIfNonLocal: /Anno.param1
+        contextReceivers: []
+        getter: KtPropertyGetterSymbol:
+          annotationsList: []
+          callableIdIfNonLocal: null
+          contextReceivers: []
+          hasBody: false
+          hasStableParameterNames: true
+          isDefault: true
+          isExtension: false
+          isInline: false
+          isOverride: false
+          modality: FINAL
+          origin: SOURCE
+          receiverType: null
+          returnType: kotlin/String
+          symbolKind: ACCESSOR
+          typeParameters: []
+          valueParameters: []
+          visibility: Public
+        hasBackingField: true
+        hasGetter: true
+        hasSetter: false
+        initializer: KtNonConstantInitializerValue(val param1: String)
+        isConst: false
+        isDelegatedProperty: false
+        isExtension: false
+        isFromPrimaryConstructor: true
+        isLateInit: false
+        isOverride: false
+        isStatic: false
+        isVal: true
+        modality: FINAL
+        name: param1
+        origin: SOURCE
+        receiverType: null
+        returnType: kotlin/String
+        setter: null
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        visibility: Public
       hasDefaultValue: false
       isCrossinline: false
       isExtension: false
@@ -73,7 +199,49 @@ KtConstructorSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
       contextReceivers: []
-      generatedPrimaryConstructorProperty: KtKotlinPropertySymbol(/Anno.param2)
+      generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
+        annotationsList: []
+        callableIdIfNonLocal: /Anno.param2
+        contextReceivers: []
+        getter: KtPropertyGetterSymbol:
+          annotationsList: []
+          callableIdIfNonLocal: null
+          contextReceivers: []
+          hasBody: false
+          hasStableParameterNames: true
+          isDefault: true
+          isExtension: false
+          isInline: false
+          isOverride: false
+          modality: FINAL
+          origin: SOURCE
+          receiverType: null
+          returnType: kotlin/Int
+          symbolKind: ACCESSOR
+          typeParameters: []
+          valueParameters: []
+          visibility: Public
+        hasBackingField: true
+        hasGetter: true
+        hasSetter: false
+        initializer: KtNonConstantInitializerValue(val param2: Int)
+        isConst: false
+        isDelegatedProperty: false
+        isExtension: false
+        isFromPrimaryConstructor: true
+        isLateInit: false
+        isOverride: false
+        isStatic: false
+        isVal: true
+        modality: FINAL
+        name: param2
+        origin: SOURCE
+        receiverType: null
+        returnType: kotlin/Int
+        setter: null
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        visibility: Public
       hasDefaultValue: false
       isCrossinline: false
       isExtension: false
