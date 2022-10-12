@@ -1,0 +1,3 @@
+package app
+
+fun commonTest() {}
