@@ -3265,7 +3265,7 @@ internal class InefficientEqualsOverridingInInlineClassImpl(
     override val className: String,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
-) : KtFirDiagnostic.InefficientEqualsOverridingInInlineClass(), KtAbstractFirDiagnostic<KtDeclaration>
+) : KtFirDiagnostic.InefficientEqualsOverridingInInlineClass(), KtAbstractFirDiagnostic<KtNamedFunction>
 
 internal class CannotAllUnderImportFromSingletonImpl(
     override val objectName: Name,

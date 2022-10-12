@@ -2704,7 +2704,7 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RedundantInlineSuspendFunctionType::class
     }
 
-    abstract class InefficientEqualsOverridingInInlineClass : KtFirDiagnostic<KtDeclaration>() {
+    abstract class InefficientEqualsOverridingInInlineClass : KtFirDiagnostic<KtNamedFunction>() {
         override val diagnosticClass get() = InefficientEqualsOverridingInInlineClass::class
         abstract val className: String
     }

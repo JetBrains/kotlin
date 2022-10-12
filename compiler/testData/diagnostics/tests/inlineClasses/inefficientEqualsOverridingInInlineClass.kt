@@ -5,7 +5,7 @@
 
 @JvmInline
 value class IC1(val x: Int) {
-    <!INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS!>override fun equals(other: Any?): Boolean<!> {
+    override fun <!INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS!>equals<!>(other: Any?): Boolean {
         if (other !is IC1) {
             return false
         }
