@@ -215,7 +215,7 @@ abstract class BenchmarkTemplate(
             }
             .concat()
             .groupBy("scenario").aggregate { // Merging scenarios from different benchmarks into one row
-                forEachRow { row ->
+                forEach { row ->
                     row["tasks start median time"] into "Configuration: ${row["benchmark"]}"
                     row["execution median time"] into "Execution: ${row["benchmark"]}"
                 }
