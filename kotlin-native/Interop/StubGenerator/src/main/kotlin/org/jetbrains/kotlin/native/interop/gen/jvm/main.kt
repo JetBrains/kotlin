@@ -385,7 +385,7 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
         KotlinPlatform.NATIVE -> {
             val outLib = File(nativeLibsDir, "$libName.bc")
             val compilerCmd = arrayOf(compiler, *compilerArgs,
-                    "-emit-llvm", "-c", outCFile.absolutePath, "-o", outLib.absolutePath)
+                    "-emit-llvm", "-working-directory=${outCFile.parent}", "-c", outCFile.name, "-o", outLib.absolutePath)
             runCmd(compilerCmd, verbose)
             outLib.absolutePath
         }
