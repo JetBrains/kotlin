@@ -18,17 +18,15 @@ import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.publish.maven.MavenPublication
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.targets.metadata.*
 import org.jetbrains.kotlin.gradle.targets.metadata.COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
-import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
+import org.jetbrains.kotlin.gradle.targets.metadata.getCommonSourceSetsForMetadataCompilation
 import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
-import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.setProperty
 
 abstract class KotlinSoftwareComponent(
@@ -94,11 +92,14 @@ abstract class KotlinSoftwareComponent(
     }
 
     val sourcesArtifacts: Set<PublishArtifact> by lazy {
+        fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project) +
+                getHostSpecificMainSharedSourceSets(project)
+
         val sourcesJarTask = sourcesJarTaskNamed(
             "sourcesJar",
             name,
             project,
-            lazy { project.kotlinExtension.sourceSets.associate { it.name to it.kotlin } },
+            lazy { allPublishableCommonSourceSets().associate { it.name to it.kotlin } },
             name.toLowerCase()
         )
         val sourcesJarArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, sourcesJarTask) { sourcesJarArtifact ->
