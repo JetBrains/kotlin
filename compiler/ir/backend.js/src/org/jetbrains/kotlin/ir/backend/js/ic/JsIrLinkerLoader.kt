@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
+import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -27,6 +28,13 @@ import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
+internal fun JsIrLinker.loadUnboundSymbols(checkNoUnbound: Boolean) {
+    ExternalDependenciesGenerator(symbolTable, listOf(this)).generateUnboundSymbolsAsDependencies()
+    postProcess()
+    if (checkNoUnbound) {
+        checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
+    }
+}
 
 internal class JsIrLinkerLoader(
     private val compilerConfiguration: CompilerConfiguration,
@@ -109,8 +117,7 @@ internal class JsIrLinkerLoader(
             }
         }
 
-        ExternalDependenciesGenerator(jsIrLinker.symbolTable, listOf(jsIrLinker)).generateUnboundSymbolsAsDependencies()
-        jsIrLinker.postProcess()
+        jsIrLinker.loadUnboundSymbols(false)
         return LoadedJsIr(jsIrLinker, irModules)
     }
 }
