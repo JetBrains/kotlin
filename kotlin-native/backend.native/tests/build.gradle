@@ -4285,6 +4285,10 @@ createInterop("kt51925") {
     it.defFile 'interop/kt51925/kt51925.def'
 }
 
+createInterop("kt54284") {
+    it.defFile 'interop/kt54284/kt54284.def'
+}
+
 createInterop("kt43502") {
     it.defFile 'interop/kt43502/kt43502.def'
     it.headers "$projectDir/interop/kt43502/kt43502.h"
@@ -4757,6 +4761,12 @@ interopTest("interop_kt44283") {
     flags = ['-g']
     interop = 'kt44283'
     source = "interop/kt44283/main.kt"
+}
+
+interopTest("interop_kt54284") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    interop = 'kt54284'
+    source = "interop/kt54284/main.kt"
 }
 
 // TODO: This test should be run with caches on.
