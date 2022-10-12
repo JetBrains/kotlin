@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.incremental.storage.ProtoMapValue
+import com.intellij.util.io.DataExternalizer
+import org.jetbrains.kotlin.incremental.storage.*
+import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
 import org.jetbrains.kotlin.inline.inlineFunctionsAndAccessors
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
@@ -29,8 +31,8 @@ class KotlinClassInfo constructor(
     val classHeaderData: Array<String>, // Can be empty
     val classHeaderStrings: Array<String>, // Can be empty
     val multifileClassName: String?, // Not null iff classKind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
-    val constantsMap: LinkedHashMap<String, Any>,
-    val inlineFunctionsAndAccessorsMap: LinkedHashMap<String, Long>
+    val constantsMap: Map<String, Any>,
+    val inlineFunctionsAndAccessorsMap: Map<InlineFunctionOrAccessor, Long>
 ) {
 
     val className: JvmClassName by lazy { JvmClassName.byClassId(classId) }
@@ -82,7 +84,7 @@ class KotlinClassInfo constructor(
         }
 
         fun createFrom(classId: ClassId, classHeader: KotlinClassHeader, classContents: ByteArray): KotlinClassInfo {
-            val (constants, inlineFunctionsAndAccessors) = getConstantsAndInlineFunctionsOrAccessors(classHeader, classContents)
+            val (constants, inlineFunctionsAndAccessors) = getConstantsAndInlineFunctionsOrAccessors(classId, classHeader, classContents)
 
             return KotlinClassInfo(
                 classId,
@@ -90,8 +92,8 @@ class KotlinClassInfo constructor(
                 classHeader.data ?: emptyArray(),
                 classHeader.strings ?: emptyArray(),
                 classHeader.multifileClassName,
-                constants.mapKeysTo(LinkedHashMap()) { it.key.name },
-                inlineFunctionsAndAccessors.mapKeysTo(LinkedHashMap()) { it.key.asString() },
+                constants.mapKeys { it.key.name },
+                inlineFunctionsAndAccessors
             )
         }
     }
@@ -102,23 +104,33 @@ class KotlinClassInfo constructor(
  * separately in two passes.
  */
 private fun getConstantsAndInlineFunctionsOrAccessors(
+    classId: ClassId,
     classHeader: KotlinClassHeader,
     classContents: ByteArray
-): Pair<Map<JvmMemberSignature.Field, Any>, Map<JvmMemberSignature.Method, Long>> {
+): Pair<Map<JvmMemberSignature.Field, Any>, Map<InlineFunctionOrAccessor, Long>> {
     val constantsClassVisitor = ConstantsClassVisitor()
-    val inlineFunctionsAndAccessors = inlineFunctionsAndAccessors(classHeader)
+    val inlineFunctionsAndAccessors = inlineFunctionsAndAccessors(classHeader, excludePrivateMembers = true)
 
     return if (inlineFunctionsAndAccessors.isEmpty()) {
+        // Handle this case differently to improve performance
         // parsingOptions = (SKIP_CODE, SKIP_DEBUG) as method bodies and debug info are not important for constants
         ClassReader(classContents).accept(constantsClassVisitor, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG)
         Pair(constantsClassVisitor.getResult(), emptyMap())
     } else {
-        val inlineFunctionsAndAccessorsClassVisitor =
-            InlineFunctionsAndAccessorsClassVisitor(inlineFunctionsAndAccessors.toSet(), constantsClassVisitor)
+        val inlineFunctionsAndAccessorsClassVisitor = InlineFunctionsAndAccessorsClassVisitor(
+            inlineFunctionsAndAccessors.map { it.jvmMethodSignature }.toSet(),
+            constantsClassVisitor
+        )
         // parsingOptions must not include (SKIP_CODE, SKIP_DEBUG) as method bodies and debug info (e.g., line numbers) are important for
         // inline functions/accessors
         ClassReader(classContents).accept(inlineFunctionsAndAccessorsClassVisitor, 0)
-        Pair(constantsClassVisitor.getResult(), inlineFunctionsAndAccessorsClassVisitor.getResult())
+        val constantsMap = constantsClassVisitor.getResult()
+        val methodHashesMap = inlineFunctionsAndAccessorsClassVisitor.getResult()
+        val inlineFunctionsAndAccessorsMap = inlineFunctionsAndAccessors.associateWith {
+            methodHashesMap[it.jvmMethodSignature]
+                ?: error("Unable to find method with signature '${it.jvmMethodSignature.asString()}' in the bytecode of class '${classId.asString()}'")
+        }
+        Pair(constantsMap, inlineFunctionsAndAccessorsMap)
     }
 }
 
@@ -152,8 +164,9 @@ private class InlineFunctionsAndAccessorsClassVisitor(
     }
 
     override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
-        if (access and Opcodes.ACC_PRIVATE == Opcodes.ACC_PRIVATE) return null
-
+        // Note: Do not filter out private methods here because a *public* inline function may actually have a *private* corresponding JVM
+        // method in the bytecode (see `InlineOnlyKt.isInlineOnlyPrivateInBytecode`).
+        // Just filter the methods based on the given `inlineFunctionsAndAccessors` set.
         val method = JvmMemberSignature.Method(name, desc)
         if (method !in inlineFunctionsAndAccessors) return null
 
@@ -171,3 +184,20 @@ private class InlineFunctionsAndAccessorsClassVisitor(
 
     fun getResult() = result
 }
+
+/**
+ * [DataExternalizer] for the value of a Kotlin constant.
+ *
+ * The constants' values are provided by ASM (see the javadoc of [ConstantsClassVisitor.visitField]), so their types can only be the
+ * following: Integer, Long, Float, Double, String. (Boolean constants have Integer (0, 1) values in ASM.)
+ */
+object ConstantValueExternalizer : DataExternalizer<Any> by DelegateDataExternalizer(
+    listOf(
+        java.lang.Integer::class.java,
+        java.lang.Long::class.java,
+        java.lang.Float::class.java,
+        java.lang.Double::class.java,
+        java.lang.String::class.java
+    ),
+    listOf(IntExternalizer, LongExternalizer, FloatExternalizer, DoubleExternalizer, StringExternalizer)
+)
