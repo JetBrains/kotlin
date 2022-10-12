@@ -1,3 +1,5 @@
+// IGNORE_FE10
+
 package test
 
 class SomeClass

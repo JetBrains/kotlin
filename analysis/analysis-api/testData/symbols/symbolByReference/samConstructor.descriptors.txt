@@ -1,6 +1,7 @@
 KtSamConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/Runnable
+  contextReceivers: []
   hasStableParameterNames: true
   isExtension: false
   name: Runnable
@@ -8,8 +9,25 @@ KtSamConstructorSymbol:
   receiverType: null
   returnType: java/lang/Runnable
   symbolKind: SAM_CONSTRUCTOR
+  typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(function)
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: function
+      origin: SOURCE
+      receiverType: null
+      returnType: kotlin/Function0<kotlin/Unit>
+      symbolKind: LOCAL
+      typeParameters: []
   ]
   getContainingModule: Could not render due to java.util.NoSuchElementException: Collection contains no element matching the predicate.
 
