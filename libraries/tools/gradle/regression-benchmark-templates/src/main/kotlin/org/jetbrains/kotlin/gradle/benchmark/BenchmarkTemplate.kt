@@ -376,7 +376,7 @@ abstract class BenchmarkTemplate(
                 )
                 columnName.startsWith("measured build") -> DataColumn.createValueColumn(
                     columnName,
-                    rowToColumn(columnName) { it.toString().toInt() }
+                    rowToColumn(columnName) { it.toString().toIntOrNull() }
                 )
                 else -> throw IllegalArgumentException("Unknown column name: $columnName")
             }
