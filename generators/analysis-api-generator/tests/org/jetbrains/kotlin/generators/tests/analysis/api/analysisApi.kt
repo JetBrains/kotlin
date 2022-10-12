@@ -127,7 +127,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             }
         }
 
-        test(AbstractSymbolByReferenceTest::class, filter = frontendIs(FrontendKind.Fir)) {
+        test(AbstractSymbolByReferenceTest::class) {
             when (it.analysisApiMode) {
                 AnalysisApiMode.Ide ->
                     model("symbolByReference")
