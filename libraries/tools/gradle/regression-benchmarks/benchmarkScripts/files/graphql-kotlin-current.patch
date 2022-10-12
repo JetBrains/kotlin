@@ -34,9 +34,9 @@ index 314ccfb8c..ee33f75bc 100644
  kotlinJvmVersion = 1.8
 -kotlinVersion = 1.6.21
 +kotlinVersion = <kotlin_version>
- kotlinCoroutinesVersion = 1.6.1
+ kotlinCoroutinesVersion = 1.6.4
+ # kotlinx-serialization 1.3.3 calls Kotlin 1.7 API
  kotlinxSerializationVersion = 1.3.2
- 
 diff --git a/settings.gradle.kts b/settings.gradle.kts
 index f6fa7cee5..5bbb4828a 100644
 --- a/settings.gradle.kts
