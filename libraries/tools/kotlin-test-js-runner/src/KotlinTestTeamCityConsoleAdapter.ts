@@ -36,8 +36,6 @@ export function runWithTeamCityConsoleAdapter(
             runner.suite(name, isIgnored, fn)
         },
         test: function (name: string, isIgnored: boolean, fn: () => void) {
-            let revertLogMethods: CallableFunction[] = [];
-
             runner.test(name, isIgnored, () => {
                 const log = (type: LogType) => function (message?: any, ...optionalParams: any[]) {
                     let messageType: 'testStdOut' | 'testStdErr'
@@ -62,7 +60,7 @@ export function runWithTeamCityConsoleAdapter(
                     [method: string]: (message?: any, ...optionalParams: any[]) => void
                 };
 
-                revertLogMethods = logTypes
+                const revertLogMethods = logTypes
                     .map(method => {
                         const realMethod = globalConsole[method];
                         globalConsole[method] = log(method);
