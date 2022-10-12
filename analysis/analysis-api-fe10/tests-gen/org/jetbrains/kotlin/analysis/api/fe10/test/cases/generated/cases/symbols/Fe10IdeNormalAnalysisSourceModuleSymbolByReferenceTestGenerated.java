@@ -65,6 +65,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
     }
 
     @Test
+    @TestMetadata("functionReceiverParameter.kt")
+    public void testFunctionReceiverParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/functionReceiverParameter.kt");
+    }
+
+    @Test
     @TestMetadata("genericFromFunctionInLocalClass.kt")
     public void testGenericFromFunctionInLocalClass() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/genericFromFunctionInLocalClass.kt");
@@ -80,6 +86,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
     @TestMetadata("implicitLambdaParameter.kt")
     public void testImplicitLambdaParameter() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/implicitLambdaParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyReceiverParameter.kt")
+    public void testPropertyReceiverParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/propertyReceiverParameter.kt");
     }
 
     @Test
