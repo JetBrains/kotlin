@@ -15,7 +15,7 @@ value class IC1(val x: Any) {
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>() {}
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>(x: Any) {}
 
-    <!INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS!>override fun equals(other: Any?): Boolean<!> = true
+    override fun <!INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS!>equals<!>(other: Any?): Boolean = true
     override fun hashCode(): Int = 0
 }
 

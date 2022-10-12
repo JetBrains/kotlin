@@ -17855,9 +17855,9 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
-            @TestMetadata("illegalEqualsOverridingInInlineClass.kt")
-            public void testIllegalEqualsOverridingInInlineClass() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/inlineClasses/illegalEqualsOverridingInInlineClass.kt");
+            @TestMetadata("inefficientEqualsOverridingInInlineClass.kt")
+            public void testInefficientEqualsOverridingInInlineClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/inefficientEqualsOverridingInInlineClass.kt");
             }
 
             @Test

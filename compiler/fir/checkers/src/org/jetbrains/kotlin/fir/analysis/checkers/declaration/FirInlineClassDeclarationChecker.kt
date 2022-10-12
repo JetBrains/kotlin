@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.isEquals
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -204,16 +205,22 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
         }
 
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses)) {
-            val simpleFunctions = declaration.declarations.filterIsInstance<FirSimpleFunction>()
-            simpleFunctions.singleOrNull() { it.overridesEqualsFromAny() }?.apply {
-                if (declaration.symbol.isInline && simpleFunctions.none { it.isTypedEqualsInInlineClass(context.session) }) {
-                    reporter.reportOn(
-                        source,
-                        FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS,
-                        declaration.name.asString(),
-                        context
-                    )
+            var equalsFromAnyOverriding: FirSimpleFunction? = null
+            var typedEqualsIsDefined = false
+            declaration.declarations.forEach {
+                if (it !is FirSimpleFunction) {
+                    return@forEach
                 }
+                if (it.isEquals()) equalsFromAnyOverriding = it
+                if (it.isTypedEqualsInInlineClass(context.session)) typedEqualsIsDefined = true
+            }
+            if (equalsFromAnyOverriding != null && !typedEqualsIsDefined) {
+                reporter.reportOn(
+                    equalsFromAnyOverriding!!.source,
+                    FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS,
+                    declaration.name.asString(),
+                    context
+                )
             }
         }
     }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.types.KotlinType
@@ -93,13 +94,12 @@ fun DeclarationDescriptor.containingPackage(): FqName? {
 
 object DeserializedDeclarationsFromSupertypeConflictDataKey : CallableDescriptor.UserDataKey<CallableMemberDescriptor>
 
-fun FunctionDescriptor.isTypedEqualsInInlineClass(): Boolean = name == OperatorNameConventions.EQUALS
+fun FunctionDescriptor.isTypedEqualsInInlineClass() = name == OperatorNameConventions.EQUALS
         && (returnType?.isBoolean() ?: false) && containingDeclaration.isInlineClass()
-        && valueParameters.size == 1 && valueParameters[0].type == (containingDeclaration as? ClassDescriptor)?.defaultType
+        && valueParameters.size == 1 && valueParameters[0].type.constructor.declarationDescriptor.classId == (containingDeclaration as? ClassDescriptor)?.classId
         && contextReceiverParameters.isEmpty() && extensionReceiverParameter == null
 
 
 fun FunctionDescriptor.overridesEqualsFromAny(): Boolean = name == OperatorNameConventions.EQUALS
-        && (returnType?.isBoolean() ?: false)
         && valueParameters.size == 1 && valueParameters[0].type.isNullableAny()
         && contextReceiverParameters.isEmpty() && extensionReceiverParameter == null
