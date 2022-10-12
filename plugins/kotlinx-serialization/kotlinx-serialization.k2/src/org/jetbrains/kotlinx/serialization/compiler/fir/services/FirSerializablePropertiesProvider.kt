@@ -13,17 +13,17 @@ import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableReference
+import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent
-import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlinx.serialization.compiler.fir.*
+import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.getSuperClassNotAny
 import org.jetbrains.kotlinx.serialization.compiler.fir.isInternalSerializable
 import org.jetbrains.kotlinx.serialization.compiler.resolve.ISerializableProperty
 
@@ -33,6 +33,10 @@ class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessi
 
     fun getSerializablePropertiesForClass(classSymbol: FirClassSymbol<*>): FirSerializableProperties {
         return cache.getValue(classSymbol)
+    }
+
+    override fun FirDeclarationPredicateRegistrar.registerPredicates() {
+        register(FirSerializationPredicates.hasMetaAnnotation)
     }
 
     private fun createSerializableProperties(classSymbol: FirClassSymbol<*>): FirSerializableProperties {
@@ -49,7 +53,7 @@ class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessi
             it to parameterSymbol.hasDefaultValue
         }.toMap().withDefault { false }
 
-        val isInternalSerializable = classSymbol.isInternalSerializable
+        val isInternalSerializable = with(session) { classSymbol.isInternalSerializable }
 
         fun isPropertySerializable(propertySymbol: FirPropertySymbol): Boolean {
             return when {
@@ -75,7 +79,7 @@ class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessi
             .let { (fromConstructor, standalone) ->
                 val superClassSymbol = classSymbol.getSuperClassNotAny(session)
                 buildList {
-                    if (superClassSymbol != null && superClassSymbol.isInternalSerializable) {
+                    if (superClassSymbol != null && with(session) { superClassSymbol.isInternalSerializable }) {
                         addAll(getSerializablePropertiesForClass(superClassSymbol).serializableProperties)
                     }
                     addAll(fromConstructor)
@@ -84,7 +88,7 @@ class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessi
             }
             .let { restoreCorrectOrderFromClassProtoExtension(classSymbol, it) }
 
-        val isExternallySerializable = classSymbol.isInternallySerializableEnum ||
+        val isExternallySerializable = classSymbol.isEnumClass ||
                 primaryConstructorProperties.size == classSymbol.primaryConstructorSymbol()?.valueParameterSymbols?.size
 
         val (serializableConstructorProperties, serializableStandaloneProperties) = serializableProperties.partition { it.propertySymbol in primaryConstructorProperties }
