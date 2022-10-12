@@ -6,11 +6,21 @@ KtBackingFieldSymbol:
   name: field
   origin: PROPERTY_BACKING_FIELD
   owningProperty: KtKotlinPropertySymbol:
-    annotationsList: []
+    annotationsList: [
+      PropertyAnnotation()
+        psi: KtAnnotationEntry
+      FieldAnnotation()
+        psi: KtAnnotationEntry
+    ]
     callableIdIfNonLocal: /x
     contextReceivers: []
     getter: KtPropertyGetterSymbol:
-      annotationsList: []
+      annotationsList: [
+        ExplicitGetAnnotation()
+          psi: KtAnnotationEntry
+        GetAnnotation()
+          psi: KtAnnotationEntry
+      ]
       callableIdIfNonLocal: null
       contextReceivers: []
       hasBody: true
@@ -45,7 +55,12 @@ KtBackingFieldSymbol:
     receiverType: null
     returnType: kotlin/Int
     setter: KtPropertySetterSymbol:
-      annotationsList: []
+      annotationsList: [
+        ExplicitSetAnnotation()
+          psi: KtAnnotationEntry
+        SetAnnotation()
+          psi: KtAnnotationEntry
+      ]
       callableIdIfNonLocal: null
       contextReceivers: []
       hasBody: true
@@ -57,7 +72,12 @@ KtBackingFieldSymbol:
       modality: FINAL
       origin: SOURCE
       parameter: KtValueParameterSymbol:
-        annotationsList: []
+        annotationsList: [
+          ExplicitSetparamAnnotation()
+            psi: KtAnnotationEntry
+          SetparamAnnotation()
+            psi: KtAnnotationEntry
+        ]
         callableIdIfNonLocal: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
@@ -79,7 +99,12 @@ KtBackingFieldSymbol:
       typeParameters: []
       valueParameters: [
         KtValueParameterSymbol:
-          annotationsList: []
+          annotationsList: [
+            ExplicitSetparamAnnotation()
+              psi: KtAnnotationEntry
+            SetparamAnnotation()
+              psi: KtAnnotationEntry
+          ]
           callableIdIfNonLocal: null
           contextReceivers: []
           generatedPrimaryConstructorProperty: null
