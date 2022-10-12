@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
-import org.jetbrains.kotlin.native.interop.indexer.TURepository
+import org.jetbrains.kotlin.native.interop.indexer.TUCache
 import org.jetbrains.kotlin.native.interop.indexer.getHeaderPaths
 import org.jetbrains.kotlin.native.interop.indexer.use
 import kotlin.test.*
@@ -23,7 +23,7 @@ class ExcludeFilterTests : InteropTestsBase() {
             excludeFilter = header3.h
         """.trimIndent())
         val library = buildNativeLibraryFrom(defFile, files.directory)
-        val headers = TURepository().use { library.getHeaderPaths(it).ownHeaders }
+        val headers = TUCache().use { library.getHeaderPaths(it).ownHeaders }
         assertContains(headers, header1.absolutePath)
         assertContains(headers, header2.absolutePath)
         assertFalse(header3.absolutePath in headers)
@@ -41,7 +41,7 @@ class ExcludeFilterTests : InteropTestsBase() {
             excludeFilter = header[2-3].h
         """.trimIndent())
         val library = buildNativeLibraryFrom(defFile, files.directory)
-        val headers = TURepository().use { library.getHeaderPaths(it).ownHeaders }
+        val headers = TUCache().use { library.getHeaderPaths(it).ownHeaders }
         assertContains(headers, header1.absolutePath)
         assertFalse(header2.absolutePath in headers)
         assertFalse(header3.absolutePath in headers)
@@ -57,7 +57,7 @@ class ExcludeFilterTests : InteropTestsBase() {
             excludeFilter = 
         """.trimIndent())
         val library = buildNativeLibraryFrom(defFile, files.directory)
-        val headers = TURepository().use { library.getHeaderPaths(it).ownHeaders }
+        val headers = TUCache().use { library.getHeaderPaths(it).ownHeaders }
         assertContains(headers, header1.absolutePath)
     }
 
@@ -71,7 +71,7 @@ class ExcludeFilterTests : InteropTestsBase() {
             excludeFilter = header1.h
         """.trimIndent())
         val library = buildNativeLibraryFrom(defFile, files.directory)
-        val headers = TURepository().use { library.getHeaderPaths(it).ownHeaders }
+        val headers = TUCache().use { library.getHeaderPaths(it).ownHeaders }
         assertFalse(header1.absolutePath in headers)
     }
 }
