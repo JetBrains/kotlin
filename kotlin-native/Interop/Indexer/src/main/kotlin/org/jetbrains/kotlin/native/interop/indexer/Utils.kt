@@ -690,7 +690,7 @@ internal fun getHeadersAndUnits(
 class TUCache : Disposable {
     private val unitByBinaryFile = mutableMapOf<String, CXTranslationUnit>()
 
-    internal fun putOrGet(index: CXIndex, info: CXIdxImportedASTFileInfo): CXTranslationUnit {
+    internal fun load(index: CXIndex, info: CXIdxImportedASTFileInfo): CXTranslationUnit {
         val canonicalPath: String = info.file!!.canonicalPath
         return unitByBinaryFile.getOrElse(canonicalPath) {
             clang_createTranslationUnit(index, canonicalPath)!!.also { unit ->
@@ -778,7 +778,7 @@ private fun filterHeadersByName(
             }
 
             override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
-                tuCache.putOrGet(index, info).also { unit ->
+                tuCache.load(index, info).also { unit ->
                     if (!translationUnits.contains(unit)) {
                         translationUnits.add(unit)
                         ownTranslationUnits += unit
@@ -834,7 +834,7 @@ private fun filterHeadersByPredefined(
             }
 
             override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
-                tuCache.putOrGet(index, info).also { unit ->
+                tuCache.load(index, info).also { unit ->
                     if (!translationUnits.contains(unit)) {
                         translationUnits.add(unit)
                     }
