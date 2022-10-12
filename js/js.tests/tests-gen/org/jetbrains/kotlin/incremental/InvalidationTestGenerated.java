@@ -60,6 +60,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/classFunctionsAndFields/");
     }
 
+    @TestMetadata("companionFunction")
+    public void testCompanionFunction() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/companionFunction/");
+    }
+
     @TestMetadata("companionInlineFunction")
     public void testCompanionInlineFunction() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/companionInlineFunction/");
@@ -88,6 +93,16 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
     @TestMetadata("enum")
     public void testEnum() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/enum/");
+    }
+
+    @TestMetadata("enumsInInlineFunctions")
+    public void testEnumsInInlineFunctions() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/enumsInInlineFunctions/");
+    }
+
+    @TestMetadata("exceptionsFromInlineFunction")
+    public void testExceptionsFromInlineFunction() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/exceptionsFromInlineFunction/");
     }
 
     @TestMetadata("exportsThroughInlineFunction")
