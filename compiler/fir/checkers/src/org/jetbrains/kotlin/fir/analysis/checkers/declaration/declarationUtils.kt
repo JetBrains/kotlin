@@ -121,17 +121,10 @@ fun FirClassSymbol<*>.primaryConstructorSymbol(): FirConstructorSymbol? {
 
 fun FirSimpleFunction.isTypedEqualsInInlineClass(session: FirSession): Boolean =
     containingClass()?.toFirRegularClassSymbol(session)?.run {
-        this@isTypedEqualsInInlineClass.contextReceivers.isEmpty()
-                && this@isTypedEqualsInInlineClass.receiverTypeRef == null
-                && this@isTypedEqualsInInlineClass.name == OperatorNameConventions.EQUALS
-                && this@isTypedEqualsInInlineClass.returnTypeRef.isBoolean
-                && isInline
-                && this@isTypedEqualsInInlineClass.valueParameters.size == 1
-                && this@isTypedEqualsInInlineClass.valueParameters[0].returnTypeRef.coneType.classId == classId
+        with(this@isTypedEqualsInInlineClass) {
+            contextReceivers.isEmpty() && receiverTypeRef == null && name == OperatorNameConventions.EQUALS
+                    && this@run.isInline && valueParameters.size == 1 && returnTypeRef.isBoolean
+                    && valueParameters[0].returnTypeRef.coneType.classId == this@run.classId
+        }
     } ?: false
 
-fun FirSimpleFunction.overridesEqualsFromAny(): Boolean {
-    return name == OperatorNameConventions.EQUALS && returnTypeRef.isBoolean
-            && valueParameters.size == 1 && valueParameters[0].returnTypeRef.isNullableAny
-            && contextReceivers.isEmpty() && receiverTypeRef == null
-}
