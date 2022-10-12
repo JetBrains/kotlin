@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.fir
 
-import org.jetbrains.kotlin.fir.extensions.predicate.AnnotatedWith
-import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
-import org.jetbrains.kotlin.fir.extensions.predicate.ancestorAnnotated
+import org.jetbrains.kotlin.fir.extensions.predicate.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
 
 object FirSerializationPredicates {
@@ -15,5 +13,7 @@ object FirSerializationPredicates {
         AnnotatedWith(setOf(SerializationAnnotations.serializerAnnotationFqName)) // @Serializer(for=...)
     internal val generatedSerializer: DeclarationPredicate =
         ancestorAnnotated(SerializationAnnotations.serializableAnnotationFqName) // @Serializable X.$serializer
-    internal val annotatedWithSerializable = AnnotatedWith(setOf(SerializationAnnotations.serializableAnnotationFqName))
+    internal val hasMetaAnnotation = metaAnnotated(SerializationAnnotations.metaSerializableAnnotationFqName)
+    internal val annotatedWithSerializableOrMeta =
+        AnnotatedWith(setOf(SerializationAnnotations.serializableAnnotationFqName)) or metaAnnotated(SerializationAnnotations.metaSerializableAnnotationFqName)
 }

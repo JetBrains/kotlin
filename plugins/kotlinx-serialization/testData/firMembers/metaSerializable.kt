@@ -1,5 +1,3 @@
-// TARGET_BACKEND: JVM_IR
-
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -8,8 +6,6 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.json.*
 import kotlin.reflect.KClass
 import kotlin.test.*
-
-// TODO: for this test to work, runtime dependency should be updated to (yet unreleased) serialization with @MetaSerializable annotation
 
 @MetaSerializable
 @Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY)

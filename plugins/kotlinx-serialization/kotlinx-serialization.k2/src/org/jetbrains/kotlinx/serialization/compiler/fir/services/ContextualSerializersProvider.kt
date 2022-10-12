@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlinx.serialization.compiler.fir.*
-import org.jetbrains.kotlinx.serialization.compiler.fir.serializableWith
+import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.classSerializer
+import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.currentFile
+import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.overriddenSerializer
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 
@@ -116,20 +118,20 @@ fun findTypeSerializer(type: ConeKotlinType): FirClassSymbol<*>? {
     if (type.isArrayType) {
         return serializationProvider.getClassFromInternalSerializationPackage(SpecialBuiltins.Names.referenceArraySerializer)
     }
-    if (type.isGeneratedSerializableObject) {
+    if (with(session) { type.isGeneratedSerializableObject }) {
         return serializationProvider.getClassFromInternalSerializationPackage(SpecialBuiltins.Names.objectSerializer)
     }
     // see if there is a standard serializer
-    val standardSerializer = findStandardKotlinTypeSerializer(type) ?: findEnumTypeSerializer(type)
+    val standardSerializer = with(session) { findStandardKotlinTypeSerializer(type) ?: findEnumTypeSerializer(type) }
     if (standardSerializer != null) return standardSerializer
     val symbol = type.toRegularClassSymbol(session) ?: return null
-    if (symbol.isSealedSerializableInterface) {
+    if (with(session) { symbol.isSealedSerializableInterface }) {
         return serializationProvider.getClassFromSerializationPackage(SpecialBuiltins.Names.polymorphicSerializer)
     }
     return symbol.classSerializer // check for serializer defined on the type
 }
 
-context(CheckerContext)
+context(FirSession)
 fun findStandardKotlinTypeSerializer(type: ConeKotlinType): FirClassSymbol<*>? {
     val name = when {
         type.isBoolean -> PrimitiveBuiltins.booleanSerializer
@@ -142,15 +144,15 @@ fun findStandardKotlinTypeSerializer(type: ConeKotlinType): FirClassSymbol<*>? {
         type.isChar -> PrimitiveBuiltins.charSerializer
         else -> findStandardKotlinTypeSerializerName(type.classId?.asFqNameString())
     }?.let(Name::identifier) ?: return null
-    val symbolProvider = session.symbolProvider
+    val symbolProvider = symbolProvider
     return symbolProvider.getClassLikeSymbolByClassId(ClassId(SerializationPackages.internalPackageFqName, name)) as? FirClassSymbol<*>
         ?: symbolProvider.getClassLikeSymbolByClassId(ClassId(SerializationPackages.packageFqName, name)) as? FirClassSymbol<*>
 }
 
-context(CheckerContext)
+context(FirSession)
 fun findEnumTypeSerializer(type: ConeKotlinType): FirClassSymbol<*>? {
-    val symbol = type.toRegularClassSymbol(session) ?: return null
+    val symbol = type.toRegularClassSymbol(this@FirSession) ?: return null
     return runIf(symbol.isEnumClass && !symbol.isEnumWithLegacyGeneratedSerializer) {
-        session.symbolProvider.getClassLikeSymbolByClassId(SerializersClassIds.enumSerializerId) as? FirClassSymbol<*>
+        symbolProvider.getClassLikeSymbolByClassId(SerializersClassIds.enumSerializerId) as? FirClassSymbol<*>
     }
 }
