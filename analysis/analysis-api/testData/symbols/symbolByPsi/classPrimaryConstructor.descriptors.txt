@@ -4,14 +4,14 @@ KtValueParameterSymbol:
   contextReceivers: []
   generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
     annotationsList: []
-    callableIdIfNonLocal: /P.x
+    callableIdIfNonLocal: /A.a
     contextReceivers: []
     getter: KtPropertyGetterSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
       contextReceivers: []
       hasBody: false
-      hasStableParameterNames: true
+      hasStableParameterNames: false
       isDefault: true
       isExtension: false
       isInline: false
@@ -27,17 +27,17 @@ KtValueParameterSymbol:
     hasBackingField: true
     hasGetter: true
     hasSetter: false
-    initializer: KtNonConstantInitializerValue(val x: Int)
+    initializer: null
     isConst: false
     isDelegatedProperty: false
     isExtension: false
-    isFromPrimaryConstructor: true
+    isFromPrimaryConstructor: false
     isLateInit: false
     isOverride: false
     isStatic: false
     isVal: true
     modality: FINAL
-    name: x
+    name: a
     origin: SOURCE
     receiverType: null
     returnType: kotlin/Int
@@ -51,7 +51,7 @@ KtValueParameterSymbol:
   isImplicitLambdaParameter: false
   isNoinline: false
   isVararg: false
-  name: x
+  name: a
   origin: SOURCE
   receiverType: null
   returnType: kotlin/Int
@@ -64,59 +64,17 @@ KtValueParameterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   contextReceivers: []
-  generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
-    annotationsList: []
-    callableIdIfNonLocal: /P.y
-    contextReceivers: []
-    getter: KtPropertyGetterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
-      contextReceivers: []
-      hasBody: false
-      hasStableParameterNames: true
-      isDefault: true
-      isExtension: false
-      isInline: false
-      isOverride: false
-      modality: FINAL
-      origin: SOURCE
-      receiverType: null
-      returnType: kotlin/Int
-      symbolKind: ACCESSOR
-      typeParameters: []
-      valueParameters: []
-      visibility: Public
-    hasBackingField: true
-    hasGetter: true
-    hasSetter: false
-    initializer: KtNonConstantInitializerValue(val y: Int)
-    isConst: false
-    isDelegatedProperty: false
-    isExtension: false
-    isFromPrimaryConstructor: true
-    isLateInit: false
-    isOverride: false
-    isStatic: false
-    isVal: true
-    modality: FINAL
-    name: y
-    origin: SOURCE
-    receiverType: null
-    returnType: kotlin/Int
-    setter: null
-    symbolKind: CLASS_MEMBER
-    typeParameters: []
-    visibility: Public
+  generatedPrimaryConstructorProperty: null
   hasDefaultValue: false
   isCrossinline: false
   isExtension: false
   isImplicitLambdaParameter: false
   isNoinline: false
   isVararg: false
-  name: y
+  name: b
   origin: SOURCE
   receiverType: null
-  returnType: kotlin/Int
+  returnType: kotlin/String
   symbolKind: LOCAL
   typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
@@ -125,14 +83,14 @@ KtValueParameterSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
-  containingClassIdIfNonLocal: P
+  containingClassIdIfNonLocal: A
   contextReceivers: []
   hasStableParameterNames: true
   isExtension: false
   isPrimary: true
   origin: SOURCE
   receiverType: null
-  returnType: P
+  returnType: A
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -142,14 +100,14 @@ KtConstructorSymbol:
       contextReceivers: []
       generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
         annotationsList: []
-        callableIdIfNonLocal: /P.x
+        callableIdIfNonLocal: /A.a
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
           annotationsList: []
           callableIdIfNonLocal: null
           contextReceivers: []
           hasBody: false
-          hasStableParameterNames: true
+          hasStableParameterNames: false
           isDefault: true
           isExtension: false
           isInline: false
@@ -165,17 +123,17 @@ KtConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(val x: Int)
+        initializer: null
         isConst: false
         isDelegatedProperty: false
         isExtension: false
-        isFromPrimaryConstructor: true
+        isFromPrimaryConstructor: false
         isLateInit: false
         isOverride: false
         isStatic: false
         isVal: true
         modality: FINAL
-        name: x
+        name: a
         origin: SOURCE
         receiverType: null
         returnType: kotlin/Int
@@ -189,7 +147,7 @@ KtConstructorSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
-      name: x
+      name: a
       origin: SOURCE
       receiverType: null
       returnType: kotlin/Int
@@ -199,59 +157,17 @@ KtConstructorSymbol:
       annotationsList: []
       callableIdIfNonLocal: null
       contextReceivers: []
-      generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
-        annotationsList: []
-        callableIdIfNonLocal: /P.y
-        contextReceivers: []
-        getter: KtPropertyGetterSymbol:
-          annotationsList: []
-          callableIdIfNonLocal: null
-          contextReceivers: []
-          hasBody: false
-          hasStableParameterNames: true
-          isDefault: true
-          isExtension: false
-          isInline: false
-          isOverride: false
-          modality: FINAL
-          origin: SOURCE
-          receiverType: null
-          returnType: kotlin/Int
-          symbolKind: ACCESSOR
-          typeParameters: []
-          valueParameters: []
-          visibility: Public
-        hasBackingField: true
-        hasGetter: true
-        hasSetter: false
-        initializer: KtNonConstantInitializerValue(val y: Int)
-        isConst: false
-        isDelegatedProperty: false
-        isExtension: false
-        isFromPrimaryConstructor: true
-        isLateInit: false
-        isOverride: false
-        isStatic: false
-        isVal: true
-        modality: FINAL
-        name: y
-        origin: SOURCE
-        receiverType: null
-        returnType: kotlin/Int
-        setter: null
-        symbolKind: CLASS_MEMBER
-        typeParameters: []
-        visibility: Public
+      generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
       isCrossinline: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
-      name: y
+      name: b
       origin: SOURCE
       receiverType: null
-      returnType: kotlin/Int
+      returnType: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
   ]
@@ -261,79 +177,23 @@ KtConstructorSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: P
+  classIdIfNonLocal: A
   classKind: CLASS
   companionObject: null
   contextReceivers: []
-  isData: true
+  isData: false
   isExternal: false
   isFun: false
   isInline: false
   isInner: false
   modality: FINAL
-  name: P
+  name: A
   origin: SOURCE
   superTypes: [
     kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-
-KtLocalVariableSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  contextReceivers: []
-  isExtension: false
-  isVal: true
-  name: l
-  origin: SOURCE
-  receiverType: null
-  returnType: kotlin/Int
-  symbolKind: LOCAL
-  typeParameters: []
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-
-KtLocalVariableSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  contextReceivers: []
-  isExtension: false
-  isVal: true
-  name: r
-  origin: SOURCE
-  receiverType: null
-  returnType: kotlin/Int
-  symbolKind: LOCAL
-  typeParameters: []
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /destruct
-  contextReceivers: []
-  hasStableParameterNames: true
-  isBuiltinFunctionInvoke: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  modality: FINAL
-  name: destruct
-  origin: SOURCE
-  receiverType: null
-  returnType: kotlin/Int
-  symbolKind: TOP_LEVEL
-  typeParameters: []
-  valueParameters: []
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

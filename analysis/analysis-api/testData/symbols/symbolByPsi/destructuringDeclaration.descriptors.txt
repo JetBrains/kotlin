@@ -11,7 +11,7 @@ KtValueParameterSymbol:
       callableIdIfNonLocal: null
       contextReceivers: []
       hasBody: false
-      hasStableParameterNames: true
+      hasStableParameterNames: false
       isDefault: true
       isExtension: false
       isInline: false
@@ -27,11 +27,11 @@ KtValueParameterSymbol:
     hasBackingField: true
     hasGetter: true
     hasSetter: false
-    initializer: KtNonConstantInitializerValue(val x: Int)
+    initializer: null
     isConst: false
     isDelegatedProperty: false
     isExtension: false
-    isFromPrimaryConstructor: true
+    isFromPrimaryConstructor: false
     isLateInit: false
     isOverride: false
     isStatic: false
@@ -73,7 +73,7 @@ KtValueParameterSymbol:
       callableIdIfNonLocal: null
       contextReceivers: []
       hasBody: false
-      hasStableParameterNames: true
+      hasStableParameterNames: false
       isDefault: true
       isExtension: false
       isInline: false
@@ -89,11 +89,11 @@ KtValueParameterSymbol:
     hasBackingField: true
     hasGetter: true
     hasSetter: false
-    initializer: KtNonConstantInitializerValue(val y: Int)
+    initializer: null
     isConst: false
     isDelegatedProperty: false
     isExtension: false
-    isFromPrimaryConstructor: true
+    isFromPrimaryConstructor: false
     isLateInit: false
     isOverride: false
     isStatic: false
@@ -149,7 +149,7 @@ KtConstructorSymbol:
           callableIdIfNonLocal: null
           contextReceivers: []
           hasBody: false
-          hasStableParameterNames: true
+          hasStableParameterNames: false
           isDefault: true
           isExtension: false
           isInline: false
@@ -165,11 +165,11 @@ KtConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(val x: Int)
+        initializer: null
         isConst: false
         isDelegatedProperty: false
         isExtension: false
-        isFromPrimaryConstructor: true
+        isFromPrimaryConstructor: false
         isLateInit: false
         isOverride: false
         isStatic: false
@@ -208,7 +208,7 @@ KtConstructorSymbol:
           callableIdIfNonLocal: null
           contextReceivers: []
           hasBody: false
-          hasStableParameterNames: true
+          hasStableParameterNames: false
           isDefault: true
           isExtension: false
           isInline: false
@@ -224,11 +224,11 @@ KtConstructorSymbol:
         hasBackingField: true
         hasGetter: true
         hasSetter: false
-        initializer: KtNonConstantInitializerValue(val y: Int)
+        initializer: null
         isConst: false
         isDelegatedProperty: false
         isExtension: false
-        isFromPrimaryConstructor: true
+        isFromPrimaryConstructor: false
         isLateInit: false
         isOverride: false
         isStatic: false
