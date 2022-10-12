@@ -9,13 +9,13 @@
 @file:BenchmarkProject(
     name = "graphql-kotlin",
     gitUrl = "https://github.com/ExpediaGroup/graphql-kotlin.git",
-    gitCommitSha = "1a4c7a81a5c63ac9cf7e44faf125a6d1df035439"
+    gitCommitSha = "fd1e9063f3aae144e099cdcfa69a4416fa434fb2"
 )
 
 import java.io.File
 
 val stableReleasePatch = {
-    "graphql-kotlin-1.7.10.patch" to File("benchmarkScripts/files/graphql-kotlin-1.7.10.patch")
+    "graphql-kotlin-1.7.20.patch" to File("benchmarkScripts/files/graphql-kotlin-1.7.20.patch")
         .readText()
         .byteInputStream()
 }
@@ -67,9 +67,33 @@ runAllBenchmarks(
             runTasks(":graphql-kotlin-spring-server:assemble")
             applyAbiChangeTo("clients/graphql-kotlin-client/src/main/kotlin/com/expediagroup/graphql/client/GraphQLClient.kt")
         }
+
+        scenario {
+            title = "Dry run configuration time"
+            useGradleArgs("--no-build-cache", "-m")
+
+            iterations = 20
+            runTasks("assemble")
+        }
+
+        scenario {
+            title = "No-op configuration time"
+            useGradleArgs("--no-build-cache")
+
+            iterations = 20
+            runTasks("help")
+        }
+
+        scenario {
+            title = "UP-TO-DATE configuration time"
+            useGradleArgs("--no-build-cache")
+
+            iterations = 20
+            runTasks("assemble")
+        }
     },
     mapOf(
-        "1.7.10" to stableReleasePatch,
-        "1.7.20" to currentReleasePatch
+        "1.7.20" to stableReleasePatch,
+        "1.8.0" to currentReleasePatch
     )
 )
