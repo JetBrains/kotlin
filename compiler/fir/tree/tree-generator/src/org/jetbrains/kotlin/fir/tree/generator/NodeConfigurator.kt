@@ -88,7 +88,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         callableDeclaration.configure {
             +field("returnTypeRef", typeRef, withReplace = true).withTransform()
-            +field("receiverTypeRef", typeRef, nullable = true, withReplace = true).withTransform()
+            +field("receiverParameter", receiverParameter, nullable = true, withReplace = true).withTransform()
             +field("deprecationsProvider", deprecationsProviderType).withReplace().apply { isMutable = true }
             +symbol("FirCallableSymbol", "out FirCallableDeclaration")
 
@@ -391,6 +391,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +symbol("FirValueParameterSymbol")
             +field("defaultValue", expression, nullable = true)
             generateBooleanFields("crossinline", "noinline", "vararg")
+        }
+
+        receiverParameter.configure {
+            +field("type", typeRef).withTransform()
+            +annotations
         }
 
         variable.configure {

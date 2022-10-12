@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.createFunctionalType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedCallableReferenceTarget
 import org.jetbrains.kotlin.fir.resolve.inference.extractInputOutputTypesFromCallableReferenceExpectedType
-import org.jetbrains.kotlin.fir.types.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -71,8 +70,7 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
             }
 
             val declarationReceiverType: ConeKotlinType? =
-                fir.receiverTypeRef?.coneType
-                    ?.let(candidate.substitutor::substituteOrSelf)
+                fir.receiverParameter?.type?.coneType?.let(candidate.substitutor::substituteOrSelf)
 
             if (resultingReceiverType != null && declarationReceiverType != null) {
                 val capturedReceiver = context.session.typeContext.captureFromExpression(resultingReceiverType) ?: resultingReceiverType
@@ -115,7 +113,7 @@ private fun buildReflectionType(
                 )
 
             val parameters = mutableListOf<ConeKotlinType>()
-            if (fir.receiverTypeRef == null && receiverType != null) {
+            if (fir.receiverParameter == null && receiverType != null) {
                 parameters += receiverType
             }
 
@@ -134,7 +132,7 @@ private fun buildReflectionType(
                     callableReferenceAdaptation?.suspendConversionStrategy == SuspendConversionStrategy.SUSPEND_CONVERSION
             return createFunctionalType(
                 parameters,
-                receiverType = receiverType.takeIf { fir.receiverTypeRef != null },
+                receiverType = receiverType.takeIf { fir.receiverParameter != null },
                 rawReturnType = returnType,
                 isKFunctionType = true,
                 isSuspend = isSuspend

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -346,7 +346,7 @@ class Fir2IrDeclarationStorage(
             val thisOrigin = IrDeclarationOrigin.DEFINED
             if (function !is FirConstructor) {
                 val receiverTypeRef =
-                    if (function !is FirPropertyAccessor && function != null) function.receiverTypeRef
+                    if (function !is FirPropertyAccessor && function != null) function.receiverParameter?.type
                     else parentPropertyReceiverType
                 if (receiverTypeRef != null) {
                     extensionReceiverParameter = receiverTypeRef.convertWithOffsets { startOffset, endOffset ->
@@ -729,7 +729,7 @@ class Fir2IrDeclarationStorage(
                 bindAndDeclareParameters(
                     propertyAccessor, irParent,
                     thisReceiverOwner, isStatic = irParent !is IrClass || propertyAccessor?.isStatic == true,
-                    parentPropertyReceiverType = property.receiverTypeRef
+                    parentPropertyReceiverType = property.receiverParameter?.type
                 )
                 leaveScope(this)
                 if (irParent != null) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -115,7 +115,7 @@ internal fun checkPropertyInitializer(
                     !backingFieldRequired -> {
                         reporter.reportOn(it, FirErrors.PROPERTY_INITIALIZER_NO_BACKING_FIELD, context)
                     }
-                    property.receiverTypeRef != null -> {
+                    property.receiverParameter != null -> {
                         reporter.reportOn(it, FirErrors.EXTENSION_PROPERTY_WITH_BACKING_FIELD, context)
                     }
                 }
@@ -145,7 +145,7 @@ internal fun checkPropertyInitializer(
                 !isExternal &&
                 !property.hasExplicitBackingField
             ) {
-                if (property.receiverTypeRef != null && !property.hasAccessorImplementation) {
+                if (property.receiverParameter != null && !property.hasAccessorImplementation) {
                     reporter.reportOn(propertySource, FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT, context)
                 } else if (reachable) { // TODO: can be suppressed not to report diagnostics about no body
                     if (containingClass == null || property.hasAccessorImplementation) {

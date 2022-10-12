@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.fir.symbols.constructStarProjectedType
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.*
@@ -561,15 +563,24 @@ fun FirExpression.pullUpSafeCallIfNecessary(): FirExpression {
 fun List<FirAnnotationCall>.filterUseSiteTarget(target: AnnotationUseSiteTarget): List<FirAnnotationCall> =
     mapNotNull {
         if (it.useSiteTarget != target) null
-        else buildAnnotationCall {
+        else buildAnnotationCallCopy(it) {
             source = it.source?.fakeElement(KtFakeSourceElementKind.FromUseSiteTarget)
-            useSiteTarget = it.useSiteTarget
-            annotationTypeRef = it.annotationTypeRef
-            argumentList = it.argumentList
-            calleeReference = it.calleeReference
-            argumentMapping = it.argumentMapping
         }
     }
+
+fun FirTypeRef.convertToReceiverParameter(): FirReceiverParameter {
+    val typeRef = this
+    return buildReceiverParameter {
+        @Suppress("UNCHECKED_CAST")
+        annotations += (typeRef.annotations as List<FirAnnotationCall>).filterUseSiteTarget(AnnotationUseSiteTarget.RECEIVER)
+        (typeRef.annotations as MutableList<FirAnnotation>).removeIf { it.useSiteTarget == AnnotationUseSiteTarget.RECEIVER }
+        type = typeRef
+    }
+}
+
+fun FirImplicitTypeRef.asReceiverParameter(): FirReceiverParameter = buildReceiverParameter {
+    type = this@asReceiverParameter
+}
 
 fun <T> FirCallableDeclaration.initContainingClassAttr(context: Context<T>) {
     containingClassForStaticMemberAttr = currentDispatchReceiverType(context)?.lookupTag ?: return

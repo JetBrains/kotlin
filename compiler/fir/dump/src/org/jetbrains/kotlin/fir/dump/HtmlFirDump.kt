@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.dump
@@ -967,7 +967,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.generateReceiver(declaration: FirCallableDeclaration) {
-        generateReceiver(declaration.receiverTypeRef)
+        generateReceiver(declaration.receiverParameter?.type)
     }
 
     private fun FlowContent.generateReceiver(receiverTypeRef: FirTypeRef?) {
@@ -1119,7 +1119,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.describeVerbose(symbol: FirCallableSymbol<*>, fir: FirFunction) {
         describeTypeParameters(fir)
 
-        fir.receiverTypeRef?.let {
+        fir.receiverParameter?.type?.let {
             +"("
             generate(it)
             +")."
@@ -1138,7 +1138,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.describeVerbose(symbol: FirCallableSymbol<*>, fir: FirVariable) {
         if (fir is FirTypeParametersOwner) describeTypeParameters(fir)
 
-        fir.receiverTypeRef?.let {
+        fir.receiverParameter?.type?.let {
             +"("
             generate(it)
             +")."
@@ -1766,7 +1766,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             iline {
                 generateLabel(anonymousFunction.label)
                 keyword("fun ")
-                generateReceiver(anonymousFunction.receiverTypeRef)
+                generateReceiver(anonymousFunction.receiverParameter?.type)
 
                 +"("
                 generateList(anonymousFunction.valueParameters) {

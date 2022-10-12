@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -256,7 +256,7 @@ abstract class AbstractKtDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
                 if (fir.status.isInline) append("inline ")
                 if (fir.status.isInfix) append("infix ")
                 if (fir.status.isOperator) append("operator ")
-                if (fir.receiverTypeRef != null) append("extension ")
+                if (fir.receiverParameter != null) append("extension ")
                 append(TypeOfCall.FUNCTION.nameToRender)
             }
             else -> TypeOfCall.OTHER.nameToRender

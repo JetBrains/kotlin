@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -52,7 +52,7 @@ class FirJavaField @FirImplementationDetail constructor(
         symbol.bind(this)
     }
 
-    override val receiverTypeRef: FirTypeRef? get() = null
+    override val receiverParameter: FirReceiverParameter? get() = null
     override val isVal: Boolean get() = !isVar
     override val getter: FirPropertyAccessor? get() = null
     override val setter: FirPropertyAccessor? get() = null
@@ -91,7 +91,7 @@ class FirJavaField @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirField {
+    override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirField {
         return this
     }
 
@@ -144,7 +144,7 @@ class FirJavaField @FirImplementationDetail constructor(
         return this
     }
 
-    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
+    override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {}
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {}
 
     override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirField {

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
@@ -235,6 +236,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitValueParameter(valueParameter: FirValueParameter) {
         visitElement(valueParameter)
+    }
+
+    open fun visitReceiverParameter(receiverParameter: FirReceiverParameter) {
+        visitElement(receiverParameter)
     }
 
     open fun visitProperty(property: FirProperty) {
@@ -775,6 +780,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitValueParameter(valueParameter: FirValueParameter, data: Nothing?) {
         visitValueParameter(valueParameter)
+    }
+
+    final override fun visitReceiverParameter(receiverParameter: FirReceiverParameter, data: Nothing?) {
+        visitReceiverParameter(receiverParameter)
     }
 
     final override fun visitProperty(property: FirProperty, data: Nothing?) {

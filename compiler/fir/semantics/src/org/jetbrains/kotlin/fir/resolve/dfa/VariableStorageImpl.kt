@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -189,7 +189,7 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
             property.delegate != null -> PropertyStability.DELEGATED_PROPERTY
             property.isLocal -> if (property.isVal) PropertyStability.STABLE_VALUE else PropertyStability.LOCAL_VAR
             property.isVar -> PropertyStability.MUTABLE_PROPERTY
-            property.receiverTypeRef != null -> PropertyStability.PROPERTY_WITH_GETTER
+            property.receiverParameter != null -> PropertyStability.PROPERTY_WITH_GETTER
             property.getter.let { it != null && it !is FirDefaultPropertyAccessor } -> PropertyStability.PROPERTY_WITH_GETTER
             property.modality != Modality.FINAL -> {
                 val dispatchReceiver = (originalFir.unwrapElement() as? FirQualifiedAccess)?.dispatchReceiver ?: return null

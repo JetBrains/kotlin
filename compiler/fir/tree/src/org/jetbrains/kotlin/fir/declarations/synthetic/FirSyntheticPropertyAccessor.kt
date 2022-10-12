@@ -48,7 +48,7 @@ class FirSyntheticPropertyAccessor(
     override val dispatchReceiverType: ConeSimpleKotlinType?
         get() = delegate.dispatchReceiverType
 
-    override val receiverTypeRef: FirTypeRef?
+    override val receiverParameter: FirReceiverParameter?
         get() = null
     
     override val deprecationsProvider: DeprecationsProvider
@@ -103,7 +103,7 @@ class FirSyntheticPropertyAccessor(
         throw AssertionError("Transformation of synthetic property accessor isn't supported")
     }
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
+    override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
         throw AssertionError("Transformation of synthetic property accessor isn't supported")
     }
 
@@ -139,7 +139,7 @@ class FirSyntheticPropertyAccessor(
         throw AssertionError("Mutation of synthetic property accessor isn't supported")
     }
 
-    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
+    override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {
         throw AssertionError("Mutation of synthetic property accessor isn't supported")
     }
 

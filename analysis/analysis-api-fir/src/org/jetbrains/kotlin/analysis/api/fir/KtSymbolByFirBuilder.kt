@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -429,7 +429,7 @@ internal class KtSymbolByFirBuilder constructor(
         }
 
         fun buildExtensionReceiverSymbol(firCallableSymbol: FirCallableSymbol<*>): KtReceiverParameterSymbol? {
-            if (firCallableSymbol.fir.receiverTypeRef == null) return null
+            if (firCallableSymbol.fir.receiverParameter == null) return null
             return extensionReceiverSymbolsCache.cache(firCallableSymbol) {
                 KtFirReceiverParameterSymbol(firCallableSymbol, firResolveSession, token, this@KtSymbolByFirBuilder)
             }
@@ -666,7 +666,7 @@ private fun collectReferencedTypeParameters(declaration: FirCallableDeclaration)
         override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
             simpleFunction.typeParameters.forEach { it.accept(this) }
 
-            simpleFunction.receiverTypeRef?.accept(this)
+            simpleFunction.receiverParameter?.accept(this)
             simpleFunction.valueParameters.forEach { it.returnTypeRef.accept(this) }
             simpleFunction.returnTypeRef.accept(this)
         }
@@ -674,8 +674,12 @@ private fun collectReferencedTypeParameters(declaration: FirCallableDeclaration)
         override fun visitProperty(property: FirProperty) {
             property.typeParameters.forEach { it.accept(this) }
 
-            property.receiverTypeRef?.accept(this)
+            property.receiverParameter?.accept(this)
             property.returnTypeRef.accept(this)
+        }
+
+        override fun visitReceiverParameter(receiverParameter: FirReceiverParameter) {
+            receiverParameter.type.accept(this)
         }
 
         override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {

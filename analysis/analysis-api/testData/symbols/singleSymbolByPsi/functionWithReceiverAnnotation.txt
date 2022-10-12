@@ -16,11 +16,9 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverType: [
-    ReceiverAnnotation()
-      psi: KtAnnotationEntry
     ReceiverTypeAnnotation()
       psi: KtAnnotationEntry
-  ] @RECEIVER:R|ReceiverAnnotation|()  @R|ReceiverTypeAnnotation|()  kotlin/Int
+  ] @R|ReceiverTypeAnnotation|()  kotlin/Int
   returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []

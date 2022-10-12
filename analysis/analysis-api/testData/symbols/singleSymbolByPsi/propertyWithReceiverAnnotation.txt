@@ -15,11 +15,9 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverType: [
-      ReceiverAnnotation()
-        psi: KtAnnotationEntry
       ReceiverTypeAnnotation()
         psi: KtAnnotationEntry
-    ] @RECEIVER:R|ReceiverAnnotation|()  @R|ReceiverTypeAnnotation|()  kotlin/Long
+    ] @R|ReceiverTypeAnnotation|()  kotlin/Long
     returnType: kotlin/Boolean
     symbolKind: ACCESSOR
     typeParameters: []
@@ -43,11 +41,9 @@ KtKotlinPropertySymbol:
   name: prop
   origin: SOURCE
   receiverType: [
-    ReceiverAnnotation()
-      psi: KtAnnotationEntry
     ReceiverTypeAnnotation()
       psi: KtAnnotationEntry
-  ] @RECEIVER:R|ReceiverAnnotation|()  @R|ReceiverTypeAnnotation|()  kotlin/Long
+  ] @R|ReceiverTypeAnnotation|()  kotlin/Long
   returnType: kotlin/Boolean
   setter: null
   symbolKind: TOP_LEVEL

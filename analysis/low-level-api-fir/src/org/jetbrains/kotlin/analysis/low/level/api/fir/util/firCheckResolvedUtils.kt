@@ -46,7 +46,7 @@ internal fun checkReturnTypeRefIsResolved(declaration: FirCallableDeclaration, a
 }
 
 internal fun checkReceiverTypeRefIsResolved(declaration: FirCallableDeclaration, acceptImplicitTypeRef: Boolean = false) {
-    val receiverTypeRef = declaration.receiverTypeRef ?: return
+    val receiverTypeRef = declaration.receiverParameter?.type ?: return
     checkTypeRefIsResolved(receiverTypeRef, typeRefName = "receiver type", declaration, acceptImplicitTypeRef)
 }
 

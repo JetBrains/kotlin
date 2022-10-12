@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.resolve.transformers
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameterCopy
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -32,10 +33,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.remapArgumentsWithVararg
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.writeResultType
 import org.jetbrains.kotlin.fir.scopes.impl.ConvertibleIntegerOperators.binaryOperatorsWithSignedArgument
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedType
@@ -134,7 +131,7 @@ class FirCallCompletionResultsWriterTransformer(
         var extensionReceiver = subCandidate.chosenExtensionReceiverExpression()
         if (!declaration.isWrappedIntegerOperator()) {
             val expectedDispatchReceiverType = (declaration as? FirCallableDeclaration)?.dispatchReceiverType
-            val expectedExtensionReceiverType = (declaration as? FirCallableDeclaration)?.receiverTypeRef?.coneType
+            val expectedExtensionReceiverType = (declaration as? FirCallableDeclaration)?.receiverParameter?.type?.coneType
             dispatchReceiver = dispatchReceiver.transformSingle(integerOperatorApproximator, expectedDispatchReceiverType)
             extensionReceiver = extensionReceiver.transformSingle(integerOperatorApproximator, expectedExtensionReceiverType)
         }
@@ -617,10 +614,15 @@ class FirCallCompletionResultsWriterTransformer(
 
         var needUpdateLambdaType = false
 
-        val initialReceiverType = anonymousFunction.receiverTypeRef?.coneTypeSafe<ConeKotlinType>()
+        val receiverParameter = anonymousFunction.receiverParameter
+        val initialReceiverType = receiverParameter?.type?.coneTypeSafe<ConeKotlinType>()
         val resultReceiverType = initialReceiverType?.let { finalSubstitutor.substituteOrNull(it) }
         if (resultReceiverType != null) {
-            anonymousFunction.replaceReceiverTypeRef(anonymousFunction.receiverTypeRef!!.resolvedTypeFromPrototype(resultReceiverType))
+            anonymousFunction.replaceReceiverParameter(
+                buildReceiverParameterCopy(receiverParameter) {
+                    type = receiverParameter.type.resolvedTypeFromPrototype(resultReceiverType)
+                }
+            )
             needUpdateLambdaType = true
         }
 
@@ -932,7 +934,7 @@ internal class FirDeclarationCompletionResultsWriter(
         else ApproximationData.ApproximateByStatus(simpleFunction.visibility, simpleFunction.isInline)
         simpleFunction.transformReturnTypeRef(this, newData)
         simpleFunction.transformValueParameters(this, ApproximationData.NoApproximation)
-        simpleFunction.transformReceiverTypeRef(this, newData)
+        simpleFunction.transformReceiverParameter(this, newData)
         return simpleFunction
     }
 
@@ -942,7 +944,7 @@ internal class FirDeclarationCompletionResultsWriter(
         property.transformGetter(this, newData)
         property.transformSetter(this, newData)
         property.transformReturnTypeRef(this, newData)
-        property.transformReceiverTypeRef(this, newData)
+        property.transformReceiverParameter(this, newData)
         return property
     }
 

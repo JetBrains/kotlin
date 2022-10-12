@@ -28,8 +28,8 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
 
     val resolvedReceiverTypeRef: FirResolvedTypeRef?
         get() {
-            ensureType(fir.receiverTypeRef)
-            return fir.receiverTypeRef as FirResolvedTypeRef?
+            ensureType(fir.receiverParameter?.type)
+            return fir.receiverParameter?.type as FirResolvedTypeRef?
         }
 
     val resolvedContextReceivers: List<FirContextReceiver>
@@ -78,7 +78,7 @@ val FirCallableSymbol<*>.isStatic: Boolean get() = (fir as? FirMemberDeclaration
 
 val FirCallableSymbol<*>.isExtension: Boolean
     get() = when (fir) {
-        is FirFunction -> fir.receiverTypeRef != null
-        is FirProperty -> fir.receiverTypeRef != null
+        is FirFunction -> fir.receiverParameter != null
+        is FirProperty -> fir.receiverParameter != null
         is FirVariable -> false
     }

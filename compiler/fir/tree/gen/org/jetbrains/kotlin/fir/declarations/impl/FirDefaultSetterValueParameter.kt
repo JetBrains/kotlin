@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -43,7 +44,7 @@ internal class FirDefaultSetterValueParameter(
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
-    override var receiverTypeRef: FirTypeRef?,
+    override var receiverParameter: FirReceiverParameter?,
     override var deprecationsProvider: DeprecationsProvider,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
@@ -74,7 +75,7 @@ internal class FirDefaultSetterValueParameter(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
-        receiverTypeRef?.accept(visitor, data)
+        receiverParameter?.accept(visitor, data)
         contextReceivers.forEach { it.accept(visitor, data) }
         initializer?.accept(visitor, data)
         delegate?.accept(visitor, data)
@@ -89,7 +90,7 @@ internal class FirDefaultSetterValueParameter(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
-        transformReceiverTypeRef(transformer, data)
+        transformReceiverParameter(transformer, data)
         transformInitializer(transformer, data)
         transformDelegate(transformer, data)
         transformGetter(transformer, data)
@@ -113,8 +114,8 @@ internal class FirDefaultSetterValueParameter(
         return this
     }
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
-        receiverTypeRef = receiverTypeRef?.transform(transformer, data)
+    override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
+        receiverParameter = receiverParameter?.transform(transformer, data)
         return this
     }
 
@@ -164,8 +165,8 @@ internal class FirDefaultSetterValueParameter(
         returnTypeRef = newReturnTypeRef
     }
 
-    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
-        receiverTypeRef = newReceiverTypeRef
+    override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {
+        receiverParameter = newReceiverParameter
     }
 
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {

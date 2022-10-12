@@ -2,11 +2,9 @@ KtReceiverParameterSymbol:
   origin: SOURCE
   owningCallableSymbol: KtFunctionSymbol(/foo)
   type: [
-    ReceiverAnnotation()
-      psi: KtAnnotationEntry
     ReceiverTypeAnnotation()
       psi: KtAnnotationEntry
-  ] @RECEIVER:R|ReceiverAnnotation|()  @R|ReceiverTypeAnnotation|()  kotlin/Int
+  ] @R|ReceiverTypeAnnotation|()  kotlin/Int
   getContainingModule: Could not render due to java.lang.IllegalArgumentException: Failed requirement.
 
   deprecationStatus: Could not render due to java.lang.IllegalArgumentException: Failed requirement.

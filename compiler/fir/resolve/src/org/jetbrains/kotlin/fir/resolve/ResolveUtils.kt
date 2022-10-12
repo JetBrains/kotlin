@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -63,10 +63,11 @@ fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
 
 fun FirFunction.constructFunctionalType(isSuspend: Boolean = false): ConeLookupTagBasedType {
     val receiverTypeRef = when (this) {
-        is FirSimpleFunction -> receiverTypeRef
-        is FirAnonymousFunction -> receiverTypeRef
+        is FirSimpleFunction -> receiverParameter
+        is FirAnonymousFunction -> receiverParameter
         else -> null
-    }
+    }?.type
+
     val parameters = valueParameters.map {
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeErrorType(
             ConeSimpleDiagnostic(

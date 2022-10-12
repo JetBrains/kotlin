@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.containingClassForLocal
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
-import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameterCopy
+import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -192,11 +189,18 @@ private fun FirFunction.copyToFreeAnonymousFunction(approximator: AbstractTypeAp
     val function = this
     return buildAnonymousFunction {
         val typeParameterSet = function.typeParameters.filterIsInstanceTo(mutableSetOf<FirTypeParameter>())
+        annotations += function.annotations
         moduleData = function.moduleData
         origin = FirDeclarationOrigin.Source
         symbol = FirAnonymousFunctionSymbol()
         returnTypeRef = function.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = true)
-        receiverTypeRef = function.receiverTypeRef?.approximated(approximator, typeParameterSet, toSuper = false)
+        receiverParameter = function.receiverParameter?.let { receiverParameter ->
+            buildReceiverParameter {
+                type = receiverParameter.type.approximated(approximator, typeParameterSet, toSuper = false)
+                annotations += receiverParameter.annotations
+            }
+        }
+
         isLambda = (function as? FirAnonymousFunction)?.isLambda == true
         hasExplicitParameterList = (function as? FirAnonymousFunction)?.hasExplicitParameterList == true
         valueParameters.addAll(function.valueParameters.map {
@@ -242,7 +246,12 @@ internal fun FirProperty.copyToFreeProperty(approximator: AbstractTypeApproximat
         val newPropertySymbol = FirPropertySymbol(property.symbol.callableId)
         symbol = newPropertySymbol
         returnTypeRef = property.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = true)
-        receiverTypeRef = property.receiverTypeRef?.approximated(approximator, typeParameterSet, toSuper = false)
+        receiverParameter = property.receiverParameter?.let { receiverParameter ->
+            buildReceiverParameter {
+                type = receiverParameter.type.approximated(approximator, typeParameterSet, toSuper = false)
+                annotations += receiverParameter.annotations
+            }
+        }
         name = property.name
         initializer = property.initializer
         delegate = property.delegate

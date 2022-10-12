@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -60,7 +60,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
 
     override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
 
-    override val receiverTypeRef: FirTypeRef?
+    override val receiverParameter: FirReceiverParameter?
         get() = null
 
     override val deprecationsProvider: DeprecationsProvider
@@ -116,7 +116,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirValueParameter {
+    override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirValueParameter {
         return this
     }
 
@@ -165,8 +165,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
         returnTypeRef = newReturnTypeRef
     }
 
-    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
-    }
+    override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {}
 
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
 

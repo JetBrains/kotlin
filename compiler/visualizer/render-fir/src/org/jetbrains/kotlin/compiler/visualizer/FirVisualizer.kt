@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -270,7 +270,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 when (psi) {
                     is KtLambdaArgument -> {
                         val firLambda = (psi.firstOfType<FirLambdaArgumentExpression>()?.expression as? FirAnonymousFunctionExpression)?.anonymousFunction
-                        firLambda?.receiverTypeRef?.let {
+                        firLambda?.receiverParameter?.type?.let {
                             lastCallWithLambda = psi.getLambdaExpression()?.firstOfType<FirLabel>()?.name
                             implicitReceivers += it.coneType
                             psi.accept(this)
@@ -537,7 +537,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             data.append(if (fir.isVar) "var" else "val").append(" ")
             renderListInTriangles(fir.typeParameters, data, withSpace = true)
 
-            val receiver = fir.receiverTypeRef?.render()
+            val receiver = fir.receiverParameter?.type?.render()
             when {
                 receiver != null -> data.append(receiver).append(".").append(symbol.callableId.callableName)
                 fir.dispatchReceiverType != null -> {
@@ -560,14 +560,14 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
             val id = getSymbolId(symbol)
             val callableName = symbol.callableId.callableName
-            val receiverType = fir.receiverTypeRef
+            val receiverParameterType = fir.receiverParameter?.type
 
             if (call == null) {
                 // call is null for callable reference
-                if (receiverType == null) {
+                if (receiverParameterType == null) {
                     symbol.callableId.className?.let { data.append("($it).$callableName") } ?: data.append(callableName)
                 } else {
-                    data.append("${receiverType.render()}.$callableName")
+                    data.append("${receiverParameterType.render()}.$callableName")
                 }
                 return
             }
@@ -576,7 +576,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             when {
                 call.extensionReceiver !is FirNoReceiverExpression -> {
                     // render type from symbol because this way it will be consistent with psi render
-                    fir.receiverTypeRef?.accept(this, data)
+                    fir.receiverParameter?.accept(this, data)
                     data.append(".").append(callableName)
                 }
                 call.dispatchReceiver.typeRef.annotations.any { it.isExtensionFunctionAnnotationCall } -> {

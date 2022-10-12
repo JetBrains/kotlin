@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -219,7 +219,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultFalse("isVar", withGetter = true)
 
             defaultNull(
-                "receiverTypeRef",
+                "receiverParameter",
                 "initializer",
                 "delegate",
                 "getter", "setter",
@@ -236,13 +236,13 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
             publicImplementation()
 
-            defaultNull("receiverTypeRef", "delegate", "getter", "setter", withGetter = true)
+            defaultNull("receiverParameter", "delegate", "getter", "setter", withGetter = true)
         }
 
         impl(enumEntry) {
             defaultTrue("isVal", withGetter = true)
             defaultFalse("isVar", withGetter = true)
-            defaultNull("receiverTypeRef", "delegate", "getter", "setter", withGetter = true)
+            defaultNull("receiverParameter", "delegate", "getter", "setter", withGetter = true)
         }
 
         impl(namedArgumentExpression) {
@@ -331,7 +331,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         noImpl(anonymousFunctionExpression)
 
         impl(propertyAccessor) {
-            default("receiverTypeRef") {
+            default("receiverParameter") {
                 value = "null"
                 withGetter = true
             }
@@ -434,7 +434,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(errorFunction) {
-            defaultNull("receiverTypeRef", "body", withGetter = true)
+            defaultNull("receiverParameter", "body", withGetter = true)
             default("returnTypeRef", "FirErrorTypeRefImpl(null, null, diagnostic, false)")
             useTypes(errorTypeRefImplType)
         }
@@ -469,7 +469,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(valueParameter) {
             defaultTrue("isVal", withGetter = true)
             defaultFalse("isVar", withGetter = true)
-            defaultNull("getter", "setter", "initializer", "delegate", "receiverTypeRef", withGetter = true)
+            defaultNull("getter", "setter", "initializer", "delegate", "receiverParameter", withGetter = true)
         }
 
         impl(valueParameter, "FirDefaultSetterValueParameter") {

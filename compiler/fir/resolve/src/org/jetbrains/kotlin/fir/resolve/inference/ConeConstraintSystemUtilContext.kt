@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -69,7 +69,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
                     else null
                 } else { // function expression - all types are explicit, shouldn't return null
                     buildList {
-                        atom.receiverTypeRef?.coneType?.let { add(it) }
+                        atom.receiverParameter?.type?.coneType?.let { add(it) }
                         addAll(atom.collectDeclaredValueParameterTypes())
                     }
                 }
@@ -88,7 +88,9 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
 
     override fun PostponedAtomWithRevisableExpectedType.isFunctionExpressionWithReceiver(): Boolean {
         require(this is PostponedResolvedAtom)
-        return this is LambdaWithTypeVariableAsExpectedTypeAtom && !this.atom.anonymousFunction.isLambda && this.atom.anonymousFunction.receiverTypeRef?.coneType != null
+        return this is LambdaWithTypeVariableAsExpectedTypeAtom &&
+                !this.atom.anonymousFunction.isLambda &&
+                this.atom.anonymousFunction.receiverParameter?.type?.coneType != null
     }
 
     override fun PostponedAtomWithRevisableExpectedType.isLambda(): Boolean {

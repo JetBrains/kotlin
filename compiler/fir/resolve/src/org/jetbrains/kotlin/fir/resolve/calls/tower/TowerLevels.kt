@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -390,7 +390,7 @@ class ScopeTowerLevel(
         candidate: FirCallableSymbol<*>,
         processor: TowerScopeLevelProcessor<T>
     ) {
-        val candidateReceiverTypeRef = candidate.fir.receiverTypeRef
+        val candidateReceiverTypeRef = candidate.fir.receiverParameter?.type
         if (withHideMembersOnly && candidate.getAnnotationByClassId(HidesMembers) == null) {
             return
         }
@@ -471,5 +471,5 @@ class ScopeTowerLevel(
 }
 
 private fun FirCallableSymbol<*>.hasExtensionReceiver(): Boolean {
-    return fir.receiverTypeRef != null
+    return fir.receiverParameter != null
 }

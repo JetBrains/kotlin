@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -41,8 +41,8 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
     }
 
     private fun receiverTypeMatch(psi: KtCallableDeclaration, fir: FirCallableDeclaration): Boolean {
-        if ((fir.receiverTypeRef != null) != (psi.receiverTypeReference != null)) return false
-        if (fir.receiverTypeRef != null && !isTheSameTypes(psi.receiverTypeReference!!, fir.receiverTypeRef!!, isVararg = false)) {
+        if ((fir.receiverParameter != null) != (psi.receiverTypeReference != null)) return false
+        if (fir.receiverParameter != null && !isTheSameTypes(psi.receiverTypeReference!!, fir.receiverParameter!!.type, isVararg = false)) {
             return false
         }
         return true
@@ -223,7 +223,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
 
     @TestOnly
     fun renderFir(firFunction: FirFunction): String = buildString {
-        appendLine("receiver: ${firFunction.receiverTypeRef?.renderTypeAsKotlinType()}")
+        appendLine("receiver: ${firFunction.receiverParameter?.type?.renderTypeAsKotlinType()}")
         firFunction.valueParameters.forEach { parameter ->
             appendLine("${parameter.name}: ${parameter.returnTypeRef.renderTypeAsKotlinType()}")
         }

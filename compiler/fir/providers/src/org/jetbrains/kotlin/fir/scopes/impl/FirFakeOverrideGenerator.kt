@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -147,9 +147,15 @@ object FirFakeOverrideGenerator {
         // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
         // As second alternative, we can invent some light-weight kind of FirRegularClass
         return buildConstructor {
+            annotations += baseConstructor.annotations
             moduleData = session.moduleData
             this.origin = origin
-            receiverTypeRef = baseConstructor.receiverTypeRef?.withReplacedConeType(null)
+            receiverParameter = baseConstructor.receiverParameter?.let { receiverParameter ->
+                buildReceiverParameterCopy(receiverParameter) {
+                    type = receiverParameter.type.withReplacedConeType(null)
+                }
+            }
+
             status = baseConstructor.status.copy(isExpect = isExpect)
             symbol = fakeOverrideSymbol
 
@@ -261,7 +267,11 @@ object FirFakeOverrideGenerator {
         }
 
         if (this is FirSimpleFunctionBuilder) {
-            receiverTypeRef = baseFunction.receiverTypeRef?.withReplacedConeType(newReceiverType)
+            receiverParameter = baseFunction.receiverParameter?.let { receiverParameter ->
+                buildReceiverParameterCopy(receiverParameter) {
+                    type = receiverParameter.type.withReplacedConeType(newReceiverType)
+                }
+            }
         }
         valueParameters += baseFunction.valueParameters.zip(
             newParameterTypes ?: List(baseFunction.valueParameters.size) { null }
@@ -408,7 +418,7 @@ object FirFakeOverrideGenerator {
     ): Triple<ConeKotlinType?, List<ConeKotlinType?>, Maybe<ConeKotlinType?>> {
         val copiedReceiverType = newReceiverType?.let {
             substitutor.substituteOrNull(it)
-        } ?: baseCallable.receiverTypeRef?.let {
+        } ?: baseCallable.receiverParameter?.type?.let {
             substitutor.substituteOrNull(it.coneType)
         }
 
@@ -444,13 +454,20 @@ object FirFakeOverrideGenerator {
         val fakeOverrideSubstitution = fakeOverrideSubstitution ?: runIf(baseProperty.returnTypeRef is FirImplicitTypeRef) {
             FakeOverrideSubstitution(ConeSubstitutor.Empty, baseProperty.symbol)
         }
+
         if (fakeOverrideSubstitution != null) {
             returnTypeRef = buildImplicitTypeRef()
             attributes.fakeOverrideSubstitution = fakeOverrideSubstitution
         } else {
             returnTypeRef = baseProperty.returnTypeRef.withReplacedReturnType(newReturnType)
         }
-        receiverTypeRef = baseProperty.receiverTypeRef?.withReplacedConeType(newReceiverType)
+
+        receiverParameter = baseProperty.receiverParameter?.let { receiverParameter ->
+            buildReceiverParameterCopy(receiverParameter) {
+                type = receiverParameter.type.withReplacedConeType(newReceiverType)
+            }
+        }
+
         contextReceivers += baseProperty.contextReceivers.zip(
             newContextReceiverTypes ?: List(baseProperty.contextReceivers.size) { null }
         ) { contextReceiver, newType ->

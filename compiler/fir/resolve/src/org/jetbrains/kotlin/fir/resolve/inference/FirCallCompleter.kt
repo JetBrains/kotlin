@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildContextReceiver
+import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameterCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -305,9 +306,13 @@ class FirCallCompleter(
 
             val expectedReturnTypeRef = expectedReturnType?.let { lambdaArgument.returnTypeRef.resolvedTypeFromPrototype(it) }
 
-            lambdaArgument.replaceReceiverTypeRef(
-                receiverType?.approximateLambdaInputType()?.let {
-                    lambdaArgument.receiverTypeRef?.resolvedTypeFromPrototype(it)
+            lambdaArgument.replaceReceiverParameter(
+                lambdaArgument.receiverParameter?.let { receiverParameter ->
+                    receiverType?.approximateLambdaInputType()?.let { approximatedType ->
+                        buildReceiverParameterCopy(receiverParameter) {
+                            type = receiverParameter.type.resolvedTypeFromPrototype(approximatedType)
+                        }
+                    }
                 }
             )
 
@@ -394,7 +399,7 @@ internal fun FirFunction.isFunctionForExpectTypeFromCastFeature(): Boolean {
         coneTypeSafe<ConeKotlinType>()
             ?.contains { (it.unwrap() as? ConeTypeParameterType)?.lookupTag == typeParameter.symbol.toLookupTag() } != false
 
-    if (valueParameters.any { it.returnTypeRef.isBadType() } || receiverTypeRef?.isBadType() == true) return false
+    if (valueParameters.any { it.returnTypeRef.isBadType() } || receiverParameter?.type?.isBadType() == true) return false
 
     return true
 }

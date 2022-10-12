@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -154,7 +154,7 @@ open class FirJvmMangleComputer(
             mangleType(builder, it.typeRef.coneType)
         }
 
-        val receiverType = receiverTypeRef ?: (this as? FirPropertyAccessor)?.propertySymbol?.fir?.receiverTypeRef
+        val receiverType = receiverParameter?.type ?: (this as? FirPropertyAccessor)?.propertySymbol?.fir?.receiverParameter?.type
         receiverType?.let {
             builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
             mangleType(builder, it.coneType)
@@ -317,7 +317,7 @@ open class FirJvmMangleComputer(
             builder.appendSignature(MangleConstant.STATIC_MEMBER_MARK)
         }
 
-        variable.receiverTypeRef?.let {
+        variable.receiverParameter?.type?.let {
             builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
             mangleType(builder, it.coneType)
         }

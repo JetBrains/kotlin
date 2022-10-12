@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -178,8 +178,9 @@ class FirElementSerializer private constructor(
             builder.inlineClassUnderlyingPropertyName = getSimpleNameIndex(representation.underlyingPropertyName)
 
             val property = callableMembers.single {
-                it is FirProperty && it.receiverTypeRef == null && it.name == representation.underlyingPropertyName
+                it is FirProperty && it.receiverParameter == null && it.name == representation.underlyingPropertyName
             }
+
             if (!property.visibility.isPublicAPI) {
                 if (useTypeTable()) {
                     builder.inlineClassUnderlyingTypeId = typeId(representation.underlyingType)
@@ -328,8 +329,9 @@ class FirElementSerializer private constructor(
             }
         }
 
-        val receiverTypeRef = property.receiverTypeRef
-        if (receiverTypeRef != null) {
+        val receiverParameter = property.receiverParameter
+        if (receiverParameter != null) {
+            val receiverTypeRef = receiverParameter.type
             if (useTypeTable()) {
                 builder.receiverTypeId = local.typeId(receiverTypeRef)
             } else {
@@ -411,8 +413,9 @@ class FirElementSerializer private constructor(
             }
         }
 
-        val receiverTypeRef = function.receiverTypeRef
-        if (receiverTypeRef != null) {
+        val receiverParameter = function.receiverParameter
+        if (receiverParameter != null) {
+            val receiverTypeRef = receiverParameter.type
             if (useTypeTable()) {
                 builder.receiverTypeId = local.typeId(receiverTypeRef)
             } else {

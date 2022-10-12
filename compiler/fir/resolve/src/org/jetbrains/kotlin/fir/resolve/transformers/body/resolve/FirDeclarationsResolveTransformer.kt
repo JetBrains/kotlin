@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildContextReceiver
+import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameterCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -82,7 +83,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
 
     private fun prepareSignatureForBodyResolve(callableMember: FirCallableDeclaration) {
         callableMember.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
-        callableMember.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
+        callableMember.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
         if (callableMember is FirFunction) {
             callableMember.valueParameters.forEach {
                 it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
@@ -132,7 +133,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
             return property
         }
 
-        property.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
+        property.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
         dataFlowAnalyzer.enterProperty(property)
         doTransformTypeParameters(property)
         val shouldResolveEverything = !implicitTypeOnly
@@ -231,7 +232,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         val typeRef = propertyReferenceAccess.typeRef
         if (typeRef is FirResolvedTypeRef && property.returnTypeRef is FirResolvedTypeRef) {
             val typeArguments = (typeRef.type as ConeClassLikeType).typeArguments
-            val extensionType = property.receiverTypeRef?.coneType
+            val extensionType = property.receiverParameter?.type?.coneType
             val dispatchType = context.containingClass?.let { containingClass ->
                 containingClass.symbol.constructStarProjectedType(containingClass.typeParameters.size)
             }
@@ -702,7 +703,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         context.withConstructor(constructor) {
             constructor.transformTypeParameters(transformer, data)
                 .transformAnnotations(transformer, data)
-                .transformReceiverTypeRef(transformer, data)
+                .transformReceiverParameter(transformer, data)
                 .transformReturnTypeRef(transformer, data)
 
             context.forConstructorParameters(constructor, owningClass, components) {
@@ -757,7 +758,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         // Either ContextDependent, ContextIndependent or WithExpectedType could be here
         if (data !is ResolutionMode.LambdaResolution) {
             anonymousFunction.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
-            anonymousFunction.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
+            anonymousFunction.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
             anonymousFunction.valueParameters.forEach { it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent) }
         }
         return when (data) {
@@ -815,8 +816,14 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         val returnTypeRefFromResolvedAtom =
             resolvedLambdaAtom?.returnType?.let { lambda.returnTypeRef.resolvedTypeFromPrototype(it) }
         lambda = buildAnonymousFunctionCopy(lambda) {
-            receiverTypeRef = lambda.receiverTypeRef?.takeIf { it !is FirImplicitTypeRef }
-                ?: resolvedLambdaAtom?.receiver?.let { lambda.receiverTypeRef?.resolvedTypeFromPrototype(it) }
+            receiverParameter = lambda.receiverParameter?.takeIf { it.type !is FirImplicitTypeRef }
+                ?: resolvedLambdaAtom?.receiver?.let { coneKotlinType ->
+                    lambda.receiverParameter?.let {
+                        buildReceiverParameterCopy(it) {
+                            type = it.type.resolvedTypeFromPrototype(coneKotlinType)
+                        }
+                    }
+                }
 
             contextReceivers.clear()
             contextReceivers.addAll(

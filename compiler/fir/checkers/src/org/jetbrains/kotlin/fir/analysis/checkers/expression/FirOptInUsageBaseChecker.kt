@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenProperties
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -173,7 +173,7 @@ object FirOptInUsageBaseChecker {
             if (fir !is FirConstructor) {
                 // Without coneTypeSafe v fails in MT test (FirRenderer.kt)
                 fir.returnTypeRef.coneTypeSafe<ConeKotlinType>().addExperimentalities(context, result, visited)
-                fir.receiverTypeRef?.coneType.addExperimentalities(context, result, visited)
+                fir.receiverParameter?.type?.coneType.addExperimentalities(context, result, visited)
                 if (fir is FirSimpleFunction) {
                     fir.valueParameters.forEach {
                         it.returnTypeRef.coneType.addExperimentalities(context, result, visited)

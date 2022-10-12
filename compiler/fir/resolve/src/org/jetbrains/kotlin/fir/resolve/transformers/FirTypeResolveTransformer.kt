@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -114,12 +114,16 @@ open class FirTypeResolveTransformer(
         return enumEntry
     }
 
+    override fun transformReceiverParameter(receiverParameter: FirReceiverParameter, data: Any?): FirReceiverParameter {
+        return receiverParameter.transformAnnotations(this, data).transformType(this, data)
+    }
+
     override fun transformProperty(property: FirProperty, data: Any?): FirProperty {
         return withScopeCleanup {
             property.addTypeParametersScope()
             property.transformTypeParameters(this, data)
                 .transformReturnTypeRef(this, data)
-                .transformReceiverTypeRef(this, data)
+                .transformReceiverParameter(this, data)
                 .transformContextReceivers(this, data)
                 .transformGetter(this, data)
                 .transformSetter(this, data)

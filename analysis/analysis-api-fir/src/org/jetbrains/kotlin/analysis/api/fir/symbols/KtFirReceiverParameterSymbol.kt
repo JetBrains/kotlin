@@ -29,15 +29,14 @@ internal class KtFirReceiverParameterSymbol(
     override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder
 ) : KtReceiverParameterSymbol(), KtLifetimeOwner {
-    override val psi: PsiElement? by cached { firSymbol.fir.receiverTypeRef?.findPsi(firSymbol.fir.moduleData.session) }
+    override val psi: PsiElement? by cached { firSymbol.fir.receiverParameter?.type?.findPsi(firSymbol.fir.moduleData.session) }
 
     init {
-        require(firSymbol.fir.receiverTypeRef != null) { "$firSymbol doesn't have an extension receiver." }
+        require(firSymbol.fir.receiverParameter != null) { "$firSymbol doesn't have an extension receiver." }
     }
 
     override val type: KtType by cached {
-        firSymbol.receiverType(builder)
-            ?: error("$firSymbol doesn't have an extension receiver.")
+        firSymbol.receiverType(builder) ?: error("$firSymbol doesn't have an extension receiver.")
     }
 
     override val owningCallableSymbol: KtCallableSymbol by cached { builder.callableBuilder.buildCallableSymbol(firSymbol) }

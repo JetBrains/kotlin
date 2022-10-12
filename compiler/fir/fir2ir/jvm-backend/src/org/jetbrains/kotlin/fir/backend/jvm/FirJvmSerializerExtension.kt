@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -231,7 +231,7 @@ class FirJvmSerializerExtension(
         this is FirSimpleFunction && isInline && !isSuspend && !isParamAssertionsDisabled &&
                 !Visibilities.isPrivate(visibility) &&
                 (valueParameters.any { it.returnTypeRef.coneType.isBuiltinFunctionalType(session) } ||
-                        receiverTypeRef?.coneType?.isBuiltinFunctionalType(session) == true)
+                        receiverParameter?.type?.coneType?.isBuiltinFunctionalType(session) == true)
 
     override fun serializeProperty(
         property: FirProperty,
@@ -320,7 +320,7 @@ class FirJvmSerializerExtension(
         private fun requiresSignature(function: FirFunction, desc: String): Boolean {
             val sb = StringBuilder()
             sb.append("(")
-            val receiverTypeRef = function.receiverTypeRef
+            val receiverTypeRef = function.receiverParameter?.type
             if (receiverTypeRef != null) {
                 val receiverDesc = mapTypeDefault(receiverTypeRef) ?: return true
                 sb.append(receiverDesc)

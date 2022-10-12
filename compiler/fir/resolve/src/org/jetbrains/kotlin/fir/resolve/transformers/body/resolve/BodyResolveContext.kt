@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -569,7 +569,7 @@ class BodyResolveContext(
                 for (parameter in function.valueParameters) {
                     storeVariable(parameter, holder.session)
                 }
-                val receiverTypeRef = function.receiverTypeRef
+                val receiverTypeRef = function.receiverParameter?.type
                 val type = receiverTypeRef?.coneType
                 val additionalLabelName = type?.labelName()
                 withLabelAndReceiverType(function.name, function, type, holder, additionalLabelName, f)
@@ -622,7 +622,7 @@ class BodyResolveContext(
         }
         return withTowerDataCleanup {
             addLocalScope(FirLocalScope(holder.session))
-            val receiverTypeRef = anonymousFunction.receiverTypeRef
+            val receiverTypeRef = anonymousFunction.receiverParameter?.type
             val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
             withContainer(anonymousFunction) {
                 withLabelAndReceiverType(labelName, anonymousFunction, receiverTypeRef?.coneType, holder) {
@@ -717,7 +717,7 @@ class BodyResolveContext(
             }
         }
         return withTowerDataCleanup {
-            val receiverTypeRef = property.receiverTypeRef
+            val receiverTypeRef = property.receiverParameter?.type
             addLocalScope(FirLocalScope(holder.session))
             if (!forContracts && receiverTypeRef == null && property.returnTypeRef !is FirImplicitTypeRef &&
                 !property.isLocal && property.delegate == null

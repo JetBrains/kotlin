@@ -168,7 +168,9 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
                 moduleData = session.moduleData
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = buildImplicitTypeRef()
-                receiverTypeRef = buildImplicitTypeRef()
+                receiverParameter = buildReceiverParameter {
+                    type = buildImplicitTypeRef()
+                }
                 symbol = FirAnonymousFunctionSymbol()
                 isLambda = true
                 hasExplicitParameterList = true

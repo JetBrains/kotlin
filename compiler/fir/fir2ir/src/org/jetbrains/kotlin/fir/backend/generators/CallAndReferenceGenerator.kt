@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -409,7 +409,7 @@ class CallAndReferenceGenerator(
                 qualifiedAccess.convertWithOffsets { startOffset, endOffset ->
                     val callableDeclaration = firSymbol?.fir as? FirCallableDeclaration
                     val targetType = callableDeclaration?.dispatchReceiverType?.toIrType()
-                        ?: callableDeclaration?.receiverTypeRef?.toIrType()
+                        ?: callableDeclaration?.receiverParameter?.type?.toIrType()
                         ?: error("Couldn't get the proper receiver")
                     IrTypeOperatorCallImpl(
                         startOffset, endOffset, targetType,
@@ -1061,7 +1061,7 @@ class CallAndReferenceGenerator(
                 if (ownerFunction?.extensionReceiverParameter != null) {
                     extensionReceiver = qualifiedAccess.findIrExtensionReceiver(explicitReceiverExpression)?.let {
                         ((qualifiedAccess.calleeReference as FirResolvedNamedReference)
-                            .resolvedSymbol.fir as? FirCallableDeclaration)?.receiverTypeRef?.let { receiverType ->
+                            .resolvedSymbol.fir as? FirCallableDeclaration)?.receiverParameter?.type?.let { receiverType ->
                             with(visitor.implicitCastInserter) {
                                 it.cast(
                                     qualifiedAccess.extensionReceiver,

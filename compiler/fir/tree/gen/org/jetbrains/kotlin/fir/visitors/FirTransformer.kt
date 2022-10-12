@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
@@ -236,6 +237,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     open fun transformValueParameter(valueParameter: FirValueParameter, data: D): FirStatement {
         return transformElement(valueParameter, data)
+    }
+
+    open fun transformReceiverParameter(receiverParameter: FirReceiverParameter, data: D): FirReceiverParameter {
+        return transformElement(receiverParameter, data)
     }
 
     open fun transformProperty(property: FirProperty, data: D): FirStatement {
@@ -776,6 +781,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitValueParameter(valueParameter: FirValueParameter, data: D): FirStatement {
         return transformValueParameter(valueParameter, data)
+    }
+
+    final override fun visitReceiverParameter(receiverParameter: FirReceiverParameter, data: D): FirReceiverParameter {
+        return transformReceiverParameter(receiverParameter, data)
     }
 
     final override fun visitProperty(property: FirProperty, data: D): FirStatement {

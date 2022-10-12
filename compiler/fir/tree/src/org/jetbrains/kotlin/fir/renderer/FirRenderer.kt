@@ -179,10 +179,10 @@ class FirRenderer(
             renderContexts(callableDeclaration.contextReceivers)
             annotationRenderer?.render(callableDeclaration)
             visitMemberDeclaration(callableDeclaration)
-            val receiverType = callableDeclaration.receiverTypeRef
+            val receiverParameter = callableDeclaration.receiverParameter
             print(" ")
-            if (receiverType != null) {
-                receiverType.accept(this)
+            if (receiverParameter != null) {
+                receiverParameter.type.accept(this)
                 print(".")
             }
             when (callableDeclaration) {
@@ -299,6 +299,12 @@ class FirRenderer(
             }
         }
 
+        override fun visitReceiverParameter(receiverParameter: FirReceiverParameter) {
+            print("<explicit receiver parameter>: ")
+            annotationRenderer?.render(receiverParameter)
+            receiverParameter.type.accept(this)
+        }
+
         override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
             visitCallableDeclaration(simpleFunction)
             bodyRenderer?.render(simpleFunction)
@@ -343,9 +349,9 @@ class FirRenderer(
             annotationRenderer?.render(anonymousFunction)
             declarationRenderer.render(anonymousFunction)
             print(" ")
-            val receiverType = anonymousFunction.receiverTypeRef
-            if (receiverType != null) {
-                receiverType.accept(this)
+            val receiverParameter = anonymousFunction.receiverParameter
+            if (receiverParameter != null) {
+                receiverParameter.type.accept(this)
                 print(".")
             }
             print("<anonymous>")
