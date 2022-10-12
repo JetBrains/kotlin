@@ -861,6 +861,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("kt54382.kt")
+        public void testKt54382() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/kt54382.kt");
+        }
+
+        @Test
         @TestMetadata("lambdaWithValueClass.kt")
         public void testLambdaWithValueClass() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/lambdaWithValueClass.kt");
@@ -882,6 +888,18 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         @TestMetadata("onlyInlineSuspendFunction.kt")
         public void testOnlyInlineSuspendFunction() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/onlyInlineSuspendFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("suspendFunctionAsSupertypeIsCheck.kt")
+        public void testSuspendFunctionAsSupertypeIsCheck() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/suspendFunctionAsSupertypeIsCheck.kt");
+        }
+
+        @Test
+        @TestMetadata("suspendFunctionIsAs.kt")
+        public void testSuspendFunctionIsAs() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/suspendFunctionIsAs.kt");
         }
     }
 
