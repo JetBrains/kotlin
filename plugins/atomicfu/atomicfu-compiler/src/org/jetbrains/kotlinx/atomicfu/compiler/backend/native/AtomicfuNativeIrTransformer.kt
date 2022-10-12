@@ -102,9 +102,8 @@ class AtomicfuNativeIrTransformer(
             symbol.isKotlinxAtomicfuPackage() && symbol.owner.name.asString() == ATOMIC_VALUE_FACTORY &&
                     type.isAtomicValueType()
 
+        // todo abstract
         private fun IrSimpleFunctionSymbol.isKotlinxAtomicfuPackage(): Boolean =
-            owner.parentClassOrNull?.classId?.let {
-                it.packageFqName.asString() == AFU_PKG
-            } ?: false
+            owner.parent.kotlinFqName.asString() == AFU_PKG
     }
 }
