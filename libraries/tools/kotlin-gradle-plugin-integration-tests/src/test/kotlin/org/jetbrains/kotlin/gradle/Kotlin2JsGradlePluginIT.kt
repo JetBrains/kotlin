@@ -1102,6 +1102,16 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                 gradleProperties.appendText(jsCompilerType(KotlinJsCompilerType.IR))
             }
 
+            if (irBackend) {
+                build("compileProductionExecutableKotlinJs") {
+                    assertTasksExecuted(":app:compileProductionExecutableKotlinJs")
+                    assert(task(":kotlinNpmInstall") == null) {
+                        printBuildOutput()
+                        "NPM install should not be run"
+                    }
+                }
+            }
+
             build("assemble") {
                 assertTasksExecuted(":app:browserProductionWebpack")
 
