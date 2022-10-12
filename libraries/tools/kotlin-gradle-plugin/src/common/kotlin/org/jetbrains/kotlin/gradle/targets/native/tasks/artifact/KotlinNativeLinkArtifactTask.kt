@@ -97,38 +97,23 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
             freeCompilerArgs.addAll(PropertiesProvider(project).nativeLinkArgs)
         }
 
-    @Suppress("DEPRECATION")
-    @Deprecated(
-        message = "Replaced with toolOptions",
-        replaceWith = ReplaceWith("toolOptions")
-    )
     @get:Internal
     val kotlinOptions = object : KotlinCommonToolOptions {
         override val options: KotlinCommonCompilerToolOptions
             get() = toolOptions
     }
 
-    @Suppress("DEPRECATION")
-    @Deprecated(
-        message = "Replaced with toolOptions()",
-        replaceWith = ReplaceWith("toolOptions(fn)")
-    )
     fun kotlinOptions(fn: KotlinCommonToolOptions.() -> Unit) {
         kotlinOptions.fn()
     }
 
-    @Suppress("DEPRECATION")
-    @Deprecated(
-        message = "Replaced with toolOptions()",
-        replaceWith = ReplaceWith("toolOptions(fn)")
-    )
     fun kotlinOptions(fn: Action<KotlinCommonToolOptions>) {
         fn.execute(kotlinOptions)
     }
 
     @Deprecated(
         message = "Replaced with toolOptions.allWarningsAsErrors",
-        replaceWith = ReplaceWith("toolOptions.allWarningsAsErrors")
+        replaceWith = ReplaceWith("toolOptions.allWarningsAsErrors.get()")
     )
     @get:Internal
     val allWarningsAsErrors: Boolean
@@ -136,7 +121,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
 
     @Deprecated(
         message = "Replaced with toolOptions.suppressWarnings",
-        replaceWith = ReplaceWith("toolOptions.suppressWarnings")
+        replaceWith = ReplaceWith("toolOptions.suppressWarnings.get()")
     )
     @get:Internal
     val suppressWarnings: Boolean
@@ -144,7 +129,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
 
     @Deprecated(
         message = "Replaced with toolOptions.verbose",
-        replaceWith = ReplaceWith("toolOptions.verbose")
+        replaceWith = ReplaceWith("toolOptions.verbose.get()")
     )
     @get:Internal
     val verbose: Boolean
@@ -152,7 +137,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
 
     @Deprecated(
         message = "Replaced with toolOptions.freeCompilerArgs",
-        replaceWith = ReplaceWith("toolOptions.freeCompilerArgs")
+        replaceWith = ReplaceWith("toolOptions.freeCompilerArgs.get()")
     )
     @get:Internal
     val freeCompilerArgs: List<String>

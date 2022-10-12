@@ -72,25 +72,13 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
 
     val compileTaskProvider: TaskProvider<out KotlinCompilationTask<*>>
 
-    @Deprecated(
-        message = "Replaced by compilerOptions",
-        replaceWith = ReplaceWith("compilerOptions.options")
-    )
     val kotlinOptions: T
 
-    @Deprecated(
-        message = "Replaced by compilerOptions.configure { }",
-        replaceWith = ReplaceWith("compilerOptions.configure(configure)")
-    )
     fun kotlinOptions(configure: T.() -> Unit) {
         @Suppress("DEPRECATION")
         configure(kotlinOptions)
     }
 
-    @Deprecated(
-        message = "Replaced by compilerOptions(Action)",
-        replaceWith = ReplaceWith("compilerOptions.configure(configure)")
-    )
     fun kotlinOptions(configure: Action<@UnsafeVariance T>) {
         @Suppress("DEPRECATION")
         configure.execute(kotlinOptions)

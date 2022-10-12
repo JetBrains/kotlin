@@ -45,8 +45,6 @@ abstract class KotlinCompileCommon @Inject constructor(
         compilerOptions.verbose.convention(logger.isDebugEnabled)
     }
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Replaced by compilerOptions input", replaceWith = ReplaceWith("compilerOptions"))
     override val kotlinOptions: KotlinMultiplatformCommonOptions = KotlinMultiplatformCommonOptionsCompat(
         { this },
         compilerOptions

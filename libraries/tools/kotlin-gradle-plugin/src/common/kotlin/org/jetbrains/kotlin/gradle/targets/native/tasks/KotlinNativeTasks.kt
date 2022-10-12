@@ -351,15 +351,15 @@ constructor(
 
     // region Language settings imported from a SourceSet.
     @Deprecated(
-        message = "Replaced with compilerOptions.languageVersion",
-        replaceWith = ReplaceWith("compilerOptions.languageVersion")
+        message = "Replaced with kotlinOptions.languageVersion",
+        replaceWith = ReplaceWith("kotlinOptions.languageVersion")
     )
     val languageVersion: String?
         @Optional @Input get() = languageSettings.languageVersion
 
     @Deprecated(
-        message = "Replaced with compilerOptions.apiVersion",
-        replaceWith = ReplaceWith("compilerOptions.apiVersion")
+        message = "Replaced with kotlinOptions.apiVersion",
+        replaceWith = ReplaceWith("kotlinOptions.apiVersion")
     )
     val apiVersion: String?
         @Optional @Input get() = languageSettings.apiVersion
@@ -374,28 +374,18 @@ constructor(
     // region Kotlin options.
     override val compilerOptions: KotlinCommonCompilerOptions  = compilation.compilerOptions.options
 
-    @Deprecated(
-        message = "Replaced with compilerOptions",
-        replaceWith = ReplaceWith("compilerOptions")
-    )
-    @Suppress("DEPRECATION")
     override val kotlinOptions: KotlinCommonOptions = object : KotlinCommonOptions {
         override val options: KotlinCommonCompilerOptions
             get() = compilerOptions
     }
 
-    @Suppress("DEPRECATION")
-    @Deprecated(
-        message = "Replaced with compilerOptions()",
-        replaceWith = ReplaceWith("compilerOptions(fn)")
-    )
     override fun kotlinOptions(fn: KotlinCommonOptions.() -> Unit) {
         kotlinOptions.fn()
     }
 
     @Deprecated(
-        message = "Replaced with compilerOptions()",
-        replaceWith = ReplaceWith("compilerOptions(fn)")
+        message = "Replaced with kotlinOptions()",
+        replaceWith = ReplaceWith("kotlinOptions(fn)")
     )
     override fun kotlinOptions(fn: Closure<*>) {
         @Suppress("DEPRECATION")
@@ -405,7 +395,7 @@ constructor(
 
     @Deprecated(
         message = "Replaced with compilerOptions.freeCompilerArgs",
-        replaceWith = ReplaceWith("compilerOptions.freeCompilerArgs")
+        replaceWith = ReplaceWith("compilerOptions.freeCompilerArgs.get()")
     )
     @get:Input
     override val additionalCompilerOptions: Provider<Collection<String>> get() = compilerOptions
