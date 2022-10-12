@@ -46,6 +46,9 @@ open class KotlinSourceFileMap<out T>(files: Map<KotlinLibraryFile, Map<KotlinSo
     inline fun forEachFile(f: (KotlinLibraryFile, KotlinSourceFile, T) -> Unit) =
         forEach { (lib, files) -> files.forEach { (file, data) -> f(lib, file, data) } }
 
+    inline fun allFiles(p: (KotlinLibraryFile, KotlinSourceFile, T) -> Boolean) =
+        entries.all { (lib, files) -> files.entries.all { (file, data) -> p(lib, file, data) } }
+
     operator fun get(libFile: KotlinLibraryFile, sourceFile: KotlinSourceFile): T? = get(libFile)?.get(sourceFile)
 }
 

@@ -226,26 +226,6 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             }
         }
 
-        fun executorWithBoxExport(
-            currentModule: IrModuleFragment,
-            allModules: Collection<IrModuleFragment>,
-            irLinker: JsIrLinker,
-            configuration: CompilerConfiguration,
-            dirtyFiles: Collection<IrFile>,
-            exportedDeclarations: Set<FqName>,
-            mainArguments: List<String>?
-        ): List<JsIrFragmentAndBinaryAst> {
-            return buildCacheForModuleFiles(
-                mainModule = currentModule,
-                allModules = allModules,
-                irLinker = irLinker,
-                configuration = configuration,
-                dirtyFiles = dirtyFiles,
-                exportedDeclarations = exportedDeclarations + FqName(BOX_FUNCTION_NAME),
-                mainArguments = mainArguments,
-            )
-        }
-
         fun execute() {
             val stdlibCacheDir = resolveModuleCache(STDLIB_ALIAS, buildDir).canonicalPath
             for (projStep in projectInfo.steps) {
@@ -259,7 +239,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                     compilerConfiguration = configuration,
                     irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
                     mainArguments = null,
-                    executor = ::executorWithBoxExport
+                    compilerInterfaceFactory = { mainModule, cfg -> JsIrCompilerWithIC(mainModule, cfg, setOf(FqName(BOX_FUNCTION_NAME))) }
                 )
 
                 val icCaches = cacheUpdater.actualizeCaches()
