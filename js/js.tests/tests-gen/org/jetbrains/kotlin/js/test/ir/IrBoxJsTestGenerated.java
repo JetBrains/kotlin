@@ -2218,9 +2218,111 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             }
 
             @Test
+            @TestMetadata("bridgeSavingAfterExport.kt")
+            public void testBridgeSavingAfterExport() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/bridgeSavingAfterExport.kt");
+            }
+
+            @Test
+            @TestMetadata("bridgeSavingAfterExportInExportedFile.kt")
+            public void testBridgeSavingAfterExportInExportedFile() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/bridgeSavingAfterExportInExportedFile.kt");
+            }
+
+            @Test
+            @TestMetadata("defaultInlineClassConstructorParam.kt")
+            public void testDefaultInlineClassConstructorParam() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/defaultInlineClassConstructorParam.kt");
+            }
+
+            @Test
+            @TestMetadata("defaultInlineClassConstructorParamInExportedFile.kt")
+            public void testDefaultInlineClassConstructorParamInExportedFile() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/defaultInlineClassConstructorParamInExportedFile.kt");
+            }
+
+            @Test
             @TestMetadata("exportAllFile.kt")
             public void testExportAllFile() throws Exception {
                 runTest("js/js.translator/testData/box/esModules/export/exportAllFile.kt");
+            }
+
+            @Test
+            @TestMetadata("exportEnumClass.kt")
+            public void testExportEnumClass() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/exportEnumClass.kt");
+            }
+
+            @Test
+            @TestMetadata("exportFileWithEnumClass.kt")
+            public void testExportFileWithEnumClass() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/exportFileWithEnumClass.kt");
+            }
+
+            @Test
+            @TestMetadata("exportFileWithInterface.kt")
+            public void testExportFileWithInterface() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/exportFileWithInterface.kt");
+            }
+
+            @Test
+            @TestMetadata("exportFileWithNestedClass.kt")
+            public void testExportFileWithNestedClass() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/exportFileWithNestedClass.kt");
+            }
+
+            @Test
+            @TestMetadata("exportFileWithNestedObject.kt")
+            public void testExportFileWithNestedObject() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/exportFileWithNestedObject.kt");
+            }
+
+            @Test
+            @TestMetadata("exportFileWithProtectedMembers.kt")
+            public void testExportFileWithProtectedMembers() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/exportFileWithProtectedMembers.kt");
+            }
+
+            @Test
+            @TestMetadata("exportFileWithTopLevelProperty.kt")
+            public void testExportFileWithTopLevelProperty() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/exportFileWithTopLevelProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("exportInnerClass.kt")
+            public void testExportInnerClass() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/exportInnerClass.kt");
+            }
+
+            @Test
+            @TestMetadata("exportInterface.kt")
+            public void testExportInterface() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/exportInterface.kt");
+            }
+
+            @Test
+            @TestMetadata("exportNestedClass.kt")
+            public void testExportNestedClass() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/exportNestedClass.kt");
+            }
+
+            @Test
+            @TestMetadata("exportNestedObject.kt")
+            public void testExportNestedObject() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/exportNestedObject.kt");
+            }
+
+            @Test
+            @TestMetadata("exportProtectedMembers.kt")
+            public void testExportProtectedMembers() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/exportProtectedMembers.kt");
+            }
+
+            @Test
+            @TestMetadata("exportTopLevelProperty.kt")
+            public void testExportTopLevelProperty() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/exportTopLevelProperty.kt");
             }
 
             @Test
@@ -2230,9 +2332,21 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             }
 
             @Test
+            @TestMetadata("nonIndetifierModuleNameInExportedFile.kt")
+            public void testNonIndetifierModuleNameInExportedFile() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/nonIndetifierModuleNameInExportedFile.kt");
+            }
+
+            @Test
             @TestMetadata("overriddenChainNonExportIntermediate.kt")
             public void testOverriddenChainNonExportIntermediate() throws Exception {
                 runTest("js/js.translator/testData/box/esModules/export/overriddenChainNonExportIntermediate.kt");
+            }
+
+            @Test
+            @TestMetadata("overriddenChainNonExportIntermediateInExportedFile.kt")
+            public void testOverriddenChainNonExportIntermediateInExportedFile() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/overriddenChainNonExportIntermediateInExportedFile.kt");
             }
 
             @Test
@@ -2242,9 +2356,33 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             }
 
             @Test
+            @TestMetadata("overriddenExternalMethodWithSameStableNameMethod.kt")
+            public void testOverriddenExternalMethodWithSameStableNameMethod() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/overriddenExternalMethodWithSameStableNameMethod.kt");
+            }
+
+            @Test
+            @TestMetadata("overriddenExternalMethodWithSameStableNameMethodInExportedFile.kt")
+            public void testOverriddenExternalMethodWithSameStableNameMethodInExportedFile() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/overriddenExternalMethodWithSameStableNameMethodInExportedFile.kt");
+            }
+
+            @Test
             @TestMetadata("reservedModuleName.kt")
             public void testReservedModuleName() throws Exception {
                 runTest("js/js.translator/testData/box/esModules/export/reservedModuleName.kt");
+            }
+
+            @Test
+            @TestMetadata("reservedModuleNameInExportedFile.kt")
+            public void testReservedModuleNameInExportedFile() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/reservedModuleNameInExportedFile.kt");
+            }
+
+            @Test
+            @TestMetadata("vararg.kt")
+            public void testVararg() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/vararg.kt");
             }
         }
 

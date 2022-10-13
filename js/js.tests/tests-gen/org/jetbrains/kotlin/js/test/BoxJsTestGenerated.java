@@ -1906,18 +1906,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             public void testAllFilesPresentInExport() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/export"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
             }
-
-            @Test
-            @TestMetadata("overriddenExternalMethodWithSameStableNameMethod.kt")
-            public void testOverriddenExternalMethodWithSameStableNameMethod() throws Exception {
-                runTest("js/js.translator/testData/box/esModules/export/overriddenExternalMethodWithSameStableNameMethod.kt");
-            }
-
-            @Test
-            @TestMetadata("reservedModuleName.kt")
-            public void testReservedModuleName() throws Exception {
-                runTest("js/js.translator/testData/box/esModules/export/reservedModuleName.kt");
-            }
         }
 
         @Nested

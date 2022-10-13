@@ -34,8 +34,6 @@ object BinaryArtifacts {
 
         class JsIrArtifact(override val outputFile: File, val compilerResult: CompilerResult, val icCache: Map<String, ByteArray>? = null) : Js()
 
-        class JsEsArtifact(override val outputFile: File, val outputDceFile: File?) : Js()
-
         data class IncrementalJsArtifact(val originalArtifact: Js, val recompiledArtifact: Js) : Js() {
             override val outputFile: File
                 get() = unwrap().outputFile

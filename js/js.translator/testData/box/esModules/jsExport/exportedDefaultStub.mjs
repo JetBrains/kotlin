@@ -1,4 +1,4 @@
-import * as api from "./main/index.js";
+import * as api from "./exportedDefaultStub_v5.mjs";
 
 export default function() {
     var ping = api.ping;

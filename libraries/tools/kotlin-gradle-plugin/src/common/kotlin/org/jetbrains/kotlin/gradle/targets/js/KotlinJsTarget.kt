@@ -183,4 +183,8 @@ constructor(
             }
         }
     }
+
+    override fun useEsModules() {
+        error("ES modules are not supported in legacy JS compiler. Please, use IR one instead.")
+    }
 }

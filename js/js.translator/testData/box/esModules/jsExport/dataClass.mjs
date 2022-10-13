@@ -1,4 +1,4 @@
-import { Point } from "./main/index.js";
+import { Point } from "./dataClass_v5.mjs";
 
 export default function() {
     var p = new Point(3, 7);

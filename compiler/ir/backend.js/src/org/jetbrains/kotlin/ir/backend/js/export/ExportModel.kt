@@ -48,7 +48,7 @@ data class ExportedConstructSignature(
     val returnType: ExportedType,
 ) : ExportedDeclaration()
 
-class ExportedProperty(
+data class ExportedProperty(
     val name: String,
     val type: ExportedType,
     val mutable: Boolean = true,
@@ -94,7 +94,7 @@ data class ExportedObject(
     override val members: List<ExportedDeclaration>,
     override val nestedClasses: List<ExportedClass>,
     override val ir: IrClass,
-    val irGetter: IrFunction
+    val irGetter: IrSimpleFunction
 ) : ExportedClass()
 
 class ExportedParameter(

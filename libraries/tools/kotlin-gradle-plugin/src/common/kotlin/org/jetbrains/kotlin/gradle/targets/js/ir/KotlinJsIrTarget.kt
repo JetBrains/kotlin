@@ -358,8 +358,29 @@ constructor(
         legacyTarget?.useCommonJs()
     }
 
+    override fun useEsModules() {
+        compilations.all {
+            it.kotlinOptions.configureEsModulesOptions()
+
+            binaries
+                .withType(JsIrBinary::class.java)
+                .all {
+                    it.linkTask.configure { linkTask ->
+                        linkTask.kotlinOptions.configureEsModulesOptions()
+                    }
+                }
+        }
+
+    }
+
     private fun KotlinJsOptions.configureCommonJsOptions() {
         moduleKind = "commonjs"
+        sourceMap = true
+        sourceMapEmbedSources = "never"
+    }
+
+    private fun KotlinJsOptions.configureEsModulesOptions() {
+        moduleKind = "es"
         sourceMap = true
         sourceMapEmbedSources = "never"
     }
