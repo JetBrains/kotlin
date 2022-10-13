@@ -28,6 +28,11 @@ value class IC3(val value: Int) {
 
 }
 
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IC4(val value: Int) {
+    override fun equals(other: Any?) = TODO()
+}
+
 fun box() =
     if (IC1(1.0) == IC1(1.05) && IC1(1.0) != IC1(1.2)
         && IC2(5) == IC2(6) && IC2(5) != IC2(7)
