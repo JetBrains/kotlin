@@ -157,7 +157,7 @@ class SerializableCompanionIrGenerator(
             it.valueParameters.size == 1
                     && it.valueParameters.first().isVararg
                     && it.returnType.isKSerializer()
-                    && it.isFromPlugin()
+                    && it.isFromPlugin(compilerContext.afterK2)
         }?.let { return it }
         val kSerializerStarType = compilerContext.getClassFromRuntime(SerialEntityNames.KSERIALIZER_CLASS).starProjectedType
         val f = irClass.addFunction(

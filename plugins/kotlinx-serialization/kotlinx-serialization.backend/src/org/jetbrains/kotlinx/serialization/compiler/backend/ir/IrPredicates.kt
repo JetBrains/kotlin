@@ -57,9 +57,9 @@ internal val IrClass.isInternallySerializableObject: Boolean
     get() = kind == ClassKind.OBJECT && hasSerializableOrMetaAnnotationWithoutArgs()
 
 
-internal fun IrClass.findPluginGeneratedMethod(name: String): IrSimpleFunction? {
+internal fun IrClass.findPluginGeneratedMethod(name: String, afterK2: Boolean): IrSimpleFunction? {
     return this.functions.find {
-        it.name.asString() == name && it.isFromPlugin()
+        it.name.asString() == name && it.isFromPlugin(afterK2)
     }
 }
 
@@ -147,8 +147,13 @@ fun IrClass.getSuperClassNotAny(): IrClass? {
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-internal fun IrDeclaration.isFromPlugin(): Boolean =
-    this.origin == IrDeclarationOrigin.GeneratedByPlugin(SerializationPluginKey) || (this.descriptor as? CallableMemberDescriptor)?.kind == CallableMemberDescriptor.Kind.SYNTHESIZED // old FE doesn't specify origin
+internal fun IrDeclaration.isFromPlugin(afterK2: Boolean): Boolean =
+    if (afterK2) {
+        this.origin == IrDeclarationOrigin.GeneratedByPlugin(SerializationPluginKey)
+    } else {
+        // old FE doesn't specify custom origin
+        (this.descriptor as? CallableMemberDescriptor)?.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
+    }
 
 internal fun IrConstructor.isSerializationCtor(): Boolean {
     /*kind == CallableMemberDescriptor.Kind.SYNTHESIZED does not work because DeserializedClassConstructorDescriptor loses its kind*/

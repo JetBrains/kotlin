@@ -1,3 +1,0 @@
-An operation is not implemented: Support @Serializer(for=...) supertype generation
-kotlin.NotImplementedError: An operation is not implemented: Support @Serializer(for=...) supertype generation
-	at org.jetbrains.kotlinx.serialization.compiler.fir.SerializationFirSupertypesExtension.computeAdditionalSupertypes(SerializationFirSupertypesExtension.kt:39)

@@ -42,6 +42,8 @@ open class IrPluginContextImpl constructor(
     override val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns, st)
 ) : IrPluginContext {
 
+    override val afterK2: Boolean = false
+
     override val platform: TargetPlatform? = module.platform
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
