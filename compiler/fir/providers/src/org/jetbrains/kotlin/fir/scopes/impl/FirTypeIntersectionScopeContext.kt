@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFull
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext.ResultOfIntersection
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
-import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import kotlin.contracts.ExperimentalContracts
@@ -36,6 +34,7 @@ class FirTypeIntersectionScopeContext(
     private val overrideChecker: FirOverrideChecker,
     val scopes: List<FirTypeScope>,
     private val dispatchReceiverType: ConeSimpleKotlinType,
+    private val forSubtyping: Boolean,
 ) {
     private val overrideService = session.overrideService
 
@@ -164,15 +163,12 @@ class FirTypeIntersectionScopeContext(
             }.takeIf { it.isNotEmpty() } ?: extractBothWaysWithPrivate
             val baseMembersForIntersection = extractedOverrides.calcBaseMembersForIntersectionOverride()
             if (baseMembersForIntersection.size > 1) {
-                result += ResultOfIntersection.NonTrivial(
-                    this,
-                    overrideService.selectMostSpecificMembers(baseMembersForIntersection, ReturnTypeCalculatorForFullBodyResolve),
-                    extractedOverrides,
-                    containingScope = null
-                )
+                val mostSpecific =
+                    overrideService.selectMostSpecificMembers(baseMembersForIntersection, ReturnTypeCalculatorForFullBodyResolve)
+                result += ResultOfIntersection.NonTrivial(this, mostSpecific, extractedOverrides, containingScope = null)
             } else {
-                val (mostSpecific, containingScope) = baseMembersForIntersection.single()
-                result += ResultOfIntersection.SingleMember(mostSpecific, extractedOverrides, containingScope)
+                val (member, containingScope) = baseMembersForIntersection.single()
+                result += ResultOfIntersection.SingleMember(member, extractedOverrides, containingScope)
             }
         }
 
@@ -215,7 +211,10 @@ class FirTypeIntersectionScopeContext(
         // we should just take most specific member without creating intersection
         // A typical sample here is inheritance of the same class in different places of hierarchy
         if (unwrappedMemberSet.size == 1) {
-            return listOf(overrideService.selectMostSpecificMember(this, ReturnTypeCalculatorForFullBodyResolve))
+            return when {
+                forSubtyping -> listOf(overrideService.selectMostSpecificMember(this, ReturnTypeCalculatorForFullBodyResolve))
+                else -> this
+            }
         }
 
         val baseMembers = mutableSetOf<S>()
@@ -239,10 +238,7 @@ class FirTypeIntersectionScopeContext(
                 }
             }
         }
-
-        val result = this.toMutableList()
-        result.removeIf { (member, _) -> member.fir.unwrapSubstitutionOverrides().symbol in baseMembers }
-        return result
+        return filter { it.member.fir.unwrapSubstitutionOverrides().symbol !in baseMembers }
     }
 
     private fun <D : FirCallableSymbol<*>> findMemberWithMaxVisibility(members: Collection<MemberWithBaseScope<D>>): MemberWithBaseScope<D> {
@@ -381,6 +377,7 @@ class FirTypeIntersectionScopeContext(
             newModality = newModality,
             newVisibility = newVisibility,
             newDispatchReceiverType = dispatchReceiverType,
+            newReturnType = if (!forSubtyping) intersectReturnTypes(mostSpecific) else null,
         ).apply {
             originalForIntersectionOverrideAttr = keyFir
         }
@@ -405,10 +402,29 @@ class FirTypeIntersectionScopeContext(
             newModality = newModality,
             newVisibility = newVisibility,
             newDispatchReceiverType = dispatchReceiverType,
+            // If any of the properties are vars and the types are not equal, these declarations are conflicting
+            // anyway and their uses should result in an overload resolution error.
+            newReturnType = if (!forSubtyping && !mostSpecific.any { (it as FirPropertySymbol).fir.isVar })
+                intersectReturnTypes(mostSpecific)
+            else
+                null,
         ).apply {
             originalForIntersectionOverrideAttr = keyFir
         }
         return newSymbol
+    }
+
+    private fun intersectReturnTypes(overrides: Collection<FirCallableSymbol<*>>): ConeKotlinType? {
+        val key = overrides.first()
+        // Remap type parameters to the first declaration's:
+        //   (fun <A, B> foo(): B) & (fun <C, D> foo(): D?) -> (fun <A, B> foo(): B & B?)
+        val substituted = overrides.mapNotNull {
+            val returnType = it.fir.returnTypeRef.coneTypeSafe<ConeKotlinType>()
+            if (it == key) return@mapNotNull returnType
+            val substitutor = buildSubstitutorForOverridesCheck(it.fir, key.fir, session) ?: return@mapNotNull null
+            returnType?.let(substitutor::substituteOrSelf)
+        }
+        return if (substituted.isNotEmpty()) session.typeContext.intersectTypes(substituted) else null
     }
 }
 
