@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.arguments
@@ -85,6 +86,10 @@ internal val FirBasedSymbol<*>.serializableWith: ConeKotlinType?
 internal val List<FirAnnotation>.serializableWith: ConeKotlinType?
     get() = serializableAnnotation()?.getKClassArgument(AnnotationParameterNames.WITH)
 
+fun FirAnnotation.getGetKClassArgument(name: Name): FirGetClassCall? {
+    return findArgumentByName(name) as? FirGetClassCall
+}
+
 internal val FirClassSymbol<*>.serializerAnnotation: FirAnnotation?
     get() = getAnnotationByClassId(SerializationAnnotations.serializerAnnotationClassId)
 
@@ -93,6 +98,15 @@ internal val FirClassSymbol<*>.serializerForClass: ConeKotlinType?
     get() = resolvedAnnotationsWithArguments
         .getAnnotationByClassId(SerializationAnnotations.serializerAnnotationClassId)
         ?.getKClassArgument(AnnotationParameterNames.FOR_CLASS)
+
+internal val FirClassSymbol<*>.serializerFor: FirGetClassCall?
+    get() = resolvedAnnotationsWithArguments
+        .getAnnotationByClassId(SerializationAnnotations.serializerAnnotationClassId)
+        ?.getGetKClassArgument(AnnotationParameterNames.FOR_CLASS)
+
+internal val FirClassLikeDeclaration.serializerFor: FirGetClassCall?
+    get() = getAnnotationByClassId(SerializationAnnotations.serializerAnnotationClassId)
+        ?.getGetKClassArgument(AnnotationParameterNames.FOR_CLASS)
 
 context(FirSession)
 @Suppress("IncorrectFormatting") // KTIJ-22227
@@ -172,7 +186,8 @@ val FirClassSymbol<*>.hasCompanionObjectAsSerializer: Boolean
 context(FirSession)
 @Suppress("IncorrectFormatting") // KTIJ-22227
 val FirClassSymbol<*>.hasCustomSerializerOnCompanion: Boolean
-    get() = (this as? FirRegularClassSymbol)?.companionObjectSymbol?.serializerForClass != null
+// TODO It was accepted that the annotation on the companion can take only the current class as an argument. Before the release of FIR, we need to add a new annotation and check gere for its presence
+    get() = (this as? FirRegularClassSymbol)?.companionObjectSymbol?.serializerFor != null
 
 context(FirSession)
 val FirClassSymbol<*>.isEnumWithLegacyGeneratedSerializer: Boolean
@@ -180,7 +195,7 @@ val FirClassSymbol<*>.isEnumWithLegacyGeneratedSerializer: Boolean
 
 context(FirSession)
 val FirClassSymbol<*>.shouldHaveGeneratedSerializer: Boolean
-    get() = (isInternalSerializable && (modality == Modality.FINAL || modality == Modality.OPEN)) || isEnumWithLegacyGeneratedSerializer
+    get() = (isInternalSerializable && isFinalOrOpen()) || isEnumWithLegacyGeneratedSerializer
 
 context(FirSession)
 @Suppress("IncorrectFormatting") // KTIJ-22227

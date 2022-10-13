@@ -52,6 +52,8 @@ class Fir2IrPluginContext(
     override val typeTranslator: TypeTranslator
         get() = error(ERROR_MESSAGE)
 
+    override val afterK2: Boolean = true
+
     override val languageVersionSettings: LanguageVersionSettings
         get() = components.session.languageVersionSettings
 

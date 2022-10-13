@@ -34,6 +34,11 @@ annotation class FirIncompatiblePluginAPI(val hint: String = "")
 interface IrPluginContext : IrGeneratorContext {
     val languageVersionSettings: LanguageVersionSettings
 
+    /**
+     * Indicates that the plugin works after FIR. Effectively it means that all descriptor-based API may contain incorrect and/or incomplete information, and declarations marked with `@FirIncompatibleApi` will throw runtime exceptions.
+     */
+    val afterK2: Boolean
+
     @ObsoleteDescriptorBasedAPI
     val moduleDescriptor: ModuleDescriptor
 

@@ -5,13 +5,13 @@ import kotlinx.serialization.*
 
 class Bar
 @Serializer(forClass = Bar::class)
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>object BarSerializer<!>: KSerializer<Bar>
+object BarSerializer: KSerializer<Bar>
 
 class Baz
 @Serializer(forClass = Baz::class)
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>object BazSerializer<!>: KSerializer<Baz>
+object BazSerializer: KSerializer<Baz>
 @Serializer(forClass = Baz::class)
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>object NullableBazSerializer<!>: KSerializer<Baz?>
+object NullableBazSerializer: KSerializer<Baz?>
 
 <!SERIALIZER_TYPE_INCOMPATIBLE!>@Serializable(with = BazSerializer::class)<!>
 class Biz(val i: Int)

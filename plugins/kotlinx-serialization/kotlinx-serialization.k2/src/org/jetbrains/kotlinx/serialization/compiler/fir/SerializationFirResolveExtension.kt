@@ -39,9 +39,8 @@ import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIALIZER_FACTORY_INTERFACE_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
-
-val generatedSerializerClassId = ClassId(SerializationPackages.internalPackageFqName, SerialEntityNames.GENERATED_SERIALIZER_CLASS)
-val kSerializerClassId = ClassId(SerializationPackages.packageFqName, SerialEntityNames.KSERIALIZER_NAME)
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.generatedSerializerId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.kSerializerId
 
 class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGenerationExtension(session) {
 
@@ -62,7 +61,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         with(session) {
             if (classSymbol.shouldHaveGeneratedMethodsInCompanion && !classSymbol.isSerializableObject)
                 result += SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
-            if (classSymbol.shouldHaveGeneratedSerializer(!runtimeHasEnumSerializerFactory) /* TODO && !classSymbol.hasCompanionObjectAsSerializer*/)
+            if (classSymbol.shouldHaveGeneratedSerializer && !classSymbol.hasCompanionObjectAsSerializer)
                 result += SerialEntityNames.SERIALIZER_CLASS_NAME
         }
 
@@ -85,31 +84,24 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
         val classId = classSymbol.classId
         val result = mutableSetOf<Name>()
-        when (classId.shortClassName) {
-            SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT -> {
-                val origin = classSymbol.origin as? FirDeclarationOrigin.Plugin
-                if (origin?.key == SerializationPluginKey) {
-                    result += SpecialNames.INIT
-                    result += SerialEntityNames.SERIALIZER_PROVIDER_NAME
-                } else {
-                    // TODO: handle user-written companions & named companions
-                }
+
+        val origin = classSymbol.origin as? FirDeclarationOrigin.Plugin
+
+        when {
+            classSymbol.isCompanion && origin?.key == SerializationPluginKey -> {
+                result += SpecialNames.INIT
+                result += SerialEntityNames.SERIALIZER_PROVIDER_NAME
             }
-            SerialEntityNames.SERIALIZER_CLASS_NAME -> {
+
+            classId.shortClassName == SerialEntityNames.SERIALIZER_CLASS_NAME -> {
                 // TODO: check classSymbol for already added functions
-                // TODO: support user-defined serializers?
                 result += setOf(
                     SpecialNames.INIT,
                     SerialEntityNames.SAVE_NAME,
                     SerialEntityNames.LOAD_NAME,
                     SerialEntityNames.SERIAL_DESC_FIELD_NAME
                 )
-                if (classSymbol.resolvedSuperTypes.any {
-                        it.classId == ClassId(
-                            SerializationPackages.internalPackageFqName,
-                            SerialEntityNames.GENERATED_SERIALIZER_CLASS
-                        )
-                    }) {
+                if (classSymbol.resolvedSuperTypes.any { it.classId == generatedSerializerId }) {
                     result += SerialEntityNames.CHILD_SERIALIZERS_GETTER
 
                     if (classSymbol.typeParameterSymbols.isNotEmpty()) {
@@ -118,7 +110,28 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                 }
             }
 
-            else -> if (with(session) { classSymbol.isSerializableObject }) result += SerialEntityNames.SERIALIZER_PROVIDER_NAME
+            classSymbol.isExternalSerializer -> {
+                if (classSymbol.declarationSymbols.filterIsInstance<FirPropertySymbol>()
+                        .none { it.name == SerialEntityNames.SERIAL_DESC_FIELD_NAME }
+                ) {
+                    result += SerialEntityNames.SERIAL_DESC_FIELD_NAME
+                }
+
+                if (classSymbol.isCompanion) result += SerialEntityNames.SERIALIZER_PROVIDER_NAME
+
+                if (classSymbol.declarationSymbols.filterIsInstance<FirNamedFunctionSymbol>()
+                        .none { it.name == SerialEntityNames.SAVE_NAME }
+                ) {
+                    result += SerialEntityNames.SAVE_NAME // TODO how check parameters?!
+                }
+                if (classSymbol.declarationSymbols.filterIsInstance<FirNamedFunctionSymbol>()
+                        .none { it.name == SerialEntityNames.LOAD_NAME }
+                ) {
+                    result += SerialEntityNames.LOAD_NAME // TODO how check parameters?!
+                }
+            }
+
+            with(session) { classSymbol.isSerializableObject } -> result += SerialEntityNames.SERIALIZER_PROVIDER_NAME
         }
         return result
     }
@@ -135,7 +148,6 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         return targets.singleOrNull() ?: error("Multiple overrides found for ${callableId.callableName}")
     }
 
-    // TODO: support @Serializer(for)
     @OptIn(SymbolInternals::class)
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         val owner = context?.owner ?: return emptyList()
@@ -150,7 +162,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             serializableClass ?: return emptyList()
             return listOf(generateSerializerGetterInCompanion(owner, serializableClass, callableId))
         }
-        if (owner.name != SerialEntityNames.SERIALIZER_CLASS_NAME) return emptyList()
+        if (!owner.isSerializer) return emptyList()
         if (callableId.callableName !in setOf(
                 SpecialNames.INIT,
                 SerialEntityNames.SAVE_NAME,
@@ -193,14 +205,14 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             valueParameters.addAll(List(serializableClassSymbol.typeParameterSymbols.size) { i ->
                 newSimpleValueParameter(
                     session,
-                    kSerializerClassId.constructClassLikeType(arrayOf(parametersAsArguments[i]), false).toFirResolvedTypeRef(),
+                    kSerializerId.constructClassLikeType(arrayOf(parametersAsArguments[i]), false).toFirResolvedTypeRef(),
                     Name.identifier("${SerialEntityNames.typeArgPrefix}$i")
                 )
             })
 
 
             returnTypeRef = buildResolvedTypeRef {
-                type = kSerializerClassId.constructClassLikeType(
+                type = kSerializerId.constructClassLikeType(
                     arrayOf(serializableClassSymbol.constructType(parametersAsArguments, false)),
                     isNullable = false
                 )
@@ -212,7 +224,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
     @OptIn(SymbolInternals::class)
     override fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> {
         val owner = context?.owner ?: return emptyList()
-        if (owner.name != SerialEntityNames.SERIALIZER_CLASS_NAME) return emptyList()
+        if (!owner.isSerializer) return emptyList()
         if (callableId.callableName != SerialEntityNames.SERIAL_DESC_FIELD_NAME) return emptyList()
 
         val target = getFromSupertype(callableId, owner) { it.getProperties(callableId.callableName).filterIsInstance<FirPropertySymbol>() }
@@ -265,7 +277,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                 valueParameters.addAll(owner.typeParameterSymbols.mapIndexed { i, typeParam ->
                     newSimpleValueParameter(
                         session,
-                        kSerializerClassId.constructClassLikeType(arrayOf(typeParam.toConeType()), false).toFirResolvedTypeRef(),
+                        kSerializerId.constructClassLikeType(arrayOf(typeParam.toConeType()), false).toFirResolvedTypeRef(),
                         Name.identifier("${SerialEntityNames.typeArgPrefix}$i")
                     )
                 })
@@ -302,7 +314,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             })
 
             val parametersAsArguments = typeParameters.map { it.toConeType() }.toTypedArray<ConeTypeProjection>()
-            superTypeRefs += generatedSerializerClassId.constructClassLikeType(
+            superTypeRefs += generatedSerializerId.constructClassLikeType(
                 arrayOf(
                     owner.constructType(
                         parametersAsArguments,
@@ -344,6 +356,12 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(FirSerializationPredicates.annotatedWithSerializableOrMeta, FirSerializationPredicates.hasMetaAnnotation)
     }
+
+    private val FirClassSymbol<*>.isSerializer: Boolean
+        get() = name == SerialEntityNames.SERIALIZER_CLASS_NAME || isExternalSerializer
+
+    private val FirClassSymbol<*>.isExternalSerializer: Boolean
+        get() = session.predicateBasedProvider.matches(FirSerializationPredicates.serializerFor, this)
 
     context(FirSession)
     @Suppress("IncorrectFormatting") // KTIJ-22227

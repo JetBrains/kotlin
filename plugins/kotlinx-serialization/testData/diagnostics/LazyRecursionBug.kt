@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // This test enshures that analysis ends up without compiler exceptions
 
 import kotlinx.serialization.*
