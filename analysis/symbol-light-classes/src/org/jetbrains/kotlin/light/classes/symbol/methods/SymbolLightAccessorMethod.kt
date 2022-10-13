@@ -217,6 +217,10 @@ internal class SymbolLightAccessorMethod(
         return _defaultValue
     }
 
+    override fun getText(): String {
+        return lightMemberOrigin?.auxiliaryOriginalElement?.text ?: super.getText()
+    }
+
     override fun getTextOffset(): Int {
         return lightMemberOrigin?.auxiliaryOriginalElement?.textOffset ?: super.getTextOffset()
     }
