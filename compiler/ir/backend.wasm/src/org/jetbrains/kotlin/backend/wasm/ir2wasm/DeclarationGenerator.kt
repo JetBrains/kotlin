@@ -492,7 +492,6 @@ fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder,
             body.buildConstI32Symbol(literalPoolId)
             body.buildConstI32Symbol(literalAddress)
             body.buildConstI32(stringValue.length)
-            body.buildConstI32(stringValue.hashCode())
             body.buildCall(context.referenceFunction(context.backendContext.wasmSymbols.stringGetLiteral))
         }
         else -> error("Unknown constant kind")

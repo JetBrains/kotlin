@@ -491,6 +491,13 @@ class BodyGenerator(
                 body.buildInstr(WasmOp.ARRAY_COPY, immediate, immediate)
             }
 
+            wasmSymbols.wasmArrayNewData0 -> {
+                val immediate = WasmImmediate.GcType(
+                    context.referenceGcType(call.getTypeArgument(0)!!.getRuntimeClass(irBuiltIns).symbol)
+                )
+                body.buildInstr(WasmOp.ARRAY_NEW_DATA, immediate, WasmImmediate.DataIdx(0))
+            }
+
             wasmSymbols.stringGetPoolSize -> {
                 body.buildConstI32Symbol(context.stringPoolSize)
             }

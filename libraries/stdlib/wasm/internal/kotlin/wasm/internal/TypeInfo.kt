@@ -28,8 +28,8 @@ internal fun getTypeInfoTypeDataByPtr(typeInfoPtr: Int): TypeInfoData {
     val simpleNameLength = wasm_i32_load(typeInfoPtr + TYPE_INFO_TYPE_SIMPLE_NAME_LENGTH_OFFSET)
     val simpleNameId = wasm_i32_load(typeInfoPtr + TYPE_INFO_TYPE_SIMPLE_NAME_ID_OFFSET)
     val simpleNamePtr = wasm_i32_load(typeInfoPtr + TYPE_INFO_TYPE_SIMPLE_NAME_PRT_OFFSET)
-    val packageName = stringLiteral(fqNameId, fqNamePtr, fqNameLength, 0)
-    val simpleName = stringLiteral(simpleNameId, simpleNamePtr, simpleNameLength, 0)
+    val packageName = stringLiteral(fqNameId, fqNamePtr, fqNameLength)
+    val simpleName = stringLiteral(simpleNameId, simpleNamePtr, simpleNameLength)
     return TypeInfoData(typeInfoPtr, isInterface = false, packageName, simpleName)
 }
 
