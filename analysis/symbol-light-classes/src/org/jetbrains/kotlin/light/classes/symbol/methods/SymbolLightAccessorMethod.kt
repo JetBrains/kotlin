@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightSetterPar
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
 import org.jetbrains.kotlin.load.java.JvmAbi.getterName
 import org.jetbrains.kotlin.load.java.JvmAbi.setterName
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
@@ -77,9 +76,6 @@ internal class SymbolLightAccessorMethod(
     override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
 
     override fun isVarArgs(): Boolean = false
-
-    override val kotlinOrigin: KtDeclaration?
-        get() = lightMemberOrigin?.originalElement
 
     private val accessorSite
         get() =
@@ -186,7 +182,6 @@ internal class SymbolLightAccessorMethod(
                         propertyAccessorSymbol == other.propertyAccessorSymbol)
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()
-
 
     private val _parametersList by lazyPub {
         SymbolLightParameterList(this, containingPropertySymbol) { builder ->
