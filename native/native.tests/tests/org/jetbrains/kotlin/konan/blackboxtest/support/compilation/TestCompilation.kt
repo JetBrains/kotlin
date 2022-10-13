@@ -18,12 +18,10 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.util.buildArgs
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.flatMapToSet
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.mapToSet
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
-import org.jetbrains.kotlin.native.interop.gen.jvm.InternalInteropOptions
-import org.jetbrains.kotlin.native.interop.gen.jvm.interop
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File
-import kotlin.test.assertNull
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
@@ -225,7 +223,7 @@ internal class CInteropCompilation(
                 extraArgsArray
             )
         }
-        assertNull(maybeCompilerArgs)  // check that compiler invocation is not needed
+        assertEquals(null, maybeCompilerArgs)  // check that compiler invocation is not needed
 
         // TODO  Actual compiler output is not included now into `compilerOutput` and `compilerOutputHasErrors`
         // TODO  since there is no technical ability to extract them from C-interop tool invocation at the moment.
@@ -241,25 +239,6 @@ internal class CInteropCompilation(
         expectedArtifact.logFile.writeText(loggedCInteropCall.toString())
 
         return TestCompilationResult.Success(expectedArtifact, loggedCInteropCall)
-    }
-
-    private fun invokeCInterop(inputDef: File, outputLib: File, extraArgs: Array<String>): Array<String>? {
-        val args = arrayOf("-o", outputLib.canonicalPath, "-def", inputDef.canonicalPath)
-        val buildDir = org.jetbrains.kotlin.konan.file.File("${outputLib.canonicalPath}-build")
-        val generatedDir = org.jetbrains.kotlin.konan.file.File(buildDir, "kotlin")
-        val nativesDir = org.jetbrains.kotlin.konan.file.File(buildDir, "natives")
-        val manifest = org.jetbrains.kotlin.konan.file.File(buildDir, "manifest.properties")
-        val cstubsName = "cstubs"
-
-        return interop(
-            "native",
-            args + extraArgs,
-            InternalInteropOptions(generatedDir.absolutePath,
-                                   nativesDir.absolutePath, manifest.path,
-                                   cstubsName
-            ),
-            false
-        )
     }
 }
 

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.compilation
 
-import org.jetbrains.kotlin.cli.klib.Library
 import java.io.File
 
 internal sealed interface TestCompilationArtifact {
@@ -14,12 +13,6 @@ internal sealed interface TestCompilationArtifact {
     data class KLIB(val klibFile: File) : TestCompilationArtifact {
         val path: String get() = klibFile.path
         override val logFile: File get() = klibFile.resolveSibling("${klibFile.name}.log")
-        fun getContents(): String {
-            val output = StringBuilder()
-            val lib = Library(klibFile.canonicalPath, null, "host")
-            lib.contents(output, false)
-            return output.toString()
-        }
     }
 
     data class KLIBStaticCache(val cacheDir: File, val klib: KLIB) : TestCompilationArtifact {
