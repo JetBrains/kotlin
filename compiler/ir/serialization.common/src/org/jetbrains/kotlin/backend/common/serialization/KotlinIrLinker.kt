@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.*
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupport
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupportImpl
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageSupport
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageSupportImpl
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -53,10 +53,10 @@ abstract class KotlinIrLinker(
 
     private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
-    val unlinkedDeclarationsSupport: UnlinkedDeclarationsSupport = if (partialLinkageEnabled)
-        UnlinkedDeclarationsSupportImpl(builtIns)
+    val partialLinkageSupport: PartialLinkageSupport = if (partialLinkageEnabled)
+        PartialLinkageSupportImpl(builtIns)
     else
-        UnlinkedDeclarationsSupport.DISABLED
+        PartialLinkageSupport.DISABLED
 
     protected open val userVisibleIrModulesSupport: UserVisibleIrModulesSupport get() = UserVisibleIrModulesSupport.DEFAULT
 
@@ -78,7 +78,7 @@ abstract class KotlinIrLinker(
         val symbol: IrSymbol? = actualModuleDeserializer?.tryDeserializeIrSymbol(idSignature, symbolKind)
 
         return symbol ?: run {
-            if (unlinkedDeclarationsSupport.partialLinkageEnabled)
+            if (partialLinkageSupport.partialLinkageEnabled)
                 referenceDeserializedSymbol(symbolTable, null, symbolKind, idSignature)
             else
                 SignatureIdNotFoundInModuleWithDependencies(
@@ -170,7 +170,7 @@ abstract class KotlinIrLinker(
                     ?: tryResolveCustomDeclaration(symbol)
                     ?: return null
             } catch (e: IrSymbolTypeMismatchException) {
-                if (!unlinkedDeclarationsSupport.partialLinkageEnabled) {
+                if (!partialLinkageSupport.partialLinkageEnabled) {
                     SymbolTypeMismatch(e, deserializersForModules.values, userVisibleIrModulesSupport).raiseIssue(messageLogger)
                 }
             }
@@ -224,12 +224,12 @@ abstract class KotlinIrLinker(
     override fun postProcess() {
         finalizeExpectActualLinker()
 
-        unlinkedDeclarationsSupport.markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder)
+        partialLinkageSupport.markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder)
 
         fakeOverrideBuilder.provideFakeOverrides()
         triedToDeserializeDeclarationForSymbol.clear()
 
-        unlinkedDeclarationsSupport.processUnlinkedDeclarations(messageLogger) {
+        partialLinkageSupport.processUnlinkedDeclarations(messageLogger) {
             deserializersForModules.values.map { it.moduleFragment }
         }
 

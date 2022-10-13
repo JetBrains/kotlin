@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 
-interface UnlinkedDeclarationsSupport {
+interface PartialLinkageSupport {
     val partialLinkageEnabled: Boolean
 
     /** For general use in IR linker. */
@@ -28,7 +28,7 @@ interface UnlinkedDeclarationsSupport {
     }
 
     companion object {
-        val DISABLED = object : UnlinkedDeclarationsSupport {
+        val DISABLED = object : PartialLinkageSupport {
             override val partialLinkageEnabled get() = false
             override fun markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder: FakeOverrideBuilder) = Unit
             override fun markUsedClassifiersInInlineLazyIrFunction(function: IrFunction) = Unit
