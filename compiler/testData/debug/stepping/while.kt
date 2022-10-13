@@ -35,3 +35,4 @@ fun box() {
 // test.kt:12 box
 // test.kt:12 box
 // test.kt:12 box
+// test.kt:13 box

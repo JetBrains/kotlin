@@ -29,3 +29,4 @@ fun box() {
 // a.kt:4 a
 // test.kt:15 box
 // b.kt:8 b
+// test.kt:16 box

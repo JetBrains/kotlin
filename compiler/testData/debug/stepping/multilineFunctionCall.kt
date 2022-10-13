@@ -17,3 +17,5 @@ fun foo(i: Int) {
 
 // EXPECTATIONS JS_IR
 // test.kt:4 box
+// test.kt:10 foo
+// test.kt:7 box

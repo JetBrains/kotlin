@@ -39,9 +39,12 @@ fun box() {
 // test.kt:15 box
 // test.kt:8 foo
 // test.kt:5 cond
+// test.kt:12 foo
 // test.kt:16 box
 // test.kt:17 box
 // test.kt:8 foo
 // test.kt:5 cond
 // test.kt:9 foo
 // test.kt:5 cond
+// test.kt:12 foo
+// test.kt:18 box

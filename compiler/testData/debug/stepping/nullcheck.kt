@@ -75,3 +75,4 @@ fun testExpressionBody(nullable: String?) =
 // test.kt:21 testExpressionBody
 // test.kt:9 box
 // test.kt:21 testExpressionBody
+// test.kt:10 box

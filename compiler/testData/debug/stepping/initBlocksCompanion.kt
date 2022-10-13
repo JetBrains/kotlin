@@ -60,4 +60,6 @@ fun box() {
 // test.kt:13 <init>
 // test.kt:16 <init>
 // test.kt:21 <init>
+// test.kt:4 <init>
 // test.kt:30 box
+// test.kt:31 box

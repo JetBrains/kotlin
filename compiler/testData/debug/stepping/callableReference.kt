@@ -23,7 +23,9 @@ fun f(block: () -> Unit) {
 // EXPECTATIONS JS_IR
 // test.kt:3 box
 // test.kt:4 box
-// test.kt:4 box$lambda
 // test.kt:4 box
 // test.kt:10 f
 // test.kt:5 box$lambda$lambda
+// test.kt:6 box$lambda$lambda
+// test.kt:11 f
+// test.kt:7 box

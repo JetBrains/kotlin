@@ -57,6 +57,7 @@ fun box() {
 
 // EXPECTATIONS
 // test.kt:39 box
+// test.kt:36 noop
 // test.kt:41 box
 // test.kt:42 box
 // a.kt:11 box
@@ -78,3 +79,4 @@ fun box() {
 // a.kt:6 exclamate
 // a.kt:29 box
 // a.kt:22 value
+// test.kt:56 box
