@@ -120,6 +120,7 @@ private fun JavaType?.toConeTypeProjection(
                         // It should not affect semantics, since it would be still a valid type anyway
                         avoidComprehensiveCheck = true,
                     ) ?: lowerBound
+
                 else -> lowerBound
             }
 
@@ -130,6 +131,7 @@ private fun JavaType?.toConeTypeProjection(
             val (classId, arguments) = when (val componentType = componentType) {
                 is JavaPrimitiveType ->
                     StandardClassIds.byName(componentType.type!!.arrayTypeName.identifier) to arrayOf()
+
                 else ->
                     StandardClassIds.Array to arrayOf(componentType.toConeKotlinType(session, javaTypeParameterStack, mode))
             }
@@ -199,6 +201,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                             ?: Array(classifier.typeParameters.size) { ConeStarProjection }
                     }
                 }
+
                 lookupTag != lowerBound?.lookupTag && typeArguments.isNotEmpty() -> {
                     val typeParameterSymbols =
                         lookupTag.takeIf { mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND }
@@ -211,19 +214,23 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                         argument.toConeTypeProjection(session, javaTypeParameterStack, variance, newMode)
                     }
                 }
+
                 else -> lowerBound?.typeArguments
             }
 
             lookupTag.constructClassType(mappedTypeArguments ?: emptyArray(), isNullable = lowerBound != null, attributes)
         }
+
         is JavaTypeParameter -> {
             val symbol = javaTypeParameterStack[classifier]
             ConeTypeParameterTypeImpl(symbol.toLookupTag(), isNullable = lowerBound != null, attributes)
         }
+
         null -> {
             val classId = ClassId.topLevel(FqName(this.classifierQualifiedName))
             classId.constructClassLikeType(emptyArray(), isNullable = lowerBound != null, attributes)
         }
+
         else -> ConeErrorType(ConeSimpleDiagnostic("Unexpected classifier: $classifier", DiagnosticKind.Java))
     }
 }
