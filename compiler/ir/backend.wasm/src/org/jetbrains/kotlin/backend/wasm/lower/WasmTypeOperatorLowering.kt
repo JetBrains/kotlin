@@ -237,7 +237,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         }
 
         if (toType == symbols.voidType) {
-            return builder.irCall(symbols.consumeAnyIntoVoid).apply {
+            return builder.irCall(symbols.findVoidConsumer(value.type)).apply {
                 putValueArgument(0, value)
             }
         }

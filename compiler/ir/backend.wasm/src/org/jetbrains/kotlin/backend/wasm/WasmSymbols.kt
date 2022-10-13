@@ -118,9 +118,23 @@ class WasmSymbols(
 
     val wasmUnreachable = getInternalFunction("wasm_unreachable")
 
-    val consumeAnyIntoVoid = getInternalFunction("consumeAnyIntoVoid")
     val voidClass = getIrClass(FqName("kotlin.wasm.internal.Void"))
     val voidType by lazy { voidClass.defaultType }
+
+    private val consumeAnyIntoVoid = getInternalFunction("consumeAnyIntoVoid")
+    private val consumePrimitiveIntoVoid = mapOf(
+        context.irBuiltIns.booleanType to getInternalFunction("consumeBooleanIntoVoid"),
+        context.irBuiltIns.byteType to getInternalFunction("consumeByteIntoVoid"),
+        context.irBuiltIns.shortType to getInternalFunction("consumeShortIntoVoid"),
+        context.irBuiltIns.charType to getInternalFunction("consumeCharIntoVoid"),
+        context.irBuiltIns.intType to getInternalFunction("consumeIntIntoVoid"),
+        context.irBuiltIns.longType to getInternalFunction("consumeLongIntoVoid"),
+        context.irBuiltIns.floatType to getInternalFunction("consumeFloatIntoVoid"),
+        context.irBuiltIns.doubleType to getInternalFunction("consumeDoubleIntoVoid")
+    )
+    
+    fun findVoidConsumer(type: IrType): IrSimpleFunctionSymbol =
+        consumePrimitiveIntoVoid[type] ?: consumeAnyIntoVoid
 
     val equalityFunctions = mapOf(
         context.irBuiltIns.booleanType to getInternalFunction("wasm_i32_eq"),
