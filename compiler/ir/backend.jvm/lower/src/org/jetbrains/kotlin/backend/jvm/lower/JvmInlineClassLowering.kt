@@ -486,7 +486,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         val type = left.type.unboxInlineClass()
 
         val typedEqualsStaticReplacement = findStaticReplacementForTypedEquals(valueClass)
-        val untypedEquals = valueClass.functions.single { overridesEqualsFromAny(it) }
+        val untypedEquals = valueClass.functions.single { it.overridesEqualsFromAny }
 
         function.body = context.createIrBuilder(valueClass.symbol).run {
             irExprBody(
@@ -513,13 +513,6 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         }
 
         valueClass.declarations += function
-    }
-
-    private fun overridesEqualsFromAny(irFunction: IrFunction): Boolean {
-        return irFunction.run {
-            name == EQUALS && returnType.isBoolean() && valueParameters.size == 1
-                    && valueParameters[0].type.isNullableAny() && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
-        }
     }
 
     private fun findStaticReplacementForTypedEquals(valueClass: IrClass): IrFunction? {

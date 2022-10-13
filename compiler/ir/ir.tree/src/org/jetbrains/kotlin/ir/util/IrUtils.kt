@@ -1304,3 +1304,7 @@ fun IrBuiltIns.getKFunctionType(returnType: IrType, parameterTypes: List<IrType>
 
 fun IdSignature?.isComposite(): Boolean =
     this is IdSignature.CompositeSignature
+
+val IrFunction.overridesEqualsFromAny
+    get() = name == OperatorNameConventions.EQUALS && valueParameters.size == 1 && valueParameters[0].type.isNullableAny()
+            && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
