@@ -53,6 +53,7 @@ dependencies {
     testImplementation(libs.protobufLite)
     testImplementation(libs.guavaAndroid)
     testImplementation(project(":compose:compiler:compiler-hosted"))
+    testImplementation(projectOrArtifact(":compose:foundation:foundation"))
     testImplementation(projectOrArtifact(":compose:material:material"))
     testImplementation(project(":compose:runtime:runtime"))
     testImplementation(projectOrArtifact(":compose:ui:ui"))
