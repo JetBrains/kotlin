@@ -206,7 +206,7 @@ abstract class KotlinJsProjectExtension(project: Project) :
             targetSetObservers.forEach { it(value) }
         }
 
-    internal fun registerTargetObserver(observer: (KotlinJsTargetDsl?) -> Unit) {
+    fun registerTargetObserver(observer: (KotlinJsTargetDsl?) -> Unit) {
         targetSetObservers.add(observer)
     }
 
