@@ -80,7 +80,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                                 primaryConstructorParametersByName.map { (_, parameter) -> parameter.symbol }.toSet()
                         }
 
-                        innerDeclaration.body != null -> {
+                        innerDeclaration.body != null && !context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClassesSecondaryConstructorWithBody) -> {
                             val body = innerDeclaration.body!!
                             reporter.reportOn(
                                 body.source, FirErrors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS, context

@@ -6,20 +6,26 @@
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND: ANDROID, ANDROID_IR
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +ValueClasses, +ValueClassesSecondaryConstructorWithBody
 
 @JvmInline
 value class A<T : Any>(val x: List<T>)
 
 @JvmInline
-value class B(val x: UInt)
+value class B(val x: UInt) {
+    constructor(x: String) : this(x.toUInt()) {
+        supply(x)
+    }
+}
 
 @JvmInline
 value class C(val x: Int, val y: B, val z: String = "3")
 
 @JvmInline
 value class D(val x: C) {
-    constructor(x: Int, y: UInt, z: Int) : this(C(x, B(y), z.toString()))
+    constructor(x: Int, y: UInt, z: Int) : this(C(x, B(y), z.toString())) {
+        supply(y)
+    }
 
     init {
         supply(x.x)
@@ -69,6 +75,7 @@ fun <T : List<Int>> h(r: R<T>) {
     g(r.z)
     f(r)
     r
+    require(B("3") == B(3U))
     C(2, B(3U), "")
     D(C(2, B(3U), ""))
     val x = D(C(2, B(3U), ""))
@@ -227,6 +234,7 @@ fun box(): String {
         1
         #3
         3
+        4
         #4
         #5
         R(x=1, y=2, z=E(x=D(x=C(x=3, y=B(x=4), z=5))), t=A(x=[[6]]))
@@ -257,12 +265,14 @@ fun box(): String {
         B(x=4)
         5
         4
+        3
         2
         2
         4
         D(x=C(x=4, y=B(x=5), z=1))
         6
         6
+        7
         6
         6
         D(x=C(x=6, y=B(x=7), z=2))

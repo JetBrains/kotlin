@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !SKIP_JAVAC
 // !LANGUAGE: +InlineClasses, +CustomEqualsInInlineClasses
 // ALLOW_KOTLIN_PACKAGE
@@ -50,7 +51,7 @@ value class IC4(val s: String) : WithBox {
 
 @JvmInline
 value class IC5(val a: String) {
-    constructor(i: Int) : this(i.toString()) <!SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS!>{<!>
+    constructor(i: Int) : this(i.toString()) {
         TODO("something")
     }
 }

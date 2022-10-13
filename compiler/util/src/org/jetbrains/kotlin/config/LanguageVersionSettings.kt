@@ -317,6 +317,7 @@ enum class LanguageFeature(
     JavaSamConversionEqualsHashCode(sinceVersion = null, kind = UNSTABLE_FEATURE),
     UnitConversionsOnArbitraryExpressions(sinceVersion = null),
     JsAllowImplementingFunctionInterface(sinceVersion = null, kind = UNSTABLE_FEATURE),
+    ValueClassesSecondaryConstructorWithBody(sinceVersion = null, kind = UNSTABLE_FEATURE),
     ;
 
     init {
