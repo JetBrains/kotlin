@@ -19,46 +19,9 @@ import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.utils.SmartSet
 import java.util.*
 
 class FirOverrideService(val session: FirSession) : FirSessionComponent {
-    fun <D : FirCallableSymbol<*>> selectMostSpecificInEachOverridableGroup(
-        members: Collection<MemberWithBaseScope<D>>,
-        overrideChecker: FirOverrideChecker,
-        returnTypeCalculator: ReturnTypeCalculator
-    ): Collection<MemberWithBaseScope<D>> {
-        if (members.size <= 1) return members
-        val queue = LinkedList(members)
-        val result = SmartSet.create<MemberWithBaseScope<D>>()
-
-        while (queue.isNotEmpty()) {
-            val nextHandle = queue.first()
-
-            val conflictedHandles = SmartSet.create<MemberWithBaseScope<D>>()
-
-            val overridableGroup = extractBothWaysOverridable(nextHandle, queue, overrideChecker)
-
-            if (overridableGroup.size == 1 && conflictedHandles.isEmpty()) {
-                result.add(overridableGroup.single())
-                continue
-            }
-
-            val mostSpecific = selectMostSpecificMember(overridableGroup, returnTypeCalculator)
-
-            overridableGroup.filterNotTo(conflictedHandles) {
-                isMoreSpecificOrEqual(mostSpecific, it, returnTypeCalculator)
-            }
-
-            if (conflictedHandles.isNotEmpty()) {
-                result.addAll(conflictedHandles)
-            }
-
-            result.add(mostSpecific)
-        }
-        return result
-    }
-
     fun <D : FirCallableSymbol<*>> createOverridableGroups(
         members: Collection<MemberWithBaseScope<D>>,
         overrideChecker: FirOverrideChecker
@@ -133,11 +96,6 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
         return maximums.map { it.memberWithBaseScope }
     }
 
-    fun <D : FirCallableSymbol<*>> selectMostSpecificMember(
-        overridables: List<MemberWithBaseScope<D>>,
-        returnTypeCalculator: ReturnTypeCalculator
-    ): MemberWithBaseScope<D> = selectMostSpecificMembers(overridables, returnTypeCalculator).first()
-
     private fun <E> MutableList<E>.removeFlagged(flags: BooleanArray) {
         var dest = 0
         for (i in flags.indices) {
@@ -148,14 +106,6 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
         while (size > dest) {
             removeLast()
         }
-    }
-
-    private fun isMoreSpecificOrEqual(
-        a: MemberWithBaseScope<*>,
-        b: MemberWithBaseScope<*>,
-        returnTypeCalculator: ReturnTypeCalculator
-    ) = MemberWithBaseScopeAndReturnType(a, returnTypeCalculator).compareTo(MemberWithBaseScopeAndReturnType(b, returnTypeCalculator)).let {
-        it != null && it >= 0
     }
 
     private class MemberWithBaseScopeAndReturnType<out D : FirCallableSymbol<*>>(
