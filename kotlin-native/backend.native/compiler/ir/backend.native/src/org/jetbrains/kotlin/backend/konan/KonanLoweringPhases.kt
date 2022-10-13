@@ -96,6 +96,12 @@ internal val propertyAccessorInlinePhase = makeKonanModuleLoweringPhase(
 
 /* IrFile phases */
 
+internal val createFileLowerStatePhase = makeKonanFileOpPhase(
+        { context, _ -> context.generationState.fileLowerState = FileLowerState() },
+        name = "CreateFileLowerState",
+        description = "Create FileLowerState"
+)
+
 internal val removeExpectDeclarationsPhase = makeKonanFileLoweringPhase(
         ::ExpectDeclarationsRemoving,
         name = "RemoveExpectDeclarations",

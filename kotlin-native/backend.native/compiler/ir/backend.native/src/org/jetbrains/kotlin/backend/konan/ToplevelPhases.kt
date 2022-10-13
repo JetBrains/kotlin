@@ -247,6 +247,7 @@ internal val allLoweringsPhase = SameTypeNamedCompilerPhase(
                 name = "IrLowerByFile",
                 description = "IR Lowering by file",
                 lower = listOf(
+                        createFileLowerStatePhase,
                         removeExpectDeclarationsPhase,
                         stripTypeAliasDeclarationsPhase,
                         lowerBeforeInlinePhase,

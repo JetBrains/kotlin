@@ -81,6 +81,8 @@ private abstract class BaseInteropIrTransformer(private val context: Context) : 
         }
 
         return object : KotlinStubs {
+            private val cStubsManager = context.generationState.cStubsManager
+
             override val irBuiltIns get() = context.irBuiltIns
             override val symbols get() = context.ir.symbols
             override val typeSystem: IrTypeSystemContext get() = context.typeSystem
@@ -97,14 +99,14 @@ private abstract class BaseInteropIrTransformer(private val context: Context) : 
             }
 
             override fun addC(lines: List<String>) {
-                context.generationState.cStubsManager.addStub(location, lines, language)
+                cStubsManager.addStub(location, lines, language)
             }
 
             override fun getUniqueCName(prefix: String) =
-                    "$uniquePrefix${context.generationState.cStubsManager.getUniqueName(prefix)}"
+                    "$uniquePrefix${cStubsManager.getUniqueName(prefix)}"
 
             override fun getUniqueKotlinFunctionReferenceClassName(prefix: String) =
-                    "$prefix${context.functionReferenceCount++}"
+                    context.generationState.fileLowerState.getFunctionReferenceImplUniqueName(prefix)
 
             override val target get() = context.config.target
 
