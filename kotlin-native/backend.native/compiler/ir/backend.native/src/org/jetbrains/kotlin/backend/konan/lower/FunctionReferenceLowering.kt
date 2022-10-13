@@ -162,6 +162,7 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
         private val irBuiltIns = context.irBuiltIns
         private val symbols = context.ir.symbols
         private val irFactory = context.irFactory
+        private val fileLowerState = context.generationState.fileLowerState
 
         private val startOffset = functionReference.startOffset
         private val endOffset = functionReference.endOffset
@@ -194,7 +195,7 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
             startOffset = this@FunctionReferenceBuilder.startOffset
             endOffset = this@FunctionReferenceBuilder.endOffset
             origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL
-            name = "${functionReferenceTarget.name}\$FUNCTION_REFERENCE\$${context.functionReferenceCount++}".synthesizedName
+            name = fileLowerState.getFunctionReferenceImplUniqueName(functionReferenceTarget).synthesizedName
             visibility = DescriptorVisibilities.PRIVATE
         }.apply {
             parent = this@FunctionReferenceBuilder.parent

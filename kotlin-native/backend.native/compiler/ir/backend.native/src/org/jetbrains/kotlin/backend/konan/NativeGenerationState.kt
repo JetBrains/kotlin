@@ -19,9 +19,26 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.name.ClassId
 
 internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
+
+internal class FileLowerState {
+    private var functionReferenceCount = 0
+    private var coroutineCount = 0
+    private var cStubCount = 0
+
+    fun getFunctionReferenceImplUniqueName(targetFunction: IrFunction): String =
+            getFunctionReferenceImplUniqueName("${targetFunction.name}\$FUNCTION_REFERENCE\$")
+
+    fun getCoroutineImplUniqueName(function: IrFunction): String =
+            "${function.name}COROUTINE\$${coroutineCount++}"
+
+    fun getFunctionReferenceImplUniqueName(prefix: String) =
+            "$prefix${functionReferenceCount++}"
+
+    fun getCStubUniqueName(prefix: String) =
+            "$prefix${cStubCount++}"
+}
 
 internal class NativeGenerationState(private val context: Context) {
     private val config = context.config
@@ -54,6 +71,8 @@ internal class NativeGenerationState(private val context: Context) {
         getLocalClassName(source)?.let { name -> putLocalClassName(destination, name) }
     }
 
+    lateinit var fileLowerState: FileLowerState
+
     private val runtimeDelegate = lazy { Runtime(llvmContext, config.distribution.compilerInterface(config.target)) }
     private val llvmDelegate = lazy { Llvm(context, LLVMModuleCreateWithNameInContext("out", llvmContext)!!) }
     private val debugInfoDelegate = lazy { DebugInfo(context) }
@@ -63,7 +82,7 @@ internal class NativeGenerationState(private val context: Context) {
     val runtime by runtimeDelegate
     val llvm by llvmDelegate
     val debugInfo by debugInfoDelegate
-    val cStubsManager = CStubsManager(config.target)
+    val cStubsManager = CStubsManager(config.target, this)
     lateinit var llvmDeclarations: LlvmDeclarations
 
     fun hasDebugInfo() = debugInfoDelegate.isInitialized()

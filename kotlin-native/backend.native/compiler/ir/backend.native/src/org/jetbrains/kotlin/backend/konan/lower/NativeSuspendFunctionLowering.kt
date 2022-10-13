@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSuspendableExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSuspensionPointImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
@@ -29,8 +28,9 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
-internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunctionsLowering<Context>(ctx) {
+internal class NativeSuspendFunctionsLowering(ctx: Context) : AbstractSuspendFunctionsLowering<Context>(ctx) {
     private val symbols = context.ir.symbols
+    private val fileLowerState = context.generationState.fileLowerState
 
     override val stateMachineMethodName = Name.identifier("invokeSuspend")
 
@@ -42,7 +42,7 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
             })
 
     override fun nameForCoroutineClass(function: IrFunction) =
-            "${function.name}COROUTINE\$${context.coroutineCount++}".synthesizedName
+            fileLowerState.getCoroutineImplUniqueName(function).synthesizedName
 
     override fun initializeStateMachine(coroutineConstructors: List<IrConstructor>, coroutineClassThis: IrValueDeclaration) {
         // Nothing to do: it's redundant to initialize the "label" field with null

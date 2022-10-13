@@ -162,9 +162,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
         config.librariesWithDependencies(moduleDescriptor)
     }
 
-    var functionReferenceCount = 0
-    var coroutineCount = 0
-
     fun needGlobalInit(field: IrField): Boolean {
         if (field.descriptor.containingDeclaration !is PackageFragmentDescriptor) return false
         // TODO: add some smartness here. Maybe if package of the field is in never accessed
