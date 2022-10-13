@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.fir.resolve.substitution
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.withCombinedAttributesFrom
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
@@ -219,6 +222,56 @@ class ConeSubstitutorByMap(
     }
 
     override fun hashCode() = hashCode
+}
+
+class ConeRawScopeSubstitutor(
+    private val useSiteSession: FirSession,
+) : AbstractConeSubstitutor(useSiteSession.typeContext) {
+    override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+        return when {
+            type is ConeTypeParameterType -> {
+                substituteOrSelf(
+                    listOf(type.lookupTag.symbol).eraseToUpperBounds(useSiteSession)[0] as ConeKotlinType
+                )
+            }
+            type is ConeClassLikeType && type.typeArguments.isNotEmpty() -> {
+                if (type.lookupTag.classId == StandardClassIds.Array) {
+                    val argument = type.typeArguments[0]
+                    val erasedType = argument.type?.let(this::substituteOrSelf)
+
+                    return type.withArguments(
+                        arrayOf(erasedType?.toTypeProjection(argument.kind) ?: ConeStarProjection)
+                    )
+                }
+
+                val firClass = type.fullyExpandedType(useSiteSession).lookupTag.toFirRegularClassSymbol(useSiteSession) ?: return null
+                ConeRawType.create(
+                    type.withArguments(firClass.typeParameterSymbols.eraseToUpperBounds(useSiteSession)),
+                    type.replaceArgumentsWithStarProjections()
+                )
+            }
+            type is ConeFlexibleType -> {
+                val substitutedLowerBound = substituteOrNull(type.lowerBound)
+                val substitutedUpperBound = substituteOrNull(type.upperBound)
+                if (substitutedLowerBound == null && substitutedUpperBound == null) return null
+
+                val newLowerBound = substitutedLowerBound?.lowerBoundIfFlexible() ?: type.lowerBound
+                val newUpperBound = substitutedUpperBound?.upperBoundIfFlexible() ?: type.upperBound
+
+                if (substitutedLowerBound is ConeRawType || substitutedUpperBound is ConeRawType) {
+                    return ConeRawType.create(newLowerBound, newUpperBound)
+                }
+
+                ConeFlexibleType(newLowerBound, newUpperBound)
+            }
+
+            else -> null
+        }
+    }
+
+    override fun equals(other: Any?) = other is ConeRawScopeSubstitutor
+
+    override fun hashCode(): Int = 0
 }
 
 fun createTypeSubstitutorByTypeConstructor(

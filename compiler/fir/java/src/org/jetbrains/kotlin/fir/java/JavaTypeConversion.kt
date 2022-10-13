@@ -123,7 +123,7 @@ private fun JavaType?.toConeTypeProjection(
                 else -> lowerBound
             }
 
-            if (isRaw) ConeRawType(finalLowerBound, upperBound) else ConeFlexibleType(finalLowerBound, upperBound)
+            if (isRaw) ConeRawType.create(finalLowerBound, upperBound) else ConeFlexibleType(finalLowerBound, upperBound)
         }
 
         is JavaArrayType -> {
