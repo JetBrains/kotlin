@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.light.classes.symbol.invalidAccess
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
+import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.hasBody
 
@@ -55,20 +56,26 @@ internal class SymbolLightMemberModifierList<T : KtLightMember<*>>(
 
     override fun findAnnotation(qualifiedName: String) = annotations.firstOrNull { it.qualifiedName == qualifiedName }
 
-    override fun getTextOffset(): Int {
+    private inline fun <R> getTextVariantFromModifierListOfPropertyAccessorIfNeeded(
+        retriever: (KtModifierList) -> R
+    ): R? {
         val auxiliaryOrigin = (owner as? KtLightMember<*>)?.lightMemberOrigin?.auxiliaryOriginalElement
-        return if (auxiliaryOrigin is KtPropertyAccessor)
-            auxiliaryOrigin.modifierList?.textOffset ?: super.getTextOffset()
-        else
-            super.getTextOffset()
+        return (auxiliaryOrigin as? KtPropertyAccessor)?.modifierList?.let(retriever)
+    }
+
+    override fun getText(): String {
+        return getTextVariantFromModifierListOfPropertyAccessorIfNeeded(KtModifierList::getText)
+            ?: super.getText()
+    }
+
+    override fun getTextOffset(): Int {
+        return getTextVariantFromModifierListOfPropertyAccessorIfNeeded(KtModifierList::getTextOffset)
+            ?: super.getTextOffset()
     }
 
     override fun getTextRange(): TextRange {
-        val auxiliaryOrigin = (owner as? KtLightMember<*>)?.lightMemberOrigin?.auxiliaryOriginalElement
-        return if (auxiliaryOrigin is KtPropertyAccessor)
-            auxiliaryOrigin.modifierList?.textRange ?: super.getTextRange()
-        else
-            super.getTextRange()
+        return getTextVariantFromModifierListOfPropertyAccessorIfNeeded(KtModifierList::getTextRange)
+            ?: super.getTextRange()
     }
 
     override fun equals(other: Any?): Boolean = this === other
