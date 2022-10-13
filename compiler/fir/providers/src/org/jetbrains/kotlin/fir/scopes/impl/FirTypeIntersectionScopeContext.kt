@@ -156,23 +156,21 @@ class FirTypeIntersectionScopeContext(
         val result = mutableListOf<ResultOfIntersection<D>>()
 
         while (allMembersWithScope.size > 1) {
-            val maxByVisibility = findMemberWithMaxVisibility(allMembersWithScope)
-            val extractBothWaysWithPrivate = overrideService.extractBothWaysOverridable(maxByVisibility, allMembersWithScope, overrideChecker)
-            val extractedOverrides = extractBothWaysWithPrivate.filterNotTo(mutableListOf()) {
-                Visibilities.isPrivate((it.member.fir as FirMemberDeclaration).visibility)
-            }.takeIf { it.isNotEmpty() } ?: extractBothWaysWithPrivate
-            val singleRealMethod = extractedOverrides.size == 1 ||
-                    extractedOverrides.mapTo(mutableSetOf()) { it.member.fir.unwrapSubstitutionOverrides().symbol }.size == 1
-            val directOverrides = if (singleRealMethod) extractedOverrides else extractedOverrides.onlyDirectlyInherited()
+            val groupWithPrivate =
+                overrideService.extractBothWaysOverridable(allMembersWithScope.maxByVisibility(), allMembersWithScope, overrideChecker)
+            val group = groupWithPrivate.filter { !Visibilities.isPrivate(it.member.fir.visibility) }.ifEmpty { groupWithPrivate }
+            val singleRealImplementation = group.size == 1 ||
+                    group.mapTo(mutableSetOf()) { it.member.fir.unwrapSubstitutionOverrides().symbol }.size == 1
+            val directOverrides = if (singleRealImplementation) group else group.onlyDirectlyInherited()
             val mostSpecific = overrideService.selectMostSpecificMembers(directOverrides, ReturnTypeCalculatorForFullBodyResolve)
             // Always create a non-trivial intersection override when the base methods come from different scopes,
             // even if one of them is more specific than the others. This is necessary for proper reporting of
             // MANY_{IMPL,INTERFACES}_MEMBER_NOT_IMPLEMENTED diagnostics.
-            if ((!forSubtyping && mostSpecific.size > 1) || (!singleRealMethod && directOverrides.size > 1)) {
-                result += ResultOfIntersection.NonTrivial(this, mostSpecific, extractedOverrides, containingScope = null)
+            if ((!forSubtyping && mostSpecific.size > 1) || (!singleRealImplementation && directOverrides.size > 1)) {
+                result += ResultOfIntersection.NonTrivial(this, mostSpecific, group, containingScope = null)
             } else {
                 val (member, containingScope) = mostSpecific.first()
-                result += ResultOfIntersection.SingleMember(member, extractedOverrides, containingScope)
+                result += ResultOfIntersection.SingleMember(member, group, containingScope)
             }
         }
 
@@ -205,35 +203,28 @@ class FirTypeIntersectionScopeContext(
     }
 
     private fun <S : FirCallableSymbol<*>> List<MemberWithBaseScope<S>>.onlyDirectlyInherited(): List<MemberWithBaseScope<S>> {
-        val baseMembers = mutableSetOf<S>()
+        val baseMembers = mutableSetOf<FirCallableSymbol<*>>()
         for ((member, scope) in this) {
-            @Suppress("UNCHECKED_CAST")
+            val unwrapped = member.fir.unwrapSubstitutionOverrides().symbol
+            val addIfDifferent = { it: FirCallableSymbol<*> ->
+                val symbol = it.fir.unwrapSubstitutionOverrides().symbol
+                if (symbol != unwrapped) {
+                    baseMembers += symbol
+                }
+                ProcessorAction.NEXT
+            }
             if (member is FirNamedFunctionSymbol) {
-                scope.processOverriddenFunctions(member) {
-                    val symbol = it.fir.unwrapSubstitutionOverrides().symbol
-                    if (symbol != member.fir.unwrapSubstitutionOverrides().symbol) {
-                        baseMembers += symbol as S
-                    }
-                    ProcessorAction.NEXT
-                }
+                scope.processOverriddenFunctions(member, addIfDifferent)
             } else if (member is FirPropertySymbol) {
-                scope.processOverriddenProperties(member) {
-                    val symbol = it.fir.unwrapSubstitutionOverrides().symbol
-                    if (symbol != member.fir.unwrapSubstitutionOverrides().symbol) {
-                        baseMembers += symbol as S
-                    }
-                    ProcessorAction.NEXT
-                }
+                scope.processOverriddenProperties(member, addIfDifferent)
             }
         }
         return filter { it.member.fir.unwrapSubstitutionOverrides().symbol !in baseMembers }
     }
 
-    private fun <D : FirCallableSymbol<*>> findMemberWithMaxVisibility(members: Collection<MemberWithBaseScope<D>>): MemberWithBaseScope<D> {
-        assert(members.isNotEmpty())
-
-        var member: MemberWithBaseScope<D>? = null
-        for (candidate in members) {
+    private fun <S : FirCallableSymbol<*>> Collection<MemberWithBaseScope<S>>.maxByVisibility(): MemberWithBaseScope<S> {
+        var member: MemberWithBaseScope<S>? = null
+        for (candidate in this) {
             if (member == null) {
                 member = candidate
                 continue
