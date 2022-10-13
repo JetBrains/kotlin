@@ -114,7 +114,7 @@ dependencies {
 
     compilerApi project(":kotlin-native:utilities:basic-utils")
 
-    compilerApi project(kotlinCompilerModule)
+    compilerImplementation project(":kotlin-compiler")
     compilerApi project(":native:kotlin-native-utils")
     compilerApi project(":core:descriptors")
     compilerApi project(":compiler:ir.tree")
