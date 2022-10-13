@@ -13,22 +13,15 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.addFunction
+import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -36,7 +29,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 internal class FunctionReferenceLowering(val context: Context) : FileLoweringPass {
-
     private object DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
 
     companion object {
@@ -157,7 +149,6 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
 
     private val VOLATILE_LAMBDA_FQ_NAME = FqName.fromSegments(listOf("kotlin", "native", "internal", "VolatileLambda"))
 
-
     class FunctionReferenceBuilder(
             val irFile: IrFile,
             val parent: IrDeclarationParent,
@@ -170,6 +161,8 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
 
         private val irBuiltIns = context.irBuiltIns
         private val symbols = context.ir.symbols
+        private val irFactory = context.irFactory
+
         private val startOffset = functionReference.startOffset
         private val endOffset = functionReference.endOffset
         private val referencedFunction = functionReference.symbol.owner
@@ -197,41 +190,31 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
 
         private val functionReferenceTarget = adaptedReferenceOriginalTarget ?: referencedFunction
 
-        private val functionReferenceClass: IrClass =
-                IrClassImpl(
-                        startOffset, endOffset,
-                        DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                        IrClassSymbolImpl(),
-                        "${functionReferenceTarget.name}\$FUNCTION_REFERENCE\$${context.functionReferenceCount++}".synthesizedName,
-                        ClassKind.CLASS,
-                        DescriptorVisibilities.PRIVATE,
-                        Modality.FINAL,
-                        isCompanion = false,
-                        isInner = false,
-                        isData = false,
-                        isExternal = false,
-                        isValue = false,
-                        isExpect = false,
-                        isFun = false
-                ).apply {
-                    parent = this@FunctionReferenceBuilder.parent
-                    createParameterDeclarations()
+        private val functionReferenceClass = irFactory.buildClass {
+            startOffset = this@FunctionReferenceBuilder.startOffset
+            endOffset = this@FunctionReferenceBuilder.endOffset
+            origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL
+            name = "${functionReferenceTarget.name}\$FUNCTION_REFERENCE\$${context.functionReferenceCount++}".synthesizedName
+            visibility = DescriptorVisibilities.PRIVATE
+        }.apply {
+            parent = this@FunctionReferenceBuilder.parent
+            createParameterDeclarations()
 
-                    // copy the generated name for IrClass, partially solves KT-47194
-                    context.generationState.copyLocalClassName(functionReference, this)
-                }
+            // copy the generated name for IrClass, partially solves KT-47194
+            context.generationState.copyLocalClassName(functionReference, this)
+        }
 
         private val functionReferenceThis = functionReferenceClass.thisReceiver!!
 
-        private val argumentToPropertiesMap = boundFunctionParameters.associate {
-            it to createField(
-                    startOffset, endOffset,
-                    DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                    it.type,
-                    it.name,
-                    isMutable = false,
-                    owner = functionReferenceClass
-            )
+        private val argumentToPropertiesMap = boundFunctionParameters.associateWith {
+            functionReferenceClass.addField {
+                startOffset = this@FunctionReferenceBuilder.startOffset
+                endOffset = this@FunctionReferenceBuilder.endOffset
+                origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL
+                name = it.name
+                type = it.type
+                isFinal = true
+            }
         }
 
         private fun IrClass.getInvokeFunction() = simpleFunctions().single { it.name.asString() == "invoke" }
@@ -331,39 +314,28 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
             return functionReferenceClass
         }
 
-        private fun buildConstructor(): IrConstructor {
-            return IrConstructorImpl(
-                    startOffset, endOffset,
-                    DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                    IrConstructorSymbolImpl(),
-                    Name.special("<init>"),
-                    DescriptorVisibilities.PUBLIC,
-                    functionReferenceClass.defaultType,
-                    isInline = false,
-                    isExternal = false,
-                    isPrimary = true,
-                    isExpect = false
-            ).apply {
-                parent = functionReferenceClass
-                functionReferenceClass.declarations += this
+        private fun buildConstructor() = functionReferenceClass.addConstructor {
+            startOffset = this@FunctionReferenceBuilder.startOffset
+            endOffset = this@FunctionReferenceBuilder.endOffset
+            origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL
+            isPrimary = true
+        }.apply {
+            valueParameters += boundFunctionParameters.mapIndexed { index, parameter ->
+                parameter.copyTo(this, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, index,
+                        type = parameter.type.substitute(typeArgumentsMap))
+            }
 
-                valueParameters += boundFunctionParameters.mapIndexed { index, parameter ->
-                    parameter.copyTo(this, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, index,
-                            type = parameter.type.substitute(typeArgumentsMap))
+            body = context.createIrBuilder(symbol, startOffset, endOffset).irBlockBody {
+                val superConstructor = when {
+                    isKSuspendFunction -> kSuspendFunctionImplConstructorSymbol.owner
+                    isLambda -> irBuiltIns.anyClass.owner.constructors.single()
+                    else -> kFunctionImplConstructorSymbol.owner
                 }
-
-                body = context.createIrBuilder(symbol, startOffset, endOffset).irBlockBody {
-                    val superConstructor = when {
-                        isKSuspendFunction -> kSuspendFunctionImplConstructorSymbol.owner
-                        isLambda -> irBuiltIns.anyClass.owner.constructors.single()
-                        else -> kFunctionImplConstructorSymbol.owner
-                    }
-                    +irDelegatingConstructorCall(superConstructor)
-                    +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClass.symbol, irBuiltIns.unitType)
-                    // Save all arguments to fields.
-                    boundFunctionParameters.forEachIndexed { index, parameter ->
-                        +irSetField(irGet(functionReferenceThis), argumentToPropertiesMap[parameter]!!, irGet(valueParameters[index]))
-                    }
+                +irDelegatingConstructorCall(superConstructor)
+                +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClass.symbol, irBuiltIns.unitType)
+                // Save all arguments to fields.
+                boundFunctionParameters.forEachIndexed { index, parameter ->
+                    +irSetField(irGet(functionReferenceThis), argumentToPropertiesMap[parameter]!!, irGet(valueParameters[index]))
                 }
             }
         }
@@ -425,73 +397,60 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
             return false
         }
 
-        private fun buildInvokeMethod(superFunction: IrSimpleFunction): IrSimpleFunction {
-            return IrFunctionImpl(
-                    startOffset, endOffset,
-                    DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                    IrSimpleFunctionSymbolImpl(),
-                    superFunction.name,
-                    DescriptorVisibilities.PRIVATE,
-                    Modality.FINAL,
-                    functionReturnType,
-                    isInline = false,
-                    isExternal = false,
-                    isTailrec = false,
-                    isSuspend = superFunction.isSuspend,
-                    isExpect = false,
-                    isFakeOverride = false,
-                    isOperator = false,
-                    isInfix = false
-            ).apply {
-                val function = this
-                parent = functionReferenceClass
-                functionReferenceClass.declarations += function
+        private fun buildInvokeMethod(superFunction: IrSimpleFunction) = functionReferenceClass.addFunction {
+            startOffset = this@FunctionReferenceBuilder.startOffset
+            endOffset = this@FunctionReferenceBuilder.endOffset
+            origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL
+            name = superFunction.name
+            returnType = functionReturnType
+            isSuspend = superFunction.isSuspend
+        }.apply {
+            val function = this
 
-                this.createDispatchReceiverParameter()
+            function.createDispatchReceiverParameter()
 
-                extensionReceiverParameter = superFunction.extensionReceiverParameter?.copyTo(function)
+            extensionReceiverParameter = superFunction.extensionReceiverParameter?.copyTo(function)
 
-                valueParameters += superFunction.valueParameters.mapIndexed { index, parameter ->
-                    parameter.copyTo(function, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, index,
-                            type = functionParameterTypes[index])
-                }
+            valueParameters += superFunction.valueParameters.mapIndexed { index, parameter ->
+                parameter.copyTo(function, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, index,
+                        type = functionParameterTypes[index])
+            }
 
-                overriddenSymbols += superFunction.symbol
+            overriddenSymbols += superFunction.symbol
 
-                body = context.createIrBuilder(function.symbol, startOffset, endOffset).irBlockBody(startOffset, endOffset) {
-                    +irReturn(
-                            irCall(functionReference.symbol).apply {
-                                var unboundIndex = 0
-                                val unboundArgsSet = unboundFunctionParameters.toSet()
-                                for (parameter in functionParameters) {
-                                    val argument =
-                                            if (!unboundArgsSet.contains(parameter))
-                                            // Bound parameter - read from field.
-                                                irGetField(
-                                                        irGet(function.dispatchReceiverParameter!!),
-                                                        argumentToPropertiesMap[parameter]!!
-                                                )
-                                            else {
-                                                if (parameter == referencedFunction.extensionReceiverParameter
-                                                        && extensionReceiverParameter != null)
-                                                    irGet(extensionReceiverParameter!!)
-                                                else
-                                                    irGet(valueParameters[unboundIndex++])
-                                            }
-                                    when (parameter) {
-                                        referencedFunction.dispatchReceiverParameter -> dispatchReceiver = argument
-                                        referencedFunction.extensionReceiverParameter -> extensionReceiver = argument
-                                        else -> putValueArgument(parameter.index, argument)
-                                    }
-                                }
-                                assert(unboundIndex == valueParameters.size) { "Not all arguments of <invoke> are used" }
-
-                                referencedFunction.typeParameters.forEach { typeParam ->
-                                    putTypeArgument(typeParam.index, functionReference.getTypeArgument(typeParam.index)!!)
+            body = context.createIrBuilder(function.symbol, startOffset, endOffset).irBlockBody(startOffset, endOffset) {
+                +irReturn(
+                        irCall(functionReference.symbol).apply {
+                            var unboundIndex = 0
+                            val unboundArgsSet = unboundFunctionParameters.toSet()
+                            for (parameter in functionParameters) {
+                                val argument =
+                                        if (!unboundArgsSet.contains(parameter))
+                                        // Bound parameter - read from field.
+                                            irGetField(
+                                                    irGet(function.dispatchReceiverParameter!!),
+                                                    argumentToPropertiesMap[parameter]!!
+                                            )
+                                        else {
+                                            if (parameter == referencedFunction.extensionReceiverParameter
+                                                    && extensionReceiverParameter != null)
+                                                irGet(extensionReceiverParameter!!)
+                                            else
+                                                irGet(valueParameters[unboundIndex++])
+                                        }
+                                when (parameter) {
+                                    referencedFunction.dispatchReceiverParameter -> dispatchReceiver = argument
+                                    referencedFunction.extensionReceiverParameter -> extensionReceiver = argument
+                                    else -> putValueArgument(parameter.index, argument)
                                 }
                             }
-                    )
-                }
+                            assert(unboundIndex == valueParameters.size) { "Not all arguments of <invoke> are used" }
+
+                            referencedFunction.typeParameters.forEach { typeParam ->
+                                putTypeArgument(typeParam.index, functionReference.getTypeArgument(typeParam.index)!!)
+                            }
+                        }
+                )
             }
         }
     }
