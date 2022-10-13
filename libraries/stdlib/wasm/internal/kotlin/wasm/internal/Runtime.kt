@@ -82,6 +82,38 @@ internal class Void private constructor()
 internal fun consumeAnyIntoVoid(a: Any?): Void =
     implementedAsIntrinsic
 
+@WasmOp(WasmOp.DROP)
+internal fun consumeBooleanIntoVoid(a: Boolean): Void =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.DROP)
+internal fun consumeByteIntoVoid(a: Byte): Void =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.DROP)
+internal fun consumeShortIntoVoid(a: Short): Void =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.DROP)
+internal fun consumeCharIntoVoid(a: Char): Void =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.DROP)
+internal fun consumeIntIntoVoid(a: Int): Void =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.DROP)
+internal fun consumeLongIntoVoid(a: Long): Void =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.DROP)
+internal fun consumeFloatIntoVoid(a: Float): Void =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.DROP)
+internal fun consumeDoubleIntoVoid(a: Double): Void =
+    implementedAsIntrinsic
+
 @ExcludedFromCodegen
 internal fun stringGetPoolSize(): Int =
     implementedAsIntrinsic
