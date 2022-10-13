@@ -29712,6 +29712,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("capturedSpecificity.kt")
+                public void testCapturedSpecificity() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/capturedSpecificity.kt");
+                }
+
+                @Test
                 @TestMetadata("conflictTypeParameters.kt")
                 public void testConflictTypeParameters() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/conflictTypeParameters.kt");
@@ -29727,6 +29733,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("flexibleTypes.kt")
                 public void testFlexibleTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/flexibleTypes.kt");
+                }
+
+                @Test
+                @TestMetadata("intersectReturnType.kt")
+                public void testIntersectReturnType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/intersectReturnType.kt");
                 }
 
                 @Test
