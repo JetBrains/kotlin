@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val JVM_INLINE_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmInline")
 val JVM_INLINE_ANNOTATION_CLASS_ID = ClassId.topLevel(JVM_INLINE_ANNOTATION_FQ_NAME)
@@ -28,10 +27,10 @@ fun DeclarationDescriptor.isMultiFieldValueClass(): Boolean =
 fun DeclarationDescriptor.isValueClass(): Boolean = isInlineClass() || isMultiFieldValueClass()
 
 fun KotlinType.unsubstitutedUnderlyingType(): KotlinType? =
-    constructor.declarationDescriptor.safeAs<ClassDescriptor>()?.inlineClassRepresentation?.underlyingType
+    (constructor.declarationDescriptor as? ClassDescriptor)?.inlineClassRepresentation?.underlyingType
 
 fun KotlinType.unsubstitutedUnderlyingTypes(): List<KotlinType> {
-    val declarationDescriptor = constructor.declarationDescriptor.safeAs<ClassDescriptor>() ?: return emptyList()
+    val declarationDescriptor = constructor.declarationDescriptor as? ClassDescriptor ?: return emptyList()
     return when {
         declarationDescriptor.isInlineClass() -> listOfNotNull(unsubstitutedUnderlyingType())
         declarationDescriptor.isMultiFieldValueClass() ->

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.typeUtil.builtIns
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 private val EXPERIMENTAL_CONTINUATION_FQ_NAME = FqName("kotlin.coroutines.experimental.Continuation")
@@ -232,7 +231,7 @@ class TypeDeserializer(
         val suspendReturnType = continuationArgumentType.arguments.single().type
 
         // Load kotlin.suspend as accepting and returning suspend function type independent of its version requirement
-        if (c.containingDeclaration.safeAs<CallableDescriptor>()?.fqNameOrNull() == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME) {
+        if ((c.containingDeclaration as? CallableDescriptor)?.fqNameOrNull() == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME) {
             return createSimpleSuspendFunctionType(funType, suspendReturnType)
         }
 

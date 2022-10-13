@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class LazyJavaClassDescriptor(
     val outerContext: LazyJavaResolverContext,
@@ -187,7 +186,7 @@ class LazyJavaClassDescriptor(
 
         // Check if any of the super-interfaces contain too many methods to be a SAM
         return typeConstructor.supertypes.any {
-            it.constructor.declarationDescriptor.safeAs<LazyJavaClassDescriptor>()?.isDefinitelyNotSamInterface == true
+            (it.constructor.declarationDescriptor as? LazyJavaClassDescriptor)?.isDefinitelyNotSamInterface == true
         }
     }
 

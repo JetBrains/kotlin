@@ -399,7 +399,7 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
             val baseBuildscript = baseSubproject.buildGradleKts
             val libBuildscript = libSubproject.buildGradleKts
             baseBuildscript.modify {
-                it.replace("js(\"both\")", "js(\"both\") { moduleName = \"base2\" }")
+                it.replace("js(\"both\")", "js(\"both\") { (this as org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget).legacyTarget?.moduleName = \"base2\" }")
             }
             libBuildscript.modify {
                 it.replace("implementation(project(\":base\"))", "implementation(files(\"${normalizePath(originalBaseJar.toString())}\"))")

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
@@ -103,8 +104,8 @@ internal class KotlinProjectNpmResolver(
             }
 
             // Hack for mixed mode, when target is JS and contain JS-IR
-            if (target is KotlinJsTarget) {
-                target.irTarget?.compilations?.all { compilation ->
+            if (target is KotlinJsIrTarget) {
+                target.legacyTarget?.compilations?.all { compilation ->
                     if (compilation is KotlinJsCompilation) {
                         addCompilation(compilation)
                     }

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class OptInMarkerDeclarationAnnotationChecker(private val module: ModuleDescriptor) : AdditionalAnnotationChecker {
     override fun checkEntries(
@@ -43,9 +42,8 @@ class OptInMarkerDeclarationAnnotationChecker(private val module: ModuleDescript
             val annotation = trace.bindingContext.get(BindingContext.ANNOTATION, entry) ?: continue
             when (annotation.fqName) {
                 OptInNames.OPT_IN_FQ_NAME -> {
-                    val annotationClasses =
-                        annotation.allValueArguments[OptInNames.OPT_IN_ANNOTATION_CLASS]
-                            .safeAs<ArrayValue>()?.value.orEmpty()
+                    val annotationClasses = (annotation.allValueArguments[OptInNames.OPT_IN_ANNOTATION_CLASS] as? ArrayValue)
+                        ?.value.orEmpty()
                     checkOptInUsage(annotationClasses, trace, entry)
                 }
                 OptInNames.SUBCLASS_OPT_IN_REQUIRED_FQ_NAME -> {

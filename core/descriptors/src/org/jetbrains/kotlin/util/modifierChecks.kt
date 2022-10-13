@@ -54,7 +54,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.SIMPLE_UNARY_OPERATION_
 import org.jetbrains.kotlin.util.ReturnsCheck.*
 import org.jetbrains.kotlin.util.ValueParameterCountCheck.NoValueParameters
 import org.jetbrains.kotlin.util.ValueParameterCountCheck.SingleValueParameter
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 sealed class CheckResult(val isSuccess: Boolean) {
     class IllegalSignature(val error: String) : CheckResult(false)
@@ -241,8 +240,7 @@ object OperatorChecks : AbstractModifierChecks() {
 
         val potentialActualAliasId = classDescriptor.classId ?: return false
         val actualReceiverTypeAlias =
-            classDescriptor.module.findClassifierAcrossModuleDependencies(potentialActualAliasId).safeAs<TypeAliasDescriptor>()
-                ?: return false
+            classDescriptor.module.findClassifierAcrossModuleDependencies(potentialActualAliasId) as? TypeAliasDescriptor ?: return false
 
         returnType?.let { returnType ->
             return returnType.isSubtypeOf(actualReceiverTypeAlias.expandedType)

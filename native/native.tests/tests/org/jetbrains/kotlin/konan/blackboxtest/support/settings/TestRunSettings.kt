@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.settings
 
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ExternalSourceTransformers
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 
 /**
@@ -18,7 +17,7 @@ import java.io.File
  */
 internal class BlackBoxTestInstances(val allInstances: List<Any>) {
     val enclosingTestInstance: AbstractNativeBlackBoxTest
-        get() = allInstances.firstOrNull().cast()
+        get() = allInstances.firstOrNull() as AbstractNativeBlackBoxTest
 }
 
 internal interface ExternalSourceTransformersProvider {

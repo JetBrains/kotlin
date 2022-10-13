@@ -33,8 +33,8 @@ private fun makeJsModulePhase(
     lowering: (JsIrBackendContext) -> FileLoweringPass,
     name: String,
     description: String,
-    prerequisite: Set<NamedCompilerPhase<JsIrBackendContext, *>> = emptySet()
-): NamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>> = makeCustomJsModulePhase(
+    prerequisite: Set<AbstractNamedCompilerPhase<JsIrBackendContext, *, *>> = emptySet()
+): SameTypeNamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>> = makeCustomJsModulePhase(
     op = { context, modules -> lowering(context).lower(modules) },
     name = name,
     description = description,
@@ -45,14 +45,14 @@ private fun makeCustomJsModulePhase(
     op: (JsIrBackendContext, IrModuleFragment) -> Unit,
     description: String,
     name: String,
-    prerequisite: Set<NamedCompilerPhase<JsIrBackendContext, *>> = emptySet()
-): NamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>> = NamedCompilerPhase(
+    prerequisite: Set<AbstractNamedCompilerPhase<JsIrBackendContext, *, *>> = emptySet()
+): SameTypeNamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>> = SameTypeNamedCompilerPhase(
     name = name,
     description = description,
     prerequisite = prerequisite,
     lower = object : SameTypeCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>> {
         override fun invoke(
-            phaseConfig: PhaseConfig,
+            phaseConfig: PhaseConfigurationService,
             phaserState: PhaserState<Iterable<IrModuleFragment>>,
             context: JsIrBackendContext,
             input: Iterable<IrModuleFragment>
@@ -67,13 +67,13 @@ private fun makeCustomJsModulePhase(
 )
 
 sealed class Lowering(val name: String) {
-    abstract val modulePhase: NamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>>
+    abstract val modulePhase: SameTypeNamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>>
 }
 
 class DeclarationLowering(
     name: String,
     description: String,
-    prerequisite: Set<NamedCompilerPhase<JsIrBackendContext, *>> = emptySet(),
+    prerequisite: Set<AbstractNamedCompilerPhase<JsIrBackendContext, *, *>> = emptySet(),
     private val factory: (JsIrBackendContext) -> DeclarationTransformer
 ) : Lowering(name) {
     fun declarationTransformer(context: JsIrBackendContext): DeclarationTransformer {
@@ -86,7 +86,7 @@ class DeclarationLowering(
 class BodyLowering(
     name: String,
     description: String,
-    prerequisite: Set<NamedCompilerPhase<JsIrBackendContext, *>> = emptySet(),
+    prerequisite: Set<AbstractNamedCompilerPhase<JsIrBackendContext, *, *>> = emptySet(),
     private val factory: (JsIrBackendContext) -> BodyLoweringPass
 ) : Lowering(name) {
     fun bodyLowering(context: JsIrBackendContext): BodyLoweringPass {
@@ -98,7 +98,7 @@ class BodyLowering(
 
 class ModuleLowering(
     name: String,
-    override val modulePhase: NamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>>
+    override val modulePhase: SameTypeNamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>>
 ) : Lowering(name)
 
 private fun makeDeclarationTransformerPhase(
@@ -115,7 +115,7 @@ private fun makeBodyLoweringPhase(
     prerequisite: Set<Lowering> = emptySet()
 ) = BodyLowering(name, description, prerequisite.map { it.modulePhase }.toSet(), lowering)
 
-fun NamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>>.toModuleLowering() = ModuleLowering(this.name, this)
+fun SameTypeNamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>>.toModuleLowering() = ModuleLowering(this.name, this)
 
 private val validateIrBeforeLowering = makeCustomJsModulePhase(
     { context, module -> validationCallback(context, module) },
@@ -927,7 +927,7 @@ val loweringList = listOf<Lowering>(
 // TODO comment? Eliminate ModuleLowering's? Don't filter them here?
 val pirLowerings = loweringList.filter { it is DeclarationLowering || it is BodyLowering } + staticMembersLoweringPhase
 
-val jsPhases = NamedCompilerPhase(
+val jsPhases = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
     lower = loweringList.map {

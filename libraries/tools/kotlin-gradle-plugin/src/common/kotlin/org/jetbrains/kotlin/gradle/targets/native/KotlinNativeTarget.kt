@@ -186,6 +186,27 @@ internal fun getHostSpecificSourceSets(project: Project): Set<KotlinSourceSet> {
     )
 }
 
+/**
+ * Returns all host-specific source sets that will be compiled to two or more targets
+ */
+internal fun getHostSpecificMainSharedSourceSets(project: Project): Set<KotlinSourceSet> {
+    fun KotlinSourceSet.testOnly(): Boolean = internal.compilations.all { it.isTest() }
+
+    fun KotlinSourceSet.isCompiledToSingleTarget(): Boolean {
+        return internal
+            .compilations
+            // if for some reason [it.target] is not a [KotlinNativeTarget] then assume that it is not a host-specific source set
+            .distinctBy { (it.target as? KotlinNativeTarget)?.konanTarget ?: return false }
+            .size == 1
+    }
+
+    return getHostSpecificSourceSets(project)
+        .filterNot { it.testOnly() }
+        .filterNot { it.isCompiledToSingleTarget() }
+        .toSet()
+}
+
+
 abstract class KotlinNativeTargetWithTests<T : KotlinNativeBinaryTestRun>(
     project: Project,
     konanTarget: KonanTarget

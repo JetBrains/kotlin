@@ -390,14 +390,14 @@ internal class Llvm(private val context: Context, val module: LLVMModuleRef) : R
     val nativeDependenciesToLink: List<KonanLibrary> by lazy {
         context.config.resolvedLibraries
                 .getFullList(TopologicalLibraryOrder)
+                .map { it as KonanLibrary }
                 .filter {
-                    require(it is KonanLibrary)
                     (!it.isDefault && !context.config.purgeUserLibs) || imports.nativeDependenciesAreUsed(it)
-                }.cast<List<KonanLibrary>>()
+                }
     }
 
     private val immediateBitcodeDependencies: List<KonanLibrary> by lazy {
-        context.config.resolvedLibraries.getFullList(TopologicalLibraryOrder).cast<List<KonanLibrary>>()
+        context.config.resolvedLibraries.getFullList(TopologicalLibraryOrder).map { it as KonanLibrary }
                 .filter { (!it.isDefault && !context.config.purgeUserLibs) || imports.bitcodeIsUsed(it) }
     }
 
@@ -440,12 +440,12 @@ internal class Llvm(private val context: Context, val module: LLVMModuleRef) : R
         // libraries list being returned is also toposorted.
         context.config.resolvedLibraries
                 .getFullList(TopologicalLibraryOrder)
-                .cast<List<KonanLibrary>>()
+                .map { it as KonanLibrary }
                 .filter { it in set }
     }
 
     val bitcodeToLink: List<KonanLibrary> by lazy {
-        (context.config.resolvedLibraries.getFullList(TopologicalLibraryOrder).cast<List<KonanLibrary>>())
+        context.config.resolvedLibraries.getFullList(TopologicalLibraryOrder).map { it as KonanLibrary }
                 .filter { shouldContainBitcode(it) }
     }
 

@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-@Deprecated("Use CompilerJsDceOptions instead", level = DeprecationLevel.WARNING)
+@Deprecated("Use KotlinJsDceCompilerToolOptions instead", level = DeprecationLevel.WARNING)
 interface KotlinJsDceOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions {
-    override val options: org.jetbrains.kotlin.gradle.dsl.CompilerJsDceOptions
+    override val options: org.jetbrains.kotlin.gradle.dsl.KotlinJsDceCompilerToolOptions
 
     /**
      * Development mode: don't strip out any code, just copy dependencies

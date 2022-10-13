@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.getAbbreviation
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object DslMarkerUtils {
 
@@ -33,13 +32,12 @@ object DslMarkerUtils {
     fun extractDslMarkerFqNames(receiver: ReceiverValue): DslMarkersFromReceiver {
         val errorLevel = extractDslMarkerFqNames(receiver.type)
 
-        val deprecationLevel =
-            receiver.safeAs<ExtensionReceiver>()
-                ?.declarationDescriptor
-                ?.safeAs<FunctionDescriptor>()
-                ?.getUserData(FunctionTypeAnnotationsKey)
-                ?.let(Annotations::extractDslMarkerFqNames)
-                ?.toSet() ?: emptySet()
+        val functionDescriptor = (receiver as? ExtensionReceiver)?.declarationDescriptor as? FunctionDescriptor
+        val deprecationLevel = functionDescriptor
+            ?.getUserData(FunctionTypeAnnotationsKey)
+            ?.let(Annotations::extractDslMarkerFqNames)
+            ?.toSet()
+            ?: emptySet()
 
         return DslMarkersFromReceiver(errorLevel, deprecationLevel)
     }
@@ -51,7 +49,7 @@ object DslMarkerUtils {
 
         kotlinType.getAbbreviation()?.constructor?.declarationDescriptor?.run {
             result.addAll(annotations.extractDslMarkerFqNames())
-            safeAs<TypeAliasDescriptor>()?.run {
+            (this as? TypeAliasDescriptor)?.run {
                 result.addAll(extractDslMarkerFqNames(this.underlyingType))
             }
         }

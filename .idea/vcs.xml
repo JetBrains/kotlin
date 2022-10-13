@@ -4,7 +4,7 @@
     <profile version="1.0">
       <inspection_tool class="BodyLimit" enabled="true" level="WARNING" enabled_by_default="true" />
       <inspection_tool class="GrazieCommit" enabled="true" level="TYPO" enabled_by_default="true" />
-      <inspection_tool class="SubjectBodySeparation" enabled="true" level="WARNING" enabled_by_default="true" />
+      <inspection_tool class="SubjectBodySeparation" enabled="true" level="ERROR" enabled_by_default="true" />
       <inspection_tool class="SubjectLimit" enabled="true" level="WARNING" enabled_by_default="true" />
     </profile>
   </component>
@@ -38,6 +38,14 @@
         <IssueNavigationLink>
           <option name="issueRegexp" value="KOTLIN-CR\-\d+" />
           <option name="linkRegexp" value="https://upsource.jetbrains.com/kotlin/review/$0" />
+        </IssueNavigationLink>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="(\w+)-(CR|MR)-(\d+)" />
+          <option name="linkRegexp" value="https://jetbrains.team/p/$1/reviews/$3" />
+        </IssueNavigationLink>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="KOTLIN-(MR|CR)-(\d+)" />
+          <option name="linkRegexp" value="https://kotlin.jetbrains.space/p/kotlin/reviews/$2" />
         </IssueNavigationLink>
       </list>
     </option>

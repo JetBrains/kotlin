@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.artifacts.Configuration
-import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
-import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptionsDefault
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
@@ -42,17 +40,17 @@ abstract class GradleKpmJvmVariant @Inject constructor(
 class GradleKpmJvmVariantCompilationData(val variant: GradleKpmJvmVariant) : GradleKpmVariantCompilationDataInternal<KotlinJvmOptions> {
     override val owner: GradleKpmJvmVariant get() = variant
 
-    override val compilerOptions: HasCompilerOptions<CompilerJvmOptions> =
-        object : HasCompilerOptions<CompilerJvmOptions> {
-            override val options: CompilerJvmOptions =
-                variant.project.objects.newInstance(CompilerJvmOptionsDefault::class.java)
+    override val compilerOptions: HasCompilerOptions<KotlinJvmCompilerOptions> =
+        object : HasCompilerOptions<KotlinJvmCompilerOptions> {
+            override val options: KotlinJvmCompilerOptions =
+                variant.project.objects.newInstance(KotlinJvmCompilerOptionsDefault::class.java)
         }
 
     // TODO pull out to the variant
     @Suppress("DEPRECATION")
     @Deprecated("Replaced with compilerOptions.options", replaceWith = ReplaceWith("compilerOptions.options"))
     override val kotlinOptions: KotlinJvmOptions = object : KotlinJvmOptions {
-        override val options: CompilerJvmOptions
+        override val options: KotlinJvmCompilerOptions
             get() = compilerOptions.options
     }
 }

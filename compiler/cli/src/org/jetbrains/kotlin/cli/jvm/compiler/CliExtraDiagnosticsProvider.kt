@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 private val JAVA_API_STUB = Key.create<CachedValue<Diagnostics>>("JAVA_API_STUB")
 
@@ -48,7 +47,7 @@ object CliExtraDiagnosticsProvider {
             .findFilesForFacade(facadeFqName, GlobalSearchScope.allScope(project))
             .ifEmpty { return Diagnostics.EMPTY }
 
-        val context = LightClassGenerationSupport.getInstance(project).cast<CliLightClassGenerationSupport>().context
+        val context = (LightClassGenerationSupport.getInstance(project) as CliLightClassGenerationSupport).context
         val (_, _, diagnostics) = extraJvmDiagnosticsFromBackend(
             facadeFqName.parent(),
             facadeCollection,

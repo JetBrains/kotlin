@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
@@ -18,6 +21,7 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import javax.inject.Inject
 
 internal enum class AppleTarget(
     val targetName: String,
@@ -138,10 +142,17 @@ private fun Project.registerAssembleFatForXCFrameworkTask(
     }
 }
 
-abstract class XCFrameworkTask : DefaultTask() {
+abstract class XCFrameworkTask
+@Inject
+internal constructor(
+    private val execOperations: ExecOperations,
+    private val projectLayout: ProjectLayout,
+) : DefaultTask() {
     init {
         onlyIf { HostManager.hostIsMac }
     }
+
+    private val projectBuildDir: File get() = projectLayout.buildDirectory.asFile.get()
 
     /**
      * A base name for the XCFramework.
@@ -172,14 +183,14 @@ abstract class XCFrameworkTask : DefaultTask() {
      * A parent directory for the XCFramework.
      */
     @get:Internal  // We take it into account as an output in the outputXCFrameworkFile property.
-    var outputDir: File = project.buildDir.resolve("XCFrameworks")
+    var outputDir: File = projectBuildDir.resolve("XCFrameworks")
 
     /**
      * A parent directory for the fat frameworks.
      */
     @get:Internal  // We take it into account as an input in the buildType and baseName properties.
     protected val fatFrameworksDir: File
-        get() = fatFrameworkDir(project, xcFrameworkName.get(), buildType)
+        get() = fatFrameworkDir(projectBuildDir, xcFrameworkName.get(), buildType)
 
     @get:OutputDirectory
     protected val outputXCFrameworkFile: File
@@ -264,7 +275,7 @@ abstract class XCFrameworkTask : DefaultTask() {
         }
         cmdArgs.add("-output")
         cmdArgs.add(output.path)
-        project.exec { it.commandLine(cmdArgs) }
+        execOperations.exec { it.commandLine(cmdArgs) }
     }
 
     internal companion object {
@@ -273,11 +284,19 @@ abstract class XCFrameworkTask : DefaultTask() {
             xcFrameworkName: String,
             buildType: NativeBuildType,
             appleTarget: AppleTarget? = null
-        ) = project.buildDir
+        ) = fatFrameworkDir(project.buildDir, xcFrameworkName, buildType, appleTarget)
+
+        fun fatFrameworkDir(
+            buildDir: File,
+            xcFrameworkName: String,
+            buildType: NativeBuildType,
+            appleTarget: AppleTarget? = null
+        ) = buildDir
             .resolve(xcFrameworkName.asValidFrameworkName() + "XCFrameworkTemp")
             .resolve("fatframework")
             .resolve(buildType.getName())
             .resolveIfNotNull(appleTarget?.targetName)
+
 
         private fun File.resolveIfNotNull(relative: String?): File = if (relative == null) this else this.resolve(relative)
     }

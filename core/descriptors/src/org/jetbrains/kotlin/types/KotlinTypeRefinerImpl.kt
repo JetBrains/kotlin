@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.types.checker.REFINER_CAPABILITY
 import org.jetbrains.kotlin.types.checker.TypeRefinementSupport
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 @OptIn(TypeRefinement::class)
 class KotlinTypeRefinerImpl(
@@ -203,8 +202,8 @@ private val TypeConstructor.allDependentTypeConstructors: Collection<TypeConstru
         else -> supertypes.map { it.constructor }
     }
 
-private fun TypeConstructor.isExpectClass() =
-    declarationDescriptor?.safeAs<ClassDescriptor>()?.isExpect == true
+private fun TypeConstructor.isExpectClass(): Boolean =
+    (declarationDescriptor as? ClassDescriptor)?.isExpect == true
 
 private fun KotlinType.restoreAdditionalTypeInformation(prototype: KotlinType): KotlinType {
     return TypeUtils.makeNullableAsSpecified(this, prototype.isMarkedNullable).replace(prototype.arguments)

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.descriptors.isEnumClass
 import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isInlineClass
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.*
@@ -31,6 +33,7 @@ import org.jetbrains.kotlinx.serialization.compiler.fir.services.dependencySeria
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.findTypeSerializerOrContextUnchecked
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.serializablePropertiesProvider
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.versionReader
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
 
 object FirSerializationPluginClassChecker : FirClassChecker() {
     private val JAVA_SERIALIZABLE_ID = ClassId.topLevel(FqName("java.io.Serializable"))
@@ -205,7 +208,7 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
             return false
         }
         
-        if (!classSymbol.hasSerializableOrMetaAnnotation) return false
+        if (!with(session) { classSymbol.hasSerializableOrMetaAnnotation }) return false
         
         if (classSymbol.isAnonymousObjectOrInsideIt) {
             reporter.reportOn(classSymbol.serializableOrMetaAnnotationSource, FirSerializationErrors.ANONYMOUS_OBJECTS_NOT_SUPPORTED)
@@ -227,13 +230,13 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
             return false
         }
 
-        if (!classSymbol.hasSerializableOrMetaAnnotationWithoutArgs) {
+        if (!with(session) { classSymbol.hasSerializableOrMetaAnnotationWithoutArgs }) {
             // defined custom serializer
             checkClassWithCustomSerializer(classSymbol, reporter)
             return false
         }
 
-        if (classSymbol.serializableAnnotationIsUseless) {
+        if (with(session) { classSymbol.serializableAnnotationIsUseless }) {
             reporter.reportOn(classSymbol.serializableOrMetaAnnotationSource, FirSerializationErrors.SERIALIZABLE_ANNOTATION_IGNORED)
             return false
         }
@@ -241,7 +244,7 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
         // check that we can instantiate supertype
         if (!classSymbol.isEnumClass) { // enums are inherited from java.lang.Enum and can't be inherited from other classes
             val superClassSymbol = classSymbol.getSuperClassOrAny(session)
-            if (!superClassSymbol.isInternalSerializable) {
+            if (with(session) { !superClassSymbol.isInternalSerializable }) {
                 val noArgConstructorSymbol = superClassSymbol.declarationSymbols.firstOrNull { it is FirConstructorSymbol && it.valueParameterSymbols.isEmpty() }
                 if (noArgConstructorSymbol == null) {
                     reporter.reportOn(classSymbol.serializableOrMetaAnnotationSource, FirSerializationErrors.NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR)
@@ -296,9 +299,11 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     context(CheckerContext)
     @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun buildSerializableProperties(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter): FirSerializableProperties? {
-        if (!classSymbol.hasSerializableOrMetaAnnotation) return null
-        if (!classSymbol.isInternalSerializable) return null
-        if (classSymbol.hasCompanionObjectAsSerializer) return null
+        with(session) {
+            if (!classSymbol.hasSerializableOrMetaAnnotation) return null
+            if (!classSymbol.isInternalSerializable) return null
+            if (classSymbol.hasCompanionObjectAsSerializer) return null
+        }
 
         val properties = session.serializablePropertiesProvider.getSerializablePropertiesForClass(classSymbol)
         if (!properties.isExternallySerializable) {
@@ -370,7 +375,18 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
                 checkSerializerNullability(propertyType, serializerType, source, reporter)
             } else {
                 checkType(propertyType, source, reporter)
+                checkGenericArrayType(propertyType, source, reporter)
             }
+        }
+    }
+
+    context(CheckerContext)
+    private fun checkGenericArrayType(propertyType: ConeKotlinType, source: KtSourceElement?, reporter: DiagnosticReporter) {
+        if (propertyType.isNonPrimitiveArray && propertyType.typeArguments.first().type?.isTypeParameter == true) {
+            reporter.reportOn(
+                source,
+                FirSerializationErrors.GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED,
+            )
         }
     }
 
@@ -476,34 +492,4 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
             reporter.reportOn(source, FirSerializationErrors.SERIALIZER_NULLABILITY_INCOMPATIBLE, serializerType, classType)
         }
     }
-
-    // --------------------------------------------------------------------------------------
-
-    context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
-    private val FirClassSymbol<*>.isSerializableEnumWithMissingSerializer: Boolean
-        get() {
-            if (!isEnumClass) return false
-            if (hasSerializableOrMetaAnnotation) return false
-            if (hasAnySerialAnnotation) return true
-            return collectEnumEntries().any { it.hasAnySerialAnnotation }
-        }
-
-    context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
-    private val FirClassSymbol<*>.serializableOrMetaAnnotationSource: KtSourceElement?
-        get() {
-            serializableAnnotation(needArguments = false)?.source?.let { return it }
-            metaSerializableAnnotation(needArguments = false)?.source?.let { return it }
-            return null
-        }
-
-    context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
-    private val FirClassSymbol<*>.serializableAnnotationIsUseless: Boolean
-        get() = !classKind.isEnumClass &&
-                hasSerializableOrMetaAnnotationWithoutArgs &&
-                !isInternalSerializable &&
-                !hasCompanionObjectAsSerializer &&
-                !isSealedSerializableInterface
 }

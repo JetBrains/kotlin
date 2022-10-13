@@ -36,7 +36,7 @@ internal class DukatCompilationResolverPlugin(
     }
     val legacyTargetReuseIrTask by lazy {
         val target = compilation.target
-        target is KotlinJsTarget && (target.irTarget != null && externalsOutputFormat == ExternalsOutputFormat.SOURCE)
+        target is KotlinJsTarget && (target.mixedMode && externalsOutputFormat == ExternalsOutputFormat.SOURCE)
     }
     val externalsOutputFormat by lazy {
         compilation.externalsOutputFormat
@@ -137,7 +137,7 @@ internal class DukatCompilationResolverPlugin(
         internal fun KotlinJsCompilation.shouldDependOnDukatIntegrationTask(): Boolean = with(target) {
             this is KotlinJsIrTarget ||
                 (this is KotlinJsTarget &&
-                    (irTarget == null || externalsOutputFormat != ExternalsOutputFormat.SOURCE)
+                    (!mixedMode || externalsOutputFormat != ExternalsOutputFormat.SOURCE)
                     )
         }
 

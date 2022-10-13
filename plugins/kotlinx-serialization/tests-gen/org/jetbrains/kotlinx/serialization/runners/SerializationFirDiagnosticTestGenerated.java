@@ -45,6 +45,12 @@ public class SerializationFirDiagnosticTestGenerated extends AbstractSerializati
         }
 
         @Test
+        @TestMetadata("GenericArrays.kt")
+        public void testGenericArrays() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/diagnostics/GenericArrays.kt");
+        }
+
+        @Test
         @TestMetadata("IncorrectTransient.kt")
         public void testIncorrectTransient() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/diagnostics/IncorrectTransient.kt");
@@ -172,6 +178,12 @@ public class SerializationFirDiagnosticTestGenerated extends AbstractSerializati
         @TestMetadata("inlineClasses.kt")
         public void testInlineClasses() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/firMembers/inlineClasses.kt");
+        }
+
+        @Test
+        @TestMetadata("metaSerializable.kt")
+        public void testMetaSerializable() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/firMembers/metaSerializable.kt");
         }
 
         @Test

@@ -7,8 +7,23 @@ package org.jetbrains.kotlin.js.backend.ast
 
 class JsImport(
     val module: String,
-    val elements: MutableList<Element> = mutableListOf(),
+    val target: Target,
 ) : SourceInfoAwareJsNode(), JsStatement {
+    constructor(module: String, elements: MutableList<Element> = mutableListOf()) : this(module, Target.Elements(elements))
+
+    val elements: MutableList<Element>
+        get() = (target as Target.Elements).elements
+
+    sealed class Target {
+        class Elements(val elements: MutableList<Element>) : Target()
+        class Default(val name: JsName) : Target() {
+            constructor(name: String) : this(JsName(name, false))
+        }
+
+        class All(val alias: JsName) : Target() {
+            constructor(alias: String) : this(JsName(alias, false))
+        }
+    }
 
     class Element(
         val name: JsName,
@@ -25,7 +40,7 @@ class JsImport(
     }
 
     override fun deepCopy(): JsStatement =
-        JsImport(module, elements.map { it }.toMutableList())
+        JsImport(module, target)
 
     override fun traverse(v: JsVisitorWithContext, ctx: JsContext<*>) {
         v.visit(this, ctx)

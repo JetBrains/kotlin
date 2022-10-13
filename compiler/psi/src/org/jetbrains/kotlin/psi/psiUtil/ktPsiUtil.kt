@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 // NOTE: in this file we collect only Kotlin-specific methods working with PSI and not modifying it
@@ -674,7 +673,7 @@ fun isTopLevelInFileOrScript(element: PsiElement): Boolean {
 fun KtFile.getFileOrScriptDeclarations() = if (isScript()) script!!.declarations else declarations
 
 fun KtExpression.getBinaryWithTypeParent(): KtBinaryExpressionWithTypeRHS? {
-    val callExpression = parent.safeAs<KtCallExpression>() ?: return null
+    val callExpression = parent as? KtCallExpression ?: return null
     val possibleQualifiedExpression = callExpression.parent
 
     val targetExpression = if (possibleQualifiedExpression is KtQualifiedExpression) {

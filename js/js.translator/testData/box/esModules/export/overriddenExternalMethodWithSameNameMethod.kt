@@ -1,9 +1,8 @@
 // EXPECTED_REACHABLE_NODES: 1252
-// INFER_MAIN_MODULE
 // DONT_TARGET_EXACT_BACKEND: JS
 // ES_MODULES
 
-// MODULE: overriden_external_method_with_same_name_method
+// MODULE: lib
 // FILE: lib.kt
 external abstract class Foo {
     abstract fun o(): String
@@ -32,10 +31,9 @@ Foo.prototype.k = function() {
 
 // FILE: entry.mjs
 // ENTRY_ES_MODULE
-import { Baz } from "./overriden_external_method_with_same_name_method/index.js";
+import { Baz } from "./overriddenExternalMethodWithSameNameMethod-lib_v5.mjs";
 
-function test(foo) {
+export function box() {
+    const foo = new Baz()
     return foo.o() + foo.k()
 }
-
-console.assert(test(new Baz())  == "OK");

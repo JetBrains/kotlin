@@ -211,7 +211,7 @@ internal class FirLocalVariableAssignmentAnalyzer(
          * The generated mini CFG looks like the following, with assigned local variables annotated after each node in curly brackets.
          *
          *     ┌───────┐
-         *     │ entry │ {x y z a}
+         *     │ entry │ {x y z}
          *     └─┬─┬─┬─┘
          *       │ │ │ fallback
          *       │ │ └─────────────────────────────┐
@@ -247,11 +247,8 @@ internal class FirLocalVariableAssignmentAnalyzer(
          *
          * - changes to `z` is captured and back-propagated to all earlier nodes as desired.
          *
-         * - "lambda body" node does not contain `a` because `a` is declared inside the function. Such declarations are removed after
-         *   the graph is constructed, as loop closure can reintroduce them at any point. However, the parent nodes contain `a` because
-         *   [MiniCfgBuilder.recordAssignment] propagates `a` during traversal. The extra `a` won't do any harm since `a` can never be
-         *   referenced outside the lambda. It's possible to track the scope at each node and remove the unneeded `a` in "entry" and "then"
-         *   nodes. But doing that seems to be more expensive than simply letting it propagate.
+         * - `a` is not recorded anywhere because it's declared inside the lambda, and no statement needed a new block after
+         *   the declaration.
          *
          * Because names are not resolved at this point, we manually track local variable declarations and resolve them along the way
          * so that shadowed names are handled correctly. This works because local variables at any scope have higher priority
@@ -260,16 +257,12 @@ internal class FirLocalVariableAssignmentAnalyzer(
         fun analyzeFunction(rootFunction: FirFunction): FirLocalVariableAssignmentAnalyzer {
             val data = MiniCfgBuilder.MiniCfgData()
             MiniCfgBuilder().visitElement(rootFunction, data)
-            for (fork in data.functionForks.values) {
-                fork.assignedInside.retainAll(fork.declaredBefore)
-            }
             return FirLocalVariableAssignmentAnalyzer(data.functionForks)
         }
 
         class FunctionFork(
-            val declaredBefore: Set<FirProperty>,
             val assignedLater: Set<FirProperty>,
-            val assignedInside: MutableSet<FirProperty>,
+            val assignedInside: Set<FirProperty>,
         )
 
         private class MiniFlow(val parents: Set<MiniFlow>) {
@@ -295,13 +288,17 @@ internal class FirLocalVariableAssignmentAnalyzer(
 
             override fun visitFunction(function: FirFunction, data: MiniCfgData) {
                 val freeVariables = data.variableDeclarations.flatMapTo(mutableSetOf()) { it.values }
-                val flowInto = data.flow.fork()
-                val flowAfter = data.flow.fork()
+                val flow = data.flow
+                // Detach the function flow so that variables declared inside don't leak into the outside.
+                val flowInto = MiniFlow.start()
                 data.flow = flowInto
                 function.acceptChildren(this, data)
-                data.flow = flowAfter
-                data.functionForks[function.symbol] =
-                    FunctionFork(freeVariables, flowAfter.assignedLater, flowInto.assignedLater)
+                flowInto.assignedLater.retainAll(freeVariables)
+                // Now that the inner variables have been discarded, the rest can be propagated to prevent smartcasts
+                // in lambdas declared before this one.
+                flow.recordAssignments(flowInto.assignedLater)
+                data.flow = flow.fork()
+                data.functionForks[function.symbol] = FunctionFork(data.flow.assignedLater, flowInto.assignedLater)
             }
 
             override fun visitWhenExpression(whenExpression: FirWhenExpression, data: MiniCfgData) {
@@ -336,14 +333,17 @@ internal class FirLocalVariableAssignmentAnalyzer(
                 data.flow = start
                 whileLoop.condition.accept(this, data)
                 whileLoop.block.accept(this, data)
-                data.flow.addBackEdgeTo(start)
+                // All forks in the loop should have the same set of variables assigned later, equal to the set
+                // at the start of the loop.
+                data.flow.recordAssignments(start.assignedLater)
             }
 
             override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: MiniCfgData) {
                 val start = data.flow.fork()
+                data.flow = start
                 doWhileLoop.block.accept(this, data)
                 doWhileLoop.condition.accept(this, data)
-                data.flow.addBackEdgeTo(start)
+                data.flow.recordAssignments(start.assignedLater)
             }
 
             // TODO: liveness analysis - return/throw/break/continue terminate the flow.
@@ -356,6 +356,8 @@ internal class FirLocalVariableAssignmentAnalyzer(
                 with(functionCall) {
                     setOfNotNull(explicitReceiver, dispatchReceiver, extensionReceiver).forEach { it.accept(visitor, data) }
                     // Delay processing of lambda args because lambda body are evaluated after all arguments have been evaluated.
+                    // TODO: this is not entirely correct (the lambda might be nested deep inside an expression), but also this
+                    //  entire override should be unnecessary as long as the full CFG builder visits everything in the right order
                     val (postponedFunctionArgs, normalArgs) = argumentList.arguments.partition { it is FirAnonymousFunctionExpression }
                     normalArgs.forEach { it.accept(visitor, data) }
                     postponedFunctionArgs.forEach { it.accept(visitor, data) }
@@ -392,19 +394,14 @@ internal class FirLocalVariableAssignmentAnalyzer(
             private fun MiniCfgData.recordAssignment(reference: FirReference) {
                 val name = (reference as? FirNamedReference)?.name ?: return
                 val property = variableDeclarations.lastOrNull { name in it }?.get(name) ?: return
-                flow.recordAssignments(setOf(property), mutableSetOf())
+                flow.recordAssignments(setOf(property))
             }
 
-            private fun MiniFlow.recordAssignments(properties: Set<FirProperty>, visited: MutableSet<MiniFlow>) {
-                if (!visited.add(this)) return
-                assignedLater += properties
-                parents.forEach { it.recordAssignments(properties, visited) }
-            }
-
-            private fun MiniFlow.addBackEdgeTo(loopStart: MiniFlow) {
-                // All forks in the loop should have the same set of variables assigned later, equal to the set
-                // at the start of the loop.
-                recordAssignments(loopStart.assignedLater, mutableSetOf())
+            private fun MiniFlow.recordAssignments(properties: Set<FirProperty>) {
+                // All assignments already recorded here should also have been recorded in all parents,
+                // so if (properties - assignedLater) is empty, no point in continuing.
+                if (!assignedLater.addAll(properties)) return
+                parents.forEach { it.recordAssignments(properties) }
             }
 
             class MiniCfgData {

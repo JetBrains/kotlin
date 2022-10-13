@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 @Suppress("DEPRECATION")
 class KotlinJvmOptionsCompat(
     private val task: () -> KotlinCompile,
-    override val options: CompilerJvmOptions
+    override val options: KotlinJvmCompilerOptions
 ) : KotlinJvmOptions {
     override var freeCompilerArgs: List<String>
         get() = if (isTaskExecuting) {

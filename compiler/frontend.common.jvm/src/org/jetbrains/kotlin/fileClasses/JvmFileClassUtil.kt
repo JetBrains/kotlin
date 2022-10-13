@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object JvmFileClassUtil {
     val JVM_NAME: FqName = FqName("kotlin.jvm.JvmName")
@@ -90,7 +89,7 @@ object JvmFileClassUtil {
         val stringTemplateExpression = annotation.valueArguments.firstOrNull()?.run {
             when (this) {
                 is KtValueArgument -> stringTemplateExpression
-                else -> getArgumentExpression().safeAs<KtStringTemplateExpression>()
+                else -> getArgumentExpression() as? KtStringTemplateExpression
             }
         } ?: return null
 

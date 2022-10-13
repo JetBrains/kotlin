@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
 class SyntheticJavaClassDescriptor(
@@ -121,7 +120,7 @@ class SyntheticJavaClassDescriptor(
 
         // Check if any of the super-interfaces contain too many methods to be a SAM
         return typeConstructor.supertypes.any {
-            it.constructor.declarationDescriptor.safeAs<SyntheticJavaClassDescriptor>()?.isDefinitelyNotSamInterface == true
+            (it.constructor.declarationDescriptor as? SyntheticJavaClassDescriptor)?.isDefinitelyNotSamInterface == true
         }
     }
 

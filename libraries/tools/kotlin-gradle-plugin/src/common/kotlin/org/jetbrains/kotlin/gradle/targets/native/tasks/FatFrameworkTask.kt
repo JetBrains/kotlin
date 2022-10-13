@@ -7,8 +7,11 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.FileTree
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
+import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -23,6 +26,7 @@ import org.jetbrains.kotlin.konan.util.visibleName
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.file.Files
+import javax.inject.Inject
 
 class FrameworkDsymLayout(val rootDir: File) {
     init {
@@ -110,7 +114,13 @@ class FrameworkDescriptor(
 /**
  * Task running lipo to create a fat framework from several simple frameworks. It also merges headers, plists and module files.
  */
-open class FatFrameworkTask : DefaultTask() {
+open class FatFrameworkTask
+@Inject
+internal constructor(
+    private val execOperations: ExecOperations,
+    private val fileOperations: FileSystemOperations,
+    private val objectFactory: ObjectFactory,
+) : DefaultTask() {
     init {
         onlyIf { HostManager.hostIsMac }
     }
@@ -150,7 +160,7 @@ open class FatFrameworkTask : DefaultTask() {
     @get:InputFiles
     @get:SkipWhenEmpty
     protected val inputFrameworkFiles: Iterable<FileTree>
-        get() = frameworks.map { project.fileTree(it.file) }
+        get() = frameworks.map { objectFactory.fileTree().from(it.file) }
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories
@@ -160,7 +170,7 @@ open class FatFrameworkTask : DefaultTask() {
             framework.files.dSYM.takeIf {
                 it.exists()
             }?.rootDir?.let {
-                project.fileTree(it)
+                objectFactory.fileTree().from(it)
             }
         }
 
@@ -244,10 +254,13 @@ open class FatFrameworkTask : DefaultTask() {
 
     private val FrameworkDescriptor.plistPlatform: String
         get() = when (target) {
-            MACOS_X64, MACOS_ARM64 -> "MacOSX"
-            IOS_ARM32, IOS_ARM64, IOS_X64, IOS_SIMULATOR_ARM64 -> "iPhoneOS"
-            TVOS_ARM64, TVOS_X64, TVOS_SIMULATOR_ARM64 -> "AppleTVOS"
-            WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X86, WATCHOS_X64, WATCHOS_SIMULATOR_ARM64, WATCHOS_DEVICE_ARM64 -> "WatchOS"
+            // remove `is ...` after Gradle Configuration Cache deserialization for Objects of a Sealed Class is fixed
+            // https://github.com/gradle/gradle/issues/22347
+            is MACOS_X64, is MACOS_ARM64 -> "MacOSX"
+            is IOS_ARM32, is IOS_ARM64, is IOS_X64, is IOS_SIMULATOR_ARM64 -> "iPhoneOS"
+            is TVOS_ARM64, is TVOS_X64, is TVOS_SIMULATOR_ARM64 -> "AppleTVOS"
+            is WATCHOS_ARM32, is WATCHOS_ARM64, is WATCHOS_X86,
+            is WATCHOS_X64, is WATCHOS_SIMULATOR_ARM64, is WATCHOS_DEVICE_ARM64 -> "WatchOS"
             else -> error("Fat frameworks are not supported for platform `${target.visibleName}`")
         }
 
@@ -263,7 +276,7 @@ open class FatFrameworkTask : DefaultTask() {
         val commands = mutableListOf<String>()
         var ignoreExitValue = false
 
-        fun run() = project.exec { exec ->
+        fun run() = execOperations.exec { exec ->
             exec.executable = "/usr/libexec/PlistBuddy"
             commands.forEach {
                 exec.args("-c", it)
@@ -282,7 +295,7 @@ open class FatFrameworkTask : DefaultTask() {
     }
 
     private fun runLipo(inputFiles: Collection<File>, outputFile: File) =
-        project.exec { exec ->
+        execOperations.exec { exec ->
             exec.executable = "/usr/bin/lipo"
             exec.args = listOf(
                 "-create",
@@ -292,7 +305,7 @@ open class FatFrameworkTask : DefaultTask() {
         }
 
     private fun runInstallNameTool(file: File, frameworkName: String) {
-        project.exec { exec ->
+        execOperations.exec { exec ->
             exec.executable = "install_name_tool"
             exec.args = listOf(
                 "-id",
@@ -359,7 +372,7 @@ open class FatFrameworkTask : DefaultTask() {
 
         // Use Info.plist of one of the frameworks to get basic data.
         val baseInfo = frameworks.first().files.infoPlist
-        project.copy {
+        fileOperations.copy {
             it.from(baseInfo)
             it.into(outputFile.parentFile)
         }
@@ -410,7 +423,7 @@ open class FatFrameworkTask : DefaultTask() {
         // Copy dSYM's Info.plist.
         // It doesn't contain target-specific info or framework names except the bundle id so there is no need to edit it.
         // TODO: handle bundle id.
-        project.copy {
+        fileOperations.copy {
             it.from(dsymInputs.values.first().infoPlist)
             it.into(fatDsym.infoPlist.parentFile)
         }

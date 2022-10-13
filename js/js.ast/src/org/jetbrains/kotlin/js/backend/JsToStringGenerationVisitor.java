@@ -1329,31 +1329,47 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitImport(@NotNull JsImport jsImport) {
-        p.print("import {");
-        boolean isMultiline = jsImport.getElements().size() > 1;
-        p.indentIn();
-        if (isMultiline)
-            newlineOpt();
-        else
-            space();
+        JsImport.Target target = jsImport.getTarget();
 
-        for (JsImport.Element element : jsImport.getElements()) {
-            nameDef(element.getName());
-            JsName alias = element.getAlias();
-            if (alias != null) {
-                p.print(" as ");
-                nameDef(alias);
-            }
+        p.print("import ");
 
-            if (isMultiline) {
-                p.print(',');
+        if (target instanceof JsImport.Target.Default) {
+            nameDef(((JsImport.Target.Default) target).getName());
+        } else if (target instanceof JsImport.Target.All) {
+            p.print("* as ");
+            nameDef(((JsImport.Target.All) target).getAlias());
+        } else if (target instanceof JsImport.Target.Elements) {
+            List<JsImport.Element> elements = ((JsImport.Target.Elements) target).getElements();
+
+            p.print("{");
+            boolean isMultiline = elements.size() > 1;
+            p.indentIn();
+            if (isMultiline)
                 newlineOpt();
-            } else {
+            else
                 space();
+
+            for (JsImport.Element element : elements) {
+                nameDef(element.getName());
+                JsName alias = element.getAlias();
+                if (alias != null) {
+                    p.print(" as ");
+                    nameDef(alias);
+                }
+
+                if (isMultiline) {
+                    p.print(',');
+                    newlineOpt();
+                }
+                else {
+                    space();
+                }
             }
+            p.indentOut();
+            p.print("}");
         }
-        p.indentOut();
-        p.print("} from ");
+
+        p.print(" from ");
         p.print(javaScriptString(jsImport.getModule()));
     }
 

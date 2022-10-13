@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-@Deprecated("Use CompilerCommonOptions instead", level = DeprecationLevel.WARNING)
+@Deprecated("Use KotlinCommonCompilerOptions instead", level = DeprecationLevel.WARNING)
 interface KotlinCommonOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions {
-    override val options: org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
+    override val options: org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 
     private val kotlin.String?.apiVersionCompilerOption get() = if (this != null) org.jetbrains.kotlin.gradle.dsl.KotlinVersion.fromVersion(this) else null
 

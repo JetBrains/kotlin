@@ -67,7 +67,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             messageCollector.report(ERROR, "K2 does not support Native target right now")
             return ExitCode.COMPILATION_ERROR
         }
-        configuration.put(CLIConfigurationKeys.PHASE_CONFIG, createPhaseConfig(toplevelPhase, arguments, messageCollector))
+        configuration.put(CLIConfigurationKeys.PHASE_CONFIG, createPhaseConfig(toplevelPhaseErased, arguments, messageCollector))
 
         val enoughArguments = arguments.freeArgs.isNotEmpty() || arguments.isUsefulWithoutFreeArgs
         if (!enoughArguments) {

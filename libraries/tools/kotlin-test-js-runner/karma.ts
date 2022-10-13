@@ -13,10 +13,18 @@ const parser = new CliArgsParser(
         throw new Error(`Exit with ${exitCode}`)
     }
 );
+
 const untypedArgs = parser.parse(window.__karma__.config.args);
 
-const adapterTransformer: (current: KotlinTestRunner) => KotlinTestRunner = current =>
-    runWithFilteringAndConsoleAdapters(current, untypedArgs);
+let adapterTransformer: (current: KotlinTestRunner) => KotlinTestRunner
+if (window.kotlinTest) {
+    const currentAdapterTransformer = window.kotlinTest.adapterTransformer;
+    adapterTransformer = current =>
+        runWithFilteringAndConsoleAdapters(currentAdapterTransformer(current), untypedArgs);
+} else {
+    adapterTransformer = current =>
+        runWithFilteringAndConsoleAdapters(current, untypedArgs);
+}
 
 window.kotlinTest = {
     adapterTransformer: adapterTransformer

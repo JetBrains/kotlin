@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object NativeObjCNameChecker : DeclarationChecker {
 
@@ -90,9 +89,9 @@ object NativeObjCNameChecker : DeclarationChecker {
     class ObjCName(
         val annotation: AnnotationDescriptor
     ) {
-        val name: String? = annotation.argumentValue("name")?.value?.safeAs<String>()
-        val swiftName: String? = annotation.argumentValue("swiftName")?.value?.safeAs<String>()
-        val exact: Boolean = annotation.argumentValue("exact")?.value?.safeAs<Boolean>() ?: false
+        val name: String? = annotation.argumentValue("name")?.value as? String
+        val swiftName: String? = annotation.argumentValue("swiftName")?.value as? String
+        val exact: Boolean = annotation.argumentValue("exact")?.value as? Boolean ?: false
 
         override fun equals(other: Any?): Boolean =
             other is ObjCName && name == other.name && swiftName == other.swiftName && exact == other.exact

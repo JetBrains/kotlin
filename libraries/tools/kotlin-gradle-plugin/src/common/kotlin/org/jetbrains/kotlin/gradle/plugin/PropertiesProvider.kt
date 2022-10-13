@@ -59,7 +59,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = this.property("kotlin.internal.single.build.metrics.file")?.let { File(it) }
 
     val buildReportSingleFile: File?
-        get() = this.property("kotlin.build.report.single_file")?.let { File(it) }
+        get() = this.property(PropertyNames.KOTLIN_BUILD_REPORT_SINGLE_FILE)?.let { File(it) }
 
     @Deprecated(message = "Please use kotlin.build.report.output instead ")
     val buildReportEnabled: Boolean
@@ -86,10 +86,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val buildReportFileOutputDir: File?
         get() = this.property("kotlin.build.report.file.output_dir")?.let { File(it) }
 
-    val buildReportHttpUrlProperty = "kotlin.build.report.http.url"
-
     val buildReportHttpUrl: String?
-        get() = this.property(buildReportHttpUrlProperty)
+        get() = this.property(PropertyNames.KOTLIN_BUILD_REPORT_HTTP_URL)
 
     val buildReportHttpUser: String?
         get() = this.property("kotlin.build.report.http.user")
@@ -200,9 +198,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val enableKotlinToolingMetadataArtifact: Boolean
         get() = booleanProperty("kotlin.mpp.enableKotlinToolingMetadataArtifact") ?: true
-
-    val mppStabilityNoWarn: Boolean?
-        get() = booleanProperty(KotlinMultiplatformPlugin.STABILITY_NOWARN_FLAG)
 
     val mppEnableOptimisticNumberCommonization: Boolean
         get() = booleanProperty(KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION) ?: true
@@ -515,6 +510,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION = "kotlin.mpp.enablePlatformIntegerCommonization"
         const val KOTLIN_ABI_SNAPSHOT = "kotlin.incremental.classpath.snapshot.enabled"
         const val KOTLIN_JS_KARMA_BROWSERS = "kotlin.js.browser.karma.browsers"
+        const val KOTLIN_BUILD_REPORT_SINGLE_FILE = "kotlin.build.report.single_file"
+        const val KOTLIN_BUILD_REPORT_HTTP_URL = "kotlin.build.report.http.url"
     }
 
     companion object {

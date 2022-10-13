@@ -103,6 +103,10 @@ object KtDefaultErrorMessagesSerialization {
             "@kotlin.jvm.Transient does not affect @Serializable classes. Please use @kotlinx.serialization.Transient instead."
         )
         put(
+            FirSerializationErrors.GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED,
+            "Serialization of Arrays with generic type arguments is impossible because of unknown compile-time type."
+        )
+        put(
             FirSerializationErrors.REQUIRED_KOTLIN_TOO_HIGH,
             "Your current Kotlin version is {0}, while kotlinx.serialization core runtime {1} requires at least Kotlin {2}. " +
                     "Please update your Kotlin compiler and IDE plugin.",

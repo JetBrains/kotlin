@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.CompilerMultiplatformCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
@@ -31,8 +29,8 @@ abstract class KotlinCommonCompilation @Inject constructor(
         get() = super.compileKotlinTask as KotlinCompileCommon
 
     @Suppress("UNCHECKED_CAST")
-    override val compileTaskProvider: TaskProvider<KotlinCompilationTask<CompilerMultiplatformCommonOptions>>
-        get() = super.compileTaskProvider as TaskProvider<KotlinCompilationTask<CompilerMultiplatformCommonOptions>>
+    override val compileTaskProvider: TaskProvider<KotlinCompilationTask<KotlinMultiplatformCommonCompilerOptions>>
+        get() = super.compileTaskProvider as TaskProvider<KotlinCompilationTask<KotlinMultiplatformCommonCompilerOptions>>
 
     internal val isKlibCompilation: Boolean
         get() = target.project.isKotlinGranularMetadataEnabled && !forceCompilationToKotlinMetadata

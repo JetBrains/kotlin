@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingDeclarationSymbol
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.origin
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
@@ -55,15 +57,15 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         hasFactory && hasMarkedFactory
     }
 
-    internal val FirClassSymbol<*>.shouldHaveGeneratedSerializer: Boolean
-        get() = (isInternalSerializable && isFinalOrOpen()) || (classKind == ClassKind.ENUM_CLASS && hasSerializableAnnotationWithoutArgs && !runtimeHasEnumSerializerFactory)
-
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>): Set<Name> {
         val result = mutableSetOf<Name>()
-        if (classSymbol.shouldHaveGeneratedMethodsInCompanion && !classSymbol.isSerializableObject)
-            result += SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
-        if (classSymbol.shouldHaveGeneratedSerializer /* TODO && !classSymbol.hasCompanionObjectAsSerializer*/)
-            result += SerialEntityNames.SERIALIZER_CLASS_NAME
+        with(session) {
+            if (classSymbol.shouldHaveGeneratedMethodsInCompanion && !classSymbol.isSerializableObject)
+                result += SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
+            if (classSymbol.shouldHaveGeneratedSerializer(!runtimeHasEnumSerializerFactory) /* TODO && !classSymbol.hasCompanionObjectAsSerializer*/)
+                result += SerialEntityNames.SERIALIZER_CLASS_NAME
+        }
+
         return result
     }
 
@@ -115,7 +117,8 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                     }
                 }
             }
-            else -> if (classSymbol.isSerializableObject) result += SerialEntityNames.SERIALIZER_PROVIDER_NAME
+
+            else -> if (with(session) { classSymbol.isSerializableObject }) result += SerialEntityNames.SERIALIZER_PROVIDER_NAME
         }
         return result
     }
@@ -129,8 +132,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             useSiteSuperType.scopeForSupertype(session, scopeSession, owner.fir)
         }
         val targets = scopes.flatMap { extractor(it) }
-        val target = targets.singleOrNull() ?: error("Multiple overrides found for ${callableId.callableName}")
-        return target
+        return targets.singleOrNull() ?: error("Multiple overrides found for ${callableId.callableName}")
     }
 
     // TODO: support @Serializer(for)
@@ -138,7 +140,14 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         val owner = context?.owner ?: return emptyList()
         if (callableId.callableName == SerialEntityNames.SERIALIZER_PROVIDER_NAME) {
-            val serializableClass = owner.getSerializableClassSymbolIfCompanion(session) ?: return emptyList()
+            val serializableClass = if (owner.isCompanion) {
+                val containingSymbol = owner.getContainingDeclarationSymbol(session) as? FirClassSymbol<*> ?: return emptyList()
+                if (with(session) { containingSymbol.shouldHaveGeneratedMethodsInCompanion }) containingSymbol else null
+            } else {
+                if (with(session) { owner.isSerializableObject }) owner else null
+            }
+
+            serializableClass ?: return emptyList()
             return listOf(generateSerializerGetterInCompanion(owner, serializableClass, callableId))
         }
         if (owner.name != SerialEntityNames.SERIALIZER_CLASS_NAME) return emptyList()
@@ -228,7 +237,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
 
     // FIXME: it seems that this list will always be used, why not provide it automatically?
     private val matchedClasses by lazy {
-        session.predicateBasedProvider.getSymbolsByPredicate(FirSerializationPredicates.annotatedWithSerializable)
+        session.predicateBasedProvider.getSymbolsByPredicate(FirSerializationPredicates.annotatedWithSerializableOrMeta)
             .filterIsInstance<FirRegularClassSymbol>()
     }
 
@@ -324,7 +333,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             name = SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
             symbol = FirRegularClassSymbol(classId)
             superTypeRefs += session.builtinTypes.anyType
-            if (owner.companionNeedsSerializerFactory()) {
+            if (with(session) { owner.companionNeedsSerializerFactory }) {
                 val serializerFactoryClassId = ClassId(SerializationPackages.internalPackageFqName, SERIALIZER_FACTORY_INTERFACE_NAME)
                 superTypeRefs += serializerFactoryClassId.constructClassLikeType(emptyArray(), false).toFirResolvedTypeRef()
             }
@@ -333,16 +342,20 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
     }
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
-        register(FirSerializationPredicates.annotatedWithSerializable)
+        register(FirSerializationPredicates.annotatedWithSerializableOrMeta, FirSerializationPredicates.hasMetaAnnotation)
     }
 
-    private fun FirClassSymbol<*>.companionNeedsSerializerFactory(): Boolean {
-        if (!(moduleData.platform.isNative() || moduleData.platform.isJs())) return false
-        if (isSerializableObject) return true
-        if (isSerializableEnum) return true
-        if (isAbstractOrSealedSerializableClass) return true
-        if (isSealedSerializableInterface) return true
-        if (typeParameterSymbols.isEmpty()) return false
-        return true
-    }
+    context(FirSession)
+    @Suppress("IncorrectFormatting") // KTIJ-22227
+    private val FirClassSymbol<*>.companionNeedsSerializerFactory: Boolean
+        get() {
+            if (!(moduleData.platform.isNative() || moduleData.platform.isJs())) return false
+            if (isSerializableObject) return true
+            if (isSerializableEnum) return true
+            if (isAbstractOrSealedSerializableClass) return true
+            if (isSealedSerializableInterface) return true
+            if (typeParameterSymbols.isEmpty()) return false
+            return true
+        }
+
 }

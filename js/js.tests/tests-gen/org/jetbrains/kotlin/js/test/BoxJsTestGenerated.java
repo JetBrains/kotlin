@@ -797,6 +797,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("kt54382.kt")
+        public void testKt54382() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/kt54382.kt");
+        }
+
+        @Test
         @TestMetadata("lambdaWithValueClass.kt")
         public void testLambdaWithValueClass() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/lambdaWithValueClass.kt");
@@ -818,6 +824,18 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("onlyInlineSuspendFunction.kt")
         public void testOnlyInlineSuspendFunction() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/onlyInlineSuspendFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("suspendFunctionAsSupertypeIsCheck.kt")
+        public void testSuspendFunctionAsSupertypeIsCheck() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/suspendFunctionAsSupertypeIsCheck.kt");
+        }
+
+        @Test
+        @TestMetadata("suspendFunctionIsAs.kt")
+        public void testSuspendFunctionIsAs() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/suspendFunctionIsAs.kt");
         }
     }
 
@@ -1887,18 +1905,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             @Test
             public void testAllFilesPresentInExport() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/export"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
-            }
-
-            @Test
-            @TestMetadata("overriddenExternalMethodWithSameStableNameMethod.kt")
-            public void testOverriddenExternalMethodWithSameStableNameMethod() throws Exception {
-                runTest("js/js.translator/testData/box/esModules/export/overriddenExternalMethodWithSameStableNameMethod.kt");
-            }
-
-            @Test
-            @TestMetadata("reservedModuleName.kt")
-            public void testReservedModuleName() throws Exception {
-                runTest("js/js.translator/testData/box/esModules/export/reservedModuleName.kt");
             }
         }
 

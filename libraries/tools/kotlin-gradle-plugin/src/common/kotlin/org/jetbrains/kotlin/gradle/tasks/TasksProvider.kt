@@ -22,9 +22,7 @@ import org.gradle.api.UnknownTaskException
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.CompilerJsOptions
-import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
-import org.jetbrains.kotlin.gradle.dsl.CompilerMultiplatformCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.tasks.configuration.*
 
@@ -102,7 +100,7 @@ internal open class KotlinTasksProvider {
     open fun registerKotlinJVMTask(
         project: Project,
         taskName: String,
-        compilerOptions: CompilerJvmOptions,
+        compilerOptions: KotlinJvmCompilerOptions,
         configuration: KotlinCompileConfig
     ): TaskProvider<out KotlinCompile> {
         return project.registerTask(taskName, KotlinCompile::class.java, constructorArgs = listOf(compilerOptions)).also {
@@ -113,7 +111,7 @@ internal open class KotlinTasksProvider {
     fun registerKotlinJSTask(
         project: Project,
         taskName: String,
-        compilerOptions: CompilerJsOptions,
+        compilerOptions: KotlinJsCompilerOptions,
         configuration: Kotlin2JsCompileConfig
     ): TaskProvider<out Kotlin2JsCompile> {
         return project.registerTask(
@@ -136,7 +134,7 @@ internal open class KotlinTasksProvider {
     fun registerKotlinCommonTask(
         project: Project,
         taskName: String,
-        compilerOptions: CompilerMultiplatformCommonOptions,
+        compilerOptions: KotlinMultiplatformCommonCompilerOptions,
         configuration: KotlinCompileCommonConfig
     ): TaskProvider<out KotlinCompileCommon> {
         return project.registerTask(

@@ -50,6 +50,18 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("genericBaseClassMultiple.kt")
+    public void testGenericBaseClassMultiple() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/genericBaseClassMultiple.kt");
+    }
+
+    @Test
+    @TestMetadata("genericBaseClassSimple.kt")
+    public void testGenericBaseClassSimple() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/genericBaseClassSimple.kt");
+    }
+
+    @Test
     @TestMetadata("generics.kt")
     public void testGenerics() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/generics.kt");
@@ -80,8 +92,20 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("multipleGenericsPolymorphic.kt")
+    public void testMultipleGenericsPolymorphic() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/multipleGenericsPolymorphic.kt");
+    }
+
+    @Test
     @TestMetadata("sealedInterfaces.kt")
     public void testSealedInterfaces() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/sealedInterfaces.kt");
+    }
+
+    @Test
+    @TestMetadata("starProjections.kt")
+    public void testStarProjections() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/starProjections.kt");
     }
 }

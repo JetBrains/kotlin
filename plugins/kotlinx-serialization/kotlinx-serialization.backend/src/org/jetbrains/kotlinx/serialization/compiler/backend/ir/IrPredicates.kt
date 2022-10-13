@@ -236,5 +236,16 @@ fun IrType.classOrUpperBound(): IrClassSymbol? = when(val cls = classifierOrNull
     else -> null
 }
 
+/**
+ * Replaces star projections with representativeUpperBound of respective type parameter
+ * to mimic behaviour of old FE (see StarProjectionImpl.getType())
+ */
+fun IrSimpleType.argumentTypesOrUpperBounds(): List<IrType> {
+    val params = this.classOrUpperBound()!!.owner.typeParameters
+    return arguments.mapIndexed { index, argument ->
+        argument.typeOrNull ?: params[index].representativeUpperBound
+    }
+}
+
 internal inline fun IrClass.shouldHaveSpecificSyntheticMethods(functionPresenceChecker: () -> IrSimpleFunction?) =
     !isValue && (isAbstractOrSealedSerializableClass || functionPresenceChecker() != null)

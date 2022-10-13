@@ -53,6 +53,7 @@ interface KotlinJsTargetDsl : KotlinTarget {
     }
 
     fun useCommonJs()
+    fun useEsModules()
 
     val binaries: KotlinJsBinaryContainer
 

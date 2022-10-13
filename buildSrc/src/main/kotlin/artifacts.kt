@@ -29,6 +29,7 @@ import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 import plugins.KotlinBuildPublishingPlugin
 import plugins.mainPublicationName
+import java.io.File
 
 
 private const val MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME = "testJar"
@@ -77,11 +78,19 @@ fun Jar.addEmbeddedRuntime() {
         dependsOn(embedded)
         val archiveOperations = project.serviceOf<ArchiveOperations>()
         from {
-            embedded.map {
-                if (it.extension.equals("jar", ignoreCase = true)) {
-                    archiveOperations.zipTree(it)
+            embedded.map { dependency: File ->
+                check(!dependency.path.contains("kotlin-stdlib")) {
+                    """
+                    |There's an attempt to have an embedded kotlin-stdlib in $project which is likely a misconfiguration
+                    |All embedded dependencies:
+                    |    ${embedded.files.joinToString(separator = "\n|    ")}
+                    """.trimMargin()
+                }
+
+                if (dependency.extension.equals("jar", ignoreCase = true)) {
+                    archiveOperations.zipTree(dependency)
                 } else {
-                    it
+                    dependency
                 }
             }
         }

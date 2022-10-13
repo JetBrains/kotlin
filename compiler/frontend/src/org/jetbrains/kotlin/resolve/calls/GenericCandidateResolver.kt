@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.ResolveConstruct
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val SPECIAL_FUNCTION_NAMES = ResolveConstruct.values().map { it.specialFunctionName }.toSet()
 
@@ -133,7 +132,7 @@ class GenericCandidateResolver(
 
         if (context.candidateCall is VariableAsFunctionResolvedCall) return
 
-        val candidateDescriptor = context.candidateCall.candidateDescriptor.safeAs<FunctionDescriptor>() ?: return
+        val candidateDescriptor = context.candidateCall.candidateDescriptor as? FunctionDescriptor ?: return
 
         val binaryParent = context.call.calleeExpression?.getBinaryWithTypeParent() ?: return
         val operationType = binaryParent.operationReference.getReferencedNameElementType().takeIf {

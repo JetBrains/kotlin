@@ -61,10 +61,11 @@ class ResolvedAtomCompleter(
     private val moduleDescriptor: ModuleDescriptor,
     private val dataFlowValueFactory: DataFlowValueFactory,
     private val typeApproximator: TypeApproximator,
-    private val missingSupertypesResolver: MissingSupertypesResolver
+    private val missingSupertypesResolver: MissingSupertypesResolver,
+    private val callComponents: KotlinCallComponents,
 ) {
     private val topLevelCallCheckerContext = CallCheckerContext(
-        topLevelCallContext, deprecationResolver, moduleDescriptor, missingSupertypesResolver
+        topLevelCallContext, deprecationResolver, moduleDescriptor, missingSupertypesResolver, callComponents,
     )
     private val topLevelTrace = topLevelCallCheckerContext.trace
 
@@ -186,7 +187,8 @@ class ResolvedAtomCompleter(
                 resolutionContextForPartialCall.replaceBindingTrace(topLevelTrace),
                 deprecationResolver,
                 moduleDescriptor,
-                missingSupertypesResolver
+                missingSupertypesResolver,
+                callComponents,
             )
         else
             topLevelCallCheckerContext
@@ -240,7 +242,7 @@ class ResolvedAtomCompleter(
                 ?: return (subResolvedAtoms!!.single() as ResolvedLambdaAtom).isCoercedToUnit
             val returnTypes =
                 resultArgumentsInfo.nonErrorArguments.map {
-                    val type = it.safeAs<SimpleKotlinCallArgument>()?.receiver?.receiverValue?.type ?: return@map null
+                    val type = (it as? SimpleKotlinCallArgument)?.receiver?.receiverValue?.type ?: return@map null
                     val unwrappedType = when (type) {
                         is WrappedType -> type.unwrap()
                         is UnwrappedType -> type

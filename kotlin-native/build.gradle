@@ -225,13 +225,14 @@ task shadowJar(type: ShadowJar) {
     mergeServiceFiles()
     destinationDirectory.set(file("$distDir/konan/lib"))
     archiveBaseName.set("kotlin-native")
+    archiveVersion.set("")
+    archiveClassifier.set("")
     // Exclude trove4j because of license agreement.
     exclude "*trove4j*"
     exclude("META-INF/versions/9/module-info.class")
     configurations = [project.configurations.distPack]
-    archiveClassifier.set(null)
     outputs.upToDateWhen {
-        archiveFile.getOrNull()?.asFile.exists() ?: false
+        archiveFile.getOrNull()?.asFile?.exists() ?: false
     }
 }
 

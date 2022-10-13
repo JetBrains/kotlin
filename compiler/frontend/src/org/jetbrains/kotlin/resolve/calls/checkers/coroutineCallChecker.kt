@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
-import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val COROUTINE_CONTEXT_FQ_NAME =
     StandardNames.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("coroutineContext"))
@@ -48,10 +46,12 @@ fun PropertyDescriptor.isBuiltInCoroutineContext() =
 
 private val ALLOWED_SCOPE_KINDS = setOf(LexicalScopeKind.FUNCTION_INNER_SCOPE, LexicalScopeKind.FUNCTION_HEADER_FOR_DESTRUCTURING)
 
-fun findEnclosingSuspendFunction(context: CallCheckerContext): FunctionDescriptor? =
-    context.scope.parentsWithSelf.firstOrNull {
-        it is LexicalScope && it.kind in ALLOWED_SCOPE_KINDS && it.ownerDescriptor.safeAs<FunctionDescriptor>()?.isSuspend == true
-    }?.cast<LexicalScope>()?.ownerDescriptor?.cast()
+fun findEnclosingSuspendFunction(context: CallCheckerContext): FunctionDescriptor? {
+    val scope = context.scope.parentsWithSelf.firstOrNull {
+        it is LexicalScope && it.kind in ALLOWED_SCOPE_KINDS && (it.ownerDescriptor as? FunctionDescriptor)?.isSuspend == true
+    } as LexicalScope?
+    return scope?.ownerDescriptor as FunctionDescriptor?
+}
 
 object CoroutineSuspendCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {

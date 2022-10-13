@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.internal
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptionsDefault
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileArgumentsProvider
@@ -77,7 +77,7 @@ internal open class KotlinJvmCompilerArgumentsContributor(
         args: K2JVMCompilerArguments,
         flags: Collection<CompilerArgumentsConfigurationFlag>
     ) {
-        (compilerOptions as CompilerJvmOptionsDefault).fillDefaultValues(args)
+        (compilerOptions as KotlinJvmCompilerOptionsDefault).fillDefaultValues(args)
 
         super.contributeArguments(args, flags)
 

@@ -6,10 +6,10 @@ plugins {
 }
 
 dependencies {
-    embedded(project(":kotlin-assignment-compiler-plugin.common"))
-    embedded(project(":kotlin-assignment-compiler-plugin.k1"))
-    embedded(project(":kotlin-assignment-compiler-plugin.k2"))
-    embedded(project(":kotlin-assignment-compiler-plugin.cli"))
+    embedded(project(":kotlin-assignment-compiler-plugin.common")) { isTransitive = false }
+    embedded(project(":kotlin-assignment-compiler-plugin.k1")) { isTransitive = false }
+    embedded(project(":kotlin-assignment-compiler-plugin.k2")) { isTransitive = false }
+    embedded(project(":kotlin-assignment-compiler-plugin.cli")) { isTransitive = false }
 
     testApi(project(":compiler:backend"))
     testApi(project(":compiler:cli"))

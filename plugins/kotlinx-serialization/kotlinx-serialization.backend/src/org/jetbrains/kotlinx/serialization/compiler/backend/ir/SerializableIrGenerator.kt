@@ -369,6 +369,7 @@ class SerializableIrGenerator(
         val serializerDescriptor = irClass.classSerializer(compilerContext)?.owner ?: return
         if (irClass.shouldHaveSpecificSyntheticMethods { serializerDescriptor.findPluginGeneratedMethod(SAVE) }) {
             val func = irClass.findWriteSelfMethod() ?: return
+            func.origin = SERIALIZATION_PLUGIN_ORIGIN
             generateWriteSelfMethod(func)
         }
     }

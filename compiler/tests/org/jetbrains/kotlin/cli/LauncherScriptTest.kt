@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -81,11 +80,13 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         }
     }
 
-    private fun quoteIfNeeded(args: Array<out String>): Array<String> =
-        if (SystemInfo.isWindows) args.map {
+    private fun quoteIfNeeded(args: Array<out String>): Array<String> {
+        @Suppress("UNCHECKED_CAST")
+        return if (SystemInfo.isWindows) args.map {
             if (it.contains('=') || it.contains(" ") || it.contains(";") || it.contains(",")) "\"$it\"" else it
         }.toTypedArray()
-        else args.cast()
+        else args as Array<String>
+    }
 
     private val testDataDirectory: String
         get() = KtTestUtil.getTestDataPathBase() + "/launcher"

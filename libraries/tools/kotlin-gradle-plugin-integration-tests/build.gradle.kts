@@ -329,6 +329,7 @@ tasks.withType<Test> {
     val jdk10Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_10_0).map { it.metadata.installationPath.asFile.absolutePath }
     val jdk11Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0).map { it.metadata.installationPath.asFile.absolutePath }
     val jdk16Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_16_0).map { it.metadata.installationPath.asFile.absolutePath }
+    val jdk17Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0).map { it.metadata.installationPath.asFile.absolutePath }
     val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").forUseAtConfigurationTime().orNull
 
     // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase
@@ -338,6 +339,7 @@ tasks.withType<Test> {
         systemProperty("jdk10Home", jdk10Provider.get())
         systemProperty("jdk11Home", jdk11Provider.get())
         systemProperty("jdk16Home", jdk16Provider.get())
+        systemProperty("jdk17Home", jdk17Provider.get())
         if (mavenLocalRepo != null) {
             systemProperty("maven.repo.local", mavenLocalRepo)
         }

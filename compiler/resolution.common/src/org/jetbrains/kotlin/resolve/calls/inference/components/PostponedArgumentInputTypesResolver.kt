@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartSet
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 private typealias Context = ConstraintSystemCompletionContext
@@ -530,7 +529,7 @@ class PostponedArgumentInputTypesResolver(
         dependencyProvider: TypeVariableDependencyInformationProvider,
         resolvedAtomProvider: ResolvedAtomProvider
     ): Boolean = with(c) {
-        val expectedType = argument.run { safeAs<PostponedAtomWithRevisableExpectedType>()?.revisedExpectedType ?: expectedType }
+        val expectedType = argument.run { (this as? PostponedAtomWithRevisableExpectedType)?.revisedExpectedType ?: expectedType }
 
         if (expectedType != null && expectedType.isFunctionOrKFunctionWithAnySuspendability()) {
             val wasFixedSomeVariable = c.fixNextReadyVariableForParameterType(
