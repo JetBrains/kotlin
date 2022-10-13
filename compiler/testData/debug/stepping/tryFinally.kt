@@ -79,13 +79,17 @@ fun box() {
 // test.kt:29 box
 // test.kt:5 foo
 // test.kt:21 mightThrow
+// test.kt:22 mightThrow
 // test.kt:11 foo
 // test.kt:25 mightThrow2
+// test.kt:26 mightThrow2
 // test.kt:10 foo
+// test.kt:15 foo
 // test.kt:30 box
 // test.kt:31 box
 // test.kt:5 foo
 // test.kt:21 mightThrow
+// test.kt:22 mightThrow
 // test.kt:11 foo
 // test.kt:25 mightThrow2
 // test.kt:25 mightThrow2

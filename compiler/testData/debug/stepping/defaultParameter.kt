@@ -25,9 +25,11 @@ fun box() {
 
 // EXPECTATIONS JS_IR
 // test.kt:11 box
+// test.kt:3 <init>
 // test.kt:11 box
-// test.kt:6 foo$default
 // test.kt:4 computeParam
 // test.kt:6 foo$default
 // test.kt:6 foo$default
+// test.kt:7 foo
 // test.kt:6 foo$default
+// test.kt:12 box

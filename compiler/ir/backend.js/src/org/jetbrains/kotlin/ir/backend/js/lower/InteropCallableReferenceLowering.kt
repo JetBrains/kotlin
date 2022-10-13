@@ -353,11 +353,13 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         lambdaContextMapping: Map<IrFieldSymbol, IrValueSymbol>,
         outerReceiverMapping: Map<IrFieldSymbol, IrGetField> = emptyMap()
     ): IrBlockBody {
-        val body = invokeFun.body
+        val oldBody = invokeFun.body as? IrBlockBody
             ?: compilationException(
                 "invoke() method has to have a body",
                 invokeFun
             )
+        // Don't use offsets from oldBody, use offsets from invokeFun instead. This is more precise.
+        val body = context.irFactory.createBlockBody(invokeFun.startOffset, invokeFun.endOffset, oldBody.statements)
 
         fun IrExpression.getValue(d: IrValueSymbol): IrExpression = IrGetValueImpl(startOffset, endOffset, d)
         fun IrExpression.getCastedValue(d: IrValueSymbol, toType: IrType): IrExpression =
@@ -406,10 +408,20 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
         if (invokeFun.returnType.isUnit()) {
             val unitValue = JsIrBuilder.buildGetObjectValue(context.irBuiltIns.unitType, context.irBuiltIns.unitClass)
-            (body as IrBlockBody).statements.add(IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingType, lambdaDeclaration.symbol, unitValue))
+            // Set both offsets of the IrReturn to body.endOffset - 1 so that a breakpoint set at the closing brace of a lambda expression
+            // could be hit.
+            body.statements.add(
+                IrReturnImpl(
+                    body.endOffset - 1,
+                    body.endOffset - 1,
+                    context.irBuiltIns.nothingType,
+                    lambdaDeclaration.symbol,
+                    unitValue
+                )
+            )
         }
 
-        return body as IrBlockBody
+        return body
     }
 
     private fun buildLambdaBody(instance: IrVariable, lambdaDeclaration: IrSimpleFunction, invokeFun: IrSimpleFunction): IrBlockBody {

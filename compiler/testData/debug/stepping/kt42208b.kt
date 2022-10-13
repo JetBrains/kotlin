@@ -28,3 +28,4 @@ inline fun foo() = {
 // test.kt:4 box
 // test.kt:5 box
 // test1.kt:7 box$lambda
+// test.kt:6 box

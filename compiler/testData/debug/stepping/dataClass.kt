@@ -64,7 +64,9 @@ fun box() {
 // test.kt:13 box
 // test.kt:3 <init>
 // test.kt:3 <init>
+// test.kt:3 <init>
 // test.kt:14 box
+// test.kt:3 <init>
 // test.kt:3 <init>
 // test.kt:3 <init>
 // test.kt:14 box
@@ -87,14 +89,16 @@ fun box() {
 // test.kt:18 box
 // test.kt:1 copy$default
 // test.kt:1 copy$default
-// test.kt:1 copy$default
 // test.kt:1 copy
+// test.kt:3 <init>
 // test.kt:3 <init>
 // test.kt:3 <init>
 // test.kt:19 box
 // test.kt:5 <init>
 // test.kt:5 <init>
+// test.kt:5 <init>
 // test.kt:20 box
+// test.kt:5 <init>
 // test.kt:5 <init>
 // test.kt:5 <init>
 // test.kt:20 box
@@ -112,3 +116,5 @@ fun box() {
 // test.kt:9 copy
 // test.kt:5 <init>
 // test.kt:5 <init>
+// test.kt:5 <init>
+// test.kt:25 box

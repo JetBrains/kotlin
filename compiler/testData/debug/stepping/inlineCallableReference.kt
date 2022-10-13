@@ -39,3 +39,4 @@ inline fun f(block: () -> Unit) {
 // test.kt:5 box
 // test.kt:8 box
 // test.kt:10 box
+// test.kt:12 box

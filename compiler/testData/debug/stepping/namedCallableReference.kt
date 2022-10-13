@@ -32,8 +32,10 @@ fun g() {}
 // EXPECTATIONS JS_IR
 // test.kt:3 box
 // test.kt:4 box
-// test.kt:4 g$ref
 // test.kt:4 box
 // test.kt:8 f
 // test.kt:4 g$ref$lambda
+// test.kt:11 g
 // test.kt:4 g$ref$lambda
+// test.kt:9 f
+// test.kt:5 box
