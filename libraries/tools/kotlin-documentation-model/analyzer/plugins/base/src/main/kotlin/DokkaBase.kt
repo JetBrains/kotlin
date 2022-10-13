@@ -36,6 +36,7 @@ import org.jetbrains.dokka.base.translators.descriptors.ExternalClasslikesTransl
 import org.jetbrains.dokka.base.translators.descriptors.ExternalDocumentablesProvider
 import org.jetbrains.dokka.base.utils.NoopIntellijLoggerFactory
 import org.jetbrains.dokka.plugability.DokkaPlugin
+import org.jetbrains.dokka.plugability.configuration
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
 import org.jetbrains.dokka.transformers.pages.PageTransformer
 
@@ -186,7 +187,12 @@ class DokkaBase : DokkaPlugin() {
     }
 
     val defaultKotlinAnalysis by extending {
-        kotlinAnalysis providing { ctx -> KotlinAnalysis(ctx.configuration.sourceSets, ctx.logger) }
+        kotlinAnalysis providing { ctx ->
+            KotlinAnalysis(
+                sourceSets = ctx.configuration.sourceSets,
+                logger = ctx.logger
+            )
+        }
     }
 
     val locationProvider by extending {
