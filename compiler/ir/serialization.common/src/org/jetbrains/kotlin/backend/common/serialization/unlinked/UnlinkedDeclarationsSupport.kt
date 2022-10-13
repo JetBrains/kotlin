@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 
 interface UnlinkedDeclarationsSupport {
-    val allowUnboundSymbols: Boolean
+    val partialLinkageEnabled: Boolean
 
     /** For general use in IR linker. */
     fun markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder: FakeOverrideBuilder)
@@ -29,7 +29,7 @@ interface UnlinkedDeclarationsSupport {
 
     companion object {
         val DISABLED = object : UnlinkedDeclarationsSupport {
-            override val allowUnboundSymbols get() = false
+            override val partialLinkageEnabled get() = false
             override fun markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder: FakeOverrideBuilder) = Unit
             override fun markUsedClassifiersInInlineLazyIrFunction(function: IrFunction) = Unit
             override fun processUnlinkedDeclarations(messageLogger: IrMessageLogger, lazyRoots: () -> List<IrElement>) = Unit

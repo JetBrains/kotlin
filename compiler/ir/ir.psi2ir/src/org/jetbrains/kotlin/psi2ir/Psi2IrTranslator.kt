@@ -113,7 +113,7 @@ class Psi2IrTranslator(
     }
 
     private fun GeneratorContext.checkNoUnboundSymbols(whenDetected: () -> String) {
-        if (!configuration.allowUnboundSymbols)
+        if (!configuration.partialLinkageEnabled)
             checkNoUnboundSymbols(symbolTable, whenDetected())
     }
 }

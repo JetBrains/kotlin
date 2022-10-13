@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupportImpl
 import org.jetbrains.kotlin.backend.konan.descriptors.isForwardDeclarationModule
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
@@ -52,11 +51,11 @@ internal fun Context.psiToIr(
     val expectActualLinker = config.configuration[CommonConfigurationKeys.EXPECT_ACTUAL_LINKER] ?: false
     val messageLogger = config.configuration[IrMessageLogger.IR_MESSAGE_LOGGER] ?: IrMessageLogger.None
 
-    val allowUnboundSymbols = config.configuration[KonanConfigKeys.PARTIAL_LINKAGE] ?: false
+    val partialLinkageEnabled = config.configuration[KonanConfigKeys.PARTIAL_LINKAGE] ?: false
 
     val translator = Psi2IrTranslator(
             config.configuration.languageVersionSettings,
-            Psi2IrConfiguration(ignoreErrors = false, allowUnboundSymbols = allowUnboundSymbols),
+            Psi2IrConfiguration(ignoreErrors = false, partialLinkageEnabled),
             messageLogger::checkNoUnboundSymbols
     )
     val generatorContext = translator.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
@@ -123,8 +122,6 @@ internal fun Context.psiToIr(
                         config.resolve.includedLibraries.map { it.uniqueName }
                 ).associateWith { friendModules }
 
-        val unlinkedDeclarationsSupport = UnlinkedDeclarationsSupportImpl(generatorContext.irBuiltIns, allowUnboundSymbols)
-
         KonanIrLinker(
                 currentModule = moduleDescriptor,
                 translationPluginContext = translationContext,
@@ -136,10 +133,10 @@ internal fun Context.psiToIr(
                 stubGenerator = stubGenerator,
                 cenumsProvider = irProviderForCEnumsAndCStructs,
                 exportedDependencies = exportedDependencies,
+                partialLinkageEnabled = partialLinkageEnabled,
                 cachedLibraries = config.cachedLibraries,
                 lazyIrForCaches = config.lazyIrForCaches,
                 libraryBeingCached = config.libraryToCache,
-                unlinkedDeclarationsSupport = unlinkedDeclarationsSupport,
                 userVisibleIrModulesSupport = config.userVisibleIrModulesSupport
         ).also { linker ->
 

@@ -224,7 +224,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
         val typeTranslator =
             TypeTranslatorImpl(symbolTable, myEnvironment.configuration.languageVersionSettings, testDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(testDescriptor.builtIns, typeTranslator, symbolTable)
-        val irLinker = JsIrLinker(null, IrMessageLogger.None, irBuiltIns, symbolTable, null)
+        val irLinker = JsIrLinker(null, IrMessageLogger.None, irBuiltIns, symbolTable, partialLinkageEnabled = false, null)
         irLinker.deserializeIrModuleHeader(stdlibDescriptor, stdlib)
         val testModule = irLinker.deserializeIrModuleHeader(testDescriptor, klib, { DeserializationStrategy.ALL })
         irLinker.init(null, emptyList())
@@ -290,7 +290,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
         val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl, NameProvider.DEFAULT)
         val context = psi2Ir.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
         val irBuiltIns = context.irBuiltIns
-        val irLinker = JsIrLinker(moduleDescriptor, messageLogger, irBuiltIns, symbolTable, null)
+        val irLinker = JsIrLinker(moduleDescriptor, messageLogger, irBuiltIns, symbolTable, partialLinkageEnabled = false, null)
         irLinker.deserializeIrModuleHeader(stdlibDescriptor, stdlib)
 
         return psi2Ir.generateModuleFragment(context, ktFiles, listOf(irLinker), emptyList(), expectActualSymbols) to bindingContext

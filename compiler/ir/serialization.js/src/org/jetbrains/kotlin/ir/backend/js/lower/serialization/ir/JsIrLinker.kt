@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.serialization.*
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupport
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupportImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
@@ -22,13 +20,10 @@ import org.jetbrains.kotlin.library.containsErrorCode
 
 class JsIrLinker(
     private val currentModule: ModuleDescriptor?, messageLogger: IrMessageLogger, builtIns: IrBuiltIns, symbolTable: SymbolTable,
+    partialLinkageEnabled: Boolean,
     override val translationPluginContext: TranslationPluginContext?,
     private val icData: ICData? = null,
     friendModules: Map<String, Collection<String>> = emptyMap(),
-    override val unlinkedDeclarationsSupport: UnlinkedDeclarationsSupport = UnlinkedDeclarationsSupportImpl(
-        builtIns,
-        allowUnboundSymbols = false
-    ),
     private val stubGenerator: DeclarationStubGenerator? = null
 ) : KotlinIrLinker(
     currentModule = currentModule,
@@ -36,6 +31,7 @@ class JsIrLinker(
     builtIns = builtIns,
     symbolTable = symbolTable,
     exportedDependencies = emptyList(),
+    partialLinkageEnabled = partialLinkageEnabled,
     symbolProcessor = { symbol, idSig ->
         if (idSig.isLocal) {
             symbol.privateSignature = IdSignature.CompositeSignature(IdSignature.FileSignature(fileSymbol), idSig)
