@@ -23,27 +23,20 @@ import com.intellij.util.io.EnumeratorStringDescriptor
 import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.build.GeneratedJvmClass
-import org.jetbrains.kotlin.incremental.DifferenceCalculatorForClass.Companion.getNonPrivateMembers
-import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getNonPrivateMembers
 import org.jetbrains.kotlin.incremental.storage.*
-import org.jetbrains.kotlin.inline.inlineAccessors
-import org.jetbrains.kotlin.inline.inlineFunctionsAndAccessors
+import org.jetbrains.kotlin.inline.InlineFunction
+import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
+import org.jetbrains.kotlin.inline.InlinePropertyAccessor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.org.objectweb.asm.*
-import org.jetbrains.org.objectweb.asm.ClassReader.SKIP_CODE
-import org.jetbrains.org.objectweb.asm.ClassReader.SKIP_DEBUG
 import java.io.File
 import java.security.MessageDigest
 
@@ -439,7 +432,7 @@ open class IncrementalJvmCache(
 
     // todo: reuse code with InlineFunctionsMap?
     private inner class ConstantsMap(storageFile: File) :
-        BasicStringMap<LinkedHashMap<String, Any>>(storageFile, LinkedHashMapExternalizer(StringExternalizer, ConstantExternalizer)) {
+        BasicStringMap<Map<String, Any>>(storageFile, MapExternalizer(StringExternalizer, ConstantValueExternalizer)) {
 
         operator fun contains(className: JvmClassName): Boolean =
             className.internalName in storage
@@ -487,7 +480,7 @@ open class IncrementalJvmCache(
             storage.remove(className.internalName)
         }
 
-        override fun dumpValue(value: LinkedHashMap<String, Any>): String =
+        override fun dumpValue(value: Map<String, Any>): String =
             value.dumpMap(Any::toString)
     }
 
@@ -567,7 +560,10 @@ open class IncrementalJvmCache(
     }
 
     private inner class InlineFunctionsMap(storageFile: File) :
-        BasicStringMap<LinkedHashMap<String, Long>>(storageFile, LinkedHashMapExternalizer(StringExternalizer, LongExternalizer)) {
+        BasicStringMap<Map<InlineFunctionOrAccessor, Long>>(
+            storageFile,
+            MapExternalizer(InlineFunctionOrAccessorExternalizer, LongExternalizer)
+        ) {
 
         @Synchronized
         fun process(kotlinClassInfo: KotlinClassInfo, changesCollector: ChangesCollector) {
@@ -581,34 +577,36 @@ open class IncrementalJvmCache(
                 storage.remove(key)
             }
 
-            for (methodSignature in oldMap.keys + newMap.keys) {
-                val inlineFunctionOrAccessorName = functionNameBySignature(methodSignature)
-                // Note: If we detect a change in an inline property accessor (e.g., `getFoo`), we have two options:
-                //   1. Report that property `foo` has changed (and ignore `getFoo`)
-                //   2. Report that property accessor `getFoo` has changed (and ignore `foo`)
-                // Both options are possible (the compiler generates `LookupSymbol`s for both `foo` and `getFoo` when `getFoo` is inlined).
-                // Currently, we choose option 2 as it is simpler (i.e., even though inline property accessors are not immediate members of
-                // a class/package, we treat them like immediate members).
-                changesCollector.collectMemberIfValueWasChanged(
-                    kotlinClassInfo.scopeFqName(),
-                    inlineFunctionOrAccessorName,
-                    oldMap[methodSignature],
-                    newMap[methodSignature]
-                )
+            // Note: If we detect a change in an inline function `foo` with @JvmName `fooJvmName`, we have two options:
+            //   1. Report that function `foo` has changed
+            //   2. Report that method `fooJvmName` has changed
+            //
+            // Similarly, if we detect a change in an inline property accessor with JvmName `getFoo` of property `foo`, we have two options:
+            //   1. Report that property `foo` has changed
+            //   2. Report that property accessor `getFoo` has changed
+            //
+            // The compiler is guaranteed to generate `LookupSymbol`s corresponding to option 1 when referencing inline functions/property
+            // accessors, but it is not guaranteed to generate `LookupSymbol`s corresponding to option 2. (Currently the compiler seems to
+            // support option 2 for *inline* functions/property accessors, but that may change.)
+            //
+            // In the following, we will choose option 1 as it is cleaner and safer.
+            val scope = kotlinClassInfo.scopeFqName()
+            (oldMap.keys + newMap.keys).forEach {
+                val name = when (it) {
+                    is InlineFunction -> it.kotlinFunctionName
+                    is InlinePropertyAccessor -> it.propertyName
+                }
+                changesCollector.collectMemberIfValueWasChanged(scope, name, oldMap[it], newMap[it])
             }
         }
-
-        // TODO get name in better way instead of using substringBefore
-        private fun functionNameBySignature(signature: String): String =
-            signature.substringBefore("(")
 
         @Synchronized
         fun remove(className: JvmClassName) {
             storage.remove(className.internalName)
         }
 
-        override fun dumpValue(value: LinkedHashMap<String, Long>): String =
-            value.dumpMap { java.lang.Long.toHexString(it) }
+        override fun dumpValue(value: Map<InlineFunctionOrAccessor, Long>): String =
+            value.mapKeys { it.key.jvmMethodSignature.asString() }.dumpMap { java.lang.Long.toHexString(it) }
     }
 
     private fun KotlinClassInfo.scopeFqName() = when (classKind) {
@@ -669,182 +667,3 @@ fun <K : Comparable<K>, V> Map<K, V>.dumpMap(dumpValue: (V) -> String): String =
 @TestOnly
 fun <T : Comparable<T>> Collection<T>.dumpCollection(): String =
     "[${sorted().joinToString(", ", transform = Any::toString)}]"
-
-/**
- * @param includeInlineAccessors If `true`, also include inline property accessors in the returned list. This is necessary because property
- * accessors are not immediate members of a class/package, and in some cases we treat them like immediate members (see
- * [org.jetbrains.kotlin.incremental.IncrementalJvmCache.InlineFunctionsMap.process]). Note that here we deal with *inline* property
- * accessors only as [org.jetbrains.kotlin.incremental.IncrementalJvmCache.InlineFunctionsMap.process] is written only to handle *inline*
- * property accessors (and functions).
- */
-fun ProtoData.getNonPrivateMemberNames(includeInlineAccessors: Boolean): List<String> {
-    return when (this) {
-        is ClassProtoData -> {
-            getNonPrivateMembers() + (if (includeInlineAccessors) {
-                inlineAccessors(proto.propertyList, nameResolver, excludePrivateAccessors = true).map { it.name }
-            } else emptyList())
-        }
-        is PackagePartProtoData -> {
-            getNonPrivateMembers() + (if (includeInlineAccessors) {
-                inlineAccessors(proto.propertyList, nameResolver, excludePrivateAccessors = true).map { it.name }
-            } else emptyList())
-        }
-    }
-}
-
-/**
- * Minimal information about a Kotlin class to compute recompilation-triggering changes during an incremental run of the `KotlinCompile`
- * task (see [IncrementalJvmCache.saveClassToCache]).
- *
- * It's important that this class contain only the minimal required information, as it will be part of the classpath snapshot of the
- * `KotlinCompile` task and the task needs to support compile avoidance. For example, this class should contain public method signatures,
- * and should not contain private method signatures, or method implementations.
- */
-class KotlinClassInfo constructor(
-    val classId: ClassId,
-    val classKind: KotlinClassHeader.Kind,
-    val classHeaderData: Array<String>, // Can be empty
-    val classHeaderStrings: Array<String>, // Can be empty
-    val multifileClassName: String?, // Not null iff classKind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
-    val constantsMap: LinkedHashMap<String, Any>,
-    val inlineFunctionsAndAccessorsMap: LinkedHashMap<String, Long>
-) {
-
-    val className: JvmClassName by lazy { JvmClassName.byClassId(classId) }
-
-    val protoMapValue: ProtoMapValue by lazy {
-        ProtoMapValue(
-            isPackageFacade = classKind != KotlinClassHeader.Kind.CLASS,
-            BitEncoding.decodeBytes(classHeaderData),
-            classHeaderStrings
-        )
-    }
-
-    /**
-     * The [ProtoData] of this class.
-     *
-     * NOTE: The caller needs to ensure `classKind != KotlinClassHeader.Kind.MULTIFILE_CLASS` first, as the compiler doesn't write proto
-     * data to [KotlinClassHeader.Kind.MULTIFILE_CLASS] classes.
-     */
-    val protoData: ProtoData by lazy {
-        check(classKind != KotlinClassHeader.Kind.MULTIFILE_CLASS) {
-            "Proto data is not available for KotlinClassHeader.Kind.MULTIFILE_CLASS: $classId"
-        }
-        protoMapValue.toProtoData(classId.packageFqName)
-    }
-
-    /** Name of the companion object of this class (default is "Companion") iff this class HAS a companion object, or null otherwise. */
-    val companionObject: ClassId? by lazy {
-        if (classKind == KotlinClassHeader.Kind.CLASS) {
-            (protoData as ClassProtoData).getCompanionObjectName()?.let {
-                classId.createNestedClassId(Name.identifier(it))
-            }
-        } else null
-    }
-
-    /** List of constants defined in this class iff this class IS a companion object, or null otherwise. The list could be empty. */
-    val constantsInCompanionObject: List<String>? by lazy {
-        if (classKind == KotlinClassHeader.Kind.CLASS) {
-            val classProtoData = protoData as ClassProtoData
-            if (classProtoData.proto.isCompanionObject) {
-                classProtoData.getConstants()
-            } else null
-        } else null
-    }
-
-    companion object {
-
-        fun createFrom(kotlinClass: LocalFileKotlinClass): KotlinClassInfo {
-            return createFrom(kotlinClass.classId, kotlinClass.classHeader, kotlinClass.fileContents)
-        }
-
-        fun createFrom(classId: ClassId, classHeader: KotlinClassHeader, classContents: ByteArray): KotlinClassInfo {
-            val (constants, inlineFunctionsAndAccessors) = getConstantsAndInlineFunctionsOrAccessors(classHeader, classContents)
-
-            return KotlinClassInfo(
-                classId,
-                classHeader.kind,
-                classHeader.data ?: emptyArray(),
-                classHeader.strings ?: emptyArray(),
-                classHeader.multifileClassName,
-                constants.mapKeysTo(LinkedHashMap()) { it.key.name },
-                inlineFunctionsAndAccessors.mapKeysTo(LinkedHashMap()) { it.key.asString() },
-            )
-        }
-    }
-}
-
-/**
- * Parses the class file only once to get both constants and inline functions/property accessors. This is faster than getting them
- * separately in two passes.
- */
-private fun getConstantsAndInlineFunctionsOrAccessors(
-    classHeader: KotlinClassHeader,
-    classContents: ByteArray
-): Pair<Map<JvmMemberSignature.Field, Any>, Map<JvmMemberSignature.Method, Long>> {
-    val constantsClassVisitor = ConstantsClassVisitor()
-    val inlineFunctionsAndAccessors = inlineFunctionsAndAccessors(classHeader)
-
-    return if (inlineFunctionsAndAccessors.isEmpty()) {
-        // parsingOptions = (SKIP_CODE, SKIP_DEBUG) as method bodies and debug info are not important for constants
-        ClassReader(classContents).accept(constantsClassVisitor, SKIP_CODE or SKIP_DEBUG)
-        Pair(constantsClassVisitor.getResult(), emptyMap())
-    } else {
-        val inlineFunctionsAndAccessorsClassVisitor =
-            InlineFunctionsAndAccessorsClassVisitor(inlineFunctionsAndAccessors.toSet(), constantsClassVisitor)
-        // parsingOptions must not include (SKIP_CODE, SKIP_DEBUG) as method bodies and debug info (e.g., line numbers) are important for
-        // inline functions/accessors
-        ClassReader(classContents).accept(inlineFunctionsAndAccessorsClassVisitor, 0)
-        Pair(constantsClassVisitor.getResult(), inlineFunctionsAndAccessorsClassVisitor.getResult())
-    }
-}
-
-private class ConstantsClassVisitor : ClassVisitor(Opcodes.API_VERSION) {
-    private val result = mutableMapOf<JvmMemberSignature.Field, Any>()
-
-    override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
-        if (access and Opcodes.ACC_PRIVATE == Opcodes.ACC_PRIVATE) return null
-
-        val staticFinal = Opcodes.ACC_STATIC or Opcodes.ACC_FINAL
-        if (value != null && access and staticFinal == staticFinal) {
-            result[JvmMemberSignature.Field(name, desc)] = value
-        }
-        return null
-    }
-
-    fun getResult() = result
-}
-
-private class InlineFunctionsAndAccessorsClassVisitor(
-    private val inlineFunctionsAndAccessors: Set<JvmMemberSignature.Method>,
-    cv: ConstantsClassVisitor // Note: cv must not override `visitMethod` (it will not be called with the current implementation below)
-) : ClassVisitor(Opcodes.API_VERSION, cv) {
-
-    private val result = mutableMapOf<JvmMemberSignature.Method, Long>()
-    private var classVersion: Int? = null
-
-    override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<out String>?) {
-        super.visit(version, access, name, signature, superName, interfaces)
-        classVersion = version
-    }
-
-    override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
-        if (access and Opcodes.ACC_PRIVATE == Opcodes.ACC_PRIVATE) return null
-
-        val method = JvmMemberSignature.Method(name, desc)
-        if (method !in inlineFunctionsAndAccessors) return null
-
-        val classWriter = ClassWriter(0)
-
-        // The `version` and `name` parameters are important (see KT-38857), the others can be null.
-        classWriter.visit(/* version */ classVersion!!, /* access */ 0, /* name */ "ClassWithOneMethod", null, null, null)
-
-        return object : MethodVisitor(Opcodes.API_VERSION, classWriter.visitMethod(access, name, desc, signature, exceptions)) {
-            override fun visitEnd() {
-                result[method] = classWriter.toByteArray().md5()
-            }
-        }
-    }
-
-    fun getResult() = result
-}

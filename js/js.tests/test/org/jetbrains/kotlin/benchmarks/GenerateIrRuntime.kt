@@ -326,7 +326,7 @@ class GenerateIrRuntime {
                 buildHistoryFile = buildHistoryFile,
                 modulesApiHistory = EmptyModulesApiHistory
             )
-            compiler.compile(allFiles, args, MessageCollector.NONE, providedChangedFiles = null)
+            compiler.compile(allFiles, args, MessageCollector.NONE, changedFiles = null)
         }
 
         val cleanBuildTime = System.nanoTime() - cleanBuildStart
