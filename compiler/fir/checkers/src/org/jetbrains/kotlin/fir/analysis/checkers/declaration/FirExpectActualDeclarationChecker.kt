@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -51,6 +51,8 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         checkAmbiguousExpects(symbol, compatibilityToMembersMap, symbol, context, reporter)
 
         val source = declaration.source
+
+        // Dead code guarded by L36?
         if (!declaration.isActual) {
             if (compatibilityToMembersMap.allStrongIncompatibilities()) return
 
@@ -104,6 +106,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
             }
 
             else -> {
+                // Key [Compatible] is proven in L93, but non-empty list is not proven, right? This is a convention?
                 val expected = compatibilityToMembersMap[Compatible]!!.first()
                 if (expected is FirRegularClassSymbol && expected.classKind == ClassKind.ANNOTATION_CLASS) {
                     val klass = symbol.expandedClass(session)
