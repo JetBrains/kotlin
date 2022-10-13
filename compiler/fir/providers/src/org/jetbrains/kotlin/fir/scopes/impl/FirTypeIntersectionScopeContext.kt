@@ -34,7 +34,7 @@ class FirTypeIntersectionScopeContext(
     private val overrideChecker: FirOverrideChecker,
     val scopes: List<FirTypeScope>,
     private val dispatchReceiverType: ConeSimpleKotlinType,
-    private val forSubtyping: Boolean,
+    private val forClassUseSiteScope: Boolean,
 ) {
     private val overrideService = session.overrideService
 
@@ -159,14 +159,23 @@ class FirTypeIntersectionScopeContext(
             val groupWithPrivate =
                 overrideService.extractBothWaysOverridable(allMembersWithScope.maxByVisibility(), allMembersWithScope, overrideChecker)
             val group = groupWithPrivate.filter { !Visibilities.isPrivate(it.member.fir.visibility) }.ifEmpty { groupWithPrivate }
-            val singleRealImplementation = group.size == 1 ||
-                    group.mapTo(mutableSetOf()) { it.member.fir.unwrapSubstitutionOverrides().symbol }.size == 1
-            val directOverrides = if (singleRealImplementation) group else group.onlyDirectlyInherited()
+            val directOverrides = group.onlyDirectlyInherited()
             val mostSpecific = overrideService.selectMostSpecificMembers(directOverrides, ReturnTypeCalculatorForFullBodyResolve)
-            // Always create a non-trivial intersection override when the base methods come from different scopes,
-            // even if one of them is more specific than the others. This is necessary for proper reporting of
-            // MANY_{IMPL,INTERFACES}_MEMBER_NOT_IMPLEMENTED diagnostics.
-            if ((!forSubtyping && mostSpecific.size > 1) || (!singleRealImplementation && directOverrides.size > 1)) {
+            val nonTrivial = if (forClassUseSiteScope) {
+                // Create a non-trivial intersection override when the base methods come from different scopes,
+                // even if one of them is more specific than the others. This is necessary for proper reporting of
+                // MANY_{IMPL,INTERFACES}_MEMBER_NOT_IMPLEMENTED diagnostics.
+                //
+                // It is also possible to have the opposite case (> 1 most specific member, but all members are from
+                // the same base scope), but this means there are different instantiations of the same base class,
+                // which should generally result in INCONSISTENT_TYPE_PARAMETER_VALUES errors.
+                directOverrides.size > 1 &&
+                        directOverrides.mapTo(mutableSetOf()) { it.member.fir.unwrapSubstitutionOverrides().symbol }.size > 1
+            } else {
+                // Create a non-trivial intersection override when return types should be intersected.
+                mostSpecific.size > 1
+            }
+            if (nonTrivial) {
                 result += ResultOfIntersection.NonTrivial(this, mostSpecific, group, containingScope = null)
             } else {
                 val (member, containingScope) = mostSpecific.first()
@@ -356,7 +365,7 @@ class FirTypeIntersectionScopeContext(
             newModality = newModality,
             newVisibility = newVisibility,
             newDispatchReceiverType = dispatchReceiverType,
-            newReturnType = if (!forSubtyping) intersectReturnTypes(mostSpecific) else null,
+            newReturnType = if (!forClassUseSiteScope) intersectReturnTypes(mostSpecific) else null,
         ).apply {
             originalForIntersectionOverrideAttr = keyFir
         }
@@ -383,7 +392,7 @@ class FirTypeIntersectionScopeContext(
             newDispatchReceiverType = dispatchReceiverType,
             // If any of the properties are vars and the types are not equal, these declarations are conflicting
             // anyway and their uses should result in an overload resolution error.
-            newReturnType = if (!forSubtyping && !mostSpecific.any { (it as FirPropertySymbol).fir.isVar })
+            newReturnType = if (!forClassUseSiteScope && !mostSpecific.any { (it as FirPropertySymbol).fir.isVar })
                 intersectReturnTypes(mostSpecific)
             else
                 null,
