@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.methods
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
@@ -214,5 +215,13 @@ internal class SymbolLightAccessorMethod(
 
     override fun getDefaultValue(): PsiAnnotationMemberValue? {
         return _defaultValue
+    }
+
+    override fun getTextOffset(): Int {
+        return lightMemberOrigin?.auxiliaryOriginalElement?.textOffset ?: super.getTextOffset()
+    }
+
+    override fun getTextRange(): TextRange {
+        return lightMemberOrigin?.auxiliaryOriginalElement?.textRange ?: super.getTextRange()
     }
 }
