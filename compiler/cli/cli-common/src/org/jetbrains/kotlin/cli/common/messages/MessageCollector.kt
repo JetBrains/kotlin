@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common.messages
 
+@JvmDefaultWithCompatibility
 interface MessageCollector {
     fun clear()
 
