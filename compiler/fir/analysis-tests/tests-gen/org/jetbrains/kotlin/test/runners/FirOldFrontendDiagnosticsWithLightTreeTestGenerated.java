@@ -29622,6 +29622,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("capturedSpecificity.kt")
+                public void testCapturedSpecificity() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/capturedSpecificity.kt");
+                }
+
+                @Test
                 @TestMetadata("conflictTypeParameters.kt")
                 public void testConflictTypeParameters() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/conflictTypeParameters.kt");
@@ -29637,6 +29643,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 @TestMetadata("flexibleTypes.kt")
                 public void testFlexibleTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/flexibleTypes.kt");
+                }
+
+                @Test
+                @TestMetadata("intersectReturnType.kt")
+                public void testIntersectReturnType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/intersectReturnType.kt");
                 }
 
                 @Test
