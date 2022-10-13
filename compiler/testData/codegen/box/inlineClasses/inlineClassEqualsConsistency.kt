@@ -38,10 +38,10 @@ fun box(): String {
     val b2Untyped: Any = b2Typed
     val c2Untyped: Any = c2Typed
 
-    if ((a1Typed == b1Typed) != (a1Untyped == b1Untyped)) throw AssertionError()
-    if ((a1Typed == c1Typed) != (a1Untyped == c1Untyped)) throw AssertionError()
-    if ((a2Typed == b2Typed) != (a2Untyped == b2Untyped)) throw AssertionError()
-    if ((a2Typed == c2Typed) != (a2Untyped == c2Untyped)) throw AssertionError()
+    if ((a1Typed == b1Typed) != (a1Untyped == b1Untyped)) return "Fail 1"
+    if ((a1Typed == c1Typed) != (a1Untyped == c1Untyped)) return "Fail 2"
+    if ((a2Typed == b2Typed) != (a2Untyped == b2Untyped)) return "Fail 3"
+    if ((a2Typed == c2Typed) != (a2Untyped == c2Untyped)) return "Fail 4"
 
     return "OK"
 }

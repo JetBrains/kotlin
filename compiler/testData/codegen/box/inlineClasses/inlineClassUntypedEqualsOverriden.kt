@@ -19,5 +19,9 @@ value class IC(val x: Int) {
 
 fun box(): String {
     val set = setOf(IC(1), IC(2), IC(5))
-    return if (set.size == 2 && IC(1) == IC(1) && IC(1) == IC(2) && IC(1) != IC(5)) "OK" else "Fail"
+    if (set.size != 2) return "Fail 1"
+    if (IC(1) != IC(1)) return "Fail 2"
+    if (IC(1) != IC(2)) return "Fail 3"
+    if (IC(1) == IC(5)) return "Fail 4"
+    return "OK"
 }
