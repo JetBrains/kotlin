@@ -1697,7 +1697,7 @@ class GeneralKotlin2JsGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testYarnLockStore(gradleVersion: GradleVersion) {
         project("nodeJsDownload", gradleVersion) {
-            build("assemble") {
+            build("assemble", "kotlinStoreYarnLock") {
                 assertFileExists(projectPath.resolve("kotlin-js-store").resolve("yarn.lock"))
                 assert(
                     projectPath
@@ -1721,7 +1721,7 @@ class GeneralKotlin2JsGradlePluginIT : KGPBaseTest() {
                         }
                         """.trimIndent()
             }
-            build("assemble") {
+            build("assemble", "kotlinNpmInstall") {
                 assert(
                     projectPath
                         .resolve("build")
@@ -1745,7 +1745,7 @@ class GeneralKotlin2JsGradlePluginIT : KGPBaseTest() {
 
             build("clean")
 
-            build("assemble") {
+            build("assemble", "kotlinNpmInstall") {
                 assertDirectoryExists(
                     projectPath
                         .resolve("build")
