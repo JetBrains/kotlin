@@ -384,6 +384,8 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
         }
         KotlinPlatform.NATIVE -> {
             val outLib = File(nativeLibsDir, "$libName.bc")
+            // To make klib generation deterministic we pass in a relative path `outCFile`
+            // to ensure that the generated path does not end up in the bitcode.
             val compilerCmd = arrayOf(compiler, *compilerArgs,
                     "-emit-llvm", "-working-directory=${outCFile.parent}", "-c", outCFile.name, "-o", outLib.absolutePath)
             runCmd(compilerCmd, verbose)
