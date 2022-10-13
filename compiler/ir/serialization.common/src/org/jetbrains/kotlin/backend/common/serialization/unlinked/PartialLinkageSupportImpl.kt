@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupport.UnlinkedMarkerTypeHandler
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageSupport.UnlinkedMarkerTypeHandler
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UsedClassifierSymbolStatus.*
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-class UnlinkedDeclarationsSupportImpl(private val builtIns: IrBuiltIns) : UnlinkedDeclarationsSupport {
+class PartialLinkageSupportImpl(private val builtIns: IrBuiltIns) : PartialLinkageSupport {
     private val handler = object : UnlinkedMarkerTypeHandler {
         override val unlinkedMarkerType = IrSimpleTypeImpl(
             classifier = builtIns.anyClass,

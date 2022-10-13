@@ -721,12 +721,12 @@ internal class KonanIrLinker(
                 }
             }
 
-            unlinkedDeclarationsSupport.markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder)
-            unlinkedDeclarationsSupport.markUsedClassifiersInInlineLazyIrFunction(function)
+            partialLinkageSupport.markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder)
+            partialLinkageSupport.markUsedClassifiersInInlineLazyIrFunction(function)
 
             fakeOverrideBuilder.provideFakeOverrides()
 
-            unlinkedDeclarationsSupport.processUnlinkedDeclarations(linker.messageLogger) { listOf(function) }
+            partialLinkageSupport.processUnlinkedDeclarations(linker.messageLogger) { listOf(function) }
 
             return InlineFunctionOriginInfo(function, fileDeserializationState.file, inlineFunctionReference.startOffset, inlineFunctionReference.endOffset)
         }
