@@ -1,6 +1,5 @@
 // DONT_TARGET_EXACT_BACKEND: JS
 // EXPECTED_REACHABLE_NODES: 1252
-// INFER_MAIN_MODULE
 
 // ES_MODULES
 // MODULE: overriden_chain_non_export_intermediate
@@ -28,12 +27,19 @@ class C : B() {
 
 // FILE: entry.mjs
 // ENTRY_ES_MODULE
-import { C } from "./overriden_chain_non_export_intermediate/index.js";
+import { C } from "./overriddenChainNonExportIntermediate-overriden_chain_non_export_intermediate_v5.mjs";
 
-function test(c) {
-    if (c.foo() === "foo" && c.bar() === "bar" && c.bay() == "bay") return "OK"
+export function box() {
+    const c = new C()
 
-    return "fail"
+    const foo = c.foo()
+    if (foo !== "foo") return `Fail: expect c.foo() to return 'foo' but it returns ${foo}`
+
+    const bar = c.bar()
+    if (bar !== "bar") return `Fail: expect c.bar() to return 'bar' but it returns ${bar}`
+
+    const bay = c.bay()
+    if (bay !== "bay") return `Fail: expect c.bay() to return 'bay' but it returns ${bay}`
+
+    return "OK"
 }
-
-console.assert(test(new C()) == "OK");

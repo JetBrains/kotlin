@@ -1,12 +1,8 @@
 // EXPECTED_REACHABLE_NODES: 1252
-// IGNORE_BACKEND: JS
-// INFER_MAIN_MODULE
+// DONT_TARGET_EXACT_BACKEND: JS
 // ES_MODULES
 
-// TODO: Fix tests on Windows
-// DONT_TARGET_EXACT_BACKEND: JS_IR
-
-// MODULE: overriden_external_method_with_same_stable_name_method
+// MODULE: lib
 // FILE: lib.kt
 external abstract class Foo {
     abstract fun o(): String
@@ -36,12 +32,11 @@ Foo.prototype.k = function() {
 
 // FILE: entry.mjs
 // ENTRY_ES_MODULE
-import { Baz } from "./overriden-external-method-with-same-stable-name-method/index.js";
+import { Baz } from "./overriddenExternalMethodWithSameStableNameMethod-lib_v5.mjs";
 
-function test(foo) {
+export function box() {
+    const foo = new Baz()
     const oStable = foo.oStable("OK")
     if (oStable !== "OK") return "false: " + oStable
     return foo.o() + foo.k()
 }
-
-console.assert(test(new Baz()) == "OK");

@@ -24,7 +24,7 @@ open class B {
 // FILE: entry.mjs
 // ENTRY_ES_MODULE
 
-import { A, B } from "./main/index.js";
+import { A, B } from "./inheritanceInNativeClass_v5.mjs";
 
 function createA() {
     function ADerived() {
@@ -46,7 +46,7 @@ function createB() {
     return new BDerived();
 }
 
-function box() {
+export function box() {
     let a = createA();
     if (a.bar(0) != 124) return "fail1";
 
@@ -55,5 +55,3 @@ function box() {
 
     return "OK";
 }
-
-console.assert(box() == "OK");

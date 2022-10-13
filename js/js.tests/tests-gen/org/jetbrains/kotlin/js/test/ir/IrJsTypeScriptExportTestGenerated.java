@@ -457,6 +457,12 @@ public class IrJsTypeScriptExportTestGenerated extends AbstractIrJsTypeScriptExp
         }
 
         @Test
+        @TestMetadata("esm.kt")
+        public void testEsm() throws Exception {
+            runTest("js/js.translator/testData/typescript-export/module-systems/esm.kt");
+        }
+
+        @Test
         @TestMetadata("plain.kt")
         public void testPlain() throws Exception {
             runTest("js/js.translator/testData/typescript-export/module-systems/plain.kt");
@@ -482,6 +488,12 @@ public class IrJsTypeScriptExportTestGenerated extends AbstractIrJsTypeScriptExp
         @TestMetadata("commonjs.kt")
         public void testCommonjs() throws Exception {
             runTest("js/js.translator/testData/typescript-export/module-systems-in-exported-file/commonjs.kt");
+        }
+
+        @Test
+        @TestMetadata("esm.kt")
+        public void testEsm() throws Exception {
+            runTest("js/js.translator/testData/typescript-export/module-systems-in-exported-file/esm.kt");
         }
 
         @Test

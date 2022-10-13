@@ -551,7 +551,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         var moduleKind: ModuleKind? = if (moduleKindName != null) moduleKindMap[moduleKindName] else ModuleKind.PLAIN
         if (moduleKind == null) {
             messageCollector.report(
-                ERROR, "Unknown module kind: $moduleKindName. Valid values are: plain, amd, commonjs, umd", null
+                ERROR, "Unknown module kind: $moduleKindName. Valid values are: plain, amd, commonjs, umd, es", null
             )
             moduleKind = ModuleKind.PLAIN
         }

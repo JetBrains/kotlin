@@ -17,7 +17,7 @@ object ModuleWrapperTranslation {
     }
 
     fun wrap(
-        moduleId: String, function: JsExpression, importedModules: List<JsImportedModule>,
+        moduleId: String, function: JsFunction, importedModules: List<JsImportedModule>,
         program: JsProgram, kind: ModuleKind
     ): List<JsStatement> {
         return when (kind) {
@@ -25,7 +25,7 @@ object ModuleWrapperTranslation {
             ModuleKind.COMMON_JS -> wrapCommonJs(function, importedModules, program)
             ModuleKind.UMD -> wrapUmd(moduleId, function, importedModules, program)
             ModuleKind.PLAIN -> wrapPlain(moduleId, function, importedModules, program)
-            ModuleKind.ES -> error("ES modules are not supported in legacy wrapper")
+            ModuleKind.ES -> wrapEsModule(function, importedModules)
         }
     }
 
@@ -99,6 +99,21 @@ object ModuleWrapperTranslation {
         val invocation = JsInvocation(function, listOf(JsNameRef("exports", moduleName.makeRef())) + invocationArgs)
         return listOf(invocation.makeStmt())
     }
+
+    private fun wrapEsModule(function: JsFunction, importedModules: List<JsImportedModule>): List<JsStatement> {
+        val importStatements = importedModules.zip(function.parameters.drop(1)).map {
+            JsImport(
+                it.first.externalName,
+                if (it.first.plainReference == null) {
+                    JsImport.Target.All(alias = it.second.name)
+                } else {
+                    JsImport.Target.Default(name = it.second.name)
+                }
+            )
+        }
+       return importStatements + function.body.statements.dropLast(1)
+    }
+
 
     private fun wrapPlain(
         moduleId: String, function: JsExpression,

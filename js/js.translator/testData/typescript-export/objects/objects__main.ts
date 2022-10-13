@@ -6,6 +6,7 @@ import getParent = JS_TESTS.foo.getParent;
 import createNested1 = JS_TESTS.foo.createNested1;
 import createNested2 = JS_TESTS.foo.createNested2;
 import createNested3 = JS_TESTS.foo.createNested3;
+import WithSimpleObjectInside = JS_TESTS.foo.WithSimpleObjectInside;
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -30,5 +31,8 @@ function box(): string {
     assert(createNested1() === nested1)
     assert(createNested2() !== nested2 && createNested2() instanceof Parent.Nested1.Nested2)
     assert(createNested3() !== nested3 && createNested3() instanceof Parent.Nested1.Nested2.Companion.Nested3)
+
+    assert(WithSimpleObjectInside.value === "WithSimpleObjectInside");
+    assert(WithSimpleObjectInside.SimpleObject.value === "SimpleObject");
     return "OK";
 }

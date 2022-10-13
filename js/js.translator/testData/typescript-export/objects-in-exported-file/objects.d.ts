@@ -8,6 +8,12 @@ declare namespace JS_TESTS {
             foo(): number;
         };
         function takesO(o: typeof foo.O): number;
+        const WithSimpleObjectInside: {
+            get value(): string;
+            get SimpleObject(): {
+                get value(): string;
+            };
+        };
         abstract class Parent {
             private constructor();
         }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.ir.backend.js.utils.toJsIdentifier
 import org.jetbrains.kotlin.js.backend.ast.*
 import java.io.File
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 class JsIrProgramFragment(val packageFqn: String) {
     val nameBindings = mutableMapOf<String, JsName>()
@@ -57,8 +58,8 @@ class JsIrModuleHeader(
 }
 
 class JsIrProgram(private var modules: List<JsIrModule>) {
-    fun asCrossModuleDependencies(relativeRequirePath: Boolean): List<Pair<JsIrModule, CrossModuleReferences>> {
-        val resolver = CrossModuleDependenciesResolver(modules.map { it.makeModuleHeader() })
+    fun asCrossModuleDependencies(moduleKind: ModuleKind, relativeRequirePath: Boolean): List<Pair<JsIrModule, CrossModuleReferences>> {
+        val resolver = CrossModuleDependenciesResolver(moduleKind, modules.map { it.makeModuleHeader() })
         modules = emptyList()
         val crossModuleReferences = resolver.resolveCrossModuleDependencies(relativeRequirePath)
         return crossModuleReferences.entries.map {
@@ -75,9 +76,12 @@ class JsIrProgram(private var modules: List<JsIrModule>) {
     }
 }
 
-class CrossModuleDependenciesResolver(private val headers: List<JsIrModuleHeader>) {
+class CrossModuleDependenciesResolver(
+    private val moduleKind: ModuleKind,
+    private val headers: List<JsIrModuleHeader>
+) {
     fun resolveCrossModuleDependencies(relativeRequirePath: Boolean): Map<JsIrModuleHeader, CrossModuleReferences> {
-        val headerToBuilder = headers.associateWith { JsIrModuleCrossModuleReferecenceBuilder(it, relativeRequirePath) }
+        val headerToBuilder = headers.associateWith { JsIrModuleCrossModuleReferecenceBuilder(moduleKind, it, relativeRequirePath) }
         val definitionModule = mutableMapOf<String, JsIrModuleCrossModuleReferecenceBuilder>()
 
         val mainModuleHeader = headers.last()
@@ -110,7 +114,11 @@ private fun String.prettyTag() = takeWhile { c -> c != '|' }
 
 private class CrossModuleRef(val module: JsIrModuleCrossModuleReferecenceBuilder, val tag: String)
 
-private class JsIrModuleCrossModuleReferecenceBuilder(val header: JsIrModuleHeader, val relativeRequirePath: Boolean) {
+private class JsIrModuleCrossModuleReferecenceBuilder(
+    val moduleKind: ModuleKind,
+    val header: JsIrModuleHeader,
+    val relativeRequirePath: Boolean
+) {
     val imports = mutableListOf<CrossModuleRef>()
     val exports = mutableSetOf<String>()
     var transitiveJsExportFrom = emptyList<JsIrModuleHeader>()
@@ -155,7 +163,13 @@ private class JsIrModuleCrossModuleReferecenceBuilder(val header: JsIrModuleHead
         val transitiveExport = transitiveJsExportFrom.mapNotNull {
             if (it.hasJsExports) import(it) else null
         }
-        return CrossModuleReferences(importedModules.values.toList(), transitiveExport, exportNames, resultImports)
+        return CrossModuleReferences(
+            moduleKind,
+            importedModules.values.toList(),
+            transitiveExport,
+            exportNames,
+            resultImports
+        )
     }
 
     private fun relativeRequirePath(moduleHeader: JsIrModuleHeader): String? {
@@ -177,6 +191,7 @@ private class JsIrModuleCrossModuleReferecenceBuilder(val header: JsIrModuleHead
 class CrossModuleImport(val exportedAs: String, val moduleExporter: JsName)
 
 class CrossModuleReferences(
+    val moduleKind: ModuleKind,
     val importedModules: List<JsImportedModule>, // additional Kotlin imported modules
     val transitiveJsExportFrom: List<JsName>, // the list of modules which provide their js exports for transitive export
     val exports: Map<String, String>, // tag -> index
@@ -190,12 +205,21 @@ class CrossModuleReferences(
         val tagToName = module.fragments.flatMap { it.nameBindings.entries }.associate { it.key to it.value }
         jsImports = imports.entries.associate {
             val importedAs = tagToName[it.key] ?: error("Internal error: cannot find imported name for symbol ${it.key.prettyTag()}")
-            val exportRef = JsNameRef(it.value.exportedAs, ReservedJsNames.makeCrossModuleNameRef(it.value.moduleExporter))
+            val exportRef = JsNameRef(
+                it.value.exportedAs,
+                it.value.moduleExporter.let {
+                    if (moduleKind == ModuleKind.ES) {
+                        it.makeRef()
+                    } else {
+                        ReservedJsNames.makeCrossModuleNameRef(it)
+                    }
+                }
+            )
             it.key to JsVars.JsVar(importedAs, exportRef)
         }
     }
 
     companion object {
-        val Empty = CrossModuleReferences(listOf(), emptyList(), emptyMap(), emptyMap())
+        fun Empty(moduleKind: ModuleKind) = CrossModuleReferences(moduleKind, listOf(), emptyList(), emptyMap(), emptyMap())
     }
 }

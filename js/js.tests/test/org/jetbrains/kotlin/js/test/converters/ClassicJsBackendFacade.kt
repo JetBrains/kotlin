@@ -51,9 +51,7 @@ class ClassicJsBackendFacade(
                             "$KOTLIN_TEST_INTERNAL.setModuleId(\"$escapedModuleId\"); }\n" +
                             "$content\n"
 
-                ModuleKind.PLAIN -> content
-
-                ModuleKind.ES -> error("Module emulation markers are not supported for ES modules")
+                ModuleKind.PLAIN, ModuleKind.ES -> content
             }
         }
     }

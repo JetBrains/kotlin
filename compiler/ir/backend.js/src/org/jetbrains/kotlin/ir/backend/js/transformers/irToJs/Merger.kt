@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 
 class Merger(
     private val moduleName: String,
@@ -20,6 +21,7 @@ class Merger(
     private val generateCallToMain: Boolean,
 ) {
 
+    private val isEsModules = moduleKind == ModuleKind.ES
     private val importStatements = mutableMapOf<String, JsStatement>()
     private val importedModulesMap = mutableMapOf<JsImportedModuleKey, JsImportedModule>()
 
@@ -65,16 +67,25 @@ class Merger(
         if (crossModuleReferences.exports.isNotEmpty()) {
             val internalModuleName = ReservedJsNames.makeInternalModuleName()
 
-            val createExportBlock = jsAssignment(
-                ReservedJsNames.makeCrossModuleNameRef(internalModuleName),
-                JsAstUtils.or(ReservedJsNames.makeCrossModuleNameRef(internalModuleName), JsObjectLiteral())
-            ).makeStmt()
-            additionalExports += createExportBlock
+            if (isEsModules) {
+                val exportedElements = crossModuleReferences.exports.entries.map { (tag, hash) ->
+                    val internalName = nameMap[tag] ?: error("Missing name for declaration '$tag'")
+                    JsExport.Element(internalName, JsName(hash, false))
+                }
 
-            crossModuleReferences.exports.entries.forEach { (tag, hash) ->
-                val internalName = nameMap[tag] ?: error("Missing name for declaration '$tag'")
-                val crossModuleRef = ReservedJsNames.makeCrossModuleNameRef(ReservedJsNames.makeInternalModuleName())
-                additionalExports += jsAssignment(JsNameRef(hash, crossModuleRef), JsNameRef(internalName)).makeStmt()
+                additionalExports += JsExport(JsExport.Subject.Elements(exportedElements))
+            } else {
+                val createExportBlock = jsAssignment(
+                    ReservedJsNames.makeCrossModuleNameRef(internalModuleName),
+                    JsAstUtils.or(ReservedJsNames.makeCrossModuleNameRef(internalModuleName), JsObjectLiteral())
+                ).makeStmt()
+                additionalExports += createExportBlock
+
+                crossModuleReferences.exports.entries.forEach { (tag, hash) ->
+                    val internalName = nameMap[tag] ?: error("Missing name for declaration '$tag'")
+                    val crossModuleRef = ReservedJsNames.makeCrossModuleNameRef(ReservedJsNames.makeInternalModuleName())
+                    additionalExports += jsAssignment(JsNameRef(hash, crossModuleRef), JsNameRef(internalName)).makeStmt()
+                }
             }
         }
     }
@@ -125,25 +136,41 @@ class Merger(
     }
 
     private fun declareAndCallJsExporter(): List<JsStatement> {
-        val exportBody = JsBlock(fragments.flatMap { it.exports.statements })
-        if (exportBody.isEmpty) {
-            return emptyList()
-        }
+        if (isEsModules) {
+            val allExportRelatedStatements = fragments.flatMap { it.exports.statements }
+            val (allExportStatements, restStatements) = allExportRelatedStatements.partitionIsInstance<JsStatement, JsExport>()
+            val (currentModuleExportStatements, restExportStatements) = allExportStatements.partition { it.fromModule == null }
+            val exportedElements = currentModuleExportStatements.takeIf { it.isNotEmpty() }
+                ?.asSequence()
+                ?.flatMap { (it.subject as JsExport.Subject.Elements).elements }
+                ?.distinctBy { (it.alias ?: it.name).ident }
+                ?.map { if (it.name.ident == it.alias?.ident) JsExport.Element(it.name, null) else it }
+                ?.toList()
 
-        val internalModuleName = ReservedJsNames.makeInternalModuleName()
-        val exporterName = ReservedJsNames.makeJsExporterName()
-        val jsExporterFunction = JsFunction(emptyScope, "js exporter function").apply {
-            body = exportBody
-            name = exporterName
-            parameters.add(JsParameter(internalModuleName))
+            val oneLargeExportStatement = exportedElements?.let { JsExport(JsExport.Subject.Elements(it)) }
+
+            return restStatements + listOfNotNull(oneLargeExportStatement) + restExportStatements
+        } else {
+            val exportBody = JsBlock(fragments.flatMap { it.exports.statements })
+            if (exportBody.isEmpty) {
+                return emptyList()
+            }
+
+            val internalModuleName = ReservedJsNames.makeInternalModuleName()
+            val exporterName = ReservedJsNames.makeJsExporterName()
+            val jsExporterFunction = JsFunction(emptyScope, "js exporter function").apply {
+                body = exportBody
+                name = exporterName
+                parameters.add(JsParameter(internalModuleName))
+            }
+            val jsExporterCall = JsInvocation(exporterName.makeRef(), internalModuleName.makeRef())
+            val result = mutableListOf(jsExporterFunction.makeStmt(), jsExporterCall.makeStmt())
+            if (!generateCallToMain) {
+                val exportExporter = jsAssignment(JsNameRef(exporterName, internalModuleName.makeRef()), exporterName.makeRef())
+                result += exportExporter.makeStmt()
+            }
+            return result
         }
-        val jsExporterCall = JsInvocation(exporterName.makeRef(), internalModuleName.makeRef())
-        val result = mutableListOf(jsExporterFunction.makeStmt(), jsExporterCall.makeStmt())
-        if (!generateCallToMain) {
-            val exportExporter = jsAssignment(JsNameRef(exporterName, internalModuleName.makeRef()), exporterName.makeRef())
-            result += exportExporter.makeStmt()
-        }
-        return result
     }
 
     private fun transitiveJsExport(): List<JsStatement> {
@@ -214,9 +241,6 @@ class Merger(
 
         if (generateScriptModule) {
             with(program.globalBlock) {
-                if (!generateScriptModule) {
-                    statements += JsStringLiteral("use strict").makeStmt()
-                }
                 statements.addWithComment("block: polyfills", polyfillDeclarationBlock.statements)
                 statements.addWithComment("block: imports", importStatements)
                 statements += moduleBody
@@ -228,7 +252,7 @@ class Merger(
                 parameters += JsParameter(internalModuleName)
                 parameters += (importedJsModules).map { JsParameter(it.internalName) }
                 with(body) {
-                    if (!generateScriptModule) {
+                    if (!isEsModules) {
                         statements += JsStringLiteral("use strict").makeStmt()
                     }
                     statements.addWithComment("block: imports", importStatements)
