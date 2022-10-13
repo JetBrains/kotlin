@@ -45,7 +45,7 @@ class JsScriptDependencyCompiler(
 
         val typeTranslator = TypeTranslatorImpl(symbolTable, languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(builtIns, typeTranslator, symbolTable)
-        val jsLinker = JsIrLinker(null, messageLogger, irBuiltIns, symbolTable, null)
+        val jsLinker = JsIrLinker(null, messageLogger, irBuiltIns, symbolTable, partialLinkageEnabled = false, null)
 
         val irDependencies = dependencies.map { jsLinker.deserializeFullModule(it, it.kotlinLibrary) }
         val moduleFragment = irDependencies.last()

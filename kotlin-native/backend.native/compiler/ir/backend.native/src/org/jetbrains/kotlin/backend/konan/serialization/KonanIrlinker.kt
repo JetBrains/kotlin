@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinaryNameAnd
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.encodings.FunctionFlags
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.UserVisibleIrModulesSupport
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupport
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
@@ -42,8 +41,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.types.*
@@ -320,12 +317,12 @@ internal class KonanIrLinker(
         private val stubGenerator: DeclarationStubGenerator,
         private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
         exportedDependencies: List<ModuleDescriptor>,
+        partialLinkageEnabled: Boolean,
         private val cachedLibraries: CachedLibraries,
         private val lazyIrForCaches: Boolean,
         private val libraryBeingCached: PartialCacheInfo?,
-        override val unlinkedDeclarationsSupport: UnlinkedDeclarationsSupport,
         override val userVisibleIrModulesSupport: UserVisibleIrModulesSupport
-) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, exportedDependencies) {
+) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, exportedDependencies, partialLinkageEnabled) {
 
     companion object {
         private val C_NAMES_NAME = Name.identifier("cnames")

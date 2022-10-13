@@ -473,6 +473,7 @@ class GenerateIrRuntime {
             messageLogger,
             psi2IrContext.irBuiltIns,
             psi2IrContext.symbolTable,
+            partialLinkageEnabled = false,
             null
         )
 
@@ -548,7 +549,7 @@ class GenerateIrRuntime {
         val typeTranslator = TypeTranslatorImpl(symbolTable, languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 
-        val jsLinker = JsIrLinker(moduleDescriptor, IrMessageLogger.None, irBuiltIns, symbolTable, null)
+        val jsLinker = JsIrLinker(moduleDescriptor, IrMessageLogger.None, irBuiltIns, symbolTable, partialLinkageEnabled = false, null)
 
         val moduleFragment = jsLinker.deserializeFullModule(moduleDescriptor, moduleDescriptor.kotlinLibrary)
         jsLinker.init(null, emptyList())
@@ -573,7 +574,7 @@ class GenerateIrRuntime {
         val typeTranslator = TypeTranslatorImpl(symbolTable, languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 
-        val jsLinker = JsIrLinker(moduleDescriptor, IrMessageLogger.None, irBuiltIns, symbolTable, null)
+        val jsLinker = JsIrLinker(moduleDescriptor, IrMessageLogger.None, irBuiltIns, symbolTable, partialLinkageEnabled = false, null)
 
         val moduleFragment = jsLinker.deserializeFullModule(moduleDescriptor, moduleDescriptor.kotlinLibrary)
         // Create stubs

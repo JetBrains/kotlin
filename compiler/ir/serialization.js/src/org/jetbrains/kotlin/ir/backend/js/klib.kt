@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDes
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataIncrementalSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupportImpl
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -121,7 +120,7 @@ fun generateIrForKlibSerialization(
     val incrementalDataProvider = configuration.get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER)
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageLogger = configuration.irMessageLogger
-    val allowUnboundSymbols = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+    val partialLinkageEnabled = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
 
     val serializedIrFiles = mutableListOf<SerializedIrFile>()
 
@@ -152,7 +151,7 @@ fun generateIrForKlibSerialization(
     val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
     val psi2Ir = Psi2IrTranslator(
         configuration.languageVersionSettings,
-        Psi2IrConfiguration(errorPolicy.allowErrors, allowUnboundSymbols),
+        Psi2IrConfiguration(errorPolicy.allowErrors, partialLinkageEnabled),
         messageLogger::checkNoUnboundSymbols
     )
     val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
@@ -172,6 +171,7 @@ fun generateIrForKlibSerialization(
         messageLogger,
         psi2IrContext.irBuiltIns,
         psi2IrContext.symbolTable,
+        partialLinkageEnabled = false,
         feContext,
         ICData(serializedIrFiles, errorPolicy.allowErrors),
         stubGenerator = stubGenerator
@@ -313,7 +313,7 @@ fun loadIr(
     val allDependencies = depsDescriptors.allDependencies.map { it.library }
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageLogger = configuration.irMessageLogger
-    val allowUnboundSymbol = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+    val partialLinkageEnabled = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
 
     val signaturer = IdSignatureDescriptor(JsManglerDesc)
     val symbolTable = SymbolTable(signaturer, irFactory)
@@ -321,7 +321,7 @@ fun loadIr(
     when (mainModule) {
         is MainModule.SourceFiles -> {
             assert(filesToLoad == null)
-            val psi2IrContext = preparePsi2Ir(depsDescriptors, errorPolicy, symbolTable, allowUnboundSymbol)
+            val psi2IrContext = preparePsi2Ir(depsDescriptors, errorPolicy, symbolTable, partialLinkageEnabled)
             val friendModules =
                 mapOf(psi2IrContext.moduleDescriptor.name.asString() to depsDescriptors.friendDependencies.map { it.library.uniqueName })
 
@@ -376,18 +376,17 @@ fun getIrModuleInfoForKlib(
     val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
     val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 
-    val allowUnboundSymbols = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
-    val unlinkedDeclarationsSupport = UnlinkedDeclarationsSupportImpl(irBuiltIns, allowUnboundSymbols)
+    val partialLinkageEnabled = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
 
     val irLinker = JsIrLinker(
         currentModule = null,
         messageLogger = messageLogger,
         builtIns = irBuiltIns,
         symbolTable = symbolTable,
+        partialLinkageEnabled = partialLinkageEnabled,
         translationPluginContext = null,
         icData = null,
-        friendModules = friendModules,
-        unlinkedDeclarationsSupport = unlinkedDeclarationsSupport
+        friendModules = friendModules
     )
 
     val deserializedModuleFragmentsToLib = deserializeDependencies(sortedDependencies, irLinker, mainModuleLib, filesToLoad, mapping)
@@ -435,18 +434,17 @@ fun getIrModuleInfoForSourceFiles(
         JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
     }
 
-    val allowUnboundSymbols = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
-    val unlinkedDeclarationsSupport = UnlinkedDeclarationsSupportImpl(irBuiltIns, allowUnboundSymbols)
+    val partialLinkageEnabled = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
 
     val irLinker = JsIrLinker(
         currentModule = psi2IrContext.moduleDescriptor,
         messageLogger = messageLogger,
         builtIns = irBuiltIns,
         symbolTable = symbolTable,
+        partialLinkageEnabled = partialLinkageEnabled,
         translationPluginContext = feContext,
         icData = null,
         friendModules = friendModules,
-        unlinkedDeclarationsSupport = unlinkedDeclarationsSupport
     )
     val deserializedModuleFragmentsToLib = deserializeDependencies(allSortedDependencies, irLinker, null,null, mapping)
     val deserializedModuleFragments = deserializedModuleFragmentsToLib.keys.toList()
@@ -506,12 +504,12 @@ private fun preparePsi2Ir(
     depsDescriptors: ModulesStructure,
     errorIgnorancePolicy: ErrorTolerancePolicy,
     symbolTable: SymbolTable,
-    allowUnboundSymbols: Boolean
+    partialLinkageEnabled: Boolean
 ): GeneratorContext {
     val analysisResult = depsDescriptors.jsFrontEndResult
     val psi2Ir = Psi2IrTranslator(
         depsDescriptors.compilerConfiguration.languageVersionSettings,
-        Psi2IrConfiguration(errorIgnorancePolicy.allowErrors, allowUnboundSymbols),
+        Psi2IrConfiguration(errorIgnorancePolicy.allowErrors, partialLinkageEnabled),
         depsDescriptors.compilerConfiguration::checkNoUnboundSymbols
     )
     return psi2Ir.createGeneratorContext(

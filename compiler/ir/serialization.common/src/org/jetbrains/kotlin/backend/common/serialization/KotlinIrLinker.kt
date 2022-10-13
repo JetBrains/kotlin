@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.*
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupport
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupportImpl
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -30,6 +31,7 @@ abstract class KotlinIrLinker(
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     private val exportedDependencies: List<ModuleDescriptor>,
+    partialLinkageEnabled: Boolean,
     val symbolProcessor: IrSymbolDeserializer.(IrSymbol, IdSignature) -> IrSymbol = { s, _ -> s },
 ) : IrDeserializer, FileLocalAwareLinker {
 
@@ -51,7 +53,11 @@ abstract class KotlinIrLinker(
 
     private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
-    open val unlinkedDeclarationsSupport: UnlinkedDeclarationsSupport get() = UnlinkedDeclarationsSupport.DISABLED
+    val unlinkedDeclarationsSupport: UnlinkedDeclarationsSupport = if (partialLinkageEnabled)
+        UnlinkedDeclarationsSupportImpl(builtIns)
+    else
+        UnlinkedDeclarationsSupport.DISABLED
+
     protected open val userVisibleIrModulesSupport: UserVisibleIrModulesSupport get() = UserVisibleIrModulesSupport.DEFAULT
 
     fun deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(
@@ -72,7 +78,7 @@ abstract class KotlinIrLinker(
         val symbol: IrSymbol? = actualModuleDeserializer?.tryDeserializeIrSymbol(idSignature, symbolKind)
 
         return symbol ?: run {
-            if (unlinkedDeclarationsSupport.allowUnboundSymbols)
+            if (unlinkedDeclarationsSupport.partialLinkageEnabled)
                 referenceDeserializedSymbol(symbolTable, null, symbolKind, idSignature)
             else
                 SignatureIdNotFoundInModuleWithDependencies(
@@ -164,7 +170,7 @@ abstract class KotlinIrLinker(
                     ?: tryResolveCustomDeclaration(symbol)
                     ?: return null
             } catch (e: IrSymbolTypeMismatchException) {
-                if (!unlinkedDeclarationsSupport.allowUnboundSymbols) {
+                if (!unlinkedDeclarationsSupport.partialLinkageEnabled) {
                     SymbolTypeMismatch(e, deserializersForModules.values, userVisibleIrModulesSupport).raiseIssue(messageLogger)
                 }
             }
