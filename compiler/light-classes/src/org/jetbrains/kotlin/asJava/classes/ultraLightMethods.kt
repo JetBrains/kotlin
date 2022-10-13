@@ -26,11 +26,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtPropertyAccessor
-import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasBody
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
@@ -61,20 +57,26 @@ private class KtUltraLightMethodModifierList(
 
     override fun copy() = KtUltraLightMethodModifierList(support, owner, delegate)
 
-    override fun getTextOffset(): Int {
+    private inline fun <R> getTextVariantFromModifierListOfPropertyAccessorIfNeeded(
+        retriever: (KtModifierList) -> R
+    ): R? {
         val auxiliaryOrigin = (owner as? KtLightMember<*>)?.lightMemberOrigin?.auxiliaryOriginalElement
-        return if (auxiliaryOrigin is KtPropertyAccessor)
-            auxiliaryOrigin.modifierList?.textOffset ?: super.getTextOffset()
-        else
-            super.getTextOffset()
+        return (auxiliaryOrigin as? KtPropertyAccessor)?.modifierList?.let(retriever)
+    }
+
+    override fun getText(): String {
+        return getTextVariantFromModifierListOfPropertyAccessorIfNeeded(KtModifierList::getText)
+            ?: super.getText()
+    }
+
+    override fun getTextOffset(): Int {
+        return getTextVariantFromModifierListOfPropertyAccessorIfNeeded(KtModifierList::getTextOffset)
+            ?: super.getTextOffset()
     }
 
     override fun getTextRange(): TextRange {
-        val auxiliaryOrigin = (owner as? KtLightMember<*>)?.lightMemberOrigin?.auxiliaryOriginalElement
-        return if (auxiliaryOrigin is KtPropertyAccessor)
-            auxiliaryOrigin.modifierList?.textRange ?: super.getTextRange()
-        else
-            super.getTextRange()
+        return getTextVariantFromModifierListOfPropertyAccessorIfNeeded(KtModifierList::getTextRange)
+            ?: super.getTextRange()
     }
 }
 
