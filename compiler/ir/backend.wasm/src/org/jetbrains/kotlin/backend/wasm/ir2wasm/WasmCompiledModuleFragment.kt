@@ -124,19 +124,6 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
             currentDataSectionAddress += typeInfoElement.sizeInBytes
         }
 
-        val stringDataSectionStart = currentDataSectionAddress
-        val stringDataSectionBytes = mutableListOf<Byte>()
-        var stringLiteralCount = 0
-        for ((string, symbol) in stringLiteralAddress.unbound) {
-            val constData = ConstantDataCharArray("string_literal", string.toCharArray())
-            stringDataSectionBytes += constData.toBytes().toList()
-            symbol.bind(currentDataSectionAddress)
-            stringLiteralPoolId.reference(string).bind(stringLiteralCount)
-            currentDataSectionAddress += constData.sizeInBytes
-            stringLiteralCount++
-        }
-        stringPoolSize.bind(stringLiteralCount)
-
         // Reserve some memory to pass complex exported types (like strings). It's going to be accessible through 'unsafeGetScratchRawMemory'
         // runtime call from stdlib.
         currentDataSectionAddress = alignUp(currentDataSectionAddress, INT_SIZE_BYTES)
@@ -146,8 +133,22 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
         bind(classIds.unbound, klassIds)
         interfaceId.unbound.onEachIndexed { index, entry -> entry.value.bind(index) }
 
-        val data = typeInfo.buildData(address = { klassIds.getValue(it) }) +
-                WasmData(WasmDataMode.Active(0, stringDataSectionStart), stringDataSectionBytes.toByteArray())
+        val stringDataSectionBytes = mutableListOf<Byte>()
+        var stringDataSectionStart = 0
+        var stringLiteralCount = 0
+        for ((string, symbol) in stringLiteralAddress.unbound) {
+            symbol.bind(stringDataSectionStart)
+            stringLiteralPoolId.reference(string).bind(stringLiteralCount)
+            val constData = ConstantDataCharArray("string_literal", string.toCharArray())
+            stringDataSectionBytes += constData.toBytes().toList()
+            stringDataSectionStart += constData.sizeInBytes
+            stringLiteralCount++
+        }
+        stringPoolSize.bind(stringLiteralCount)
+
+        val data = mutableListOf<WasmData>()
+        data.add(WasmData(WasmDataMode.Passive, stringDataSectionBytes.toByteArray()))
+        typeInfo.buildData(data, address = { klassIds.getValue(it) })
 
         val masterInitFunctionType = WasmFunctionType(emptyList(), emptyList())
         val masterInitFunction = WasmFunction.Defined("__init", WasmSymbol(masterInitFunctionType))
@@ -227,8 +228,11 @@ private fun irSymbolDebugDump(symbol: Any?): String =
         else -> symbol.toString()
     }
 
-inline fun WasmCompiledModuleFragment.ReferencableAndDefinable<IrClassSymbol, ConstantDataElement>.buildData(address: (IrClassSymbol) -> Int): List<WasmData> {
-    return elements.map {
+inline fun WasmCompiledModuleFragment.ReferencableAndDefinable<IrClassSymbol, ConstantDataElement>.buildData(
+    into: MutableList<WasmData>,
+    address: (IrClassSymbol) -> Int
+) {
+    elements.mapTo(into) {
         val id = address(wasmToIr.getValue(it))
         val offset = mutableListOf<WasmInstr>()
         WasmIrExpressionBuilder(offset).buildConstI32(id)
