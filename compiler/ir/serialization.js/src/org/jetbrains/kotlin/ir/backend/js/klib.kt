@@ -171,7 +171,7 @@ fun generateIrForKlibSerialization(
         messageLogger,
         psi2IrContext.irBuiltIns,
         psi2IrContext.symbolTable,
-        partialLinkageEnabled = false,
+        partialLinkageEnabled = partialLinkageEnabled,
         feContext,
         ICData(serializedIrFiles, errorPolicy.allowErrors),
         stubGenerator = stubGenerator

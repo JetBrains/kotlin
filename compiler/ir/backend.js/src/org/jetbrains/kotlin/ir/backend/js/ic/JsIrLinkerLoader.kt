@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.irMessageLogger
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
@@ -49,7 +50,8 @@ internal class JsIrLinkerLoader(
         val moduleDescriptor = loadedModules.keys.last()
         val typeTranslator = TypeTranslatorImpl(symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-        return JsIrLinker(null, compilerConfiguration.irMessageLogger, irBuiltIns, symbolTable, partialLinkageEnabled = false, null)
+        val partialLinkageEnabled = compilerConfiguration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+        return JsIrLinker(null, compilerConfiguration.irMessageLogger, irBuiltIns, symbolTable, partialLinkageEnabled, null)
     }
 
     private fun loadModules(): Map<ModuleDescriptor, KotlinLibrary> {
