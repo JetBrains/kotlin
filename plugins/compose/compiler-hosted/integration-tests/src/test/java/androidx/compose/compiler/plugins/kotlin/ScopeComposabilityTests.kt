@@ -152,10 +152,8 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
 
         val ktFile = KtPsiFactory(environment.project).createFile(text)
         val bindingContext = JvmResolveUtil.analyzeAndCheckForErrors(
-            environment.project,
+            environment,
             listOf(ktFile),
-            environment.configuration,
-            environment::createPackagePartProvider
         ).bindingContext
 
         carets.forEachIndexed { index, (offset, marking) ->
