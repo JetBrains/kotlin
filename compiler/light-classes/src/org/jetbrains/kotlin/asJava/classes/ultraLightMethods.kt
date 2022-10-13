@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
@@ -15,6 +16,7 @@ import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
+import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
 import org.jetbrains.kotlin.asJava.elements.KtUltraLightModifierList
 import org.jetbrains.kotlin.codegen.FunctionCodegen
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 import org.jetbrains.kotlin.psi.psiUtil.hasBody
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -57,6 +60,22 @@ private class KtUltraLightMethodModifierList(
     private fun isImplementationInInterface() = owner.containingClass.isInterface && owner.kotlinOrigin?.hasBody() == true
 
     override fun copy() = KtUltraLightMethodModifierList(support, owner, delegate)
+
+    override fun getTextOffset(): Int {
+        val auxiliaryOrigin = (owner as? KtLightMember<*>)?.lightMemberOrigin?.auxiliaryOriginalElement
+        return if (auxiliaryOrigin is KtPropertyAccessor)
+            auxiliaryOrigin.modifierList?.textOffset ?: super.getTextOffset()
+        else
+            super.getTextOffset()
+    }
+
+    override fun getTextRange(): TextRange {
+        val auxiliaryOrigin = (owner as? KtLightMember<*>)?.lightMemberOrigin?.auxiliaryOriginalElement
+        return if (auxiliaryOrigin is KtPropertyAccessor)
+            auxiliaryOrigin.modifierList?.textRange ?: super.getTextRange()
+        else
+            super.getTextRange()
+    }
 }
 
 internal abstract class KtUltraLightMethod(
