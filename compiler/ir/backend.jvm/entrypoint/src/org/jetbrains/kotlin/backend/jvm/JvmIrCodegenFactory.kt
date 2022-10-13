@@ -120,7 +120,7 @@ open class JvmIrCodegenFactory(
             input.languageVersionSettings,
             Psi2IrConfiguration(
                 input.ignoreErrors,
-                allowUnboundSymbols = false,
+                partialLinkageEnabled = false,
                 input.skipBodies
             ),
             messageLogger::checkNoUnboundSymbols

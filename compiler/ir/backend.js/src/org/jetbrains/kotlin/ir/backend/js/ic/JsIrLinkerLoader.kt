@@ -49,7 +49,7 @@ internal class JsIrLinkerLoader(
         val moduleDescriptor = loadedModules.keys.last()
         val typeTranslator = TypeTranslatorImpl(symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-        return JsIrLinker(null, compilerConfiguration.irMessageLogger, irBuiltIns, symbolTable, null)
+        return JsIrLinker(null, compilerConfiguration.irMessageLogger, irBuiltIns, symbolTable, partialLinkageEnabled = false, null)
     }
 
     private fun loadModules(): Map<ModuleDescriptor, KotlinLibrary> {

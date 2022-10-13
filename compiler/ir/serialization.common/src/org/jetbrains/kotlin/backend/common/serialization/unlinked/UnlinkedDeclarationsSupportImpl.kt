@@ -28,10 +28,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-class UnlinkedDeclarationsSupportImpl(
-    private val builtIns: IrBuiltIns,
-    override val allowUnboundSymbols: Boolean
-) : UnlinkedDeclarationsSupport {
+class UnlinkedDeclarationsSupportImpl(private val builtIns: IrBuiltIns) : UnlinkedDeclarationsSupport {
     private val handler = object : UnlinkedMarkerTypeHandler {
         override val unlinkedMarkerType = IrSimpleTypeImpl(
             classifier = builtIns.anyClass,
@@ -45,9 +42,9 @@ class UnlinkedDeclarationsSupportImpl(
 
     private val usedClassifierSymbols = UsedClassifierSymbols()
 
-    override fun markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder: FakeOverrideBuilder) {
-        if (!allowUnboundSymbols) return
+    override val partialLinkageEnabled get() = true
 
+    override fun markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder: FakeOverrideBuilder) {
         val entries = fakeOverrideBuilder.fakeOverrideCandidates
         if (entries.isEmpty()) return
 
@@ -114,8 +111,6 @@ class UnlinkedDeclarationsSupportImpl(
     }
 
     override fun markUsedClassifiersInInlineLazyIrFunction(function: IrFunction) {
-        if (!allowUnboundSymbols) return
-
         function.acceptChildrenVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
@@ -173,8 +168,6 @@ class UnlinkedDeclarationsSupportImpl(
     }
 
     override fun processUnlinkedDeclarations(messageLogger: IrMessageLogger, lazyRoots: () -> List<IrElement>) {
-        if (!allowUnboundSymbols) return
-
         val processor = UnlinkedDeclarationsProcessor(builtIns, usedClassifierSymbols, handler, messageLogger)
         processor.addLinkageErrorIntoUnlinkedClasses()
 
