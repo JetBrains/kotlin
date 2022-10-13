@@ -50,9 +50,9 @@ public open class Rendering : R|kotlin/Any| {
 
     }
     public/*package*/ abstract interface H_Raw : R|kotlin/Any| {
-        public abstract fun foo1(x: R|ft<kotlin/collections/MutableList<kotlin/Any?>, kotlin/collections/List<*>?>|): R|kotlin/Unit|
+        public abstract fun foo1(x: R|ft<Raw type kotlin/collections/MutableList<kotlin/Any?>, kotlin/collections/List<*>?>|): R|kotlin/Unit|
 
-        public abstract fun foo2(x: R|ft<test/Rendering.D_SuperG<kotlin/Any!>, test/Rendering.D_SuperG<*>?>|): R|kotlin/Unit|
+        public abstract fun foo2(x: R|ft<Raw type test/Rendering.D_SuperG<kotlin/Any!>, test/Rendering.D_SuperG<*>?>|): R|kotlin/Unit|
 
     }
     public/*package*/ abstract interface I_Wildcard : R|kotlin/Any| {

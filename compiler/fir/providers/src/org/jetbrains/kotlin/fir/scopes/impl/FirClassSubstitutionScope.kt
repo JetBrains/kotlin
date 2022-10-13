@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.fir.scopes.FakeOverrideSubstitution
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -118,7 +118,7 @@ class FirClassSubstitutionScope(
     }
 
     private fun ConeSimpleKotlinType.substitute(substitutor: ConeSubstitutor): ConeSimpleKotlinType? {
-        return substitutor.substituteOrNull(this) as ConeSimpleKotlinType?
+        return substitutor.substituteOrNull(this)?.lowerBoundIfFlexible()
     }
 
     fun createSubstitutionOverrideFunction(original: FirNamedFunctionSymbol): FirNamedFunctionSymbol {
@@ -212,7 +212,8 @@ class FirClassSubstitutionScope(
             constructor,
             FirDeclarationOrigin.SubstitutionOverride,
             newDispatchReceiverType,
-            newReturnType,
+            // Constructors' return types are expected to be non-flexible (i.e., non raw)
+            newReturnType?.lowerBoundIfFlexible(),
             newParameterTypes,
             newContextReceiverTypes,
             newTypeParameters,

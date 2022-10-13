@@ -24188,6 +24188,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("nonRawArraysInRawType.kt")
+                public void testNonRawArraysInRawType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/nonRawArraysInRawType.kt");
+                }
+
+                @Test
                 @TestMetadata("nonTrivialErasure.kt")
                 public void testNonTrivialErasure() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/nonTrivialErasure.kt");
