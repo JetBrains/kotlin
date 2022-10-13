@@ -161,13 +161,17 @@ class FirTypeIntersectionScopeContext(
             val extractedOverrides = extractBothWaysWithPrivate.filterNotTo(mutableListOf()) {
                 Visibilities.isPrivate((it.member.fir as FirMemberDeclaration).visibility)
             }.takeIf { it.isNotEmpty() } ?: extractBothWaysWithPrivate
-            val baseMembersForIntersection = extractedOverrides.calcBaseMembersForIntersectionOverride()
-            if (baseMembersForIntersection.size > 1) {
-                val mostSpecific =
-                    overrideService.selectMostSpecificMembers(baseMembersForIntersection, ReturnTypeCalculatorForFullBodyResolve)
+            val singleRealMethod = extractedOverrides.size == 1 ||
+                    extractedOverrides.mapTo(mutableSetOf()) { it.member.fir.unwrapSubstitutionOverrides().symbol }.size == 1
+            val directOverrides = if (singleRealMethod) extractedOverrides else extractedOverrides.onlyDirectlyInherited()
+            val mostSpecific = overrideService.selectMostSpecificMembers(directOverrides, ReturnTypeCalculatorForFullBodyResolve)
+            // Always create a non-trivial intersection override when the base methods come from different scopes,
+            // even if one of them is more specific than the others. This is necessary for proper reporting of
+            // MANY_{IMPL,INTERFACES}_MEMBER_NOT_IMPLEMENTED diagnostics.
+            if ((!forSubtyping && mostSpecific.size > 1) || (!singleRealMethod && directOverrides.size > 1)) {
                 result += ResultOfIntersection.NonTrivial(this, mostSpecific, extractedOverrides, containingScope = null)
             } else {
-                val (member, containingScope) = baseMembersForIntersection.single()
+                val (member, containingScope) = mostSpecific.first()
                 result += ResultOfIntersection.SingleMember(member, extractedOverrides, containingScope)
             }
         }
@@ -200,23 +204,7 @@ class FirTypeIntersectionScopeContext(
         }.withScope(key.baseScope)
     }
 
-    private fun <S : FirCallableSymbol<*>> List<MemberWithBaseScope<S>>.calcBaseMembersForIntersectionOverride(): List<MemberWithBaseScope<S>> {
-        if (size == 1) return this
-        val unwrappedMemberSet = mutableSetOf<MemberWithBaseScope<S>>()
-        for ((member, scope) in this) {
-            @Suppress("UNCHECKED_CAST")
-            unwrappedMemberSet += MemberWithBaseScope(member.fir.unwrapSubstitutionOverrides().symbol as S, scope)
-        }
-        // If in fact extracted overrides are the same symbols,
-        // we should just take most specific member without creating intersection
-        // A typical sample here is inheritance of the same class in different places of hierarchy
-        if (unwrappedMemberSet.size == 1) {
-            return when {
-                forSubtyping -> listOf(overrideService.selectMostSpecificMember(this, ReturnTypeCalculatorForFullBodyResolve))
-                else -> this
-            }
-        }
-
+    private fun <S : FirCallableSymbol<*>> List<MemberWithBaseScope<S>>.onlyDirectlyInherited(): List<MemberWithBaseScope<S>> {
         val baseMembers = mutableSetOf<S>()
         for ((member, scope) in this) {
             @Suppress("UNCHECKED_CAST")
