@@ -343,7 +343,7 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         ComposeComponentRegistrar.registerCommonExtensions(environment.project)
         IrGenerationExtension.registerExtension(environment.project, extension)
 
-        val analysisResult = JvmResolveUtil.analyze(files, environment)
+        val analysisResult = JvmResolveUtil.analyzeAndCheckForErrors(environment, files)
         val codegenFactory = JvmIrCodegenFactory(
             configuration,
             configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases)
