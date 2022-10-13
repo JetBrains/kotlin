@@ -1212,7 +1212,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
 
             assertEquals(
-                setOf("commonMain", "jvm6Main", "linux64Main", "linuxMipsel32Main", "macos64Main", "mingw64Main", "mingw86Main", "nodeJsMain", "wasmMain"),
+                setOf("commonMain"),
                 sourceJarSourceRoots[null]
             )
             assertEquals(setOf("commonMain", "jvm6Main"), sourceJarSourceRoots["jvm6"])
