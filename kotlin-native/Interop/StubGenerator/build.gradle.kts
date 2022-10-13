@@ -34,8 +34,8 @@ dependencies {
 
     api(project(":kotlin-stdlib"))
 //    api(project(path = ":kotlin-compiler", configuration = "runtimeElements"))
-    api(project(":kotlinx-metadata-klib"))
-    api(project(":native:kotlin-native-utils"))
+    implementation(project(":kotlinx-metadata-klib"))
+    implementation(project(":native:kotlin-native-utils"))
     implementation(project(":compiler:util"))
     implementation(project(":compiler:ir.serialization.common"))
 

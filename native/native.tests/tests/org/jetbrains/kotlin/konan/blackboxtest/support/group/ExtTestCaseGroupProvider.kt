@@ -15,6 +15,7 @@ import com.intellij.psi.impl.source.tree.TreeCopyHandler
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.codegen.extractUrls
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
