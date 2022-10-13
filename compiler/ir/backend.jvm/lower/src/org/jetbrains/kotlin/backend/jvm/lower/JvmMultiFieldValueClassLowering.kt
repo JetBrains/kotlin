@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.common.lower.MethodsFromAnyGeneratorForLowerings.Companion.isEquals
+import org.jetbrains.kotlin.backend.common.lower.MethodsFromAnyGeneratorForLowerings.Companion.isToString
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -784,6 +786,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             }.unwrapBlock()
         }
         if (expression.isSpecializedMFVCEqEq) {
+            val backendContext = context
             return context.createIrBuilder(getCurrentScopeSymbol()).irBlock {
                 val leftArgument = expression.getValueArgument(0)!!
                 val rightArgument = expression.getValueArgument(1)!!
@@ -792,35 +795,23 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                 val rightClass = rightArgument.type.erasedUpperBound
                 val rightNode = if (rightArgument.type.needsMfvcFlattening()) replacements.getRootMfvcNodeOrNull(rightClass) else null
                 if (leftNode != null) {
-                    if (rightNode != null) {
+                    val newEquals = if (rightNode != null) {
+                        require(leftNode == rightNode) { "Different nodes: $leftNode, $rightNode" }
                         // both are unboxed
-                        val leftExpressions = flattenExpression(leftArgument)
-                        require((leftExpressions.size > 1) == leftArgument.type.needsMfvcFlattening()) {
-                            "Illegal flattening of ${leftArgument.dump()}\n\n${leftExpressions.joinToString("\n") { it.dump() }}"
-                        }
-                        val rightExpressions = flattenExpression(rightArgument)
-                        require((rightExpressions.size > 1) == rightArgument.type.needsMfvcFlattening()) {
-                            "Illegal flattening of ${rightArgument.dump()}\n\n${rightExpressions.joinToString("\n") { it.dump() }}"
-                        }
-                        require(leftNode == rightNode) { "Different node: $leftNode, $rightNode" }
-                        require(leftClass == rightClass) { "Equals for different classes: $leftClass and $rightClass called" }
-
-                        +irCall(leftNode.specializedEqualsMethod).apply {
-                            ((leftArgument.type as IrSimpleType).arguments + (rightArgument.type as IrSimpleType).arguments).forEachIndexed { index, argument ->
-                                putTypeArgument(index, argument.typeOrNull)
-                            }
-                            val arguments = leftExpressions + rightExpressions
-                            arguments.forEachIndexed { index, argument -> putValueArgument(index, argument) }
-                        }
+                        leftNode.specializedEqualsMethod
                     } else {
                         // left one is unboxed, right is not
-                        val equals = leftClass.functions.single { it.isEquals() }
-                        +irCall(equals).apply {
-                            copyTypeArgumentsFrom(expression)
-                            dispatchReceiver = leftArgument
-                            putValueArgument(0, rightArgument)
-                        }.transform(this@JvmMultiFieldValueClassLowering, null)
+                        leftClass.functions.single { it.isEquals(backendContext) }
                     }
+                    +irCall(newEquals).apply {
+                        if (rightNode != null) {
+                            for ((index, typeArgument) in (rightArgument.type as IrSimpleType).arguments.withIndex()) {
+                                putTypeArgument(index, typeArgument.typeOrNull)
+                            }
+                        }
+                        dispatchReceiver = leftArgument
+                        putValueArgument(0, rightArgument)
+                    }.transform(this@JvmMultiFieldValueClassLowering, null)
                 } else if (rightNode != null) {
                     // left one is boxed, right one is unboxed
                     if (leftArgument.isNullConst()) {

@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 
 fun createLeafMfvcNode(
     parent: IrDeclarationContainer,
@@ -258,6 +257,7 @@ private fun IrProperty.isStatic(currentContainer: IrDeclarationContainer) =
 fun getRootNode(context: JvmBackendContext, mfvc: IrClass): RootMfvcNode {
     require(mfvc.isMultiFieldValueClass) { "${mfvc.defaultType.render()} does not require flattening" }
     val oldPrimaryConstructor = mfvc.primaryConstructor!!
+    val oldFields = mfvc.fields.filter { !it.isStatic }.toList()
     val representation = mfvc.multiFieldValueClassRepresentation!!
     val properties = collectPropertiesAfterLowering(mfvc).associateBy { it.isStatic(mfvc) to it.name }
 
@@ -270,7 +270,7 @@ fun getRootNode(context: JvmBackendContext, mfvc: IrClass): RootMfvcNode {
     val newPrimaryConstructor = makeMfvcPrimaryConstructor(context, oldPrimaryConstructor, mfvc, leaves, fields)
     val primaryConstructorImpl = makePrimaryConstructorImpl(context, oldPrimaryConstructor, mfvc, leaves)
     val boxMethod = makeBoxMethod(context, mfvc, leaves, newPrimaryConstructor)
-    val specializedEqualsMethod = makeSpecializedEqualsMethod(context, mfvc, leaves)
+    val specializedEqualsMethod = makeSpecializedEqualsMethod(context, mfvc, oldFields)
 
     return RootMfvcNode(
         mfvc, subnodes, oldPrimaryConstructor, newPrimaryConstructor, primaryConstructorImpl, boxMethod, specializedEqualsMethod
@@ -278,50 +278,28 @@ fun getRootNode(context: JvmBackendContext, mfvc: IrClass): RootMfvcNode {
 }
 
 private fun makeSpecializedEqualsMethod(
-    context: JvmBackendContext,
-    mfvc: IrClass,
-    leaves: List<LeafMfvcNode>
+    context: JvmBackendContext, mfvc: IrClass, oldFields: List<IrField>
 ) = context.irFactory.buildFun {
-    name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
+    name = Name.identifier("equals")
     // TODO: Revisit this once we allow user defined equals methods in value classes.
-    origin = JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD
+    origin = IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER
     returnType = context.irBuiltIns.booleanType
 }.apply {
     parent = mfvc
     copyTypeParametersFrom(mfvc)
-    val typeParametersHalf1 = typeParameters.apply {
-        for (it in this) {
-            it.name = Name.guessByFirstCharacter("${it.name.asString()}1")
-        }
-    }
+    createDispatchReceiverParameter()
 
-    copyTypeParametersFrom(mfvc)
-    val typeParametersHalf2 = typeParameters.drop(typeParametersHalf1.size).apply {
-        for (it in this) {
-            it.name = Name.guessByFirstCharacter("${it.name.asString()}2")
-        }
-    }
+    val functionTypeParameters = typeParameters
 
-    val valueParametersHalf1 = leaves.map { leaf ->
-        addValueParameter {
-            this.name = Name.guessByFirstCharacter(
-                "${InlineClassDescriptorResolver.SPECIALIZED_EQUALS_FIRST_PARAMETER_NAME}$${leaf.fullFieldName}"
-            )
-            this.type = leaf.type.substitute(mfvc.typeParameters, typeParametersHalf1.map { it.defaultType })
-        }
-    }
-
-    val valueParametersHalf2 = leaves.map { leaf ->
-        addValueParameter {
-            this.name = Name.guessByFirstCharacter(
-                "${InlineClassDescriptorResolver.SPECIALIZED_EQUALS_SECOND_PARAMETER_NAME}$${leaf.fullFieldName}"
-            )
-            this.type = leaf.type.substitute(mfvc.typeParameters, typeParametersHalf2.map { it.defaultType })
-        }
+    val other = addValueParameter {
+        name = Name.identifier("other")
+        type = mfvc.defaultType.substitute(mfvc.typeParameters, functionTypeParameters.map { it.defaultType })
     }
 
     body = with(context.createJvmIrBuilder(this.symbol)) {
-        val conjunctions = valueParametersHalf1.zip(valueParametersHalf2) { f1, f2 -> irEquals(irGet(f1), irGet(f2)) }
+        val leftArgs = oldFields.map { irGetField(irGet(dispatchReceiverParameter!!), it) }
+        val rightArgs = oldFields.map { irGetField(irGet(other), it) }
+        val conjunctions = leftArgs.zip(rightArgs) { l, r -> irEquals(l, r) }
         irExprBody(conjunctions.reduce { acc, current ->
             irCall(context.irBuiltIns.andandSymbol).apply {
                 putValueArgument(0, acc)

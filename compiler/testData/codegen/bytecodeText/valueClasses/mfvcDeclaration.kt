@@ -45,7 +45,7 @@ fun functionWithoutBoxes(x: D, y: D) {
 // 2 INVOKESTATIC C.hashCode-impl \(IILjava/lang/String;\)I
 // 1 INVOKESTATIC D.hashCode-impl \(IILjava/lang/String;\)I
 // 2 public static equals-impl\(IILjava/lang/String;Ljava/lang/Object;\)Z
-// 2 public final static equals-impl0\(IILjava/lang/String;IILjava/lang/String;\)Z
+// 2 public final static equals-sUp7gFk\(IILjava/lang/String;IILjava/lang/String;\)Z
 // 1 public final static constructor-impl\(III\)LD;
 // 2 public final static constructor-impl\(IILjava/lang/String;\)V
 // 2 INVOKESTATIC D.constructor-impl \(IILjava/lang/String;\)V

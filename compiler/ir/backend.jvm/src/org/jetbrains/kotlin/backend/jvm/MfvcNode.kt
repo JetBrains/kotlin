@@ -420,8 +420,8 @@ class RootMfvcNode internal constructor(
             boxMethod.typeParameters.size,
             primaryConstructorImpl.typeParameters.size,
         )
-        require(specializedEqualsMethod.typeParameters.size == 2 * mfvc.typeParameters.size) {
-            "Specialized equals method must contain twice more type parameters than corresponding MFVC ${mfvc.typeParameters.map { it.defaultType.render() }} but has ${specializedEqualsMethod.typeParameters.map { it.defaultType.render() }}"
+        require(specializedEqualsMethod.typeParameters.size == mfvc.typeParameters.size) {
+            "Specialized equals method must contain the same number of type parameters as the corresponding MFVC ${mfvc.typeParameters.map { it.defaultType.render() }} but has ${specializedEqualsMethod.typeParameters.map { it.defaultType.render() }}"
         }
         requireSameSizes(oldPrimaryConstructor.valueParameters.size, subnodes.size)
         requireSameSizes(
@@ -430,8 +430,8 @@ class RootMfvcNode internal constructor(
             primaryConstructorImpl.valueParameters.size,
             boxMethod.valueParameters.size,
         )
-        require(specializedEqualsMethod.valueParameters.size == 2 * leavesCount) {
-            "Specialized equals method must contain twice more value parameters than corresponding primary constructor of the MFVC ${mfvc.typeParameters.map { it.defaultType.render() }} but has ${specializedEqualsMethod.typeParameters.map { it.defaultType.render() }}"
+        require(specializedEqualsMethod.valueParameters.size == 1) {
+            "Specialized equals method must contain single value parameter but has\n${specializedEqualsMethod.valueParameters.joinToString("\n") { it.dump() }}"
         }
         for (function in listOf(oldPrimaryConstructor, newPrimaryConstructor, primaryConstructorImpl, boxMethod, specializedEqualsMethod)) {
             require(function.extensionReceiverParameter == null) { "Extension receiver is not expected for ${function.render()}" }

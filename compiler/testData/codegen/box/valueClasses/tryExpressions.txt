@@ -9,7 +9,7 @@ public final class DPoint {
     public final static method constructor-impl(p0: double, p1: double): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
-    public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
+    public final static method equals-sUp7gFk(p0: double, p1: double, p2: double, p3: double): boolean
     public method hashCode(): int
     public static method hashCode-impl(p0: double, p1: double): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
