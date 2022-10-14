@@ -11,10 +11,12 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeFragmentMetadataCompilationData
+import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -76,6 +78,9 @@ abstract class KotlinNativeCompilation @Inject constructor(
 
     override val target: KotlinNativeTarget
         get() = super.target as KotlinNativeTarget
+
+    override val compilerOptions: NativeCompilerOptions
+        get() = super.compilerOptions as NativeCompilerOptions
 
     // Interop DSL.
     val cinterops = project.container(DefaultCInteropSettings::class.java) { cinteropName ->

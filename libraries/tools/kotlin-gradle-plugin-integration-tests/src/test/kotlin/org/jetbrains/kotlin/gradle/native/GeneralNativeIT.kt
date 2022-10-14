@@ -25,9 +25,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.junit.Assume
 import org.junit.Ignore
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.ErrorCollector
 import java.io.File
 import java.nio.file.Files
 import java.util.*
@@ -1176,6 +1174,29 @@ class GeneralNativeIT : BaseGradleIT() {
             assertSuccessful()
             assertDirectoryExists("build/mydir/bin/host/debugExecutable")
             assertNoSuchFile("build/bin")
+        }
+    }
+
+    // KT-54439
+    @Test
+    fun testLanguageSettingsSyncToNativeTasks() = with(transformNativeTestProjectWithPluginDsl("native-kotlin-options")) {
+        gradleBuildScript().modify {
+            """
+            |${it.substringBefore("kotlin {")}
+            |
+            |kotlin {
+            |    ${HostManager.host.presetName}("host") {
+            |        compilations.named("main").configure { 
+            |            kotlinOptions.freeCompilerArgs += ["-Xverbose-phases=Linker"] 
+            |        }
+            |    }
+            |}
+            """.trimMargin()
+        }
+
+        build("assemble") {
+            assertSuccessful()
+            assertContains("-Xverbose-phases=Linker")
         }
     }
 
