@@ -7,7 +7,7 @@ KtKotlinPropertySymbol:
     callableIdIfNonLocal: null
     contextReceivers: []
     hasBody: false
-    hasStableParameterNames: false
+    hasStableParameterNames: true
     isDefault: true
     isExtension: false
     isInline: false
@@ -42,7 +42,7 @@ KtKotlinPropertySymbol:
     callableIdIfNonLocal: null
     contextReceivers: []
     hasBody: false
-    hasStableParameterNames: false
+    hasStableParameterNames: true
     isDefault: true
     isExtension: false
     isInline: false
@@ -164,7 +164,7 @@ KtKotlinPropertySymbol:
     callableIdIfNonLocal: null
     contextReceivers: []
     hasBody: false
-    hasStableParameterNames: false
+    hasStableParameterNames: true
     isDefault: true
     isExtension: false
     isInline: false
@@ -215,7 +215,7 @@ KtKotlinPropertySymbol:
     callableIdIfNonLocal: null
     contextReceivers: []
     hasBody: false
-    hasStableParameterNames: false
+    hasStableParameterNames: true
     isDefault: true
     isExtension: false
     isInline: false
@@ -250,7 +250,7 @@ KtKotlinPropertySymbol:
     callableIdIfNonLocal: null
     contextReceivers: []
     hasBody: false
-    hasStableParameterNames: false
+    hasStableParameterNames: true
     isDefault: true
     isExtension: false
     isInline: false
@@ -318,7 +318,7 @@ KtKotlinPropertySymbol:
     callableIdIfNonLocal: null
     contextReceivers: []
     hasBody: false
-    hasStableParameterNames: false
+    hasStableParameterNames: true
     isDefault: true
     isExtension: false
     isInline: false

@@ -7,7 +7,7 @@ KtKotlinPropertySymbol:
     callableIdIfNonLocal: null
     contextReceivers: []
     hasBody: false
-    hasStableParameterNames: false
+    hasStableParameterNames: true
     isDefault: false
     isExtension: false
     isInline: false

@@ -11,7 +11,7 @@ KtValueParameterSymbol:
       callableIdIfNonLocal: null
       contextReceivers: []
       hasBody: false
-      hasStableParameterNames: false
+      hasStableParameterNames: true
       isDefault: true
       isExtension: false
       isInline: false
@@ -73,7 +73,7 @@ KtValueParameterSymbol:
       callableIdIfNonLocal: null
       contextReceivers: []
       hasBody: false
-      hasStableParameterNames: false
+      hasStableParameterNames: true
       isDefault: true
       isExtension: false
       isInline: false
@@ -135,7 +135,7 @@ KtValueParameterSymbol:
       callableIdIfNonLocal: null
       contextReceivers: []
       hasBody: false
-      hasStableParameterNames: false
+      hasStableParameterNames: true
       isDefault: true
       isExtension: false
       isInline: false
@@ -211,7 +211,7 @@ KtConstructorSymbol:
           callableIdIfNonLocal: null
           contextReceivers: []
           hasBody: false
-          hasStableParameterNames: false
+          hasStableParameterNames: true
           isDefault: true
           isExtension: false
           isInline: false
@@ -270,7 +270,7 @@ KtConstructorSymbol:
           callableIdIfNonLocal: null
           contextReceivers: []
           hasBody: false
-          hasStableParameterNames: false
+          hasStableParameterNames: true
           isDefault: true
           isExtension: false
           isInline: false
@@ -329,7 +329,7 @@ KtConstructorSymbol:
           callableIdIfNonLocal: null
           contextReceivers: []
           hasBody: false
-          hasStableParameterNames: false
+          hasStableParameterNames: true
           isDefault: true
           isExtension: false
           isInline: false

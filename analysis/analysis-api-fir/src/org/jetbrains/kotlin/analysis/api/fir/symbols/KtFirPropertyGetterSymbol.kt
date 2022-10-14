@@ -72,7 +72,7 @@ internal class KtFirPropertyGetterSymbol(
     override val valueParameters: List<KtValueParameterSymbol> get() = withValidityAssertion { emptyList() }
 
     override val hasStableParameterNames: Boolean
-        get() = withValidityAssertion { firSymbol.fir.getHasStableParameterNames(firSymbol.moduleData.session) }
+        get() = withValidityAssertion { true }
 
     override fun createPointer(): KtSymbolPointer<KtPropertyGetterSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }

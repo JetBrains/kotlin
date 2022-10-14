@@ -41,7 +41,7 @@ internal class KtFe10DescPropertySetterSymbol(
         get() = withValidityAssertion { descriptor.valueParameters.map { KtFe10DescValueParameterSymbol(it, analysisContext) } }
 
     override val hasStableParameterNames: Boolean
-        get() = withValidityAssertion { descriptor.ktHasStableParameterNames }
+        get() = withValidityAssertion { true }
 
     override val callableIdIfNonLocal: CallableId?
         get() = withValidityAssertion { descriptor.correspondingProperty.setterCallableIdIfNotLocal }
