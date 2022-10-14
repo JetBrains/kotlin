@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.backend.konan.driver
 
 import kotlinx.cinterop.usingJvmCInteropCallbacks
-import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendContextImpl
+import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendPhase
+import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendPhaseOutput
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
 
 /**
@@ -33,13 +32,22 @@ internal class StaticCompilerDriver : CompilerDriver() {
             targets.list()
         }
 
-        val context = Context(konanConfig)
-        context.environment = environment
-        context.phaseConfig.konanPhasesConfig(konanConfig) // TODO: Wrong place to call it
-
         if (konanConfig.infoArgsOnly) return
 
-        if (!context.frontendPhase()) return
+        val frontendContext = FrontendContextImpl(konanConfig)
+        val frontendOutput = FrontendPhase.phaseBody(frontendContext, environment)
+        if (frontendOutput is FrontendPhaseOutput.ShouldNotGenerateCode) {
+            return
+        }
+        require(frontendOutput is FrontendPhaseOutput.Full)
+        val context = Context(
+                konanConfig,
+                environment,
+                frontendOutput.frontendServices,
+                frontendOutput.bindingContext,
+                frontendOutput.moduleDescriptor,
+        )
+        context.phaseConfig.konanPhasesConfig(konanConfig) // TODO: Wrong place to call it
 
         usingNativeMemoryAllocator {
             usingJvmCInteropCallbacks {
@@ -51,35 +59,4 @@ internal class StaticCompilerDriver : CompilerDriver() {
             }
         }
     }
-
-    // returns true if should generate code.
-    private fun Context.frontendPhase(): Boolean {
-        lateinit var analysisResult: AnalysisResult
-
-        do {
-            val analyzerWithCompilerReport = AnalyzerWithCompilerReport(
-                    messageCollector,
-                    environment.configuration.languageVersionSettings,
-                    environment.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-            )
-
-            // Build AST and binding info.
-            analyzerWithCompilerReport.analyzeAndReport(environment.getSourceFiles()) {
-                TopDownAnalyzerFacadeForKonan.analyzeFiles(environment.getSourceFiles(), this)
-            }
-            if (analyzerWithCompilerReport.hasErrors()) {
-                throw KonanCompilationException()
-            }
-            analysisResult = analyzerWithCompilerReport.analysisResult
-            if (analysisResult is AnalysisResult.RetryWithAdditionalRoots) {
-                environment.addKotlinSourceRoots(analysisResult.additionalKotlinRoots)
-            }
-        } while(analysisResult is AnalysisResult.RetryWithAdditionalRoots)
-
-        moduleDescriptor = analysisResult.moduleDescriptor
-        bindingContext = analysisResult.bindingContext
-
-        return analysisResult.shouldGenerateCode
-    }
-
 }
