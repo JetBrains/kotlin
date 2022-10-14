@@ -37,18 +37,18 @@ internal open class Kotlin2JsPlugin(
             KotlinPlatformType.js,
             targetName,
             {
-                object : HasCompilerOptions<CompilerJsOptions> {
-                    override val options: CompilerJsOptions =
-                        project.objects.newInstance(CompilerJsOptionsDefault::class.java)
+                object : HasCompilerOptions<KotlinJsCompilerOptions> {
+                    override val options: KotlinJsCompilerOptions =
+                        project.objects.newInstance(KotlinJsCompilerOptionsDefault::class.java)
                 }
             },
-            { compilerOptions: CompilerJsOptions ->
+            { compilerOptions: KotlinJsCompilerOptions ->
                 object : KotlinJsOptions {
-                    override val options: CompilerJsOptions
+                    override val options: KotlinJsCompilerOptions
                         get() = compilerOptions
                 }
             }
-        ) as KotlinWithJavaTarget<KotlinJsOptions, CompilerJsOptions>
+        ) as KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>
 
         (project.kotlinExtension as Kotlin2JsProjectExtension).setTarget(target)
         super.apply(project)

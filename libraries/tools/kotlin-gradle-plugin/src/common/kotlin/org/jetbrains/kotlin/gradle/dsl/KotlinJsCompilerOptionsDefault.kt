@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-@Deprecated("Rebasing Artifact. Will be removed later", replaceWith = ReplaceWith("KotlinJsCompilerOptionsDefault"))
-internal typealias CompilerJsOptionsDefault = KotlinJsCompilerOptionsDefault
-
 internal abstract class KotlinJsCompilerOptionsDefault @javax.inject.Inject constructor(
     objectFactory: org.gradle.api.model.ObjectFactory
 ) : org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsDefault(objectFactory), org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions {

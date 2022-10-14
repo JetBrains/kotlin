@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
@@ -28,7 +25,7 @@ open class KotlinJvmCompilation @Inject internal constructor(
 
     override val target: KotlinJvmTarget = compilation.target as KotlinJvmTarget
 
-    override val compilerOptions: HasCompilerOptions<CompilerJvmOptions> =
+    override val compilerOptions: HasCompilerOptions<KotlinJvmCompilerOptions> =
         compilation.compilerOptions.castCompilerOptionsType()
 
     @Deprecated("Replaced with compileTaskProvider", replaceWith = ReplaceWith("compileTaskProvider"))
@@ -42,8 +39,8 @@ open class KotlinJvmCompilation @Inject internal constructor(
         get() = compilation.compileKotlinTask as org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
     @Suppress("UNCHECKED_CAST")
-    override val compileTaskProvider: TaskProvider<out KotlinCompilationTask<CompilerJvmOptions>>
-        get() = compilation.compileTaskProvider as TaskProvider<KotlinCompilationTask<CompilerJvmOptions>>
+    override val compileTaskProvider: TaskProvider<out KotlinCompilationTask<KotlinJvmCompilerOptions>>
+        get() = compilation.compileTaskProvider as TaskProvider<KotlinCompilationTask<KotlinJvmCompilerOptions>>
 
     val compileJavaTaskProvider: TaskProvider<out JavaCompile>?
         get() = if (target.withJavaEnabled) {
@@ -67,7 +64,7 @@ internal inline fun <reified T : KotlinCommonOptions> InternalKotlinCompilation<
 }
 
 //TODO SEB: Find home for function
-internal inline fun <reified T : CompilerCommonOptions> HasCompilerOptions<*>.castCompilerOptionsType(): HasCompilerOptions<T> {
+internal inline fun <reified T : KotlinCommonCompilerOptions> HasCompilerOptions<*>.castCompilerOptionsType(): HasCompilerOptions<T> {
     this.options as T
     @Suppress("UNCHECKED_CAST")
     return this as HasCompilerOptions<T>

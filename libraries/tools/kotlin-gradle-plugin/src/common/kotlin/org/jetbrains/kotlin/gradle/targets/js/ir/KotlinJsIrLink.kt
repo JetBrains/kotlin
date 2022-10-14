@@ -15,7 +15,7 @@ import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
-import org.jetbrains.kotlin.gradle.dsl.CompilerJsOptionsDefault
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -36,7 +36,7 @@ abstract class KotlinJsIrLink @Inject constructor(
     objectFactory: ObjectFactory,
     workerExecutor: WorkerExecutor
 ) : Kotlin2JsCompile(
-    objectFactory.newInstance(CompilerJsOptionsDefault::class.java),
+    objectFactory.newInstance(KotlinJsCompilerOptionsDefault::class.java),
     objectFactory,
     workerExecutor
 ) {

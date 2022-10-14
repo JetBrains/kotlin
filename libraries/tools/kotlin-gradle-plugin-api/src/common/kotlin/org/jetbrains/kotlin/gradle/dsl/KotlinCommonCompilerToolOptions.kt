@@ -5,11 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-
-
-@Deprecated("Rebasing Artifact. Will be removed later", replaceWith = ReplaceWith("KotlinCommonCompilerToolOptions"))
-typealias CompilerCommonToolOptions = KotlinCommonCompilerToolOptions
-
 interface KotlinCommonCompilerToolOptions {
 
     /**

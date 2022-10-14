@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.CompilerJsOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -28,7 +28,7 @@ internal class KotlinJsIrSourceSetProcessor(
         return tasksProvider.registerKotlinJSTask(
             project,
             taskName,
-            compilationProjection.compilerOptions.options as CompilerJsOptions,
+            compilationProjection.compilerOptions.options as KotlinJsCompilerOptions,
             configAction
         )
     }
