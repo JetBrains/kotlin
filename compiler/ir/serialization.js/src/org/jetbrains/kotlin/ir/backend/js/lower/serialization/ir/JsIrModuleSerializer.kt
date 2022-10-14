@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
+import org.jetbrains.kotlin.backend.common.serialization.IdSignatureClashTracker
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleSerializer
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -21,10 +22,14 @@ class JsIrModuleSerializer(
     compatibilityMode: CompatibilityMode,
     val skipExpects: Boolean,
     normalizeAbsolutePaths: Boolean,
-    sourceBaseDirs: Collection<String>
+    sourceBaseDirs: Collection<String>,
+    shouldCheckSignaturesOnUniqueness: Boolean = true
 ) : IrModuleSerializer<JsIrFileSerializer>(messageLogger, compatibilityMode, normalizeAbsolutePaths, sourceBaseDirs) {
 
-    private val globalDeclarationTable = JsGlobalDeclarationTable(irBuiltIns)
+    private val globalDeclarationTable = JsGlobalDeclarationTable(
+        irBuiltIns,
+        if (shouldCheckSignaturesOnUniqueness) JsUniqIdClashTracker() else IdSignatureClashTracker.DEFAULT_TRACKER
+    )
 
     override fun createSerializerForFile(file: IrFile): JsIrFileSerializer =
         JsIrFileSerializer(
