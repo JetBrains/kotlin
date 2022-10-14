@@ -20,13 +20,15 @@ dependencies {
     testImplementation(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":generators:test-generator"))
     testApiJUnit5()
-    if (kotlinBuildProperties.isKotlinNativeEnabled) {
-        testImplementation(project(":kotlin-native:Interop:StubGenerator"))
-        testImplementation(project(":kotlin-native:klib"))
-    }
 
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+
+    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+        testImplementation(project(":kotlin-native:Interop:StubGenerator"))
+        testImplementation(project(":kotlin-native:klib"))
+        testRuntimeOnly(project(":kotlin-native-compiler-embeddable"))
+    }
 }
 
 val generationRoot = projectDir.resolve("tests-gen")
