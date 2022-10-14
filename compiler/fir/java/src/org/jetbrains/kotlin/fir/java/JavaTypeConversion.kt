@@ -39,7 +39,8 @@ private fun ClassId.toConeFlexibleType(
 }
 
 internal enum class FirJavaTypeConversionMode {
-    DEFAULT, ANNOTATION_MEMBER, SUPERTYPE, TYPE_PARAMETER_BOUND
+    DEFAULT, ANNOTATION_MEMBER, SUPERTYPE,
+    TYPE_PARAMETER_BOUND_FIRST_ROUND, TYPE_PARAMETER_BOUND_AFTER_FIRST_ROUND
 }
 
 internal fun FirTypeRef.resolveIfJavaType(
@@ -192,7 +193,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             val mappedTypeArguments = when {
                 isRaw -> {
                     val typeParameterSymbols =
-                        lookupTag.takeIf { lowerBound == null && mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND }
+                        lookupTag.takeIf { lowerBound == null && mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND }
                             ?.toFirRegularClassSymbol(session)?.typeParameterSymbols
                     // Given `C<T : X>`, `C` -> `C<X>..C<*>?`.
                     when (mode) {
@@ -204,7 +205,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
 
                 lookupTag != lowerBound?.lookupTag && typeArguments.isNotEmpty() -> {
                     val typeParameterSymbols =
-                        lookupTag.takeIf { mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND }
+                        lookupTag.takeIf { mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND }
                             ?.toFirRegularClassSymbol(session)?.typeParameterSymbols
                     Array(typeArguments.size) { index ->
                         // TODO: check this
