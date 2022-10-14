@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.analysis.api.KtStarProjectionTypeArgument
-import org.jetbrains.kotlin.analysis.api.KtTypeArgument
+import org.jetbrains.kotlin.analysis.api.KtStarTypeProjection
+import org.jetbrains.kotlin.analysis.api.KtTypeProjection
 import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -66,9 +65,9 @@ internal interface KtFirAnalysisSessionComponent {
             return coneType
         }
 
-    val KtTypeArgument.coneTypeProjection: ConeTypeProjection
+    val KtTypeProjection.coneTypeProjection: ConeTypeProjection
         get() = when (this) {
-            is KtStarProjectionTypeArgument -> ConeStarProjection
+            is KtStarTypeProjection -> ConeStarProjection
             is KtTypeArgumentWithVariance -> {
                 typeContext.createTypeArgument(type.coneType, variance.convertVariance()) as ConeTypeProjection
             }

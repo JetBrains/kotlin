@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.KtStarProjectionTypeArgument
+import org.jetbrains.kotlin.analysis.api.KtStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.components.KtClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KtTypeCreator
@@ -60,7 +60,7 @@ internal class KtFe10TypeCreator(
         val type = if (typeParameters.size == builder.arguments.size) {
             val projections = builder.arguments.mapIndexed { index, arg ->
                 when (arg) {
-                    is KtStarProjectionTypeArgument -> StarProjectionImpl(typeParameters[index])
+                    is KtStarTypeProjection -> StarProjectionImpl(typeParameters[index])
                     is KtTypeArgumentWithVariance -> TypeProjectionImpl(arg.variance, (arg.type as KtFe10Type).type)
                 }
             }

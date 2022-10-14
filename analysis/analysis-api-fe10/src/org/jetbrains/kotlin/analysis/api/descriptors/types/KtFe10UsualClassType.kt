@@ -5,19 +5,21 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
-import org.jetbrains.kotlin.analysis.api.KtTypeArgument
+import org.jetbrains.kotlin.analysis.api.KtTypeProjection
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.maybeLocalClassId
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeArgument
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtClassSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeProjection
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebugging
+import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10JvmTypeMapperContext
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KtUsualClassType
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.SimpleType
@@ -29,14 +31,40 @@ internal class KtFe10UsualClassType(
 ) : KtUsualClassType(), KtFe10Type {
     override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging() }
 
+    override val qualifiers: List<KtClassTypeQualifier.KtResolvedClassTypeQualifier>
+        get() = withValidityAssertion {
+            val nestedType = KtFe10JvmTypeMapperContext.getNestedType(type)
+            val nonInnerQualifiers =
+                generateSequence(nestedType.root.classifierDescriptor.containingDeclaration as? ClassDescriptor) { it.containingDeclaration as? ClassDescriptor }
+
+            buildList {
+                nonInnerQualifiers.mapTo(this) {
+                    KtClassTypeQualifier.KtResolvedClassTypeQualifier(
+                        it.toKtClassSymbol(analysisContext),
+                        emptyList(),
+                        token
+                    )
+                }
+
+                nestedType.allInnerTypes.mapTo(this) { innerType ->
+                    KtClassTypeQualifier.KtResolvedClassTypeQualifier(
+                        innerType.classDescriptor.toKtClassSymbol(analysisContext),
+                        innerType.arguments.map { it.toKtTypeProjection(analysisContext) },
+                        token
+                    )
+                }
+
+            }
+        }
+
     override val classId: ClassId
         get() = withValidityAssertion { descriptor.maybeLocalClassId }
 
     override val classSymbol: KtClassLikeSymbol
         get() = withValidityAssertion { KtFe10DescNamedClassOrObjectSymbol(descriptor, analysisContext) }
 
-    override val typeArguments: List<KtTypeArgument>
-        get() = withValidityAssertion { type.arguments.map { it.toKtTypeArgument(analysisContext) } }
+    override val ownTypeArguments: List<KtTypeProjection>
+        get() = withValidityAssertion { type.arguments.map { it.toKtTypeProjection(analysisContext) } }
 
     override val nullability: KtTypeNullability
         get() = withValidityAssertion { type.ktNullability }

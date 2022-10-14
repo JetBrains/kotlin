@@ -5,35 +5,39 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types
 
-import org.jetbrains.kotlin.analysis.api.KtTypeProjection
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForType
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.types.KtCapturedType
+import org.jetbrains.kotlin.analysis.api.types.KtTypeErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
-import org.jetbrains.kotlin.fir.types.ConeCapturedType
+import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferParameterType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 
-internal class KtFirCapturedType(
-    override val coneType: ConeCapturedType,
+internal class KtFirTypeErrorType(
+    override val coneType: ConeErrorType,
     override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
-) : KtCapturedType(), KtFirType {
-    override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+) : KtTypeErrorType(), KtFirType {
 
-    override val projection: KtTypeProjection
-        get() = withValidityAssertion { builder.typeBuilder.buildTypeProjection(coneType.constructor.projection) }
+    override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+    override val errorMessage: String get() = withValidityAssertion { coneType.diagnostic.reason }
+
+    override fun tryRenderAsNonErrorType(): String? = withValidityAssertion {
+        when (val diagnostic = coneType.diagnostic) {
+            is ConeCannotInferParameterType -> diagnostic.typeParameter.name.asString()
+            else -> null
+        }
+    }
 
     override val annotationsList: KtAnnotationsList by cached {
         KtFirAnnotationListForType.create(coneType, builder.rootSession, token)
     }
 
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.renderForDebugging() }
-
-
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
 }

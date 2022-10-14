@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
+import org.jetbrains.kotlin.fir.java.javaSymbolProvider
 
 class FirDeclarationDesignationWithFile(
     path: List<FirDeclaration>,
@@ -73,7 +74,9 @@ private fun collectDesignationPath(declaration: FirDeclaration): List<FirDeclara
         }
         is FirClassLikeDeclaration -> {
             if (declaration.isLocal) return null
-            declaration.symbol.classId.outerClassId?.let(declaration.moduleData.session.firProvider::getFirClassifierByFqName)
+            val outerClassId = declaration.symbol.classId.outerClassId
+            outerClassId?.let(declaration.moduleData.session.firProvider::getFirClassifierByFqName)
+                ?: outerClassId?.let(declaration.moduleData.session.javaSymbolProvider::getClassLikeSymbolByClassId)?.fir
         }
         else -> return null
     } ?: return emptyList()

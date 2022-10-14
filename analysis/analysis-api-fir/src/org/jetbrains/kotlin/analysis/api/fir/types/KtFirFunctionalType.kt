@@ -5,15 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types
 
-import org.jetbrains.kotlin.analysis.api.KtTypeArgument
+import org.jetbrains.kotlin.analysis.api.KtTypeProjection
 import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForType
+import org.jetbrains.kotlin.analysis.api.fir.types.qualifiers.UsualClassTypeQualifierBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KtFunctionalType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
@@ -35,10 +37,10 @@ internal class KtFirFunctionalType(
         builder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
             ?: errorWithFirSpecificEntries("Class was not found", coneType = coneType)
     }
-    override val typeArguments: List<KtTypeArgument> by cached {
-        coneType.typeArguments.map { typeArgument ->
-            builder.typeBuilder.buildTypeArgument(typeArgument)
-        }
+    override val ownTypeArguments: List<KtTypeProjection> get() = withValidityAssertion { qualifiers.last().typeArguments }
+
+    override val qualifiers: List<KtClassTypeQualifier.KtResolvedClassTypeQualifier> by cached {
+        UsualClassTypeQualifierBuilder.buildQualifiers(coneType, builder)
     }
 
     override val annotationsList: KtAnnotationsList by cached {
@@ -56,7 +58,7 @@ internal class KtFirFunctionalType(
 
     override val receiverType: KtType?
         get() = withValidityAssertion {
-            if (coneType.isExtensionFunctionType) (typeArguments.first() as KtTypeArgumentWithVariance).type
+            if (coneType.isExtensionFunctionType) (ownTypeArguments.first() as KtTypeArgumentWithVariance).type
             else null
         }
 
@@ -66,13 +68,13 @@ internal class KtFirFunctionalType(
         }
 
     override val parameterTypes: List<KtType> by cached {
-        val parameterTypeArgs = if (coneType.isExtensionFunctionType) typeArguments.subList(1, typeArguments.lastIndex)
-        else typeArguments.subList(0, typeArguments.lastIndex)
+        val parameterTypeArgs = if (coneType.isExtensionFunctionType) ownTypeArguments.subList(1, ownTypeArguments.lastIndex)
+        else ownTypeArguments.subList(0, ownTypeArguments.lastIndex)
         parameterTypeArgs.map { (it as KtTypeArgumentWithVariance).type }
     }
 
     override val returnType: KtType
-        get() = withValidityAssertion { (typeArguments.last() as KtTypeArgumentWithVariance).type }
+        get() = withValidityAssertion { (ownTypeArguments.last() as KtTypeArgumentWithVariance).type }
 
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.renderForDebugging() }
     override fun equals(other: Any?) = typeEquals(other)

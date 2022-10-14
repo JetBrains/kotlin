@@ -16,7 +16,7 @@ import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
+import org.jetbrains.kotlin.analysis.api.types.KtErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
@@ -67,7 +67,7 @@ internal class SymbolLightTypeParameter(
             .filter { type ->
                 when (type) {
                     is KtNonErrorClassType -> type.classId != StandardClassIds.Any
-                    is KtClassErrorType -> false
+                    is KtErrorType -> false
                     else -> true
                 }
             }
