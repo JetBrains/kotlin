@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
+import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeName
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.test.services.TestServices
@@ -26,7 +27,9 @@ class JsIrModuleToPath(val testServices: TestServices, shouldProvidePaths: Boole
 
     override operator fun get(key: K): V? {
         return runIf(!isEmpty()) {
-            "./${getJsArtifactSimpleName(testServices, key.safeName)}_v5.mjs"
+            "./${getJsArtifactSimpleName(testServices, key.safeName)}_v5.mjs".run {
+                if (isWindows) minify() else this
+            }
         }
     }
 }
