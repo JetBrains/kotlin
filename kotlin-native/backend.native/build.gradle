@@ -104,7 +104,7 @@ configurations {
 }
 
 dependencies {
-    kotlin_compiler_jar project(kotlinCompilerModule)
+    kotlin_compiler_jar kotlinCompilerModule
     kotlin_stdlib_jar kotlinStdLibModule
     use(DependenciesKt) {
         trove4j_jar commonDependency("org.jetbrains.intellij.deps:trove4j")
