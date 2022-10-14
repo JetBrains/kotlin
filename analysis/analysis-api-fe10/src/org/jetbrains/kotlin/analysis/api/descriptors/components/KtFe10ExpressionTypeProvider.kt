@@ -161,7 +161,12 @@ class KtFe10ExpressionTypeProvider(
 
     override fun getExpectedType(expression: PsiElement): KtType? {
         val ktExpression = expression.getParentOfType<KtExpression>(false) ?: return null
-        val parentExpression = ktExpression.parent
+        val parentExpression = if (ktExpression.parent is KtLabeledExpression) {
+            // lambda -> labeled expression -> lambda argument (value argument)
+            ktExpression.parent.parent
+        } else {
+            ktExpression.parent
+        }
 
         // Unwrap specific expressions
         when (ktExpression) {
