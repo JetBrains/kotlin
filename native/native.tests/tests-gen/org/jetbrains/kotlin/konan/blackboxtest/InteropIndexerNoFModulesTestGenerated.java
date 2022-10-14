@@ -126,4 +126,20 @@ public class InteropIndexerNoFModulesTestGenerated extends AbstractNativeInterop
             runTest("native/native.tests/testData/Interop/Indexer/framework/frameworkDefs/full/");
         }
     }
+
+    @Nested
+    @TestMetadata("native/native.tests/testData/Interop/Indexer/builtins/builtinsDefs")
+    @TestDataPath("$PROJECT_ROOT")
+    public class BuiltinsDefs {
+        @Test
+        public void testAllFilesPresentInBuiltinsDefs() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/Interop/Indexer/builtins/builtinsDefs"), Pattern.compile("^([^_](.+))$"), null, false);
+        }
+
+        @Test
+        @TestMetadata("filterA")
+        public void testFilterA() throws Exception {
+            runTest("native/native.tests/testData/Interop/Indexer/builtins/builtinsDefs/filterA/");
+        }
+    }
 }
