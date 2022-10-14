@@ -42,8 +42,9 @@ configurations {
 }
 
 dependencies {
-    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7'
-    cli_bc project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
+    // TODO: upgrade coroutines
+    api DependenciesKt.commonDependency(project, "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
+//    cli_bc project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
 }
 ext.testOutputRoot = rootProject.file("test.output").absolutePath
 
@@ -6470,7 +6471,7 @@ fileCheckTest("filecheck_constants_merge") {
 }
 
 dependencies {
-    nopPluginApi project(kotlinCompilerModule)
+    nopPluginApi kotlinCompilerModule
     nopPluginApi project(":native:kotlin-native-utils")
     nopPluginApi project(":core:descriptors")
     nopPluginApi project(":compiler:ir.tree")
@@ -6483,7 +6484,7 @@ dependencies {
     nopPluginApi project(":kotlin-util-klib-metadata")
     nopPluginApi project(":compiler:ir.serialization.common")
 
-    api project(kotlinCompilerModule)
+    implementation kotlinCompilerModule
     api project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
     api DependenciesKt.commonDependency(project, "junit")
 }
