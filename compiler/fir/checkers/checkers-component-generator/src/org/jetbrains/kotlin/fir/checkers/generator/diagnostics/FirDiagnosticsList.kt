@@ -426,10 +426,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION by error<PsiElement>()
         val VALUE_CLASS_CANNOT_EXTEND_CLASSES by error<KtTypeReference>()
         val VALUE_CLASS_CANNOT_BE_RECURSIVE by error<KtTypeReference>()
+        val SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS by error<PsiElement>()
         val RESERVED_MEMBER_INSIDE_VALUE_CLASS by error<KtFunction>(PositioningStrategy.DECLARATION_NAME) {
             parameter<String>("name")
         }
-        val SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS by error<PsiElement>()
+        val TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS by error<KtTypeReference>()
         val INNER_CLASS_INSIDE_VALUE_CLASS by error<KtDeclaration>(PositioningStrategy.INNER_MODIFIER)
         val VALUE_CLASS_CANNOT_BE_CLONEABLE by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
     }
@@ -1407,7 +1408,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE by warning<KtElement>(PositioningStrategy.SUSPEND_MODIFIER)
 
-        val INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS by warning<KtNamedFunction>(PositioningStrategy.DECLARATION_NAME) {
+        val INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS by warning<KtNamedFunction>(PositioningStrategy.DECLARATION_NAME) {
             parameter<ConeKotlinType>("type")
         }
     }

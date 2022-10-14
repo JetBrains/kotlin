@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.isInlineClass
+import org.jetbrains.kotlin.resolve.isValueClass
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -200,10 +200,10 @@ object OperatorChecks : AbstractModifierChecks() {
         Checks(RANGE_UNTIL, MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck),
         Checks(EQUALS, Member) {
             fun DeclarationDescriptor.isAny() = this is ClassDescriptor && KotlinBuiltIns.isAny(this)
-            ensure(containingDeclaration.isAny() || overriddenDescriptors.any { it.containingDeclaration.isAny() } || isTypedEqualsInInlineClass()) {
+            ensure(containingDeclaration.isAny() || overriddenDescriptors.any { it.containingDeclaration.isAny() } || isTypedEqualsInValueClass()) {
                 buildString {
                     append("must override ''equals()'' in Any")
-                    if (containingDeclaration.isInlineClass()) {
+                    if (containingDeclaration.isValueClass()) {
                         val expectedParameterTypeRendered = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(
                             (containingDeclaration as ClassDescriptor).defaultType.replaceArgumentsWithStarProjections()
                         )

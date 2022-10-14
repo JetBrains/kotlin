@@ -259,7 +259,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_CHARACT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_LEFT_COMPONENT_OF_INTERSECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INC_DEC_SHOULD_NOT_RETURN_UNIT
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_UNSUCCESSFUL_FORK
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION
@@ -501,6 +501,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_SHOULD_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_CANT_BE_USED_FOR_CONST_VAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_MISMATCH
@@ -1276,11 +1277,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             FIR,
             DECLARATION_NAME
         )
-        map.put(RESERVED_MEMBER_INSIDE_VALUE_CLASS, "Member with the name ''{0}'' is reserved for future releases", TO_STRING)
         map.put(
             SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS,
             "Secondary constructors with bodies are reserved for for future releases"
         )
+        map.put(RESERVED_MEMBER_INSIDE_VALUE_CLASS, "Member with the name ''{0}'' is reserved for future releases", TO_STRING)
+        map.put(TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS, "Type arguments for typed value class equals must be only star projections")
         map.put(INNER_CLASS_INSIDE_VALUE_CLASS, "Value class cannot have inner classes")
         map.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be Cloneable")
 
@@ -2023,8 +2025,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
 
         map.put(
-            INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS,
-            "Overriding ''equals'' from ''Any'' in inline class without operator ''equals(other: {0}): Boolean'' leads to boxing on every equality comparison",
+            INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS,
+            "Overriding ''equals'' from ''Any'' in value class without operator ''equals(other: {0}): Boolean'' leads to boxing on every equality comparison",
             RENDER_TYPE
         )
 

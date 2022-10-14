@@ -381,6 +381,7 @@ class RootMfvcNode internal constructor(
     val primaryConstructorImpl: IrSimpleFunction,
     override val boxMethod: IrSimpleFunction,
     val specializedEqualsMethod: IrSimpleFunction,
+    val createdNewSpecializedEqualsMethod: Boolean,
 ) : MfvcNodeWithSubnodes {
     override val subnodesImpl: MfvcNodeWithSubnodesImpl = MfvcNodeWithSubnodesImpl(subnodes, null)
     override val type: IrSimpleType = mfvc.defaultType
@@ -420,8 +421,8 @@ class RootMfvcNode internal constructor(
             boxMethod.typeParameters.size,
             primaryConstructorImpl.typeParameters.size,
         )
-        require(specializedEqualsMethod.typeParameters.size == mfvc.typeParameters.size) {
-            "Specialized equals method must contain the same number of type parameters as the corresponding MFVC ${mfvc.typeParameters.map { it.defaultType.render() }} but has ${specializedEqualsMethod.typeParameters.map { it.defaultType.render() }}"
+        require(specializedEqualsMethod.typeParameters.isEmpty()) {
+            "Specialized equals method must not contain type parameters but has ${specializedEqualsMethod.typeParameters.map { it.defaultType.render() }}"
         }
         requireSameSizes(oldPrimaryConstructor.valueParameters.size, subnodes.size)
         requireSameSizes(

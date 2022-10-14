@@ -1,5 +1,5 @@
 // !SKIP_JAVAC
-// !LANGUAGE: +CustomEqualsInInlineClasses, +ValueClasses
+// !LANGUAGE: +CustomEqualsInValueClasses, +ValueClasses
 // ALLOW_KOTLIN_PACKAGE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
@@ -102,4 +102,24 @@ value class MFVC5(val a: String, val b: String) {
     constructor(i: Int) : this(i.toString(), "6") <!SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS!>{<!>
         TODO("something")
     }
+}
+
+@JvmInline
+value class MFVC6(val a: String, val b: String) {
+    fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> equals(other: MFVC6): Boolean = true
+}
+
+@JvmInline
+value class MFVC7<T>(val a: String, val b: String) {
+    fun equals(other: MFVC7<*>): Boolean = true
+}
+
+@JvmInline
+value class MFVC8<T>(val a: String, val b: String) {
+    fun equals(other: <!TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS!>MFVC8<T><!>): Boolean = true
+}
+
+@JvmInline
+value class MFVC9<T>(val a: String, val b: String) {
+    fun equals(other: <!TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS!>MFVC9<String><!>): Boolean = true
 }

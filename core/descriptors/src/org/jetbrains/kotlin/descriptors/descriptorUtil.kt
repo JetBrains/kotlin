@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.isInlineClass
+import org.jetbrains.kotlin.resolve.isValueClass
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.typeUtil.*
@@ -91,14 +91,14 @@ fun DeclarationDescriptor.containingPackage(): FqName? {
 
 object DeserializedDeclarationsFromSupertypeConflictDataKey : CallableDescriptor.UserDataKey<CallableMemberDescriptor>
 
-fun FunctionDescriptor.isTypedEqualsInInlineClass(): Boolean {
-    val inlineClassStarProjection =
-        (containingDeclaration as? ClassDescriptor)?.takeIf { it.isInlineClass() }?.defaultType?.replaceArgumentsWithStarProjections()
+fun FunctionDescriptor.isTypedEqualsInValueClass(): Boolean {
+    val valueClassStarProjection =
+        (containingDeclaration as? ClassDescriptor)?.takeIf { it.isValueClass() }?.defaultType?.replaceArgumentsWithStarProjections()
             ?: return false
     val returnType = returnType ?: return false
     return name == OperatorNameConventions.EQUALS
             && (returnType.isBoolean() || returnType.isNothing())
-            && valueParameters.size == 1 && valueParameters[0].type == inlineClassStarProjection
+            && valueParameters.size == 1 && valueParameters[0].type.replaceArgumentsWithStarProjections() == valueClassStarProjection
             && contextReceiverParameters.isEmpty() && extensionReceiverParameter == null
 }
 

@@ -85,7 +85,7 @@ fun FirBasedSymbol<*>.isEnumConstructor(session: FirSession): Boolean {
     return getConstructedClass(session)?.classKind == ClassKind.ENUM_CLASS
 }
 
-fun FirBasedSymbol<*>.isPrimaryConstructorOfInlineClass(session: FirSession): Boolean {
+fun FirBasedSymbol<*>.isPrimaryConstructorOfInlineOrValueClass(session: FirSession): Boolean {
     if (this !is FirConstructorSymbol) return false
     return getConstructedClass(session)?.isInlineOrValueClass() == true && this.isPrimary
 }

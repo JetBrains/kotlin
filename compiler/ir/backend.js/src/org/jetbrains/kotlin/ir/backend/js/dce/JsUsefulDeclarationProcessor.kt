@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.dce
 
-import org.jetbrains.kotlin.backend.common.lower.MethodsFromAnyGeneratorForLowerings.Companion.collectOverridenSymbols
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.export.isExported

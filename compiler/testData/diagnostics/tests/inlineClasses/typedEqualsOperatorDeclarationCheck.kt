@@ -1,7 +1,7 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
 // !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
-// LANGUAGE: +CustomEqualsInInlineClasses
+// LANGUAGE: +CustomEqualsInValueClasses
 
 
 @JvmInline
@@ -23,12 +23,12 @@ value class IC2(val x: Int) {
 
 @JvmInline
 value class IC3<T>(val x: T) {
-    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun equals(other: IC3<T>) = true
+    operator fun equals(other: <!TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS!>IC3<T><!>) = true
 }
 
 @JvmInline
 value class IC4<T>(val x: T) {
-    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun equals(other: IC4<String>) = true
+    operator fun equals(other: <!TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS!>IC4<String><!>) = true
 }
 
 @JvmInline

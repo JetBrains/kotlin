@@ -1,0 +1,32 @@
+@kotlin.Metadata
+public interface I {
+    // source: 'mfvcEqualsOverride.kt'
+    public abstract method equals-sUp7gFk(p0: int, p1: int): boolean
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class MFVC {
+    // source: 'mfvcEqualsOverride.kt'
+    private final field field-0: int
+    private final field field-1: int
+    private synthetic method <init>(p0: int, p1: int): void
+    public synthetic final static method box-impl(p0: int, p1: int): MFVC
+    public final static method constructor-impl(p0: int, p1: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: int, p2: java.lang.Object): boolean
+    public method equals-sUp7gFk(p0: int, p1: int): boolean
+    public static method equals-sUp7gFk(p0: int, p1: int, p2: int, p3: int): boolean
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int, p1: int): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: int, p1: int): java.lang.String
+    public synthetic final method unbox-impl-0(): int
+    public synthetic final method unbox-impl-1(): int
+}
+
+@kotlin.Metadata
+public final class MfvcEqualsOverrideKt {
+    // source: 'mfvcEqualsOverride.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

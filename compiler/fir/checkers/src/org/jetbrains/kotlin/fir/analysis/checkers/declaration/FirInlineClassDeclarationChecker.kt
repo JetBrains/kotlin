@@ -100,7 +100,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
 
                     if (functionName in boxAndUnboxNames
                         || (functionName in equalsAndHashCodeNames
-                                && !context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses))
+                                && !context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses))
                     ) {
                         reporter.reportOn(
                             innerDeclaration.source, FirErrors.RESERVED_MEMBER_INSIDE_VALUE_CLASS, functionName, context
@@ -206,29 +206,37 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
             }
         }
 
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses)) {
-            var equalsFromAnyOverriding: FirSimpleFunction? = null
-            var typedEquals: FirSimpleFunction? = null
-            declaration.declarations.forEach {
-                if (it !is FirSimpleFunction) {
-                    return@forEach
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses)) {
+            val (equalsFromAnyOverriding, typedEquals) = run {
+                var equalsFromAnyOverriding: FirSimpleFunction? = null
+                var typedEquals: FirSimpleFunction? = null
+                declaration.declarations.forEach {
+                    if (it !is FirSimpleFunction) {
+                        return@forEach
+                    }
+                    if (it.isEquals()) equalsFromAnyOverriding = it
+                    if (it.isTypedEqualsInValueClass(context.session)) typedEquals = it
                 }
-                if (it.isEquals()) equalsFromAnyOverriding = it
-                if (it.isTypedEqualsInInlineClass(context.session)) typedEquals = it
+                equalsFromAnyOverriding to typedEquals
             }
-
-            if (typedEquals?.typeParameters?.isNotEmpty() == true) {
-                reporter.reportOn(
-                    typedEquals!!.source,
-                    FirErrors.TYPE_PARAMETERS_NOT_ALLOWED,
-                    context
-                )
+            if (typedEquals != null) {
+                if (typedEquals.typeParameters.isNotEmpty()) {
+                    reporter.reportOn(
+                        typedEquals.source,
+                        FirErrors.TYPE_PARAMETERS_NOT_ALLOWED,
+                        context
+                    )
+                }
+                val singleParameterReturnTypeRef = typedEquals.valueParameters.single().returnTypeRef
+                if (singleParameterReturnTypeRef.coneType.typeArguments.any { !it.isStarProjection }) {
+                    reporter.reportOn(singleParameterReturnTypeRef.source, FirErrors.TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS, context)
+                }
             }
 
             if (equalsFromAnyOverriding != null && typedEquals == null) {
                 reporter.reportOn(
-                    equalsFromAnyOverriding!!.source,
-                    FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS,
+                    equalsFromAnyOverriding.source,
+                    FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS,
                     declaration.defaultType().replaceArgumentsWithStarProjections(),
                     context
                 )

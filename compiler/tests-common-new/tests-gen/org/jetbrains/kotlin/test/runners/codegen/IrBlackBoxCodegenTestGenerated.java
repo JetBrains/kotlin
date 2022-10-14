@@ -21486,15 +21486,15 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
-        @TestMetadata("inlineClassEqualsOverride.kt")
-        public void testInlineClassEqualsOverride() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualsOverride.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        @TestMetadata("inlineClassEqualsOverriddenForCollections.kt")
+        public void testInlineClassEqualsOverriddenForCollections() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualsOverriddenForCollections.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @Test
-        @TestMetadata("inlineClassEqualsOverridenForCollections.kt")
-        public void testInlineClassEqualsOverridenForCollections() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualsOverridenForCollections.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        @TestMetadata("inlineClassEqualsOverride.kt")
+        public void testInlineClassEqualsOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualsOverride.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @Test
@@ -50466,9 +50466,51 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("mfvcBothEqualsOverride.kt")
+        public void testMfvcBothEqualsOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/mfvcBothEqualsOverride.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("mfvcEqualsConsistency.kt")
+        public void testMfvcEqualsConsistency() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/mfvcEqualsConsistency.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("mfvcEqualsOverriddenForCollections.kt")
+        public void testMfvcEqualsOverriddenForCollections() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/mfvcEqualsOverriddenForCollections.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("mfvcEqualsOverride.kt")
+        public void testMfvcEqualsOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/mfvcEqualsOverride.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
         @TestMetadata("mfvcFieldInitializationOrder.kt")
         public void testMfvcFieldInitializationOrder() throws Exception {
             runTest("compiler/testData/codegen/box/valueClasses/mfvcFieldInitializationOrder.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("mfvcHashCodeOverride.kt")
+        public void testMfvcHashCodeOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/mfvcHashCodeOverride.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("mfvcTypedEqualsGenerics.kt")
+        public void testMfvcTypedEqualsGenerics() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/mfvcTypedEqualsGenerics.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("mfvcUntypedEqualsOverriden.kt")
+        public void testMfvcUntypedEqualsOverriden() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/mfvcUntypedEqualsOverriden.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @Test

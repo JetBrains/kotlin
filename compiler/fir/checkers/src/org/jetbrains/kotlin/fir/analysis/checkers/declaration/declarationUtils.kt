@@ -119,15 +119,15 @@ fun FirClassSymbol<*>.primaryConstructorSymbol(): FirConstructorSymbol? {
     return null
 }
 
-fun FirSimpleFunction.isTypedEqualsInInlineClass(session: FirSession): Boolean =
+fun FirSimpleFunction.isTypedEqualsInValueClass(session: FirSession): Boolean =
     containingClassLookupTag()?.toFirRegularClassSymbol(session)?.run {
-        val inlineClassStarProjection = this@run.defaultType().replaceArgumentsWithStarProjections()
-        with(this@isTypedEqualsInInlineClass) {
+        val valueClassStarProjection = this@run.defaultType().replaceArgumentsWithStarProjections()
+        with(this@isTypedEqualsInValueClass) {
             contextReceivers.isEmpty() && receiverParameter == null
                     && name == OperatorNameConventions.EQUALS
                     && this@run.isInline && valueParameters.size == 1
                     && (returnTypeRef.isBoolean || returnTypeRef.isNothing)
-                    && valueParameters[0].returnTypeRef.coneType == inlineClassStarProjection
+                    && valueParameters[0].returnTypeRef.coneType.let { it is ConeClassLikeType && it.replaceArgumentsWithStarProjections() == valueClassStarProjection }
         }
     } ?: false
 

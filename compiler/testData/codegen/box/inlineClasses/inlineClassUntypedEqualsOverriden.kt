@@ -1,7 +1,10 @@
+// IGNORE_BACKEND_FIR: JVM_IR
+// https://youtrack.jetbrains.com/issue/KT-52236/Different-modality-in-psi-and-fir
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +CustomEqualsInInlineClasses
+// LANGUAGE: +ValueClasses, +CustomEqualsInValueClasses
 // TARGET_BACKEND: JVM_IR
+// CHECK_BYTECODE_LISTING
 
 import kotlin.math.abs
 

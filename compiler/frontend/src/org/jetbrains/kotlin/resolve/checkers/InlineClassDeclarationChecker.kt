@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 
 private val javaLangCloneable = FqNameUnsafe("java.lang.Cloneable")
 
-object InlineClassDeclarationChecker : DeclarationChecker {
+object ValueClassDeclarationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (declaration !is KtClass) return
         if (descriptor !is ClassDescriptor || !descriptor.isInline && !descriptor.isValue) return
@@ -166,20 +166,16 @@ object InlineClassDeclarationChecker : DeclarationChecker {
             context.trace.bindingContext.get(BindingContext.FUNCTION, declaration)
 
         fun isUntypedEquals(declaration: KtNamedFunction): Boolean = getFunctionDescriptor(declaration)?.overridesEqualsFromAny() ?: false
-        fun isTypedEquals(declaration: KtNamedFunction): Boolean = getFunctionDescriptor(declaration)?.isTypedEqualsInInlineClass() ?: false
+        fun isTypedEquals(declaration: KtNamedFunction): Boolean = getFunctionDescriptor(declaration)?.isTypedEqualsInValueClass() ?: false
         fun KtClass.namedFunctions() = declarations.filterIsInstance<KtNamedFunction>()
 
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses)) {
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses)) {
             val typedEquals = declaration.namedFunctions().firstOrNull { isTypedEquals(it) }
-
-            if (typedEquals?.typeParameters?.isNotEmpty() == true) {
-                trace.report(Errors.TYPE_PARAMETERS_NOT_ALLOWED.on(typedEquals))
-            }
 
             declaration.namedFunctions().singleOrNull { isUntypedEquals(it) }?.apply {
                 if (typedEquals == null) {
                     trace.report(
-                        Errors.INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS.on(
+                        Errors.INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS.on(
                             this@apply,
                             descriptor.defaultType.replaceArgumentsWithStarProjections()
                         )
@@ -255,10 +251,18 @@ class ReservedMembersAndConstructsForInlineClass : DeclarationChecker {
                 val functionName = descriptor.name.asString()
                 if (functionName in boxAndUnboxNames
                     || (functionName in equalsAndHashCodeNames
-                            && !context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses))
+                            && !context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses))
                 ) {
                     val nameIdentifier = ktFunction.nameIdentifier ?: return
                     context.trace.report(Errors.RESERVED_MEMBER_INSIDE_VALUE_CLASS.on(nameIdentifier, functionName))
+                } else if (descriptor.isTypedEqualsInValueClass()) {
+                    if (descriptor.typeParameters.isNotEmpty()) {
+                        context.trace.report(Errors.TYPE_PARAMETERS_NOT_ALLOWED.on(declaration))
+                    }
+                    val parameterType = descriptor.valueParameters.first()?.type
+                    if (parameterType != null && parameterType.arguments.any { !it.isStarProjection }) {
+                        context.trace.report(Errors.TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS.on(declaration.valueParameters[0].typeReference!!))
+                    }
                 }
             }
 

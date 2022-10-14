@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.lower.MethodsFromAnyGeneratorForLowerings.Companion.isEquals
-import org.jetbrains.kotlin.backend.common.lower.MethodsFromAnyGeneratorForLowerings.Companion.isToString
+import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -379,7 +378,10 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         val rootNode = replacements.getRootMfvcNode(declaration)
         rootNode.replaceFields()
         declaration.declarations.removeIf { it is IrSimpleFunction && it.isMultiFieldValueClassFieldGetter && it.overriddenSymbols.isEmpty() }
-        declaration.declarations += rootNode.run { allUnboxMethods + listOf(boxMethod, specializedEqualsMethod) }
+        declaration.declarations += rootNode.allUnboxMethods + listOfNotNull(
+            // `takeIf` is a workaround for double addition problem: user-defined typed equals is already defined in the class
+            rootNode.boxMethod, rootNode.specializedEqualsMethod.takeIf { rootNode.createdNewSpecializedEqualsMethod }
+        )
         rootNode.replacePrimaryMultiFieldValueClassConstructor()
     }
 
@@ -786,7 +788,6 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             }.unwrapBlock()
         }
         if (expression.isSpecializedMFVCEqEq) {
-            val backendContext = context
             return context.createIrBuilder(getCurrentScopeSymbol()).irBlock {
                 val leftArgument = expression.getValueArgument(0)!!
                 val rightArgument = expression.getValueArgument(1)!!
@@ -801,14 +802,9 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                         leftNode.specializedEqualsMethod
                     } else {
                         // left one is unboxed, right is not
-                        leftClass.functions.single { it.isEquals(backendContext) }
+                        leftClass.functions.single { it.isEquals() }
                     }
                     +irCall(newEquals).apply {
-                        if (rightNode != null) {
-                            for ((index, typeArgument) in (rightArgument.type as IrSimpleType).arguments.withIndex()) {
-                                putTypeArgument(index, typeArgument.typeOrNull)
-                            }
-                        }
                         dispatchReceiver = leftArgument
                         putValueArgument(0, rightArgument)
                     }.transform(this@JvmMultiFieldValueClassLowering, null)

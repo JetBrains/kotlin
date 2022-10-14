@@ -186,11 +186,11 @@ private object OperatorFunctionChecks {
             object : Check {
                 override fun check(context: CheckerContext, function: FirSimpleFunction): String? {
                     val containingClassSymbol = function.containingClassLookupTag()?.toFirRegularClassSymbol(context.session) ?: return null
-                    val customEqualsSupported = context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses)
+                    val customEqualsSupported = context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses)
 
                     if (function.overriddenFunctions(containingClassSymbol, context)
                             .any { it.containingClassLookupTag()?.classId == StandardClassIds.Any }
-                        || (customEqualsSupported && function.isTypedEqualsInInlineClass(context.session))
+                        || (customEqualsSupported && function.isTypedEqualsInValueClass(context.session))
                     ) {
                         return null
                     }

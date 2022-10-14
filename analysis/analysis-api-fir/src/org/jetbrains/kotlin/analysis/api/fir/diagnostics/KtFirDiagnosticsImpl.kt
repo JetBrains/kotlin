@@ -1183,16 +1183,21 @@ internal class ValueClassCannotBeRecursiveImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.ValueClassCannotBeRecursive(), KtAbstractFirDiagnostic<KtTypeReference>
 
+internal class SecondaryConstructorWithBodyInsideValueClassImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.SecondaryConstructorWithBodyInsideValueClass(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class ReservedMemberInsideValueClassImpl(
     override val name: String,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.ReservedMemberInsideValueClass(), KtAbstractFirDiagnostic<KtFunction>
 
-internal class SecondaryConstructorWithBodyInsideValueClassImpl(
+internal class TypeArgumentOnTypedValueClassEqualsImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
-) : KtFirDiagnostic.SecondaryConstructorWithBodyInsideValueClass(), KtAbstractFirDiagnostic<PsiElement>
+) : KtFirDiagnostic.TypeArgumentOnTypedValueClassEquals(), KtAbstractFirDiagnostic<KtTypeReference>
 
 internal class InnerClassInsideValueClassImpl(
     override val firDiagnostic: KtPsiDiagnostic,
@@ -3287,11 +3292,11 @@ internal class RedundantInlineSuspendFunctionTypeImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.RedundantInlineSuspendFunctionType(), KtAbstractFirDiagnostic<KtElement>
 
-internal class InefficientEqualsOverridingInInlineClassImpl(
+internal class InefficientEqualsOverridingInValueClassImpl(
     override val type: KtType,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
-) : KtFirDiagnostic.InefficientEqualsOverridingInInlineClass(), KtAbstractFirDiagnostic<KtNamedFunction>
+) : KtFirDiagnostic.InefficientEqualsOverridingInValueClass(), KtAbstractFirDiagnostic<KtNamedFunction>
 
 internal class CannotAllUnderImportFromSingletonImpl(
     override val objectName: Name,
