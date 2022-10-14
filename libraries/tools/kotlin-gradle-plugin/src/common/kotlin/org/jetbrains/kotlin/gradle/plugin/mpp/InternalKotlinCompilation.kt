@@ -9,7 +9,7 @@ import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationDependencyConfigurationsContainer
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationModuleManager
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
 import org.jetbrains.kotlin.tooling.core.MutableExtras
@@ -20,7 +20,7 @@ internal interface InternalKotlinCompilation<out T : KotlinCommonOptions> : Kotl
     override val kotlinSourceSets: ObservableSet<KotlinSourceSet>
     override val allKotlinSourceSets: ObservableSet<KotlinSourceSet>
 
-    val configurations: KotlinCompilationDependencyConfigurationsContainer
+    val configurations: KotlinCompilationConfigurationsContainer
     val friendPaths: Iterable<FileCollection>
     val compilationModule: KotlinCompilationModuleManager.CompilationModule
     val processResourcesTaskName: String?

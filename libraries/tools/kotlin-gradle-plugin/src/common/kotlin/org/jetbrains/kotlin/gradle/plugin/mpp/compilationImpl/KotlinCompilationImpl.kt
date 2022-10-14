@@ -36,7 +36,7 @@ internal class KotlinCompilationImpl @Inject constructor(
         val target: KotlinTarget,
         val compilationModule: KotlinCompilationModuleManager.CompilationModule,
         val sourceSets: KotlinCompilationSourceSetsContainer,
-        val dependencyConfigurations: KotlinCompilationDependencyConfigurationsContainer,
+        val dependencyConfigurations: KotlinCompilationConfigurationsContainer,
         val compilationTaskNames: KotlinCompilationTaskNamesContainer,
         val processResourcesTaskName: String?,
         val output: KotlinCompilationOutput,
@@ -61,7 +61,7 @@ internal class KotlinCompilationImpl @Inject constructor(
 
     val sourceSets get() = params.sourceSets
 
-    override val configurations: KotlinCompilationDependencyConfigurationsContainer
+    override val configurations: KotlinCompilationConfigurationsContainer
         get() = params.dependencyConfigurations
 
     override val compilationName: String

@@ -28,7 +28,6 @@ import org.gradle.api.tasks.bundling.Zip
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.internal.reorderPluginClasspathDependencies
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
@@ -273,22 +272,6 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             val project = compilation.target.project
             val target = compilation.target
             val configurations = target.project.configurations
-
-            configurations.maybeCreate(compilation.pluginConfigurationName).apply {
-                addGradlePluginMetadataAttributes(project)
-
-                if (target.platformType == KotlinPlatformType.native) {
-                    extendsFrom(configurations.getByName(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME))
-
-                    isTransitive = false
-                } else {
-                    extendsFrom(target.project.commonKotlinPluginClasspath)
-                }
-                isVisible = false
-                isCanBeConsumed = false
-                description = "Kotlin compiler plugins for $compilation"
-                reorderPluginClasspathDependencies()
-            }
 
             val compileConfiguration = configurations.findByName(compilation.deprecatedCompileConfigurationName)?.apply {
                 isCanBeConsumed = false
@@ -552,5 +535,3 @@ private fun Configuration.setJavaTargetEnvironmentAttributeIfSupported(project: 
 }
 
 internal val Project.commonKotlinPluginClasspath get() = configurations.getByName(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
-internal val KotlinCompilation<*>.pluginConfigurationName
-    get() = lowerCamelCaseName(PLUGIN_CLASSPATH_CONFIGURATION_NAME, target.disambiguationClassifier, compilationName)
