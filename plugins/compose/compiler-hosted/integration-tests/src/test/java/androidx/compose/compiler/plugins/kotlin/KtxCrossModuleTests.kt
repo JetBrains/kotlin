@@ -1080,7 +1080,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
             instanceClass ?: error("Could not find class $mainClassName in loaded classes")
         }
 
-        val instanceOfClass = instanceClass.newInstance()
+        val instanceOfClass = instanceClass.getDeclaredConstructor().newInstance()
         val advanceMethod = instanceClass.getMethod("advance")
         val composeMethod = instanceClass.getMethod(
             "compose",
