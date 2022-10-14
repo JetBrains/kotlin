@@ -17,5 +17,5 @@ class C : B() {
 }
 
 fun foo() {
-    C().<!BASE_CLASS_FIELD_SHADOWS_DERIVED_CLASS_PROPERTY!>size<!>
+    C().size
 }

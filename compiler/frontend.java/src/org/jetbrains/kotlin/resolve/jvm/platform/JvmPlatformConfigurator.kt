@@ -64,7 +64,8 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         EnumDeclaringClassDeprecationChecker,
         UpperBoundViolatedInTypealiasConstructorChecker,
         JvmSyntheticAssignmentChecker,
-        LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = false)
+        LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = false),
+        JvmPropertyVsFieldAmbiguityCallChecker,
     ),
 
     additionalTypeCheckers = listOf(

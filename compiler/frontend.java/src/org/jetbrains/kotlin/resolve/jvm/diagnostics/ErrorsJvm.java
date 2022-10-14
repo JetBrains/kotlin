@@ -214,6 +214,12 @@ public interface ErrorsJvm {
 
     DiagnosticFactory2<KtAnnotationEntry, FqName, FqName> REDUNDANT_REPEATABLE_ANNOTATION = DiagnosticFactory2.create(WARNING);
 
+    DiagnosticFactory2<PsiElement, String, String> BASE_CLASS_FIELD_SHADOWS_DERIVED_CLASS_PROPERTY = DiagnosticFactory2.create(WARNING);
+
+    DiagnosticFactory2<PsiElement, String, String> BASE_CLASS_FIELD_MAY_SHADOW_DERIVED_CLASS_PROPERTY = DiagnosticFactory2.create(WARNING);
+
+    DiagnosticFactory2<PsiElement, String, String> BACKING_FIELD_ACCESSED_DUE_TO_PROPERTY_FIELD_CONFLICT = DiagnosticFactory2.create(WARNING);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {

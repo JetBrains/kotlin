@@ -1,0 +1,35 @@
+package
+
+public fun test(/*0*/ d: Derived): kotlin.Unit
+
+public open class Base {
+    public constructor Base()
+    public final var lateInit: kotlin.String!
+    public final var lazyProp: kotlin.String!
+    public final var openProp: kotlin.String!
+    public final var regular: kotlin.String!
+    public final var withGetter: kotlin.String!
+    public final var withSetter: kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Derived : Base {
+    public constructor Derived()
+    public final lateinit var lateInit: kotlin.String
+    public final override /*1*/ /*fake_override*/ var lateInit: kotlin.String!
+    public final val lazyProp: kotlin.String
+    public final override /*1*/ /*fake_override*/ var lazyProp: kotlin.String!
+    public open val openProp: kotlin.String = "ff"
+    public final override /*1*/ /*fake_override*/ var openProp: kotlin.String!
+    public final val regular: kotlin.String = "aa"
+    public final override /*1*/ /*fake_override*/ var regular: kotlin.String!
+    public final val withGetter: kotlin.String
+    public final override /*1*/ /*fake_override*/ var withGetter: kotlin.String!
+    public final var withSetter: kotlin.String
+    public final override /*1*/ /*fake_override*/ var withSetter: kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
