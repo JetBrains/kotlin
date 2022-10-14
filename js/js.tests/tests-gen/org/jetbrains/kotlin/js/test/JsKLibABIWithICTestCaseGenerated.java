@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/klibABI")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class JsKLibABITestCaseGenerated extends AbstractJsKLibABITestCase {
+public class JsKLibABIWithICTestCaseGenerated extends AbstractJsKLibABIWithICTestCase {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
     }

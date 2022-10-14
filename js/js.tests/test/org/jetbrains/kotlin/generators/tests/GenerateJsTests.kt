@@ -43,7 +43,12 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData") {
-            testClass<AbstractJsKLibABITestCase> {
+            testClass<AbstractJsKLibABIWithICTestCase> {
+                model("klibABI/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false, )
+            }
+        }
+        testGroup("js/js.tests/tests-gen", "compiler/testData") {
+            testClass<AbstractJsKLibABINoICTestCase> {
                 model("klibABI/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false, )
             }
         }
