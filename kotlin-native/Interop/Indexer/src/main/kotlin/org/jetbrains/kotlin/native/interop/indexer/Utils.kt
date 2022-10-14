@@ -864,10 +864,10 @@ fun NativeLibrary.getHeaderPaths(tuCache: TUCache): NativeLibraryHeaders<String>
 
             fun getPath(file: CXFile?) = if (file == null) "<builtins>" else file.canonicalPath
 
-            val headersAndUnits = getHeadersAndUnits(this, index, translationUnit, tuCache)
+            val (headers, _) = getHeadersAndUnits(this, index, translationUnit, tuCache)
             return NativeLibraryHeaders(
-                    headersAndUnits.headers.ownHeaders.map(::getPath).toSet(),
-                    headersAndUnits.headers.importedHeaders.map(::getPath).toSet()
+                    headers.ownHeaders.map(::getPath).toSet(),
+                    headers.importedHeaders.map(::getPath).toSet()
             )
         } finally {
             clang_disposeTranslationUnit(translationUnit)

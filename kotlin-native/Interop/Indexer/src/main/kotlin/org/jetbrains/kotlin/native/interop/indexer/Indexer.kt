@@ -1203,14 +1203,13 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
             val compilation = nativeIndex.library.withPrecompiledHeader(translationUnit)
 
             TUCache().use { tuCache ->
-                val cachedHeadersAndUnits = getHeadersAndUnits(nativeIndex.library, index, translationUnit, tuCache)
-                val cachedHeaders = cachedHeadersAndUnits.headers
-                val headers = cachedHeaders.ownHeaders
-                val headersCanonicalPaths = headers.filterNotNull().map { it.canonicalPath }.toSet()
+                val (headers, ownUnits) = getHeadersAndUnits(nativeIndex.library, index, translationUnit, tuCache)
+                val ownHeaders = headers.ownHeaders
+                val headersCanonicalPaths = ownHeaders.filterNotNull().map { it.canonicalPath }.toSet()
 
-                val unitsToProcess = (cachedHeadersAndUnits.units + setOf(translationUnit)).toList()
+                val unitsToProcess = (ownUnits + setOf(translationUnit)).toList()
 
-                nativeIndex.includedHeaders = headers.map {
+                nativeIndex.includedHeaders = ownHeaders.map {
                     nativeIndex.getHeaderId(it)
                 }
 
@@ -1235,7 +1234,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                 if (nativeIndex.library.language == Language.CPP) {
                     unitsToProcess.forEach {
                         visitChildren(clang_getTranslationUnitCursor(it)) { cursor, _ ->
-                            if (getContainingFile(cursor) in headers) {
+                            if (getContainingFile(cursor) in ownHeaders) {
                                 nativeIndex.indexCxxDeclaration(cursor)
                             }
                             CXChildVisitResult.CXChildVisit_Continue
@@ -1246,7 +1245,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                 unitsToProcess.forEach {
                     visitChildren(clang_getTranslationUnitCursor(it)) { cursor, _ ->
                         val file = getContainingFile(cursor)
-                        if (file in headers && nativeIndex.library.includesDeclaration(cursor)) {
+                        if (file in ownHeaders && nativeIndex.library.includesDeclaration(cursor)) {
                             when (cursor.kind) {
                                 CXCursorKind.CXCursor_ObjCInterfaceDecl -> nativeIndex.indexObjCClass(cursor)
                                 CXCursorKind.CXCursor_ObjCProtocolDecl -> nativeIndex.indexObjCProtocol(cursor)
@@ -1265,7 +1264,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                     }
                 }
 
-                findMacros(nativeIndex, compilation, unitsToProcess, headers)
+                findMacros(nativeIndex, compilation, unitsToProcess, ownHeaders)
             }
             return compilation
         } finally {
