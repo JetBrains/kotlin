@@ -68,7 +68,7 @@ internal class KotlinCompilationImplFactory(
     }
 
     fun interface KotlinCompilationDependencyConfigurationsFactory {
-        fun create(target: KotlinTarget, compilationName: String): KotlinCompilationDependencyConfigurationsContainer
+        fun create(target: KotlinTarget, compilationName: String): KotlinCompilationConfigurationsContainer
     }
 
     fun interface KotlinCompilationOutputFactory {

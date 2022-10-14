@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithClosure
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToCompilerOptions
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.report.BuildReportsService
@@ -94,7 +95,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                     .value(providers.provider { compilation.associateWithClosure.map { it.name } })
                     .disallowChanges()
                 task.pluginClasspath.from(
-                    compilation.project.configurations.getByName(compilation.pluginConfigurationName)
+                    compilation.internal.configurations.pluginConfiguration
                 )
             }
             task.moduleName.set(providers.provider { compilationProjection.moduleName })

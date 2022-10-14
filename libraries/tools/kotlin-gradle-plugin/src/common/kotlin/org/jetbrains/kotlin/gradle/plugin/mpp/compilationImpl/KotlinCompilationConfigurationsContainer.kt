@@ -8,33 +8,32 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.attributes.Category
-import org.gradle.api.attributes.Usage
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
+import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.utils.*
 
-internal interface KotlinCompilationDependencyConfigurationsContainer {
+internal interface KotlinCompilationConfigurationsContainer {
     val apiConfiguration: Configuration
     val implementationConfiguration: Configuration
     val compileOnlyConfiguration: Configuration
     val runtimeOnlyConfiguration: Configuration
     val compileDependencyConfiguration: Configuration
     val runtimeDependencyConfiguration: Configuration?
+    val pluginConfiguration: Configuration
 }
 
-internal class DefaultKotlinCompilationDependencyConfigurationsContainer(
+internal class DefaultKotlinCompilationConfigurationsContainer(
     override val apiConfiguration: Configuration,
     override val implementationConfiguration: Configuration,
     override val compileOnlyConfiguration: Configuration,
     override val runtimeOnlyConfiguration: Configuration,
     override val compileDependencyConfiguration: Configuration,
-    override val runtimeDependencyConfiguration: Configuration?
-) : KotlinCompilationDependencyConfigurationsContainer
+    override val runtimeDependencyConfiguration: Configuration?,
+    override val pluginConfiguration: Configuration
+) : KotlinCompilationConfigurationsContainer
 
 internal fun HasKotlinDependencies(
-    project: Project, compilationDependencyContainer: KotlinCompilationDependencyConfigurationsContainer
+    project: Project, compilationDependencyContainer: KotlinCompilationConfigurationsContainer
 ): HasKotlinDependencies = object : HasKotlinDependencies {
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
         DefaultKotlinDependencyHandler(this, project).run(configure)

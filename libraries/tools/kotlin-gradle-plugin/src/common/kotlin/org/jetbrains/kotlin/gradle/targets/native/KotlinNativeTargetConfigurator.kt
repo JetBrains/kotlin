@@ -533,9 +533,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                     .addSubpluginOptions(project, compilation)
 
                 compilation.compileKotlinTaskProvider.configure {
-                    it.compilerPluginClasspath = project
-                        .configurations
-                        .getByName(compilation.pluginConfigurationName)
+                    it.compilerPluginClasspath = compilation.configurations.pluginConfiguration
                 }
             }
         }
