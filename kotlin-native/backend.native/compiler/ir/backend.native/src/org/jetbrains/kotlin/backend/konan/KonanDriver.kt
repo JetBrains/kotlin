@@ -62,7 +62,7 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
             }
         }
         // Dynamic driver is WIP, so it might not support all possible configurations.
-        return if (DynamicCompilerDriver.supportsConfig()) {
+        return if (DynamicCompilerDriver.supportsConfig(config)) {
             DynamicCompilerDriver()
         } else {
             StaticCompilerDriver()
