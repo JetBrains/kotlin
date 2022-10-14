@@ -68,7 +68,7 @@ internal class ObjCExport(
     internal fun generate(codegen: CodeGenerator) {
         if (!target.family.isAppleFamily) return
 
-        if (context.shouldDefineFunctionClasses) {
+        if (context.generationState.shouldDefineFunctionClasses) {
             ObjCExportBlockCodeGenerator(codegen).generate()
         }
 

@@ -287,7 +287,7 @@ internal class ObjCExportBlockCodeGenerator(codegen: CodeGenerator) : ObjCExport
         // 1. Enumerates [BuiltInFictitiousFunctionIrClassFactory] built classes, which may be incomplete otherwise.
         // 2. Modifies stdlib global initializers.
         // 3. Defines runtime-declared globals.
-        require(context.shouldDefineFunctionClasses)
+        require(context.generationState.shouldDefineFunctionClasses)
     }
 
     fun generate() {
@@ -499,7 +499,7 @@ internal class ObjCExportCodeGenerator(
             descriptorToAdapter[adapter.objCName] = typeAdapter
 
             if (irClass != null) {
-                if (!context.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
+                if (!context.generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
                     setObjCExportTypeInfo(irClass, typeAdapter = typeAdapter)
                 } else {
                     // Optimization: avoid generating huge initializers;
@@ -527,7 +527,7 @@ internal class ObjCExportCodeGenerator(
         emitSortedAdapters(placedClassAdapters, "Kotlin_ObjCExport_sortedClassAdapters")
         emitSortedAdapters(placedInterfaceAdapters, "Kotlin_ObjCExport_sortedProtocolAdapters")
 
-        if (context.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
+        if (context.generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
             replaceExternalWeakOrCommonGlobal(
                 "Kotlin_ObjCExport_initTypeAdapters",
                 llvm.constInt1(true),
@@ -555,7 +555,7 @@ internal class ObjCExportCodeGenerator(
         if (determineLinkerOutput(context) == LinkerOutputKind.STATIC_LIBRARY) {
             // Might be affected by https://youtrack.jetbrains.com/issue/KT-42254.
             // The code below generally follows [replaceExternalWeakOrCommonGlobal] implementation.
-            if (context.llvmModuleSpecification.importsKotlinDeclarationsFromOtherObjectFiles()) {
+            if (context.generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherObjectFiles()) {
                 // So the compiler uses caches. If a user is linking two such static frameworks into a single binary,
                 // the linker might fail with a lot of "duplicate symbol" errors due to KT-42254.
                 // Adding a similar symbol that would explicitly hint to take a look at the YouTrack issue if reported.
@@ -701,14 +701,14 @@ private fun ObjCExportCodeGenerator.replaceExternalWeakOrCommonGlobal(
         origin: CompiledKlibModuleOrigin
 ) {
     // TODO: A similar mechanism is used in `IrToBitcode.overrideRuntimeGlobal`. Consider merging them.
-    if (context.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
+    if (context.generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
         val global = codegen.importGlobal(name, value.llvmType, origin)
         externalGlobalInitializers[global] = value
     } else {
         context.generationState.llvmImports.add(origin)
         val global = staticData.placeGlobal(name, value, isExported = true)
 
-        if (context.llvmModuleSpecification.importsKotlinDeclarationsFromOtherObjectFiles()) {
+        if (context.generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherObjectFiles()) {
             // Note: actually this is required only if global's weak/common definition is in another object file,
             // but it is simpler to do this for all globals, considering that all usages can't be removed by DCE anyway.
             llvm.usedGlobals += global.llvmGlobal
@@ -872,7 +872,7 @@ private val ObjCExportBlockCodeGenerator.mappedFunctionNClasses get() =
         .filter { it.descriptor.isMappedFunctionClass() }
 
 private fun ObjCExportBlockCodeGenerator.emitFunctionConverters() {
-    require(context.shouldDefineFunctionClasses)
+    require(context.generationState.shouldDefineFunctionClasses)
     mappedFunctionNClasses.forEach { functionClass ->
         val convertToRetained = kotlinFunctionToRetainedBlockConverter(BlockPointerBridge(functionClass.arity, returnsVoid = false))
 
@@ -882,7 +882,7 @@ private fun ObjCExportBlockCodeGenerator.emitFunctionConverters() {
 }
 
 private fun ObjCExportBlockCodeGenerator.emitBlockToKotlinFunctionConverters() {
-    require(context.shouldDefineFunctionClasses)
+    require(context.generationState.shouldDefineFunctionClasses)
     val functionClassesByArity = mappedFunctionNClasses.associateBy { it.arity }
 
     val arityLimit = (functionClassesByArity.keys.maxOrNull() ?: -1) + 1

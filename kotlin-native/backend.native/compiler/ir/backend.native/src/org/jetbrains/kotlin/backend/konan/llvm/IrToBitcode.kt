@@ -2670,7 +2670,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     // Globals set this way cannot be const, but are overridable when producing final executable.
     private fun overrideRuntimeGlobal(name: String, value: ConstValue) {
         // TODO: A similar mechanism is used in `ObjCExportCodeGenerator`. Consider merging them.
-        if (context.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
+        if (context.generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
             // When some dynamic caches are used, we consider that stdlib is in the dynamic cache as well.
             // Runtime is linked into stdlib module only, so import runtime global from it.
             val global = codegen.importGlobal(name, value.llvmType, context.standardLlvmSymbolsOrigin)
@@ -2687,7 +2687,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             // Define a strong runtime global. It'll overrule a weak global defined in a statically linked runtime.
             val global = llvm.staticData.placeGlobal(name, value, true)
 
-            if (context.llvmModuleSpecification.importsKotlinDeclarationsFromOtherObjectFiles()) {
+            if (context.generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherObjectFiles()) {
                 llvm.usedGlobals += global.llvmGlobal
                 LLVMSetVisibility(global.llvmGlobal, LLVMVisibility.LLVMHiddenVisibility)
             }
@@ -2789,7 +2789,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 else -> library.moduleConstructorName
             }
 
-            if (library == null || context.llvmModuleSpecification.containsLibrary(library)) {
+            if (library == null || context.generationState.llvmModuleSpecification.containsLibrary(library)) {
                 val otherInitializers = llvm.otherStaticInitializers.takeIf { library == null }.orEmpty()
 
                 val ctorFunction = addCtorFunction(ctorName)

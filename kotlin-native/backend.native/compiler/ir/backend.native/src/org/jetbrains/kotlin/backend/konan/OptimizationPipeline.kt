@@ -142,7 +142,7 @@ internal fun createLTOFinalPipelineConfig(context: Context): LlvmPipelineConfig 
     val globalDce = true
     // Since we are in a "closed world" internalization can be safely used
     // to reduce size of a bitcode with global dce.
-    val internalize = context.llvmModuleSpecification.isFinal
+    val internalize = context.generationState.llvmModuleSpecification.isFinal
     // Hidden visibility makes symbols internal when linking the binary.
     // When producing dynamic library, this enables stripping unused symbols from binary with -dead_strip flag,
     // similar to DCE enabled by internalize but later:

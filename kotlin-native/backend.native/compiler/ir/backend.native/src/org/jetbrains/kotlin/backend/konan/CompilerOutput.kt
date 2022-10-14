@@ -43,20 +43,19 @@ val CompilerOutputKind.isNativeLibrary: Boolean
 val CompilerOutputKind.involvesBitcodeGeneration: Boolean
     get() = this != CompilerOutputKind.LIBRARY
 
-internal val Context.producedLlvmModuleContainsStdlib: Boolean
-    get() = this.llvmModuleSpecification.containsModule(this.stdlibModule)
+internal val CacheDeserializationStrategy?.containsKFunctionImpl: Boolean
+    get() = this?.contains(KonanFqNames.internalPackageName, "KFunctionImpl.kt") != false
 
-internal val Context.shouldDefineFunctionClasses: Boolean
-    get() = producedLlvmModuleContainsStdlib &&
-            config.libraryToCache?.strategy?.contains(KonanFqNames.internalPackageName, "KFunctionImpl.kt") != false
+internal val NativeGenerationState.shouldDefineFunctionClasses: Boolean
+    get() = producedLlvmModuleContainsStdlib && cacheDeserializationStrategy.containsKFunctionImpl
 
-internal val Context.shouldDefineCachedBoxes: Boolean
+internal val NativeGenerationState.shouldDefineCachedBoxes: Boolean
     get() = producedLlvmModuleContainsStdlib &&
-            config.libraryToCache?.strategy?.contains(KonanFqNames.internalPackageName, "Boxing.kt") != false
+            cacheDeserializationStrategy?.contains(KonanFqNames.internalPackageName, "Boxing.kt") != false
 
-internal val Context.shouldLinkRuntimeNativeLibraries: Boolean
+internal val NativeGenerationState.shouldLinkRuntimeNativeLibraries: Boolean
     get() = producedLlvmModuleContainsStdlib &&
-            config.libraryToCache?.strategy?.contains(KonanFqNames.packageName, "Runtime.kt") != false
+            cacheDeserializationStrategy?.contains(KonanFqNames.packageName, "Runtime.kt") != false
 
 val KonanConfig.involvesLinkStage: Boolean
     get() = when (this.produce) {
@@ -116,7 +115,7 @@ private fun collectLlvmModules(context: Context, generatedBitcodeFiles: List<Str
     val config = context.config
 
     val (bitcodePartOfStdlib, bitcodeLibraries) = context.generationState.llvm.bitcodeToLink
-            .partition { it.isStdlib && context.producedLlvmModuleContainsStdlib }
+            .partition { it.isStdlib && context.generationState.producedLlvmModuleContainsStdlib }
             .toList()
             .map { libraries ->
                 libraries.flatMap { it.bitcodePaths }.filter { it.isBitcode }
@@ -146,7 +145,7 @@ private fun collectLlvmModules(context: Context, generatedBitcodeFiles: List<Str
 
     val runtimeModules = parseBitcodeFiles(
             (runtimeNativeLibraries + bitcodePartOfStdlib)
-                    .takeIf { context.shouldLinkRuntimeNativeLibraries }.orEmpty()
+                    .takeIf { context.generationState.shouldLinkRuntimeNativeLibraries }.orEmpty()
     )
     val additionalModules = parseBitcodeFiles(additionalBitcodeFiles)
     return LlvmModules(

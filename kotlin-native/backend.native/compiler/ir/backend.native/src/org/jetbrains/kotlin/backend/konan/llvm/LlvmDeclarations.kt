@@ -168,7 +168,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
             if (!context.config.producePerFileCache)
                 "${MangleConstant.CLASS_PREFIX}:$internalName"
             else {
-                val containerName = (context.config.libraryToCache!!.strategy as CacheDeserializationStrategy.SingleFile).filePath
+                val containerName = (context.generationState.cacheDeserializationStrategy as CacheDeserializationStrategy.SingleFile).filePath
                 declaration.computePrivateTypeInfoSymbolName(containerName)
             }
         }
@@ -341,7 +341,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
                     "${MangleConstant.FUN_PREFIX}:${qualifyInternalName(declaration)}"
                 else {
                     val containerName = declaration.parentClassOrNull?.fqNameForIrSerialization?.asString()
-                            ?: (context.config.libraryToCache!!.strategy as CacheDeserializationStrategy.SingleFile).filePath
+                            ?: (context.generationState.cacheDeserializationStrategy as CacheDeserializationStrategy.SingleFile).filePath
                     declaration.computePrivateSymbolName(containerName)
                 }
             }

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
-import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
@@ -64,10 +63,15 @@ internal fun Context.psiToIr(
 
     val forwardDeclarationsModuleDescriptor = moduleDescriptor.allDependencyModules.firstOrNull { it.isForwardDeclarationModule }
 
-    val modulesWithoutDCE = moduleDescriptor.allDependencyModules
-            .filter { !llvmModuleSpecification.isFinal && llvmModuleSpecification.containsModule(it) }
+    val libraryToCacheModule = config.libraryToCache?.klib?.let {
+        moduleDescriptor.allDependencyModules.single { module -> module.konanLibrary == it }
+    }
 
-    // Note: using [llvmModuleSpecification] since this phase produces IR for generating single LLVM module.
+    val stdlibIsCached = stdlibModule.konanLibrary?.let { config.cachedLibraries.isLibraryCached(it) } == true
+    val stdlibIsBeingCached = libraryToCacheModule == stdlibModule
+    require(!(stdlibIsCached && stdlibIsBeingCached)) { "The cache for stdlib is already built" }
+    val kFunctionImplIsBeingCached = stdlibIsBeingCached && config.libraryToCache?.strategy.containsKFunctionImpl
+    val shouldUseLazyFunctionClasses = (stdlibIsCached || stdlibIsBeingCached) && !kFunctionImplIsBeingCached
 
     val stubGenerator = DeclarationStubGeneratorImpl(
             moduleDescriptor, symbolTable,
@@ -77,10 +81,10 @@ internal fun Context.psiToIr(
     )
     val irBuiltInsOverDescriptors = generatorContext.irBuiltIns as IrBuiltInsOverDescriptors
     val functionIrClassFactory: KonanIrAbstractDescriptorBasedFunctionFactory =
-            if (shouldDefineFunctionClasses || !config.lazyIrForCaches)
-                BuiltInFictitiousFunctionIrClassFactory(symbolTable, irBuiltInsOverDescriptors, reflectionTypes)
-            else
+            if (shouldUseLazyFunctionClasses && config.lazyIrForCaches)
                 LazyIrFunctionFactory(symbolTable, stubGenerator, irBuiltInsOverDescriptors, reflectionTypes)
+            else
+                BuiltInFictitiousFunctionIrClassFactory(symbolTable, irBuiltInsOverDescriptors, reflectionTypes)
     irBuiltInsOverDescriptors.functionFactory = functionIrClassFactory
     val descriptorsLookup = DescriptorsLookup(this.builtIns)
     val symbols = KonanSymbols(this, descriptorsLookup, generatorContext.irBuiltIns, symbolTable, symbolTable.lazyWrapper)
@@ -98,7 +102,7 @@ internal fun Context.psiToIr(
             }
         }
     } else {
-        val exportedDependencies = (getExportedDependencies() + modulesWithoutDCE).distinct()
+        val exportedDependencies = (getExportedDependencies() + libraryToCacheModule?.let { listOf(it) }.orEmpty()).distinct()
         val irProviderForCEnumsAndCStructs =
                 IrProviderForCEnumAndCStructStubs(generatorContext, interopBuiltIns, symbols)
 
@@ -171,9 +175,8 @@ internal fun Context.psiToIr(
 
             // We need to run `buildAllEnumsAndStructsFrom` before `generateModuleFragment` because it adds references to symbolTable
             // that should be bound.
-            modulesWithoutDCE
-                    .filter(ModuleDescriptor::isFromInteropLibrary)
-                    .forEach(irProviderForCEnumsAndCStructs::referenceAllEnumsAndStructsFrom)
+            if (libraryToCacheModule?.isFromInteropLibrary() == true)
+                irProviderForCEnumsAndCStructs.referenceAllEnumsAndStructsFrom(libraryToCacheModule)
 
             translator.addPostprocessingStep {
                 irProviderForCEnumsAndCStructs.generateBodies()
@@ -228,8 +231,7 @@ internal fun Context.psiToIr(
 
     irModule = mainModule
 
-    // Note: coupled with [shouldLower] below.
-    irModules = modules.filterValues { llvmModuleSpecification.containsModule(it) }
+    irModules = modules
     // IR linker deserializes files in the order they lie on the disk, which might be inconvenient,
     // so to make the pipeline more deterministic, the files are to be sorted.
     // This concerns in the first place global initializers order for the eager initialization strategy,
@@ -243,11 +245,11 @@ internal fun Context.psiToIr(
 
     if (!isProducingLibrary) {
         // TODO: find out what should be done in the new builtins/symbols about it
-        if (this.stdlibModule in modulesWithoutDCE) {
+        if (stdlibIsBeingCached) {
             (functionIrClassFactory as? BuiltInFictitiousFunctionIrClassFactory)?.buildAllClasses()
         }
         (functionIrClassFactory as? BuiltInFictitiousFunctionIrClassFactory)?.module =
-                (modules.values + irModule!!).single { it.descriptor.isNativeStdlib() }
+                (modules.values + irModule!!).single { it.descriptor == this.stdlibModule }
     }
 
     mainModule.files.forEach { it.metadata = KonanFileMetadataSource(mainModule) }

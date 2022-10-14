@@ -52,7 +52,7 @@ sealed class CacheDeserializationStrategy {
     }
 }
 
-class PartialCacheInfo(val klib: KotlinLibrary, var strategy: CacheDeserializationStrategy)
+class PartialCacheInfo(val klib: KotlinLibrary, val strategy: CacheDeserializationStrategy)
 
 class CacheSupport(
         private val configuration: CompilerConfiguration,
@@ -72,11 +72,11 @@ class CacheSupport(
                         ?: configuration.reportCompilationError("cache directory $it is not found or not a directory")
             }
 
-    internal fun tryGetImplicitOutput(): String? {
+    internal fun tryGetImplicitOutput(cacheDeserializationStrategy: CacheDeserializationStrategy?): String? {
         val libraryToCache = libraryToCache ?: return null
         // Put the resulting library in the first cache directory.
         val cacheDirectory = implicitCacheDirectories.firstOrNull() ?: return null
-        val singleFileStrategy = libraryToCache.strategy as? CacheDeserializationStrategy.SingleFile
+        val singleFileStrategy = cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile
         val baseLibraryCacheDirectory = cacheDirectory.child(
                 if (singleFileStrategy == null)
                     CachedLibraries.getCachedLibraryName(libraryToCache.klib)

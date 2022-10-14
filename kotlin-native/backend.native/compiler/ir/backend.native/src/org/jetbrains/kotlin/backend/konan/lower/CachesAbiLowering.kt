@@ -162,7 +162,7 @@ internal class ImportCachesAbiTransformer(val context: Context) : FileLoweringPa
         val property = field.correspondingPropertySymbol?.owner
 
         return when {
-            context.llvmModuleSpecification.containsDeclaration(field) -> expression
+            context.generationState.llvmModuleSpecification.containsDeclaration(field) -> expression
 
             irClass?.isInner == true && context.innerClassesSupport.getOuterThisField(irClass) == field -> {
                 val accessor = cachesAbiSupport.getOuterThisAccessor(irClass)

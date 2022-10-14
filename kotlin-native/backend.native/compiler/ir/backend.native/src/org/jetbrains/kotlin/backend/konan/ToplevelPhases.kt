@@ -129,13 +129,13 @@ internal val psiToIrPhase = konanUnitPhase(
 
 internal val buildAdditionalCacheInfoPhase = konanUnitPhase(
         op = {
-            irModules.values.single().let { module ->
-                val moduleDeserializer = irLinker.moduleDeserializers[module.descriptor]
-                if (moduleDeserializer == null) {
-                    require(module.descriptor.isFromInteropLibrary()) { "No module deserializer for ${module.descriptor}" }
-                } else {
-                    CacheInfoBuilder(this, moduleDeserializer).build()
-                }
+            val module = irModules[config.libraryToCache!!.klib.libraryName]
+                    ?: error("No module for the library being cached: ${config.libraryToCache!!.klib.libraryName}")
+            val moduleDeserializer = irLinker.moduleDeserializers[module.descriptor]
+            if (moduleDeserializer == null) {
+                require(module.descriptor.isFromInteropLibrary()) { "No module deserializer for ${module.descriptor}" }
+            } else {
+                CacheInfoBuilder(this, moduleDeserializer).build()
             }
         },
         name = "BuildAdditionalCacheInfo",
@@ -319,7 +319,8 @@ internal val dependenciesLowerPhase = SameTypeNamedCompilerPhase(
                         .reversed()
                         .forEach {
                             val libModule = context.irModules[it.libraryName]
-                                    ?: return@forEach
+                            if (libModule == null || !context.generationState.llvmModuleSpecification.containsModule(libModule))
+                                return@forEach
 
                             input.files += libModule.files
                             allLoweringsPhase.invoke(phaseConfig, phaserState, context, input)
@@ -332,7 +333,9 @@ internal val dependenciesLowerPhase = SameTypeNamedCompilerPhase(
                 context.librariesWithDependencies
                         .forEach {
                             val libModule = context.irModules[it.libraryName]
-                                    ?: return@forEach
+                            if (libModule == null || !context.generationState.llvmModuleSpecification.containsModule(libModule))
+                                return@forEach
+
                             input.files += libModule.files
                         }
 
@@ -348,7 +351,8 @@ internal val umbrellaCompilation = SameTypeNamedCompilerPhase(
         prerequisite = emptySet(),
         lower = object : CompilerPhase<Context, Unit, Unit> {
             override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
-                val module = context.irModules.values.single()
+                val module = context.irModules[context.config.libraryToCache!!.klib.libraryName]
+                        ?: error("No module for the library being cached: ${context.config.libraryToCache!!.klib.libraryName}")
 
                 val files = module.files.toList()
                 module.files.clear()
@@ -357,12 +361,10 @@ internal val umbrellaCompilation = SameTypeNamedCompilerPhase(
                 for (file in files) {
                     if (file.isFunctionInterfaceFile) continue
 
-                    // Pretend we're about to create a single file cache.
-                    context.config.cacheSupport.libraryToCache!!.strategy =
-                            CacheDeserializationStrategy.SingleFile(file.path, file.fqName.asString())
+                    context.generationState = NativeGenerationState(context, CacheDeserializationStrategy.SingleFile(file.path, file.fqName.asString()))
 
                     module.files += file
-                    if (context.shouldDefineFunctionClasses)
+                    if (context.generationState.shouldDefineFunctionClasses)
                         module.files += functionInterfaceFiles
 
                     entireBackend.invoke(phaseConfig, phaserState, context, Unit)
@@ -383,7 +385,7 @@ internal val entryPointPhase = makeCustomPhase<Context, IrModuleFragment>(
             require(context.config.produce == CompilerOutputKind.PROGRAM)
 
             val entryPoint = context.ir.symbols.entryPoint!!.owner
-            val file = if (context.llvmModuleSpecification.containsDeclaration(entryPoint)) {
+            val file = if (context.generationState.llvmModuleSpecification.containsDeclaration(entryPoint)) {
                 entryPoint.file
             } else {
                 // `main` function is compiled to other LLVM module.
@@ -447,7 +449,7 @@ internal val createGenerationStatePhase = namedUnitPhase(
         description = "Create generation state",
         lower = object : CompilerPhase<Context, Unit, Unit> {
             override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
-                context.generationState = NativeGenerationState(context)
+                context.generationState = NativeGenerationState(context, context.config.libraryToCache?.strategy)
             }
         }
 )
@@ -475,8 +477,7 @@ private val phasesOverMainModule = SameTypeNamedCompilerPhase(
 private val entireBackend = SameTypeNamedCompilerPhase(
         name = "EntireBackend",
         description = "Entire backend",
-        lower = createGenerationStatePhase then
-                buildAdditionalCacheInfoPhase then
+        lower = buildAdditionalCacheInfoPhase then
                 phasesOverMainModule then
                 saveAdditionalCacheInfoPhase then
                 produceOutputPhase then
@@ -503,7 +504,8 @@ private val middleEnd = SameTypeNamedCompilerPhase(
 private val singleCompilation = SameTypeNamedCompilerPhase(
         name = "SingleCompilation",
         description = "Single compilation",
-        lower = entireBackend
+        lower = createGenerationStatePhase then
+                entireBackend
 )
 
 internal val toplevelPhase: CompilerPhase<Context, Unit, Unit> = namedUnitPhase(

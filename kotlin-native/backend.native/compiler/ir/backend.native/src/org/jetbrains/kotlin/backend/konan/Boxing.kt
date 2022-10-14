@@ -173,7 +173,7 @@ internal fun initializeCachedBoxes(context: Context) {
         val rangeStart = "${cache.name}_RANGE_FROM"
         val rangeEnd = "${cache.name}_RANGE_TO"
         initCache(cache, context, cacheName, rangeStart, rangeEnd,
-                declareOnly = !context.shouldDefineCachedBoxes
+                declareOnly = !context.generationState.shouldDefineCachedBoxes
         ).also { context.generationState.llvm.boxCacheGlobals[cache] = it }
     }
 }

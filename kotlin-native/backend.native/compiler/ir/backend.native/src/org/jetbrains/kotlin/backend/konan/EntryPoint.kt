@@ -25,11 +25,11 @@ internal object DECLARATION_ORIGIN_ENTRY_POINT : IrDeclarationOriginImpl("ENTRY_
 internal fun makeEntryPoint(context: Context): IrFunction {
     val actualMain = context.ir.symbols.entryPoint!!.owner
     // TODO: Do we need to do something with the offsets if <main> is in a cached library?
-    val startOffset = if (context.llvmModuleSpecification.containsDeclaration(actualMain))
+    val startOffset = if (context.generationState.llvmModuleSpecification.containsDeclaration(actualMain))
         actualMain.startOffset
     else
         SYNTHETIC_OFFSET
-    val endOffset = if (context.llvmModuleSpecification.containsDeclaration(actualMain))
+    val endOffset = if (context.generationState.llvmModuleSpecification.containsDeclaration(actualMain))
         actualMain.endOffset
     else
         SYNTHETIC_OFFSET

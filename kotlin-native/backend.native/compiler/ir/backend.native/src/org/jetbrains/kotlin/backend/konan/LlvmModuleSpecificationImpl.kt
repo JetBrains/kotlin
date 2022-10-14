@@ -52,10 +52,10 @@ internal class CacheLlvmModuleSpecification(
     override fun containsLibrary(library: KotlinLibrary): Boolean = library == libraryToCache.klib
 
     override fun containsDeclaration(declaration: IrDeclaration): Boolean {
-        if (context.shouldDefineFunctionClasses && declaration.getPackageFragment().isFunctionInterfaceFile)
+        if (context.generationState.shouldDefineFunctionClasses && declaration.getPackageFragment().isFunctionInterfaceFile)
             return true
         if (!super.containsDeclaration(declaration)) return false
-        return (libraryToCache.strategy as? CacheDeserializationStrategy.SingleFile)
+        return (context.generationState.cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile)
                 ?.filePath.let { it == null || it == declaration.fileOrNull?.path }
     }
 }

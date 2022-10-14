@@ -80,7 +80,7 @@ internal class NativeInlineFunctionResolver(override val context: Context) : Def
 
         LocalClassesInInlineLambdasLowering(context).lower(body, possiblyLoweredFunction)
 
-        if (context.llvmModuleSpecification.containsDeclaration(function)) {
+        if (context.generationState.llvmModuleSpecification.containsDeclaration(function)) {
             // Do not extract local classes off of inline functions from cached libraries.
             LocalClassesInInlineFunctionsLowering(context).lower(body, possiblyLoweredFunction)
             LocalClassesExtractionFromInlineFunctionsLowering(context).lower(body, possiblyLoweredFunction)

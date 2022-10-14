@@ -236,7 +236,7 @@ private fun determineCachesToLink(context: Context): CachesToLink {
     val dynamicCaches = mutableListOf<String>()
 
     context.generationState.llvm.allCachedBitcodeDependencies.forEach { library ->
-        val currentBinaryContainsLibrary = context.llvmModuleSpecification.containsLibrary(library)
+        val currentBinaryContainsLibrary = context.generationState.llvmModuleSpecification.containsLibrary(library)
         val cache = context.config.cachedLibraries.getLibraryCache(library)
                 ?: error("Library $library is expected to be cached")
 

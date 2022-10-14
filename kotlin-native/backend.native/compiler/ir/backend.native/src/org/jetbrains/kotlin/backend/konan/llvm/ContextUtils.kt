@@ -163,7 +163,7 @@ internal interface ContextUtils : RuntimeAware {
      * or just drop all [else] branches of corresponding conditionals.
      */
     fun isExternal(declaration: IrDeclaration): Boolean {
-        return !context.llvmModuleSpecification.containsDeclaration(declaration)
+        return !context.generationState.llvmModuleSpecification.containsDeclaration(declaration)
     }
 
     /**
@@ -450,11 +450,11 @@ internal class Llvm(private val context: Context, val module: LLVMModuleRef) : R
     }
 
     private fun shouldContainBitcode(library: KonanLibrary): Boolean {
-        if (!context.llvmModuleSpecification.containsLibrary(library)) {
+        if (!context.generationState.llvmModuleSpecification.containsLibrary(library)) {
             return false
         }
 
-        if (!context.llvmModuleSpecification.isFinal) {
+        if (!context.generationState.llvmModuleSpecification.isFinal) {
             return true
         }
 
