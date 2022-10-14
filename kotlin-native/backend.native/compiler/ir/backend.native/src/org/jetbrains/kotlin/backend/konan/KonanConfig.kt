@@ -49,6 +49,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val target = targetManager.target
     val targetHasAddressDependency get() = target.hasAddressDependencyInMemoryModel()
     internal val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)!!
+    internal val flexiblePhaseConfig = configuration.get(CLIConfigurationKeys.FLEXIBLE_PHASE_CONFIG)!!
 
     // TODO: debug info generation mode and debug/release variant selection probably requires some refactoring.
     val debug: Boolean get() = configuration.getBoolean(KonanConfigKeys.DEBUG)
