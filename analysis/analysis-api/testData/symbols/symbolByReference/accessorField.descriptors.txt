@@ -22,7 +22,7 @@ KtBackingFieldSymbol:
       callableIdIfNonLocal: null
       contextReceivers: []
       hasBody: true
-      hasStableParameterNames: false
+      hasStableParameterNames: true
       isDefault: false
       isExtension: false
       isInline: false
@@ -62,7 +62,7 @@ KtBackingFieldSymbol:
       callableIdIfNonLocal: null
       contextReceivers: []
       hasBody: true
-      hasStableParameterNames: false
+      hasStableParameterNames: true
       isDefault: false
       isExtension: false
       isInline: false
