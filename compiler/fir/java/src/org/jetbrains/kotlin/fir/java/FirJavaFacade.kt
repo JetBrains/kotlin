@@ -175,19 +175,17 @@ abstract class FirJavaFacade(
         // TODO: some (all?) of those loops can be avoided, e.g. we don't actually need to resolve class arguments of annotations
         //   to determine whether they set default nullability - but without laziness, breaking those loops is somewhat hard,
         //   as we have a nested ordering here.
-        for (typeParameter in firJavaClass.typeParameters) {
-            if (typeParameter is FirTypeParameter) {
-                typeParameter.replaceBounds(typeParameter.bounds.map {
-                    it.resolveIfJavaType(session, javaTypeParameterStack, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND)
-                })
-            }
-        }
+
+        val enhancement = FirSignatureEnhancement(firJavaClass, session) { emptyList() }
+        enhancement.performFirstRoundOfBoundsResolution(firJavaClass.typeParameters)
+
         // 1. Resolve annotations
         // 2. Enhance type parameter bounds - may refer to each other, take default nullability from annotations
         // 3. Enhance super types - may refer to type parameter bounds, take default nullability from annotations
         firJavaClass.annotations.addFromJava(session, javaClass, javaTypeParameterStack)
-        val enhancement = FirSignatureEnhancement(firJavaClass, session) { emptyList() }
-        enhancement.enhanceTypeParameterBounds(firJavaClass.typeParameters)
+
+        enhancement.enhanceTypeParameterBoundsAfterFirstRound(firJavaClass.typeParameters)
+
         val enhancedSuperTypes = buildList {
             val purelyImplementedSupertype = firJavaClass.getPurelyImplementedSupertype()
             val purelyImplementedSupertypeClassId = purelyImplementedSupertype?.classId
