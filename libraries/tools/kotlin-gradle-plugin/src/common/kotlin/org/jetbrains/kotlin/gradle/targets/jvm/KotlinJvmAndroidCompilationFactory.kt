@@ -10,14 +10,14 @@ import com.android.build.gradle.api.BaseVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.AndroidKotlinCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.AndroidCompilationSourceSetsContainerFactory
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmCompilerOptionsFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinJvmCompilerOptionsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 
 class KotlinJvmAndroidCompilationFactory internal constructor(
     override val target: KotlinAndroidTarget,
     private val variant: BaseVariant,
     private val compilationImplFactory: KotlinCompilationImplFactory = KotlinCompilationImplFactory(
-        compilerOptionsFactory = JvmCompilerOptionsFactory,
+        compilerOptionsFactory = KotlinJvmCompilerOptionsFactory,
         compilationFriendPathsResolver = DefaultKotlinCompilationFriendPathsResolver(
             friendArtifactResolver = DefaultKotlinCompilationFriendPathsResolver.FriendArtifactResolver.composite(
                 DefaultKotlinCompilationFriendPathsResolver.DefaultFriendArtifactResolver,
