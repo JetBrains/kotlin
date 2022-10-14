@@ -11,6 +11,7 @@ dependencies {
     testImplementation(kotlinStdlib())
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(intellijCore())
+    testImplementation(intellijPlatformUtil())
     testImplementation(commonDependency("commons-lang:commons-lang"))
     testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     testImplementation(project(":kotlin-compiler-runner-unshaded"))
@@ -19,8 +20,10 @@ dependencies {
     testImplementation(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":generators:test-generator"))
     testApiJUnit5()
-    testImplementation(project(":kotlin-native:Interop:StubGenerator"))
-    testImplementation(project(":kotlin-native:klib"))
+    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+        testImplementation(project(":kotlin-native:Interop:StubGenerator"))
+        testImplementation(project(":kotlin-native:klib"))
+    }
 
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
