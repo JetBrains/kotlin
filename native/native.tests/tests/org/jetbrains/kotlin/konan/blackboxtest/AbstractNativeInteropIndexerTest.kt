@@ -36,10 +36,10 @@ abstract class AbstractNativeInteropIndexerTest : AbstractNativeInteropIndexerBa
         val defFile = testPathFull.resolve("pod1.def")
         val goldenFile = testPathFull.resolve("contents.gold.txt")
         val fmodulesArgs = if (fmodules) listOf("-compiler-option", "-fmodules") else listOf()
-        val includeFrameworkArgs = if (testDataDir.name == "simple")
-            listOf("-compiler-option", "-I${includeFolder.canonicalPath}")
-        else
+        val includeFrameworkArgs = if (testDataDir.name == "framework")
             listOf("-compiler-option", "-F${testDataDir.canonicalPath}")
+        else
+            listOf("-compiler-option", "-I${includeFolder.canonicalPath}")
 
         val testCase: TestCase = generateCInteropTestCaseWithSingleDef(defFile, includeFrameworkArgs + fmodulesArgs)
         val testCompilationResult = testCase.cinteropToLibrary()
