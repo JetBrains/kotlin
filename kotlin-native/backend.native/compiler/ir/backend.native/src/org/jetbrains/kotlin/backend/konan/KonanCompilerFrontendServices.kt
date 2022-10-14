@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendContext
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazy
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazyImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportProblemCollector
@@ -45,7 +46,7 @@ internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
     }
 }
 
-internal fun ComponentProvider.postprocessComponents(context: Context, files: Collection<KtFile>) {
+internal fun ComponentProvider.postprocessComponents(context: FrontendContext, files: Collection<KtFile>) {
     context.frontendServices = this.get<FrontendServices>()
 
     context.config.configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)?.let {

@@ -61,13 +61,13 @@ internal class NativeMapping : DefaultMapping() {
     val enumValuesCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
 }
 
-internal class Context(config: KonanConfig) : KonanBackendContext(config), ConfigChecks {
-    lateinit var frontendServices: FrontendServices
-    lateinit var environment: KotlinCoreEnvironment
-    lateinit var bindingContext: BindingContext
-
-    lateinit var moduleDescriptor: ModuleDescriptor
-
+internal class Context(
+        config: KonanConfig,
+        val environment: KotlinCoreEnvironment,
+        val frontendServices: FrontendServices,
+        var bindingContext: BindingContext,
+        val moduleDescriptor: ModuleDescriptor,
+) : KonanBackendContext(config), ConfigChecks {
     lateinit var objCExport: ObjCExport
 
     lateinit var cAdapterGenerator: CAdapterGenerator
