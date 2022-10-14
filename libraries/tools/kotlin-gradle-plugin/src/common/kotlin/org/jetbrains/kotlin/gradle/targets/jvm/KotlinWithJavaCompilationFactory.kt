@@ -32,7 +32,7 @@ class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, 
             compilerOptionsFactory = { _, _ ->
                 val compilerOptions = compilerOptionsFactory()
                 val kotlinOptions = kotlinOptionsFactory(compilerOptions.options)
-                KotlinCompilationImplFactory.CompilerOptionsFactory.Options(compilerOptions, kotlinOptions)
+                KotlinCompilationImplFactory.KotlinCompilerOptionsFactory.Options(compilerOptions, kotlinOptions)
             },
             compilationAssociator = JvmKotlinCompilationAssociator,
             compilationOutputFactory = { _, compilationName ->

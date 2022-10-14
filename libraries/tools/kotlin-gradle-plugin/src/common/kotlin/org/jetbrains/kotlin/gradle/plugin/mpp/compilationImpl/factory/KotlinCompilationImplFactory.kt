@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.decoratedInstance
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 
 internal class KotlinCompilationImplFactory(
-    private val compilerOptionsFactory: CompilerOptionsFactory,
+    private val compilerOptionsFactory: KotlinCompilerOptionsFactory,
 
     private val compilationModuleFactory: CompilationModuleFactory =
         DefaultCompilationModuleFactory,
@@ -75,7 +75,7 @@ internal class KotlinCompilationImplFactory(
         fun create(target: KotlinTarget, compilationName: String): KotlinCompilationOutput
     }
 
-    fun interface CompilerOptionsFactory {
+    fun interface KotlinCompilerOptionsFactory {
         data class Options(val compilerOptions: HasCompilerOptions<*>, val kotlinOptions: KotlinCommonOptions)
 
         fun create(target: KotlinTarget, compilationName: String): Options

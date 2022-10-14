@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationS
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.NativeKotlinCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.DefaultKotlinCompilationDependencyConfigurationsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.NativeCompilerOptionsFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinNativeCompilerOptionsFactory
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 open class KotlinSharedNativeCompilationFactory internal constructor(
@@ -23,7 +23,7 @@ open class KotlinSharedNativeCompilationFactory internal constructor(
     private val compilationImplFactory: KotlinCompilationImplFactory =
         KotlinCompilationImplFactory(
             compilationDependencyConfigurationsFactory = DefaultKotlinCompilationDependencyConfigurationsFactory.WithoutRuntime,
-            compilerOptionsFactory = NativeCompilerOptionsFactory,
+            compilerOptionsFactory = KotlinNativeCompilerOptionsFactory,
             compilationAssociator = NativeKotlinCompilationAssociator,
 
             compilationSourceSetInclusion = DefaultKotlinCompilationSourceSetInclusion(
