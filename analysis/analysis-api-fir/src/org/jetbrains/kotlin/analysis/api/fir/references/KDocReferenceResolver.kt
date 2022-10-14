@@ -35,6 +35,8 @@ internal object KDocReferenceResolver {
                     is KtNamedClassOrObjectSymbol -> {
                         collectPrimaryConstructorParameterSymbols(ownerSymbol, singleSegment)
                     }
+
+                    else -> {}
                 }
             }
         }

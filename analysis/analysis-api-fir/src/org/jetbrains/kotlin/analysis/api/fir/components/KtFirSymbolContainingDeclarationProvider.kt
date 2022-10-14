@@ -10,55 +10,64 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolContainingDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getContainingKtModule
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 
 internal class KtFirSymbolContainingDeclarationProvider(
     override val analysisSession: KtFirAnalysisSession,
     override val token: KtLifetimeToken
 ) : KtSymbolContainingDeclarationProvider(), KtFirAnalysisSessionComponent {
-    override fun getContainingDeclaration(symbol: KtSymbol): KtSymbolWithKind? { if (symbol is KtReceiverParameterSymbol) {
-            return firSymbolBuilder.buildSymbol((symbol as KtFirReceiverParameterSymbol).firSymbol) as KtSymbolWithKind
-        }
-
-        if (symbol is KtPackageSymbol) return null
+    override fun getContainingDeclaration(symbol: KtSymbol): KtDeclarationSymbol? {
+        if (symbol !is KtDeclarationSymbol) return null
         if (symbol is KtSymbolWithKind && symbol.symbolKind == KtSymbolKind.TOP_LEVEL) return null
-        if (symbol is KtCallableSymbol) {
-            val classId = symbol.callableIdIfNonLocal?.classId
-            if (classId != null) {
-                with(analysisSession) {
-                    return getClassOrObjectSymbolByClassId(classId)
-                }
-            }
-        }
+        fun getParentSymbolByPsi() = getContainingPsi(symbol).let { with(analysisSession) { it.getSymbol() } }
         return when (symbol) {
-            is KtFirTypeParameterSymbol -> {
-                firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as KtSymbolWithKind
+            is KtPropertyAccessorSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.fir.propertySymbol) as? KtDeclarationSymbol
+            is KtBackingFieldSymbol -> symbol.owningProperty
+            is KtTypeParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KtDeclarationSymbol
+            is KtLocalVariableSymbol -> getParentSymbolByPsi()
+            is KtAnonymousFunctionSymbol -> getParentSymbolByPsi()
+            is KtAnonymousObjectSymbol -> getParentSymbolByPsi()
+            is KtSamConstructorSymbol -> null // SAM constructors are always toplevel
+
+            is KtClassInitializerSymbol -> {
+                val outerFirClassifier = symbol.firSymbol.getContainingClassSymbol(symbol.firSymbol.llFirSession)
+                    ?: return getParentSymbolByPsi()
+                firSymbolBuilder.buildSymbol(outerFirClassifier) as? KtDeclarationSymbol
             }
-            is KtSymbolWithKind -> when (symbol.origin) {
-                KtSymbolOrigin.SOURCE, KtSymbolOrigin.SOURCE_MEMBER_GENERATED ->
-                    getContainingDeclarationForKotlinInSourceSymbol(symbol)
-                KtSymbolOrigin.LIBRARY, KtSymbolOrigin.JAVA, KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY ->
-                    getContainingDeclarationForLibrarySymbol(symbol)
-                KtSymbolOrigin.PROPERTY_BACKING_FIELD -> getContainingDeclarationForBackingFieldSymbol(symbol)
-                KtSymbolOrigin.INTERSECTION_OVERRIDE, KtSymbolOrigin.SUBSTITUTION_OVERRIDE -> TODO()
-                KtSymbolOrigin.SAM_CONSTRUCTOR -> null
-                KtSymbolOrigin.PLUGIN -> TODO("Containing declaration is requested for ${ DebugSymbolRenderer.render(symbol) }")
-                KtSymbolOrigin.DELEGATED -> TODO()
+
+            is KtValueParameterSymbol -> {
+                // todo that does not work for parameters not from source, corresponding info should be added to the fir tree
+                getParentSymbolByPsi()
             }
-            else -> null
+
+            is KtCallableSymbol -> {
+                val outerFirClassifier = symbol.firSymbol.getContainingClassSymbol(symbol.firSymbol.llFirSession)
+                    ?: return getParentSymbolByPsi()
+                firSymbolBuilder.buildSymbol(outerFirClassifier) as? KtDeclarationSymbol
+            }
+
+            is KtClassLikeSymbol -> {
+                val classId = symbol.classIdIfNonLocal ?: return getParentSymbolByPsi() // local
+                val outerClassId = classId.outerClassId ?: return null // toplevel
+                val outerFirClassifier = symbol.firSymbol.llFirSession.firProvider.getFirClassifierByFqName(outerClassId) ?: return null
+                firSymbolBuilder.buildSymbol(outerFirClassifier) as? KtDeclarationSymbol
+            }
+
+
         }
     }
 
@@ -66,25 +75,8 @@ internal class KtFirSymbolContainingDeclarationProvider(
         return symbol.getContainingKtModule(analysisSession.firResolveSession)
     }
 
-    private fun getContainingDeclarationForBackingFieldSymbol(symbol: KtSymbolWithKind): KtSymbolWithKind {
-        require(symbol is KtBackingFieldSymbol)
-        return symbol.owningProperty
-    }
 
-    private fun getContainingDeclarationForKotlinInSourceSymbol(symbol: KtSymbolWithKind): KtSymbolWithKind = with(analysisSession) {
-        require(symbol.origin == KtSymbolOrigin.SOURCE || symbol.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED)
-        require(symbol is KtFirSymbol<*>)
-
-        val containingDeclaration = getContainingPsi(symbol)
-
-        return with(analysisSession) {
-            val containingSymbol = containingDeclaration.getSymbol()
-            check(containingSymbol is KtSymbolWithKind)
-            containingSymbol
-        }
-    }
-
-    private fun getContainingPsi(symbol: KtFirSymbol<*>): KtDeclaration {
+    private fun getContainingPsi(symbol: KtSymbol): KtDeclaration {
         val source = symbol.firSymbol.source
         val thisSource = when (source?.kind) {
             null -> buildErrorWithAttachment("PSI should present for declaration built by Kotlin code") {
@@ -106,12 +98,12 @@ internal class KtFirSymbolContainingDeclarationProvider(
 
         return when (symbol.origin) {
             KtSymbolOrigin.SOURCE -> thisSource.getContainingKtDeclaration()
-                ?: buildErrorWithAttachment("Containing declaration should present for non-toplevel declaration") {
+                ?: buildErrorWithAttachment("Containing declaration should present for non-toplevel declaration ${thisSource::class}") {
                     withSymbolAttachment("symbolForContainingPsi", symbol)
                 }
 
             KtSymbolOrigin.SOURCE_MEMBER_GENERATED -> thisSource as KtDeclaration
-            else -> buildErrorWithAttachment("Unsupported declaration origin ${symbol.origin}") {
+            else -> buildErrorWithAttachment("Unsupported declaration origin ${symbol.origin} ${thisSource::class}") {
                 withSymbolAttachment("symbolForContainingPsi", symbol)
             }
         }
@@ -122,45 +114,4 @@ internal class KtFirSymbolContainingDeclarationProvider(
             is KtDestructuringDeclaration -> container.parentOfType()
             else -> container
         }
-
-    private fun getContainingDeclarationForLibrarySymbol(symbol: KtSymbolWithKind): KtSymbolWithKind = with(analysisSession) {
-        require(symbol.origin == KtSymbolOrigin.LIBRARY || symbol.origin == KtSymbolOrigin.JAVA)
-        check(symbol.symbolKind == KtSymbolKind.CLASS_MEMBER)
-
-        fun error(message: String): Nothing {
-            buildErrorWithAttachment(message) {
-                withSymbolAttachment("symbolToGetContaining", symbol)
-            }
-        }
-
-        val containingClassId = when (symbol) {
-            is KtClassLikeSymbol -> {
-                val classId = symbol.classIdIfNonLocal
-                    ?: error("classId should not be null for non-local declaration")
-                classId.outerClassId
-            }
-            is KtFunctionSymbol -> {
-                val fqName = symbol.callableIdIfNonLocal
-                    ?: error("callableIdIfNonLocal should not be null for non-local declaration")
-                fqName.classId
-            }
-            is KtEnumEntrySymbol -> {
-                val classId = symbol.containingEnumClassIdIfNonLocal
-                    ?: error("fqName should not be null for non-local declaration")
-                classId.outerClassId
-            }
-            is KtPropertySymbol -> {
-                val fqName = symbol.callableIdIfNonLocal
-                    ?: error("fqName should not be null for non-local declaration")
-                fqName.classId
-            }
-            is KtConstructorSymbol -> {
-                symbol.containingClassIdIfNonLocal
-                    ?: error("fqName should not be null for non-local declaration")
-            }
-            else -> error("We should not have a ${symbol::class} from a library")
-        } ?: error("outerClassId should not be null for member declaration")
-        val containingClass = getClassOrObjectSymbolByClassId(containingClassId)
-        return containingClass ?: error("Class by class id should exists")
-    }
 }

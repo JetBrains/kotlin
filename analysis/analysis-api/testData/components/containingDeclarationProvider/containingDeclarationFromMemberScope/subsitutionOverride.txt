@@ -1,0 +1,16 @@
+fun <S> foo1(t: Int): Int fromClass Y
+  S from /Y.foo1
+
+fun <Q> foo2(t: Int) fromClass Y
+  Q from /Y.foo2
+
+fun <U> foo3() fromClass X
+  U from /X.foo3
+
+fun equals(other: Any?): Boolean fromClass kotlin/Any
+
+fun hashCode(): Int fromClass kotlin/Any
+
+fun toString(): String fromClass kotlin/Any
+
+constructor() fromClass Y
