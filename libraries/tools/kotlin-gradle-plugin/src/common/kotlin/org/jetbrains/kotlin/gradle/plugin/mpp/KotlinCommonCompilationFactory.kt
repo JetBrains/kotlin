@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSourceSetsContainer
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.CommonCompilerOptionsFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinMultiplatformCommonCompilerOptionsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.DefaultKotlinCompilationDependencyConfigurationsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 
@@ -18,7 +18,7 @@ class KotlinCommonCompilationFactory internal constructor(
     private val compilationFactory: KotlinCompilationImplFactory =
         KotlinCompilationImplFactory(
             compilationDependencyConfigurationsFactory = DefaultKotlinCompilationDependencyConfigurationsFactory.WithoutRuntime,
-            compilerOptionsFactory = CommonCompilerOptionsFactory,
+            compilerOptionsFactory = KotlinMultiplatformCommonCompilerOptionsFactory,
             compilationFriendPathsResolver = DefaultKotlinCompilationFriendPathsResolver(
                 friendArtifactResolver = DefaultKotlinCompilationFriendPathsResolver.FriendArtifactResolver.composite(
                     DefaultKotlinCompilationFriendPathsResolver.DefaultFriendArtifactResolver,

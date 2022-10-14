@@ -7,14 +7,14 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JsCompilationSourceSetsContainerFactory
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JsCompilerOptionsFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinJsCompilerOptionsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JsKotlinCompilationDependencyConfigurationsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 
 class KotlinJsCompilationFactory internal constructor(
     override val target: KotlinOnlyTarget<KotlinJsCompilation>,
     private val compilationImplFactory: KotlinCompilationImplFactory = KotlinCompilationImplFactory(
-        compilerOptionsFactory = JsCompilerOptionsFactory,
+        compilerOptionsFactory = KotlinJsCompilerOptionsFactory,
         compilationSourceSetsContainerFactory = JsCompilationSourceSetsContainerFactory,
         compilationDependencyConfigurationsFactory = JsKotlinCompilationDependencyConfigurationsFactory
     )
