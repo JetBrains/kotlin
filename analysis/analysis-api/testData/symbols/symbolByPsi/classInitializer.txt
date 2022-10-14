@@ -50,8 +50,10 @@ KtKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KtClassInitializerSymbol:
+  annotationsList: []
   origin: SOURCE
   symbolKind: CLASS_MEMBER
+  typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
