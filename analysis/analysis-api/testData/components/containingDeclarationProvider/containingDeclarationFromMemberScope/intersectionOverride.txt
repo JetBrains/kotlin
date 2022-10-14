@@ -1,0 +1,10 @@
+fun <T> foo() fromClass Y
+  T from /Y.foo
+
+fun equals(other: Any?): Boolean fromClass kotlin/Any
+
+fun hashCode(): Int fromClass kotlin/Any
+
+fun toString(): String fromClass kotlin/Any
+
+constructor() fromClass Y
