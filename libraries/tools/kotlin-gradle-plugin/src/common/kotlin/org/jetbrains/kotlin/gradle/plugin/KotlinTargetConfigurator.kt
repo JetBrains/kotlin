@@ -18,6 +18,7 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.file.FileCollection
+import org.gradle.api.internal.artifacts.ArtifactAttributes
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaBasePlugin
@@ -447,7 +448,7 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
 
             // Configure an implicit variant
             publications.artifacts.add(jarArtifact)
-            publications.attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, archiveType)
+            publications.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, archiveType)
         }
     }
 }
