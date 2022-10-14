@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.native.interop.indexer
 
-enum class Language(val sourceFileExtension: String) {
-    C("c"),
-    CPP("cpp"),
-    OBJECTIVE_C("m")
+enum class Language(val sourceFileExtension: String, val clangLanguageName: String) {
+    C("c", "c"),
+    CPP("cpp", "c++"),
+    OBJECTIVE_C("m", "objective-c")
 }
 
 interface HeaderInclusionPolicy {

@@ -106,7 +106,10 @@ private fun List<String>?.isTrue(): Boolean {
 }
 
 private fun runCmd(command: Array<String>, verbose: Boolean = false, redirectInputFile: File? = null) {
-    if (verbose) println("COMMAND: " + command.joinToString(" "))
+    if (verbose) {
+        val redirect = if (redirectInputFile == null) "" else " < ${redirectInputFile.path}"
+        println("COMMAND: " + command.joinToString(" ") + redirect)
+    }
     Command(command.toList(), redirectInputFile = redirectInputFile).getOutputLines(true).let { lines ->
         if (verbose) lines.forEach(::println)
     }
@@ -384,8 +387,10 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
         }
         KotlinPlatform.NATIVE -> {
             val outLib = File(nativeLibsDir, "$libName.bc")
+            // Note that the output bitcode contains the source file path, which can lead to non-deterministc builds (see KT-54284).
+            // The source file is passed in via stdin to ensure the output library is deterministic.
             val compilerCmd = arrayOf(compiler, *compilerArgs,
-                    "-emit-llvm", "-x", "c", "-c", "-", "-o", outLib.absolutePath)
+                    "-emit-llvm", "-x", library.language.clangLanguageName, "-c", "-", "-o", outLib.absolutePath)
             runCmd(compilerCmd, verbose, redirectInputFile = File(outCFile.absolutePath))
             outLib.absolutePath
         }
