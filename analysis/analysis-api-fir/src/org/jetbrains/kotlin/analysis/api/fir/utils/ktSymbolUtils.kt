@@ -6,20 +6,31 @@
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 
 internal val KtSymbol.firSymbol: FirBasedSymbol<*>
     get() {
         require(this is KtFirSymbol<*>)
         return this.firSymbol
     }
+
+internal val KtTypeParameterSymbol.firSymbol: FirTypeParameterSymbol get() = (this as KtFirSymbol<*>).firSymbol as FirTypeParameterSymbol
+internal val KtTypeAliasSymbol.firSymbol: FirTypeAliasSymbol get() = (this as KtFirSymbol<*>).firSymbol as FirTypeAliasSymbol
+
+internal val KtCallableSymbol.firSymbol: FirCallableSymbol<*> get() = (this as KtFirSymbol<*>).firSymbol as FirCallableSymbol<*>
+internal val KtValueParameterSymbol.firSymbol: FirValueParameterSymbol get() = (this as KtFirSymbol<*>).firSymbol as FirValueParameterSymbol
+internal val KtEnumEntrySymbol.firSymbol: FirEnumEntrySymbol get() = (this as KtFirSymbol<*>).firSymbol as FirEnumEntrySymbol
+internal val KtConstructorSymbol.firSymbol: FirConstructorSymbol get() = (this as KtFirSymbol<*>).firSymbol as FirConstructorSymbol
+internal val KtPropertyAccessorSymbol.firSymbol: FirPropertyAccessorSymbol get() = (this as KtFirSymbol<*>).firSymbol as FirPropertyAccessorSymbol
+internal val KtClassInitializerSymbol.firSymbol: FirAnonymousInitializerSymbol get() = (this as KtFirSymbol<*>).firSymbol as FirAnonymousInitializerSymbol
+
 
 fun FirBasedSymbol<*>.getContainingKtModule(firResolveSession: LLFirResolveSession): KtModule {
     val target = when (this) {

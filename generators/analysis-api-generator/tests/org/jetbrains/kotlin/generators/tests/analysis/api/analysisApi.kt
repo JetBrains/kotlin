@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.Abstra
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractResolveCallTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractResolveCandidatesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByMemberScopeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByPsiTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractCollectDiagnosticsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider.AbstractReturnTargetSymbolTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider.AbstractWhenMissingCasesTest
@@ -227,6 +229,17 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     component("diagnosticsProvider", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
         test(AbstractCollectDiagnosticsTest::class) {
             model("diagnostics")
+        }
+    }
+
+    // for K1, symbols do not have a proper equality implementation, so the tests are failing
+    component("containingDeclarationProvider", filter = frontendIs(FrontendKind.Fir)) {
+        test(AbstractContainingDeclarationProviderByPsiTest::class) {
+            model("containingDeclarationByPsi")
+        }
+
+        test(AbstractContainingDeclarationProviderByMemberScopeTest::class) {
+            model("containingDeclarationFromMemberScope")
         }
     }
 
