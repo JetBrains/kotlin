@@ -598,7 +598,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                             }
                             diagnostic = when {
                                 // Use a stub diagnostic to suppress unresolved error here because it would be reported by other logic
-                                lhsReference is FirErrorNamedReference -> ConeStubDiagnostic(ConeUnresolvedReferenceError())
+                                lhsReference is FirErrorNamedReference -> ConeStubDiagnostic(ConeUnresolvedReferenceError(lhsReference.name))
                                 lhsSymbol == null -> ConeVariableExpectedError
                                 else -> ConeValReassignmentError(lhsSymbol)
                             }
