@@ -120,7 +120,7 @@ abstract class AbstractLoweringTests : AbstractCodegenTest() {
             instanceClass ?: error("Could not find class $className in loaded classes")
         }
 
-        val instanceOfClass = instanceClass.newInstance()
+        val instanceOfClass = instanceClass.getDeclaredConstructor().newInstance()
         val testMethod = instanceClass.getMethod(
             "test",
             *parameterTypes,

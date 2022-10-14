@@ -143,7 +143,7 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
         val loader = createClassLoader()
         if (dumpClasses) dumpClasses(loader)
         val loadedClass = loader.loadClass("Test")
-        val instance = loadedClass.newInstance()
+        val instance = loadedClass.getDeclaredConstructor().newInstance()
         val instanceClass = instance::class.java
         val testMethod = instanceClass.getMethod("test")
         testMethod.invoke(instance)
