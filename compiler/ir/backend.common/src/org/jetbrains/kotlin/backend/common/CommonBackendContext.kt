@@ -27,10 +27,12 @@ interface LoggingContext {
     fun log(message: () -> String)
 }
 
-interface CommonBackendContext : BackendContext, LoggingContext {
-    override val ir: Ir<CommonBackendContext>
-
+interface ErrorReportingContext {
     fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean)
+}
+
+interface CommonBackendContext : BackendContext, LoggingContext, ErrorReportingContext {
+    override val ir: Ir<CommonBackendContext>
 
     val configuration: CompilerConfiguration
     val scriptMode: Boolean
