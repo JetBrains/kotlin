@@ -22,9 +22,8 @@ import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
 internal class DynamicCompilerDriver : CompilerDriver() {
 
     companion object {
-        // Will become non-trivial in the future.
-        fun supportsConfig(): Boolean =
-                false
+        fun supportsConfig(config: KonanConfig): Boolean =
+                config.produce == CompilerOutputKind.LIBRARY
     }
 
     override fun run(config: KonanConfig, environment: KotlinCoreEnvironment) {
