@@ -341,8 +341,6 @@ internal class AndroidProjectHandler(
     fun setUpDependencyResolution(variant: BaseVariant, compilation: KotlinJvmAndroidCompilation) {
         val project = compilation.target.project
 
-        AbstractKotlinTargetConfigurator.defineConfigurationsForCompilation(compilation)
-
         compilation.compileDependencyFiles = variant.compileConfiguration.apply {
             usesPlatformOf(compilation.target)
             project.addExtendsFromRelation(name, compilation.compileDependencyConfigurationName)
