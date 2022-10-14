@@ -1,7 +1,6 @@
 // !LANGUAGE: +SuspendConversion
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // WITH_STDLIB
-// FIR status: java.lang.Integer cannot be cast to java.lang.String
 
 object Test1 {
     fun foo(f: () -> Unit) {}
