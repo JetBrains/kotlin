@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory
 
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
+import org.jetbrains.kotlin.gradle.internal.reorderPluginClasspathDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationDependencyConfigurationsContainer
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationDependencyConfigurationsContainer
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationConfigurationsContainer
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.javaSourceSets
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
@@ -21,13 +22,13 @@ internal sealed class DefaultKotlinCompilationDependencyConfigurationsFactory :
     KotlinCompilationImplFactory.KotlinCompilationDependencyConfigurationsFactory {
 
     object WithRuntime : DefaultKotlinCompilationDependencyConfigurationsFactory() {
-        override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationDependencyConfigurationsContainer {
+        override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationConfigurationsContainer {
             return KotlinCompilationDependencyConfigurationsContainer(target, compilationName, withRuntime = true)
         }
     }
 
     object WithoutRuntime : DefaultKotlinCompilationDependencyConfigurationsFactory() {
-        override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationDependencyConfigurationsContainer {
+        override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationConfigurationsContainer {
             return KotlinCompilationDependencyConfigurationsContainer(target, compilationName, withRuntime = false)
         }
     }
@@ -36,7 +37,7 @@ internal sealed class DefaultKotlinCompilationDependencyConfigurationsFactory :
 internal object NativeKotlinCompilationDependencyConfigurationsFactory :
     KotlinCompilationImplFactory.KotlinCompilationDependencyConfigurationsFactory {
 
-    override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationDependencyConfigurationsContainer {
+    override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationConfigurationsContainer {
         val naming = ConfigurationNaming.Default(target, compilationName)
         return KotlinCompilationDependencyConfigurationsContainer(
             target = target,
@@ -51,7 +52,7 @@ internal object NativeKotlinCompilationDependencyConfigurationsFactory :
 internal object JsKotlinCompilationDependencyConfigurationsFactory :
     KotlinCompilationImplFactory.KotlinCompilationDependencyConfigurationsFactory {
 
-    override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationDependencyConfigurationsContainer {
+    override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationConfigurationsContainer {
         val defaultNaming = ConfigurationNaming.Default(target, compilationName)
         return KotlinCompilationDependencyConfigurationsContainer(
             target, compilationName, withRuntime = true,
@@ -64,7 +65,7 @@ internal object JsKotlinCompilationDependencyConfigurationsFactory :
 
 internal class JvmWithJavaCompilationDependencyConfigurationsFactory(private val target: KotlinWithJavaTarget<*, *>) :
     KotlinCompilationImplFactory.KotlinCompilationDependencyConfigurationsFactory {
-    override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationDependencyConfigurationsContainer {
+    override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationConfigurationsContainer {
         val javaSourceSet = this.target.javaSourceSets.maybeCreate(compilationName)
         return KotlinCompilationDependencyConfigurationsContainer(
             target = target, compilationName = compilationName, withRuntime = true,
@@ -119,8 +120,13 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
     compileOnlyConfigurationName: String = naming.name(compilation, COMPILE_ONLY),
     runtimeOnlyConfigurationName: String = naming.name(compilation, RUNTIME_ONLY),
     compileClasspathConfigurationName: String = naming.name(compileClasspath),
-    runtimeClasspathConfigurationName: String = naming.name(runtimeClasspath)
-): KotlinCompilationDependencyConfigurationsContainer {
+    runtimeClasspathConfigurationName: String = naming.name(runtimeClasspath),
+    pluginConfigurationName: String = lowerCamelCaseName(
+        PLUGIN_CLASSPATH_CONFIGURATION_NAME,
+        target.disambiguationClassifier,
+        compilationName
+    )
+): KotlinCompilationConfigurationsContainer {
     val compilationCoordinates = "${target.disambiguationClassifier}/$compilationName"
 
     val apiConfiguration = target.project.configurations.maybeCreate(apiConfigurationName).apply {
@@ -180,12 +186,28 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
             description = "Runtime classpath of $compilationCoordinates."
         } else null
 
-    return DefaultKotlinCompilationDependencyConfigurationsContainer(
+    val pluginConfiguration = target.project.configurations.maybeCreate(pluginConfigurationName).apply {
+        addGradlePluginMetadataAttributes(target.project)
+
+        if (target.platformType == KotlinPlatformType.native) {
+            extendsFrom(target.project.configurations.getByName(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME))
+            isTransitive = false
+        } else {
+            extendsFrom(target.project.commonKotlinPluginClasspath)
+        }
+        isVisible = false
+        isCanBeConsumed = false
+        description = "Kotlin compiler plugins for $compilation"
+        reorderPluginClasspathDependencies()
+    }
+
+    return DefaultKotlinCompilationConfigurationsContainer(
         apiConfiguration = apiConfiguration,
         implementationConfiguration = implementationConfiguration,
         compileOnlyConfiguration = compileOnlyConfiguration,
         runtimeOnlyConfiguration = runtimeOnlyConfiguration,
         compileDependencyConfiguration = compileDependencyConfiguration,
-        runtimeDependencyConfiguration = runtimeDependencyConfiguration
+        runtimeDependencyConfiguration = runtimeDependencyConfiguration,
+        pluginConfiguration = pluginConfiguration
     )
 }
