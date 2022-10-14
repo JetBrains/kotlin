@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // SKIP_TXT
 
 // FILE: StubElement.java
@@ -12,7 +13,7 @@ public class IStubFileElementType<X extends StubElement> {
 
 // FILE: main.kt
 fun foo(i: IStubFileElementType<*>) {
-    bar(i.getFoo()) // In FIR, `i.getFoo()` has a type ft<StubElement<*>, StubElement<*>?>, while in FE1.0 it's ft<StubElement<CharSequence>, StubElement<*>?>
+    bar(i.getFoo())
 }
 
 fun bar(w: StubElement<CharSequence>) {}
