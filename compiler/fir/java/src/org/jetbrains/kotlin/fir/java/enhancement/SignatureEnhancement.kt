@@ -68,8 +68,11 @@ class FirSignatureEnhancement(
 
     private val typeQualifierResolver = session.javaAnnotationTypeQualifierResolver
 
-    private val contextQualifiers: JavaTypeQualifiersByElementType? =
+    // This property is assumed to be initialized only after annotations for the class are initialized
+    // While in one of the cases FirSignatureEnhancement is created just one step before annotations resolution
+    private val contextQualifiers: JavaTypeQualifiersByElementType? by lazy(LazyThreadSafetyMode.NONE) {
         typeQualifierResolver.extractDefaultQualifiers(owner)
+    }
 
     private val enhancementsCache = session.enhancedSymbolStorage.cacheByOwner.getValue(owner.symbol, null)
 
@@ -187,7 +190,7 @@ class FirSignatureEnhancement(
         if (firMethod !is FirJavaMethod && firMethod !is FirJavaConstructor) {
             return original
         }
-        enhanceTypeParameterBounds(firMethod.typeParameters)
+        enhanceTypeParameterBoundsForMethod(firMethod)
         return enhanceMethod(firMethod, original.callableId, name)
     }
 
@@ -327,24 +330,33 @@ class FirSignatureEnhancement(
         return function.symbol
     }
 
-    fun enhanceTypeParameterBounds(typeParameters: List<FirTypeParameterRef>) {
+    // Perform first time initialization of bounds with FirResolvedTypeRef instances
+    fun performFirstRoundOfBoundsResolution(typeParameters: List<FirTypeParameterRef>) {
+        for (typeParameter in typeParameters) {
+            if (typeParameter is FirTypeParameter) {
+                typeParameter.replaceBounds(typeParameter.bounds.map {
+                    it.resolveIfJavaType(session, javaTypeParameterStack, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND)
+                })
+            }
+        }
+    }
+
+    fun enhanceTypeParameterBoundsAfterFirstRound(typeParameters: List<FirTypeParameterRef>) {
         // Type parameters can have interdependencies between them. Assuming that there are no top-level cycles
         // (`A : B, B : A` - invalid), the cycles can still appear when type parameters use each other in argument
         // position (`A : C<B>, B : D<A>` - valid). In this case the precise enhancement of each bound depends on
         // the others' nullability, for which we need to enhance at least its head type constructor.
-        typeParameters.replaceBounds { _, bound ->
-            // Resolve without enhancement so we don't crash the frontend if there is a restricted cycle (`A : B, B : A`)
-            // or if we visit type parameters in the wrong order (`A : B, B : C<A>` with `A` enhanced before `B`).
-            // TODO: the second case technically produces incorrect results - the loop below should visit type parameters
-            //   in topological order, then a resolved-but-not-enhanced type will never be observable with valid code.
-            bound.resolveIfJavaType(session, javaTypeParameterStack, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND)
-        }
         typeParameters.replaceBounds { typeParameter, bound ->
             enhanceTypeParameterBound(typeParameter, bound, forceOnlyHeadTypeConstructor = true)
         }
         typeParameters.replaceBounds { typeParameter, bound ->
             enhanceTypeParameterBound(typeParameter, bound, forceOnlyHeadTypeConstructor = false)
         }
+    }
+
+    private fun enhanceTypeParameterBoundsForMethod(firMethod: FirFunction) {
+        performFirstRoundOfBoundsResolution(firMethod.typeParameters)
+        enhanceTypeParameterBoundsAfterFirstRound(firMethod.typeParameters)
     }
 
     private inline fun List<FirTypeParameterRef>.replaceBounds(block: (FirTypeParameter, FirTypeRef) -> FirTypeRef) {
