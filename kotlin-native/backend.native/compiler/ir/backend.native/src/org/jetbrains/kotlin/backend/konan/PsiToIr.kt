@@ -9,12 +9,16 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
 import org.jetbrains.kotlin.backend.konan.descriptors.isForwardDeclarationModule
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
+import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
+import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrInput
+import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrResult
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
@@ -32,8 +36,6 @@ import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.CleanableBindingContext
 import org.jetbrains.kotlin.utils.DFS
 
 object KonanStubGeneratorExtensions : StubGeneratorExtensions() {
@@ -42,11 +44,11 @@ object KonanStubGeneratorExtensions : StubGeneratorExtensions() {
     }
 }
 
-internal fun Context.psiToIr(
-        symbolTable: SymbolTable,
-        isProducingLibrary: Boolean,
+internal fun PsiToIrContext.psiToIr(
+        psiToIrInput: PsiToIrInput,
         useLinkerWhenProducingLibrary: Boolean
-) {
+): PsiToIrResult {
+    val (moduleDescriptor, environment, isProducingLibrary) = psiToIrInput
     // Translate AST to high level IR.
     val expectActualLinker = config.configuration[CommonConfigurationKeys.EXPECT_ACTUAL_LINKER] ?: false
     val messageLogger = config.configuration[IrMessageLogger.IR_MESSAGE_LOGGER] ?: IrMessageLogger.None
@@ -98,7 +100,7 @@ internal fun Context.psiToIr(
             }
         }
     } else {
-        val exportedDependencies = (getExportedDependencies() + modulesWithoutDCE).distinct()
+        val exportedDependencies = (moduleDescriptor.getExportedDependencies(config) + modulesWithoutDCE).distinct()
         val irProviderForCEnumsAndCStructs =
                 IrProviderForCEnumAndCStructStubs(generatorContext, interopBuiltIns, symbols)
 
@@ -199,7 +201,7 @@ internal fun Context.psiToIr(
         }
     }
 
-    expectDescriptorToSymbol = mutableMapOf()
+    val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
     val mainModule = translator.generateModuleFragment(
             generatorContext,
             environment.getSourceFiles(),
@@ -228,20 +230,13 @@ internal fun Context.psiToIr(
         modules.values.forEach { fakeOverrideChecker.check(it) }
     }
 
-    irModule = mainModule
-
     // Note: coupled with [shouldLower] below.
-    irModules = modules.filterValues { llvmModuleSpecification.containsModule(it) }
+    val irModules = modules.filterValues { llvmModuleSpecification.containsModule(it) }
     // IR linker deserializes files in the order they lie on the disk, which might be inconvenient,
     // so to make the pipeline more deterministic, the files are to be sorted.
     // This concerns in the first place global initializers order for the eager initialization strategy,
     // where the files are being initialized in order one by one.
     irModules.values.forEach { module -> module.files.sortBy { it.fileEntry.name } }
-
-    if (!isProducingLibrary)
-        irLinker = irDeserializer as KonanIrLinker
-
-    ir.symbols = symbols
 
     if (!isProducingLibrary) {
         // TODO: find out what should be done in the new builtins/symbols about it
@@ -249,17 +244,18 @@ internal fun Context.psiToIr(
             (functionIrClassFactory as? BuiltInFictitiousFunctionIrClassFactory)?.buildAllClasses()
         }
         (functionIrClassFactory as? BuiltInFictitiousFunctionIrClassFactory)?.module =
-                (modules.values + irModule!!).single { it.descriptor.isNativeStdlib() }
+                (modules.values + mainModule).single { it.descriptor.isNativeStdlib() }
     }
 
     mainModule.files.forEach { it.metadata = KonanFileMetadataSource(mainModule) }
     modules.values.forEach { module ->
         module.files.forEach { it.metadata = KonanFileMetadataSource(module as KonanIrModuleFragmentImpl) }
     }
-
-    val originalBindingContext = bindingContext as? CleanableBindingContext
-            ?: error("BindingContext should be cleanable in K/N IR to avoid leaking memory: $bindingContext")
-    originalBindingContext.clear()
-
-    this.bindingContext = BindingContext.EMPTY
+    return PsiToIrResult(
+            irModules,
+            mainModule,
+            expectDescriptorToSymbol,
+            symbols,
+            if (isProducingLibrary) null else irDeserializer as KonanIrLinker
+    )
 }

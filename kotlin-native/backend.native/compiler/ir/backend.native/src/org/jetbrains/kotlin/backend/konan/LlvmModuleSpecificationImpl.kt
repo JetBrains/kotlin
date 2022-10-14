@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -43,7 +44,7 @@ internal class DefaultLlvmModuleSpecification(cachedLibraries: CachedLibraries)
 }
 
 internal class CacheLlvmModuleSpecification(
-        private val context: Context,
+        private val context: PsiToIrContext,
         cachedLibraries: CachedLibraries,
         private val libraryToCache: PartialCacheInfo
 ) : LlvmModuleSpecificationBase(cachedLibraries) {

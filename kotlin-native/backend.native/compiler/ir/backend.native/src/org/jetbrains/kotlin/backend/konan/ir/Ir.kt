@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.findMainEntryPoint
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -41,14 +42,14 @@ internal class KonanIr(context: Context, irModule: IrModuleFragment): Ir<Context
 }
 
 internal class KonanSymbols(
-        val context: Context,
+        val context: PhaseContext,
         private val descriptorsLookup: DescriptorsLookup,
         irBuiltIns: IrBuiltIns,
         private val symbolTable: SymbolTable,
         lazySymbolTable: ReferenceSymbolTable
 ): Symbols(irBuiltIns, symbolTable) {
 
-    val entryPoint = findMainEntryPoint(context)?.let { symbolTable.referenceSimpleFunction(it) }
+    val entryPoint = findMainEntryPoint(context, descriptorsLookup.builtIns)?.let { symbolTable.referenceSimpleFunction(it) }
 
     override val externalSymbolTable = lazySymbolTable
 

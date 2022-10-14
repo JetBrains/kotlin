@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.phaser.ActionState
 import org.jetbrains.kotlin.backend.common.phaser.BeforeOrAfter
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
+import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -43,18 +44,18 @@ val CompilerOutputKind.isNativeLibrary: Boolean
 val CompilerOutputKind.involvesBitcodeGeneration: Boolean
     get() = this != CompilerOutputKind.LIBRARY
 
-internal val Context.producedLlvmModuleContainsStdlib: Boolean
+internal val PsiToIrContext.producedLlvmModuleContainsStdlib: Boolean
     get() = this.llvmModuleSpecification.containsModule(this.stdlibModule)
 
-internal val Context.shouldDefineFunctionClasses: Boolean
+internal val PsiToIrContext.shouldDefineFunctionClasses: Boolean
     get() = producedLlvmModuleContainsStdlib &&
             config.libraryToCache?.strategy?.contains(KonanFqNames.internalPackageName, "KFunctionImpl.kt") != false
 
-internal val Context.shouldDefineCachedBoxes: Boolean
+internal val PsiToIrContext.shouldDefineCachedBoxes: Boolean
     get() = producedLlvmModuleContainsStdlib &&
             config.libraryToCache?.strategy?.contains(KonanFqNames.internalPackageName, "Boxing.kt") != false
 
-internal val Context.shouldLinkRuntimeNativeLibraries: Boolean
+internal val PsiToIrContext.shouldLinkRuntimeNativeLibraries: Boolean
     get() = producedLlvmModuleContainsStdlib &&
             config.libraryToCache?.strategy?.contains(KonanFqNames.packageName, "Runtime.kt") != false
 

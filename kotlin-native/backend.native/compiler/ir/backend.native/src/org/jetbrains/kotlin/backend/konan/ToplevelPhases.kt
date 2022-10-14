@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
+import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrInput
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
@@ -31,6 +32,8 @@ import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.CleanableBindingContext
 
 internal fun moduleValidationCallback(state: ActionState, module: IrModuleFragment, context: Context) {
     if (!context.config.needVerifyIr) return
@@ -113,9 +116,13 @@ internal val buildCExportsPhase = konanUnitPhase(
 
 internal val psiToIrPhase = konanUnitPhase(
         op = {
-            this.psiToIr(symbolTable,
-                    isProducingLibrary = config.produce == CompilerOutputKind.LIBRARY,
-                    useLinkerWhenProducingLibrary = false)
+            val input = PsiToIrInput(moduleDescriptor, environment, isProducingLibrary = config.produce == CompilerOutputKind.LIBRARY)
+            val psiToIrResult = this.psiToIr(input, useLinkerWhenProducingLibrary = false)
+            this.populateAfterPsiToIr(psiToIrResult)
+            val originalBindingContext = bindingContext as? CleanableBindingContext
+                    ?: error("BindingContext should be cleanable in K/N IR to avoid leaking memory: $bindingContext")
+            originalBindingContext.clear()
+            this.bindingContext = BindingContext.EMPTY
         },
         name = "Psi2Ir",
         description = "Psi to IR conversion and klib linkage",
