@@ -155,7 +155,11 @@ internal class KtFirExpressionTypeProvider(
     }
 
     private fun PsiElement.getFunctionCallAsWithThisAsParameter(): KtCallWithArgument? {
-        val valueArgument = unwrapQualified<KtValueArgument> { valueArg, expr -> valueArg.getArgumentExpression() == expr } ?: return null
+        val valueArgument = unwrapQualified<KtValueArgument> { valueArg, expr ->
+            // If `valueArg` is [KtLambdaArgument], its [getArgumentExpression] could be labeled expression (e.g., l@{ ... }).
+            // That is not exactly `expr`, which would be [KtLambdaExpression]. So, we need [unwrap] here.
+            valueArg.getArgumentExpression()?.unwrap() == expr
+        } ?: return null
         val callExpression =
             (valueArgument.parent as? KtValueArgumentList)?.parent as? KtCallExpression
                 ?: valueArgument.parent as? KtCallExpression // KtLambdaArgument
@@ -271,7 +275,8 @@ private inline fun <reified R : Any> PsiElement.unwrapQualified(check: (R, PsiEl
 
 private val PsiElement.nonContainerParent: PsiElement?
     get() = when (val parent = parent) {
-        is KtContainerNode -> parent.parent
+        is KtContainerNode -> parent.nonContainerParent
+        is KtLabeledExpression -> parent.nonContainerParent
         else -> parent
     }
 
