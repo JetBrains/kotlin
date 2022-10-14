@@ -83,7 +83,7 @@ internal fun makeKonanModuleOpPhase(
 )
 
 internal val specialBackendChecksPhase = makeKonanModuleLoweringPhase(
-        ::SpecialBackendChecksTraversal,
+        { SpecialBackendChecksTraversal(it, it.interopBuiltIns, it.ir.symbols, it.irBuiltIns) },
         name = "SpecialBackendChecks",
         description = "Special backend checks"
 )

@@ -59,7 +59,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             val psiToIrContext = PsiToIrContextImpl(config, frontendResult.moduleDescriptor, frontendResult.bindingContext, symbolTable)
             engine.useContext(psiToIrContext) { psiToIrEngine ->
                 val result = psiToIrEngine.runPsiToIr(frontendResult, isProducingLibrary = true)
-                // TODO: Native-specific checks.
+                psiToIrEngine.runSpecialBackendChecks(result)
                 result
             }
         } else null
