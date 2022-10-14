@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/k2ValRedeclaration.kt
+-Xuse-k2
+-d
+$TEMP_DIR$

@@ -1,0 +1,10 @@
+warning: ATTENTION!
+ This build uses experimental K2 compiler:
+  -Xuse-k2
+compiler/testData/cli/jvm/k2ValRedeclaration.kt:3:13: error: conflicting declarations: [lval someVal: Int = Int(42)]
+        val someVal = "One"
+            ^
+compiler/testData/cli/jvm/k2ValRedeclaration.kt:4:13: error: conflicting declarations: [lval someVal: String = String(One)]
+        val someVal = 42
+            ^
+COMPILATION_ERROR

@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
+import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
@@ -224,6 +226,11 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
         when (declaration) {
             is FirFile -> checkFile(declaration, inspector, context)
             is FirRegularClass -> checkRegularClass(declaration, inspector)
+            is FirFunction -> {
+                val body = declaration.body ?: return
+                checkBlock(body, inspector)
+            }
+
             else -> {
             }
         }
@@ -319,6 +326,22 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
         }
         for (topLevelDeclaration in file.declarations) {
             inspector.collectWithExternalConflicts(topLevelDeclaration, file, context.session, packageMemberScope)
+        }
+    }
+
+    private fun checkBlock(body: FirBlock, inspector: DeclarationInspector) {
+        for (it in body.statements) {
+            when (it) {
+                is FirVariable -> {
+                    inspector.collect(it)
+                }
+
+                is FirBlock -> {
+                    checkBlock(it, inspector)
+                }
+
+                else -> {}
+            }
         }
     }
 

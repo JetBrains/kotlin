@@ -732,6 +732,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/jvmRecordWrongTarget.args");
         }
 
+        @TestMetadata("k2ValRedeclaration.args")
+        public void testK2ValRedeclaration() throws Exception {
+            runTest("compiler/testData/cli/jvm/k2ValRedeclaration.args");
+        }
+
         @TestMetadata("kotlinHomeWithoutStdlib.args")
         public void testKotlinHomeWithoutStdlib() throws Exception {
             runTest("compiler/testData/cli/jvm/kotlinHomeWithoutStdlib.args");
