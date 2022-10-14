@@ -11,7 +11,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.AbstractCompile
-import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -32,7 +32,7 @@ internal class Kotlin2JvmSourceSetProcessor(
         return tasksProvider.registerKotlinJVMTask(
             project,
             taskName,
-            compilationProjection.compilerOptions.options as CompilerJvmOptions,
+            compilationProjection.compilerOptions.options as KotlinJvmCompilerOptions,
             configAction
         )
     }

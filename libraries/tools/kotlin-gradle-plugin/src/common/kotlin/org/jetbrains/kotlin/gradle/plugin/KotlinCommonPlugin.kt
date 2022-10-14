@@ -33,18 +33,18 @@ internal open class KotlinCommonPlugin(
             KotlinPlatformType.common,
             targetName,
             {
-                object : HasCompilerOptions<CompilerMultiplatformCommonOptions> {
-                    override val options: CompilerMultiplatformCommonOptions =
-                        project.objects.newInstance(CompilerMultiplatformCommonOptionsDefault::class.java)
+                object : HasCompilerOptions<KotlinMultiplatformCommonCompilerOptions> {
+                    override val options: KotlinMultiplatformCommonCompilerOptions =
+                        project.objects.newInstance(KotlinMultiplatformCommonCompilerOptionsDefault::class.java)
                 }
             },
-            { compilerOptions: CompilerMultiplatformCommonOptions ->
+            { compilerOptions: KotlinMultiplatformCommonCompilerOptions ->
                 object : KotlinMultiplatformCommonOptions {
-                    override val options: CompilerMultiplatformCommonOptions
+                    override val options: KotlinMultiplatformCommonCompilerOptions
                         get() = compilerOptions
                 }
             }
-        ) as KotlinWithJavaTarget<KotlinMultiplatformCommonOptions, CompilerMultiplatformCommonOptions>
+        ) as KotlinWithJavaTarget<KotlinMultiplatformCommonOptions, KotlinMultiplatformCommonCompilerOptions>
         (project.kotlinExtension as KotlinCommonProjectExtension).target = target
 
         super.apply(project)

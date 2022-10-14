@@ -11,7 +11,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.kotlin.gradle.dsl.CompilerJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.getJavaTaskProvider
@@ -26,7 +26,7 @@ open class KotlinJvmAndroidCompilation @Inject internal constructor(
 
     override val target: KotlinAndroidTarget = compilation.target as KotlinAndroidTarget
 
-    override val compilerOptions: HasCompilerOptions<CompilerJvmOptions> =
+    override val compilerOptions: HasCompilerOptions<KotlinJvmCompilerOptions> =
         compilation.compilerOptions.castCompilerOptionsType()
 
     internal val testedVariantArtifacts: Property<FileCollection> =
@@ -43,8 +43,8 @@ open class KotlinJvmAndroidCompilation @Inject internal constructor(
         get() = compilation.compileKotlinTaskProvider as TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
 
     @Suppress("UNCHECKED_CAST")
-    override val compileTaskProvider: TaskProvider<out KotlinCompilationTask<CompilerJvmOptions>>
-        get() = compilation.compileTaskProvider as TaskProvider<KotlinCompilationTask<CompilerJvmOptions>>
+    override val compileTaskProvider: TaskProvider<out KotlinCompilationTask<KotlinJvmCompilerOptions>>
+        get() = compilation.compileTaskProvider as TaskProvider<KotlinCompilationTask<KotlinJvmCompilerOptions>>
 
     val compileJavaTaskProvider: TaskProvider<out JavaCompile>
         get() = androidVariant.getJavaTaskProvider()

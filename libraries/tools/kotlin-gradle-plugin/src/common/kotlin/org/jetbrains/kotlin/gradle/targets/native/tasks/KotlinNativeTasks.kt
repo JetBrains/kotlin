@@ -415,7 +415,7 @@ internal constructor(
     // endregion.
 
     // region Kotlin options.
-    override val compilerOptions: CompilerCommonOptions = compilation.compilerOptions.options
+    override val compilerOptions: KotlinCommonCompilerOptions = compilation.compilerOptions.options
 
     @Deprecated(
         message = "Replaced with compilerOptions",

@@ -6,7 +6,7 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.jetbrains.kotlin.gradle.dsl.CompilerCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.JvmKotlinCompilationAssociator
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmWithJav
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmWithJavaCompilationTaskNamesContainerFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 
-class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, CO : CompilerCommonOptions> internal constructor(
+class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> internal constructor(
     override val target: KotlinWithJavaTarget<KotlinOptionsType, CO>,
     val compilerOptionsFactory: () -> HasCompilerOptions<CO>,
     val kotlinOptionsFactory: (CO) -> KotlinOptionsType

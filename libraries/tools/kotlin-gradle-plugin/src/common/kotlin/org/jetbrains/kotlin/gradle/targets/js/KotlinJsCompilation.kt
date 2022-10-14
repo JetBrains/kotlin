@@ -10,7 +10,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
@@ -25,8 +26,8 @@ open class KotlinJsCompilation @Inject internal constructor(
 ) : AbstractKotlinCompilationToRunnableFiles<KotlinJsOptions>(compilation) {
 
     @Suppress("UNCHECKED_CAST")
-    final override val compilerOptions: HasCompilerOptions<CompilerJsOptions>
-        get() = compilation.compilerOptions as HasCompilerOptions<CompilerJsOptions>
+    final override val compilerOptions: HasCompilerOptions<KotlinJsCompilerOptions>
+        get() = compilation.compilerOptions as HasCompilerOptions<KotlinJsCompilerOptions>
 
     internal val binaries: KotlinJsBinaryContainer =
         compilation.target.project.objects.newInstance(
