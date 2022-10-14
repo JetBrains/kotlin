@@ -107,35 +107,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
     val enumsSupport by lazy { EnumsSupport(mapping, ir.symbols, irBuiltIns, irFactory) }
     val cachesAbiSupport by lazy { CachesAbiSupport(mapping, ir.symbols, irFactory) }
 
-    open class LazyMember<T>(val initializer: Context.() -> T) {
-        operator fun getValue(thisRef: Context, property: KProperty<*>): T = thisRef.getValue(this)
-    }
-
-    class LazyVarMember<T>(initializer: Context.() -> T) : LazyMember<T>(initializer) {
-        operator fun setValue(thisRef: Context, property: KProperty<*>, newValue: T) = thisRef.setValue(this, newValue)
-    }
-
-    companion object {
-        fun <T> lazyMember(initializer: Context.() -> T) = LazyMember<T>(initializer)
-
-        fun <K, V> lazyMapMember(initializer: Context.(K) -> V): LazyMember<(K) -> V> = lazyMember {
-            val storage = mutableMapOf<K, V>()
-            val result: (K) -> V = {
-                storage.getOrPut(it, { initializer(it) })
-            }
-            result
-        }
-    }
-
-    private val lazyValues = mutableMapOf<LazyMember<*>, Any?>()
-
-    fun <T> getValue(member: LazyMember<T>): T =
-            @Suppress("UNCHECKED_CAST") (lazyValues.getOrPut(member, { member.initializer(this) }) as T)
-
-    fun <T> setValue(member: LazyVarMember<T>, newValue: T) {
-        lazyValues[member] = newValue
-    }
-
     val reflectionTypes: KonanReflectionTypes by lazy(PUBLICATION) {
         KonanReflectionTypes(moduleDescriptor)
     }

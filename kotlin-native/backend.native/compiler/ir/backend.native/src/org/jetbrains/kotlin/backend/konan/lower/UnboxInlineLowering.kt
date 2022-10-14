@@ -53,7 +53,7 @@ private class AccessorInliner(commonBackendContext: CommonBackendContext) : IrEl
 
     private fun tryInlineUnbox(call: IrCall): IrExpression? {
         val returnClass = call.type.getClass()!!
-        val singleStatement = context.getUnboxFunction(returnClass).body?.statements?.singleOrNull()
+        val singleStatement = context.ir.symbols.getUnboxFunction(returnClass).body?.statements?.singleOrNull()
         return if (singleStatement is IrReturn) {
             val retVal = singleStatement.value
             if (retVal is IrGetField) {

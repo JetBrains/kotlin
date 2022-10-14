@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import kotlin.properties.Delegates
+import kotlin.reflect.KProperty
 
 object KonanNameConventions {
     val setWithoutBoundCheck = Name.special("<setWithoutBoundCheck>")
@@ -459,4 +460,33 @@ internal class KonanSymbols(
     }
 
     fun getTestFunctionKind(kind: TestProcessor.FunctionKind) = testFunctionKindCache[kind]!!
+
+    open class LazyMember<T>(val initializer: KonanSymbols.() -> T) {
+        operator fun getValue(thisRef: KonanSymbols, property: KProperty<*>): T = thisRef.getValue(this)
+    }
+
+    class LazyVarMember<T>(initializer: KonanSymbols.() -> T) : LazyMember<T>(initializer) {
+        operator fun setValue(thisRef: KonanSymbols, property: KProperty<*>, newValue: T) = thisRef.setValue(this, newValue)
+    }
+
+    companion object {
+        fun <T> lazyMember(initializer: KonanSymbols.() -> T) = LazyMember<T>(initializer)
+
+        fun <K, V> lazyMapMember(initializer: KonanSymbols.(K) -> V): LazyMember<(K) -> V> = lazyMember {
+            val storage = mutableMapOf<K, V>()
+            val result: (K) -> V = {
+                storage.getOrPut(it, { initializer(it) })
+            }
+            result
+        }
+    }
+
+    private val lazyValues = mutableMapOf<LazyMember<*>, Any?>()
+
+    fun <T> getValue(member: LazyMember<T>): T =
+            @Suppress("UNCHECKED_CAST") (lazyValues.getOrPut(member, { member.initializer(this) }) as T)
+
+    fun <T> setValue(member: LazyVarMember<T>, newValue: T) {
+        lazyValues[member] = newValue
+    }
 }

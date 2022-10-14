@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.hasCCallAnnotation
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -217,8 +217,8 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
                     buildBoxField(declaration)
                 }
 
-                buildBoxFunction(declaration, context.getBoxFunction(declaration))
-                buildUnboxFunction(declaration, context.getUnboxFunction(declaration))
+                buildBoxFunction(declaration, context.ir.symbols.getBoxFunction(declaration))
+                buildUnboxFunction(declaration, context.ir.symbols.getUnboxFunction(declaration))
             }
 
             if (declaration.isNativePrimitiveType()) {
@@ -226,7 +226,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
                 // Skipping here for simplicity.
             } else {
                 declaration.constructors.toList().mapTo(declaration.declarations) {
-                    context.getLoweredInlineClassConstructor(it)
+                    context.ir.symbols.getLoweredInlineClassConstructor(it)
                 }
             }
         }
@@ -420,7 +420,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             callee: IrConstructor
     ): IrExpression {
         this.at(expression)
-        val loweredConstructor = this@InlineClassTransformer.context.getLoweredInlineClassConstructor(callee)
+        val loweredConstructor = this@InlineClassTransformer.context.ir.symbols.getLoweredInlineClassConstructor(callee)
         return if (callee.isPrimary) this.irBlock {
             val argument = irTemporary(expression.getValueArgument(0)!!, irType = loweredConstructor.valueParameters.single().type)
             +irCall(loweredConstructor).apply {
@@ -435,7 +435,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
     }
 
     private fun buildLoweredConstructor(irConstructor: IrConstructor) {
-        val result = context.getLoweredInlineClassConstructor(irConstructor)
+        val result = context.ir.symbols.getLoweredInlineClassConstructor(irConstructor)
         val irClass = irConstructor.parentAsClass
 
         result.body = context.createIrBuilder(result.symbol).irBlockBody(result) {
@@ -505,7 +505,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.backingField }.single()
 }
 
-private val Context.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpleFunction by Context.lazyMapMember { irConstructor ->
+private val KonanSymbols.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpleFunction by KonanSymbols.lazyMapMember { irConstructor ->
     require(irConstructor.constructedClass.isInlined())
 
     val returnType = if (irConstructor.isPrimary) {

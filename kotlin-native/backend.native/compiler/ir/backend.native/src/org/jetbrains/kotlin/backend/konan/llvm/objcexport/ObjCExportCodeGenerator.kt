@@ -803,7 +803,7 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
     val name = "${boxClass.name}ToNSNumber"
 
     val converter = functionGenerator(kotlinToObjCFunctionType, name).generate {
-        val unboxFunction = context.getUnboxFunction(boxClass).llvmFunction
+        val unboxFunction = symbols.getUnboxFunction(boxClass).llvmFunction
         val kotlinValue = callFromBridge(
                 unboxFunction,
                 listOf(param(0)),
