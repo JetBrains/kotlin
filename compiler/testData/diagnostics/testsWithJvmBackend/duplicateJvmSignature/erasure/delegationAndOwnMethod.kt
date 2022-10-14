@@ -1,3 +1,4 @@
+// IGNORE_FIR
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface Foo<T> {

@@ -1,3 +1,5 @@
+// IGNORE_FIR
+
 interface T {
     fun getX(): Int
 }

@@ -1,3 +1,5 @@
+// IGNORE_FIR
+
 open class B {
     fun getX() = 1
 }

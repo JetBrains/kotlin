@@ -168,12 +168,6 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
             }
 
             @Test
-            @TestMetadata("overridesNothing_old.kt")
-            public void testOverridesNothing_old() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/overridesNothing_old.kt");
-            }
-
-            @Test
             @TestMetadata("privateClassFunctionOverriddenByProperty.kt")
             public void testPrivateClassFunctionOverriddenByProperty() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/privateClassFunctionOverriddenByProperty.kt");
@@ -784,12 +778,6 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
         @TestMetadata("cloneable.kt")
         public void testCloneable() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJvmBackend/valueClasses/cloneable.kt");
-        }
-
-        @Test
-        @TestMetadata("cloneable.fir.kt")
-        public void testCloneable_fir() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithJvmBackend/valueClasses/cloneable.fir.kt");
         }
     }
 }

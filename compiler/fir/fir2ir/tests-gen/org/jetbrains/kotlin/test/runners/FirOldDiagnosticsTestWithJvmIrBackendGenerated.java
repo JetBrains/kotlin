@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.runners;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,10 +18,10 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend")
 @TestDataPath("$PROJECT_ROOT")
-public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosticsTestWithOldJvmBackend {
+public class FirOldDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirDiagnosticsTestWithJvmIrBackend {
     @Test
     public void testAllFilesPresentInTestsWithJvmBackend() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_OLD, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -32,15 +31,33 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
     }
 
     @Test
+    @TestMetadata("indirectInlineCycle_ir.kt")
+    public void testIndirectInlineCycle_ir() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/indirectInlineCycle_ir.kt");
+    }
+
+    @Test
     @TestMetadata("inlineCycle.kt")
     public void testInlineCycle() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/inlineCycle.kt");
     }
 
     @Test
+    @TestMetadata("inlineCycle_ir.kt")
+    public void testInlineCycle_ir() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/inlineCycle_ir.kt");
+    }
+
+    @Test
     @TestMetadata("multipleBigArityFunsImplemented.kt")
     public void testMultipleBigArityFunsImplemented() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/multipleBigArityFunsImplemented.kt");
+    }
+
+    @Test
+    @TestMetadata("multipleBigArityFunsImplemented_ir.kt")
+    public void testMultipleBigArityFunsImplemented_ir() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/multipleBigArityFunsImplemented_ir.kt");
     }
 
     @Test
@@ -61,13 +78,25 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/suspendInlineCycle.kt");
     }
 
+    @Test
+    @TestMetadata("suspendInlineCycle_ir.kt")
+    public void testSuspendInlineCycle_ir() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/suspendInlineCycle_ir.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/dataObjects")
     @TestDataPath("$PROJECT_ROOT")
     public class DataObjects {
         @Test
         public void testAllFilesPresentInDataObjects() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/dataObjects"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_OLD, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/dataObjects"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("customReadResolve.kt")
+        public void testCustomReadResolve() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJvmBackend/dataObjects/customReadResolve.kt");
         }
     }
 
@@ -77,7 +106,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
     public class DuplicateJvmSignature {
         @Test
         public void testAllFilesPresentInDuplicateJvmSignature() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_OLD, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -110,7 +139,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
 
             @Test
             public void testAllFilesPresentInAccidentalOverrides() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_OLD, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @Test
@@ -138,9 +167,21 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
             }
 
             @Test
+            @TestMetadata("defaultFunction_ir.kt")
+            public void testDefaultFunction_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/defaultFunction_ir.kt");
+            }
+
+            @Test
             @TestMetadata("defaultFunction_old.kt")
             public void testDefaultFunction_old() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/defaultFunction_old.kt");
+            }
+
+            @Test
+            @TestMetadata("delegatedFunctionOverriddenByProperty_ir.kt")
+            public void testDelegatedFunctionOverriddenByProperty_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/delegatedFunctionOverriddenByProperty_ir.kt");
             }
 
             @Test
@@ -156,6 +197,12 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
             }
 
             @Test
+            @TestMetadata("overridesNothing_ir.kt")
+            public void testOverridesNothing_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/overridesNothing_ir.kt");
+            }
+
+            @Test
             @TestMetadata("privateClassFunctionOverriddenByProperty.kt")
             public void testPrivateClassFunctionOverriddenByProperty() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/privateClassFunctionOverriddenByProperty.kt");
@@ -165,6 +212,12 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
             @TestMetadata("traitFunctionOverriddenByPropertyNoImpl.kt")
             public void testTraitFunctionOverriddenByPropertyNoImpl() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/traitFunctionOverriddenByPropertyNoImpl.kt");
+            }
+
+            @Test
+            @TestMetadata("traitFunctionOverriddenByProperty_ir.kt")
+            public void testTraitFunctionOverriddenByProperty_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/traitFunctionOverriddenByProperty_ir.kt");
             }
 
             @Test
@@ -180,6 +233,12 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
             }
 
             @Test
+            @TestMetadata("traitPropertyOverriddenByFunction_ir.kt")
+            public void testTraitPropertyOverriddenByFunction_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/traitPropertyOverriddenByFunction_ir.kt");
+            }
+
+            @Test
             @TestMetadata("traitPropertyOverriddenByFunction_old.kt")
             public void testTraitPropertyOverriddenByFunction_old() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/traitPropertyOverriddenByFunction_old.kt");
@@ -192,7 +251,13 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
         public class Bridges {
             @Test
             public void testAllFilesPresentInBridges() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_OLD, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("class_ir.kt")
+            public void testClass_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges/class_ir.kt");
             }
 
             @Test
@@ -202,9 +267,21 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
             }
 
             @Test
+            @TestMetadata("fakeOverrideTrait_ir.kt")
+            public void testFakeOverrideTrait_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges/fakeOverrideTrait_ir.kt");
+            }
+
+            @Test
             @TestMetadata("fakeOverrideTrait_old.kt")
             public void testFakeOverrideTrait_old() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges/fakeOverrideTrait_old.kt");
+            }
+
+            @Test
+            @TestMetadata("trait_ir.kt")
+            public void testTrait_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges/trait_ir.kt");
             }
 
             @Test
@@ -220,7 +297,13 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
         public class Erasure {
             @Test
             public void testAllFilesPresentInErasure() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_OLD, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("clashFromInterfaceAndSuperClass_ir.kt")
+            public void testClashFromInterfaceAndSuperClass_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/clashFromInterfaceAndSuperClass_ir.kt");
             }
 
             @Test
@@ -266,6 +349,12 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
             }
 
             @Test
+            @TestMetadata("inheritFromTwoTraits_ir.kt")
+            public void testInheritFromTwoTraits_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/inheritFromTwoTraits_ir.kt");
+            }
+
+            @Test
             @TestMetadata("inheritFromTwoTraits_old.kt")
             public void testInheritFromTwoTraits_old() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/inheritFromTwoTraits_old.kt");
@@ -284,9 +373,21 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
             }
 
             @Test
+            @TestMetadata("superTraitAndDelegationToTraitImpl_ir.kt")
+            public void testSuperTraitAndDelegationToTraitImpl_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/superTraitAndDelegationToTraitImpl_ir.kt");
+            }
+
+            @Test
             @TestMetadata("superTraitAndDelegationToTraitImpl_old.kt")
             public void testSuperTraitAndDelegationToTraitImpl_old() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/superTraitAndDelegationToTraitImpl_old.kt");
+            }
+
+            @Test
+            @TestMetadata("twoTraitsAndOwnFunction_ir.kt")
+            public void testTwoTraitsAndOwnFunction_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/twoTraitsAndOwnFunction_ir.kt");
             }
 
             @Test
@@ -332,13 +433,19 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
         public class FinalMembersFromBuiltIns {
             @Test
             public void testAllFilesPresentInFinalMembersFromBuiltIns() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/finalMembersFromBuiltIns"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_OLD, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/finalMembersFromBuiltIns"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @Test
             @TestMetadata("enumMembers.kt")
             public void testEnumMembers() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/finalMembersFromBuiltIns/enumMembers.kt");
+            }
+
+            @Test
+            @TestMetadata("waitNotifyGetClass_ir.kt")
+            public void testWaitNotifyGetClass_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/finalMembersFromBuiltIns/waitNotifyGetClass_ir.kt");
             }
 
             @Test
@@ -354,7 +461,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
         public class FunctionAndProperty {
             @Test
             public void testAllFilesPresentInFunctionAndProperty() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_OLD, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @Test
@@ -460,6 +567,12 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
             }
 
             @Test
+            @TestMetadata("trait_ir.kt")
+            public void testTrait_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/trait_ir.kt");
+            }
+
+            @Test
             @TestMetadata("trait_old.kt")
             public void testTrait_old() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty/trait_old.kt");
@@ -472,7 +585,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
         public class SpecialNames {
             @Test
             public void testAllFilesPresentInSpecialNames() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_OLD, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @Test
@@ -482,9 +595,21 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
             }
 
             @Test
+            @TestMetadata("classObjectCopiedFieldObject_ir.kt")
+            public void testClassObjectCopiedFieldObject_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/classObjectCopiedFieldObject_ir.kt");
+            }
+
+            @Test
             @TestMetadata("classObjectCopiedFieldObject_old.kt")
             public void testClassObjectCopiedFieldObject_old() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/classObjectCopiedFieldObject_old.kt");
+            }
+
+            @Test
+            @TestMetadata("classObject_ir.kt")
+            public void testClassObject_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/classObject_ir.kt");
             }
 
             @Test
@@ -500,9 +625,21 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
             }
 
             @Test
+            @TestMetadata("defaults_ir.kt")
+            public void testDefaults_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/defaults_ir.kt");
+            }
+
+            @Test
             @TestMetadata("defaults_old.kt")
             public void testDefaults_old() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/defaults_old.kt");
+            }
+
+            @Test
+            @TestMetadata("delegationBy_ir.kt")
+            public void testDelegationBy_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/delegationBy_ir.kt");
             }
 
             @Test
@@ -518,15 +655,33 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
             }
 
             @Test
+            @TestMetadata("innerClassField_ir.kt")
+            public void testInnerClassField_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/innerClassField_ir.kt");
+            }
+
+            @Test
             @TestMetadata("innerClassField_old.kt")
             public void testInnerClassField_old() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/innerClassField_old.kt");
             }
 
             @Test
+            @TestMetadata("instance_ir.kt")
+            public void testInstance_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/instance_ir.kt");
+            }
+
+            @Test
             @TestMetadata("instance_old.kt")
             public void testInstance_old() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/instance_old.kt");
+            }
+
+            @Test
+            @TestMetadata("propertyMetadataCache_ir.kt")
+            public void testPropertyMetadataCache_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/propertyMetadataCache_ir.kt");
             }
 
             @Test
@@ -542,7 +697,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
         public class Statics {
             @Test
             public void testAllFilesPresentInStatics() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/statics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_OLD, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/statics"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @Test
@@ -588,7 +743,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
         public class Synthesized {
             @Test
             public void testAllFilesPresentInSynthesized() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/synthesized"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_OLD, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/synthesized"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @Test
@@ -604,7 +759,13 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
         public class TraitImpl {
             @Test
             public void testAllFilesPresentInTraitImpl() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_OLD, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("defaultVsNonDefault_ir.kt")
+            public void testDefaultVsNonDefault_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/defaultVsNonDefault_ir.kt");
             }
 
             @Test
@@ -620,9 +781,21 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
             }
 
             @Test
+            @TestMetadata("oneTrait_ir.kt")
+            public void testOneTrait_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/oneTrait_ir.kt");
+            }
+
+            @Test
             @TestMetadata("oneTrait_old.kt")
             public void testOneTrait_old() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/oneTrait_old.kt");
+            }
+
+            @Test
+            @TestMetadata("traitFunctionOverriddenByPropertyInTrait_ir.kt")
+            public void testTraitFunctionOverriddenByPropertyInTrait_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/traitFunctionOverriddenByPropertyInTrait_ir.kt");
             }
 
             @Test
@@ -632,9 +805,21 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
             }
 
             @Test
+            @TestMetadata("traitPropertyOverriddenByFunctionInTrait_ir.kt")
+            public void testTraitPropertyOverriddenByFunctionInTrait_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/traitPropertyOverriddenByFunctionInTrait_ir.kt");
+            }
+
+            @Test
             @TestMetadata("traitPropertyOverriddenByFunctionInTrait_old.kt")
             public void testTraitPropertyOverriddenByFunctionInTrait_old() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/traitPropertyOverriddenByFunctionInTrait_old.kt");
+            }
+
+            @Test
+            @TestMetadata("twoTraits_ir.kt")
+            public void testTwoTraits_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/twoTraits_ir.kt");
             }
 
             @Test
@@ -651,7 +836,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
     public class MultifileClasses {
         @Test
         public void testAllFilesPresentInMultifileClasses() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_OLD, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -667,7 +852,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
     public class Scripts {
         @Test
         public void testAllFilesPresentInScripts() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/scripts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_OLD, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/scripts"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
     }
 
@@ -677,7 +862,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
     public class TypeOf {
         @Test
         public void testAllFilesPresentInTypeOf() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/typeOf"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_OLD, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/typeOf"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -699,7 +884,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
     public class ValueClasses {
         @Test
         public void testAllFilesPresentInValueClasses() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_OLD, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test

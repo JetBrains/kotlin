@@ -129,7 +129,7 @@ class IrSourceCompilerForInline(
     override fun reportSuspensionPointInsideMonitor(stackTraceElement: String) {
         codegen.context.ktDiagnosticReporter
             .at(callElement.symbol.owner as IrDeclaration)
-            .report(JvmBackendErrors.SUSPENSION_POINT_INSIDE_MONITOR, stackTraceElement)
+            .reportAndCommit(JvmBackendErrors.SUSPENSION_POINT_INSIDE_MONITOR, stackTraceElement)
     }
 }
 
