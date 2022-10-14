@@ -511,15 +511,15 @@ internal val toplevelPhase: CompilerPhase<Context, Unit, Unit> = namedUnitPhase(
 val toplevelPhaseErased: CompilerPhase<*, Unit, Unit>
     get() = toplevelPhase
 
-internal fun PhaseConfig.disableIf(phase: AnyNamedPhase, condition: Boolean) {
+internal fun PhaseConfigurationService.disableIf(phase: AnyNamedPhase, condition: Boolean) {
     if (condition) disable(phase)
 }
 
-internal fun PhaseConfig.disableUnless(phase: AnyNamedPhase, condition: Boolean) {
+internal fun PhaseConfigurationService.disableUnless(phase: AnyNamedPhase, condition: Boolean) {
     if (!condition) disable(phase)
 }
 
-internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
+internal fun PhaseConfigurationService.konanPhasesConfig(config: KonanConfig) {
     with(config.configuration) {
         // The original comment around [checkSamSuperTypesPhase] still holds, but in order to be on par with JVM_IR
         // (which doesn't report error for these corner cases), we turn off the checker for now (the problem with variances
