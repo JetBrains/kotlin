@@ -310,16 +310,16 @@ val TestModule.kind: ModuleKind
     get() = directives.moduleKind
 
 fun String.augmentWithModuleName(moduleName: String): String {
-    return if (moduleName.isPath()) {
-        replaceAfterLast(File.separator, moduleName.replace("./", ""))
+    val normalizedName = moduleName.run { if (isWindows) minify() else this }
+
+    return if (normalizedName.isPath()) {
+        replaceAfterLast(File.separator, normalizedName.replace("./", ""))
     } else {
         val suffix = when {
             endsWith(ESM_EXTENSION) -> ESM_EXTENSION
             endsWith(REGULAR_EXTENSION) -> REGULAR_EXTENSION
             else -> error("Unexpected file '$this' extension")
         }
-        val normalizedName = moduleName.run { if (isWindows) minify() else this }
-
         return removeSuffix("_v5$suffix") + "-${normalizedName}_v5$suffix"
     }
 }
