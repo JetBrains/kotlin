@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // TARGET_BACKEND: JVM_IR
+// IGNORE_FIR
 
 interface A<T> {
     fun foo(l: List<T>)

@@ -119,12 +119,12 @@ class IrInlineIntrinsicsSupport(
     override fun toKotlinType(type: IrType): KotlinType = type.toIrBasedKotlinType()
 
     override fun reportSuspendTypeUnsupported() {
-        classCodegen.context.ktDiagnosticReporter.at(reportErrorsOn, containingFile).report(JvmBackendErrors.TYPEOF_SUSPEND_TYPE)
+        classCodegen.context.ktDiagnosticReporter.at(reportErrorsOn, containingFile).reportAndCommit(JvmBackendErrors.TYPEOF_SUSPEND_TYPE)
     }
 
     override fun reportNonReifiedTypeParameterWithRecursiveBoundUnsupported(typeParameterName: Name) {
         classCodegen.context.ktDiagnosticReporter.at(reportErrorsOn, containingFile)
-            .report(JvmBackendErrors.TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND, typeParameterName.asString())
+            .reportAndCommit(JvmBackendErrors.TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND, typeParameterName.asString())
     }
 
     override fun rewritePluginDefinedOperationMarker(v: InstructionAdapter, reifiedInsn: AbstractInsnNode, instructions: InsnList, type: IrType): Boolean {

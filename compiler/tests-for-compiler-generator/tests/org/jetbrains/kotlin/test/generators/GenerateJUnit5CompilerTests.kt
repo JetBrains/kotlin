@@ -264,6 +264,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("diagnostics/firTestWithJvmBackend")
             }
 
+            testClass<AbstractFirDiagnosticsTestWithJvmIrBackend>(suiteTestClassName = "FirOldDiagnosticsTestWithJvmIrBackendGenerated") {
+                model("diagnostics/testsWithJvmBackend")
+            }
+
             testClass<AbstractFirSerializeCompileKotlinAgainstInlineKotlinTest> {
                 model("codegen/boxInline")
             }
