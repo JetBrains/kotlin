@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withConeTypeEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirSymbolEntry
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
+import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -34,6 +35,8 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
@@ -45,15 +48,14 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -446,7 +448,11 @@ internal class KtSymbolByFirBuilder constructor(
                     else KtFirUsualClassType(coneType, token, this@KtSymbolByFirBuilder)
                 }
                 is ConeTypeParameterType -> KtFirTypeParameterType(coneType, token, this@KtSymbolByFirBuilder)
-                is ConeErrorType -> KtFirClassErrorType(coneType, token, this@KtSymbolByFirBuilder)
+                is ConeErrorType -> when (val diagnostic = coneType.diagnostic) {
+                    is ConeUnresolvedError, is ConeUnmatchedTypeArgumentsError ->
+                        KtFirClassErrorType(coneType, diagnostic, token, this@KtSymbolByFirBuilder)
+                    else -> KtFirTypeErrorType(coneType, token, this@KtSymbolByFirBuilder)
+                }
                 is ConeDynamicType -> KtFirDynamicType(coneType, token, this@KtSymbolByFirBuilder)
                 is ConeFlexibleType -> KtFirFlexibleType(coneType, token, this@KtSymbolByFirBuilder)
                 is ConeIntersectionType -> KtFirIntersectionType(coneType, token, this@KtSymbolByFirBuilder)
@@ -483,8 +489,8 @@ internal class KtSymbolByFirBuilder constructor(
             return buildKtType(coneType.coneType)
         }
 
-        fun buildTypeArgument(coneType: ConeTypeProjection): KtTypeArgument = when (coneType) {
-            is ConeStarProjection -> KtStarProjectionTypeArgument(token)
+        fun buildTypeProjection(coneType: ConeTypeProjection): KtTypeProjection = when (coneType) {
+            is ConeStarProjection -> KtStarTypeProjection(token)
             is ConeKotlinTypeProjection -> KtTypeArgumentWithVariance(
                 buildKtType(coneType.type),
                 coneType.kind.toVariance(),

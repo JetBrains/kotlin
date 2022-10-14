@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 
 sealed interface ConeUnresolvedError : ConeDiagnostic {
-    val qualifier: String?
+    val qualifier: String
 }
 
 interface ConeDiagnosticWithSymbol<S : FirBasedSymbol<*>> : ConeDiagnostic {
@@ -41,9 +42,9 @@ interface ConeDiagnosticWithSingleCandidate : ConeDiagnosticWithCandidates {
     override val candidateSymbols: Collection<FirBasedSymbol<*>> get() = listOf(candidateSymbol)
 }
 
-class ConeUnresolvedReferenceError(val name: Name? = null) : ConeUnresolvedError {
-    override val qualifier: String? get() = name?.asString()
-    override val reason: String get() = "Unresolved reference" + if (name != null) ": ${name.asString()}" else ""
+class ConeUnresolvedReferenceError(val name: Name) : ConeUnresolvedError {
+    override val qualifier: String get() = if (!name.isSpecial) name.asString() else "NO_NAME"
+    override val reason: String get() = "Unresolved reference: ${name.asString()}"
 }
 
 class ConeUnresolvedSymbolError(val classId: ClassId) : ConeUnresolvedError {
@@ -51,7 +52,8 @@ class ConeUnresolvedSymbolError(val classId: ClassId) : ConeUnresolvedError {
     override val reason: String get() = "Symbol not found for $classId"
 }
 
-class ConeUnresolvedQualifierError(override val qualifier: String) : ConeUnresolvedError {
+class ConeUnresolvedTypeQualifierError(val qualifiers: List<FirQualifierPart>) : ConeUnresolvedError {
+    override val qualifier: String get() = qualifiers.joinToString(separator = ".") { it.name.asString() }
     override val reason: String get() = "Symbol not found for $qualifier"
 }
 
@@ -146,7 +148,7 @@ class ConeIllegalAnnotationError(val name: Name) : ConeDiagnostic {
     override val reason: String get() = "Not a legal annotation: $name"
 }
 
-interface ConeUnmatchedTypeArgumentsError : ConeDiagnosticWithSymbol<FirClassLikeSymbol<*>> {
+sealed interface ConeUnmatchedTypeArgumentsError : ConeDiagnosticWithSymbol<FirClassLikeSymbol<*>> {
     val desiredCount: Int
 }
 

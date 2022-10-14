@@ -11,11 +11,11 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.types.Variance
 
-public sealed class KtTypeArgument : KtLifetimeOwner {
+public sealed class KtTypeProjection : KtLifetimeOwner {
     public abstract val type: KtType?
 }
 
-public class KtStarProjectionTypeArgument(override val token: KtLifetimeToken) : KtTypeArgument() {
+public class KtStarTypeProjection(override val token: KtLifetimeToken) : KtTypeProjection() {
     override val type: KtType? get() = withValidityAssertion { null }
 }
 
@@ -23,7 +23,7 @@ public class KtTypeArgumentWithVariance(
     private val _type: KtType,
     public val variance: Variance,
     override val token: KtLifetimeToken,
-) : KtTypeArgument() {
+) : KtTypeProjection() {
     override val type: KtType get() = withValidityAssertion { _type }
 }
 

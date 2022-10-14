@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KtTypeArgument
+import org.jetbrains.kotlin.analysis.api.KtTypeProjection
 import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
@@ -49,13 +49,13 @@ public inline fun KtTypeCreatorMixIn.buildTypeParameterType(
 public sealed class KtTypeBuilder : KtLifetimeOwner
 
 public sealed class KtClassTypeBuilder : KtTypeBuilder() {
-    private val _arguments = mutableListOf<KtTypeArgument>()
+    private val _arguments = mutableListOf<KtTypeProjection>()
 
     public var nullability: KtTypeNullability = KtTypeNullability.NON_NULLABLE
 
-    public val arguments: List<KtTypeArgument> get() = withValidityAssertion { _arguments }
+    public val arguments: List<KtTypeProjection> get() = withValidityAssertion { _arguments }
 
-    public fun argument(argument: KtTypeArgument) {
+    public fun argument(argument: KtTypeProjection) {
         assertIsValidAndAccessible()
         _arguments += argument
     }

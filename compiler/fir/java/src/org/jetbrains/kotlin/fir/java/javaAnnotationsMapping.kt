@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -214,7 +215,8 @@ private fun JavaAnnotation.toFirAnnotationCall(
                 type = ConeClassLikeTypeImpl(lookupTag, emptyArray(), isNullable = false)
             }
         } else {
-            buildErrorTypeRef { diagnostic = ConeUnresolvedReferenceError() }
+            val unresolvedName = classId?.shortClassName ?: SpecialNames.NO_NAME_PROVIDED
+            buildErrorTypeRef { diagnostic = ConeUnresolvedReferenceError(unresolvedName) }
         }
 
         argumentMapping = buildAnnotationArgumentMapping {
