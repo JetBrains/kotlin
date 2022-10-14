@@ -101,20 +101,7 @@ internal class KtFirNamedClassOrObjectSymbol(
             firSymbol.classKind.toKtClassKind(isCompanionObject = firSymbol.isCompanion)
         }
 
-    override val symbolKind: KtSymbolKind
-        get() = withValidityAssertion {
-            when {
-                // TODO: hack should be dropped after KT-54390
-                firSymbol.isLocal && (firSymbol.fir.getContainingDeclaration(firResolveSession.useSiteFirSession) as? FirClass)?.let { clazz ->
-                    clazz.declarations.none { it === firSymbol.fir }
-                } == true -> KtSymbolKind.LOCAL
-
-                firSymbol.classId.isNestedClass -> KtSymbolKind.CLASS_MEMBER
-                firSymbol.isLocal -> KtSymbolKind.LOCAL
-                else -> KtSymbolKind.TOP_LEVEL
-            }
-        }
-
+    override val symbolKind: KtSymbolKind get() = withValidityAssertion { getSymbolKind(firResolveSession) }
 
     override fun createPointer(): KtSymbolPointer<KtNamedClassOrObjectSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }

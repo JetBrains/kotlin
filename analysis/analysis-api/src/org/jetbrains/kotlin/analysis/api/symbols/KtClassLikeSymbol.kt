@@ -41,8 +41,6 @@ public abstract class KtTypeAliasSymbol : KtClassLikeSymbol(),
     KtSymbolWithVisibility,
     KtNamedSymbol {
 
-    final override val symbolKind: KtSymbolKind get() = withValidityAssertion { KtSymbolKind.TOP_LEVEL }
-
     /**
      * Returns type from right-hand site of type alias
      * If type alias has type parameters, then those type parameters will be present in result type
