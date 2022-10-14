@@ -252,7 +252,12 @@ internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KtType {
         is DynamicType -> KtFe10DynamicType(unwrappedType, analysisContext)
         is FlexibleType -> KtFe10FlexibleType(unwrappedType, analysisContext)
         is DefinitelyNotNullType -> KtFe10DefinitelyNotNullType(unwrappedType, analysisContext)
-        is ErrorType -> KtFe10ClassErrorType(unwrappedType, analysisContext)
+        is ErrorType -> {
+            if (unwrappedType.kind.isUnresolved)
+                KtFe10ClassErrorType(unwrappedType, analysisContext)
+            else
+                KtFe10TypeErrorType(unwrappedType, analysisContext)
+        }
         is CapturedType -> KtFe10CapturedType(unwrappedType, analysisContext)
         is NewCapturedType -> KtFe10NewCapturedType(unwrappedType, analysisContext)
         is SimpleType -> {
@@ -291,9 +296,9 @@ internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KtType {
     }
 }
 
-internal fun TypeProjection.toKtTypeArgument(analysisContext: Fe10AnalysisContext): KtTypeArgument {
+internal fun TypeProjection.toKtTypeProjection(analysisContext: Fe10AnalysisContext): KtTypeProjection {
     return if (isStarProjection) {
-        KtStarProjectionTypeArgument(analysisContext.token)
+        KtStarTypeProjection(analysisContext.token)
     } else {
         KtTypeArgumentWithVariance(type.toKtType(analysisContext), this.projectionKind, analysisContext.token)
     }

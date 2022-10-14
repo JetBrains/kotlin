@@ -247,7 +247,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     ConeAmbiguityError(typeRef.qualifier.last().name, result.typeCandidates.first().applicability, result.typeCandidates)
                 }
                 else -> {
-                    ConeUnresolvedQualifierError(typeRef.render())
+                    ConeUnresolvedTypeQualifierError(typeRef.qualifier, isNullable = typeRef.isMarkedNullable)
                 }
             }
             return ConeErrorType(diagnostic, attributes = typeRef.annotations.computeTypeAttributes(session))

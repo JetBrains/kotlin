@@ -181,7 +181,7 @@ internal fun KtAnalysisSession.getTypeNullability(ktType: KtType): NullabilityTy
     }
 
     if (ktType !is KtNonErrorClassType) return NullabilityType.NotNull
-    if (ktType.typeArguments.any { it.type is KtClassErrorType }) return NullabilityType.NotNull
+    if (ktType.ownTypeArguments.any { it.type is KtClassErrorType }) return NullabilityType.NotNull
     if (ktType.classId.shortClassName.asString() == SpecialNames.ANONYMOUS_STRING) return NullabilityType.NotNull
 
     val canonicalSignature = ktType.mapTypeToJvmType().descriptor

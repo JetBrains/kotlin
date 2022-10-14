@@ -100,7 +100,7 @@ internal class ConeTypeIdeRenderer(
         if (options.renderUnresolvedTypeAsResolved) {
             when (diagnostic) {
                 is ConeUnresolvedError -> {
-                    val qualifierRendered = diagnostic.qualifier?.let { FqName(it).render() }.orEmpty()
+                    val qualifierRendered = diagnostic.qualifier.let { FqName(it).render() }
                     append(qualifierRendered)
                 }
 
