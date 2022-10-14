@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory
 
+import org.gradle.api.tasks.SourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationTaskNamesContainer
@@ -19,3 +20,20 @@ internal object DefaultKotlinCompilationTaskNamesContainerFactory :
         compileAllTaskName = lowerCamelCaseName(target.disambiguationClassifier, compilationName, "classes")
     )
 }
+
+
+internal class JvmWithJavaCompilationTaskNamesContainerFactory(private val javaSourceSet: SourceSet) :
+    KotlinCompilationImplFactory.KotlinCompilationTaskNamesContainerFactory {
+    override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationTaskNamesContainer =
+        DefaultKotlinCompilationTaskNamesContainerFactory.create(target, compilationName)
+            .copy(compileAllTaskName = javaSourceSet.classesTaskName)
+}
+
+
+internal object NativeKotlinCompilationTaskNamesContainerFactory :
+    KotlinCompilationImplFactory.KotlinCompilationTaskNamesContainerFactory {
+    override fun create(target: KotlinTarget, compilationName: String) =
+        DefaultKotlinCompilationTaskNamesContainerFactory.create(target, compilationName)
+            .copy(compileAllTaskName = lowerCamelCaseName(target.disambiguationClassifier, compilationName, "klibrary"))
+}
+
