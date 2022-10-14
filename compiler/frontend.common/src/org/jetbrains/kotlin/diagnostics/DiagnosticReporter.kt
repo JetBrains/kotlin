@@ -76,13 +76,20 @@ open class KtDiagnosticReporterWithContext(
         }
 
         @OptIn(InternalDiagnosticFactoryMethod::class)
-        fun <A1 : Any, A2: Any> report(
+        fun <A1 : Any, A2 : Any> report(
             factory: KtDiagnosticFactory2<A1, A2>,
             a1: A1,
             a2: A2,
             positioningStrategy: AbstractSourceElementPositioningStrategy? = null
         ) {
             sourceElement?.let { report(factory.on(it, a1, a2, positioningStrategy), this) }
+        }
+
+        fun reportAndCommit(factory: KtDiagnosticFactory0) {
+            sourceElement?.let {
+                reportOn(it, factory, this)
+                checkAndCommitReportsOn(it, this)
+            }
         }
 
         fun <A : Any> reportAndCommit(factory: KtDiagnosticFactory1<A>, a: A) {

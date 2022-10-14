@@ -1,3 +1,5 @@
+// IGNORE_FIR
+
 class G<T>
 
 val <T> G<T>.foo: Int

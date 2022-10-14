@@ -33,12 +33,12 @@ class ConstEvaluationLowering(val context: JvmBackendContext) : FileLoweringPass
     override fun lower(irFile: IrFile) {
         fun onError(element: IrElement, error: IrErrorExpression) {
             context.ktDiagnosticReporter.at(element, irFile)
-                .report(JvmBackendErrors.EXCEPTION_IN_CONST_VAL_INITIALIZER, error.description)
+                .reportAndCommit(JvmBackendErrors.EXCEPTION_IN_CONST_VAL_INITIALIZER, error.description)
         }
 
         fun onWarning(element: IrElement, warning: IrErrorExpression) {
             context.ktDiagnosticReporter.at(element, irFile)
-                .report(JvmBackendErrors.EXCEPTION_IN_CONST_EXPRESSION, warning.description)
+                .reportAndCommit(JvmBackendErrors.EXCEPTION_IN_CONST_EXPRESSION, warning.description)
         }
 
         val suppressErrors = context.configuration.getBoolean(JVMConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS)

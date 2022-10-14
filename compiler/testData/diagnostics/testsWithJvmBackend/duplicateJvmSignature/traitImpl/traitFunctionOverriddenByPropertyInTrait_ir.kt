@@ -1,3 +1,4 @@
+// IGNORE_FIR
 // TARGET_BACKEND: JVM_IR
 
 interface T {
