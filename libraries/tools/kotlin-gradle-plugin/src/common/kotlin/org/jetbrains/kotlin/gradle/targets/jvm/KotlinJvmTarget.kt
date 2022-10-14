@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
@@ -160,7 +161,7 @@ abstract class KotlinJvmTarget @Inject constructor(
             compilation.apiConfigurationName,
             compilation.implementationConfigurationName,
             compilation.compileOnlyConfigurationName,
-            compilation.deprecatedCompileConfigurationName.takeIf { project.configurations.findByName(it) != null }
+            compilation.internal.configurations.deprecatedCompileConfiguration?.name,
         ).forEach { configurationName ->
             project.addExtendsFromRelation(javaSourceSet.compileClasspathConfigurationName, configurationName)
         }
@@ -169,7 +170,7 @@ abstract class KotlinJvmTarget @Inject constructor(
             compilation.apiConfigurationName,
             compilation.implementationConfigurationName,
             compilation.runtimeOnlyConfigurationName,
-            compilation.deprecatedRuntimeConfigurationName.takeIf { project.configurations.findByName(it) != null }
+            compilation.internal.configurations.deprecatedRuntimeConfiguration?.name,
         ).forEach { configurationName ->
             project.addExtendsFromRelation(javaSourceSet.runtimeClasspathConfigurationName, configurationName)
         }

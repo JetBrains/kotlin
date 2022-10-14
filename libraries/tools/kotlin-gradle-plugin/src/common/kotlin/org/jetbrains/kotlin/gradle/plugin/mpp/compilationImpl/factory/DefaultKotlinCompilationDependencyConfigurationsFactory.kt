@@ -129,7 +129,34 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
 ): KotlinCompilationConfigurationsContainer {
     val compilationCoordinates = "${target.disambiguationClassifier}/$compilationName"
 
+    /* Support deprecated configurations */
+    val deprecatedCompileConfiguration = target.project.configurations.findByName(
+        ConfigurationNaming.Default(target, compilationName).name(COMPILE)
+    )?.apply {
+        isCanBeConsumed = false
+        setupAsLocalTargetSpecificConfigurationIfSupported(target)
+        isVisible = false
+        isCanBeResolved = false
+        description = "Dependencies for $compilation (deprecated, use '${implementationConfigurationName} ' instead)."
+    }
+
+    val deprecatedRuntimeConfiguration = if (withRuntime) target.project.configurations.findByName(
+        ConfigurationNaming.Default(target, compilationName).name(RUNTIME)
+    )?.apply {
+        isCanBeConsumed = false
+        setupAsLocalTargetSpecificConfigurationIfSupported(target)
+        deprecatedCompileConfiguration?.let { extendsFrom(it) }
+        isVisible = false
+        isCanBeResolved = false
+        description =
+            "Runtime dependencies for $compilation (deprecated, use '${runtimeOnlyConfigurationName} ' instead)."
+    } else null
+
+    /* Actual configurations */
+
     val apiConfiguration = target.project.configurations.maybeCreate(apiConfigurationName).apply {
+        deprecatedCompileConfiguration?.let { extendsFrom(it) }
+
         isVisible = false
         isCanBeConsumed = false
         isCanBeResolved = false
@@ -138,6 +165,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
 
     val implementationConfiguration = target.project.configurations.maybeCreate(implementationConfigurationName).apply {
         extendsFrom(apiConfiguration)
+        deprecatedCompileConfiguration?.let { extendsFrom(it) }
         isVisible = false
         isCanBeConsumed = false
         isCanBeResolved = false
@@ -175,6 +203,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
     val runtimeDependencyConfiguration =
         if (withRuntime) target.project.configurations.maybeCreate(runtimeClasspathConfigurationName).apply {
             extendsFrom(runtimeOnlyConfiguration, implementationConfiguration)
+            deprecatedRuntimeConfiguration?.let { extendsFrom(it) }
             usesPlatformOf(target)
             isVisible = false
             isCanBeConsumed = false
@@ -202,6 +231,8 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
     }
 
     return DefaultKotlinCompilationConfigurationsContainer(
+        deprecatedCompileConfiguration = deprecatedCompileConfiguration,
+        deprecatedRuntimeConfiguration = deprecatedRuntimeConfiguration,
         apiConfiguration = apiConfiguration,
         implementationConfiguration = implementationConfiguration,
         compileOnlyConfiguration = compileOnlyConfiguration,

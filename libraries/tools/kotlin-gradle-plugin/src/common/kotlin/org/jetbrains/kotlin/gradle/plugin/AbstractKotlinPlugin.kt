@@ -251,7 +251,6 @@ internal abstract class AbstractKotlinPlugin(
             buildSourceSetProcessor: (KotlinCompilation<*>) -> KotlinSourceSetProcessor<*>
         ) {
             kotlinTarget.compilations.all { compilation ->
-                AbstractKotlinTargetConfigurator.defineConfigurationsForCompilation(compilation)
                 buildSourceSetProcessor(compilation).run()
             }
         }

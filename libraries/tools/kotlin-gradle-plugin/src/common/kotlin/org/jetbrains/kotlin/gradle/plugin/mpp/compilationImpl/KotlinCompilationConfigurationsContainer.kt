@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
 
 internal interface KotlinCompilationConfigurationsContainer {
+    val deprecatedCompileConfiguration: Configuration?
+    val deprecatedRuntimeConfiguration: Configuration?
     val apiConfiguration: Configuration
     val implementationConfiguration: Configuration
     val compileOnlyConfiguration: Configuration
@@ -23,6 +25,8 @@ internal interface KotlinCompilationConfigurationsContainer {
 }
 
 internal class DefaultKotlinCompilationConfigurationsContainer(
+    override val deprecatedCompileConfiguration: Configuration?,
+    override val deprecatedRuntimeConfiguration: Configuration?,
     override val apiConfiguration: Configuration,
     override val implementationConfiguration: Configuration,
     override val compileOnlyConfiguration: Configuration,

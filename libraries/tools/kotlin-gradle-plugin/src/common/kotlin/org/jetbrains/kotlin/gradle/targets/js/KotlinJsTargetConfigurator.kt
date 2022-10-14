@@ -61,8 +61,6 @@ open class KotlinJsTargetConfigurator :
         val project = target.project
 
         target.compilations.all { compilation ->
-            defineConfigurationsForCompilation(compilation)
-
             compilation.source(compilation.defaultSourceSet)
 
             configureResourceProcessing(
