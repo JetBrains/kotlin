@@ -10,6 +10,9 @@ import java.io.NotSerializableException
 internal class SetBuilder<E> internal constructor(
     private val backing: MapBuilder<E, *>
 ) : MutableSet<E>, AbstractMutableSet<E>(), Serializable {
+    private companion object {
+        private val Empty = SetBuilder(MapBuilder.Empty)
+    }
 
     constructor() : this(MapBuilder<E, Nothing>())
 
@@ -17,7 +20,7 @@ internal class SetBuilder<E> internal constructor(
 
     fun build(): Set<E> {
         backing.build()
-        return this
+        return if (size > 0) this else Empty
     }
 
     private fun writeReplace(): Any =
