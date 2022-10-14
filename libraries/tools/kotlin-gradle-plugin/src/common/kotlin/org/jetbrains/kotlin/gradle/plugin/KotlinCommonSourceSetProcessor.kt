@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.CompilerMultiplatformCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinCompileCommonConfig
@@ -45,7 +45,7 @@ internal class KotlinCommonSourceSetProcessor(
         return tasksProvider.registerKotlinCommonTask(
             project,
             taskName,
-            compilationProjection.compilerOptions.options as CompilerMultiplatformCommonOptions,
+            compilationProjection.compilerOptions.options as KotlinMultiplatformCommonCompilerOptions,
             configAction
         )
     }

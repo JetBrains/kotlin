@@ -5,8 +5,5 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-@Deprecated("Rebasing Artifact. Will be removed later", replaceWith = ReplaceWith("KotlinMultiplatformCommonCompilerOptions"))
-typealias CompilerMultiplatformCommonOptions = KotlinMultiplatformCommonCompilerOptions
-
 interface KotlinMultiplatformCommonCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions {
 }

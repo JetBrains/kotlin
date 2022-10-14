@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.CompilerJsOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
@@ -29,7 +29,7 @@ internal class Kotlin2JsSourceSetProcessor(
         return tasksProvider.registerKotlinJSTask(
             project,
             taskName,
-            compilationProjection.compilerOptions.options as CompilerJsOptions,
+            compilationProjection.compilerOptions.options as KotlinJsCompilerOptions,
             configAction
         )
     }
