@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
-    public open fun getSymbol(psi: KtDeclaration): KtSymbol = when (psi) {
+    public open fun getSymbol(psi: KtDeclaration): KtDeclarationSymbol = when (psi) {
         is KtParameter -> getParameterSymbol(psi)
         is KtNamedFunction -> getFunctionLikeSymbol(psi)
         is KtConstructor<*> -> getConstructorSymbol(psi)
@@ -62,7 +62,7 @@ public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
 }
 
 public interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
-    public fun KtDeclaration.getSymbol(): KtSymbol =
+    public fun KtDeclaration.getSymbol(): KtDeclarationSymbol =
         withValidityAssertion { analysisSession.symbolProvider.getSymbol(this) }
 
     /**
