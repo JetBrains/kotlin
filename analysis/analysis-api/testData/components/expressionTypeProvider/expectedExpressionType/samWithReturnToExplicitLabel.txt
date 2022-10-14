@@ -1,0 +1,2 @@
+expression: { return@l }
+expected type: java/lang/Runnable
