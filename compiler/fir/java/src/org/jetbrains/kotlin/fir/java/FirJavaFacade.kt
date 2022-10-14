@@ -177,14 +177,14 @@ abstract class FirJavaFacade(
         //   as we have a nested ordering here.
 
         val enhancement = FirSignatureEnhancement(firJavaClass, session) { emptyList() }
-        enhancement.performFirstRoundOfBoundsResolution(firJavaClass.typeParameters)
+        val initialBounds = enhancement.performFirstRoundOfBoundsResolution(firJavaClass.typeParameters)
 
         // 1. Resolve annotations
         // 2. Enhance type parameter bounds - may refer to each other, take default nullability from annotations
         // 3. Enhance super types - may refer to type parameter bounds, take default nullability from annotations
         firJavaClass.annotations.addFromJava(session, javaClass, javaTypeParameterStack)
 
-        enhancement.enhanceTypeParameterBoundsAfterFirstRound(firJavaClass.typeParameters)
+        enhancement.enhanceTypeParameterBoundsAfterFirstRound(firJavaClass.typeParameters, initialBounds)
 
         val enhancedSuperTypes = buildList {
             val purelyImplementedSupertype = firJavaClass.getPurelyImplementedSupertype()
