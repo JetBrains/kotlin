@@ -77,14 +77,9 @@ internal fun konanUnitPhase(
         op: Context.() -> Unit
 ) = namedOpUnitPhase(name, description, prerequisite, op)
 
-/**
- * Valid from [createSymbolTablePhase] until [destroySymbolTablePhase].
- */
-private var Context.symbolTable: SymbolTable? by Context.nullValue()
-
 internal val createSymbolTablePhase = konanUnitPhase(
         op = {
-            this.symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
+            this.nullableSymbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
         },
         name = "CreateSymbolTable",
         description = "Create SymbolTable"
@@ -97,7 +92,7 @@ internal val objCExportPhase = konanUnitPhase(
                 config.produce != CompilerOutputKind.FRAMEWORK -> null
                 else -> produceObjCExportInterface(this)
             }
-            val codeSpec = objcInterface?.createCodeSpec(symbolTable!!)
+            val codeSpec = objcInterface?.createCodeSpec(symbolTable)
             objCExport = ObjCExport(this, objcInterface, codeSpec)
         },
         name = "ObjCExport",
@@ -108,7 +103,7 @@ internal val objCExportPhase = konanUnitPhase(
 internal val buildCExportsPhase = konanUnitPhase(
         op = {
             this.cAdapterGenerator = CAdapterGenerator(this).also {
-                it.buildExports(this.symbolTable!!)
+                it.buildExports(this.symbolTable)
             }
         },
         name = "BuildCExports",
@@ -118,7 +113,7 @@ internal val buildCExportsPhase = konanUnitPhase(
 
 internal val psiToIrPhase = konanUnitPhase(
         op = {
-            this.psiToIr(symbolTable!!,
+            this.psiToIr(symbolTable,
                     isProducingLibrary = config.produce == CompilerOutputKind.LIBRARY,
                     useLinkerWhenProducingLibrary = false)
         },
@@ -145,7 +140,7 @@ internal val buildAdditionalCacheInfoPhase = konanUnitPhase(
 
 internal val destroySymbolTablePhase = konanUnitPhase(
         op = {
-            this.symbolTable = null // TODO: invalidate symbolTable itself.
+            this.nullableSymbolTable = null // TODO: invalidate symbolTable itself.
         },
         name = "DestroySymbolTable",
         description = "Destroy SymbolTable",

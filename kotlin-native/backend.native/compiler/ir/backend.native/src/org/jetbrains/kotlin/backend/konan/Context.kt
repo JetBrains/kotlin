@@ -33,10 +33,10 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.needSmallBinary
 import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.name.FqName
@@ -84,6 +84,15 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
 
     override val optimizeLoopsOverUnsignedArrays = true
 
+
+    /**
+     * Valid from [createSymbolTablePhase] until [destroySymbolTablePhase].
+     */
+    var nullableSymbolTable: SymbolTable? = null
+
+    val symbolTable: SymbolTable
+        get() = nullableSymbolTable!!
+
     lateinit var generationState: NativeGenerationState
 
     fun disposeGenerationState() {
@@ -116,8 +125,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
             }
             result
         }
-
-        fun <T> nullValue() = LazyVarMember<T?>({ null })
     }
 
     private val lazyValues = mutableMapOf<LazyMember<*>, Any?>()
