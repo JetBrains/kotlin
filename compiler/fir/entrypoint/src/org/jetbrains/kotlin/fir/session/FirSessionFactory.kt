@@ -204,60 +204,6 @@ object FirSessionFactory : FirAbstractSessionFactory() {
     }
 
     @OptIn(SessionConfiguration::class)
-    fun createJvmLibrarySession(
-        mainModuleName: Name,
-        sessionProvider: FirProjectSessionProvider,
-        moduleDataProvider: ModuleDataProvider,
-        scope: AbstractProjectFileSearchScope,
-        projectEnvironment: AbstractProjectEnvironment,
-        packagePartProvider: PackagePartProvider,
-        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-    ): FirSession =
-        createLibrarySession(
-            sessionProvider, moduleDataProvider, languageVersionSettings
-        ) {
-            registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver())
-
-            val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
-            register(FirKotlinScopeProvider::class, kotlinScopeProvider)
-
-            val classFileBasedSymbolProvider = JvmClassFileBasedSymbolProvider(
-                this,
-                moduleDataProvider,
-                kotlinScopeProvider,
-                packagePartProvider,
-                projectEnvironment.getKotlinClassFinder(scope),
-                projectEnvironment.getFirJavaFacade(this, moduleDataProvider.allModuleData.last(), scope)
-            )
-
-            val optionalAnnotationClassesProvider = OptionalAnnotationClassesProvider(
-                this,
-                moduleDataProvider,
-                kotlinScopeProvider,
-                packagePartProvider
-            )
-
-            val builtinsModuleData = createModuleDataForBuiltins(
-                mainModuleName,
-                moduleDataProvider.platform,
-                moduleDataProvider.analyzerServices
-            ).also { it.bindSession(this) }
-
-            val symbolProvider = FirCompositeSymbolProvider(
-                this,
-                listOf(
-                    classFileBasedSymbolProvider,
-                    FirBuiltinSymbolProvider(this, builtinsModuleData, kotlinScopeProvider),
-                    FirCloneableSymbolProvider(this, builtinsModuleData, kotlinScopeProvider),
-                    FirDependenciesSymbolProviderImpl(this),
-                    optionalAnnotationClassesProvider
-                )
-            )
-            register(FirSymbolProvider::class, symbolProvider)
-            register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
-        }
-
-    @OptIn(SessionConfiguration::class)
     fun createJsLibrarySession(
         mainModuleName: Name,
         libraries: List<String>,
