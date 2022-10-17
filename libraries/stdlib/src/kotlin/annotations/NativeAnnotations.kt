@@ -20,14 +20,14 @@ public expect annotation class CName(val externName: String = "", val shortName:
 /**
  * Freezing API is deprecated since 1.7.20.
  *
- * See [NEW_MM.md#freezing-deprecation](https://github.com/JetBrains/kotlin/blob/master/kotlin-native/NEW_MM.md#freezing-deprecation) for details
+ * See [documentation](https://kotlinlang.org/docs/native-migration-guide.html) for details
  */
 // Note: when changing level of deprecation here, also change
 // * `freezing` mode handling in KonanConfig.kt
 // * frontend diagnostics in ErrorsNative.kt
 @SinceKotlin("1.7")
 @RequiresOptIn(
-    message = "Freezing API is deprecated since 1.7.20. See https://github.com/JetBrains/kotlin/blob/master/kotlin-native/NEW_MM.md#freezing-deprecation for details",
+    message = "Freezing API is deprecated since 1.7.20. See https://kotlinlang.org/docs/native-migration-guide.html for details",
     level = RequiresOptIn.Level.WARNING,
 )
 @Target(

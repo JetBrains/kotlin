@@ -13,7 +13,7 @@ import kotlin.time.Duration.Companion.microseconds
  *
  * Kotlin/Native uses tracing garbage collector (GC) that is executed periodically to collect objects
  * that are not reachable from the "roots", like local and global variables.
- * See [documentation](https://github.com/JetBrains/kotlin/blob/master/kotlin-native/NEW_MM.md) to learn more about
+ * See [documentation](https://kotlinlang.org/docs/native-memory-manager.html) to learn more about
  * Kotlin/Native memory management.
  *
  * This object provides a set of functions and properties that allows to tune garbage collector.
