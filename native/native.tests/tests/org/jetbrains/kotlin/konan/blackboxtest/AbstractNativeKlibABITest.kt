@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.konan.blackboxtest
 
 import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.klib.AbstractKlibABITestCase
+import org.jetbrains.kotlin.klib.KlibABITestUtils
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.*
@@ -25,15 +25,24 @@ import java.io.File
 abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
     private val producedKlibs = linkedMapOf<KLIB, Collection<File>>() // IMPORTANT: The order makes sense!
 
-    protected fun runTest(@TestDataFile testPath: String): Unit = AbstractKlibABITestCase.doTest(
-        testDir = getAbsoluteFile(testPath),
-        buildDir = buildDir,
-        stdlibFile = stdlibFile,
-        buildKlib = ::buildKlib,
-        buildBinaryAndRun = { _, allDependencies -> buildBinaryAndRun(allDependencies) },
-        onNonEmptyBuildDirectory = ::backupDirectoryContents,
-        onIgnoredTest = { throw TestAbortedException() }
-    )
+    private inner class NativeTestConfiguration(testPath: String) : KlibABITestUtils.TestConfiguration {
+        override val testDir = getAbsoluteFile(testPath)
+        override val buildDir get() = this@AbstractNativeKlibABITest.buildDir
+        override val stdlibFile get() = this@AbstractNativeKlibABITest.stdlibFile
+
+        override fun buildKlib(moduleName: String, moduleSourceDir: File, moduleDependencies: Collection<File>, klibFile: File) =
+            this@AbstractNativeKlibABITest.buildKlib(moduleName, moduleSourceDir, moduleDependencies, klibFile)
+
+        override fun buildBinaryAndRun(mainModuleKlibFile: File, allDependencies: Collection<File>) =
+            this@AbstractNativeKlibABITest.buildBinaryAndRun(allDependencies)
+
+        override fun onNonEmptyBuildDirectory(directory: File) = backupDirectoryContents(directory)
+
+        override fun onIgnoredTest() = throw TestAbortedException()
+    }
+
+    // The entry point to generated test classes.
+    protected fun runTest(@TestDataFile testPath: String) = KlibABITestUtils.runTest(NativeTestConfiguration(testPath))
 
     private fun buildKlib(moduleName: String, moduleSourceDir: File, moduleDependencies: Collection<File>, klibFile: File) {
         val module = createModule(moduleName)
@@ -66,7 +75,7 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
         } else
             emptyList()
 
-        val (sourceDir, outputDir) = AbstractKlibABITestCase.createModuleDirs(buildDir, LAUNCHER_MODULE_NAME)
+        val (sourceDir, outputDir) = KlibABITestUtils.createModuleDirs(buildDir, LAUNCHER_MODULE_NAME)
         val executableFile = outputDir.resolve("app." + testRunSettings.get<KotlinNativeTargets>().testTarget.family.exeSuffix)
 
         val module = createModule(LAUNCHER_MODULE_NAME)
