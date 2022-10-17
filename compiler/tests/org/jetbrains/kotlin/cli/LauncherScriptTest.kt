@@ -472,4 +472,10 @@ println(42)
             environment = jdk11,
         )
     }
+
+    fun testInterpreterClassLoader() {
+        runProcess(
+            "kotlinc", "$testDataDirectory/interpreterClassLoader.kt", "-d", tmpdir.path
+        )
+    }
 }
