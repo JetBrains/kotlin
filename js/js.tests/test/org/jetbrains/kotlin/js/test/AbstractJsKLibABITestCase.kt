@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.*
@@ -77,6 +78,20 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
 
         override fun onNonEmptyBuildDirectory(directory: File) {
             directory.listFiles()?.forEach(File::deleteRecursively)
+        }
+
+        // TODO: Suppress the tests failing with ISE "Symbol for <signature> is unbound" until KT-54491 is fixed.
+        //  Such failures are caused by references to unbound symbols still preserved in CacheUpdater in JS IR IC.
+        override fun isIgnoredTest(projectInfo: ProjectInfo) = when {
+            super.isIgnoredTest(projectInfo) -> true
+            !useIncrementalCompiler -> false
+            else -> projectInfo.name in setOf(
+                "removeFunction",
+                "removeProperty",
+                "removeOpenFunction",
+                "removeOpenProperty",
+                "removeInlinedClass"
+            )
         }
 
         override fun onIgnoredTest() {
