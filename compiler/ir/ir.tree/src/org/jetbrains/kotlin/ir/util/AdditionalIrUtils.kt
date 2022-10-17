@@ -225,15 +225,15 @@ class NaiveSourceBasedFileEntryImpl(
 
     override fun getLineNumber(offset: Int): Int {
         if (offset == SYNTHETIC_OFFSET) return 0
-        if (offset < 0) return -1
+        if (offset < 0) return UNDEFINED_LINE_NUMBER
         return calculatedBeforeLineNumbers.get(offset)
     }
 
     override fun getColumnNumber(offset: Int): Int {
         if (offset == SYNTHETIC_OFFSET) return 0
-        if (offset < 0) return -1
+        if (offset < 0) return UNDEFINED_COLUMN_NUMBER
         val lineNumber = getLineNumber(offset)
-        return if (lineNumber < 0) -1 else offset - lineStartOffsets[lineNumber]
+        return if (lineNumber < 0) UNDEFINED_COLUMN_NUMBER else offset - lineStartOffsets[lineNumber]
     }
 
     override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo =

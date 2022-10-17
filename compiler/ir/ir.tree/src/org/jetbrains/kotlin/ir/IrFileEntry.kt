@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.ir
 
 const val UNDEFINED_OFFSET: Int = -1
+const val UNDEFINED_LINE_NUMBER: Int = UNDEFINED_OFFSET
+const val UNDEFINED_COLUMN_NUMBER: Int = UNDEFINED_OFFSET
 
 data class SourceRangeInfo(
     val filePath: String,

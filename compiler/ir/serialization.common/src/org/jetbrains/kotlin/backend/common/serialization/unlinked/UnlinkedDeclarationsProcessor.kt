@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageSupport.UnlinkedMarkerTypeHandler
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsProcessor.Companion.MISSING_ABSTRACT_CALLABLE_MEMBER_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedIrElementRenderer.appendDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedIrElementRenderer.renderError
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UsedClassifierSymbolStatus.Companion.isUnlinked
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -345,12 +344,39 @@ private fun IrDeclaration.location(): Location? = locationIn(fileOrNull)
 private fun IrElement.locationIn(currentFile: IrFile?): Location? {
     if (currentFile == null) return null
 
-    val moduleName = currentFile.module.name
-    val fileEntry = currentFile.fileEntry
-    val fileName = fileEntry.name
-    val lineNumber = fileEntry.getLineNumber(startOffset) + 1 // since humans count from 1, not 0
-    val columnNumber = fileEntry.getColumnNumber(startOffset) + 1
+    val moduleName: String = currentFile.module.name.asString()
+    val filePath: String = currentFile.fileEntry.name
 
-    // unsure whether should module name be added here
-    return Location("$moduleName @ $fileName", lineNumber, columnNumber)
+    val lineNumber: Int
+    val columnNumber: Int
+
+    when (val effectiveStartOffset = startOffsetOfFirstNonSyntheticIrElement()) {
+        UNDEFINED_OFFSET -> {
+            lineNumber = UNDEFINED_LINE_NUMBER
+            columnNumber = UNDEFINED_COLUMN_NUMBER
+        }
+        else -> {
+            lineNumber = currentFile.fileEntry.getLineNumber(effectiveStartOffset) + 1 // since humans count from 1, not 0
+            columnNumber = currentFile.fileEntry.getColumnNumber(effectiveStartOffset) + 1
+        }
+    }
+
+    // TODO: should module name still be added here?
+    return Location("$moduleName @ $filePath", lineNumber, columnNumber)
+}
+
+private tailrec fun IrElement.startOffsetOfFirstNonSyntheticIrElement(): Int = when (this) {
+    is IrPackageFragment -> UNDEFINED_OFFSET
+    !is IrDeclaration -> {
+        // We don't generate synthetic IR expressions in the course of partial linkage.
+        startOffset
+    }
+    else -> when (origin) {
+        MISSING_ABSTRACT_CALLABLE_MEMBER_IMPLEMENTATION -> {
+            // There is no sense to take coordinates from the declaration that does not exist in the code.
+            // Let's take the coordinates of the parent.
+            parent.startOffsetOfFirstNonSyntheticIrElement()
+        }
+        else -> startOffset
+    }
 }
