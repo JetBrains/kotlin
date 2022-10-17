@@ -184,6 +184,12 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
             function,
             replacement,
             when {
+                function.isTypedEquals -> InlineClassAbi.mangledNameFor(
+                    function,
+                    false,
+                    function.parentClassOrNull?.isSingleFieldValueClass == true &&
+                        context.state.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
+                )
                 // If the original function has signature which need mangling we still need to replace it with a mangled version.
                 (!function.isFakeOverride || function.findInterfaceImplementation(context.state.jvmDefaultMode) != null) && when (specificMangle) {
                     SpecificMangle.Inline -> function.signatureRequiresMangling(includeInline = true, includeMFVC = false)
