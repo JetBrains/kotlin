@@ -225,7 +225,3 @@ tasks.create("updatePrebuilt") {
         }
     }
 }
-
-projectTest(parallel = true) {
-    workingDir = rootDir
-}
