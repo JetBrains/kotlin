@@ -28,14 +28,14 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-output", valueDescription = "<filepath>", description = "Destination *.js file for the compilation result")
     var outputFile: String? by NullableStringFreezableVar(null)
 
-    @Argument(value = "-Xir-output-dir", valueDescription = "<directory>", description = "Destination for generated files")
+    @Argument(value = "-ir-output-dir", valueDescription = "<directory>", description = "Destination for generated files")
     var outputDir: String? by NullableStringFreezableVar(null)
 
     @GradleOption(
         value = DefaultValues.StringNullDefault::class,
         gradleInputType = GradleInputTypes.INPUT
     )
-    @Argument(value = "-module-name", description = "Base name of generated files")
+    @Argument(value = "-ir-output-name", description = "Base name of generated files")
     var moduleName: String? by NullableStringFreezableVar(null)
 
     @GradleOption(

@@ -38,7 +38,6 @@ where advanced options include:
                              Enable runtime diagnostics when access safely to boolean in external declarations
   -Xlegacy-deprecated-no-warn Disable warnings of deprecation of legacy compiler
   -Xmetadata-only            Generate *.meta.js and *.kjsm files only
-  -Xir-output-dir=<directory> Destination for generated files
   -Xpartial-linkage          Allow unlinked symbols
   -Xrepositories=<path>      Paths to additional places where libraries could be found
   -Xstrict-implicit-export-types Generate strict types for implicitly exported entities inside d.ts files. Available in IR backend only.
