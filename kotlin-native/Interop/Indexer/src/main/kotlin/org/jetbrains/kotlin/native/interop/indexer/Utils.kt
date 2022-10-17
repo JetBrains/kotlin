@@ -692,10 +692,8 @@ class UnitsHolder(val index: CXIndex) : Disposable {
 
     internal fun load(info: CXIdxImportedASTFileInfo): CXTranslationUnit {
         val canonicalPath: String = info.file!!.canonicalPath
-        return unitByBinaryFile.getOrElse(canonicalPath) {
-            clang_createTranslationUnit(index, canonicalPath)!!.also { unit ->
-                unitByBinaryFile[canonicalPath] = unit
-            }
+        return unitByBinaryFile.getOrPut(canonicalPath) {
+            clang_createTranslationUnit(index, canonicalPath)!!
         }
     }
 
