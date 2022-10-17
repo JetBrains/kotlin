@@ -221,18 +221,6 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
     }
 
     @Test
-    @TestMetadata("propertyWithAnnotations.kt")
-    public void testPropertyWithAnnotations() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/propertyWithAnnotations.kt");
-    }
-
-    @Test
-    @TestMetadata("receiverAnnotation.kt")
-    public void testReceiverAnnotation() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/receiverAnnotation.kt");
-    }
-
-    @Test
     @TestMetadata("topLevelFunctions.kt")
     public void testTopLevelFunctions() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/topLevelFunctions.kt");

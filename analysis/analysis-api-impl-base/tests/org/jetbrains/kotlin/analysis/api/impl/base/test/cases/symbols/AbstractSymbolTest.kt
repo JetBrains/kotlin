@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE_K1
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE_K2
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.PRETTY_RENDERING_MODE
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
@@ -45,7 +46,8 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
             ?: DO_NOT_CHECK_SYMBOL_RESTORE_K1.takeIf { configurator.frontendKind == FrontendKind.Fe10 && it in directives }
             ?: DO_NOT_CHECK_SYMBOL_RESTORE_K2.takeIf { configurator.frontendKind == FrontendKind.Fir && it in directives }
 
-        val prettyRenderOptions = when (prettyRenderMode) {
+        val renderMode = directives[PRETTY_RENDERING_MODE].singleOrNull()
+        val prettyRenderOptions = when (renderMode ?: prettyRenderMode) {
             PrettyRenderingMode.RENDER_SYMBOLS_LINE_BY_LINE -> renderingOptions
             PrettyRenderingMode.RENDER_SYMBOLS_NESTED -> renderingOptions.copy(renderClassMembers = true)
         }
@@ -161,6 +163,8 @@ object SymbolTestDirectives : SimpleDirectivesContainer() {
     val DO_NOT_CHECK_SYMBOL_RESTORE_K2 by directive(
         description = "Symbol restoring for some symbols in current test is not supported yet in K2",
     )
+
+    val PRETTY_RENDERING_MODE by enumDirective(description = "Explicit rendering mode") { PrettyRenderingMode.valueOf(it) }
 }
 
 enum class PrettyRenderingMode {

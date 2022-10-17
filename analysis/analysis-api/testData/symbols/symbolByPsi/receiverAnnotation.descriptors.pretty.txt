@@ -1,8 +1,0 @@
-fun (@ReceiverTypeAnnotation kotlin.Int).foo()
-
-val (@ReceiverTypeAnnotation kotlin.Long).prop: kotlin.Boolean
-
-annotation class ReceiverAnnotation
-
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
-annotation class ReceiverTypeAnnotation
