@@ -18,8 +18,7 @@ class LanguageFeatureMessageRenderer @JvmOverloads constructor(
 
     enum class Type {
         UNSUPPORTED,
-        WARNING,
-        ERROR
+        WARNING
     }
 
     override fun render(obj: Pair<LanguageFeature, LanguageVersionSettings>, renderingContext: RenderingContext): String {
@@ -43,7 +42,6 @@ class LanguageFeatureMessageRenderer @JvmOverloads constructor(
                 }
 
             Type.WARNING -> sb.append("experimental")
-            Type.ERROR -> sb.append("experimental and disabled")
         }
 
         val hintUrl = feature.hintUrl

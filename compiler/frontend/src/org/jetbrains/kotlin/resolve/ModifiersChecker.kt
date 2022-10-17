@@ -226,10 +226,6 @@ object ModifierCheckerCore {
                 LanguageFeature.State.ENABLED_WITH_WARNING -> {
                     trace.report(Errors.EXPERIMENTAL_FEATURE_WARNING.on(node.psi, diagnosticData))
                 }
-                LanguageFeature.State.ENABLED_WITH_ERROR -> {
-                    trace.report(Errors.EXPERIMENTAL_FEATURE_ERROR.on(node.psi, diagnosticData))
-                    return false
-                }
                 LanguageFeature.State.DISABLED -> {
                     trace.report(Errors.UNSUPPORTED_FEATURE.on(node.psi, diagnosticData))
                     return false
