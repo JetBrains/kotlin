@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 enum class E {
     ENTRY;
 

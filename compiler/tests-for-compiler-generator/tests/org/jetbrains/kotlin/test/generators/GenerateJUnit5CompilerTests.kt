@@ -38,11 +38,20 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractDiagnosticsTestWithOldJvmBackend> {
-                model("diagnostics/testsWithJvmBackend", targetBackend = TargetBackend.JVM_OLD)
+                model(
+                    "diagnostics/testsWithJvmBackend",
+                    targetBackend = TargetBackend.JVM_OLD,
+                    excludedPattern = excludedFirTestdataPattern
+                )
             }
 
             testClass<AbstractDiagnosticsTestWithJvmIrBackend> {
-                model("diagnostics/testsWithJvmBackend", pattern = "^(.+)\\.kts?$", targetBackend = TargetBackend.JVM_IR)
+                model(
+                    "diagnostics/testsWithJvmBackend",
+                    pattern = "^(.+)\\.kts?$",
+                    targetBackend = TargetBackend.JVM_IR,
+                    excludedPattern = excludedFirTestdataPattern
+                )
             }
 
             testClass<AbstractDiagnosticsNativeTest> {
@@ -265,7 +274,7 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractFirDiagnosticsTestWithJvmIrBackend>(suiteTestClassName = "FirOldDiagnosticsTestWithJvmIrBackendGenerated") {
-                model("diagnostics/testsWithJvmBackend")
+                model("diagnostics/testsWithJvmBackend", excludedPattern = excludedFirTestdataPattern)
             }
 
             testClass<AbstractFirSerializeCompileKotlinAgainstInlineKotlinTest> {

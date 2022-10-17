@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun foo() =
     object {
         <!CONFLICTING_JVM_DECLARATIONS!>val x<!> = 1
