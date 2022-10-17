@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-54209
 
 class A {
