@@ -748,7 +748,7 @@ fun serializeModuleIntoKlib(
         additionalFiles += compiledKotlinFile
         val ioFile = ktSourceFile.toIoFileOrNull()
         assert(ioFile != null) {
-            "No file fouud for source ${ktSourceFile.path}"
+            "No file found for source ${ktSourceFile.path}"
         }
         processCompiledFileData(ioFile!!, compiledKotlinFile)
     }
