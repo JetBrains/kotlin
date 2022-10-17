@@ -63,6 +63,7 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
 
     override fun tearDown() {
         buildDir.deleteRecursively()
+        super.tearDown()
     }
 
     private inner class JsTestConfiguration(testPath: String) : KlibABITestUtils.TestConfiguration {
