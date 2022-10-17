@@ -103,8 +103,6 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
                 add(file)
                 addAll(cliArgs.toList())
                 addAll(cliArg("--require", npmProject.require("kotlin-test-js-runner/kotlin-test-nodejs-empty-runner.js")))
-
-                addAll(cliArg("-n", "experimental-wasm-typed-funcref,experimental-wasm-gc,experimental-wasm-eh"))
             }
         }
 
