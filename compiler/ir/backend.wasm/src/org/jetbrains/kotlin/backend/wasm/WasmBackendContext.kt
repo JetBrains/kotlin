@@ -86,15 +86,15 @@ class WasmBackendContext(
                 SourceRangeInfo(
                     "",
                     UNDEFINED_OFFSET,
+                    UNDEFINED_LINE_NUMBER,
+                    UNDEFINED_COLUMN_NUMBER,
                     UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET
+                    UNDEFINED_LINE_NUMBER,
+                    UNDEFINED_COLUMN_NUMBER
                 )
 
-            override fun getLineNumber(offset: Int) = UNDEFINED_OFFSET
-            override fun getColumnNumber(offset: Int) = UNDEFINED_OFFSET
+            override fun getLineNumber(offset: Int) = UNDEFINED_LINE_NUMBER
+            override fun getColumnNumber(offset: Int) = UNDEFINED_COLUMN_NUMBER
         }, internalPackageFragmentDescriptor, irModuleFragment).also {
             irModuleFragment.files += it
         }
@@ -158,15 +158,15 @@ class WasmBackendContext(
                 SourceRangeInfo(
                     "",
                     UNDEFINED_OFFSET,
+                    UNDEFINED_LINE_NUMBER,
+                    UNDEFINED_COLUMN_NUMBER,
                     UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET
+                    UNDEFINED_LINE_NUMBER,
+                    UNDEFINED_COLUMN_NUMBER
                 )
 
-            override fun getLineNumber(offset: Int) = UNDEFINED_OFFSET
-            override fun getColumnNumber(offset: Int) = UNDEFINED_OFFSET
+            override fun getLineNumber(offset: Int) = UNDEFINED_LINE_NUMBER
+            override fun getColumnNumber(offset: Int) = UNDEFINED_COLUMN_NUMBER
         }, internalPackageFragmentDescriptor, module).also {
             module.files += it
         }

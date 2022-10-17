@@ -24,15 +24,15 @@ class PsiIrFileEntry(val psiFile: PsiFile) : IrFileEntry {
     }
 
     override fun getLineNumber(offset: Int): Int {
-        if (offset < 0) return -1
+        if (offset < 0) return UNDEFINED_LINE_NUMBER
         val index = lineStartOffsets.binarySearch(offset)
         return if (index >= 0) index else -index - 2
     }
 
     override fun getColumnNumber(offset: Int): Int {
-        if (offset < 0) return -1
+        if (offset < 0) return UNDEFINED_COLUMN_NUMBER
         val lineNumber = getLineNumber(offset)
-        if (lineNumber < 0) return -1
+        if (lineNumber < 0) return UNDEFINED_COLUMN_NUMBER
         return offset - lineStartOffsets[lineNumber]
     }
 
