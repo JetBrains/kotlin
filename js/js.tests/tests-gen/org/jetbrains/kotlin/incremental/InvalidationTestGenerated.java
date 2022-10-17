@@ -70,6 +70,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/companionInlineFunction/");
     }
 
+    @TestMetadata("companionProperties")
+    public void testCompanionProperties() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/companionProperties/");
+    }
+
     @TestMetadata("companionWithStdLibCall")
     public void testCompanionWithStdLibCall() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/companionWithStdLibCall/");

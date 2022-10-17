@@ -1,0 +1,50 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : l2string.0.kt -> l2string.kt
+        U : l2.0.kt -> l2.kt
+    added file: l2.kt, l2string.kt
+STEP 1:
+    dependencies: lib1
+    modifications:
+        U : l2int.1.kt -> l2int.kt
+        U : l2.1.kt -> l2.kt
+    added file: l2int.kt
+    modified ir: l2.kt
+STEP 2:
+    dependencies: lib1
+STEP 3:
+    dependencies: lib1
+    modifications:
+        U : l2pair.3.kt -> l2pair.kt
+        U : l2.3.kt -> l2.kt
+    added file: l2pair.kt
+    modified ir: l2.kt
+STEP 4:
+    dependencies: lib1
+    modifications:
+        U : l2func.4.kt -> l2func.kt
+        U : l2.4.kt -> l2.kt
+        U : l2string.4.kt -> l2string.kt
+    added file: l2func.kt
+    modified ir: l2.kt, l2string.kt
+STEP 5:
+    dependencies: lib1
+STEP 6:
+    dependencies: lib1
+    modifications:
+        U : l2.6.kt -> l2.kt
+    modified ir: l2.kt
+    updated exports: l2pair.kt, l2string.kt, l2func.kt
+STEP 7:
+    dependencies: lib1
+    modifications:
+        D : l2pair.kt
+        D : l2string.kt
+        D : l2func.kt
+STEP 8:
+    dependencies: lib1
+    updated imports: l2int.kt
+STEP 9..10:
+    dependencies: lib1
+    updated imports: l2int.kt, l2.kt
