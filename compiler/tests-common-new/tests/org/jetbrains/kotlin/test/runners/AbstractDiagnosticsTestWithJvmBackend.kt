@@ -31,14 +31,12 @@ import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirIdenticalChecker
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 import java.io.File
 
 abstract class AbstractDiagnosticsTestWithJvmBackend<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>> :
@@ -96,12 +94,9 @@ abstract class AbstractDiagnosticsTestWithJvmBackend<R : ResultingArtifact.Front
                 )
             }
         } else {
-            useAfterAnalysisCheckers(
-                ::FirIdenticalChecker,
-            )
-            useMetaTestConfigurators(
-                ::FirOldFrontendMetaConfigurator,
-            )
+            forTestsMatching("compiler/testData/diagnostics/testsWithJvmBackend/*") {
+                configurationForClassicAndFirTestsAlongside()
+            }
         }
 
         facadeStep(converter)
