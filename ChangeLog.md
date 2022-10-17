@@ -1,3 +1,13 @@
+## 1.7.11
+
+### Compiler
+
+- [`KT-53739`](https://youtrack.jetbrains.com/issue/KT-53739) Builder inference, extension hides members
+
+#### Fixes
+- [`KT-53124`](https://youtrack.jetbrains.com/issue/KT-53124) Receiver type mismatch when combining extension properties, type projections, Java sources, and F-bounded type-variables
+
+
 ## 1.7.10
 
 ### Compiler
