@@ -949,6 +949,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
         val typeOfExpression = when (val lhs = transformedGetClassCall.argument) {
             is FirResolvedQualifier -> {
+                lhs.replaceResolvedToCompanionObject(newResolvedToCompanionObject = false)
                 val symbol = lhs.symbol
                 val typeArguments: Array<ConeTypeProjection> =
                     if (lhs.typeArguments.isNotEmpty()) {
