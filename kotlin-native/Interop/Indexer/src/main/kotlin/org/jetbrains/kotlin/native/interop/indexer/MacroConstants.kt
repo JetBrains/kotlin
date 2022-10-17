@@ -188,7 +188,7 @@ private fun reparseWithCodeSnippets(library: CompilationWithPCH,
             codeSnippetLines.forEach { writer.appendLine(it) }
         }
     }
-    clang_reparseTranslationUnit(translationUnit, 0, null, CXTranslationUnit_DetailedPreprocessingRecord) // CXTranslationUnit_DetailedPreprocessingRecord
+    clang_reparseTranslationUnit(translationUnit, 0, null, CXTranslationUnit_DetailedPreprocessingRecord)
 }
 
 /**
