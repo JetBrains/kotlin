@@ -443,7 +443,7 @@ class KotlinLanguageInjector(
         val classNames = SmartList<String>()
         fun collect(condition: PatternCondition<*>) {
             when (condition) {
-                is PatternConditionPlus<*, *> -> condition.valuePattern.condition.conditions.forEach { collect(it) }
+                is PatternConditionPlus<*, *> -> condition.valuePattern.condition.conditions.forEach { collect(it as PatternCondition<*>) }
                 is KotlinFunctionPattern.DefinedInClassCondition -> classNames.add(condition.fqName)
             }
         }
