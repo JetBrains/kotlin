@@ -53,6 +53,18 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiGenerated e
     }
 
     @Test
+    @TestMetadata("getterWithAnnotations.kt")
+    public void testGetterWithAnnotations() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/getterWithAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("getterWithReceiverAndAnnotations.kt")
+    public void testGetterWithReceiverAndAnnotations() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/getterWithReceiverAndAnnotations.kt");
+    }
+
+    @Test
     @TestMetadata("propertyWithAnnotations.kt")
     public void testPropertyWithAnnotations() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyWithAnnotations.kt");
@@ -74,6 +86,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiGenerated e
     @TestMetadata("propertyWithReceiverAnnotation.kt")
     public void testPropertyWithReceiverAnnotation() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyWithReceiverAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("setterWithAnnotations.kt")
+    public void testSetterWithAnnotations() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/setterWithAnnotations.kt");
     }
 
     @Nested
