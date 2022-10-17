@@ -64,6 +64,11 @@ class MemoizedInlineClassReplacements(
                 // Mangle all functions in the body of an inline class
                 it.parent.safeAs<IrClass>()?.isSingleFieldValueClass == true ->
                     when {
+                        it.isTypedEquals -> createStaticReplacement(it).also {
+                            it.name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
+                            specializedEqualsCache.computeIfAbsent(it.parentAsClass) { it }
+                        }
+
                         it.isRemoveAtSpecialBuiltinStub() ->
                             null
                         it.isValueClassMemberFakeOverriddenFromJvmDefaultInterfaceMethod() ||
