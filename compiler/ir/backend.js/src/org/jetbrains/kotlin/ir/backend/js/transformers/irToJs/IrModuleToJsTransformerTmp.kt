@@ -310,11 +310,9 @@ class IrModuleToJsTransformerTmp(
                 val jsName = staticContext.getNameForStaticFunction(it)
                 val generateArgv = it.valueParameters.firstOrNull()?.isStringArrayParameter() ?: false
                 val generateContinuation = it.isLoweredSuspendFunction(backendContext)
-                result.mainFunction = JsInvocation(jsName.makeRef(), generateMainArguments(generateArgv, generateContinuation, staticContext)).makeStmt()
-                // TODO:
-//                val mainInvocation =
-//                    JsInvocation(jsName.makeRef(), generateMainArguments(generateArgv, generateContinuation, staticContext)).makeStmt()
-//                result.mainFunction = irToJsTransformationExtensions.fold(mainInvocation) { acc, ext -> ext.transformMainFunction(acc) }
+                val mainInvocation =
+                    JsInvocation(jsName.makeRef(), generateMainArguments(generateArgv, generateContinuation, staticContext)).makeStmt()
+                result.mainFunction = irToJsTransformationExtensions.fold(mainInvocation) { acc, ext -> ext.transformMainFunction(acc) }
             }
         }
 
