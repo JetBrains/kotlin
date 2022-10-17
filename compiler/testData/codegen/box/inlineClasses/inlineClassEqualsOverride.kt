@@ -2,6 +2,7 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +CustomEqualsInInlineClasses
 // TARGET_BACKEND: JVM_IR
+// CHECK_BYTECODE_LISTING
 
 import kotlin.math.abs
 

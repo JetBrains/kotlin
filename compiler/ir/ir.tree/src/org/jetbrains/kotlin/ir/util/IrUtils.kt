@@ -1308,6 +1308,10 @@ fun IrBuiltIns.getKFunctionType(returnType: IrType, parameterTypes: List<IrType>
 fun IdSignature?.isComposite(): Boolean =
     this is IdSignature.CompositeSignature
 
-val IrFunction.overridesEqualsFromAny
-    get() = name == OperatorNameConventions.EQUALS && valueParameters.size == 1 && valueParameters[0].type.isNullableAny()
-            && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
+val IrFunction.isTypedEquals: Boolean
+    get() {
+        val parentClass = parent as? IrClass ?: return false
+        return name == OperatorNameConventions.EQUALS && returnType.isBoolean() && valueParameters.size == 1
+                && (valueParameters[0].type.classFqName?.run { parentClass.hasEqualFqName(this) } ?: false)
+                && contextReceiverParametersCount == 0 && extensionReceiverParameter == null && parentClass.isValue
+    }
