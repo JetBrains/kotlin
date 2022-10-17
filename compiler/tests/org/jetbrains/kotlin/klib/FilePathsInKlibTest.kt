@@ -58,6 +58,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
     }
 
     private fun produceKlib(module: ModulesStructure, destination: File) {
+        // TODO: improve API for generateIrForKlibSerialization and related functionality and remove code duplication here and in similar places in the code
         val sourceFiles = (module.mainModule as MainModule.SourceFiles).files
         val icData = module.compilerConfiguration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
         val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
