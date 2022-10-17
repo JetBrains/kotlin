@@ -77,7 +77,7 @@ internal class CommonProxy private constructor(override val state: Common, overr
                 else -> arrayOf(extendFrom, Proxy::class.java)
             }
 
-            return java.lang.reflect.Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), interfaces)
+            return java.lang.reflect.Proxy.newProxyInstance(this::class.java.classLoader, interfaces)
             { /*proxy*/_, method, args ->
                 when {
                     method.declaringClass == Proxy::class.java && method.name == "getState" -> commonProxy.state
