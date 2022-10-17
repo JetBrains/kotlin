@@ -16738,6 +16738,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("thisPlusString.kt")
+        public void testThisPlusString() throws Exception {
+            runTest("compiler/testData/codegen/box/evaluate/thisPlusString.kt");
+        }
+
+        @Test
         @TestMetadata("unaryMinus.kt")
         public void testUnaryMinus() throws Exception {
             runTest("compiler/testData/codegen/box/evaluate/unaryMinus.kt");

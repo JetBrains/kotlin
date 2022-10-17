@@ -444,4 +444,10 @@ println(42)
             workDirectory = subDir
         )
     }
+
+    fun testInterpreterClassLoader() {
+        runProcess(
+            "kotlinc", "$testDataDirectory/interpreterClassLoader.kt", "-d", tmpdir.path
+        )
+    }
 }
