@@ -1076,6 +1076,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("anonymousObjectInUnreachableCode.kt")
+            public void testAnonymousObjectInUnreachableCode() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/cfg/anonymousObjectInUnreachableCode.kt");
+            }
+
+            @Test
             @TestMetadata("binaryOperations.kt")
             public void testBinaryOperations() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/cfg/binaryOperations.kt");
