@@ -12,6 +12,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -25,11 +26,14 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
-import org.jetbrains.kotlin.klib.AbstractKlibABITestCase
+import org.jetbrains.kotlin.klib.KlibABITestUtils
+import org.jetbrains.kotlin.klib.KlibABITestUtils.MAIN_MODULE_NAME
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
+import kotlin.io.path.createTempDirectory
 
 abstract class AbstractJsKLibABIWithICTestCase : AbstractJsKLibABITestCase() {
     override val useIncrementalCompiler get() = true
@@ -39,12 +43,51 @@ abstract class AbstractJsKLibABINoICTestCase : AbstractJsKLibABITestCase() {
     override val useIncrementalCompiler get() = false
 }
 
-abstract class AbstractJsKLibABITestCase : AbstractKlibABITestCase() {
+abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
     abstract val useIncrementalCompiler: Boolean
 
-    override fun stdlibFile(): File = File("libraries/stdlib/js-ir/build/classes/kotlin/js/main").absoluteFile
+    private lateinit var buildDir: File
+    private lateinit var environment: KotlinCoreEnvironment
 
-    override fun buildKlib(moduleName: String, moduleSourceDir: File, moduleDependencies: Collection<File>, klibFile: File) {
+    override fun setUp() {
+        super.setUp()
+        buildDir = createTempDirectory().toFile().also { it.mkdirs() }
+
+        environment = KotlinCoreEnvironment.createForTests(
+            testRootDisposable,
+            CompilerConfiguration(),
+            EnvironmentConfigFiles.JS_CONFIG_FILES
+        )
+    }
+
+    override fun tearDown() {
+        buildDir.deleteRecursively()
+    }
+
+    private inner class JsTestConfiguration(testPath: String) : KlibABITestUtils.TestConfiguration {
+        override val testDir: File = File(testPath).absoluteFile
+        override val buildDir: File get() = this@AbstractJsKLibABITestCase.buildDir
+        override val stdlibFile: File get() = File("libraries/stdlib/js-ir/build/classes/kotlin/js/main").absoluteFile
+
+        override fun buildKlib(moduleName: String, moduleSourceDir: File, moduleDependencies: Collection<File>, klibFile: File) =
+            this@AbstractJsKLibABITestCase.buildKlib(moduleName, moduleSourceDir, moduleDependencies, klibFile)
+
+        override fun buildBinaryAndRun(mainModuleKlibFile: File, allDependencies: Collection<File>) =
+            this@AbstractJsKLibABITestCase.buildBinaryAndRun(mainModuleKlibFile, allDependencies)
+
+        override fun onNonEmptyBuildDirectory(directory: File) {
+            directory.listFiles()?.forEach(File::deleteRecursively)
+        }
+
+        override fun onIgnoredTest() {
+            /* Do nothing specific. JUnit 3 does not support programmatic tests muting. */
+        }
+    }
+
+    // The entry point to generated test classes.
+    fun doTest(testPath: String) = KlibABITestUtils.runTest(JsTestConfiguration(testPath))
+
+    private fun buildKlib(moduleName: String, moduleSourceDir: File, moduleDependencies: Collection<File>, klibFile: File) {
         val ktFiles = environment.createPsiFiles(moduleSourceDir)
 
         val config = environment.configuration.copy()
@@ -62,7 +105,7 @@ abstract class AbstractJsKLibABITestCase : AbstractKlibABITestCase() {
         generateKLib(sourceModule, IrFactoryImpl, klibFile.path, nopack = false, jsOutputName = moduleName)
     }
 
-    override fun buildBinaryAndRun(mainModuleKlibFile: File, libraries: Collection<File>) {
+    private fun buildBinaryAndRun(mainModuleKlibFile: File, libraries: Collection<File>) {
         val configuration = environment.configuration.copy()
 
         configuration.put(JSConfigurationKeys.PARTIAL_LINKAGE, true)
