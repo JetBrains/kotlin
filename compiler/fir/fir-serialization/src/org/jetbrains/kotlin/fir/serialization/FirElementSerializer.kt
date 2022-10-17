@@ -628,6 +628,26 @@ class FirElementSerializer private constructor(
         correspondingTypeRef: FirTypeRef? = null,
         isDefinitelyNotNullType: Boolean = false,
     ): ProtoBuf.Type.Builder {
+        val typeProto = typeOrTypealiasProto(type, toSuper, correspondingTypeRef, isDefinitelyNotNullType)
+        val expanded = if (type is ConeClassLikeType) type.fullyExpandedType(session) else type
+        if (expanded === type) {
+            return typeProto
+        }
+        val expandedProto = typeOrTypealiasProto(expanded, toSuper, correspondingTypeRef, isDefinitelyNotNullType)
+        if (useTypeTable()) {
+            expandedProto.abbreviatedTypeId = typeTable[typeProto]
+        } else {
+            expandedProto.setAbbreviatedType(typeProto)
+        }
+        return expandedProto
+    }
+
+    private fun typeOrTypealiasProto(
+        type: ConeKotlinType,
+        toSuper: Boolean,
+        correspondingTypeRef: FirTypeRef?,
+        isDefinitelyNotNullType: Boolean,
+    ): ProtoBuf.Type.Builder {
         val builder = ProtoBuf.Type.newBuilder()
         when (type) {
             is ConeDefinitelyNotNullType -> return typeProto(type.original, toSuper, correspondingTypeRef, isDefinitelyNotNullType = true)
