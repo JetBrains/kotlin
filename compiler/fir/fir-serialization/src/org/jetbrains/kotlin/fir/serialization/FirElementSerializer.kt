@@ -214,7 +214,6 @@ class FirElementSerializer private constructor(
         return builder
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun FirClass.declarations(): List<FirCallableDeclaration> = buildList {
         val memberScope =
             defaultType().scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)

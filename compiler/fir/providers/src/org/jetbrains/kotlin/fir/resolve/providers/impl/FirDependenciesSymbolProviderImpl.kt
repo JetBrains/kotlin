@@ -45,17 +45,17 @@ open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirDependenc
         }
     }
 
-    @OptIn(FirSymbolProviderInternals::class, ExperimentalStdlibApi::class)
+    @OptIn(FirSymbolProviderInternals::class)
     private fun computeTopLevelCallables(callableId: CallableId): List<FirCallableSymbol<*>> = buildList {
         dependencyProviders.forEach { it.getTopLevelCallableSymbolsTo(this, callableId.packageName, callableId.callableName) }
     }
 
-    @OptIn(FirSymbolProviderInternals::class, ExperimentalStdlibApi::class)
+    @OptIn(FirSymbolProviderInternals::class)
     private fun computeTopLevelFunctions(callableId: CallableId): List<FirNamedFunctionSymbol> = buildList {
         dependencyProviders.forEach { it.getTopLevelFunctionSymbolsTo(this, callableId.packageName, callableId.callableName) }
     }
 
-    @OptIn(FirSymbolProviderInternals::class, ExperimentalStdlibApi::class)
+    @OptIn(FirSymbolProviderInternals::class)
     private fun computeTopLevelProperties(callableId: CallableId): List<FirPropertySymbol> = buildList {
         dependencyProviders.forEach { it.getTopLevelPropertySymbolsTo(this, callableId.packageName, callableId.callableName) }
     }

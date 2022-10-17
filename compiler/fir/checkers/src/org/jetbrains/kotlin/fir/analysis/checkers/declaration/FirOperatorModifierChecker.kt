@@ -159,7 +159,6 @@ private object Checks {
 
 }
 
-@OptIn(ExperimentalStdlibApi::class)
 private object OperatorFunctionChecks {
 
     //reimplementation of org.jetbrains.kotlin.util.OperatorChecks for FIR
