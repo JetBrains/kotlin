@@ -8969,6 +8969,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("deprecatedCompanionAndClassReference.kt")
+            public void testDeprecatedCompanionAndClassReference() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedCompanionAndClassReference.kt");
+            }
+
+            @Test
             @TestMetadata("deprecatedConstructor.kt")
             public void testDeprecatedConstructor() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedConstructor.kt");
