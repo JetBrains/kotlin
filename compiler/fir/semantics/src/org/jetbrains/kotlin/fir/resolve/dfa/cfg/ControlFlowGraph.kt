@@ -171,7 +171,6 @@ enum class EdgeKind(
     DeadBackward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = true, isDead = true)
 }
 
-@OptIn(ExperimentalStdlibApi::class)
 private fun ControlFlowGraph.orderNodes(): LinkedHashSet<CFGNode<*>> {
     val visitedNodes = linkedSetOf<CFGNode<*>>()
     /*
@@ -203,7 +202,6 @@ private fun ControlFlowGraph.orderNodes(): LinkedHashSet<CFGNode<*>> {
     return visitedNodes
 }
 
-@OptIn(ExperimentalStdlibApi::class)
 private fun ControlFlowGraph.walkThrowSubGraphs(
     otherGraph: ControlFlowGraph,
     visitedNodes: Set<CFGNode<*>>,

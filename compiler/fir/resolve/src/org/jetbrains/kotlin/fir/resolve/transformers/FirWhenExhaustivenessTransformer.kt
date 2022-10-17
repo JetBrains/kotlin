@@ -35,7 +35,6 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             WhenOnNothingExhaustivenessChecker
         )
 
-        @OptIn(ExperimentalStdlibApi::class)
         fun computeAllMissingCases(session: FirSession, whenExpression: FirWhenExpression): List<WhenMissingCase> {
             val subjectType = getSubjectType(session, whenExpression) ?: return emptyList()
             return buildList {
@@ -59,7 +58,6 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         }
 
 
-        @OptIn(ExperimentalStdlibApi::class)
         private fun getCheckers(
             subjectType: ConeKotlinType,
             session: FirSession
@@ -102,7 +100,6 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         return whenExpression
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun processExhaustivenessCheck(whenExpression: FirWhenExpression) {
         if (whenExpression.branches.any { it.condition is FirElseIfTrueCondition }) {
             whenExpression.replaceExhaustivenessStatus(ExhaustivenessStatus.ProperlyExhaustive)

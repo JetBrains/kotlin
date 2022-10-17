@@ -172,7 +172,6 @@ class FirDelegatedMemberScope(
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private val callableNamesLazy: Set<Name> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildSet {
             addAll(declaredMemberScope.getCallableNames())
@@ -183,7 +182,6 @@ class FirDelegatedMemberScope(
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private val classifierNamesLazy: Set<Name> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildSet {
             addAll(declaredMemberScope.getClassifierNames())

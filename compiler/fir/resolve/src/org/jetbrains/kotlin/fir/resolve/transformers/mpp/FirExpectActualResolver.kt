@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.utils.keysToMap
 import java.util.*
 
 object FirExpectActualResolver {
-    @OptIn(ExperimentalStdlibApi::class)
     fun findExpectForActual(
         actualSymbol: FirBasedSymbol<*>,
         useSiteSession: FirSession,
@@ -668,7 +667,6 @@ object FirExpectActualResolver {
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun FirTypeScope.getMembersTo(
         destination: MutableList<in FirCallableSymbol<*>>,
         name: Name,

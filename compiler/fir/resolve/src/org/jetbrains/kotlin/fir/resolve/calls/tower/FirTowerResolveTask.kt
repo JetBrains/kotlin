@@ -30,7 +30,6 @@ internal class TowerDataElementsForName(
     val nonLocalTowerDataElements = towerDataContext.nonLocalTowerDataElements.asReversedFrozen()
 
     val reversedFilteredLocalScopes by lazy(LazyThreadSafetyMode.NONE) {
-        @OptIn(ExperimentalStdlibApi::class)
         buildList {
             val localScopesBase = towerDataContext.localScopes
             val lastIndex = localScopesBase.lastIndex

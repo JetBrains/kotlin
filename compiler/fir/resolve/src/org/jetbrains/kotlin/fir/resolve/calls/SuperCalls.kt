@@ -126,7 +126,6 @@ private inline fun BodyResolveComponents.resolveSupertypesByMembers(
     }
 }
 
-@OptIn(ExperimentalStdlibApi::class)
 private fun BodyResolveComponents.getFunctionMembers(type: ConeKotlinType, name: Name): Collection<FirCallableDeclaration> =
     buildList {
         type.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)?.processFunctionsByName(name) {
@@ -134,7 +133,6 @@ private fun BodyResolveComponents.getFunctionMembers(type: ConeKotlinType, name:
         }
     }
 
-@OptIn(ExperimentalStdlibApi::class)
 private fun BodyResolveComponents.getPropertyMembers(type: ConeKotlinType, name: Name): Collection<FirCallableDeclaration> =
     buildList {
         type.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)?.processPropertiesByName(name) {
