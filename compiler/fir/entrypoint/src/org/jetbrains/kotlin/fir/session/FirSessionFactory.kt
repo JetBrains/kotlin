@@ -297,16 +297,4 @@ object FirSessionFactory : FirAbstractSessionFactory() {
             ))
         }
     }
-
-    fun createModuleDataForBuiltins(
-        parentModuleName: Name,
-        platform: TargetPlatform,
-        analyzerServices: PlatformDependentAnalyzerServices
-    ): FirModuleData {
-        return DependencyListForCliModule.createDependencyModuleData(
-            Name.special("<builtins of ${parentModuleName.asString()}"),
-            platform,
-            analyzerServices,
-        )
-    }
 }

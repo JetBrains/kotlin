@@ -70,7 +70,7 @@ abstract class FirAbstractSessionFactory {
         }
     }
 
-    private fun createModuleDataForBuiltins(
+    protected fun createModuleDataForBuiltins(
         parentModuleName: Name,
         platform: TargetPlatform,
         analyzerServices: PlatformDependentAnalyzerServices
