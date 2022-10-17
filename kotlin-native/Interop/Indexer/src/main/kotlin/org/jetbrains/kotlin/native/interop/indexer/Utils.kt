@@ -666,7 +666,7 @@ internal fun getHeadersAndUnits(
         library: NativeLibrary,
         index: CXIndex,
         translationUnit: CXTranslationUnit,
-        tuCache: TUCache
+        unitsHolder: UnitsHolder
 ): NativeLibraryHeadersAndUnits {
     val ownTranslationUnits = mutableSetOf<CXTranslationUnit>()
     val ownHeaders = mutableSetOf<CXFile?>()
@@ -676,10 +676,10 @@ internal fun getHeadersAndUnits(
 
     when (filter) {
         is NativeLibraryHeaderFilter.NameBased ->
-            filterHeadersByName(library, filter, index, translationUnit, ownTranslationUnits, ownHeaders, allHeaders, tuCache)
+            filterHeadersByName(library, filter, index, translationUnit, ownTranslationUnits, ownHeaders, allHeaders, unitsHolder)
 
         is NativeLibraryHeaderFilter.Predefined ->
-            filterHeadersByPredefined(filter, index, translationUnit, ownHeaders, allHeaders, tuCache)
+            filterHeadersByPredefined(filter, index, translationUnit, ownHeaders, allHeaders, unitsHolder)
     }
 
     ownHeaders.removeAll { library.headerExclusionPolicy.excludeAll(getHeaderId(library, it)) }
@@ -687,7 +687,7 @@ internal fun getHeadersAndUnits(
     return NativeLibraryHeadersAndUnits(NativeLibraryHeaders(ownHeaders, allHeaders - ownHeaders), ownTranslationUnits)
 }
 
-class TUCache(val index: CXIndex) : Disposable {
+class UnitsHolder(val index: CXIndex) : Disposable {
     private val unitByBinaryFile = mutableMapOf<String, CXTranslationUnit>()
 
     internal fun load(info: CXIdxImportedASTFileInfo): CXTranslationUnit {
@@ -713,7 +713,7 @@ private fun filterHeadersByName(
         ownTranslationUnits: MutableSet<CXTranslationUnit>,
         ownHeaders: MutableSet<CXFile?>,
         allHeaders: MutableSet<CXFile?>,
-        tuCache: TUCache
+        unitsHolder: UnitsHolder
 ) {
     val topLevelFiles = mutableSetOf<CXFile>()
     var mainFile: CXFile? = null
@@ -779,7 +779,7 @@ private fun filterHeadersByName(
                 }
 
                 override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
-                    tuCache.load(info).also { unit ->
+                    unitsHolder.load(info).also { unit ->
                         if (!translationUnits.contains(unit)) {
                             translationUnits.add(unit)
                             ownTranslationUnits += unit
@@ -816,7 +816,7 @@ private fun filterHeadersByPredefined(
         translationUnit: CXTranslationUnit,
         ownHeaders: MutableSet<CXFile?>,
         allHeaders: MutableSet<CXFile?>,
-        tuCache: TUCache
+        unitsHolder: UnitsHolder
 ) {
     val translationUnits = mutableListOf(translationUnit)
     // Note: suboptimal but simple.
@@ -838,7 +838,7 @@ private fun filterHeadersByPredefined(
                 }
 
                 override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
-                    tuCache.load(info).also { unit ->
+                    unitsHolder.load(info).also { unit ->
                         if (!translationUnits.contains(unit)) {
                             translationUnits.add(unit)
                         }
@@ -855,12 +855,11 @@ fun NativeLibrary.getHeaderPaths(): NativeLibraryHeaders<String> {
         val translationUnit =
                 this.parse(index, options = CXTranslationUnit_DetailedPreprocessingRecord).ensureNoCompileErrors()
         try {
+            val (headers, _) = UnitsHolder(index).use { unitsHolder ->
+                getHeadersAndUnits(this, index, translationUnit, unitsHolder)
+            }
 
             fun getPath(file: CXFile?) = if (file == null) "<builtins>" else file.canonicalPath
-
-            val (headers, _) = TUCache(index).use { tuCache ->
-                getHeadersAndUnits(this, index, translationUnit, tuCache)
-            }
             return NativeLibraryHeaders(
                     headers.ownHeaders.map(::getPath).toSet(),
                     headers.importedHeaders.map(::getPath).toSet()
