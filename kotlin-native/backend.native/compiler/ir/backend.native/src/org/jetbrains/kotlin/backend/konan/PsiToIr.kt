@@ -51,7 +51,7 @@ internal fun PsiToIrContext.psiToIr(
     val (moduleDescriptor, environment, isProducingLibrary) = input
     // Translate AST to high level IR.
     val expectActualLinker = config.configuration[CommonConfigurationKeys.EXPECT_ACTUAL_LINKER] ?: false
-    val messageLogger = config.configuration[IrMessageLogger.IR_MESSAGE_LOGGER] ?: IrMessageLogger.None
+    val messageLogger = config.configuration.irMessageLogger
 
     val partialLinkageEnabled = config.configuration[KonanConfigKeys.PARTIAL_LINKAGE] ?: false
 
