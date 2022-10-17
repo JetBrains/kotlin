@@ -234,12 +234,12 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         val outputDirPath = arguments.outputDir
         val outputName = arguments.moduleName
         if (outputDirPath == null) {
-            messageCollector.report(ERROR, "IR: Specify output dir via -Xir-output-dir", null)
+            messageCollector.report(ERROR, "IR: Specify output dir via -ir-output-dir", null)
             return COMPILATION_ERROR
         }
 
         if (outputName == null) {
-            messageCollector.report(ERROR, "IR: Specify output name via -Xir-module-name", null)
+            messageCollector.report(ERROR, "IR: Specify output name via -ir-output-name", null)
             return COMPILATION_ERROR
         }
 
