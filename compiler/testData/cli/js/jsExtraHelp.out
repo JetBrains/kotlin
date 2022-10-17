@@ -21,7 +21,7 @@ where advanced options include:
                              Lambda expressions that capture values are translated into in-line anonymous JavaScript functions
   -Xir-keep                  Comma-separated list of fully-qualified names to not be eliminated by DCE (if it can be reached), and for which to keep non-minified names.
   -Xir-minimized-member-names Perform minimization for names of members
-  -Xir-klib-module-name=<name> Specify a compilation module name for IR backend
+  -Xir-module-name=<name>    Specify a compilation module name for IR backend
   -Xir-new-ir2js             New fragment-based ir2js
   -Xir-only                  Disables pre-IR backend
   -Xir-per-file              Splits generated .js per-file
@@ -38,7 +38,6 @@ where advanced options include:
                              Enable runtime diagnostics when access safely to boolean in external declarations
   -Xlegacy-deprecated-no-warn Disable warnings of deprecation of legacy compiler
   -Xmetadata-only            Generate *.meta.js and *.kjsm files only
-  -Xir-module-name           Base name of generated files
   -Xir-output-dir=<directory> Destination for generated files
   -Xpartial-linkage          Allow unlinked symbols
   -Xrepositories=<path>      Paths to additional places where libraries could be found
