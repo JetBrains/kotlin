@@ -1,0 +1,30 @@
+KtPropertyGetterSymbol:
+  annotationsList: [
+    ExplicitGetAnnotation()
+      psi: KtAnnotationEntry
+    GetAnnotation()
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: null
+  contextReceivers: []
+  hasBody: true
+  hasStableParameterNames: true
+  isDefault: false
+  isExtension: false
+  isInline: false
+  isOverride: false
+  modality: FINAL
+  origin: SOURCE
+  receiverType: [
+    ReceiverAnnotation()
+      psi: KtAnnotationEntry
+    ReceiverTypeAnnotation()
+      psi: KtAnnotationEntry
+  ] @RECEIVER:R|ReceiverAnnotation|()  @R|ReceiverTypeAnnotation|()  kotlin/Long
+  returnType: kotlin/Int
+  symbolKind: ACCESSOR
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
