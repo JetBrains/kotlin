@@ -125,29 +125,6 @@ KtNamedClassOrObjectSymbol:
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtValueParameterSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  contextReceivers: []
-  generatedPrimaryConstructorProperty: null
-  hasDefaultValue: false
-  isCrossinline: false
-  isExtension: false
-  isImplicitLambdaParameter: false
-  isNoinline: false
-  isVararg: false
-  name: arg
-  origin: SOURCE
-  receiverType: null
-  returnType: [
-    Anno2()
-      psi: KtAnnotationEntry
-  ] @R|Anno2|()  I
-  symbolKind: LOCAL
-  typeParameters: []
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /X.f
