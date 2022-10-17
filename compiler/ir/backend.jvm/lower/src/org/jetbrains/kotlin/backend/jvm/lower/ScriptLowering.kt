@@ -127,7 +127,9 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
                             declaration.isEnumClass -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_ENUM)
                             declaration.isEnumEntry -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_ENUM_ENTRY)
                             // TODO: ClosureAnnotator is not catching companion's closures, so the following reporting never happens. Make it work or drop
-                            declaration.isCompanion -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_OBJECT, SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
+                            declaration.isCompanion -> reportError(
+                                JvmBackendErrors.SCRIPT_CAPTURING_OBJECT, SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
+                            )
                             declaration.kind.isSingleton -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_OBJECT)
 
                             declaration.isClass ->
@@ -201,7 +203,7 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
         irScriptClass.thisReceiver = scriptTransformer.scriptClassReceiver
 
         val defaultContext = ScriptToClassTransformerContext(irScriptClass.thisReceiver?.symbol, null, null, false)
-        fun <E: IrElement> E.patchForClass(): IrElement {
+        fun <E : IrElement> E.patchForClass(): IrElement {
             return transform(scriptTransformer, defaultContext)
                 .transform(lambdaPatcher, ScriptFixLambdasTransformerContext())
         }
