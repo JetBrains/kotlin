@@ -1,0 +1,4 @@
+compiler/testData/cli/jvm/KT-54316.kt:12:14: error: too many arguments for public abstract fun invoke(): Unit defined in kotlin.reflect.KFunction0
+    a.invoke(Foo())
+             ^
+COMPILATION_ERROR

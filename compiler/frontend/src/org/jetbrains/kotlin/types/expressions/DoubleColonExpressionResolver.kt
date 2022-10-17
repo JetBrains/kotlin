@@ -838,7 +838,10 @@ class DoubleColonExpressionResolver(
             descriptor.contextReceiverParameters.map { it.type }
 
         private fun receiverTypeFor(descriptor: CallableDescriptor, lhs: DoubleColonLHS?): KotlinType? =
-            (descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter)?.let { (lhs as? DoubleColonLHS.Type)?.type }
+            (descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter)
+                // checker descriptor is inside companion object.
+                ?.takeUnless { DescriptorUtils.isCompanionObject(it.containingDeclaration as? ClassDescriptor) }
+                ?.let { (lhs as? DoubleColonLHS.Type)?.type }
 
         private fun isMutablePropertyReference(
             descriptor: PropertyDescriptor,
