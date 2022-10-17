@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.overrides
+package org.jetbrains.kotlin.ir.linkage.partial
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
 
 interface IrUnimplementedOverridesStrategy {
-    class Customization(val origin: IrDeclarationOrigin?, val modality: Modality?, val needToCreateBody: Boolean) {
+    class Customization(val origin: IrDeclarationOrigin?, val modality: Modality?) {
         companion object {
-            val NO = Customization(null, null, false)
+            val NO = Customization(null, null)
         }
     }
 

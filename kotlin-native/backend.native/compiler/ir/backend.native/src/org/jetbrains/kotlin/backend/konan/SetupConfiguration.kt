@@ -284,7 +284,7 @@ private fun String.absoluteNormalizedFile() = java.io.File(this).absoluteFile.no
 internal fun CompilerConfiguration.setupCommonOptionsForCaches(konanConfig: KonanConfig) = with(KonanConfigKeys) {
     put(TARGET, konanConfig.target.toString())
     put(DEBUG, konanConfig.debug)
-    put(PARTIAL_LINKAGE, konanConfig.partialLinkage)
+    put(PARTIAL_LINKAGE, konanConfig.partialLinkageEnabled)
     putIfNotNull(EXTERNAL_DEPENDENCIES, konanConfig.externalDependenciesFile?.absolutePath)
     put(BinaryOptions.memoryModel, konanConfig.memoryModel)
     put(PROPERTY_LAZY_INITIALIZATION, konanConfig.propertyLazyInitialization)

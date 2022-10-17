@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.linkage.partial.isPartialLinkageRuntimeError
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
@@ -168,14 +169,26 @@ open class IrBuildingTransformer(private val context: BackendContext) : IrElemen
     }
 }
 
-fun IrConstructor.callsSuper(irBuiltIns: IrBuiltIns): Boolean {
+enum class ConstructorDelegationKind {
+    /** Calls another constructor of the same class. */
+    CALLS_THIS,
+
+    /** Calls the constructor of the super class. */
+    CALLS_SUPER,
+
+    /** The actual delegation is not known. The constructor call was replaced by a partial linkage error. */
+    PARTIAL_LINKAGE_ERROR
+}
+
+fun IrConstructor.delegationKind(irBuiltIns: IrBuiltIns): ConstructorDelegationKind {
     val constructedClass = parent as IrClass
     val superClass = constructedClass.superTypes
         .mapNotNull { it as? IrSimpleType }
         .firstOrNull { (it.classifier.owner as IrClass).run { kind == ClassKind.CLASS || kind == ClassKind.ANNOTATION_CLASS || kind == ClassKind.ENUM_CLASS } }
         ?: irBuiltIns.anyType
     var callsSuper = false
-    var numberOfCalls = 0
+    var numberOfDelegatingCalls = 0
+    var hasPartialLinkageError = false
     acceptChildrenVoid(object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
@@ -186,7 +199,7 @@ fun IrConstructor.callsSuper(irBuiltIns: IrBuiltIns): Boolean {
         }
 
         override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
-            assert(++numberOfCalls == 1) { "More than one delegating constructor call: ${symbol.owner}" }
+            numberOfDelegatingCalls++
             val delegatingClass = expression.symbol.owner.parent as IrClass
             // TODO: figure out why Lazy IR multiplies Declarations for descriptors and fix it
             // It happens because of IrBuiltIns whose IrDeclarations are different for runtime and test
@@ -198,10 +211,30 @@ fun IrConstructor.callsSuper(irBuiltIns: IrBuiltIns): Boolean {
                             " call to super class constructor. But was: $delegatingClass with '${delegatingClass.name}' name"
                 )
         }
+
+        override fun visitExpression(expression: IrExpression) {
+            hasPartialLinkageError = hasPartialLinkageError || expression.isPartialLinkageRuntimeError()
+            super.visitExpression(expression)
+        }
     })
-    assert(numberOfCalls == 1) { "Expected exactly one delegating constructor call but none encountered: ${symbol.owner}" }
-    return callsSuper
+
+    val delegationKind: ConstructorDelegationKind? = when (numberOfDelegatingCalls) {
+        0 -> if (hasPartialLinkageError) ConstructorDelegationKind.PARTIAL_LINKAGE_ERROR else null
+        1 -> if (callsSuper) ConstructorDelegationKind.CALLS_SUPER else ConstructorDelegationKind.CALLS_THIS
+        else -> null
+    }
+
+    if (delegationKind != null)
+        return delegationKind
+    else
+        throw AssertionError("Expected exactly one delegating constructor call but $numberOfDelegatingCalls encountered: ${symbol.owner}")
 }
+
+@Deprecated(
+    "Replaced by delegationKind() that is aware of the possible partial linkage side effects",
+    ReplaceWith("delegationKind(irBuiltIns)")
+)
+fun IrConstructor.callsSuper(irBuiltIns: IrBuiltIns): Boolean = delegationKind(irBuiltIns) == ConstructorDelegationKind.CALLS_SUPER
 
 fun ParameterDescriptor.copyAsValueParameter(newOwner: CallableDescriptor, index: Int, name: Name = this.name) = when (this) {
     is ValueParameterDescriptor -> this.copy(newOwner, name, index)
