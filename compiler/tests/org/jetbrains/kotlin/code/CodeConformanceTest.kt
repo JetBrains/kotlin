@@ -393,7 +393,7 @@ class CodeConformanceTest : TestCase() {
 
     fun testLanguageFeatureOrder() {
         val values = enumValues<LanguageFeature>()
-        val enabledFeatures = values.filter { it.sinceVersion != null && it.defaultState == LanguageFeature.State.ENABLED }
+        val enabledFeatures = values.filter { it.sinceVersion != null }
 
         if (enabledFeatures.sortedBy { it.sinceVersion!! } != enabledFeatures) {
             val (a, b) = enabledFeatures.zipWithNext().first { (a, b) -> a.sinceVersion!! > b.sinceVersion!! }
