@@ -1,4 +1,3 @@
-// IGNORE_FIR
 // TARGET_BACKEND: JVM_IR
 interface T {
     fun getX() = 1

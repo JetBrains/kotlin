@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +DataObjects
 // TARGET_BACKEND: JVM_IR
 
