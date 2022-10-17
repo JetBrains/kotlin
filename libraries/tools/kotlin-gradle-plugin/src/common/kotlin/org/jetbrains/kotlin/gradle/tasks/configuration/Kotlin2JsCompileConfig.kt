@@ -106,7 +106,9 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
             } else {
                 "${project.name}_${compilation.compilationPurpose}"
             }
-            add("$KLIB_MODULE_NAME=${project.klibModuleName(baseName)}")
+            if (none { it.startsWith(KLIB_MODULE_NAME) }) {
+                add("$KLIB_MODULE_NAME=${project.klibModuleName(baseName)}")
+            }
         }
     }
 }
