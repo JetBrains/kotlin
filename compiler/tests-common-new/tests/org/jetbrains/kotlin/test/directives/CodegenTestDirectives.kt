@@ -201,7 +201,7 @@ fun extractIgnoredDirectiveForTargetBackend(
             !module.directives.contains(specificIgnoreDirective) -> CodegenTestDirectives.IGNORE_BACKEND
             else -> {
                 val inCommonIgnored = module.directives[CodegenTestDirectives.IGNORE_BACKEND].let { targetBackend in it || TargetBackend.ANY in it }
-                val inSpecificIgnored = module.directives[ specificIgnoreDirective].let { targetBackend in it || TargetBackend.ANY in it }
+                val inSpecificIgnored = module.directives[specificIgnoreDirective].let { targetBackend in it || TargetBackend.ANY in it }
                 if (inCommonIgnored && inSpecificIgnored) {
                     throw AssertionError("Both, IGNORE_BACKEND and ${specificIgnoreDirective.name} contain target backend ${targetBackend.name}. Please remove one of them.")
                 }
