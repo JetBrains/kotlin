@@ -14,6 +14,42 @@ import java.io.File
 
 data class SteppingTestLoggedData(val line: Int, val isSynthetic: Boolean, val expectation: String)
 
+sealed interface LocalValue
+
+class LocalPrimitive(val value: String, val valueType: String) : LocalValue {
+    override fun toString(): String {
+        return "$value:$valueType"
+    }
+}
+
+class LocalReference(val id: String, val referenceType: String) : LocalValue {
+    override fun toString(): String {
+        return referenceType
+    }
+}
+
+object LocalNullValue : LocalValue {
+    override fun toString(): String {
+        return "null"
+    }
+}
+
+class LocalVariableRecord(
+    val variable: String,
+    val variableType: String?,
+    val value: LocalValue
+) {
+    override fun toString(): String = buildString {
+        append(variable)
+        if (variableType != null) {
+            append(":")
+            append(variableType)
+        }
+        append("=")
+        append(value)
+    }
+}
+
 private const val EXPECTATIONS_MARKER = "// EXPECTATIONS"
 private const val FORCE_STEP_INTO_MARKER = "// FORCE_STEP_INTO"
 
@@ -27,7 +63,7 @@ fun checkSteppingTestResult(
     val lines = wholeFile.readLines()
     val forceStepInto = lines.any { it.startsWith(FORCE_STEP_INTO_MARKER) }
 
-    val actualLineNumbers = compressSequencesWithoutLinenumber(loggedItems)
+    val actualLineNumbers = compressSequencesWithoutLineNumber(loggedItems)
         .filter {
             // Ignore synthetic code with no line number information unless force step into behavior is requested.
             forceStepInto || !it.isSynthetic
@@ -88,7 +124,7 @@ fun checkSteppingTestResult(
  * print as byte offsets. This avoids overspecifying code generation
  * strategy in debug tests.
  */
-private fun compressSequencesWithoutLinenumber(loggedItems: List<SteppingTestLoggedData>): List<SteppingTestLoggedData> {
+private fun compressSequencesWithoutLineNumber(loggedItems: List<SteppingTestLoggedData>): List<SteppingTestLoggedData> {
     if (loggedItems.isEmpty()) return listOf()
 
     val logIterator = loggedItems.iterator()
@@ -105,7 +141,22 @@ private fun compressSequencesWithoutLinenumber(loggedItems: List<SteppingTestLog
     return result
 }
 
-fun formatAsSteppingTestExpectation(sourceName: String, lineNumber: Int, functionName: String, isSynthetic: Boolean): String {
-    val synthetic = if (isSynthetic) " (synthetic)" else ""
-    return "$sourceName:$lineNumber $functionName$synthetic"
-}
+fun formatAsSteppingTestExpectation(
+    sourceName: String,
+    lineNumber: Int,
+    functionName: String,
+    isSynthetic: Boolean,
+    visibleVars: List<LocalVariableRecord>? = null
+) = buildString {
+    append(sourceName)
+    append(':')
+    append(lineNumber)
+    append(' ')
+    append(functionName)
+    if (isSynthetic)
+        append(" (synthetic)")
+    if (visibleVars != null) {
+        append(": ")
+        visibleVars.joinTo(this)
+    }
+}.trim()

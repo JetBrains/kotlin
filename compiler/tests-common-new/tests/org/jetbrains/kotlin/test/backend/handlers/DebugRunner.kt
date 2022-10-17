@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.BOX_MAIN_FILE_NAME
-import org.jetbrains.kotlin.test.utils.SteppingTestLoggedData
-import org.jetbrains.kotlin.test.utils.checkSteppingTestResult
-import org.jetbrains.kotlin.test.utils.formatAsSteppingTestExpectation
+import org.jetbrains.kotlin.test.utils.*
 import java.io.File
 import java.net.URL
 
@@ -161,8 +159,8 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
         virtualMachine.resume()
     }
 
-    fun Location.formatAsExpectation() =
-        formatAsSteppingTestExpectation(sourceName(), lineNumber(), method().name(), method().isSynthetic)
+    fun Location.formatAsExpectation(visibleVars: List<LocalVariableRecord>? = null) =
+        formatAsSteppingTestExpectation(sourceName(), lineNumber(), method().name(), method().isSynthetic, visibleVars)
 
     fun setupMethodEntryAndExitRequests(virtualMachine: VirtualMachine) {
         val manager = virtualMachine.eventRequestManager()
@@ -204,40 +202,11 @@ class SteppingDebugRunner(testServices: TestServices) : DebugRunner(testServices
 }
 
 class LocalVariableDebugRunner(testServices: TestServices) : DebugRunner(testServices) {
-    interface LocalValue
-
-    class LocalPrimitive(val value: String, val valueType: String) : LocalValue {
-        override fun toString(): String {
-            return "$value:$valueType"
-        }
-    }
-
-    class LocalReference(val id: String, val referenceType: String) : LocalValue {
-        override fun toString(): String {
-            return referenceType
-        }
-    }
-
-    class LocalNullValue : LocalValue {
-        override fun toString(): String {
-            return "null"
-        }
-    }
-
-    class LocalVariableRecord(
-        val variable: String,
-        val variableType: String,
-        val value: LocalValue
-    ) {
-        override fun toString(): String {
-            return "$variable:$variableType=$value"
-        }
-    }
 
     private fun toRecord(frame: StackFrame, variable: LocalVariable): LocalVariableRecord {
         val value = frame.getValue(variable)
         val valueRecord = if (value == null) {
-            LocalNullValue()
+            LocalNullValue
         } else if (value is ObjectReference && value.referenceType().name() != "java.lang.String") {
             LocalReference(value.uniqueID().toString(), value.referenceType().name())
         } else {
@@ -269,7 +238,7 @@ class LocalVariableDebugRunner(testServices: TestServices) : DebugRunner(testSer
             SteppingTestLoggedData(
                 location.lineNumber(),
                 false,
-                "${location.formatAsExpectation()}: ${visibleVars.joinToString(", ")}".trim()
+                location.formatAsExpectation(visibleVars)
             )
         )
     }
