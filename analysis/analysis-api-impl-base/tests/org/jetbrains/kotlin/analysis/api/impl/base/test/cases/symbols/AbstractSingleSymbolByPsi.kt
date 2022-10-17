@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractSingleSymbolByPsi : AbstractSymbolTest() {
     override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
-        val declaration = testServices.expressionMarkerProvider.getSelectedElementOfType<KtDeclaration>(ktFile)
+        val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(ktFile)
         val symbol = declaration.getSymbol()
         return SymbolsData(listOf(symbol))
     }

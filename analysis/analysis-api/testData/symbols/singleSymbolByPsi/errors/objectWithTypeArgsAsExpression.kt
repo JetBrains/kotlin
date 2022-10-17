@@ -1,3 +1,3 @@
-private val commonSettingsLazy = <expr>object A<LanguageVersionSettings> {
+private val commonSettingsLazy = o<caret>bject A<LanguageVersionSettings> {
    println(x)
-}</expr>
+}
