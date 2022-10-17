@@ -553,23 +553,28 @@ public class KotlinTestUtils {
                 if (PRINT_STACKTRACE_FOR_IGNORED_TESTS) {
                     e.printStackTrace();
                 } else {
-                    System.err.println("MUTED TEST with `" + ignoreDirectives + "`");
+                    System.err.println("MUTED TEST with `" + ignoreDirectives[0] + "`");
                 }
                 return;
             }
 
             if (isIgnored) {
+                StringBuilder directivesToRemove = new StringBuilder();
                 if (AUTOMATICALLY_UNMUTE_PASSED_TESTS) {
-                    String text = KtTestUtil.doLoadFile(testDataFile);
-                    String directive = ignoreDirectives + targetBackend.name();
-                    String newText = Pattern.compile("^" + directive + "\n", Pattern.MULTILINE).matcher(text).replaceAll("");
-                    if (!newText.equals(text)) {
-                        System.err.println("\"" + directive + "\" was removed from \"" + testDataFile + "\"");
-                        FileUtil.writeToFile(testDataFile, newText);
+                    for (String ignoreDirective: ignoreDirectives){
+                        String text = KtTestUtil.doLoadFile(testDataFile);
+                        String directive = ignoreDirective + targetBackend.name();
+                        directivesToRemove.append(directive);
+                        directivesToRemove.append(", ");
+                        String newText = Pattern.compile("^" + directive + "\n", Pattern.MULTILINE).matcher(text).replaceAll("");
+                        if (!newText.equals(text)) {
+                            System.err.println("\"" + directive + "\" was removed from \"" + testDataFile + "\"");
+                            FileUtil.writeToFile(testDataFile, newText);
+                        }
                     }
                 }
 
-                throw new AssertionError(String.format("Looks like this test can be unmuted. Remove \"%s%s\" directive.", ignoreDirectives, targetBackend));
+                throw new AssertionError(String.format("Looks like this test can be unmuted. Remove \"%s\" directive.", directivesToRemove.toString()));
             }
         };
     }
