@@ -276,7 +276,7 @@ enum class LanguageFeature(
     ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound(KOTLIN_1_9, kind = BUG_FIX), // KT-47986
     KeepNullabilityWhenApproximatingLocalType(KOTLIN_1_9, kind = BUG_FIX), // KT-53982
     SkipStandaloneScriptsInSourceRoots(KOTLIN_1_9, kind = OTHER), // KT-52525
-    ModifierNonBuiltinSuspendFunError(KOTLIN_1_9),
+    ModifierNonBuiltinSuspendFunError(KOTLIN_1_9), // KT-49264
     BreakContinueInInlineLambdas(KOTLIN_1_9, defaultState = State.ENABLED), // KT-1436
     EnumEntries(KOTLIN_1_9, sinceApiVersion = ApiVersion.KOTLIN_1_8, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE), // KT-48872
     EnableDfaWarningsInK2(KOTLIN_1_9, kind = OTHER), // KT-50965
