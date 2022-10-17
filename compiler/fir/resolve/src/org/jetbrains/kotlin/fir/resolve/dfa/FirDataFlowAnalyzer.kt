@@ -355,7 +355,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     fun exitAnonymousObject(anonymousObject: FirAnonymousObject): ControlFlowGraph {
-        // TODO: support capturing of mutable properties, KT-44877
         val (node, controlFlowGraph) = graphBuilder.exitAnonymousObject(anonymousObject)
         node.mergeIncomingFlow()
         return controlFlowGraph
@@ -1555,13 +1554,13 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         var deadForwardCount = 0
         for (previousNode in previousNodes) {
             val incomingEdgeKind = incomingEdges.getValue(previousNode).kind
-            if (isDead) {
-                if (!incomingEdgeKind.isBack) {
-                    previousFlows += previousNode.flow
-                }
+
+            if (isDead && incomingEdgeKind.usedInDeadDfa) {
+                previousFlows += previousNode.flow
             } else if (incomingEdgeKind.usedInDfa) {
                 previousFlows += previousNode.flow
             }
+
             if (incomingEdgeKind == EdgeKind.DeadForward) {
                 deadForwardCount++
             }

@@ -931,6 +931,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/annotatedLocalClass.kt");
         }
 
+        @TestMetadata("anonymousObjectInUnreachableCode.kt")
+        public void testAnonymousObjectInUnreachableCode() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/cfg/anonymousObjectInUnreachableCode.kt");
+        }
+
         @TestMetadata("binaryOperations.kt")
         public void testBinaryOperations() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/binaryOperations.kt");
