@@ -56,11 +56,13 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             // TODO: Invalidate properly in PsiToIrContextImpl.dispose
             val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
             val psiToIrContext = PsiToIrContextImpl(config, frontendResult.moduleDescriptor, frontendResult.bindingContext, symbolTable)
-            engine.useContext(psiToIrContext) { psiToIrEngine ->
+            val psiToIrResult = engine.useContext(psiToIrContext) { psiToIrEngine ->
                 val result = psiToIrEngine.runPsiToIr(frontendResult, isProducingLibrary = true)
                 psiToIrEngine.runSpecialBackendChecks(result)
                 result
             }
+            engine.runPhase(engine.context, CopyDefaultValuesToActualPhase, psiToIrResult.irModule)
+            psiToIrResult
         } else null
         val serializerResult = engine.runSerializer(frontendResult.moduleDescriptor, psiToIrResult)
         engine.writeKlib(serializerResult)
