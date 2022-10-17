@@ -687,10 +687,10 @@ internal fun getHeadersAndUnits(
     return NativeLibraryHeadersAndUnits(NativeLibraryHeaders(ownHeaders, allHeaders - ownHeaders), ownTranslationUnits)
 }
 
-class TUCache : Disposable {
+class TUCache(val index: CXIndex) : Disposable {
     private val unitByBinaryFile = mutableMapOf<String, CXTranslationUnit>()
 
-    internal fun load(index: CXIndex, info: CXIdxImportedASTFileInfo): CXTranslationUnit {
+    internal fun load(info: CXIdxImportedASTFileInfo): CXTranslationUnit {
         val canonicalPath: String = info.file!!.canonicalPath
         return unitByBinaryFile.getOrElse(canonicalPath) {
             clang_createTranslationUnit(index, canonicalPath)!!.also { unit ->
@@ -779,7 +779,7 @@ private fun filterHeadersByName(
                 }
 
                 override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
-                    tuCache.load(index, info).also { unit ->
+                    tuCache.load(info).also { unit ->
                         if (!translationUnits.contains(unit)) {
                             translationUnits.add(unit)
                             ownTranslationUnits += unit
@@ -838,7 +838,7 @@ private fun filterHeadersByPredefined(
                 }
 
                 override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
-                    tuCache.load(index, info).also { unit ->
+                    tuCache.load(info).also { unit ->
                         if (!translationUnits.contains(unit)) {
                             translationUnits.add(unit)
                         }
@@ -850,7 +850,7 @@ private fun filterHeadersByPredefined(
     }
 }
 
-fun NativeLibrary.getHeaderPaths(tuCache: TUCache): NativeLibraryHeaders<String> {
+fun NativeLibrary.getHeaderPaths(): NativeLibraryHeaders<String> {
     withIndex { index ->
         val translationUnit =
                 this.parse(index, options = CXTranslationUnit_DetailedPreprocessingRecord).ensureNoCompileErrors()
@@ -858,7 +858,9 @@ fun NativeLibrary.getHeaderPaths(tuCache: TUCache): NativeLibraryHeaders<String>
 
             fun getPath(file: CXFile?) = if (file == null) "<builtins>" else file.canonicalPath
 
-            val (headers, _) = getHeadersAndUnits(this, index, translationUnit, tuCache)
+            val (headers, _) = TUCache(index).use { tuCache ->
+                getHeadersAndUnits(this, index, translationUnit, tuCache)
+            }
             return NativeLibraryHeaders(
                     headers.ownHeaders.map(::getPath).toSet(),
                     headers.importedHeaders.map(::getPath).toSet()
