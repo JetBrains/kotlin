@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
-import org.jetbrains.kotlin.native.interop.indexer.TUCache
 import org.jetbrains.kotlin.native.interop.indexer.getHeaderPaths
-import org.jetbrains.kotlin.native.interop.indexer.use
 import kotlin.test.*
 
 class ExcludeFilterTests : InteropTestsBase() {

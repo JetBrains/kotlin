@@ -1202,8 +1202,8 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
 
             val compilation = nativeIndex.library.withPrecompiledHeader(translationUnit)
 
-            TUCache(index).use { tuCache ->
-                val (headers, ownUnits) = getHeadersAndUnits(nativeIndex.library, index, translationUnit, tuCache)
+            UnitsHolder(index).use { unitsHolder ->
+                val (headers, ownUnits) = getHeadersAndUnits(nativeIndex.library, index, translationUnit, unitsHolder)
                 val ownHeaders = headers.ownHeaders
                 val headersCanonicalPaths = ownHeaders.filterNotNull().map { it.canonicalPath }.toSet()
 
