@@ -22,7 +22,7 @@ internal const val PRODUCE_ZIPPED_KLIB = "-Xir-produce-klib-file"
 
 internal const val MINIMIZED_MEMBER_NAMES = "-Xir-minimized-member-names"
 
-internal const val KLIB_MODULE_NAME = "-Xir-klib-module-name"
+internal const val KLIB_MODULE_NAME = "-Xir-module-name"
 
 internal const val PER_MODULE = "-Xir-per-module"
 internal const val PER_MODULE_OUTPUT_NAME = "-Xir-per-module-output-name"

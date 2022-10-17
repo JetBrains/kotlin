@@ -35,7 +35,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         value = DefaultValues.StringNullDefault::class,
         gradleInputType = GradleInputTypes.INPUT
     )
-    @Argument(value = "-Xir-module-name", description = "Base name of generated files")
+    @Argument(value = "-module-name", description = "Base name of generated files")
     var moduleName: String? by NullableStringFreezableVar(null)
 
     @GradleOption(
@@ -204,7 +204,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var irOnly: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xir-klib-module-name",
+        value = "-Xir-module-name",
         valueDescription = "<name>",
         description = "Specify a compilation module name for IR backend"
     )
