@@ -1,0 +1,2 @@
+@PropertyAnnotation
+var prop: kotlin.Int

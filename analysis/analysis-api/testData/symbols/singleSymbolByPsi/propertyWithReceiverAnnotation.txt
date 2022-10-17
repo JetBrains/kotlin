@@ -1,0 +1,59 @@
+KtKotlinPropertySymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /prop
+  contextReceivers: []
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: true
+    hasStableParameterNames: true
+    isDefault: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverType: [
+      ReceiverAnnotation()
+        psi: KtAnnotationEntry
+      ReceiverTypeAnnotation()
+        psi: KtAnnotationEntry
+    ] @RECEIVER:R|ReceiverAnnotation|()  @R|ReceiverTypeAnnotation|()  kotlin/Long
+    returnType: kotlin/Boolean
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
+  hasBackingField: false
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isConst: false
+  isDelegatedProperty: false
+  isExtension: true
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: prop
+  origin: SOURCE
+  receiverType: [
+    ReceiverAnnotation()
+      psi: KtAnnotationEntry
+    ReceiverTypeAnnotation()
+      psi: KtAnnotationEntry
+  ] @RECEIVER:R|ReceiverAnnotation|()  @R|ReceiverTypeAnnotation|()  kotlin/Long
+  returnType: kotlin/Boolean
+  setter: null
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getProp
+  javaSetterName: null
+  setterDeprecationStatus: null

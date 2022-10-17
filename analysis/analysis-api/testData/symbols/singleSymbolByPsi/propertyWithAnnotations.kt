@@ -11,9 +11,4 @@ annotation class SetparamAnnotation
 @get:GetAnnotation
 @set:SetAnnotation
 @setparam:SetparamAnnotation
-var prop: Int = 1
-
-annotation class DelegateAnnotation
-
-@delegate:DelegateAnnotation
-val lazyProperty by lazy { 1 }
+var pr<caret>op: Int = 1

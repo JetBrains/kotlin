@@ -1,0 +1,30 @@
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /foo
+  contextReceivers: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: true
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: foo
+  origin: SOURCE
+  receiverType: [
+    ReceiverAnnotation()
+      psi: KtAnnotationEntry
+    ReceiverTypeAnnotation()
+      psi: KtAnnotationEntry
+  ] @RECEIVER:R|ReceiverAnnotation|()  @R|ReceiverTypeAnnotation|()  kotlin/Int
+  returnType: kotlin/Unit
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
