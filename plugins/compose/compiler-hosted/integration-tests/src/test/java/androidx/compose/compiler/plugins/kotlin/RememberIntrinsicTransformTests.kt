@@ -17,7 +17,6 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.intellij.lang.annotations.Language
-import org.junit.Ignore
 import org.junit.Test
 
 class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
@@ -49,6 +48,20 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
     )
 
     @Test
+    // The intent of this test is incorrect. If a slot is conditional it requires a group
+    // as slots can only be inserted and removed as part of a group. If we made the remember in the
+    // `if` statement intrinsic when taking the "else" part of the branch will leave the cached
+    // state as part of the slot table (preventing `onForgotten` from being called) as its group
+    // was not removed (not calling `onForgotten`). Keeping for now to ensure we handle this case
+    // correctly if intrinsic remember is allowed in more places.
+    //
+    // If the remember in the `if` statement was converted to be an intrinsic remember the else
+    // block would need to explicitly overwrite the slots used in the `then` part with
+    // [Composer.Empty]. Note that this also means that the else block takens more slot space as
+    // the slots are still allocated but unused.
+    //
+    // Without intrinsic remember, the slots are deleted from the slot table when
+    // the "remember" group is removed but at the cost of a group to track the slot.
     fun testElidedRememberInsideIfDeoptsRememberAfterIf(): Unit = comparisonPropagation(
         "",
         """
@@ -71,10 +84,11 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 traceEventStart(<>, %changed, -1, <>)
               }
               val a = %composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "<rememb...>")
               val tmp0_group = if (x) {
-                %composer.cache(false) {
+                remember({
                   1
-                }
+                }, %composer, 0)
               } else {
                 2
               }
@@ -479,15 +493,15 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             @Composable
             fun Test(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test)<curren...>:Test.kt")
+              sourceInformation(%composer, "C(Test)<curren...>,<rememb...>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
                 val bar = compositionLocalBar.current
-                val foo = %composer.cache(%composer.changed(bar)) {
+                val foo = remember(bar, {
                   Foo()
-                }
+                }, %composer, 0)
                 if (isTraceInProgress()) {
                   traceEventEnd()
                 }
@@ -512,7 +526,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Test() { 
+            fun Test() {
                 val foo = remember(compositionLocalBar.current) { Foo() }
             }
         """,
@@ -520,14 +534,14 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             @Composable
             fun Test(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test)<curren...>:Test.kt")
+              sourceInformation(%composer, "C(Test)<curren...>,<rememb...>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
-                val foo = %composer.cache(%composer.changed(compositionLocalBar.current)) {
+                val foo = remember(compositionLocalBar.current, {
                   Foo()
-                }
+                }, %composer, 0)
                 if (isTraceInProgress()) {
                   traceEventEnd()
                 }
@@ -599,7 +613,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             @Composable
             fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test)<A()>:Test.kt")
+              sourceInformation(%composer, "C(Test)<A()>,<rememb...>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
@@ -610,9 +624,9 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 }
                 A(%composer, 0)
                 if (condition) {
-                  val foo = %composer.cache(false) {
+                  val foo = remember({
                     Foo()
-                  }
+                  }, %composer, 0)
                 }
                 if (isTraceInProgress()) {
                   traceEventEnd()
@@ -1204,8 +1218,8 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
         """
     )
 
-    @Ignore("This test must pass before intrinsic remember can be turned on")
-    fun xtestOptimizationFailsIfDefaultsGroupIsUsed(): Unit = comparisonPropagation(
+    @Test
+    fun testOptimizationFailsIfDefaultsGroupIsUsed(): Unit = comparisonPropagation(
         """
             class Foo
             fun someInt(): Int = 123
@@ -1228,29 +1242,386 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 %dirty = %dirty or if (%default and 0b0001 === 0 && %composer.changed(a)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                %composer.startDefaults()
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
-                  %composer.startDefaults()
                   if (%default and 0b0001 !== 0) {
                     a = someInt()
                     %dirty = %dirty and 0b1110.inv()
                   }
-                  %composer.endDefaults()
                 } else {
-                  %composer.skipCurrentGroup()
+                  %composer.skipToGroupEnd()
                   if (%default and 0b0001 !== 0) {
                     %dirty = %dirty and 0b1110.inv()
                   }
+                }
+                %composer.endDefaults()
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
                 }
                 val foo = remember({
                   Foo()
                 }, %composer, 0)
                 used(foo)
                 used(a)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(a, %composer, updateChangedFlags(%changed or 0b0001), %default)
+              }
+            }
+        """
+    )
+
+    @Test
+    fun testIntrinsicRememberOfDefaultParameters_Simple() = comparisonPropagation(
+        """""",
+        """
+            @Composable
+            fun Test(a: Int = remember { 0 }) {
+                used(a)
+            }
+        """,
+        """
+            @Composable
+            fun Test(a: Int, %composer: Composer?, %changed: Int, %default: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test):Test.kt")
+              val %dirty = %changed
+              if (%default and 0b0001 !== 0) {
+                %dirty = %dirty or 0b0110
+              } else if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+              }
+              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                if (%default and 0b0001 !== 0) {
+                  a = %composer.cache(false) {
+                    0
+                  }
+                }
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
+                used(a)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(a, %composer, updateChangedFlags(%changed or 0b0001), %default)
+              }
+            }
+        """
+    )
+
+    @Test
+    fun testIntrinsicRememberOfDefaultParameters_AfterComposable() = comparisonPropagation(
+        """
+            @Composable
+            fun SomeComposable() = 0
+        """,
+        """
+            @Composable
+            fun Test(a: Int = remember { 0 }, b: Int = SomeComposable(), c: Int = remember { 0 }) {
+                used(a)
+                used(b)
+                used(c)
+            }
+        """,
+        """
+            @Composable
+            fun Test(a: Int, b: Int, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test)<SomeCo...>,<rememb...>:Test.kt")
+              val %dirty = %changed
+              if (%default and 0b0001 !== 0) {
+                %dirty = %dirty or 0b0110
+              } else if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+              }
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%default and 0b0010 === 0 && %composer.changed(b)) 0b00100000 else 0b00010000
+              }
+              if (%default and 0b0100 !== 0) {
+                %dirty = %dirty or 0b000110000000
+              } else if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(c)) 0b000100000000 else 0b10000000
+              }
+              if (%dirty and 0b001011011011 !== 0b10010010 || !%composer.skipping) {
+                %composer.startDefaults()
+                if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
+                  if (%default and 0b0001 !== 0) {
+                    a = %composer.cache(false) {
+                      0
+                    }
+                  }
+                  if (%default and 0b0010 !== 0) {
+                    b = SomeComposable(%composer, 0)
+                    %dirty = %dirty and 0b01110000.inv()
+                  }
+                  if (%default and 0b0100 !== 0) {
+                    c = remember({
+                      0
+                    }, %composer, 0)
+                  }
+                } else {
+                  %composer.skipToGroupEnd()
+                  if (%default and 0b0010 !== 0) {
+                    %dirty = %dirty and 0b01110000.inv()
+                  }
+                }
+                %composer.endDefaults()
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
+                used(a)
+                used(b)
+                used(c)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(a, b, c, %composer, updateChangedFlags(%changed or 0b0001), %default)
+              }
+            }
+        """
+    )
+
+    @Test
+    fun testIntrinsicRememberOfLambdaInIfBlock() = comparisonPropagation(
+        // Simulation of Scrim in BackdropScaffold
+        """
+            class Modifier
+            fun Modifier.pointerInput(key1: Any?, block: () -> Unit) = this
+            fun detectTapGestures(block: () -> Unit) {}
+            @Composable fun someComposableValue(): Int = 1
+        """,
+        """
+        @Composable
+        fun Test(a: Boolean, visible: Boolean, onDismiss: () -> Unit) {
+            if (a) {
+                val a = someComposableValue()
+                used(a)
+                val m = Modifier()
+                val dismissModifier = if (visible) {
+                    m.pointerInput(Unit) { detectTapGestures { onDismiss() } }
+                } else {
+                    m
+                }
+                used(dismissModifier)
+            }
+        }
+        """,
+        """
+            @Composable
+            fun Test(a: Boolean, visible: Boolean, onDismiss: Function0<Unit>, %composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test)P(!1,2)<someCo...>,<{>:Test.kt")
+              val %dirty = %changed
+              if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+              }
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(visible)) 0b00100000 else 0b00010000
+              }
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changedInstance(onDismiss)) 0b000100000000 else 0b10000000
+              }
+              if (%dirty and 0b001011011011 !== 0b10010010 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %dirty, -1, <>)
+                }
+                if (a) {
+                  val a = someComposableValue(%composer, 0)
+                  used(a)
+                  val m = Modifier()
+                  val dismissModifier =
+                  val tmp0_group = if (visible) {
+                    m.pointerInput(Unit, remember(onDismiss, {
+                      {
+                        detectTapGestures {
+                          onDismiss()
+                        }
+                      }
+                    }, %composer, 0b1110 and %dirty shr 0b0110))
+                  } else {
+                    m
+                  }
+                  tmp0_group
+                  used(dismissModifier)
+                }
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(a, visible, onDismiss, %composer, updateChangedFlags(%changed or 0b0001))
+              }
+            }        """
+    )
+
+    @Test
+    fun testRememberAfterStaticDefaultParameters() = comparisonPropagation(
+        unchecked = """
+            import androidx.compose.runtime.*
+
+            enum class Foo {
+                A,
+                B,
+                C,
+            }
+
+            @Stable
+            fun swizzle(a: Int, b: Int) = a + b
+
+            @Composable
+            fun used(a: Any) { }
+            """,
+        checked = """
+            @Composable
+            fun Test(a: Int = 1, b: Foo = Foo.B, c: Int = swizzle(1, 2) ) {
+                val s = remember(a, b, c) { Any() }
+                used(s)
+            }
+        """,
+        expectedTransformed = """
+            @Composable
+            fun Test(a: Int, b: Foo?, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test)<used(s...>:Test.kt")
+              val %dirty = %changed
+              if (%default and 0b0001 !== 0) {
+                %dirty = %dirty or 0b0110
+              } else if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+              }
+              if (%default and 0b0010 !== 0) {
+                %dirty = %dirty or 0b00110000
+              } else if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(b)) 0b00100000 else 0b00010000
+              }
+              if (%default and 0b0100 !== 0) {
+                %dirty = %dirty or 0b000110000000
+              } else if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(c)) 0b000100000000 else 0b10000000
+              }
+              if (%dirty and 0b001011011011 !== 0b10010010 || !%composer.skipping) {
+                if (%default and 0b0001 !== 0) {
+                  a = 1
+                }
+                if (%default and 0b0010 !== 0) {
+                  b = Foo.B
+                }
+                if (%default and 0b0100 !== 0) {
+                  c = swizzle(1, 2)
+                }
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %dirty, -1, <>)
+                }
+                val s = %composer.cache(%dirty and 0b1110 === 0b0100 or %dirty and 0b01110000 === 0b00100000 or %dirty and 0b001110000000 === 0b000100000000) {
+                  Any()
+                }
+                used(s, %composer, 0b1000)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(a, b, c, %composer, updateChangedFlags(%changed or 0b0001), %default)
+              }
+            }
+        """
+    )
+
+    @Test
+    fun testRememberAfterNonStaticDefaultParameters() = comparisonPropagation(
+        unchecked = """
+            import androidx.compose.runtime.*
+
+            enum class Foo {
+                A,
+                B,
+                C,
+            }
+
+            fun swizzle(a: Int, b: Int) = a + b
+
+            @Composable
+            fun used(a: Any) { }
+            """,
+        checked = """
+            @Composable
+            fun Test(a: Int = 1, b: Foo = Foo.B, c: Int = swizzle(1, 2) ) {
+                val s = remember(a, b, c) { Any() }
+                used(s)
+            }
+        """,
+        expectedTransformed = """
+            @Composable
+            fun Test(a: Int, b: Foo?, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test)<rememb...>,<used(s...>:Test.kt")
+              val %dirty = %changed
+              if (%default and 0b0001 !== 0) {
+                %dirty = %dirty or 0b0110
+              } else if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+              }
+              if (%default and 0b0010 !== 0) {
+                %dirty = %dirty or 0b00110000
+              } else if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(b)) 0b00100000 else 0b00010000
+              }
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%default and 0b0100 === 0 && %composer.changed(c)) 0b000100000000 else 0b10000000
+              }
+              if (%dirty and 0b001011011011 !== 0b10010010 || !%composer.skipping) {
+                %composer.startDefaults()
+                if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
+                  if (%default and 0b0001 !== 0) {
+                    a = 1
+                  }
+                  if (%default and 0b0010 !== 0) {
+                    b = Foo.B
+                  }
+                  if (%default and 0b0100 !== 0) {
+                    c = swizzle(1, 2)
+                    %dirty = %dirty and 0b001110000000.inv()
+                  }
+                } else {
+                  %composer.skipToGroupEnd()
+                  if (%default and 0b0100 !== 0) {
+                    %dirty = %dirty and 0b001110000000.inv()
+                  }
+                }
+                %composer.endDefaults()
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %dirty, -1, <>)
+                }
+                val s = remember(a, b, c, {
+                  Any()
+                }, %composer, 0b1110 and %dirty or 0b01110000 and %dirty or 0b001110000000 and %dirty)
+                used(s, %composer, 0b1000)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(a, b, c, %composer, updateChangedFlags(%changed or 0b0001), %default)
               }
             }
         """

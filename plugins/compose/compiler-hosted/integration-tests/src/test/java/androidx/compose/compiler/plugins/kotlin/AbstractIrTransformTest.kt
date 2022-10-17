@@ -73,7 +73,7 @@ abstract class ComposeIrTransformTest : AbstractIrTransformTest() {
     open val liveLiteralsV2Enabled get() = false
     open val generateFunctionKeyMetaClasses get() = false
     open val sourceInformationEnabled get() = true
-    open val intrinsicRememberEnabled get() = false
+    open val intrinsicRememberEnabled get() = true
     open val decoysEnabled get() = false
     open val metricsDestination: String? get() = null
 
