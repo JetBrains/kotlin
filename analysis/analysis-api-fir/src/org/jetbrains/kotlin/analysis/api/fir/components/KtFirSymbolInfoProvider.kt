@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSyntheticJavaPropertyS
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.getDeprecationForCallSite
@@ -73,7 +74,9 @@ internal class KtFirSymbolInfoProvider(
             return symbol.javaGetterSymbol.name
         }
 
-        val firProperty = symbol.firSymbol.fir as? FirProperty ?: return symbol.name
+        val firProperty = symbol.firSymbol.fir
+        requireIsInstance<FirProperty>(firProperty)
+
         return getJvmName(firProperty, isSetter = false)
     }
 
@@ -83,7 +86,9 @@ internal class KtFirSymbolInfoProvider(
             return symbol.javaSetterSymbol?.name
         }
 
-        val firProperty = symbol.firSymbol.fir as? FirProperty ?: return symbol.name
+        val firProperty = symbol.firSymbol.fir
+        requireIsInstance<FirProperty>(firProperty)
+
         if (firProperty.isVal) return null
 
         return getJvmName(firProperty, isSetter = true)
