@@ -745,7 +745,6 @@ public class DefaultErrorMessages {
 
         MAP.put(UNSUPPORTED_FEATURE, "{0}", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.UNSUPPORTED));
         MAP.put(EXPERIMENTAL_FEATURE_WARNING, "{0}", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.WARNING));
-        MAP.put(EXPERIMENTAL_FEATURE_ERROR, "{0}", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.ERROR));
 
         MAP.put(EXPLICIT_BACKING_FIELDS_UNSUPPORTED, "Explicit backing field declarations are not supported in FE 1.0");
 

@@ -330,7 +330,6 @@ enum class LanguageFeature(
     enum class State(override val description: String) : DescriptionAware {
         ENABLED("Enabled"),
         ENABLED_WITH_WARNING("Enabled with warning"),
-        ENABLED_WITH_ERROR("Disabled"), // TODO: consider dropping this and using DISABLED instead
         DISABLED("Disabled");
     }
 
@@ -525,7 +524,7 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
             val char = when (state) {
                 LanguageFeature.State.ENABLED -> '+'
                 LanguageFeature.State.ENABLED_WITH_WARNING -> '~'
-                LanguageFeature.State.ENABLED_WITH_ERROR, LanguageFeature.State.DISABLED -> '-'
+                LanguageFeature.State.DISABLED -> '-'
             }
             append(" $char$feature")
         }
