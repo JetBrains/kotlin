@@ -660,7 +660,7 @@ internal fun getHeaderId(library: NativeLibrary, header: CXFile?): HeaderId {
 }
 
 class NativeLibraryHeaders<Header>(val ownHeaders: Set<Header>, val importedHeaders: Set<Header>)
-data class NativeLibraryHeadersAndUnits(val headers: NativeLibraryHeaders<CXFile?>, val units: Set<CXTranslationUnit>)
+data class NativeLibraryHeadersAndUnits(val headers: NativeLibraryHeaders<CXFile?>, val ownTranslationUnits: Set<CXTranslationUnit>)
 
 internal fun getHeadersAndUnits(
         library: NativeLibrary,
