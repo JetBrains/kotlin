@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !RENDER_DIAGNOSTICS_FULL_TEXT
 // TARGET_BACKEND: JVM_IR
 inline fun inlineFun1(crossinline p: () -> Unit) {

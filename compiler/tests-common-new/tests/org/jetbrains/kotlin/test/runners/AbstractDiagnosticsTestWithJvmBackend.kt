@@ -25,20 +25,24 @@ import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.classic.handlers.DeclarationsDumpHandler
+import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
 import org.jetbrains.kotlin.test.frontend.classic.handlers.OldNewInferenceMetaInfoProcessor
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirIdenticalChecker
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 import java.io.File
 
-abstract class AbstractDiagnosticsTestWithJvmBackend<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>> : AbstractKotlinCompilerTest() {
+abstract class AbstractDiagnosticsTestWithJvmBackend<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>> :
+    AbstractKotlinCompilerTest() {
     abstract val targetFrontend: FrontendKind<R>
     abstract val targetBackend: TargetBackend
     abstract val frontend: Constructor<FrontendFacade<R>>
@@ -85,6 +89,21 @@ abstract class AbstractDiagnosticsTestWithJvmBackend<R : ResultingArtifact.Front
             }
         }
 
+        if (targetFrontend == FrontendKinds.ClassicFrontend) {
+            if (targetBackend == TargetBackend.JVM_IR) {
+                useAfterAnalysisCheckers(
+                    ::FirTestDataConsistencyHandler,
+                )
+            }
+        } else {
+            useAfterAnalysisCheckers(
+                ::FirIdenticalChecker,
+            )
+            useMetaTestConfigurators(
+                ::FirOldFrontendMetaConfigurator,
+            )
+        }
+
         facadeStep(converter)
         facadeStep(backendFacade)
 
@@ -96,7 +115,8 @@ abstract class AbstractDiagnosticsTestWithJvmBackend<R : ResultingArtifact.Front
     }
 }
 
-abstract class AbstractDiagnosticsTestWithOldJvmBackend : AbstractDiagnosticsTestWithJvmBackend<ClassicFrontendOutputArtifact, ClassicBackendInput>() {
+abstract class AbstractDiagnosticsTestWithOldJvmBackend :
+    AbstractDiagnosticsTestWithJvmBackend<ClassicFrontendOutputArtifact, ClassicBackendInput>() {
     override val targetFrontend: FrontendKind<ClassicFrontendOutputArtifact>
         get() = FrontendKinds.ClassicFrontend
 
@@ -113,7 +133,8 @@ abstract class AbstractDiagnosticsTestWithOldJvmBackend : AbstractDiagnosticsTes
         get() = ::ClassicJvmBackendFacade
 }
 
-abstract class AbstractDiagnosticsTestWithJvmIrBackend : AbstractDiagnosticsTestWithJvmBackend<ClassicFrontendOutputArtifact, IrBackendInput>() {
+abstract class AbstractDiagnosticsTestWithJvmIrBackend :
+    AbstractDiagnosticsTestWithJvmBackend<ClassicFrontendOutputArtifact, IrBackendInput>() {
     override val targetFrontend: FrontendKind<ClassicFrontendOutputArtifact>
         get() = FrontendKinds.ClassicFrontend
 
@@ -151,7 +172,6 @@ abstract class AbstractFirDiagnosticsTestWithJvmIrBackend : AbstractDiagnosticsT
         val wholeText = wholeFile.readText()
         // TODO: test infrastructure shouldn't allow to run such tests anyway
         if (InTextDirectivesUtils.isDirectiveDefined(wholeText, "// TARGET_BACKEND: JVM_OLD")) return
-        if (InTextDirectivesUtils.isDirectiveDefined(wholeText, "// IGNORE_FIR")) return
         super.runTest(filePath)
     }
 }

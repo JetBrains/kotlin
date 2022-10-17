@@ -1,4 +1,3 @@
-// IGNORE_FIR
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class C {
