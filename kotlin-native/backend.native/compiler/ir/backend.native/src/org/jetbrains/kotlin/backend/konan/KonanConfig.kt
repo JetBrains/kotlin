@@ -149,7 +149,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 // TODO: When moving into proper deprecation cycle replace with WARNING.
                 configuration.report(
                         CompilerMessageSeverity.INFO,
-                        "`freezing` should not be enabled with the new MM. Freezing API is deprecated since 1.7.20. See https://github.com/JetBrains/kotlin/blob/master/kotlin-native/NEW_MM.md#freezing-deprecation for details"
+                        "`freezing` should not be enabled with the new MM. Freezing API is deprecated since 1.7.20. See https://kotlinlang.org/docs/native-migration-guide.html for details"
                 )
                 freezingMode
             }
