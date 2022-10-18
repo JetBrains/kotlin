@@ -27,6 +27,16 @@ object ConeTypeIntersector {
             }
         }
 
+        if (inputTypes.any { it is ConeFlexibleType }) {
+            // (A..B) & C = (A & C)..(B & C)
+            val lowerBound = intersectTypes(context, inputTypes.map { it.lowerBoundIfFlexible() })
+            val upperBound = intersectTypes(context, inputTypes.map { it.upperBoundIfFlexible() })
+            // Special case - if C is `Nothing?`, then the result is `Nothing!`; but if it is non-null,
+            // then this code is unreachable, so it's more useful to do resolution/diagnostics
+            // under the assumption that it is purely nullable.
+            return if (lowerBound.isNothing) upperBound else coneFlexibleOrSimpleType(context, lowerBound, upperBound)
+        }
+
         /**
          * resultNullability. Value description:
          * ACCEPT_NULL means that all types marked nullable
@@ -62,19 +72,6 @@ object ConeTypeIntersector {
 
         ConeIntegerLiteralIntersector.findCommonIntersectionType(resultList)?.let { return it }
 
-        /*
-         * For the case like it(ft(String..String?), String?), where ft(String..String?) == String?, we prefer to _keep_ flexible type.
-         * When a == b, the former, i.e., the one in the list will be filtered out, and the other one will remain.
-         * So, here, we sort the interim list such that flexible types appear later.
-         */
-        resultList.sortWith { p0, p1 ->
-            when {
-                p0 is ConeFlexibleType && p1 is ConeFlexibleType -> 0
-                p0 is ConeFlexibleType -> 1
-                p1 is ConeFlexibleType -> -1
-                else -> 0
-            }
-        }
         resultList.removeIfAny { it, other -> AbstractTypeChecker.equalTypes(context, it, other) }
         assert(resultList.isNotEmpty()) { "no types left after removing equal types: ${inputTypes.joinToString()}" }
         return resultList.singleOrNull() ?: ConeIntersectionType(resultList)

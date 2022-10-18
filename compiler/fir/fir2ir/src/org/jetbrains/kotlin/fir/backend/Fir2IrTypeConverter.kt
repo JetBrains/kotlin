@@ -173,8 +173,8 @@ class Fir2IrTypeConverter(
             is ConeFlexibleType -> with(session.typeContext) {
                 if (upperBound is ConeClassLikeType) {
                     val upper = upperBound as ConeClassLikeType
-                    val lower = lowerBound as? ConeClassLikeType ?: error("Expecting class-like type, got $lowerBound")
-                    val intermediate = if (lower.lookupTag == upper.lookupTag) {
+                    val lower = lowerBound
+                    val intermediate = if (lower is ConeClassLikeType && lower.lookupTag == upper.lookupTag) {
                         lower.replaceArguments(upper.getArguments())
                     } else lower
                     (intermediate.withNullability(upper.isNullable) as ConeKotlinType)

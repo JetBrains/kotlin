@@ -38755,6 +38755,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("intersectFlexibleAndMutable.kt")
+            public void testIntersectFlexibleAndMutable() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/java/intersectFlexibleAndMutable.kt");
+            }
+
+            @Test
             @TestMetadata("patternCompileCallableReference.kt")
             public void testPatternCompileCallableReference() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/java/patternCompileCallableReference.kt");
