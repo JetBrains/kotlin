@@ -76,7 +76,7 @@ KtKotlinPropertySymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
-      name: <set-?>
+      name: value
       origin: SOURCE
       receiverType: null
       returnType: kotlin/Int
@@ -103,7 +103,7 @@ KtKotlinPropertySymbol:
         isImplicitLambdaParameter: false
         isNoinline: false
         isVararg: false
-        name: <set-?>
+        name: value
         origin: SOURCE
         receiverType: null
         returnType: kotlin/Int

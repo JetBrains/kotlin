@@ -1350,7 +1350,7 @@ class DeclarationsConverter(
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source
             returnTypeRef = propertyTypeRefToUse
-            symbol = FirValueParameterSymbol(SpecialNames.IMPLICIT_SET_PARAMETER)
+            symbol = FirValueParameterSymbol(StandardNames.DEFAULT_VALUE_PARAMETER)
         }
         var block: LighterASTNode? = null
         var expression: LighterASTNode? = null
