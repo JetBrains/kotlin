@@ -22,10 +22,9 @@ import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.DELEG
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.INNER_MODIFIER
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.NAME_IDENTIFIER
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.OVERRIDE_MODIFIER
+import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.psi.KtClassOrObject
 
 object KtErrorsParcelize {
     val PARCELABLE_SHOULD_BE_CLASS by error0<PsiElement>(NAME_IDENTIFIER)
@@ -52,4 +51,8 @@ object KtErrorsParcelize {
     val DEPRECATED_PARCELER by error0<PsiElement>()
     val INAPPLICABLE_IGNORED_ON_PARCEL by warning0<PsiElement>()
     val INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY by warning0<PsiElement>()
+
+    init {
+        RootDiagnosticRendererFactory.registerFactory(KtDefaultErrorMessagesParcelize)
+    }
 }
