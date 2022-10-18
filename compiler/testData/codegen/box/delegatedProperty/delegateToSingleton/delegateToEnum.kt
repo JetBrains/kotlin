@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // CHECK_BYTECODE_LISTING
+// FIR_IDENTICAL
 
 enum class E {
     OK, NOT_OK

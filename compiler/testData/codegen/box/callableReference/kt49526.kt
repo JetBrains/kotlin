@@ -1,5 +1,7 @@
 // WITH_STDLIB
 // CHECK_BYTECODE_LISTING
+// FIR_IDENTICAL
+// FIR_IDENTICAL
 
 inline fun <T> useRef(value: T, f: (T) -> Boolean) = f(value)
 
