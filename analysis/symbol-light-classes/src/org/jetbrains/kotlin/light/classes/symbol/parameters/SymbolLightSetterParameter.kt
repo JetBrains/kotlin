@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
+import org.jetbrains.kotlin.name.SpecialNames
 
 context(KtAnalysisSession)
 internal class SymbolLightSetterParameter(
@@ -24,6 +25,12 @@ internal class SymbolLightSetterParameter(
     private val parameterSymbol: KtValueParameterSymbol,
     containingMethod: SymbolLightMethodBase
 ) : SymbolLightParameterCommon(parameterSymbol, containingMethod) {
+
+    override fun getName(): String {
+        if (containingPropertySymbol.setter?.isDefault != false)
+            return SpecialNames.IMPLICIT_SET_PARAMETER.asString()
+        return super.getName()
+    }
 
     private val _annotations: List<PsiAnnotation> by lazyPub {
         val annotationsFromSetter = parameterSymbol.computeAnnotations(

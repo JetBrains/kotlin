@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -139,7 +140,7 @@ class FirDefaultPropertySetter(
             this@builder.moduleData = moduleData
             this@builder.origin = origin
             this@builder.returnTypeRef = propertyTypeRef
-            this@builder.symbol = FirValueParameterSymbol(SpecialNames.IMPLICIT_SET_PARAMETER)
+            this@builder.symbol = FirValueParameterSymbol(StandardNames.DEFAULT_VALUE_PARAMETER)
             this@builder.annotations += parameterAnnotations
         }
     ),
