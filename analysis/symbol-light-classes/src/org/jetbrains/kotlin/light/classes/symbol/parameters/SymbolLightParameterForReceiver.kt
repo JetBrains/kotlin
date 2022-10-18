@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.annotations
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightAnnotationForAnnotationCall
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 
 context(KtAnalysisSession)
 internal class SymbolLightParameterForReceiver private constructor(
-    private val receiverType: KtType,
+    private val receiver: KtReceiverParameterSymbol,
     private val context: KtSymbol,
     methodName: String,
     method: SymbolLightMethodBase
@@ -43,13 +43,13 @@ internal class SymbolLightParameterForReceiver private constructor(
             if (callableSymbol !is KtNamedSymbol) return null
 
             if (!callableSymbol.isExtension) return null
-            val extensionTypeAndAnnotations = callableSymbol.receiverType ?: return null
+            val extensionTypeAndAnnotations = callableSymbol.receiver ?: return null
 
             return SymbolLightParameterForReceiver(
-                receiverType = extensionTypeAndAnnotations,
+                receiver = extensionTypeAndAnnotations,
                 context = callableSymbol,
                 methodName = callableSymbol.name.asString(),
-                method = method
+                method = method,
             )
         }
     }
@@ -69,8 +69,8 @@ internal class SymbolLightParameterForReceiver private constructor(
 
     private val _annotations: List<PsiAnnotation> by lazyPub {
         buildList {
-            receiverType.nullabilityType.computeNullabilityAnnotation(this@SymbolLightParameterForReceiver)?.let { add(it) }
-            receiverType.annotations.mapTo(this) {
+            receiver.type.nullabilityType.computeNullabilityAnnotation(this@SymbolLightParameterForReceiver)?.let { add(it) }
+            receiver.annotations.mapTo(this) {
                 SymbolLightAnnotationForAnnotationCall(it, this@SymbolLightParameterForReceiver)
             }
         }
@@ -82,7 +82,7 @@ internal class SymbolLightParameterForReceiver private constructor(
     }
 
     private val _type: PsiType by lazyPub {
-        receiverType.asPsiType(this@SymbolLightParameterForReceiver) ?: nonExistentType()
+        receiver.type.asPsiType(this@SymbolLightParameterForReceiver) ?: nonExistentType()
     }
 
     override fun getType(): PsiType = _type
@@ -90,7 +90,7 @@ internal class SymbolLightParameterForReceiver private constructor(
     override fun equals(other: Any?): Boolean =
         this === other ||
                 (other is SymbolLightParameterForReceiver &&
-                        receiverType == other.receiverType)
+                        receiver == other.receiver)
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()
 

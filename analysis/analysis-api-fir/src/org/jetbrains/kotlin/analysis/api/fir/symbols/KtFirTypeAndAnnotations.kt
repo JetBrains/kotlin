@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveSupertypesInTheAir
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 
@@ -37,6 +37,9 @@ private fun List<FirTypeRef>.mapToKtType(
 
 internal fun FirCallableSymbol<*>.returnType(builder: KtSymbolByFirBuilder): KtType =
     builder.typeBuilder.buildKtType(resolvedReturnType)
+
+internal fun FirCallableSymbol<*>.receiver(builder: KtSymbolByFirBuilder): KtReceiverParameterSymbol? =
+        builder.callableBuilder.buildExtensionReceiverSymbol(this)
 
 internal fun FirCallableSymbol<*>.receiverType(builder: KtSymbolByFirBuilder): KtType? =
     resolvedReceiverTypeRef?.let { receiver ->

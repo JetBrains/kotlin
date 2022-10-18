@@ -15,10 +15,16 @@ KtFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiverType: [
-    ReceiverTypeAnnotation()
-      psi: KtAnnotationEntry
-  ] @R|ReceiverTypeAnnotation|()  kotlin/Int
+  receiver: KtReceiverParameterSymbol:
+    annotationsList: [
+      ReceiverAnnotation()
+        psi: KtAnnotationEntry
+    ]
+    origin: SOURCE
+    type: [
+      ReceiverTypeAnnotation()
+        psi: KtAnnotationEntry
+    ] @R|ReceiverTypeAnnotation|()  kotlin/Int
   returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []

@@ -14,7 +14,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: OPEN
     origin: DELEGATED
-    receiverType: null
+    receiver: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -38,7 +38,7 @@ KtKotlinPropertySymbol:
   modality: OPEN
   name: foo
   origin: DELEGATED
-  receiverType: null
+  receiver: null
   returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER

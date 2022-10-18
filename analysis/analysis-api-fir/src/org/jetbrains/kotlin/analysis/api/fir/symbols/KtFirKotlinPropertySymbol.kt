@@ -61,7 +61,7 @@ internal class KtFirKotlinPropertySymbol(
     override val name: Name get() = withValidityAssertion { firSymbol.name }
 
     override val returnType: KtType get() = withValidityAssertion { firSymbol.returnType(builder) }
-    override val receiverType: KtType? get() = withValidityAssertion { firSymbol.receiverType(builder) }
+    override val receiver: KtReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.receiver(builder) }
 
     override val contextReceivers: List<KtContextReceiver> by cached { firSymbol.createContextReceivers(builder) }
 

@@ -7,7 +7,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: true
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: A
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -32,7 +32,7 @@ KtConstructorSymbol:
           isOverride: false
           modality: FINAL
           origin: SOURCE
-          receiverType: null
+          receiver: null
           returnType: kotlin/Int
           symbolKind: ACCESSOR
           typeParameters: []
@@ -56,7 +56,7 @@ KtConstructorSymbol:
         modality: FINAL
         name: a
         origin: SOURCE
-        receiverType: null
+        receiver: null
         returnType: kotlin/Int
         setter: null
         symbolKind: CLASS_MEMBER
@@ -77,7 +77,7 @@ KtConstructorSymbol:
       isVararg: false
       name: a
       origin: SOURCE
-      receiverType: null
+      receiver: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -96,7 +96,7 @@ KtConstructorSymbol:
       isVararg: false
       name: b
       origin: SOURCE
-      receiverType: null
+      receiver: null
       returnType: kotlin/String
       symbolKind: LOCAL
       typeParameters: []

@@ -18,7 +18,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: y
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []

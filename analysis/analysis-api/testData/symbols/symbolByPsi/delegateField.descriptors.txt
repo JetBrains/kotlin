@@ -7,7 +7,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: true
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: MyColor
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -32,7 +32,7 @@ KtConstructorSymbol:
           isOverride: false
           modality: FINAL
           origin: SOURCE
-          receiverType: null
+          receiver: null
           returnType: kotlin/Int
           symbolKind: ACCESSOR
           typeParameters: []
@@ -56,7 +56,7 @@ KtConstructorSymbol:
         modality: FINAL
         name: x
         origin: SOURCE
-        receiverType: null
+        receiver: null
         returnType: kotlin/Int
         setter: null
         symbolKind: CLASS_MEMBER
@@ -77,7 +77,7 @@ KtConstructorSymbol:
       isVararg: false
       name: x
       origin: SOURCE
-      receiverType: null
+      receiver: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -103,7 +103,7 @@ KtConstructorSymbol:
           isOverride: false
           modality: FINAL
           origin: SOURCE
-          receiverType: null
+          receiver: null
           returnType: kotlin/Int
           symbolKind: ACCESSOR
           typeParameters: []
@@ -127,7 +127,7 @@ KtConstructorSymbol:
         modality: FINAL
         name: y
         origin: SOURCE
-        receiverType: null
+        receiver: null
         returnType: kotlin/Int
         setter: null
         symbolKind: CLASS_MEMBER
@@ -148,7 +148,7 @@ KtConstructorSymbol:
       isVararg: false
       name: y
       origin: SOURCE
-      receiverType: null
+      receiver: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -174,7 +174,7 @@ KtConstructorSymbol:
           isOverride: false
           modality: FINAL
           origin: SOURCE
-          receiverType: null
+          receiver: null
           returnType: kotlin/Int
           symbolKind: ACCESSOR
           typeParameters: []
@@ -198,7 +198,7 @@ KtConstructorSymbol:
         modality: FINAL
         name: z
         origin: SOURCE
-        receiverType: null
+        receiver: null
         returnType: kotlin/Int
         setter: null
         symbolKind: CLASS_MEMBER
@@ -219,7 +219,7 @@ KtConstructorSymbol:
       isVararg: false
       name: z
       origin: SOURCE
-      receiverType: null
+      receiver: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -260,7 +260,7 @@ KtAnonymousFunctionSymbol:
   hasStableParameterNames: true
   isExtension: false
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: MyColor
   symbolKind: LOCAL
   typeParameters: []
@@ -284,7 +284,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiver: null
     returnType: MyColor
     symbolKind: ACCESSOR
     typeParameters: []
@@ -308,7 +308,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: delegate
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: MyColor
   setter: null
   symbolKind: CLASS_MEMBER
@@ -329,7 +329,7 @@ KtAnonymousFunctionSymbol:
   hasStableParameterNames: true
   isExtension: false
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: MyColor
   symbolKind: LOCAL
   typeParameters: []
@@ -353,7 +353,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiver: null
     returnType: kotlin/Lazy<MyColor>
     symbolKind: ACCESSOR
     typeParameters: []
@@ -377,7 +377,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: lambda
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: kotlin/Lazy<MyColor>
   setter: null
   symbolKind: CLASS_MEMBER
@@ -407,7 +407,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiver: null
     returnType: MyColor
     symbolKind: ACCESSOR
     typeParameters: []
@@ -431,7 +431,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: nonLazy
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: MyColor
   setter: null
   symbolKind: CLASS_MEMBER

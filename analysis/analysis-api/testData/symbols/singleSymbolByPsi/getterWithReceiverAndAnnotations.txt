@@ -15,10 +15,16 @@ KtPropertyGetterSymbol:
   isOverride: false
   modality: FINAL
   origin: SOURCE
-  receiverType: [
-    ReceiverTypeAnnotation()
-      psi: KtAnnotationEntry
-  ] @R|ReceiverTypeAnnotation|()  kotlin/Long
+  receiver: KtReceiverParameterSymbol:
+    annotationsList: [
+      ReceiverAnnotation()
+        psi: KtAnnotationEntry
+    ]
+    origin: SOURCE
+    type: [
+      ReceiverTypeAnnotation()
+        psi: KtAnnotationEntry
+    ] @R|ReceiverTypeAnnotation|()  kotlin/Long
   returnType: kotlin/Int
   symbolKind: ACCESSOR
   typeParameters: []

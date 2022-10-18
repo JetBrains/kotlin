@@ -14,10 +14,16 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: [
-      ReceiverTypeAnnotation()
-        psi: KtAnnotationEntry
-    ] @R|ReceiverTypeAnnotation|()  kotlin/Long
+    receiver: KtReceiverParameterSymbol:
+      annotationsList: [
+        ReceiverAnnotation()
+          psi: KtAnnotationEntry
+      ]
+      origin: SOURCE
+      type: [
+        ReceiverTypeAnnotation()
+          psi: KtAnnotationEntry
+      ] @R|ReceiverTypeAnnotation|()  kotlin/Long
     returnType: kotlin/Boolean
     symbolKind: ACCESSOR
     typeParameters: []
@@ -40,10 +46,16 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: prop
   origin: SOURCE
-  receiverType: [
-    ReceiverTypeAnnotation()
-      psi: KtAnnotationEntry
-  ] @R|ReceiverTypeAnnotation|()  kotlin/Long
+  receiver: KtReceiverParameterSymbol:
+    annotationsList: [
+      ReceiverAnnotation()
+        psi: KtAnnotationEntry
+    ]
+    origin: SOURCE
+    type: [
+      ReceiverTypeAnnotation()
+        psi: KtAnnotationEntry
+    ] @R|ReceiverTypeAnnotation|()  kotlin/Long
   returnType: kotlin/Boolean
   setter: null
   symbolKind: TOP_LEVEL

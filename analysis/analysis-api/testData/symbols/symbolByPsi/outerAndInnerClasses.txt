@@ -473,7 +473,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: [

@@ -14,7 +14,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiver: null
     returnType: kotlin/Long
     symbolKind: ACCESSOR
     typeParameters: []
@@ -37,7 +37,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: jvmField
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: kotlin/Long
   setter: KtPropertySetterSymbol:
     annotationsList: []
@@ -64,13 +64,13 @@ KtKotlinPropertySymbol:
       isVararg: false
       name: value
       origin: SOURCE
-      receiverType: null
+      receiver: null
       returnType: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    receiverType: null
+    receiver: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
@@ -88,7 +88,7 @@ KtKotlinPropertySymbol:
         isVararg: false
         name: value
         origin: SOURCE
-        receiverType: null
+        receiver: null
         returnType: kotlin/Long
         symbolKind: LOCAL
         typeParameters: []
@@ -125,7 +125,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiver: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -148,7 +148,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: jvmFieldOnField
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: kotlin/Int
   setter: KtPropertySetterSymbol:
     annotationsList: []
@@ -175,13 +175,13 @@ KtKotlinPropertySymbol:
       isVararg: false
       name: value
       origin: SOURCE
-      receiverType: null
+      receiver: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    receiverType: null
+    receiver: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
@@ -199,7 +199,7 @@ KtKotlinPropertySymbol:
         isVararg: false
         name: value
         origin: SOURCE
-        receiverType: null
+        receiver: null
         returnType: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []

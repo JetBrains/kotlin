@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.analysis.api.components.KtSignatureSubstitutor
 import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
-import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 
@@ -45,7 +47,7 @@ abstract class AbstractKtSignatureSubstitutorImpl : KtSignatureSubstitutor() {
         return KtFunctionLikeSignature(
             symbol,
             substitutor.substitute(symbol.returnType),
-            symbol.receiverType?.let { substitutor.substitute(it) },
+            symbol.receiver?.type?.let { substitutor.substitute(it) },
             symbol.valueParameters.map { substitute(it, substitutor) }
         )
     }
@@ -55,7 +57,7 @@ abstract class AbstractKtSignatureSubstitutorImpl : KtSignatureSubstitutor() {
         return KtVariableLikeSignature(
             symbol,
             substitutor.substitute(symbol.returnType),
-            symbol.receiverType?.let { substitutor.substitute(it) },
+            symbol.receiver?.type?.let { substitutor.substitute(it) },
         )
     }
 
@@ -68,10 +70,10 @@ abstract class AbstractKtSignatureSubstitutorImpl : KtSignatureSubstitutor() {
     }
 
     override fun <S : KtFunctionLikeSymbol> asSignature(symbol: S): KtFunctionLikeSignature<S> {
-        return KtFunctionLikeSignature(symbol, symbol.returnType, symbol.receiverType, symbol.valueParameters.map { asSignature(it) })
+        return KtFunctionLikeSignature(symbol, symbol.returnType, symbol.receiver?.type, symbol.valueParameters.map { asSignature(it) })
     }
 
     override fun <S : KtVariableLikeSymbol> asSignature(symbol: S): KtVariableLikeSignature<S> {
-        return KtVariableLikeSignature(symbol, symbol.returnType, symbol.receiverType)
+        return KtVariableLikeSignature(symbol, symbol.returnType, symbol.receiver?.type)
     }
 }

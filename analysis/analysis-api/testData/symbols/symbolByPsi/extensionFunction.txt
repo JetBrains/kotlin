@@ -15,7 +15,10 @@ KtFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiverType: kotlin/String
+  receiver: KtReceiverParameterSymbol:
+    annotationsList: []
+    origin: SOURCE
+    type: kotlin/String
   returnType: kotlin/Int
   symbolKind: TOP_LEVEL
   typeParameters: []

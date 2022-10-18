@@ -15,7 +15,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: withOuter
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: Outer?
   symbolKind: CLASS_MEMBER
   typeParameters: []

@@ -19,7 +19,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiver: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -42,7 +42,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: lazyProperty
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL

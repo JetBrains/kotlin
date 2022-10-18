@@ -26,7 +26,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: function
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: kotlin/Int
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -55,7 +55,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: functionWithDefault
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -73,7 +73,7 @@ KtFunctionSymbol:
       isVararg: false
       name: par1
       origin: SOURCE
-      receiverType: null
+      receiver: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -100,7 +100,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiver: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -123,7 +123,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: testVal
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
@@ -152,7 +152,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiver: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -175,7 +175,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: initializedVariable
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: kotlin/Int
   setter: KtPropertySetterSymbol:
     annotationsList: []
@@ -202,13 +202,13 @@ KtKotlinPropertySymbol:
       isVararg: false
       name: value
       origin: SOURCE
-      receiverType: null
+      receiver: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    receiverType: null
+    receiver: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
@@ -226,7 +226,7 @@ KtKotlinPropertySymbol:
         isVararg: false
         name: value
         origin: SOURCE
-        receiverType: null
+        receiver: null
         returnType: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []
@@ -262,7 +262,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiver: null
     returnType: kotlin/Long
     symbolKind: ACCESSOR
     typeParameters: []
@@ -285,7 +285,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: unitializedVariable
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: kotlin/Long
   setter: KtPropertySetterSymbol:
     annotationsList: []
@@ -312,13 +312,13 @@ KtKotlinPropertySymbol:
       isVararg: false
       name: value
       origin: SOURCE
-      receiverType: null
+      receiver: null
       returnType: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    receiverType: null
+    receiver: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
@@ -336,7 +336,7 @@ KtKotlinPropertySymbol:
         isVararg: false
         name: value
         origin: SOURCE
-        receiverType: null
+        receiver: null
         returnType: kotlin/Long
         symbolKind: LOCAL
         typeParameters: []
@@ -372,7 +372,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiver: null
     returnType: kotlin/String
     symbolKind: ACCESSOR
     typeParameters: []
@@ -395,7 +395,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: lateinitVariable
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: kotlin/String
   setter: KtPropertySetterSymbol:
     annotationsList: []
@@ -422,13 +422,13 @@ KtKotlinPropertySymbol:
       isVararg: false
       name: value
       origin: SOURCE
-      receiverType: null
+      receiver: null
       returnType: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    receiverType: null
+    receiver: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
@@ -446,7 +446,7 @@ KtKotlinPropertySymbol:
         isVararg: false
         name: value
         origin: SOURCE
-        receiverType: null
+        receiver: null
         returnType: kotlin/String
         symbolKind: LOCAL
         typeParameters: []
@@ -482,7 +482,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiver: null
     returnType: kotlin/Long
     symbolKind: ACCESSOR
     typeParameters: []
@@ -505,7 +505,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: variableWithBackingField
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: kotlin/Long
   setter: KtPropertySetterSymbol:
     annotationsList: []
@@ -532,13 +532,13 @@ KtKotlinPropertySymbol:
       isVararg: false
       name: value
       origin: SOURCE
-      receiverType: null
+      receiver: null
       returnType: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    receiverType: null
+    receiver: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
@@ -556,7 +556,7 @@ KtKotlinPropertySymbol:
         isVararg: false
         name: value
         origin: SOURCE
-        receiverType: null
+        receiver: null
         returnType: kotlin/Long
         symbolKind: LOCAL
         typeParameters: []
@@ -592,7 +592,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiver: null
     returnType: kotlin/String
     symbolKind: ACCESSOR
     typeParameters: []
@@ -615,7 +615,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: privateSetter
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: kotlin/String
   setter: KtPropertySetterSymbol:
     annotationsList: [
@@ -645,13 +645,13 @@ KtKotlinPropertySymbol:
       isVararg: false
       name: value
       origin: SOURCE
-      receiverType: null
+      receiver: null
       returnType: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    receiverType: null
+    receiver: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
@@ -669,7 +669,7 @@ KtKotlinPropertySymbol:
         isVararg: false
         name: value
         origin: SOURCE
-        receiverType: null
+        receiver: null
         returnType: kotlin/String
         symbolKind: LOCAL
         typeParameters: []
@@ -705,7 +705,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiver: null
     returnType: kotlin/String
     symbolKind: ACCESSOR
     typeParameters: []
@@ -728,7 +728,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: jvmNameOnSetter
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: kotlin/String
   setter: KtPropertySetterSymbol:
     annotationsList: [
@@ -758,13 +758,13 @@ KtKotlinPropertySymbol:
       isVararg: false
       name: value
       origin: SOURCE
-      receiverType: null
+      receiver: null
       returnType: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    receiverType: null
+    receiver: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
@@ -782,7 +782,7 @@ KtKotlinPropertySymbol:
         isVararg: false
         name: value
         origin: SOURCE
-        receiverType: null
+        receiver: null
         returnType: kotlin/String
         symbolKind: LOCAL
         typeParameters: []
@@ -821,7 +821,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiver: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -844,7 +844,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: customGetter
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
@@ -876,7 +876,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiver: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -899,7 +899,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: jvmNameOnGetter
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
@@ -928,7 +928,10 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: kotlin/Int
+    receiver: KtReceiverParameterSymbol:
+      annotationsList: []
+      origin: SOURCE
+      type: kotlin/Int
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -951,7 +954,10 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: propertyWithReceiver
   origin: SOURCE
-  receiverType: kotlin/Int
+  receiver: KtReceiverParameterSymbol:
+    annotationsList: []
+    origin: SOURCE
+    type: kotlin/Int
   returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
@@ -980,7 +986,10 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: T
+    receiver: KtReceiverParameterSymbol:
+      annotationsList: []
+      origin: SOURCE
+      type: T
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -1003,7 +1012,10 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: propertyWithGenericReceiver
   origin: SOURCE
-  receiverType: T
+  receiver: KtReceiverParameterSymbol:
+    annotationsList: []
+    origin: SOURCE
+    type: T
   returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
@@ -1034,7 +1046,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiver: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -1057,7 +1069,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: constant
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
@@ -1089,7 +1101,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiver: null
     returnType: kotlin/Long
     symbolKind: ACCESSOR
     typeParameters: []
@@ -1112,7 +1124,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: jvmField
   origin: SOURCE
-  receiverType: null
+  receiver: null
   returnType: kotlin/Long
   setter: KtPropertySetterSymbol:
     annotationsList: []
@@ -1139,13 +1151,13 @@ KtKotlinPropertySymbol:
       isVararg: false
       name: value
       origin: SOURCE
-      receiverType: null
+      receiver: null
       returnType: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    receiverType: null
+    receiver: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
@@ -1163,7 +1175,7 @@ KtKotlinPropertySymbol:
         isVararg: false
         name: value
         origin: SOURCE
-        receiverType: null
+        receiver: null
         returnType: kotlin/Long
         symbolKind: LOCAL
         typeParameters: []

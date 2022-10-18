@@ -17,7 +17,7 @@ public sealed class KtCallableSymbol : KtSymbolWithKind, KtPossibleMemberSymbol,
     public abstract val callableIdIfNonLocal: CallableId?
     public abstract val returnType: KtType
 
-    public abstract val receiverType: KtType?
+    public abstract val receiver: KtReceiverParameterSymbol?
     public abstract val isExtension: Boolean
 
     abstract override fun createPointer(): KtSymbolPointer<KtCallableSymbol>

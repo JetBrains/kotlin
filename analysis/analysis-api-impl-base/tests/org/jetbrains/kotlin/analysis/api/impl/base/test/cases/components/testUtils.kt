@@ -47,8 +47,8 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any): String = with(any
                 }
             )
             append("(")
-            (this@with as? KtFunctionSymbol)?.receiverType?.let { receiver ->
-                append("<extension receiver>: ${receiver.render()}")
+            (this@with as? KtFunctionSymbol)?.receiver?.let { receiver ->
+                append("<extension receiver>: ${receiver.type.render()}")
                 if (valueParameters.isNotEmpty()) append(", ")
             }
 

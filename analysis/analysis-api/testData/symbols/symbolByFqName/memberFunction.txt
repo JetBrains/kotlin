@@ -15,7 +15,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: get
   origin: LIBRARY
-  receiverType: null
+  receiver: null
   returnType: E
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -33,7 +33,7 @@ KtFunctionSymbol:
       isVararg: false
       name: index
       origin: LIBRARY
-      receiverType: null
+      receiver: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []

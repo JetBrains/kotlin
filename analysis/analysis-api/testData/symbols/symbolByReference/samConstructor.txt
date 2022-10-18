@@ -6,7 +6,7 @@ KtSamConstructorSymbol:
   isExtension: false
   name: Runnable
   origin: SAM_CONSTRUCTOR
-  receiverType: null
+  receiver: null
   returnType: java/lang/Runnable
   symbolKind: SAM_CONSTRUCTOR
   typeParameters: []
@@ -24,7 +24,7 @@ KtSamConstructorSymbol:
       isVararg: false
       name: function
       origin: SAM_CONSTRUCTOR
-      receiverType: null
+      receiver: null
       returnType: kotlin/Function0<kotlin/Unit>
       symbolKind: LOCAL
       typeParameters: []
