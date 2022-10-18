@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationClassForOptInMarker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.*
 
 object FirOptInMarkedDeclarationChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -37,6 +34,14 @@ object FirOptInMarkedDeclarationChecker : FirBasicDeclarationChecker() {
             }
             if (useSiteTarget == FIELD || useSiteTarget == PROPERTY_DELEGATE_FIELD) {
                 reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "field", context)
+            }
+        }
+
+        if (declaration !is FirCallableDeclaration) return
+        val receiver = declaration.receiverParameter ?: return
+        for (annotation in receiver.annotations) {
+            if (annotation.getAnnotationClassForOptInMarker(context.session) != null) {
+                reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "parameter", context)
             }
         }
     }
