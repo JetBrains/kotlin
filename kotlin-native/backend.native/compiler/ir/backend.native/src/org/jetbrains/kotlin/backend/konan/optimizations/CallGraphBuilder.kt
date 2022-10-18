@@ -193,6 +193,12 @@ internal class CallGraphBuilder(
                     else {
                         val callSite = CallGraphNode.CallSite(call, true, call.callee)
                         callGraph.addEdge(symbol, callSite)
+
+                        allPossibleCallees.forEach {
+                            val callee = moduleDFG.functions[it]
+                            if (callee != null)
+                                functionStack.push(HandleFunctionParams(null, callee))
+                        }
                     }
                 }
             }

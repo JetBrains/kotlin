@@ -234,6 +234,7 @@ internal val escapeAnalysisPhase = makeKonanModuleOpPhase(
                     externalModulesDFG,
                     context.devirtualizationAnalysisResult!!,
                     nonDevirtualizedCallSitesUnfoldFactor
+//                    nonDevirtualizedCallSitesUnfoldFactor = Int.MAX_VALUE
             ).build()
             EscapeAnalysis.computeLifetimes(
                     context, context.moduleDFG!!, externalModulesDFG, callGraph, context.lifetimes
