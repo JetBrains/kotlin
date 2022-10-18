@@ -265,7 +265,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     }
 
     private fun transformPropertyAccessorsWithDelegate(property: FirProperty) {
-
         context.forPropertyDelegateAccessors(property, resolutionContext, callCompleter) {
             // Resolve delegate expression, after that, delegate will contain either expr.provideDelegate or expr
             if (property.isLocal) {
@@ -282,7 +281,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
             val finalSubstitutor = createFinalSubstitutor()
 
-            // Replace stub types with corresponding type variable types
             val stubTypeCompletionResultsWriter = FirStubTypeTransformer(finalSubstitutor)
             property.transformSingle(stubTypeCompletionResultsWriter, null)
 
