@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationInspector
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationPresenter
 import org.jetbrains.kotlin.fir.analysis.checkers.PsiSourceNavigator.getRawName
+import org.jetbrains.kotlin.fir.analysis.checkers.SourceNavigator
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isUnderscore
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -353,9 +354,14 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                     return
                 }
                 // not allow use underscore as var name without backquotes
-                val rawName = property.getRawName()
-                if (rawName?.isUnderscore == true) {
-                    return
+                val declarationSource = property.source
+                if (declarationSource != null && declarationSource.kind !is KtFakeSourceElementKind) {
+                    with(SourceNavigator.forElement(property)) {
+                        val rawName = property.getRawName()
+                        if (rawName?.isUnderscore == true) {
+                            return
+                        }
+                    }
                 }
                 inspector.collect(property)
             }
