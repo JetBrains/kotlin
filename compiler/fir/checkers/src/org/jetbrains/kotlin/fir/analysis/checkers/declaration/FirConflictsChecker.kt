@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationInspector
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationPresenter
+import org.jetbrains.kotlin.fir.analysis.checkers.PsiSourceNavigator.getRawName
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isUnderscore
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
@@ -347,8 +349,15 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
 
             override fun visitProperty(property: FirProperty) {
                 val inspector = inspectorStack.peek()
-                if (!property.name.isSpecial)
-                    inspector.collect(property)
+                if (property.name.isSpecial) {
+                    return
+                }
+                // not allow use underscore as var name without backquotes
+                val rawName = property.getRawName()
+                if (rawName?.isUnderscore == true) {
+                    return
+                }
+                inspector.collect(property)
             }
         }
 
