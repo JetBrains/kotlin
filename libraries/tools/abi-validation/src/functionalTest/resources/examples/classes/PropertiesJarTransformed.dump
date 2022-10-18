@@ -1,0 +1,8 @@
+public final class foo/ClassWithProperties {
+	public fun <init> ()V
+	public final fun getBar1 ()I
+	public final fun getBar2 ()I
+	public final fun setBar1 (I)V
+	public final fun setBar2 (I)V
+}
+
