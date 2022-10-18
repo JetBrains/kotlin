@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal val singletonOrConstantDelegationPhase = makeIrFilePhase(
     ::SingletonOrConstantDelegationLowering,
@@ -47,22 +44,14 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
         if (!isDelegated || isFakeOverride || backingField == null) return null
         val delegate = backingField?.initializer?.expression?.takeIf { it.isInlineable() } ?: return null
         val originalThis = parentAsClass.thisReceiver
-        val receiverMapper = object : IrElementTransformer<Pair<Name, IrExpression>> {
-            override fun visitCall(expression: IrCall, data: Pair<Name, IrExpression>): IrExpression {
-                val (name, newReceiver) = data
-                if (expression.symbol.owner.name == name) {
-                    if ((expression.dispatchReceiver as? IrGetField)?.symbol == backingField?.symbol) {
-                        expression.dispatchReceiver = newReceiver
-                    } else if ((expression.extensionReceiver as? IrGetField)?.symbol == backingField?.symbol) {
-                        expression.extensionReceiver = newReceiver
-                    }
-                }
-                return expression
-            }
+
+        class DelegateFieldAccessTransformer(val newReceiver: IrExpression) : IrElementTransformerVoid() {
+            override fun visitGetField(expression: IrGetField): IrExpression =
+                if (expression.symbol == backingField?.symbol) newReceiver else super.visitGetField(expression)
         }
 
-        getter?.transform(receiverMapper,OperatorNameConventions.GET_VALUE to delegate.remapReceiver(originalThis, getter?.dispatchReceiverParameter))
-        setter?.transform(receiverMapper,OperatorNameConventions.SET_VALUE to delegate.remapReceiver(originalThis, setter?.dispatchReceiverParameter))
+        getter?.transform(DelegateFieldAccessTransformer(delegate.remapReceiver(originalThis, getter?.dispatchReceiverParameter)), null)
+        setter?.transform(DelegateFieldAccessTransformer(delegate.remapReceiver(originalThis, setter?.dispatchReceiverParameter)), null)
 
         backingField = null
 
