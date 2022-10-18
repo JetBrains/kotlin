@@ -4,13 +4,13 @@
 @file:BenchmarkProject(
     name = "duckduckgo",
     gitUrl = "https://github.com/duckduckgo/Android.git",
-    gitCommitSha = "648b0aae2dd54c4da4176eb91b3a05ea44118fa5"
+    gitCommitSha = "18e230fcefbefb4317c1fe128b4539a2315e7c0a"
 )
 
 import java.io.File
 
 val stableReleasePatch = {
-    "duckduckgo-kotlin-1.7.10.patch" to File("benchmarkScripts/files/duckduckgo-kotlin-1.7.10.patch")
+    "duckduckgo-kotlin-1.7.20.patch" to File("benchmarkScripts/files/duckduckgo-kotlin-1.7.20.patch")
         .readText()
         .byteInputStream()
 }
@@ -41,11 +41,19 @@ runAllBenchmarks(
         }
 
         scenario {
-            title = "Incremetal build with ABI change in Kapt component"
+            title = "Incremental build with ABI change in Kapt component"
             useGradleArgs("--no-build-cache")
 
             runTasks(":app:assemblePlayDebug")
-            applyAbiChangeTo("vpn/src/main/java/com/duckduckgo/mobile/android/vpn/di/VpnModule.kt")
+            applyAbiChangeTo("app-tracking-protection/vpn-impl/src/main/java/com/duckduckgo/mobile/android/vpn/network/VpnNetworkModule.kt")
+        }
+
+        scenario {
+            title = "Incremental build with ABI change in Kapt component"
+            useGradleArgs("--no-build-cache")
+
+            runTasks(":app:assemblePlayDebug")
+            applyNonAbiChangeTo("app-tracking-protection/vpn-impl/src/main/java/com/duckduckgo/mobile/android/vpn/network/VpnNetworkModule.kt")
         }
 
         scenario {
@@ -56,9 +64,31 @@ runAllBenchmarks(
 
             applyAndroidResourceValueChange("common-ui/src/main/res/values/strings.xml")
         }
+
+        scenario {
+            title = "Dry run configuration time"
+            useGradleArgs("-m")
+
+            iterations = 20
+            runTasks(":app:assemblePlayDebug")
+        }
+
+        scenario {
+            title = "No-op configuration time"
+
+            iterations = 20
+            runTasks("help")
+        }
+
+        scenario {
+            title = "UP-TO-DATE configuration time"
+
+            iterations = 20
+            runTasks(":app:assemblePlayDebug")
+        }
     },
     mapOf(
-        "1.7.10" to stableReleasePatch,
-        "1.7.20" to currentReleasePatch
+        "1.7.20" to stableReleasePatch,
+        "1.8.0" to currentReleasePatch
     )
 )

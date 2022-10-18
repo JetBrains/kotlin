@@ -1,5 +1,5 @@
 diff --git a/build.gradle b/build.gradle
-index be987782b..417b6c88d 100644
+index be987782b..f59d7e0db 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -2,7 +2,7 @@
@@ -7,27 +7,11 @@ index be987782b..417b6c88d 100644
 
      ext {
 -        kotlin_version = '1.7.10'
-+        kotlin_version = '<kotlin_version>'
++        kotlin_version = '1.7.20'
          spotless = "6.1.2"
          anvil_version = "2.4.1"
          gradle_plugin = "7.2.2" // When updating, also update lint_version
-@@ -14,6 +14,7 @@ buildscript {
-     }
-
-     repositories {
-+        mavenLocal()
-         google()
-         mavenCentral()
-         maven { url "https://plugins.gradle.org/m2/" }
-@@ -35,6 +36,7 @@ plugins {
-
- allprojects {
-     repositories {
-+        mavenLocal()
-         google()
-         mavenCentral()
-     }
-@@ -120,4 +122,4 @@ fladle {
+@@ -120,4 +120,4 @@ fladle {
      }
  }
 
@@ -35,7 +19,7 @@ index be987782b..417b6c88d 100644
 \ No newline at end of file
 +apply plugin: 'android-reporting'
 diff --git a/versions.properties b/versions.properties
-index 0bdde3fdb..dff5e798f 100644
+index 0bdde3fdb..c41dc1dc5 100644
 --- a/versions.properties
 +++ b/versions.properties
 @@ -75,7 +75,7 @@ version.jakewharton.rxrelay2=2.0.0
@@ -43,7 +27,7 @@ index 0bdde3fdb..dff5e798f 100644
  version.jakewharton.timber=5.0.1
 
 -version.kotlin=1.7.10
-+version.kotlin=<kotlin_version>
++version.kotlin=1.7.20
 
  version.kotlinx.coroutines=1.6.4
 
