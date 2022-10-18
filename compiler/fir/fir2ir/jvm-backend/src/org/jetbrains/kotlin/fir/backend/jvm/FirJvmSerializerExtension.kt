@@ -87,7 +87,8 @@ class FirJvmSerializerExtension(
     }
 
     override fun shouldSerializeTypeAlias(typeAlias: FirTypeAlias): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI || typeAlias.visibility != Visibilities.Private
+        // TODO: do not serialize private type aliases in ABI class builder mode (KT-54500)
+        return true
     }
 
     override fun shouldSerializeNestedClass(nestedClass: FirRegularClass): Boolean {

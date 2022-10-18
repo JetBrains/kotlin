@@ -155,11 +155,7 @@ private class AbiKmClassVisitor(delegate: KmClassVisitor) : KmClassVisitor(deleg
         return null
     }
 
-    override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? {
-        if (!isPrivateDeclaration(flags))
-            return super.visitTypeAlias(flags, name)
-        return null
-    }
+    // TODO: do not serialize private type aliases (KT-54500)
 
     override fun visitExtensions(type: KmExtensionType): KmClassExtensionVisitor? {
         val delegate = super.visitExtensions(type)
@@ -189,11 +185,7 @@ private class AbiKmPackageVisitor(delegate: KmPackageVisitor) : KmPackageVisitor
         return null
     }
 
-    override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? {
-        if (!isPrivateDeclaration(flags))
-            return super.visitTypeAlias(flags, name)
-        return null
-    }
+    // TODO: do not serialize private type aliases (KT-54500)
 
     override fun visitExtensions(type: KmExtensionType): KmPackageExtensionVisitor? {
         val delegate = super.visitExtensions(type)

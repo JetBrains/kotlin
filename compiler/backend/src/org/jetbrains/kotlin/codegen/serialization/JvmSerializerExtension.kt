@@ -73,7 +73,8 @@ class JvmSerializerExtension @JvmOverloads constructor(
     }
 
     override fun shouldSerializeTypeAlias(descriptor: TypeAliasDescriptor): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI || descriptor.visibility != DescriptorVisibilities.PRIVATE
+        // TODO: do not serialize private type aliases in ABI class builder mode (KT-54500)
+        return true
     }
 
     override fun shouldSerializeNestedClass(descriptor: ClassDescriptor): Boolean {
