@@ -57,6 +57,13 @@ import org.jetbrains.kotlin.utils.join
 import java.io.File
 import java.io.IOException
 
+private val K2JSCompilerArguments.granularity: JsGenerationGranularity
+    get() = when {
+        this.irPerModule -> JsGenerationGranularity.PER_MODULE
+        this.irPerFile -> JsGenerationGranularity.PER_FILE
+        else -> JsGenerationGranularity.WHOLE_PROGRAM
+    }
+
 class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
     override val defaultPerformanceManager: CommonCompilerPerformanceManager =
@@ -76,12 +83,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         val mainCallArguments: List<String>?
     ) {
         private fun lowerIr(): LoweredIr {
-            val granularity = when {
-                arguments.irPerModule -> JsGenerationGranularity.PER_MODULE
-                arguments.irPerFile -> JsGenerationGranularity.PER_FILE
-                else -> JsGenerationGranularity.WHOLE_PROGRAM
-            }
-
             val irFactory = when {
                 arguments.irNewIr2Js -> IrFactoryImplForJsIC(WholeWorldStageController())
                 else -> IrFactoryImpl
@@ -105,7 +106,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     arguments.irSafeExternalBooleanDiagnostic,
                     messageCollector
                 ),
-                granularity = granularity,
+                granularity = arguments.granularity,
                 icCompatibleIr2Js = arguments.irNewIr2Js,
             )
         }
@@ -290,7 +291,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 compilerConfiguration = configurationJs,
                 irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
                 mainArguments = mainCallArguments,
-                compilerInterfaceFactory = { mainModule, cfg -> JsIrCompilerWithIC(mainModule, cfg) }
+                compilerInterfaceFactory = { mainModule, cfg -> JsIrCompilerWithIC(mainModule, cfg, arguments.granularity) }
             )
 
             var tp = System.currentTimeMillis()

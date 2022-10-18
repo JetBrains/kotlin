@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaserState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.ic.JsIrCompilerICInterface
 import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 class JsIrCompilerWithIC(
     private val mainModule: IrModuleFragment,
     configuration: CompilerConfiguration,
+    granularity: JsGenerationGranularity,
     exportedDeclarations: Set<FqName> = emptySet(),
     es6mode: Boolean = false
 ) : JsIrCompilerICInterface {
@@ -41,6 +43,7 @@ class JsIrCompilerWithIC(
             keep = emptySet(),
             configuration = configuration,
             es6mode = es6mode,
+            granularity = granularity,
             icCompatibleIr2Js = IcCompatibleIr2Js.IC_MODE,
         )
     }

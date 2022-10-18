@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrFragmentAndBinaryAst
 import org.jetbrains.kotlin.ir.declarations.*
@@ -755,7 +756,7 @@ fun rebuildCacheForDirtyFiles(
         currentIrModule.files.filter { irFile -> irFile.fileEntry.name in files }
     } ?: currentIrModule.files
 
-    val compilerWithIC = JsIrCompilerWithIC(currentIrModule, configuration, exportedDeclarations)
+    val compilerWithIC = JsIrCompilerWithIC(currentIrModule, configuration, JsGenerationGranularity.PER_MODULE, exportedDeclarations)
 
     // Load declarations referenced during `context` initialization
     jsIrLinker.loadUnboundSymbols(true)
