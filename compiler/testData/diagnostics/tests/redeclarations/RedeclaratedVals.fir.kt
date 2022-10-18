@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 class Foo {
     fun normal() : Unit {
         val <!REDECLARATION!>someVal<!> = "One"
