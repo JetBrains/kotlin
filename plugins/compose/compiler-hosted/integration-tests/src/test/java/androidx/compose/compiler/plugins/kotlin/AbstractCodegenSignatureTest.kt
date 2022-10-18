@@ -246,7 +246,7 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
             instanceClass ?: error("Could not find class $className in loaded classes")
         }
 
-        val instanceOfClass = instanceClass.newInstance()
+        val instanceOfClass = instanceClass.getDeclaredConstructor().newInstance()
         val testMethod = instanceClass.getMethod("test", Context::class.java)
 
         val controller = Robolectric.buildActivity(TestActivity::class.java)
