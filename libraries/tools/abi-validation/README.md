@@ -125,6 +125,26 @@ apiValidation {
 }
 ```
 
+### Producing dump of a jar
+
+By default, binary compatibility validator analyzes project output class files from `build/classes` directory when building an API dump.
+If you pack these classes into an output jar not in a regular way, for example, by excluding certain classes, applying `shadow` plugin, and so on,
+the API dump built from the original class files may no longer reflect the resulting jar contents accurately.
+In that case, it makes sense to use the resulting jar as an input of the `apuBuild` task:
+
+Kotlin
+```kotlin
+tasks {
+    apiBuild {
+        // "jar" here is the name of the default Jar task producing the resulting jar file
+        // in a multiplatform project it can be named "jvmJar"
+        // if you applied the shadow plugin, it creates the "shadowJar" task that produces the transformed jar
+        inputJar.value(jar.flatMap { it.archiveFile })
+    }
+}
+```
+
+
 ### Workflow
 
 When starting to validate your library public API, we recommend the following workflow:
