@@ -241,7 +241,7 @@ object FirSessionFactory : FirAbstractSessionFactory() {
         register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
     }
 
-    fun createLibrarySession(
+    private fun createLibrarySession(
         sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
