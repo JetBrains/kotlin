@@ -12,10 +12,10 @@ index db904c8841..ef155edc8e 100644
  }
 
  dependencies {
--    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
+-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.20")
 +    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:<kotlin_version>")
      implementation("de.marcphilipp.gradle:nexus-publish-plugin:0.4.0")
-     implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.7.0") {
+     implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.7.10") {
          exclude("org.jetbrains.kotlin","kotlin-stdlib-jdk8")
 diff --git a/buildSrc/src/main/kotlin/Shared.kt b/buildSrc/src/main/kotlin/Shared.kt
 index cb90de74ab..440e2ce91a 100644
@@ -38,13 +38,13 @@ index 5cb5298782..3fb47f8cdc 100644
 +++ b/gradle.properties
 @@ -1,7 +1,7 @@
  group=io.kvision
- versionNumber=5.12.0
+ versionNumber=5.16.1
  
--systemProp.kotlinVersion=1.7.10
+-systemProp.kotlinVersion=1.7.20
 +systemProp.kotlinVersion=<kotlin_version>
  javaVersion=1.8
- coroutinesVersion=1.6.3
- serializationVersion=1.3.3
+ coroutinesVersion=1.6.4
+ serializationVersion=1.4.0
 diff --git a/settings.gradle.kts b/settings.gradle.kts
 index f85a2f087e..a122b6fd5e 100644
 --- a/settings.gradle.kts
