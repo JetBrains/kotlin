@@ -207,6 +207,22 @@ object StandardClassIds {
     object Java {
         val Record = "Record".javaLangId()
     }
+
+    object Collections {
+        val baseCollectionToMutableEquivalent: Map<ClassId, ClassId> = mapOf(
+            StandardClassIds.Iterable to StandardClassIds.MutableIterable,
+            StandardClassIds.Iterator to StandardClassIds.MutableIterator,
+            StandardClassIds.ListIterator to StandardClassIds.MutableListIterator,
+            StandardClassIds.List to StandardClassIds.MutableList,
+            StandardClassIds.Collection to StandardClassIds.MutableCollection,
+            StandardClassIds.Set to StandardClassIds.MutableSet,
+            StandardClassIds.Map to StandardClassIds.MutableMap,
+            StandardClassIds.MapEntry to StandardClassIds.MutableMapEntry
+        )
+
+         val mutableCollectionToBaseCollection: Map<ClassId, ClassId> =
+             baseCollectionToMutableEquivalent.entries.associateBy({ it.value }) { it.key }
+    }
 }
 
 private fun String.baseId() = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier(this))
