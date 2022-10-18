@@ -35,8 +35,8 @@ fun test3() {
 fun test4() {
     try {}
     catch (e: Exception) {
-        val a = 42
-        val a = "foo"
+        val <!REDECLARATION!>a<!> = 42
+        val <!REDECLARATION!>a<!> = "foo"
     }
 }
 

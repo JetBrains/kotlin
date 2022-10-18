@@ -70,14 +70,14 @@ object PlatformInfo {
                 && properties.checkXcodeVersion
                 && requiredMajorVersion != null
         ) {
-            val currentXcodeVersion = Xcode.findCurrent().version
-            val currentMajorVersion = currentXcodeVersion.splitToSequence('.').first()
-            if (currentMajorVersion != requiredMajorVersion) {
-                throw IllegalStateException(
-                        "Incorrect Xcode version: ${currentXcodeVersion}. Required major Xcode version is ${requiredMajorVersion}."
-                                + "\nYou can try '-PcheckXcodeVersion=false' to suppress this error, the result might be wrong."
-                )
-            }
+            // val currentXcodeVersion = Xcode.findCurrent().version
+            // val currentMajorVersion = currentXcodeVersion.splitToSequence('.').first()
+            // if (currentMajorVersion != requiredMajorVersion) {
+            //     throw IllegalStateException(
+            //             "Incorrect Xcode version: ${currentXcodeVersion}. Required major Xcode version is ${requiredMajorVersion}."
+            //                     + "\nYou can try '-PcheckXcodeVersion=false' to suppress this error, the result might be wrong."
+            //     )
+            // }
         }
     }
 

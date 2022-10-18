@@ -24717,6 +24717,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("RedeclaratedVals.kt")
+            public void testRedeclaratedVals() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclaratedVals.kt");
+            }
+
+            @Test
             @TestMetadata("RedeclarationInDefaultObject.kt")
             public void testRedeclarationInDefaultObject() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationInDefaultObject.kt");
