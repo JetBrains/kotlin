@@ -84,6 +84,8 @@ class FirFrontendFacade(
             testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project).values to emptyList()
         }
 
+        // the special name is required for `KlibMetadataModuleDescriptorFactoryImpl.createDescriptorOptionalBuiltIns`
+        // it doesn't seem convincingly legitimate, probably should be refactored
         val moduleName = Name.special("<${module.name}>")
         val languageVersionSettings = module.languageVersionSettings
         val analyzerServices = module.targetPlatform.getAnalyzerServices()
