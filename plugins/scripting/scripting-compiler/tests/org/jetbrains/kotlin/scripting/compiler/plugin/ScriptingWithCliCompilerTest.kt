@@ -191,7 +191,7 @@ class ScriptingWithCliCompilerTest {
     @Test
     fun testCompileScriptWithRegularKotlin() {
 
-        fun compileVariant(vararg flags: String): Pair<List<String>, ExitCode> {
+        fun compileVariant(vararg flags: String, withScriptInstance: Boolean = true): Pair<List<String>, ExitCode> {
             return withTempDir { tmpdir ->
                 val (_, err, exitCode) = captureOutErrRet {
                     CLITool.doMainNoExit(
@@ -200,7 +200,10 @@ class ScriptingWithCliCompilerTest {
                             "-d", tmpdir.path,
                             "-cp", getMainKtsClassPath().joinToString(File.pathSeparator),
                             *flags,
-                            "$TEST_DATA_DIR/compiler/mixedCompilation/simpleScriptInstance.kt",
+                            if (withScriptInstance)
+                                "$TEST_DATA_DIR/compiler/mixedCompilation/simpleScriptInstance.kt"
+                            else
+                                "$TEST_DATA_DIR/compiler/mixedCompilation/nonScript.kt",
                             "$TEST_DATA_DIR/compiler/mixedCompilation/simpleScript.main.kts"
                         )
                     )
@@ -230,6 +233,11 @@ class ScriptingWithCliCompilerTest {
                 Assert.fail("Expecting unresolved reference: SimpleScript_main error, got:\n${errLines.joinToString("\n")}")
             }
             Assert.assertEquals(ExitCode.COMPILATION_ERROR, exitCode)
+        }
+
+        compileVariant("-language-version", "1.9", withScriptInstance = false).let { (errLines, exitCode) ->
+            Assert.assertTrue(errLines.none { it.startsWith(scriptInSourceRootWarning) })
+            Assert.assertEquals(ExitCode.OK, exitCode)
         }
 
         compileVariant("-language-version", "1.9", "-Xallow-any-scripts-in-source-roots").let { (errLines, exitCode) ->

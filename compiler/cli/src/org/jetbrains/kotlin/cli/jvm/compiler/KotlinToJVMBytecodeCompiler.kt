@@ -30,9 +30,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.LOOKUP_TRACKER
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
-import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -232,10 +230,7 @@ object KotlinToJVMBytecodeCompiler {
 
     fun analyze(environment: KotlinCoreEnvironment): AnalysisResult? {
         val collector = environment.messageCollector
-        val sourceFiles = ProcessSourcesBeforeCompilingExtension.getInstances(environment.project)
-            .fold(environment.getSourceFiles() as Collection<KtFile>) { files, extension ->
-                extension.processSources(files, environment.configuration)
-            }
+        val sourceFiles = environment.getSourceFiles()
 
         // Can be null for Scripts/REPL
         val performanceManager = environment.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
