@@ -418,7 +418,11 @@ class KotlinCoreEnvironment private constructor(
         return result
     }
 
-    fun getSourceFiles(): List<KtFile> = sourceFiles
+    fun getSourceFiles(): List<KtFile> =
+        ProcessSourcesBeforeCompilingExtension.getInstances(project)
+            .fold(sourceFiles as Collection<KtFile>) { files, extension ->
+                extension.processSources(files, configuration)
+            }.toList()
 
     internal fun report(severity: CompilerMessageSeverity, message: String) = configuration.report(severity, message)
 
