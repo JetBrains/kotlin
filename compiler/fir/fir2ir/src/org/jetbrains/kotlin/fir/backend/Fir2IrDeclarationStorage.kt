@@ -307,7 +307,7 @@ class Fir2IrDeclarationStorage(
         containingClass: IrClass?,
         isStatic: Boolean,
         // Can be not-null only for property accessors
-        parentPropertyReceiverType: FirTypeRef?
+        parentPropertyReceiver: FirReceiverParameter?
     ) {
         val parent = this
         if (function is FirSimpleFunction || function is FirConstructor) {
@@ -345,21 +345,22 @@ class Fir2IrDeclarationStorage(
         with(classifierStorage) {
             val thisOrigin = IrDeclarationOrigin.DEFINED
             if (function !is FirConstructor) {
-                val receiverTypeRef =
-                    if (function !is FirPropertyAccessor && function != null) function.receiverParameter?.type
-                    else parentPropertyReceiverType
-                if (receiverTypeRef != null) {
-                    extensionReceiverParameter = receiverTypeRef.convertWithOffsets { startOffset, endOffset ->
+                val receiver: FirReceiverParameter? =
+                    if (function !is FirPropertyAccessor && function != null) function.receiverParameter
+                    else parentPropertyReceiver
+                if (receiver != null) {
+                    extensionReceiverParameter = receiver.convertWithOffsets { startOffset, endOffset ->
                         val name = (function as? FirAnonymousFunction)?.label?.name?.let {
                             val suffix = it.takeIf(Name::isValidIdentifier) ?: "\$receiver"
                             Name.identifier("\$this\$$suffix")
                         } ?: SpecialNames.THIS
                         declareThisReceiverParameter(
-                            thisType = receiverTypeRef.toIrType(typeContext),
+                            thisType = receiver.type.toIrType(typeContext),
                             thisOrigin = thisOrigin,
                             startOffset = startOffset,
                             endOffset = endOffset,
-                            name = name
+                            name = name,
+                            explicitReceiver = receiver,
                         )
                     }
                 }
@@ -401,10 +402,10 @@ class Fir2IrDeclarationStorage(
         irParent: IrDeclarationParent?,
         thisReceiverOwner: IrClass? = irParent as? IrClass,
         isStatic: Boolean,
-        parentPropertyReceiverType: FirTypeRef? = null
+        parentPropertyReceiver: FirReceiverParameter? = null
     ): T {
         setAndModifyParent(irParent)
-        declareParameters(function, thisReceiverOwner, isStatic, parentPropertyReceiverType)
+        declareParameters(function, thisReceiverOwner, isStatic, parentPropertyReceiver)
         return this
     }
 
@@ -729,7 +730,7 @@ class Fir2IrDeclarationStorage(
                 bindAndDeclareParameters(
                     propertyAccessor, irParent,
                     thisReceiverOwner, isStatic = irParent !is IrClass || propertyAccessor?.isStatic == true,
-                    parentPropertyReceiverType = property.receiverParameter?.type
+                    parentPropertyReceiver = property.receiverParameter,
                 )
                 leaveScope(this)
                 if (irParent != null) {

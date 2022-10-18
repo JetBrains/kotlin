@@ -67,8 +67,8 @@ class Fir2IrLazyPropertyAccessor(
     }
 
     override var extensionReceiverParameter: IrValueParameter? by lazyVar(lock) {
-        firParentProperty.receiverParameter?.type?.let {
-            createThisReceiverParameter(it.toIrType(typeConverter, conversionTypeContext))
+        firParentProperty.receiverParameter?.let {
+            createThisReceiverParameter(it.type.toIrType(typeConverter, conversionTypeContext), it)
         }
     }
 

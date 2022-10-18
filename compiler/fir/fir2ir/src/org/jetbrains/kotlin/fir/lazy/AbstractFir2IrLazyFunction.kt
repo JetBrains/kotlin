@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.lazy
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -97,9 +98,9 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
                 (fir as? FirPropertyAccessor)?.propertySymbol?.fir?.hasAnnotation(JVM_STATIC_CLASS_ID) == true
     }
 
-    protected fun createThisReceiverParameter(thisType: IrType): IrValueParameter {
+    protected fun createThisReceiverParameter(thisType: IrType, explicitReceiver: FirAnnotationContainer? = null): IrValueParameter {
         declarationStorage.enterScope(this)
-        return declareThisReceiverParameter(thisType, origin).apply {
+        return declareThisReceiverParameter(thisType, origin, explicitReceiver = explicitReceiver).apply {
             declarationStorage.leaveScope(this@AbstractFir2IrLazyFunction)
         }
     }
