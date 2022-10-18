@@ -125,6 +125,7 @@ object FirNativeObjCNameChecker : FirBasicDeclarationChecker() {
         is FirFunctionSymbol<*> -> buildList {
             add((this@getObjCNames as FirBasedSymbol<*>).getObjCName())
             add(resolvedReceiverTypeRef?.getObjCName())
+            add(receiverParameter?.getObjCName())
             valueParameterSymbols.forEach { add(it.getObjCName()) }
         }
 

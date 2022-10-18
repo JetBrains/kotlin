@@ -1,4 +1,8 @@
 KtReceiverParameterSymbol:
+  annotationsList: [
+    ReceiverAnnotation()
+      psi: KtAnnotationEntry
+  ]
   origin: SOURCE
   owningCallableSymbol: KtKotlinPropertySymbol(/prop)
   type: [
