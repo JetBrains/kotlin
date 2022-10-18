@@ -10,9 +10,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
-import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.NotFixedTypeToVariableSubstitutorForDelegateInference
+import org.jetbrains.kotlin.fir.resolve.substitution.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
@@ -228,9 +226,11 @@ class FirDelegatedPropertyInferenceSession(
     fun createFinalSubstitutor(): ConeSubstitutor {
         val stubTypeSubstitutor = createNonFixedTypeToVariableSubstitutor()
 
+        val typeContext = components.session.typeContext
         val resultSubstitutor = resultingConstraintSystem.asReadOnlyStorage()
-            .buildAbstractResultingSubstitutor(components.session.typeContext) as ConeSubstitutor
+            .buildAbstractResultingSubstitutor(typeContext) as ConeSubstitutor
         return ChainedSubstitutor(stubTypeSubstitutor, resultSubstitutor)
+            .replaceStubsAndTypeVariablesToErrors(typeContext, stubTypesByTypeVariable.values.map { it.constructor })
     }
 
     val stubTypesByTypeVariable: MutableMap<ConeTypeVariable, ConeStubType> = mutableMapOf()

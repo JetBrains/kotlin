@@ -1,10 +1,11 @@
+// FIR_DUMP
 // WITH_REFLECT
 
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty1
 
 class ProcessorWithParent : Entity {
-    var processor by <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>parent<!>(ProcessorWithChildren::processors)
+    var processor by parent(ProcessorWithChildren::processors)
 }
 
 class ProcessorWithChildren : Entity {
