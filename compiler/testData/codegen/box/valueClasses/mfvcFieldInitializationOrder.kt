@@ -3,6 +3,7 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
 // CHECK_BYTECODE_LISTING
+// FIR_IDENTICAL
 
 @JvmInline
 value class DPoint(val x: Double, val y: Double)

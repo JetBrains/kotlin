@@ -3,6 +3,7 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 // CHECK_BYTECODE_LISTING
+// FIR_IDENTICAL
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

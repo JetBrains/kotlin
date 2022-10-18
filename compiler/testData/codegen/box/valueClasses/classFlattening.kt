@@ -4,6 +4,7 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses +ContextReceivers
 // CHECK_BYTECODE_LISTING
+// FIR_IDENTICAL
 
 @JvmInline
 value class IC(val x: UInt)

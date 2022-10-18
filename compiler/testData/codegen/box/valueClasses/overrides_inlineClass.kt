@@ -5,6 +5,7 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
 // CHECK_BYTECODE_LISTING
+// FIR_IDENTICAL
 
 interface AbstractPoint<T> {
     val x: T

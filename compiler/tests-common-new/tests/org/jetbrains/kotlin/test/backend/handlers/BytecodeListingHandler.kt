@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE_LISTING
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.WITH_SIGNATURES
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_IDENTICAL
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
@@ -42,10 +44,12 @@ class BytecodeListingHandler(testServices: TestServices) : JvmBinaryArtifactHand
         if (multiModuleInfoDumper.isEmpty()) return
 
         val sourceFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val defaultTxtFile = sourceFile.withExtension(".txt")
+        val extension =
+            if (testServices.defaultsProvider.defaultFrontend == FrontendKinds.FIR && FIR_IDENTICAL !in testServices.moduleStructure.allDirectives) ".fir.txt" else ".txt"
+        val defaultTxtFile = sourceFile.withExtension(extension)
         val isIr = testServices.defaultsProvider.defaultTargetBackend?.isIR == true
         val txtFile =
-            if (isIr) sourceFile.withSuffixAndExtension("_ir", ".txt").takeIf(File::exists) ?: defaultTxtFile
+            if (isIr) sourceFile.withSuffixAndExtension("_ir", extension).takeIf(File::exists) ?: defaultTxtFile
             else defaultTxtFile
 
         assertions.assertEqualsToFile(txtFile, multiModuleInfoDumper.generateResultingDump())
