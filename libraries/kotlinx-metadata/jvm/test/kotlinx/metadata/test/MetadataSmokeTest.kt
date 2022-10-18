@@ -63,7 +63,7 @@ class MetadataSmokeTest {
             }
         }
 
-        val header = KotlinClassMetadata.writeClass(klass).header
+        val annotationData = KotlinClassMetadata.writeClass(klass).annotationData
 
         // Then, produce the bytecode of a .class file with ASM
 
@@ -72,14 +72,14 @@ class MetadataSmokeTest {
 
             // Use the created KotlinMetadata instance to write @kotlin.Metadata annotation on the class file
             visitAnnotation("Lkotlin/Metadata;", true).run {
-                visit("mv", header.metadataVersion)
-                visit("k", header.kind)
+                visit("mv", annotationData.metadataVersion)
+                visit("k", annotationData.kind)
                 visitArray("d1").run {
-                    header.data1.forEach { visit(null, it) }
+                    annotationData.data1.forEach { visit(null, it) }
                     visitEnd()
                 }
                 visitArray("d2").run {
-                    header.data2.forEach { visit(null, it) }
+                    annotationData.data2.forEach { visit(null, it) }
                     visitEnd()
                 }
                 visitEnd()

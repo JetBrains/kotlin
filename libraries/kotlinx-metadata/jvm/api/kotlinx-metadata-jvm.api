@@ -259,7 +259,7 @@ public abstract class kotlinx/metadata/jvm/KotlinClassMetadata {
 	public static final field MULTI_FILE_CLASS_PART_KIND I
 	public static final field SYNTHETIC_CLASS_KIND I
 	public synthetic fun <init> (Lkotlin/Metadata;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getHeader ()Lkotlin/Metadata;
+	public final fun getAnnotationData ()Lkotlin/Metadata;
 	public static final fun read (Lkotlin/Metadata;)Lkotlinx/metadata/jvm/KotlinClassMetadata;
 }
 
