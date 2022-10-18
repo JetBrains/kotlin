@@ -6,6 +6,7 @@
 // LANGUAGE: +ValueClasses
 // LANGUAGE: +GenericInlineClassParameter
 // CHECK_BYTECODE_LISTING
+// FIR_IDENTICAL
 
 interface AbstractPoint<T> {
     val x: T
