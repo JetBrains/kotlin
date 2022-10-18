@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.parcelize.fir.diagnostics
 
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderer
+import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.checkMissingMessages
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.CLASS_SHOULD_BE_PARCELIZE
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.CREATOR_DEFINITION_IS_NOT_ALLOWED
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.DEPRECATED_ANNOTATION
@@ -46,13 +46,8 @@ import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELER
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PROPERTY_WONT_BE_SERIALIZED
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.REDUNDANT_TYPE_PARCELER
 
-object KtDefaultErrorMessagesParcelize {
-    fun getRendererForDiagnostic(diagnostic: KtDiagnostic): KtDiagnosticRenderer {
-        val factory = diagnostic.factory
-        return MAP[factory] ?: factory.ktRenderer
-    }
-
-    val MAP = KtDiagnosticFactoryToRendererMap("Parcelize").also { map ->
+object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
+    override val MAP = KtDiagnosticFactoryToRendererMap("Parcelize").also { map ->
         map.put(
             PARCELABLE_SHOULD_BE_CLASS,
             "'Parcelable' should be a class"
@@ -176,5 +171,7 @@ object KtDefaultErrorMessagesParcelize {
             DEPRECATED_PARCELER,
             "'kotlinx.android.parcel.Parceler' is deprecated. Use 'kotlinx.parcelize.Parceler' instead"
         )
+
+        map.checkMissingMessages(KtErrorsParcelize)
     }
 }
