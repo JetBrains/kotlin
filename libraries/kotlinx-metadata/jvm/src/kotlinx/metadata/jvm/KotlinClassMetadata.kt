@@ -24,15 +24,16 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
  * To create an instance of [KotlinClassMetadata], first obtain an instance of [Metadata] annotation on a class file, and then call [KotlinClassMetadata.read].
  * [Metadata] annotation can be obtained either via reflection or created from data from a binary class file, using its constructor or helper function [kotlinx.metadata.jvm.Metadata].
  */
-sealed class KotlinClassMetadata(val header: Metadata) {
+sealed class KotlinClassMetadata(val annotationData: Metadata) {
+
     /**
      * Represents metadata of a class file containing a declaration of a Kotlin class.
      */
-    class Class internal constructor(header: Metadata) : KotlinClassMetadata(header) {
+    class Class internal constructor(annotationData: Metadata) : KotlinClassMetadata(annotationData) {
         private val classData by lazy(PUBLICATION) {
-            val data1 = (header.data1.takeIf(Array<*>::isNotEmpty)
+            val data1 = (annotationData.data1.takeIf(Array<*>::isNotEmpty)
                 ?: throw InconsistentKotlinMetadataException("data1 must not be empty"))
-            JvmProtoBufUtil.readClassDataFrom(data1, header.data2)
+            JvmProtoBufUtil.readClassDataFrom(data1, annotationData.data2)
         }
 
         /**
@@ -86,11 +87,11 @@ sealed class KotlinClassMetadata(val header: Metadata) {
     /**
      * Represents metadata of a class file containing a compiled Kotlin file facade.
      */
-    class FileFacade internal constructor(header: Metadata) : KotlinClassMetadata(header) {
+    class FileFacade internal constructor(annotationData: Metadata) : KotlinClassMetadata(annotationData) {
         private val packageData by lazy(PUBLICATION) {
-            val data1 = (header.data1.takeIf(Array<*>::isNotEmpty)
+            val data1 = (annotationData.data1.takeIf(Array<*>::isNotEmpty)
                 ?: throw InconsistentKotlinMetadataException("data1 must not be empty"))
-            JvmProtoBufUtil.readPackageDataFrom(data1, header.data2)
+            JvmProtoBufUtil.readPackageDataFrom(data1, annotationData.data2)
         }
 
         /**
@@ -145,10 +146,10 @@ sealed class KotlinClassMetadata(val header: Metadata) {
      * Represents metadata of a class file containing a synthetic class, e.g. a class for lambda, `$DefaultImpls` class for interface
      * method implementations, `$WhenMappings` class for optimized `when` over enums, etc.
      */
-    class SyntheticClass internal constructor(header: Metadata) : KotlinClassMetadata(header) {
+    class SyntheticClass internal constructor(annotationData: Metadata) : KotlinClassMetadata(annotationData) {
         private val functionData by lazy(PUBLICATION) {
-            header.data1.takeIf(Array<*>::isNotEmpty)?.let { data1 ->
-                JvmProtoBufUtil.readFunctionDataFrom(data1, header.data2)
+            annotationData.data1.takeIf(Array<*>::isNotEmpty)?.let { data1 ->
+                JvmProtoBufUtil.readFunctionDataFrom(data1, annotationData.data2)
             }
         }
 
@@ -164,7 +165,7 @@ sealed class KotlinClassMetadata(val header: Metadata) {
          * Returns `true` if this synthetic class is a class file compiled for a Kotlin lambda.
          */
         val isLambda: Boolean
-            get() = header.data1.isNotEmpty()
+            get() = annotationData.data1.isNotEmpty()
 
         /**
          * Makes the given visitor visit metadata of this file facade, if this synthetic class represents a Kotlin lambda
@@ -227,11 +228,11 @@ sealed class KotlinClassMetadata(val header: Metadata) {
      *
      * @see JvmMultifileClass
      */
-    class MultiFileClassFacade internal constructor(header: Metadata) : KotlinClassMetadata(header) {
+    class MultiFileClassFacade internal constructor(annotationData: Metadata) : KotlinClassMetadata(annotationData) {
         /**
          * JVM internal names of the part classes which this multi-file class combines.
          */
-        val partClassNames: List<String> = header.data1.asList()
+        val partClassNames: List<String> = annotationData.data1.asList()
 
         /**
          * A writer that generates the metadata of a multi-file class facade.
@@ -274,18 +275,18 @@ sealed class KotlinClassMetadata(val header: Metadata) {
      *
      * @see JvmMultifileClass
      */
-    class MultiFileClassPart internal constructor(header: Metadata) : KotlinClassMetadata(header) {
+    class MultiFileClassPart internal constructor(annotationData: Metadata) : KotlinClassMetadata(annotationData) {
         private val packageData by lazy(PUBLICATION) {
-            val data1 = (header.data1.takeIf(Array<*>::isNotEmpty)
+            val data1 = (annotationData.data1.takeIf(Array<*>::isNotEmpty)
                 ?: throw InconsistentKotlinMetadataException("data1 must not be empty"))
-            JvmProtoBufUtil.readPackageDataFrom(data1, header.data2)
+            JvmProtoBufUtil.readPackageDataFrom(data1, annotationData.data2)
         }
 
         /**
          * JVM internal name of the corresponding multi-file class facade.
          */
         val facadeClassName: String
-            get() = header.extraString
+            get() = annotationData.extraString
 
         /**
          * Visits metadata of this multi-file class part with a new [KmPackage] instance and returns that instance.
@@ -343,7 +344,7 @@ sealed class KotlinClassMetadata(val header: Metadata) {
      * Represents metadata of an unknown class file. This class is used if an old version of this library is used against a new kind
      * of class files generated by the Kotlin compiler, unsupported by this library.
      */
-    class Unknown internal constructor(header: Metadata) : KotlinClassMetadata(header)
+    class Unknown internal constructor(annotationData: Metadata) : KotlinClassMetadata(annotationData)
 
     companion object {
         /**
@@ -433,30 +434,31 @@ sealed class KotlinClassMetadata(val header: Metadata) {
 
 
         /**
-         * Reads and parses the given header of a Kotlin JVM class file and returns the correct type of [KotlinClassMetadata] encoded by
-         * this header, or `null` if this header encodes an unsupported kind of Kotlin classes or has an unsupported metadata version.
+         * Reads and parses the given annotation data of a Kotlin JVM class file and returns the correct type of [KotlinClassMetadata] encoded by
+         * this annotation, or `null` if this annotation encodes an unsupported kind of Kotlin classes or has an unsupported metadata version.
+         *
+         * [annotationData] may be obtained reflectively, constructed manually or with helper [kotlinx.metadata.jvm.Metadata] function,
+         * or equivalent [KotlinClassHeader] can be used.
          *
          * Throws [InconsistentKotlinMetadataException] if the metadata has inconsistencies which signal that it may have been
          * modified by a separate tool.
-         *
-         * @param header the header of a Kotlin JVM class file to be parsed
          */
         @JvmStatic
-        fun read(header: Metadata): KotlinClassMetadata? {
+        fun read(annotationData: Metadata): KotlinClassMetadata? {
             if (!JvmMetadataVersion(
-                    header.metadataVersion,
-                    (header.extraInt and (1 shl 3)/* see JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG */) != 0
+                    annotationData.metadataVersion,
+                    (annotationData.extraInt and (1 shl 3)/* see JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG */) != 0
                 ).isCompatible()
             ) return null
 
             return try {
-                when (header.kind) {
-                    CLASS_KIND -> Class(header)
-                    FILE_FACADE_KIND -> FileFacade(header)
-                    SYNTHETIC_CLASS_KIND -> SyntheticClass(header)
-                    MULTI_FILE_CLASS_FACADE_KIND -> MultiFileClassFacade(header)
-                    MULTI_FILE_CLASS_PART_KIND -> MultiFileClassPart(header)
-                    else -> Unknown(header)
+                when (annotationData.kind) {
+                    CLASS_KIND -> Class(annotationData)
+                    FILE_FACADE_KIND -> FileFacade(annotationData)
+                    SYNTHETIC_CLASS_KIND -> SyntheticClass(annotationData)
+                    MULTI_FILE_CLASS_FACADE_KIND -> MultiFileClassFacade(annotationData)
+                    MULTI_FILE_CLASS_PART_KIND -> MultiFileClassPart(annotationData)
+                    else -> Unknown(annotationData)
                 }
             } catch (e: InconsistentKotlinMetadataException) {
                 throw e
