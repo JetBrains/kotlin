@@ -27,6 +27,16 @@ object ConeTypeIntersector {
             }
         }
 
+        if (inputTypes.any { it is ConeFlexibleType }) {
+            // (A..B) & C = (A & C)..(B & C)
+            val lowerBound = intersectTypes(context, inputTypes.map { it.lowerBoundIfFlexible() })
+            val upperBound = intersectTypes(context, inputTypes.map { it.upperBoundIfFlexible() })
+            // Special case - if C is `Nothing?`, then the result is `Nothing!`; but if it is non-null,
+            // then this code is unreachable, so it's more useful to do resolution/diagnostics
+            // under the assumption that it is purely nullable.
+            return if (lowerBound.isNothing) upperBound else coneFlexibleOrSimpleType(context, lowerBound, upperBound)
+        }
+
         /**
          * resultNullability. Value description:
          * ACCEPT_NULL means that all types marked nullable
@@ -37,11 +47,11 @@ object ConeTypeIntersector {
          * UNKNOWN means, that we do not know, i.e. more precisely, all singleClassifier types marked nullable if any,
          * and other types is captured types or type parameters without not-null upper bound. Example: `String? & T` such types we should leave as is.
          */
-        val isResultNullable = inputTypes.all { it.isNullable(context) }
-        val inputTypesWithNullability = inputTypes.mapTo(LinkedHashSet()) {
-            if (isResultNullable) it else it.makeConeTypeDefinitelyNotNullOrNotNull(context)
+        val isResultNotNullable = inputTypes.any { !it.isNullable(context) }
+        val inputTypesMadeNotNullIfNeeded = inputTypes.mapTo(LinkedHashSet()) {
+            if (isResultNotNullable) it.makeConeTypeDefinitelyNotNullOrNotNull(context) else it
         }
-        if (inputTypesWithNullability.size == 1) return inputTypesWithNullability.single()
+        if (inputTypesMadeNotNullIfNeeded.size == 1) return inputTypesMadeNotNullIfNeeded.single()
 
         /*
          * Here we drop types from intersection set for cases like that:
@@ -54,25 +64,12 @@ object ConeTypeIntersector {
          * We want to drop A from that set, because it's useless for type checking. But in case if
          *   A came from inference and B came from smartcast we want to save both types in intersection
          */
-        val resultList = inputTypesWithNullability.toMutableList()
+        val resultList = inputTypesMadeNotNullIfNeeded.toMutableList()
         resultList.removeIfNonSingleErrorOrInRelation { candidate, other -> other.isStrictSubtypeOf(context, candidate) }
         assert(resultList.isNotEmpty()) { "no types left after removing strict supertypes: ${inputTypes.joinToString()}" }
 
         ConeIntegerLiteralIntersector.findCommonIntersectionType(resultList)?.let { return it }
 
-        /*
-         * For the case like it(ft(String..String?), String?), where ft(String..String?) == String?, we prefer to _keep_ flexible type.
-         * When a == b, the former, i.e., the one in the list will be filtered out, and the other one will remain.
-         * So, here, we sort the interim list such that flexible types appear later.
-         */
-        resultList.sortWith { p0, p1 ->
-            when {
-                p0 is ConeFlexibleType && p1 is ConeFlexibleType -> 0
-                p0 is ConeFlexibleType -> 1
-                p1 is ConeFlexibleType -> -1
-                else -> 0
-            }
-        }
         resultList.removeIfNonSingleErrorOrInRelation { candidate, other -> AbstractTypeChecker.equalTypes(context, candidate, other) }
         assert(resultList.isNotEmpty()) { "no types left after removing equal types: ${inputTypes.joinToString()}" }
         return resultList.singleOrNull() ?: ConeIntersectionType(resultList)
