@@ -147,7 +147,7 @@ object FirKotlinToJvmBytecodeCompiler {
             findMainClass(outputs.single().first.fir)
         }
 
-        return writeOutputs(
+        return writeOutputsIfNeeded(
             project,
             projectConfiguration,
             chunk,
