@@ -266,7 +266,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
         when (declaration) {
             is FirFile -> checkFile(declaration, inspector, context)
             is FirRegularClass -> checkRegularClass(declaration, inspector)
-            is FirFunction -> checkFunction(declaration, declaration, context, reporter)
+            is FirSimpleFunction -> checkFunction(declaration, declaration, context, reporter)
 
             else -> {
             }
@@ -338,14 +338,17 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                 resolveConflictingSymbols(declaration, context, reporter, inspector)
             }
 
-            override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {}
+            override fun visitWhenExpression(whenExpression: FirWhenExpression) {
+                whenExpression.branches.map { it.accept(this) }
+            }
 
             override fun visitFunction(function: FirFunction) {}
             override fun visitRegularClass(regularClass: FirRegularClass) {}
 
             override fun visitProperty(property: FirProperty) {
                 val inspector = inspectorStack.peek()
-                inspector.collect(property)
+                if (!property.name.isSpecial)
+                    inspector.collect(property)
             }
         }
 

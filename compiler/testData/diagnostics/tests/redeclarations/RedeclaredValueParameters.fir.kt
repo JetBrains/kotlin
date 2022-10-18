@@ -1,4 +1,4 @@
-fun test(<!REDECLARATION!>a<!>: Int, <!REDECLARATION!>a<!>: String) {}
+fun test(<!REDECLARATION, REDECLARATION!>a<!>: Int, <!REDECLARATION, REDECLARATION!>a<!>: String) {}
 
 fun test2(block: (Int, String) -> Unit) { }
 

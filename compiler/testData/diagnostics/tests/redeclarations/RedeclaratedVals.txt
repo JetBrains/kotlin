@@ -1,0 +1,13 @@
+package
+
+public final class Foo {
+    public constructor Foo()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun normal(): kotlin.Unit
+    public final fun redeclarationInBlock(): kotlin.Unit
+    public final fun redeclarationInBlock1(): kotlin.Unit
+    public final fun redeclarationInFunc(): kotlin.Unit
+    public final fun redeclarationInStatements(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

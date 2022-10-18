@@ -6,7 +6,7 @@ data class B(val u: Double, val w: Short)
 fun foo(block: (A, B) -> Unit) { }
 
 fun bar() {
-    foo { (a, a), b ->
+    foo { (<!REDECLARATION!>a<!>, <!REDECLARATION!>a<!>), b ->
         a checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Int>() }
         b checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
     }
@@ -21,7 +21,7 @@ fun bar() {
         b checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
     }
 
-    foo { (a, b), (c, b) ->
+    foo { (a, <!REDECLARATION!>b<!>), (c, <!REDECLARATION!>b<!>) ->
         a checkType { _<Int>() }
         b checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
         c checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><B>() }

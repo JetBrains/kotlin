@@ -129,7 +129,7 @@ DexMethodCountKt.dexMethodCount(project) { task ->
 }
 
 compileKotlin {
-    kotlinJavaToolchain.toolchain.use(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_1_8))
+    kotlinJavaToolchain.toolchain.use(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_1_6))
     kotlinOptions {
         jvmTarget = "1.8"
         freeCompilerArgs = [
