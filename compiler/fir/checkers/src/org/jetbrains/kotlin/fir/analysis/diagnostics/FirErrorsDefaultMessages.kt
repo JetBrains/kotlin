@@ -1953,7 +1953,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SYMBOL
         )
         map.put(RECURSION_IN_INLINE, "Inline function ''{0}'' cannot be recursive", SYMBOL)
-        map.put(NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, "Public-API inline function cannot access non-public-API ''{1}''", SYMBOL, SYMBOL)
+        map.put(NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, "Public-API inline function cannot access non-public-API ''{0}''", SYMBOL, SYMBOL)
         map.put(
             PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE,
             "Protected constructor call from public-API inline function is deprecated",
