@@ -30,53 +30,35 @@ object ConeTypeIntersector {
          * UNKNOWN means, that we do not know, i.e. more precisely, all singleClassifier types marked nullable if any,
          * and other types is captured types or type parameters without not-null upper bound. Example: `String? & T` such types we should leave as is.
          */
-        val resultNullability = inputTypes.fold(ResultNullability.START) { nullability, nextType ->
-            nullability.combine(nextType.type, context)
+        val isResultNullable = inputTypes.all { it.isNullable(context) }
+        val inputTypesWithNullability = inputTypes.mapTo(LinkedHashSet()) {
+            if (isResultNullable) it else it.makeConeTypeDefinitelyNotNullOrNotNull(context)
         }
+        if (inputTypesWithNullability.size == 1) return inputTypesWithNullability.single()
 
-        val inputTypesWithCorrectNullability = inputTypes.mapTo(LinkedHashSet()) {
-            if (resultNullability == ResultNullability.NOT_NULL) with(context) {
-                it.makeDefinitelyNotNullOrNotNull() as ConeKotlinType
-            } else it
-        }
+        /*
+         * Here we drop types from intersection set for cases like that:
+         *
+         * interface A
+         * interface B : A
+         *
+         * type = (A & B & ...)
+         *
+         * We want to drop A from that set, because it's useless for type checking. But in case if
+         *   A came from inference and B came from smartcast we want to save both types in intersection
+         */
+        val resultList = inputTypesWithNullability.toMutableList()
+        resultList.removeIfNonSingleErrorOrInRelation { candidate, other -> other.isStrictSubtypeOf(context, candidate) }
+        assert(resultList.isNotEmpty()) { "no types left after removing strict supertypes: ${inputTypes.joinToString()}" }
 
-        return intersectTypesWithoutIntersectionType(context, inputTypesWithCorrectNullability)
-    }
-
-    private fun intersectTypesWithoutIntersectionType(
-        context: ConeTypeContext,
-        inputTypes: Set<ConeKotlinType>
-    ): ConeKotlinType {
-        if (inputTypes.size == 1) return inputTypes.single().type
-
-        // Any and Nothing should leave
-        // Note that duplicates should be dropped because we have Set here.
-        val errorMessage = { "This collections cannot be empty! input types: ${inputTypes.joinToString()}" }
-
-        val filteredEqualTypes = filterTypes(inputTypes) { lower, upper ->
-            /*
-             * Here we drop types from intersection set for cases like that:
-             *
-             * interface A
-             * interface B : A
-             *
-             * type = (A & B & ...)
-             *
-             * We want to drop A from that set, because it's useless for type checking. But in case if
-             *   A came from inference and B came from smartcast we want to safe both types in intersection
-             */
-            isStrictSupertype(context, lower, upper)
-        }
-        assert(filteredEqualTypes.isNotEmpty(), errorMessage)
-
-        ConeIntegerLiteralIntersector.findCommonIntersectionType(filteredEqualTypes)?.let { return it }
+        ConeIntegerLiteralIntersector.findCommonIntersectionType(resultList)?.let { return it }
 
         /*
          * For the case like it(ft(String..String?), String?), where ft(String..String?) == String?, we prefer to _keep_ flexible type.
          * When a == b, the former, i.e., the one in the list will be filtered out, and the other one will remain.
          * So, here, we sort the interim list such that flexible types appear later.
          */
-        val sortedEqualTypes = filteredEqualTypes.sortedWith { p0, p1 ->
+        resultList.sortWith { p0, p1 ->
             when {
                 p0 is ConeFlexibleType && p1 is ConeFlexibleType -> 0
                 p0 is ConeFlexibleType -> 1
@@ -84,36 +66,22 @@ object ConeTypeIntersector {
                 else -> 0
             }
         }
-        val filteredSuperAndEqualTypes = filterTypes(sortedEqualTypes) { a, b ->
-            AbstractTypeChecker.equalTypes(context, a, b)
-        }
-        assert(filteredSuperAndEqualTypes.isNotEmpty(), errorMessage)
-
-        if (filteredSuperAndEqualTypes.size < 2) return filteredSuperAndEqualTypes.single()
-
-        return ConeIntersectionType(filteredSuperAndEqualTypes)
+        resultList.removeIfNonSingleErrorOrInRelation { candidate, other -> AbstractTypeChecker.equalTypes(context, candidate, other) }
+        assert(resultList.isNotEmpty()) { "no types left after removing equal types: ${inputTypes.joinToString()}" }
+        return resultList.singleOrNull() ?: ConeIntersectionType(resultList)
     }
 
-    private fun filterTypes(
-        inputTypes: Collection<ConeKotlinType>,
-        predicate: (lower: ConeKotlinType, upper: ConeKotlinType) -> Boolean
-    ): List<ConeKotlinType> {
-        val filteredTypes = ArrayList(inputTypes)
-        val iterator = filteredTypes.iterator()
+    private fun MutableCollection<ConeKotlinType>.removeIfNonSingleErrorOrInRelation(
+        predicate: (candidate: ConeKotlinType, other: ConeKotlinType) -> Boolean
+    ) {
+        val iterator = iterator()
         while (iterator.hasNext()) {
-            val upper = iterator.next()
-            if (filteredTypes.any { lower -> lower !== upper && predicate(lower, upper) } ||
-                upper is ConeErrorType && filteredTypes.size > 1
+            val candidate = iterator.next()
+            if (candidate is ConeErrorType && size > 1 ||
+                any { other -> other !== candidate && predicate(candidate, other) }
             ) {
                 iterator.remove()
             }
-        }
-        return filteredTypes
-    }
-
-    private fun isStrictSupertype(context: ConeTypeContext, subtype: ConeKotlinType, supertype: ConeKotlinType): Boolean {
-        return with(AbstractTypeChecker) {
-            isSubtypeOf(context, subtype, supertype) && !isSubtypeOf(context, supertype, subtype)
         }
     }
 
@@ -132,35 +100,13 @@ object ConeTypeIntersector {
         }
     }
 
-    private enum class ResultNullability {
-        START {
-            override fun combine(nextType: ConeKotlinType, context: ConeTypeContext): ResultNullability =
-                nextType.resultNullability(context)
-        },
-        ACCEPT_NULL {
-            override fun combine(nextType: ConeKotlinType, context: ConeTypeContext): ResultNullability =
-                nextType.resultNullability(context)
-        },
+    private fun ConeKotlinType.isStrictSubtypeOf(context: ConeTypeContext, supertype: ConeKotlinType): Boolean =
+        AbstractTypeChecker.isSubtypeOf(context, this, supertype) && !AbstractTypeChecker.isSubtypeOf(context, supertype, this)
 
-        // example: type parameter without not-null supertype
-        UNKNOWN {
-            override fun combine(nextType: ConeKotlinType, context: ConeTypeContext): ResultNullability =
-                nextType.resultNullability(context).let {
-                    if (it == ACCEPT_NULL) this else it
-                }
-        },
-        NOT_NULL {
-            override fun combine(nextType: ConeKotlinType, context: ConeTypeContext): ResultNullability = this
-        };
-
-        abstract fun combine(nextType: ConeKotlinType, context: ConeTypeContext): ResultNullability
-
-        protected fun ConeKotlinType.resultNullability(context: ConeTypeContext): ResultNullability =
-            when {
-                isMarkedNullable -> ACCEPT_NULL
-                this is ConeFlexibleType -> upperBound.resultNullability(context)
-                ConeNullabilityChecker.isSubtypeOfAny(context, this) -> NOT_NULL
-                else -> UNKNOWN
-            }
-    }
+    private fun ConeKotlinType.isNullable(context: ConeTypeContext): Boolean =
+        when {
+            isMarkedNullable -> true
+            this is ConeFlexibleType -> upperBound.isNullable(context)
+            else -> !ConeNullabilityChecker.isSubtypeOfAny(context, this)
+        }
 }
