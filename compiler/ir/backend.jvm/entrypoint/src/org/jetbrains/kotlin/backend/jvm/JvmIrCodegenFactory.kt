@@ -306,11 +306,14 @@ open class JvmIrCodegenFactory(
     override fun invokeCodegen(input: CodegenFactory.CodegenInput) {
         val (state, context, module, notifyCodegenStart) = input as JvmIrCodegenInput
 
-        if ((state.diagnosticReporter as? BaseDiagnosticsCollector)?.hasErrors == true) return
+        fun hasErrors() = (state.diagnosticReporter as? BaseDiagnosticsCollector)?.hasErrors == true
+
+        if (hasErrors()) return
 
         notifyCodegenStart()
         jvmCodegenPhases.invokeToplevel(PhaseConfig(jvmCodegenPhases), context, module)
 
+        if (hasErrors()) return
         // TODO: split classes into groups connected by inline calls; call this after every group
         //       and clear `JvmBackendContext.classCodegens`
         state.afterIndependentPart()
