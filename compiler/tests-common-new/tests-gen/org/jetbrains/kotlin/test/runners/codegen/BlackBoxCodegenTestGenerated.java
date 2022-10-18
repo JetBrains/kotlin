@@ -14765,6 +14765,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("kt54463_platformType.kt")
+            public void testKt54463_platformType() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/kt54463_platformType.kt");
+            }
+
+            @Test
             @TestMetadata("memberExtensionPropertyAndImportFromObject.kt")
             public void testMemberExtensionPropertyAndImportFromObject() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/memberExtensionPropertyAndImportFromObject.kt");
