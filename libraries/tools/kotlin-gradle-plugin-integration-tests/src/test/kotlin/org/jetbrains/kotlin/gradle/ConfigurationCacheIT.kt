@@ -117,12 +117,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
                 checkConfigurationCacheFileReport = false,
                 buildOptions = defaultBuildOptions.copy(
                     configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
-                    warningMode = WarningMode.All,
-                    freeArgs = listOf(
-                        // remove after KT-49933 is fixed
-                        "-x", ":lib:transformCommonMainDependenciesMetadata",
-                        "-x", ":lib:transformCommonMainCInteropDependenciesMetadata",
-                    )
+                    warningMode = WarningMode.All
                 )
             )
         }
