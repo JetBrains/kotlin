@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 
 abstract class FirPartialBodyResolveTransformer(
-    val transformer: FirBodyResolveTransformer
+    val transformer: FirAbstractBodyResolveTransformerDispatcher
 ) : FirAbstractBodyResolveTransformer(transformer.transformerPhase) {
     @Suppress("OVERRIDE_BY_INLINE")
     final override inline val context: BodyResolveContext
