@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.renderer
 import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.containingClassForLocal
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
@@ -213,7 +213,7 @@ internal class ConeTypeIdeRenderer(
     private fun collectDesignationPathForLocal(declaration: FirDeclaration): List<FirDeclaration>? {
         @OptIn(LookupTagInternals::class)
         val containingClass = when (declaration) {
-            is FirCallableDeclaration -> declaration.containingClass()?.toFirRegularClass(declaration.moduleData.session)
+            is FirCallableDeclaration -> declaration.containingClassLookupTag()?.toFirRegularClass(declaration.moduleData.session)
             is FirAnonymousObject -> return listOf(declaration)
             is FirClassLikeDeclaration -> declaration.let {
                 if (!declaration.isLocal) return null

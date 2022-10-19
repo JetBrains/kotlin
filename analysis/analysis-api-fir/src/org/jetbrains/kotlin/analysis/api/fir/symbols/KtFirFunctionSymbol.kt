@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.getHasStableParameterNames
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -76,7 +76,7 @@ internal class KtFirFunctionSymbol(
         get() = withValidityAssertion {
             when {
                 firSymbol.isLocal -> KtSymbolKind.LOCAL
-                firSymbol.containingClass()?.classId == null -> KtSymbolKind.TOP_LEVEL
+                firSymbol.containingClassLookupTag()?.classId == null -> KtSymbolKind.TOP_LEVEL
                 else -> KtSymbolKind.CLASS_MEMBER
             }
         }
@@ -93,7 +93,7 @@ internal class KtFirFunctionSymbol(
 
             KtSymbolKind.CLASS_MEMBER ->
                 KtFirMemberFunctionSymbolPointer(
-                    firSymbol.containingClass()?.classId ?: error("ClassId should not be null for member function"),
+                    firSymbol.containingClassLookupTag()?.classId ?: error("ClassId should not be null for member function"),
                     firSymbol.name,
                     firSymbol.createSignature()
                 )

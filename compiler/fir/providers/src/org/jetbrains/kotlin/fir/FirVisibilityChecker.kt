@@ -154,7 +154,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                     }
                 }
 
-                val containingLookupTag = this.containingClass()
+                val containingLookupTag = this.containingClassLookupTag()
                 val containingClass = containingLookupTag?.toSymbol(session)?.fir
 
                 if (isStatic && containingClass != null) {
@@ -521,7 +521,7 @@ fun FirBasedSymbol<*>.getOwnerLookupTag(): ConeClassLikeLookupTag? {
     return when (this) {
         is FirBackingFieldSymbol -> fir.propertySymbol.getOwnerLookupTag()
         is FirClassLikeSymbol<*> -> getContainingClassLookupTag()
-        is FirCallableSymbol<*> -> containingClass()
+        is FirCallableSymbol<*> -> containingClassLookupTag()
         else -> error("Unsupported owner search for ${fir.javaClass}: ${fir.render()}")
     }
 }

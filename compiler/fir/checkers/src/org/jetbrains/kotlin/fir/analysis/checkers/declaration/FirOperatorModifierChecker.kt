@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.overriddenFunctions
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
@@ -188,11 +188,11 @@ private object OperatorFunctionChecks {
             member,
             object : Check {
                 override fun check(context: CheckerContext, function: FirSimpleFunction): String? {
-                    val containingClassSymbol = function.containingClass()?.toFirRegularClassSymbol(context.session) ?: return null
+                    val containingClassSymbol = function.containingClassLookupTag()?.toFirRegularClassSymbol(context.session) ?: return null
                     val customEqualsSupported = context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInInlineClasses)
 
                     if (function.overriddenFunctions(containingClassSymbol, context)
-                            .any { it.containingClass()?.classId == StandardClassIds.Any }
+                            .any { it.containingClassLookupTag()?.classId == StandardClassIds.Any }
                         || (customEqualsSupported && function.isTypedEqualsInInlineClass(context.session))
                     ) {
                         return null

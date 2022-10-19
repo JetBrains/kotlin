@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCOMPATIBLE_OBJC_NAME_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeObjCNameChecker.getObjCNames
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.isIntersectionOverride
@@ -46,7 +46,7 @@ object FirNativeObjCNameOverridesChecker : FirClassChecker() {
         if (overriddenSymbols.isEmpty()) return
         val objCNames = overriddenSymbols.map { it.getFirstBaseSymbol(firTypeScope).getObjCNames() }
         if (!objCNames.allNamesEquals()) {
-            val containingDeclarations = overriddenSymbols.mapNotNull { it.containingClass()?.toFirRegularClassSymbol(context.session) }
+            val containingDeclarations = overriddenSymbols.mapNotNull { it.containingClassLookupTag()?.toFirRegularClassSymbol(context.session) }
             reporter.reportOn(
                 declarationToReport.source,
                 INCOMPATIBLE_OBJC_NAME_OVERRIDE,

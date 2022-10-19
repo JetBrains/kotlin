@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isCompiledToJvmDefault
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isJvm6
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -127,7 +127,7 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
                 for (overriddenFunction in overriddenFunctions) {
                     val overriddenDeclarations = overriddenFunction.getOverriddenDeclarations()
                     for (overriddenDeclaration in overriddenDeclarations) {
-                        val containingClassSymbol = overriddenDeclaration.containingClass()?.toSymbol(context.session)
+                        val containingClassSymbol = overriddenDeclaration.containingClassLookupTag()?.toSymbol(context.session)
                         if (containingClassSymbol?.origin is FirDeclarationOrigin.Java &&
                             overriddenDeclaration.modality != Modality.ABSTRACT
                         ) {

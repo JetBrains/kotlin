@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -324,7 +324,7 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
         }
 
         private fun FirCallableSymbol<*>.isInsidePrivateClass(): Boolean {
-            val containingClassSymbol = this.containingClass()?.toSymbol(session) ?: return false
+            val containingClassSymbol = this.containingClassLookupTag()?.toSymbol(session) ?: return false
 
             val containingClassVisibility = when (containingClassSymbol) {
                 is FirAnonymousObjectSymbol -> return false
@@ -426,7 +426,7 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
 
     private fun FirCallableDeclaration.getOverriddenSymbols(context: CheckerContext): List<FirCallableSymbol<out FirCallableDeclaration>> {
         if (!this.isOverride) return emptyList()
-        val classSymbol = this.containingClass()?.toSymbol(context.session) as? FirClassSymbol<*> ?: return emptyList()
+        val classSymbol = this.containingClassLookupTag()?.toSymbol(context.session) as? FirClassSymbol<*> ?: return emptyList()
         val scope = classSymbol.unsubstitutedScope(context)
         //this call is needed because AbstractFirUseSiteMemberScope collect overrides in it only,
         //and not in processDirectOverriddenFunctionsWithBaseScope
@@ -455,7 +455,7 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ): Boolean {
-        if (declaration.containingClass() == null) return true
+        if (declaration.containingClassLookupTag() == null) return true
         if (effectiveVisibility == EffectiveVisibility.PrivateInClass) return true
 
         if (!declaration.isFinal) {

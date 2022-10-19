@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.explicitReceiverIsNotSuperReference
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -35,7 +35,7 @@ object FirAbstractSuperCallChecker : FirQualifiedAccessExpressionChecker() {
             // handles all the FirSimpleFunction/FirProperty/etc.
             val declarationSymbol = expression.toResolvedCallableSymbol() ?: return
 
-            val containingClassSymbol = declarationSymbol.containingClass()?.toSymbol(context.session) as? FirRegularClassSymbol ?: return
+            val containingClassSymbol = declarationSymbol.containingClassLookupTag()?.toSymbol(context.session) as? FirRegularClassSymbol ?: return
 
             if (containingClassSymbol.isAbstract) {
                 if (declarationSymbol.isAbstract) {
@@ -43,7 +43,7 @@ object FirAbstractSuperCallChecker : FirQualifiedAccessExpressionChecker() {
                 }
                 if (declarationSymbol is FirIntersectionCallableSymbol) {
                     val symbolFromBaseClass = declarationSymbol.intersections.firstOrNull {
-                        it.containingClass()?.toSymbol(context.session)?.classKind != ClassKind.INTERFACE
+                        it.containingClassLookupTag()?.toSymbol(context.session)?.classKind != ClassKind.INTERFACE
                     }
                     if (symbolFromBaseClass?.isAbstract == true) {
                         if (context.languageVersionSettings.supportsFeature(LanguageFeature.ForbidSuperDelegationToAbstractFakeOverride)) {

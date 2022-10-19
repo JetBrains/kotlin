@@ -383,7 +383,7 @@ class FakeOverrideGenerator(
         irProducer: (F) -> S
     ): List<S> {
         val overriddenContainingClass =
-            overridden.containingClass()?.toSymbol(session)?.fir as? FirClass ?: return emptyList()
+            overridden.containingClassLookupTag()?.toSymbol(session)?.fir as? FirClass ?: return emptyList()
 
         val overriddenContainingIrClass =
             declarationStorage.classifierStorage.getIrClassSymbol(overriddenContainingClass.symbol).owner as? IrClass
