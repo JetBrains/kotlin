@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
 import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.internal.ResolvedDependencyGraph
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
