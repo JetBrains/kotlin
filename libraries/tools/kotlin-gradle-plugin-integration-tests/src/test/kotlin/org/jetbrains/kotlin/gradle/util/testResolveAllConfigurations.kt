@@ -53,12 +53,13 @@ fun TestProject.testResolveAllConfigurations(
     }
 ) {
     if (!skipSetup) {
+        val targetProject = subproject?.let { subProject(it) } ?: this
         when {
-            Files.exists(buildGradle) -> buildGradle
+            Files.exists(targetProject.buildGradle) -> targetProject.buildGradle
                 .append("\n${generateResolveAllConfigurationsTask(excludeConfigurations)}")
-            Files.exists(buildGradleKts) -> buildGradleKts
+            Files.exists(targetProject.buildGradleKts) -> targetProject.buildGradleKts
                 .append("\n${generateResolveAllConfigurationsTaskKts(excludeConfigurations)}")
-            else -> error("Build script does not exists under $projectPath")
+            else -> error("Build script does not exist under $projectPath")
         }
     }
 
