@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -71,7 +71,7 @@ internal class KtFirKotlinPropertySymbol(
 
     override val symbolKind: KtSymbolKind
         get() = withValidityAssertion {
-            when (firSymbol.containingClass()?.classId) {
+            when (firSymbol.containingClassLookupTag()?.classId) {
                 null -> KtSymbolKind.TOP_LEVEL
                 else -> KtSymbolKind.CLASS_MEMBER
             }
@@ -124,7 +124,7 @@ internal class KtFirKotlinPropertySymbol(
             KtSymbolKind.TOP_LEVEL -> TODO("Creating symbol for top level properties is not supported yet")
             KtSymbolKind.CLASS_MEMBER ->
                 KtFirMemberPropertySymbolPointer(
-                    firSymbol.containingClass()?.classId ?: error("ClassId should not be null for member property"),
+                    firSymbol.containingClassLookupTag()?.classId ?: error("ClassId should not be null for member property"),
                     firSymbol.name,
                     firSymbol.createSignature()
                 )

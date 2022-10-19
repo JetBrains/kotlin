@@ -293,7 +293,7 @@ private class ReturnTypeCalculatorWithJump(
             val provider = session.firProvider
             val file = provider.getFirCallableContainerFile(symbol)
 
-            val outerClasses = generateSequence(symbol.containingClass()?.classId) { classId ->
+            val outerClasses = generateSequence(symbol.containingClassLookupTag()?.classId) { classId ->
                 classId.outerClassId
             }.mapTo(mutableListOf()) { provider.getFirClassifierByFqName(it) }
 

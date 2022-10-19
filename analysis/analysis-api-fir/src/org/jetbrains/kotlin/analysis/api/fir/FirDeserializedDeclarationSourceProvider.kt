@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirMo
 import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.name.ClassId
@@ -125,7 +125,7 @@ internal object FirDeserializedDeclarationSourceProvider {
     }
 
     private fun FirCallableDeclaration.containingKtClass(project: Project): KtClassOrObject? =
-        unwrapFakeOverrides().containingClass()?.classId?.let { classByClassId(it, scope(project), project) }
+        unwrapFakeOverrides().containingClassLookupTag()?.classId?.let { classByClassId(it, scope(project), project) }
 
     private fun classByClassId(classId: ClassId, scope: GlobalSearchScope, project: Project): KtClassOrObject? {
         val correctedClassId = classIdMapping[classId] ?: classId

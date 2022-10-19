@@ -80,7 +80,7 @@ object FirNativeThrowsChecker : FirBasicDeclarationChecker() {
             reporter.reportOn(
                 declaration.source,
                 FirNativeErrors.INCOMPATIBLE_THROWS_INHERITED,
-                inherited.mapNotNull { it.key.containingClass()?.toFirRegularClassSymbol(context.session) },
+                inherited.mapNotNull { it.key.containingClassLookupTag()?.toFirRegularClassSymbol(context.session) },
                 context
             )
             return false
@@ -90,7 +90,7 @@ object FirNativeThrowsChecker : FirBasicDeclarationChecker() {
             ?: return true // Should not happen though.
 
         if (decodeThrowsFilter(throwsAnnotation, context.session) != overriddenThrows) {
-            val containingClassSymbol = overriddenMember.containingClass()?.toFirRegularClassSymbol(context.session)
+            val containingClassSymbol = overriddenMember.containingClassLookupTag()?.toFirRegularClassSymbol(context.session)
             if (containingClassSymbol != null) {
                 reporter.reportOn(throwsAnnotation?.source, FirNativeErrors.INCOMPATIBLE_THROWS_OVERRIDE, containingClassSymbol, context)
             }
@@ -110,7 +110,7 @@ object FirNativeThrowsChecker : FirBasicDeclarationChecker() {
 
         fun getInheritedThrows(localThrowsAnnotation: FirAnnotationCall?, localFunctionSymbol: FirNamedFunctionSymbol) {
             if (!visited.add(localFunctionSymbol)) return
-            val containingClassSymbol = localFunctionSymbol.containingClass()?.toFirRegularClassSymbol(context.session)
+            val containingClassSymbol = localFunctionSymbol.containingClassLookupTag()?.toFirRegularClassSymbol(context.session)
 
             if (containingClassSymbol != null) {
                 val unsubstitutedScope = containingClassSymbol.unsubstitutedScope(context)

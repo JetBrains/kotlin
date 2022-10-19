@@ -502,7 +502,7 @@ private fun initialTypeOfCandidate(candidate: Candidate, typeRef: FirResolvedTyp
 }
 
 fun FirCallableDeclaration.getContainingClass(session: FirSession): FirRegularClass? =
-    this.containingClass()?.let { lookupTag ->
+    this.containingClassLookupTag()?.let { lookupTag ->
         session.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirRegularClass
     }
 

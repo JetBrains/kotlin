@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.samWithReceiver.k2
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.resolve.FirSamConversionTransformerExtension
@@ -21,7 +21,7 @@ class FirSamWithReceiverConventionTransformer(
     session: FirSession
 ) : FirSamConversionTransformerExtension(session) {
     override fun getCustomFunctionalTypeForSamConversion(function: FirSimpleFunction): ConeLookupTagBasedType? {
-        val containingClassSymbol = function.containingClass()?.toFirRegularClassSymbol(session) ?: return null
+        val containingClassSymbol = function.containingClassLookupTag()?.toFirRegularClassSymbol(session) ?: return null
         return runIf(containingClassSymbol.resolvedAnnotationClassIds.any { it.asSingleFqName().asString() in annotations }) {
             val parameterTypes = function.valueParameters.map { it.returnTypeRef.coneType }
             if (parameterTypes.isEmpty()) return null

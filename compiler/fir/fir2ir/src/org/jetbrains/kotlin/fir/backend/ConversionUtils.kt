@@ -229,7 +229,7 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
 ): IrSymbol? {
     val dispatchReceiverLookupTag = when {
         dispatchReceiver is FirNoReceiverExpression -> {
-            val containingClass = containingClass()
+            val containingClass = containingClassLookupTag()
             if (containingClass != null && containingClass.classId != StandardClassIds.Any) {
                 // Make sure that symbol is not extension and is not from inline class
                 val coneType = ((explicitReceiver as? FirResolvedQualifier)?.symbol as? FirClassSymbol)?.defaultType()
@@ -367,7 +367,7 @@ internal tailrec fun FirCallableSymbol<*>.unwrapCallRepresentative(root: FirCall
     }
 
     val overriddenSymbol = fir.originalForSubstitutionOverride?.takeIf {
-        it.containingClass() == root.containingClass()
+        it.containingClassLookupTag() == root.containingClassLookupTag()
     }?.symbol ?: return this
 
     return overriddenSymbol.unwrapCallRepresentative(this)

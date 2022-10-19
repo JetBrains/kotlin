@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.modality
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -120,7 +120,7 @@ fun FirClassSymbol<*>.primaryConstructorSymbol(): FirConstructorSymbol? {
 }
 
 fun FirSimpleFunction.isTypedEqualsInInlineClass(session: FirSession): Boolean =
-    containingClass()?.toFirRegularClassSymbol(session)?.run {
+    containingClassLookupTag()?.toFirRegularClassSymbol(session)?.run {
         with(this@isTypedEqualsInInlineClass) {
             contextReceivers.isEmpty() && receiverTypeRef == null && name == OperatorNameConventions.EQUALS
                     && this@run.isInline && valueParameters.size == 1 && returnTypeRef.isBoolean

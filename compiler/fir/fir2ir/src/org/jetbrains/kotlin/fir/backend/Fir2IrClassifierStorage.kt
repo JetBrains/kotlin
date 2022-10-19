@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
@@ -471,7 +471,7 @@ class Fir2IrClassifierStorage(
     ): IrEnumEntry {
         getCachedIrEnumEntry(enumEntry)?.let { return it }
         val containingFile = firProvider.getFirCallableContainerFile(enumEntry.symbol)
-        val irParentClass = irParent ?: enumEntry.containingClass()?.let { findIrClass(it) }
+        val irParentClass = irParent ?: enumEntry.containingClassLookupTag()?.let { findIrClass(it) }
 
         @Suppress("NAME_SHADOWING")
         val predefinedOrigin = predefinedOrigin ?: if (containingFile != null) {

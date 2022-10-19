@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.serialization.constant
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
@@ -98,7 +98,7 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
 
             symbol is FirConstructorSymbol -> {
                 val constructorCall = qualifiedAccessExpression as FirFunctionCall
-                val constructedClassSymbol = symbol.containingClass()?.toFirRegularClassSymbol(data) ?: return null
+                val constructedClassSymbol = symbol.containingClassLookupTag()?.toFirRegularClassSymbol(data) ?: return null
                 return if (constructedClassSymbol.classKind == ClassKind.ANNOTATION_CLASS) {
                     AnnotationValue(
                         buildAnnotationCall {

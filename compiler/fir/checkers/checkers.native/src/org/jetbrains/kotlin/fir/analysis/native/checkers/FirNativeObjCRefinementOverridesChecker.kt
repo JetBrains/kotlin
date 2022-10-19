@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeObjCRefinementChecker.hidesFromObjCClassId
 import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeObjCRefinementChecker.refinesInSwiftClassId
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
@@ -108,7 +108,7 @@ object FirNativeObjCRefinementOverridesChecker : FirClassChecker() {
         notRefinedSupers: List<FirCallableSymbol<*>>,
         context: CheckerContext
     ) {
-        val containingDeclarations = notRefinedSupers.mapNotNull { it.containingClass()?.toFirRegularClassSymbol(context.session) }
+        val containingDeclarations = notRefinedSupers.mapNotNull { it.containingClassLookupTag()?.toFirRegularClassSymbol(context.session) }
         if (annotations.isEmpty()) {
             reportOn(declaration.source, INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE, declaration.symbol, containingDeclarations, context)
         } else {

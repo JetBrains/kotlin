@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseCh
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.overridesBackwardCompatibilityHelper
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
@@ -285,7 +285,7 @@ object FirOverrideChecker : FirClassChecker() {
                     skipCheckForContainingClassVisibility = true
                 )
             }?.originalOrSelf() ?: return
-            val originalContainingClassSymbol = overridden.containingClass()?.toSymbol(context.session) as? FirRegularClassSymbol ?: return
+            val originalContainingClassSymbol = overridden.containingClassLookupTag()?.toSymbol(context.session) as? FirRegularClassSymbol ?: return
             reporter.reportOn(
                 member.source,
                 FirErrors.VIRTUAL_MEMBER_HIDDEN,
@@ -369,7 +369,7 @@ object FirOverrideChecker : FirClassChecker() {
         overridden: FirCallableSymbol<*>,
         context: CheckerContext
     ) {
-        overridden.containingClass()?.let { containingClass ->
+        overridden.containingClassLookupTag()?.let { containingClass ->
             reportOn(overriding.source, FirErrors.OVERRIDING_FINAL_MEMBER, overridden, containingClass.name, context)
         }
     }
@@ -387,7 +387,7 @@ object FirOverrideChecker : FirClassChecker() {
         overridden: FirCallableSymbol<*>,
         context: CheckerContext
     ) {
-        val containingClass = overridden.containingClass() ?: return
+        val containingClass = overridden.containingClassLookupTag() ?: return
         reportOn(
             overriding.source,
             FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE,
@@ -403,7 +403,7 @@ object FirOverrideChecker : FirClassChecker() {
         overridden: FirCallableSymbol<*>,
         context: CheckerContext
     ) {
-        val containingClass = overridden.containingClass() ?: return
+        val containingClass = overridden.containingClassLookupTag() ?: return
         reportOn(
             overriding.source,
             FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE,

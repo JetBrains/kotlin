@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.getHasStableParameterNames
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -52,7 +52,7 @@ internal class KtFirConstructorSymbol(
     override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, firResolveSession.useSiteFirSession, token) }
 
     override val containingClassIdIfNonLocal: ClassId?
-        get() = withValidityAssertion { firSymbol.containingClass()?.classId?.takeUnless { it.isLocal } }
+        get() = withValidityAssertion { firSymbol.containingClassLookupTag()?.classId?.takeUnless { it.isLocal } }
 
     override val isPrimary: Boolean get() = withValidityAssertion { firSymbol.isPrimary }
 

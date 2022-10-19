@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getContainingDeclarationSymbol
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
@@ -41,7 +41,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         val annotation = declaration.getAnnotationByClassId(JVM_FIELD_ANNOTATION_CLASS_ID) ?: return
         val session = context.session
-        val containingClassSymbol = declaration.containingClass()?.toFirRegularClassSymbol(session)
+        val containingClassSymbol = declaration.containingClassLookupTag()?.toFirRegularClassSymbol(session)
 
         val problem = when {
             declaration.delegate != null -> DELEGATE

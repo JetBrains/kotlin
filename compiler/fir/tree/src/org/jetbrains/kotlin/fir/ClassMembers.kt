@@ -25,8 +25,8 @@ fun FirCallableDeclaration.dispatchReceiverClassOrNull(): ConeClassLikeLookupTag
     return (dispatchReceiverType as? ConeClassLikeType)?.lookupTag
 }
 
-fun FirCallableSymbol<*>.containingClass(): ConeClassLikeLookupTag? = fir.containingClass()
-fun FirCallableDeclaration.containingClass(): ConeClassLikeLookupTag? {
+fun FirCallableSymbol<*>.containingClassLookupTag(): ConeClassLikeLookupTag? = fir.containingClassLookupTag()
+fun FirCallableDeclaration.containingClassLookupTag(): ConeClassLikeLookupTag? {
     return (containingClassForStaticMemberAttr ?: dispatchReceiverClassOrNull())
 }
 

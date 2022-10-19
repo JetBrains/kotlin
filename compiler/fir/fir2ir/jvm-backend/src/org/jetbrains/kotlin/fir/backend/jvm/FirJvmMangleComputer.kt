@@ -85,7 +85,7 @@ open class FirJvmMangleComputer(
 
     private fun FirDeclaration.visitParent() {
         val (parentPackageFqName, parentClassId) = when (this) {
-            is FirCallableDeclaration -> this.containingClass()?.classId?.let { it.packageFqName to it } ?: return
+            is FirCallableDeclaration -> this.containingClassLookupTag()?.classId?.let { it.packageFqName to it } ?: return
             is FirClassLikeDeclaration -> this.symbol.classId.let { it.packageFqName to it.outerClassId }
             else -> return
         }

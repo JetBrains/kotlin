@@ -152,7 +152,7 @@ object FirOptInUsageBaseChecker {
         val result = knownExperimentalities ?: SmartSet.create()
         val session = context.session
         if (fir is FirCallableDeclaration) {
-            val parentClassSymbol = fir.containingClass()?.toSymbol(session) as? FirRegularClassSymbol
+            val parentClassSymbol = fir.containingClassLookupTag()?.toSymbol(session) as? FirRegularClassSymbol
             if (fir.isSubstitutionOrIntersectionOverride) {
                 parentClassSymbol?.lazyResolveToPhase(FirResolvePhase.STATUS)
                 val parentClassScope = parentClassSymbol?.unsubstitutedScope(context)
