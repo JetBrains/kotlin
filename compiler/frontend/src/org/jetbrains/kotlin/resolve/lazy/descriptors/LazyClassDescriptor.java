@@ -667,7 +667,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         if (isRecursiveInlineClass(constructor, new HashSet<>())) {
             return new InlineClassRepresentation<>(parameters.get(0).getName(), (SimpleType) parameters.get(0).getType());
         }
-        if (parameters.size() == 0) {
+        if (parameters.size() == 0 && modality.invoke() != Modality.SEALED) {
             return invalidValueClassRepresentation;
         }
         List<Pair<Name, SimpleType>> fields = parameters.stream()

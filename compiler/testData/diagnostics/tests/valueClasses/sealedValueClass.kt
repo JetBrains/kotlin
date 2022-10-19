@@ -1,0 +1,5 @@
+// FIR_IDENTICAL
+// !SKIP_JAVAC
+// !LANGUAGE: -SealedInlineClasses
+
+<!UNSUPPORTED_FEATURE!>sealed<!> <!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class SVC

@@ -270,7 +270,7 @@ class DeclarationsChecker(
 
         if (declaration is KtPrimaryConstructor &&
             !DescriptorUtils.isAnnotationClass(constructorDescriptor.constructedClass) &&
-            !constructorDescriptor.constructedClass.isValueClass()
+            constructorDescriptor.constructedClass.let { it.isSingleFieldValueClass() || it.isMultiFieldValueClass() } == false
         ) {
             for (parameter in declaration.valueParameters) {
                 if (parameter.hasValOrVar()) {

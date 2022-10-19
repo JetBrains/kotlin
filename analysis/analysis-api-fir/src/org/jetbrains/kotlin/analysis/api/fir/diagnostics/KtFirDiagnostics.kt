@@ -1023,6 +1023,22 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val name: String
     }
 
+    abstract class ValueObjectNotSealedInlineChild : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = ValueObjectNotSealedInlineChild::class
+    }
+
+    abstract class SealedInlineClassWithPrimaryConstructor : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = SealedInlineClassWithPrimaryConstructor::class
+    }
+
+    abstract class SealedInlineChildNotValue : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = SealedInlineChildNotValue::class
+    }
+
+    abstract class SealedInlineChildOverlappingType : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = SealedInlineChildOverlappingType::class
+    }
+
     abstract class NoneApplicable : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = NoneApplicable::class
         abstract val candidates: List<KtSymbol>

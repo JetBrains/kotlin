@@ -442,6 +442,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET by error<KtAnnotationEntry> {
             parameter<String>("name")
         }
+        val VALUE_OBJECT_NOT_SEALED_INLINE_CHILD by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
+        val SEALED_INLINE_CLASS_WITH_PRIMARY_CONSTRUCTOR by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
+        val SEALED_INLINE_CHILD_NOT_VALUE by error<KtDeclaration>()
+        val SEALED_INLINE_CHILD_OVERLAPPING_TYPE by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
     }
 
     val APPLICABILITY by object : DiagnosticGroup("Applicability") {

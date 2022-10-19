@@ -41,7 +41,7 @@ fun DeclarationDescriptor.isSingleFieldValueClass(): Boolean =
 fun DeclarationDescriptor.isMultiFieldValueClass(): Boolean =
     this is ClassDescriptor && this.valueClassRepresentation is MultiFieldValueClassRepresentation
 
-fun DeclarationDescriptor.isValueClass(): Boolean = isInlineClass() || isMultiFieldValueClass()
+fun DeclarationDescriptor.isValueClass(): Boolean = isInlineClass() || isMultiFieldValueClass() || isSealedInlineClass()
 
 fun KotlinType.unsubstitutedUnderlyingType(): KotlinType? =
     (constructor.declarationDescriptor as? ClassDescriptor)?.let {
