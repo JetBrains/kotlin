@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.lightTree.fir
 
 import com.intellij.lang.LighterASTNode
-import org.jetbrains.kotlin.fir.builder.generateLazyLogicalOperation
+import org.jetbrains.kotlin.fir.builder.buildBalancedOrExpressionTree
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -20,19 +20,8 @@ data class WhenEntry(
     val isElse: Boolean = false
 ) {
     fun toFirWhenCondition(): FirExpression {
-        var firCondition: FirExpression? = null
-        for (condition in conditions) {
-            val firConditionElement = condition.toFirWhenCondition()
-            firCondition = when (firCondition) {
-                null -> firConditionElement
-                else -> firCondition.generateLazyLogicalOperation(firConditionElement, false, null)
-            }
-        }
-        return firCondition!!
-    }
-
-    private fun FirExpression.toFirWhenCondition(): FirExpression {
-        return this
+        require(conditions.isNotEmpty())
+        return buildBalancedOrExpressionTree(conditions)
     }
 
     fun toFirWhenConditionWithoutSubject(): FirExpression {
